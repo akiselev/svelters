@@ -1,0 +1,119 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new message dialog.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`AlertDialog`](xref:gtk:Gtk.AlertDialog) instead",
+      "file": "gtk/gtkmessagedialog.c",
+      "line": 476,
+      "md": "Creates a new message dialog.\n\nThis is a simple dialog with some text the user may want to see.\nWhen the user clicks a button a “response” signal is emitted with\nresponse IDs from [`ResponseType`](xref:gtk:Gtk.ResponseType). See [`Dialog`](xref:gtk:Gtk.Dialog)\nfor more details."
+    },
+    "new_with_markup": {
+      "brief": "Creates a new message dialog.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`AlertDialog`](xref:gtk:Gtk.AlertDialog) instead",
+      "file": "gtk/gtkmessagedialog.c",
+      "line": 542,
+      "md": "Creates a new message dialog.\n\nThis is a simple dialog with some text that is marked up with\nPango markup. When the user clicks a button a “response” signal\nis emitted with response IDs from [`ResponseType`](xref:gtk:Gtk.ResponseType). See\n[`Dialog`](xref:gtk:Gtk.Dialog) for more details.\n\nSpecial XML characters in the printf() arguments passed to this\nfunction will automatically be escaped as necessary.\n(See g_markup_printf_escaped() for how this is implemented.)\nUsually this is what you want, but if you have an existing\nPango markup string that you want to use literally as the\nlabel, then you need to use [`MessageDialog.set_markup()`](xref:gtk:Gtk.MessageDialog#method:set_markup)\ninstead, since you can’t pass the markup string either\nas the format (it might contain “%” characters) or as a string\nargument.\n\n```c\nGtkWidget *dialog;\nGtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;\ndialog = gtk_message_dialog_new (parent_window,\n                                 flags,\n                                 GTK_MESSAGE_ERROR,\n                                 GTK_BUTTONS_CLOSE,\n                                 NULL);\ngtk_message_dialog_set_markup (GTK_MESSAGE_DIALOG (dialog),\n                               markup);\n```"
+    }
+  },
+  "doc": {
+    "brief": "`GtkMessageDialog` presents a dialog with some message text.",
+    "deprecated": "4.10",
+    "deprecated_md": "Use [`AlertDialog`](xref:gtk:Gtk.AlertDialog) instead",
+    "file": "gtk/gtkmessagedialog.c",
+    "line": 42,
+    "md": "`GtkMessageDialog` presents a dialog with some message text.\n\nIt’s simply a convenience widget; you could construct the equivalent of\n`GtkMessageDialog` from `GtkDialog` without too much effort, but\n`GtkMessageDialog` saves typing.\n\nThe easiest way to do a modal message dialog is to use the %GTK_DIALOG_MODAL\nflag, which will call [`Window.set_modal()`](xref:gtk:Gtk.Window#method:set_modal) internally. The dialog will\nprevent interaction with the parent window until it's hidden or destroyed.\nYou can use the [`Dialog::response`](xref:gtk:Gtk.Dialog#event:response) signal to know when the user\ndismissed the dialog.\n\nAn example for using a modal dialog:\n```c\nGtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_MODAL;\ndialog = gtk_message_dialog_new (parent_window,\n                                 flags,\n                                 GTK_MESSAGE_ERROR,\n                                 GTK_BUTTONS_CLOSE,\n                                 \"Error reading “%s”: %s\",\n                                 filename,\n                                 g_strerror (errno));\n// Destroy the dialog when the user responds to it\n// (e.g. clicks a button)\n\ng_signal_connect (dialog, \"response\",\n                  G_CALLBACK (gtk_window_destroy),\n                  NULL);\n```\n\nYou might do a non-modal `GtkMessageDialog` simply by omitting the\n%GTK_DIALOG_MODAL flag:\n\n```c\nGtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;\ndialog = gtk_message_dialog_new (parent_window,\n                                 flags,\n                                 GTK_MESSAGE_ERROR,\n                                 GTK_BUTTONS_CLOSE,\n                                 \"Error reading “%s”: %s\",\n                                 filename,\n                                 g_strerror (errno));\n\n// Destroy the dialog when the user responds to it\n// (e.g. clicks a button)\ng_signal_connect (dialog, \"response\",\n                  G_CALLBACK (gtk_window_destroy),\n                  NULL);\n```\n\n# GtkMessageDialog as GtkBuildable\n\nThe `GtkMessageDialog` implementation of the `GtkBuildable` interface exposes\nthe message area as an internal child with the name “message_area”."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:MessageDialog",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "format_secondary_markup": {
+      "brief": "Sets the secondary text of the message dialog.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`AlertDialog`](xref:gtk:Gtk.AlertDialog) instead",
+      "file": "gtk/gtkmessagedialog.c",
+      "line": 678,
+      "md": "Sets the secondary text of the message dialog.\n\nThe `message_format` is assumed to contain Pango markup.\n\nDue to an oversight, this function does not escape special\nXML characters like [`MessageDialog.new_with_markup()`](xref:gtk:Gtk.MessageDialog#constructor:new_with_markup)\ndoes. Thus, if the arguments may contain special XML characters,\nyou should use g_markup_printf_escaped() to escape it.\n\n```c\nchar *msg;\n\nmsg = g_markup_printf_escaped (message_format, ...);\ngtk_message_dialog_format_secondary_markup (message_dialog,\n                                            \"%s\", msg);\ng_free (msg);\n```"
+    },
+    "format_secondary_text": {
+      "brief": "Sets the secondary text of the message dialog.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`AlertDialog`](xref:gtk:Gtk.AlertDialog) instead",
+      "file": "gtk/gtkmessagedialog.c",
+      "line": 635,
+      "md": "Sets the secondary text of the message dialog."
+    },
+    "get_message_area": {
+      "brief": "Returns the message area of the dialog.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`AlertDialog`](xref:gtk:Gtk.AlertDialog) instead",
+      "file": "gtk/gtkmessagedialog.c",
+      "line": 737,
+      "md": "Returns the message area of the dialog.\n\nThis is the box where the dialog’s primary and secondary labels\nare packed. You can add your own extra content to that box and it\nwill appear below those labels. See [`Dialog.get_content_area()`](xref:gtk:Gtk.Dialog#method:get_content_area)\nfor the corresponding function in the parent [`Dialog`](xref:gtk:Gtk.Dialog)."
+    },
+    "set_markup": {
+      "brief": "Sets the text of the message dialog.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`AlertDialog`](xref:gtk:Gtk.AlertDialog) instead",
+      "file": "gtk/gtkmessagedialog.c",
+      "line": 614,
+      "md": "Sets the text of the message dialog."
+    }
+  },
+  "properties": {
+    "buttons": {
+      "brief": "Set of buttons to display on the dialog.",
+      "file": "gtk/gtkmessagedialog.c",
+      "line": 374,
+      "md": "Set of buttons to display on the dialog."
+    },
+    "message-area": {
+      "brief": "The `GtkBox` that corresponds to the message area of this dialog.",
+      "file": "gtk/gtkmessagedialog.c",
+      "line": 431,
+      "md": "The `GtkBox` that corresponds to the message area of this dialog.\n\nSee [`MessageDialog.get_message_area()`](xref:gtk:Gtk.MessageDialog#method:get_message_area) for a detailed\ndescription of this area."
+    },
+    "message-type": {
+      "brief": "The type of the message.",
+      "file": "gtk/gtkmessagedialog.c",
+      "line": 363,
+      "md": "The type of the message."
+    },
+    "secondary-text": {
+      "brief": "The secondary text of the message dialog.",
+      "file": "gtk/gtkmessagedialog.c",
+      "line": 409,
+      "md": "The secondary text of the message dialog."
+    },
+    "secondary-use-markup": {
+      "brief": "`TRUE` if the secondary text of the dialog includes Pango markup.",
+      "file": "gtk/gtkmessagedialog.c",
+      "line": 419,
+      "md": "`TRUE` if the secondary text of the dialog includes Pango markup.\n\nSee `parse_markup`."
+    },
+    "text": {
+      "brief": "The primary text of the message dialog.",
+      "file": "gtk/gtkmessagedialog.c",
+      "line": 385,
+      "md": "The primary text of the message dialog.\n\nIf the dialog has a secondary text, this will appear as the title."
+    },
+    "use-markup": {
+      "brief": "`TRUE` if the primary text of the dialog includes Pango markup.",
+      "file": "gtk/gtkmessagedialog.c",
+      "line": 397,
+      "md": "`TRUE` if the primary text of the dialog includes Pango markup.\n\nSee `parse_markup`."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

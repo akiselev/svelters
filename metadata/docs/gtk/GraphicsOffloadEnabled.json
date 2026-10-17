@@ -1,0 +1,38 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Represents the state of graphics offloading.",
+    "file": "gtk/gtkgraphicsoffload.h",
+    "line": 47,
+    "md": "Represents the state of graphics offloading.",
+    "since": "4.14"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:GraphicsOffloadEnabled",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "disabled": {
+      "brief": "Graphics offloading is disabled.",
+      "file": "gtk/gtkgraphicsoffload.h",
+      "line": 50,
+      "md": "Graphics offloading is disabled."
+    },
+    "enabled": {
+      "brief": "Graphics offloading is enabled.",
+      "file": "gtk/gtkgraphicsoffload.h",
+      "line": 49,
+      "md": "Graphics offloading is enabled."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -1,0 +1,61 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Used to reference the parts of `GtkTextView`.",
+    "file": "gtk/gtktextview.h",
+    "line": 44,
+    "md": "Used to reference the parts of `GtkTextView`."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:TextWindowType",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "bottom": {
+      "brief": "Bottom border window.",
+      "file": "gtk/gtktextview.h",
+      "line": 51,
+      "md": "Bottom border window."
+    },
+    "left": {
+      "brief": "Left side border window.",
+      "file": "gtk/gtktextview.h",
+      "line": 48,
+      "md": "Left side border window."
+    },
+    "right": {
+      "brief": "Right side border window.",
+      "file": "gtk/gtktextview.h",
+      "line": 49,
+      "md": "Right side border window."
+    },
+    "text": {
+      "brief": "Scrollable text window.",
+      "file": "gtk/gtktextview.h",
+      "line": 47,
+      "md": "Scrollable text window."
+    },
+    "top": {
+      "brief": "Top border window.",
+      "file": "gtk/gtktextview.h",
+      "line": 50,
+      "md": "Top border window."
+    },
+    "widget": {
+      "brief": "Window that floats over scrolling areas.",
+      "file": "gtk/gtktextview.h",
+      "line": 46,
+      "md": "Window that floats over scrolling areas."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

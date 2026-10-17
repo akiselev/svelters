@@ -43,6 +43,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsObject",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsObject:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "protected",
@@ -103,7 +113,7 @@
             "native": "Qt::GestureType",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::GestureType>"
           }
         },
         {
@@ -113,7 +123,7 @@
             "native": "Qt::GestureFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::GestureFlag>"
           }
         }
       ],
@@ -150,7 +160,7 @@
             "native": "Qt::GestureType",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::GestureType>"
           }
         }
       ],
@@ -212,6 +222,7 @@
         "set": null
       },
       "brief": "The effect attached to this item",
+      "default": null,
       "js_name": "effect",
       "metaobject": {
         "constant": false,
@@ -232,6 +243,7 @@
       "name": "effect",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QGraphicsEffect*",
@@ -252,6 +264,7 @@
         "set": null
       },
       "brief": "Whether the item is enabled or not",
+      "default": null,
       "js_name": "enabled",
       "metaobject": {
         "constant": false,
@@ -275,6 +288,7 @@
         "signal": "enabledChanged()"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -295,6 +309,7 @@
         "set": null
       },
       "brief": "The opacity of the item",
+      "default": null,
       "js_name": "opacity",
       "metaobject": {
         "constant": false,
@@ -318,6 +333,7 @@
         "signal": "opacityChanged()"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "qreal",
@@ -338,6 +354,7 @@
         "set": null
       },
       "brief": "The parent of the item",
+      "default": null,
       "js_name": "parent",
       "metaobject": {
         "constant": false,
@@ -361,6 +378,7 @@
         "signal": "parentChanged()"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QGraphicsObject*",
@@ -381,6 +399,7 @@
         "set": null
       },
       "brief": "The position of the item",
+      "default": null,
       "js_name": "pos",
       "metaobject": {
         "constant": false,
@@ -401,12 +420,13 @@
       "name": "pos",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       }
     },
     {
@@ -421,6 +441,7 @@
         "set": null
       },
       "brief": "The rotation of the item in degrees",
+      "default": null,
       "js_name": "rotation",
       "metaobject": {
         "constant": false,
@@ -444,6 +465,7 @@
         "signal": "rotationChanged()"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "qreal",
@@ -464,6 +486,7 @@
         "set": null
       },
       "brief": "The scale of the item",
+      "default": null,
       "js_name": "scale",
       "metaobject": {
         "constant": false,
@@ -487,6 +510,7 @@
         "signal": "scaleChanged()"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "qreal",
@@ -507,6 +531,7 @@
         "set": null
       },
       "brief": "The transformation origin",
+      "default": null,
       "js_name": "transformOriginPoint",
       "metaobject": {
         "constant": false,
@@ -527,12 +552,13 @@
       "name": "transformOriginPoint",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       }
     },
     {
@@ -547,6 +573,7 @@
         "set": null
       },
       "brief": "Whether the item is visible or not",
+      "default": null,
       "js_name": "visible",
       "metaobject": {
         "constant": false,
@@ -570,6 +597,7 @@
         "signal": "visibleChanged()"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -590,6 +618,7 @@
         "set": null
       },
       "brief": "The x position of the item",
+      "default": null,
       "js_name": "x",
       "metaobject": {
         "constant": false,
@@ -613,6 +642,7 @@
         "signal": "xChanged()"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "qreal",
@@ -633,6 +663,7 @@
         "set": null
       },
       "brief": "The y position of the item",
+      "default": null,
       "js_name": "y",
       "metaobject": {
         "constant": false,
@@ -656,6 +687,7 @@
         "signal": "yChanged()"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "qreal",
@@ -676,6 +708,7 @@
         "set": null
       },
       "brief": "The z value of the item",
+      "default": null,
       "js_name": "z",
       "metaobject": {
         "constant": false,
@@ -699,6 +732,7 @@
         "signal": "zChanged()"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "qreal",

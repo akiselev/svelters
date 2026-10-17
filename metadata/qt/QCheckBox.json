@@ -79,6 +79,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QCheckBox",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QCheckBox:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -99,7 +109,7 @@
         "native": "Qt::CheckState",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::CheckState>"
       },
       "signature": "Qt::CheckState checkState() const",
       "since": null,
@@ -191,7 +201,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -288,7 +298,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize minimumSizeHint() const override",
       "since": null,
@@ -417,7 +427,7 @@
             "native": "Qt::CheckState",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::CheckState>"
           }
         }
       ],
@@ -488,7 +498,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,
@@ -516,6 +526,8 @@
         "set": "setTristate"
       },
       "brief": "Whether the checkbox is a tri-state checkbox",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "tristate",
       "metaobject": {
         "constant": false,
@@ -536,6 +548,7 @@
       "name": "tristate",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -570,7 +583,7 @@
             "native": "Qt::CheckState",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::CheckState>"
           }
         }
       ],

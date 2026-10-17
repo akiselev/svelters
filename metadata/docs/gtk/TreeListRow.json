@@ -1,0 +1,110 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "The type of item used by `GtkTreeListModel`.",
+    "file": "gtk/gtktreelistmodel.c",
+    "line": 931,
+    "md": "The type of item used by `GtkTreeListModel`.\n\nIt allows navigating the model as a tree and modify the state of rows.\n\n`GtkTreeListRow` instances are created by a `GtkTreeListModel` only\nwhen the [`TreeListModel:passthrough`](xref:gtk:Gtk.TreeListModel#property:passthrough) property is not set.\n\nThere are various support objects that can make use of `GtkTreeListRow`\nobjects, such as the [`TreeExpander`](xref:gtk:Gtk.TreeExpander) widget that allows displaying\nan icon to expand or collapse a row or [`TreeListRowSorter`](xref:gtk:Gtk.TreeListRowSorter) that\nmakes it possible to sort trees properly."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:TreeListRow",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_child_row": {
+      "brief": "If `self` is not expanded or `position` is greater than the number of children, `NULL` is returned.",
+      "file": "gtk/gtktreelistmodel.c",
+      "line": 1362,
+      "md": "If `self` is not expanded or `position` is greater than the\nnumber of children, `NULL` is returned."
+    },
+    "get_children": {
+      "brief": "If the row is expanded, gets the model holding the children of `self`.",
+      "file": "gtk/gtktreelistmodel.c",
+      "line": 1303,
+      "md": "If the row is expanded, gets the model holding the children of `self`.\n\nThis model is the model created by the\n[`TreeListModelCreateModelFunc`](xref:gtk:Gtk.TreeListModelCreateModelFunc)\nand contains the original items, no matter what value\n[`TreeListModel:passthrough`](xref:gtk:Gtk.TreeListModel#property:passthrough) is set to."
+    },
+    "get_depth": {
+      "brief": "Gets the depth of this row.",
+      "file": "gtk/gtktreelistmodel.c",
+      "line": 1128,
+      "md": "Gets the depth of this row.\n\nRows that correspond to items in the root model have a depth\nof zero, rows corresponding to items of models of direct children\nof the root model have a depth of 1 and so on.\n\nThe depth of a row never changes until the row is removed from its model\nat which point it will forever return 0."
+    },
+    "get_expanded": {
+      "brief": "Gets if a row is currently expanded.",
+      "file": "gtk/gtktreelistmodel.c",
+      "line": 1221,
+      "md": "Gets if a row is currently expanded."
+    },
+    "get_item": {
+      "brief": "Gets the item corresponding to this row,",
+      "file": "gtk/gtktreelistmodel.c",
+      "line": 1285,
+      "md": "Gets the item corresponding to this row,"
+    },
+    "get_parent": {
+      "brief": "Gets the row representing the parent for `self`.",
+      "file": "gtk/gtktreelistmodel.c",
+      "line": 1327,
+      "md": "Gets the row representing the parent for `self`.\n\nThat is the row that would need to be collapsed\nto make this row disappear.\n\nIf `self` is a row corresponding to the root model,\n`NULL` is returned.\n\nThe value returned by this function never changes\nuntil the row is removed from its model at which point\nit will forever return `NULL`."
+    },
+    "get_position": {
+      "brief": "Returns the position in the `GtkTreeListModel` that `self` occupies at the moment.",
+      "file": "gtk/gtktreelistmodel.c",
+      "line": 1108,
+      "md": "Returns the position in the `GtkTreeListModel` that `self` occupies\nat the moment."
+    },
+    "is_expandable": {
+      "brief": "Checks if a row can be expanded.",
+      "file": "gtk/gtktreelistmodel.c",
+      "line": 1240,
+      "md": "Checks if a row can be expanded.\n\nThis does not mean that the row is actually expanded,\nthis can be checked with [`TreeListRow.get_expanded()`](xref:gtk:Gtk.TreeListRow#method:get_expanded).\n\nIf a row is expandable never changes until the row is removed\nfrom its model at which point it will forever return `FALSE`."
+    },
+    "set_expanded": {
+      "brief": "Expands or collapses a row.",
+      "file": "gtk/gtktreelistmodel.c",
+      "line": 1163,
+      "md": "Expands or collapses a row.\n\nIf a row is expanded, the model of calling the\n[`TreeListModelCreateModelFunc`](xref:gtk:Gtk.TreeListModelCreateModelFunc) for the row's\nitem will be inserted after this row. If a row is collapsed,\nthose items will be removed from the model.\n\nIf the row is not expandable, this function does nothing."
+    }
+  },
+  "properties": {
+    "children": {
+      "brief": "The model holding the row's children.",
+      "file": "gtk/gtktreelistmodel.c",
+      "line": 1050,
+      "md": "The model holding the row's children."
+    },
+    "depth": {
+      "brief": "The depth in the tree of this row.",
+      "file": "gtk/gtktreelistmodel.c",
+      "line": 1060,
+      "md": "The depth in the tree of this row."
+    },
+    "expandable": {
+      "brief": "If this row can ever be expanded.",
+      "file": "gtk/gtktreelistmodel.c",
+      "line": 1070,
+      "md": "If this row can ever be expanded."
+    },
+    "expanded": {
+      "brief": "If this row is currently expanded.",
+      "file": "gtk/gtktreelistmodel.c",
+      "line": 1080,
+      "md": "If this row is currently expanded."
+    },
+    "item": {
+      "brief": "The item held in this row.",
+      "file": "gtk/gtktreelistmodel.c",
+      "line": 1090,
+      "md": "The item held in this row."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

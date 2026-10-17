@@ -1,0 +1,79 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "The identifiers for [`Editable`](xref:gtk:Gtk.Editable) properties.",
+    "file": "gtk/gtkeditable.h",
+    "line": 148,
+    "md": "The identifiers for [`Editable`](xref:gtk:Gtk.Editable) properties.\n\nSee `install_properties` for details on how to\nimplement the `GtkEditable` interface."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:EditableProperties",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "num_properties": {
+      "brief": "the number of properties",
+      "file": "gtk/gtkeditable.h",
+      "line": 158,
+      "md": "the number of properties"
+    },
+    "prop_cursor_position": {
+      "brief": "the property id for [`Editable:cursor-position`](xref:gtk:Gtk.Editable#property:cursor-position)",
+      "file": "gtk/gtkeditable.h",
+      "line": 151,
+      "md": "the property id for [`Editable:cursor-position`](xref:gtk:Gtk.Editable#property:cursor-position)"
+    },
+    "prop_editable": {
+      "brief": "the property id for [`Editable:editable`](xref:gtk:Gtk.Editable#property:editable)",
+      "file": "gtk/gtkeditable.h",
+      "line": 153,
+      "md": "the property id for [`Editable:editable`](xref:gtk:Gtk.Editable#property:editable)"
+    },
+    "prop_enable_undo": {
+      "brief": "the property id for [`Editable:enable-undo`](xref:gtk:Gtk.Editable#property:enable-undo)",
+      "file": "gtk/gtkeditable.h",
+      "line": 157,
+      "md": "the property id for [`Editable:enable-undo`](xref:gtk:Gtk.Editable#property:enable-undo)"
+    },
+    "prop_max_width_chars": {
+      "brief": "the property id for [`Editable:max-width-chars`](xref:gtk:Gtk.Editable#property:max-width-chars)",
+      "file": "gtk/gtkeditable.h",
+      "line": 155,
+      "md": "the property id for [`Editable:max-width-chars`](xref:gtk:Gtk.Editable#property:max-width-chars)"
+    },
+    "prop_selection_bound": {
+      "brief": "the property id for [`Editable:selection-bound`](xref:gtk:Gtk.Editable#property:selection-bound)",
+      "file": "gtk/gtkeditable.h",
+      "line": 152,
+      "md": "the property id for [`Editable:selection-bound`](xref:gtk:Gtk.Editable#property:selection-bound)"
+    },
+    "prop_text": {
+      "brief": "the property id for [`Editable:text`](xref:gtk:Gtk.Editable#property:text)",
+      "file": "gtk/gtkeditable.h",
+      "line": 150,
+      "md": "the property id for [`Editable:text`](xref:gtk:Gtk.Editable#property:text)"
+    },
+    "prop_width_chars": {
+      "brief": "the property id for [`Editable:width-chars`](xref:gtk:Gtk.Editable#property:width-chars)",
+      "file": "gtk/gtkeditable.h",
+      "line": 154,
+      "md": "the property id for [`Editable:width-chars`](xref:gtk:Gtk.Editable#property:width-chars)"
+    },
+    "prop_xalign": {
+      "brief": "the property id for [`Editable:xalign`](xref:gtk:Gtk.Editable#property:xalign)",
+      "file": "gtk/gtkeditable.h",
+      "line": 156,
+      "md": "the property id for [`Editable:xalign`](xref:gtk:Gtk.Editable#property:xalign)"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -1,0 +1,150 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkCellView` widget.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellview.c",
+      "line": 808,
+      "md": "Creates a new `GtkCellView` widget."
+    },
+    "new_with_context": {
+      "brief": "Creates a new `GtkCellView` widget with a specific `GtkCellArea` to layout cells and a specific `GtkCellAreaContext`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellview.c",
+      "line": 828,
+      "md": "Creates a new `GtkCellView` widget with a specific `GtkCellArea`\nto layout cells and a specific `GtkCellAreaContext`.\n\nSpecifying the same context for a handful of cells lets\nthe underlying area synchronize the geometry for those cells,\nin this way alignments with cellviews for other rows are\npossible."
+    },
+    "new_with_markup": {
+      "brief": "Creates a new `GtkCellView` widget, adds a `GtkCellRendererText` to it, and makes it show `markup`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellview.c",
+      "line": 890,
+      "md": "Creates a new `GtkCellView` widget, adds a `GtkCellRendererText`\nto it, and makes it show `markup`. The text can be marked up with\nthe [Pango text markup language](https://docs.gtk.org/Pango/pango_markup.html)."
+    },
+    "new_with_text": {
+      "brief": "Creates a new `GtkCellView` widget, adds a `GtkCellRendererText` to it, and makes it show `text`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellview.c",
+      "line": 858,
+      "md": "Creates a new `GtkCellView` widget, adds a `GtkCellRendererText`\nto it, and makes it show `text`."
+    },
+    "new_with_texture": {
+      "brief": "Creates a new `GtkCellView` widget, adds a `GtkCellRendererPixbuf` to it, and makes it show `texture`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellview.c",
+      "line": 923,
+      "md": "Creates a new `GtkCellView` widget, adds a `GtkCellRendererPixbuf`\nto it, and makes it show `texture`."
+    }
+  },
+  "doc": {
+    "brief": "A widget displaying a single row of a GtkTreeModel",
+    "deprecated": "4.10",
+    "deprecated_md": "List views use widgets to display their contents.\n  You can use [`Box`](xref:gtk:Gtk.Box) instead",
+    "file": "gtk/deprecated/gtkcellview.c",
+    "line": 37,
+    "md": "A widget displaying a single row of a GtkTreeModel\n\nA `GtkCellView` displays a single row of a `GtkTreeModel` using a `GtkCellArea`\nand `GtkCellAreaContext`. A `GtkCellAreaContext` can be provided to the\n`GtkCellView` at construction time in order to keep the cellview in context\nof a group of cell views, this ensures that the renderers displayed will\nbe properly aligned with each other (like the aligned cells in the menus\nof `GtkComboBox`).\n\n`GtkCellView` is `GtkOrientable` in order to decide in which orientation\nthe underlying `GtkCellAreaContext` should be allocated. Taking the `GtkComboBox`\nmenu as an example, cellviews should be oriented horizontally if the menus are\nlisted top-to-bottom and thus all share the same width but may have separate\nindividual heights (left-to-right menus should be allocated vertically since\nthey all share the same height but may have variable widths).\n\n## CSS nodes\n\nGtkCellView has a single CSS node with name cellview."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:CellView",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_displayed_row": {
+      "brief": "Returns a `GtkTreePath` referring to the currently displayed row.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellview.c",
+      "line": 1081,
+      "md": "Returns a `GtkTreePath` referring to the currently\ndisplayed row. If no row is currently displayed,\n`NULL` is returned."
+    },
+    "get_draw_sensitive": {
+      "brief": "Gets whether `cell_view` is configured to draw all of its cells in a sensitive state.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellview.c",
+      "line": 1106,
+      "md": "Gets whether `cell_view` is configured to draw all of its\ncells in a sensitive state."
+    },
+    "get_fit_model": {
+      "brief": "Gets whether `cell_view` is configured to request space to fit the entire `GtkTreeModel`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellview.c",
+      "line": 1156,
+      "md": "Gets whether `cell_view` is configured to request space\nto fit the entire `GtkTreeModel`."
+    },
+    "get_model": {
+      "brief": "Returns the model for `cell_view`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellview.c",
+      "line": 1024,
+      "md": "Returns the model for `cell_view`. If no model is used `NULL` is\nreturned."
+    },
+    "set_displayed_row": {
+      "brief": "Sets the row of the model that is currently displayed by the `GtkCellView`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellview.c",
+      "line": 1045,
+      "md": "Sets the row of the model that is currently displayed\nby the `GtkCellView`. If the path is unset, then the\ncontents of the cellview “stick” at their last value;\nthis is not normally a desired result, but may be\na needed intermediate state if say, the model for\nthe `GtkCellView` becomes temporarily empty."
+    },
+    "set_draw_sensitive": {
+      "brief": "Sets whether `cell_view` should draw all of its cells in a sensitive state, this is used by `GtkComboBox` menus to ensure that rows with insensitive cells that contain children appear sensitive in the parent menu item.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellview.c",
+      "line": 1128,
+      "md": "Sets whether `cell_view` should draw all of its\ncells in a sensitive state, this is used by `GtkComboBox` menus\nto ensure that rows with insensitive cells that contain\nchildren appear sensitive in the parent menu item."
+    },
+    "set_fit_model": {
+      "brief": "Sets whether `cell_view` should request space to fit the entire `GtkTreeModel`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellview.c",
+      "line": 1178,
+      "md": "Sets whether `cell_view` should request space to fit the entire `GtkTreeModel`.\n\nThis is used by `GtkComboBox` to ensure that the cell view displayed on\nthe combo box’s button always gets enough space and does not resize\nwhen selection changes."
+    },
+    "set_model": {
+      "brief": "Sets the model for `cell_view`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellview.c",
+      "line": 980,
+      "md": "Sets the model for `cell_view`.  If `cell_view` already has a model\nset, it will remove it before setting the new model.  If `model` is\n`NULL`, then it will unset the old model."
+    }
+  },
+  "properties": {
+    "cell-area": {
+      "brief": "The `GtkCellArea` rendering cells",
+      "file": "gtk/deprecated/gtkcellview.c",
+      "line": 207,
+      "md": "The `GtkCellArea` rendering cells\n\nIf no area is specified when creating the cell view with gtk_cell_view_new_with_context()\na horizontally oriented `GtkCellArea`Box will be used.\n\nsince 3.0"
+    },
+    "cell-area-context": {
+      "brief": "The `GtkCellAreaContext` used to compute the geometry of the cell view.",
+      "file": "gtk/deprecated/gtkcellview.c",
+      "line": 223,
+      "md": "The `GtkCellAreaContext` used to compute the geometry of the cell view.\n\nA group of cell views can be assigned the same context in order to\nensure the sizes and cell alignments match across all the views with\nthe same context.\n\n`GtkComboBox` menus uses this to assign the same context to all cell views\nin the menu items for a single menu (each submenu creates its own\ncontext since the size of each submenu does not depend on parent\nor sibling menus).\n\nsince 3.0"
+    },
+    "draw-sensitive": {
+      "brief": "Whether all cells should be draw as sensitive for this view regardless of the actual cell properties (used to make menus with submenus appear sensitive when the items in submenus might be insensitive).",
+      "file": "gtk/deprecated/gtkcellview.c",
+      "line": 245,
+      "md": "Whether all cells should be draw as sensitive for this view regardless\nof the actual cell properties (used to make menus with submenus appear\nsensitive when the items in submenus might be insensitive).\n\nsince 3.0"
+    },
+    "fit-model": {
+      "brief": "Whether the view should request enough space to always fit the size of every row in the model (used by the combo box to ensure the combo box size doesn't change when different items are selected).",
+      "file": "gtk/deprecated/gtkcellview.c",
+      "line": 260,
+      "md": "Whether the view should request enough space to always fit\nthe size of every row in the model (used by the combo box to\nensure the combo box size doesn't change when different items\nare selected).\n\nsince 3.0"
+    },
+    "model": {
+      "brief": "The model for cell view",
+      "file": "gtk/deprecated/gtkcellview.c",
+      "line": 193,
+      "md": "The model for cell view\n\nsince 2.10"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

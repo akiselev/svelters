@@ -1,0 +1,181 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Stores geometrical information for a series of rows in a GtkCellArea",
+    "deprecated": "4.10",
+    "deprecated_md": "This object will be removed in GTK 5",
+    "file": "gtk/deprecated/gtkcellareacontext.c",
+    "line": 22,
+    "md": "Stores geometrical information for a series of rows in a GtkCellArea\n\nThe `GtkCellAreaContext` object is created by a given `GtkCellArea`\nimplementation via its `GtkCellAreaClass.create_context()` virtual\nmethod and is used to store cell sizes and alignments for a series of\n`GtkTreeModel` rows that are requested and rendered in the same context.\n\n`GtkCellLayout` widgets can create any number of contexts in which to\nrequest and render groups of data rows. However, it’s important that the\nsame context which was used to request sizes for a given `GtkTreeModel`\nrow also be used for the same row when calling other `GtkCellArea` APIs\nsuch as gtk_cell_area_render() and gtk_cell_area_event()."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:CellAreaContext",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "allocate": {
+      "brief": "Allocates a width and/or a height for all rows which are to be rendered with `context`.",
+      "deprecated": "4.10",
+      "deprecated_md": "This object will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkcellareacontext.c",
+      "line": 373,
+      "md": "Allocates a width and/or a height for all rows which are to be\nrendered with `context`.\n\nUsually allocation is performed only horizontally or sometimes\nvertically since a group of rows are usually rendered side by\nside vertically or horizontally and share either the same width\nor the same height. Sometimes they are allocated in both horizontal\nand vertical orientations producing a homogeneous effect of the\nrows. This is generally the case for `GtkTreeView` when\n`GtkTreeView:fixed-height-mode` is enabled."
+    },
+    "get_allocation": {
+      "brief": "Fetches the current allocation size for `context`.",
+      "deprecated": "4.10",
+      "deprecated_md": "This object will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkcellareacontext.c",
+      "line": 524,
+      "md": "Fetches the current allocation size for `context`.\n\nIf the context was not allocated in width or height, or if the\ncontext was recently reset with gtk_cell_area_context_reset(),\nthe returned value will be -1."
+    },
+    "get_area": {
+      "brief": "Fetches the `GtkCellArea` this `context` was created by.",
+      "deprecated": "4.10",
+      "deprecated_md": "This object will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkcellareacontext.c",
+      "line": 307,
+      "md": "Fetches the `GtkCellArea` this `context` was created by.\n\nThis is generally unneeded by layouting widgets; however,\nit is important for the context implementation itself to\nfetch information about the area it is being used for.\n\nFor instance at `GtkCellAreaContextClass.allocate()` time\nit’s important to know details about any cell spacing\nthat the `GtkCellArea` is configured with in order to\ncompute a proper allocation."
+    },
+    "get_preferred_height": {
+      "brief": "Gets the accumulative preferred height for all rows which have been requested with this context.",
+      "deprecated": "4.10",
+      "deprecated_md": "This object will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkcellareacontext.c",
+      "line": 434,
+      "md": "Gets the accumulative preferred height for all rows which have been\nrequested with this context.\n\nAfter gtk_cell_area_context_reset() is called and/or before ever\nrequesting the size of a `GtkCellArea`, the returned values are 0."
+    },
+    "get_preferred_height_for_width": {
+      "brief": "Gets the accumulative preferred height for `width` for all rows which have been requested for the same said `width` with this context.",
+      "deprecated": "4.10",
+      "deprecated_md": "This object will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkcellareacontext.c",
+      "line": 464,
+      "md": "Gets the accumulative preferred height for `width` for all rows\nwhich have been requested for the same said `width` with this context.\n\nAfter gtk_cell_area_context_reset() is called and/or before ever\nrequesting the size of a `GtkCellArea`, the returned values are -1."
+    },
+    "get_preferred_width": {
+      "brief": "Gets the accumulative preferred width for all rows which have been requested with this context.",
+      "deprecated": "4.10",
+      "deprecated_md": "This object will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkcellareacontext.c",
+      "line": 404,
+      "md": "Gets the accumulative preferred width for all rows which have been\nrequested with this context.\n\nAfter gtk_cell_area_context_reset() is called and/or before ever\nrequesting the size of a `GtkCellArea`, the returned values are 0."
+    },
+    "get_preferred_width_for_height": {
+      "brief": "Gets the accumulative preferred width for `height` for all rows which have been requested for the same said `height` with this context.",
+      "deprecated": "4.10",
+      "deprecated_md": "This object will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkcellareacontext.c",
+      "line": 494,
+      "md": "Gets the accumulative preferred width for `height` for all rows which\nhave been requested for the same said `height` with this context.\n\nAfter gtk_cell_area_context_reset() is called and/or before ever\nrequesting the size of a `GtkCellArea`, the returned values are -1."
+    },
+    "push_preferred_height": {
+      "brief": "Causes the minimum and/or natural height to grow if the new proposed sizes exceed the current minimum and natural height.",
+      "deprecated": "4.10",
+      "deprecated_md": "This object will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkcellareacontext.c",
+      "line": 598,
+      "md": "Causes the minimum and/or natural height to grow if the new\nproposed sizes exceed the current minimum and natural height.\n\nThis is used by `GtkCellAreaContext` implementations during\nthe request process over a series of `GtkTreeModel` rows to\nprogressively push the requested height over a series of\ngtk_cell_area_get_preferred_height() requests."
+    },
+    "push_preferred_width": {
+      "brief": "Causes the minimum and/or natural width to grow if the new proposed sizes exceed the current minimum and natural width.",
+      "deprecated": "4.10",
+      "deprecated_md": "This object will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkcellareacontext.c",
+      "line": 554,
+      "md": "Causes the minimum and/or natural width to grow if the new\nproposed sizes exceed the current minimum and natural width.\n\nThis is used by `GtkCellAreaContext` implementations during\nthe request process over a series of `GtkTreeModel` rows to\nprogressively push the requested width over a series of\ngtk_cell_area_get_preferred_width() requests."
+    },
+    "reset": {
+      "brief": "Resets any previously cached request and allocation data.",
+      "deprecated": "4.10",
+      "deprecated_md": "This object will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkcellareacontext.c",
+      "line": 336,
+      "md": "Resets any previously cached request and allocation\ndata.\n\nWhen underlying `GtkTreeModel` data changes its\nimportant to reset the context if the content\nsize is allowed to shrink. If the content size\nis only allowed to grow (this is usually an option\nfor views rendering large data stores as a measure\nof optimization), then only the row that changed\nor was inserted needs to be (re)requested with\ngtk_cell_area_get_preferred_width().\n\nWhen the new overall size of the context requires\nthat the allocated size changes (or whenever this\nallocation changes at all), the variable row\nsizes need to be re-requested for every row.\n\nFor instance, if the rows are displayed all with\nthe same width from top to bottom then a change\nin the allocated width necessitates a recalculation\nof all the displayed row heights using\ngtk_cell_area_get_preferred_height_for_width()."
+    }
+  },
+  "properties": {
+    "area": {
+      "brief": "The `GtkCellArea` this context was created by",
+      "deprecated": "4.10",
+      "deprecated_md": "This object will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkcellareacontext.c",
+      "line": 108,
+      "md": "The `GtkCellArea` this context was created by"
+    },
+    "minimum-height": {
+      "brief": "The minimum height for the `GtkCellArea` in this context for all `GtkTreeModel` rows that this context was requested for using gtk_cell_area_get_preferred_height().",
+      "deprecated": "4.10",
+      "deprecated_md": "This object will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkcellareacontext.c",
+      "line": 151,
+      "md": "The minimum height for the `GtkCellArea` in this context\nfor all `GtkTreeModel` rows that this context was requested\nfor using gtk_cell_area_get_preferred_height()."
+    },
+    "minimum-width": {
+      "brief": "The minimum width for the `GtkCellArea` in this context for all `GtkTreeModel` rows that this context was requested for using gtk_cell_area_get_preferred_width().",
+      "deprecated": "4.10",
+      "deprecated_md": "This object will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkcellareacontext.c",
+      "line": 121,
+      "md": "The minimum width for the `GtkCellArea` in this context\nfor all `GtkTreeModel` rows that this context was requested\nfor using gtk_cell_area_get_preferred_width()."
+    },
+    "natural-height": {
+      "brief": "The natural height for the `GtkCellArea` in this context for all `GtkTreeModel` rows that this context was requested for using gtk_cell_area_get_preferred_height().",
+      "deprecated": "4.10",
+      "deprecated_md": "This object will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkcellareacontext.c",
+      "line": 166,
+      "md": "The natural height for the `GtkCellArea` in this context\nfor all `GtkTreeModel` rows that this context was requested\nfor using gtk_cell_area_get_preferred_height()."
+    },
+    "natural-width": {
+      "brief": "The natural width for the `GtkCellArea` in this context for all `GtkTreeModel` rows that this context was requested for using gtk_cell_area_get_preferred_width().",
+      "deprecated": "4.10",
+      "deprecated_md": "This object will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkcellareacontext.c",
+      "line": 136,
+      "md": "The natural width for the `GtkCellArea` in this context\nfor all `GtkTreeModel` rows that this context was requested\nfor using gtk_cell_area_get_preferred_width()."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "allocate": {
+      "brief": "Allocates a width and/or a height for all rows which are to be rendered with `context`.",
+      "deprecated": "4.10",
+      "deprecated_md": "This object will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkcellareacontext.c",
+      "line": 373,
+      "md": "Allocates a width and/or a height for all rows which are to be\nrendered with `context`.\n\nUsually allocation is performed only horizontally or sometimes\nvertically since a group of rows are usually rendered side by\nside vertically or horizontally and share either the same width\nor the same height. Sometimes they are allocated in both horizontal\nand vertical orientations producing a homogeneous effect of the\nrows. This is generally the case for `GtkTreeView` when\n`GtkTreeView:fixed-height-mode` is enabled."
+    },
+    "get_preferred_height_for_width": {
+      "brief": "Gets the accumulative preferred height for `width` for all rows which have been requested for the same said `width` with this context.",
+      "deprecated": "4.10",
+      "deprecated_md": "This object will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkcellareacontext.c",
+      "line": 464,
+      "md": "Gets the accumulative preferred height for `width` for all rows\nwhich have been requested for the same said `width` with this context.\n\nAfter gtk_cell_area_context_reset() is called and/or before ever\nrequesting the size of a `GtkCellArea`, the returned values are -1."
+    },
+    "get_preferred_width_for_height": {
+      "brief": "Gets the accumulative preferred width for `height` for all rows which have been requested for the same said `height` with this context.",
+      "deprecated": "4.10",
+      "deprecated_md": "This object will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkcellareacontext.c",
+      "line": 494,
+      "md": "Gets the accumulative preferred width for `height` for all rows which\nhave been requested for the same said `height` with this context.\n\nAfter gtk_cell_area_context_reset() is called and/or before ever\nrequesting the size of a `GtkCellArea`, the returned values are -1."
+    },
+    "reset": {
+      "brief": "Resets any previously cached request and allocation data.",
+      "deprecated": "4.10",
+      "deprecated_md": "This object will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkcellareacontext.c",
+      "line": 336,
+      "md": "Resets any previously cached request and allocation\ndata.\n\nWhen underlying `GtkTreeModel` data changes its\nimportant to reset the context if the content\nsize is allowed to shrink. If the content size\nis only allowed to grow (this is usually an option\nfor views rendering large data stores as a measure\nof optimization), then only the row that changed\nor was inserted needs to be (re)requested with\ngtk_cell_area_get_preferred_width().\n\nWhen the new overall size of the context requires\nthat the allocated size changes (or whenever this\nallocation changes at all), the variable row\nsizes need to be re-requested for every row.\n\nFor instance, if the rows are displayed all with\nthe same width from top to bottom then a change\nin the allocated width necessitates a recalculation\nof all the displayed row heights using\ngtk_cell_area_get_preferred_height_for_width()."
+    }
+  }
+}

@@ -1,0 +1,101 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new empty `GtkTreeListModel` displaying `root` with all rows collapsed.",
+      "file": "gtk/gtktreelistmodel.c",
+      "line": 733,
+      "md": "Creates a new empty `GtkTreeListModel` displaying `root`\nwith all rows collapsed."
+    }
+  },
+  "doc": {
+    "brief": "A list model that can create child models on demand.",
+    "file": "gtk/gtktreelistmodel.c",
+    "line": 27,
+    "md": "A list model that can create child models on demand."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:TreeListModel",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_autoexpand": {
+      "brief": "Gets whether the model is set to automatically expand new rows that get added.",
+      "file": "gtk/gtktreelistmodel.c",
+      "line": 841,
+      "md": "Gets whether the model is set to automatically expand new rows\nthat get added.\n\nThis can be either rows added by changes to the underlying\nmodels or via [`TreeListRow.set_expanded()`](xref:gtk:Gtk.TreeListRow#method:set_expanded)."
+    },
+    "get_child_row": {
+      "brief": "Gets the row item corresponding to the child at index `position` for `self`'s root model.",
+      "file": "gtk/gtktreelistmodel.c",
+      "line": 901,
+      "md": "Gets the row item corresponding to the child at index `position` for\n`self`'s root model.\n\nIf `position` is greater than the number of children in the root model,\n`NULL` is returned.\n\nDo not confuse this function with [`TreeListModel.get_row()`](xref:gtk:Gtk.TreeListModel#method:get_row)."
+    },
+    "get_model": {
+      "brief": "Gets the root model that `self` was created with.",
+      "file": "gtk/gtktreelistmodel.c",
+      "line": 775,
+      "md": "Gets the root model that `self` was created with."
+    },
+    "get_passthrough": {
+      "brief": "Gets whether the model is passing through original row items.",
+      "file": "gtk/gtktreelistmodel.c",
+      "line": 791,
+      "md": "Gets whether the model is passing through original row items.\n\nIf this function returns `FALSE`, the `GListModel` functions for `self`\nreturn custom `GtkTreeListRow` objects. You need to call\n[`TreeListRow.get_item()`](xref:gtk:Gtk.TreeListRow#method:get_item) on these objects to get the original\nitem.\n\nIf `TRUE`, the values of the child models are passed through in their\noriginal state. You then need to call [`TreeListModel.get_row()`](xref:gtk:Gtk.TreeListModel#method:get_row)\nto get the custom `GtkTreeListRow`s."
+    },
+    "get_row": {
+      "brief": "Gets the row object for the given row.",
+      "file": "gtk/gtktreelistmodel.c",
+      "line": 861,
+      "md": "Gets the row object for the given row.\n\nIf `position` is greater than the number of items in `self`,\n`NULL` is returned.\n\nThe row object can be used to expand and collapse rows as\nwell as to inspect its position in the tree. See its\ndocumentation for details.\n\nThis row object is persistent and will refer to the current\nitem as long as the row is present in `self`, independent of\nother rows being added or removed.\n\nIf `self` is set to not be passthrough, this function is\nequivalent to calling g_list_model_get_item().\n\nDo not confuse this function with [`TreeListModel.get_child_row()`](xref:gtk:Gtk.TreeListModel#method:get_child_row)."
+    },
+    "set_autoexpand": {
+      "brief": "Sets whether the model should autoexpand.",
+      "file": "gtk/gtktreelistmodel.c",
+      "line": 816,
+      "md": "Sets whether the model should autoexpand.\n\nIf set to `TRUE`, the model will recursively expand all rows that\nget added to the model. This can be either rows added by changes\nto the underlying models or via [`TreeListRow.set_expanded()`](xref:gtk:Gtk.TreeListRow#method:set_expanded)."
+    }
+  },
+  "properties": {
+    "autoexpand": {
+      "brief": "If all rows should be expanded by default.",
+      "file": "gtk/gtktreelistmodel.c",
+      "line": 665,
+      "md": "If all rows should be expanded by default."
+    },
+    "item-type": {
+      "brief": "The type of items. See [`ListModel.get_item_type()`](xref:gtk:Gio.ListModel#method:get_item_type).",
+      "file": "gtk/gtktreelistmodel.c",
+      "line": 675,
+      "md": "The type of items. See [`ListModel.get_item_type()`](xref:gtk:Gio.ListModel#method:get_item_type).",
+      "since": "4.8"
+    },
+    "model": {
+      "brief": "The root model displayed.",
+      "file": "gtk/gtktreelistmodel.c",
+      "line": 687,
+      "md": "The root model displayed."
+    },
+    "n-items": {
+      "brief": "The number of items.",
+      "file": "gtk/gtktreelistmodel.c",
+      "line": 697,
+      "md": "The number of items. See [`ListModel.get_n_items()`](xref:gtk:Gio.ListModel#method:get_n_items).",
+      "since": "4.8"
+    },
+    "passthrough": {
+      "brief": "Gets whether the model is in passthrough mode.",
+      "file": "gtk/gtktreelistmodel.c",
+      "line": 709,
+      "md": "Gets whether the model is in passthrough mode.\n\nIf `FALSE`, the `GListModel` functions for this object return custom\n[`TreeListRow`](xref:gtk:Gtk.TreeListRow) objects. If `TRUE`, the values of the child\nmodels are pass through unmodified."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

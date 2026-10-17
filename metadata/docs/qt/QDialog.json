@@ -1,0 +1,133 @@
+{
+  "doc": {
+    "brief": "The QDialog class is the base class of dialog windows.",
+    "index_brief": "The base class of dialog windows",
+    "url": "https://doc.qt.io/qt-6/qdialog.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QDialog",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QDialog(QWidget *parent, Qt::WindowFlags f)": {
+      "brief": "Constructs a dialog with parent *parent*.",
+      "url": "https://doc.qt.io/qt-6/qdialog.html#QDialog"
+    },
+    "QSize minimumSizeHint() const override": {
+      "brief": "Reimplements an access function for property: [QWidget::minimumSizeHint](xref:qt:QWidget).",
+      "url": "https://doc.qt.io/qt-6/qdialog.html#minimumSizeHint"
+    },
+    "QSize sizeHint() const override": {
+      "brief": "Reimplements an access function for property: [QWidget::sizeHint](xref:qt:QWidget).",
+      "url": "https://doc.qt.io/qt-6/qdialog.html#sizeHint"
+    },
+    "bool eventFilter(QObject *o, QEvent *e) override": {
+      "brief": "Reimplements: [QObject::eventFilter](xref:qt:QObject)(QObject *watched, QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qdialog.html#eventFilter"
+    },
+    "bool isSizeGripEnabled() const": {
+      "brief": "This property holds whether the size grip is enabled",
+      "url": "https://doc.qt.io/qt-6/qdialog.html#sizeGripEnabled-prop"
+    },
+    "int exec()": {
+      "brief": "Shows the dialog as a [modal dialog](xref:qt:QDialog), blocking until the user closes it.",
+      "url": "https://doc.qt.io/qt-6/qdialog.html#exec"
+    },
+    "int result() const": {
+      "brief": "In general returns the modal dialog's result code, `Accepted` or `Rejected`.",
+      "url": "https://doc.qt.io/qt-6/qdialog.html#result"
+    },
+    "void accept()": {
+      "brief": "Hides the modal dialog and sets the result code to `Accepted`.",
+      "url": "https://doc.qt.io/qt-6/qdialog.html#accept"
+    },
+    "void accepted()": {
+      "brief": "This signal is emitted when the dialog has been accepted either by the user or by calling [accept](xref:qt:QDialog)() or [done](xref:qt:QDialog)() with the [QDialog::Accepted](xref:qt:QDialog)...",
+      "url": "https://doc.qt.io/qt-6/qdialog.html#accepted"
+    },
+    "void closeEvent(QCloseEvent *e) override": {
+      "brief": "Reimplements: [QWidget::closeEvent](xref:qt:QWidget)(QCloseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qdialog.html#closeEvent"
+    },
+    "void contextMenuEvent(QContextMenuEvent *e) override": {
+      "brief": "Reimplements: [QWidget::contextMenuEvent](xref:qt:QWidget)(QContextMenuEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qdialog.html#contextMenuEvent"
+    },
+    "void done(int r)": {
+      "brief": "Closes the dialog and sets its result code to *r*.",
+      "url": "https://doc.qt.io/qt-6/qdialog.html#done"
+    },
+    "void finished(int result)": {
+      "brief": "This signal is emitted when the dialog's *result* code has been set, either by the user or by calling [done](xref:qt:QDialog)(), [accept](xref:qt:QDialog)(), or [reject](xref:qt:QDialog)().",
+      "url": "https://doc.qt.io/qt-6/qdialog.html#finished"
+    },
+    "void keyPressEvent(QKeyEvent *e) override": {
+      "brief": "Reimplements: [QWidget::keyPressEvent](xref:qt:QWidget)(QKeyEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qdialog.html#keyPressEvent"
+    },
+    "void open()": {
+      "brief": "Shows the dialog as a [window modal dialog](xref:qt:QDialog), returning immediately.",
+      "url": "https://doc.qt.io/qt-6/qdialog.html#open"
+    },
+    "void reject()": {
+      "brief": "Hides the modal dialog and sets the result code to `Rejected`.",
+      "url": "https://doc.qt.io/qt-6/qdialog.html#reject"
+    },
+    "void rejected()": {
+      "brief": "This signal is emitted when the dialog has been rejected either by the user or by calling [reject](xref:qt:QDialog)() or [done](xref:qt:QDialog)() with the [QDialog::Rejected](xref:qt:QDialog)...",
+      "url": "https://doc.qt.io/qt-6/qdialog.html#rejected"
+    },
+    "void resizeEvent(QResizeEvent *) override": {
+      "brief": "Reimplements: [QWidget::resizeEvent](xref:qt:QWidget)(QResizeEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qdialog.html#resizeEvent"
+    },
+    "void setModal(bool modal)": {
+      "brief": "This property holds whether [show](xref:qt:QWidget)() should pop up the dialog as modal or modeless",
+      "url": "https://doc.qt.io/qt-6/qdialog.html#modal-prop"
+    },
+    "void setResult(int i)": {
+      "brief": "Sets the modal dialog's result code to *i*.",
+      "url": "https://doc.qt.io/qt-6/qdialog.html#setResult"
+    },
+    "void setSizeGripEnabled(bool)": {
+      "brief": "This property holds whether the size grip is enabled",
+      "url": "https://doc.qt.io/qt-6/qdialog.html#sizeGripEnabled-prop"
+    },
+    "void setVisible(bool visible) override": {
+      "brief": "Reimplements an access function for property: [QWidget::visible](xref:qt:QWidget).",
+      "url": "https://doc.qt.io/qt-6/qdialog.html#setVisible"
+    },
+    "void showEvent(QShowEvent *event) override": {
+      "brief": "Reimplements: [QWidget::showEvent](xref:qt:QWidget)(QShowEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qdialog.html#showEvent"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "modal": {
+      "brief": "Whether show() should pop up the dialog as modal or modeless",
+      "url": "https://doc.qt.io/qt-6/qdialog.html#modal-prop"
+    },
+    "sizeGripEnabled": {
+      "brief": "Whether the size grip is enabled",
+      "url": "https://doc.qt.io/qt-6/qdialog.html#sizeGripEnabled-prop"
+    }
+  },
+  "qss": {
+    "box_model": false,
+    "pseudo_states": [],
+    "sub_controls": [],
+    "url": "https://doc.qt.io/qt-6/stylesheet-reference.html#qdialog-widget"
+  },
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

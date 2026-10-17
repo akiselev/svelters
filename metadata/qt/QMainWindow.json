@@ -40,7 +40,7 @@
             "native": "Qt::WindowFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::WindowType>"
           }
         }
       ],
@@ -52,28 +52,36 @@
   ],
   "enums": [
     {
+      "flags_alias": "QMainWindow::DockOptions",
+      "fullname": "QMainWindow::DockOption",
       "members": [
         {
+          "cpp": "QMainWindow::AnimatedDocks",
           "name": "AnimatedDocks",
           "value": "0x01"
         },
         {
+          "cpp": "QMainWindow::AllowNestedDocks",
           "name": "AllowNestedDocks",
           "value": "0x02"
         },
         {
+          "cpp": "QMainWindow::AllowTabbedDocks",
           "name": "AllowTabbedDocks",
           "value": "0x04"
         },
         {
+          "cpp": "QMainWindow::ForceTabbedDocks",
           "name": "ForceTabbedDocks",
           "value": "0x08"
         },
         {
+          "cpp": "QMainWindow::VerticalTabs",
           "name": "VerticalTabs",
           "value": "0x10"
         },
         {
+          "cpp": "QMainWindow::GroupedDragging",
           "name": "GroupedDragging",
           "value": "0x20"
         }
@@ -91,12 +99,28 @@
         "scoped": false
       },
       "name": "DockOption",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QMainWindow",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "toplevel",
+    "close": {
+      "default": "destroy",
+      "request_signal": "close-request",
+      "veto": "event_ignore"
+    },
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QMainWindow:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QMainWindow/QDialog subclass; ABI v2 toplevel class (plans/architecture/backend-abi.md)"
+  },
   "methods": [
     {
       "access": "public",
@@ -120,7 +144,7 @@
             "native": "Qt::DockWidgetArea",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::DockWidgetArea>"
           }
         },
         {
@@ -167,7 +191,7 @@
             "native": "Qt::DockWidgetArea",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::DockWidgetArea>"
           }
         },
         {
@@ -187,7 +211,7 @@
             "native": "Qt::Orientation",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Orientation>"
           }
         }
       ],
@@ -298,7 +322,7 @@
             "native": "Qt::ToolBarArea",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ToolBarArea>"
           }
         },
         {
@@ -345,7 +369,7 @@
             "native": "Qt::ToolBarArea",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ToolBarArea>"
           }
         }
       ],
@@ -445,7 +469,7 @@
             "native": "Qt::Corner",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Corner>"
           }
         }
       ],
@@ -453,7 +477,7 @@
         "native": "Qt::DockWidgetArea",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::DockWidgetArea>"
       },
       "signature": "Qt::DockWidgetArea corner(Qt::Corner corner) const",
       "since": null,
@@ -505,7 +529,7 @@
         "native": "QMainWindow::DockOptions",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QMainWindow::DockOption>"
       },
       "signature": "QMainWindow::DockOptions dockOptions() const",
       "since": null,
@@ -542,7 +566,7 @@
         "native": "Qt::DockWidgetArea",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::DockWidgetArea>"
       },
       "signature": "Qt::DockWidgetArea dockWidgetArea(QDockWidget *dockwidget) const",
       "since": null,
@@ -631,7 +655,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize iconSize() const",
       "since": null,
@@ -959,7 +983,7 @@
             "native": "const QList<QDockWidget *> &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<object<QDockWidget>>"
           }
         },
         {
@@ -969,7 +993,7 @@
             "native": "const QList<int> &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<i32>"
           }
         },
         {
@@ -979,7 +1003,7 @@
             "native": "Qt::Orientation",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Orientation>"
           }
         }
       ],
@@ -1053,7 +1077,7 @@
             "native": "const QByteArray &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "bytes"
           }
         },
         {
@@ -1108,7 +1132,7 @@
         "native": "QByteArray",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "bytes"
       },
       "signature": "QByteArray saveState(int version) const",
       "since": null,
@@ -1211,7 +1235,7 @@
             "native": "Qt::Corner",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Corner>"
           }
         },
         {
@@ -1221,7 +1245,7 @@
             "native": "Qt::DockWidgetArea",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::DockWidgetArea>"
           }
         }
       ],
@@ -1295,7 +1319,7 @@
             "native": "QMainWindow::DockOptions",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QMainWindow::DockOption>"
           }
         }
       ],
@@ -1369,7 +1393,7 @@
             "native": "const QSize &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Size>"
           }
         }
       ],
@@ -1517,7 +1541,7 @@
             "native": "Qt::DockWidgetAreas",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::DockWidgetArea>"
           }
         },
         {
@@ -1527,7 +1551,7 @@
             "native": "QTabWidget::TabPosition",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QTabWidget::TabPosition>"
           }
         }
       ],
@@ -1564,7 +1588,7 @@
             "native": "QTabWidget::TabShape",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QTabWidget::TabShape>"
           }
         }
       ],
@@ -1601,7 +1625,7 @@
             "native": "Qt::ToolButtonStyle",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ToolButtonStyle>"
           }
         }
       ],
@@ -1695,7 +1719,7 @@
             "native": "Qt::Orientation",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Orientation>"
           }
         }
       ],
@@ -1758,7 +1782,7 @@
             "native": "Qt::DockWidgetArea",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::DockWidgetArea>"
           }
         }
       ],
@@ -1766,7 +1790,7 @@
         "native": "QTabWidget::TabPosition",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QTabWidget::TabPosition>"
       },
       "signature": "QTabWidget::TabPosition tabPosition(Qt::DockWidgetArea area) const",
       "since": null,
@@ -1792,7 +1816,7 @@
         "native": "QTabWidget::TabShape",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QTabWidget::TabShape>"
       },
       "signature": "QTabWidget::TabShape tabShape() const",
       "since": null,
@@ -1829,7 +1853,7 @@
         "native": "QList<QDockWidget *>",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<object<QDockWidget>>"
       },
       "signature": "QList<QDockWidget *> tabifiedDockWidgets(QDockWidget *dockwidget) const",
       "since": null,
@@ -1939,7 +1963,7 @@
         "native": "Qt::ToolBarArea",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::ToolBarArea>"
       },
       "signature": "Qt::ToolBarArea toolBarArea(const QToolBar *toolbar) const",
       "since": null,
@@ -2002,7 +2026,7 @@
         "native": "Qt::ToolButtonStyle",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::ToolButtonStyle>"
       },
       "signature": "Qt::ToolButtonStyle toolButtonStyle() const",
       "since": null,
@@ -2149,6 +2173,8 @@
         "set": "setAnimated"
       },
       "brief": "Whether manipulating dock widgets and tool bars is animated",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "animated",
       "metaobject": {
         "constant": false,
@@ -2169,6 +2195,7 @@
       "name": "animated",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2189,6 +2216,8 @@
         "set": "setDockNestingEnabled"
       },
       "brief": "Whether docks can be nested",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "dockNestingEnabled",
       "metaobject": {
         "constant": false,
@@ -2209,6 +2238,7 @@
       "name": "dockNestingEnabled",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2229,6 +2259,8 @@
         "set": "setDockOptions"
       },
       "brief": "The docking behavior of QMainWindow",
+      "default": "AnimatedDocks|AllowTabbedDocks",
+      "default_origin": "runtime",
       "js_name": "dockOptions",
       "metaobject": {
         "constant": false,
@@ -2249,12 +2281,13 @@
       "name": "dockOptions",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "DockOptions",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QMainWindow::DockOption>"
       }
     },
     {
@@ -2269,6 +2302,8 @@
         "set": "setDocumentMode"
       },
       "brief": "Whether the tab bar for tabbed dockwidgets is set to document mode",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "documentMode",
       "metaobject": {
         "constant": false,
@@ -2289,6 +2324,7 @@
       "name": "documentMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2309,6 +2345,7 @@
         "set": "setIconSize"
       },
       "brief": "Size of toolbar icons in this mainwindow",
+      "default": null,
       "js_name": "iconSize",
       "metaobject": {
         "constant": false,
@@ -2329,12 +2366,13 @@
       "name": "iconSize",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       }
     },
     {
@@ -2349,6 +2387,7 @@
         "set": "setTabShape"
       },
       "brief": "The tab shape used for tabbed dock widgets",
+      "default": null,
       "js_name": "tabShape",
       "metaobject": {
         "constant": false,
@@ -2369,12 +2408,13 @@
       "name": "tabShape",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QTabWidget::TabShape",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QTabWidget::TabShape>"
       }
     },
     {
@@ -2389,6 +2429,8 @@
         "set": "setToolButtonStyle"
       },
       "brief": "Style of toolbar buttons in this mainwindow",
+      "default": "ToolButtonIconOnly",
+      "default_origin": "runtime",
       "js_name": "toolButtonStyle",
       "metaobject": {
         "constant": false,
@@ -2409,12 +2451,13 @@
       "name": "toolButtonStyle",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::ToolButtonStyle",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::ToolButtonStyle>"
       }
     },
     {
@@ -2429,6 +2472,8 @@
         "set": "setUnifiedTitleAndToolBarOnMac"
       },
       "brief": "Whether the window uses the unified title and toolbar look on macOS",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "unifiedTitleAndToolBarOnMac",
       "metaobject": {
         "constant": false,
@@ -2449,6 +2494,7 @@
       "name": "unifiedTitleAndToolBarOnMac",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2483,7 +2529,7 @@
             "native": "const QSize &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Size>"
           }
         }
       ],
@@ -2553,7 +2599,7 @@
             "native": "Qt::ToolButtonStyle",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ToolButtonStyle>"
           }
         }
       ],

@@ -1,0 +1,292 @@
+{
+  "doc": {
+    "brief": "The QFormLayout class manages forms of input widgets and their associated labels.",
+    "index_brief": "Manages forms of input widgets and their associated labels",
+    "url": "https://doc.qt.io/qt-6/qformlayout.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QFormLayout",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QFormLayout(QWidget *parent)": {
+      "brief": "Constructs a new form layout with the given *parent* widget.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#QFormLayout"
+    },
+    "QFormLayout::FieldGrowthPolicy fieldGrowthPolicy() const": {
+      "brief": "This property holds the way in which the form's fields grow",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#fieldGrowthPolicy-prop"
+    },
+    "QFormLayout::RowWrapPolicy rowWrapPolicy() const": {
+      "brief": "This property holds the way in which the form's rows wrap",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#rowWrapPolicy-prop"
+    },
+    "QFormLayout::TakeRowResult takeRow(QLayout *layout)": {
+      "brief": "Removes the specified *layout* from this form layout.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#takeRow-1"
+    },
+    "QFormLayout::TakeRowResult takeRow(QWidget *widget)": {
+      "brief": "Removes the specified *widget* from this form layout.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#takeRow-2"
+    },
+    "QFormLayout::TakeRowResult takeRow(int row)": {
+      "brief": "Removes the specified *row* from this form layout.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#takeRow"
+    },
+    "QLayoutItem * itemAt(int index) const override": {
+      "brief": "Reimplements: [QLayout::itemAt](xref:qt:QLayout)(int index) const.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#itemAt"
+    },
+    "QLayoutItem * itemAt(int row, QFormLayout::ItemRole role) const": {
+      "brief": "Returns the layout item in the given *row* with the specified *role* (column).",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#itemAt-1"
+    },
+    "QLayoutItem * takeAt(int index) override": {
+      "brief": "Reimplements: [QLayout::takeAt](xref:qt:QLayout)(int index).",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#takeAt"
+    },
+    "QSize minimumSize() const override": {
+      "brief": "Reimplements: [QLayout::minimumSize](xref:qt:QLayout)() const.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#minimumSize"
+    },
+    "QSize sizeHint() const override": {
+      "brief": "Reimplements: [QLayoutItem::sizeHint](xref:qt:QLayoutItem)() const.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#sizeHint"
+    },
+    "QWidget * labelForField(QLayout *field) const": {
+      "brief": "> This is an overloaded function.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#labelForField-1"
+    },
+    "QWidget * labelForField(QWidget *field) const": {
+      "brief": "Returns the label associated with the given *field*.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#labelForField"
+    },
+    "Qt::Alignment formAlignment() const": {
+      "brief": "This property holds the alignment of the form layout's contents within the layout's geometry",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#formAlignment-prop"
+    },
+    "Qt::Alignment labelAlignment() const": {
+      "brief": "This property holds the horizontal alignment of the labels",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#labelAlignment-prop"
+    },
+    "Qt::Orientations expandingDirections() const override": {
+      "brief": "Reimplements: [QLayout::expandingDirections](xref:qt:QLayout)() const.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#expandingDirections"
+    },
+    "bool hasHeightForWidth() const override": {
+      "brief": "Reimplements: [QLayoutItem::hasHeightForWidth](xref:qt:QLayoutItem)() const.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#hasHeightForWidth"
+    },
+    "bool isRowVisible(QLayout *layout) const": {
+      "brief": "Returns true if some items in the row corresponding to *layout* are visible, otherwise returns false.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#isRowVisible-1"
+    },
+    "bool isRowVisible(QWidget *widget) const": {
+      "brief": "Returns true if some items in the row corresponding to *widget* are visible, otherwise returns false.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#isRowVisible-2"
+    },
+    "bool isRowVisible(int row) const": {
+      "brief": "Returns true if some items in the row *row* are visible, otherwise returns false.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#isRowVisible"
+    },
+    "int count() const override": {
+      "brief": "Reimplements: [QLayout::count](xref:qt:QLayout)() const.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#count"
+    },
+    "int heightForWidth(int width) const override": {
+      "brief": "Reimplements: [QLayoutItem::heightForWidth](xref:qt:QLayoutItem)(int) const.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#heightForWidth"
+    },
+    "int horizontalSpacing() const": {
+      "brief": "This property holds the spacing between widgets that are laid out side by side",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#horizontalSpacing-prop"
+    },
+    "int rowCount() const": {
+      "brief": "Returns the number of rows in the form.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#rowCount"
+    },
+    "int spacing() const override": {
+      "brief": "Reimplements an access function for property: [QLayout::spacing](xref:qt:QLayout).",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#spacing"
+    },
+    "int verticalSpacing() const": {
+      "brief": "This property holds the spacing between widgets that are laid out vertically",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#verticalSpacing-prop"
+    },
+    "void addItem(QLayoutItem *item) override": {
+      "brief": "Reimplements: [QLayout::addItem](xref:qt:QLayout)(QLayoutItem *item).",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#addItem"
+    },
+    "void addRow(QLayout *layout)": {
+      "brief": "Adds the specified *layout* at the end of this form layout.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#addRow-1"
+    },
+    "void addRow(QWidget *label, QLayout *field)": {
+      "brief": "> This is an overloaded function.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#addRow-3"
+    },
+    "void addRow(QWidget *label, QWidget *field)": {
+      "brief": "Adds a new row to the bottom of this form layout, with the given *label* and *field*.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#addRow"
+    },
+    "void addRow(QWidget *widget)": {
+      "brief": "Adds the specified *widget* at the end of this form layout.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#addRow-2"
+    },
+    "void addRow(const QString &labelText, QLayout *field)": {
+      "brief": "This overload automatically creates a [QLabel](xref:qt:QLabel) behind the scenes with *labelText* as its text.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#addRow-4"
+    },
+    "void addRow(const QString &labelText, QWidget *field)": {
+      "brief": "This overload automatically creates a [QLabel](xref:qt:QLabel) behind the scenes with *labelText* as its text.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#addRow-5"
+    },
+    "void getItemPosition(int index, int *rowPtr, QFormLayout::ItemRole *rolePtr) const": {
+      "brief": "Retrieves the row and role (column) of the item at the specified *index*.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#getItemPosition"
+    },
+    "void getLayoutPosition(QLayout *layout, int *rowPtr, QFormLayout::ItemRole *rolePtr) const": {
+      "brief": "Retrieves the row and role (column) of the specified child *layout*.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#getLayoutPosition"
+    },
+    "void getWidgetPosition(QWidget *widget, int *rowPtr, QFormLayout::ItemRole *rolePtr) const": {
+      "brief": "Retrieves the row and role (column) of the specified *widget* in the layout.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#getWidgetPosition"
+    },
+    "void insertRow(int row, QLayout *layout)": {
+      "brief": "Inserts the specified *layout* at position *row* in this form layout.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#insertRow-1"
+    },
+    "void insertRow(int row, QWidget *label, QLayout *field)": {
+      "brief": "> This is an overloaded function.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#insertRow-3"
+    },
+    "void insertRow(int row, QWidget *label, QWidget *field)": {
+      "brief": "Inserts a new row at position *row* in this form layout, with the given *label* and *field*.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#insertRow"
+    },
+    "void insertRow(int row, QWidget *widget)": {
+      "brief": "Inserts the specified *widget* at position *row* in this form layout.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#insertRow-2"
+    },
+    "void insertRow(int row, const QString &labelText, QLayout *field)": {
+      "brief": "This overload automatically creates a [QLabel](xref:qt:QLabel) behind the scenes with *labelText* as its text.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#insertRow-4"
+    },
+    "void insertRow(int row, const QString &labelText, QWidget *field)": {
+      "brief": "This overload automatically creates a [QLabel](xref:qt:QLabel) behind the scenes with *labelText* as its text.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#insertRow-5"
+    },
+    "void invalidate() override": {
+      "brief": "Reimplements: [QLayout::invalidate](xref:qt:QLayout)().",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#invalidate"
+    },
+    "void removeRow(QLayout *layout)": {
+      "brief": "Deletes the row corresponding to *layout* from this form layout.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#removeRow-1"
+    },
+    "void removeRow(QWidget *widget)": {
+      "brief": "Deletes the row corresponding to *widget* from this form layout.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#removeRow-2"
+    },
+    "void removeRow(int row)": {
+      "brief": "Deletes row *row* from this form layout.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#removeRow"
+    },
+    "void setFieldGrowthPolicy(QFormLayout::FieldGrowthPolicy policy)": {
+      "brief": "This property holds the way in which the form's fields grow",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#fieldGrowthPolicy-prop"
+    },
+    "void setFormAlignment(Qt::Alignment alignment)": {
+      "brief": "This property holds the alignment of the form layout's contents within the layout's geometry",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#formAlignment-prop"
+    },
+    "void setGeometry(const QRect &rect) override": {
+      "brief": "Reimplements: [QLayout::setGeometry](xref:qt:QLayout)(const QRect &r).",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#setGeometry"
+    },
+    "void setHorizontalSpacing(int spacing)": {
+      "brief": "This property holds the spacing between widgets that are laid out side by side",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#horizontalSpacing-prop"
+    },
+    "void setItem(int row, QFormLayout::ItemRole role, QLayoutItem *item)": {
+      "brief": "Sets the item in the given *row* for the given *role* to *item*, extending the layout with empty rows if necessary.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#setItem"
+    },
+    "void setLabelAlignment(Qt::Alignment alignment)": {
+      "brief": "This property holds the horizontal alignment of the labels",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#labelAlignment-prop"
+    },
+    "void setLayout(int row, QFormLayout::ItemRole role, QLayout *layout)": {
+      "brief": "Sets the sub-layout in the given *row* for the given *role* to *layout*, extending the form layout with empty rows if necessary.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#setLayout"
+    },
+    "void setRowVisible(QLayout *layout, bool on)": {
+      "brief": "Shows the row corresponding to *layout* if *on* is true, otherwise hides the row.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#setRowVisible-1"
+    },
+    "void setRowVisible(QWidget *widget, bool on)": {
+      "brief": "Shows the row corresponding to *widget* if *on* is true, otherwise hides the row.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#setRowVisible-2"
+    },
+    "void setRowVisible(int row, bool on)": {
+      "brief": "Shows the row *row* if *on* is true, otherwise hides the row.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#setRowVisible"
+    },
+    "void setRowWrapPolicy(QFormLayout::RowWrapPolicy policy)": {
+      "brief": "This property holds the way in which the form's rows wrap",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#rowWrapPolicy-prop"
+    },
+    "void setSpacing(int spacing) override": {
+      "brief": "Reimplements an access function for property: [QLayout::spacing](xref:qt:QLayout).",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#setSpacing"
+    },
+    "void setVerticalSpacing(int spacing)": {
+      "brief": "This property holds the spacing between widgets that are laid out vertically",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#verticalSpacing-prop"
+    },
+    "void setWidget(int row, QFormLayout::ItemRole role, QWidget *widget)": {
+      "brief": "Sets the widget in the given *row* for the given *role* to *widget*, extending the layout with empty rows if necessary.",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#setWidget"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "fieldGrowthPolicy": {
+      "brief": "The way in which the form's fields grow",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#fieldGrowthPolicy-prop"
+    },
+    "formAlignment": {
+      "brief": "The alignment of the form layout's contents within the layout's geometry",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#formAlignment-prop"
+    },
+    "horizontalSpacing": {
+      "brief": "The spacing between widgets that are laid out side by side",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#horizontalSpacing-prop"
+    },
+    "labelAlignment": {
+      "brief": "The horizontal alignment of the labels",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#labelAlignment-prop"
+    },
+    "rowWrapPolicy": {
+      "brief": "The way in which the form's rows wrap",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#rowWrapPolicy-prop"
+    },
+    "verticalSpacing": {
+      "brief": "The spacing between widgets that are laid out vertically",
+      "url": "https://doc.qt.io/qt-6/qformlayout.html#verticalSpacing-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

@@ -1,0 +1,111 @@
+{
+  "doc": {
+    "brief": "The QStatusBar class provides a horizontal bar suitable for presenting status information.",
+    "index_brief": "Horizontal bar suitable for presenting status information",
+    "url": "https://doc.qt.io/qt-6/qstatusbar.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QStatusBar",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QStatusBar(QWidget *parent)": {
+      "brief": "Constructs a status bar with a size grip and the given *parent*.",
+      "url": "https://doc.qt.io/qt-6/qstatusbar.html#QStatusBar"
+    },
+    "QString currentMessage() const": {
+      "brief": "Returns the temporary message currently shown, or an empty string if there is no such message.",
+      "url": "https://doc.qt.io/qt-6/qstatusbar.html#currentMessage"
+    },
+    "bool event(QEvent *e) override": {
+      "brief": "Reimplements: [QWidget::event](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qstatusbar.html#event"
+    },
+    "bool isSizeGripEnabled() const": {
+      "brief": "This property holds whether the [QSizeGrip](xref:qt:QSizeGrip) in the bottom-right corner of the status bar is enabled",
+      "url": "https://doc.qt.io/qt-6/qstatusbar.html#sizeGripEnabled-prop"
+    },
+    "int insertPermanentWidget(int index, QWidget *widget, int stretch)": {
+      "brief": "Inserts the given *widget* at the given *index* permanently to this status bar, reparenting the widget if it isn't already a child of this [QStatusBar](xref:qt:QStatusBar) object.",
+      "url": "https://doc.qt.io/qt-6/qstatusbar.html#insertPermanentWidget"
+    },
+    "int insertWidget(int index, QWidget *widget, int stretch)": {
+      "brief": "Inserts the given *widget* at the given *index* to this status bar, reparenting the widget if it isn't already a child of this [QStatusBar](xref:qt:QStatusBar) object.",
+      "url": "https://doc.qt.io/qt-6/qstatusbar.html#insertWidget"
+    },
+    "void addPermanentWidget(QWidget *widget, int stretch)": {
+      "brief": "Adds the given *widget* permanently to this status bar, reparenting the widget if it isn't already a child of this [QStatusBar](xref:qt:QStatusBar) object.",
+      "url": "https://doc.qt.io/qt-6/qstatusbar.html#addPermanentWidget"
+    },
+    "void addWidget(QWidget *widget, int stretch)": {
+      "brief": "Adds the given *widget* to this status bar, reparenting the widget if it isn't already a child of this [QStatusBar](xref:qt:QStatusBar) object.",
+      "url": "https://doc.qt.io/qt-6/qstatusbar.html#addWidget"
+    },
+    "void clearMessage()": {
+      "brief": "Removes any temporary message being shown.",
+      "url": "https://doc.qt.io/qt-6/qstatusbar.html#clearMessage"
+    },
+    "void hideOrShow()": {
+      "brief": "Ensures that the right widgets are visible.",
+      "url": "https://doc.qt.io/qt-6/qstatusbar.html#hideOrShow"
+    },
+    "void messageChanged(const QString &message)": {
+      "brief": "This signal is emitted whenever the temporary status message changes.",
+      "url": "https://doc.qt.io/qt-6/qstatusbar.html#messageChanged"
+    },
+    "void paintEvent(QPaintEvent *event) override": {
+      "brief": "Reimplements: [QWidget::paintEvent](xref:qt:QWidget)(QPaintEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qstatusbar.html#paintEvent"
+    },
+    "void reformat()": {
+      "brief": "Changes the status bar's appearance to account for item changes.",
+      "url": "https://doc.qt.io/qt-6/qstatusbar.html#reformat"
+    },
+    "void removeWidget(QWidget *widget)": {
+      "brief": "Removes the specified *widget* from the status bar.",
+      "url": "https://doc.qt.io/qt-6/qstatusbar.html#removeWidget"
+    },
+    "void resizeEvent(QResizeEvent *e) override": {
+      "brief": "Reimplements: [QWidget::resizeEvent](xref:qt:QWidget)(QResizeEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qstatusbar.html#resizeEvent"
+    },
+    "void setSizeGripEnabled(bool)": {
+      "brief": "This property holds whether the [QSizeGrip](xref:qt:QSizeGrip) in the bottom-right corner of the status bar is enabled",
+      "url": "https://doc.qt.io/qt-6/qstatusbar.html#sizeGripEnabled-prop"
+    },
+    "void showEvent(QShowEvent *) override": {
+      "brief": "Reimplements: [QWidget::showEvent](xref:qt:QWidget)(QShowEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qstatusbar.html#showEvent"
+    },
+    "void showMessage(const QString &message, int timeout)": {
+      "brief": "Hides the normal status indications and displays the given *message* for the specified number of milli-seconds (*timeout*).",
+      "url": "https://doc.qt.io/qt-6/qstatusbar.html#showMessage"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "sizeGripEnabled": {
+      "brief": "Whether the QSizeGrip in the bottom-right corner of the status bar is enabled",
+      "url": "https://doc.qt.io/qt-6/qstatusbar.html#sizeGripEnabled-prop"
+    }
+  },
+  "qss": {
+    "box_model": false,
+    "pseudo_states": [],
+    "sub_controls": [
+      "::item"
+    ],
+    "url": "https://doc.qt.io/qt-6/stylesheet-reference.html#qstatusbar-widget"
+  },
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

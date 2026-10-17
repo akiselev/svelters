@@ -1,0 +1,172 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkAdjustment`.",
+      "file": "gtk/gtkadjustment.c",
+      "line": 374,
+      "md": "Creates a new `GtkAdjustment`."
+    }
+  },
+  "doc": {
+    "brief": "A model for a numeric value.",
+    "file": "gtk/gtkadjustment.c",
+    "line": 32,
+    "md": "A model for a numeric value.\n\nThe `GtkAdjustment` has an associated lower and upper bound.\nIt also contains step and page increments, and a page size.\n\nAdjustments are used within several GTK widgets, including\n[`SpinButton`](xref:gtk:Gtk.SpinButton), [`Viewport`](xref:gtk:Gtk.Viewport), [`Scrollbar`](xref:gtk:Gtk.Scrollbar)\nand [`Scale`](xref:gtk:Gtk.Scale).\n\nThe `GtkAdjustment` object does not update the value itself. Instead\nit is left up to the owner of the `GtkAdjustment` to control the value."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Adjustment",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "clamp_page": {
+      "brief": "Updates the value of the adjustment to ensure that the given range is contained in the current page.",
+      "file": "gtk/gtkadjustment.c",
+      "line": 873,
+      "md": "Updates the value of the adjustment to ensure that the\ngiven range is contained in the current page.\n\nThe current page goes from `value` to `value` + `page-size`.\nIf the range is larger than the page size, then only the\nstart of it will be in the current page.\n\nA [`Adjustment::value-changed`](xref:gtk:Gtk.Adjustment#event:value-changed) signal will be emitted\nif the value is changed."
+    },
+    "configure": {
+      "brief": "Sets all properties of the adjustment at once.",
+      "file": "gtk/gtkadjustment.c",
+      "line": 814,
+      "md": "Sets all properties of the adjustment at once.\n\nUse this function to avoid multiple emissions of the\n[`Adjustment::changed`](xref:gtk:Gtk.Adjustment#event:changed) signal. See\n[`Adjustment.set_lower()`](xref:gtk:Gtk.Adjustment#method:set_lower) for an alternative\nway of compressing multiple emissions of\n[`Adjustment::changed`](xref:gtk:Gtk.Adjustment#event:changed) into one."
+    },
+    "get_lower": {
+      "brief": "Retrieves the minimum value of the adjustment.",
+      "file": "gtk/gtkadjustment.c",
+      "line": 578,
+      "md": "Retrieves the minimum value of the adjustment."
+    },
+    "get_minimum_increment": {
+      "brief": "Gets the smaller of step increment and page increment.",
+      "file": "gtk/gtkadjustment.c",
+      "line": 920,
+      "md": "Gets the smaller of step increment and page increment."
+    },
+    "get_page_increment": {
+      "brief": "Retrieves the page increment of the adjustment.",
+      "file": "gtk/gtkadjustment.c",
+      "line": 724,
+      "md": "Retrieves the page increment of the adjustment."
+    },
+    "get_page_size": {
+      "brief": "Retrieves the page size of the adjustment.",
+      "file": "gtk/gtkadjustment.c",
+      "line": 769,
+      "md": "Retrieves the page size of the adjustment."
+    },
+    "get_step_increment": {
+      "brief": "Retrieves the step increment of the adjustment.",
+      "file": "gtk/gtkadjustment.c",
+      "line": 679,
+      "md": "Retrieves the step increment of the adjustment."
+    },
+    "get_upper": {
+      "brief": "Retrieves the maximum value of the adjustment.",
+      "file": "gtk/gtkadjustment.c",
+      "line": 631,
+      "md": "Retrieves the maximum value of the adjustment."
+    },
+    "get_value": {
+      "brief": "Gets the current value of the adjustment.",
+      "file": "gtk/gtkadjustment.c",
+      "line": 407,
+      "md": "Gets the current value of the adjustment."
+    },
+    "set_lower": {
+      "brief": "Sets the minimum value of the adjustment.",
+      "file": "gtk/gtkadjustment.c",
+      "line": 596,
+      "md": "Sets the minimum value of the adjustment.\n\nWhen setting multiple adjustment properties via their individual\nsetters, multiple [`Adjustment::changed`](xref:gtk:Gtk.Adjustment#event:changed) signals will\nbe emitted. However, since the emission of the\n[`Adjustment::changed`](xref:gtk:Gtk.Adjustment#event:changed) signal is tied to the emission\nof the ::notify signals of the changed properties, it’s possible\nto compress the [`Adjustment::changed`](xref:gtk:Gtk.Adjustment#event:changed) signals into one\nby calling g_object_freeze_notify() and g_object_thaw_notify()\naround the calls to the individual setters.\n\nAlternatively, using a single g_object_set() for all the properties\nto change, or using [`Adjustment.configure()`](xref:gtk:Gtk.Adjustment#method:configure) has the same effect."
+    },
+    "set_page_increment": {
+      "brief": "Sets the page increment of the adjustment.",
+      "file": "gtk/gtkadjustment.c",
+      "line": 742,
+      "md": "Sets the page increment of the adjustment.\n\nSee [`Adjustment.set_lower()`](xref:gtk:Gtk.Adjustment#method:set_lower) about how to compress\nmultiple emissions of the [`Adjustment::changed`](xref:gtk:Gtk.Adjustment#event:changed)\nsignal when setting multiple adjustment properties."
+    },
+    "set_page_size": {
+      "brief": "Sets the page size of the adjustment.",
+      "file": "gtk/gtkadjustment.c",
+      "line": 787,
+      "md": "Sets the page size of the adjustment.\n\nSee [`Adjustment.set_lower()`](xref:gtk:Gtk.Adjustment#method:set_lower) about how to compress\nmultiple emissions of the [`Adjustment::changed`](xref:gtk:Gtk.Adjustment#event:changed)\nsignal when setting multiple adjustment properties."
+    },
+    "set_step_increment": {
+      "brief": "Sets the step increment of the adjustment.",
+      "file": "gtk/gtkadjustment.c",
+      "line": 697,
+      "md": "Sets the step increment of the adjustment.\n\nSee [`Adjustment.set_lower()`](xref:gtk:Gtk.Adjustment#method:set_lower) about how to compress\nmultiple emissions of the [`Adjustment::changed`](xref:gtk:Gtk.Adjustment#event:changed)\nsignal when setting multiple adjustment properties."
+    },
+    "set_upper": {
+      "brief": "Sets the maximum value of the adjustment.",
+      "file": "gtk/gtkadjustment.c",
+      "line": 649,
+      "md": "Sets the maximum value of the adjustment.\n\nNote that values will be restricted by `upper - page-size`\nif the page-size property is nonzero.\n\nSee [`Adjustment.set_lower()`](xref:gtk:Gtk.Adjustment#method:set_lower) about how to compress\nmultiple emissions of the [`Adjustment::changed`](xref:gtk:Gtk.Adjustment#event:changed)\nsignal when setting multiple adjustment properties."
+    },
+    "set_value": {
+      "brief": "Sets the `GtkAdjustment` value.",
+      "file": "gtk/gtkadjustment.c",
+      "line": 543,
+      "md": "Sets the `GtkAdjustment` value.\n\nThe value is clamped to lie between [`Adjustment:lower`](xref:gtk:Gtk.Adjustment#property:lower)\nand [`Adjustment:upper`](xref:gtk:Gtk.Adjustment#property:upper).\n\nNote that for adjustments which are used in a `GtkScrollbar`,\nthe effective range of allowed values goes from\n[`Adjustment:lower`](xref:gtk:Gtk.Adjustment#property:lower) to\n[`Adjustment:upper`](xref:gtk:Gtk.Adjustment#property:upper) - [`Adjustment:page-size`](xref:gtk:Gtk.Adjustment#property:page-size)."
+    }
+  },
+  "properties": {
+    "lower": {
+      "brief": "The minimum value of the adjustment.",
+      "file": "gtk/gtkadjustment.c",
+      "line": 144,
+      "md": "The minimum value of the adjustment."
+    },
+    "page-increment": {
+      "brief": "The page increment of the adjustment.",
+      "file": "gtk/gtkadjustment.c",
+      "line": 180,
+      "md": "The page increment of the adjustment."
+    },
+    "page-size": {
+      "brief": "The page size of the adjustment.",
+      "file": "gtk/gtkadjustment.c",
+      "line": 191,
+      "md": "The page size of the adjustment.\n\nNote that the page-size is irrelevant and should be set to zero\nif the adjustment is used for a simple scalar value, e.g. in a\n`GtkSpinButton`."
+    },
+    "step-increment": {
+      "brief": "The step increment of the adjustment.",
+      "file": "gtk/gtkadjustment.c",
+      "line": 169,
+      "md": "The step increment of the adjustment."
+    },
+    "upper": {
+      "brief": "The maximum value of the adjustment.",
+      "file": "gtk/gtkadjustment.c",
+      "line": 155,
+      "md": "The maximum value of the adjustment.\n\nNote that values will be restricted by `upper - page-size` if the page-size\nproperty is nonzero."
+    },
+    "value": {
+      "brief": "The value of the adjustment.",
+      "file": "gtk/gtkadjustment.c",
+      "line": 133,
+      "md": "The value of the adjustment."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "changed": {
+      "brief": "Emitted when one or more of the `GtkAdjustment` properties have been changed.",
+      "file": "gtk/gtkadjustment.c",
+      "line": 208,
+      "md": "Emitted when one or more of the `GtkAdjustment` properties have been\nchanged.\n\nNote that the [`Adjustment:value`](xref:gtk:Gtk.Adjustment#property:value) property is\ncovered by the [`Adjustment::value-changed`](xref:gtk:Gtk.Adjustment#event:value-changed) signal."
+    },
+    "value-changed": {
+      "brief": "Emitted when the value has been changed.",
+      "file": "gtk/gtkadjustment.c",
+      "line": 227,
+      "md": "Emitted when the value has been changed."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

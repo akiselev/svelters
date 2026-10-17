@@ -17,6 +17,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsAnchor",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsAnchor:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -40,7 +50,7 @@
             "native": "QSizePolicy::Policy",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QSizePolicy::Policy>"
           }
         }
       ],
@@ -111,7 +121,7 @@
         "native": "QSizePolicy::Policy",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QSizePolicy::Policy>"
       },
       "signature": "QSizePolicy::Policy sizePolicy() const",
       "since": null,
@@ -191,6 +201,7 @@
         "set": "setSizePolicy"
       },
       "brief": "The size policy for the QGraphicsAnchor",
+      "default": null,
       "js_name": "sizePolicy",
       "metaobject": {
         "constant": false,
@@ -211,12 +222,13 @@
       "name": "sizePolicy",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QSizePolicy::Policy",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QSizePolicy::Policy>"
       }
     },
     {
@@ -231,6 +243,7 @@
         "set": "setSpacing"
       },
       "brief": "The preferred space between items in the QGraphicsAnchorLayout",
+      "default": null,
       "js_name": "spacing",
       "metaobject": {
         "constant": false,
@@ -251,6 +264,7 @@
       "name": "spacing",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "qreal",

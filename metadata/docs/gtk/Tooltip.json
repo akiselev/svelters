@@ -1,0 +1,67 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Represents a widget tooltip.",
+    "file": "gtk/gtktooltip.c",
+    "line": 38,
+    "md": "Represents a widget tooltip.\n\nBasic tooltips can be realized simply by using\n[`Widget.set_tooltip_text()`](xref:gtk:Gtk.Widget#method:set_tooltip_text) or\n[`Widget.set_tooltip_markup()`](xref:gtk:Gtk.Widget#method:set_tooltip_markup) without\nany explicit tooltip object.\n\nWhen you need a tooltip with a little more fancy contents,\nlike adding an image, or you want the tooltip to have different\ncontents per `GtkTreeView` row or cell, you will have to do a\nlittle more work:\n\n- Set the [`Widget:has-tooltip`](xref:gtk:Gtk.Widget#property:has-tooltip) property to `TRUE`.\n  This will make GTK monitor the widget for motion and related events\n  which are needed to determine when and where to show a tooltip.\n\n- Connect to the [`Widget::query-tooltip`](xref:gtk:Gtk.Widget#event:query-tooltip) signal.\n  This signal will be emitted when a tooltip is supposed to be shown.\n  One of the arguments passed to the signal handler is a `GtkTooltip`\n  object. This is the object that we are about to display as a tooltip,\n  and can be manipulated in your callback using functions like\n  [`Tooltip.set_icon()`](xref:gtk:Gtk.Tooltip#method:set_icon). There are functions for setting\n  the tooltip’s markup, setting an image from a named icon, or even\n  putting in a custom widget.\n\n- Return `TRUE` from your ::query-tooltip handler. This causes the tooltip\n  to be show. If you return `FALSE`, it will not be shown."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Tooltip",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "set_custom": {
+      "brief": "Replaces the widget packed into the tooltip with `custom_widget`.",
+      "file": "gtk/gtktooltip.c",
+      "line": 297,
+      "md": "Replaces the widget packed into the tooltip with\n`custom_widget`. `custom_widget` does not get destroyed when the tooltip goes\naway.\nBy default a box with a `GtkImage` and `GtkLabel` is embedded in\nthe tooltip, which can be configured using gtk_tooltip_set_markup()\nand gtk_tooltip_set_icon()."
+    },
+    "set_icon": {
+      "brief": "Sets the icon of the tooltip (which is in front of the text) to be `paintable`.",
+      "file": "gtk/gtktooltip.c",
+      "line": 241,
+      "md": "Sets the icon of the tooltip (which is in front of the text) to be\n`paintable`.  If `paintable` is `NULL`, the image will be hidden."
+    },
+    "set_icon_from_gicon": {
+      "brief": "Sets the icon of the tooltip (which is in front of the text) to be the icon indicated by `gicon` with the size indicated by `size`.",
+      "file": "gtk/gtktooltip.c",
+      "line": 278,
+      "md": "Sets the icon of the tooltip (which is in front of the text)\nto be the icon indicated by `gicon` with the size indicated\nby `size`. If `gicon` is `NULL`, the image will be hidden."
+    },
+    "set_icon_from_icon_name": {
+      "brief": "Sets the icon of the tooltip (which is in front of the text) to be the icon indicated by `icon_name` with the size indicated by `size`.",
+      "file": "gtk/gtktooltip.c",
+      "line": 259,
+      "md": "Sets the icon of the tooltip (which is in front of the text) to be\nthe icon indicated by `icon_name` with the size indicated\nby `size`.  If `icon_name` is `NULL`, the image will be hidden."
+    },
+    "set_markup": {
+      "brief": "Sets the text of the tooltip to be `markup`.",
+      "file": "gtk/gtktooltip.c",
+      "line": 203,
+      "md": "Sets the text of the tooltip to be `markup`.\n\nThe string must be marked up with Pango markup.\nIf `markup` is `NULL`, the label will be hidden."
+    },
+    "set_text": {
+      "brief": "Sets the text of the tooltip to be `text`.",
+      "file": "gtk/gtktooltip.c",
+      "line": 222,
+      "md": "Sets the text of the tooltip to be `text`.\n\nIf `text` is `NULL`, the label will be hidden.\nSee also [`Tooltip.set_markup()`](xref:gtk:Gtk.Tooltip#method:set_markup)."
+    },
+    "set_tip_area": {
+      "brief": "Sets the area of the widget, where the contents of this tooltip apply, to be `rect` (in widget coordinates).",
+      "file": "gtk/gtktooltip.c",
+      "line": 324,
+      "md": "Sets the area of the widget, where the contents of this tooltip apply,\nto be `rect` (in widget coordinates).  This is especially useful for\nproperly setting tooltips on `GtkTreeView` rows and cells, `GtkIconViews`,\netc.\n\nFor setting tooltips on `GtkTreeView`, please refer to the convenience\nfunctions for this: gtk_tree_view_set_tooltip_row() and\ngtk_tree_view_set_tooltip_cell()."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

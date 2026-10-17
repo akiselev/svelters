@@ -107,7 +107,7 @@ test('capture / RESTORE writes the native value read before the first write', ()
 test('token lists add and remove one token, reading the native list once', () => {
   const t = harness();
   let reads = 0;
-  t.th.host.getProp = () => (reads++, 'flat  circular');
+  t.th.host.getProp = () => (reads++, ['flat', 'circular']);
   const accent = $.state(true);
   mountInWindow((c) => {
     const b = $n.element('button');
@@ -115,10 +115,10 @@ test('token lists add and remove one token, reading the native list once', () =>
     $n.token(b, 'css-classes', 'flat', true);
     $n.append(c, b);
   });
-  assert.deepEqual(t.take().filter((l) => l.startsWith('set')), ['set #2 css-classes "flat circular suggested-action"']);
+  assert.deepEqual(t.take().filter((l) => l.startsWith('set')), ['set #2 css-classes ["flat","circular","suggested-action"]']);
   $.set(accent, false);
   $.flush();
-  assert.deepEqual(t.take(), ['set #2 css-classes "flat circular"']);
+  assert.deepEqual(t.take(), ['set #2 css-classes ["flat","circular"]']);
   assert.equal(reads, 1);
 });
 

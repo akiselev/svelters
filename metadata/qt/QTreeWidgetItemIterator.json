@@ -36,7 +36,7 @@
             "native": "QTreeWidgetItemIterator::IteratorFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QTreeWidgetItemIterator::IteratorFlag>"
           }
         }
       ],
@@ -70,7 +70,7 @@
             "native": "QTreeWidgetItemIterator::IteratorFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QTreeWidgetItemIterator::IteratorFlag>"
           }
         }
       ],
@@ -82,96 +82,126 @@
   ],
   "enums": [
     {
+      "flags_alias": "QTreeWidgetItemIterator::IteratorFlags",
+      "fullname": "QTreeWidgetItemIterator::IteratorFlag",
       "members": [
         {
+          "cpp": "QTreeWidgetItemIterator::All",
           "name": "All",
           "value": "0x00000000"
         },
         {
+          "cpp": "QTreeWidgetItemIterator::Hidden",
           "name": "Hidden",
           "value": "0x00000001"
         },
         {
+          "cpp": "QTreeWidgetItemIterator::NotHidden",
           "name": "NotHidden",
           "value": "0x00000002"
         },
         {
+          "cpp": "QTreeWidgetItemIterator::Selected",
           "name": "Selected",
           "value": "0x00000004"
         },
         {
+          "cpp": "QTreeWidgetItemIterator::Unselected",
           "name": "Unselected",
           "value": "0x00000008"
         },
         {
+          "cpp": "QTreeWidgetItemIterator::Selectable",
           "name": "Selectable",
           "value": "0x00000010"
         },
         {
+          "cpp": "QTreeWidgetItemIterator::NotSelectable",
           "name": "NotSelectable",
           "value": "0x00000020"
         },
         {
+          "cpp": "QTreeWidgetItemIterator::DragEnabled",
           "name": "DragEnabled",
           "value": "0x00000040"
         },
         {
+          "cpp": "QTreeWidgetItemIterator::DragDisabled",
           "name": "DragDisabled",
           "value": "0x00000080"
         },
         {
+          "cpp": "QTreeWidgetItemIterator::DropEnabled",
           "name": "DropEnabled",
           "value": "0x00000100"
         },
         {
+          "cpp": "QTreeWidgetItemIterator::DropDisabled",
           "name": "DropDisabled",
           "value": "0x00000200"
         },
         {
+          "cpp": "QTreeWidgetItemIterator::HasChildren",
           "name": "HasChildren",
           "value": "0x00000400"
         },
         {
+          "cpp": "QTreeWidgetItemIterator::NoChildren",
           "name": "NoChildren",
           "value": "0x00000800"
         },
         {
+          "cpp": "QTreeWidgetItemIterator::Checked",
           "name": "Checked",
           "value": "0x00001000"
         },
         {
+          "cpp": "QTreeWidgetItemIterator::NotChecked",
           "name": "NotChecked",
           "value": "0x00002000"
         },
         {
+          "cpp": "QTreeWidgetItemIterator::Enabled",
           "name": "Enabled",
           "value": "0x00004000"
         },
         {
+          "cpp": "QTreeWidgetItemIterator::Disabled",
           "name": "Disabled",
           "value": "0x00008000"
         },
         {
+          "cpp": "QTreeWidgetItemIterator::Editable",
           "name": "Editable",
           "value": "0x00010000"
         },
         {
+          "cpp": "QTreeWidgetItemIterator::NotEditable",
           "name": "NotEditable",
           "value": "0x00020000"
         },
         {
+          "cpp": "QTreeWidgetItemIterator::UserFlag",
           "name": "UserFlag",
           "value": "0x01000000"
         }
       ],
       "metaobject": null,
       "name": "IteratorFlag",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QTreeWidgetItemIterator",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "borrowed_only",
+    "id": "svelters-api:v1:type:qt:QtWidgets:QTreeWidgetItemIterator:lifetime",
+    "native_refcount": "none",
+    "origin": "derived",
+    "provenance": "derived: abstract or not a QObject; JS cannot create it"
+  },
   "methods": [
     {
       "access": "public",

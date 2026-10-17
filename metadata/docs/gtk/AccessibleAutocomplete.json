@@ -1,0 +1,49 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "The possible values for the %GTK_ACCESSIBLE_PROPERTY_AUTOCOMPLETE accessible property.",
+    "file": "gtk/gtkenums.h",
+    "line": 1870,
+    "md": "The possible values for the %GTK_ACCESSIBLE_PROPERTY_AUTOCOMPLETE\naccessible property."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:AccessibleAutocomplete",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "both": {
+      "brief": "When a user is providing input, an element containing a collection of values that could complete the provided input may be displayed.",
+      "file": "gtk/gtkenums.h",
+      "line": 1879,
+      "md": "When a user is providing input, an element\n   containing a collection of values that could complete the provided input\n   may be displayed. If displayed, one value in the collection is automatically\n   selected, and the text needed to complete the automatically selected value\n   appears after the caret in the input."
+    },
+    "inline": {
+      "brief": "When a user is providing input, text suggesting one way to complete the provided input may be dynamically inserted after the caret.",
+      "file": "gtk/gtkenums.h",
+      "line": 1873,
+      "md": "When a user is providing input, text\n   suggesting one way to complete the provided input may be dynamically\n   inserted after the caret."
+    },
+    "list": {
+      "brief": "When a user is providing input, an element containing a collection of values that could complete the provided input may be displayed.",
+      "file": "gtk/gtkenums.h",
+      "line": 1876,
+      "md": "When a user is providing input, an element\n   containing a collection of values that could complete the provided input\n   may be displayed."
+    },
+    "none": {
+      "brief": "Automatic suggestions are not displayed.",
+      "file": "gtk/gtkenums.h",
+      "line": 1872,
+      "md": "Automatic suggestions are not displayed."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

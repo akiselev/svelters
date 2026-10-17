@@ -1,0 +1,219 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "An interface for describing UI elements for Assistive Technologies.",
+    "file": "gtk/gtkaccessible.c",
+    "line": 21,
+    "md": "An interface for describing UI elements for Assistive Technologies.\n\nEvery accessible implementation has:\n\n - a “role”, represented by a value of the [`AccessibleRole`](xref:gtk:Gtk.AccessibleRole) enumeration\n - “attributes”, represented by a set of [`AccessibleState`](xref:gtk:Gtk.AccessibleState),\n   [`AccessibleProperty`](xref:gtk:Gtk.AccessibleProperty) and [`AccessibleRelation`](xref:gtk:Gtk.AccessibleRelation) values\n\nThe role cannot be changed after instantiating a `GtkAccessible`\nimplementation.\n\nThe attributes are updated every time a UI element's state changes in\na way that should be reflected by assistive technologies. For instance,\nif a `GtkWidget` visibility changes, the %GTK_ACCESSIBLE_STATE_HIDDEN\nstate will also change to reflect the [`Widget:visible`](xref:gtk:Gtk.Widget#property:visible) property.\n\nEvery accessible implementation is part of a tree of accessible objects.\nNormally, this tree corresponds to the widget tree, but can be customized\nby reimplementing the [`Accessible.get_accessible_parent()`](xref:gtk:Gtk.Accessible#vfunc:get_accessible_parent),\n[`Accessible.get_first_accessible_child()`](xref:gtk:Gtk.Accessible#vfunc:get_first_accessible_child) and\n[`Accessible.get_next_accessible_sibling()`](xref:gtk:Gtk.Accessible#vfunc:get_next_accessible_sibling) virtual functions.\n\nNote that you can not create a top-level accessible object as of now,\nwhich means that you must always have a parent accessible object.\n\nAlso note that when an accessible object does not correspond to a widget,\nand it has children, whose implementation you don't control,\nit is necessary to ensure the correct shape of the a11y tree\nby calling [`Accessible.set_accessible_parent()`](xref:gtk:Gtk.Accessible#method:set_accessible_parent) and\nupdating the sibling by [`Accessible.update_next_accessible_sibling()`](xref:gtk:Gtk.Accessible#method:update_next_accessible_sibling)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Accessible",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "announce": {
+      "brief": "Requests the user's screen reader to announce the given message.",
+      "file": "gtk/gtkaccessible.c",
+      "line": 801,
+      "md": "Requests the user's screen reader to announce the given message.\n\nThis kind of notification is useful for messages that\neither have only a visual representation or that are not\nexposed visually at all, e.g. a notification about a\nsuccessful operation.\n\nAlso, by using this API, you can ensure that the message\ndoes not interrupts the user's current screen reader output.",
+      "since": "4.14"
+    },
+    "get_accessible_id": {
+      "brief": "Retrieves the accessible identifier for the accessible object.",
+      "file": "gtk/gtkaccessible.c",
+      "line": 1281,
+      "md": "Retrieves the accessible identifier for the accessible object.\n\nThis functionality can be overridden by `GtkAccessible`\nimplementations.\n\nIt is left to the accessible implementation to define the scope\nand uniqueness of the identifier.",
+      "since": "4.22"
+    },
+    "get_accessible_parent": {
+      "brief": "Retrieves the accessible parent for an accessible object.",
+      "file": "gtk/gtkaccessible.c",
+      "line": 119,
+      "md": "Retrieves the accessible parent for an accessible object.\n\nThis function returns `NULL` for top level widgets.",
+      "since": "4.10"
+    },
+    "get_accessible_role": {
+      "brief": "Retrieves the accessible role of an accessible object.",
+      "file": "gtk/gtkaccessible.c",
+      "line": 280,
+      "md": "Retrieves the accessible role of an accessible object."
+    },
+    "get_at_context": {
+      "brief": "Retrieves the implementation for the given accessible object.",
+      "file": "gtk/gtkaccessible.c",
+      "line": 101,
+      "md": "Retrieves the implementation for the given accessible object.",
+      "since": "4.10"
+    },
+    "get_bounds": {
+      "brief": "Queries the coordinates and dimensions of this accessible",
+      "file": "gtk/gtkaccessible.c",
+      "line": 1249,
+      "md": "Queries the coordinates and dimensions of this accessible\n\nThis functionality can be overridden by `GtkAccessible`\nimplementations, e.g. to get the bounds from an ignored\nchild widget.",
+      "since": "4.10"
+    },
+    "get_first_accessible_child": {
+      "brief": "Retrieves the first accessible child of an accessible object.",
+      "file": "gtk/gtkaccessible.c",
+      "line": 229,
+      "md": "Retrieves the first accessible child of an accessible object.",
+      "since": "4.10"
+    },
+    "get_next_accessible_sibling": {
+      "brief": "Retrieves the next accessible sibling of an accessible object",
+      "file": "gtk/gtkaccessible.c",
+      "line": 247,
+      "md": "Retrieves the next accessible sibling of an accessible object",
+      "since": "4.10"
+    },
+    "get_platform_state": {
+      "brief": "Queries a platform state, such as focus.",
+      "file": "gtk/gtkaccessible.c",
+      "line": 1154,
+      "md": "Queries a platform state, such as focus.\n\nThis functionality can be overridden by `GtkAccessible`\nimplementations, e.g. to get platform state from an ignored\nchild widget, as is the case for `GtkText` wrappers.",
+      "since": "4.10"
+    },
+    "reset_property": {
+      "brief": "Resets the accessible property to its default value.",
+      "file": "gtk/gtkaccessible.c",
+      "line": 591,
+      "md": "Resets the accessible property to its default value."
+    },
+    "reset_relation": {
+      "brief": "Resets the accessible relation to its default value.",
+      "file": "gtk/gtkaccessible.c",
+      "line": 777,
+      "md": "Resets the accessible relation to its default value."
+    },
+    "reset_state": {
+      "brief": "Resets the accessible state to its default value.",
+      "file": "gtk/gtkaccessible.c",
+      "line": 440,
+      "md": "Resets the accessible state to its default value."
+    },
+    "set_accessible_parent": {
+      "brief": "Sets the parent and sibling of an accessible object.",
+      "file": "gtk/gtkaccessible.c",
+      "line": 152,
+      "md": "Sets the parent and sibling of an accessible object.\n\nThis function is meant to be used by accessible implementations that are\nnot part of the widget hierarchy, and but act as a logical bridge between\nwidgets. For instance, if a widget creates an object that holds metadata\nfor each child, and you want that object to implement the `GtkAccessible`\ninterface, you will use this function to ensure that the parent of each\nchild widget is the metadata object, and the parent of each metadata\nobject is the container widget.",
+      "since": "4.10"
+    },
+    "update_next_accessible_sibling": {
+      "brief": "Updates the next accessible sibling.",
+      "file": "gtk/gtkaccessible.c",
+      "line": 190,
+      "md": "Updates the next accessible sibling.\n\nThat might be useful when a new child of a custom accessible\nis created, and it needs to be linked to a previous child.",
+      "since": "4.10"
+    },
+    "update_platform_state": {
+      "brief": "Informs ATs that the platform state has changed.",
+      "file": "gtk/gtkaccessible.c",
+      "line": 1178,
+      "md": "Informs ATs that the platform state has changed.\n\nThis function should be used by `GtkAccessible` implementations that\nhave a platform state but are not widgets. Widgets handle platform\nstates automatically.",
+      "since": "4.18"
+    },
+    "update_property": {
+      "brief": "Updates a list of accessible properties.",
+      "file": "gtk/gtkaccessible.c",
+      "line": 464,
+      "md": "Updates a list of accessible properties.\n\nSee the [`AccessibleProperty`](xref:gtk:Gtk.AccessibleProperty) documentation for the\nvalue types of accessible properties.\n\nThis function should be called by `GtkWidget` types whenever\nan accessible property change must be communicated to assistive\ntechnologies.\n\nExample:\n```c\nvalue = gtk_adjustment_get_value (adjustment);\ngtk_accessible_update_property (GTK_ACCESSIBLE (spin_button),\n                                   GTK_ACCESSIBLE_PROPERTY_VALUE_NOW, value,\n                                   -1);\n```"
+    },
+    "update_property_value": {
+      "brief": "Updates an array of accessible properties.",
+      "file": "gtk/gtkaccessible.c",
+      "line": 537,
+      "md": "Updates an array of accessible properties.\n\nThis function should be called by `GtkWidget` types whenever an accessible\nproperty change must be communicated to assistive technologies.\n\nThis function is meant to be used by language bindings."
+    },
+    "update_relation": {
+      "brief": "Updates a list of accessible relations.",
+      "file": "gtk/gtkaccessible.c",
+      "line": 636,
+      "md": "Updates a list of accessible relations.\n\nThis function should be called by `GtkWidget` types whenever an accessible\nrelation change must be communicated to assistive technologies.\n\nIf the [`AccessibleRelation`](xref:gtk:Gtk.AccessibleRelation) requires a list of references,\nyou should pass each reference individually, followed by `NULL`, e.g.\n\n```c\ngtk_accessible_update_relation (accessible,\n                                GTK_ACCESSIBLE_RELATION_CONTROLS,\n                                  ref1, NULL,\n                                GTK_ACCESSIBLE_RELATION_LABELLED_BY,\n                                  ref1, ref2, ref3, NULL,\n                                -1);\n```"
+    },
+    "update_relation_value": {
+      "brief": "Updates an array of accessible relations.",
+      "file": "gtk/gtkaccessible.c",
+      "line": 715,
+      "md": "Updates an array of accessible relations.\n\nThis function should be called by `GtkWidget` types whenever an accessible\nrelation change must be communicated to assistive technologies.\n\nThis function is meant to be used by language bindings."
+    },
+    "update_state": {
+      "brief": "Updates a list of accessible states.",
+      "file": "gtk/gtkaccessible.c",
+      "line": 312,
+      "md": "Updates a list of accessible states.\n\nSee the [`AccessibleState`](xref:gtk:Gtk.AccessibleState) documentation for the\nvalue types of accessible states.\n\nThis function should be called by `GtkWidget` types whenever\nan accessible state change must be communicated to assistive\ntechnologies.\n\nExample:\n\n```c\nvalue = GTK_ACCESSIBLE_TRISTATE_MIXED;\ngtk_accessible_update_state (GTK_ACCESSIBLE (check_button),\n                             GTK_ACCESSIBLE_STATE_CHECKED, value,\n                             -1);\n```"
+    },
+    "update_state_value": {
+      "brief": "Updates an array of accessible states.",
+      "file": "gtk/gtkaccessible.c",
+      "line": 386,
+      "md": "Updates an array of accessible states.\n\nThis function should be called by `GtkWidget` types whenever an accessible\nstate change must be communicated to assistive technologies.\n\nThis function is meant to be used by language bindings."
+    }
+  },
+  "properties": {
+    "accessible-role": {
+      "brief": "The accessible role of the given `GtkAccessible` implementation.",
+      "file": "gtk/gtkaccessible.c",
+      "line": 82,
+      "md": "The accessible role of the given `GtkAccessible` implementation.\n\nThe accessible role cannot be changed once set."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "get_accessible_id": {
+      "brief": "Retrieves the accessible identifier for the accessible object.",
+      "file": "gtk/gtkaccessible.c",
+      "line": 1281,
+      "md": "Retrieves the accessible identifier for the accessible object.\n\nThis functionality can be overridden by `GtkAccessible`\nimplementations.\n\nIt is left to the accessible implementation to define the scope\nand uniqueness of the identifier.",
+      "since": "4.22"
+    },
+    "get_accessible_parent": {
+      "brief": "Retrieves the accessible parent for an accessible object.",
+      "file": "gtk/gtkaccessible.c",
+      "line": 119,
+      "md": "Retrieves the accessible parent for an accessible object.\n\nThis function returns `NULL` for top level widgets.",
+      "since": "4.10"
+    },
+    "get_at_context": {
+      "brief": "Retrieves the implementation for the given accessible object.",
+      "file": "gtk/gtkaccessible.c",
+      "line": 101,
+      "md": "Retrieves the implementation for the given accessible object.",
+      "since": "4.10"
+    },
+    "get_bounds": {
+      "brief": "Queries the coordinates and dimensions of this accessible",
+      "file": "gtk/gtkaccessible.c",
+      "line": 1249,
+      "md": "Queries the coordinates and dimensions of this accessible\n\nThis functionality can be overridden by `GtkAccessible`\nimplementations, e.g. to get the bounds from an ignored\nchild widget.",
+      "since": "4.10"
+    },
+    "get_first_accessible_child": {
+      "brief": "Retrieves the first accessible child of an accessible object.",
+      "file": "gtk/gtkaccessible.c",
+      "line": 229,
+      "md": "Retrieves the first accessible child of an accessible object.",
+      "since": "4.10"
+    },
+    "get_next_accessible_sibling": {
+      "brief": "Retrieves the next accessible sibling of an accessible object",
+      "file": "gtk/gtkaccessible.c",
+      "line": 247,
+      "md": "Retrieves the next accessible sibling of an accessible object",
+      "since": "4.10"
+    },
+    "get_platform_state": {
+      "brief": "Queries a platform state, such as focus.",
+      "file": "gtk/gtkaccessible.c",
+      "line": 1154,
+      "md": "Queries a platform state, such as focus.\n\nThis functionality can be overridden by `GtkAccessible`\nimplementations, e.g. to get platform state from an ignored\nchild widget, as is the case for `GtkText` wrappers.",
+      "since": "4.10"
+    }
+  }
+}

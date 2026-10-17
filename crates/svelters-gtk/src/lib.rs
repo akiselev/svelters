@@ -5,10 +5,12 @@
 
 mod backend;
 mod convert;
+mod gi;
 pub mod generated;
 mod lookup;
 pub mod testing;
 pub mod timing;
+mod types;
 mod util;
 
 pub use backend::GtkBackend;

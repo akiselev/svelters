@@ -52,7 +52,7 @@
             "native": "const QIcon &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QIcon>"
           }
         },
         {
@@ -74,59 +74,84 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QSystemTrayIcon::ActivationReason",
       "members": [
         {
+          "cpp": "QSystemTrayIcon::Unknown",
           "name": "Unknown",
           "value": "0"
         },
         {
+          "cpp": "QSystemTrayIcon::Context",
           "name": "Context",
           "value": "1"
         },
         {
+          "cpp": "QSystemTrayIcon::DoubleClick",
           "name": "DoubleClick",
           "value": "2"
         },
         {
+          "cpp": "QSystemTrayIcon::Trigger",
           "name": "Trigger",
           "value": "3"
         },
         {
+          "cpp": "QSystemTrayIcon::MiddleClick",
           "name": "MiddleClick",
           "value": "4"
         }
       ],
       "metaobject": null,
       "name": "ActivationReason",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QSystemTrayIcon::MessageIcon",
       "members": [
         {
+          "cpp": "QSystemTrayIcon::NoIcon",
           "name": "NoIcon",
           "value": "0"
         },
         {
+          "cpp": "QSystemTrayIcon::Information",
           "name": "Information",
           "value": "1"
         },
         {
+          "cpp": "QSystemTrayIcon::Warning",
           "name": "Warning",
           "value": "2"
         },
         {
+          "cpp": "QSystemTrayIcon::Critical",
           "name": "Critical",
           "value": "3"
         }
       ],
       "metaobject": null,
       "name": "MessageIcon",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QSystemTrayIcon",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QSystemTrayIcon:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -210,7 +235,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRect geometry() const",
       "since": null,
@@ -262,7 +287,7 @@
         "native": "QIcon",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QIcon>"
       },
       "signature": "QIcon icon() const",
       "since": null,
@@ -380,7 +405,7 @@
             "native": "const QIcon &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QIcon>"
           }
         }
       ],
@@ -537,7 +562,7 @@
             "native": "QSystemTrayIcon::MessageIcon",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QSystemTrayIcon::MessageIcon>"
           }
         },
         {
@@ -604,7 +629,7 @@
             "native": "const QIcon &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QIcon>"
           }
         },
         {
@@ -711,6 +736,7 @@
         "set": "setIcon"
       },
       "brief": "The system tray icon",
+      "default": null,
       "js_name": "icon",
       "metaobject": {
         "constant": false,
@@ -731,12 +757,13 @@
       "name": "icon",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QIcon",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QIcon>"
       }
     },
     {
@@ -751,6 +778,8 @@
         "set": "setToolTip"
       },
       "brief": "The tooltip for the system tray entry",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "toolTip",
       "metaobject": {
         "constant": false,
@@ -771,6 +800,7 @@
       "name": "toolTip",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -791,6 +821,8 @@
         "set": "setVisible"
       },
       "brief": "Whether the system tray entry is visible",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "visible",
       "metaobject": {
         "constant": false,
@@ -811,6 +843,7 @@
       "name": "visible",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -845,7 +878,7 @@
             "native": "QSystemTrayIcon::ActivationReason",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QSystemTrayIcon::ActivationReason>"
           }
         }
       ],

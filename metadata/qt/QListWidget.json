@@ -48,6 +48,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QListWidget",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QListWidget:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -145,7 +155,7 @@
             "native": "const QStringList &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<string>"
           }
         }
       ],
@@ -380,7 +390,7 @@
             "native": "Qt::DropAction",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::DropAction>"
           }
         }
       ],
@@ -501,7 +511,7 @@
             "native": "Qt::MatchFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::MatchFlag>"
           }
         }
       ],
@@ -679,7 +689,7 @@
             "native": "const QStringList &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<string>"
           }
         }
       ],
@@ -816,7 +826,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -1045,7 +1055,7 @@
         "native": "QStringList",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<string>"
       },
       "signature": "QStringList mimeTypes() const",
       "since": null,
@@ -1195,7 +1205,7 @@
             "native": "QAbstractItemView::ScrollHint",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QAbstractItemView::ScrollHint>"
           }
         }
       ],
@@ -1305,7 +1315,7 @@
             "native": "QItemSelectionModel::SelectionFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QItemSelectionModel::SelectionFlag>"
           }
         }
       ],
@@ -1389,7 +1399,7 @@
             "native": "QItemSelectionModel::SelectionFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QItemSelectionModel::SelectionFlag>"
           }
         }
       ],
@@ -1547,7 +1557,7 @@
             "native": "Qt::DropActions",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::DropAction>"
           }
         }
       ],
@@ -1584,7 +1594,7 @@
             "native": "Qt::SortOrder",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::SortOrder>"
           }
         }
       ],
@@ -1618,7 +1628,7 @@
         "native": "Qt::DropActions",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::DropAction>"
       },
       "signature": "Qt::DropActions supportedDragActions() const",
       "since": null,
@@ -1644,7 +1654,7 @@
         "native": "Qt::DropActions",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::DropAction>"
       },
       "signature": "Qt::DropActions supportedDropActions() const",
       "since": null,
@@ -1718,7 +1728,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRect visualItemRect(const QListWidgetItem *item) const",
       "since": null,
@@ -1809,6 +1819,8 @@
         "set": null
       },
       "brief": "The number of items in the list including any hidden items",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "count",
       "metaobject": {
         "constant": false,
@@ -1829,6 +1841,7 @@
       "name": "count",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -1849,6 +1862,8 @@
         "set": "setCurrentRow"
       },
       "brief": "The row of the current item",
+      "default": -1,
+      "default_origin": "runtime",
       "js_name": "currentRow",
       "metaobject": {
         "constant": false,
@@ -1872,6 +1887,7 @@
         "signal": "currentRowChanged(int)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -1892,6 +1908,8 @@
         "set": "setSortingEnabled"
       },
       "brief": "Whether sorting is enabled",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "sortingEnabled",
       "metaobject": {
         "constant": false,
@@ -1912,6 +1930,7 @@
       "name": "sortingEnabled",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1932,6 +1951,8 @@
         "set": "setSupportedDragActions"
       },
       "brief": "The drag actions supported by this view",
+      "default": "CopyAction|MoveAction",
+      "default_origin": "runtime",
       "js_name": "supportedDragActions",
       "metaobject": {
         "constant": false,
@@ -1952,12 +1973,13 @@
       "name": "supportedDragActions",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::DropActions",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::DropAction>"
       }
     }
   ],

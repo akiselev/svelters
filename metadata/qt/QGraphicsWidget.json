@@ -41,7 +41,7 @@
             "native": "Qt::WindowFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::WindowType>"
           }
         }
       ],
@@ -53,20 +53,34 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QGraphicsWidget::anonymous",
       "members": [
         {
+          "cpp": "QGraphicsWidget::Type",
           "name": "Type",
           "value": "11"
         }
       ],
       "metaobject": null,
       "name": "anonymous",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsWidget",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsWidget:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -87,7 +101,7 @@
         "native": "QList<QAction *>",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<object<QAction>>"
       },
       "signature": "QList<QAction *> actions() const",
       "since": null,
@@ -153,7 +167,7 @@
             "native": "const QList<QAction *> &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<object<QAction>>"
           }
         }
       ],
@@ -239,7 +253,7 @@
         "native": "QRectF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRectF boundingRect() const override",
       "since": null,
@@ -513,7 +527,7 @@
         "native": "Qt::FocusPolicy",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::FocusPolicy>"
       },
       "signature": "Qt::FocusPolicy focusPolicy() const",
       "since": null,
@@ -565,7 +579,7 @@
         "native": "QFont",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QFont>"
       },
       "signature": "QFont font() const",
       "since": null,
@@ -802,7 +816,7 @@
             "native": "const QKeySequence &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QKeySequence>"
           }
         },
         {
@@ -812,7 +826,7 @@
             "native": "Qt::ShortcutContext",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ShortcutContext>"
           }
         }
       ],
@@ -1054,7 +1068,7 @@
             "native": "const QList<QAction *> &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<object<QAction>>"
           }
         }
       ],
@@ -1117,7 +1131,7 @@
             "native": "QGraphicsItem::GraphicsItemChange",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QGraphicsItem::GraphicsItemChange>"
           }
         },
         {
@@ -1187,7 +1201,7 @@
         "native": "Qt::LayoutDirection",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::LayoutDirection>"
       },
       "signature": "Qt::LayoutDirection layoutDirection() const",
       "since": null,
@@ -1364,7 +1378,7 @@
         "native": "QPalette",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPalette>"
       },
       "signature": "QPalette palette() const",
       "since": null,
@@ -1416,7 +1430,7 @@
         "native": "QRectF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRectF rect() const",
       "since": null,
@@ -1519,7 +1533,7 @@
             "native": "const QSizeF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Size>"
           }
         }
       ],
@@ -1677,7 +1691,7 @@
             "native": "Qt::WidgetAttribute",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::WidgetAttribute>"
           }
         },
         {
@@ -1761,7 +1775,7 @@
             "native": "QMarginsF",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Insets>"
           }
         }
       ],
@@ -1865,7 +1879,7 @@
             "native": "Qt::FocusPolicy",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::FocusPolicy>"
           }
         }
       ],
@@ -1902,7 +1916,7 @@
             "native": "const QFont &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QFont>"
           }
         }
       ],
@@ -1939,7 +1953,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -2080,7 +2094,7 @@
             "native": "Qt::LayoutDirection",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::LayoutDirection>"
           }
         }
       ],
@@ -2117,7 +2131,7 @@
             "native": "const QPalette &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPalette>"
           }
         }
       ],
@@ -2332,7 +2346,7 @@
             "native": "Qt::WindowFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::WindowType>"
           }
         }
       ],
@@ -2369,7 +2383,7 @@
             "native": "QMarginsF",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Insets>"
           }
         }
       ],
@@ -2507,7 +2521,7 @@
         "native": "QPainterPath",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPainterPath>"
       },
       "signature": "QPainterPath shape() const override",
       "since": null,
@@ -2570,7 +2584,7 @@
         "native": "QSizeF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSizeF size() const",
       "since": null,
@@ -2599,7 +2613,7 @@
             "native": "Qt::SizeHint",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::SizeHint>"
           }
         },
         {
@@ -2609,7 +2623,7 @@
             "native": "const QSizeF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Size>"
           }
         }
       ],
@@ -2617,7 +2631,7 @@
         "native": "QSizeF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint) const override",
       "since": null,
@@ -2672,7 +2686,7 @@
             "native": "Qt::WidgetAttribute",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::WidgetAttribute>"
           }
         }
       ],
@@ -2884,7 +2898,7 @@
         "native": "Qt::WindowFlags",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::WindowType>"
       },
       "signature": "Qt::WindowFlags windowFlags() const",
       "since": null,
@@ -2947,7 +2961,7 @@
         "native": "QRectF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRectF windowFrameGeometry() const",
       "since": null,
@@ -2973,7 +2987,7 @@
         "native": "QRectF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRectF windowFrameRect() const",
       "since": null,
@@ -3002,7 +3016,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -3010,7 +3024,7 @@
         "native": "Qt::WindowFrameSection",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::WindowFrameSection>"
       },
       "signature": "Qt::WindowFrameSection windowFrameSectionAt(const QPointF &pos) const",
       "since": null,
@@ -3062,7 +3076,7 @@
         "native": "Qt::WindowType",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::WindowType>"
       },
       "signature": "Qt::WindowType windowType() const",
       "since": null,
@@ -3130,6 +3144,8 @@
         "set": "setAutoFillBackground"
       },
       "brief": "Whether the widget background is filled automatically",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "autoFillBackground",
       "metaobject": {
         "constant": false,
@@ -3150,6 +3166,7 @@
       "name": "autoFillBackground",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -3170,6 +3187,8 @@
         "set": "setFocusPolicy"
       },
       "brief": "The way the widget accepts keyboard focus",
+      "default": "NoFocus",
+      "default_origin": "runtime",
       "js_name": "focusPolicy",
       "metaobject": {
         "constant": false,
@@ -3190,12 +3209,13 @@
       "name": "focusPolicy",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::FocusPolicy",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::FocusPolicy>"
       }
     },
     {
@@ -3210,6 +3230,7 @@
         "set": "setFont"
       },
       "brief": "The widgets' font",
+      "default": null,
       "js_name": "font",
       "metaobject": {
         "constant": false,
@@ -3230,12 +3251,13 @@
       "name": "font",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QFont",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QFont>"
       }
     },
     {
@@ -3250,6 +3272,7 @@
         "set": "setGeometry"
       },
       "brief": "The geometry of the widget",
+      "default": null,
       "js_name": "geometry",
       "metaobject": {
         "constant": false,
@@ -3273,12 +3296,13 @@
         "signal": "geometryChanged()"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QRectF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       }
     },
     {
@@ -3293,6 +3317,7 @@
         "set": "setLayout"
       },
       "brief": "Of the widget",
+      "default": null,
       "js_name": "layout",
       "metaobject": {
         "constant": false,
@@ -3316,6 +3341,7 @@
         "signal": "layoutChanged()"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QGraphicsLayout*",
@@ -3336,6 +3362,8 @@
         "set": "setLayoutDirection"
       },
       "brief": "The layout direction for this widget",
+      "default": "LeftToRight",
+      "default_origin": "runtime",
       "js_name": "layoutDirection",
       "metaobject": {
         "constant": false,
@@ -3356,12 +3384,13 @@
       "name": "layoutDirection",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::LayoutDirection",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::LayoutDirection>"
       }
     },
     {
@@ -3376,6 +3405,7 @@
         "set": null
       },
       "brief": "The maximum size of the widget",
+      "default": null,
       "js_name": "maximumSize",
       "metaobject": {
         "constant": false,
@@ -3396,12 +3426,13 @@
       "name": "maximumSize",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QSizeF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       }
     },
     {
@@ -3416,6 +3447,7 @@
         "set": null
       },
       "brief": "The minimum size of the widget",
+      "default": null,
       "js_name": "minimumSize",
       "metaobject": {
         "constant": false,
@@ -3436,12 +3468,13 @@
       "name": "minimumSize",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QSizeF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       }
     },
     {
@@ -3456,6 +3489,7 @@
         "set": "setPalette"
       },
       "brief": "The widget's palette",
+      "default": null,
       "js_name": "palette",
       "metaobject": {
         "constant": false,
@@ -3476,12 +3510,13 @@
       "name": "palette",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QPalette",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPalette>"
       }
     },
     {
@@ -3496,6 +3531,7 @@
         "set": null
       },
       "brief": "The preferred size of the widget",
+      "default": null,
       "js_name": "preferredSize",
       "metaobject": {
         "constant": false,
@@ -3516,12 +3552,13 @@
       "name": "preferredSize",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QSizeF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       }
     },
     {
@@ -3536,6 +3573,7 @@
         "set": null
       },
       "brief": "The size of the widget",
+      "default": null,
       "js_name": "size",
       "metaobject": {
         "constant": false,
@@ -3559,12 +3597,13 @@
         "signal": "geometryChanged()"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QSizeF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       }
     },
     {
@@ -3579,6 +3618,7 @@
         "set": null
       },
       "brief": "The size policy for the widget",
+      "default": null,
       "js_name": "sizePolicy",
       "metaobject": {
         "constant": false,
@@ -3599,12 +3639,13 @@
       "name": "sizePolicy",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QSizePolicy",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QSizePolicy>"
       }
     },
     {
@@ -3619,6 +3660,8 @@
         "set": "setWindowFlags"
       },
       "brief": "The widget's window flags",
+      "default": "Widget",
+      "default_origin": "runtime",
       "js_name": "windowFlags",
       "metaobject": {
         "constant": false,
@@ -3639,12 +3682,13 @@
       "name": "windowFlags",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::WindowFlags",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::WindowType>"
       }
     },
     {
@@ -3659,6 +3703,8 @@
         "set": "setWindowTitle"
       },
       "brief": "This property holds the window title (caption)",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "windowTitle",
       "metaobject": {
         "constant": false,
@@ -3679,6 +3725,7 @@
       "name": "windowTitle",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",

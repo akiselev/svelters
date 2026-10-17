@@ -1,0 +1,50 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Values for [`TextBufferCommitNotify`](xref:gtk:Gtk.TextBufferCommitNotify) to denote the point of the notification.",
+    "file": "gtk/gtkenums.h",
+    "line": 1974,
+    "md": "Values for [`TextBufferCommitNotify`](xref:gtk:Gtk.TextBufferCommitNotify) to denote the\npoint of the notification.",
+    "since": "4.16"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:TextBufferNotifyFlags",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "after_delete": {
+      "brief": "Be notified after text has been deleted from the underlying buffer.",
+      "file": "gtk/gtkenums.h",
+      "line": 1982,
+      "md": "Be notified after text\n  has been deleted from the underlying buffer."
+    },
+    "after_insert": {
+      "brief": "Be notified after text has been inserted into the underlying buffer.",
+      "file": "gtk/gtkenums.h",
+      "line": 1978,
+      "md": "Be notified after text\n  has been inserted into the underlying buffer."
+    },
+    "before_delete": {
+      "brief": "Be notified before text is deleted from the underlying buffer.",
+      "file": "gtk/gtkenums.h",
+      "line": 1980,
+      "md": "Be notified before text\n  is deleted from the underlying buffer."
+    },
+    "before_insert": {
+      "brief": "Be notified before text is inserted into the underlying buffer.",
+      "file": "gtk/gtkenums.h",
+      "line": 1976,
+      "md": "Be notified before text\n  is inserted into the underlying buffer."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

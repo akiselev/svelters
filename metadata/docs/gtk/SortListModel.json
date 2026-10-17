@@ -1,0 +1,134 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new sort list model that uses the `sorter` to sort `model`.",
+      "file": "gtk/gtksortlistmodel.c",
+      "line": 1114,
+      "md": "Creates a new sort list model that uses the `sorter` to sort `model`."
+    }
+  },
+  "doc": {
+    "brief": "A list model that sorts the elements of another model.",
+    "file": "gtk/gtksortlistmodel.c",
+    "line": 56,
+    "md": "A list model that sorts the elements of another model.\n\nThe elements are sorted according to a `GtkSorter`.\n\nThe model is a stable sort. If two items compare equal according\nto the sorter, the one that appears first in the original model will\nalso appear first after sorting.\n\nNote that if you change the sorter, the previous order will have no\ninfluence on the new order. If you want that, consider using a\n`GtkMultiSorter` and appending the previous sorter to it.\n\nThe model can be set up to do incremental sorting, so that\nsorting long lists doesn't block the UI. See\n[`SortListModel.set_incremental()`](xref:gtk:Gtk.SortListModel#method:set_incremental) for details.\n\n`GtkSortListModel` is a generic model and because of that it\ncannot take advantage of any external knowledge when sorting.\nIf you run into performance issues with `GtkSortListModel`,\nit is strongly recommended that you write your own sorting list\nmodel.\n\n`GtkSortListModel` allows sorting the items into sections. It\nimplements `GtkSectionModel` and when [`SortListModel:section-sorter`](xref:gtk:Gtk.SortListModel#property:section-sorter)\nis set, it will sort all items with that sorter and items comparing\nequal with it will be put into the same section.\nThe [`SortListModel:sorter`](xref:gtk:Gtk.SortListModel#property:sorter) will then be used to sort items\ninside their sections."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:SortListModel",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_incremental": {
+      "brief": "Returns whether incremental sorting is enabled.",
+      "file": "gtk/gtksortlistmodel.c",
+      "line": 1338,
+      "md": "Returns whether incremental sorting is enabled.\n\nSee [`SortListModel.set_incremental()`](xref:gtk:Gtk.SortListModel#method:set_incremental)."
+    },
+    "get_model": {
+      "brief": "Gets the model currently sorted or `NULL` if none.",
+      "file": "gtk/gtksortlistmodel.c",
+      "line": 1192,
+      "md": "Gets the model currently sorted or `NULL` if none."
+    },
+    "get_pending": {
+      "brief": "Estimates progress of an ongoing sorting operation.",
+      "file": "gtk/gtksortlistmodel.c",
+      "line": 1356,
+      "md": "Estimates progress of an ongoing sorting operation.\n\nThe estimate is the number of items that would still need to be\nsorted to finish the sorting operation if this was a linear\nalgorithm. So this number is not related to how many items are\nalready correctly sorted.\n\nIf you want to estimate the progress, you can use code like this:\n```c\npending = gtk_sort_list_model_get_pending (self);\nmodel = gtk_sort_list_model_get_model (self);\nprogress = 1.0 - pending / (double) MAX (1, g_list_model_get_n_items (model));\n```\n\nIf no sort operation is ongoing - in particular when\n[`SortListModel:incremental`](xref:gtk:Gtk.SortListModel#property:incremental) is `FALSE` - this\nfunction returns 0."
+    },
+    "get_section_sorter": {
+      "brief": "Gets the section sorter that is used to sort items of `self` into sections.",
+      "file": "gtk/gtksortlistmodel.c",
+      "line": 1274,
+      "md": "Gets the section sorter that is used to sort items of `self` into\nsections.",
+      "since": "4.12"
+    },
+    "get_sorter": {
+      "brief": "Gets the sorter that is used to sort `self`.",
+      "file": "gtk/gtksortlistmodel.c",
+      "line": 1232,
+      "md": "Gets the sorter that is used to sort `self`."
+    },
+    "set_incremental": {
+      "brief": "Sets the sort model to do an incremental sort.",
+      "file": "gtk/gtksortlistmodel.c",
+      "line": 1293,
+      "md": "Sets the sort model to do an incremental sort.\n\nWhen incremental sorting is enabled, the `GtkSortListModel` will not do\na complete sort immediately, but will instead queue an idle handler that\nincrementally sorts the items towards their correct position. This of\ncourse means that items do not instantly appear in the right place. It\nalso means that the total sorting time is a lot slower.\n\nWhen your filter blocks the UI while sorting, you might consider\nturning this on. Depending on your model and sorters, this may become\ninteresting around 10,000 to 100,000 items.\n\nBy default, incremental sorting is disabled.\n\nSee [`SortListModel.get_pending()`](xref:gtk:Gtk.SortListModel#method:get_pending) for progress information\nabout an ongoing incremental sorting operation."
+    },
+    "set_model": {
+      "brief": "Sets the model to be sorted.",
+      "file": "gtk/gtksortlistmodel.c",
+      "line": 1144,
+      "md": "Sets the model to be sorted.\n\nThe `model`'s item type must conform to the item type of `self`."
+    },
+    "set_section_sorter": {
+      "brief": "Sets a new section sorter on `self`.",
+      "file": "gtk/gtksortlistmodel.c",
+      "line": 1248,
+      "md": "Sets a new section sorter on `self`.",
+      "since": "4.12"
+    },
+    "set_sorter": {
+      "brief": "Sets a new sorter on `self`.",
+      "file": "gtk/gtksortlistmodel.c",
+      "line": 1208,
+      "md": "Sets a new sorter on `self`."
+    }
+  },
+  "properties": {
+    "incremental": {
+      "brief": "If the model should sort items incrementally.",
+      "file": "gtk/gtksortlistmodel.c",
+      "line": 1030,
+      "md": "If the model should sort items incrementally."
+    },
+    "item-type": {
+      "brief": "The type of items. See [`ListModel.get_item_type()`](xref:gtk:Gio.ListModel#method:get_item_type).",
+      "file": "gtk/gtksortlistmodel.c",
+      "line": 1040,
+      "md": "The type of items. See [`ListModel.get_item_type()`](xref:gtk:Gio.ListModel#method:get_item_type).",
+      "since": "4.8"
+    },
+    "model": {
+      "brief": "The model being sorted.",
+      "file": "gtk/gtksortlistmodel.c",
+      "line": 1052,
+      "md": "The model being sorted."
+    },
+    "n-items": {
+      "brief": "The number of items.",
+      "file": "gtk/gtksortlistmodel.c",
+      "line": 1062,
+      "md": "The number of items. See [`ListModel.get_n_items()`](xref:gtk:Gio.ListModel#method:get_n_items).",
+      "since": "4.8"
+    },
+    "pending": {
+      "brief": "Estimate of unsorted items remaining.",
+      "file": "gtk/gtksortlistmodel.c",
+      "line": 1074,
+      "md": "Estimate of unsorted items remaining."
+    },
+    "section-sorter": {
+      "brief": "The section sorter for this model, if one is set.",
+      "file": "gtk/gtksortlistmodel.c",
+      "line": 1084,
+      "md": "The section sorter for this model, if one is set.",
+      "since": "4.12"
+    },
+    "sorter": {
+      "brief": "The sorter for this model.",
+      "file": "gtk/gtksortlistmodel.c",
+      "line": 1096,
+      "md": "The sorter for this model."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

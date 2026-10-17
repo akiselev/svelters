@@ -1,0 +1,51 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new scrollbar with the given orientation.",
+      "file": "gtk/gtkscrollbar.c",
+      "line": 279,
+      "md": "Creates a new scrollbar with the given orientation."
+    }
+  },
+  "doc": {
+    "brief": "Shows a horizontal or vertical scrollbar.",
+    "file": "gtk/gtkscrollbar.c",
+    "line": 39,
+    "md": "Shows a horizontal or vertical scrollbar.\n\nIts position and movement are controlled by the adjustment that is passed to\nor created by [`Scrollbar.new()`](xref:gtk:Gtk.Scrollbar#constructor:new). See [`Adjustment`](xref:gtk:Gtk.Adjustment) for more\ndetails. The [`Adjustment:value`](xref:gtk:Gtk.Adjustment#property:value) field sets the position of the\nthumb and must be between [`Adjustment:lower`](xref:gtk:Gtk.Adjustment#property:lower) and\n[`Adjustment:upper`](xref:gtk:Gtk.Adjustment#property:upper) - [`Adjustment:page-size`](xref:gtk:Gtk.Adjustment#property:page-size).\nThe [`Adjustment:page-size`](xref:gtk:Gtk.Adjustment#property:page-size) represents the size of the visible\nscrollable area.\n\nThe fields [`Adjustment:step-increment`](xref:gtk:Gtk.Adjustment#property:step-increment) and\n[`Adjustment:page-increment`](xref:gtk:Gtk.Adjustment#property:page-increment) fields are added to or subtracted\nfrom the [`Adjustment:value`](xref:gtk:Gtk.Adjustment#property:value) when the user asks to move by a step\n(using e.g. the cursor arrow keys) or by a page (using e.g. the Page Down/Up\nkeys).\n\n# CSS nodes\n\n```\nscrollbar\n╰── range[.fine-tune]\n    ╰── trough\n        ╰── slider\n```\n\n`GtkScrollbar` has a main CSS node with name scrollbar and a subnode for its\ncontents. The main node gets the .horizontal or .vertical style classes applied,\ndepending on the scrollbar's orientation.\n\nThe range node gets the style class .fine-tune added when the scrollbar is\nin 'fine-tuning' mode.\n\nOther style classes that may be added to scrollbars inside\n[`ScrolledWindow`](xref:gtk:Gtk.ScrolledWindow) include the positional classes (.left, .right,\n.top, .bottom) and style classes related to overlay scrolling (.overlay-indicator,\n.dragging, .hovering).\n\n# Accessibility\n\n`GtkScrollbar` uses the [`AccessibleRole.scrollbar`](xref:gtk:Gtk.AccessibleRole#value:scrollbar) role."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Scrollbar",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_adjustment": {
+      "brief": "Returns the scrollbar's adjustment.",
+      "file": "gtk/gtkscrollbar.c",
+      "line": 373,
+      "md": "Returns the scrollbar's adjustment."
+    },
+    "set_adjustment": {
+      "brief": "Makes the scrollbar use the given adjustment.",
+      "file": "gtk/gtkscrollbar.c",
+      "line": 326,
+      "md": "Makes the scrollbar use the given adjustment."
+    }
+  },
+  "properties": {
+    "adjustment": {
+      "brief": "The `GtkAdjustment` controlled by this scrollbar.",
+      "file": "gtk/gtkscrollbar.c",
+      "line": 242,
+      "md": "The `GtkAdjustment` controlled by this scrollbar."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

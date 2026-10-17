@@ -1,0 +1,43 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Specifies a preference for height-for-width or width-for-height geometry management.",
+    "file": "gtk/gtkenums.h",
+    "line": 804,
+    "md": "Specifies a preference for height-for-width or\nwidth-for-height geometry management."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:SizeRequestMode",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "constant_size": {
+      "brief": "Don’t trade height-for-width or width-for-height",
+      "file": "gtk/gtkenums.h",
+      "line": 808,
+      "md": "Don’t trade height-for-width or width-for-height"
+    },
+    "height_for_width": {
+      "brief": "Prefer height-for-width geometry management",
+      "file": "gtk/gtkenums.h",
+      "line": 806,
+      "md": "Prefer height-for-width geometry management"
+    },
+    "width_for_height": {
+      "brief": "Prefer width-for-height geometry management",
+      "file": "gtk/gtkenums.h",
+      "line": 807,
+      "md": "Prefer width-for-height geometry management"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

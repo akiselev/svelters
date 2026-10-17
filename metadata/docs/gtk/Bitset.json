@@ -1,0 +1,200 @@
+{
+  "constructors": {
+    "new_empty": {
+      "brief": "Creates a new empty bitset.",
+      "file": "gtk/gtkbitset.c",
+      "line": 262,
+      "md": "Creates a new empty bitset."
+    },
+    "new_range": {
+      "brief": "Creates a bitset with the given range set.",
+      "file": "gtk/gtkbitset.c",
+      "line": 283,
+      "md": "Creates a bitset with the given range set."
+    }
+  },
+  "doc": {
+    "brief": "A set of unsigned integers.",
+    "file": "gtk/gtkbitset.c",
+    "line": 26,
+    "md": "A set of unsigned integers.\n\nAnother name for this data structure is “bitmap”.\n\nThe current implementation is based on [roaring bitmaps](https://roaringbitmap.org/).\n\nA bitset allows adding a set of integers and provides support for set operations\nlike unions, intersections and checks for equality or if a value is contained\nin the set. `GtkBitset` also contains various functions to query metadata about\nthe bitset, such as the minimum or maximum values or its size.\n\nThe fastest way to iterate values in a bitset is [`BitsetIter`](xref:gtk:Gtk.BitsetIter).\n\nThe main use case for `GtkBitset` is implementing complex selections for\n[`SelectionModel`](xref:gtk:Gtk.SelectionModel)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Bitset",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "add": {
+      "brief": "Adds `value` to `self` if it wasn't part of it before.",
+      "file": "gtk/gtkbitset.c",
+      "line": 343,
+      "md": "Adds `value` to `self` if it wasn't part of it before."
+    },
+    "add_range": {
+      "brief": "Adds all values from `start` (inclusive) to `start` + `n_items` (exclusive) in `self`.",
+      "file": "gtk/gtkbitset.c",
+      "line": 381,
+      "md": "Adds all values from `start` (inclusive) to `start` + `n_items`\n(exclusive) in `self`."
+    },
+    "add_range_closed": {
+      "brief": "Adds the closed range [`first`, `last`], so `first`, `last` and all values in between.",
+      "file": "gtk/gtkbitset.c",
+      "line": 431,
+      "md": "Adds the closed range [`first`, `last`], so `first`, `last` and all\nvalues in between. `first` must be smaller than `last`."
+    },
+    "add_rectangle": {
+      "brief": "Interprets the values as a 2-dimensional boolean grid with the given `stride` and inside that grid, adds a rectangle with the given `width` and `height`.",
+      "file": "gtk/gtkbitset.c",
+      "line": 471,
+      "md": "Interprets the values as a 2-dimensional boolean grid with the given `stride`\nand inside that grid, adds a rectangle with the given `width` and `height`."
+    },
+    "contains": {
+      "brief": "Checks if the given `value` has been added to `self`",
+      "file": "gtk/gtkbitset.c",
+      "line": 98,
+      "md": "Checks if the given `value` has been added to `self`"
+    },
+    "copy": {
+      "brief": "Creates a copy of `self`.",
+      "file": "gtk/gtkbitset.c",
+      "line": 305,
+      "md": "Creates a copy of `self`."
+    },
+    "difference": {
+      "brief": "Sets `self` to be the symmetric difference of `self` and `other`.",
+      "file": "gtk/gtkbitset.c",
+      "line": 611,
+      "md": "Sets `self` to be the symmetric difference of `self` and `other`.\n\nThe symmetric difference is set `self` to contain all values that\nwere either contained in `self` or in `other`, but not in both.\nThis operation is also called an XOR.\n\nIt is allowed for `self` and `other` to be the same bitset. The bitset\nwill be emptied in that case."
+    },
+    "equals": {
+      "brief": "Returns `TRUE` if `self` and `other` contain the same values.",
+      "file": "gtk/gtkbitset.c",
+      "line": 132,
+      "md": "Returns `TRUE` if `self` and `other` contain the same values."
+    },
+    "get_maximum": {
+      "brief": "Returns the largest value in `self`.",
+      "file": "gtk/gtkbitset.c",
+      "line": 172,
+      "md": "Returns the largest value in `self`.\n\nIf `self` is empty, 0 is returned."
+    },
+    "get_minimum": {
+      "brief": "Returns the smallest value in `self`.",
+      "file": "gtk/gtkbitset.c",
+      "line": 154,
+      "md": "Returns the smallest value in `self`.\n\nIf `self` is empty, `G_MAXUINT` is returned."
+    },
+    "get_nth": {
+      "brief": "Returns the value of the `nth` item in self.",
+      "file": "gtk/gtkbitset.c",
+      "line": 239,
+      "md": "Returns the value of the `nth` item in self.\n\nIf `nth` is >= the size of `self`, 0 is returned."
+    },
+    "get_size": {
+      "brief": "Gets the number of values that were added to the set.",
+      "file": "gtk/gtkbitset.c",
+      "line": 190,
+      "md": "Gets the number of values that were added to the set.\n\nFor example, if the set is empty, 0 is returned.\n\nNote that this function returns a `guint64`, because when all\nvalues are set, the return value is `G_MAXUINT + 1`. Unless you\nare sure this cannot happen (it can't with `GListModel`), be sure\nto use a 64bit type."
+    },
+    "get_size_in_range": {
+      "brief": "Gets the number of values that are part of the set from `first` to `last` (inclusive).",
+      "file": "gtk/gtkbitset.c",
+      "line": 213,
+      "md": "Gets the number of values that are part of the set from `first` to `last`\n(inclusive).\n\nNote that this function returns a `guint64`, because when all values are\nset, the return value is `G_MAXUINT + 1`. Unless you are sure this cannot\nhappen (it can't with `GListModel`), be sure to use a 64bit type."
+    },
+    "intersect": {
+      "brief": "Sets `self` to be the intersection of `self` and `other`.",
+      "file": "gtk/gtkbitset.c",
+      "line": 558,
+      "md": "Sets `self` to be the intersection of `self` and `other`.\n\nIn other words, remove all values from `self` that are not part of `other`.\n\nIt is allowed for `self` and `other` to be the same bitset. Nothing will\nhappen in that case."
+    },
+    "is_empty": {
+      "brief": "Check if no value is contained in bitset.",
+      "file": "gtk/gtkbitset.c",
+      "line": 116,
+      "md": "Check if no value is contained in bitset."
+    },
+    "ref": {
+      "brief": "Acquires a reference on the given `GtkBitset`.",
+      "file": "gtk/gtkbitset.c",
+      "line": 57,
+      "md": "Acquires a reference on the given `GtkBitset`."
+    },
+    "remove": {
+      "brief": "Removes `value` from `self` if it was part of it before.",
+      "file": "gtk/gtkbitset.c",
+      "line": 362,
+      "md": "Removes `value` from `self` if it was part of it before."
+    },
+    "remove_all": {
+      "brief": "Removes all values from the bitset so that it is empty again.",
+      "file": "gtk/gtkbitset.c",
+      "line": 329,
+      "md": "Removes all values from the bitset so that it is empty again."
+    },
+    "remove_range": {
+      "brief": "Removes all values from `start` (inclusive) to `start` + `n_items` (exclusive) in `self`.",
+      "file": "gtk/gtkbitset.c",
+      "line": 406,
+      "md": "Removes all values from `start` (inclusive) to `start` + `n_items` (exclusive)\nin `self`."
+    },
+    "remove_range_closed": {
+      "brief": "Removes the closed range [`first`, `last`], so `first`, `last` and all values in between.",
+      "file": "gtk/gtkbitset.c",
+      "line": 451,
+      "md": "Removes the closed range [`first`, `last`], so `first`, `last` and all\nvalues in between. `first` must be smaller than `last`."
+    },
+    "remove_rectangle": {
+      "brief": "Interprets the values as a 2-dimensional boolean grid with the given `stride` and inside that grid, removes a rectangle with the given `width` and `height`.",
+      "file": "gtk/gtkbitset.c",
+      "line": 502,
+      "md": "Interprets the values as a 2-dimensional boolean grid with the given `stride`\nand inside that grid, removes a rectangle with the given `width` and `height`."
+    },
+    "shift_left": {
+      "brief": "Shifts all values in `self` to the left by `amount`.",
+      "file": "gtk/gtkbitset.c",
+      "line": 641,
+      "md": "Shifts all values in `self` to the left by `amount`.\n\nValues smaller than `amount` are discarded."
+    },
+    "shift_right": {
+      "brief": "Shifts all values in `self` to the right by `amount`.",
+      "file": "gtk/gtkbitset.c",
+      "line": 663,
+      "md": "Shifts all values in `self` to the right by `amount`.\n\nValues that end up too large to be held in a #guint are discarded."
+    },
+    "splice": {
+      "brief": "This is a support function for `GListModel` handling, by mirroring the `GlistModel::items-changed` signal.",
+      "file": "gtk/gtkbitset.c",
+      "line": 683,
+      "md": "This is a support function for `GListModel` handling, by mirroring\nthe `GlistModel::items-changed` signal.\n\nFirst, it \"cuts\" the values from `position` to `removed` from\nthe bitset. That is, it removes all those values and shifts\nall larger values to the left by `removed` places.\n\nThen, it \"pastes\" new room into the bitset by shifting all values\nlarger than `position` by `added` spaces to the right. This frees\nup space that can then be filled."
+    },
+    "subtract": {
+      "brief": "Sets `self` to be the subtraction of `other` from `self`.",
+      "file": "gtk/gtkbitset.c",
+      "line": 583,
+      "md": "Sets `self` to be the subtraction of `other` from `self`.\n\nIn other words, remove all values from `self` that are part of `other`.\n\nIt is allowed for `self` and `other` to be the same bitset. The bitset\nwill be emptied in that case."
+    },
+    "union": {
+      "brief": "Sets `self` to be the union of `self` and `other`.",
+      "file": "gtk/gtkbitset.c",
+      "line": 533,
+      "md": "Sets `self` to be the union of `self` and `other`.\n\nThat is, add all values from `other` into `self` that weren't part of it.\n\nIt is allowed for `self` and `other` to be the same bitset. Nothing will\nhappen in that case."
+    },
+    "unref": {
+      "brief": "Releases a reference on the given `GtkBitset`.",
+      "file": "gtk/gtkbitset.c",
+      "line": 75,
+      "md": "Releases a reference on the given `GtkBitset`.\n\nIf the reference was the last, the resources associated to the `self` are\nfreed."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -40,20 +40,31 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QGraphicsItemGroup::anonymous",
       "members": [
         {
+          "cpp": "QGraphicsItemGroup::Type",
           "name": "Type",
           "value": "10"
         }
       ],
       "metaobject": null,
       "name": "anonymous",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsItemGroup",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "borrowed_only",
+    "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsItemGroup:lifetime",
+    "native_refcount": "none",
+    "origin": "derived",
+    "provenance": "derived: abstract or not a QObject; JS cannot create it"
+  },
   "methods": [
     {
       "access": "public",
@@ -111,7 +122,7 @@
         "native": "QRectF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRectF boundingRect() const override",
       "since": null,
@@ -174,7 +185,7 @@
         "native": "QPainterPath",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPainterPath>"
       },
       "signature": "QPainterPath opaqueArea() const override",
       "since": null,

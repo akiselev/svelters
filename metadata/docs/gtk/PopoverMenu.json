@@ -1,0 +1,96 @@
+{
+  "constructors": {
+    "new_from_model": {
+      "brief": "Creates a `GtkPopoverMenu` and populates it according to `model`.",
+      "file": "gtk/gtkpopovermenu.c",
+      "line": 771,
+      "md": "Creates a `GtkPopoverMenu` and populates it according to `model`.\n\nThe created buttons are connected to actions found in the\n`GtkApplicationWindow` to which the popover belongs - typically\nby means of being attached to a widget that is contained within\nthe `GtkApplicationWindow`s widget hierarchy.\n\nActions can also be added using [`Widget.insert_action_group()`](xref:gtk:Gtk.Widget#method:insert_action_group)\non the menus attach widget or on any of its parent widgets.\n\nThis function creates menus with sliding submenus.\nSee [`PopoverMenu.new_from_model_full()`](xref:gtk:Gtk.PopoverMenu#constructor:new_from_model_full) for a way\nto control this."
+    },
+    "new_from_model_full": {
+      "brief": "Creates a `GtkPopoverMenu` and populates it according to `model`.",
+      "file": "gtk/gtkpopovermenu.c",
+      "line": 798,
+      "md": "Creates a `GtkPopoverMenu` and populates it according to `model`.\n\nThe created buttons are connected to actions found in the\naction groups that are accessible from the parent widget.\nThis includes the `GtkApplicationWindow` to which the popover\nbelongs. Actions can also be added using [`Widget.insert_action_group()`](xref:gtk:Gtk.Widget#method:insert_action_group)\non the parent widget or on any of its parent widgets."
+    }
+  },
+  "doc": {
+    "brief": "A subclass of `GtkPopover` that implements menu behavior.",
+    "file": "gtk/gtkpopovermenu.c",
+    "line": 41,
+    "md": "A subclass of `GtkPopover` that implements menu behavior.\n\n`GtkPopoverMenu` treats its children like menus and allows switching\nbetween them. It can open submenus as traditional, nested submenus,\nor in a more touch-friendly sliding fashion.\nThe property [`PopoverMenu:flags`](xref:gtk:Gtk.PopoverMenu#property:flags) controls this appearance.\n\n`GtkPopoverMenu` is meant to be used primarily with menu models,\nusing [`PopoverMenu.new_from_model()`](xref:gtk:Gtk.PopoverMenu#constructor:new_from_model). If you need to put\nother widgets such as a `GtkSpinButton` or a `GtkSwitch` into a popover,\nyou can use [`PopoverMenu.add_child()`](xref:gtk:Gtk.PopoverMenu#method:add_child).\n\nFor more dialog-like behavior, use a plain `GtkPopover`.\n\n## Menu models\n\nThe XML format understood by `GtkBuilder` for `GMenuModel` consists\nof a toplevel `<menu>` element, which contains one or more `<item>`\nelements. Each `<item>` element contains `<attribute>` and `<link>`\nelements with a mandatory name attribute. `<link>` elements have the\nsame content model as `<menu>`. Instead of `<link name=\"submenu\">`\nor `<link name=\"section\">`, you can use `<submenu>` or `<section>`\nelements.\n\n```xml\n<menu id='app-menu'>\n  <section>\n    <item>\n      <attribute name='label' translatable='yes'>_New Window</attribute>\n      <attribute name='action'>app.new</attribute>\n    </item>\n    <item>\n      <attribute name='label' translatable='yes'>_About Sunny</attribute>\n      <attribute name='action'>app.about</attribute>\n    </item>\n    <item>\n      <attribute name='label' translatable='yes'>_Quit</attribute>\n      <attribute name='action'>app.quit</attribute>\n    </item>\n  </section>\n</menu>\n```\n\nAttribute values can be translated using gettext, like other `GtkBuilder`\ncontent. `<attribute>` elements can be marked for translation with a\n`translatable=\"yes\"` attribute. It is also possible to specify message\ncontext and translator comments, using the context and comments attributes.\nTo make use of this, the `GtkBuilder` must have been given the gettext\ndomain to use.\n\nThe following attributes are used when constructing menu items:\n\n- \"label\": a user-visible string to display\n- \"use-markup\": whether the text in the menu item includes [Pango markup](https://docs.gtk.org/Pango/pango_markup.html)\n- \"action\": the prefixed name of the action to trigger\n- \"target\": the parameter to use when activating the action\n- \"icon\" and \"verb-icon\": names of icons that may be displayed\n- \"submenu-action\": name of an action that may be used to track\n     whether a submenu is open\n- \"hidden-when\": a string used to determine when the item will be hidden.\n     Possible values include \"action-disabled\", \"action-missing\", \"macos-menubar\".\n     This is mainly useful for exported menus, see [`Application.set_menubar()`](xref:gtk:Gtk.Application#method:set_menubar).\n- \"custom\": a string used to match against the ID of a custom child added with\n     [`PopoverMenu.add_child()`](xref:gtk:Gtk.PopoverMenu#method:add_child), [`PopoverMenuBar.add_child()`](xref:gtk:Gtk.PopoverMenuBar#method:add_child),\n     or in the ui file with `<child type=\"ID\">`.\n\nThe following attributes are used when constructing sections:\n\n- \"label\": a user-visible string to use as section heading\n- \"display-hint\": a string used to determine special formatting for the section.\n    Possible values include \"horizontal-buttons\", \"circular-buttons\" and\n    \"inline-buttons\". They all indicate that section should be\n    displayed as a horizontal row of buttons.\n- \"text-direction\": a string used to determine the `GtkTextDirection` to use\n    when \"display-hint\" is set to \"horizontal-buttons\". Possible values\n    include \"rtl\", \"ltr\", and \"none\".\n\nThe following attributes are used when constructing submenus:\n\n- \"label\": a user-visible string to display\n- \"icon\": icon name to display\n- \"gtk-macos-special\": (macOS only, ignored by others) Add special meaning to a menu\n    in the macOS menu bar. See [Using GTK on Apple macOS](osx.html).\n\nMenu items will also show accelerators, which are usually associated\nwith actions via [`Application.set_accels_for_action()`](xref:gtk:Gtk.Application#method:set_accels_for_action),\n[`WidgetClass.add_binding_action()`](xref:gtk:WidgetClass#method:add_binding_action) or\n[`ShortcutController.add_shortcut()`](xref:gtk:Gtk.ShortcutController#method:add_shortcut).\n\n# Shortcuts and Gestures\n\n`GtkPopoverMenu` supports the following keyboard shortcuts:\n\n- <kbd>Space</kbd> activates the default widget.\n\n# CSS Nodes\n\n`GtkPopoverMenu` is just a subclass of `GtkPopover` that adds custom content\nto it, therefore it has the same CSS nodes. It is one of the cases that add\na `.menu` style class to the main `popover` node.\n\nMenu items have nodes with name `button` and class `.model`. If a section\ndisplay-hint is set, the section gets a node `box` with class `horizontal`\nplus a class with the same text as the display hint. Note that said box may\nnot be the direct ancestor of the item `button`s. Thus, for example, to style\nitems in an `inline-buttons` section, select `.inline-buttons button.model`.\nOther things that may be of interest to style in menus include `label` nodes.\n\n# Accessibility\n\n`GtkPopoverMenu` uses the [`AccessibleRole.menu`](xref:gtk:Gtk.AccessibleRole#value:menu) role, and its\nitems use the [`AccessibleRole.menu_item`](xref:gtk:Gtk.AccessibleRole#value:menu_item),\n[`AccessibleRole.checkbox`](xref:gtk:Gtk.AccessibleRole#value:checkbox) or [`AccessibleRole.menu_item_radio`](xref:gtk:Gtk.AccessibleRole#value:menu_item_radio)\nroles, depending on the action they are connected to."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:PopoverMenu",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "add_child": {
+      "brief": "Adds a custom widget to a generated menu.",
+      "file": "gtk/gtkpopovermenu.c",
+      "line": 917,
+      "md": "Adds a custom widget to a generated menu.\n\nFor this to work, the menu model of `popover` must have\nan item with a `custom` attribute that matches `id`."
+    },
+    "get_flags": {
+      "brief": "Returns the flags that `popover` uses to create/display a menu from its model.",
+      "file": "gtk/gtkpopovermenu.c",
+      "line": 899,
+      "md": "Returns the flags that `popover` uses to create/display a menu from its model.",
+      "since": "4.14"
+    },
+    "get_menu_model": {
+      "brief": "Returns the menu model used to populate the popover.",
+      "file": "gtk/gtkpopovermenu.c",
+      "line": 883,
+      "md": "Returns the menu model used to populate the popover."
+    },
+    "remove_child": {
+      "brief": "Removes a widget that has previously been added with [`PopoverMenu.add_child()`](xref:gtk:Gtk.PopoverMenu#method:add_child)",
+      "file": "gtk/gtkpopovermenu.c",
+      "line": 943,
+      "md": "Removes a widget that has previously been added with\n[`PopoverMenu.add_child()`](xref:gtk:Gtk.PopoverMenu#method:add_child)"
+    },
+    "set_flags": {
+      "brief": "Sets the flags that `popover` uses to create/display a menu from its model.",
+      "file": "gtk/gtkpopovermenu.c",
+      "line": 853,
+      "md": "Sets the flags that `popover` uses to create/display a menu from its model.\n\nIf a model is set and the flags change, contents are rebuilt, so if setting\nproperties individually, set flags before model to avoid a redundant rebuild.",
+      "since": "4.14"
+    },
+    "set_menu_model": {
+      "brief": "Sets a new menu model on `popover`.",
+      "file": "gtk/gtkpopovermenu.c",
+      "line": 828,
+      "md": "Sets a new menu model on `popover`.\n\nThe existing contents of `popover` are removed, and\nthe `popover` is populated with new contents according\nto `model`."
+    }
+  },
+  "properties": {
+    "flags": {
+      "brief": "The flags that `popover` uses to create/display a menu from its model.",
+      "file": "gtk/gtkpopovermenu.c",
+      "line": 635,
+      "md": "The flags that `popover` uses to create/display a menu from its model.\n\nIf a model is set and the flags change, contents are rebuilt, so if setting\nproperties individually, set flags before model to avoid a redundant rebuild.",
+      "since": "4.14"
+    },
+    "menu-model": {
+      "brief": "The model from which the menu is made.",
+      "file": "gtk/gtkpopovermenu.c",
+      "line": 624,
+      "md": "The model from which the menu is made."
+    },
+    "visible-submenu": {
+      "brief": "The name of the visible submenu.",
+      "file": "gtk/gtkpopovermenu.c",
+      "line": 613,
+      "md": "The name of the visible submenu."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

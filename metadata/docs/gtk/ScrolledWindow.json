@@ -1,0 +1,334 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new scrolled window.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 2251,
+      "md": "Creates a new scrolled window."
+    }
+  },
+  "doc": {
+    "brief": "Makes its child scrollable.",
+    "file": "gtk/gtkscrolledwindow.c",
+    "line": 60,
+    "md": "Makes its child scrollable.\n\nIt does so using either internally added scrollbars or externally\nassociated adjustments, and optionally draws a frame around the child.\n\nWidgets with native scrolling support, i.e. those whose classes implement\nthe [`Scrollable`](xref:gtk:Gtk.Scrollable) interface, are added directly. For other types\nof widget, the class [`Viewport`](xref:gtk:Gtk.Viewport) acts as an adaptor, giving\nscrollability to other widgets. [`ScrolledWindow.set_child()`](xref:gtk:Gtk.ScrolledWindow#method:set_child)\nintelligently accounts for whether or not the added child is a `GtkScrollable`.\nIf it isn’t, then it wraps the child in a `GtkViewport`. Therefore, you can\njust add any child widget and not worry about the details.\n\nIf [`ScrolledWindow.set_child()`](xref:gtk:Gtk.ScrolledWindow#method:set_child) has added a `GtkViewport` for you,\nit will be automatically removed when you unset the child.\nUnless [`ScrolledWindow:hscrollbar-policy`](xref:gtk:Gtk.ScrolledWindow#property:hscrollbar-policy) and\n[`ScrolledWindow:vscrollbar-policy`](xref:gtk:Gtk.ScrolledWindow#property:vscrollbar-policy) are %GTK_POLICY_NEVER or\n%GTK_POLICY_EXTERNAL, `GtkScrolledWindow` adds internal `GtkScrollbar` widgets\naround its child. The scroll position of the child, and if applicable the\nscrollbars, is controlled by the [`ScrolledWindow:hadjustment`](xref:gtk:Gtk.ScrolledWindow#property:hadjustment)\nand [`ScrolledWindow:vadjustment`](xref:gtk:Gtk.ScrolledWindow#property:vadjustment) that are associated with the\n`GtkScrolledWindow`. See the docs on [`Scrollbar`](xref:gtk:Gtk.Scrollbar) for the details,\nbut note that the “step_increment” and “page_increment” fields are only\neffective if the policy causes scrollbars to be present.\n\nIf a `GtkScrolledWindow` doesn’t behave quite as you would like, or\ndoesn’t have exactly the right layout, it’s very possible to set up\nyour own scrolling with `GtkScrollbar` and for example a `GtkGrid`.\n\n# Touch support\n\n`GtkScrolledWindow` has built-in support for touch devices. When a\ntouchscreen is used, swiping will move the scrolled window, and will\nexpose 'kinetic' behavior. This can be turned off with the\n[`ScrolledWindow:kinetic-scrolling`](xref:gtk:Gtk.ScrolledWindow#property:kinetic-scrolling) property if it is undesired.\n\n`GtkScrolledWindow` also displays visual 'overshoot' indication when\nthe content is pulled beyond the end, and this situation can be\ncaptured with the [`ScrolledWindow::edge-overshot`](xref:gtk:Gtk.ScrolledWindow#event:edge-overshot) signal.\n\nIf no mouse device is present, the scrollbars will overlaid as\nnarrow, auto-hiding indicators over the content. If traditional\nscrollbars are desired although no mouse is present, this behaviour\ncan be turned off with the [`ScrolledWindow:overlay-scrolling`](xref:gtk:Gtk.ScrolledWindow#property:overlay-scrolling)\nproperty.\n\n# Shortcuts and Gestures\n\nThe following signals have default keybindings:\n\n- [`ScrolledWindow::scroll-child`](xref:gtk:Gtk.ScrolledWindow#event:scroll-child)\n\n# CSS nodes\n\n`GtkScrolledWindow` has a main CSS node with name scrolledwindow.\nIt gets a .frame style class added when [`ScrolledWindow:has-frame`](xref:gtk:Gtk.ScrolledWindow#property:has-frame)\nis `TRUE`.\n\nIt uses subnodes with names overshoot and undershoot to draw the overflow\nand underflow indications. These nodes get the .left, .right, .top or .bottom\nstyle class added depending on where the indication is drawn.\n\n`GtkScrolledWindow` also sets the positional style classes (.left, .right,\n.top, .bottom) and style classes related to overlay scrolling\n(.overlay-indicator, .dragging, .hovering) on its scrollbars.\n\nIf both scrollbars are visible, the area where they meet is drawn\nwith a subnode named junction.\n\n# Accessibility\n\nUntil GTK 4.10, `GtkScrolledWindow` used the [`AccessibleRole.group`](xref:gtk:Gtk.AccessibleRole#value:group) role.\n\nStarting from GTK 4.12, `GtkScrolledWindow` uses the [`AccessibleRole.generic`](xref:gtk:Gtk.AccessibleRole#value:generic)\nrole."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_child": {
+      "brief": "Gets the child widget of `scrolled_window`.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 4423,
+      "md": "Gets the child widget of `scrolled_window`.\n\nIf the scrolled window automatically added a [`Viewport`](xref:gtk:Gtk.Viewport), this\nfunction will return the viewport widget, and you can retrieve its child\nusing [`Viewport.get_child()`](xref:gtk:Gtk.Viewport#method:get_child)."
+    },
+    "get_hadjustment": {
+      "brief": "Returns the horizontal scrollbar’s adjustment.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 2402,
+      "md": "Returns the horizontal scrollbar’s adjustment.\n\nThis is the adjustment used to connect the horizontal scrollbar\nto the child widget’s horizontal scroll functionality."
+    },
+    "get_has_frame": {
+      "brief": "Gets whether the scrolled window draws a frame.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 2644,
+      "md": "Gets whether the scrolled window draws a frame."
+    },
+    "get_hscrollbar": {
+      "brief": "Returns the horizontal scrollbar of `scrolled_window`.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 2444,
+      "md": "Returns the horizontal scrollbar of `scrolled_window`."
+    },
+    "get_kinetic_scrolling": {
+      "brief": "Returns the specified kinetic scrolling behavior.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 2700,
+      "md": "Returns the specified kinetic scrolling behavior."
+    },
+    "get_max_content_height": {
+      "brief": "Returns the maximum content height set.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 4216,
+      "md": "Returns the maximum content height set."
+    },
+    "get_max_content_width": {
+      "brief": "Returns the maximum content width set.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 4167,
+      "md": "Returns the maximum content width set."
+    },
+    "get_min_content_height": {
+      "brief": "Gets the minimal content height of `scrolled_window`.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 4042,
+      "md": "Gets the minimal content height of `scrolled_window`."
+    },
+    "get_min_content_width": {
+      "brief": "Gets the minimum content width of `scrolled_window`.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 3991,
+      "md": "Gets the minimum content width of `scrolled_window`."
+    },
+    "get_overlay_scrolling": {
+      "brief": "Returns whether overlay scrolling is enabled for this scrolled window.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 4118,
+      "md": "Returns whether overlay scrolling is enabled for this scrolled window."
+    },
+    "get_placement": {
+      "brief": "Gets the placement of the contents with respect to the scrollbars.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 2581,
+      "md": "Gets the placement of the contents with respect to the scrollbars."
+    },
+    "get_policy": {
+      "brief": "Retrieves the current policy values for the horizontal and vertical scrollbars.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 2518,
+      "md": "Retrieves the current policy values for the horizontal and vertical\nscrollbars.\n\nSee [`ScrolledWindow.set_policy()`](xref:gtk:Gtk.ScrolledWindow#method:set_policy)."
+    },
+    "get_propagate_natural_height": {
+      "brief": "Reports whether the natural height of the child will be calculated and propagated through the scrolled window’s requested natural height.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 4305,
+      "md": "Reports whether the natural height of the child will be calculated\nand propagated through the scrolled window’s requested natural height."
+    },
+    "get_propagate_natural_width": {
+      "brief": "Reports whether the natural width of the child will be calculated and propagated through the scrolled window’s requested natural width.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 4260,
+      "md": "Reports whether the natural width of the child will be calculated\nand propagated through the scrolled window’s requested natural width."
+    },
+    "get_vadjustment": {
+      "brief": "Returns the vertical scrollbar’s adjustment.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 2423,
+      "md": "Returns the vertical scrollbar’s adjustment.\n\nThis is the adjustment used to connect the vertical\nscrollbar to the child widget’s vertical scroll functionality."
+    },
+    "get_vscrollbar": {
+      "brief": "Returns the vertical scrollbar of `scrolled_window`.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 2462,
+      "md": "Returns the vertical scrollbar of `scrolled_window`."
+    },
+    "set_child": {
+      "brief": "Sets the child widget of `scrolled_window`.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 4324,
+      "md": "Sets the child widget of `scrolled_window`.\n\nIf `child` does not implement the [`Scrollable`](xref:gtk:Gtk.Scrollable) interface,\nthe scrolled window will add `child` to a [`Viewport`](xref:gtk:Gtk.Viewport) instance\nand then add the viewport as its child widget."
+    },
+    "set_hadjustment": {
+      "brief": "Sets the `GtkAdjustment` for the horizontal scrollbar.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 2264,
+      "md": "Sets the `GtkAdjustment` for the horizontal scrollbar."
+    },
+    "set_has_frame": {
+      "brief": "Changes the frame drawn around the contents of `scrolled_window`.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 2616,
+      "md": "Changes the frame drawn around the contents of `scrolled_window`."
+    },
+    "set_kinetic_scrolling": {
+      "brief": "Turns kinetic scrolling on or off.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 2662,
+      "md": "Turns kinetic scrolling on or off.\n\nKinetic scrolling only applies to devices with source\n%GDK_SOURCE_TOUCHSCREEN."
+    },
+    "set_max_content_height": {
+      "brief": "Sets the maximum height that `scrolled_window` should keep visible.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 4185,
+      "md": "Sets the maximum height that `scrolled_window` should keep visible.\n\nThe `scrolled_window` will grow up to this height before it starts\nscrolling the content.\n\nIt is a programming error to set the maximum content height to a value\nsmaller than [`ScrolledWindow:min-content-height`](xref:gtk:Gtk.ScrolledWindow#property:min-content-height)."
+    },
+    "set_max_content_width": {
+      "brief": "Sets the maximum width that `scrolled_window` should keep visible.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 4136,
+      "md": "Sets the maximum width that `scrolled_window` should keep visible.\n\nThe `scrolled_window` will grow up to this width before it starts\nscrolling the content.\n\nIt is a programming error to set the maximum content width to a\nvalue smaller than [`ScrolledWindow:min-content-width`](xref:gtk:Gtk.ScrolledWindow#property:min-content-width)."
+    },
+    "set_min_content_height": {
+      "brief": "Sets the minimum height that `scrolled_window` should keep visible.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 4060,
+      "md": "Sets the minimum height that `scrolled_window` should keep visible.\n\nNote that this can and (usually will) be smaller than the minimum\nsize of the content.\n\nIt is a programming error to set the minimum content height to a\nvalue greater than [`ScrolledWindow:max-content-height`](xref:gtk:Gtk.ScrolledWindow#property:max-content-height)."
+    },
+    "set_min_content_width": {
+      "brief": "Sets the minimum width that `scrolled_window` should keep visible.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 4009,
+      "md": "Sets the minimum width that `scrolled_window` should keep visible.\n\nNote that this can and (usually will) be smaller than the minimum\nsize of the content.\n\nIt is a programming error to set the minimum content width to a\nvalue greater than [`ScrolledWindow:max-content-width`](xref:gtk:Gtk.ScrolledWindow#property:max-content-width)."
+    },
+    "set_overlay_scrolling": {
+      "brief": "Enables or disables overlay scrolling for this scrolled window.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 4093,
+      "md": "Enables or disables overlay scrolling for this scrolled window."
+    },
+    "set_placement": {
+      "brief": "Sets the placement of the contents with respect to the scrollbars for the scrolled window.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 2546,
+      "md": "Sets the placement of the contents with respect to the scrollbars\nfor the scrolled window.\n\nThe default is %GTK_CORNER_TOP_LEFT, meaning the child is\nin the top left, with the scrollbars underneath and to the right.\nOther values in [`CornerType`](xref:gtk:Gtk.CornerType) are %GTK_CORNER_TOP_RIGHT,\n%GTK_CORNER_BOTTOM_LEFT, and %GTK_CORNER_BOTTOM_RIGHT.\n\nSee also [`ScrolledWindow.get_placement()`](xref:gtk:Gtk.ScrolledWindow#method:get_placement) and\n[`ScrolledWindow.unset_placement()`](xref:gtk:Gtk.ScrolledWindow#method:unset_placement)."
+    },
+    "set_policy": {
+      "brief": "Sets the scrollbar policy for the horizontal and vertical scrollbars.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 2480,
+      "md": "Sets the scrollbar policy for the horizontal and vertical scrollbars.\n\nThe policy determines when the scrollbar should appear; it is a value\nfrom the [`PolicyType`](xref:gtk:Gtk.PolicyType) enumeration. If %GTK_POLICY_ALWAYS, the\nscrollbar is always present; if %GTK_POLICY_NEVER, the scrollbar is\nnever present; if %GTK_POLICY_AUTOMATIC, the scrollbar is present only\nif needed (that is, if the slider part of the bar would be smaller\nthan the trough — the display is larger than the page size)."
+    },
+    "set_propagate_natural_height": {
+      "brief": "Sets whether the natural height of the child should be calculated and propagated through the scrolled window’s requested natural height.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 4279,
+      "md": "Sets whether the natural height of the child should be calculated\nand propagated through the scrolled window’s requested natural height."
+    },
+    "set_propagate_natural_width": {
+      "brief": "Sets whether the natural width of the child should be calculated and propagated through the scrolled window’s requested natural width.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 4234,
+      "md": "Sets whether the natural width of the child should be calculated\nand propagated through the scrolled window’s requested natural width."
+    },
+    "set_vadjustment": {
+      "brief": "Sets the `GtkAdjustment` for the vertical scrollbar.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 2333,
+      "md": "Sets the `GtkAdjustment` for the vertical scrollbar."
+    },
+    "unset_placement": {
+      "brief": "Unsets the placement of the contents with respect to the scrollbars.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 2599,
+      "md": "Unsets the placement of the contents with respect to the scrollbars.\n\nIf no window placement is set for a scrolled window,\nit defaults to %GTK_CORNER_TOP_LEFT."
+    }
+  },
+  "properties": {
+    "child": {
+      "brief": "The child widget.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 785,
+      "md": "The child widget.\n\nWhen setting this property, if the child widget does not implement\n[`Scrollable`](xref:gtk:Gtk.Scrollable), the scrolled window will add the child to\na [`Viewport`](xref:gtk:Gtk.Viewport) and then set the viewport as the child."
+    },
+    "hadjustment": {
+      "brief": "The `GtkAdjustment` for the horizontal position.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 619,
+      "md": "The `GtkAdjustment` for the horizontal position."
+    },
+    "has-frame": {
+      "brief": "Whether to draw a frame around the contents.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 678,
+      "md": "Whether to draw a frame around the contents."
+    },
+    "hscrollbar-policy": {
+      "brief": "When the horizontal scrollbar is displayed.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 639,
+      "md": "When the horizontal scrollbar is displayed.\n\nUse [`ScrolledWindow.set_policy()`](xref:gtk:Gtk.ScrolledWindow#method:set_policy) to set\nthis property."
+    },
+    "kinetic-scrolling": {
+      "brief": "Whether kinetic scrolling is enabled or not.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 708,
+      "md": "Whether kinetic scrolling is enabled or not.\n\nKinetic scrolling only applies to devices with source %GDK_SOURCE_TOUCHSCREEN."
+    },
+    "max-content-height": {
+      "brief": "The maximum content height of `scrolled_window`.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 747,
+      "md": "The maximum content height of `scrolled_window`."
+    },
+    "max-content-width": {
+      "brief": "The maximum content width of `scrolled_window`.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 737,
+      "md": "The maximum content width of `scrolled_window`."
+    },
+    "min-content-height": {
+      "brief": "The minimum content height of `scrolled_window`.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 698,
+      "md": "The minimum content height of `scrolled_window`."
+    },
+    "min-content-width": {
+      "brief": "The minimum content width of `scrolled_window`.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 688,
+      "md": "The minimum content width of `scrolled_window`."
+    },
+    "overlay-scrolling": {
+      "brief": "Whether overlay scrolling is enabled or not.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 720,
+      "md": "Whether overlay scrolling is enabled or not.\n\nIf it is, the scrollbars are only added as traditional widgets\nwhen a mouse is present. Otherwise, they are overlaid on top of\nthe content, as narrow indicators.\n\nNote that overlay scrolling can also be globally disabled, with\nthe [`Settings:gtk-overlay-scrolling`](xref:gtk:Gtk.Settings#property:gtk-overlay-scrolling) setting."
+    },
+    "propagate-natural-height": {
+      "brief": "Whether the natural height of the child should be calculated and propagated through the scrolled window’s requested natural height.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 771,
+      "md": "Whether the natural height of the child should be calculated and propagated\nthrough the scrolled window’s requested natural height.\n\nThis is useful in cases where an attempt should be made to allocate exactly\nenough space for the natural size of the child."
+    },
+    "propagate-natural-width": {
+      "brief": "Whether the natural width of the child should be calculated and propagated through the scrolled window’s requested natural width.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 757,
+      "md": "Whether the natural width of the child should be calculated and propagated\nthrough the scrolled window’s requested natural width.\n\nThis is useful in cases where an attempt should be made to allocate exactly\nenough space for the natural size of the child."
+    },
+    "vadjustment": {
+      "brief": "The `GtkAdjustment` for the vertical position.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 629,
+      "md": "The `GtkAdjustment` for the vertical position."
+    },
+    "vscrollbar-policy": {
+      "brief": "When the vertical scrollbar is displayed.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 653,
+      "md": "When the vertical scrollbar is displayed.\n\nUse [`ScrolledWindow.set_policy()`](xref:gtk:Gtk.ScrolledWindow#method:set_policy) to set\nthis property."
+    },
+    "window-placement": {
+      "brief": "Where the contents are located with respect to the scrollbars.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 667,
+      "md": "Where the contents are located with respect to the scrollbars."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "edge-overshot": {
+      "brief": "Emitted whenever user initiated scrolling makes the scrolled window firmly surpass the limits defined by the adjustment in that orientation.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 856,
+      "md": "Emitted whenever user initiated scrolling makes the scrolled\nwindow firmly surpass the limits defined by the adjustment\nin that orientation.\n\nA similar behavior without edge resistance is provided by the\n[`ScrolledWindow::edge-reached`](xref:gtk:Gtk.ScrolledWindow#event:edge-reached) signal.\n\nNote: The `pos` argument is LTR/RTL aware, so callers should be\naware too if intending to provide behavior on horizontal edges."
+    },
+    "edge-reached": {
+      "brief": "Emitted whenever user-initiated scrolling makes the scrolled window exactly reach the lower or upper limits defined by the adjustment in that orientation.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 878,
+      "md": "Emitted whenever user-initiated scrolling makes the scrolled\nwindow exactly reach the lower or upper limits defined by the\nadjustment in that orientation.\n\nA similar behavior with edge resistance is provided by the\n[`ScrolledWindow::edge-overshot`](xref:gtk:Gtk.ScrolledWindow#event:edge-overshot) signal.\n\nNote: The `pos` argument is LTR/RTL aware, so callers should be\naware too if intending to provide behavior on horizontal edges."
+    },
+    "move-focus-out": {
+      "brief": "Emitted when focus is moved away from the scrolled window by a keybinding.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 831,
+      "md": "Emitted when focus is moved away from the scrolled window by a\nkeybinding.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThe default bindings for this signal are\n<kbd>Ctrl</kbd>+<kbd>Tab</kbd> to move forward and\n<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Tab</kbd>` to move backward."
+    },
+    "scroll-child": {
+      "brief": "Emitted when a keybinding that scrolls is pressed.",
+      "file": "gtk/gtkscrolledwindow.c",
+      "line": 801,
+      "md": "Emitted when a keybinding that scrolls is pressed.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThe horizontal or vertical adjustment is updated which triggers a\nsignal that the scrolled window’s child may listen to and scroll itself."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

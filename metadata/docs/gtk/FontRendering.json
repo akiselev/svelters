@@ -1,0 +1,38 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Values for the [`Settings:gtk-font-rendering`](xref:gtk:Gtk.Settings#property:gtk-font-rendering) setting that influence how GTK renders fonts.",
+    "file": "gtk/gtkenums.h",
+    "line": 1957,
+    "md": "Values for the [`Settings:gtk-font-rendering`](xref:gtk:Gtk.Settings#property:gtk-font-rendering) setting\nthat influence how GTK renders fonts.",
+    "since": "4.16"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:FontRendering",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "automatic": {
+      "brief": "Set up font rendering automatically, taking factors like screen resolution and scale into account",
+      "file": "gtk/gtkenums.h",
+      "line": 1959,
+      "md": "Set up font rendering automatically,\n  taking factors like screen resolution and scale into account"
+    },
+    "manual": {
+      "brief": "Follow low-level font-related settings when configuring font rendering",
+      "file": "gtk/gtkenums.h",
+      "line": 1961,
+      "md": "Follow low-level font-related settings\n  when configuring font rendering"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

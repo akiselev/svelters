@@ -52,7 +52,7 @@
             "native": "const QPixmap &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPixmap>"
           }
         },
         {
@@ -74,39 +74,56 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QGraphicsPixmapItem::ShapeMode",
       "members": [
         {
+          "cpp": "QGraphicsPixmapItem::MaskShape",
           "name": "MaskShape",
           "value": "0"
         },
         {
+          "cpp": "QGraphicsPixmapItem::BoundingRectShape",
           "name": "BoundingRectShape",
           "value": "1"
         },
         {
+          "cpp": "QGraphicsPixmapItem::HeuristicMaskShape",
           "name": "HeuristicMaskShape",
           "value": "2"
         }
       ],
       "metaobject": null,
       "name": "ShapeMode",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QGraphicsPixmapItem::anonymous",
       "members": [
         {
+          "cpp": "QGraphicsPixmapItem::Type",
           "name": "Type",
           "value": "7"
         }
       ],
       "metaobject": null,
       "name": "anonymous",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsPixmapItem",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "borrowed_only",
+    "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsPixmapItem:lifetime",
+    "native_refcount": "none",
+    "origin": "derived",
+    "provenance": "derived: abstract or not a QObject; JS cannot create it"
+  },
   "methods": [
     {
       "access": "public",
@@ -127,7 +144,7 @@
         "native": "QRectF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRectF boundingRect() const override",
       "since": null,
@@ -156,7 +173,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -227,7 +244,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF offset() const",
       "since": null,
@@ -253,7 +270,7 @@
         "native": "QPainterPath",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPainterPath>"
       },
       "signature": "QPainterPath opaqueArea() const override",
       "since": null,
@@ -336,7 +353,7 @@
         "native": "QPixmap",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPixmap>"
       },
       "signature": "QPixmap pixmap() const",
       "since": null,
@@ -365,7 +382,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -449,7 +466,7 @@
             "native": "const QPixmap &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPixmap>"
           }
         }
       ],
@@ -486,7 +503,7 @@
             "native": "QGraphicsPixmapItem::ShapeMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QGraphicsPixmapItem::ShapeMode>"
           }
         }
       ],
@@ -523,7 +540,7 @@
             "native": "Qt::TransformationMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::TransformationMode>"
           }
         }
       ],
@@ -557,7 +574,7 @@
         "native": "QPainterPath",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPainterPath>"
       },
       "signature": "QPainterPath shape() const override",
       "since": null,
@@ -583,7 +600,7 @@
         "native": "QGraphicsPixmapItem::ShapeMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QGraphicsPixmapItem::ShapeMode>"
       },
       "signature": "QGraphicsPixmapItem::ShapeMode shapeMode() const",
       "since": null,
@@ -609,7 +626,7 @@
         "native": "Qt::TransformationMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::TransformationMode>"
       },
       "signature": "Qt::TransformationMode transformationMode() const",
       "since": null,

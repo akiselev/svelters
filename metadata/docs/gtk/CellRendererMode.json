@@ -1,0 +1,45 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Identifies how the user can interact with a particular cell.",
+    "deprecated": "4.20",
+    "deprecated_md": "There is no replacement.",
+    "file": "gtk/deprecated/gtkcellrenderer.h",
+    "line": 56,
+    "md": "Identifies how the user can interact with a particular cell."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:CellRendererMode",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "activatable": {
+      "brief": "The cell can be clicked.",
+      "file": "gtk/deprecated/gtkcellrenderer.h",
+      "line": 62,
+      "md": "The cell can be clicked."
+    },
+    "editable": {
+      "brief": "The cell can be edited or otherwise modified.",
+      "file": "gtk/deprecated/gtkcellrenderer.h",
+      "line": 63,
+      "md": "The cell can be edited or otherwise modified."
+    },
+    "inert": {
+      "brief": "The cell is just for display and cannot be interacted with.",
+      "file": "gtk/deprecated/gtkcellrenderer.h",
+      "line": 58,
+      "md": "The cell is just for display\n and cannot be interacted with.  Note that this doesn’t mean that eg. the\n row being drawn can’t be selected -- just that a particular element of\n it cannot be individually modified."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -1,0 +1,43 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "The possible values for the %GTK_ACCESSIBLE_STATE_PRESSED accessible state.",
+    "file": "gtk/gtkenums.h",
+    "line": 1830,
+    "md": "The possible values for the %GTK_ACCESSIBLE_STATE_PRESSED\naccessible state.\n\nNote that the %GTK_ACCESSIBLE_TRISTATE_FALSE and\n%GTK_ACCESSIBLE_TRISTATE_TRUE have the same values\nas `FALSE` and `TRUE`."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:AccessibleTristate",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "false": {
+      "brief": "The state is `false`",
+      "file": "gtk/gtkenums.h",
+      "line": 1832,
+      "md": "The state is `false`"
+    },
+    "mixed": {
+      "brief": "The state is `mixed`",
+      "file": "gtk/gtkenums.h",
+      "line": 1834,
+      "md": "The state is `mixed`"
+    },
+    "true": {
+      "brief": "The state is `true`",
+      "file": "gtk/gtkenums.h",
+      "line": 1833,
+      "md": "The state is `true`"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

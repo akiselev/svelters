@@ -21,7 +21,7 @@ call #5 present []
 gone #5 closed
 gone #6 parent
 event #4 clicked []
-set #3 label "child closed"
+set #3 label "child closed (parent)"
 event #4 clicked []
 create window #7
 set #7 title "Child"

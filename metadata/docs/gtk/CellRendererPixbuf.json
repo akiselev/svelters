@@ -1,0 +1,53 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkCellRendererPixbuf`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellrendererpixbuf.c",
+      "line": 405,
+      "md": "Creates a new `GtkCellRendererPixbuf`. Adjust rendering\nparameters using object properties. Object properties can be set\nglobally (with g_object_set()). Also, with `GtkTreeViewColumn`, you\ncan bind a property to a value in a `GtkTreeModel`. For example, you\ncan bind the “pixbuf” property on the cell renderer to a pixbuf value\nin the model, thus rendering a different image in each row of the\n`GtkTreeView`."
+    }
+  },
+  "doc": {
+    "brief": "Renders a pixbuf in a cell",
+    "deprecated": "4.10",
+    "deprecated_md": "List views use widgets to display their contents. You\n  should use [`Image`](xref:gtk:Gtk.Image) for icons, and [`Picture`](xref:gtk:Gtk.Picture) for images",
+    "file": "gtk/deprecated/gtkcellrendererpixbuf.c",
+    "line": 33,
+    "md": "Renders a pixbuf in a cell\n\nA `GtkCellRendererPixbuf` can be used to render an image in a cell. It allows\nto render either a given `GdkPixbuf` (set via the\n`GtkCellRendererPixbuf:pixbuf` property) or a named icon (set via the\n`GtkCellRendererPixbuf:icon-name` property).\n\nTo support the tree view, `GtkCellRendererPixbuf` also supports rendering two\nalternative pixbufs, when the `GtkCellRenderer:is-expander` property is `TRUE`.\nIf the `GtkCellRenderer:is-expanded property` is `TRUE` and the\n`GtkCellRendererPixbuf:pixbuf-expander-open` property is set to a pixbuf, it\nrenders that pixbuf, if the `GtkCellRenderer:is-expanded` property is `FALSE`\nand the `GtkCellRendererPixbuf:pixbuf-expander-closed` property is set to a\npixbuf, it renders that one."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:CellRendererPixbuf",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {},
+  "properties": {
+    "gicon": {
+      "brief": "The GIcon representing the icon to display.",
+      "file": "gtk/deprecated/gtkcellrendererpixbuf.c",
+      "line": 249,
+      "md": "The GIcon representing the icon to display.\nIf the icon theme is changed, the image will be updated\nautomatically."
+    },
+    "icon-name": {
+      "brief": "The name of the themed icon to display.",
+      "file": "gtk/deprecated/gtkcellrendererpixbuf.c",
+      "line": 237,
+      "md": "The name of the themed icon to display.\nThis property only has an effect if not overridden by the \"pixbuf\" property."
+    },
+    "icon-size": {
+      "brief": "The `GtkIconSize` value that specifies the size of the rendered icon.",
+      "file": "gtk/deprecated/gtkcellrendererpixbuf.c",
+      "line": 225,
+      "md": "The `GtkIconSize` value that specifies the size of the rendered icon."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

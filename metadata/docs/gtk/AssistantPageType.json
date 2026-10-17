@@ -1,0 +1,63 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Determines the role of a page inside a `GtkAssistant`.",
+    "deprecated": "4.10",
+    "deprecated_md": "`GtkAssistant` will be removed in GTK 5",
+    "file": "gtk/deprecated/gtkassistant.h",
+    "line": 38,
+    "md": "Determines the role of a page inside a `GtkAssistant`.\n\nThe role is used to handle buttons sensitivity and visibility.\n\nNote that an assistant needs to end its page flow with a page of type\n%GTK_ASSISTANT_PAGE_CONFIRM, %GTK_ASSISTANT_PAGE_SUMMARY or\n%GTK_ASSISTANT_PAGE_PROGRESS to be correct.\n\nThe Cancel button will only be shown if the page isn’t “committed”.\nSee gtk_assistant_commit() for details."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:AssistantPageType",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "confirm": {
+      "brief": "The page lets the user confirm or deny the changes.",
+      "file": "gtk/deprecated/gtkassistant.h",
+      "line": 45,
+      "md": "The page lets the user confirm or deny the\n changes. The Back and Apply buttons will be shown."
+    },
+    "content": {
+      "brief": "The page has regular contents.",
+      "file": "gtk/deprecated/gtkassistant.h",
+      "line": 40,
+      "md": "The page has regular contents. Both the\n Back and forward buttons will be shown."
+    },
+    "custom": {
+      "brief": "Used for when other page types are not appropriate.",
+      "file": "gtk/deprecated/gtkassistant.h",
+      "line": 52,
+      "md": "Used for when other page types are not\n appropriate. No buttons will be shown, and the application must\n add its own buttons through gtk_assistant_add_action_widget()."
+    },
+    "intro": {
+      "brief": "The page contains an introduction to the assistant task.",
+      "file": "gtk/deprecated/gtkassistant.h",
+      "line": 42,
+      "md": "The page contains an introduction to the\n assistant task. Only the Forward button will be shown if there is a\n  next page."
+    },
+    "progress": {
+      "brief": "Used for tasks that take a long time to complete, blocks the assistant until the page is marked as complete.",
+      "file": "gtk/deprecated/gtkassistant.h",
+      "line": 49,
+      "md": "Used for tasks that take a long time to\n complete, blocks the assistant until the page is marked as complete.\n  Only the back button will be shown."
+    },
+    "summary": {
+      "brief": "The page informs the user of the changes done.",
+      "file": "gtk/deprecated/gtkassistant.h",
+      "line": 47,
+      "md": "The page informs the user of the changes\n done. Only the Close button will be shown."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

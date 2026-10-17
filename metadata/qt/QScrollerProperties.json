@@ -27,142 +27,186 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QScrollerProperties::FrameRates",
       "members": [
         {
+          "cpp": "QScrollerProperties::Standard",
           "name": "Standard",
           "value": "0"
         },
         {
+          "cpp": "QScrollerProperties::Fps60",
           "name": "Fps60",
           "value": "1"
         },
         {
+          "cpp": "QScrollerProperties::Fps30",
           "name": "Fps30",
           "value": "2"
         },
         {
+          "cpp": "QScrollerProperties::Fps20",
           "name": "Fps20",
           "value": "3"
         }
       ],
       "metaobject": null,
       "name": "FrameRates",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QScrollerProperties::OvershootPolicy",
       "members": [
         {
+          "cpp": "QScrollerProperties::OvershootWhenScrollable",
           "name": "OvershootWhenScrollable",
           "value": "0"
         },
         {
+          "cpp": "QScrollerProperties::OvershootAlwaysOff",
           "name": "OvershootAlwaysOff",
           "value": "1"
         },
         {
+          "cpp": "QScrollerProperties::OvershootAlwaysOn",
           "name": "OvershootAlwaysOn",
           "value": "2"
         }
       ],
       "metaobject": null,
       "name": "OvershootPolicy",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QScrollerProperties::ScrollMetric",
       "members": [
         {
+          "cpp": "QScrollerProperties::MousePressEventDelay",
           "name": "MousePressEventDelay",
           "value": "0"
         },
         {
+          "cpp": "QScrollerProperties::DragStartDistance",
           "name": "DragStartDistance",
           "value": "1"
         },
         {
+          "cpp": "QScrollerProperties::DragVelocitySmoothingFactor",
           "name": "DragVelocitySmoothingFactor",
           "value": "2"
         },
         {
+          "cpp": "QScrollerProperties::AxisLockThreshold",
           "name": "AxisLockThreshold",
           "value": "3"
         },
         {
+          "cpp": "QScrollerProperties::ScrollingCurve",
           "name": "ScrollingCurve",
           "value": "4"
         },
         {
+          "cpp": "QScrollerProperties::DecelerationFactor",
           "name": "DecelerationFactor",
           "value": "5"
         },
         {
+          "cpp": "QScrollerProperties::MinimumVelocity",
           "name": "MinimumVelocity",
           "value": "6"
         },
         {
+          "cpp": "QScrollerProperties::MaximumVelocity",
           "name": "MaximumVelocity",
           "value": "7"
         },
         {
+          "cpp": "QScrollerProperties::MaximumClickThroughVelocity",
           "name": "MaximumClickThroughVelocity",
           "value": "8"
         },
         {
+          "cpp": "QScrollerProperties::AcceleratingFlickMaximumTime",
           "name": "AcceleratingFlickMaximumTime",
           "value": "9"
         },
         {
+          "cpp": "QScrollerProperties::AcceleratingFlickSpeedupFactor",
           "name": "AcceleratingFlickSpeedupFactor",
           "value": "10"
         },
         {
+          "cpp": "QScrollerProperties::SnapPositionRatio",
           "name": "SnapPositionRatio",
           "value": "11"
         },
         {
+          "cpp": "QScrollerProperties::SnapTime",
           "name": "SnapTime",
           "value": "12"
         },
         {
+          "cpp": "QScrollerProperties::OvershootDragResistanceFactor",
           "name": "OvershootDragResistanceFactor",
           "value": "13"
         },
         {
+          "cpp": "QScrollerProperties::OvershootDragDistanceFactor",
           "name": "OvershootDragDistanceFactor",
           "value": "14"
         },
         {
+          "cpp": "QScrollerProperties::OvershootScrollDistanceFactor",
           "name": "OvershootScrollDistanceFactor",
           "value": "15"
         },
         {
+          "cpp": "QScrollerProperties::OvershootScrollTime",
           "name": "OvershootScrollTime",
           "value": "16"
         },
         {
+          "cpp": "QScrollerProperties::HorizontalOvershootPolicy",
           "name": "HorizontalOvershootPolicy",
           "value": "17"
         },
         {
+          "cpp": "QScrollerProperties::VerticalOvershootPolicy",
           "name": "VerticalOvershootPolicy",
           "value": "18"
         },
         {
+          "cpp": "QScrollerProperties::FrameRate",
           "name": "FrameRate",
           "value": "19"
         },
         {
+          "cpp": "QScrollerProperties::ScrollMetricCount",
           "name": "ScrollMetricCount",
           "value": "20"
         }
       ],
       "metaobject": null,
       "name": "ScrollMetric",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QScrollerProperties",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "borrowed_only",
+    "id": "svelters-api:v1:type:qt:QtWidgets:QScrollerProperties:lifetime",
+    "native_refcount": "none",
+    "origin": "derived",
+    "provenance": "derived: abstract or not a QObject; JS cannot create it"
+  },
   "methods": [
     {
       "access": "public",
@@ -260,7 +304,7 @@
             "native": "QScrollerProperties::ScrollMetric",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QScrollerProperties::ScrollMetric>"
           }
         }
       ],
@@ -334,7 +378,7 @@
             "native": "QScrollerProperties::ScrollMetric",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QScrollerProperties::ScrollMetric>"
           }
         },
         {

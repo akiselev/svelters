@@ -1,0 +1,449 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkPrintOperation`.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1389,
+      "md": "Creates a new `GtkPrintOperation`."
+    }
+  },
+  "doc": {
+    "brief": "High-level, portable printing API.",
+    "file": "gtk/print/gtkprintoperation.c",
+    "line": 38,
+    "md": "High-level, portable printing API.\n\nIt looks a bit different than other GTK dialogs such as the\n`GtkFileChooser`, since some platforms don’t expose enough\ninfrastructure to implement a good print dialog. On such\nplatforms, `GtkPrintOperation` uses the native print dialog.\nOn platforms which do not provide a native print dialog, GTK\nuses its own, see [`PrintUnixDialog`](xref:gtk:Gtk.PrintUnixDialog).\n\nThe typical way to use the high-level printing API is to create\na `GtkPrintOperation` object with [`PrintOperation.new()`](xref:gtk:Gtk.PrintOperation#constructor:new)\nwhen the user selects to print. Then you set some properties on it,\ne.g. the page size, any [`PrintSettings`](xref:gtk:Gtk.PrintSettings) from previous print\noperations, the number of pages, the current page, etc.\n\nThen you start the print operation by calling [`PrintOperation.run()`](xref:gtk:Gtk.PrintOperation#method:run).\nIt will then show a dialog, let the user select a printer and options.\nWhen the user finished the dialog, various signals will be emitted on\nthe `GtkPrintOperation`, the main one being\n[`PrintOperation::draw-page`](xref:gtk:Gtk.PrintOperation#event:draw-page), which you are supposed to handle\nand render the page on the provided [`PrintContext`](xref:gtk:Gtk.PrintContext) using Cairo.\n\n# The high-level printing API\n\n```c\nstatic GtkPrintSettings *settings = NULL;\n\nstatic void\ndo_print (void)\n{\n  GtkPrintOperation *print;\n  GtkPrintOperationResult res;\n\n  print = gtk_print_operation_new ();\n\n  if (settings != NULL)\n    gtk_print_operation_set_print_settings (print, settings);\n\n  g_signal_connect (print, \"begin_print\", G_CALLBACK (begin_print), NULL);\n  g_signal_connect (print, \"draw_page\", G_CALLBACK (draw_page), NULL);\n\n  res = gtk_print_operation_run (print, GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG,\n                                 GTK_WINDOW (main_window), NULL);\n\n  if (res == GTK_PRINT_OPERATION_RESULT_APPLY)\n    {\n      if (settings != NULL)\n        g_object_unref (settings);\n      settings = g_object_ref (gtk_print_operation_get_print_settings (print));\n    }\n\n  g_object_unref (print);\n}\n```\n\nBy default `GtkPrintOperation` uses an external application to do\nprint preview. To implement a custom print preview, an application\nmust connect to the preview signal. The functions\n[`PrintOperationPreview.render_page()`](xref:gtk:Gtk.PrintOperationPreview#method:render_page),\n[`PrintOperationPreview.end_preview()`](xref:gtk:Gtk.PrintOperationPreview#method:end_preview) and\n[`PrintOperationPreview.is_selected()`](xref:gtk:Gtk.PrintOperationPreview#method:is_selected)\nare useful when implementing a print preview."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:PrintOperation",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "cancel": {
+      "brief": "Cancels a running print operation.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 3160,
+      "md": "Cancels a running print operation.\n\nThis function may be called from a [`PrintOperation::begin-print`](xref:gtk:Gtk.PrintOperation#event:begin-print),\n[`PrintOperation::paginate`](xref:gtk:Gtk.PrintOperation#event:paginate) or [`PrintOperation::draw-page`](xref:gtk:Gtk.PrintOperation#event:draw-page)\nsignal handler to stop the currently running print operation."
+    },
+    "draw_page_finish": {
+      "brief": "Signal that drawing of particular page is complete.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 2335,
+      "md": "Signal that drawing of particular page is complete.\n\nIt is called after completion of page drawing (e.g. drawing\nin another thread). If [`PrintOperation.set_defer_drawing()`](xref:gtk:Gtk.PrintOperation#method:set_defer_drawing)\nwas called before, then this function has to be called by application.\nOtherwise it is called by GTK itself."
+    },
+    "get_default_page_setup": {
+      "brief": "Returns the default page setup.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1441,
+      "md": "Returns the default page setup."
+    },
+    "get_embed_page_setup": {
+      "brief": "Gets whether page setup selection combos are embedded",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 2317,
+      "md": "Gets whether page setup selection combos are embedded"
+    },
+    "get_error": {
+      "brief": "Call this when the result of a print operation is %GTK_PRINT_OPERATION_RESULT_ERROR.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 2973,
+      "md": "Call this when the result of a print operation is\n%GTK_PRINT_OPERATION_RESULT_ERROR.\n\nIt can be called either after [`PrintOperation.run()`](xref:gtk:Gtk.PrintOperation#method:run)\nreturns, or in the [`PrintOperation::done`](xref:gtk:Gtk.PrintOperation#event:done) signal\nhandler.\n\nThe returned `GError` will contain more details on what went wrong."
+    },
+    "get_has_selection": {
+      "brief": "Gets whether there is a selection.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 3246,
+      "md": "Gets whether there is a selection."
+    },
+    "get_n_pages_to_print": {
+      "brief": "Returns the number of pages that will be printed.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 3264,
+      "md": "Returns the number of pages that will be printed.\n\nNote that this value is set during print preparation phase\n(%GTK_PRINT_STATUS_PREPARING), so this function should never be\ncalled before the data generation phase (%GTK_PRINT_STATUS_GENERATING_DATA).\nYou can connect to the [`PrintOperation::status-changed`](xref:gtk:Gtk.PrintOperation#event:status-changed)\nsignal and call gtk_print_operation_get_n_pages_to_print() when\nprint status is %GTK_PRINT_STATUS_GENERATING_DATA.\n\nThis is typically used to track the progress of print operation."
+    },
+    "get_print_settings": {
+      "brief": "Returns the current print settings.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1492,
+      "md": "Returns the current print settings.\n\nNote that the return value is `NULL` until either\n[`PrintOperation.set_print_settings()`](xref:gtk:Gtk.PrintOperation#method:set_print_settings) or\n[`PrintOperation.run()`](xref:gtk:Gtk.PrintOperation#method:run) have been called."
+    },
+    "get_status": {
+      "brief": "Returns the status of the print operation.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1735,
+      "md": "Returns the status of the print operation.\n\nAlso see [`PrintOperation.get_status_string()`](xref:gtk:Gtk.PrintOperation#method:get_status_string)."
+    },
+    "get_status_string": {
+      "brief": "Returns a string representation of the status of the print operation.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1754,
+      "md": "Returns a string representation of the status of the\nprint operation.\n\nThe string is translated and suitable for displaying\nthe print status e.g. in a `GtkStatusbar`.\n\nUse [`PrintOperation.get_status()`](xref:gtk:Gtk.PrintOperation#method:get_status) to obtain\na status value that is suitable for programmatic use."
+    },
+    "get_support_selection": {
+      "brief": "Gets whether the application supports print of selection",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 3201,
+      "md": "Gets whether the application supports print of selection"
+    },
+    "is_finished": {
+      "brief": "A convenience function to find out if the print operation is finished.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1778,
+      "md": "A convenience function to find out if the print operation\nis finished.\n\na print operation is finished if its status is either\n%GTK_PRINT_STATUS_FINISHED or %GTK_PRINT_STATUS_FINISHED_ABORTED.\n\nNote: when you enable print status tracking the print operation\ncan be in a non-finished state even after done has been called, as\nthe operation status then tracks the print job status on the printer."
+    },
+    "run": {
+      "brief": "Runs the print operation.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 2999,
+      "md": "Runs the print operation.\n\nNormally that this function does not return until the rendering\nof all pages is complete. You can connect to the\n[`PrintOperation::status-changed`](xref:gtk:Gtk.PrintOperation#event:status-changed) signal on `op` to obtain\nsome information about the progress of the print operation.\n\nFurthermore, it may use a recursive mainloop to show the print dialog.\n\nIf you set the [Gtk.PrintOperation:allow-async] property, the operation\nwill run asynchronously if this is supported on the platform. The\n[`PrintOperation::done`](xref:gtk:Gtk.PrintOperation#event:done) signal will be emitted with the result\nof the operation when the it is done (i.e. when the dialog is canceled,\nor when the print succeeds or fails).\n\n```c\nif (settings != NULL)\n  gtk_print_operation_set_print_settings (print, settings);\n\nif (page_setup != NULL)\n  gtk_print_operation_set_default_page_setup (print, page_setup);\n\ng_signal_connect (print, \"begin-print\",\n                  G_CALLBACK (begin_print), &data);\ng_signal_connect (print, \"draw-page\",\n                  G_CALLBACK (draw_page), &data);\n\nres = gtk_print_operation_run (print,\n                               GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG,\n                               parent,\n                               &error);\n\nif (res == GTK_PRINT_OPERATION_RESULT_ERROR)\n {\n   error_dialog = gtk_message_dialog_new (GTK_WINDOW (parent),\n  \t\t\t                     GTK_DIALOG_DESTROY_WITH_PARENT,\n\t\t\t\t\t     GTK_MESSAGE_ERROR,\n\t\t\t\t\t     GTK_BUTTONS_CLOSE,\n\t\t\t\t\t     \"Error printing file:\\n%s\",\n\t\t\t\t\t     error->message);\n   g_signal_connect (error_dialog, \"response\",\n                     G_CALLBACK (gtk_window_destroy), NULL);\n   gtk_window_present (GTK_WINDOW (error_dialog));\n   g_error_free (error);\n }\nelse if (res == GTK_PRINT_OPERATION_RESULT_APPLY)\n {\n   if (settings != NULL)\ng_object_unref (settings);\n   settings = g_object_ref (gtk_print_operation_get_print_settings (print));\n }\n```\n\nNote that gtk_print_operation_run() can only be called once on a\ngiven `GtkPrintOperation`."
+    },
+    "set_allow_async": {
+      "brief": "Sets whether gtk_print_operation_run() may return before the print operation is completed.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1832,
+      "md": "Sets whether gtk_print_operation_run() may return\nbefore the print operation is completed.\n\nNote that some platforms may not allow asynchronous\noperation."
+    },
+    "set_current_page": {
+      "brief": "Sets the current page.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1579,
+      "md": "Sets the current page.\n\nIf this is called before [`PrintOperation.run()`](xref:gtk:Gtk.PrintOperation#method:run),\nthe user will be able to select to print only the current page.\n\nNote that this only makes sense for pre-paginated documents."
+    },
+    "set_custom_tab_label": {
+      "brief": "Sets the label for the tab holding custom widgets.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1862,
+      "md": "Sets the label for the tab holding custom widgets."
+    },
+    "set_default_page_setup": {
+      "brief": "Makes `default_page_setup` the default page setup for `op`.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1406,
+      "md": "Makes `default_page_setup` the default page setup for `op`.\n\nThis page setup will be used by [`PrintOperation.run()`](xref:gtk:Gtk.PrintOperation#method:run),\nbut it can be overridden on a per-page basis by connecting\nto the [`PrintOperation::request-page-setup`](xref:gtk:Gtk.PrintOperation#event:request-page-setup) signal."
+    },
+    "set_defer_drawing": {
+      "brief": "Sets up the `GtkPrintOperation` to wait for calling of [method@Gtk.PrintOperation.draw_page_finish from application.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 2270,
+      "md": "Sets up the `GtkPrintOperation` to wait for calling of\n[method@Gtk.PrintOperation.draw_page_finish from application.\n\nThis can be used for drawing page in another thread.\n\nThis function must be called in the callback of the\n[`PrintOperation::draw-page`](xref:gtk:Gtk.PrintOperation#event:draw-page) signal."
+    },
+    "set_embed_page_setup": {
+      "brief": "Embed page size combo box and orientation combo box into page setup page.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 2292,
+      "md": "Embed page size combo box and orientation combo box into page setup page.\n\nSelected page setup is stored as default page setup in `GtkPrintOperation`."
+    },
+    "set_export_filename": {
+      "brief": "Sets up the `GtkPrintOperation` to generate a file instead of showing the print dialog.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1884,
+      "md": "Sets up the `GtkPrintOperation` to generate a file instead\nof showing the print dialog.\n\nThe intended use of this function is for implementing\n“Export to PDF” actions. Currently, PDF is the only supported\nformat.\n\n“Print to PDF” support is independent of this and is done\nby letting the user pick the “Print to PDF” item from the list\nof printers in the print dialog."
+    },
+    "set_has_selection": {
+      "brief": "Sets whether there is a selection to print.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 3219,
+      "md": "Sets whether there is a selection to print.\n\nApplication has to set number of pages to which the selection\nwill draw by [`PrintOperation.set_n_pages()`](xref:gtk:Gtk.PrintOperation#method:set_n_pages) in a handler\nfor the [`PrintOperation::begin-print`](xref:gtk:Gtk.PrintOperation#event:begin-print) signal."
+    },
+    "set_job_name": {
+      "brief": "Sets the name of the print job.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1512,
+      "md": "Sets the name of the print job.\n\nThe name is used to identify the job (e.g. in monitoring\napplications like eggcups).\n\nIf you don’t set a job name, GTK picks a default one by\nnumbering successive print jobs."
+    },
+    "set_n_pages": {
+      "brief": "Sets the number of pages in the document.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1543,
+      "md": "Sets the number of pages in the document.\n\nThis must be set to a positive number before the rendering\nstarts. It may be set in a [`PrintOperation::begin-print`](xref:gtk:Gtk.PrintOperation#event:begin-print)\nsignal handler.\n\nNote that the page numbers passed to the\n[`PrintOperation::request-page-setup`](xref:gtk:Gtk.PrintOperation#event:request-page-setup)\nand [`PrintOperation::draw-page`](xref:gtk:Gtk.PrintOperation#event:draw-page) signals are 0-based, i.e.\nif the user chooses to print all pages, the last ::draw-page signal\nwill be for page `n_pages` - 1."
+    },
+    "set_print_settings": {
+      "brief": "Sets the print settings for `op`.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1458,
+      "md": "Sets the print settings for `op`.\n\nThis is typically used to re-establish print settings\nfrom a previous print operation, see [`PrintOperation.run()`](xref:gtk:Gtk.PrintOperation#method:run)."
+    },
+    "set_show_progress": {
+      "brief": "If `show_progress` is `TRUE`, the print operation will show a progress dialog during the print operation.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1806,
+      "md": "If `show_progress` is `TRUE`, the print operation will show\na progress dialog during the print operation."
+    },
+    "set_support_selection": {
+      "brief": "Sets whether selection is supported by `GtkPrintOperation`.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 3178,
+      "md": "Sets whether selection is supported by `GtkPrintOperation`."
+    },
+    "set_track_print_status": {
+      "brief": "If track_status is `TRUE`, the print operation will try to continue report on the status of the print job in the printer queues and printer.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1666,
+      "md": "If track_status is `TRUE`, the print operation will try to continue\nreport on the status of the print job in the printer queues and printer.\n\nThis can allow your application to show things like “out of paper”\nissues, and when the print job actually reaches the printer.\n\nThis function is often implemented using some form of polling,\nso it should not be enabled unless needed."
+    },
+    "set_unit": {
+      "brief": "Sets up the transformation for the cairo context obtained from `GtkPrintContext` in such a way that distances are measured in units of `unit`.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1641,
+      "md": "Sets up the transformation for the cairo context obtained from\n`GtkPrintContext` in such a way that distances are measured in\nunits of `unit`."
+    },
+    "set_use_full_page": {
+      "brief": "If `full_page` is `TRUE`, the transformation for the cairo context obtained from `GtkPrintContext` puts the origin at the top left corner of the page.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1610,
+      "md": "If `full_page` is `TRUE`, the transformation for the cairo context\nobtained from `GtkPrintContext` puts the origin at the top left\ncorner of the page.\n\nThis may not be the top left corner of the sheet, depending on page\norientation and the number of pages per sheet). Otherwise, the origin\nis at the top left corner of the imageable area (i.e. inside the margins)."
+    }
+  },
+  "properties": {
+    "allow-async": {
+      "brief": "Determines whether the print operation may run asynchronously or not.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1241,
+      "md": "Determines whether the print operation may run asynchronously or not.\n\nSome systems don't support asynchronous printing, but those that do\nwill return %GTK_PRINT_OPERATION_RESULT_IN_PROGRESS as the status, and\nemit the [`PrintOperation::done`](xref:gtk:Gtk.PrintOperation#event:done) signal when the operation\nis actually done.\n\nThe Windows port does not support asynchronous operation at all (this\nis unlikely to change). On other platforms, all actions except for\n%GTK_PRINT_OPERATION_ACTION_EXPORT support asynchronous operation."
+    },
+    "current-page": {
+      "brief": "The current page in the document.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1162,
+      "md": "The current page in the document.\n\nIf this is set before [`PrintOperation.run()`](xref:gtk:Gtk.PrintOperation#method:run),\nthe user will be able to select to print only the current page.\n\nNote that this only makes sense for pre-paginated documents."
+    },
+    "custom-tab-label": {
+      "brief": "Used as the label of the tab containing custom widgets.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1311,
+      "md": "Used as the label of the tab containing custom widgets.\n\nNote that this property may be ignored on some platforms.\n\nIf this is `NULL`, GTK uses a default label."
+    },
+    "default-page-setup": {
+      "brief": "The `GtkPageSetup` used by default.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1094,
+      "md": "The `GtkPageSetup` used by default.\n\nThis page setup will be used by [`PrintOperation.run()`](xref:gtk:Gtk.PrintOperation#method:run),\nbut it can be overridden on a per-page basis by connecting\nto the [`PrintOperation::request-page-setup`](xref:gtk:Gtk.PrintOperation#event:request-page-setup) signal."
+    },
+    "embed-page-setup": {
+      "brief": "If `TRUE`, page size combo box and orientation combo box are embedded into page setup page.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1354,
+      "md": "If `TRUE`, page size combo box and orientation combo box\nare embedded into page setup page."
+    },
+    "export-filename": {
+      "brief": "The name of a file to generate instead of showing the print dialog.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1261,
+      "md": "The name of a file to generate instead of showing the print dialog.\n\nCurrently, PDF is the only supported format.\n\nThe intended use of this property is for implementing\n“Export to PDF” actions.\n\n“Print to PDF” support is independent of this and is done\nby letting the user pick the “Print to PDF” item from the\nlist of printers in the print dialog."
+    },
+    "has-selection": {
+      "brief": "Determines whether there is a selection in your application.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1339,
+      "md": "Determines whether there is a selection in your application.\n\nThis can allow your application to print the selection.\nThis is typically used to make a \"Selection\" button sensitive."
+    },
+    "job-name": {
+      "brief": "A string used to identify the job (e.g. in monitoring applications like eggcups).",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1124,
+      "md": "A string used to identify the job (e.g. in monitoring\napplications like eggcups).\n\nIf you don't set a job name, GTK picks a default one\nby numbering successive print jobs."
+    },
+    "n-pages": {
+      "brief": "The number of pages in the document.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1139,
+      "md": "The number of pages in the document.\n\nThis must be set to a positive number before the rendering\nstarts. It may be set in a [`PrintOperation::begin-print`](xref:gtk:Gtk.PrintOperation#event:begin-print)\nsignal handler.\n\nNote that the page numbers passed to the\n[`PrintOperation::request-page-setup`](xref:gtk:Gtk.PrintOperation#event:request-page-setup) and\n[`PrintOperation::draw-page`](xref:gtk:Gtk.PrintOperation#event:draw-page) signals are 0-based, i.e.\nif the user chooses to print all pages, the last ::draw-page signal\nwill be for page `n_pages` - 1."
+    },
+    "n-pages-to-print": {
+      "brief": "The number of pages that will be printed.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1366,
+      "md": "The number of pages that will be printed.\n\nNote that this value is set during print preparation phase\n(%GTK_PRINT_STATUS_PREPARING), so this value should never be\nget before the data generation phase (%GTK_PRINT_STATUS_GENERATING_DATA).\nYou can connect to the [`PrintOperation::status-changed`](xref:gtk:Gtk.PrintOperation#event:status-changed) signal\nand call [`PrintOperation.get_n_pages_to_print()`](xref:gtk:Gtk.PrintOperation#method:get_n_pages_to_print) when\nprint status is %GTK_PRINT_STATUS_GENERATING_DATA.\n\nThis is typically used to track the progress of print operation."
+    },
+    "print-settings": {
+      "brief": "The `GtkPrintSettings` used for initializing the dialog.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1109,
+      "md": "The `GtkPrintSettings` used for initializing the dialog.\n\nSetting this property is typically used to re-establish\nprint settings from a previous print operation, see\n[`PrintOperation.run()`](xref:gtk:Gtk.PrintOperation#method:run)."
+    },
+    "show-progress": {
+      "brief": "Determines whether to show a progress dialog during the print operation.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1229,
+      "md": "Determines whether to show a progress dialog during the\nprint operation."
+    },
+    "status": {
+      "brief": "The status of the print operation.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1281,
+      "md": "The status of the print operation."
+    },
+    "status-string": {
+      "brief": "A string representation of the status of the print operation.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1293,
+      "md": "A string representation of the status of the print operation.\n\nThe string is translated and suitable for displaying the print\nstatus e.g. in a `GtkStatusbar`.\n\nSee the [`PrintOperation:status`](xref:gtk:Gtk.PrintOperation#property:status) property for a status\nvalue that is suitable for programmatic use."
+    },
+    "support-selection": {
+      "brief": "If `TRUE`, the print operation will support print of selection.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1326,
+      "md": "If `TRUE`, the print operation will support print of selection.\n\nThis allows the print dialog to show a \"Selection\" button."
+    },
+    "track-print-status": {
+      "brief": "If `TRUE`, the print operation will try to continue report on the status of the print job in the printer queues and printer.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1198,
+      "md": "If `TRUE`, the print operation will try to continue report on\nthe status of the print job in the printer queues and printer.\n\nThis can allow your application to show things like “out of paper”\nissues, and when the print job actually reaches the printer.\nHowever, this is often implemented using polling, and should\nnot be enabled unless needed."
+    },
+    "unit": {
+      "brief": "The transformation for the cairo context obtained from `GtkPrintContext` is set up in such a way that distances are measured in units of `unit`.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1215,
+      "md": "The transformation for the cairo context obtained from\n`GtkPrintContext` is set up in such a way that distances\nare measured in units of `unit`."
+    },
+    "use-full-page": {
+      "brief": "If `TRUE`, the transformation for the cairo context obtained from `GtkPrintContext` puts the origin at the top left corner of the page.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1180,
+      "md": "If `TRUE`, the transformation for the cairo context obtained\nfrom `GtkPrintContext` puts the origin at the top left corner\nof the page.\n\nThis may not be the top left corner of the sheet, depending on\npage orientation and the number of pages per sheet. Otherwise,\nthe origin is at the top left corner of the imageable area (i.e.\ninside the margins)."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "begin-print": {
+      "brief": "Emitted after the user has finished changing print settings in the dialog, before the actual rendering starts.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 781,
+      "md": "Emitted after the user has finished changing print settings\nin the dialog, before the actual rendering starts.\n\nA typical use for ::begin-print is to use the parameters from the\n[`PrintContext`](xref:gtk:Gtk.PrintContext) and paginate the document accordingly,\nand then set the number of pages with\n[`PrintOperation.set_n_pages()`](xref:gtk:Gtk.PrintOperation#method:set_n_pages)."
+    },
+    "create-custom-widget": {
+      "brief": "Emitted when displaying the print dialog.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 976,
+      "md": "Emitted when displaying the print dialog.\n\nIf you return a widget in a handler for this signal it will be\nadded to a custom tab in the print dialog. You typically return a\ncontainer widget with multiple widgets in it.\n\nThe print dialog owns the returned widget, and its lifetime is not\ncontrolled by the application. However, the widget is guaranteed\nto stay around until the [`PrintOperation::custom-widget-apply`](xref:gtk:Gtk.PrintOperation#event:custom-widget-apply)\nsignal is emitted on the operation. Then you can read out any\ninformation you need from the widgets."
+    },
+    "custom-widget-apply": {
+      "brief": "Emitted right before ::begin-print if you added a custom widget in the ::create-custom-widget handler.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1031,
+      "md": "Emitted right before ::begin-print if you added\na custom widget in the ::create-custom-widget handler.\n\nWhen you get this signal you should read the information from the\ncustom widgets, as the widgets are not guaranteed to be around at a\nlater time."
+    },
+    "done": {
+      "brief": "Emitted when the print operation run has finished doing everything required for printing.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 756,
+      "md": "Emitted when the print operation run has finished doing\neverything required for printing.\n\n`result` gives you information about what happened during the run.\nIf `result` is %GTK_PRINT_OPERATION_RESULT_ERROR then you can call\n[`PrintOperation.get_error()`](xref:gtk:Gtk.PrintOperation#method:get_error) for more information.\n\nIf you enabled print status tracking then\n[`PrintOperation.is_finished()`](xref:gtk:Gtk.PrintOperation#method:is_finished) may still return `FALSE`\nafter the ::done signal was emitted."
+    },
+    "draw-page": {
+      "brief": "Emitted for every page that is printed.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 865,
+      "md": "Emitted for every page that is printed.\n\nThe signal handler must render the `page_nr`'s page onto the cairo\ncontext obtained from `context` using\n[`PrintContext.get_cairo_context()`](xref:gtk:Gtk.PrintContext#method:get_cairo_context).\n\n```c\nstatic void\ndraw_page (GtkPrintOperation *operation,\n           GtkPrintContext   *context,\n           int                page_nr,\n           gpointer           user_data)\n{\n  cairo_t *cr;\n  PangoLayout *layout;\n  double width, text_height;\n  int layout_height;\n  PangoFontDescription *desc;\n  \n  cr = gtk_print_context_get_cairo_context (context);\n  width = gtk_print_context_get_width (context);\n  \n  cairo_rectangle (cr, 0, 0, width, HEADER_HEIGHT);\n  \n  cairo_set_source_rgb (cr, 0.8, 0.8, 0.8);\n  cairo_fill (cr);\n  \n  layout = gtk_print_context_create_pango_layout (context);\n  \n  desc = pango_font_description_from_string (\"sans 14\");\n  pango_layout_set_font_description (layout, desc);\n  pango_font_description_free (desc);\n  \n  pango_layout_set_text (layout, \"some text\", -1);\n  pango_layout_set_width (layout, width * PANGO_SCALE);\n  pango_layout_set_alignment (layout, PANGO_ALIGN_CENTER);\n     \t\t      \n  pango_layout_get_size (layout, NULL, &layout_height);\n  text_height = (double)layout_height / PANGO_SCALE;\n  \n  cairo_move_to (cr, width / 2,  (HEADER_HEIGHT - text_height) / 2);\n  pango_cairo_show_layout (cr, layout);\n  \n  g_object_unref (layout);\n}\n```\n\nUse [`PrintOperation.set_use_full_page()`](xref:gtk:Gtk.PrintOperation#method:set_use_full_page) and\n[`PrintOperation.set_unit()`](xref:gtk:Gtk.PrintOperation#method:set_unit) before starting the print\noperation to set up the transformation of the cairo context\naccording to your needs."
+    },
+    "end-print": {
+      "brief": "Emitted after all pages have been rendered.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 937,
+      "md": "Emitted after all pages have been rendered.\n\nA handler for this signal can clean up any resources that have\nbeen allocated in the [`PrintOperation::begin-print`](xref:gtk:Gtk.PrintOperation#event:begin-print) handler."
+    },
+    "paginate": {
+      "brief": "Emitted after the ::begin-print signal, but before the actual rendering starts.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 803,
+      "md": "Emitted after the ::begin-print signal, but before the actual rendering\nstarts.\n\nIt keeps getting emitted until a connected signal handler returns `TRUE`.\n\nThe ::paginate signal is intended to be used for paginating a document\nin small chunks, to avoid blocking the user interface for a long\ntime. The signal handler should update the number of pages using\n[`PrintOperation.set_n_pages()`](xref:gtk:Gtk.PrintOperation#method:set_n_pages), and return `TRUE` if the document\nhas been completely paginated.\n\nIf you don't need to do pagination in chunks, you can simply do\nit all in the ::begin-print handler, and set the number of pages\nfrom there."
+    },
+    "preview": {
+      "brief": "Gets emitted when a preview is requested from the native dialog.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1052,
+      "md": "Gets emitted when a preview is requested from the native dialog.\n\nThe default handler for this signal uses an external viewer\napplication to preview.\n\nTo implement a custom print preview, an application must return\n`TRUE` from its handler for this signal. In order to use the\nprovided `context` for the preview implementation, it must be\ngiven a suitable cairo context with\n[`PrintContext.set_cairo_context()`](xref:gtk:Gtk.PrintContext#method:set_cairo_context).\n\nThe custom preview implementation can use\n[`PrintOperationPreview.is_selected()`](xref:gtk:Gtk.PrintOperationPreview#method:is_selected) and\n[`PrintOperationPreview.render_page()`](xref:gtk:Gtk.PrintOperationPreview#method:render_page) to find pages which\nare selected for print and render them. The preview must be\nfinished by calling [`PrintOperationPreview.end_preview()`](xref:gtk:Gtk.PrintOperationPreview#method:end_preview)\n(typically in response to the user clicking a close button)."
+    },
+    "request-page-setup": {
+      "brief": "Emitted once for every page that is printed.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 837,
+      "md": "Emitted once for every page that is printed.\n\nThis gives the application a chance to modify the page setup.\nAny changes done to `setup` will be in force only for printing\nthis page."
+    },
+    "status-changed": {
+      "brief": "Emitted at between the various phases of the print operation.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 956,
+      "md": "Emitted at between the various phases of the print operation.\n\nSee [`PrintStatus`](xref:gtk:Gtk.PrintStatus) for the phases that are being discriminated.\nUse [`PrintOperation.get_status()`](xref:gtk:Gtk.PrintOperation#method:get_status) to find out the current\nstatus."
+    },
+    "update-custom-widget": {
+      "brief": "Emitted after change of selected printer.",
+      "file": "gtk/print/gtkprintoperation.c",
+      "line": 1007,
+      "md": "Emitted after change of selected printer.\n\nThe actual page setup and print settings are passed to the custom\nwidget, which can actualize itself according to this change."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "begin_print": {
+      "brief": "Signal emitted after the user has finished changing print settings in the dialog, before the actual rendering starts.",
+      "file": "gtk/print/gtkprintoperation.h",
+      "line": 136,
+      "md": "Signal emitted after the user has finished changing\n   print settings in the dialog, before the actual rendering starts."
+    },
+    "create_custom_widget": {
+      "brief": "Signal emitted when displaying the print dialog.",
+      "file": "gtk/print/gtkprintoperation.h",
+      "line": 146,
+      "md": "Signal emitted when displaying the print dialog."
+    },
+    "custom_widget_apply": {
+      "brief": "Signal emitted right before “begin-print” if you added a custom widget in the “create-custom-widget” handler.",
+      "file": "gtk/print/gtkprintoperation.h",
+      "line": 147,
+      "md": "Signal emitted right before “begin-print” if\n   you added a custom widget in the “create-custom-widget” handler."
+    },
+    "done": {
+      "brief": "Signal emitted when the print operation run has finished doing everything required for printing.",
+      "file": "gtk/print/gtkprintoperation.h",
+      "line": 134,
+      "md": "Signal emitted when the print operation run has finished\n   doing everything required for printing."
+    },
+    "draw_page": {
+      "brief": "Signal emitted for every page that is printed.",
+      "file": "gtk/print/gtkprintoperation.h",
+      "line": 142,
+      "md": "Signal emitted for every page that is printed."
+    },
+    "end_print": {
+      "brief": "Signal emitted after all pages have been rendered.",
+      "file": "gtk/print/gtkprintoperation.h",
+      "line": 143,
+      "md": "Signal emitted after all pages have been rendered."
+    },
+    "paginate": {
+      "brief": "Signal emitted after the “begin-print” signal, but before the actual rendering starts.",
+      "file": "gtk/print/gtkprintoperation.h",
+      "line": 138,
+      "md": "Signal emitted after the “begin-print” signal, but\n   before the actual rendering starts."
+    },
+    "preview": {
+      "brief": "Signal emitted when a preview is requested from the native dialog.",
+      "file": "gtk/print/gtkprintoperation.h",
+      "line": 149,
+      "md": "Signal emitted when a preview is requested from the\n   native dialog."
+    },
+    "request_page_setup": {
+      "brief": "Emitted once for every page that is printed, to give the application a chance to modify the page setup.",
+      "file": "gtk/print/gtkprintoperation.h",
+      "line": 140,
+      "md": "Emitted once for every page that is printed,\n   to give the application a chance to modify the page setup."
+    },
+    "status_changed": {
+      "brief": "Emitted at between the various phases of the print operation.",
+      "file": "gtk/print/gtkprintoperation.h",
+      "line": 144,
+      "md": "Emitted at between the various phases of the print\n   operation."
+    },
+    "update_custom_widget": {
+      "brief": "Emitted after change of selected printer.",
+      "file": "gtk/print/gtkprintoperation.h",
+      "line": 151,
+      "md": "Emitted after change of selected printer."
+    }
+  }
+}

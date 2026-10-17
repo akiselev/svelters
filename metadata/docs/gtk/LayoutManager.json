@@ -1,0 +1,98 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Handles the preferred size and allocation for children of a widget.",
+    "file": "gtk/gtklayoutmanager.c",
+    "line": 20,
+    "md": "Handles the preferred size and allocation for children of a widget.\n\nYou typically subclass `GtkLayoutManager` if you want to implement a\nlayout policy for the children of a widget, or if you want to determine\nthe size of a widget depending on its contents.\n\nEach `GtkWidget` can only have a `GtkLayoutManager` instance associated\nto it at any given time; it is possible, though, to replace the layout\nmanager instance using [`Widget.set_layout_manager()`](xref:gtk:Gtk.Widget#method:set_layout_manager).\n\n## Layout properties\n\nA layout manager can expose properties for controlling the layout of\neach child, by creating an object type derived from [`LayoutChild`](xref:gtk:Gtk.LayoutChild)\nand installing the properties on it as normal `GObject` properties.\n\nEach `GtkLayoutChild` instance storing the layout properties for a\nspecific child is created through the [`LayoutManager.get_layout_child()`](xref:gtk:Gtk.LayoutManager#method:get_layout_child)\nmethod; a `GtkLayoutManager` controls the creation of its `GtkLayoutChild`\ninstances by overriding the GtkLayoutManagerClass.create_layout_child()\nvirtual function. The typical implementation should look like:\n\n```c\nstatic GtkLayoutChild *\ncreate_layout_child (GtkLayoutManager *manager,\n                     GtkWidget        *container,\n                     GtkWidget        *child)\n{\n  return g_object_new (your_layout_child_get_type (),\n                       \"layout-manager\", manager,\n                       \"child-widget\", child,\n                       NULL);\n}\n```\n\nThe [`LayoutChild:layout-manager`](xref:gtk:Gtk.LayoutChild#property:layout-manager) and\n[`LayoutChild:child-widget`](xref:gtk:Gtk.LayoutChild#property:child-widget) properties\non the newly created `GtkLayoutChild` instance are mandatory. The\n`GtkLayoutManager` will cache the newly created `GtkLayoutChild` instance\nuntil the widget is removed from its parent, or the parent removes the\nlayout manager.\n\nEach `GtkLayoutManager` instance creating a `GtkLayoutChild` should use\n[`LayoutManager.get_layout_child()`](xref:gtk:Gtk.LayoutManager#method:get_layout_child) every time it needs to query\nthe layout properties; each `GtkLayoutChild` instance should call\n[`LayoutManager.layout_changed()`](xref:gtk:Gtk.LayoutManager#method:layout_changed) every time a property is\nupdated, in order to queue a new size measuring and allocation."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:LayoutManager",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "allocate": {
+      "brief": "Assigns the given `width`, `height`, and `baseline` to a `widget`, and computes the position and sizes of the children of the `widget` using the layout management policy of `manager`.",
+      "file": "gtk/gtklayoutmanager.c",
+      "line": 384,
+      "md": "Assigns the given `width`, `height`, and `baseline` to\na `widget`, and computes the position and sizes of the children of\nthe `widget` using the layout management policy of `manager`."
+    },
+    "get_layout_child": {
+      "brief": "Retrieves a `GtkLayoutChild` instance for the `GtkLayoutManager`, creating one if necessary.",
+      "file": "gtk/gtklayoutmanager.c",
+      "line": 498,
+      "md": "Retrieves a `GtkLayoutChild` instance for the `GtkLayoutManager`,\ncreating one if necessary.\n\nThe `child` widget must be a child of the widget using `manager`.\n\nThe `GtkLayoutChild` instance is owned by the `GtkLayoutManager`,\nand is guaranteed to exist as long as `child` is a child of the\n`GtkWidget` using the given `GtkLayoutManager`."
+    },
+    "get_request_mode": {
+      "brief": "Retrieves the request mode of `manager`.",
+      "file": "gtk/gtklayoutmanager.c",
+      "line": 416,
+      "md": "Retrieves the request mode of `manager`."
+    },
+    "get_widget": {
+      "brief": "Retrieves the `GtkWidget` using the given `GtkLayoutManager`.",
+      "file": "gtk/gtklayoutmanager.c",
+      "line": 438,
+      "md": "Retrieves the `GtkWidget` using the given `GtkLayoutManager`."
+    },
+    "layout_changed": {
+      "brief": "Queues a resize on the `GtkWidget` using `manager`, if any.",
+      "file": "gtk/gtklayoutmanager.c",
+      "line": 456,
+      "md": "Queues a resize on the `GtkWidget` using `manager`, if any.\n\nThis function should be called by subclasses of `GtkLayoutManager`\nin response to changes to their layout management policies."
+    },
+    "measure": {
+      "brief": "Measures the size of the `widget` using `manager`, for the given `orientation` and size.",
+      "file": "gtk/gtklayoutmanager.c",
+      "line": 297,
+      "md": "Measures the size of the `widget` using `manager`, for the\ngiven `orientation` and size.\n\nSee the [`Widget`](xref:gtk:Gtk.Widget) documentation on layout management for\nmore details."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "allocate": {
+      "brief": "Assigns the given `width`, `height`, and `baseline` to a `widget`, and computes the position and sizes of the children of the `widget` using the layout management policy of `manager`.",
+      "file": "gtk/gtklayoutmanager.c",
+      "line": 384,
+      "md": "Assigns the given `width`, `height`, and `baseline` to\na `widget`, and computes the position and sizes of the children of\nthe `widget` using the layout management policy of `manager`."
+    },
+    "create_layout_child": {
+      "brief": "Create a `GtkLayoutChild` instance for the given `for_child` widget.",
+      "file": "gtk/gtklayoutmanager.h",
+      "line": 80,
+      "md": "Create a `GtkLayoutChild` instance for the given `for_child` widget."
+    },
+    "get_request_mode": {
+      "brief": "a virtual function, used to return the preferred request mode for the layout manager; for instance, \"width for height\" or \"height for width\"; see `GtkSizeRequestMode`",
+      "file": "gtk/gtklayoutmanager.h",
+      "line": 35,
+      "md": "a virtual function, used to return the preferred\n  request mode for the layout manager; for instance, \"width for height\"\n  or \"height for width\"; see `GtkSizeRequestMode`"
+    },
+    "measure": {
+      "brief": "Measures the size of the `widget` using `manager`, for the given `orientation` and size.",
+      "file": "gtk/gtklayoutmanager.c",
+      "line": 297,
+      "md": "Measures the size of the `widget` using `manager`, for the\ngiven `orientation` and size.\n\nSee the [`Widget`](xref:gtk:Gtk.Widget) documentation on layout management for\nmore details."
+    },
+    "root": {
+      "brief": "a virtual function, called when the widget using the layout manager is attached to a `GtkRoot`",
+      "file": "gtk/gtklayoutmanager.h",
+      "line": 45,
+      "md": "a virtual function, called when the widget using the layout\n  manager is attached to a `GtkRoot`"
+    },
+    "unroot": {
+      "brief": "a virtual function, called when the widget using the layout manager is detached from a `GtkRoot`",
+      "file": "gtk/gtklayoutmanager.h",
+      "line": 47,
+      "md": "a virtual function, called when the widget using the layout\n  manager is detached from a `GtkRoot`"
+    }
+  }
+}

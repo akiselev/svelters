@@ -1,0 +1,134 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkFilterListModel` that will filter `model` using the given `filter`.",
+      "file": "gtk/gtkfilterlistmodel.c",
+      "line": 931,
+      "md": "Creates a new `GtkFilterListModel` that will filter `model` using the given\n`filter`."
+    }
+  },
+  "doc": {
+    "brief": "A list model that filters the elements of another model.",
+    "file": "gtk/gtkfilterlistmodel.c",
+    "line": 29,
+    "md": "A list model that filters the elements of another model.\n\nIt hides some elements from the underlying model according to\ncriteria given by a `GtkFilter`.\n\nThe model can be set up to do incremental filtering, so that\nfiltering long lists doesn't block the UI. See\n[`FilterListModel.set_incremental()`](xref:gtk:Gtk.FilterListModel#method:set_incremental) for details.\n\n`GtkFilterListModel` passes through sections from the underlying model."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:FilterListModel",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_filter": {
+      "brief": "Gets the `GtkFilter` currently set on `self`.",
+      "file": "gtk/gtkfilterlistmodel.c",
+      "line": 995,
+      "md": "Gets the `GtkFilter` currently set on `self`."
+    },
+    "get_incremental": {
+      "brief": "Returns whether incremental filtering is enabled.",
+      "file": "gtk/gtkfilterlistmodel.c",
+      "line": 1142,
+      "md": "Returns whether incremental filtering is enabled.\n\nSee [`FilterListModel.set_incremental()`](xref:gtk:Gtk.FilterListModel#method:set_incremental)."
+    },
+    "get_model": {
+      "brief": "Gets the model currently filtered or `NULL` if none.",
+      "file": "gtk/gtkfilterlistmodel.c",
+      "line": 1076,
+      "md": "Gets the model currently filtered or `NULL` if none."
+    },
+    "get_pending": {
+      "brief": "Returns the number of items that have not been filtered yet.",
+      "file": "gtk/gtkfilterlistmodel.c",
+      "line": 1160,
+      "md": "Returns the number of items that have not been filtered yet.\n\nYou can use this value to check if `self` is busy filtering by\ncomparing the return value to 0 or you can compute the percentage\nof the filter remaining by dividing the return value by the total\nnumber of items in the underlying model:\n\n```c\npending = gtk_filter_list_model_get_pending (self);\nmodel = gtk_filter_list_model_get_model (self);\npercentage = pending / (double) g_list_model_get_n_items (model);\n```\n\nIf no filter operation is ongoing - in particular when\n[`FilterListModel:incremental`](xref:gtk:Gtk.FilterListModel#property:incremental) is `FALSE` - this\nfunction returns 0."
+    },
+    "get_watch_items": {
+      "brief": "Returns whether watching items is enabled.",
+      "file": "gtk/gtkfilterlistmodel.c",
+      "line": 1194,
+      "md": "Returns whether watching items is enabled.\n\nSee [`FilterListModel.set_watch_items()`](xref:gtk:Gtk.FilterListModel#method:set_watch_items).",
+      "since": "4.20"
+    },
+    "set_filter": {
+      "brief": "Sets the filter used to filter items.",
+      "file": "gtk/gtkfilterlistmodel.c",
+      "line": 962,
+      "md": "Sets the filter used to filter items."
+    },
+    "set_incremental": {
+      "brief": "Sets the filter model to do an incremental sort.",
+      "file": "gtk/gtkfilterlistmodel.c",
+      "line": 1092,
+      "md": "Sets the filter model to do an incremental sort.\n\nWhen incremental filtering is enabled, the `GtkFilterListModel` will not\nrun filters immediately, but will instead queue an idle handler that\nincrementally filters the items and adds them to the list. This of course\nmeans that items are not instantly added to the list, but only appear\nincrementally.\n\nWhen your filter blocks the UI while filtering, you might consider\nturning this on. Depending on your model and filters, this may become\ninteresting around 10,000 to 100,000 items.\n\nBy default, incremental filtering is disabled.\n\nSee [`FilterListModel.get_pending()`](xref:gtk:Gtk.FilterListModel#method:get_pending) for progress information\nabout an ongoing incremental filtering operation."
+    },
+    "set_model": {
+      "brief": "Sets the model to be filtered.",
+      "file": "gtk/gtkfilterlistmodel.c",
+      "line": 1011,
+      "md": "Sets the model to be filtered.\n\nNote that GTK makes no effort to ensure that `model` conforms to\nthe item type of `self`. It assumes that the caller knows what they\nare doing and have set up an appropriate filter to ensure that item\ntypes match."
+    },
+    "set_watch_items": {
+      "brief": "Sets the filter model to monitor properties of its items.",
+      "file": "gtk/gtkfilterlistmodel.c",
+      "line": 1214,
+      "md": "Sets the filter model to monitor properties of its items.\n\nThis allows implementations of [`Filter`](xref:gtk:Gtk.Filter) that support expression\nwatching to react to property changes. This property has no effect if the\ncurrent filter doesn't support watching items.\n\nBy default, watching items is disabled.",
+      "since": "4.20"
+    }
+  },
+  "properties": {
+    "filter": {
+      "brief": "The filter for this model.",
+      "file": "gtk/gtkfilterlistmodel.c",
+      "line": 845,
+      "md": "The filter for this model."
+    },
+    "incremental": {
+      "brief": "If the model should filter items incrementally.",
+      "file": "gtk/gtkfilterlistmodel.c",
+      "line": 855,
+      "md": "If the model should filter items incrementally."
+    },
+    "item-type": {
+      "brief": "The type of items. See [`ListModel.get_item_type()`](xref:gtk:Gio.ListModel#method:get_item_type).",
+      "file": "gtk/gtkfilterlistmodel.c",
+      "line": 865,
+      "md": "The type of items. See [`ListModel.get_item_type()`](xref:gtk:Gio.ListModel#method:get_item_type).",
+      "since": "4.8"
+    },
+    "model": {
+      "brief": "The model being filtered.",
+      "file": "gtk/gtkfilterlistmodel.c",
+      "line": 877,
+      "md": "The model being filtered."
+    },
+    "n-items": {
+      "brief": "The number of items.",
+      "file": "gtk/gtkfilterlistmodel.c",
+      "line": 887,
+      "md": "The number of items. See [`ListModel.get_n_items()`](xref:gtk:Gio.ListModel#method:get_n_items).",
+      "since": "4.8"
+    },
+    "pending": {
+      "brief": "Number of items not yet filtered.",
+      "file": "gtk/gtkfilterlistmodel.c",
+      "line": 899,
+      "md": "Number of items not yet filtered."
+    },
+    "watch-items": {
+      "brief": "Monitor the list items for changes.",
+      "file": "gtk/gtkfilterlistmodel.c",
+      "line": 910,
+      "md": "Monitor the list items for changes. It may impact performance.",
+      "since": "4.20"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

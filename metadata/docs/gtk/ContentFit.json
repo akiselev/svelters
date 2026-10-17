@@ -1,0 +1,50 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Controls how a content should be made to fit inside an allocation.",
+    "file": "gtk/gtkenums.h",
+    "line": 135,
+    "md": "Controls how a content should be made to fit inside an allocation.",
+    "since": "4.8"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ContentFit",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "contain": {
+      "brief": "Scale the content to fit the allocation, while taking its aspect ratio in consideration.",
+      "file": "gtk/gtkenums.h",
+      "line": 141,
+      "md": "Scale the content to fit the allocation,\n  while taking its aspect ratio in consideration. The resulting\n  content will appear as letterboxed if its aspect ratio is different\n  from the allocation aspect ratio."
+    },
+    "cover": {
+      "brief": "Cover the entire allocation, while taking the content aspect ratio in consideration.",
+      "file": "gtk/gtkenums.h",
+      "line": 145,
+      "md": "Cover the entire allocation, while taking\n  the content aspect ratio in consideration. The resulting content\n  will appear as clipped if its aspect ratio is different from the\n  allocation aspect ratio."
+    },
+    "fill": {
+      "brief": "Make the content fill the entire allocation, without taking its aspect ratio in consideration.",
+      "file": "gtk/gtkenums.h",
+      "line": 137,
+      "md": "Make the content fill the entire allocation,\n  without taking its aspect ratio in consideration. The resulting\n  content will appear as stretched if its aspect ratio is different\n  from the allocation aspect ratio."
+    },
+    "scale_down": {
+      "brief": "The content is scaled down to fit the allocation, if needed, otherwise its original size is used.",
+      "file": "gtk/gtkenums.h",
+      "line": 149,
+      "md": "The content is scaled down to fit the\n  allocation, if needed, otherwise its original size is used."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

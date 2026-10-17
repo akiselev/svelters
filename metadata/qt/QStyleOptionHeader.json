@@ -29,96 +29,131 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionHeader::SectionPosition",
       "members": [
         {
+          "cpp": "QStyleOptionHeader::Beginning",
           "name": "Beginning",
           "value": "0"
         },
         {
+          "cpp": "QStyleOptionHeader::Middle",
           "name": "Middle",
           "value": "1"
         },
         {
+          "cpp": "QStyleOptionHeader::End",
           "name": "End",
           "value": "2"
         },
         {
+          "cpp": "QStyleOptionHeader::OnlyOneSection",
           "name": "OnlyOneSection",
           "value": "3"
         }
       ],
       "metaobject": null,
       "name": "SectionPosition",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionHeader::SelectedPosition",
       "members": [
         {
+          "cpp": "QStyleOptionHeader::NotAdjacent",
           "name": "NotAdjacent",
           "value": "0"
         },
         {
+          "cpp": "QStyleOptionHeader::NextIsSelected",
           "name": "NextIsSelected",
           "value": "1"
         },
         {
+          "cpp": "QStyleOptionHeader::PreviousIsSelected",
           "name": "PreviousIsSelected",
           "value": "2"
         },
         {
+          "cpp": "QStyleOptionHeader::NextAndPreviousAreSelected",
           "name": "NextAndPreviousAreSelected",
           "value": "3"
         }
       ],
       "metaobject": null,
       "name": "SelectedPosition",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionHeader::SortIndicator",
       "members": [
         {
+          "cpp": "QStyleOptionHeader::None",
           "name": "None",
           "value": "0"
         },
         {
+          "cpp": "QStyleOptionHeader::SortUp",
           "name": "SortUp",
           "value": "1"
         },
         {
+          "cpp": "QStyleOptionHeader::SortDown",
           "name": "SortDown",
           "value": "2"
         }
       ],
       "metaobject": null,
       "name": "SortIndicator",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionHeader::StyleOptionType",
       "members": [
         {
+          "cpp": "QStyleOptionHeader::Type",
           "name": "Type",
           "value": "SO_Header"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionType",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionHeader::StyleOptionVersion",
       "members": [
         {
+          "cpp": "QStyleOptionHeader::Version",
           "name": "Version",
           "value": "1"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionVersion",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOptionHeader",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "borrowed_only",
+    "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOptionHeader:lifetime",
+    "native_refcount": "none",
+    "origin": "derived",
+    "provenance": "derived: abstract or not a QObject; JS cannot create it"
+  },
   "methods": [],
   "native": {
     "brief": "Used to describe the parameters for drawing a header",

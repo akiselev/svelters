@@ -62,6 +62,7 @@
           "kind": "none",
           "origin": "manual"
         },
+        "id": "svelters-api:v1:type:gtk:Gtk:Window:slot:child",
         "name": "child",
         "on_remove": "empty",
         "ops": {
@@ -139,6 +140,7 @@
           "kind": "none",
           "origin": "manual"
         },
+        "id": "svelters-api:v1:type:gtk:Gtk:Window:slot:titlebar",
         "name": "titlebar",
         "on_remove": "empty",
         "ops": {
@@ -220,6 +222,21 @@
     "Gtk.ShortcutManager"
   ],
   "kind": "object",
+  "lifetime": {
+    "class": "toplevel",
+    "close": {
+      "default": "destroy",
+      "request_signal": "close-request",
+      "veto": "return_stop"
+    },
+    "destroy": {
+      "native": "gtk_window_destroy"
+    },
+    "id": "svelters-api:v1:type:gtk:Gtk:Window:lifetime",
+    "native_refcount": "gobject_floating",
+    "origin": "derived",
+    "provenance": "derived: GtkWindow subclass; ABI v2 toplevel class (plans/architecture/backend-abi.md)"
+  },
   "methods": [
     {
       "id": "svelters-api:v1:type:gtk:Gtk:Window:method:close",
@@ -806,12 +823,14 @@
       "annotated": {
         "fields": [
           "dispatch",
+          "expect",
           "js_name"
         ],
         "origin": "manual",
         "provenance": "gtk_window_present docs; JS host op: call #h present []"
       },
       "dispatch": "zero_arg",
+      "expect": "w.is_visible()",
       "id": "svelters-api:v1:type:gtk:Gtk:Window:method:present",
       "invocation": {
         "dev": "introspected",

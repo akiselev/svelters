@@ -1,0 +1,266 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkColumnView`.",
+      "file": "gtk/gtkcolumnview.c",
+      "line": 1522,
+      "md": "Creates a new `GtkColumnView`.\n\nYou most likely want to call [`ColumnView.append_column()`](xref:gtk:Gtk.ColumnView#method:append_column)\nto add columns next."
+    }
+  },
+  "doc": {
+    "brief": "Presents a large dynamic list of items using multiple columns with headers.",
+    "file": "gtk/gtkcolumnview.c",
+    "line": 43,
+    "md": "Presents a large dynamic list of items using multiple columns with headers.\n\n`GtkColumnView` uses the factories of its columns to generate a cell widget for\neach column, for each visible item and displays them together as the row for\nthis item.\n\nThe [`ColumnView:show-row-separators`](xref:gtk:Gtk.ColumnView#property:show-row-separators) and\n[`ColumnView:show-column-separators`](xref:gtk:Gtk.ColumnView#property:show-column-separators) properties offer a simple way\nto display separators between the rows or columns.\n\n`GtkColumnView` allows the user to select items according to the selection\ncharacteristics of the model. For models that allow multiple selected items,\nit is possible to turn on *rubberband selection*, using\n[`ColumnView:enable-rubberband`](xref:gtk:Gtk.ColumnView#property:enable-rubberband).\n\nThe column view supports sorting that can be customized by the user by\nclicking on column headers. To set this up, the `GtkSorter` returned by\n[`ColumnView.get_sorter()`](xref:gtk:Gtk.ColumnView#method:get_sorter) must be attached to a sort model for the\ndata that the view is showing, and the columns must have sorters attached to\nthem by calling [`ColumnViewColumn.set_sorter()`](xref:gtk:Gtk.ColumnViewColumn#method:set_sorter). The initial sort\norder can be set with [`ColumnView.sort_by_column()`](xref:gtk:Gtk.ColumnView#method:sort_by_column).\n\nThe column view also supports interactive resizing and reordering of\ncolumns, via Drag-and-Drop of the column headers. This can be enabled or\ndisabled with the [`ColumnView:reorderable`](xref:gtk:Gtk.ColumnView#property:reorderable) and\n[`ColumnViewColumn:resizable`](xref:gtk:Gtk.ColumnViewColumn#property:resizable) properties.\n\nTo learn more about the list widget framework, see the\n[overview](section-list-widget.html).\n\n# CSS nodes\n\n```\ncolumnview[.column-separators][.rich-list][.navigation-sidebar][.data-table]\n├── header\n│   ├── <column header>\n┊   ┊\n│   ╰── <column header>\n│\n├── listview\n│\n┊\n╰── [rubberband]\n```\n\n`GtkColumnView` uses a single CSS node named columnview. It may carry the\n.column-separators style class, when [`ColumnView:show-column-separators`](xref:gtk:Gtk.ColumnView#property:show-column-separators)\nproperty is set. Header widgets appear below a node with name header.\nThe rows are contained in a `GtkListView` widget, so there is a listview\nnode with the same structure as for a standalone `GtkListView` widget.\nIf [`ColumnView:show-row-separators`](xref:gtk:Gtk.ColumnView#property:show-row-separators) is set, it will be passed\non to the list view, causing its CSS node to carry the .separators style class.\nFor rubberband selection, a node with name rubberband is used.\n\nThe main columnview node may also carry style classes to select\nthe style of [list presentation](section-list-widget.html#list-styles):\n.rich-list, .navigation-sidebar or .data-table.\n\n# Accessibility\n\n`GtkColumnView` uses the [`AccessibleRole.tree_grid`](xref:gtk:Gtk.AccessibleRole#value:tree_grid) role, header title\nwidgets are using the [`AccessibleRole.column_header`](xref:gtk:Gtk.AccessibleRole#value:column_header) role. The row widgets\nare using the [`AccessibleRole.row`](xref:gtk:Gtk.AccessibleRole#value:row) role, and individual cells are using\nthe [`AccessibleRole.grid_cell`](xref:gtk:Gtk.AccessibleRole#value:grid_cell) role"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ColumnView",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "append_column": {
+      "brief": "Appends the `column` to the end of the columns in `self`.",
+      "file": "gtk/gtkcolumnview.c",
+      "line": 1689,
+      "md": "Appends the `column` to the end of the columns in `self`."
+    },
+    "get_columns": {
+      "brief": "Gets the list of columns in this column view.",
+      "file": "gtk/gtkcolumnview.c",
+      "line": 1590,
+      "md": "Gets the list of columns in this column view.\n\nThis list is constant over the lifetime of `self` and can be used to\nmonitor changes to the columns of `self` by connecting to the\n[`ListModel::items-changed`](xref:gtk:Gio.ListModel#event:items-changed) signal."
+    },
+    "get_enable_rubberband": {
+      "brief": "Returns whether rows can be selected by dragging with the mouse.",
+      "file": "gtk/gtkcolumnview.c",
+      "line": 2061,
+      "md": "Returns whether rows can be selected by dragging with the mouse."
+    },
+    "get_header_factory": {
+      "brief": "Gets the factory that's currently used to populate section headers.",
+      "file": "gtk/gtkcolumnview.c",
+      "line": 2172,
+      "md": "Gets the factory that's currently used to populate section headers.",
+      "since": "4.12"
+    },
+    "get_model": {
+      "brief": "Gets the model that's currently used to read the items displayed.",
+      "file": "gtk/gtkcolumnview.c",
+      "line": 1550,
+      "md": "Gets the model that's currently used to read the items displayed."
+    },
+    "get_reorderable": {
+      "brief": "Returns whether columns are reorderable.",
+      "file": "gtk/gtkcolumnview.c",
+      "line": 2024,
+      "md": "Returns whether columns are reorderable."
+    },
+    "get_row_factory": {
+      "brief": "Gets the factory set via [`ColumnView.set_row_factory()`](xref:gtk:Gtk.ColumnView#method:set_row_factory).",
+      "file": "gtk/gtkcolumnview.c",
+      "line": 2109,
+      "md": "Gets the factory set via [`ColumnView.set_row_factory()`](xref:gtk:Gtk.ColumnView#method:set_row_factory).",
+      "since": "4.12"
+    },
+    "get_show_column_separators": {
+      "brief": "Returns whether the list should show separators between columns.",
+      "file": "gtk/gtkcolumnview.c",
+      "line": 1673,
+      "md": "Returns whether the list should show separators between columns."
+    },
+    "get_show_row_separators": {
+      "brief": "Returns whether the list should show separators between rows.",
+      "file": "gtk/gtkcolumnview.c",
+      "line": 1631,
+      "md": "Returns whether the list should show separators between rows."
+    },
+    "get_single_click_activate": {
+      "brief": "Returns whether rows will be activated on single click and selected on hover.",
+      "file": "gtk/gtkcolumnview.c",
+      "line": 1986,
+      "md": "Returns whether rows will be activated on single click and\nselected on hover."
+    },
+    "get_sorter": {
+      "brief": "Returns a special sorter that reflects the users sorting choices in the column view.",
+      "file": "gtk/gtkcolumnview.c",
+      "line": 1894,
+      "md": "Returns a special sorter that reflects the users sorting\nchoices in the column view.\n\nTo allow users to customizable sorting by clicking on column\nheaders, this sorter needs to be set on the sort model underneath\nthe model that is displayed by the view.\n\nSee [`ColumnViewColumn.set_sorter()`](xref:gtk:Gtk.ColumnViewColumn#method:set_sorter) for setting up\nper-column sorting.\n\nHere is an example:\n```c\ngtk_column_view_column_set_sorter (column, sorter);\ngtk_column_view_append_column (view, column);\nsorter = g_object_ref (gtk_column_view_get_sorter (view)));\nmodel = gtk_sort_list_model_new (store, sorter);\nselection = gtk_no_selection_new (model);\ngtk_column_view_set_model (view, selection);\n```"
+    },
+    "get_tab_behavior": {
+      "brief": "Gets the behavior set for the <kbd>Tab</kbd> key.",
+      "file": "gtk/gtkcolumnview.c",
+      "line": 2154,
+      "md": "Gets the behavior set for the <kbd>Tab</kbd> key.",
+      "since": "4.12"
+    },
+    "insert_column": {
+      "brief": "Inserts a column at the given position in the columns of `self`.",
+      "file": "gtk/gtkcolumnview.c",
+      "line": 1753,
+      "md": "Inserts a column at the given position in the columns of `self`.\n\nIf `column` is already a column of `self`, it will be repositioned."
+    },
+    "remove_column": {
+      "brief": "Removes the `column` from the list of columns of `self`.",
+      "file": "gtk/gtkcolumnview.c",
+      "line": 1708,
+      "md": "Removes the `column` from the list of columns of `self`."
+    },
+    "scroll_to": {
+      "brief": "Scroll to the row at the given position - or cell if a column is given - and performs the actions specified in `flags`.",
+      "file": "gtk/gtkcolumnview.c",
+      "line": 2218,
+      "md": "Scroll to the row at the given position - or cell if a column is\ngiven - and performs the actions specified in `flags`.\n\nThis function works no matter if the columnview is shown or focused.\nIf it isn't, then the changes will take effect once that happens.",
+      "since": "4.12"
+    },
+    "set_enable_rubberband": {
+      "brief": "Sets whether selections can be changed by dragging with the mouse.",
+      "file": "gtk/gtkcolumnview.c",
+      "line": 2040,
+      "md": "Sets whether selections can be changed by dragging with the mouse."
+    },
+    "set_header_factory": {
+      "brief": "Sets the factory to use for populating the [`ListHeader`](xref:gtk:Gtk.ListHeader) objects used in section headers.",
+      "file": "gtk/gtkcolumnview.c",
+      "line": 2190,
+      "md": "Sets the factory to use for populating the\n[`ListHeader`](xref:gtk:Gtk.ListHeader) objects used in section headers.\n\nIf this factory is set to `NULL`, the list will not show\nsection headers.",
+      "since": "4.12"
+    },
+    "set_model": {
+      "brief": "Sets the model to use.",
+      "file": "gtk/gtkcolumnview.c",
+      "line": 1566,
+      "md": "Sets the model to use.\n\nThis must be a [`SelectionModel`](xref:gtk:Gtk.SelectionModel)."
+    },
+    "set_reorderable": {
+      "brief": "Sets whether columns should be reorderable by dragging.",
+      "file": "gtk/gtkcolumnview.c",
+      "line": 2003,
+      "md": "Sets whether columns should be reorderable by dragging."
+    },
+    "set_row_factory": {
+      "brief": "Sets the factory used for configuring rows.",
+      "file": "gtk/gtkcolumnview.c",
+      "line": 2077,
+      "md": "Sets the factory used for configuring rows.\n\nThe factory must be for configuring [`ColumnViewRow`](xref:gtk:Gtk.ColumnViewRow) objects.\n\nIf this factory is not set - which is the default - then the defaults\nwill be used.\n\nThis factory is not used to set the widgets displayed in the individual\ncells. For that see [`GtkColumnViewColumn.set_factory()`](xref:gtk:GtkColumnViewColumn#method:set_factory) and\n[`GtkColumnViewCell`](xref:gtk:GtkColumnViewCell).",
+      "since": "4.12"
+    },
+    "set_show_column_separators": {
+      "brief": "Sets whether the list should show separators between columns.",
+      "file": "gtk/gtkcolumnview.c",
+      "line": 1647,
+      "md": "Sets whether the list should show separators between columns."
+    },
+    "set_show_row_separators": {
+      "brief": "Sets whether the list should show separators between rows.",
+      "file": "gtk/gtkcolumnview.c",
+      "line": 1610,
+      "md": "Sets whether the list should show separators between rows."
+    },
+    "set_single_click_activate": {
+      "brief": "Sets whether rows should be activated on single click and selected on hover.",
+      "file": "gtk/gtkcolumnview.c",
+      "line": 1964,
+      "md": "Sets whether rows should be activated on single click and\nselected on hover."
+    },
+    "set_tab_behavior": {
+      "brief": "Sets the <kbd>Tab</kbd> key behavior.",
+      "file": "gtk/gtkcolumnview.c",
+      "line": 2127,
+      "md": "Sets the <kbd>Tab</kbd> key behavior.\n\nThis influences how the <kbd>Tab</kbd> and\n<kbd>Shift</kbd>+<kbd>Tab</kbd> keys move the\nfocus in the columnview.",
+      "since": "4.12"
+    },
+    "sort_by_column": {
+      "brief": "Sets the sorting of the view.",
+      "file": "gtk/gtkcolumnview.c",
+      "line": 1928,
+      "md": "Sets the sorting of the view.\n\nThis function should be used to set up the initial sorting.\nAt runtime, users can change the sorting of a column view\nby clicking on the list headers.\n\nThis call only has an effect if the sorter returned by\n[`ColumnView.get_sorter()`](xref:gtk:Gtk.ColumnView#method:get_sorter) is set on a sort model,\nand [`ColumnViewColumn.set_sorter()`](xref:gtk:Gtk.ColumnViewColumn#method:set_sorter) has been called\non `column` to associate a sorter with the column.\n\nIf `column` is unset, the view will be unsorted."
+    }
+  },
+  "properties": {
+    "columns": {
+      "brief": "The list of columns.",
+      "file": "gtk/gtkcolumnview.c",
+      "line": 827,
+      "md": "The list of columns."
+    },
+    "enable-rubberband": {
+      "brief": "Allow rubberband selection.",
+      "file": "gtk/gtkcolumnview.c",
+      "line": 837,
+      "md": "Allow rubberband selection."
+    },
+    "header-factory": {
+      "brief": "Factory for creating header widgets.",
+      "file": "gtk/gtkcolumnview.c",
+      "line": 934,
+      "md": "Factory for creating header widgets.\n\nThe factory must be for configuring [`ListHeader`](xref:gtk:Gtk.ListHeader) objects.",
+      "since": "4.12"
+    },
+    "model": {
+      "brief": "Model for the items displayed.",
+      "file": "gtk/gtkcolumnview.c",
+      "line": 847,
+      "md": "Model for the items displayed."
+    },
+    "reorderable": {
+      "brief": "Whether columns are reorderable.",
+      "file": "gtk/gtkcolumnview.c",
+      "line": 857,
+      "md": "Whether columns are reorderable."
+    },
+    "row-factory": {
+      "brief": "The factory used for configuring rows.",
+      "file": "gtk/gtkcolumnview.c",
+      "line": 867,
+      "md": "The factory used for configuring rows.\n\nThe factory must be for configuring [`ColumnViewRow`](xref:gtk:Gtk.ColumnViewRow) objects.",
+      "since": "4.12"
+    },
+    "show-column-separators": {
+      "brief": "Show separators between columns.",
+      "file": "gtk/gtkcolumnview.c",
+      "line": 891,
+      "md": "Show separators between columns."
+    },
+    "show-row-separators": {
+      "brief": "Show separators between rows.",
+      "file": "gtk/gtkcolumnview.c",
+      "line": 881,
+      "md": "Show separators between rows."
+    },
+    "single-click-activate": {
+      "brief": "Activate rows on single click and select them on hover.",
+      "file": "gtk/gtkcolumnview.c",
+      "line": 911,
+      "md": "Activate rows on single click and select them on hover."
+    },
+    "sorter": {
+      "brief": "Sorter with the sorting choices of the user.",
+      "file": "gtk/gtkcolumnview.c",
+      "line": 901,
+      "md": "Sorter with the sorting choices of the user."
+    },
+    "tab-behavior": {
+      "brief": "Behavior of the <kbd>Tab</kbd> key",
+      "file": "gtk/gtkcolumnview.c",
+      "line": 921,
+      "md": "Behavior of the <kbd>Tab</kbd> key",
+      "since": "4.12"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "activate": {
+      "brief": "Emitted when a row has been activated by the user, usually via activating the GtkListBase|list.activate-item action.",
+      "file": "gtk/gtkcolumnview.c",
+      "line": 950,
+      "md": "Emitted when a row has been activated by the user, usually via activating\nthe GtkListBase|list.activate-item action.\n\nThis allows for a convenient way to handle activation in a columnview.\nSee [`ListItem.set_activatable()`](xref:gtk:Gtk.ListItem#method:set_activatable) for details on how to use this\nsignal."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

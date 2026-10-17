@@ -1,0 +1,294 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "`GtkFontChooser` is an interface that can be implemented by widgets for choosing fonts.",
+    "deprecated": "4.10",
+    "deprecated_md": "Use [`FontDialog`](xref:gtk:Gtk.FontDialog) and [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton)\ninstead",
+    "file": "gtk/deprecated/gtkfontchooser.c",
+    "line": 30,
+    "md": "`GtkFontChooser` is an interface that can be implemented by widgets\nfor choosing fonts.\n\nIn GTK, the main objects that implement this interface are\n[`FontChooserWidget`](xref:gtk:Gtk.FontChooserWidget), [`FontChooserDialog`](xref:gtk:Gtk.FontChooserDialog) and\n[`FontButton`](xref:gtk:Gtk.FontButton)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:FontChooser",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_font": {
+      "brief": "Gets the currently-selected font name.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialog`](xref:gtk:Gtk.FontDialog) and [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton)\ninstead",
+      "file": "gtk/deprecated/gtkfontchooser.c",
+      "line": 246,
+      "md": "Gets the currently-selected font name.\n\nNote that this can be a different string than what you set with\n[`FontChooser.set_font()`](xref:gtk:Gtk.FontChooser#method:set_font), as the font chooser widget may\nnormalize font names and thus return a string with a different\nstructure. For example, “Helvetica Italic Bold 12” could be\nnormalized to “Helvetica Bold Italic 12”.\n\nUse [`FontDescription.equal()`](xref:gtk:Pango.FontDescription#method:equal) if you want to compare two\nfont descriptions."
+    },
+    "get_font_desc": {
+      "brief": "Gets the currently-selected font.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialog`](xref:gtk:Gtk.FontDialog) and [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton)\ninstead",
+      "file": "gtk/deprecated/gtkfontchooser.c",
+      "line": 300,
+      "md": "Gets the currently-selected font.\n\nNote that this can be a different string than what you set with\n[`FontChooser.set_font()`](xref:gtk:Gtk.FontChooser#method:set_font), as the font chooser widget may\nnormalize font names and thus return a string with a different\nstructure. For example, “Helvetica Italic Bold 12” could be\nnormalized to “Helvetica Bold Italic 12”.\n\nUse [`FontDescription.equal()`](xref:gtk:Pango.FontDescription#method:equal) if you want to compare two\nfont descriptions."
+    },
+    "get_font_face": {
+      "brief": "Gets the `PangoFontFace` representing the selected font group details (i.e. family, slant, weight, width, etc).",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialog`](xref:gtk:Gtk.FontDialog) and [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton)\ninstead",
+      "file": "gtk/deprecated/gtkfontchooser.c",
+      "line": 203,
+      "md": "Gets the `PangoFontFace` representing the selected font group\ndetails (i.e. family, slant, weight, width, etc).\n\nIf the selected font is not installed, returns `NULL`."
+    },
+    "get_font_family": {
+      "brief": "Gets the `PangoFontFamily` representing the selected font family.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialog`](xref:gtk:Gtk.FontDialog) and [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton)\ninstead",
+      "file": "gtk/deprecated/gtkfontchooser.c",
+      "line": 179,
+      "md": "Gets the `PangoFontFamily` representing the selected font family.\n\nFont families are a collection of font faces.\n\nIf the selected font is not installed, returns `NULL`."
+    },
+    "get_font_features": {
+      "brief": "Gets the currently-selected font features.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialog`](xref:gtk:Gtk.FontDialog) and [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton)\ninstead",
+      "file": "gtk/deprecated/gtkfontchooser.c",
+      "line": 589,
+      "md": "Gets the currently-selected font features.\n\nThe format of the returned string is compatible with the\n[CSS font-feature-settings property](https://www.w3.org/TR/css-fonts-4/#font-rend-desc).\nIt can be passed to `new`."
+    },
+    "get_font_map": {
+      "brief": "Gets the custom font map of this font chooser widget, or `NULL` if it does not have one.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialog`](xref:gtk:Gtk.FontDialog) and [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton)\ninstead",
+      "file": "gtk/deprecated/gtkfontchooser.c",
+      "line": 522,
+      "md": "Gets the custom font map of this font chooser widget,\nor `NULL` if it does not have one."
+    },
+    "get_font_size": {
+      "brief": "The selected font size.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialog`](xref:gtk:Gtk.FontDialog) and [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton)\ninstead",
+      "file": "gtk/deprecated/gtkfontchooser.c",
+      "line": 226,
+      "md": "The selected font size."
+    },
+    "get_language": {
+      "brief": "Gets the language that is used for font features.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialog`](xref:gtk:Gtk.FontDialog) and [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton)\ninstead",
+      "file": "gtk/deprecated/gtkfontchooser.c",
+      "line": 616,
+      "md": "Gets the language that is used for font features."
+    },
+    "get_level": {
+      "brief": "Returns the current level of granularity for selecting fonts.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialog`](xref:gtk:Gtk.FontDialog) and [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton)\ninstead",
+      "file": "gtk/deprecated/gtkfontchooser.c",
+      "line": 566,
+      "md": "Returns the current level of granularity for selecting fonts."
+    },
+    "get_preview_text": {
+      "brief": "Gets the text displayed in the preview area.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialog`](xref:gtk:Gtk.FontDialog) and [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton)\ninstead",
+      "file": "gtk/deprecated/gtkfontchooser.c",
+      "line": 353,
+      "md": "Gets the text displayed in the preview area."
+    },
+    "get_show_preview_entry": {
+      "brief": "Returns whether the preview entry is shown or not.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialog`](xref:gtk:Gtk.FontDialog) and [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton)\ninstead",
+      "file": "gtk/deprecated/gtkfontchooser.c",
+      "line": 398,
+      "md": "Returns whether the preview entry is shown or not."
+    },
+    "set_filter_func": {
+      "brief": "Adds a filter function that decides which fonts to display in the font chooser.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialog`](xref:gtk:Gtk.FontDialog) and [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton)\ninstead",
+      "file": "gtk/deprecated/gtkfontchooser.c",
+      "line": 441,
+      "md": "Adds a filter function that decides which fonts to display\nin the font chooser."
+    },
+    "set_font": {
+      "brief": "Sets the currently-selected font.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialog`](xref:gtk:Gtk.FontDialog) and [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton)\ninstead",
+      "file": "gtk/deprecated/gtkfontchooser.c",
+      "line": 280,
+      "md": "Sets the currently-selected font."
+    },
+    "set_font_desc": {
+      "brief": "Sets the currently-selected font from `font_desc`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialog`](xref:gtk:Gtk.FontDialog) and [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton)\ninstead",
+      "file": "gtk/deprecated/gtkfontchooser.c",
+      "line": 333,
+      "md": "Sets the currently-selected font from `font_desc`."
+    },
+    "set_font_map": {
+      "brief": "Sets a custom font map to use for this font chooser widget.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialog`](xref:gtk:Gtk.FontDialog) and [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton)\ninstead",
+      "file": "gtk/deprecated/gtkfontchooser.c",
+      "line": 477,
+      "md": "Sets a custom font map to use for this font chooser widget.\n\nA custom font map can be used to present application-specific\nfonts instead of or in addition to the normal system fonts.\n\n```c\nFcConfig *config;\nPangoFontMap *fontmap;\n\nconfig = FcInitLoadConfigAndFonts ();\nFcConfigAppFontAddFile (config, my_app_font_file);\n\nfontmap = pango_cairo_font_map_new_for_font_type (CAIRO_FONT_TYPE_FT);\npango_fc_font_map_set_config (PANGO_FC_FONT_MAP (fontmap), config);\n\ngtk_font_chooser_set_font_map (font_chooser, fontmap);\n```\n\nNote that other GTK widgets will only be able to use the\napplication-specific font if it is present in the font map they use:\n\n```c\ncontext = gtk_widget_get_pango_context (label);\npango_context_set_font_map (context, fontmap);\n```"
+    },
+    "set_language": {
+      "brief": "Sets the language to use for font features.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialog`](xref:gtk:Gtk.FontDialog) and [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton)\ninstead",
+      "file": "gtk/deprecated/gtkfontchooser.c",
+      "line": 639,
+      "md": "Sets the language to use for font features."
+    },
+    "set_level": {
+      "brief": "Sets the desired level of granularity for selecting fonts.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialog`](xref:gtk:Gtk.FontDialog) and [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton)\ninstead",
+      "file": "gtk/deprecated/gtkfontchooser.c",
+      "line": 547,
+      "md": "Sets the desired level of granularity for selecting fonts."
+    },
+    "set_preview_text": {
+      "brief": "Sets the text displayed in the preview area.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialog`](xref:gtk:Gtk.FontDialog) and [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton)\ninstead",
+      "file": "gtk/deprecated/gtkfontchooser.c",
+      "line": 376,
+      "md": "Sets the text displayed in the preview area.\n\nThe `text` is used to show how the selected font looks."
+    },
+    "set_show_preview_entry": {
+      "brief": "Shows or hides the editable preview entry.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialog`](xref:gtk:Gtk.FontDialog) and [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton)\ninstead",
+      "file": "gtk/deprecated/gtkfontchooser.c",
+      "line": 421,
+      "md": "Shows or hides the editable preview entry."
+    }
+  },
+  "properties": {
+    "font": {
+      "brief": "The font description as a string, e.g. \"Sans Italic 12\".",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialog`](xref:gtk:Gtk.FontDialog) and [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton) instead",
+      "file": "gtk/deprecated/gtkfontchooser.c",
+      "line": 58,
+      "md": "The font description as a string, e.g. \"Sans Italic 12\"."
+    },
+    "font-desc": {
+      "brief": "The font description as a `PangoFontDescription`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialog`](xref:gtk:Gtk.FontDialog) and [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton) instead",
+      "file": "gtk/deprecated/gtkfontchooser.c",
+      "line": 71,
+      "md": "The font description as a `PangoFontDescription`."
+    },
+    "font-features": {
+      "brief": "The selected font features.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialog`](xref:gtk:Gtk.FontDialog) and [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton) instead",
+      "file": "gtk/deprecated/gtkfontchooser.c",
+      "line": 126,
+      "md": "The selected font features.\n\nThe format of the string is compatible with\nCSS and with Pango attributes."
+    },
+    "language": {
+      "brief": "The language for which the font features were selected.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialog`](xref:gtk:Gtk.FontDialog) and [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton) instead",
+      "file": "gtk/deprecated/gtkfontchooser.c",
+      "line": 142,
+      "md": "The language for which the font features were selected."
+    },
+    "level": {
+      "brief": "The level of granularity to offer for selecting fonts.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialog`](xref:gtk:Gtk.FontDialog) and [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton) instead",
+      "file": "gtk/deprecated/gtkfontchooser.c",
+      "line": 110,
+      "md": "The level of granularity to offer for selecting fonts."
+    },
+    "preview-text": {
+      "brief": "The string with which to preview the font.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialog`](xref:gtk:Gtk.FontDialog) and [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton) instead",
+      "file": "gtk/deprecated/gtkfontchooser.c",
+      "line": 84,
+      "md": "The string with which to preview the font."
+    },
+    "show-preview-entry": {
+      "brief": "Whether to show an entry to change the preview text.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialog`](xref:gtk:Gtk.FontDialog) and [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton) instead",
+      "file": "gtk/deprecated/gtkfontchooser.c",
+      "line": 97,
+      "md": "Whether to show an entry to change the preview text."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "font-activated": {
+      "brief": "Emitted when a font is activated.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialog`](xref:gtk:Gtk.FontDialog) and [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton) instead",
+      "file": "gtk/deprecated/gtkfontchooser.c",
+      "line": 155,
+      "md": "Emitted when a font is activated.\n\nThis usually happens when the user double clicks an item,\nor an item is selected and the user presses one of the keys\nSpace, Shift+Space, Return or Enter."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "get_font_face": {
+      "brief": "Gets the `PangoFontFace` representing the selected font group details (i.e. family, slant, weight, width, etc).",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialog`](xref:gtk:Gtk.FontDialog) and [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton)\ninstead",
+      "file": "gtk/deprecated/gtkfontchooser.c",
+      "line": 203,
+      "md": "Gets the `PangoFontFace` representing the selected font group\ndetails (i.e. family, slant, weight, width, etc).\n\nIf the selected font is not installed, returns `NULL`."
+    },
+    "get_font_family": {
+      "brief": "Gets the `PangoFontFamily` representing the selected font family.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialog`](xref:gtk:Gtk.FontDialog) and [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton)\ninstead",
+      "file": "gtk/deprecated/gtkfontchooser.c",
+      "line": 179,
+      "md": "Gets the `PangoFontFamily` representing the selected font family.\n\nFont families are a collection of font faces.\n\nIf the selected font is not installed, returns `NULL`."
+    },
+    "get_font_map": {
+      "brief": "Gets the custom font map of this font chooser widget, or `NULL` if it does not have one.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialog`](xref:gtk:Gtk.FontDialog) and [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton)\ninstead",
+      "file": "gtk/deprecated/gtkfontchooser.c",
+      "line": 522,
+      "md": "Gets the custom font map of this font chooser widget,\nor `NULL` if it does not have one."
+    },
+    "get_font_size": {
+      "brief": "The selected font size.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialog`](xref:gtk:Gtk.FontDialog) and [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton)\ninstead",
+      "file": "gtk/deprecated/gtkfontchooser.c",
+      "line": 226,
+      "md": "The selected font size."
+    },
+    "set_filter_func": {
+      "brief": "Adds a filter function that decides which fonts to display in the font chooser.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialog`](xref:gtk:Gtk.FontDialog) and [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton)\ninstead",
+      "file": "gtk/deprecated/gtkfontchooser.c",
+      "line": 441,
+      "md": "Adds a filter function that decides which fonts to display\nin the font chooser."
+    },
+    "set_font_map": {
+      "brief": "Sets a custom font map to use for this font chooser widget.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FontDialog`](xref:gtk:Gtk.FontDialog) and [`FontDialogButton`](xref:gtk:Gtk.FontDialogButton)\ninstead",
+      "file": "gtk/deprecated/gtkfontchooser.c",
+      "line": 477,
+      "md": "Sets a custom font map to use for this font chooser widget.\n\nA custom font map can be used to present application-specific\nfonts instead of or in addition to the normal system fonts.\n\n```c\nFcConfig *config;\nPangoFontMap *fontmap;\n\nconfig = FcInitLoadConfigAndFonts ();\nFcConfigAppFontAddFile (config, my_app_font_file);\n\nfontmap = pango_cairo_font_map_new_for_font_type (CAIRO_FONT_TYPE_FT);\npango_fc_font_map_set_config (PANGO_FC_FONT_MAP (fontmap), config);\n\ngtk_font_chooser_set_font_map (font_chooser, fontmap);\n```\n\nNote that other GTK widgets will only be able to use the\napplication-specific font if it is present in the font map they use:\n\n```c\ncontext = gtk_widget_get_pango_context (label);\npango_context_set_font_map (context, fontmap);\n```"
+    }
+  }
+}

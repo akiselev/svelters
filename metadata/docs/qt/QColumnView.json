@@ -1,0 +1,164 @@
+{
+  "doc": {
+    "brief": "The QColumnView class provides a model/view implementation of a column view.",
+    "index_brief": "Model/view implementation of a column view",
+    "url": "https://doc.qt.io/qt-6/qcolumnview.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QColumnView",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QAbstractItemView * createColumn(const QModelIndex &index)": {
+      "brief": "To use a custom widget for the final column when you select an item overload this function and return a widget. *index* is the root index that will be assigned to the view.",
+      "url": "https://doc.qt.io/qt-6/qcolumnview.html#createColumn"
+    },
+    "QColumnView(QWidget *parent)": {
+      "brief": "Constructs a column view with a *parent* to represent a model's data.",
+      "url": "https://doc.qt.io/qt-6/qcolumnview.html#QColumnView"
+    },
+    "QList<int> columnWidths() const": {
+      "brief": "Returns a list of the width of all the columns in this view.",
+      "url": "https://doc.qt.io/qt-6/qcolumnview.html#columnWidths"
+    },
+    "QModelIndex indexAt(const QPoint &point) const override": {
+      "brief": "Reimplements: [QAbstractItemView::indexAt](xref:qt:QAbstractItemView)(const QPoint &point) const.",
+      "url": "https://doc.qt.io/qt-6/qcolumnview.html#indexAt"
+    },
+    "QModelIndex moveCursor(QAbstractItemView::CursorAction cursorAction, Qt::KeyboardModifiers modifiers) override": {
+      "brief": "Reimplements: [QAbstractItemView::moveCursor](xref:qt:QAbstractItemView)(QAbstractItemView::CursorAction cursorAction, Qt::KeyboardModifiers modifiers).",
+      "url": "https://doc.qt.io/qt-6/qcolumnview.html#moveCursor"
+    },
+    "QRect visualRect(const QModelIndex &index) const override": {
+      "brief": "Reimplements: [QAbstractItemView::visualRect](xref:qt:QAbstractItemView)(const QModelIndex &index) const.",
+      "url": "https://doc.qt.io/qt-6/qcolumnview.html#visualRect"
+    },
+    "QRegion visualRegionForSelection(const QItemSelection &selection) const override": {
+      "brief": "Reimplements: [QAbstractItemView::visualRegionForSelection](xref:qt:QAbstractItemView)(const QItemSelection &selection) const.",
+      "url": "https://doc.qt.io/qt-6/qcolumnview.html#visualRegionForSelection"
+    },
+    "QSize sizeHint() const override": {
+      "brief": "Reimplements: [QAbstractScrollArea::sizeHint](xref:qt:QAbstractScrollArea)() const.",
+      "url": "https://doc.qt.io/qt-6/qcolumnview.html#sizeHint"
+    },
+    "QWidget * previewWidget() const": {
+      "brief": "Returns the preview widget, or `nullptr` if there is none.",
+      "url": "https://doc.qt.io/qt-6/qcolumnview.html#previewWidget"
+    },
+    "bool isIndexHidden(const QModelIndex &index) const override": {
+      "brief": "Reimplements: [QAbstractItemView::isIndexHidden](xref:qt:QAbstractItemView)(const QModelIndex &index) const.",
+      "url": "https://doc.qt.io/qt-6/qcolumnview.html#isIndexHidden"
+    },
+    "bool isPreviewColumnVisible() const": {
+      "brief": "This property holds whether the preview column is visible",
+      "url": "https://doc.qt.io/qt-6/qcolumnview.html#previewColumnVisible-prop"
+    },
+    "bool resizeGripsVisible() const": {
+      "brief": "This property holds the way to specify if the list views gets resize grips or not",
+      "url": "https://doc.qt.io/qt-6/qcolumnview.html#resizeGripsVisible-prop"
+    },
+    "int horizontalOffset() const override": {
+      "brief": "Reimplements: [QAbstractItemView::horizontalOffset](xref:qt:QAbstractItemView)() const.",
+      "url": "https://doc.qt.io/qt-6/qcolumnview.html#horizontalOffset"
+    },
+    "int verticalOffset() const override": {
+      "brief": "Reimplements: [QAbstractItemView::verticalOffset](xref:qt:QAbstractItemView)() const.",
+      "url": "https://doc.qt.io/qt-6/qcolumnview.html#verticalOffset"
+    },
+    "void currentChanged(const QModelIndex &current, const QModelIndex &previous) override": {
+      "brief": "Reimplements: [QAbstractItemView::currentChanged](xref:qt:QAbstractItemView)(const QModelIndex &current, const QModelIndex &previous).",
+      "url": "https://doc.qt.io/qt-6/qcolumnview.html#currentChanged"
+    },
+    "void initializeColumn(QAbstractItemView *column) const": {
+      "brief": "Copies the behavior and options of the column view and applies them to the *column* such as the [iconSize](xref:qt:QAbstractItemView)(), [textElideMode](xref:qt:QAbstractItemView)() and...",
+      "url": "https://doc.qt.io/qt-6/qcolumnview.html#initializeColumn"
+    },
+    "void resizeEvent(QResizeEvent *event) override": {
+      "brief": "Reimplements: [QAbstractItemView::resizeEvent](xref:qt:QAbstractItemView)(QResizeEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qcolumnview.html#resizeEvent"
+    },
+    "void rowsInserted(const QModelIndex &parent, int start, int end) override": {
+      "brief": "Reimplements: [QAbstractItemView::rowsInserted](xref:qt:QAbstractItemView)(const QModelIndex &parent, int start, int end).",
+      "url": "https://doc.qt.io/qt-6/qcolumnview.html#rowsInserted"
+    },
+    "void scrollContentsBy(int dx, int dy) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::scrollContentsBy](xref:qt:QAbstractScrollArea)(int dx, int dy).",
+      "url": "https://doc.qt.io/qt-6/qcolumnview.html#scrollContentsBy"
+    },
+    "void scrollTo(const QModelIndex &index, QAbstractItemView::ScrollHint hint) override": {
+      "brief": "Reimplements: [QAbstractItemView::scrollTo](xref:qt:QAbstractItemView)(const QModelIndex &index, QAbstractItemView::ScrollHint hint).",
+      "url": "https://doc.qt.io/qt-6/qcolumnview.html#scrollTo"
+    },
+    "void selectAll() override": {
+      "brief": "Reimplements: [QAbstractItemView::selectAll](xref:qt:QAbstractItemView)().",
+      "url": "https://doc.qt.io/qt-6/qcolumnview.html#selectAll"
+    },
+    "void setColumnWidths(const QList<int> &list)": {
+      "brief": "Sets the column widths to the values given in the *list*.",
+      "url": "https://doc.qt.io/qt-6/qcolumnview.html#setColumnWidths"
+    },
+    "void setModel(QAbstractItemModel *model) override": {
+      "brief": "Reimplements: [QAbstractItemView::setModel](xref:qt:QAbstractItemView)(QAbstractItemModel *model).",
+      "url": "https://doc.qt.io/qt-6/qcolumnview.html#setModel"
+    },
+    "void setPreviewColumnVisible(bool visible)": {
+      "brief": "This property holds whether the preview column is visible",
+      "url": "https://doc.qt.io/qt-6/qcolumnview.html#previewColumnVisible-prop"
+    },
+    "void setPreviewWidget(QWidget *widget)": {
+      "brief": "Sets the preview *widget*.",
+      "url": "https://doc.qt.io/qt-6/qcolumnview.html#setPreviewWidget"
+    },
+    "void setResizeGripsVisible(bool visible)": {
+      "brief": "This property holds the way to specify if the list views gets resize grips or not",
+      "url": "https://doc.qt.io/qt-6/qcolumnview.html#resizeGripsVisible-prop"
+    },
+    "void setRootIndex(const QModelIndex &index) override": {
+      "brief": "Reimplements: [QAbstractItemView::setRootIndex](xref:qt:QAbstractItemView)(const QModelIndex &index).",
+      "url": "https://doc.qt.io/qt-6/qcolumnview.html#setRootIndex"
+    },
+    "void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command) override": {
+      "brief": "Reimplements: [QAbstractItemView::setSelection](xref:qt:QAbstractItemView)(const QRect &rect, QItemSelectionModel::SelectionFlags flags).",
+      "url": "https://doc.qt.io/qt-6/qcolumnview.html#setSelection"
+    },
+    "void setSelectionModel(QItemSelectionModel *newSelectionModel) override": {
+      "brief": "Reimplements: [QAbstractItemView::setSelectionModel](xref:qt:QAbstractItemView)(QItemSelectionModel *selectionModel).",
+      "url": "https://doc.qt.io/qt-6/qcolumnview.html#setSelectionModel"
+    },
+    "void updatePreviewWidget(const QModelIndex &index)": {
+      "brief": "This signal is emitted when the preview widget should be updated to provide rich information about *index*",
+      "url": "https://doc.qt.io/qt-6/qcolumnview.html#updatePreviewWidget"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "previewColumnVisible": {
+      "brief": "Whether the preview column is visible",
+      "url": "https://doc.qt.io/qt-6/qcolumnview.html#previewColumnVisible-prop"
+    },
+    "resizeGripsVisible": {
+      "brief": "The way to specify if the list views gets resize grips or not",
+      "url": "https://doc.qt.io/qt-6/qcolumnview.html#resizeGripsVisible-prop"
+    }
+  },
+  "qss": {
+    "box_model": false,
+    "pseudo_states": [],
+    "sub_controls": [
+      "::left-arrow",
+      "::right-arrow"
+    ],
+    "url": "https://doc.qt.io/qt-6/stylesheet-reference.html#qcolumnview-widget"
+  },
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

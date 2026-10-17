@@ -8,3 +8,6 @@ publish.workspace = true
 [dependencies]
 svelters-abi.workspace = true
 gtk.workspace = true
+
+[dev-dependencies]
+svelters-host.workspace = true

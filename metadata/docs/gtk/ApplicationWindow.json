@@ -1,0 +1,73 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkApplicationWindow`.",
+      "file": "gtk/gtkapplicationwindow.c",
+      "line": 711,
+      "md": "Creates a new `GtkApplicationWindow`."
+    }
+  },
+  "doc": {
+    "brief": "A `GtkWindow` subclass that integrates with `GtkApplication`.",
+    "file": "gtk/gtkapplicationwindow.c",
+    "line": 36,
+    "md": "A `GtkWindow` subclass that integrates with `GtkApplication`.\n\nNotably, `GtkApplicationWindow` can handle an application menubar.\n\nThis class implements the [`ActionGroup`](xref:gtk:Gio.ActionGroup) and [`ActionMap`](xref:gtk:Gio.ActionMap)\ninterfaces, to let you add window-specific actions that will be exported\nby the associated [`Application`](xref:gtk:Gtk.Application), together with its application-wide\nactions. Window-specific actions are prefixed with the “win.”\nprefix and application-wide actions are prefixed with the “app.”\nprefix. Actions must be addressed with the prefixed name when\nreferring to them from a menu model.\n\nNote that widgets that are placed inside a `GtkApplicationWindow`\ncan also activate these actions, if they implement the\n[`Actionable`](xref:gtk:Gtk.Actionable) interface.\n\nThe settings [`Settings:gtk-shell-shows-app-menu`](xref:gtk:Gtk.Settings#property:gtk-shell-shows-app-menu) and\n[`Settings:gtk-shell-shows-menubar`](xref:gtk:Gtk.Settings#property:gtk-shell-shows-menubar) tell GTK whether the\ndesktop environment is showing the application menu and menubar\nmodels outside the application as part of the desktop shell.\nFor instance, on OS X, both menus will be displayed remotely;\non Windows neither will be.\n\nIf the desktop environment does not display the menubar, it can be shown in\nthe `GtkApplicationWindow` by setting the\n[`ApplicationWindow:show-menubar`](xref:gtk:Gtk.ApplicationWindow#property:show-menubar) property to true. If the\ndesktop environment does not display the application menu, then it will\nautomatically be included in the menubar or in the window’s client-side\ndecorations.\n\nSee [`PopoverMenu`](xref:gtk:Gtk.PopoverMenu) for information about the XML language\nused by `GtkBuilder` for menu models.\n\nSee also: [`Application.set_menubar()`](xref:gtk:Gtk.Application#method:set_menubar).\n\n## A GtkApplicationWindow with a menubar\n\nThe code sample below shows how to set up a `GtkApplicationWindow`\nwith a menu bar defined on the [`Application`](xref:gtk:Gtk.Application):\n\n```c\nGtkApplication *app = gtk_application_new (\"org.gtk.test\", 0);\n\nGtkBuilder *builder = gtk_builder_new_from_string (\n    \"<interface>\"\n    \"  <menu id='menubar'>\"\n    \"    <submenu>\"\n    \"      <attribute name='label' translatable='yes'>_Edit</attribute>\"\n    \"      <item>\"\n    \"        <attribute name='label' translatable='yes'>_Copy</attribute>\"\n    \"        <attribute name='action'>win.copy</attribute>\"\n    \"      </item>\"\n    \"      <item>\"\n    \"        <attribute name='label' translatable='yes'>_Paste</attribute>\"\n    \"        <attribute name='action'>win.paste</attribute>\"\n    \"      </item>\"\n    \"    </submenu>\"\n    \"  </menu>\"\n    \"</interface>\",\n    -1);\n\nGMenuModel *menubar = G_MENU_MODEL (gtk_builder_get_object (builder, \"menubar\"));\ngtk_application_set_menubar (GTK_APPLICATION (app), menubar);\ng_object_unref (builder);\n\n// ...\n\nGtkWidget *window = gtk_application_window_new (app);\n```"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ApplicationWindow",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_help_overlay": {
+      "brief": "Gets the `GtkShortcutsWindow` that is associated with `window`.",
+      "deprecated": "4.18",
+      "deprecated_md": "`GtkShortcutsWindow` will be removed in GTK 5",
+      "file": "gtk/gtkapplicationwindow.c",
+      "line": 859,
+      "md": "Gets the `GtkShortcutsWindow` that is associated with `window`.\n\nSee [`ApplicationWindow.set_help_overlay()`](xref:gtk:Gtk.ApplicationWindow#method:set_help_overlay)."
+    },
+    "get_id": {
+      "brief": "Returns the unique ID of the window.",
+      "file": "gtk/gtkapplicationwindow.c",
+      "line": 772,
+      "md": "Returns the unique ID of the window.\n\n If the window has not yet been added to a `GtkApplication`, returns `0`."
+    },
+    "get_show_menubar": {
+      "brief": "Returns whether the window will display a menubar for the app menu and menubar as needed.",
+      "file": "gtk/gtkapplicationwindow.c",
+      "line": 729,
+      "md": "Returns whether the window will display a menubar for the app menu\nand menubar as needed."
+    },
+    "set_help_overlay": {
+      "brief": "Associates a shortcuts window with the application window.",
+      "deprecated": "4.18",
+      "deprecated_md": "`GtkShortcutsWindow` will be removed in GTK 5",
+      "file": "gtk/gtkapplicationwindow.c",
+      "line": 813,
+      "md": "Associates a shortcuts window with the application window.\n\nAdditionally, sets up an action with the name\n`win.show-help-overlay` to present it.\n\nThe window takes responsibility for destroying the help overlay."
+    },
+    "set_show_menubar": {
+      "brief": "Sets whether the window will display a menubar for the app menu and menubar as needed.",
+      "file": "gtk/gtkapplicationwindow.c",
+      "line": 745,
+      "md": "Sets whether the window will display a menubar for the app menu\nand menubar as needed."
+    }
+  },
+  "properties": {
+    "show-menubar": {
+      "brief": "If this property is true, the window will display a menubar unless it is shown by the desktop shell.",
+      "file": "gtk/gtkapplicationwindow.c",
+      "line": 693,
+      "md": "If this property is true, the window will display a menubar\nunless it is shown by the desktop shell.\n\nSee [`Application.set_menubar()`](xref:gtk:Gtk.Application#method:set_menubar).\n\nIf false, the window will not display a menubar, regardless\nof whether the desktop shell is showing it or not."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

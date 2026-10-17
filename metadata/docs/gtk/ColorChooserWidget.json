@@ -1,0 +1,40 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkColorChooserWidget`.",
+      "file": "gtk/gtkcolorchooserwidget.c",
+      "line": 893,
+      "md": "Creates a new `GtkColorChooserWidget`."
+    }
+  },
+  "doc": {
+    "brief": "The `GtkColorChooserWidget` widget lets the user select a color.",
+    "deprecated": "4.10",
+    "deprecated_md": "Direct use of `GtkColorChooserWidget` is deprecated.",
+    "file": "gtk/gtkcolorchooserwidget.c",
+    "line": 40,
+    "md": "The `GtkColorChooserWidget` widget lets the user select a color.\n\nBy default, the chooser presents a predefined palette of colors,\nplus a small number of settable custom colors. It is also possible\nto select a different color with the single-color editor.\n\nTo enter the single-color editing mode, use the context menu of any\ncolor of the palette, or use the '+' button to add a new custom color.\n\nThe chooser automatically remembers the last selection, as well\nas custom colors.\n\nTo create a `GtkColorChooserWidget`, use [`ColorChooserWidget.new()`](xref:gtk:Gtk.ColorChooserWidget#constructor:new).\n\nTo change the initially selected color, use\n[`ColorChooser.set_rgba()`](xref:gtk:Gtk.ColorChooser#method:set_rgba). To get the selected color use\n[`ColorChooser.get_rgba()`](xref:gtk:Gtk.ColorChooser#method:get_rgba).\n\nThe `GtkColorChooserWidget` is used in the [`ColorChooserDialog`](xref:gtk:Gtk.ColorChooserDialog)\nto provide a dialog for selecting colors.\n\n# Actions\n\n`GtkColorChooserWidget` defines a set of built-in actions:\n\n- `color.customize` activates the color editor for the given color.\n- `color.select` emits the [`ColorChooser::color-activated`](xref:gtk:Gtk.ColorChooser#event:color-activated) signal\n  for the given color.\n\n# CSS names\n\n`GtkColorChooserWidget` has a single CSS node with name colorchooser."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ColorChooserWidget",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {},
+  "properties": {
+    "show-editor": {
+      "brief": "`TRUE` when the color chooser is showing the single-color editor.",
+      "file": "gtk/gtkcolorchooserwidget.c",
+      "line": 732,
+      "md": "`TRUE` when the color chooser is showing the single-color editor.\n\nIt can be set to switch the color chooser into single-color editing mode."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

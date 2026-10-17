@@ -1,0 +1,477 @@
+{
+  "doc": {
+    "brief": "The QTreeView class provides a default model/view implementation of a tree view.",
+    "index_brief": "Default model/view implementation of a tree view",
+    "url": "https://doc.qt.io/qt-6/qtreeview.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QTreeView",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QHeaderView * header() const": {
+      "brief": "Returns the header for the tree view.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#header"
+    },
+    "QModelIndex indexAbove(const QModelIndex &index) const": {
+      "brief": "Returns the model index of the item above *index*.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#indexAbove"
+    },
+    "QModelIndex indexAt(const QPoint &point) const override": {
+      "brief": "Reimplements: [QAbstractItemView::indexAt](xref:qt:QAbstractItemView)(const QPoint &point) const.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#indexAt"
+    },
+    "QModelIndex indexBelow(const QModelIndex &index) const": {
+      "brief": "Returns the model index of the item below *index*.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#indexBelow"
+    },
+    "QModelIndex moveCursor(QAbstractItemView::CursorAction cursorAction, Qt::KeyboardModifiers modifiers) override": {
+      "brief": "Reimplements: [QAbstractItemView::moveCursor](xref:qt:QAbstractItemView)(QAbstractItemView::CursorAction cursorAction, Qt::KeyboardModifiers modifiers).",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#moveCursor"
+    },
+    "QModelIndexList selectedIndexes() const override": {
+      "brief": "Reimplements: [QAbstractItemView::selectedIndexes](xref:qt:QAbstractItemView)() const.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#selectedIndexes"
+    },
+    "QRect visualRect(const QModelIndex &index) const override": {
+      "brief": "Reimplements: [QAbstractItemView::visualRect](xref:qt:QAbstractItemView)(const QModelIndex &index) const.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#visualRect"
+    },
+    "QRegion visualRegionForSelection(const QItemSelection &selection) const override": {
+      "brief": "Reimplements: [QAbstractItemView::visualRegionForSelection](xref:qt:QAbstractItemView)(const QItemSelection &selection) const.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#visualRegionForSelection"
+    },
+    "QSize viewportSizeHint() const override": {
+      "brief": "Reimplements: [QAbstractItemView::viewportSizeHint](xref:qt:QAbstractItemView)() const.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#viewportSizeHint"
+    },
+    "QTreeView(QWidget *parent)": {
+      "brief": "Constructs a tree view with a *parent* to represent a model's data.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#QTreeView"
+    },
+    "bool allColumnsShowFocus() const": {
+      "brief": "This property holds whether items should show keyboard focus using all columns",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#allColumnsShowFocus-prop"
+    },
+    "bool expandsOnDoubleClick() const": {
+      "brief": "This property holds whether the items can be expanded by double-clicking.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#expandsOnDoubleClick-prop"
+    },
+    "bool isAnimated() const": {
+      "brief": "This property holds whether animations are enabled",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#animated-prop"
+    },
+    "bool isColumnHidden(int column) const": {
+      "brief": "Returns `true` if the *column* is hidden; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#isColumnHidden"
+    },
+    "bool isExpanded(const QModelIndex &index) const": {
+      "brief": "Returns `true` if the model item *index* is expanded; otherwise returns false.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#isExpanded"
+    },
+    "bool isFirstColumnSpanned(int row, const QModelIndex &parent) const": {
+      "brief": "Returns `true` if the item in first column in the given *row* of the *parent* is spanning all the columns; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#isFirstColumnSpanned"
+    },
+    "bool isHeaderHidden() const": {
+      "brief": "This property holds whether the header is shown or not.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#headerHidden-prop"
+    },
+    "bool isIndexHidden(const QModelIndex &index) const override": {
+      "brief": "Reimplements: [QAbstractItemView::isIndexHidden](xref:qt:QAbstractItemView)(const QModelIndex &index) const.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#isIndexHidden"
+    },
+    "bool isRowHidden(int row, const QModelIndex &parent) const": {
+      "brief": "Returns `true` if the item in the given *row* of the *parent* is hidden; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#isRowHidden"
+    },
+    "bool isSortingEnabled() const": {
+      "brief": "This property holds whether sorting is enabled",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#sortingEnabled-prop"
+    },
+    "bool itemsExpandable() const": {
+      "brief": "This property holds whether the items are expandable by the user.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#itemsExpandable-prop"
+    },
+    "bool rootIsDecorated() const": {
+      "brief": "This property holds whether to show controls for expanding and collapsing top-level items",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#rootIsDecorated-prop"
+    },
+    "bool uniformRowHeights() const": {
+      "brief": "This property holds whether all items in the treeview have the same height",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#uniformRowHeights-prop"
+    },
+    "bool viewportEvent(QEvent *event) override": {
+      "brief": "Reimplements: [QAbstractItemView::viewportEvent](xref:qt:QAbstractItemView)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#viewportEvent"
+    },
+    "bool wordWrap() const": {
+      "brief": "This property holds the item text word-wrapping policy",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#wordWrap-prop"
+    },
+    "int autoExpandDelay() const": {
+      "brief": "This property holds the delay time before items in a tree are opened during a drag and drop operation.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#autoExpandDelay-prop"
+    },
+    "int columnAt(int x) const": {
+      "brief": "Returns the column in the tree view whose header covers the *x* coordinate given.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#columnAt"
+    },
+    "int columnViewportPosition(int column) const": {
+      "brief": "Returns the horizontal position of the *column* in the viewport.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#columnViewportPosition"
+    },
+    "int columnWidth(int column) const": {
+      "brief": "Returns the width of the *column*.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#columnWidth"
+    },
+    "int horizontalOffset() const override": {
+      "brief": "Reimplements: [QAbstractItemView::horizontalOffset](xref:qt:QAbstractItemView)() const.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#horizontalOffset"
+    },
+    "int indentation() const": {
+      "brief": "indentation of the items in the tree view.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#indentation-prop"
+    },
+    "int indexRowSizeHint(const QModelIndex &index) const": {
+      "brief": "Returns the size hint for the row indicated by *index*.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#indexRowSizeHint"
+    },
+    "int rowHeight(const QModelIndex &index) const": {
+      "brief": "Returns the height of the row indicated by the given *index*.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#rowHeight"
+    },
+    "int sizeHintForColumn(int column) const override": {
+      "brief": "Reimplements: [QAbstractItemView::sizeHintForColumn](xref:qt:QAbstractItemView)(int column) const.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#sizeHintForColumn"
+    },
+    "int treePosition() const": {
+      "brief": "Return the logical index the tree is set on.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#treePosition"
+    },
+    "int verticalOffset() const override": {
+      "brief": "Reimplements: [QAbstractItemView::verticalOffset](xref:qt:QAbstractItemView)() const.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#verticalOffset"
+    },
+    "void changeEvent(QEvent *event) override": {
+      "brief": "Reimplements: [QFrame::changeEvent](xref:qt:QFrame)(QEvent *ev).",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#changeEvent"
+    },
+    "void collapse(const QModelIndex &index)": {
+      "brief": "Collapses the model item specified by the *index*.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#collapse"
+    },
+    "void collapseAll()": {
+      "brief": "Collapses all expanded items.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#collapseAll"
+    },
+    "void collapsed(const QModelIndex &index)": {
+      "brief": "This signal is emitted when the item specified by *index* is collapsed.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#collapsed"
+    },
+    "void columnCountChanged(int oldCount, int newCount)": {
+      "brief": "Informs the tree view that the number of columns in the tree view has changed from *oldCount* to *newCount*.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#columnCountChanged"
+    },
+    "void columnMoved()": {
+      "brief": "This slot is called whenever a column has been moved.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#columnMoved"
+    },
+    "void columnResized(int column, int oldSize, int newSize)": {
+      "brief": "This function is called whenever *column*'s size is changed in the header. *oldSize* and *newSize* give the previous size and the new size in pixels.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#columnResized"
+    },
+    "void currentChanged(const QModelIndex &current, const QModelIndex &previous) override": {
+      "brief": "Reimplements: [QAbstractItemView::currentChanged](xref:qt:QAbstractItemView)(const QModelIndex &current, const QModelIndex &previous).",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#currentChanged"
+    },
+    "void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QList<int> &roles) override": {
+      "brief": "Reimplements: [QAbstractItemView::dataChanged](xref:qt:QAbstractItemView)(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QList<int> &roles).",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#dataChanged"
+    },
+    "void dragMoveEvent(QDragMoveEvent *event) override": {
+      "brief": "Reimplements: [QAbstractItemView::dragMoveEvent](xref:qt:QAbstractItemView)(QDragMoveEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#dragMoveEvent"
+    },
+    "void drawBranches(QPainter *painter, const QRect &rect, const QModelIndex &index) const": {
+      "brief": "Draws the branches in the tree view on the same row as the model item *index*, using the *painter* given.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#drawBranches"
+    },
+    "void drawRow(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const": {
+      "brief": "Draws the row in the tree view that contains the model item *index*, using the *painter* given.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#drawRow"
+    },
+    "void drawTree(QPainter *painter, const QRegion &region) const": {
+      "brief": "Draws the part of the tree intersecting the given *region* using the specified *painter*.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#drawTree"
+    },
+    "void expand(const QModelIndex &index)": {
+      "brief": "Expands the model item specified by the *index*.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#expand"
+    },
+    "void expandAll()": {
+      "brief": "Expands all expandable items.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#expandAll"
+    },
+    "void expandRecursively(const QModelIndex &index, int depth)": {
+      "brief": "Expands the item at the given *index* and all its children to the given *depth*.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#expandRecursively"
+    },
+    "void expandToDepth(int depth)": {
+      "brief": "Expands all expandable items to the given *depth*.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#expandToDepth"
+    },
+    "void expanded(const QModelIndex &index)": {
+      "brief": "This signal is emitted when the item specified by *index* is expanded.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#expanded"
+    },
+    "void hideColumn(int column)": {
+      "brief": "Hides the *column* given.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#hideColumn"
+    },
+    "void keyPressEvent(QKeyEvent *event) override": {
+      "brief": "Reimplements: [QAbstractItemView::keyPressEvent](xref:qt:QAbstractItemView)(QKeyEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#keyPressEvent"
+    },
+    "void keyboardSearch(const QString &search) override": {
+      "brief": "Reimplements: [QAbstractItemView::keyboardSearch](xref:qt:QAbstractItemView)(const QString &search).",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#keyboardSearch"
+    },
+    "void mouseDoubleClickEvent(QMouseEvent *event) override": {
+      "brief": "Reimplements: [QAbstractItemView::mouseDoubleClickEvent](xref:qt:QAbstractItemView)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#mouseDoubleClickEvent"
+    },
+    "void mouseMoveEvent(QMouseEvent *event) override": {
+      "brief": "Reimplements: [QAbstractItemView::mouseMoveEvent](xref:qt:QAbstractItemView)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#mouseMoveEvent"
+    },
+    "void mousePressEvent(QMouseEvent *event) override": {
+      "brief": "Reimplements: [QAbstractItemView::mousePressEvent](xref:qt:QAbstractItemView)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#mousePressEvent"
+    },
+    "void mouseReleaseEvent(QMouseEvent *event) override": {
+      "brief": "Reimplements: [QAbstractItemView::mouseReleaseEvent](xref:qt:QAbstractItemView)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#mouseReleaseEvent"
+    },
+    "void paintEvent(QPaintEvent *event) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::paintEvent](xref:qt:QAbstractScrollArea)(QPaintEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#paintEvent"
+    },
+    "void reset() override": {
+      "brief": "Reimplements: [QAbstractItemView::reset](xref:qt:QAbstractItemView)().",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#reset"
+    },
+    "void resetIndentation()": {
+      "brief": "indentation of the items in the tree view.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#indentation-prop"
+    },
+    "void resizeColumnToContents(int column)": {
+      "brief": "Resizes the *column* given to the size of its contents.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#resizeColumnToContents"
+    },
+    "void rowsAboutToBeRemoved(const QModelIndex &parent, int start, int end) override": {
+      "brief": "Reimplements: [QAbstractItemView::rowsAboutToBeRemoved](xref:qt:QAbstractItemView)(const QModelIndex &parent, int start, int end).",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#rowsAboutToBeRemoved"
+    },
+    "void rowsInserted(const QModelIndex &parent, int start, int end) override": {
+      "brief": "Reimplements: [QAbstractItemView::rowsInserted](xref:qt:QAbstractItemView)(const QModelIndex &parent, int start, int end).",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#rowsInserted"
+    },
+    "void rowsRemoved(const QModelIndex &parent, int start, int end)": {
+      "brief": "Informs the view that the rows from the *start* row to the *end* row inclusive have been removed from the given *parent* model item.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#rowsRemoved"
+    },
+    "void scrollContentsBy(int dx, int dy) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::scrollContentsBy](xref:qt:QAbstractScrollArea)(int dx, int dy).",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#scrollContentsBy"
+    },
+    "void scrollTo(const QModelIndex &index, QAbstractItemView::ScrollHint hint) override": {
+      "brief": "Reimplements: [QAbstractItemView::scrollTo](xref:qt:QAbstractItemView)(const QModelIndex &index, QAbstractItemView::ScrollHint hint).",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#scrollTo"
+    },
+    "void selectAll() override": {
+      "brief": "Reimplements: [QAbstractItemView::selectAll](xref:qt:QAbstractItemView)().",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#selectAll"
+    },
+    "void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override": {
+      "brief": "Reimplements: [QAbstractItemView::selectionChanged](xref:qt:QAbstractItemView)(const QItemSelection &selected, const QItemSelection &deselected).",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#selectionChanged"
+    },
+    "void setAllColumnsShowFocus(bool enable)": {
+      "brief": "This property holds whether items should show keyboard focus using all columns",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#allColumnsShowFocus-prop"
+    },
+    "void setAnimated(bool enable)": {
+      "brief": "This property holds whether animations are enabled",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#animated-prop"
+    },
+    "void setAutoExpandDelay(int delay)": {
+      "brief": "This property holds the delay time before items in a tree are opened during a drag and drop operation.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#autoExpandDelay-prop"
+    },
+    "void setColumnHidden(int column, bool hide)": {
+      "brief": "If *hide* is true the *column* is hidden, otherwise the *column* is shown.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#setColumnHidden"
+    },
+    "void setColumnWidth(int column, int width)": {
+      "brief": "Sets the width of the given *column* to the *width* specified.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#setColumnWidth"
+    },
+    "void setExpanded(const QModelIndex &index, bool expanded)": {
+      "brief": "Sets the item referred to by *index* to either collapse or expanded, depending on the value of *expanded*.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#setExpanded"
+    },
+    "void setExpandsOnDoubleClick(bool enable)": {
+      "brief": "This property holds whether the items can be expanded by double-clicking.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#expandsOnDoubleClick-prop"
+    },
+    "void setFirstColumnSpanned(int row, const QModelIndex &parent, bool span)": {
+      "brief": "If *span* is true the item in the first column in the *row* with the given *parent* is set to span all columns, otherwise all items on the *row* are shown.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#setFirstColumnSpanned"
+    },
+    "void setHeader(QHeaderView *header)": {
+      "brief": "Sets the header for the tree view, to the given *header*.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#setHeader"
+    },
+    "void setHeaderHidden(bool hide)": {
+      "brief": "This property holds whether the header is shown or not.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#headerHidden-prop"
+    },
+    "void setIndentation(int i)": {
+      "brief": "indentation of the items in the tree view.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#indentation-prop"
+    },
+    "void setItemsExpandable(bool enable)": {
+      "brief": "This property holds whether the items are expandable by the user.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#itemsExpandable-prop"
+    },
+    "void setModel(QAbstractItemModel *model) override": {
+      "brief": "Reimplements: [QAbstractItemView::setModel](xref:qt:QAbstractItemView)(QAbstractItemModel *model).",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#setModel"
+    },
+    "void setRootIndex(const QModelIndex &index) override": {
+      "brief": "Reimplements: [QAbstractItemView::setRootIndex](xref:qt:QAbstractItemView)(const QModelIndex &index).",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#setRootIndex"
+    },
+    "void setRootIsDecorated(bool show)": {
+      "brief": "This property holds whether to show controls for expanding and collapsing top-level items",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#rootIsDecorated-prop"
+    },
+    "void setRowHidden(int row, const QModelIndex &parent, bool hide)": {
+      "brief": "If *hide* is true the *row* with the given *parent* is hidden, otherwise the *row* is shown.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#setRowHidden"
+    },
+    "void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command) override": {
+      "brief": "Reimplements: [QAbstractItemView::setSelection](xref:qt:QAbstractItemView)(const QRect &rect, QItemSelectionModel::SelectionFlags flags).",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#setSelection"
+    },
+    "void setSelectionModel(QItemSelectionModel *selectionModel) override": {
+      "brief": "Reimplements: [QAbstractItemView::setSelectionModel](xref:qt:QAbstractItemView)(QItemSelectionModel *selectionModel).",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#setSelectionModel"
+    },
+    "void setSortingEnabled(bool enable)": {
+      "brief": "This property holds whether sorting is enabled",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#sortingEnabled-prop"
+    },
+    "void setTreePosition(int index)": {
+      "brief": "This specifies that the tree structure should be placed at logical index *index*.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#setTreePosition"
+    },
+    "void setUniformRowHeights(bool uniform)": {
+      "brief": "This property holds whether all items in the treeview have the same height",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#uniformRowHeights-prop"
+    },
+    "void setWordWrap(bool on)": {
+      "brief": "This property holds the item text word-wrapping policy",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#wordWrap-prop"
+    },
+    "void showColumn(int column)": {
+      "brief": "Shows the given *column* in the tree view.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#showColumn"
+    },
+    "void sortByColumn(int column, Qt::SortOrder order)": {
+      "brief": "Sorts the model by the values in the given *column* and *order*.",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#sortByColumn"
+    },
+    "void timerEvent(QTimerEvent *event) override": {
+      "brief": "Reimplements: [QAbstractItemView::timerEvent](xref:qt:QAbstractItemView)(QTimerEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#timerEvent"
+    },
+    "void updateGeometries() override": {
+      "brief": "Reimplements: [QAbstractItemView::updateGeometries](xref:qt:QAbstractItemView)().",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#updateGeometries"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "allColumnsShowFocus": {
+      "brief": "Whether items should show keyboard focus using all columns",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#allColumnsShowFocus-prop"
+    },
+    "animated": {
+      "brief": "Whether animations are enabled",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#animated-prop"
+    },
+    "autoExpandDelay": {
+      "brief": "Delay time before items in a tree are opened during a drag and drop operation",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#autoExpandDelay-prop"
+    },
+    "expandsOnDoubleClick": {
+      "brief": "Whether the items can be expanded by double-clicking",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#expandsOnDoubleClick-prop"
+    },
+    "headerHidden": {
+      "brief": "Whether the header is shown or not",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#headerHidden-prop"
+    },
+    "indentation": {
+      "brief": "Of the items in the tree view",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#indentation-prop"
+    },
+    "itemsExpandable": {
+      "brief": "Whether the items are expandable by the user",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#itemsExpandable-prop"
+    },
+    "rootIsDecorated": {
+      "brief": "Whether to show controls for expanding and collapsing top-level items",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#rootIsDecorated-prop"
+    },
+    "sortingEnabled": {
+      "brief": "Whether sorting is enabled",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#sortingEnabled-prop"
+    },
+    "uniformRowHeights": {
+      "brief": "Whether all items in the treeview have the same height",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#uniformRowHeights-prop"
+    },
+    "wordWrap": {
+      "brief": "The item text word-wrapping policy",
+      "url": "https://doc.qt.io/qt-6/qtreeview.html#wordWrap-prop"
+    }
+  },
+  "qss": {
+    "box_model": true,
+    "pseudo_states": [
+      ":closed",
+      ":has-children",
+      ":has-siblings",
+      ":open"
+    ],
+    "sub_controls": [
+      "::branch",
+      "::item"
+    ],
+    "url": "https://doc.qt.io/qt-6/stylesheet-reference.html#qtreeview-widget"
+  },
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

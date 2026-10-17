@@ -1,0 +1,334 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkAboutDialog`.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 2224,
+      "md": "Creates a new `GtkAboutDialog`."
+    }
+  },
+  "doc": {
+    "brief": "Displays information about a program.",
+    "file": "gtk/gtkaboutdialog.c",
+    "line": 58,
+    "md": "Displays information about a program.\n\nThe shown information includes the programs' logo, name, copyright,\nwebsite and license. It is also possible to give credits to the authors,\ndocumenters, translators and artists who have worked on the program.\n\nAn about dialog is typically opened when the user selects the `About`\noption from the `Help` menu. All parts of the dialog are optional.\n\nAbout dialogs often contain links and email addresses. `GtkAboutDialog`\ndisplays these as clickable links. By default, it calls [`FileLauncher.launch()`](xref:gtk:Gtk.FileLauncher#method:launch)\nwhen a user clicks one. The behaviour can be overridden with the\n[`AboutDialog::activate-link`](xref:gtk:Gtk.AboutDialog#event:activate-link) signal.\n\nTo specify a person with an email address, use a string like\n`Edgar Allan Poe <edgar@poe.com>`. To specify a website with a title,\nuse a string like `GTK team https://www.gtk.org`.\n\nTo make constructing an about dialog as convenient as possible, you can\nuse the function `show_about_dialog` which constructs and shows\na dialog and keeps it around so that it can be shown again.\n\nNote that GTK sets a default title of `_(\"About %s\")` on the dialog\nwindow (where `%s` is replaced by the name of the application, but in\norder to ensure proper translation of the title, applications should\nset the title property explicitly when constructing an about dialog,\nas shown in the following example:\n\n```c\nGFile *logo_file = g_file_new_for_path (\"./logo.png\");\nGdkTexture *example_logo = gdk_texture_new_from_file (logo_file, NULL);\ng_object_unref (logo_file);\n\ngtk_show_about_dialog (NULL,\n                       \"program-name\", \"ExampleCode\",\n                       \"logo\", example_logo,\n                       \"title\", _(\"About ExampleCode\"),\n                       NULL);\n```\n\n## Shortcuts and Gestures\n\n`GtkAboutDialog` supports the following keyboard shortcuts:\n\n- <kbd>Escape</kbd> closes the window.\n\n## CSS nodes\n\n`GtkAboutDialog` has a single CSS node with the name `window` and style\nclass `.aboutdialog`."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "add_credit_section": {
+      "brief": "Creates a new section in the \"Credits\" page.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 2387,
+      "md": "Creates a new section in the \"Credits\" page."
+    },
+    "get_artists": {
+      "brief": "Returns the names of the artists which are displayed in the credits page.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 1557,
+      "md": "Returns the names of the artists which are displayed\nin the credits page."
+    },
+    "get_authors": {
+      "brief": "Returns the names of the authors which are displayed in the credits page.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 1470,
+      "md": "Returns the names of the authors which are displayed\nin the credits page."
+    },
+    "get_comments": {
+      "brief": "Returns the comments string.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 1202,
+      "md": "Returns the comments string."
+    },
+    "get_copyright": {
+      "brief": "Returns the copyright string.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 1153,
+      "md": "Returns the copyright string."
+    },
+    "get_documenters": {
+      "brief": "Returns the name of the documenters which are displayed in the credits page.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 1513,
+      "md": "Returns the name of the documenters which are displayed\nin the credits page."
+    },
+    "get_license": {
+      "brief": "Returns the license information.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 1252,
+      "md": "Returns the license information."
+    },
+    "get_license_type": {
+      "brief": "Retrieves the license type.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 2371,
+      "md": "Retrieves the license type."
+    },
+    "get_logo": {
+      "brief": "Returns the paintable displayed as logo in the about dialog.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 1659,
+      "md": "Returns the paintable displayed as logo in the about dialog."
+    },
+    "get_logo_icon_name": {
+      "brief": "Returns the icon name displayed as logo in the about dialog.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 1706,
+      "md": "Returns the icon name displayed as logo in the about dialog."
+    },
+    "get_program_name": {
+      "brief": "Returns the program name displayed in the about dialog.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 1050,
+      "md": "Returns the program name displayed in the about dialog."
+    },
+    "get_system_information": {
+      "brief": "Returns the system information that is shown in the about dialog.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 1307,
+      "md": "Returns the system information that is shown in the about dialog."
+    },
+    "get_translator_credits": {
+      "brief": "Returns the translator credits string which is displayed in the credits page.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 1601,
+      "md": "Returns the translator credits string which is displayed\nin the credits page."
+    },
+    "get_version": {
+      "brief": "Returns the version string.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 1113,
+      "md": "Returns the version string."
+    },
+    "get_website": {
+      "brief": "Returns the website URL.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 1390,
+      "md": "Returns the website URL."
+    },
+    "get_website_label": {
+      "brief": "Returns the label used for the website link.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 1430,
+      "md": "Returns the label used for the website link."
+    },
+    "get_wrap_license": {
+      "brief": "Returns whether the license text in the about dialog is automatically wrapped.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 1349,
+      "md": "Returns whether the license text in the about dialog is\nautomatically wrapped."
+    },
+    "set_artists": {
+      "brief": "Sets the names of the artists to be displayed in the \"Credits\" page.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 1575,
+      "md": "Sets the names of the artists to be displayed\nin the \"Credits\" page."
+    },
+    "set_authors": {
+      "brief": "Sets the names of the authors which are displayed in the \"Credits\" page of the about dialog.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 1488,
+      "md": "Sets the names of the authors which are displayed\nin the \"Credits\" page of the about dialog."
+    },
+    "set_comments": {
+      "brief": "Sets the comments string to display in the about dialog.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 1218,
+      "md": "Sets the comments string to display in the about dialog.\n\nThis should be a short string of one or two lines."
+    },
+    "set_copyright": {
+      "brief": "Sets the copyright string to display in the about dialog.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 1169,
+      "md": "Sets the copyright string to display in the about dialog.\n\nThis should be a short string of one or two lines."
+    },
+    "set_documenters": {
+      "brief": "Sets the names of the documenters which are displayed in the \"Credits\" page.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 1531,
+      "md": "Sets the names of the documenters which are displayed\nin the \"Credits\" page."
+    },
+    "set_license": {
+      "brief": "Sets the license information to be displayed in the about dialog.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 1268,
+      "md": "Sets the license information to be displayed in the\nabout dialog.\n\nIf `license` is `NULL`, the license page is hidden."
+    },
+    "set_license_type": {
+      "brief": "Sets the license of the application showing the about dialog from a list of known licenses.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 2305,
+      "md": "Sets the license of the application showing the about dialog\nfrom a list of known licenses.\n\nThis function overrides the license set using\n[`AboutDialog.set_license()`](xref:gtk:Gtk.AboutDialog#method:set_license)."
+    },
+    "set_logo": {
+      "brief": "Sets the logo in the about dialog.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 1680,
+      "md": "Sets the logo in the about dialog."
+    },
+    "set_logo_icon_name": {
+      "brief": "Sets the icon name to be displayed as logo in the about dialog.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 1726,
+      "md": "Sets the icon name to be displayed as logo in the about dialog."
+    },
+    "set_program_name": {
+      "brief": "Sets the name to display in the about dialog.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 1085,
+      "md": "Sets the name to display in the about dialog.\n\nIf `name` is not set, the string returned\nby `g_get_application_name()` is used."
+    },
+    "set_system_information": {
+      "brief": "Sets the system information to be displayed in the about dialog.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 1323,
+      "md": "Sets the system information to be displayed in the about\ndialog.\n\nIf `system_information` is `NULL`, the system information\npage is hidden.\n\nSee [`AboutDialog:system-information`](xref:gtk:Gtk.AboutDialog#property:system-information)."
+    },
+    "set_translator_credits": {
+      "brief": "Sets the translator credits string which is displayed in the credits page.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 1618,
+      "md": "Sets the translator credits string which is displayed in\nthe credits page.\n\nThe intended use for this string is to display the translator\nof the language which is currently used in the user interface.\nUsing `gettext()`, a simple way to achieve that is to mark the\nstring for translation:\n\n```c\nGtkWidget *about = gtk_about_dialog_new ();\n gtk_about_dialog_set_translator_credits (GTK_ABOUT_DIALOG (about),\n                                          _(\"translator-credits\"));\n```\n\nIt is a good idea to use the customary `msgid` “translator-credits”\nfor this purpose, since translators will already know the purpose of\nthat `msgid`, and since `GtkAboutDialog` will detect if “translator-credits”\nis untranslated and omit translator credits."
+    },
+    "set_version": {
+      "brief": "Sets the version string to display in the about dialog.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 1129,
+      "md": "Sets the version string to display in the about dialog."
+    },
+    "set_website": {
+      "brief": "Sets the URL to use for the website link.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 1406,
+      "md": "Sets the URL to use for the website link."
+    },
+    "set_website_label": {
+      "brief": "Sets the label to be used for the website link.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 1446,
+      "md": "Sets the label to be used for the website link."
+    },
+    "set_wrap_license": {
+      "brief": "Sets whether the license text in the about dialog should be automatically wrapped.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 1366,
+      "md": "Sets whether the license text in the about dialog should be\nautomatically wrapped."
+    }
+  },
+  "properties": {
+    "artists": {
+      "brief": "The people who contributed artwork to the program.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 547,
+      "md": "The people who contributed artwork to the program.\n\nEach string may contain email addresses and URLs, which will be displayed\nas links."
+    },
+    "authors": {
+      "brief": "The authors of the program.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 521,
+      "md": "The authors of the program.\n\nEach string may contain email addresses and URLs, which will be displayed\nas links, see the introduction for more details."
+    },
+    "comments": {
+      "brief": "Comments about the program.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 419,
+      "md": "Comments about the program.\n\nThis string is displayed in a label in the main dialog, thus it\nshould be a short explanation of the main purpose of the program,\nnot a detailed list of features."
+    },
+    "copyright": {
+      "brief": "Copyright information for the program.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 409,
+      "md": "Copyright information for the program."
+    },
+    "documenters": {
+      "brief": "The people documenting the program.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 534,
+      "md": "The people documenting the program.\n\nEach string may contain email addresses and URLs, which will be displayed\nas links, see the introduction for more details."
+    },
+    "license": {
+      "brief": "The license of the program, as free-form text.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 433,
+      "md": "The license of the program, as free-form text.\n\nThis string is displayed in a text view in a secondary dialog, therefore\nit is fine to use a long multi-paragraph text. Note that the text is only\nwrapped in the text view if the \"wrap-license\" property is set to `TRUE`;\notherwise the text itself must contain the intended linebreaks.\n\nWhen setting this property to a non-`NULL` value, the\n[`AboutDialog:license-type`](xref:gtk:Gtk.AboutDialog#property:license-type) property is set to\n[`License.custom`](xref:gtk:Gtk.License#value:custom) as a side effect.\n\nThe text may contain links in this format `<http://www.some.place/>`\nand email references in the form `<mail-to@some.body>`, and these will\nbe converted into clickable links."
+    },
+    "license-type": {
+      "brief": "The license of the program.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 474,
+      "md": "The license of the program.\n\nThe `GtkAboutDialog` will automatically fill out a standard disclaimer\nand link the user to the appropriate online resource for the license\ntext.\n\nIf [`License.unknown`](xref:gtk:Gtk.License#value:unknown) is used, the link used will be the same\nspecified in the [`AboutDialog:website`](xref:gtk:Gtk.AboutDialog#property:website) property.\n\nIf [`License.custom`](xref:gtk:Gtk.License#value:custom) is used, the current contents of the\n[`AboutDialog:license`](xref:gtk:Gtk.AboutDialog#property:license) property are used.\n\nFor any other [`License`](xref:gtk:Gtk.License) value, the contents of the\n[`AboutDialog:license`](xref:gtk:Gtk.AboutDialog#property:license) property are also set by\nthis property as a side effect."
+    },
+    "logo": {
+      "brief": "A logo for the about box.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 575,
+      "md": "A logo for the about box.\n\nIf it is `NULL`, the default window icon set with\n`set_default_icon_name` will be used."
+    },
+    "logo-icon-name": {
+      "brief": "A named icon to use as the logo for the about box.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 588,
+      "md": "A named icon to use as the logo for the about box.\n\nThis property overrides the [`AboutDialog:logo`](xref:gtk:Gtk.AboutDialog#property:logo) property."
+    },
+    "program-name": {
+      "brief": "The name of the program.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 386,
+      "md": "The name of the program.\n\nIf this is not set, it defaults to the value returned by\n`get_application_name`."
+    },
+    "system-information": {
+      "brief": "Information about the system on which the program is running.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 456,
+      "md": "Information about the system on which the program is running.\n\nThis information is displayed in a separate page, therefore it is fine\nto use a long multi-paragraph text. Note that the text should contain\nthe intended linebreaks.\n\nThe text may contain links in this format `<http://www.some.place/>`\nand email references in the form `<mail-to@some.body>`, and these will\nbe converted into clickable links."
+    },
+    "translator-credits": {
+      "brief": "Credits to the translators.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 560,
+      "md": "Credits to the translators.\n\nThis string should be marked as translatable.\n\nThe string may contain email addresses and URLs, which will be displayed\nas links, see the introduction for more details."
+    },
+    "version": {
+      "brief": "The version of the program.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 399,
+      "md": "The version of the program."
+    },
+    "website": {
+      "brief": "The URL for the link to the website of the program.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 499,
+      "md": "The URL for the link to the website of the program.\n\nThis should be a string starting with `http://` or `https://`."
+    },
+    "website-label": {
+      "brief": "The label for the link to the website of the program.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 511,
+      "md": "The label for the link to the website of the program."
+    },
+    "wrap-license": {
+      "brief": "Whether to wrap the text in the license dialog.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 600,
+      "md": "Whether to wrap the text in the license dialog."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "activate-link": {
+      "brief": "Emitted every time a URL is activated.",
+      "file": "gtk/gtkaboutdialog.c",
+      "line": 362,
+      "md": "Emitted every time a URL is activated.\n\nApplications may connect to it to override the default behaviour,\nwhich is to call [`FileLauncher.launch()`](xref:gtk:Gtk.FileLauncher#method:launch)."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

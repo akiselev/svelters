@@ -1,0 +1,163 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Possible transitions between pages in a `GtkStack` widget.",
+    "file": "gtk/gtkstack.c",
+    "line": 95,
+    "md": "Possible transitions between pages in a `GtkStack` widget.\n\nNew values may be added to this enumeration over time."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:StackTransitionType",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "crossfade": {
+      "brief": "A cross-fade",
+      "file": "gtk/gtkstack.c",
+      "line": 98,
+      "md": "A cross-fade"
+    },
+    "none": {
+      "brief": "No transition",
+      "file": "gtk/gtkstack.c",
+      "line": 97,
+      "md": "No transition"
+    },
+    "over_down": {
+      "brief": "Cover the old page by sliding down",
+      "file": "gtk/gtkstack.c",
+      "line": 106,
+      "md": "Cover the old page by sliding down"
+    },
+    "over_down_up": {
+      "brief": "Cover the old page sliding down or uncover the new page sliding up, according to order",
+      "file": "gtk/gtkstack.c",
+      "line": 114,
+      "md": "Cover the old page sliding down or uncover the new page sliding up, according to order"
+    },
+    "over_left": {
+      "brief": "Cover the old page by sliding to the left",
+      "file": "gtk/gtkstack.c",
+      "line": 107,
+      "md": "Cover the old page by sliding to the left"
+    },
+    "over_left_right": {
+      "brief": "Cover the old page sliding left or uncover the new page sliding right, according to order",
+      "file": "gtk/gtkstack.c",
+      "line": 115,
+      "md": "Cover the old page sliding left or uncover the new page sliding right, according to order"
+    },
+    "over_right": {
+      "brief": "Cover the old page by sliding to the right",
+      "file": "gtk/gtkstack.c",
+      "line": 108,
+      "md": "Cover the old page by sliding to the right"
+    },
+    "over_right_left": {
+      "brief": "Cover the old page sliding right or uncover the new page sliding left, according to order",
+      "file": "gtk/gtkstack.c",
+      "line": 116,
+      "md": "Cover the old page sliding right or uncover the new page sliding left, according to order"
+    },
+    "over_up": {
+      "brief": "Cover the old page by sliding up",
+      "file": "gtk/gtkstack.c",
+      "line": 105,
+      "md": "Cover the old page by sliding up"
+    },
+    "over_up_down": {
+      "brief": "Cover the old page sliding up or uncover the new page sliding down, according to order",
+      "file": "gtk/gtkstack.c",
+      "line": 113,
+      "md": "Cover the old page sliding up or uncover the new page sliding down, according to order"
+    },
+    "rotate_left": {
+      "brief": "Pretend the pages are sides of a cube and rotate that cube to the left",
+      "file": "gtk/gtkstack.c",
+      "line": 117,
+      "md": "Pretend the pages are sides of a cube and rotate that cube to the left"
+    },
+    "rotate_left_right": {
+      "brief": "Pretend the pages are sides of a cube and rotate that cube to the left or right according to the children order",
+      "file": "gtk/gtkstack.c",
+      "line": 119,
+      "md": "Pretend the pages are sides of a cube and rotate that cube to the left or right according to the children order"
+    },
+    "rotate_right": {
+      "brief": "Pretend the pages are sides of a cube and rotate that cube to the right",
+      "file": "gtk/gtkstack.c",
+      "line": 118,
+      "md": "Pretend the pages are sides of a cube and rotate that cube to the right"
+    },
+    "slide_down": {
+      "brief": "Slide from top down",
+      "file": "gtk/gtkstack.c",
+      "line": 102,
+      "md": "Slide from top down"
+    },
+    "slide_left": {
+      "brief": "Slide from right to left",
+      "file": "gtk/gtkstack.c",
+      "line": 100,
+      "md": "Slide from right to left"
+    },
+    "slide_left_right": {
+      "brief": "Slide from left or right according to the children order",
+      "file": "gtk/gtkstack.c",
+      "line": 103,
+      "md": "Slide from left or right according to the children order"
+    },
+    "slide_right": {
+      "brief": "Slide from left to right",
+      "file": "gtk/gtkstack.c",
+      "line": 99,
+      "md": "Slide from left to right"
+    },
+    "slide_up": {
+      "brief": "Slide from bottom up",
+      "file": "gtk/gtkstack.c",
+      "line": 101,
+      "md": "Slide from bottom up"
+    },
+    "slide_up_down": {
+      "brief": "Slide from top down or bottom up according to the order",
+      "file": "gtk/gtkstack.c",
+      "line": 104,
+      "md": "Slide from top down or bottom up according to the order"
+    },
+    "under_down": {
+      "brief": "Uncover the new page by sliding down",
+      "file": "gtk/gtkstack.c",
+      "line": 110,
+      "md": "Uncover the new page by sliding down"
+    },
+    "under_left": {
+      "brief": "Uncover the new page by sliding to the left",
+      "file": "gtk/gtkstack.c",
+      "line": 111,
+      "md": "Uncover the new page by sliding to the left"
+    },
+    "under_right": {
+      "brief": "Uncover the new page by sliding to the right",
+      "file": "gtk/gtkstack.c",
+      "line": 112,
+      "md": "Uncover the new page by sliding to the right"
+    },
+    "under_up": {
+      "brief": "Uncover the new page by sliding up",
+      "file": "gtk/gtkstack.c",
+      "line": 109,
+      "md": "Uncover the new page by sliding up"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

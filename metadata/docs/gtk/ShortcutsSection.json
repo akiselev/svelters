@@ -1,0 +1,78 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "A `GtkShortcutsSection` collects all the keyboard shortcuts and gestures for a major application mode.",
+    "deprecated": "4.18",
+    "deprecated_md": "This widget will be removed in GTK 5",
+    "file": "gtk/deprecated/gtkshortcutssection.c",
+    "line": 42,
+    "md": "A `GtkShortcutsSection` collects all the keyboard shortcuts and gestures\nfor a major application mode.\n\nIf your application needs multiple sections, you should give each\nsection a unique [`ShortcutsSection:section-name`](xref:gtk:Gtk.ShortcutsSection#property:section-name) and\na [`ShortcutsSection:title`](xref:gtk:Gtk.ShortcutsSection#property:title) that can be shown in the\nsection selector of the [`ShortcutsWindow`](xref:gtk:Gtk.ShortcutsWindow).\n\nThe [`ShortcutsSection:max-height`](xref:gtk:Gtk.ShortcutsSection#property:max-height) property can be used\nto influence how the groups in the section are distributed over pages\nand columns.\n\nThis widget is only meant to be used with [`ShortcutsWindow`](xref:gtk:Gtk.ShortcutsWindow).\n\nThe recommended way to construct a `GtkShortcutsSection` is with\n[`Builder`](xref:gtk:Gtk.Builder), by using the `<child>` tag to populate a\n`GtkShortcutsSection` with one or more [`ShortcutsGroup`](xref:gtk:Gtk.ShortcutsGroup)\ninstances, which in turn contain one or more [`ShortcutsShortcut`](xref:gtk:Gtk.ShortcutsShortcut)\nobjects.\n\nIf you need to add a group programmatically, use\n[`ShortcutsSection.add_group()`](xref:gtk:Gtk.ShortcutsSection#method:add_group).\n\n# Shortcuts and Gestures\n\nPan gestures allow to navigate between sections.\n\nThe following signals have default keybindings:\n\n- [`ShortcutsSection::change-current-page`](xref:gtk:Gtk.ShortcutsSection#event:change-current-page)"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ShortcutsSection",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "add_group": {
+      "brief": "Adds a group to the shortcuts section.",
+      "deprecated": "4.18",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkshortcutssection.c",
+      "line": 499,
+      "md": "Adds a group to the shortcuts section.\n\nThis is the programmatic equivalent to using [`Builder`](xref:gtk:Gtk.Builder) and a\n`<child>` tag to add the child.\n\nAdding children with the `GtkBox` API is not appropriate, as\n`GtkShortcutsSection` manages its children internally.",
+      "since": "4.14"
+    }
+  },
+  "properties": {
+    "max-height": {
+      "brief": "The maximum number of lines to allow per column.",
+      "deprecated": "4.18",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkshortcutssection.c",
+      "line": 355,
+      "md": "The maximum number of lines to allow per column.\n\nThis property can be used to influence how the groups in this\nsection are distributed across pages and columns. The default\nvalue of 15 should work in most cases."
+    },
+    "section-name": {
+      "brief": "A unique name to identify this section among the sections added to the `GtkShortcutsWindow`.",
+      "deprecated": "4.18",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkshortcutssection.c",
+      "line": 305,
+      "md": "A unique name to identify this section among the sections\nadded to the `GtkShortcutsWindow`.\n\nSetting the [`ShortcutsWindow:section-name`](xref:gtk:Gtk.ShortcutsWindow#property:section-name) property\nto this string will make this section shown in the `GtkShortcutsWindow`."
+    },
+    "title": {
+      "brief": "The string to show in the section selector of the `GtkShortcutsWindow` for this section.",
+      "deprecated": "4.18",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkshortcutssection.c",
+      "line": 339,
+      "md": "The string to show in the section selector of the `GtkShortcutsWindow`\nfor this section.\n\nIf there is only one section, you don't need to set a title,\nsince the section selector will not be shown in this case."
+    },
+    "view-name": {
+      "brief": "A view name to filter the groups in this section by.",
+      "deprecated": "4.18",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkshortcutssection.c",
+      "line": 321,
+      "md": "A view name to filter the groups in this section by.\n\nSee [`ShortcutsGroup:view`](xref:gtk:Gtk.ShortcutsGroup#property:view).\n\nApplications are expected to use the\n[`ShortcutsWindow:view-name`](xref:gtk:Gtk.ShortcutsWindow#property:view-name) property\nfor this purpose."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "change-current-page": {
+      "brief": "Emitted when we change the current page.",
+      "deprecated": "4.18",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkshortcutssection.c",
+      "line": 373,
+      "md": "Emitted when we change the current page.\n\nThe default bindings for this signal are\n<kbd>Ctrl</kbd>+<kbd>PgUp</kbd>, <kbd>PgUp</kbd>,\n<kbd>Ctrl</kbd>+<kbd>PgDn</kbd>, <kbd>PgDn</kbd>."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

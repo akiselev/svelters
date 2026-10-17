@@ -2,11 +2,15 @@ elements:
   - tag: button
     construct: { class: QPushButton }
     props:
-      - { js: label, native: text }
-      - { js: minimumHeight, native: minimumHeight }   # X1 native styling: min-height
-      - { js: default, native: default }               # X1 native styling: emphasis: accent
+      - { js: label, native: text, provenance: "QAbstractButton::text Q_PROPERTY (qdoc); P prop" }
+      - { js: icon, native: icon, provenance: "QPushButton::icon (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: iconSize, native: iconSize, provenance: "QPushButton::iconSize (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: shortcut, native: shortcut, provenance: "QPushButton::shortcut (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: checkable, native: checkable, provenance: "QPushButton::checkable (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: minimumHeight, native: minimumHeight, provenance: "QWidget::minimumHeight Q_PROPERTY (qdoc); native styling min-height (native compiler experiment)" }
+      - { js: default, native: default, provenance: "QPushButton::default Q_PROPERTY (qdoc); native styling emphasis: accent (native compiler experiment)" }
     methods:
-      - { js: click, native: click }
+      - { js: click, native: click, provenance: "QAbstractButton::click() slot (qdoc)" }
     signals:
       - js: clicked
         native: clicked
@@ -15,3 +19,4 @@ elements:
         connect: "clicked(bool)"
         args: []
         trigger: "$w->click()"
+        provenance: "QAbstractButton::clicked(bool) (qdoc); overloads collapsed (signals-and-slots-semantics.md)"

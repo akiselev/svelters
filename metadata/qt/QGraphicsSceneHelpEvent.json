@@ -18,6 +18,13 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsSceneHelpEvent",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "borrowed_only",
+    "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsSceneHelpEvent:lifetime",
+    "native_refcount": "none",
+    "origin": "derived",
+    "provenance": "derived: abstract or not a QObject; JS cannot create it"
+  },
   "methods": [
     {
       "access": "public",
@@ -38,7 +45,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF scenePos() const",
       "since": null,
@@ -64,7 +71,7 @@
         "native": "QPoint",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPoint screenPos() const",
       "since": null,

@@ -1,0 +1,82 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkLinkButton` with the URI as its text.",
+      "file": "gtk/gtklinkbutton.c",
+      "line": 572,
+      "md": "Creates a new `GtkLinkButton` with the URI as its text."
+    },
+    "new_with_label": {
+      "brief": "Creates a new `GtkLinkButton` containing a label.",
+      "file": "gtk/gtklinkbutton.c",
+      "line": 619,
+      "md": "Creates a new `GtkLinkButton` containing a label."
+    }
+  },
+  "doc": {
+    "brief": "A button with a hyperlink.",
+    "file": "gtk/gtklinkbutton.c",
+    "line": 24,
+    "md": "A button with a hyperlink.\n\nIt is useful to show quick links to resources.\n\nA link button is created by calling either [`LinkButton.new()`](xref:gtk:Gtk.LinkButton#constructor:new) or\n[`LinkButton.new_with_label()`](xref:gtk:Gtk.LinkButton#constructor:new_with_label). If using the former, the URI you\npass to the constructor is used as a label for the widget.\n\nThe URI bound to a `GtkLinkButton` can be set specifically using\n[`LinkButton.set_uri()`](xref:gtk:Gtk.LinkButton#method:set_uri).\n\nBy default, `GtkLinkButton` calls [`FileLauncher.launch()`](xref:gtk:Gtk.FileLauncher#method:launch) when the button\nis clicked. This behaviour can be overridden by connecting to the\n[`LinkButton::activate-link`](xref:gtk:Gtk.LinkButton#event:activate-link) signal and returning `TRUE` from\nthe signal handler.\n\n# Shortcuts and Gestures\n\n`GtkLinkButton` supports the following keyboard shortcuts:\n\n- <kbd>Shift</kbd>+<kbd>F10</kbd> or <kbd>Menu</kbd> opens the context menu.\n\n# Actions\n\n`GtkLinkButton` defines a set of built-in actions:\n\n- `clipboard.copy` copies the url to the clipboard.\n- `menu.popup` opens the context menu.\n\n# CSS nodes\n\n`GtkLinkButton` has a single CSS node with name button. To differentiate\nit from a plain `GtkButton`, it gets the .link style class.\n\n# Accessibility\n\n`GtkLinkButton` uses the [`AccessibleRole.link`](xref:gtk:Gtk.AccessibleRole#value:link) role."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:LinkButton",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_uri": {
+      "brief": "Retrieves the URI of the `GtkLinkButton`.",
+      "file": "gtk/gtklinkbutton.c",
+      "line": 699,
+      "md": "Retrieves the URI of the `GtkLinkButton`."
+    },
+    "get_visited": {
+      "brief": "Retrieves the “visited” state of the `GtkLinkButton`.",
+      "file": "gtk/gtklinkbutton.c",
+      "line": 756,
+      "md": "Retrieves the “visited” state of the `GtkLinkButton`.\n\nThe button becomes visited when it is clicked. If the URI\nis changed on the button, the “visited” state is unset again.\n\nThe state may also be changed using [`LinkButton.set_visited()`](xref:gtk:Gtk.LinkButton#method:set_visited)."
+    },
+    "set_uri": {
+      "brief": "Sets `uri` as the URI where the `GtkLinkButton` points.",
+      "file": "gtk/gtklinkbutton.c",
+      "line": 675,
+      "md": "Sets `uri` as the URI where the `GtkLinkButton` points.\n\nAs a side-effect this unsets the “visited” state of the button."
+    },
+    "set_visited": {
+      "brief": "Sets the “visited” state of the `GtkLinkButton`.",
+      "file": "gtk/gtklinkbutton.c",
+      "line": 716,
+      "md": "Sets the “visited” state of the `GtkLinkButton`.\n\nSee [`LinkButton.get_visited()`](xref:gtk:Gtk.LinkButton#method:get_visited) for more details."
+    }
+  },
+  "properties": {
+    "uri": {
+      "brief": "The URI bound to this button.",
+      "file": "gtk/gtklinkbutton.c",
+      "line": 188,
+      "md": "The URI bound to this button."
+    },
+    "visited": {
+      "brief": "The 'visited' state of this button.",
+      "file": "gtk/gtklinkbutton.c",
+      "line": 199,
+      "md": "The 'visited' state of this button.\n\nA visited link is drawn in a different color."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "activate-link": {
+      "brief": "Emitted each time the `GtkLinkButton` is clicked.",
+      "file": "gtk/gtklinkbutton.c",
+      "line": 212,
+      "md": "Emitted each time the `GtkLinkButton` is clicked.\n\nThe default handler will call [`FileLauncher.launch()`](xref:gtk:Gtk.FileLauncher#method:launch) with the URI\nstored inside the [`LinkButton:uri`](xref:gtk:Gtk.LinkButton#property:uri) property.\n\nTo override the default behavior, you can connect to the\n::activate-link signal and stop the propagation of the signal\nby returning `TRUE` from your handler."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

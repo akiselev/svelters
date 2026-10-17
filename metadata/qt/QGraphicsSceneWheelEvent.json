@@ -18,6 +18,13 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsSceneWheelEvent",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "borrowed_only",
+    "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsSceneWheelEvent:lifetime",
+    "native_refcount": "none",
+    "origin": "derived",
+    "provenance": "derived: abstract or not a QObject; JS cannot create it"
+  },
   "methods": [
     {
       "access": "public",
@@ -38,7 +45,7 @@
         "native": "Qt::MouseButtons",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::MouseButton>"
       },
       "signature": "Qt::MouseButtons buttons() const",
       "since": null,
@@ -116,7 +123,7 @@
         "native": "Qt::KeyboardModifiers",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::KeyboardModifier>"
       },
       "signature": "Qt::KeyboardModifiers modifiers() const",
       "since": null,
@@ -142,7 +149,7 @@
         "native": "Qt::Orientation",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::Orientation>"
       },
       "signature": "Qt::Orientation orientation() const",
       "since": null,
@@ -168,7 +175,7 @@
         "native": "Qt::ScrollPhase",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::ScrollPhase>"
       },
       "signature": "Qt::ScrollPhase phase() const",
       "since": "6.2",
@@ -194,7 +201,7 @@
         "native": "QPoint",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPoint pixelDelta() const",
       "since": "6.2",
@@ -220,7 +227,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF pos() const",
       "since": null,
@@ -246,7 +253,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF scenePos() const",
       "since": null,
@@ -272,7 +279,7 @@
         "native": "QPoint",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPoint screenPos() const",
       "since": null,

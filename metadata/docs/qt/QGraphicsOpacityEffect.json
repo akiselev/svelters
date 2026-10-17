@@ -1,0 +1,68 @@
+{
+  "doc": {
+    "brief": "The QGraphicsOpacityEffect class provides an opacity effect.",
+    "index_brief": "Opacity effect",
+    "url": "https://doc.qt.io/qt-6/qgraphicsopacityeffect.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsOpacityEffect",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QBrush opacityMask() const": {
+      "brief": "This property holds the opacity mask of the effect.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsopacityeffect.html#opacityMask-prop"
+    },
+    "QGraphicsOpacityEffect(QObject *parent)": {
+      "brief": "Constructs a new QGraphicsOpacityEffect instance.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsopacityeffect.html#QGraphicsOpacityEffect"
+    },
+    "qreal opacity() const": {
+      "brief": "This property holds the opacity of the effect.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsopacityeffect.html#opacity-prop"
+    },
+    "void draw(QPainter *painter) override": {
+      "brief": "Reimplements: [QGraphicsEffect::draw](xref:qt:QGraphicsEffect)(QPainter *painter).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsopacityeffect.html#draw"
+    },
+    "void opacityChanged(qreal opacity)": {
+      "brief": "This signal is emitted whenever the effect's opacity changes.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsopacityeffect.html#opacityChanged"
+    },
+    "void opacityMaskChanged(const QBrush &mask)": {
+      "brief": "This signal is emitted whenever the effect's opacity mask changes.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsopacityeffect.html#opacityMaskChanged"
+    },
+    "void setOpacity(qreal opacity)": {
+      "brief": "This property holds the opacity of the effect.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsopacityeffect.html#opacity-prop"
+    },
+    "void setOpacityMask(const QBrush &mask)": {
+      "brief": "This property holds the opacity mask of the effect.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsopacityeffect.html#opacityMask-prop"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "opacity": {
+      "brief": "The opacity of the effect",
+      "url": "https://doc.qt.io/qt-6/qgraphicsopacityeffect.html#opacity-prop"
+    },
+    "opacityMask": {
+      "brief": "The opacity mask of the effect",
+      "url": "https://doc.qt.io/qt-6/qgraphicsopacityeffect.html#opacityMask-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

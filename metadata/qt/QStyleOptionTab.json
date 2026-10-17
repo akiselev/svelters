@@ -29,115 +29,156 @@
   ],
   "enums": [
     {
+      "flags_alias": "QStyleOptionTab::CornerWidgets",
+      "fullname": "QStyleOptionTab::CornerWidget",
       "members": [
         {
+          "cpp": "QStyleOptionTab::NoCornerWidgets",
           "name": "NoCornerWidgets",
           "value": "0x00"
         },
         {
+          "cpp": "QStyleOptionTab::LeftCornerWidget",
           "name": "LeftCornerWidget",
           "value": "0x01"
         },
         {
+          "cpp": "QStyleOptionTab::RightCornerWidget",
           "name": "RightCornerWidget",
           "value": "0x02"
         }
       ],
       "metaobject": null,
       "name": "CornerWidget",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionTab::SelectedPosition",
       "members": [
         {
+          "cpp": "QStyleOptionTab::NotAdjacent",
           "name": "NotAdjacent",
           "value": "0"
         },
         {
+          "cpp": "QStyleOptionTab::NextIsSelected",
           "name": "NextIsSelected",
           "value": "1"
         },
         {
+          "cpp": "QStyleOptionTab::PreviousIsSelected",
           "name": "PreviousIsSelected",
           "value": "2"
         }
       ],
       "metaobject": null,
       "name": "SelectedPosition",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionTab::StyleOptionType",
       "members": [
         {
+          "cpp": "QStyleOptionTab::Type",
           "name": "Type",
           "value": "SO_Tab"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionType",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionTab::StyleOptionVersion",
       "members": [
         {
+          "cpp": "QStyleOptionTab::Version",
           "name": "Version",
           "value": "1"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionVersion",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": "QStyleOptionTab::TabFeatures",
+      "fullname": "QStyleOptionTab::TabFeature",
       "members": [
         {
+          "cpp": "QStyleOptionTab::None",
           "name": "None",
           "value": "0x00"
         },
         {
+          "cpp": "QStyleOptionTab::HasFrame",
           "name": "HasFrame",
           "value": "0x01"
         },
         {
+          "cpp": "QStyleOptionTab::MinimumSizeHint",
           "name": "MinimumSizeHint",
           "value": "0x02"
         }
       ],
       "metaobject": null,
       "name": "TabFeature",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionTab::TabPosition",
       "members": [
         {
+          "cpp": "QStyleOptionTab::Beginning",
           "name": "Beginning",
           "value": "0"
         },
         {
+          "cpp": "QStyleOptionTab::Middle",
           "name": "Middle",
           "value": "1"
         },
         {
+          "cpp": "QStyleOptionTab::End",
           "name": "End",
           "value": "2"
         },
         {
+          "cpp": "QStyleOptionTab::OnlyOneTab",
           "name": "OnlyOneTab",
           "value": "3"
         },
         {
+          "cpp": "QStyleOptionTab::Moving",
           "name": "Moving",
           "value": "4"
         }
       ],
       "metaobject": null,
       "name": "TabPosition",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOptionTab",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "borrowed_only",
+    "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOptionTab:lifetime",
+    "native_refcount": "none",
+    "origin": "derived",
+    "provenance": "derived: abstract or not a QObject; JS cannot create it"
+  },
   "methods": [],
   "native": {
     "brief": "Used to describe the parameters for drawing a tab bar",

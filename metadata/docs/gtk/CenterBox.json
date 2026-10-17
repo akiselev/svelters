@@ -1,0 +1,129 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkCenterBox`.",
+      "file": "gtk/gtkcenterbox.c",
+      "line": 353,
+      "md": "Creates a new `GtkCenterBox`."
+    }
+  },
+  "doc": {
+    "brief": "Arranges three children in a row, keeping the middle child centered as well as possible.",
+    "file": "gtk/gtkcenterbox.c",
+    "line": 21,
+    "md": "Arranges three children in a row, keeping the middle child\ncentered as well as possible.\n\nTo add children to `GtkCenterBox`, use [`CenterBox.set_start_widget()`](xref:gtk:Gtk.CenterBox#method:set_start_widget),\n[`CenterBox.set_center_widget()`](xref:gtk:Gtk.CenterBox#method:set_center_widget) and\n[`CenterBox.set_end_widget()`](xref:gtk:Gtk.CenterBox#method:set_end_widget).\n\nThe sizing and positioning of children can be influenced with the\nalign and expand properties of the children.\n\n# GtkCenterBox as GtkBuildable\n\nThe `GtkCenterBox` implementation of the `GtkBuildable` interface\nsupports placing children in the 3 positions by specifying “start”, “center”\nor “end” as the “type” attribute of a `<child>` element.\n\n# CSS nodes\n\n`GtkCenterBox` uses a single CSS node with the name “box”,\n\nThe first child of the `GtkCenterBox` will be allocated depending on the\ntext direction, i.e. in left-to-right layouts it will be allocated on the\nleft and in right-to-left layouts on the right.\n\nIn vertical orientation, the nodes of the children are arranged from top to\nbottom.\n\n# Accessibility\n\nUntil GTK 4.10, `GtkCenterBox` used the [`AccessibleRole.group`](xref:gtk:Gtk.AccessibleRole#value:group) role.\n\nStarting from GTK 4.12, `GtkCenterBox` uses the [`AccessibleRole.generic`](xref:gtk:Gtk.AccessibleRole#value:generic)\nrole."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:CenterBox",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_baseline_position": {
+      "brief": "Gets the baseline position of the center box.",
+      "file": "gtk/gtkcenterbox.c",
+      "line": 542,
+      "md": "Gets the baseline position of the center box.\n\nSee [`CenterBox.set_baseline_position()`](xref:gtk:Gtk.CenterBox#method:set_baseline_position)."
+    },
+    "get_center_widget": {
+      "brief": "Gets the center widget.",
+      "file": "gtk/gtkcenterbox.c",
+      "line": 482,
+      "md": "Gets the center widget."
+    },
+    "get_end_widget": {
+      "brief": "Gets the end widget.",
+      "file": "gtk/gtkcenterbox.c",
+      "line": 496,
+      "md": "Gets the end widget."
+    },
+    "get_shrink_center_last": {
+      "brief": "Gets whether the center widget shrinks after other children.",
+      "file": "gtk/gtkcenterbox.c",
+      "line": 601,
+      "md": "Gets whether the center widget shrinks after other children.",
+      "since": "4.12"
+    },
+    "get_start_widget": {
+      "brief": "Gets the start widget.",
+      "file": "gtk/gtkcenterbox.c",
+      "line": 468,
+      "md": "Gets the start widget."
+    },
+    "set_baseline_position": {
+      "brief": "Sets the baseline position of a center box.",
+      "file": "gtk/gtkcenterbox.c",
+      "line": 510,
+      "md": "Sets the baseline position of a center box.\n\nThis affects only horizontal boxes with at least one baseline\naligned child. If there is more vertical space available than\nrequested, and the baseline is not allocated by the parent then\n`position` is used to allocate the baseline with respect to the\nextra space available."
+    },
+    "set_center_widget": {
+      "brief": "Sets the center widget.",
+      "file": "gtk/gtkcenterbox.c",
+      "line": 400,
+      "md": "Sets the center widget.\n\nTo remove the existing center widget, pass `NULL`."
+    },
+    "set_end_widget": {
+      "brief": "Sets the end widget.",
+      "file": "gtk/gtkcenterbox.c",
+      "line": 434,
+      "md": "Sets the end widget.\n\nTo remove the existing end widget, pass `NULL`."
+    },
+    "set_shrink_center_last": {
+      "brief": "Sets whether to shrink the center widget after other children.",
+      "file": "gtk/gtkcenterbox.c",
+      "line": 564,
+      "md": "Sets whether to shrink the center widget after other children.\n\nBy default, when there's no space to give all three children their\nnatural widths, the start and end widgets start shrinking and the\ncenter child keeps natural width until they reach minimum width.\n\nIf `shrink_center_last` is false, start and end widgets keep natural\nwidth and the center widget starts shrinking instead.",
+      "since": "4.12"
+    },
+    "set_start_widget": {
+      "brief": "Sets the start widget.",
+      "file": "gtk/gtkcenterbox.c",
+      "line": 366,
+      "md": "Sets the start widget.\n\nTo remove the existing start widget, pass `NULL`."
+    }
+  },
+  "properties": {
+    "baseline-position": {
+      "brief": "The position of the baseline aligned widget if extra space is available.",
+      "file": "gtk/gtkcenterbox.c",
+      "line": 264,
+      "md": "The position of the baseline aligned widget if extra space is available."
+    },
+    "center-widget": {
+      "brief": "The widget that is placed at the center position.",
+      "file": "gtk/gtkcenterbox.c",
+      "line": 291,
+      "md": "The widget that is placed at the center position.",
+      "since": "4.10"
+    },
+    "end-widget": {
+      "brief": "The widget that is placed at the end position.",
+      "file": "gtk/gtkcenterbox.c",
+      "line": 303,
+      "md": "The widget that is placed at the end position.\n\nIn vertical orientation, the end position is at the bottom.\nIn horizontal orientation, the end position is at the trailing\nedge with respect to the text direction.",
+      "since": "4.10"
+    },
+    "shrink-center-last": {
+      "brief": "Whether to shrink the center widget after other children.",
+      "file": "gtk/gtkcenterbox.c",
+      "line": 319,
+      "md": "Whether to shrink the center widget after other children.\n\nBy default, when there's no space to give all three children their\nnatural widths, the start and end widgets start shrinking and the\ncenter child keeps natural width until they reach minimum width.\n\nIf false, start and end widgets keep natural width and the\ncenter widget starts shrinking instead.",
+      "since": "4.12"
+    },
+    "start-widget": {
+      "brief": "The widget that is placed at the start position.",
+      "file": "gtk/gtkcenterbox.c",
+      "line": 275,
+      "md": "The widget that is placed at the start position.\n\nIn vertical orientation, the start position is at the top.\nIn horizontal orientation, the start position is at the leading\nedge with respect to the text direction.",
+      "since": "4.10"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

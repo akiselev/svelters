@@ -1,0 +1,31 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkSeparator` with the given orientation.",
+      "file": "gtk/gtkseparator.c",
+      "line": 162,
+      "md": "Creates a new `GtkSeparator` with the given orientation."
+    }
+  },
+  "doc": {
+    "brief": "Draws a horizontal or vertical line to separate other widgets.",
+    "file": "gtk/gtkseparator.c",
+    "line": 34,
+    "md": "Draws a horizontal or vertical line to separate other widgets.\n\nA `GtkSeparator` can be used to group the widgets within a window.\nIt displays a line with a shadow to make it appear sunken into the\ninterface.\n\n# CSS nodes\n\n`GtkSeparator` has a single CSS node with name separator. The node\ngets one of the .horizontal or .vertical style classes.\n\n# Accessibility\n\n`GtkSeparator` uses the [`AccessibleRole.separator`](xref:gtk:Gtk.AccessibleRole#value:separator) role."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Separator",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

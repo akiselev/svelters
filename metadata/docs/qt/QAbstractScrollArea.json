@@ -1,0 +1,209 @@
+{
+  "doc": {
+    "brief": "The QAbstractScrollArea widget provides a scrolling area with on-demand scroll bars.",
+    "index_brief": "Scrolling area with on-demand scroll bars",
+    "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractScrollArea",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QAbstractScrollArea(QWidget *parent)": {
+      "brief": "Constructs a viewport.",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#QAbstractScrollArea"
+    },
+    "QAbstractScrollArea::SizeAdjustPolicy sizeAdjustPolicy() const": {
+      "brief": "This property holds the policy describing how the size of the scroll area changes when the size of the viewport changes.",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#sizeAdjustPolicy-prop"
+    },
+    "QMargins viewportMargins() const": {
+      "brief": "Returns the margins around the scrolling area.",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#viewportMargins"
+    },
+    "QScrollBar * horizontalScrollBar() const": {
+      "brief": "Returns the horizontal scroll bar.",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#horizontalScrollBar"
+    },
+    "QScrollBar * verticalScrollBar() const": {
+      "brief": "Returns the vertical scroll bar.",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#verticalScrollBar"
+    },
+    "QSize maximumViewportSize() const": {
+      "brief": "Returns the size of the viewport as if the scroll bars had no valid scrolling range.",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#maximumViewportSize"
+    },
+    "QSize minimumSizeHint() const override": {
+      "brief": "Reimplements an access function for property: [QWidget::minimumSizeHint](xref:qt:QWidget).",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#minimumSizeHint"
+    },
+    "QSize sizeHint() const override": {
+      "brief": "Reimplements: [QFrame::sizeHint](xref:qt:QFrame)() const.",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#sizeHint"
+    },
+    "QSize viewportSizeHint() const": {
+      "brief": "Returns the recommended size for the viewport.",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#viewportSizeHint"
+    },
+    "QWidget * cornerWidget() const": {
+      "brief": "Returns the widget in the corner between the two scroll bars.",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#cornerWidget"
+    },
+    "QWidget * viewport() const": {
+      "brief": "Returns the viewport widget.",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#viewport"
+    },
+    "QWidgetList scrollBarWidgets(Qt::Alignment alignment)": {
+      "brief": "Returns a list of the currently set scroll bar widgets. *alignment* can be any combination of the four location flags.",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#scrollBarWidgets"
+    },
+    "Qt::ScrollBarPolicy horizontalScrollBarPolicy() const": {
+      "brief": "This property holds the policy for the horizontal scroll bar",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#horizontalScrollBarPolicy-prop"
+    },
+    "Qt::ScrollBarPolicy verticalScrollBarPolicy() const": {
+      "brief": "This property holds the policy for the vertical scroll bar",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#verticalScrollBarPolicy-prop"
+    },
+    "bool event(QEvent *event) override": {
+      "brief": "Reimplements: [QFrame::event](xref:qt:QFrame)(QEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#event"
+    },
+    "bool viewportEvent(QEvent *event)": {
+      "brief": "The main event handler for the scrolling area (the [viewport](xref:qt:QAbstractScrollArea)() widget).",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#viewportEvent"
+    },
+    "void addScrollBarWidget(QWidget *widget, Qt::Alignment alignment)": {
+      "brief": "Adds *widget* as a scroll bar widget in the location specified by *alignment*.",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#addScrollBarWidget"
+    },
+    "void contextMenuEvent(QContextMenuEvent *e) override": {
+      "brief": "Reimplements: [QWidget::contextMenuEvent](xref:qt:QWidget)(QContextMenuEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#contextMenuEvent"
+    },
+    "void dragEnterEvent(QDragEnterEvent *event) override": {
+      "brief": "Reimplements: [QWidget::dragEnterEvent](xref:qt:QWidget)(QDragEnterEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#dragEnterEvent"
+    },
+    "void dragLeaveEvent(QDragLeaveEvent *event) override": {
+      "brief": "Reimplements: [QWidget::dragLeaveEvent](xref:qt:QWidget)(QDragLeaveEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#dragLeaveEvent"
+    },
+    "void dragMoveEvent(QDragMoveEvent *event) override": {
+      "brief": "Reimplements: [QWidget::dragMoveEvent](xref:qt:QWidget)(QDragMoveEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#dragMoveEvent"
+    },
+    "void dropEvent(QDropEvent *event) override": {
+      "brief": "Reimplements: [QWidget::dropEvent](xref:qt:QWidget)(QDropEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#dropEvent"
+    },
+    "void keyPressEvent(QKeyEvent *e) override": {
+      "brief": "Reimplements: [QWidget::keyPressEvent](xref:qt:QWidget)(QKeyEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#keyPressEvent"
+    },
+    "void mouseDoubleClickEvent(QMouseEvent *e) override": {
+      "brief": "Reimplements: [QWidget::mouseDoubleClickEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#mouseDoubleClickEvent"
+    },
+    "void mouseMoveEvent(QMouseEvent *e) override": {
+      "brief": "Reimplements: [QWidget::mouseMoveEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#mouseMoveEvent"
+    },
+    "void mousePressEvent(QMouseEvent *e) override": {
+      "brief": "Reimplements: [QWidget::mousePressEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#mousePressEvent"
+    },
+    "void mouseReleaseEvent(QMouseEvent *e) override": {
+      "brief": "Reimplements: [QWidget::mouseReleaseEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#mouseReleaseEvent"
+    },
+    "void paintEvent(QPaintEvent *event) override": {
+      "brief": "Reimplements: [QFrame::paintEvent](xref:qt:QFrame)(QPaintEvent *).",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#paintEvent"
+    },
+    "void resizeEvent(QResizeEvent *event) override": {
+      "brief": "Reimplements: [QWidget::resizeEvent](xref:qt:QWidget)(QResizeEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#resizeEvent"
+    },
+    "void scrollContentsBy(int dx, int dy)": {
+      "brief": "This virtual handler is called when the scroll bars are moved by *dx*, *dy*, and consequently the viewport's contents should be scrolled accordingly.",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#scrollContentsBy"
+    },
+    "void setCornerWidget(QWidget *widget)": {
+      "brief": "Sets the widget in the corner between the two scroll bars to be *widget*.",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#setCornerWidget"
+    },
+    "void setHorizontalScrollBar(QScrollBar *scrollBar)": {
+      "brief": "Replaces the existing horizontal scroll bar with *scrollBar*, and sets all the former scroll bar's slider properties on the new scroll bar.",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#setHorizontalScrollBar"
+    },
+    "void setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy)": {
+      "brief": "This property holds the policy for the horizontal scroll bar",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#horizontalScrollBarPolicy-prop"
+    },
+    "void setSizeAdjustPolicy(QAbstractScrollArea::SizeAdjustPolicy policy)": {
+      "brief": "This property holds the policy describing how the size of the scroll area changes when the size of the viewport changes.",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#sizeAdjustPolicy-prop"
+    },
+    "void setVerticalScrollBar(QScrollBar *scrollBar)": {
+      "brief": "Replaces the existing vertical scroll bar with *scrollBar*, and sets all the former scroll bar's slider properties on the new scroll bar.",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#setVerticalScrollBar"
+    },
+    "void setVerticalScrollBarPolicy(Qt::ScrollBarPolicy)": {
+      "brief": "This property holds the policy for the vertical scroll bar",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#verticalScrollBarPolicy-prop"
+    },
+    "void setViewport(QWidget *widget)": {
+      "brief": "Sets the viewport to be the given *widget*.",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#setViewport"
+    },
+    "void setViewportMargins(const QMargins &margins)": {
+      "brief": "Sets *margins* around the scrolling area.",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#setViewportMargins"
+    },
+    "void setViewportMargins(int left, int top, int right, int bottom)": {
+      "brief": "Sets the margins around the scrolling area to *left*, *top*, *right* and *bottom*.",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#setViewportMargins-1"
+    },
+    "void setupViewport(QWidget *viewport)": {
+      "brief": "This slot is called by [QAbstractScrollArea](xref:qt:QAbstractScrollArea) after [setViewport](xref:qt:QAbstractScrollArea)(*viewport*) has been called.",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#setupViewport"
+    },
+    "void wheelEvent(QWheelEvent *e) override": {
+      "brief": "Reimplements: [QWidget::wheelEvent](xref:qt:QWidget)(QWheelEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#wheelEvent"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "horizontalScrollBarPolicy": {
+      "brief": "The policy for the horizontal scroll bar",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#horizontalScrollBarPolicy-prop"
+    },
+    "sizeAdjustPolicy": {
+      "brief": "The policy describing how the size of the scroll area changes when the size of the viewport changes",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#sizeAdjustPolicy-prop"
+    },
+    "verticalScrollBarPolicy": {
+      "brief": "The policy for the vertical scroll bar",
+      "url": "https://doc.qt.io/qt-6/qabstractscrollarea.html#verticalScrollBarPolicy-prop"
+    }
+  },
+  "qss": {
+    "box_model": true,
+    "pseudo_states": [],
+    "sub_controls": [],
+    "url": "https://doc.qt.io/qt-6/stylesheet-reference.html#qabstractscrollarea-widget"
+  },
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

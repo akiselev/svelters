@@ -15,62 +15,81 @@
   "constructors": [],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QScroller::Input",
       "members": [
         {
+          "cpp": "QScroller::InputPress",
           "name": "InputPress",
           "value": "1"
         },
         {
+          "cpp": "QScroller::InputMove",
           "name": "InputMove",
           "value": "2"
         },
         {
+          "cpp": "QScroller::InputRelease",
           "name": "InputRelease",
           "value": "3"
         }
       ],
       "metaobject": null,
       "name": "Input",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QScroller::ScrollerGestureType",
       "members": [
         {
+          "cpp": "QScroller::TouchGesture",
           "name": "TouchGesture",
           "value": "0"
         },
         {
+          "cpp": "QScroller::LeftMouseButtonGesture",
           "name": "LeftMouseButtonGesture",
           "value": "1"
         },
         {
+          "cpp": "QScroller::RightMouseButtonGesture",
           "name": "RightMouseButtonGesture",
           "value": "2"
         },
         {
+          "cpp": "QScroller::MiddleMouseButtonGesture",
           "name": "MiddleMouseButtonGesture",
           "value": "3"
         }
       ],
       "metaobject": null,
       "name": "ScrollerGestureType",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QScroller::State",
       "members": [
         {
+          "cpp": "QScroller::Inactive",
           "name": "Inactive",
           "value": "0"
         },
         {
+          "cpp": "QScroller::Pressed",
           "name": "Pressed",
           "value": "1"
         },
         {
+          "cpp": "QScroller::Dragging",
           "name": "Dragging",
           "value": "2"
         },
         {
+          "cpp": "QScroller::Scrolling",
           "name": "Scrolling",
           "value": "3"
         }
@@ -86,12 +105,23 @@
         "scoped": false
       },
       "name": "State",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QScroller",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QScroller:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -112,7 +142,7 @@
         "native": "QList<QScroller *>",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<object<QScroller>>"
       },
       "signature": "QList<QScroller *> activeScrollers()",
       "since": null,
@@ -141,7 +171,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {
@@ -198,7 +228,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {
@@ -262,7 +292,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF finalPosition() const",
       "since": null,
@@ -301,7 +331,7 @@
             "native": "QScroller::ScrollerGestureType",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QScroller::ScrollerGestureType>"
           }
         }
       ],
@@ -309,7 +339,7 @@
         "native": "Qt::GestureType",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::GestureType>"
       },
       "signature": "Qt::GestureType grabGesture(QObject *target, QScroller::ScrollerGestureType scrollGestureType)",
       "since": null,
@@ -346,7 +376,7 @@
         "native": "Qt::GestureType",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::GestureType>"
       },
       "signature": "Qt::GestureType grabbedGesture(QObject *target)",
       "since": null,
@@ -375,7 +405,7 @@
             "native": "QScroller::Input",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QScroller::Input>"
           }
         },
         {
@@ -385,7 +415,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         },
         {
@@ -466,7 +496,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF pixelPerMeter() const",
       "since": null,
@@ -521,7 +551,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -558,7 +588,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         },
         {
@@ -742,7 +772,7 @@
             "native": "const QList<qreal> &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<f64>"
           }
         }
       ],
@@ -826,7 +856,7 @@
             "native": "const QList<qreal> &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<f64>"
           }
         }
       ],
@@ -907,7 +937,7 @@
         "native": "QScroller::State",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QScroller::State>"
       },
       "signature": "QScroller::State state() const",
       "since": null,
@@ -1022,7 +1052,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF velocity() const",
       "since": null,
@@ -1050,6 +1080,7 @@
         "set": "setScrollerProperties"
       },
       "brief": "Scroller properties of this scroller. The properties are used by the QScroller to determine its scrolling behavior",
+      "default": null,
       "js_name": "scrollerProperties",
       "metaobject": {
         "constant": false,
@@ -1073,6 +1104,7 @@
         "signal": "scrollerPropertiesChanged(QScrollerProperties)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QScrollerProperties",
@@ -1093,6 +1125,7 @@
         "set": null
       },
       "brief": "The state of the scroller",
+      "default": null,
       "js_name": "state",
       "metaobject": {
         "constant": false,
@@ -1116,12 +1149,13 @@
         "signal": "stateChanged(QScroller::State)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "State",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<State>"
+        "ref": "enum<QScroller::State>"
       }
     }
   ],
@@ -1185,7 +1219,7 @@
             "native": "QScroller::State",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QScroller::State>"
           }
         }
       ],

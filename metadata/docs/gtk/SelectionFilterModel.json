@@ -1,0 +1,65 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkSelectionFilterModel` that will include the selected items from the underlying selection model.",
+      "file": "gtk/gtkselectionfiltermodel.c",
+      "line": 276,
+      "md": "Creates a new `GtkSelectionFilterModel` that will include the\nselected items from the underlying selection model."
+    }
+  },
+  "doc": {
+    "brief": "A list model that presents the selection from a `GtkSelectionModel`.",
+    "file": "gtk/gtkselectionfiltermodel.c",
+    "line": 27,
+    "md": "A list model that presents the selection from a `GtkSelectionModel`."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:SelectionFilterModel",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_model": {
+      "brief": "Gets the model currently filtered or `NULL` if none.",
+      "file": "gtk/gtkselectionfiltermodel.c",
+      "line": 344,
+      "md": "Gets the model currently filtered or `NULL` if none."
+    },
+    "set_model": {
+      "brief": "Sets the model to be filtered.",
+      "file": "gtk/gtkselectionfiltermodel.c",
+      "line": 293,
+      "md": "Sets the model to be filtered.\n\nNote that GTK makes no effort to ensure that `model` conforms to\nthe item type of `self`. It assumes that the caller knows what they\nare doing and have set up an appropriate filter to ensure that item\ntypes match."
+    }
+  },
+  "properties": {
+    "item-type": {
+      "brief": "The type of items. See [`ListModel.get_item_type()`](xref:gtk:Gio.ListModel#method:get_item_type).",
+      "file": "gtk/gtkselectionfiltermodel.c",
+      "line": 234,
+      "md": "The type of items. See [`ListModel.get_item_type()`](xref:gtk:Gio.ListModel#method:get_item_type).",
+      "since": "4.8"
+    },
+    "model": {
+      "brief": "The model being filtered.",
+      "file": "gtk/gtkselectionfiltermodel.c",
+      "line": 246,
+      "md": "The model being filtered."
+    },
+    "n-items": {
+      "brief": "The number of items.",
+      "file": "gtk/gtkselectionfiltermodel.c",
+      "line": 256,
+      "md": "The number of items. See [`ListModel.get_n_items()`](xref:gtk:Gio.ListModel#method:get_n_items).",
+      "since": "4.8"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -1,0 +1,50 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Values for the [`Settings:gtk-interface-contrast`](xref:gtk:Gtk.Settings#property:gtk-interface-contrast) and [`CssProvider:prefers-contrast`](xref:gtk:Gtk.CssProvider#property:prefers-contrast) properties that...",
+    "file": "gtk/gtkenums.h",
+    "line": 2022,
+    "md": "Values for the [`Settings:gtk-interface-contrast`](xref:gtk:Gtk.Settings#property:gtk-interface-contrast)\nand [`CssProvider:prefers-contrast`](xref:gtk:Gtk.CssProvider#property:prefers-contrast) properties\nthat indicates the preferred level of contrast.\n\nThis information can be used inside CSS via media queries.\n\nMore values may be added to this enumeration. Unknown values\nshould be treated the same as `GTK_INTERFACE_CONTRAST_NO_PREFERENCE`.",
+    "since": "4.20"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:InterfaceContrast",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "less": {
+      "brief": "Less contrast is preferred",
+      "file": "gtk/gtkenums.h",
+      "line": 2027,
+      "md": "Less contrast is preferred"
+    },
+    "more": {
+      "brief": "More contrast is preferred",
+      "file": "gtk/gtkenums.h",
+      "line": 2026,
+      "md": "More contrast is preferred"
+    },
+    "no_preference": {
+      "brief": "No particular preference for contrast",
+      "file": "gtk/gtkenums.h",
+      "line": 2025,
+      "md": "No particular preference for contrast"
+    },
+    "unsupported": {
+      "brief": "The system doesn't support contrast levels",
+      "file": "gtk/gtkenums.h",
+      "line": 2024,
+      "md": "The system doesn't support contrast levels"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

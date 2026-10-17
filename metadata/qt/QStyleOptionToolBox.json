@@ -29,73 +29,101 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionToolBox::SelectedPosition",
       "members": [
         {
+          "cpp": "QStyleOptionToolBox::NotAdjacent",
           "name": "NotAdjacent",
           "value": "0"
         },
         {
+          "cpp": "QStyleOptionToolBox::NextIsSelected",
           "name": "NextIsSelected",
           "value": "1"
         },
         {
+          "cpp": "QStyleOptionToolBox::PreviousIsSelected",
           "name": "PreviousIsSelected",
           "value": "2"
         }
       ],
       "metaobject": null,
       "name": "SelectedPosition",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionToolBox::StyleOptionType",
       "members": [
         {
+          "cpp": "QStyleOptionToolBox::Type",
           "name": "Type",
           "value": "SO_ToolBox"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionType",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionToolBox::StyleOptionVersion",
       "members": [
         {
+          "cpp": "QStyleOptionToolBox::Version",
           "name": "Version",
           "value": "1"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionVersion",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionToolBox::TabPosition",
       "members": [
         {
+          "cpp": "QStyleOptionToolBox::Beginning",
           "name": "Beginning",
           "value": "0"
         },
         {
+          "cpp": "QStyleOptionToolBox::Middle",
           "name": "Middle",
           "value": "1"
         },
         {
+          "cpp": "QStyleOptionToolBox::End",
           "name": "End",
           "value": "2"
         },
         {
+          "cpp": "QStyleOptionToolBox::OnlyOneTab",
           "name": "OnlyOneTab",
           "value": "3"
         }
       ],
       "metaobject": null,
       "name": "TabPosition",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOptionToolBox",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "borrowed_only",
+    "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOptionToolBox:lifetime",
+    "native_refcount": "none",
+    "origin": "derived",
+    "provenance": "derived: abstract or not a QObject; JS cannot create it"
+  },
   "methods": [],
   "native": {
     "brief": "Used to describe the parameters needed for drawing a tool box",

@@ -1,0 +1,40 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "The `GtkTreeIter` is the primary structure for accessing a `GtkTreeModel`.",
+    "deprecated": "4.10",
+    "file": "gtk/deprecated/gtktreemodel.h",
+    "line": 82,
+    "md": "The `GtkTreeIter` is the primary structure\nfor accessing a `GtkTreeModel`. Models are expected to put a unique\ninteger in the `stamp` member, and put\nmodel-specific data in the three `user_data`\nmembers."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:TreeIter",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "copy": {
+      "brief": "Creates a dynamically allocated tree iterator as a copy of `iter`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1178,
+      "md": "Creates a dynamically allocated tree iterator as a copy of `iter`.\n\nThis function is not intended for use in applications,\nbecause you can just copy the structs by value\n(`GtkTreeIter new_iter = iter;`).\nYou must free this iter with gtk_tree_iter_free()."
+    },
+    "free": {
+      "brief": "Frees an iterator that has been allocated by gtk_tree_iter_copy().",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1206,
+      "md": "Frees an iterator that has been allocated by gtk_tree_iter_copy().\n\nThis function is mainly used for language bindings."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

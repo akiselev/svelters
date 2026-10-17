@@ -1,0 +1,101 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new slice model.",
+      "file": "gtk/gtkslicelistmodel.c",
+      "line": 390,
+      "md": "Creates a new slice model.\n\nIt presents the slice from `offset` to offset + `size`\nof the given `model`."
+    }
+  },
+  "doc": {
+    "brief": "A list model that presents a slice of another model.",
+    "file": "gtk/gtkslicelistmodel.c",
+    "line": 27,
+    "md": "A list model that presents a slice of another model.\n\nThis is useful when implementing paging by setting the size to the number\nof elements per page and updating the offset whenever a different page is\nopened.\n\n`GtkSliceListModel` passes through sections from the underlying model."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:SliceListModel",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_model": {
+      "brief": "Gets the model that is currently being used or `NULL` if none.",
+      "file": "gtk/gtkslicelistmodel.c",
+      "line": 470,
+      "md": "Gets the model that is currently being used or `NULL` if none."
+    },
+    "get_offset": {
+      "brief": "Gets the offset set via gtk_slice_list_model_set_offset().",
+      "file": "gtk/gtkslicelistmodel.c",
+      "line": 521,
+      "md": "Gets the offset set via gtk_slice_list_model_set_offset()."
+    },
+    "get_size": {
+      "brief": "Gets the size set via gtk_slice_list_model_set_size().",
+      "file": "gtk/gtkslicelistmodel.c",
+      "line": 580,
+      "md": "Gets the size set via gtk_slice_list_model_set_size()."
+    },
+    "set_model": {
+      "brief": "Sets the model to show a slice of.",
+      "file": "gtk/gtkslicelistmodel.c",
+      "line": 424,
+      "md": "Sets the model to show a slice of.\n\nThe model's item type must conform to `self`'s item type."
+    },
+    "set_offset": {
+      "brief": "Sets the offset into the original model for this slice.",
+      "file": "gtk/gtkslicelistmodel.c",
+      "line": 486,
+      "md": "Sets the offset into the original model for this slice.\n\nIf the offset is too large for the sliced model,\n`self` will end up empty."
+    },
+    "set_size": {
+      "brief": "Sets the maximum size.",
+      "file": "gtk/gtkslicelistmodel.c",
+      "line": 537,
+      "md": "Sets the maximum size. `self` will never have more items\nthan `size`.\n\nIt can however have fewer items if the offset is too large\nor the model sliced from doesn't have enough items."
+    }
+  },
+  "properties": {
+    "item-type": {
+      "brief": "The type of items. See [`ListModel.get_item_type()`](xref:gtk:Gio.ListModel#method:get_item_type).",
+      "file": "gtk/gtkslicelistmodel.c",
+      "line": 327,
+      "md": "The type of items. See [`ListModel.get_item_type()`](xref:gtk:Gio.ListModel#method:get_item_type).",
+      "since": "4.8"
+    },
+    "model": {
+      "brief": "Child model to take slice from.",
+      "file": "gtk/gtkslicelistmodel.c",
+      "line": 339,
+      "md": "Child model to take slice from."
+    },
+    "n-items": {
+      "brief": "The number of items.",
+      "file": "gtk/gtkslicelistmodel.c",
+      "line": 349,
+      "md": "The number of items. See [`ListModel.get_n_items()`](xref:gtk:Gio.ListModel#method:get_n_items).",
+      "since": "4.8"
+    },
+    "offset": {
+      "brief": "Offset of slice.",
+      "file": "gtk/gtkslicelistmodel.c",
+      "line": 361,
+      "md": "Offset of slice."
+    },
+    "size": {
+      "brief": "Maximum size of slice.",
+      "file": "gtk/gtkslicelistmodel.c",
+      "line": 371,
+      "md": "Maximum size of slice."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

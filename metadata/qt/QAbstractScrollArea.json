@@ -43,16 +43,21 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QAbstractScrollArea::SizeAdjustPolicy",
       "members": [
         {
+          "cpp": "QAbstractScrollArea::AdjustIgnored",
           "name": "AdjustIgnored",
           "value": "0"
         },
         {
+          "cpp": "QAbstractScrollArea::AdjustToContentsOnFirstShow",
           "name": "AdjustToContentsOnFirstShow",
           "value": "1"
         },
         {
+          "cpp": "QAbstractScrollArea::AdjustToContents",
           "name": "AdjustToContents",
           "value": "2"
         }
@@ -67,12 +72,23 @@
         "scoped": false
       },
       "name": "SizeAdjustPolicy",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractScrollArea",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractScrollArea:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -106,7 +122,7 @@
             "native": "Qt::Alignment",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::AlignmentFlag>"
           }
         }
       ],
@@ -414,7 +430,7 @@
         "native": "Qt::ScrollBarPolicy",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::ScrollBarPolicy>"
       },
       "signature": "Qt::ScrollBarPolicy horizontalScrollBarPolicy() const",
       "since": null,
@@ -477,7 +493,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize maximumViewportSize() const",
       "since": null,
@@ -503,7 +519,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize minimumSizeHint() const override",
       "since": null,
@@ -754,7 +770,7 @@
             "native": "Qt::Alignment",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::AlignmentFlag>"
           }
         }
       ],
@@ -912,7 +928,7 @@
             "native": "Qt::ScrollBarPolicy",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ScrollBarPolicy>"
           }
         }
       ],
@@ -949,7 +965,7 @@
             "native": "QAbstractScrollArea::SizeAdjustPolicy",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QAbstractScrollArea::SizeAdjustPolicy>"
           }
         }
       ],
@@ -1023,7 +1039,7 @@
             "native": "Qt::ScrollBarPolicy",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ScrollBarPolicy>"
           }
         }
       ],
@@ -1097,7 +1113,7 @@
             "native": "const QMargins &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Insets>"
           }
         }
       ],
@@ -1235,7 +1251,7 @@
         "native": "QAbstractScrollArea::SizeAdjustPolicy",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QAbstractScrollArea::SizeAdjustPolicy>"
       },
       "signature": "QAbstractScrollArea::SizeAdjustPolicy sizeAdjustPolicy() const",
       "since": null,
@@ -1261,7 +1277,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,
@@ -1313,7 +1329,7 @@
         "native": "Qt::ScrollBarPolicy",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::ScrollBarPolicy>"
       },
       "signature": "Qt::ScrollBarPolicy verticalScrollBarPolicy() const",
       "since": null,
@@ -1402,7 +1418,7 @@
         "native": "QMargins",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Insets>"
       },
       "signature": "QMargins viewportMargins() const",
       "since": null,
@@ -1428,7 +1444,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize viewportSizeHint() const",
       "since": null,
@@ -1550,6 +1566,7 @@
         "set": "setHorizontalScrollBarPolicy"
       },
       "brief": "The policy for the horizontal scroll bar",
+      "default": null,
       "js_name": "horizontalScrollBarPolicy",
       "metaobject": {
         "constant": false,
@@ -1570,12 +1587,13 @@
       "name": "horizontalScrollBarPolicy",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::ScrollBarPolicy",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::ScrollBarPolicy>"
       }
     },
     {
@@ -1590,6 +1608,8 @@
         "set": "setSizeAdjustPolicy"
       },
       "brief": "The policy describing how the size of the scroll area changes when the size of the viewport changes",
+      "default": "AdjustIgnored",
+      "default_origin": "runtime",
       "js_name": "sizeAdjustPolicy",
       "metaobject": {
         "constant": false,
@@ -1610,12 +1630,13 @@
       "name": "sizeAdjustPolicy",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "SizeAdjustPolicy",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<SizeAdjustPolicy>"
+        "ref": "enum<QAbstractScrollArea::SizeAdjustPolicy>"
       }
     },
     {
@@ -1630,6 +1651,7 @@
         "set": "setVerticalScrollBarPolicy"
       },
       "brief": "The policy for the vertical scroll bar",
+      "default": null,
       "js_name": "verticalScrollBarPolicy",
       "metaobject": {
         "constant": false,
@@ -1650,12 +1672,13 @@
       "name": "verticalScrollBarPolicy",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::ScrollBarPolicy",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::ScrollBarPolicy>"
       }
     }
   ],

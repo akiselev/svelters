@@ -42,16 +42,21 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QAbstractSpinBox::ButtonSymbols",
       "members": [
         {
+          "cpp": "QAbstractSpinBox::UpDownArrows",
           "name": "UpDownArrows",
           "value": "0"
         },
         {
+          "cpp": "QAbstractSpinBox::PlusMinus",
           "name": "PlusMinus",
           "value": "1"
         },
         {
+          "cpp": "QAbstractSpinBox::NoButtons",
           "name": "NoButtons",
           "value": "2"
         }
@@ -66,15 +71,20 @@
         "scoped": false
       },
       "name": "ButtonSymbols",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QAbstractSpinBox::CorrectionMode",
       "members": [
         {
+          "cpp": "QAbstractSpinBox::CorrectToPreviousValue",
           "name": "CorrectToPreviousValue",
           "value": "0"
         },
         {
+          "cpp": "QAbstractSpinBox::CorrectToNearestValue",
           "name": "CorrectToNearestValue",
           "value": "1"
         }
@@ -88,34 +98,45 @@
         "scoped": false
       },
       "name": "CorrectionMode",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": "QAbstractSpinBox::StepEnabled",
+      "fullname": "QAbstractSpinBox::StepEnabledFlag",
       "members": [
         {
+          "cpp": "QAbstractSpinBox::StepNone",
           "name": "StepNone",
           "value": "0x00"
         },
         {
+          "cpp": "QAbstractSpinBox::StepUpEnabled",
           "name": "StepUpEnabled",
           "value": "0x01"
         },
         {
+          "cpp": "QAbstractSpinBox::StepDownEnabled",
           "name": "StepDownEnabled",
           "value": "0x02"
         }
       ],
       "metaobject": null,
       "name": "StepEnabledFlag",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QAbstractSpinBox::StepType",
       "members": [
         {
+          "cpp": "QAbstractSpinBox::DefaultStepType",
           "name": "DefaultStepType",
           "value": "0"
         },
         {
+          "cpp": "QAbstractSpinBox::AdaptiveDecimalStepType",
           "name": "AdaptiveDecimalStepType",
           "value": "1"
         }
@@ -129,12 +150,23 @@
         "scoped": false
       },
       "name": "StepType",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -155,7 +187,7 @@
         "native": "Qt::Alignment",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::AlignmentFlag>"
       },
       "signature": "Qt::Alignment alignment() const",
       "since": null,
@@ -181,7 +213,7 @@
         "native": "QAbstractSpinBox::ButtonSymbols",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QAbstractSpinBox::ButtonSymbols>"
       },
       "signature": "QAbstractSpinBox::ButtonSymbols buttonSymbols() const",
       "since": null,
@@ -344,7 +376,7 @@
         "native": "QAbstractSpinBox::CorrectionMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QAbstractSpinBox::CorrectionMode>"
       },
       "signature": "QAbstractSpinBox::CorrectionMode correctionMode() const",
       "since": null,
@@ -647,7 +679,7 @@
             "native": "Qt::InputMethodQuery",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::InputMethodQuery>"
           }
         }
       ],
@@ -911,7 +943,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize minimumSizeHint() const override",
       "since": null,
@@ -1188,7 +1220,7 @@
             "native": "Qt::Alignment",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::AlignmentFlag>"
           }
         }
       ],
@@ -1225,7 +1257,7 @@
             "native": "QAbstractSpinBox::ButtonSymbols",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QAbstractSpinBox::ButtonSymbols>"
           }
         }
       ],
@@ -1262,7 +1294,7 @@
             "native": "QAbstractSpinBox::CorrectionMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QAbstractSpinBox::CorrectionMode>"
           }
         }
       ],
@@ -1592,7 +1624,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,
@@ -1707,7 +1739,7 @@
         "native": "QAbstractSpinBox::StepEnabled",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QAbstractSpinBox::StepEnabledFlag>"
       },
       "signature": "QAbstractSpinBox::StepEnabled stepEnabled() const",
       "since": null,
@@ -1843,7 +1875,7 @@
         "native": "QValidator::State",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QValidator::State>"
       },
       "signature": "QValidator::State validate(QString &input, int &pos) const",
       "since": null,
@@ -1970,6 +2002,8 @@
         "set": "setAccelerated"
       },
       "brief": "Whether the spin box will accelerate the frequency of the steps when pressing the step Up/Down buttons",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "accelerated",
       "metaobject": {
         "constant": false,
@@ -1990,6 +2024,7 @@
       "name": "accelerated",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2010,6 +2045,8 @@
         "set": null
       },
       "brief": "Whether the input satisfies the current validation",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "acceptableInput",
       "metaobject": {
         "constant": false,
@@ -2030,6 +2067,7 @@
       "name": "acceptableInput",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2050,6 +2088,7 @@
         "set": "setAlignment"
       },
       "brief": "The alignment of the spin box",
+      "default": null,
       "js_name": "alignment",
       "metaobject": {
         "constant": false,
@@ -2070,12 +2109,13 @@
       "name": "alignment",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::Alignment",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::AlignmentFlag>"
       }
     },
     {
@@ -2090,6 +2130,8 @@
         "set": "setButtonSymbols"
       },
       "brief": "The current button symbol mode",
+      "default": "UpDownArrows",
+      "default_origin": "runtime",
       "js_name": "buttonSymbols",
       "metaobject": {
         "constant": false,
@@ -2110,12 +2152,13 @@
       "name": "buttonSymbols",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "ButtonSymbols",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<ButtonSymbols>"
+        "ref": "enum<QAbstractSpinBox::ButtonSymbols>"
       }
     },
     {
@@ -2130,6 +2173,8 @@
         "set": "setCorrectionMode"
       },
       "brief": "The mode to correct an Intermediate value if editing finishes",
+      "default": "CorrectToPreviousValue",
+      "default_origin": "runtime",
       "js_name": "correctionMode",
       "metaobject": {
         "constant": false,
@@ -2150,12 +2195,13 @@
       "name": "correctionMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "CorrectionMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<CorrectionMode>"
+        "ref": "enum<QAbstractSpinBox::CorrectionMode>"
       }
     },
     {
@@ -2170,6 +2216,8 @@
         "set": "setFrame"
       },
       "brief": "Whether the spin box draws itself with a frame",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "frame",
       "metaobject": {
         "constant": false,
@@ -2190,6 +2238,7 @@
       "name": "frame",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2210,6 +2259,8 @@
         "set": "setKeyboardTracking"
       },
       "brief": "Whether keyboard tracking is enabled for the spinbox",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "keyboardTracking",
       "metaobject": {
         "constant": false,
@@ -2230,6 +2281,7 @@
       "name": "keyboardTracking",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2250,6 +2302,8 @@
         "set": "setReadOnly"
       },
       "brief": "Whether the spin box is read only",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "readOnly",
       "metaobject": {
         "constant": false,
@@ -2270,6 +2324,7 @@
       "name": "readOnly",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2290,6 +2345,8 @@
         "set": "setGroupSeparatorShown"
       },
       "brief": "Whether a thousands separator is enabled. By default this property is false",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "showGroupSeparator",
       "metaobject": {
         "constant": false,
@@ -2310,6 +2367,7 @@
       "name": "showGroupSeparator",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2330,6 +2388,8 @@
         "set": "setSpecialValueText"
       },
       "brief": "The special-value text",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "specialValueText",
       "metaobject": {
         "constant": false,
@@ -2350,6 +2410,7 @@
       "name": "specialValueText",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -2370,6 +2431,8 @@
         "set": null
       },
       "brief": "The spin box's text, including any prefix and suffix",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "text",
       "metaobject": {
         "constant": false,
@@ -2390,6 +2453,7 @@
       "name": "text",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -2410,6 +2474,8 @@
         "set": "setWrapping"
       },
       "brief": "Whether the spin box is circular",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "wrapping",
       "metaobject": {
         "constant": false,
@@ -2430,6 +2496,7 @@
       "name": "wrapping",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",

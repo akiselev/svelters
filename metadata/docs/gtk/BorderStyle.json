@@ -1,0 +1,85 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Describes how the border of a UI element should be rendered.",
+    "file": "gtk/gtkenums.h",
+    "line": 879,
+    "md": "Describes how the border of a UI element should be rendered."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:BorderStyle",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "dashed": {
+      "brief": "A series of square-ended dashes",
+      "file": "gtk/gtkenums.h",
+      "line": 887,
+      "md": "A series of square-ended dashes"
+    },
+    "dotted": {
+      "brief": "A series of round dots",
+      "file": "gtk/gtkenums.h",
+      "line": 886,
+      "md": "A series of round dots"
+    },
+    "double": {
+      "brief": "Two parallel lines with some space between them",
+      "file": "gtk/gtkenums.h",
+      "line": 888,
+      "md": "Two parallel lines with some space between them"
+    },
+    "groove": {
+      "brief": "Looks as if it were carved in the canvas",
+      "file": "gtk/gtkenums.h",
+      "line": 889,
+      "md": "Looks as if it were carved in the canvas"
+    },
+    "hidden": {
+      "brief": "Same as %GTK_BORDER_STYLE_NONE",
+      "file": "gtk/gtkenums.h",
+      "line": 882,
+      "md": "Same as %GTK_BORDER_STYLE_NONE"
+    },
+    "inset": {
+      "brief": "Looks as if the content is sunken into the canvas",
+      "file": "gtk/gtkenums.h",
+      "line": 884,
+      "md": "Looks as if the content is sunken into the canvas"
+    },
+    "none": {
+      "brief": "No visible border",
+      "file": "gtk/gtkenums.h",
+      "line": 881,
+      "md": "No visible border"
+    },
+    "outset": {
+      "brief": "Looks as if the content is coming out of the canvas",
+      "file": "gtk/gtkenums.h",
+      "line": 885,
+      "md": "Looks as if the content is coming out of the canvas"
+    },
+    "ridge": {
+      "brief": "Looks as if it were coming out of the canvas",
+      "file": "gtk/gtkenums.h",
+      "line": 890,
+      "md": "Looks as if it were coming out of the canvas"
+    },
+    "solid": {
+      "brief": "A single line segment",
+      "file": "gtk/gtkenums.h",
+      "line": 883,
+      "md": "A single line segment"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

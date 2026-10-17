@@ -1,0 +1,149 @@
+/* Svelters docs: badges and layout for generated API pages. Colours follow Starlight's dark/light tokens. */
+:root {
+  --svl-gir: #1f6feb;
+  --svl-qdoc: #0a8f6a;
+  --svl-metaobject: #8a63d2;
+  --svl-runtime: #b36b00;
+  --svl-typesystem: #a8466a;
+  --svl-manual: #c2410c;
+  --svl-derived: #6b7280;
+  --svl-ok: #1a7f37;
+  --svl-raw: #6b7280;
+}
+:root[data-theme='light'] {
+  --svl-ok: #116329;
+}
+
+.svl-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+.svl-toolkit,
+.svl-kind,
+.svl-tier,
+.svl-badge,
+.svl-tag {
+  display: inline-block;
+  font-size: var(--sl-text-xs);
+  line-height: 1.5;
+  padding: 0 0.5em;
+  border-radius: 0.6em;
+  border: 1px solid var(--sl-color-gray-5);
+  color: var(--sl-color-gray-2);
+  white-space: nowrap;
+  text-decoration: none;
+}
+.svl-toolkit-gtk {
+  border-color: #4a86cf;
+}
+.svl-toolkit-qt {
+  border-color: #41cd52;
+}
+.svl-tier {
+  font-weight: 600;
+}
+.svl-tier-annotated {
+  color: #fff;
+  background: var(--svl-ok);
+  border-color: var(--svl-ok);
+}
+.svl-tier-raw {
+  border-style: dashed;
+  color: var(--sl-color-gray-3);
+}
+.svl-badge {
+  font-family: var(--sl-font-mono);
+  color: #fff;
+  border: 0;
+}
+.svl-origin-gir {
+  background: var(--svl-gir);
+}
+.svl-origin-qdoc {
+  background: var(--svl-qdoc);
+}
+.svl-origin-metaobject {
+  background: var(--svl-metaobject);
+}
+.svl-origin-runtime {
+  background: var(--svl-runtime);
+}
+.svl-origin-typesystem {
+  background: var(--svl-typesystem);
+}
+.svl-origin-manual {
+  background: var(--svl-manual);
+}
+.svl-origin-derived,
+.svl-origin-apiextractor {
+  background: var(--svl-derived);
+}
+.svl-meta {
+  margin: -0.5rem 0 0.5rem;
+}
+.svl-ext {
+  display: inline-block;
+  margin-right: 1rem;
+  font-size: var(--sl-text-xs);
+  color: var(--sl-color-gray-3);
+}
+.svl-matrix {
+  width: auto;
+}
+.svl-no,
+.svl-planned {
+  color: var(--sl-color-gray-3);
+  font-style: italic;
+}
+.svl-shot {
+  margin: 1rem 0;
+}
+.svl-shot img {
+  border: 1px solid var(--sl-color-gray-5);
+  border-radius: 0.4rem;
+  background: #fff;
+}
+.svl-shot figcaption {
+  font-size: var(--sl-text-xs);
+  color: var(--sl-color-gray-3);
+}
+.svl-notice {
+  margin-top: 2rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--sl-color-gray-5);
+  font-size: var(--sl-text-xs);
+  color: var(--sl-color-gray-3);
+}
+.svl-bar {
+  display: inline-block;
+  width: 10rem;
+  height: 0.7rem;
+  vertical-align: middle;
+  background: var(--sl-color-gray-5);
+  border-radius: 0.4rem;
+  overflow: hidden;
+}
+.svl-bar > span {
+  display: block;
+  height: 100%;
+  background: var(--svl-ok);
+  min-width: 2px;
+}
+.sl-markdown-content table {
+  display: block;
+  overflow-x: auto;
+}
+.sl-markdown-content h4 {
+  font-family: var(--sl-font-mono);
+}
+details > summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.planned-banner {
+  border-inline-start: 4px solid var(--sl-color-orange);
+  padding-inline-start: 1rem;
+}

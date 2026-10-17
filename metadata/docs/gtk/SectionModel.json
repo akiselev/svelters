@@ -1,0 +1,56 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "An interface that adds support for sections to list models.",
+    "file": "gtk/gtksectionmodel.c",
+    "line": 26,
+    "md": "An interface that adds support for sections to list models.\n\nA `GtkSectionModel` groups successive items into so-called sections. List widgets\nlike `GtkListView` and `GtkGridView` then allow displaying section headers for\nthese sections by installing a header factory.\n\nMany GTK list models support sections inherently, or they pass through the sections\nof a model they are wrapping.\n\nWhen the section groupings of a model change, the model will emit the\n[`SectionModel::sections-changed`](xref:gtk:Gtk.SectionModel#event:sections-changed) signal by calling the\n[`SectionModel.sections_changed()`](xref:gtk:Gtk.SectionModel#method:sections_changed) function. All sections in the given range\nthen need to be queried again.\nThe [`ListModel::items-changed`](xref:gtk:Gio.ListModel#event:items-changed) signal has the same effect, all sections in\nthat range are invalidated, too.",
+    "since": "4.12"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:SectionModel",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_section": {
+      "brief": "Query the section that covers the given position.",
+      "file": "gtk/gtksectionmodel.c",
+      "line": 113,
+      "md": "Query the section that covers the given position. The number of\nitems in the section can be computed by `out_end - out_start`.\n\nIf the position is larger than the number of items, a single\nrange from n_items to G_MAXUINT will be returned.",
+      "since": "4.12"
+    },
+    "sections_changed": {
+      "brief": "This function emits the [`SectionModel::sections-changed`](xref:gtk:Gtk.SectionModel#event:sections-changed) signal to notify about changes to sections.",
+      "file": "gtk/gtksectionmodel.c",
+      "line": 190,
+      "md": "This function emits the [`SectionModel::sections-changed`](xref:gtk:Gtk.SectionModel#event:sections-changed)\nsignal to notify about changes to sections.\n\nIt must cover all positions that used to be a section start or that\nare now a section start. It does not have to cover all positions for\nwhich the section has changed.\n\nThe [`ListModel::items-changed`](xref:gtk:Gio.ListModel#event:items-changed) implies the effect of the\n[`SectionModel::sections-changed`](xref:gtk:Gtk.SectionModel#event:sections-changed) signal for all the items\nit covers.\n\nIt is recommended that when changes to the items cause section changes\nin a larger range, that the larger range is included in the emission\nof the [`ListModel::items-changed`](xref:gtk:Gio.ListModel#event:items-changed) instead of emitting\ntwo signals.",
+      "since": "4.12"
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "sections-changed": {
+      "brief": "Emitted when the start-of-section state of some of the items in `model` changes.",
+      "file": "gtk/gtksectionmodel.c",
+      "line": 81,
+      "md": "Emitted when the start-of-section state of some of the items in `model` changes.\n\nNote that this signal does not specify the new section state of the\nitems, they need to be queried manually. It is also not necessary for\na model to change the section state of any of the items in the section\nmodel, though it would be rather useless to emit such a signal.\n\nThe [`ListModel::items-changed`](xref:gtk:Gio.ListModel#event:items-changed) implies the effect of the\n[`SectionModel::sections-changed`](xref:gtk:Gtk.SectionModel#event:sections-changed) signal for all the items\nit covers.",
+      "since": "4.12"
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "get_section": {
+      "brief": "Query the section that covers the given position.",
+      "file": "gtk/gtksectionmodel.c",
+      "line": 113,
+      "md": "Query the section that covers the given position. The number of\nitems in the section can be computed by `out_end - out_start`.\n\nIf the position is larger than the number of items, a single\nrange from n_items to G_MAXUINT will be returned.",
+      "since": "4.12"
+    }
+  }
+}

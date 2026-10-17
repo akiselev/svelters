@@ -1,0 +1,99 @@
+{
+  "doc": {
+    "brief": "The QLayoutItem class provides an abstract item that a [QLayout](xref:qt:QLayout) manipulates.",
+    "index_brief": "Abstract item that a QLayout manipulates",
+    "url": "https://doc.qt.io/qt-6/qlayoutitem.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QLayoutItem",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QLayout * layout()": {
+      "brief": "If this item is a [QLayout](xref:qt:QLayout), it is returned as a [QLayout](xref:qt:QLayout); otherwise `nullptr` is returned.",
+      "url": "https://doc.qt.io/qt-6/qlayoutitem.html#layout"
+    },
+    "QLayoutItem(Qt::Alignment alignment)": {
+      "brief": "Constructs a layout item with an *alignment*.",
+      "url": "https://doc.qt.io/qt-6/qlayoutitem.html#QLayoutItem"
+    },
+    "QRect geometry() const = 0": {
+      "brief": "Returns the rectangle covered by this layout item.",
+      "url": "https://doc.qt.io/qt-6/qlayoutitem.html#geometry"
+    },
+    "QSize maximumSize() const = 0": {
+      "brief": "Implemented in subclasses to return the maximum size of this item.",
+      "url": "https://doc.qt.io/qt-6/qlayoutitem.html#maximumSize"
+    },
+    "QSize minimumSize() const = 0": {
+      "brief": "Implemented in subclasses to return the minimum size of this item.",
+      "url": "https://doc.qt.io/qt-6/qlayoutitem.html#minimumSize"
+    },
+    "QSize sizeHint() const = 0": {
+      "brief": "Implemented in subclasses to return the preferred size of this item.",
+      "url": "https://doc.qt.io/qt-6/qlayoutitem.html#sizeHint"
+    },
+    "QSizePolicy::ControlTypes controlTypes() const": {
+      "brief": "Returns the control type(s) for the layout item.",
+      "url": "https://doc.qt.io/qt-6/qlayoutitem.html#controlTypes"
+    },
+    "QSpacerItem * spacerItem()": {
+      "brief": "If this item is a [QSpacerItem](xref:qt:QSpacerItem), it is returned as a [QSpacerItem](xref:qt:QSpacerItem); otherwise `nullptr` is returned.",
+      "url": "https://doc.qt.io/qt-6/qlayoutitem.html#spacerItem"
+    },
+    "QWidget * widget() const": {
+      "brief": "If this item manages a [QWidget](xref:qt:QWidget), returns that widget.",
+      "url": "https://doc.qt.io/qt-6/qlayoutitem.html#widget"
+    },
+    "Qt::Alignment alignment() const": {
+      "brief": "Returns the alignment of this item.",
+      "url": "https://doc.qt.io/qt-6/qlayoutitem.html#alignment"
+    },
+    "Qt::Orientations expandingDirections() const = 0": {
+      "brief": "Returns whether this layout item can make use of more space than [sizeHint](xref:qt:QLayoutItem)().",
+      "url": "https://doc.qt.io/qt-6/qlayoutitem.html#expandingDirections"
+    },
+    "bool hasHeightForWidth() const": {
+      "brief": "Returns `true` if this layout's preferred height depends on its width; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qlayoutitem.html#hasHeightForWidth"
+    },
+    "bool isEmpty() const = 0": {
+      "brief": "Implemented in subclasses to return whether this item is empty, i.e. whether it contains any widgets.",
+      "url": "https://doc.qt.io/qt-6/qlayoutitem.html#isEmpty"
+    },
+    "int heightForWidth(int) const": {
+      "brief": "Returns the preferred height for this layout item, given the width, which is not used in this default implementation.",
+      "url": "https://doc.qt.io/qt-6/qlayoutitem.html#heightForWidth"
+    },
+    "int minimumHeightForWidth(int w) const": {
+      "brief": "Returns the minimum height this widget needs for the given width, *w*.",
+      "url": "https://doc.qt.io/qt-6/qlayoutitem.html#minimumHeightForWidth"
+    },
+    "void invalidate()": {
+      "brief": "Invalidates any cached information in this layout item.",
+      "url": "https://doc.qt.io/qt-6/qlayoutitem.html#invalidate"
+    },
+    "void setAlignment(Qt::Alignment alignment)": {
+      "brief": "Sets the alignment of this item to *alignment*.",
+      "url": "https://doc.qt.io/qt-6/qlayoutitem.html#setAlignment"
+    },
+    "void setGeometry(const QRect &r) = 0": {
+      "brief": "Implemented in subclasses to set this item's geometry to *r*.",
+      "url": "https://doc.qt.io/qt-6/qlayoutitem.html#setGeometry"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

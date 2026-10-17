@@ -1,0 +1,225 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkStack`.",
+      "file": "gtk/gtkstack.c",
+      "line": 1065,
+      "md": "Creates a new `GtkStack`."
+    }
+  },
+  "doc": {
+    "brief": "Shows one of its children at a time.",
+    "file": "gtk/gtkstack.c",
+    "line": 39,
+    "md": "Shows one of its children at a time.\n\nIn contrast to `GtkNotebook`, `GtkStack` does not provide a means\nfor users to change the visible child. Instead, a separate widget\nsuch as [`StackSwitcher`](xref:gtk:Gtk.StackSwitcher) or [`StackSidebar`](xref:gtk:Gtk.StackSidebar) can\nbe used with `GtkStack` to provide this functionality.\n\nTransitions between pages can be animated as slides or fades. This\ncan be controlled with [`Stack.set_transition_type()`](xref:gtk:Gtk.Stack#method:set_transition_type).\nThese animations respect the [`Settings:gtk-enable-animations`](xref:gtk:Gtk.Settings#property:gtk-enable-animations)\nsetting.\n\n`GtkStack` maintains a [`StackPage`](xref:gtk:Gtk.StackPage) object for each added\nchild, which holds additional per-child properties. You\nobtain the `GtkStackPage` for a child with [`Stack.get_page()`](xref:gtk:Gtk.Stack#method:get_page)\nand you can obtain a `GtkSelectionModel` containing all the pages\nwith [`Stack.get_pages()`](xref:gtk:Gtk.Stack#method:get_pages).\n\n# GtkStack as GtkBuildable\n\nTo set child-specific properties in a .ui file, create `GtkStackPage`\nobjects explicitly, and set the child widget as a property on it:\n\n```xml\n  <object class=\"GtkStack\" id=\"stack\">\n    <child>\n      <object class=\"GtkStackPage\">\n        <property name=\"name\">page1</property>\n        <property name=\"title\">In the beginning…</property>\n        <property name=\"child\">\n          <object class=\"GtkLabel\">\n            <property name=\"label\">It was dark</property>\n          </object>\n        </property>\n      </object>\n    </child>\n```\n\n# CSS nodes\n\n`GtkStack` has a single CSS node named stack.\n\n# Accessibility\n\n`GtkStack` uses the [`AccessibleRole.tab_panel`](xref:gtk:Gtk.AccessibleRole#value:tab_panel) role for the stack\npages, which are the accessible parent objects of the child widgets."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Stack",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "add_child": {
+      "brief": "Adds a child to `stack`.",
+      "file": "gtk/gtkstack.c",
+      "line": 1627,
+      "md": "Adds a child to `stack`."
+    },
+    "add_named": {
+      "brief": "Adds a child to `stack`.",
+      "file": "gtk/gtkstack.c",
+      "line": 1646,
+      "md": "Adds a child to `stack`.\n\nThe child is identified by the `name`."
+    },
+    "add_titled": {
+      "brief": "Adds a child to `stack`.",
+      "file": "gtk/gtkstack.c",
+      "line": 1600,
+      "md": "Adds a child to `stack`.\n\nThe child is identified by the `name`. The `title`\nwill be used by `GtkStackSwitcher` to represent\n`child` in a tab bar, so it should be short."
+    },
+    "get_child_by_name": {
+      "brief": "Finds the child with the name given as the argument.",
+      "file": "gtk/gtkstack.c",
+      "line": 1848,
+      "md": "Finds the child with the name given as the argument.\n\nReturns `NULL` if there is no child with this name."
+    },
+    "get_hhomogeneous": {
+      "brief": "Gets whether `stack` is horizontally homogeneous.",
+      "file": "gtk/gtkstack.c",
+      "line": 1927,
+      "md": "Gets whether `stack` is horizontally homogeneous."
+    },
+    "get_interpolate_size": {
+      "brief": "Returns whether the `GtkStack` is set up to interpolate between the sizes of children on page switch.",
+      "file": "gtk/gtkstack.c",
+      "line": 2136,
+      "md": "Returns whether the `GtkStack` is set up to interpolate between\nthe sizes of children on page switch."
+    },
+    "get_page": {
+      "brief": "Returns the `GtkStackPage` object for `child`.",
+      "file": "gtk/gtkstack.c",
+      "line": 1832,
+      "md": "Returns the `GtkStackPage` object for `child`."
+    },
+    "get_pages": {
+      "brief": "Returns a `GListModel` that contains the pages of the stack.",
+      "file": "gtk/gtkstack.c",
+      "line": 2930,
+      "md": "Returns a `GListModel` that contains the pages of the stack.\n\nThis can be used to keep an up-to-date view. The model also\nimplements [`SelectionModel`](xref:gtk:Gtk.SelectionModel) and can be used to track\nand modify the visible page."
+    },
+    "get_transition_duration": {
+      "brief": "Returns the amount of time (in milliseconds) that transitions between pages in `stack` will take.",
+      "file": "gtk/gtkstack.c",
+      "line": 1995,
+      "md": "Returns the amount of time (in milliseconds) that\ntransitions between pages in `stack` will take."
+    },
+    "get_transition_running": {
+      "brief": "Returns whether the `stack` is currently in a transition from one page to another.",
+      "file": "gtk/gtkstack.c",
+      "line": 2087,
+      "md": "Returns whether the `stack` is currently in a transition from one page to\nanother."
+    },
+    "get_transition_type": {
+      "brief": "Gets the type of animation that will be used for transitions between pages in `stack`.",
+      "file": "gtk/gtkstack.c",
+      "line": 2038,
+      "md": "Gets the type of animation that will be used\nfor transitions between pages in `stack`."
+    },
+    "get_vhomogeneous": {
+      "brief": "Gets whether `stack` is vertically homogeneous.",
+      "file": "gtk/gtkstack.c",
+      "line": 1977,
+      "md": "Gets whether `stack` is vertically homogeneous."
+    },
+    "get_visible_child": {
+      "brief": "Gets the currently visible child of `stack`.",
+      "file": "gtk/gtkstack.c",
+      "line": 2156,
+      "md": "Gets the currently visible child of `stack`.\n\nReturns `NULL` if there are no visible children."
+    },
+    "get_visible_child_name": {
+      "brief": "Returns the name of the currently visible child of `stack`.",
+      "file": "gtk/gtkstack.c",
+      "line": 2176,
+      "md": "Returns the name of the currently visible child of `stack`.\n\nReturns `NULL` if there is no visible child."
+    },
+    "remove": {
+      "brief": "Removes a child widget from `stack`.",
+      "file": "gtk/gtkstack.c",
+      "line": 1798,
+      "md": "Removes a child widget from `stack`."
+    },
+    "set_hhomogeneous": {
+      "brief": "Sets the `GtkStack` to be horizontally homogeneous or not.",
+      "file": "gtk/gtkstack.c",
+      "line": 1895,
+      "md": "Sets the `GtkStack` to be horizontally homogeneous or not.\n\nIf it is homogeneous, the `GtkStack` will request the same\nwidth for all its children. If it isn't, the stack\nmay change width when a different child becomes visible."
+    },
+    "set_interpolate_size": {
+      "brief": "Sets whether or not `stack` will interpolate its size when changing the visible child.",
+      "file": "gtk/gtkstack.c",
+      "line": 2106,
+      "md": "Sets whether or not `stack` will interpolate its size when\nchanging the visible child.\n\nIf the [`Stack:interpolate-size`](xref:gtk:Gtk.Stack#property:interpolate-size) property is set\nto `TRUE`, `stack` will interpolate its size between the current\none and the one it'll take after changing the visible child,\naccording to the set transition duration."
+    },
+    "set_transition_duration": {
+      "brief": "Sets the duration that transitions between pages in `stack` will take.",
+      "file": "gtk/gtkstack.c",
+      "line": 2014,
+      "md": "Sets the duration that transitions between pages in `stack`\nwill take."
+    },
+    "set_transition_type": {
+      "brief": "Sets the type of animation that will be used for transitions between pages in `stack`.",
+      "file": "gtk/gtkstack.c",
+      "line": 2057,
+      "md": "Sets the type of animation that will be used for\ntransitions between pages in `stack`.\n\nAvailable types include various kinds of fades and slides.\n\nThe transition type can be changed without problems\nat runtime, so it is possible to change the animation\nbased on the page that is about to become current."
+    },
+    "set_vhomogeneous": {
+      "brief": "Sets the `GtkStack` to be vertically homogeneous or not.",
+      "file": "gtk/gtkstack.c",
+      "line": 1945,
+      "md": "Sets the `GtkStack` to be vertically homogeneous or not.\n\nIf it is homogeneous, the `GtkStack` will request the same\nheight for all its children. If it isn't, the stack\nmay change height when a different child becomes visible."
+    },
+    "set_visible_child": {
+      "brief": "Makes `child` the visible child of `stack`.",
+      "file": "gtk/gtkstack.c",
+      "line": 2200,
+      "md": "Makes `child` the visible child of `stack`.\n\nIf `child` is different from the currently visible child,\nthe transition between the two will be animated with the\ncurrent transition type of `stack`.\n\nNote that the `child` widget has to be visible itself\n(see [`Widget.show()`](xref:gtk:Gtk.Widget#method:show)) in order to become the visible\nchild of `stack`."
+    },
+    "set_visible_child_full": {
+      "brief": "Makes the child with the given name visible.",
+      "file": "gtk/gtkstack.c",
+      "line": 2265,
+      "md": "Makes the child with the given name visible.\n\nNote that the child widget has to be visible itself\n(see [`Widget.show()`](xref:gtk:Gtk.Widget#method:show)) in order to become the visible\nchild of `stack`."
+    },
+    "set_visible_child_name": {
+      "brief": "Makes the child with the given name visible.",
+      "file": "gtk/gtkstack.c",
+      "line": 2239,
+      "md": "Makes the child with the given name visible.\n\nIf `child` is different from the currently visible child,\nthe transition between the two will be animated with the\ncurrent transition type of `stack`.\n\nNote that the child widget has to be visible itself\n(see [`Widget.show()`](xref:gtk:Gtk.Widget#method:show)) in order to become the visible\nchild of `stack`."
+    }
+  },
+  "properties": {
+    "hhomogeneous": {
+      "brief": "`TRUE` if the stack allocates the same width for all children.",
+      "file": "gtk/gtkstack.c",
+      "line": 969,
+      "md": "`TRUE` if the stack allocates the same width for all children."
+    },
+    "interpolate-size": {
+      "brief": "Whether or not the size should smoothly change during the transition.",
+      "file": "gtk/gtkstack.c",
+      "line": 1039,
+      "md": "Whether or not the size should smoothly change during the transition."
+    },
+    "pages": {
+      "brief": "A selection model with the stack pages.",
+      "file": "gtk/gtkstack.c",
+      "line": 1049,
+      "md": "A selection model with the stack pages."
+    },
+    "transition-duration": {
+      "brief": "The animation duration, in milliseconds.",
+      "file": "gtk/gtkstack.c",
+      "line": 1009,
+      "md": "The animation duration, in milliseconds."
+    },
+    "transition-running": {
+      "brief": "Whether or not the transition is currently running.",
+      "file": "gtk/gtkstack.c",
+      "line": 1029,
+      "md": "Whether or not the transition is currently running."
+    },
+    "transition-type": {
+      "brief": "The type of animation used to transition.",
+      "file": "gtk/gtkstack.c",
+      "line": 1019,
+      "md": "The type of animation used to transition."
+    },
+    "vhomogeneous": {
+      "brief": "`TRUE` if the stack allocates the same height for all children.",
+      "file": "gtk/gtkstack.c",
+      "line": 979,
+      "md": "`TRUE` if the stack allocates the same height for all children."
+    },
+    "visible-child": {
+      "brief": "The widget currently visible in the stack.",
+      "file": "gtk/gtkstack.c",
+      "line": 989,
+      "md": "The widget currently visible in the stack."
+    },
+    "visible-child-name": {
+      "brief": "The name of the widget currently visible in the stack.",
+      "file": "gtk/gtkstack.c",
+      "line": 999,
+      "md": "The name of the widget currently visible in the stack."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

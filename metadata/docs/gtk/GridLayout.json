@@ -1,0 +1,135 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkGridLayout`.",
+      "file": "gtk/gtkgridlayout.c",
+      "line": 1714,
+      "md": "Creates a new `GtkGridLayout`."
+    }
+  },
+  "doc": {
+    "brief": "Arranges child widgets in rows and columns.",
+    "file": "gtk/gtkgridlayout.c",
+    "line": 20,
+    "md": "Arranges child widgets in rows and columns.\n\nChildren have an \"attach point\" defined by the horizontal and vertical\nindex of the cell they occupy; children can span multiple rows or columns.\nThe layout properties for setting the attach points and spans are set\nusing the [`GridLayoutChild`](xref:gtk:Gtk.GridLayoutChild) associated to each child widget.\n\nThe behaviour of `GtkGridLayout` when several children occupy the same\ngrid cell is undefined.\n\n`GtkGridLayout` can be used like a `GtkBoxLayout` if all children are\nattached to the same row or column; however, if you only ever need a\nsingle row or column, you should consider using `GtkBoxLayout`."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:GridLayout",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_baseline_row": {
+      "brief": "Retrieves the row set with gtk_grid_layout_set_baseline_row().",
+      "file": "gtk/gtkgridlayout.c",
+      "line": 2019,
+      "md": "Retrieves the row set with gtk_grid_layout_set_baseline_row()."
+    },
+    "get_column_homogeneous": {
+      "brief": "Checks whether all columns of `grid` should have the same width.",
+      "file": "gtk/gtkgridlayout.c",
+      "line": 1828,
+      "md": "Checks whether all columns of `grid` should have the same width."
+    },
+    "get_column_spacing": {
+      "brief": "Retrieves the spacing set with gtk_grid_layout_set_column_spacing().",
+      "file": "gtk/gtkgridlayout.c",
+      "line": 1867,
+      "md": "Retrieves the spacing set with gtk_grid_layout_set_column_spacing()."
+    },
+    "get_row_baseline_position": {
+      "brief": "Returns the baseline position of `row`.",
+      "file": "gtk/gtkgridlayout.c",
+      "line": 1967,
+      "md": "Returns the baseline position of `row`.\n\nIf no value has been set with\n[`GridLayout.set_row_baseline_position()`](xref:gtk:Gtk.GridLayout#method:set_row_baseline_position),\nthe default value of %GTK_BASELINE_POSITION_CENTER\nis returned."
+    },
+    "get_row_homogeneous": {
+      "brief": "Checks whether all rows of `grid` should have the same height.",
+      "file": "gtk/gtkgridlayout.c",
+      "line": 1750,
+      "md": "Checks whether all rows of `grid` should have the same height."
+    },
+    "get_row_spacing": {
+      "brief": "Retrieves the spacing set with gtk_grid_layout_set_row_spacing().",
+      "file": "gtk/gtkgridlayout.c",
+      "line": 1789,
+      "md": "Retrieves the spacing set with gtk_grid_layout_set_row_spacing()."
+    },
+    "set_baseline_row": {
+      "brief": "Sets which row defines the global baseline for the entire grid.",
+      "file": "gtk/gtkgridlayout.c",
+      "line": 1994,
+      "md": "Sets which row defines the global baseline for the entire grid.\n\nEach row in the grid can have its own local baseline, but only\none of those is global, meaning it will be the baseline in the\nparent of the `grid`."
+    },
+    "set_column_homogeneous": {
+      "brief": "Sets whether all columns of `grid` should have the same width.",
+      "file": "gtk/gtkgridlayout.c",
+      "line": 1805,
+      "md": "Sets whether all columns of `grid` should have the same width."
+    },
+    "set_column_spacing": {
+      "brief": "Sets the amount of space to insert between consecutive columns.",
+      "file": "gtk/gtkgridlayout.c",
+      "line": 1844,
+      "md": "Sets the amount of space to insert between consecutive columns."
+    },
+    "set_row_baseline_position": {
+      "brief": "Sets how the baseline should be positioned on `row` of the grid, in case that row is assigned more space than is requested.",
+      "file": "gtk/gtkgridlayout.c",
+      "line": 1940,
+      "md": "Sets how the baseline should be positioned on `row` of the\ngrid, in case that row is assigned more space than is requested."
+    },
+    "set_row_homogeneous": {
+      "brief": "Sets whether all rows of `grid` should have the same height.",
+      "file": "gtk/gtkgridlayout.c",
+      "line": 1727,
+      "md": "Sets whether all rows of `grid` should have the same height."
+    },
+    "set_row_spacing": {
+      "brief": "Sets the amount of space to insert between consecutive rows.",
+      "file": "gtk/gtkgridlayout.c",
+      "line": 1766,
+      "md": "Sets the amount of space to insert between consecutive rows."
+    }
+  },
+  "properties": {
+    "baseline-row": {
+      "brief": "The row to align to the baseline, when `GtkWidget:valign` is set to %GTK_ALIGN_BASELINE.",
+      "file": "gtk/gtkgridlayout.c",
+      "line": 1695,
+      "md": "The row to align to the baseline, when `GtkWidget:valign` is set\nto %GTK_ALIGN_BASELINE."
+    },
+    "column-homogeneous": {
+      "brief": "Whether all the columns in the grid have the same width.",
+      "file": "gtk/gtkgridlayout.c",
+      "line": 1685,
+      "md": "Whether all the columns in the grid have the same width."
+    },
+    "column-spacing": {
+      "brief": "The amount of space between to consecutive columns.",
+      "file": "gtk/gtkgridlayout.c",
+      "line": 1665,
+      "md": "The amount of space between to consecutive columns."
+    },
+    "row-homogeneous": {
+      "brief": "Whether all the rows in the grid have the same height.",
+      "file": "gtk/gtkgridlayout.c",
+      "line": 1675,
+      "md": "Whether all the rows in the grid have the same height."
+    },
+    "row-spacing": {
+      "brief": "The amount of space between to consecutive rows.",
+      "file": "gtk/gtkgridlayout.c",
+      "line": 1655,
+      "md": "The amount of space between to consecutive rows."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

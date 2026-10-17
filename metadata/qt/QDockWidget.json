@@ -40,7 +40,7 @@
             "native": "Qt::WindowFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::WindowType>"
           }
         }
       ],
@@ -84,7 +84,7 @@
             "native": "Qt::WindowFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::WindowType>"
           }
         }
       ],
@@ -96,44 +96,64 @@
   ],
   "enums": [
     {
+      "flags_alias": "QDockWidget::DockWidgetFeatures",
+      "fullname": "QDockWidget::DockWidgetFeature",
       "members": [
         {
+          "cpp": "QDockWidget::DockWidgetClosable",
           "name": "DockWidgetClosable",
           "value": "0x01"
         },
         {
+          "cpp": "QDockWidget::DockWidgetMovable",
           "name": "DockWidgetMovable",
           "value": "0x02"
         },
         {
+          "cpp": "QDockWidget::DockWidgetFloatable",
           "name": "DockWidgetFloatable",
           "value": "0x04"
         },
         {
+          "cpp": "QDockWidget::DockWidgetVerticalTitleBar",
           "name": "DockWidgetVerticalTitleBar",
           "value": "0x08"
         },
         {
+          "cpp": "QDockWidget::DockWidgetFeatureMask",
           "name": "DockWidgetFeatureMask",
           "value": "0x0f"
         },
         {
+          "cpp": "QDockWidget::NoDockWidgetFeatures",
           "name": "NoDockWidgetFeatures",
           "value": "0x00"
         },
         {
+          "cpp": "QDockWidget::Reserved",
           "name": "Reserved",
           "value": "0xff"
         }
       ],
       "metaobject": null,
       "name": "DockWidgetFeature",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QDockWidget",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QDockWidget:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -154,7 +174,7 @@
         "native": "Qt::DockWidgetAreas",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::DockWidgetArea>"
       },
       "signature": "Qt::DockWidgetAreas allowedAreas() const",
       "since": null,
@@ -254,7 +274,7 @@
         "native": "Qt::DockWidgetArea",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::DockWidgetArea>"
       },
       "signature": "Qt::DockWidgetArea dockLocation() const",
       "since": null,
@@ -317,7 +337,7 @@
         "native": "QDockWidget::DockWidgetFeatures",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QDockWidget::DockWidgetFeature>"
       },
       "signature": "QDockWidget::DockWidgetFeatures features() const",
       "since": null,
@@ -383,7 +403,7 @@
             "native": "Qt::DockWidgetArea",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::DockWidgetArea>"
           }
         }
       ],
@@ -483,7 +503,7 @@
             "native": "Qt::DockWidgetAreas",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::DockWidgetArea>"
           }
         }
       ],
@@ -520,7 +540,7 @@
             "native": "Qt::DockWidgetArea",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::DockWidgetArea>"
           }
         }
       ],
@@ -557,7 +577,7 @@
             "native": "QDockWidget::DockWidgetFeatures",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QDockWidget::DockWidgetFeature>"
           }
         }
       ],
@@ -799,6 +819,8 @@
         "set": "setAllowedAreas"
       },
       "brief": "Areas where the dock widget may be placed",
+      "default": "DockWidgetArea_Mask|AllDockWidgetAreas",
+      "default_origin": "runtime",
       "js_name": "allowedAreas",
       "metaobject": {
         "constant": false,
@@ -822,12 +844,13 @@
         "signal": "allowedAreasChanged(Qt::DockWidgetAreas)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::DockWidgetAreas",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::DockWidgetArea>"
       }
     },
     {
@@ -842,6 +865,8 @@
         "set": "setDockLocation"
       },
       "brief": "The current dock location, or Qt::NoDockLocation if this dock widget is floating or has no mainwindow parent",
+      "default": "NoDockWidgetArea",
+      "default_origin": "runtime",
       "js_name": "dockLocation",
       "metaobject": {
         "constant": false,
@@ -865,12 +890,13 @@
         "signal": "dockLocationChanged(Qt::DockWidgetArea)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::DockWidgetArea",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::DockWidgetArea>"
       }
     },
     {
@@ -885,6 +911,8 @@
         "set": "setFeatures"
       },
       "brief": "Whether the dock widget is movable, closable, and floatable",
+      "default": "DockWidgetClosable|DockWidgetMovable|DockWidgetFloatable",
+      "default_origin": "runtime",
       "js_name": "features",
       "metaobject": {
         "constant": false,
@@ -908,12 +936,13 @@
         "signal": "featuresChanged(QDockWidget::DockWidgetFeatures)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "DockWidgetFeatures",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QDockWidget::DockWidgetFeature>"
       }
     },
     {
@@ -928,6 +957,8 @@
         "set": "setFloating"
       },
       "brief": "Whether the dock widget is floating",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "floating",
       "metaobject": {
         "constant": false,
@@ -951,6 +982,7 @@
         "signal": "topLevelChanged(bool)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -971,6 +1003,8 @@
         "set": null
       },
       "brief": "The dock widget title (caption)",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "windowTitle",
       "metaobject": {
         "constant": false,
@@ -991,6 +1025,7 @@
       "name": "windowTitle",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -1025,7 +1060,7 @@
             "native": "Qt::DockWidgetAreas",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::DockWidgetArea>"
           }
         }
       ],
@@ -1060,7 +1095,7 @@
             "native": "Qt::DockWidgetArea",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::DockWidgetArea>"
           }
         }
       ],
@@ -1095,7 +1130,7 @@
             "native": "QDockWidget::DockWidgetFeatures",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QDockWidget::DockWidgetFeature>"
           }
         }
       ],

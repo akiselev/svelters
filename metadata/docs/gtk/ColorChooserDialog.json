@@ -1,0 +1,42 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkColorChooserDialog`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`ColorDialog`](xref:gtk:Gtk.ColorDialog) instead",
+      "file": "gtk/gtkcolorchooserdialog.c",
+      "line": 300,
+      "md": "Creates a new `GtkColorChooserDialog`."
+    }
+  },
+  "doc": {
+    "brief": "A dialog for choosing a color.",
+    "deprecated": "4.10",
+    "deprecated_md": "Use [`ColorDialog`](xref:gtk:Gtk.ColorDialog) instead",
+    "file": "gtk/gtkcolorchooserdialog.c",
+    "line": 33,
+    "md": "A dialog for choosing a color.\n\n`GtkColorChooserDialog` implements the [`ColorChooser`](xref:gtk:Gtk.ColorChooser) interface\nand does not provide much API of its own.\n\nTo create a `GtkColorChooserDialog`, use [`ColorChooserDialog.new()`](xref:gtk:Gtk.ColorChooserDialog#constructor:new).\n\nTo change the initially selected color, use\n[`ColorChooser.set_rgba()`](xref:gtk:Gtk.ColorChooser#method:set_rgba). To get the selected color use\n[`ColorChooser.get_rgba()`](xref:gtk:Gtk.ColorChooser#method:get_rgba).\n\n`GtkColorChooserDialog` has been deprecated in favor of [`ColorDialog`](xref:gtk:Gtk.ColorDialog).\n\n## CSS nodes\n\n`GtkColorChooserDialog` has a single CSS node with the name `window` and style\nclass `.colorchooser`."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ColorChooserDialog",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {},
+  "properties": {
+    "show-editor": {
+      "brief": "Whether the color chooser dialog is showing the single-color editor.",
+      "file": "gtk/gtkcolorchooserdialog.c",
+      "line": 240,
+      "md": "Whether the color chooser dialog is showing the single-color editor.\n\nIt can be set to switch the color chooser into single-color editing mode."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

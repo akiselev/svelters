@@ -1,0 +1,295 @@
+{
+  "doc": {
+    "brief": "The QMainWindow class provides a main application window.",
+    "index_brief": "Main application window",
+    "url": "https://doc.qt.io/qt-6/qmainwindow.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QMainWindow",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QByteArray saveState(int version) const": {
+      "brief": "Saves the current state of this mainwindow's toolbars and dockwidgets.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#saveState"
+    },
+    "QList<QDockWidget *> tabifiedDockWidgets(QDockWidget *dockwidget) const": {
+      "brief": "Returns the dock widgets that are tabified together with *dockwidget*.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#tabifiedDockWidgets"
+    },
+    "QMainWindow(QWidget *parent, Qt::WindowFlags flags)": {
+      "brief": "Constructs a QMainWindow with the given *parent* and the specified widget *flags*.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#QMainWindow"
+    },
+    "QMainWindow::DockOptions dockOptions() const": {
+      "brief": "This property holds the docking behavior of [QMainWindow](xref:qt:QMainWindow)",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#dockOptions-prop"
+    },
+    "QMenu * createPopupMenu()": {
+      "brief": "Returns a popup menu containing checkable entries for the toolbars and dock widgets present in the main window.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#createPopupMenu"
+    },
+    "QMenuBar * menuBar() const": {
+      "brief": "Returns the menu bar for the main window.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#menuBar"
+    },
+    "QSize iconSize() const": {
+      "brief": "size of toolbar icons in this mainwindow.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#iconSize-prop"
+    },
+    "QStatusBar * statusBar() const": {
+      "brief": "Returns the status bar for the main window.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#statusBar"
+    },
+    "QTabWidget::TabPosition tabPosition(Qt::DockWidgetArea area) const": {
+      "brief": "Returns the tab position for *area*.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#tabPosition"
+    },
+    "QTabWidget::TabShape tabShape() const": {
+      "brief": "This property holds the tab shape used for tabbed dock widgets.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#tabShape-prop"
+    },
+    "QToolBar * addToolBar(const QString &title)": {
+      "brief": "Creates a [QToolBar](xref:qt:QToolBar) object, setting its window title to *title*, and inserts it into the top toolbar area.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#addToolBar-2"
+    },
+    "QWidget * centralWidget() const": {
+      "brief": "Returns the central widget for the main window.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#centralWidget"
+    },
+    "QWidget * menuWidget() const": {
+      "brief": "Returns the menu bar for the main window.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#menuWidget"
+    },
+    "QWidget * takeCentralWidget()": {
+      "brief": "Removes the central widget from this main window.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#takeCentralWidget"
+    },
+    "Qt::DockWidgetArea corner(Qt::Corner corner) const": {
+      "brief": "Returns the dock widget area that occupies the specified *corner*.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#corner"
+    },
+    "Qt::DockWidgetArea dockWidgetArea(QDockWidget *dockwidget) const": {
+      "brief": "Returns the [Qt::DockWidgetArea](https://doc.qt.io/qt-6/qt.html#DockWidgetArea-enum) for *dockwidget*.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#dockWidgetArea"
+    },
+    "Qt::ToolBarArea toolBarArea(const QToolBar *toolbar) const": {
+      "brief": "Returns the [Qt::ToolBarArea](https://doc.qt.io/qt-6/qt.html#ToolBarArea-enum) for *toolbar*.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#toolBarArea"
+    },
+    "Qt::ToolButtonStyle toolButtonStyle() const": {
+      "brief": "style of toolbar buttons in this mainwindow.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#toolButtonStyle-prop"
+    },
+    "bool documentMode() const": {
+      "brief": "This property holds whether the tab bar for tabbed dockwidgets is set to document mode.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#documentMode-prop"
+    },
+    "bool event(QEvent *event) override": {
+      "brief": "Reimplements: [QWidget::event](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#event"
+    },
+    "bool isAnimated() const": {
+      "brief": "This property holds whether manipulating dock widgets and tool bars is animated",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#animated-prop"
+    },
+    "bool isDockNestingEnabled() const": {
+      "brief": "This property holds whether docks can be nested",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#dockNestingEnabled-prop"
+    },
+    "bool restoreDockWidget(QDockWidget *dockwidget)": {
+      "brief": "Restores the state of *dockwidget* if it is created after the call to [restoreState](xref:qt:QMainWindow)().",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#restoreDockWidget"
+    },
+    "bool restoreState(const QByteArray &state, int version)": {
+      "brief": "Restores the *state* of this mainwindow's toolbars and dockwidgets.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#restoreState"
+    },
+    "bool toolBarBreak(QToolBar *toolbar) const": {
+      "brief": "Returns whether there is a toolbar break before the *toolbar*.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#toolBarBreak"
+    },
+    "bool unifiedTitleAndToolBarOnMac() const": {
+      "brief": "This property holds whether the window uses the unified title and toolbar look on macOS",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#unifiedTitleAndToolBarOnMac-prop"
+    },
+    "void addDockWidget(Qt::DockWidgetArea area, QDockWidget *dockwidget)": {
+      "brief": "Adds the given *dockwidget* to the specified *area*.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#addDockWidget"
+    },
+    "void addDockWidget(Qt::DockWidgetArea area, QDockWidget *dockwidget, Qt::Orientation orientation)": {
+      "brief": "Adds *dockwidget* into the given *area* in the direction specified by the *orientation*.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#addDockWidget-1"
+    },
+    "void addToolBar(QToolBar *toolbar)": {
+      "brief": "Equivalent of calling addToolBar([Qt::TopToolBarArea](https://doc.qt.io/qt-6/qt.html#ToolBarArea-enum), *toolbar*)",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#addToolBar-1"
+    },
+    "void addToolBar(Qt::ToolBarArea area, QToolBar *toolbar)": {
+      "brief": "Adds the *toolbar* into the specified *area* in this main window.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#addToolBar"
+    },
+    "void addToolBarBreak(Qt::ToolBarArea area)": {
+      "brief": "Adds a toolbar break to the given *area* after all the other objects that are present.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#addToolBarBreak"
+    },
+    "void contextMenuEvent(QContextMenuEvent *event) override": {
+      "brief": "Reimplements: [QWidget::contextMenuEvent](xref:qt:QWidget)(QContextMenuEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#contextMenuEvent"
+    },
+    "void iconSizeChanged(const QSize &iconSize)": {
+      "brief": "This signal is emitted when the size of the icons used in the window is changed.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#iconSizeChanged"
+    },
+    "void insertToolBar(QToolBar *before, QToolBar *toolbar)": {
+      "brief": "Inserts the *toolbar* into the area occupied by the *before* toolbar so that it appears before it.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#insertToolBar"
+    },
+    "void insertToolBarBreak(QToolBar *before)": {
+      "brief": "Inserts a toolbar break before the toolbar specified by *before*.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#insertToolBarBreak"
+    },
+    "void removeDockWidget(QDockWidget *dockwidget)": {
+      "brief": "Removes the *dockwidget* from the main window layout and hides it.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#removeDockWidget"
+    },
+    "void removeToolBar(QToolBar *toolbar)": {
+      "brief": "Removes the *toolbar* from the main window layout and hides it.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#removeToolBar"
+    },
+    "void removeToolBarBreak(QToolBar *before)": {
+      "brief": "Removes a toolbar break previously inserted before the toolbar specified by *before*.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#removeToolBarBreak"
+    },
+    "void resizeDocks(const QList<QDockWidget *> &docks, const QList<int> &sizes, Qt::Orientation orientation)": {
+      "brief": "Resizes the dock widgets in the list *docks* to the corresponding size in pixels from the list *sizes*.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#resizeDocks"
+    },
+    "void setAnimated(bool enabled)": {
+      "brief": "This property holds whether manipulating dock widgets and tool bars is animated",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#animated-prop"
+    },
+    "void setCentralWidget(QWidget *widget)": {
+      "brief": "Sets the given *widget* to be the main window's central widget.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#setCentralWidget"
+    },
+    "void setCorner(Qt::Corner corner, Qt::DockWidgetArea area)": {
+      "brief": "Sets the given dock widget *area* to occupy the specified *corner*.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#setCorner"
+    },
+    "void setDockNestingEnabled(bool enabled)": {
+      "brief": "This property holds whether docks can be nested",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#dockNestingEnabled-prop"
+    },
+    "void setDockOptions(QMainWindow::DockOptions options)": {
+      "brief": "This property holds the docking behavior of [QMainWindow](xref:qt:QMainWindow)",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#dockOptions-prop"
+    },
+    "void setDocumentMode(bool enabled)": {
+      "brief": "This property holds whether the tab bar for tabbed dockwidgets is set to document mode.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#documentMode-prop"
+    },
+    "void setIconSize(const QSize &iconSize)": {
+      "brief": "size of toolbar icons in this mainwindow.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#iconSize-prop"
+    },
+    "void setMenuBar(QMenuBar *menuBar)": {
+      "brief": "Sets the menu bar for the main window to *menuBar*.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#setMenuBar"
+    },
+    "void setMenuWidget(QWidget *menuBar)": {
+      "brief": "Sets the menu bar for the main window to *menuBar*.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#setMenuWidget"
+    },
+    "void setStatusBar(QStatusBar *statusbar)": {
+      "brief": "Sets the status bar for the main window to *statusbar*.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#setStatusBar"
+    },
+    "void setTabPosition(Qt::DockWidgetAreas areas, QTabWidget::TabPosition tabPosition)": {
+      "brief": "Sets the tab position for the given dock widget *areas* to the specified *tabPosition*.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#setTabPosition"
+    },
+    "void setTabShape(QTabWidget::TabShape tabShape)": {
+      "brief": "This property holds the tab shape used for tabbed dock widgets.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#tabShape-prop"
+    },
+    "void setToolButtonStyle(Qt::ToolButtonStyle toolButtonStyle)": {
+      "brief": "style of toolbar buttons in this mainwindow.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#toolButtonStyle-prop"
+    },
+    "void setUnifiedTitleAndToolBarOnMac(bool set)": {
+      "brief": "This property holds whether the window uses the unified title and toolbar look on macOS",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#unifiedTitleAndToolBarOnMac-prop"
+    },
+    "void splitDockWidget(QDockWidget *first, QDockWidget *second, Qt::Orientation orientation)": {
+      "brief": "Splits the space covered by the *first* dock widget into two parts, moves the *first* dock widget into the first part, and moves the *second* dock widget into the second part.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#splitDockWidget"
+    },
+    "void tabifiedDockWidgetActivated(QDockWidget *dockWidget)": {
+      "brief": "This signal is emitted when the tabified dock widget is activated by selecting the tab.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#tabifiedDockWidgetActivated"
+    },
+    "void tabifyDockWidget(QDockWidget *first, QDockWidget *second)": {
+      "brief": "Moves *second* dock widget on top of *first* dock widget, creating a tabbed docked area in the main window.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#tabifyDockWidget"
+    },
+    "void toolButtonStyleChanged(Qt::ToolButtonStyle toolButtonStyle)": {
+      "brief": "This signal is emitted when the style used for tool buttons in the window is changed.",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#toolButtonStyleChanged"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "animated": {
+      "brief": "Whether manipulating dock widgets and tool bars is animated",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#animated-prop"
+    },
+    "dockNestingEnabled": {
+      "brief": "Whether docks can be nested",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#dockNestingEnabled-prop"
+    },
+    "dockOptions": {
+      "brief": "The docking behavior of QMainWindow",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#dockOptions-prop"
+    },
+    "documentMode": {
+      "brief": "Whether the tab bar for tabbed dockwidgets is set to document mode",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#documentMode-prop"
+    },
+    "iconSize": {
+      "brief": "Size of toolbar icons in this mainwindow",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#iconSize-prop"
+    },
+    "tabShape": {
+      "brief": "The tab shape used for tabbed dock widgets",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#tabShape-prop"
+    },
+    "toolButtonStyle": {
+      "brief": "Style of toolbar buttons in this mainwindow",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#toolButtonStyle-prop"
+    },
+    "unifiedTitleAndToolBarOnMac": {
+      "brief": "Whether the window uses the unified title and toolbar look on macOS",
+      "url": "https://doc.qt.io/qt-6/qmainwindow.html#unifiedTitleAndToolBarOnMac-prop"
+    }
+  },
+  "qss": {
+    "box_model": false,
+    "pseudo_states": [],
+    "sub_controls": [
+      "::separator"
+    ],
+    "url": "https://doc.qt.io/qt-6/stylesheet-reference.html#qmainwindow-widget"
+  },
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

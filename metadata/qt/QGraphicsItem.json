@@ -38,288 +38,371 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QGraphicsItem::CacheMode",
       "members": [
         {
+          "cpp": "QGraphicsItem::NoCache",
           "name": "NoCache",
           "value": "0"
         },
         {
+          "cpp": "QGraphicsItem::ItemCoordinateCache",
           "name": "ItemCoordinateCache",
           "value": "1"
         },
         {
+          "cpp": "QGraphicsItem::DeviceCoordinateCache",
           "name": "DeviceCoordinateCache",
           "value": "2"
         }
       ],
       "metaobject": null,
       "name": "CacheMode",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QGraphicsItem::GraphicsItemChange",
       "members": [
         {
+          "cpp": "QGraphicsItem::ItemPositionChange",
           "name": "ItemPositionChange",
           "value": "0"
         },
         {
+          "cpp": "QGraphicsItem::ItemVisibleChange",
           "name": "ItemVisibleChange",
           "value": "2"
         },
         {
+          "cpp": "QGraphicsItem::ItemEnabledChange",
           "name": "ItemEnabledChange",
           "value": "3"
         },
         {
+          "cpp": "QGraphicsItem::ItemSelectedChange",
           "name": "ItemSelectedChange",
           "value": "4"
         },
         {
+          "cpp": "QGraphicsItem::ItemParentChange",
           "name": "ItemParentChange",
           "value": "5"
         },
         {
+          "cpp": "QGraphicsItem::ItemChildAddedChange",
           "name": "ItemChildAddedChange",
           "value": "6"
         },
         {
+          "cpp": "QGraphicsItem::ItemChildRemovedChange",
           "name": "ItemChildRemovedChange",
           "value": "7"
         },
         {
+          "cpp": "QGraphicsItem::ItemTransformChange",
           "name": "ItemTransformChange",
           "value": "8"
         },
         {
+          "cpp": "QGraphicsItem::ItemPositionHasChanged",
           "name": "ItemPositionHasChanged",
           "value": "9"
         },
         {
+          "cpp": "QGraphicsItem::ItemTransformHasChanged",
           "name": "ItemTransformHasChanged",
           "value": "10"
         },
         {
+          "cpp": "QGraphicsItem::ItemSceneChange",
           "name": "ItemSceneChange",
           "value": "11"
         },
         {
+          "cpp": "QGraphicsItem::ItemVisibleHasChanged",
           "name": "ItemVisibleHasChanged",
           "value": "12"
         },
         {
+          "cpp": "QGraphicsItem::ItemEnabledHasChanged",
           "name": "ItemEnabledHasChanged",
           "value": "13"
         },
         {
+          "cpp": "QGraphicsItem::ItemSelectedHasChanged",
           "name": "ItemSelectedHasChanged",
           "value": "14"
         },
         {
+          "cpp": "QGraphicsItem::ItemParentHasChanged",
           "name": "ItemParentHasChanged",
           "value": "15"
         },
         {
+          "cpp": "QGraphicsItem::ItemSceneHasChanged",
           "name": "ItemSceneHasChanged",
           "value": "16"
         },
         {
+          "cpp": "QGraphicsItem::ItemCursorChange",
           "name": "ItemCursorChange",
           "value": "17"
         },
         {
+          "cpp": "QGraphicsItem::ItemCursorHasChanged",
           "name": "ItemCursorHasChanged",
           "value": "18"
         },
         {
+          "cpp": "QGraphicsItem::ItemToolTipChange",
           "name": "ItemToolTipChange",
           "value": "19"
         },
         {
+          "cpp": "QGraphicsItem::ItemToolTipHasChanged",
           "name": "ItemToolTipHasChanged",
           "value": "20"
         },
         {
+          "cpp": "QGraphicsItem::ItemFlagsChange",
           "name": "ItemFlagsChange",
           "value": "21"
         },
         {
+          "cpp": "QGraphicsItem::ItemFlagsHaveChanged",
           "name": "ItemFlagsHaveChanged",
           "value": "22"
         },
         {
+          "cpp": "QGraphicsItem::ItemZValueChange",
           "name": "ItemZValueChange",
           "value": "23"
         },
         {
+          "cpp": "QGraphicsItem::ItemZValueHasChanged",
           "name": "ItemZValueHasChanged",
           "value": "24"
         },
         {
+          "cpp": "QGraphicsItem::ItemOpacityChange",
           "name": "ItemOpacityChange",
           "value": "25"
         },
         {
+          "cpp": "QGraphicsItem::ItemOpacityHasChanged",
           "name": "ItemOpacityHasChanged",
           "value": "26"
         },
         {
+          "cpp": "QGraphicsItem::ItemScenePositionHasChanged",
           "name": "ItemScenePositionHasChanged",
           "value": "27"
         },
         {
+          "cpp": "QGraphicsItem::ItemRotationChange",
           "name": "ItemRotationChange",
           "value": "28"
         },
         {
+          "cpp": "QGraphicsItem::ItemRotationHasChanged",
           "name": "ItemRotationHasChanged",
           "value": "29"
         },
         {
+          "cpp": "QGraphicsItem::ItemScaleChange",
           "name": "ItemScaleChange",
           "value": "30"
         },
         {
+          "cpp": "QGraphicsItem::ItemScaleHasChanged",
           "name": "ItemScaleHasChanged",
           "value": "31"
         },
         {
+          "cpp": "QGraphicsItem::ItemTransformOriginPointChange",
           "name": "ItemTransformOriginPointChange",
           "value": "32"
         },
         {
+          "cpp": "QGraphicsItem::ItemTransformOriginPointHasChanged",
           "name": "ItemTransformOriginPointHasChanged",
           "value": "33"
         }
       ],
       "metaobject": null,
       "name": "GraphicsItemChange",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": "QGraphicsItem::GraphicsItemFlags",
+      "fullname": "QGraphicsItem::GraphicsItemFlag",
       "members": [
         {
+          "cpp": "QGraphicsItem::ItemIsMovable",
           "name": "ItemIsMovable",
           "value": "0x1"
         },
         {
+          "cpp": "QGraphicsItem::ItemIsSelectable",
           "name": "ItemIsSelectable",
           "value": "0x2"
         },
         {
+          "cpp": "QGraphicsItem::ItemIsFocusable",
           "name": "ItemIsFocusable",
           "value": "0x4"
         },
         {
+          "cpp": "QGraphicsItem::ItemClipsToShape",
           "name": "ItemClipsToShape",
           "value": "0x8"
         },
         {
+          "cpp": "QGraphicsItem::ItemClipsChildrenToShape",
           "name": "ItemClipsChildrenToShape",
           "value": "0x10"
         },
         {
+          "cpp": "QGraphicsItem::ItemIgnoresTransformations",
           "name": "ItemIgnoresTransformations",
           "value": "0x20"
         },
         {
+          "cpp": "QGraphicsItem::ItemIgnoresParentOpacity",
           "name": "ItemIgnoresParentOpacity",
           "value": "0x40"
         },
         {
+          "cpp": "QGraphicsItem::ItemDoesntPropagateOpacityToChildren",
           "name": "ItemDoesntPropagateOpacityToChildren",
           "value": "0x80"
         },
         {
+          "cpp": "QGraphicsItem::ItemStacksBehindParent",
           "name": "ItemStacksBehindParent",
           "value": "0x100"
         },
         {
+          "cpp": "QGraphicsItem::ItemUsesExtendedStyleOption",
           "name": "ItemUsesExtendedStyleOption",
           "value": "0x200"
         },
         {
+          "cpp": "QGraphicsItem::ItemHasNoContents",
           "name": "ItemHasNoContents",
           "value": "0x400"
         },
         {
+          "cpp": "QGraphicsItem::ItemSendsGeometryChanges",
           "name": "ItemSendsGeometryChanges",
           "value": "0x800"
         },
         {
+          "cpp": "QGraphicsItem::ItemAcceptsInputMethod",
           "name": "ItemAcceptsInputMethod",
           "value": "0x1000"
         },
         {
+          "cpp": "QGraphicsItem::ItemNegativeZStacksBehindParent",
           "name": "ItemNegativeZStacksBehindParent",
           "value": "0x2000"
         },
         {
+          "cpp": "QGraphicsItem::ItemIsPanel",
           "name": "ItemIsPanel",
           "value": "0x4000"
         },
         {
+          "cpp": "QGraphicsItem::ItemIsFocusScope",
           "name": "ItemIsFocusScope",
           "value": "0x8000"
         },
         {
+          "cpp": "QGraphicsItem::ItemSendsScenePositionChanges",
           "name": "ItemSendsScenePositionChanges",
           "value": "0x10000"
         },
         {
+          "cpp": "QGraphicsItem::ItemStopsClickFocusPropagation",
           "name": "ItemStopsClickFocusPropagation",
           "value": "0x20000"
         },
         {
+          "cpp": "QGraphicsItem::ItemStopsFocusHandling",
           "name": "ItemStopsFocusHandling",
           "value": "0x40000"
         },
         {
+          "cpp": "QGraphicsItem::ItemContainsChildrenInShape",
           "name": "ItemContainsChildrenInShape",
           "value": "0x80000"
         }
       ],
       "metaobject": null,
       "name": "GraphicsItemFlag",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QGraphicsItem::PanelModality",
       "members": [
         {
+          "cpp": "QGraphicsItem::NonModal",
           "name": "NonModal",
           "value": "0"
         },
         {
+          "cpp": "QGraphicsItem::PanelModal",
           "name": "PanelModal",
           "value": "1"
         },
         {
+          "cpp": "QGraphicsItem::SceneModal",
           "name": "SceneModal",
           "value": "2"
         }
       ],
       "metaobject": null,
       "name": "PanelModality",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QGraphicsItem::anonymous",
       "members": [
         {
+          "cpp": "QGraphicsItem::Type",
           "name": "Type",
           "value": "1"
         },
         {
+          "cpp": "QGraphicsItem::UserType",
           "name": "UserType",
           "value": "65536"
         }
       ],
       "metaobject": null,
       "name": "anonymous",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsItem",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "borrowed_only",
+    "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsItem:lifetime",
+    "native_refcount": "none",
+    "origin": "derived",
+    "provenance": "derived: abstract or not a QObject; JS cannot create it"
+  },
   "methods": [
     {
       "access": "public",
@@ -418,7 +501,7 @@
         "native": "Qt::MouseButtons",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::MouseButton>"
       },
       "signature": "Qt::MouseButtons acceptedMouseButtons() const",
       "since": null,
@@ -481,7 +564,7 @@
         "native": "QRectF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRectF boundingRect() const = 0",
       "since": null,
@@ -510,7 +593,7 @@
             "native": "const QTransform &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QTransform>"
           }
         }
       ],
@@ -518,7 +601,7 @@
         "native": "QRegion",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QRegion>"
       },
       "signature": "QRegion boundingRegion(const QTransform &itemToDeviceTransform) const",
       "since": null,
@@ -570,7 +653,7 @@
         "native": "QGraphicsItem::CacheMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QGraphicsItem::CacheMode>"
       },
       "signature": "QGraphicsItem::CacheMode cacheMode() const",
       "since": null,
@@ -622,7 +705,7 @@
         "native": "QRectF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRectF childrenBoundingRect() const",
       "since": null,
@@ -674,7 +757,7 @@
         "native": "QPainterPath",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPainterPath>"
       },
       "signature": "QPainterPath clipPath() const",
       "since": null,
@@ -713,7 +796,7 @@
             "native": "Qt::ItemSelectionMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ItemSelectionMode>"
           }
         }
       ],
@@ -750,7 +833,7 @@
             "native": "const QPainterPath &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPainterPath>"
           }
         },
         {
@@ -760,7 +843,7 @@
             "native": "Qt::ItemSelectionMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ItemSelectionMode>"
           }
         }
       ],
@@ -797,7 +880,7 @@
             "native": "Qt::ItemSelectionMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ItemSelectionMode>"
           }
         }
       ],
@@ -871,7 +954,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -942,7 +1025,7 @@
         "native": "QCursor",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QCursor>"
       },
       "signature": "QCursor cursor() const",
       "since": null,
@@ -1008,7 +1091,7 @@
             "native": "const QTransform &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QTransform>"
           }
         }
       ],
@@ -1016,7 +1099,7 @@
         "native": "QTransform",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QTransform>"
       },
       "signature": "QTransform deviceTransform(const QTransform &viewportTransform) const",
       "since": null,
@@ -1219,7 +1302,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {
@@ -1386,7 +1469,7 @@
         "native": "QGraphicsItem::GraphicsItemFlags",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QGraphicsItem::GraphicsItemFlag>"
       },
       "signature": "QGraphicsItem::GraphicsItemFlags flags() const",
       "since": null,
@@ -1894,7 +1977,7 @@
         "native": "Qt::InputMethodHints",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::InputMethodHint>"
       },
       "signature": "Qt::InputMethodHints inputMethodHints() const",
       "since": null,
@@ -1923,7 +2006,7 @@
             "native": "Qt::InputMethodQuery",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::InputMethodQuery>"
           }
         }
       ],
@@ -2149,7 +2232,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -2483,7 +2566,7 @@
             "native": "QGraphicsItem::GraphicsItemChange",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QGraphicsItem::GraphicsItemChange>"
           }
         },
         {
@@ -2548,7 +2631,7 @@
         "native": "QTransform",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QTransform>"
       },
       "signature": "QTransform itemTransform(const QGraphicsItem *other, bool *ok) const",
       "since": null,
@@ -2661,7 +2744,7 @@
             "native": "const QPainterPath &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPainterPath>"
           }
         }
       ],
@@ -2669,7 +2752,7 @@
         "native": "QPainterPath",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPainterPath>"
       },
       "signature": "QPainterPath mapFromItem(const QGraphicsItem *item, const QPainterPath &path) const",
       "since": null,
@@ -2708,7 +2791,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -2716,7 +2799,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF mapFromItem(const QGraphicsItem *item, const QPointF &point) const",
       "since": null,
@@ -2773,7 +2856,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF mapFromItem(const QGraphicsItem *item, qreal x, qreal y) const",
       "since": null,
@@ -2859,7 +2942,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -2973,7 +3056,7 @@
             "native": "const QPainterPath &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPainterPath>"
           }
         }
       ],
@@ -2981,7 +3064,7 @@
         "native": "QPainterPath",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPainterPath>"
       },
       "signature": "QPainterPath mapFromParent(const QPainterPath &path) const",
       "since": null,
@@ -3010,7 +3093,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -3018,7 +3101,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF mapFromParent(const QPointF &point) const",
       "since": null,
@@ -3065,7 +3148,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF mapFromParent(qreal x, qreal y) const",
       "since": null,
@@ -3131,7 +3214,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -3235,7 +3318,7 @@
             "native": "const QPainterPath &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPainterPath>"
           }
         }
       ],
@@ -3243,7 +3326,7 @@
         "native": "QPainterPath",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPainterPath>"
       },
       "signature": "QPainterPath mapFromScene(const QPainterPath &path) const",
       "since": null,
@@ -3272,7 +3355,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -3280,7 +3363,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF mapFromScene(const QPointF &point) const",
       "since": null,
@@ -3327,7 +3410,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF mapFromScene(qreal x, qreal y) const",
       "since": null,
@@ -3393,7 +3476,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -3507,7 +3590,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -3515,7 +3598,7 @@
         "native": "QRectF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRectF mapRectFromItem(const QGraphicsItem *item, const QRectF &rect) const",
       "since": null,
@@ -3592,7 +3675,7 @@
         "native": "QRectF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRectF mapRectFromItem(const QGraphicsItem *item, qreal x, qreal y, qreal w, qreal h) const",
       "since": null,
@@ -3621,7 +3704,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -3629,7 +3712,7 @@
         "native": "QRectF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRectF mapRectFromParent(const QRectF &rect) const",
       "since": null,
@@ -3696,7 +3779,7 @@
         "native": "QRectF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRectF mapRectFromParent(qreal x, qreal y, qreal w, qreal h) const",
       "since": null,
@@ -3725,7 +3808,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -3733,7 +3816,7 @@
         "native": "QRectF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRectF mapRectFromScene(const QRectF &rect) const",
       "since": null,
@@ -3800,7 +3883,7 @@
         "native": "QRectF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRectF mapRectFromScene(qreal x, qreal y, qreal w, qreal h) const",
       "since": null,
@@ -3839,7 +3922,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -3847,7 +3930,7 @@
         "native": "QRectF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRectF mapRectToItem(const QGraphicsItem *item, const QRectF &rect) const",
       "since": null,
@@ -3924,7 +4007,7 @@
         "native": "QRectF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRectF mapRectToItem(const QGraphicsItem *item, qreal x, qreal y, qreal w, qreal h) const",
       "since": null,
@@ -3953,7 +4036,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -3961,7 +4044,7 @@
         "native": "QRectF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRectF mapRectToParent(const QRectF &rect) const",
       "since": null,
@@ -4028,7 +4111,7 @@
         "native": "QRectF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRectF mapRectToParent(qreal x, qreal y, qreal w, qreal h) const",
       "since": null,
@@ -4057,7 +4140,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -4065,7 +4148,7 @@
         "native": "QRectF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRectF mapRectToScene(const QRectF &rect) const",
       "since": null,
@@ -4132,7 +4215,7 @@
         "native": "QRectF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRectF mapRectToScene(qreal x, qreal y, qreal w, qreal h) const",
       "since": null,
@@ -4171,7 +4254,7 @@
             "native": "const QPainterPath &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPainterPath>"
           }
         }
       ],
@@ -4179,7 +4262,7 @@
         "native": "QPainterPath",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPainterPath>"
       },
       "signature": "QPainterPath mapToItem(const QGraphicsItem *item, const QPainterPath &path) const",
       "since": null,
@@ -4218,7 +4301,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -4226,7 +4309,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF mapToItem(const QGraphicsItem *item, const QPointF &point) const",
       "since": null,
@@ -4283,7 +4366,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF mapToItem(const QGraphicsItem *item, qreal x, qreal y) const",
       "since": null,
@@ -4369,7 +4452,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -4483,7 +4566,7 @@
             "native": "const QPainterPath &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPainterPath>"
           }
         }
       ],
@@ -4491,7 +4574,7 @@
         "native": "QPainterPath",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPainterPath>"
       },
       "signature": "QPainterPath mapToParent(const QPainterPath &path) const",
       "since": null,
@@ -4520,7 +4603,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -4528,7 +4611,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF mapToParent(const QPointF &point) const",
       "since": null,
@@ -4575,7 +4658,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF mapToParent(qreal x, qreal y) const",
       "since": null,
@@ -4641,7 +4724,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -4745,7 +4828,7 @@
             "native": "const QPainterPath &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPainterPath>"
           }
         }
       ],
@@ -4753,7 +4836,7 @@
         "native": "QPainterPath",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPainterPath>"
       },
       "signature": "QPainterPath mapToScene(const QPainterPath &path) const",
       "since": null,
@@ -4782,7 +4865,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -4790,7 +4873,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF mapToScene(const QPointF &point) const",
       "since": null,
@@ -4837,7 +4920,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF mapToScene(qreal x, qreal y) const",
       "since": null,
@@ -4903,7 +4986,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -5225,7 +5308,7 @@
         "native": "QPainterPath",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPainterPath>"
       },
       "signature": "QPainterPath opaqueArea() const",
       "since": null,
@@ -5334,7 +5417,7 @@
         "native": "QGraphicsItem::PanelModality",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QGraphicsItem::PanelModality>"
       },
       "signature": "QGraphicsItem::PanelModality panelModality() const",
       "since": null,
@@ -5438,7 +5521,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF pos() const",
       "since": null,
@@ -5668,7 +5751,7 @@
         "native": "QRectF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRectF sceneBoundingRect() const",
       "since": null,
@@ -5778,7 +5861,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF scenePos() const",
       "since": null,
@@ -5804,7 +5887,7 @@
         "native": "QTransform",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QTransform>"
       },
       "signature": "QTransform sceneTransform() const",
       "since": null,
@@ -5853,7 +5936,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -6001,7 +6084,7 @@
             "native": "Qt::MouseButtons",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::MouseButton>"
           }
         }
       ],
@@ -6112,7 +6195,7 @@
             "native": "QGraphicsItem::CacheMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QGraphicsItem::CacheMode>"
           }
         },
         {
@@ -6122,7 +6205,7 @@
             "native": "const QSize &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Size>"
           }
         }
       ],
@@ -6159,7 +6242,7 @@
             "native": "const QCursor &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QCursor>"
           }
         }
       ],
@@ -6317,7 +6400,7 @@
             "native": "QGraphicsItem::GraphicsItemFlag",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QGraphicsItem::GraphicsItemFlag>"
           }
         },
         {
@@ -6364,7 +6447,7 @@
             "native": "QGraphicsItem::GraphicsItemFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QGraphicsItem::GraphicsItemFlag>"
           }
         }
       ],
@@ -6401,7 +6484,7 @@
             "native": "Qt::FocusReason",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::FocusReason>"
           }
         }
       ],
@@ -6586,7 +6669,7 @@
             "native": "Qt::InputMethodHints",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::InputMethodHint>"
           }
         }
       ],
@@ -6660,7 +6743,7 @@
             "native": "QGraphicsItem::PanelModality",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QGraphicsItem::PanelModality>"
           }
         }
       ],
@@ -6734,7 +6817,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -6966,7 +7049,7 @@
             "native": "const QTransform &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QTransform>"
           }
         },
         {
@@ -7013,7 +7096,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -7097,7 +7180,7 @@
             "native": "const QList<QGraphicsTransform *> &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<object<QGraphicsTransform>>"
           }
         }
       ],
@@ -7279,7 +7362,7 @@
         "native": "QPainterPath",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPainterPath>"
       },
       "signature": "QPainterPath shape() const",
       "since": null,
@@ -7498,7 +7581,7 @@
         "native": "QTransform",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QTransform>"
       },
       "signature": "QTransform transform() const",
       "since": null,
@@ -7524,7 +7607,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF transformOriginPoint() const",
       "since": null,
@@ -7550,7 +7633,7 @@
         "native": "QList<QGraphicsTransform *>",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<object<QGraphicsTransform>>"
       },
       "signature": "QList<QGraphicsTransform *> transformations() const",
       "since": null,
@@ -7683,7 +7766,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],

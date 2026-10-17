@@ -1,0 +1,115 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Error codes in the `GTK_SVG_ERROR` domain for errors that happen during parsing or rendering of SVG.",
+    "file": "gtk/gtksvg.c",
+    "line": 26568,
+    "md": "Error codes in the `GTK_SVG_ERROR` domain for errors\nthat happen during parsing or rendering of SVG.",
+    "since": "4.22"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:SvgError",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "failed_rendering": {
+      "brief": "Rendering is not according to expecations",
+      "file": "gtk/gtksvg.c",
+      "line": 26582,
+      "md": "Rendering is not according to\n  expecations"
+    },
+    "failed_update": {
+      "brief": "An animation could not be updated",
+      "file": "gtk/gtksvg.c",
+      "line": 26581,
+      "md": "An animation could not be updated"
+    },
+    "ignored_element": {
+      "brief": "An XML element is ignored, but it should not affect rendering (this error code is used for metadata and exension elements)",
+      "file": "gtk/gtksvg.c",
+      "line": 26584,
+      "md": "An XML element is ignored,\n  but it should not affect rendering (this error code is used\n  for metadata and exension elements)"
+    },
+    "invalid_attribute": {
+      "brief": "An attribute is invalid (either because it is not part of SVG, or because it is not implemented in GTK, or its value is problematic)",
+      "file": "gtk/gtksvg.c",
+      "line": 26575,
+      "md": "An attribute is invalid\n  (either because it is not part of SVG, or because it is\n  not implemented in GTK, or its value is problematic)"
+    },
+    "invalid_element": {
+      "brief": "An XML element is invalid (either because it is not part of SVG, or because it is in the wrong place, or because it not implemented in GTK)",
+      "file": "gtk/gtksvg.c",
+      "line": 26572,
+      "md": "An XML element is invalid\n  (either because it is not part of SVG, or because it is\n  in the wrong place, or because it not implemented in GTK)"
+    },
+    "invalid_reference": {
+      "brief": "A reference does not point to a suitable element",
+      "file": "gtk/gtksvg.c",
+      "line": 26579,
+      "md": "A reference does not point to\n  a suitable element"
+    },
+    "invalid_syntax": {
+      "brief": "The XML syntax is broken in some way",
+      "file": "gtk/gtksvg.c",
+      "line": 26570,
+      "md": "The XML syntax is broken\n  in some way"
+    },
+    "limits_exceeded": {
+      "brief": "An implementation limit has been hit, such as the number of loaded shapes.",
+      "file": "gtk/gtksvg.c",
+      "line": 26590,
+      "md": "An implementation limit has\n  been hit, such as the number of loaded shapes."
+    },
+    "missing_attribute": {
+      "brief": "A required attribute is missing",
+      "file": "gtk/gtksvg.c",
+      "line": 26578,
+      "md": "A required attribute is missing"
+    },
+    "not_implemented": {
+      "brief": "The SVG uses features that are not supported by `GtkSvg`.",
+      "file": "gtk/gtksvg.c",
+      "line": 26587,
+      "md": "The SVG uses features that\n  are not supported by `GtkSvg`. It may be advisable to use\n  a different SVG renderer."
+    }
+  },
+  "methods": {
+    "get_attribute": {
+      "brief": "Returns context information about what XML attribute the parsing error occurred in.",
+      "file": "gtk/gtksvg.c",
+      "line": 26637,
+      "md": "Returns context information about what XML attribute\nthe parsing error occurred in.",
+      "since": "4.22"
+    },
+    "get_element": {
+      "brief": "Returns context information about what XML element the parsing error occurred in.",
+      "file": "gtk/gtksvg.c",
+      "line": 26615,
+      "md": "Returns context information about what XML element\nthe parsing error occurred in.",
+      "since": "4.22"
+    },
+    "get_end": {
+      "brief": "Returns context information about the end position in the document where the parsing error occurred.",
+      "file": "gtk/gtksvg.c",
+      "line": 26681,
+      "md": "Returns context information about the end position\nin the document where the parsing error occurred.",
+      "since": "4.22"
+    },
+    "get_start": {
+      "brief": "Returns context information about the start position in the document where the parsing error occurred.",
+      "file": "gtk/gtksvg.c",
+      "line": 26659,
+      "md": "Returns context information about the start position\nin the document where the parsing error occurred.",
+      "since": "4.22"
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

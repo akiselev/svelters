@@ -6,17 +6,17 @@ elements:
   - tag: window
     construct: { class: QMainWindow }
     props:
-      - { js: title, native: windowTitle }
+      - { js: title, native: windowTitle, provenance: "QWidget::windowTitle Q_PROPERTY (qdoc); P prop" }
     methods:
-      - { js: show, native: show }
-      - { js: present, native: show }
-      - { js: close, native: close }
-      - { js: resize, native: resize, params: [i32, i32] }
+      - { js: show, native: show, provenance: "QWidget::show() slot (qdoc)" }
+      - { js: present, native: show, provenance: "GTK name for show(); P host op call present" }
+      - { js: close, native: close, provenance: "QWidget::close() slot (qdoc); non-blocking" }
+      - { js: resize, native: resize, params: [i32, i32], provenance: "QWidget::resize(int, int) (qdoc)" }
     signals:
       # Synthetic: the backend vetoes a native close while this is listened to and posts the
       # event (React Native's onRequestClose). Without a listener the window is destroyed and
       # reported as closed.
-      - { js: close-request, synthetic: close_request }
+      - { js: close-request, synthetic: close_request, provenance: "ABI v2 window close (plans/architecture/backend-abi.md); QCloseEvent via event filter" }
     children:
       policy: named_slots
       default_slot: central

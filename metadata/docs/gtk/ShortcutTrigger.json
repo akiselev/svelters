@@ -1,0 +1,80 @@
+{
+  "constructors": {
+    "parse_string": {
+      "brief": "Tries to parse the given string into a trigger.",
+      "file": "gtk/gtkshortcuttrigger.c",
+      "line": 106,
+      "md": "Tries to parse the given string into a trigger.\n\nOn success, the parsed trigger is returned.\nWhen parsing failed, `NULL` is returned.\n\nThe accepted strings are:\n\n  - `never`, for `GtkNeverTrigger`\n  - a string parsed by gtk_accelerator_parse(), for a `GtkKeyvalTrigger`, e.g. `<Control>C`\n  - underscore, followed by a single character, for `GtkMnemonicTrigger`, e.g. `_l`\n  - two valid trigger strings, separated by a `|` character, for a\n    `GtkAlternativeTrigger`: `<Control>q|<Control>w`\n\nNote that you will have to escape the `<` and `>` characters when specifying\ntriggers in XML files, such as GtkBuilder ui files. Use `&lt;` instead of\n`<` and `&gt;` instead of `>`."
+    }
+  },
+  "doc": {
+    "brief": "Tracks how a `GtkShortcut` can be activated.",
+    "file": "gtk/gtkshortcuttrigger.c",
+    "line": 22,
+    "md": "Tracks how a `GtkShortcut` can be activated.\n\nTo find out if a `GtkShortcutTrigger` triggers, you can call\n[`ShortcutTrigger.trigger()`](xref:gtk:Gtk.ShortcutTrigger#method:trigger) on a `GdkEvent`.\n\n`GtkShortcutTriggers` contain functions that allow easy presentation\nto end users as well as being printed for debugging.\n\nAll `GtkShortcutTriggers` are immutable, you can only specify their\nproperties during construction. If you want to change a trigger, you\nhave to replace it with a new one."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ShortcutTrigger",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "compare": {
+      "brief": "The types of `trigger1` and `trigger2` are `gconstpointer` only to allow use of this function as a `GCompareFunc`.",
+      "file": "gtk/gtkshortcuttrigger.c",
+      "line": 353,
+      "md": "The types of `trigger1` and `trigger2` are `gconstpointer` only to allow\nuse of this function as a `GCompareFunc`.\n\nThey must each be a `GtkShortcutTrigger`."
+    },
+    "equal": {
+      "brief": "Checks if `trigger1` and `trigger2` trigger under the same conditions.",
+      "file": "gtk/gtkshortcuttrigger.c",
+      "line": 334,
+      "md": "Checks if `trigger1` and `trigger2` trigger under the same conditions.\n\nThe types of `one` and `two` are `gconstpointer` only to allow use of this\nfunction with `GHashTable`. They must each be a `GtkShortcutTrigger`."
+    },
+    "hash": {
+      "brief": "Generates a hash value for a `GtkShortcutTrigger`.",
+      "file": "gtk/gtkshortcuttrigger.c",
+      "line": 308,
+      "md": "Generates a hash value for a `GtkShortcutTrigger`.\n\nThe output of this function is guaranteed to be the same for a given\nvalue only per-process. It may change between different processor\narchitectures or even different versions of GTK. Do not use this\nfunction as a basis for building protocols or file formats.\n\nThe types of `trigger` is `gconstpointer` only to allow use of this\nfunction with `GHashTable`. They must each be a `GtkShortcutTrigger`."
+    },
+    "print": {
+      "brief": "Prints the given trigger into a string for the developer.",
+      "file": "gtk/gtkshortcuttrigger.c",
+      "line": 219,
+      "md": "Prints the given trigger into a string for the developer.\nThis is meant for debugging and logging.\n\nThe form of the representation may change at any time\nand is not guaranteed to stay identical."
+    },
+    "print_label": {
+      "brief": "Prints the given trigger into a string.",
+      "file": "gtk/gtkshortcuttrigger.c",
+      "line": 274,
+      "md": "Prints the given trigger into a string.\n\nThis function is returning a translated string for presentation\nto end users for example in menu items or in help texts.\n\nThe `display` in use may influence the resulting string in\nvarious forms, such as resolving hardware keycodes or by\ncausing display-specific modifier names.\n\nThe form of the representation may change at any time and is\nnot guaranteed to stay identical."
+    },
+    "to_label": {
+      "brief": "Gets textual representation for the given trigger.",
+      "file": "gtk/gtkshortcuttrigger.c",
+      "line": 240,
+      "md": "Gets textual representation for the given trigger.\n\nThis function is returning a translated string for\npresentation to end users for example in menu items\nor in help texts.\n\nThe `display` in use may influence the resulting string in\nvarious forms, such as resolving hardware keycodes or by\ncausing display-specific modifier names.\n\nThe form of the representation may change at any time and is\nnot guaranteed to stay identical."
+    },
+    "to_string": {
+      "brief": "Prints the given trigger into a human-readable string.",
+      "file": "gtk/gtkshortcuttrigger.c",
+      "line": 194,
+      "md": "Prints the given trigger into a human-readable string.\n\nThis is a small wrapper around [`ShortcutTrigger.print()`](xref:gtk:Gtk.ShortcutTrigger#method:print)\nto help when debugging."
+    },
+    "trigger": {
+      "brief": "Checks if the given `event` triggers `self`.",
+      "file": "gtk/gtkshortcuttrigger.c",
+      "line": 84,
+      "md": "Checks if the given `event` triggers `self`."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

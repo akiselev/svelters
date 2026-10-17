@@ -1,0 +1,68 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Describes the behavior of a `GtkEventControllerScroll`.",
+    "file": "gtk/gtkeventcontrollerscroll.h",
+    "line": 41,
+    "md": "Describes the behavior of a `GtkEventControllerScroll`."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:EventControllerScrollFlags",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "both_axes": {
+      "brief": "Emit scroll on both axes.",
+      "file": "gtk/gtkeventcontrollerscroll.h",
+      "line": 48,
+      "md": "Emit scroll on both axes."
+    },
+    "discrete": {
+      "brief": "Only emit deltas that are multiples of 1.",
+      "file": "gtk/gtkeventcontrollerscroll.h",
+      "line": 46,
+      "md": "Only emit deltas that are multiples of 1."
+    },
+    "horizontal": {
+      "brief": "Emit scroll with horizontal deltas.",
+      "file": "gtk/gtkeventcontrollerscroll.h",
+      "line": 45,
+      "md": "Emit scroll with horizontal deltas."
+    },
+    "kinetic": {
+      "brief": "Emit ::decelerate after continuous scroll finishes.",
+      "file": "gtk/gtkeventcontrollerscroll.h",
+      "line": 47,
+      "md": "Emit ::decelerate after continuous scroll finishes."
+    },
+    "none": {
+      "brief": "Don't emit scroll.",
+      "file": "gtk/gtkeventcontrollerscroll.h",
+      "line": 43,
+      "md": "Don't emit scroll."
+    },
+    "physical_direction": {
+      "brief": "A `GtkEventControllerScrollFlags` value to prefer physical direction over logical direction (i.e. oblivious to natural scroll).",
+      "file": "gtk/gtkeventcontrollerscroll.h",
+      "line": 53,
+      "md": "A `GtkEventControllerScrollFlags` value to prefer physical direction over\nlogical direction (i.e. oblivious to natural scroll).",
+      "since": "4.20"
+    },
+    "vertical": {
+      "brief": "Emit scroll with vertical deltas.",
+      "file": "gtk/gtkeventcontrollerscroll.h",
+      "line": 44,
+      "md": "Emit scroll with vertical deltas."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

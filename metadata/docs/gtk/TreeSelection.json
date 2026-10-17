@@ -1,0 +1,201 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "The selection object for GtkTreeView",
+    "deprecated": "4.10",
+    "deprecated_md": "Use [`SelectionModel`](xref:gtk:Gtk.SelectionModel) instead",
+    "file": "gtk/deprecated/gtktreeselection.c",
+    "line": 30,
+    "md": "The selection object for GtkTreeView\n\nThe `GtkTreeSelection` object is a helper object to manage the selection\nfor a `GtkTreeView` widget.  The `GtkTreeSelection` object is\nautomatically created when a new `GtkTreeView` widget is created, and\ncannot exist independently of this widget.  The primary reason the\n`GtkTreeSelection` objects exists is for cleanliness of code and API.\nThat is, there is no conceptual reason all these functions could not be\nmethods on the `GtkTreeView` widget instead of a separate function.\n\nThe `GtkTreeSelection` object is gotten from a `GtkTreeView` by calling\ngtk_tree_view_get_selection().  It can be manipulated to check the\nselection status of the tree, as well as select and deselect individual\nrows.  Selection is done completely view side.  As a result, multiple\nviews of the same model can have completely different selections.\nAdditionally, you cannot change the selection of a row on the model that\nis not currently displayed by the view without expanding its parents\nfirst.\n\nOne of the important things to remember when monitoring the selection of\na view is that the `GtkTreeSelection`::changed signal is mostly a hint.\nThat is, it may only emit one signal when a range of rows is selected.\nAdditionally, it may on occasion emit a `GtkTreeSelection`::changed signal\nwhen nothing has happened (mostly as a result of programmers calling\nselect_row on an already selected row)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:TreeSelection",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "count_selected_rows": {
+      "brief": "Returns the number of rows that have been selected in `tree`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use GtkListView or GtkColumnView",
+      "file": "gtk/deprecated/gtktreeselection.c",
+      "line": 669,
+      "md": "Returns the number of rows that have been selected in `tree`."
+    },
+    "get_mode": {
+      "brief": "Gets the selection mode for `selection`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use GtkListView or GtkColumnView",
+      "file": "gtk/deprecated/gtktreeselection.c",
+      "line": 364,
+      "md": "Gets the selection mode for `selection`. See\ngtk_tree_selection_set_mode()."
+    },
+    "get_select_function": {
+      "brief": "Returns the current selection function.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use GtkListView or GtkColumnView",
+      "file": "gtk/deprecated/gtktreeselection.c",
+      "line": 416,
+      "md": "Returns the current selection function."
+    },
+    "get_selected": {
+      "brief": "Sets `iter` to the currently selected node if `selection` is set to %GTK_SELECTION_SINGLE or %GTK_SELECTION_BROWSE.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use GtkListView or GtkColumnView",
+      "file": "gtk/deprecated/gtktreeselection.c",
+      "line": 470,
+      "md": "Sets `iter` to the currently selected node if `selection` is set to\n%GTK_SELECTION_SINGLE or %GTK_SELECTION_BROWSE.  `iter` may be NULL if you\njust want to test if `selection` has any selected nodes.  `model` is filled\nwith the current model as a convenience.  This function will not work if you\nuse `selection` is %GTK_SELECTION_MULTIPLE."
+    },
+    "get_selected_rows": {
+      "brief": "Creates a list of path of all selected rows.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use GtkListView or GtkColumnView",
+      "file": "gtk/deprecated/gtktreeselection.c",
+      "line": 542,
+      "md": "Creates a list of path of all selected rows. Additionally, if you are\nplanning on modifying the model after calling this function, you may\nwant to convert the returned list into a list of `GtkTreeRowReference`s.\nTo do this, you can use gtk_tree_row_reference_new().\n\nTo free the return value, use:\n\n```c\ng_list_free_full (list, (GDestroyNotify) gtk_tree_path_free);\n```"
+    },
+    "get_tree_view": {
+      "brief": "Returns the tree view associated with `selection`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use GtkListView or GtkColumnView",
+      "file": "gtk/deprecated/gtktreeselection.c",
+      "line": 452,
+      "md": "Returns the tree view associated with `selection`."
+    },
+    "get_user_data": {
+      "brief": "Returns the user data for the selection function.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use GtkListView or GtkColumnView",
+      "file": "gtk/deprecated/gtktreeselection.c",
+      "line": 434,
+      "md": "Returns the user data for the selection function."
+    },
+    "iter_is_selected": {
+      "brief": "Returns `TRUE` if the row at `iter` is currently selected.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use GtkListView or GtkColumnView",
+      "file": "gtk/deprecated/gtktreeselection.c",
+      "line": 1042,
+      "md": "Returns `TRUE` if the row at `iter` is currently selected."
+    },
+    "path_is_selected": {
+      "brief": "Returns `TRUE` if the row pointed to by `path` is currently selected.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use GtkListView or GtkColumnView",
+      "file": "gtk/deprecated/gtktreeselection.c",
+      "line": 1003,
+      "md": "Returns `TRUE` if the row pointed to by `path` is currently selected.  If `path`\ndoes not point to a valid location, `FALSE` is returned"
+    },
+    "select_all": {
+      "brief": "Selects all the nodes.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use GtkListView or GtkColumnView",
+      "file": "gtk/deprecated/gtktreeselection.c",
+      "line": 1137,
+      "md": "Selects all the nodes. `selection` must be set to %GTK_SELECTION_MULTIPLE\nmode."
+    },
+    "select_iter": {
+      "brief": "Selects the specified iterator.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use GtkListView or GtkColumnView",
+      "file": "gtk/deprecated/gtktreeselection.c",
+      "line": 938,
+      "md": "Selects the specified iterator."
+    },
+    "select_path": {
+      "brief": "Select the row at `path`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use GtkListView or GtkColumnView",
+      "file": "gtk/deprecated/gtktreeselection.c",
+      "line": 858,
+      "md": "Select the row at `path`."
+    },
+    "select_range": {
+      "brief": "Selects a range of nodes, determined by `start_path` and `end_path` inclusive.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use GtkListView or GtkColumnView",
+      "file": "gtk/deprecated/gtktreeselection.c",
+      "line": 1356,
+      "md": "Selects a range of nodes, determined by `start_path` and `end_path` inclusive.\n`selection` must be set to %GTK_SELECTION_MULTIPLE mode."
+    },
+    "selected_foreach": {
+      "brief": "Calls a function for each selected node.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use GtkListView or GtkColumnView",
+      "file": "gtk/deprecated/gtktreeselection.c",
+      "line": 719,
+      "md": "Calls a function for each selected node. Note that you cannot modify\nthe tree or selection from within this function. As a result,\ngtk_tree_selection_get_selected_rows() might be more useful."
+    },
+    "set_mode": {
+      "brief": "Sets the selection mode of the `selection`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use GtkListView or GtkColumnView",
+      "file": "gtk/deprecated/gtktreeselection.c",
+      "line": 287,
+      "md": "Sets the selection mode of the `selection`.  If the previous type was\n%GTK_SELECTION_MULTIPLE, then the anchor is kept selected, if it was\npreviously selected."
+    },
+    "set_select_function": {
+      "brief": "Sets the selection function.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use GtkListView or GtkColumnView",
+      "file": "gtk/deprecated/gtktreeselection.c",
+      "line": 383,
+      "md": "Sets the selection function.\n\nIf set, this function is called before any node is selected or unselected,\ngiving some control over which nodes are selected. The select function\nshould return `TRUE` if the state of the node may be toggled, and `FALSE`\nif the state of the node should be left unchanged."
+    },
+    "unselect_all": {
+      "brief": "Unselects all the nodes.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use GtkListView or GtkColumnView",
+      "file": "gtk/deprecated/gtktreeselection.c",
+      "line": 1243,
+      "md": "Unselects all the nodes."
+    },
+    "unselect_iter": {
+      "brief": "Unselects the specified iterator.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use GtkListView or GtkColumnView",
+      "file": "gtk/deprecated/gtktreeselection.c",
+      "line": 971,
+      "md": "Unselects the specified iterator."
+    },
+    "unselect_path": {
+      "brief": "Unselects the row at `path`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use GtkListView or GtkColumnView",
+      "file": "gtk/deprecated/gtktreeselection.c",
+      "line": 900,
+      "md": "Unselects the row at `path`."
+    },
+    "unselect_range": {
+      "brief": "Unselects a range of nodes, determined by `start_path` and `end_path` inclusive.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use GtkListView or GtkColumnView",
+      "file": "gtk/deprecated/gtktreeselection.c",
+      "line": 1382,
+      "md": "Unselects a range of nodes, determined by `start_path` and `end_path`\ninclusive."
+    }
+  },
+  "properties": {
+    "mode": {
+      "brief": "Selection mode. See gtk_tree_selection_set_mode() for more information on this property.",
+      "file": "gtk/deprecated/gtktreeselection.c",
+      "line": 130,
+      "md": "Selection mode.\nSee gtk_tree_selection_set_mode() for more information on this property."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "changed": {
+      "brief": "Emitted whenever the selection has (possibly) changed.",
+      "file": "gtk/deprecated/gtktreeselection.c",
+      "line": 146,
+      "md": "Emitted whenever the selection has (possibly) changed. Please note that\nthis signal is mostly a hint.  It may only be emitted once when a range\nof rows are selected, and it may occasionally be emitted when nothing\nhas happened."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

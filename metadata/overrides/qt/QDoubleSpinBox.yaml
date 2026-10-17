@@ -1,0 +1,6 @@
+elements:
+  - tag: doublespinbox
+    construct: { class: QDoubleSpinBox }
+    props:
+      - { js: value, native: value, provenance: "QDoubleSpinBox::value (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: decimals, native: decimals, provenance: "QDoubleSpinBox::decimals (qdoc); typed by the S1 value model (ABI v3)" }

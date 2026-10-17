@@ -1,0 +1,104 @@
+{
+  "doc": {
+    "brief": "The QScrollArea class provides a scrolling view onto another widget.",
+    "index_brief": "Scrolling view onto another widget",
+    "url": "https://doc.qt.io/qt-6/qscrollarea.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QScrollArea",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QScrollArea(QWidget *parent)": {
+      "brief": "Constructs an empty scroll area with the given *parent*.",
+      "url": "https://doc.qt.io/qt-6/qscrollarea.html#QScrollArea"
+    },
+    "QSize sizeHint() const override": {
+      "brief": "Reimplements: [QAbstractScrollArea::sizeHint](xref:qt:QAbstractScrollArea)() const.",
+      "url": "https://doc.qt.io/qt-6/qscrollarea.html#sizeHint"
+    },
+    "QSize viewportSizeHint() const override": {
+      "brief": "Reimplements: [QAbstractScrollArea::viewportSizeHint](xref:qt:QAbstractScrollArea)() const.",
+      "url": "https://doc.qt.io/qt-6/qscrollarea.html#viewportSizeHint"
+    },
+    "QWidget * takeWidget()": {
+      "brief": "Removes the scroll area's widget, and passes ownership of the widget to the caller.",
+      "url": "https://doc.qt.io/qt-6/qscrollarea.html#takeWidget"
+    },
+    "QWidget * widget() const": {
+      "brief": "Returns the scroll area's widget, or `nullptr` if there is none.",
+      "url": "https://doc.qt.io/qt-6/qscrollarea.html#widget"
+    },
+    "Qt::Alignment alignment() const": {
+      "brief": "This property holds the alignment of the scroll area's widget",
+      "url": "https://doc.qt.io/qt-6/qscrollarea.html#alignment-prop"
+    },
+    "bool event(QEvent *e) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::event](xref:qt:QAbstractScrollArea)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qscrollarea.html#event"
+    },
+    "bool eventFilter(QObject *o, QEvent *e) override": {
+      "brief": "Reimplements: [QObject::eventFilter](xref:qt:QObject)(QObject *watched, QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qscrollarea.html#eventFilter"
+    },
+    "bool focusNextPrevChild(bool next) override": {
+      "brief": "Reimplements: [QWidget::focusNextPrevChild](xref:qt:QWidget)(bool next).",
+      "url": "https://doc.qt.io/qt-6/qscrollarea.html#focusNextPrevChild"
+    },
+    "bool widgetResizable() const": {
+      "brief": "This property holds whether the scroll area should resize the view widget",
+      "url": "https://doc.qt.io/qt-6/qscrollarea.html#widgetResizable-prop"
+    },
+    "void ensureVisible(int x, int y, int xmargin, int ymargin)": {
+      "brief": "Scrolls the contents of the scroll area so that the point (*x*, *y*) is visible inside the region of the viewport with margins specified in pixels by *xmargin* and *ymargin*.",
+      "url": "https://doc.qt.io/qt-6/qscrollarea.html#ensureVisible"
+    },
+    "void ensureWidgetVisible(QWidget *childWidget, int xmargin, int ymargin)": {
+      "brief": "Scrolls the contents of the scroll area so that the *childWidget* of [QScrollArea::widget](xref:qt:QScrollArea)() is visible inside the viewport with margins specified in pixels by *xmargin* and...",
+      "url": "https://doc.qt.io/qt-6/qscrollarea.html#ensureWidgetVisible"
+    },
+    "void resizeEvent(QResizeEvent *) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::resizeEvent](xref:qt:QAbstractScrollArea)(QResizeEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qscrollarea.html#resizeEvent"
+    },
+    "void scrollContentsBy(int dx, int dy) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::scrollContentsBy](xref:qt:QAbstractScrollArea)(int dx, int dy).",
+      "url": "https://doc.qt.io/qt-6/qscrollarea.html#scrollContentsBy"
+    },
+    "void setAlignment(Qt::Alignment)": {
+      "brief": "This property holds the alignment of the scroll area's widget",
+      "url": "https://doc.qt.io/qt-6/qscrollarea.html#alignment-prop"
+    },
+    "void setWidget(QWidget *widget)": {
+      "brief": "Sets the scroll area's *widget*.",
+      "url": "https://doc.qt.io/qt-6/qscrollarea.html#setWidget"
+    },
+    "void setWidgetResizable(bool resizable)": {
+      "brief": "This property holds whether the scroll area should resize the view widget",
+      "url": "https://doc.qt.io/qt-6/qscrollarea.html#widgetResizable-prop"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "alignment": {
+      "brief": "The alignment of the scroll area's widget",
+      "url": "https://doc.qt.io/qt-6/qscrollarea.html#alignment-prop"
+    },
+    "widgetResizable": {
+      "brief": "Whether the scroll area should resize the view widget",
+      "url": "https://doc.qt.io/qt-6/qscrollarea.html#widgetResizable-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

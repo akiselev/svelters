@@ -1,0 +1,44 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Options for selecting a different wrap mode for natural size requests.",
+    "file": "gtk/gtkenums.h",
+    "line": 382,
+    "md": "Options for selecting a different wrap mode for natural size\nrequests.\n\nSee for example the [`Label:natural-wrap-mode`](xref:gtk:Gtk.Label#property:natural-wrap-mode) property.",
+    "since": "4.6"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:NaturalWrapMode",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "inherit": {
+      "brief": "Inherit the minimum size request.",
+      "file": "gtk/gtkenums.h",
+      "line": 384,
+      "md": "Inherit the minimum size request.\n  In particular, this should be used with %PANGO_WRAP_CHAR."
+    },
+    "none": {
+      "brief": "Try not to wrap the text.",
+      "file": "gtk/gtkenums.h",
+      "line": 386,
+      "md": "Try not to wrap the text. This mode is the\n  closest to GTK3's behavior but can lead to a wide label leaving\n  lots of empty space below the text."
+    },
+    "word": {
+      "brief": "Attempt to wrap at word boundaries.",
+      "file": "gtk/gtkenums.h",
+      "line": 389,
+      "md": "Attempt to wrap at word boundaries. This\n  is useful in particular when using %PANGO_WRAP_WORD_CHAR as the\n  wrap mode."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

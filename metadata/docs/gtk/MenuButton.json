@@ -1,0 +1,290 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkMenuButton` widget with downwards-pointing arrow as the only child.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 725,
+      "md": "Creates a new `GtkMenuButton` widget with downwards-pointing\narrow as the only child.\n\nYou can replace the child widget with another `GtkWidget`\nshould you wish to."
+    }
+  },
+  "doc": {
+    "brief": "Displays a popup when clicked.",
+    "file": "gtk/gtkmenubutton.c",
+    "line": 21,
+    "md": "Displays a popup when clicked.\n\nThis popup can be provided either as a `GtkPopover` or as an abstract\n`GMenuModel`.\n\nThe `GtkMenuButton` widget can show either an icon (set with the\n[`MenuButton:icon-name`](xref:gtk:Gtk.MenuButton#property:icon-name) property) or a label (set with the\n[`MenuButton:label`](xref:gtk:Gtk.MenuButton#property:label) property). If neither is explicitly set,\na [`Image`](xref:gtk:Gtk.Image) is automatically created, using an arrow image oriented\naccording to [`MenuButton:direction`](xref:gtk:Gtk.MenuButton#property:direction) or the generic\n“open-menu-symbolic” icon if the direction is not set.\n\nThe positioning of the popup is determined by the\n[`MenuButton:direction`](xref:gtk:Gtk.MenuButton#property:direction) property of the menu button.\n\nFor menus, the [`Widget:halign`](xref:gtk:Gtk.Widget#property:halign) and [`Widget:valign`](xref:gtk:Gtk.Widget#property:valign)\nproperties of the menu are also taken into account. For example, when the\ndirection is %GTK_ARROW_DOWN and the horizontal alignment is %GTK_ALIGN_START,\nthe menu will be positioned below the button, with the starting edge\n(depending on the text direction) of the menu aligned with the starting\nedge of the button. If there is not enough space below the button, the\nmenu is popped up above the button instead. If the alignment would move\npart of the menu offscreen, it is “pushed in”.\n\n|           | start                | center                | end                |\n| -         | ---                  | ---                   | ---                |\n| **down**  | ![](down-start.png)  | ![](down-center.png)  | ![](down-end.png)  |\n| **up**    | ![](up-start.png)    | ![](up-center.png)    | ![](up-end.png)    |\n| **left**  | ![](left-start.png)  | ![](left-center.png)  | ![](left-end.png)  |\n| **right** | ![](right-start.png) | ![](right-center.png) | ![](right-end.png) |\n\n# CSS nodes\n\n```\nmenubutton\n╰── button.toggle\n    ╰── <content>\n         ╰── [arrow]\n```\n\n`GtkMenuButton` has a single CSS node with name `menubutton`\nwhich contains a `button` node with a `.toggle` style class.\n\nIf the button contains an icon, it will have the `.image-button` style class,\nif it contains text, it will have `.text-button` style class. If an arrow is\nvisible in addition to an icon, text or a custom child, it will also have\n`.arrow-button` style class.\n\nInside the toggle button content, there is an `arrow` node for\nthe indicator, which will carry one of the `.none`, `.up`, `.down`,\n`.left` or `.right` style classes to indicate the direction that\nthe menu will appear in. The CSS is expected to provide a suitable\nimage for each of these cases using the `-gtk-icon-source` property.\n\nOptionally, the `menubutton` node can carry the `.circular` style class\nto request a round appearance.\n\n# Accessibility\n\n`GtkMenuButton` uses the [`AccessibleRole.button`](xref:gtk:Gtk.AccessibleRole#value:button) role."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:MenuButton",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_active": {
+      "brief": "Returns whether the menu button is active.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 1589,
+      "md": "Returns whether the menu button is active.",
+      "since": "4.10"
+    },
+    "get_always_show_arrow": {
+      "brief": "Gets whether to show a dropdown arrow even when using an icon or a custom child.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 1125,
+      "md": "Gets whether to show a dropdown arrow even when using an icon or a custom\nchild.",
+      "since": "4.4"
+    },
+    "get_can_shrink": {
+      "brief": "Retrieves whether the button can be smaller than the natural size of its contents.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 1644,
+      "md": "Retrieves whether the button can be smaller than the natural\nsize of its contents.",
+      "since": "4.12"
+    },
+    "get_child": {
+      "brief": "Gets the child widget of `menu_button`.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 1547,
+      "md": "Gets the child widget of `menu_button`.",
+      "since": "4.6"
+    },
+    "get_direction": {
+      "brief": "Returns the direction the popup will be pointing at when popped up.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 903,
+      "md": "Returns the direction the popup will be pointing at when popped up."
+    },
+    "get_has_frame": {
+      "brief": "Returns whether the button has a frame.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 1240,
+      "md": "Returns whether the button has a frame."
+    },
+    "get_icon_name": {
+      "brief": "Gets the name of the icon shown in the button.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 1077,
+      "md": "Gets the name of the icon shown in the button."
+    },
+    "get_label": {
+      "brief": "Gets the label shown in the button",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 1201,
+      "md": "Gets the label shown in the button"
+    },
+    "get_menu_model": {
+      "brief": "Returns the `GMenuModel` used to generate the popup.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 823,
+      "md": "Returns the `GMenuModel` used to generate the popup."
+    },
+    "get_popover": {
+      "brief": "Returns the `GtkPopover` that pops out of the button.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 1002,
+      "md": "Returns the `GtkPopover` that pops out of the button.\n\nIf the button is not using a `GtkPopover`, this function\nreturns `NULL`."
+    },
+    "get_primary": {
+      "brief": "Returns whether the menu button acts as a primary menu.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 1458,
+      "md": "Returns whether the menu button acts as a primary menu.",
+      "since": "4.4"
+    },
+    "get_use_underline": {
+      "brief": "Returns whether an embedded underline in the text indicates a mnemonic.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 1347,
+      "md": "Returns whether an embedded underline in the text indicates a\nmnemonic."
+    },
+    "popdown": {
+      "brief": "Dismiss the menu.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 1270,
+      "md": "Dismiss the menu."
+    },
+    "popup": {
+      "brief": "Pop up the menu.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 1256,
+      "md": "Pop up the menu."
+    },
+    "set_active": {
+      "brief": "Sets whether the menu button is active.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 1565,
+      "md": "Sets whether the menu button is active.",
+      "since": "4.10"
+    },
+    "set_always_show_arrow": {
+      "brief": "Sets whether to show a dropdown arrow even when using an icon or a custom child.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 1096,
+      "md": "Sets whether to show a dropdown arrow even when using an icon or a custom\nchild.",
+      "since": "4.4"
+    },
+    "set_can_shrink": {
+      "brief": "Sets whether the button size can be smaller than the natural size of its contents.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 1607,
+      "md": "Sets whether the button size can be smaller than the natural size of\nits contents.\n\nFor text buttons, setting `can_shrink` to true will ellipsize the label.\n\nFor icon buttons, this function has no effect.",
+      "since": "4.12"
+    },
+    "set_child": {
+      "brief": "Sets the child widget of `menu_button`.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 1476,
+      "md": "Sets the child widget of `menu_button`.\n\nSetting a child resets [`MenuButton:label`](xref:gtk:Gtk.MenuButton#property:label) and\n[`MenuButton:icon-name`](xref:gtk:Gtk.MenuButton#property:icon-name).\n\nIf [`MenuButton:always-show-arrow`](xref:gtk:Gtk.MenuButton#property:always-show-arrow) is set to `TRUE` and\n[`MenuButton:direction`](xref:gtk:Gtk.MenuButton#property:direction) is not `GTK_ARROW_NONE`, a dropdown arrow\nwill be shown next to the child.",
+      "since": "4.6"
+    },
+    "set_create_popup_func": {
+      "brief": "Sets `func` to be called when a popup is about to be shown.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 1284,
+      "md": "Sets `func` to be called when a popup is about to be shown.\n\n`func` should use one of\n\n - [`MenuButton.set_popover()`](xref:gtk:Gtk.MenuButton#method:set_popover)\n - [`MenuButton.set_menu_model()`](xref:gtk:Gtk.MenuButton#method:set_menu_model)\n\nto set a popup for `menu_button`.\nIf `func` is non-`NULL`, `menu_button` will always be sensitive.\n\nUsing this function will not reset the menu widget attached to\n`menu_button`. Instead, this can be done manually in `func`."
+    },
+    "set_direction": {
+      "brief": "Sets the direction in which the popup will be popped up.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 871,
+      "md": "Sets the direction in which the popup will be popped up.\n\nIf the button is automatically populated with an arrow icon,\nits direction will be changed to match.\n\nIf the does not fit in the available space in the given direction,\nGTK will its best to keep it inside the screen and fully visible.\n\nIf you pass %GTK_ARROW_NONE for a `direction`, the popup will behave\nas if you passed %GTK_ARROW_DOWN (although you won’t see any arrows)."
+    },
+    "set_has_frame": {
+      "brief": "Sets the style of the button.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 1220,
+      "md": "Sets the style of the button."
+    },
+    "set_icon_name": {
+      "brief": "Sets the name of an icon to show inside the menu button.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 1021,
+      "md": "Sets the name of an icon to show inside the menu button.\n\nSetting icon name resets [`MenuButton:label`](xref:gtk:Gtk.MenuButton#property:label) and\n[`MenuButton:child`](xref:gtk:Gtk.MenuButton#property:child).\n\nIf [`MenuButton:always-show-arrow`](xref:gtk:Gtk.MenuButton#property:always-show-arrow) is set to `TRUE` and\n[`MenuButton:direction`](xref:gtk:Gtk.MenuButton#property:direction) is not `GTK_ARROW_NONE`, a dropdown arrow\nwill be shown next to the icon."
+    },
+    "set_label": {
+      "brief": "Sets the label to show inside the menu button.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 1145,
+      "md": "Sets the label to show inside the menu button.\n\nSetting a label resets [`MenuButton:icon-name`](xref:gtk:Gtk.MenuButton#property:icon-name) and\n[`MenuButton:child`](xref:gtk:Gtk.MenuButton#property:child).\n\nIf [`MenuButton:direction`](xref:gtk:Gtk.MenuButton#property:direction) is not `GTK_ARROW_NONE`, a dropdown\narrow will be shown next to the label."
+    },
+    "set_menu_model": {
+      "brief": "Sets the `GMenuModel` from which the popup will be constructed.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 771,
+      "md": "Sets the `GMenuModel` from which the popup will be constructed.\n\nIf `menu_model` is `NULL`, the button is disabled.\n\nA [`Popover`](xref:gtk:Gtk.Popover) will be created from the menu model with\n[`PopoverMenu.new_from_model()`](xref:gtk:Gtk.PopoverMenu#constructor:new_from_model). Actions will be connected\nas documented for this function.\n\nIf [`MenuButton:popover`](xref:gtk:Gtk.MenuButton#property:popover) is already set, it will be\ndissociated from the `menu_button`, and the property is set to `NULL`."
+    },
+    "set_popover": {
+      "brief": "Sets the `GtkPopover` that will be popped up when the `menu_button` is clicked.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 945,
+      "md": "Sets the `GtkPopover` that will be popped up when the `menu_button` is clicked.\n\nIf `popover` is `NULL`, the button is disabled.\n\nIf [`MenuButton:menu-model`](xref:gtk:Gtk.MenuButton#property:menu-model) is set, the menu model is dissociated\nfrom the `menu_button`, and the property is set to `NULL`."
+    },
+    "set_primary": {
+      "brief": "Sets whether menu button acts as a primary menu.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 1422,
+      "md": "Sets whether menu button acts as a primary menu.\n\nPrimary menus can be opened with the <kbd>F10</kbd> key.",
+      "since": "4.4"
+    },
+    "set_use_underline": {
+      "brief": "If true, an underline in the text indicates a mnemonic.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 1324,
+      "md": "If true, an underline in the text indicates a mnemonic."
+    }
+  },
+  "properties": {
+    "active": {
+      "brief": "Whether the menu button is active.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 539,
+      "md": "Whether the menu button is active.",
+      "since": "4.10"
+    },
+    "always-show-arrow": {
+      "brief": "Whether to show a dropdown arrow even when using an icon or a custom child.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 471,
+      "md": "Whether to show a dropdown arrow even when using an icon or a custom child.",
+      "since": "4.4"
+    },
+    "can-shrink": {
+      "brief": "Whether the size of the button can be made smaller than the natural size of its contents.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 551,
+      "md": "Whether the size of the button can be made smaller than the natural\nsize of its contents.",
+      "since": "4.12"
+    },
+    "child": {
+      "brief": "The child widget.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 527,
+      "md": "The child widget.",
+      "since": "4.6"
+    },
+    "direction": {
+      "brief": "The `GtkArrowType` representing the direction in which the menu or popover will be popped out.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 439,
+      "md": "The `GtkArrowType` representing the direction in which the\nmenu or popover will be popped out."
+    },
+    "has-frame": {
+      "brief": "Whether the button has a frame.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 503,
+      "md": "Whether the button has a frame."
+    },
+    "icon-name": {
+      "brief": "The name of the icon used to automatically populate the button.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 461,
+      "md": "The name of the icon used to automatically populate the button."
+    },
+    "label": {
+      "brief": "The label for the button.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 483,
+      "md": "The label for the button."
+    },
+    "menu-model": {
+      "brief": "The `GMenuModel` from which the popup will be created.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 426,
+      "md": "The `GMenuModel` from which the popup will be created.\n\nSee [`MenuButton.set_menu_model()`](xref:gtk:Gtk.MenuButton#method:set_menu_model) for the interaction\nwith the [`MenuButton:popover`](xref:gtk:Gtk.MenuButton#property:popover) property."
+    },
+    "popover": {
+      "brief": "The `GtkPopover` that will be popped up when the button is clicked.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 451,
+      "md": "The `GtkPopover` that will be popped up when the button is clicked."
+    },
+    "primary": {
+      "brief": "Whether the menu button acts as a primary menu.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 513,
+      "md": "Whether the menu button acts as a primary menu.\n\nPrimary menus can be opened using the <kbd>F10</kbd> key",
+      "since": "4.4"
+    },
+    "use-underline": {
+      "brief": "If set an underscore in the text indicates a mnemonic.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 493,
+      "md": "If set an underscore in the text indicates a mnemonic."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "activate": {
+      "brief": "Emitted to when the menu button is activated.",
+      "file": "gtk/gtkmenubutton.c",
+      "line": 566,
+      "md": "Emitted to when the menu button is activated.\n\nThe `::activate` signal on `GtkMenuButton` is an action signal and\nemitting it causes the button to pop up its menu.",
+      "since": "4.4"
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

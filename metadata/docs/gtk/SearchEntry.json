@@ -1,0 +1,178 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a `GtkSearchEntry`.",
+      "file": "gtk/gtksearchentry.c",
+      "line": 879,
+      "md": "Creates a `GtkSearchEntry`."
+    }
+  },
+  "doc": {
+    "brief": "A single-line text entry widget for use as a search entry.",
+    "file": "gtk/gtksearchentry.c",
+    "line": 47,
+    "md": "A single-line text entry widget for use as a search entry.\n\nThe main API for interacting with a `GtkSearchEntry` as entry\nis the `GtkEditable` interface.\n\nIt will show an inactive symbolic “find” icon when the search\nentry is empty, and a symbolic “clear” icon when there is text.\nClicking on the “clear” icon will empty the search entry.\n\nTo make filtering appear more reactive, it is a good idea to\nnot react to every change in the entry text immediately, but\nonly after a short delay. To support this, `GtkSearchEntry`\nemits the [`SearchEntry::search-changed`](xref:gtk:Gtk.SearchEntry#event:search-changed) signal which\ncan be used instead of the [`Editable::changed`](xref:gtk:Gtk.Editable#event:changed) signal.\n\nThe [`SearchEntry::previous-match`](xref:gtk:Gtk.SearchEntry#event:previous-match),\n[`SearchEntry::next-match`](xref:gtk:Gtk.SearchEntry#event:next-match) and\n[`SearchEntry::stop-search`](xref:gtk:Gtk.SearchEntry#event:stop-search) signals can be used to\nimplement moving between search results and ending the search.\n\nOften, `GtkSearchEntry` will be fed events by means of being\nplaced inside a [`SearchBar`](xref:gtk:Gtk.SearchBar). If that is not the case,\nyou can use [`SearchEntry.set_key_capture_widget()`](xref:gtk:Gtk.SearchEntry#method:set_key_capture_widget) to\nlet it capture key input from another widget.\n\n`GtkSearchEntry` provides only minimal API and should be used with\nthe [`Editable`](xref:gtk:Gtk.Editable) API.\n\n## Shortcuts and Gestures\n\nThe following signals have default keybindings:\n\n- [`SearchEntry::activate`](xref:gtk:Gtk.SearchEntry#event:activate)\n- [`SearchEntry::next-match`](xref:gtk:Gtk.SearchEntry#event:next-match)\n- [`SearchEntry::previous-match`](xref:gtk:Gtk.SearchEntry#event:previous-match)\n- [`SearchEntry::stop-search`](xref:gtk:Gtk.SearchEntry#event:stop-search)\n\n## CSS Nodes\n\n```\nentry.search\n╰── text\n```\n\n`GtkSearchEntry` has a single CSS node with name entry that carries\na `.search` style class, and the text node is a child of that.\n\n## Accessibility\n\n`GtkSearchEntry` uses the [`AccessibleRole.search_box`](xref:gtk:Gtk.AccessibleRole#value:search_box) role."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:SearchEntry",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_input_hints": {
+      "brief": "Gets the input purpose for `entry`.",
+      "file": "gtk/gtksearchentry.c",
+      "line": 1155,
+      "md": "Gets the input purpose for `entry`.",
+      "since": "4.14"
+    },
+    "get_input_purpose": {
+      "brief": "Gets the input purpose of `entry`.",
+      "file": "gtk/gtksearchentry.c",
+      "line": 1114,
+      "md": "Gets the input purpose of `entry`.",
+      "since": "4.14"
+    },
+    "get_key_capture_widget": {
+      "brief": "Gets the widget that `entry` is capturing key events from.",
+      "file": "gtk/gtksearchentry.c",
+      "line": 1010,
+      "md": "Gets the widget that `entry` is capturing key events from."
+    },
+    "get_placeholder_text": {
+      "brief": "Gets the placeholder text associated with `entry`.",
+      "file": "gtk/gtksearchentry.c",
+      "line": 1078,
+      "md": "Gets the placeholder text associated with `entry`.",
+      "since": "4.10"
+    },
+    "get_search_delay": {
+      "brief": "Get the delay to be used between the last keypress and the [`SearchEntry::search-changed`](xref:gtk:Gtk.SearchEntry#event:search-changed) signal being emitted.",
+      "file": "gtk/gtksearchentry.c",
+      "line": 1053,
+      "md": "Get the delay to be used between the last keypress and the\n[`SearchEntry::search-changed`](xref:gtk:Gtk.SearchEntry#event:search-changed) signal being emitted.",
+      "since": "4.8"
+    },
+    "set_input_hints": {
+      "brief": "Sets the input hints for `entry`.",
+      "file": "gtk/gtksearchentry.c",
+      "line": 1173,
+      "md": "Sets the input hints for `entry`.",
+      "since": "4.14"
+    },
+    "set_input_purpose": {
+      "brief": "Sets the input purpose of `entry`.",
+      "file": "gtk/gtksearchentry.c",
+      "line": 1132,
+      "md": "Sets the input purpose of `entry`.",
+      "since": "4.14"
+    },
+    "set_key_capture_widget": {
+      "brief": "Sets `widget` as the widget that `entry` will capture key events from.",
+      "file": "gtk/gtksearchentry.c",
+      "line": 949,
+      "md": "Sets `widget` as the widget that `entry` will capture key\nevents from.\n\nKey events are consumed by the search entry to start or\ncontinue a search.\n\nIf the entry is part of a `GtkSearchBar`, it is preferable\nto call [`SearchBar.set_key_capture_widget()`](xref:gtk:Gtk.SearchBar#method:set_key_capture_widget) instead,\nwhich will reveal the entry in addition to triggering the\nsearch entry.\n\nNote that despite the name of this function, the events\nare only 'captured' in the bubble phase, which means that\neditable child widgets of `widget` will receive text input\nbefore it gets captured. If that is not desired, you can\ncapture and forward the events yourself with\n[`EventControllerKey.forward()`](xref:gtk:Gtk.EventControllerKey#method:forward)."
+    },
+    "set_placeholder_text": {
+      "brief": "Sets the placeholder text associated with `entry`.",
+      "file": "gtk/gtksearchentry.c",
+      "line": 1096,
+      "md": "Sets the placeholder text associated with `entry`.",
+      "since": "4.10"
+    },
+    "set_search_delay": {
+      "brief": "Set the delay to be used between the last keypress and the [`SearchEntry::search-changed`](xref:gtk:Gtk.SearchEntry#event:search-changed) signal being emitted.",
+      "file": "gtk/gtksearchentry.c",
+      "line": 1026,
+      "md": "Set the delay to be used between the last keypress and the\n[`SearchEntry::search-changed`](xref:gtk:Gtk.SearchEntry#event:search-changed) signal being emitted.",
+      "since": "4.8"
+    }
+  },
+  "properties": {
+    "activates-default": {
+      "brief": "Whether to activate the default widget when Enter is pressed.",
+      "file": "gtk/gtksearchentry.c",
+      "line": 519,
+      "md": "Whether to activate the default widget when Enter is pressed."
+    },
+    "input-hints": {
+      "brief": "The hints about input for the `GtkSearchEntry` used to alter the behaviour of input methods.",
+      "file": "gtk/gtksearchentry.c",
+      "line": 505,
+      "md": "The hints about input for the `GtkSearchEntry` used to alter the\nbehaviour of input methods.",
+      "since": "4.14"
+    },
+    "input-purpose": {
+      "brief": "The purpose for the `GtkSearchEntry` input used to alter the behaviour of input methods.",
+      "file": "gtk/gtksearchentry.c",
+      "line": 491,
+      "md": "The purpose for the `GtkSearchEntry` input used to alter the\nbehaviour of input methods.",
+      "since": "4.14"
+    },
+    "key-capture-widget": {
+      "brief": "The widget that the entry will use to capture key events.",
+      "file": "gtk/gtksearchentry.c",
+      "line": 542,
+      "md": "The widget that the entry will use to capture key events.\n\nKey events are consumed by the search entry to start or continue a search.",
+      "since": "4.22"
+    },
+    "placeholder-text": {
+      "brief": "The text that will be displayed in the `GtkSearchEntry` when it is empty and unfocused.",
+      "file": "gtk/gtksearchentry.c",
+      "line": 480,
+      "md": "The text that will be displayed in the `GtkSearchEntry`\nwhen it is empty and unfocused."
+    },
+    "search-delay": {
+      "brief": "The delay in milliseconds from last keypress to the search changed signal.",
+      "file": "gtk/gtksearchentry.c",
+      "line": 529,
+      "md": "The delay in milliseconds from last keypress to the search\nchanged signal.",
+      "since": "4.8"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "activate": {
+      "brief": "Emitted when the entry is activated.",
+      "file": "gtk/gtksearchentry.c",
+      "line": 559,
+      "md": "Emitted when the entry is activated.\n\nThe keybindings for this signal are all forms of the <kbd>Enter</kbd> key."
+    },
+    "next-match": {
+      "brief": "Emitted when the user initiates a move to the next match for the current search string.",
+      "file": "gtk/gtksearchentry.c",
+      "line": 593,
+      "md": "Emitted when the user initiates a move to the next match\nfor the current search string.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nApplications should connect to it, to implement moving\nbetween matches.\n\nThe default bindings for this signal is <kbd>Ctrl</kbd>+<kbd>g</kbd>."
+    },
+    "previous-match": {
+      "brief": "Emitted when the user initiates a move to the previous match for the current search string.",
+      "file": "gtk/gtksearchentry.c",
+      "line": 616,
+      "md": "Emitted when the user initiates a move to the previous match\nfor the current search string.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nApplications should connect to it, to implement moving\nbetween matches.\n\nThe default bindings for this signal is\n<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>g</kbd>."
+    },
+    "search-changed": {
+      "brief": "Emitted with a delay.",
+      "file": "gtk/gtksearchentry.c",
+      "line": 576,
+      "md": "Emitted with a delay. The length of the delay can be\nchanged with the [`SearchEntry:search-delay`](xref:gtk:Gtk.SearchEntry#property:search-delay)\nproperty."
+    },
+    "search-started": {
+      "brief": "Emitted when the user initiated a search on the entry.",
+      "file": "gtk/gtksearchentry.c",
+      "line": 662,
+      "md": "Emitted when the user initiated a search on the entry."
+    },
+    "stop-search": {
+      "brief": "Emitted when the user stops a search via keyboard input.",
+      "file": "gtk/gtksearchentry.c",
+      "line": 640,
+      "md": "Emitted when the user stops a search via keyboard input.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nApplications should connect to it, to implement hiding\nthe search entry in this case.\n\nThe default bindings for this signal is <kbd>Escape</kbd>."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

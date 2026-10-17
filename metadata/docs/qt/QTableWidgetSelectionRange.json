@@ -1,0 +1,67 @@
+{
+  "doc": {
+    "brief": "The QTableWidgetSelectionRange class provides a way to interact with selection in a model without using model indexes and a selection model.",
+    "index_brief": "Way to interact with selection in a model without using model indexes and a selection model",
+    "url": "https://doc.qt.io/qt-6/qtablewidgetselectionrange.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QTableWidgetSelectionRange",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QTableWidgetSelectionRange()": {
+      "brief": "Constructs an empty table selection range, i.e. a range whose [rowCount](xref:qt:QTableWidgetSelectionRange)() and [columnCount](xref:qt:QTableWidgetSelectionRange)() are 0.",
+      "url": "https://doc.qt.io/qt-6/qtablewidgetselectionrange.html#QTableWidgetSelectionRange"
+    },
+    "QTableWidgetSelectionRange(int top, int left, int bottom, int right)": {
+      "brief": "Constructs the table selection range from the given *top*, *left*, *bottom* and *right* table rows and columns.",
+      "url": "https://doc.qt.io/qt-6/qtablewidgetselectionrange.html#QTableWidgetSelectionRange-1"
+    },
+    "bool operator!=(const QTableWidgetSelectionRange &lhs, const QTableWidgetSelectionRange &rhs)": {
+      "brief": "Returns true if *lhs* and *rhs* are not equal, otherwise returns false.",
+      "url": "https://doc.qt.io/qt-6/qtablewidgetselectionrange.html#operator-not-eq"
+    },
+    "bool operator==(const QTableWidgetSelectionRange &lhs, const QTableWidgetSelectionRange &rhs)": {
+      "brief": "Returns true if *lhs* and *rhs* are equal, otherwise returns false.",
+      "url": "https://doc.qt.io/qt-6/qtablewidgetselectionrange.html#operator-eq-eq"
+    },
+    "int bottomRow() const": {
+      "brief": "Returns the bottom row of the range.",
+      "url": "https://doc.qt.io/qt-6/qtablewidgetselectionrange.html#bottomRow"
+    },
+    "int columnCount() const": {
+      "brief": "Returns the number of columns in the range.",
+      "url": "https://doc.qt.io/qt-6/qtablewidgetselectionrange.html#columnCount"
+    },
+    "int leftColumn() const": {
+      "brief": "Returns the left column of the range.",
+      "url": "https://doc.qt.io/qt-6/qtablewidgetselectionrange.html#leftColumn"
+    },
+    "int rightColumn() const": {
+      "brief": "Returns the right column of the range.",
+      "url": "https://doc.qt.io/qt-6/qtablewidgetselectionrange.html#rightColumn"
+    },
+    "int rowCount() const": {
+      "brief": "Returns the number of rows in the range.",
+      "url": "https://doc.qt.io/qt-6/qtablewidgetselectionrange.html#rowCount"
+    },
+    "int topRow() const": {
+      "brief": "Returns the top row of the range.",
+      "url": "https://doc.qt.io/qt-6/qtablewidgetselectionrange.html#topRow"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

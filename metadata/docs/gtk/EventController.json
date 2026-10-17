@@ -1,0 +1,129 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "The base class for event controllers.",
+    "file": "gtk/gtkeventcontroller.c",
+    "line": 21,
+    "md": "The base class for event controllers.\n\nThese are ancillary objects associated to widgets, which react\nto `GdkEvents`, and possibly trigger actions as a consequence.\n\nEvent controllers are added to a widget with\n[`Widget.add_controller()`](xref:gtk:Gtk.Widget#method:add_controller). It is rarely necessary to\nexplicitly remove a controller with [`Widget.remove_controller()`](xref:gtk:Gtk.Widget#method:remove_controller).\n\nSee the chapter on [input handling](input-handling.html) for\nan overview of the basic concepts, such as the capture and bubble\nphases of event propagation."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:EventController",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_current_event": {
+      "brief": "Returns the event that is currently being handled by the controller.",
+      "file": "gtk/gtkeventcontroller.c",
+      "line": 631,
+      "md": "Returns the event that is currently being handled by the controller.\n\nAt other times, `NULL` is returned."
+    },
+    "get_current_event_device": {
+      "brief": "Returns the device of the event that is currently being handled by the controller.",
+      "file": "gtk/gtkeventcontroller.c",
+      "line": 672,
+      "md": "Returns the device of the event that is currently being\nhandled by the controller.\n\nAt other times, `NULL` is returned."
+    },
+    "get_current_event_state": {
+      "brief": "Returns the modifier state of the event that is currently being handled by the controller.",
+      "file": "gtk/gtkeventcontroller.c",
+      "line": 695,
+      "md": "Returns the modifier state of the event that is currently being\nhandled by the controller.\n\nAt other times, 0 is returned."
+    },
+    "get_current_event_time": {
+      "brief": "Returns the timestamp of the event that is currently being handled by the controller.",
+      "file": "gtk/gtkeventcontroller.c",
+      "line": 650,
+      "md": "Returns the timestamp of the event that is currently being\nhandled by the controller.\n\nAt other times, 0 is returned."
+    },
+    "get_name": {
+      "brief": "Gets the name of `controller`.",
+      "file": "gtk/gtkeventcontroller.c",
+      "line": 561,
+      "md": "Gets the name of `controller`."
+    },
+    "get_propagation_limit": {
+      "brief": "Gets the propagation limit of the event controller.",
+      "file": "gtk/gtkeventcontroller.c",
+      "line": 512,
+      "md": "Gets the propagation limit of the event controller."
+    },
+    "get_propagation_phase": {
+      "brief": "Gets the propagation phase at which `controller` handles events.",
+      "file": "gtk/gtkeventcontroller.c",
+      "line": 460,
+      "md": "Gets the propagation phase at which `controller` handles events."
+    },
+    "get_widget": {
+      "brief": "Returns the `GtkWidget` this controller relates to.",
+      "file": "gtk/gtkeventcontroller.c",
+      "line": 421,
+      "md": "Returns the `GtkWidget` this controller relates to."
+    },
+    "reset": {
+      "brief": "Resets the `controller` to a clean state.",
+      "file": "gtk/gtkeventcontroller.c",
+      "line": 441,
+      "md": "Resets the `controller` to a clean state."
+    },
+    "set_name": {
+      "brief": "Sets a name on the controller that can be used for debugging.",
+      "file": "gtk/gtkeventcontroller.c",
+      "line": 579,
+      "md": "Sets a name on the controller that can be used for debugging."
+    },
+    "set_propagation_limit": {
+      "brief": "Sets the event propagation limit on the event controller.",
+      "file": "gtk/gtkeventcontroller.c",
+      "line": 532,
+      "md": "Sets the event propagation limit on the event controller.\n\nIf the limit is set to %GTK_LIMIT_SAME_NATIVE, the controller\nwon't handle events that are targeted at widgets on a different\nsurface, such as popovers."
+    },
+    "set_propagation_phase": {
+      "brief": "Sets the propagation phase at which a controller handles events.",
+      "file": "gtk/gtkeventcontroller.c",
+      "line": 480,
+      "md": "Sets the propagation phase at which a controller handles events.\n\nIf `phase` is %GTK_PHASE_NONE, no automatic event handling will be\nperformed, but other additional gesture maintenance will."
+    },
+    "set_static_name": {
+      "brief": "Sets a name on the controller that can be used for debugging.",
+      "file": "gtk/gtkeventcontroller.c",
+      "line": 600,
+      "md": "Sets a name on the controller that can be used for debugging.",
+      "since": "4.8"
+    }
+  },
+  "properties": {
+    "name": {
+      "brief": "The name for this controller, typically used for debugging purposes.",
+      "file": "gtk/gtkeventcontroller.c",
+      "line": 231,
+      "md": "The name for this controller, typically used for debugging purposes."
+    },
+    "propagation-limit": {
+      "brief": "The limit for which events this controller will handle.",
+      "file": "gtk/gtkeventcontroller.c",
+      "line": 220,
+      "md": "The limit for which events this controller will handle."
+    },
+    "propagation-phase": {
+      "brief": "The propagation phase at which this controller will handle events.",
+      "file": "gtk/gtkeventcontroller.c",
+      "line": 209,
+      "md": "The propagation phase at which this controller will handle events."
+    },
+    "widget": {
+      "brief": "The widget receiving the `GdkEvents` that the controller will handle.",
+      "file": "gtk/gtkeventcontroller.c",
+      "line": 199,
+      "md": "The widget receiving the `GdkEvents` that the controller will handle."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

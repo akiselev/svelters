@@ -1,0 +1,98 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "`GtkLayoutChild` subclass for children in a `GtkGridLayout`.",
+    "file": "gtk/gtkgridlayout.c",
+    "line": 38,
+    "md": "`GtkLayoutChild` subclass for children in a `GtkGridLayout`."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:GridLayoutChild",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_column": {
+      "brief": "Retrieves the column number to which `child` attaches its left side.",
+      "file": "gtk/gtkgridlayout.c",
+      "line": 271,
+      "md": "Retrieves the column number to which `child` attaches its left side."
+    },
+    "get_column_span": {
+      "brief": "Retrieves the number of columns that `child` spans to.",
+      "file": "gtk/gtkgridlayout.c",
+      "line": 310,
+      "md": "Retrieves the number of columns that `child` spans to."
+    },
+    "get_row": {
+      "brief": "Retrieves the row number to which `child` attaches its top side.",
+      "file": "gtk/gtkgridlayout.c",
+      "line": 232,
+      "md": "Retrieves the row number to which `child` attaches its top side."
+    },
+    "get_row_span": {
+      "brief": "Retrieves the number of rows that `child` spans to.",
+      "file": "gtk/gtkgridlayout.c",
+      "line": 349,
+      "md": "Retrieves the number of rows that `child` spans to."
+    },
+    "set_column": {
+      "brief": "Sets the column number to attach the left side of `child`.",
+      "file": "gtk/gtkgridlayout.c",
+      "line": 248,
+      "md": "Sets the column number to attach the left side of `child`."
+    },
+    "set_column_span": {
+      "brief": "Sets the number of columns `child` spans to.",
+      "file": "gtk/gtkgridlayout.c",
+      "line": 287,
+      "md": "Sets the number of columns `child` spans to."
+    },
+    "set_row": {
+      "brief": "Sets the row to place `child` in.",
+      "file": "gtk/gtkgridlayout.c",
+      "line": 209,
+      "md": "Sets the row to place `child` in."
+    },
+    "set_row_span": {
+      "brief": "Sets the number of rows `child` spans to.",
+      "file": "gtk/gtkgridlayout.c",
+      "line": 326,
+      "md": "Sets the number of rows `child` spans to."
+    }
+  },
+  "properties": {
+    "column": {
+      "brief": "The column to place the child in.",
+      "file": "gtk/gtkgridlayout.c",
+      "line": 159,
+      "md": "The column to place the child in."
+    },
+    "column-span": {
+      "brief": "The number of columns the child spans to.",
+      "file": "gtk/gtkgridlayout.c",
+      "line": 179,
+      "md": "The number of columns the child spans to."
+    },
+    "row": {
+      "brief": "The row to place the child in.",
+      "file": "gtk/gtkgridlayout.c",
+      "line": 169,
+      "md": "The row to place the child in."
+    },
+    "row-span": {
+      "brief": "The number of rows the child spans to.",
+      "file": "gtk/gtkgridlayout.c",
+      "line": 189,
+      "md": "The number of rows the child spans to."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

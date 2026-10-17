@@ -1,0 +1,39 @@
+{
+  "doc": {
+    "brief": "The QStandardItemEditorCreator class provides the possibility to register widgets without having to subclass [QItemEditorCreatorBase](xref:qt:QItemEditorCreatorBase).",
+    "index_brief": "The possibility to register widgets without having to subclass QItemEditorCreatorBase",
+    "url": "https://doc.qt.io/qt-6/qstandarditemeditorcreator.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QStandardItemEditorCreator",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QByteArray valuePropertyName() const override": {
+      "brief": "Reimplements: [QItemEditorCreatorBase::valuePropertyName](xref:qt:QItemEditorCreatorBase)() const.",
+      "url": "https://doc.qt.io/qt-6/qstandarditemeditorcreator.html#valuePropertyName"
+    },
+    "QStandardItemEditorCreator()": {
+      "brief": "Constructs an editor creator object.",
+      "url": "https://doc.qt.io/qt-6/qstandarditemeditorcreator.html#QStandardItemEditorCreator"
+    },
+    "QWidget * createWidget(QWidget *parent) const override": {
+      "brief": "Reimplements: [QItemEditorCreatorBase::createWidget](xref:qt:QItemEditorCreatorBase)(QWidget *parent) const.",
+      "url": "https://doc.qt.io/qt-6/qstandarditemeditorcreator.html#createWidget"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

@@ -1,0 +1,108 @@
+{
+  "doc": {
+    "brief": "The QButtonGroup class provides a container to organize groups of button widgets.",
+    "index_brief": "Container to organize groups of button widgets",
+    "url": "https://doc.qt.io/qt-6/qbuttongroup.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QButtonGroup",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QAbstractButton * button(int id) const": {
+      "brief": "Returns the button with the specified *id*, or `nullptr` if no such button exists.",
+      "url": "https://doc.qt.io/qt-6/qbuttongroup.html#button"
+    },
+    "QAbstractButton * checkedButton() const": {
+      "brief": "Returns the button group's checked button, or `nullptr` if no buttons are checked.",
+      "url": "https://doc.qt.io/qt-6/qbuttongroup.html#checkedButton"
+    },
+    "QButtonGroup(QObject *parent)": {
+      "brief": "Constructs a new, empty button group with the given *parent*.",
+      "url": "https://doc.qt.io/qt-6/qbuttongroup.html#QButtonGroup"
+    },
+    "QList<QAbstractButton *> buttons() const": {
+      "brief": "Returns the button group's list of buttons.",
+      "url": "https://doc.qt.io/qt-6/qbuttongroup.html#buttons"
+    },
+    "bool exclusive() const": {
+      "brief": "This property holds whether the button group is exclusive",
+      "url": "https://doc.qt.io/qt-6/qbuttongroup.html#exclusive-prop"
+    },
+    "int checkedId() const": {
+      "brief": "Returns the id of the [checkedButton](xref:qt:QButtonGroup)(), or -1 if no button is checked.",
+      "url": "https://doc.qt.io/qt-6/qbuttongroup.html#checkedId"
+    },
+    "int id(QAbstractButton *button) const": {
+      "brief": "Returns the id for the specified *button*, or -1 if no such button exists.",
+      "url": "https://doc.qt.io/qt-6/qbuttongroup.html#id"
+    },
+    "void addButton(QAbstractButton *button, int id)": {
+      "brief": "Adds the given *button* to the button group.",
+      "url": "https://doc.qt.io/qt-6/qbuttongroup.html#addButton"
+    },
+    "void buttonClicked(QAbstractButton *button)": {
+      "brief": "This signal is emitted when the given *button* is clicked.",
+      "url": "https://doc.qt.io/qt-6/qbuttongroup.html#buttonClicked"
+    },
+    "void buttonPressed(QAbstractButton *button)": {
+      "brief": "This signal is emitted when the given *button* is pressed down.",
+      "url": "https://doc.qt.io/qt-6/qbuttongroup.html#buttonPressed"
+    },
+    "void buttonReleased(QAbstractButton *button)": {
+      "brief": "This signal is emitted when the given *button* is released.",
+      "url": "https://doc.qt.io/qt-6/qbuttongroup.html#buttonReleased"
+    },
+    "void buttonToggled(QAbstractButton *button, bool checked)": {
+      "brief": "This signal is emitted when the given *button* is toggled. *checked* is true if the button is checked, or false if the button is unchecked.",
+      "url": "https://doc.qt.io/qt-6/qbuttongroup.html#buttonToggled"
+    },
+    "void idClicked(int id)": {
+      "brief": "This signal is emitted when a button with the given *id* is clicked.",
+      "url": "https://doc.qt.io/qt-6/qbuttongroup.html#idClicked"
+    },
+    "void idPressed(int id)": {
+      "brief": "This signal is emitted when a button with the given *id* is pressed down.",
+      "url": "https://doc.qt.io/qt-6/qbuttongroup.html#idPressed"
+    },
+    "void idReleased(int id)": {
+      "brief": "This signal is emitted when a button with the given *id* is released.",
+      "url": "https://doc.qt.io/qt-6/qbuttongroup.html#idReleased"
+    },
+    "void idToggled(int id, bool checked)": {
+      "brief": "This signal is emitted when a button with the given *id* is toggled. *checked* is true if the button is checked, or false if the button is unchecked.",
+      "url": "https://doc.qt.io/qt-6/qbuttongroup.html#idToggled"
+    },
+    "void removeButton(QAbstractButton *button)": {
+      "brief": "Removes the given *button* from the button group.",
+      "url": "https://doc.qt.io/qt-6/qbuttongroup.html#removeButton"
+    },
+    "void setExclusive(bool)": {
+      "brief": "This property holds whether the button group is exclusive",
+      "url": "https://doc.qt.io/qt-6/qbuttongroup.html#exclusive-prop"
+    },
+    "void setId(QAbstractButton *button, int id)": {
+      "brief": "Sets the *id* for the specified *button*.",
+      "url": "https://doc.qt.io/qt-6/qbuttongroup.html#setId"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "exclusive": {
+      "brief": "Whether the button group is exclusive",
+      "url": "https://doc.qt.io/qt-6/qbuttongroup.html#exclusive-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

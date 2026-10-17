@@ -1,0 +1,136 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Base class for platform dialogs that don't use `GtkDialog`.",
+    "file": "gtk/gtknativedialog.c",
+    "line": 32,
+    "md": "Base class for platform dialogs that don't use `GtkDialog`.\n\nNative dialogs are used in order to integrate better with a platform,\nby looking the same as other native applications and supporting\nplatform specific features.\n\nThe [`Dialog`](xref:gtk:Gtk.Dialog) functions cannot be used on such objects,\nbut we need a similar API in order to drive them. The `GtkNativeDialog`\nobject is an API that allows you to do this. It allows you to set\nvarious common properties on the dialog, as well as show and hide\nit and get a [`NativeDialog::response`](xref:gtk:Gtk.NativeDialog#event:response) signal when the user\nfinished with the dialog.\n\nNote that unlike `GtkDialog`, `GtkNativeDialog` objects are not\ntoplevel widgets, and GTK does not keep them alive. It is your\nresponsibility to keep a reference until you are done with the\nobject."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:NativeDialog",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "destroy": {
+      "brief": "Destroys a dialog.",
+      "file": "gtk/gtknativedialog.c",
+      "line": 336,
+      "md": "Destroys a dialog.\n\nWhen a dialog is destroyed, it will break any references it holds\nto other objects.\n\nIf it is visible it will be hidden and any underlying window system\nresources will be destroyed.\n\nNote that this does not release any reference to the object (as opposed\nto destroying a `GtkWindow`) because there is no reference from the\nwindowing system to the `GtkNativeDialog`."
+    },
+    "get_modal": {
+      "brief": "Returns whether the dialog is modal.",
+      "file": "gtk/gtknativedialog.c",
+      "line": 419,
+      "md": "Returns whether the dialog is modal."
+    },
+    "get_title": {
+      "brief": "Gets the title of the `GtkNativeDialog`.",
+      "file": "gtk/gtknativedialog.c",
+      "line": 458,
+      "md": "Gets the title of the `GtkNativeDialog`."
+    },
+    "get_transient_for": {
+      "brief": "Fetches the transient parent for this window.",
+      "file": "gtk/gtknativedialog.c",
+      "line": 522,
+      "md": "Fetches the transient parent for this window."
+    },
+    "get_visible": {
+      "brief": "Determines whether the dialog is visible.",
+      "file": "gtk/gtknativedialog.c",
+      "line": 371,
+      "md": "Determines whether the dialog is visible."
+    },
+    "hide": {
+      "brief": "Hides the dialog if it is visible, aborting any interaction.",
+      "file": "gtk/gtknativedialog.c",
+      "line": 302,
+      "md": "Hides the dialog if it is visible, aborting any interaction.\n\nOnce this is called the [`NativeDialog::response`](xref:gtk:Gtk.NativeDialog#event:response) signal\nwill *not* be emitted until after the next call to\n[`NativeDialog.show()`](xref:gtk:Gtk.NativeDialog#method:show).\n\nIf the dialog is not visible this does nothing."
+    },
+    "set_modal": {
+      "brief": "Sets a dialog modal or non-modal.",
+      "file": "gtk/gtknativedialog.c",
+      "line": 389,
+      "md": "Sets a dialog modal or non-modal.\n\nModal dialogs prevent interaction with other windows in the same\napplication. To keep modal dialogs on top of main application\nwindows, use [`NativeDialog.set_transient_for()`](xref:gtk:Gtk.NativeDialog#method:set_transient_for) to make\nthe dialog transient for the parent; most window managers will\nthen disallow lowering the dialog below the parent."
+    },
+    "set_title": {
+      "brief": "Sets the title of the `GtkNativeDialog.`",
+      "file": "gtk/gtknativedialog.c",
+      "line": 437,
+      "md": "Sets the title of the `GtkNativeDialog.`"
+    },
+    "set_transient_for": {
+      "brief": "Dialog windows should be set transient for the main application window they were spawned from.",
+      "file": "gtk/gtknativedialog.c",
+      "line": 487,
+      "md": "Dialog windows should be set transient for the main application\nwindow they were spawned from.\n\nThis allows window managers to e.g. keep the dialog on top of the\nmain window, or center the dialog over the main window.\n\nPassing `NULL` for `parent` unsets the current transient window."
+    },
+    "show": {
+      "brief": "Shows the dialog on the display.",
+      "file": "gtk/gtknativedialog.c",
+      "line": 269,
+      "md": "Shows the dialog on the display.\n\nWhen the user accepts the state of the dialog the dialog will\nbe automatically hidden and the [`NativeDialog::response`](xref:gtk:Gtk.NativeDialog#event:response)\nsignal will be emitted.\n\nMultiple calls while the dialog is visible will be ignored."
+    }
+  },
+  "properties": {
+    "modal": {
+      "brief": "Whether the window should be modal with respect to its transient parent.",
+      "file": "gtk/gtknativedialog.c",
+      "line": 209,
+      "md": "Whether the window should be modal with respect to its transient parent."
+    },
+    "title": {
+      "brief": "The title of the dialog window",
+      "file": "gtk/gtknativedialog.c",
+      "line": 199,
+      "md": "The title of the dialog window"
+    },
+    "transient-for": {
+      "brief": "The transient parent of the dialog, or `NULL` for none.",
+      "file": "gtk/gtknativedialog.c",
+      "line": 229,
+      "md": "The transient parent of the dialog, or `NULL` for none."
+    },
+    "visible": {
+      "brief": "Whether the window is currently visible.",
+      "file": "gtk/gtknativedialog.c",
+      "line": 219,
+      "md": "Whether the window is currently visible."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "response": {
+      "brief": "Emitted when the user responds to the dialog.",
+      "file": "gtk/gtknativedialog.c",
+      "line": 241,
+      "md": "Emitted when the user responds to the dialog.\n\nWhen this is called the dialog has been hidden.\n\nIf you call [`NativeDialog.hide()`](xref:gtk:Gtk.NativeDialog#method:hide) before the user\nresponds to the dialog this signal will not be emitted."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "hide": {
+      "brief": "Hides the dialog if it is visible, aborting any interaction.",
+      "file": "gtk/gtknativedialog.c",
+      "line": 302,
+      "md": "Hides the dialog if it is visible, aborting any interaction.\n\nOnce this is called the [`NativeDialog::response`](xref:gtk:Gtk.NativeDialog#event:response) signal\nwill *not* be emitted until after the next call to\n[`NativeDialog.show()`](xref:gtk:Gtk.NativeDialog#method:show).\n\nIf the dialog is not visible this does nothing."
+    },
+    "response": {
+      "brief": "class handler for the `GtkNativeDialog::response` signal",
+      "file": "gtk/gtknativedialog.h",
+      "line": 36,
+      "md": "class handler for the `GtkNativeDialog::response` signal"
+    },
+    "show": {
+      "brief": "Shows the dialog on the display.",
+      "file": "gtk/gtknativedialog.c",
+      "line": 269,
+      "md": "Shows the dialog on the display.\n\nWhen the user accepts the state of the dialog the dialog will\nbe automatically hidden and the [`NativeDialog::response`](xref:gtk:Gtk.NativeDialog#event:response)\nsignal will be emitted.\n\nMultiple calls while the dialog is visible will be ignored."
+    }
+  }
+}

@@ -1,0 +1,118 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "`GtkColorChooser` is an interface that is implemented by widgets for choosing colors.",
+    "deprecated": "4.10",
+    "deprecated_md": "Use [`ColorDialog`](xref:gtk:Gtk.ColorDialog) and [`ColorDialogButton`](xref:gtk:Gtk.ColorDialogButton)\n  instead of widgets implementing `GtkColorChooser`",
+    "file": "gtk/deprecated/gtkcolorchooser.c",
+    "line": 28,
+    "md": "`GtkColorChooser` is an interface that is implemented by widgets\nfor choosing colors.\n\nDepending on the situation, colors may be allowed to have alpha (translucency).\n\nIn GTK, the main widgets that implement this interface are\n[`ColorChooserWidget`](xref:gtk:Gtk.ColorChooserWidget), [`ColorChooserDialog`](xref:gtk:Gtk.ColorChooserDialog) and\n[`ColorButton`](xref:gtk:Gtk.ColorButton)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ColorChooser",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "add_palette": {
+      "brief": "Adds a palette to the color chooser.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`ColorDialog`](xref:gtk:Gtk.ColorDialog) instead",
+      "file": "gtk/deprecated/gtkcolorchooser.c",
+      "line": 204,
+      "md": "Adds a palette to the color chooser.\n\nIf `orientation` is horizontal, the colors are grouped in rows,\nwith `colors_per_line` colors in each row. If `horizontal` is `FALSE`,\nthe colors are grouped in columns instead.\n\nThe default color palette of [`ColorChooserWidget`](xref:gtk:Gtk.ColorChooserWidget) has\n45 colors, organized in columns of 5 colors (this includes some\ngrays).\n\nThe layout of the color chooser widget works best when the\npalettes have 9-10 columns.\n\nCalling this function for the first time has the side effect\nof removing the default color palette from the color chooser.\n\nIf `colors` is `NULL`, removes all previously added palettes."
+    },
+    "get_rgba": {
+      "brief": "Gets the currently-selected color.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`ColorDialog`](xref:gtk:Gtk.ColorDialog) instead",
+      "file": "gtk/deprecated/gtkcolorchooser.c",
+      "line": 125,
+      "md": "Gets the currently-selected color."
+    },
+    "get_use_alpha": {
+      "brief": "Returns whether the color chooser shows the alpha channel.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`ColorDialog`](xref:gtk:Gtk.ColorDialog) instead",
+      "file": "gtk/deprecated/gtkcolorchooser.c",
+      "line": 162,
+      "md": "Returns whether the color chooser shows the alpha channel."
+    },
+    "set_rgba": {
+      "brief": "Sets the color.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`ColorDialog`](xref:gtk:Gtk.ColorDialog) instead",
+      "file": "gtk/deprecated/gtkcolorchooser.c",
+      "line": 143,
+      "md": "Sets the color."
+    },
+    "set_use_alpha": {
+      "brief": "Sets whether or not the color chooser should use the alpha channel.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`ColorDialog`](xref:gtk:Gtk.ColorDialog) instead",
+      "file": "gtk/deprecated/gtkcolorchooser.c",
+      "line": 185,
+      "md": "Sets whether or not the color chooser should use the alpha channel."
+    }
+  },
+  "properties": {
+    "rgba": {
+      "brief": "The currently selected color, as a `GdkRGBA` struct.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`ColorDialog`](xref:gtk:Gtk.ColorDialog) and [`ColorDialogButton`](xref:gtk:Gtk.ColorDialogButton)\n  instead of widgets implementing `GtkColorChooser`",
+      "file": "gtk/deprecated/gtkcolorchooser.c",
+      "line": 57,
+      "md": "The currently selected color, as a `GdkRGBA` struct.\n\nThe property can be set to change the current selection\nprogrammatically."
+    },
+    "use-alpha": {
+      "brief": "Whether colors may have alpha (translucency).",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`ColorDialog`](xref:gtk:Gtk.ColorDialog) and [`ColorDialogButton`](xref:gtk:Gtk.ColorDialogButton)\n  instead of widgets implementing `GtkColorChooser`",
+      "file": "gtk/deprecated/gtkcolorchooser.c",
+      "line": 73,
+      "md": "Whether colors may have alpha (translucency).\n\nWhen ::use-alpha is `FALSE`, the `GdkRGBA` struct obtained\nvia the [`ColorChooser:rgba`](xref:gtk:Gtk.ColorChooser#property:rgba) property will be\nforced to have alpha == 1.\n\nImplementations are expected to show alpha by rendering the color\nover a non-uniform background (like a checkerboard pattern)."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "color-activated": {
+      "brief": "Emitted when a color is activated from the color chooser.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`ColorDialog`](xref:gtk:Gtk.ColorDialog) and [`ColorDialogButton`](xref:gtk:Gtk.ColorDialogButton)\n  instead of widgets implementing `GtkColorChooser`",
+      "file": "gtk/deprecated/gtkcolorchooser.c",
+      "line": 93,
+      "md": "Emitted when a color is activated from the color chooser.\n\nThis usually happens when the user clicks a color swatch,\nor a color is selected and the user presses one of the keys\nSpace, Shift+Space, Return or Enter."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "add_palette": {
+      "brief": "Adds a palette to the color chooser.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`ColorDialog`](xref:gtk:Gtk.ColorDialog) instead",
+      "file": "gtk/deprecated/gtkcolorchooser.c",
+      "line": 204,
+      "md": "Adds a palette to the color chooser.\n\nIf `orientation` is horizontal, the colors are grouped in rows,\nwith `colors_per_line` colors in each row. If `horizontal` is `FALSE`,\nthe colors are grouped in columns instead.\n\nThe default color palette of [`ColorChooserWidget`](xref:gtk:Gtk.ColorChooserWidget) has\n45 colors, organized in columns of 5 colors (this includes some\ngrays).\n\nThe layout of the color chooser widget works best when the\npalettes have 9-10 columns.\n\nCalling this function for the first time has the side effect\nof removing the default color palette from the color chooser.\n\nIf `colors` is `NULL`, removes all previously added palettes."
+    },
+    "get_rgba": {
+      "brief": "Gets the currently-selected color.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`ColorDialog`](xref:gtk:Gtk.ColorDialog) instead",
+      "file": "gtk/deprecated/gtkcolorchooser.c",
+      "line": 125,
+      "md": "Gets the currently-selected color."
+    },
+    "set_rgba": {
+      "brief": "Sets the color.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`ColorDialog`](xref:gtk:Gtk.ColorDialog) instead",
+      "file": "gtk/deprecated/gtkcolorchooser.c",
+      "line": 143,
+      "md": "Sets the color."
+    }
+  }
+}

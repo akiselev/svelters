@@ -40,24 +40,39 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QGesture::GestureCancelPolicy",
       "members": [
         {
+          "cpp": "QGesture::CancelNone",
           "name": "CancelNone",
           "value": "0"
         },
         {
+          "cpp": "QGesture::CancelAllInContext",
           "name": "CancelAllInContext",
           "value": "1"
         }
       ],
       "metaobject": null,
       "name": "GestureCancelPolicy",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QGesture",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QGesture:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -78,7 +93,7 @@
         "native": "QGesture::GestureCancelPolicy",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QGesture::GestureCancelPolicy>"
       },
       "signature": "QGesture::GestureCancelPolicy gestureCancelPolicy() const",
       "since": null,
@@ -104,7 +119,7 @@
         "native": "Qt::GestureType",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::GestureType>"
       },
       "signature": "Qt::GestureType gestureType() const",
       "since": null,
@@ -156,7 +171,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF hotSpot() const",
       "since": null,
@@ -185,7 +200,7 @@
             "native": "QGesture::GestureCancelPolicy",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QGesture::GestureCancelPolicy>"
           }
         }
       ],
@@ -222,7 +237,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -256,7 +271,7 @@
         "native": "Qt::GestureState",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::GestureState>"
       },
       "signature": "Qt::GestureState state() const",
       "since": null,
@@ -310,6 +325,7 @@
         "set": "setGestureCancelPolicy"
       },
       "brief": "The policy for deciding what happens on accepting a gesture",
+      "default": null,
       "js_name": "gestureCancelPolicy",
       "metaobject": {
         "constant": false,
@@ -330,12 +346,13 @@
       "name": "gestureCancelPolicy",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QGesture::GestureCancelPolicy",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QGesture::GestureCancelPolicy>"
       }
     },
     {
@@ -350,6 +367,8 @@
         "set": null
       },
       "brief": "The type of the gesture",
+      "default": "CustomGesture",
+      "default_origin": "runtime",
       "js_name": "gestureType",
       "metaobject": {
         "constant": false,
@@ -370,12 +389,13 @@
       "name": "gestureType",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::GestureType",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::GestureType>"
       }
     },
     {
@@ -390,6 +410,8 @@
         "set": null
       },
       "brief": "Whether the gesture has a hot-spot",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "hasHotSpot",
       "metaobject": {
         "constant": false,
@@ -410,6 +432,7 @@
       "name": "hasHotSpot",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -430,6 +453,7 @@
         "set": "setHotSpot"
       },
       "brief": "Point that is used to find the receiver for the gesture event",
+      "default": null,
       "js_name": "hotSpot",
       "metaobject": {
         "constant": false,
@@ -450,12 +474,13 @@
       "name": "hotSpot",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       }
     },
     {
@@ -470,6 +495,8 @@
         "set": null
       },
       "brief": "The current state of the gesture",
+      "default": "NoGesture",
+      "default_origin": "runtime",
       "js_name": "state",
       "metaobject": {
         "constant": false,
@@ -490,12 +517,13 @@
       "name": "state",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::GestureState",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::GestureState>"
       }
     }
   ],

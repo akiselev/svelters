@@ -1,0 +1,342 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "The integration point for media playback inside GTK.",
+    "file": "gtk/gtkmediastream.c",
+    "line": 25,
+    "md": "The integration point for media playback inside GTK.\n\nGTK provides an implementation of the `GtkMediaStream` interface that\nis called [`MediaFile`](xref:gtk:Gtk.MediaFile).\n\nApart from application-facing API for stream playback, `GtkMediaStream`\nhas a number of APIs that are only useful for implementations and should\nnot be used in applications:\n[`MediaStream.prepared()`](xref:gtk:Gtk.MediaStream#method:prepared),\n[`MediaStream.unprepared()`](xref:gtk:Gtk.MediaStream#method:unprepared),\n[`MediaStream.update()`](xref:gtk:Gtk.MediaStream#method:update),\n[`MediaStream.ended()`](xref:gtk:Gtk.MediaStream#method:ended),\n[`MediaStream.seek_success()`](xref:gtk:Gtk.MediaStream#method:seek_success),\n[`MediaStream.seek_failed()`](xref:gtk:Gtk.MediaStream#method:seek_failed),\n[`MediaStream.gerror()`](xref:gtk:Gtk.MediaStream#method:gerror),\n[`MediaStream.error()`](xref:gtk:Gtk.MediaStream#method:error),\n[`MediaStream.error_valist()`](xref:gtk:Gtk.MediaStream#method:error_valist)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:MediaStream",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "ended": {
+      "brief": "Pauses the media stream and marks it as ended.",
+      "deprecated": "4.4",
+      "deprecated_md": "Use [`MediaStream.stream_ended()`](xref:gtk:Gtk.MediaStream#method:stream_ended) instead",
+      "file": "gtk/gtkmediastream.c",
+      "line": 1344,
+      "md": "Pauses the media stream and marks it as ended.\n\nThis is a hint only, calls to [`MediaStream.play()`](xref:gtk:Gtk.MediaStream#method:play)\nmay still happen.\n\nThe media stream must be prepared when this function is called."
+    },
+    "error": {
+      "brief": "Sets `self` into an error state using a printf()-style format string.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 1204,
+      "md": "Sets `self` into an error state using a printf()-style format string.\n\nThis is a utility function that calls [`MediaStream.gerror()`](xref:gtk:Gtk.MediaStream#method:gerror).\nSee that function for details."
+    },
+    "error_valist": {
+      "brief": "Sets `self` into an error state using a printf()-style format string.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 1238,
+      "md": "Sets `self` into an error state using a printf()-style format string.\n\nThis is a utility function that calls [`MediaStream.gerror()`](xref:gtk:Gtk.MediaStream#method:gerror).\nSee that function for details."
+    },
+    "gerror": {
+      "brief": "Sets `self` into an error state.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 1151,
+      "md": "Sets `self` into an error state.\n\nThis will pause the stream (you can check for an error\nvia [`MediaStream.get_error()`](xref:gtk:Gtk.MediaStream#method:get_error) in your\nGtkMediaStream.pause() implementation), abort pending\nseeks and mark the stream as prepared.\n\nif the stream is already in an error state, this call\nwill be ignored and the existing error will be retained.\n\nTo unset an error, the stream must be reset via a call to\n[`MediaStream.unprepared()`](xref:gtk:Gtk.MediaStream#method:unprepared)."
+    },
+    "get_duration": {
+      "brief": "Gets the duration of the stream.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 629,
+      "md": "Gets the duration of the stream.\n\nIf the duration is not known, 0 will be returned."
+    },
+    "get_ended": {
+      "brief": "Returns whether the streams playback is finished.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 593,
+      "md": "Returns whether the streams playback is finished."
+    },
+    "get_error": {
+      "brief": "If the stream is in an error state, returns the `GError` explaining that state.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 693,
+      "md": "If the stream is in an error state, returns the `GError`\nexplaining that state.\n\nAny type of error can be reported here depending on the\nimplementation of the media stream.\n\nA media stream in an error cannot be operated on, calls\nlike [`MediaStream.play()`](xref:gtk:Gtk.MediaStream#method:play) or\n[`MediaStream.seek()`](xref:gtk:Gtk.MediaStream#method:seek) will not have any effect.\n\n`GtkMediaStream` itself does not provide a way to unset\nan error, but implementations may provide options. For example,\na [`MediaFile`](xref:gtk:Gtk.MediaFile) will unset errors when a new source is\nset, e.g. with [`MediaFile.set_file()`](xref:gtk:Gtk.MediaFile#method:set_file)."
+    },
+    "get_loop": {
+      "brief": "Returns whether the stream is set to loop.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 771,
+      "md": "Returns whether the stream is set to loop.\n\nSee [`MediaStream.set_loop()`](xref:gtk:Gtk.MediaStream#method:set_loop) for details."
+    },
+    "get_muted": {
+      "brief": "Returns whether the audio for the stream is muted.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 820,
+      "md": "Returns whether the audio for the stream is muted.\n\nSee [`MediaStream.set_muted()`](xref:gtk:Gtk.MediaStream#method:set_muted) for details."
+    },
+    "get_playing": {
+      "brief": "Return whether the stream is currently playing.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 556,
+      "md": "Return whether the stream is currently playing."
+    },
+    "get_timestamp": {
+      "brief": "Returns the current presentation timestamp in microseconds.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 611,
+      "md": "Returns the current presentation timestamp in microseconds."
+    },
+    "get_volume": {
+      "brief": "Returns the volume of the audio for the stream.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 872,
+      "md": "Returns the volume of the audio for the stream.\n\nSee [`MediaStream.set_volume()`](xref:gtk:Gtk.MediaStream#method:set_volume) for details."
+    },
+    "has_audio": {
+      "brief": "Returns whether the stream has audio.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 455,
+      "md": "Returns whether the stream has audio."
+    },
+    "has_video": {
+      "brief": "Returns whether the stream has video.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 473,
+      "md": "Returns whether the stream has video."
+    },
+    "is_prepared": {
+      "brief": "Returns whether the stream has finished initializing.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 435,
+      "md": "Returns whether the stream has finished initializing.\n\nAt this point the existence of audio and video is known."
+    },
+    "is_seekable": {
+      "brief": "Checks if a stream may be seekable.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 649,
+      "md": "Checks if a stream may be seekable.\n\nThis is meant to be a hint. Streams may not allow seeking even if\nthis function returns `TRUE`. However, if this function returns\n`FALSE`, streams are guaranteed to not be seekable and user interfaces\nmay hide controls that allow seeking.\n\nIt is allowed to call [`MediaStream.seek()`](xref:gtk:Gtk.MediaStream#method:seek) on a non-seekable\nstream, though it will not do anything."
+    },
+    "is_seeking": {
+      "brief": "Checks if there is currently a seek operation going on.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 675,
+      "md": "Checks if there is currently a seek operation going on."
+    },
+    "pause": {
+      "brief": "Pauses playback of the stream.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 529,
+      "md": "Pauses playback of the stream.\n\nIf the stream is not playing, do nothing."
+    },
+    "play": {
+      "brief": "Starts playing the stream.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 491,
+      "md": "Starts playing the stream.\n\nIf the stream is in error or already playing, do nothing."
+    },
+    "prepared": {
+      "brief": "Same as gtk_media_stream_stream_prepared().",
+      "deprecated": "4.4",
+      "deprecated_md": "Use [`MediaStream.stream_prepared()`](xref:gtk:Gtk.MediaStream#method:stream_prepared) instead.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 1115,
+      "md": "Same as gtk_media_stream_stream_prepared()."
+    },
+    "realize": {
+      "brief": "Called by users to attach the media stream to a `GdkSurface` they manage.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 929,
+      "md": "Called by users to attach the media stream to a `GdkSurface` they manage.\n\nThe stream can then access the resources of `surface` for its\nrendering purposes. In particular, media streams might want to\ncreate a `GdkGLContext` or sync to the `GdkFrameClock`.\n\nWhoever calls this function is responsible for calling\n[`MediaStream.unrealize()`](xref:gtk:Gtk.MediaStream#method:unrealize) before either the stream\nor `surface` get destroyed.\n\nMultiple calls to this function may happen from different\nusers of the video, even with the same `surface`. Each of these\ncalls must be followed by its own call to\n[`MediaStream.unrealize()`](xref:gtk:Gtk.MediaStream#method:unrealize).\n\nIt is not required to call this function to make a media stream work."
+    },
+    "seek": {
+      "brief": "Start a seek operation on `self` to `timestamp`.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 725,
+      "md": "Start a seek operation on `self` to `timestamp`.\n\nIf `timestamp` is out of range, it will be clamped.\n\nSeek operations may not finish instantly. While a\nseek operation is in process, the [`MediaStream:seeking`](xref:gtk:Gtk.MediaStream#property:seeking)\nproperty will be set.\n\nWhen calling gtk_media_stream_seek() during an\nongoing seek operation, the new seek will override\nany pending seek."
+    },
+    "seek_failed": {
+      "brief": "Ends a seek operation started via GtkMediaStream.seek() as a failure.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 1397,
+      "md": "Ends a seek operation started via GtkMediaStream.seek() as a failure.\n\nThis will not cause an error on the stream and will assume that\nplayback continues as if no seek had happened.\n\nSee [`MediaStream.seek_success()`](xref:gtk:Gtk.MediaStream#method:seek_success) for the other way of\nending a seek."
+    },
+    "seek_success": {
+      "brief": "Ends a seek operation started via GtkMediaStream.seek() successfully.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 1363,
+      "md": "Ends a seek operation started via GtkMediaStream.seek() successfully.\n\nThis function will unset the GtkMediaStream:ended property\nif it was set.\n\nSee [`MediaStream.seek_failed()`](xref:gtk:Gtk.MediaStream#method:seek_failed) for the other way of\nending a seek."
+    },
+    "set_loop": {
+      "brief": "Sets whether the stream should loop.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 791,
+      "md": "Sets whether the stream should loop.\n\nIn this case, it will attempt to restart playback\nfrom the beginning instead of stopping at the end.\n\nNot all streams may support looping, in particular\nnon-seekable streams. Those streams will ignore the\nloop setting and just end."
+    },
+    "set_muted": {
+      "brief": "Sets whether the audio stream should be muted.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 840,
+      "md": "Sets whether the audio stream should be muted.\n\nMuting a stream will cause no audio to be played, but it\ndoes not modify the volume. This means that muting and\nthen unmuting the stream will restore the volume settings.\n\nIf the stream has no audio, calling this function will\nstill work but it will not have an audible effect."
+    },
+    "set_playing": {
+      "brief": "Starts or pauses playback of the stream.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 574,
+      "md": "Starts or pauses playback of the stream."
+    },
+    "set_volume": {
+      "brief": "Sets the volume of the audio stream.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 892,
+      "md": "Sets the volume of the audio stream.\n\nThis function call will work even if the stream is muted.\n\nThe given `volume` should range from 0.0 for silence to 1.0\nfor as loud as possible. Values outside of this range will\nbe clamped to the nearest value.\n\nIf the stream has no audio or is muted, calling this function\nwill still work but it will not have an immediate audible effect.\nWhen the stream is unmuted, the new volume setting will take effect."
+    },
+    "stream_ended": {
+      "brief": "Pauses the media stream and marks it as ended.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 1312,
+      "md": "Pauses the media stream and marks it as ended.\n\nThis is a hint only, calls to [`MediaStream.play()`](xref:gtk:Gtk.MediaStream#method:play)\nmay still happen.\n\nThe media stream must be prepared when this function is called.",
+      "since": "4.4"
+    },
+    "stream_prepared": {
+      "brief": "Called by `GtkMediaStream` implementations to advertise the stream being ready to play and providing details about the stream.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 987,
+      "md": "Called by `GtkMediaStream` implementations to advertise the stream\nbeing ready to play and providing details about the stream.\n\nNote that the arguments are hints. If the stream implementation\ncannot determine the correct values, it is better to err on the\nside of caution and return `TRUE`. User interfaces will use those\nvalues to determine what controls to show.\n\nThis function may not be called again until the stream has been\nreset via [`MediaStream.stream_unprepared()`](xref:gtk:Gtk.MediaStream#method:stream_unprepared).",
+      "since": "4.4"
+    },
+    "stream_unprepared": {
+      "brief": "Resets a given media stream implementation.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 1049,
+      "md": "Resets a given media stream implementation.\n\n[`MediaStream.stream_prepared()`](xref:gtk:Gtk.MediaStream#method:stream_prepared) can then be called again.\n\nThis function will also reset any error state the stream was in.",
+      "since": "4.4"
+    },
+    "unprepared": {
+      "brief": "Same as gtk_media_stream_stream_unprepared().",
+      "deprecated": "4.4",
+      "deprecated_md": "Use [`MediaStream.stream_unprepared()`](xref:gtk:Gtk.MediaStream#method:stream_unprepared) instead.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 1137,
+      "md": "Same as gtk_media_stream_stream_unprepared()."
+    },
+    "unrealize": {
+      "brief": "Undoes a previous call to gtk_media_stream_realize().",
+      "file": "gtk/gtkmediastream.c",
+      "line": 964,
+      "md": "Undoes a previous call to gtk_media_stream_realize().\n\nThis causes the stream to release all resources it had\nallocated from `surface`."
+    },
+    "update": {
+      "brief": "Media stream implementations should regularly call this function to update the timestamp reported by the stream.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 1269,
+      "md": "Media stream implementations should regularly call this\nfunction to update the timestamp reported by the stream.\n\nIt is up to implementations to call this at the frequency\nthey deem appropriate.\n\nThe media stream must be prepared when this function is called."
+    }
+  },
+  "properties": {
+    "duration": {
+      "brief": "The stream's duration in microseconds or 0 if unknown.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 364,
+      "md": "The stream's duration in microseconds or 0 if unknown."
+    },
+    "ended": {
+      "brief": "Set when playback has finished.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 344,
+      "md": "Set when playback has finished."
+    },
+    "error": {
+      "brief": "`NULL` for a properly working stream or the `GError` that the stream is in.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 303,
+      "md": "`NULL` for a properly working stream or the `GError`\nthat the stream is in."
+    },
+    "has-audio": {
+      "brief": "Whether the stream contains audio.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 314,
+      "md": "Whether the stream contains audio."
+    },
+    "has-video": {
+      "brief": "Whether the stream contains video.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 324,
+      "md": "Whether the stream contains video."
+    },
+    "loop": {
+      "brief": "Try to restart the media from the beginning once it ended.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 394,
+      "md": "Try to restart the media from the beginning once it ended."
+    },
+    "muted": {
+      "brief": "Whether the audio stream should be muted.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 404,
+      "md": "Whether the audio stream should be muted."
+    },
+    "playing": {
+      "brief": "Whether the stream is currently playing.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 334,
+      "md": "Whether the stream is currently playing."
+    },
+    "prepared": {
+      "brief": "Whether the stream has finished initializing and existence of audio and video is known.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 292,
+      "md": "Whether the stream has finished initializing and existence of\naudio and video is known."
+    },
+    "seekable": {
+      "brief": "Set unless the stream is known to not support seeking.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 374,
+      "md": "Set unless the stream is known to not support seeking."
+    },
+    "seeking": {
+      "brief": "Set while a seek is in progress.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 384,
+      "md": "Set while a seek is in progress."
+    },
+    "timestamp": {
+      "brief": "The current presentation timestamp in microseconds.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 354,
+      "md": "The current presentation timestamp in microseconds."
+    },
+    "volume": {
+      "brief": "Volume of the audio stream.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 414,
+      "md": "Volume of the audio stream."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "pause": {
+      "brief": "Pauses playback of the stream.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 529,
+      "md": "Pauses playback of the stream.\n\nIf the stream is not playing, do nothing."
+    },
+    "realize": {
+      "brief": "Called by users to attach the media stream to a `GdkSurface` they manage.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 929,
+      "md": "Called by users to attach the media stream to a `GdkSurface` they manage.\n\nThe stream can then access the resources of `surface` for its\nrendering purposes. In particular, media streams might want to\ncreate a `GdkGLContext` or sync to the `GdkFrameClock`.\n\nWhoever calls this function is responsible for calling\n[`MediaStream.unrealize()`](xref:gtk:Gtk.MediaStream#method:unrealize) before either the stream\nor `surface` get destroyed.\n\nMultiple calls to this function may happen from different\nusers of the video, even with the same `surface`. Each of these\ncalls must be followed by its own call to\n[`MediaStream.unrealize()`](xref:gtk:Gtk.MediaStream#method:unrealize).\n\nIt is not required to call this function to make a media stream work."
+    },
+    "seek": {
+      "brief": "Start a seek operation on `self` to `timestamp`.",
+      "file": "gtk/gtkmediastream.c",
+      "line": 725,
+      "md": "Start a seek operation on `self` to `timestamp`.\n\nIf `timestamp` is out of range, it will be clamped.\n\nSeek operations may not finish instantly. While a\nseek operation is in process, the [`MediaStream:seeking`](xref:gtk:Gtk.MediaStream#property:seeking)\nproperty will be set.\n\nWhen calling gtk_media_stream_seek() during an\nongoing seek operation, the new seek will override\nany pending seek."
+    },
+    "unrealize": {
+      "brief": "Undoes a previous call to gtk_media_stream_realize().",
+      "file": "gtk/gtkmediastream.c",
+      "line": 964,
+      "md": "Undoes a previous call to gtk_media_stream_realize().\n\nThis causes the stream to release all resources it had\nallocated from `surface`."
+    }
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new string filter.",
+      "file": "gtk/gtkstringfilter.c",
+      "line": 300,
+      "md": "Creates a new string filter.\n\nYou will want to set up the filter by providing a string to search for\nand by providing a property to look up on the item."
+    }
+  },
+  "doc": {
+    "brief": "Determines whether to include items by comparing strings to a fixed search term.",
+    "file": "gtk/gtkstringfilter.c",
+    "line": 26,
+    "md": "Determines whether to include items by comparing strings to a fixed search term.\n\nThe strings are obtained from the items by evaluating an expression\nset with [`StringFilter.set_expression()`](xref:gtk:Gtk.StringFilter#method:set_expression), and they are\ncompared against a search term set with [`StringFilter.set_search()`](xref:gtk:Gtk.StringFilter#method:set_search).\n\n`GtkStringFilter` has several different modes of comparison - it\ncan match the whole string, just a prefix, or any substring. Use\n[`StringFilter.set_match_mode()`](xref:gtk:Gtk.StringFilter#method:set_match_mode) choose a mode.\n\nIt is also possible to make case-insensitive comparisons, with\n[`StringFilter.set_ignore_case()`](xref:gtk:Gtk.StringFilter#method:set_ignore_case)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:StringFilter",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_expression": {
+      "brief": "Gets the expression that the string filter uses to obtain strings from items.",
+      "file": "gtk/gtkstringfilter.c",
+      "line": 381,
+      "md": "Gets the expression that the string filter uses to\nobtain strings from items."
+    },
+    "get_ignore_case": {
+      "brief": "Returns whether the filter ignores case differences.",
+      "file": "gtk/gtkstringfilter.c",
+      "line": 427,
+      "md": "Returns whether the filter ignores case differences."
+    },
+    "get_match_mode": {
+      "brief": "Returns the match mode that the filter is using.",
+      "file": "gtk/gtkstringfilter.c",
+      "line": 471,
+      "md": "Returns the match mode that the filter is using."
+    },
+    "get_search": {
+      "brief": "Gets the search term.",
+      "file": "gtk/gtkstringfilter.c",
+      "line": 325,
+      "md": "Gets the search term."
+    },
+    "set_expression": {
+      "brief": "Sets the expression that the string filter uses to obtain strings from items.",
+      "file": "gtk/gtkstringfilter.c",
+      "line": 398,
+      "md": "Sets the expression that the string filter uses to\nobtain strings from items.\n\nThe expression must have a value type of `G_TYPE_STRING`."
+    },
+    "set_ignore_case": {
+      "brief": "Sets whether the filter ignores case differences.",
+      "file": "gtk/gtkstringfilter.c",
+      "line": 443,
+      "md": "Sets whether the filter ignores case differences."
+    },
+    "set_match_mode": {
+      "brief": "Sets the match mode for the filter.",
+      "file": "gtk/gtkstringfilter.c",
+      "line": 487,
+      "md": "Sets the match mode for the filter."
+    },
+    "set_search": {
+      "brief": "Sets the string to search for.",
+      "file": "gtk/gtkstringfilter.c",
+      "line": 341,
+      "md": "Sets the string to search for."
+    }
+  },
+  "properties": {
+    "expression": {
+      "brief": "The expression to evaluate on each item to get a string to compare with.",
+      "file": "gtk/gtkstringfilter.c",
+      "line": 248,
+      "md": "The expression to evaluate on each item to get a\nstring to compare with."
+    },
+    "ignore-case": {
+      "brief": "If matching is case sensitive.",
+      "file": "gtk/gtkstringfilter.c",
+      "line": 258,
+      "md": "If matching is case sensitive."
+    },
+    "match-mode": {
+      "brief": "If exact matches are necessary or if substrings are allowed.",
+      "file": "gtk/gtkstringfilter.c",
+      "line": 268,
+      "md": "If exact matches are necessary or if substrings are allowed."
+    },
+    "search": {
+      "brief": "The search term.",
+      "file": "gtk/gtkstringfilter.c",
+      "line": 279,
+      "md": "The search term."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

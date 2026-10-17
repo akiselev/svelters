@@ -42,6 +42,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QButtonGroup",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QButtonGroup:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -146,7 +156,7 @@
         "native": "QList<QAbstractButton *>",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<object<QAbstractButton>>"
       },
       "signature": "QList<QAbstractButton *> buttons() const",
       "since": null,
@@ -435,6 +445,8 @@
         "set": "setExclusive"
       },
       "brief": "Whether the button group is exclusive",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "exclusive",
       "metaobject": {
         "constant": false,
@@ -455,6 +467,7 @@
       "name": "exclusive",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",

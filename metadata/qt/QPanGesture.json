@@ -18,6 +18,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QPanGesture",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QPanGesture:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -64,7 +74,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF delta() const",
       "since": null,
@@ -90,7 +100,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF lastOffset() const",
       "since": null,
@@ -116,7 +126,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF offset() const",
       "since": null,
@@ -182,7 +192,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -219,7 +229,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -255,6 +265,8 @@
         "set": "setAcceleration"
       },
       "brief": "The acceleration in the motion of the touch point for this gesture",
+      "default": 0.0,
+      "default_origin": "runtime",
       "js_name": "acceleration",
       "metaobject": {
         "constant": false,
@@ -275,6 +287,7 @@
       "name": "acceleration",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "qreal",
@@ -295,6 +308,7 @@
         "set": null
       },
       "brief": "The offset from the previous input position to the current input",
+      "default": null,
       "js_name": "delta",
       "metaobject": {
         "constant": false,
@@ -315,12 +329,13 @@
       "name": "delta",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       }
     },
     {
@@ -335,6 +350,7 @@
         "set": "setLastOffset"
       },
       "brief": "The last offset recorded for this gesture",
+      "default": null,
       "js_name": "lastOffset",
       "metaobject": {
         "constant": false,
@@ -355,12 +371,13 @@
       "name": "lastOffset",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       }
     },
     {
@@ -375,6 +392,7 @@
         "set": "setOffset"
       },
       "brief": "The total offset from the first input position to the current input position",
+      "default": null,
       "js_name": "offset",
       "metaobject": {
         "constant": false,
@@ -395,12 +413,13 @@
       "name": "offset",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       }
     }
   ],

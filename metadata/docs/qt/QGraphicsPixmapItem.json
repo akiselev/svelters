@@ -1,0 +1,99 @@
+{
+  "doc": {
+    "brief": "The QGraphicsPixmapItem class provides a pixmap item that you can add to a [QGraphicsScene](xref:qt:QGraphicsScene).",
+    "index_brief": "Pixmap item that you can add to a QGraphicsScene",
+    "url": "https://doc.qt.io/qt-6/qgraphicspixmapitem.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsPixmapItem",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QGraphicsPixmapItem(QGraphicsItem *parent)": {
+      "brief": "Constructs a QGraphicsPixmapItem. *parent* is passed to [QGraphicsItem](xref:qt:QGraphicsItem)'s constructor.",
+      "url": "https://doc.qt.io/qt-6/qgraphicspixmapitem.html#QGraphicsPixmapItem"
+    },
+    "QGraphicsPixmapItem(const QPixmap &pixmap, QGraphicsItem *parent)": {
+      "brief": "Constructs a QGraphicsPixmapItem, using *pixmap* as the default pixmap. *parent* is passed to [QGraphicsItem](xref:qt:QGraphicsItem)'s constructor.",
+      "url": "https://doc.qt.io/qt-6/qgraphicspixmapitem.html#QGraphicsPixmapItem-1"
+    },
+    "QGraphicsPixmapItem::ShapeMode shapeMode() const": {
+      "brief": "Returns the item's shape mode.",
+      "url": "https://doc.qt.io/qt-6/qgraphicspixmapitem.html#shapeMode"
+    },
+    "QPainterPath opaqueArea() const override": {
+      "brief": "Reimplements: [QGraphicsItem::opaqueArea](xref:qt:QGraphicsItem)() const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicspixmapitem.html#opaqueArea"
+    },
+    "QPainterPath shape() const override": {
+      "brief": "Reimplements: [QGraphicsItem::shape](xref:qt:QGraphicsItem)() const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicspixmapitem.html#shape"
+    },
+    "QPixmap pixmap() const": {
+      "brief": "Returns the item's pixmap, or an invalid [QPixmap](xref:qt:QPixmap) if no pixmap has been set.",
+      "url": "https://doc.qt.io/qt-6/qgraphicspixmapitem.html#pixmap"
+    },
+    "QPointF offset() const": {
+      "brief": "Returns the pixmap item's *offset*, which defines the point of the top-left corner of the pixmap, in local coordinates.",
+      "url": "https://doc.qt.io/qt-6/qgraphicspixmapitem.html#offset"
+    },
+    "QRectF boundingRect() const override": {
+      "brief": "Reimplements: [QGraphicsItem::boundingRect](xref:qt:QGraphicsItem)() const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicspixmapitem.html#boundingRect"
+    },
+    "Qt::TransformationMode transformationMode() const": {
+      "brief": "Returns the transformation mode of the pixmap.",
+      "url": "https://doc.qt.io/qt-6/qgraphicspixmapitem.html#transformationMode"
+    },
+    "bool contains(const QPointF &point) const override": {
+      "brief": "Reimplements: [QGraphicsItem::contains](xref:qt:QGraphicsItem)(const QPointF &point) const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicspixmapitem.html#contains"
+    },
+    "bool isObscuredBy(const QGraphicsItem *item) const override": {
+      "brief": "Reimplements: [QGraphicsItem::isObscuredBy](xref:qt:QGraphicsItem)(const QGraphicsItem *item) const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicspixmapitem.html#isObscuredBy"
+    },
+    "int type() const override": {
+      "brief": "Reimplements: [QGraphicsItem::type](xref:qt:QGraphicsItem)() const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicspixmapitem.html#type"
+    },
+    "void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override": {
+      "brief": "Reimplements: [QGraphicsItem::paint](xref:qt:QGraphicsItem)(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget).",
+      "url": "https://doc.qt.io/qt-6/qgraphicspixmapitem.html#paint"
+    },
+    "void setOffset(const QPointF &offset)": {
+      "brief": "Sets the pixmap item's offset to *offset*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicspixmapitem.html#setOffset"
+    },
+    "void setOffset(qreal x, qreal y)": {
+      "brief": "This convenience function is equivalent to calling setOffset([QPointF](xref:qt:QPointF)(*x*, *y*)).",
+      "url": "https://doc.qt.io/qt-6/qgraphicspixmapitem.html#setOffset-1"
+    },
+    "void setPixmap(const QPixmap &pixmap)": {
+      "brief": "Sets the item's pixmap to *pixmap*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicspixmapitem.html#setPixmap"
+    },
+    "void setShapeMode(QGraphicsPixmapItem::ShapeMode mode)": {
+      "brief": "Sets the item's shape mode to *mode*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicspixmapitem.html#setShapeMode"
+    },
+    "void setTransformationMode(Qt::TransformationMode mode)": {
+      "brief": "Sets the pixmap item's transformation mode to *mode*, and toggles an update of the item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicspixmapitem.html#setTransformationMode"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

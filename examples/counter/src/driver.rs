@@ -223,6 +223,7 @@ impl Driver {
             Step::Checkpoint => "checkpoint".to_string(),
             Step::Event { handle, signal, .. } => format!("{signal}#{handle}"),
             Step::Gone { handle, .. } => format!("gone#{handle}"),
+            Step::Sync { handle, signal, .. } => format!("sync {signal}#{handle}"),
         };
         if self.opts.measure {
             let _ = self.host.take_timing();
@@ -234,6 +235,9 @@ impl Driver {
             if let Err(e) = self.tk.close(handle) {
                 self.fail(format!("step {index} (close #{handle}): {e}"));
             }
+        }
+        if let Step::Sync { handle, signal, .. } = &step {
+            self.fail(format!("step {index}: sync step ({signal} on #{handle}) has no native action"));
         }
         if let Step::Event { handle, signal, args } = step {
             let res = match (signal.as_str(), args.first()) {

@@ -1,0 +1,290 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkSpinButton`.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 1838,
+      "md": "Creates a new `GtkSpinButton`."
+    },
+    "new_with_range": {
+      "brief": "Creates a new `GtkSpinButton` with the given properties.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 1866,
+      "md": "Creates a new `GtkSpinButton` with the given properties.\n\nThis is a convenience constructor that allows creation\nof a numeric `GtkSpinButton` without manually creating\nan adjustment. The value is initially set to the minimum\nvalue and a page increment of 10 * `step` is the default.\nThe precision of the spin button is equivalent to the\nprecision of `step`.\n\nNote that the way in which the precision is derived works\nbest if `step` is a power of ten. If the resulting precision\nis not suitable for your needs, use\n[`SpinButton.set_digits()`](xref:gtk:Gtk.SpinButton#method:set_digits) to correct it."
+    }
+  },
+  "doc": {
+    "brief": "Allows to enter or change numeric values.",
+    "file": "gtk/gtkspinbutton.c",
+    "line": 69,
+    "md": "Allows to enter or change numeric values.\n\nRather than having to directly type a number into a `GtkEntry`,\n`GtkSpinButton` allows the user to click on one of two arrows\nto increment or decrement the displayed value. A value can still be\ntyped in, with the bonus that it can be checked to ensure it is in a\ngiven range.\n\nThe main properties of a `GtkSpinButton` are through an adjustment.\nSee the [`Adjustment`](xref:gtk:Gtk.Adjustment) documentation for more details about\nan adjustment's properties.\n\nNote that `GtkSpinButton` will by default make its entry large enough\nto accommodate the lower and upper bounds of the adjustment. If this\nis not desired, the automatic sizing can be turned off by explicitly\nsetting [`Editable:width-chars`](xref:gtk:Gtk.Editable#property:width-chars) to a value != -1.\n\n## Using a GtkSpinButton to get an integer\n\n```c\n// Provides a function to retrieve an integer value from a GtkSpinButton\n// and creates a spin button to model percentage values.\n\nint\ngrab_int_value (GtkSpinButton *button,\n                gpointer       user_data)\n{\n  return gtk_spin_button_get_value_as_int (button);\n}\n\nvoid\ncreate_integer_spin_button (void)\n{\n\n  GtkWidget *window, *button;\n  GtkAdjustment *adjustment;\n\n  adjustment = gtk_adjustment_new (50.0, 0.0, 100.0, 1.0, 5.0, 0.0);\n\n  window = gtk_window_new ();\n\n  // creates the spinbutton, with no decimal places\n  button = gtk_spin_button_new (adjustment, 1.0, 0);\n  gtk_window_set_child (GTK_WINDOW (window), button);\n\n  gtk_window_present (GTK_WINDOW (window));\n}\n```\n\n## Using a GtkSpinButton to get a floating point value\n\n```c\n// Provides a function to retrieve a floating point value from a\n// GtkSpinButton, and creates a high precision spin button.\n\nfloat\ngrab_float_value (GtkSpinButton *button,\n                  gpointer       user_data)\n{\n  return gtk_spin_button_get_value (button);\n}\n\nvoid\ncreate_floating_spin_button (void)\n{\n  GtkWidget *window, *button;\n  GtkAdjustment *adjustment;\n\n  adjustment = gtk_adjustment_new (2.500, 0.0, 5.0, 0.001, 0.1, 0.0);\n\n  window = gtk_window_new ();\n\n  // creates the spinbutton, with three decimal places\n  button = gtk_spin_button_new (adjustment, 0.001, 3);\n  gtk_window_set_child (GTK_WINDOW (window), button);\n\n  gtk_window_present (GTK_WINDOW (window));\n}\n```\n\n# Shortcuts and Gestures\n\nThe following signals have default keybindings:\n\n- [`SpinButton::change-value`](xref:gtk:Gtk.SpinButton#event:change-value)\n\n# CSS nodes\n\n```\nspinbutton.horizontal\n├── text\n│    ├── undershoot.left\n│    ╰── undershoot.right\n├── button.down\n╰── button.up\n```\n\n```\nspinbutton.vertical\n├── button.up\n├── text\n│    ├── undershoot.left\n│    ╰── undershoot.right\n╰── button.down\n```\n\n`GtkSpinButton`s main CSS node has the name spinbutton. It creates subnodes\nfor the entry and the two buttons, with these names. The button nodes have\nthe style classes .up and .down. The `GtkText` subnodes (if present) are put\nbelow the text node. The orientation of the spin button is reflected in\nthe .vertical or .horizontal style class on the main node.\n\n# Accessibility\n\n`GtkSpinButton` uses the [`AccessibleRole.spin_button`](xref:gtk:Gtk.AccessibleRole#value:spin_button) role."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:SpinButton",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "configure": {
+      "brief": "Changes the properties of an existing spin button.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 1768,
+      "md": "Changes the properties of an existing spin button.\n\nThe adjustment, climb rate, and number of decimal places\nare updated accordingly."
+    },
+    "get_activates_default": {
+      "brief": "Retrieves the value set by [`SpinButton.set_activates_default()`](xref:gtk:Gtk.SpinButton#method:set_activates_default).",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 1946,
+      "md": "Retrieves the value set by [`SpinButton.set_activates_default()`](xref:gtk:Gtk.SpinButton#method:set_activates_default).",
+      "since": "4.14"
+    },
+    "get_adjustment": {
+      "brief": "Get the adjustment associated with a `GtkSpinButton`.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 1988,
+      "md": "Get the adjustment associated with a `GtkSpinButton`."
+    },
+    "get_climb_rate": {
+      "brief": "Returns the acceleration rate for repeated changes.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 2418,
+      "md": "Returns the acceleration rate for repeated changes."
+    },
+    "get_digits": {
+      "brief": "Fetches the precision of `spin_button`.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 2031,
+      "md": "Fetches the precision of `spin_button`."
+    },
+    "get_increments": {
+      "brief": "Gets the current step and page the increments used by `spin_button`.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 2074,
+      "md": "Gets the current step and page the increments\nused by `spin_button`.\n\nSee [`SpinButton.set_increments()`](xref:gtk:Gtk.SpinButton#method:set_increments)."
+    },
+    "get_numeric": {
+      "brief": "Returns whether non-numeric text can be typed into the spin button.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 2290,
+      "md": "Returns whether non-numeric text can be typed into the spin button."
+    },
+    "get_range": {
+      "brief": "Gets the range allowed for `spin_button`.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 2129,
+      "md": "Gets the range allowed for `spin_button`.\n\nSee [`SpinButton.set_range()`](xref:gtk:Gtk.SpinButton#method:set_range)."
+    },
+    "get_snap_to_ticks": {
+      "brief": "Returns whether the values are corrected to the nearest step.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 2379,
+      "md": "Returns whether the values are corrected to the nearest step."
+    },
+    "get_update_policy": {
+      "brief": "Gets the update behavior of a spin button.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 2241,
+      "md": "Gets the update behavior of a spin button.\n\nSee [`SpinButton.set_update_policy()`](xref:gtk:Gtk.SpinButton#method:set_update_policy)."
+    },
+    "get_value": {
+      "brief": "Get the value in the `spin_button`.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 2152,
+      "md": "Get the value in the `spin_button`."
+    },
+    "get_value_as_int": {
+      "brief": "Get the value `spin_button` represented as an integer.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 2168,
+      "md": "Get the value `spin_button` represented as an integer."
+    },
+    "get_wrap": {
+      "brief": "Returns whether the spin button’s value wraps around to the opposite limit when the upper or lower limit of the range is exceeded.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 2332,
+      "md": "Returns whether the spin button’s value wraps around to the\nopposite limit when the upper or lower limit of the range is\nexceeded."
+    },
+    "set_activates_default": {
+      "brief": "Sets whether activating the spin button will activate the default widget for the window containing the spin button.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 1919,
+      "md": "Sets whether activating the spin button will activate the default\nwidget for the window containing the spin button.\n\nSee [`SpinButton::activate`](xref:gtk:Gtk.SpinButton#event:activate) for what counts as activation.",
+      "since": "4.14"
+    },
+    "set_adjustment": {
+      "brief": "Replaces the `GtkAdjustment` associated with `spin_button`.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 1964,
+      "md": "Replaces the `GtkAdjustment` associated with `spin_button`."
+    },
+    "set_climb_rate": {
+      "brief": "Sets the acceleration rate for repeated changes when you hold down a button or key.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 2395,
+      "md": "Sets the acceleration rate for repeated changes when you\nhold down a button or key."
+    },
+    "set_digits": {
+      "brief": "Set the precision to be displayed by `spin_button`.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 2004,
+      "md": "Set the precision to be displayed by `spin_button`.\n\nUp to 20 digit precision is allowed."
+    },
+    "set_increments": {
+      "brief": "Sets the step and page increments for spin_button.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 2047,
+      "md": "Sets the step and page increments for spin_button.\n\nThis affects how quickly the value changes when\nthe spin button’s arrows are activated."
+    },
+    "set_numeric": {
+      "brief": "Sets the flag that determines if non-numeric text can be typed into the spin button.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 2259,
+      "md": "Sets the flag that determines if non-numeric text can be typed\ninto the spin button."
+    },
+    "set_range": {
+      "brief": "Sets the minimum and maximum allowable values for `spin_button`.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 2098,
+      "md": "Sets the minimum and maximum allowable values for `spin_button`.\n\nIf the current value is outside this range, it will be adjusted\nto fit within the range, otherwise it will remain unchanged."
+    },
+    "set_snap_to_ticks": {
+      "brief": "Sets the policy as to whether values are corrected to the nearest step increment when a spin button is activated after providing an invalid value.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 2350,
+      "md": "Sets the policy as to whether values are corrected to the\nnearest step increment when a spin button is activated after\nproviding an invalid value."
+    },
+    "set_update_policy": {
+      "brief": "Sets the update behavior of a spin button.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 2218,
+      "md": "Sets the update behavior of a spin button.\n\nThis determines whether the spin button is always\nupdated or only when a valid value is set."
+    },
+    "set_value": {
+      "brief": "Sets the value of `spin_button`.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 2190,
+      "md": "Sets the value of `spin_button`."
+    },
+    "set_wrap": {
+      "brief": "Sets the flag that determines if a spin button value wraps around to the opposite limit when the upper or lower limit of the range is exceeded.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 2306,
+      "md": "Sets the flag that determines if a spin button value wraps\naround to the opposite limit when the upper or lower limit\nof the range is exceeded."
+    },
+    "spin": {
+      "brief": "Increment or decrement a spin button’s value in a specified direction by a specified amount.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 2434,
+      "md": "Increment or decrement a spin button’s value in a specified\ndirection by a specified amount."
+    },
+    "update": {
+      "brief": "Manually force an update of the spin button.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 2512,
+      "md": "Manually force an update of the spin button."
+    }
+  },
+  "properties": {
+    "activates-default": {
+      "brief": "Whether to activate the default widget when the spin button is activated.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 387,
+      "md": "Whether to activate the default widget when the spin button is activated.\n\nSee [`SpinButton::activate`](xref:gtk:Gtk.SpinButton#event:activate) for what counts as activation.",
+      "since": "4.14"
+    },
+    "adjustment": {
+      "brief": "The adjustment that holds the value of the spin button.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 401,
+      "md": "The adjustment that holds the value of the spin button."
+    },
+    "climb-rate": {
+      "brief": "The acceleration rate when you hold down a button or key.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 411,
+      "md": "The acceleration rate when you hold down a button or key."
+    },
+    "digits": {
+      "brief": "The number of decimal places to display.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 421,
+      "md": "The number of decimal places to display."
+    },
+    "numeric": {
+      "brief": "Whether non-numeric characters should be ignored.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 442,
+      "md": "Whether non-numeric characters should be ignored."
+    },
+    "snap-to-ticks": {
+      "brief": "Whether erroneous values are automatically changed to the spin buttons nearest step increment.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 431,
+      "md": "Whether erroneous values are automatically changed to the spin buttons\nnearest step increment."
+    },
+    "update-policy": {
+      "brief": "Whether the spin button should update always, or only when the value is acceptable.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 462,
+      "md": "Whether the spin button should update always, or only when the value\nis acceptable."
+    },
+    "value": {
+      "brief": "The current value.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 474,
+      "md": "The current value."
+    },
+    "wrap": {
+      "brief": "Whether a spin button should wrap upon reaching its limits.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 452,
+      "md": "Whether a spin button should wrap upon reaching its limits."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "activate": {
+      "brief": "Emitted when the spin button is activated.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 573,
+      "md": "Emitted when the spin button is activated.\n\nThe keybindings for this signal are all forms of the <kbd>Enter</kbd> key.\n\nIf the <kbd>Enter</kbd> key results in the value being committed to the\nspin button, then activation does not occur until <kbd>Enter</kbd> is\npressed again.",
+      "since": "4.14"
+    },
+    "change-value": {
+      "brief": "Emitted when the user initiates a value change.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 615,
+      "md": "Emitted when the user initiates a value change.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nApplications should not connect to it, but may emit it with\ng_signal_emit_by_name() if they need to control the cursor\nprogrammatically.\n\nThe default bindings for this signal are Up/Down and PageUp/PageDown."
+    },
+    "input": {
+      "brief": "Emitted to convert the users input into a double value.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 489,
+      "md": "Emitted to convert the users input into a double value.\n\nThe signal handler is expected to use [`Editable.get_text()`](xref:gtk:Gtk.Editable#method:get_text)\nto retrieve the text of the spinbutton and set `new_value` to the\nnew value.\n\nThe default conversion uses g_strtod()."
+    },
+    "output": {
+      "brief": "Emitted to tweak the formatting of the value for display.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 518,
+      "md": "Emitted to tweak the formatting of the value for display.\n\n```c\n// show leading zeros\nstatic gboolean\non_output (GtkSpinButton *spin,\n           gpointer       data)\n{\n   char *text;\n   int value;\n\n   value = gtk_spin_button_get_value_as_int (spin);\n   text = g_strdup_printf (\"%02d\", value);\n   gtk_editable_set_text (GTK_EDITABLE (spin), text):\n   g_free (text);\n\n   return TRUE;\n}\n```"
+    },
+    "value-changed": {
+      "brief": "Emitted when the value is changed.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 556,
+      "md": "Emitted when the value is changed.\n\nAlso see the [`SpinButton::output`](xref:gtk:Gtk.SpinButton#event:output) signal."
+    },
+    "wrapped": {
+      "brief": "Emitted right after the spinbutton wraps from its maximum to its minimum value or vice-versa.",
+      "file": "gtk/gtkspinbutton.c",
+      "line": 598,
+      "md": "Emitted right after the spinbutton wraps from its maximum\nto its minimum value or vice-versa."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

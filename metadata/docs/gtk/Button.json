@@ -1,0 +1,188 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkButton` widget.",
+      "file": "gtk/gtkbutton.c",
+      "line": 664,
+      "md": "Creates a new `GtkButton` widget.\n\nTo add a child widget to the button, use [`Button.set_child()`](xref:gtk:Gtk.Button#method:set_child)."
+    },
+    "new_from_icon_name": {
+      "brief": "Creates a new button containing an icon from the current icon theme.",
+      "file": "gtk/gtkbutton.c",
+      "line": 693,
+      "md": "Creates a new button containing an icon from the current icon theme.\n\nIf the icon name isn’t known, a “broken image” icon will be\ndisplayed instead. If the current icon theme is changed, the icon\nwill be updated appropriately."
+    },
+    "new_with_label": {
+      "brief": "Creates a `GtkButton` widget with a `GtkLabel` child.",
+      "file": "gtk/gtkbutton.c",
+      "line": 679,
+      "md": "Creates a `GtkButton` widget with a `GtkLabel` child."
+    },
+    "new_with_mnemonic": {
+      "brief": "Creates a new `GtkButton` containing a label.",
+      "file": "gtk/gtkbutton.c",
+      "line": 717,
+      "md": "Creates a new `GtkButton` containing a label.\n\nIf characters in `label` are preceded by an underscore, they are underlined.\nIf you need a literal underscore character in a label, use “__” (two\nunderscores). The first underlined character represents a keyboard\naccelerator called a mnemonic. Pressing <kbd>Alt</kbd> and that key\nactivates the button."
+    }
+  },
+  "doc": {
+    "brief": "Calls a callback function when the button is clicked.",
+    "file": "gtk/gtkbutton.c",
+    "line": 25,
+    "md": "Calls a callback function when the button is clicked.\n\nThe `GtkButton` widget can hold any valid child widget. That is, it can hold\nalmost any other standard `GtkWidget`. The most commonly used child is the\n`GtkLabel`.\n\n# Shortcuts and Gestures\n\nThe following signals have default keybindings:\n\n- [`Button::activate`](xref:gtk:Gtk.Button#event:activate)\n\n# CSS nodes\n\n`GtkButton` has a single CSS node with name button. The node will get the\nstyle classes .image-button or .text-button, if the content is just an\nimage or label, respectively. It may also receive the .flat style class.\nWhen activating a button via the keyboard, the button will temporarily\ngain the .keyboard-activating style class.\n\nOther style classes that are commonly used with `GtkButton` include\n.suggested-action and .destructive-action. In special cases, buttons\ncan be made round by adding the .circular style class.\n\nButton-like widgets like [`ToggleButton`](xref:gtk:Gtk.ToggleButton), [`MenuButton`](xref:gtk:Gtk.MenuButton),\n[`VolumeButton`](xref:gtk:Gtk.VolumeButton), [`LockButton`](xref:gtk:Gtk.LockButton), [`ColorButton`](xref:gtk:Gtk.ColorButton)\nor [`FontButton`](xref:gtk:Gtk.FontButton) use style classes such as .toggle, .popup, .scale,\n.lock, .color on the button node to differentiate themselves from a plain\n`GtkButton`.\n\n# Accessibility\n\n`GtkButton` uses the [`AccessibleRole.button`](xref:gtk:Gtk.AccessibleRole#value:button) role."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Button",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_can_shrink": {
+      "brief": "Retrieves whether the button can be smaller than the natural size of its contents.",
+      "file": "gtk/gtkbutton.c",
+      "line": 1183,
+      "md": "Retrieves whether the button can be smaller than the natural\nsize of its contents.",
+      "since": "4.12"
+    },
+    "get_child": {
+      "brief": "Gets the child widget of `button`.",
+      "file": "gtk/gtkbutton.c",
+      "line": 1116,
+      "md": "Gets the child widget of `button`."
+    },
+    "get_has_frame": {
+      "brief": "Returns whether the button has a frame.",
+      "file": "gtk/gtkbutton.c",
+      "line": 765,
+      "md": "Returns whether the button has a frame."
+    },
+    "get_icon_name": {
+      "brief": "Returns the icon name of the button.",
+      "file": "gtk/gtkbutton.c",
+      "line": 1033,
+      "md": "Returns the icon name of the button.\n\nIf the icon name has not been set with [`Button.set_icon_name()`](xref:gtk:Gtk.Button#method:set_icon_name)\nthe return value will be `NULL`. This will be the case if you create\nan empty button with [`Button.new()`](xref:gtk:Gtk.Button#constructor:new) to use as a container."
+    },
+    "get_label": {
+      "brief": "Fetches the text from the label of the button.",
+      "file": "gtk/gtkbutton.c",
+      "line": 906,
+      "md": "Fetches the text from the label of the button.\n\nIf the label text has not been set with [`Button.set_label()`](xref:gtk:Gtk.Button#method:set_label)\nthe return value will be `NULL`. This will be the case if you create\nan empty button with [`Button.new()`](xref:gtk:Gtk.Button#constructor:new) to use as a container."
+    },
+    "get_use_underline": {
+      "brief": "gets whether underlines are interpreted as mnemonics.",
+      "file": "gtk/gtkbutton.c",
+      "line": 965,
+      "md": "gets whether underlines are interpreted as mnemonics.\n\nSee [`Button.set_use_underline()`](xref:gtk:Gtk.Button#method:set_use_underline)."
+    },
+    "set_can_shrink": {
+      "brief": "Sets whether the button size can be smaller than the natural size of its contents.",
+      "file": "gtk/gtkbutton.c",
+      "line": 1134,
+      "md": "Sets whether the button size can be smaller than the natural size of\nits contents.\n\nFor text buttons, setting `can_shrink` to true will ellipsize the label.\n\nFor icons and custom children, this function has no effect.",
+      "since": "4.12"
+    },
+    "set_child": {
+      "brief": "Sets the child widget of `button`.",
+      "file": "gtk/gtkbutton.c",
+      "line": 1074,
+      "md": "Sets the child widget of `button`.\n\nNote that by using this API, you take full responsibility for setting\nup the proper accessibility label and description information for `button`.\nMost likely, you'll either set the accessibility label or description\nfor `button` explicitly, or you'll set a labelled-by or described-by\nrelations from `child` to `button`."
+    },
+    "set_has_frame": {
+      "brief": "Sets the style of the button.",
+      "file": "gtk/gtkbutton.c",
+      "line": 738,
+      "md": "Sets the style of the button.\n\nButtons can have a flat appearance or have a frame drawn around them."
+    },
+    "set_icon_name": {
+      "brief": "Adds a `GtkImage` with the given icon name as a child.",
+      "file": "gtk/gtkbutton.c",
+      "line": 996,
+      "md": "Adds a `GtkImage` with the given icon name as a child.\n\nIf `button` already contains a child widget, that child widget will\nbe removed and replaced with the image."
+    },
+    "set_label": {
+      "brief": "Sets the text of the label of the button to `label`.",
+      "file": "gtk/gtkbutton.c",
+      "line": 861,
+      "md": "Sets the text of the label of the button to `label`.\n\nThis will also clear any previously set labels."
+    },
+    "set_use_underline": {
+      "brief": "Sets whether to use underlines as mnemonics.",
+      "file": "gtk/gtkbutton.c",
+      "line": 932,
+      "md": "Sets whether to use underlines as mnemonics.\n\nIf true, an underline in the text of the button label indicates\nthe next character should be used for the mnemonic accelerator key."
+    }
+  },
+  "properties": {
+    "can-shrink": {
+      "brief": "Whether the size of the button can be made smaller than the natural size of its contents.",
+      "file": "gtk/gtkbutton.c",
+      "line": 274,
+      "md": "Whether the size of the button can be made smaller than the natural\nsize of its contents.\n\nFor text buttons, setting this property will allow ellipsizing the label.\n\nIf the contents of a button are an icon or a custom widget, setting this\nproperty has no effect.",
+      "since": "4.12"
+    },
+    "child": {
+      "brief": "The child widget.",
+      "file": "gtk/gtkbutton.c",
+      "line": 264,
+      "md": "The child widget."
+    },
+    "has-frame": {
+      "brief": "Whether the button has a frame.",
+      "file": "gtk/gtkbutton.c",
+      "line": 244,
+      "md": "Whether the button has a frame."
+    },
+    "icon-name": {
+      "brief": "The name of the icon used to automatically populate the button.",
+      "file": "gtk/gtkbutton.c",
+      "line": 254,
+      "md": "The name of the icon used to automatically populate the button."
+    },
+    "label": {
+      "brief": "Text of the label inside the button, if the button contains a label widget.",
+      "file": "gtk/gtkbutton.c",
+      "line": 223,
+      "md": "Text of the label inside the button, if the button contains a label widget."
+    },
+    "use-underline": {
+      "brief": "If set, an underline in the text indicates that the following character is to be used as mnemonic.",
+      "file": "gtk/gtkbutton.c",
+      "line": 233,
+      "md": "If set, an underline in the text indicates that the following character is\nto be used as mnemonic."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "activate": {
+      "brief": "Emitted to animate press then release.",
+      "file": "gtk/gtkbutton.c",
+      "line": 312,
+      "md": "Emitted to animate press then release.\n\nThis is an action signal. Applications should never connect\nto this signal, but use the [`Button::clicked`](xref:gtk:Gtk.Button#event:clicked) signal.\n\nThe default bindings for this signal are all forms of the\n<kbd>␣</kbd> and <kbd>Enter</kbd> keys."
+    },
+    "clicked": {
+      "brief": "Emitted when the button has been activated (pressed and released).",
+      "file": "gtk/gtkbutton.c",
+      "line": 297,
+      "md": "Emitted when the button has been activated (pressed and released)."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "activate": {
+      "brief": "Signal that causes the button to animate press then release.",
+      "file": "gtk/gtkbutton.h",
+      "line": 57,
+      "md": "Signal that causes the button to animate press then\n   release. Applications should never connect to this signal, but use\n   the `clicked` signal."
+    },
+    "clicked": {
+      "brief": "Signal emitted when the button has been activated (pressed and released).",
+      "file": "gtk/gtkbutton.h",
+      "line": 56,
+      "md": "Signal emitted when the button has been activated (pressed and released)."
+    }
+  }
+}

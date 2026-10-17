@@ -1,0 +1,187 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkFontDialogButton` with the given `GtkFontDialog`.",
+      "file": "gtk/gtkfontdialogbutton.c",
+      "line": 733,
+      "md": "Creates a new `GtkFontDialogButton` with the\ngiven `GtkFontDialog`.\n\nYou can pass `NULL` to this function and set a `GtkFontDialog`\nlater. The button will be insensitive until that happens.",
+      "since": "4.10"
+    }
+  },
+  "doc": {
+    "brief": "Opens a font chooser dialog to select a font.",
+    "file": "gtk/gtkfontdialogbutton.c",
+    "line": 40,
+    "md": "Opens a font chooser dialog to select a font.\n\nIt is suitable widget for selecting a font in a preference dialog.\n\n# CSS nodes\n\n```\nfontbutton\n╰── button.font\n    ╰── [content]\n```\n\n`GtkFontDialogButton` has a single CSS node with name fontbutton which\ncontains a button node with the .font style class.",
+    "since": "4.10"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:FontDialogButton",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_dialog": {
+      "brief": "Returns the `GtkFontDialog` of `self`.",
+      "file": "gtk/gtkfontdialogbutton.c",
+      "line": 792,
+      "md": "Returns the `GtkFontDialog` of `self`.",
+      "since": "4.10"
+    },
+    "get_font_desc": {
+      "brief": "Returns the font of the button.",
+      "file": "gtk/gtkfontdialogbutton.c",
+      "line": 886,
+      "md": "Returns the font of the button.\n\nThis function is what should be used to obtain\nthe font that was chosen by the user. To get\ninformed about changes, listen to \"notify::font-desc\".",
+      "since": "4.10"
+    },
+    "get_font_features": {
+      "brief": "Returns the font features of the button.",
+      "file": "gtk/gtkfontdialogbutton.c",
+      "line": 937,
+      "md": "Returns the font features of the button.\n\nThis function is what should be used to obtain the font features\nthat were chosen by the user. To get informed about changes, listen\nto \"notify::font-features\".\n\nNote that the button will only let users choose font features\nif [`FontDialogButton:level`](xref:gtk:Gtk.FontDialogButton#property:level) is set to\n`GTK_FONT_LEVEL_FEATURES`.",
+      "since": "4.10"
+    },
+    "get_language": {
+      "brief": "Returns the language that is used for font features.",
+      "file": "gtk/gtkfontdialogbutton.c",
+      "line": 988,
+      "md": "Returns the language that is used for font features.",
+      "since": "4.10"
+    },
+    "get_level": {
+      "brief": "Returns the level of detail at which this dialog lets the user select fonts.",
+      "file": "gtk/gtkfontdialogbutton.c",
+      "line": 810,
+      "md": "Returns the level of detail at which this dialog\nlets the user select fonts.",
+      "since": "4.10"
+    },
+    "get_use_font": {
+      "brief": "Returns whether the selected font is used in the label.",
+      "file": "gtk/gtkfontdialogbutton.c",
+      "line": 1036,
+      "md": "Returns whether the selected font is used in the label.",
+      "since": "4.10"
+    },
+    "get_use_size": {
+      "brief": "Returns whether the selected font size is used in the label.",
+      "file": "gtk/gtkfontdialogbutton.c",
+      "line": 1081,
+      "md": "Returns whether the selected font size is used in the label.",
+      "since": "4.10"
+    },
+    "set_dialog": {
+      "brief": "Sets a `GtkFontDialog` object to use for creating the font chooser dialog that is presented when the user clicks the button.",
+      "file": "gtk/gtkfontdialogbutton.c",
+      "line": 766,
+      "md": "Sets a `GtkFontDialog` object to use for\ncreating the font chooser dialog that is\npresented when the user clicks the button.",
+      "since": "4.10"
+    },
+    "set_font_desc": {
+      "brief": "Sets the font of the button.",
+      "file": "gtk/gtkfontdialogbutton.c",
+      "line": 853,
+      "md": "Sets the font of the button.",
+      "since": "4.10"
+    },
+    "set_font_features": {
+      "brief": "Sets the font features of the button.",
+      "file": "gtk/gtkfontdialogbutton.c",
+      "line": 908,
+      "md": "Sets the font features of the button.",
+      "since": "4.10"
+    },
+    "set_language": {
+      "brief": "Sets the language to use for font features.",
+      "file": "gtk/gtkfontdialogbutton.c",
+      "line": 963,
+      "md": "Sets the language to use for font features.",
+      "since": "4.10"
+    },
+    "set_level": {
+      "brief": "Sets the level of detail at which this dialog lets the user select fonts.",
+      "file": "gtk/gtkfontdialogbutton.c",
+      "line": 829,
+      "md": "Sets the level of detail at which this dialog\nlets the user select fonts.",
+      "since": "4.10"
+    },
+    "set_use_font": {
+      "brief": "If `use_font` is `TRUE`, the font name will be written using the selected font.",
+      "file": "gtk/gtkfontdialogbutton.c",
+      "line": 1009,
+      "md": "If `use_font` is `TRUE`, the font name will be written\nusing the selected font.",
+      "since": "4.10"
+    },
+    "set_use_size": {
+      "brief": "If `use_size` is `TRUE`, the font name will be written using the selected font size.",
+      "file": "gtk/gtkfontdialogbutton.c",
+      "line": 1054,
+      "md": "If `use_size` is `TRUE`, the font name will be written\nusing the selected font size.",
+      "since": "4.10"
+    }
+  },
+  "properties": {
+    "dialog": {
+      "brief": "The `GtkFontDialog` that contains parameters for the font chooser dialog.",
+      "file": "gtk/gtkfontdialogbutton.c",
+      "line": 302,
+      "md": "The `GtkFontDialog` that contains parameters for\nthe font chooser dialog.",
+      "since": "4.10"
+    },
+    "font-desc": {
+      "brief": "The selected font.",
+      "file": "gtk/gtkfontdialogbutton.c",
+      "line": 326,
+      "md": "The selected font.\n\nThis property can be set to give the button its initial\nfont, and it will be updated to reflect the users choice\nin the font chooser dialog.\n\nListen to `notify::font-desc` to get informed about changes\nto the buttons font.",
+      "since": "4.10"
+    },
+    "font-features": {
+      "brief": "The selected font features.",
+      "file": "gtk/gtkfontdialogbutton.c",
+      "line": 345,
+      "md": "The selected font features.\n\nThis property will be updated to reflect the users choice\nin the font chooser dialog.\n\nListen to `notify::font-features` to get informed about changes\nto the buttons font features.",
+      "since": "4.10"
+    },
+    "language": {
+      "brief": "The selected language for font features.",
+      "file": "gtk/gtkfontdialogbutton.c",
+      "line": 363,
+      "md": "The selected language for font features.\n\nThis property will be updated to reflect the users choice\nin the font chooser dialog.\n\nListen to `notify::language` to get informed about changes\nto the buttons language.",
+      "since": "4.10"
+    },
+    "level": {
+      "brief": "The level of detail for the font chooser dialog.",
+      "file": "gtk/gtkfontdialogbutton.c",
+      "line": 315,
+      "md": "The level of detail for the font chooser dialog."
+    },
+    "use-font": {
+      "brief": "Whether the buttons label will be drawn in the selected font.",
+      "file": "gtk/gtkfontdialogbutton.c",
+      "line": 381,
+      "md": "Whether the buttons label will be drawn in the selected font."
+    },
+    "use-size": {
+      "brief": "Whether the buttons label will use the selected font size.",
+      "file": "gtk/gtkfontdialogbutton.c",
+      "line": 391,
+      "md": "Whether the buttons label will use the selected font size."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "activate": {
+      "brief": "Emitted when the font dialog button is activated.",
+      "file": "gtk/gtkfontdialogbutton.c",
+      "line": 403,
+      "md": "Emitted when the font dialog button is activated.\n\nThe `::activate` signal on `GtkFontDialogButton` is an action signal\nand emitting it causes the button to pop up its dialog.",
+      "since": "4.14"
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

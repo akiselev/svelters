@@ -1,0 +1,139 @@
+{
+  "doc": {
+    "brief": "The QProxyStyle class is a convenience class that simplifies dynamically overriding [QStyle](xref:qt:QStyle) elements.",
+    "index_brief": "Convenience class that simplifies dynamically overriding QStyle elements",
+    "url": "https://doc.qt.io/qt-6/qproxystyle.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QProxyStyle",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QIcon standardIcon(QStyle::StandardPixmap standardIcon, const QStyleOption *option, const QWidget *widget) const override": {
+      "brief": "Reimplements: [QStyle::standardIcon](xref:qt:QStyle)(QStyle::StandardPixmap standardIcon, const QStyleOption *option, const QWidget *widget) const.",
+      "url": "https://doc.qt.io/qt-6/qproxystyle.html#standardIcon"
+    },
+    "QPalette standardPalette() const override": {
+      "brief": "Reimplements: [QStyle::standardPalette](xref:qt:QStyle)() const.",
+      "url": "https://doc.qt.io/qt-6/qproxystyle.html#standardPalette"
+    },
+    "QPixmap generatedIconPixmap(QIcon::Mode iconMode, const QPixmap &pixmap, const QStyleOption *opt) const override": {
+      "brief": "Reimplements: [QCommonStyle::generatedIconPixmap](xref:qt:QCommonStyle)(QIcon::Mode iconMode, const QPixmap &pixmap, const QStyleOption *opt) const.",
+      "url": "https://doc.qt.io/qt-6/qproxystyle.html#generatedIconPixmap"
+    },
+    "QPixmap standardPixmap(QStyle::StandardPixmap standardPixmap, const QStyleOption *opt, const QWidget *widget) const override": {
+      "brief": "Reimplements: [QCommonStyle::standardPixmap](xref:qt:QCommonStyle)(QStyle::StandardPixmap sp, const QStyleOption *option, const QWidget *widget) const.",
+      "url": "https://doc.qt.io/qt-6/qproxystyle.html#standardPixmap"
+    },
+    "QProxyStyle(QStyle *style)": {
+      "brief": "Constructs a QProxyStyle object for overriding behavior in the specified *style*, or in the default native [style](xref:qt:QApplication) if *style* is not specified.",
+      "url": "https://doc.qt.io/qt-6/qproxystyle.html#QProxyStyle"
+    },
+    "QProxyStyle(const QString &key)": {
+      "brief": "Constructs a QProxyStyle object for overriding behavior in the base style specified by style *key*, or in the current [application style](xref:qt:QApplication) if the specified style *key* is...",
+      "url": "https://doc.qt.io/qt-6/qproxystyle.html#QProxyStyle-1"
+    },
+    "QRect itemPixmapRect(const QRect &r, int flags, const QPixmap &pixmap) const override": {
+      "brief": "Reimplements: [QStyle::itemPixmapRect](xref:qt:QStyle)(const QRect &rectangle, int alignment, const QPixmap &pixmap) const.",
+      "url": "https://doc.qt.io/qt-6/qproxystyle.html#itemPixmapRect"
+    },
+    "QRect itemTextRect(const QFontMetrics &fm, const QRect &r, int flags, bool enabled, const QString &text) const override": {
+      "brief": "Reimplements: [QStyle::itemTextRect](xref:qt:QStyle)(const QFontMetrics &metrics, const QRect &rectangle, int alignment, bool enabled, const QString &text) const.",
+      "url": "https://doc.qt.io/qt-6/qproxystyle.html#itemTextRect"
+    },
+    "QRect subControlRect(QStyle::ComplexControl cc, const QStyleOptionComplex *option, QStyle::SubControl sc, const QWidget *widget) const override": {
+      "brief": "Reimplements: [QCommonStyle::subControlRect](xref:qt:QCommonStyle)(QStyle::ComplexControl cc, const QStyleOptionComplex *opt, QStyle::SubControl sc, const QWidget *widget) const.",
+      "url": "https://doc.qt.io/qt-6/qproxystyle.html#subControlRect"
+    },
+    "QRect subElementRect(QStyle::SubElement element, const QStyleOption *option, const QWidget *widget) const override": {
+      "brief": "Reimplements: [QCommonStyle::subElementRect](xref:qt:QCommonStyle)(QStyle::SubElement sr, const QStyleOption *opt, const QWidget *widget) const.",
+      "url": "https://doc.qt.io/qt-6/qproxystyle.html#subElementRect"
+    },
+    "QSize sizeFromContents(QStyle::ContentsType type, const QStyleOption *option, const QSize &size, const QWidget *widget) const override": {
+      "brief": "Reimplements: [QCommonStyle::sizeFromContents](xref:qt:QCommonStyle)(QStyle::ContentsType contentsType, const QStyleOption *opt, const QSize &contentsSize, const QWidget *widget) const.",
+      "url": "https://doc.qt.io/qt-6/qproxystyle.html#sizeFromContents"
+    },
+    "QStyle * baseStyle() const": {
+      "brief": "Returns the proxy base style object.",
+      "url": "https://doc.qt.io/qt-6/qproxystyle.html#baseStyle"
+    },
+    "QStyle::SubControl hitTestComplexControl(QStyle::ComplexControl control, const QStyleOptionComplex *option, const QPoint &pos, const QWidget *widget) const override": {
+      "brief": "Reimplements: [QCommonStyle::hitTestComplexControl](xref:qt:QCommonStyle)(QStyle::ComplexControl cc, const QStyleOptionComplex *opt, const QPoint &pt, const QWidget *widget) const.",
+      "url": "https://doc.qt.io/qt-6/qproxystyle.html#hitTestComplexControl"
+    },
+    "bool event(QEvent *e) override": {
+      "brief": "Reimplements: [QObject::event](xref:qt:QObject)(QEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qproxystyle.html#event"
+    },
+    "int layoutSpacing(QSizePolicy::ControlType control1, QSizePolicy::ControlType control2, Qt::Orientation orientation, const QStyleOption *option, const QWidget *widget) const override": {
+      "brief": "Reimplements: [QCommonStyle::layoutSpacing](xref:qt:QCommonStyle)(QSizePolicy::ControlType control1, QSizePolicy::ControlType control2, Qt::Orientation orientation, const QStyleOption *option, const...",
+      "url": "https://doc.qt.io/qt-6/qproxystyle.html#layoutSpacing"
+    },
+    "int pixelMetric(QStyle::PixelMetric metric, const QStyleOption *option, const QWidget *widget) const override": {
+      "brief": "Reimplements: [QCommonStyle::pixelMetric](xref:qt:QCommonStyle)(QStyle::PixelMetric m, const QStyleOption *opt, const QWidget *widget) const.",
+      "url": "https://doc.qt.io/qt-6/qproxystyle.html#pixelMetric"
+    },
+    "int styleHint(QStyle::StyleHint hint, const QStyleOption *option, const QWidget *widget, QStyleHintReturn *returnData) const override": {
+      "brief": "Reimplements: [QCommonStyle::styleHint](xref:qt:QCommonStyle)(QStyle::StyleHint sh, const QStyleOption *opt, const QWidget *widget, QStyleHintReturn *hret) const.",
+      "url": "https://doc.qt.io/qt-6/qproxystyle.html#styleHint"
+    },
+    "void drawComplexControl(QStyle::ComplexControl control, const QStyleOptionComplex *option, QPainter *painter, const QWidget *widget) const override": {
+      "brief": "Reimplements: [QCommonStyle::drawComplexControl](xref:qt:QCommonStyle)(QStyle::ComplexControl cc, const QStyleOptionComplex *opt, QPainter *p, const QWidget *widget) const.",
+      "url": "https://doc.qt.io/qt-6/qproxystyle.html#drawComplexControl"
+    },
+    "void drawControl(QStyle::ControlElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const override": {
+      "brief": "Reimplements: [QCommonStyle::drawControl](xref:qt:QCommonStyle)(QStyle::ControlElement element, const QStyleOption *opt, QPainter *p, const QWidget *widget) const.",
+      "url": "https://doc.qt.io/qt-6/qproxystyle.html#drawControl"
+    },
+    "void drawItemPixmap(QPainter *painter, const QRect &rect, int alignment, const QPixmap &pixmap) const override": {
+      "brief": "Reimplements: [QStyle::drawItemPixmap](xref:qt:QStyle)(QPainter *painter, const QRect &rectangle, int alignment, const QPixmap &pixmap) const.",
+      "url": "https://doc.qt.io/qt-6/qproxystyle.html#drawItemPixmap"
+    },
+    "void drawItemText(QPainter *painter, const QRect &rect, int flags, const QPalette &pal, bool enabled, const QString &text, QPalette::ColorRole textRole) const override": {
+      "brief": "Reimplements: [QStyle::drawItemText](xref:qt:QStyle)(QPainter *painter, const QRect &rectangle, int alignment, const QPalette &palette, bool enabled, const QString &text, QPalette::ColorRole...",
+      "url": "https://doc.qt.io/qt-6/qproxystyle.html#drawItemText"
+    },
+    "void drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const override": {
+      "brief": "Reimplements: [QCommonStyle::drawPrimitive](xref:qt:QCommonStyle)(QStyle::PrimitiveElement pe, const QStyleOption *opt, QPainter *p, const QWidget *widget) const.",
+      "url": "https://doc.qt.io/qt-6/qproxystyle.html#drawPrimitive"
+    },
+    "void polish(QApplication *app) override": {
+      "brief": "Reimplements: [QCommonStyle::polish](xref:qt:QCommonStyle)(QApplication *app).",
+      "url": "https://doc.qt.io/qt-6/qproxystyle.html#polish"
+    },
+    "void polish(QPalette &pal) override": {
+      "brief": "Reimplements: [QCommonStyle::polish](xref:qt:QCommonStyle)(QPalette &pal).",
+      "url": "https://doc.qt.io/qt-6/qproxystyle.html#polish-1"
+    },
+    "void polish(QWidget *widget) override": {
+      "brief": "Reimplements: [QCommonStyle::polish](xref:qt:QCommonStyle)(QWidget *widget).",
+      "url": "https://doc.qt.io/qt-6/qproxystyle.html#polish-2"
+    },
+    "void setBaseStyle(QStyle *style)": {
+      "brief": "Sets the base style that should be proxied.",
+      "url": "https://doc.qt.io/qt-6/qproxystyle.html#setBaseStyle"
+    },
+    "void unpolish(QApplication *app) override": {
+      "brief": "Reimplements: [QCommonStyle::unpolish](xref:qt:QCommonStyle)(QApplication *application).",
+      "url": "https://doc.qt.io/qt-6/qproxystyle.html#unpolish"
+    },
+    "void unpolish(QWidget *widget) override": {
+      "brief": "Reimplements: [QCommonStyle::unpolish](xref:qt:QCommonStyle)(QWidget *widget).",
+      "url": "https://doc.qt.io/qt-6/qproxystyle.html#unpolish-1"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

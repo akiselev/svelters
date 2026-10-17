@@ -42,20 +42,26 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QTabWidget::TabPosition",
       "members": [
         {
+          "cpp": "QTabWidget::North",
           "name": "North",
           "value": "0"
         },
         {
+          "cpp": "QTabWidget::South",
           "name": "South",
           "value": "1"
         },
         {
+          "cpp": "QTabWidget::West",
           "name": "West",
           "value": "2"
         },
         {
+          "cpp": "QTabWidget::East",
           "name": "East",
           "value": "3"
         }
@@ -71,15 +77,20 @@
         "scoped": false
       },
       "name": "TabPosition",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QTabWidget::TabShape",
       "members": [
         {
+          "cpp": "QTabWidget::Rounded",
           "name": "Rounded",
           "value": "0"
         },
         {
+          "cpp": "QTabWidget::Triangular",
           "name": "Triangular",
           "value": "1"
         }
@@ -93,12 +104,23 @@
         "scoped": false
       },
       "name": "TabShape",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QTabWidget",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QTabWidget:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -132,7 +154,7 @@
             "native": "const QIcon &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QIcon>"
           }
         },
         {
@@ -289,7 +311,7 @@
             "native": "Qt::Corner",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Corner>"
           }
         }
       ],
@@ -427,7 +449,7 @@
         "native": "Qt::TextElideMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::TextElideMode>"
       },
       "signature": "Qt::TextElideMode elideMode() const",
       "since": null,
@@ -553,7 +575,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize iconSize() const",
       "since": null,
@@ -676,7 +698,7 @@
             "native": "const QIcon &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QIcon>"
           }
         },
         {
@@ -914,7 +936,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize minimumSizeHint() const override",
       "since": null,
@@ -1064,7 +1086,7 @@
             "native": "Qt::Corner",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::Corner>"
           }
         }
       ],
@@ -1212,7 +1234,7 @@
             "native": "Qt::TextElideMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::TextElideMode>"
           }
         }
       ],
@@ -1249,7 +1271,7 @@
             "native": "const QSize &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Size>"
           }
         }
       ],
@@ -1454,7 +1476,7 @@
             "native": "const QIcon &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QIcon>"
           }
         }
       ],
@@ -1491,7 +1513,7 @@
             "native": "QTabWidget::TabPosition",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QTabWidget::TabPosition>"
           }
         }
       ],
@@ -1528,7 +1550,7 @@
             "native": "QTabWidget::TabShape",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QTabWidget::TabShape>"
           }
         }
       ],
@@ -1861,7 +1883,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,
@@ -1950,7 +1972,7 @@
         "native": "QIcon",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QIcon>"
       },
       "signature": "QIcon tabIcon(int index) const",
       "since": null,
@@ -2013,7 +2035,7 @@
         "native": "QTabWidget::TabPosition",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QTabWidget::TabPosition>"
       },
       "signature": "QTabWidget::TabPosition tabPosition() const",
       "since": null,
@@ -2076,7 +2098,7 @@
         "native": "QTabWidget::TabShape",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QTabWidget::TabShape>"
       },
       "signature": "QTabWidget::TabShape tabShape() const",
       "since": null,
@@ -2365,6 +2387,8 @@
         "set": null
       },
       "brief": "The number of tabs in the tab bar",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "count",
       "metaobject": {
         "constant": false,
@@ -2385,6 +2409,7 @@
       "name": "count",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -2405,6 +2430,8 @@
         "set": "setCurrentIndex"
       },
       "brief": "The index position of the current tab page",
+      "default": -1,
+      "default_origin": "runtime",
       "js_name": "currentIndex",
       "metaobject": {
         "constant": false,
@@ -2428,6 +2455,7 @@
         "signal": "currentChanged(int)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -2448,6 +2476,8 @@
         "set": "setDocumentMode"
       },
       "brief": "Whether or not the tab widget is rendered in a mode suitable for document pages. This is the same as document mode on macOS",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "documentMode",
       "metaobject": {
         "constant": false,
@@ -2468,6 +2498,7 @@
       "name": "documentMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2488,6 +2519,8 @@
         "set": "setElideMode"
       },
       "brief": "How to elide text in the tab bar",
+      "default": "ElideNone",
+      "default_origin": "runtime",
       "js_name": "elideMode",
       "metaobject": {
         "constant": false,
@@ -2508,12 +2541,13 @@
       "name": "elideMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::TextElideMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::TextElideMode>"
       }
     },
     {
@@ -2528,6 +2562,7 @@
         "set": "setIconSize"
       },
       "brief": "Size for icons in the tab bar",
+      "default": null,
       "js_name": "iconSize",
       "metaobject": {
         "constant": false,
@@ -2548,12 +2583,13 @@
       "name": "iconSize",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       }
     },
     {
@@ -2568,6 +2604,8 @@
         "set": "setMovable"
       },
       "brief": "This property holds whether the user can move the tabs within the tabbar area",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "movable",
       "metaobject": {
         "constant": false,
@@ -2588,6 +2626,7 @@
       "name": "movable",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2608,6 +2647,8 @@
         "set": "setTabBarAutoHide"
       },
       "brief": "If true, the tab bar is automatically hidden when it contains less than 2 tabs",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "tabBarAutoHide",
       "metaobject": {
         "constant": false,
@@ -2628,6 +2669,7 @@
       "name": "tabBarAutoHide",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2648,6 +2690,8 @@
         "set": "setTabPosition"
       },
       "brief": "The position of the tabs in this tab widget",
+      "default": "North",
+      "default_origin": "runtime",
       "js_name": "tabPosition",
       "metaobject": {
         "constant": false,
@@ -2668,12 +2712,13 @@
       "name": "tabPosition",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "TabPosition",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<TabPosition>"
+        "ref": "enum<QTabWidget::TabPosition>"
       }
     },
     {
@@ -2688,6 +2733,8 @@
         "set": "setTabShape"
       },
       "brief": "The shape of the tabs in this tab widget",
+      "default": "Rounded",
+      "default_origin": "runtime",
       "js_name": "tabShape",
       "metaobject": {
         "constant": false,
@@ -2708,12 +2755,13 @@
       "name": "tabShape",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "TabShape",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<TabShape>"
+        "ref": "enum<QTabWidget::TabShape>"
       }
     },
     {
@@ -2728,6 +2776,8 @@
         "set": "setTabsClosable"
       },
       "brief": "Whether close buttons are automatically added to each tab",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "tabsClosable",
       "metaobject": {
         "constant": false,
@@ -2748,6 +2798,7 @@
       "name": "tabsClosable",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2768,6 +2819,8 @@
         "set": "setUsesScrollButtons"
       },
       "brief": "Whether or not a tab bar should use buttons to scroll tabs when it has many tabs",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "usesScrollButtons",
       "metaobject": {
         "constant": false,
@@ -2788,6 +2841,7 @@
       "name": "usesScrollButtons",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",

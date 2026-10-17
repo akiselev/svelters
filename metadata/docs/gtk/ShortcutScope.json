@@ -1,0 +1,43 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Describes where [`Shortcut`](xref:gtk:Shortcut)s added to a [`ShortcutController`](xref:gtk:ShortcutController) get handled.",
+    "file": "gtk/gtkenums.h",
+    "line": 1094,
+    "md": "Describes where [`Shortcut`](xref:gtk:Shortcut)s added to a\n[`ShortcutController`](xref:gtk:ShortcutController) get handled."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ShortcutScope",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "global": {
+      "brief": "Shortcuts are handled by the root widget.",
+      "file": "gtk/gtkenums.h",
+      "line": 1100,
+      "md": "Shortcuts are handled by\n  the root widget."
+    },
+    "local": {
+      "brief": "Shortcuts are handled inside the widget the controller belongs to.",
+      "file": "gtk/gtkenums.h",
+      "line": 1096,
+      "md": "Shortcuts are handled inside\n  the widget the controller belongs to."
+    },
+    "managed": {
+      "brief": "Shortcuts are handled by the first ancestor that is a [`ShortcutManager`](xref:gtk:ShortcutManager)",
+      "file": "gtk/gtkenums.h",
+      "line": 1098,
+      "md": "Shortcuts are handled by\n  the first ancestor that is a [`ShortcutManager`](xref:gtk:ShortcutManager)"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

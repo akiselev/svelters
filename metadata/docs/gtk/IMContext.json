@@ -1,0 +1,300 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "The interface for GTK input methods.",
+    "file": "gtk/gtkimcontext.c",
+    "line": 27,
+    "md": "The interface for GTK input methods.\n\n`GtkIMContext` is used by GTK text input widgets like `GtkText`\nto map from key events to Unicode character strings.\n\nAn input method may consume multiple key events in sequence before finally\noutputting the composed result. This is called *preediting*, and an input\nmethod may provide feedback about this process by displaying the intermediate\ncomposition states as preedit text. To do so, the `GtkIMContext` will emit\n[`IMContext::preedit-start`](xref:gtk:Gtk.IMContext#event:preedit-start), [`IMContext::preedit-changed`](xref:gtk:Gtk.IMContext#event:preedit-changed)\nand [`IMContext::preedit-end`](xref:gtk:Gtk.IMContext#event:preedit-end) signals.\n\nFor instance, the built-in GTK input method [`IMContextSimple`](xref:gtk:Gtk.IMContextSimple)\nimplements the input of arbitrary Unicode code points by holding down the\n<kbd>Control</kbd> and <kbd>Shift</kbd> keys and then typing <kbd>u</kbd>\nfollowed by the hexadecimal digits of the code point. When releasing the\n<kbd>Control</kbd> and <kbd>Shift</kbd> keys, preediting ends and the\ncharacter is inserted as text. For example,\n\n    Ctrl+Shift+u 2 0 A C\n\nresults in the € sign.\n\nAdditional input methods can be made available for use by GTK widgets as\nloadable modules. An input method module is a small shared library which\nprovides a `GIOExtension` for the extension point named \"gtk-im-module\".\n\nTo connect a widget to the users preferred input method, you should use\n[`IMMulticontext`](xref:gtk:Gtk.IMMulticontext)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:IMContext",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "activate_osk": {
+      "brief": "Requests the platform to show an on-screen keyboard for user input.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 1033,
+      "md": "Requests the platform to show an on-screen keyboard for user input.\n\nThis method will return `TRUE` if this request was actually performed\nto the platform, other environmental factors may result in an on-screen\nkeyboard effectively not showing up.",
+      "since": "4.14"
+    },
+    "delete_surrounding": {
+      "brief": "Asks the widget that the input context is attached to delete characters around the cursor position by emitting the `::delete_surrounding` signal.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 938,
+      "md": "Asks the widget that the input context is attached to delete\ncharacters around the cursor position by emitting the\n`::delete_surrounding` signal.\n\nNote that `offset` and `n_chars` are in characters not in bytes\nwhich differs from the usage other places in `GtkIMContext`.\n\nIn order to use this function, you should first call\n[`IMContext.get_surrounding()`](xref:gtk:Gtk.IMContext#method:get_surrounding) to get the current context,\nand call this function immediately afterwards to make sure that you\nknow what you are deleting. You should also account for the fact\nthat even if the signal was handled, the input context might not\nhave deleted all the characters that were requested to be deleted.\n\nThis function is used by an input method that wants to make\nsubstitutions in the existing text in response to new input.\nIt is not useful for applications."
+    },
+    "filter_key": {
+      "brief": "Allow an input method to forward key press and release events to another input method without necessarily having a `GdkEvent` available.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 559,
+      "md": "Allow an input method to forward key press and release events\nto another input method without necessarily having a `GdkEvent`\navailable."
+    },
+    "filter_keypress": {
+      "brief": "Allow an input method to internally handle key press and release events.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 533,
+      "md": "Allow an input method to internally handle key press and release\nevents.\n\nIf this function returns `TRUE`, then no further processing\nshould be done for this key event."
+    },
+    "focus_in": {
+      "brief": "Notify the input method that the widget to which this input context corresponds has gained focus.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 644,
+      "md": "Notify the input method that the widget to which this\ninput context corresponds has gained focus.\n\nThe input method may, for example, change the displayed\nfeedback to reflect this change."
+    },
+    "focus_out": {
+      "brief": "Notify the input method that the widget to which this input context corresponds has lost focus.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 666,
+      "md": "Notify the input method that the widget to which this\ninput context corresponds has lost focus.\n\nThe input method may, for example, change the displayed\nfeedback or reset the contexts state to reflect this change."
+    },
+    "get_preedit_string": {
+      "brief": "Retrieve the current preedit string for the input context, and a list of attributes to apply to the string.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 502,
+      "md": "Retrieve the current preedit string for the input context,\nand a list of attributes to apply to the string.\n\nThis string should be displayed inserted at the insertion point."
+    },
+    "get_surrounding": {
+      "brief": "Retrieves context around the insertion point.",
+      "deprecated": "4.2",
+      "deprecated_md": "Use [`IMContext.get_surrounding_with_selection()`](xref:gtk:Gtk.IMContext#method:get_surrounding_with_selection) instead.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 826,
+      "md": "Retrieves context around the insertion point.\n\nInput methods typically want context in order to constrain input text\nbased on existing text; this is important for languages such as Thai\nwhere only some sequences of characters are allowed.\n\nThis function is implemented by emitting the\n[`IMContext::retrieve-surrounding`](xref:gtk:Gtk.IMContext#event:retrieve-surrounding) signal on the input method;\nin response to this signal, a widget should provide as much context as\nis available, up to an entire paragraph, by calling\n[`IMContext.set_surrounding()`](xref:gtk:Gtk.IMContext#method:set_surrounding).\n\nNote that there is no obligation for a widget to respond to the\n`::retrieve-surrounding` signal, so input methods must be prepared to\nfunction without context."
+    },
+    "get_surrounding_with_selection": {
+      "brief": "Retrieves context around the insertion point.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 868,
+      "md": "Retrieves context around the insertion point.\n\nInput methods typically want context in order to constrain input\ntext based on existing text; this is important for languages such\nas Thai where only some sequences of characters are allowed.\n\nThis function is implemented by emitting the\n[`IMContext::retrieve-surrounding`](xref:gtk:Gtk.IMContext#event:retrieve-surrounding) signal on the input method;\nin response to this signal, a widget should provide as much context as\nis available, up to an entire paragraph, by calling\n[`IMContext.set_surrounding_with_selection()`](xref:gtk:Gtk.IMContext#method:set_surrounding_with_selection).\n\nNote that there is no obligation for a widget to respond to the\n`::retrieve-surrounding` signal, so input methods must be prepared to\nfunction without context.",
+      "since": "4.2"
+    },
+    "reset": {
+      "brief": "Notify the input method that a change such as a change in cursor position has been made.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 688,
+      "md": "Notify the input method that a change such as a change in cursor\nposition has been made.\n\nThis will typically cause the input method to clear the preedit state."
+    },
+    "set_client_widget": {
+      "brief": "Set the client widget for the input context.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 477,
+      "md": "Set the client widget for the input context.\n\nThis is the `GtkWidget` holding the input focus. This widget is\nused in order to correctly position status windows, and may\nalso be used for purposes internal to the input method."
+    },
+    "set_cursor_location": {
+      "brief": "Notify the input method that a change in cursor position has been made.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 710,
+      "md": "Notify the input method that a change in cursor\nposition has been made.\n\nThe location is relative to the client widget."
+    },
+    "set_surrounding": {
+      "brief": "Sets surrounding context around the insertion point and preedit string.",
+      "deprecated": "4.2",
+      "deprecated_md": "Use [`IMContext.set_surrounding_with_selection()`](xref:gtk:Gtk.IMContext#method:set_surrounding_with_selection) instead",
+      "file": "gtk/gtkimcontext.c",
+      "line": 758,
+      "md": "Sets surrounding context around the insertion point and preedit\nstring.\n\nThis function is expected to be called in response to the\n[`IMContext::retrieve-surrounding`](xref:gtk:Gtk.IMContext#event:retrieve-surrounding) signal, and will\nlikely have no effect if called at other times."
+    },
+    "set_surrounding_with_selection": {
+      "brief": "Sets surrounding context around the insertion point and preedit string.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 784,
+      "md": "Sets surrounding context around the insertion point and preedit\nstring. This function is expected to be called in response to the\n[`IMContext::retrieve_surrounding`](xref:gtk:Gtk.IMContext#event:retrieve_surrounding) signal, and will likely\nhave no effect if called at other times.",
+      "since": "4.2"
+    },
+    "set_use_preedit": {
+      "brief": "Sets whether the IM context should use the preedit string to display feedback.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 733,
+      "md": "Sets whether the IM context should use the preedit string\nto display feedback.\n\nIf `use_preedit` is `FALSE` (default is `TRUE`), then the IM context\nmay use some other method to display feedback, such as displaying\nit in a child of the root window."
+    }
+  },
+  "properties": {
+    "input-hints": {
+      "brief": "Additional hints that allow input methods to fine-tune their behaviour.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 365,
+      "md": "Additional hints that allow input methods to fine-tune\ntheir behaviour."
+    },
+    "input-purpose": {
+      "brief": "The purpose of the text field that the `GtkIMContext is connected to.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 351,
+      "md": "The purpose of the text field that the `GtkIMContext is connected to.\n\nThis property can be used by on-screen keyboards and other input\nmethods to adjust their behaviour."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "commit": {
+      "brief": "The ::commit signal is emitted when a complete input sequence has been entered by the user.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 255,
+      "md": "The ::commit signal is emitted when a complete input sequence\nhas been entered by the user.\n\nIf the commit comes after a preediting sequence, the\n::commit signal is emitted after ::preedit-end.\n\nThis can be a single character immediately after a key press or\nthe final result of preediting."
+    },
+    "delete-surrounding": {
+      "brief": "The ::delete-surrounding signal is emitted when the input method needs to delete all or part of the context surrounding the cursor.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 303,
+      "md": "The ::delete-surrounding signal is emitted when the input method\nneeds to delete all or part of the context surrounding the cursor."
+    },
+    "invalid-composition": {
+      "brief": "Emitted when the filtered keys do not compose to a single valid character.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 330,
+      "md": "Emitted when the filtered keys do not compose to a single valid character.",
+      "since": "4.22"
+    },
+    "preedit-changed": {
+      "brief": "The ::preedit-changed signal is emitted whenever the preedit sequence currently being entered has changed.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 236,
+      "md": "The ::preedit-changed signal is emitted whenever the preedit sequence\ncurrently being entered has changed.\n\nIt is also emitted at the end of a preedit sequence, in which case\n[`IMContext.get_preedit_string()`](xref:gtk:Gtk.IMContext#method:get_preedit_string) returns the empty string."
+    },
+    "preedit-end": {
+      "brief": "The ::preedit-end signal is emitted when a preediting sequence has been completed or canceled.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 220,
+      "md": "The ::preedit-end signal is emitted when a preediting sequence\nhas been completed or canceled."
+    },
+    "preedit-start": {
+      "brief": "The ::preedit-start signal is emitted when a new preediting sequence starts.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 204,
+      "md": "The ::preedit-start signal is emitted when a new preediting sequence\nstarts."
+    },
+    "retrieve-surrounding": {
+      "brief": "The ::retrieve-surrounding signal is emitted when the input method requires the context surrounding the cursor.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 279,
+      "md": "The ::retrieve-surrounding signal is emitted when the input method\nrequires the context surrounding the cursor.\n\nThe callback should set the input method surrounding context by\ncalling the [`IMContext.set_surrounding()`](xref:gtk:Gtk.IMContext#method:set_surrounding) method."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "commit": {
+      "brief": "Default handler of the [`IMContext::commit`](xref:gtk:Gtk.IMContext#event:commit) signal.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 124,
+      "md": "Default handler of the [`IMContext::commit`](xref:gtk:Gtk.IMContext#event:commit) signal."
+    },
+    "delete_surrounding": {
+      "brief": "Asks the widget that the input context is attached to delete characters around the cursor position by emitting the `::delete_surrounding` signal.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 938,
+      "md": "Asks the widget that the input context is attached to delete\ncharacters around the cursor position by emitting the\n`::delete_surrounding` signal.\n\nNote that `offset` and `n_chars` are in characters not in bytes\nwhich differs from the usage other places in `GtkIMContext`.\n\nIn order to use this function, you should first call\n[`IMContext.get_surrounding()`](xref:gtk:Gtk.IMContext#method:get_surrounding) to get the current context,\nand call this function immediately afterwards to make sure that you\nknow what you are deleting. You should also account for the fact\nthat even if the signal was handled, the input context might not\nhave deleted all the characters that were requested to be deleted.\n\nThis function is used by an input method that wants to make\nsubstitutions in the existing text in response to new input.\nIt is not useful for applications."
+    },
+    "filter_keypress": {
+      "brief": "Allow an input method to internally handle key press and release events.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 533,
+      "md": "Allow an input method to internally handle key press and release\nevents.\n\nIf this function returns `TRUE`, then no further processing\nshould be done for this key event."
+    },
+    "focus_in": {
+      "brief": "Notify the input method that the widget to which this input context corresponds has gained focus.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 644,
+      "md": "Notify the input method that the widget to which this\ninput context corresponds has gained focus.\n\nThe input method may, for example, change the displayed\nfeedback to reflect this change."
+    },
+    "focus_out": {
+      "brief": "Notify the input method that the widget to which this input context corresponds has lost focus.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 666,
+      "md": "Notify the input method that the widget to which this\ninput context corresponds has lost focus.\n\nThe input method may, for example, change the displayed\nfeedback or reset the contexts state to reflect this change."
+    },
+    "get_preedit_string": {
+      "brief": "Retrieve the current preedit string for the input context, and a list of attributes to apply to the string.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 502,
+      "md": "Retrieve the current preedit string for the input context,\nand a list of attributes to apply to the string.\n\nThis string should be displayed inserted at the insertion point."
+    },
+    "get_surrounding": {
+      "brief": "Retrieves context around the insertion point.",
+      "deprecated": "4.2",
+      "deprecated_md": "Use [`IMContext.get_surrounding_with_selection()`](xref:gtk:Gtk.IMContext#method:get_surrounding_with_selection) instead.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 826,
+      "md": "Retrieves context around the insertion point.\n\nInput methods typically want context in order to constrain input text\nbased on existing text; this is important for languages such as Thai\nwhere only some sequences of characters are allowed.\n\nThis function is implemented by emitting the\n[`IMContext::retrieve-surrounding`](xref:gtk:Gtk.IMContext#event:retrieve-surrounding) signal on the input method;\nin response to this signal, a widget should provide as much context as\nis available, up to an entire paragraph, by calling\n[`IMContext.set_surrounding()`](xref:gtk:Gtk.IMContext#method:set_surrounding).\n\nNote that there is no obligation for a widget to respond to the\n`::retrieve-surrounding` signal, so input methods must be prepared to\nfunction without context."
+    },
+    "get_surrounding_with_selection": {
+      "brief": "Retrieves context around the insertion point.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 868,
+      "md": "Retrieves context around the insertion point.\n\nInput methods typically want context in order to constrain input\ntext based on existing text; this is important for languages such\nas Thai where only some sequences of characters are allowed.\n\nThis function is implemented by emitting the\n[`IMContext::retrieve-surrounding`](xref:gtk:Gtk.IMContext#event:retrieve-surrounding) signal on the input method;\nin response to this signal, a widget should provide as much context as\nis available, up to an entire paragraph, by calling\n[`IMContext.set_surrounding_with_selection()`](xref:gtk:Gtk.IMContext#method:set_surrounding_with_selection).\n\nNote that there is no obligation for a widget to respond to the\n`::retrieve-surrounding` signal, so input methods must be prepared to\nfunction without context.",
+      "since": "4.2"
+    },
+    "invalid_composition": {
+      "brief": "Default handler of the [`IMContext::invalid-composition`](xref:gtk:Gtk.IMContext#event:invalid-composition) signal.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 188,
+      "md": "Default handler of the\n  [`IMContext::invalid-composition`](xref:gtk:Gtk.IMContext#event:invalid-composition) signal. Since: 4.22"
+    },
+    "preedit_changed": {
+      "brief": "Default handler of the [`IMContext::preedit-changed`](xref:gtk:Gtk.IMContext#event:preedit-changed) signal.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 122,
+      "md": "Default handler of the [`IMContext::preedit-changed`](xref:gtk:Gtk.IMContext#event:preedit-changed)\n  signal."
+    },
+    "preedit_end": {
+      "brief": "Default handler of the [`IMContext::preedit-end`](xref:gtk:Gtk.IMContext#event:preedit-end) signal.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 121,
+      "md": "Default handler of the [`IMContext::preedit-end`](xref:gtk:Gtk.IMContext#event:preedit-end) signal."
+    },
+    "preedit_start": {
+      "brief": "Default handler of the [`IMContext::preedit-start`](xref:gtk:Gtk.IMContext#event:preedit-start) signal.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 120,
+      "md": "Default handler of the [`IMContext::preedit-start`](xref:gtk:Gtk.IMContext#event:preedit-start) signal."
+    },
+    "reset": {
+      "brief": "Notify the input method that a change such as a change in cursor position has been made.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 688,
+      "md": "Notify the input method that a change such as a change in cursor\nposition has been made.\n\nThis will typically cause the input method to clear the preedit state."
+    },
+    "retrieve_surrounding": {
+      "brief": "Default handler of the [`IMContext::retrieve-surrounding`](xref:gtk:Gtk.IMContext#event:retrieve-surrounding) signal.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 125,
+      "md": "Default handler of the\n  [`IMContext::retrieve-surrounding`](xref:gtk:Gtk.IMContext#event:retrieve-surrounding) signal."
+    },
+    "set_client_widget": {
+      "brief": "Set the client widget for the input context.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 477,
+      "md": "Set the client widget for the input context.\n\nThis is the `GtkWidget` holding the input focus. This widget is\nused in order to correctly position status windows, and may\nalso be used for purposes internal to the input method."
+    },
+    "set_cursor_location": {
+      "brief": "Notify the input method that a change in cursor position has been made.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 710,
+      "md": "Notify the input method that a change in cursor\nposition has been made.\n\nThe location is relative to the client widget."
+    },
+    "set_surrounding": {
+      "brief": "Sets surrounding context around the insertion point and preedit string.",
+      "deprecated": "4.2",
+      "deprecated_md": "Use [`IMContext.set_surrounding_with_selection()`](xref:gtk:Gtk.IMContext#method:set_surrounding_with_selection) instead",
+      "file": "gtk/gtkimcontext.c",
+      "line": 758,
+      "md": "Sets surrounding context around the insertion point and preedit\nstring.\n\nThis function is expected to be called in response to the\n[`IMContext::retrieve-surrounding`](xref:gtk:Gtk.IMContext#event:retrieve-surrounding) signal, and will\nlikely have no effect if called at other times."
+    },
+    "set_surrounding_with_selection": {
+      "brief": "Sets surrounding context around the insertion point and preedit string.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 784,
+      "md": "Sets surrounding context around the insertion point and preedit\nstring. This function is expected to be called in response to the\n[`IMContext::retrieve_surrounding`](xref:gtk:Gtk.IMContext#event:retrieve_surrounding) signal, and will likely\nhave no effect if called at other times.",
+      "since": "4.2"
+    },
+    "set_use_preedit": {
+      "brief": "Sets whether the IM context should use the preedit string to display feedback.",
+      "file": "gtk/gtkimcontext.c",
+      "line": 733,
+      "md": "Sets whether the IM context should use the preedit string\nto display feedback.\n\nIf `use_preedit` is `FALSE` (default is `TRUE`), then the IM context\nmay use some other method to display feedback, such as displaying\nit in a child of the root window."
+    }
+  }
+}

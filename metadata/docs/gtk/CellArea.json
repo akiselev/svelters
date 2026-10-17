@@ -1,0 +1,506 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "An abstract class for laying out `GtkCellRenderer`s",
+    "deprecated": "4.10",
+    "deprecated_md": "List views use widgets for displaying their\n  contents",
+    "file": "gtk/deprecated/gtkcellarea.c",
+    "line": 22,
+    "md": "An abstract class for laying out `GtkCellRenderer`s\n\nThe `GtkCellArea` is an abstract class for [`CellLayout`](xref:gtk:Gtk.CellLayout)\nwidgets (also referred to as \"layouting widgets\") to interface with\nan arbitrary number of [`CellRenderer`](xref:gtk:Gtk.CellRenderer)s and interact with the user\nfor a given [`TreeModel`](xref:gtk:Gtk.TreeModel) row.\n\nThe cell area handles events, focus navigation, drawing and\nsize requests and allocations for a given row of data.\n\nUsually users dont have to interact with the `GtkCellArea` directly\nunless they are implementing a cell-layouting widget themselves.\n\n## Requesting area sizes\n\nAs outlined in\n[GtkWidget’s geometry management section](class.Widget.html#height-for-width-geometry-management),\nGTK uses a height-for-width\ngeometry management system to compute the sizes of widgets and user\ninterfaces. `GtkCellArea` uses the same semantics to calculate the\nsize of an area for an arbitrary number of `GtkTreeModel` rows.\n\nWhen requesting the size of a cell area one needs to calculate\nthe size for a handful of rows, and this will be done differently by\ndifferent layouting widgets. For instance a [`TreeViewColumn`](xref:gtk:Gtk.TreeViewColumn)\nalways lines up the areas from top to bottom while a [`IconView`](xref:gtk:Gtk.IconView)\non the other hand might enforce that all areas received the same\nwidth and wrap the areas around, requesting height for more cell\nareas when allocated less width.\n\nIt’s also important for areas to maintain some cell\nalignments with areas rendered for adjacent rows (cells can\nappear “columnized” inside an area even when the size of\ncells are different in each row). For this reason the `GtkCellArea`\nuses a [`CellAreaContext`](xref:gtk:Gtk.CellAreaContext) object to store the alignments\nand sizes along the way (as well as the overall largest minimum\nand natural size for all the rows which have been calculated\nwith the said context).\n\nThe [`CellAreaContext`](xref:gtk:Gtk.CellAreaContext) is an opaque object specific to the\n`GtkCellArea` which created it (see [`CellArea.create_context()`](xref:gtk:Gtk.CellArea#method:create_context)).\n\nThe owning cell-layouting widget can create as many contexts as\nit wishes to calculate sizes of rows which should receive the\nsame size in at least one orientation (horizontally or vertically),\nHowever, it’s important that the same [`CellAreaContext`](xref:gtk:Gtk.CellAreaContext) which\nwas used to request the sizes for a given `GtkTreeModel` row be\nused when rendering or processing events for that row.\n\nIn order to request the width of all the rows at the root level\nof a `GtkTreeModel` one would do the following:\n\n```c\nGtkTreeIter iter;\nint minimum_width;\nint natural_width;\n\nvalid = gtk_tree_model_get_iter_first (model, &iter);\nwhile (valid)\n  {\n    gtk_cell_area_apply_attributes (area, model, &iter, FALSE, FALSE);\n    gtk_cell_area_get_preferred_width (area, context, widget, NULL, NULL);\n\n    valid = gtk_tree_model_iter_next (model, &iter);\n  }\n\ngtk_cell_area_context_get_preferred_width (context, &minimum_width, &natural_width);\n```\n\nNote that in this example it’s not important to observe the\nreturned minimum and natural width of the area for each row\nunless the cell-layouting object is actually interested in the\nwidths of individual rows. The overall width is however stored\nin the accompanying `GtkCellAreaContext` object and can be consulted\nat any time.\n\nThis can be useful since `GtkCellLayout` widgets usually have to\nsupport requesting and rendering rows in treemodels with an\nexceedingly large amount of rows. The `GtkCellLayout` widget in\nthat case would calculate the required width of the rows in an\nidle or timeout source (see `timeout_add`) and when the widget\nis requested its actual width in [`Widget.measure()`](xref:gtk:Gtk.Widget#vfunc:measure)\nit can simply consult the width accumulated so far in the\n`GtkCellAreaContext` object.\n\nA simple example where rows are rendered from top to bottom and\ntake up the full width of the layouting widget would look like:\n\n```c\nstatic void\nfoo_get_preferred_width (GtkWidget *widget,\n                         int       *minimum_size,\n                         int       *natural_size)\n{\n  Foo *self = FOO (widget);\n  FooPrivate *priv = foo_get_instance_private (self);\n\n  foo_ensure_at_least_one_handfull_of_rows_have_been_requested (self);\n\n  gtk_cell_area_context_get_preferred_width (priv->context, minimum_size, natural_size);\n}\n```\n\nIn the above example the `Foo` widget has to make sure that some\nrow sizes have been calculated (the amount of rows that `Foo` judged\nwas appropriate to request space for in a single timeout iteration)\nbefore simply returning the amount of space required by the area via\nthe `GtkCellAreaContext`.\n\nRequesting the height for width (or width for height) of an area is\na similar task except in this case the `GtkCellAreaContext` does not\nstore the data (actually, it does not know how much space the layouting\nwidget plans to allocate it for every row. It’s up to the layouting\nwidget to render each row of data with the appropriate height and\nwidth which was requested by the `GtkCellArea`).\n\nIn order to request the height for width of all the rows at the\nroot level of a `GtkTreeModel` one would do the following:\n\n```c\nGtkTreeIter iter;\nint minimum_height;\nint natural_height;\nint full_minimum_height = 0;\nint full_natural_height = 0;\n\nvalid = gtk_tree_model_get_iter_first (model, &iter);\nwhile (valid)\n  {\n    gtk_cell_area_apply_attributes (area, model, &iter, FALSE, FALSE);\n    gtk_cell_area_get_preferred_height_for_width (area, context, widget,\n                                                  width, &minimum_height, &natural_height);\n\n    if (width_is_for_allocation)\n       cache_row_height (&iter, minimum_height, natural_height);\n\n    full_minimum_height += minimum_height;\n    full_natural_height += natural_height;\n\n    valid = gtk_tree_model_iter_next (model, &iter);\n  }\n```\n\nNote that in the above example we would need to cache the heights\nreturned for each row so that we would know what sizes to render the\nareas for each row. However we would only want to really cache the\nheights if the request is intended for the layouting widgets real\nallocation.\n\nIn some cases the layouting widget is requested the height for an\narbitrary for_width, this is a special case for layouting widgets\nwho need to request size for tens of thousands  of rows. For this\ncase it’s only important that the layouting widget calculate\none reasonably sized chunk of rows and return that height\nsynchronously. The reasoning here is that any layouting widget is\nat least capable of synchronously calculating enough height to fill\nthe screen height (or scrolled window height) in response to a single\ncall to [`Widget.measure()`](xref:gtk:Gtk.Widget#vfunc:measure). Returning\na perfect height for width that is larger than the screen area is\ninconsequential since after the layouting receives an allocation\nfrom a scrolled window it simply continues to drive the scrollbar\nvalues while more and more height is required for the row heights\nthat are calculated in the background.\n\n## Rendering Areas\n\nOnce area sizes have been acquired at least for the rows in the\nvisible area of the layouting widget they can be rendered at\n[`Widget.snapshot()`](xref:gtk:Gtk.Widget#vfunc:snapshot) time.\n\nA crude example of how to render all the rows at the root level\nruns as follows:\n\n```c\nGtkAllocation allocation;\nGdkRectangle cell_area = { 0, };\nGtkTreeIter iter;\nint minimum_width;\nint natural_width;\n\ngtk_widget_get_allocation (widget, &allocation);\ncell_area.width = allocation.width;\n\nvalid = gtk_tree_model_get_iter_first (model, &iter);\nwhile (valid)\n  {\n    cell_area.height = get_cached_height_for_row (&iter);\n\n    gtk_cell_area_apply_attributes (area, model, &iter, FALSE, FALSE);\n    gtk_cell_area_render (area, context, widget, cr,\n                          &cell_area, &cell_area, state_flags, FALSE);\n\n    cell_area.y += cell_area.height;\n\n    valid = gtk_tree_model_iter_next (model, &iter);\n  }\n```\n\nNote that the cached height in this example really depends on how\nthe layouting widget works. The layouting widget might decide to\ngive every row its minimum or natural height or, if the model content\nis expected to fit inside the layouting widget without scrolling, it\nwould make sense to calculate the allocation for each row at\nthe time the widget is allocated using `distribute_natural_allocation`.\n\n## Handling Events and Driving Keyboard Focus\n\nPassing events to the area is as simple as handling events on any\nnormal widget and then passing them to the [`CellArea.event()`](xref:gtk:Gtk.CellArea#method:event)\nAPI as they come in. Usually `GtkCellArea` is only interested in\nbutton events, however some customized derived areas can be implemented\nwho are interested in handling other events. Handling an event can\ntrigger the [`CellArea::focus-changed`](xref:gtk:Gtk.CellArea#event:focus-changed) signal to fire; as well\nas [`CellArea::add-editable`](xref:gtk:Gtk.CellArea#event:add-editable) in the case that an editable cell\nwas clicked and needs to start editing. You can call\n[`CellArea.stop_editing()`](xref:gtk:Gtk.CellArea#method:stop_editing) at any time to cancel any cell editing\nthat is currently in progress.\n\nThe `GtkCellArea` drives keyboard focus from cell to cell in a way\nsimilar to `GtkWidget`. For layouting widgets that support giving\nfocus to cells it’s important to remember to pass `GTK_CELL_RENDERER_FOCUSED`\nto the area functions for the row that has focus and to tell the\narea to paint the focus at render time.\n\nLayouting widgets that accept focus on cells should implement the\n[`Widget.focus()`](xref:gtk:Gtk.Widget#vfunc:focus) virtual method. The layouting widget is always\nresponsible for knowing where `GtkTreeModel` rows are rendered inside\nthe widget, so at [`Widget.focus()`](xref:gtk:Gtk.Widget#vfunc:focus) time the layouting widget\nshould use the `GtkCellArea` methods to navigate focus inside the area\nand then observe the [`DirectionType`](xref:gtk:Gtk.DirectionType) to pass the focus to adjacent\nrows and areas.\n\nA basic example of how the [`Widget.focus()`](xref:gtk:Gtk.Widget#vfunc:focus) virtual method\nshould be implemented:\n\n```\nstatic gboolean\nfoo_focus (GtkWidget       *widget,\n           GtkDirectionType direction)\n{\n  Foo *self = FOO (widget);\n  FooPrivate *priv = foo_get_instance_private (self);\n  int focus_row = priv->focus_row;\n  gboolean have_focus = FALSE;\n\n  if (!gtk_widget_has_focus (widget))\n    gtk_widget_grab_focus (widget);\n\n  valid = gtk_tree_model_iter_nth_child (priv->model, &iter, NULL, priv->focus_row);\n  while (valid)\n    {\n      gtk_cell_area_apply_attributes (priv->area, priv->model, &iter, FALSE, FALSE);\n\n      if (gtk_cell_area_focus (priv->area, direction))\n        {\n           priv->focus_row = focus_row;\n           have_focus = TRUE;\n           break;\n        }\n      else\n        {\n          if (direction == GTK_DIR_RIGHT ||\n              direction == GTK_DIR_LEFT)\n            break;\n          else if (direction == GTK_DIR_UP ||\n                   direction == GTK_DIR_TAB_BACKWARD)\n           {\n              if (focus_row == 0)\n                break;\n              else\n               {\n                  focus_row--;\n                  valid = gtk_tree_model_iter_nth_child (priv->model, &iter, NULL, focus_row);\n               }\n            }\n          else\n            {\n              if (focus_row == last_row)\n                break;\n              else\n                {\n                  focus_row++;\n                  valid = gtk_tree_model_iter_next (priv->model, &iter);\n                }\n            }\n        }\n    }\n    return have_focus;\n}\n```\n\nNote that the layouting widget is responsible for matching the\n`GtkDirectionType` values to the way it lays out its cells.\n\n## Cell Properties\n\nThe `GtkCellArea` introduces cell properties for `GtkCellRenderer`s.\nThis provides some general interfaces for defining the relationship\ncell areas have with their cells. For instance in a [`CellAreaBox`](xref:gtk:Gtk.CellAreaBox)\na cell might “expand” and receive extra space when the area is allocated\nmore than its full natural request, or a cell might be configured to “align”\nwith adjacent rows which were requested and rendered with the same\n`GtkCellAreaContext`.\n\nUse [`CellAreaClass.install_cell_property()`](xref:gtk:Gtk.CellAreaClass#method:install_cell_property) to install cell\nproperties for a cell area class and [`CellAreaClass.find_cell_property()`](xref:gtk:Gtk.CellAreaClass#method:find_cell_property)\nor [`CellAreaClass.list_cell_properties()`](xref:gtk:Gtk.CellAreaClass#method:list_cell_properties) to get information about\nexisting cell properties.\n\nTo set the value of a cell property, use [`CellArea.cell_set_property()`](xref:gtk:Gtk.CellArea#method:cell_set_property),\n[`CellArea.cell_set()`](xref:gtk:Gtk.CellArea#method:cell_set) or [`CellArea.cell_set_valist()`](xref:gtk:Gtk.CellArea#method:cell_set_valist). To obtain\nthe value of a cell property, use [`CellArea.cell_get_property()`](xref:gtk:Gtk.CellArea#method:cell_get_property)\n[`CellArea.cell_get()`](xref:gtk:Gtk.CellArea#method:cell_get) or [`CellArea.cell_get_valist()`](xref:gtk:Gtk.CellArea#method:cell_get_valist)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:CellArea",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "activate": {
+      "brief": "Activates `area`, usually by activating the currently focused cell, however some subclasses which embed widgets in the area can also activate a widget if it currently has the focus.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 2885,
+      "md": "Activates `area`, usually by activating the currently focused\ncell, however some subclasses which embed widgets in the area\ncan also activate a widget if it currently has the focus."
+    },
+    "activate_cell": {
+      "brief": "This is used by `GtkCellArea` subclasses when handling events to activate cells, the base `GtkCellArea` class activates cells for keyboard events for free in its own GtkCellArea->activate() implementation.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 3322,
+      "md": "This is used by `GtkCellArea` subclasses when handling events\nto activate cells, the base `GtkCellArea` class activates cells\nfor keyboard events for free in its own GtkCellArea->activate()\nimplementation."
+    },
+    "add": {
+      "brief": "Adds `renderer` to `area` with the default child cell properties.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 1588,
+      "md": "Adds `renderer` to `area` with the default child cell properties."
+    },
+    "add_focus_sibling": {
+      "brief": "Adds `sibling` to `renderer`’s focusable area, focus will be drawn around `renderer` and all of its siblings if `renderer` can focus for a given row.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 2986,
+      "md": "Adds `sibling` to `renderer`’s focusable area, focus will be drawn\naround `renderer` and all of its siblings if `renderer` can\nfocus for a given row.\n\nEvents handled by focus siblings can also activate the given\nfocusable `renderer`."
+    },
+    "add_with_properties": {
+      "brief": "Adds `renderer` to `area`, setting cell properties at the same time.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 2467,
+      "md": "Adds `renderer` to `area`, setting cell properties at the same time.\nSee gtk_cell_area_add() and gtk_cell_area_cell_set() for more details."
+    },
+    "apply_attributes": {
+      "brief": "Applies any connected attributes to the renderers in `area` by pulling the values from `tree_model`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 2318,
+      "md": "Applies any connected attributes to the renderers in\n`area` by pulling the values from `tree_model`."
+    },
+    "attribute_connect": {
+      "brief": "Connects an `attribute` to apply values from `column` for the `GtkTreeModel` in use.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 2167,
+      "md": "Connects an `attribute` to apply values from `column` for the\n`GtkTreeModel` in use."
+    },
+    "attribute_disconnect": {
+      "brief": "Disconnects `attribute` for the `renderer` in `area` so that attribute will no longer be updated with values from the model.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 2235,
+      "md": "Disconnects `attribute` for the `renderer` in `area` so that\nattribute will no longer be updated with values from the\nmodel."
+    },
+    "attribute_get_column": {
+      "brief": "Returns the model column that an attribute has been mapped to, or -1 if the attribute is not mapped.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 2279,
+      "md": "Returns the model column that an attribute has been mapped to,\nor -1 if the attribute is not mapped."
+    },
+    "cell_get": {
+      "brief": "Gets the values of one or more cell properties for `renderer` in `area`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 2536,
+      "md": "Gets the values of one or more cell properties for `renderer` in `area`."
+    },
+    "cell_get_property": {
+      "brief": "Gets the value of a cell property for `renderer` in `area`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 2769,
+      "md": "Gets the value of a cell property for `renderer` in `area`."
+    },
+    "cell_get_valist": {
+      "brief": "Gets the values of one or more cell properties for `renderer` in `area`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 2671,
+      "md": "Gets the values of one or more cell properties for `renderer` in `area`."
+    },
+    "cell_set": {
+      "brief": "Sets one or more cell properties for `cell` in `area`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 2508,
+      "md": "Sets one or more cell properties for `cell` in `area`."
+    },
+    "cell_set_property": {
+      "brief": "Sets a cell property for `renderer` in `area`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 2731,
+      "md": "Sets a cell property for `renderer` in `area`."
+    },
+    "cell_set_valist": {
+      "brief": "Sets one or more cell properties for `renderer` in `area`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 2609,
+      "md": "Sets one or more cell properties for `renderer` in `area`."
+    },
+    "copy_context": {
+      "brief": "This is sometimes needed for cases where rows need to share alignments in one orientation but may be separately grouped in the opposing orientation.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 1963,
+      "md": "This is sometimes needed for cases where rows need to share\nalignments in one orientation but may be separately grouped\nin the opposing orientation.\n\nFor instance, `GtkIconView` creates all icons (rows) to have\nthe same width and the cells theirin to have the same\nhorizontal alignments. However each row of icons may have\na separate collective height. `GtkIconView` uses this to\nrequest the heights of each row based on a context which\nwas already used to request all the row widths that are\nto be displayed."
+    },
+    "create_context": {
+      "brief": "Creates a `GtkCellArea`Context to be used with `area` for all purposes.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 1940,
+      "md": "Creates a `GtkCellArea`Context to be used with `area` for\nall purposes. `GtkCellArea`Context stores geometry information\nfor rows for which it was operated on, it is important to use\nthe same context for the same row of data at all times (i.e.\none should render and handle events with the same `GtkCellArea`Context\nwhich was used to request the size of those rows of data)."
+    },
+    "event": {
+      "brief": "Delegates event handling to a `GtkCellArea`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 1740,
+      "md": "Delegates event handling to a `GtkCellArea`."
+    },
+    "focus": {
+      "brief": "This should be called by the `area`’s owning layout widget when focus is to be passed to `area`, or moved within `area` for a given `direction` and row data.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 2859,
+      "md": "This should be called by the `area`’s owning layout widget\nwhen focus is to be passed to `area`, or moved within `area`\nfor a given `direction` and row data.\n\nImplementing `GtkCellArea` classes should implement this\nmethod to receive and navigate focus in its own way particular\nto how it lays out cells."
+    },
+    "foreach": {
+      "brief": "Calls `callback` for every `GtkCellRenderer` in `area`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 1686,
+      "md": "Calls `callback` for every `GtkCellRenderer` in `area`."
+    },
+    "foreach_alloc": {
+      "brief": "Calls `callback` for every `GtkCellRenderer` in `area` with the allocated rectangle inside `cell_area`.",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 1707,
+      "md": "Calls `callback` for every `GtkCellRenderer` in `area` with the\nallocated rectangle inside `cell_area`."
+    },
+    "get_cell_allocation": {
+      "brief": "Derives the allocation of `renderer` inside `area` if `area` were to be rendered in `cell_area`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 1837,
+      "md": "Derives the allocation of `renderer` inside `area` if `area`\nwere to be rendered in `cell_area`."
+    },
+    "get_cell_at_position": {
+      "brief": "Gets the `GtkCellRenderer` at `x` and `y` coordinates inside `area` and optionally returns the full cell allocation for it inside `cell_area`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 1891,
+      "md": "Gets the `GtkCellRenderer` at `x` and `y` coordinates inside `area` and optionally\nreturns the full cell allocation for it inside `cell_area`."
+    },
+    "get_current_path_string": {
+      "brief": "Gets the current `GtkTreePath` string for the currently applied `GtkTreeIter`, this is implicitly updated when gtk_cell_area_apply_attributes() is called and can be used to interact with renderers from `GtkCellArea`...",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 2347,
+      "md": "Gets the current `GtkTreePath` string for the currently\napplied `GtkTreeIter`, this is implicitly updated when\ngtk_cell_area_apply_attributes() is called and can be\nused to interact with renderers from `GtkCellArea`\nsubclasses."
+    },
+    "get_edit_widget": {
+      "brief": "Gets the `GtkCellEditable` widget currently used to edit the currently edited cell.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 3301,
+      "md": "Gets the `GtkCellEditable` widget currently used\nto edit the currently edited cell."
+    },
+    "get_edited_cell": {
+      "brief": "Gets the `GtkCellRenderer` in `area` that is currently being edited.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 3280,
+      "md": "Gets the `GtkCellRenderer` in `area` that is currently\nbeing edited."
+    },
+    "get_focus_cell": {
+      "brief": "Retrieves the currently focused cell for `area`",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 2961,
+      "md": "Retrieves the currently focused cell for `area`"
+    },
+    "get_focus_from_sibling": {
+      "brief": "Gets the `GtkCellRenderer` which is expected to be focusable for which `renderer` is, or may be a sibling.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 3132,
+      "md": "Gets the `GtkCellRenderer` which is expected to be focusable\nfor which `renderer` is, or may be a sibling.\n\nThis is handy for `GtkCellArea` subclasses when handling events,\nafter determining the renderer at the event location it can\nthen chose to activate the focus cell for which the event\ncell may have been a sibling."
+    },
+    "get_focus_siblings": {
+      "brief": "Gets the focus sibling cell renderers for `renderer`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 3108,
+      "md": "Gets the focus sibling cell renderers for `renderer`."
+    },
+    "get_preferred_height": {
+      "brief": "Retrieves a cell area’s initial minimum and natural height.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 2088,
+      "md": "Retrieves a cell area’s initial minimum and natural height.\n\n`area` will store some geometrical information in `context` along the way;\nwhen requesting sizes over an arbitrary number of rows, it’s not important\nto check the `minimum_height` and `natural_height` of this call but rather to\nconsult gtk_cell_area_context_get_preferred_height() after a series of\nrequests."
+    },
+    "get_preferred_height_for_width": {
+      "brief": "Retrieves a cell area’s minimum and natural height if it would be given the specified `width`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 2044,
+      "md": "Retrieves a cell area’s minimum and natural height if it would be given\nthe specified `width`.\n\n`area` stores some geometrical information in `context` along the way\nwhile calling gtk_cell_area_get_preferred_width(). It’s important to\nperform a series of gtk_cell_area_get_preferred_width() requests with\n`context` first and then call gtk_cell_area_get_preferred_height_for_width()\non each cell area individually to get the height for width of each\nfully requested row.\n\nIf at some point, the width of a single row changes, it should be\nrequested with gtk_cell_area_get_preferred_width() again and then\nthe full width of the requested rows checked again with\ngtk_cell_area_context_get_preferred_width()."
+    },
+    "get_preferred_width": {
+      "brief": "Retrieves a cell area’s initial minimum and natural width.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 2012,
+      "md": "Retrieves a cell area’s initial minimum and natural width.\n\n`area` will store some geometrical information in `context` along the way;\nwhen requesting sizes over an arbitrary number of rows, it’s not important\nto check the `minimum_width` and `natural_width` of this call but rather to\nconsult gtk_cell_area_context_get_preferred_width() after a series of\nrequests."
+    },
+    "get_preferred_width_for_height": {
+      "brief": "Retrieves a cell area’s minimum and natural width if it would be given the specified `height`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 2120,
+      "md": "Retrieves a cell area’s minimum and natural width if it would be given\nthe specified `height`.\n\n`area` stores some geometrical information in `context` along the way\nwhile calling gtk_cell_area_get_preferred_height(). It’s important to\nperform a series of gtk_cell_area_get_preferred_height() requests with\n`context` first and then call gtk_cell_area_get_preferred_width_for_height()\non each cell area individually to get the height for width of each\nfully requested row.\n\nIf at some point, the height of a single row changes, it should be\nrequested with gtk_cell_area_get_preferred_height() again and then\nthe full height of the requested rows checked again with\ngtk_cell_area_context_get_preferred_height()."
+    },
+    "get_request_mode": {
+      "brief": "Gets whether the area prefers a height-for-width layout or a width-for-height layout.",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 1994,
+      "md": "Gets whether the area prefers a height-for-width layout\nor a width-for-height layout."
+    },
+    "has_renderer": {
+      "brief": "Checks if `area` contains `renderer`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 1661,
+      "md": "Checks if `area` contains `renderer`."
+    },
+    "inner_cell_area": {
+      "brief": "This is a convenience function for `GtkCellArea` implementations to get the inner area where a given `GtkCellRenderer` will be rendered.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 3476,
+      "md": "This is a convenience function for `GtkCellArea` implementations\nto get the inner area where a given `GtkCellRenderer` will be\nrendered. It removes any padding previously added by gtk_cell_area_request_renderer()."
+    },
+    "is_activatable": {
+      "brief": "Returns whether the area can do anything when activated, after applying new attributes to `area`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 2840,
+      "md": "Returns whether the area can do anything when activated,\nafter applying new attributes to `area`."
+    },
+    "is_focus_sibling": {
+      "brief": "Returns whether `sibling` is one of `renderer`’s focus siblings (see gtk_cell_area_add_focus_sibling()).",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 3070,
+      "md": "Returns whether `sibling` is one of `renderer`’s focus siblings\n(see gtk_cell_area_add_focus_sibling())."
+    },
+    "remove": {
+      "brief": "Removes `renderer` from `area`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 1607,
+      "md": "Removes `renderer` from `area`."
+    },
+    "remove_focus_sibling": {
+      "brief": "Removes `sibling` from `renderer`’s focus sibling list (see gtk_cell_area_add_focus_sibling()).",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 3035,
+      "md": "Removes `sibling` from `renderer`’s focus sibling list\n(see gtk_cell_area_add_focus_sibling())."
+    },
+    "request_renderer": {
+      "brief": "This is a convenience function for `GtkCellArea` implementations to request size for cell renderers.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 3525,
+      "md": "This is a convenience function for `GtkCellArea` implementations\nto request size for cell renderers. It’s important to use this\nfunction to request size and then use gtk_cell_area_inner_cell_area()\nat render and event time since this function will add padding\naround the cell for focus painting."
+    },
+    "set_focus_cell": {
+      "brief": "Explicitly sets the currently focused cell to `renderer`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 2917,
+      "md": "Explicitly sets the currently focused cell to `renderer`.\n\nThis is generally called by implementations of\n`GtkCellAreaClass.focus()` or `GtkCellAreaClass.event()`,\nhowever it can also be used to implement functions such\nas gtk_tree_view_set_cursor_on_cell()."
+    },
+    "snapshot": {
+      "brief": "Snapshots `area`’s cells according to `area`’s layout onto at the given coordinates.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 1781,
+      "md": "Snapshots `area`’s cells according to `area`’s layout onto at\nthe given coordinates."
+    },
+    "stop_editing": {
+      "brief": "Explicitly stops the editing of the currently edited cell.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 3420,
+      "md": "Explicitly stops the editing of the currently edited cell.\n\nIf `canceled` is `TRUE`, the currently edited cell renderer\nwill emit the ::editing-canceled signal, otherwise the\nthe ::editing-done signal will be emitted on the current\nedit widget.\n\nSee gtk_cell_area_get_edited_cell() and gtk_cell_area_get_edit_widget()."
+    }
+  },
+  "properties": {
+    "edit-widget": {
+      "brief": "The widget currently editing the edited cell",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 798,
+      "md": "The widget currently editing the edited cell\n\nThis property is read-only and only changes as\na result of a call gtk_cell_area_activate_cell()."
+    },
+    "edited-cell": {
+      "brief": "The cell in the area that is currently edited",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 784,
+      "md": "The cell in the area that is currently edited\n\nThis property is read-only and only changes as\na result of a call gtk_cell_area_activate_cell()."
+    },
+    "focus-cell": {
+      "brief": "The cell in the area that currently has focus",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 773,
+      "md": "The cell in the area that currently has focus"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "add-editable": {
+      "brief": "Indicates that editing has started on `renderer` and that `editable` should be added to the owning cell-layouting widget at `cell_area`.",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 700,
+      "md": "Indicates that editing has started on `renderer` and that `editable`\nshould be added to the owning cell-layouting widget at `cell_area`."
+    },
+    "apply-attributes": {
+      "brief": "This signal is emitted whenever applying attributes to `area` from `model`",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 675,
+      "md": "This signal is emitted whenever applying attributes to `area` from `model`"
+    },
+    "focus-changed": {
+      "brief": "Indicates that focus changed on this `area`.",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 746,
+      "md": "Indicates that focus changed on this `area`. This signal\nis emitted either as a result of focus handling or event\nhandling.\n\nIt's possible that the signal is emitted even if the\ncurrently focused renderer did not change, this is\nbecause focus may change to the same renderer in the\nsame cell area for a different row of data."
+    },
+    "remove-editable": {
+      "brief": "Indicates that editing finished on `renderer` and that `editable` should be removed from the owning cell-layouting widget.",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 726,
+      "md": "Indicates that editing finished on `renderer` and that `editable`\nshould be removed from the owning cell-layouting widget."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "activate": {
+      "brief": "Activates `area`, usually by activating the currently focused cell, however some subclasses which embed widgets in the area can also activate a widget if it currently has the focus.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 2885,
+      "md": "Activates `area`, usually by activating the currently focused\ncell, however some subclasses which embed widgets in the area\ncan also activate a widget if it currently has the focus."
+    },
+    "add": {
+      "brief": "Adds `renderer` to `area` with the default child cell properties.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 1588,
+      "md": "Adds `renderer` to `area` with the default child cell properties."
+    },
+    "apply_attributes": {
+      "brief": "Applies any connected attributes to the renderers in `area` by pulling the values from `tree_model`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 2318,
+      "md": "Applies any connected attributes to the renderers in\n`area` by pulling the values from `tree_model`."
+    },
+    "copy_context": {
+      "brief": "This is sometimes needed for cases where rows need to share alignments in one orientation but may be separately grouped in the opposing orientation.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 1963,
+      "md": "This is sometimes needed for cases where rows need to share\nalignments in one orientation but may be separately grouped\nin the opposing orientation.\n\nFor instance, `GtkIconView` creates all icons (rows) to have\nthe same width and the cells theirin to have the same\nhorizontal alignments. However each row of icons may have\na separate collective height. `GtkIconView` uses this to\nrequest the heights of each row based on a context which\nwas already used to request all the row widths that are\nto be displayed."
+    },
+    "create_context": {
+      "brief": "Creates a `GtkCellArea`Context to be used with `area` for all purposes.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 1940,
+      "md": "Creates a `GtkCellArea`Context to be used with `area` for\nall purposes. `GtkCellArea`Context stores geometry information\nfor rows for which it was operated on, it is important to use\nthe same context for the same row of data at all times (i.e.\none should render and handle events with the same `GtkCellArea`Context\nwhich was used to request the size of those rows of data)."
+    },
+    "event": {
+      "brief": "Delegates event handling to a `GtkCellArea`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 1740,
+      "md": "Delegates event handling to a `GtkCellArea`."
+    },
+    "focus": {
+      "brief": "This should be called by the `area`’s owning layout widget when focus is to be passed to `area`, or moved within `area` for a given `direction` and row data.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 2859,
+      "md": "This should be called by the `area`’s owning layout widget\nwhen focus is to be passed to `area`, or moved within `area`\nfor a given `direction` and row data.\n\nImplementing `GtkCellArea` classes should implement this\nmethod to receive and navigate focus in its own way particular\nto how it lays out cells."
+    },
+    "foreach": {
+      "brief": "Calls `callback` for every `GtkCellRenderer` in `area`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 1686,
+      "md": "Calls `callback` for every `GtkCellRenderer` in `area`."
+    },
+    "foreach_alloc": {
+      "brief": "Calls `callback` for every `GtkCellRenderer` in `area` with the allocated rectangle inside `cell_area`.",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 1707,
+      "md": "Calls `callback` for every `GtkCellRenderer` in `area` with the\nallocated rectangle inside `cell_area`."
+    },
+    "get_cell_property": {
+      "brief": "This should be implemented to report the values of child cell properties for a given child `GtkCellRenderer`.",
+      "file": "gtk/deprecated/gtkcellarea.h",
+      "line": 157,
+      "md": "This should be implemented to report the values of\n  child cell properties for a given child `GtkCellRenderer`."
+    },
+    "get_preferred_height": {
+      "brief": "Retrieves a cell area’s initial minimum and natural height.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 2088,
+      "md": "Retrieves a cell area’s initial minimum and natural height.\n\n`area` will store some geometrical information in `context` along the way;\nwhen requesting sizes over an arbitrary number of rows, it’s not important\nto check the `minimum_height` and `natural_height` of this call but rather to\nconsult gtk_cell_area_context_get_preferred_height() after a series of\nrequests."
+    },
+    "get_preferred_height_for_width": {
+      "brief": "Retrieves a cell area’s minimum and natural height if it would be given the specified `width`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 2044,
+      "md": "Retrieves a cell area’s minimum and natural height if it would be given\nthe specified `width`.\n\n`area` stores some geometrical information in `context` along the way\nwhile calling gtk_cell_area_get_preferred_width(). It’s important to\nperform a series of gtk_cell_area_get_preferred_width() requests with\n`context` first and then call gtk_cell_area_get_preferred_height_for_width()\non each cell area individually to get the height for width of each\nfully requested row.\n\nIf at some point, the width of a single row changes, it should be\nrequested with gtk_cell_area_get_preferred_width() again and then\nthe full width of the requested rows checked again with\ngtk_cell_area_context_get_preferred_width()."
+    },
+    "get_preferred_width": {
+      "brief": "Retrieves a cell area’s initial minimum and natural width.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 2012,
+      "md": "Retrieves a cell area’s initial minimum and natural width.\n\n`area` will store some geometrical information in `context` along the way;\nwhen requesting sizes over an arbitrary number of rows, it’s not important\nto check the `minimum_width` and `natural_width` of this call but rather to\nconsult gtk_cell_area_context_get_preferred_width() after a series of\nrequests."
+    },
+    "get_preferred_width_for_height": {
+      "brief": "Retrieves a cell area’s minimum and natural width if it would be given the specified `height`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 2120,
+      "md": "Retrieves a cell area’s minimum and natural width if it would be given\nthe specified `height`.\n\n`area` stores some geometrical information in `context` along the way\nwhile calling gtk_cell_area_get_preferred_height(). It’s important to\nperform a series of gtk_cell_area_get_preferred_height() requests with\n`context` first and then call gtk_cell_area_get_preferred_width_for_height()\non each cell area individually to get the height for width of each\nfully requested row.\n\nIf at some point, the height of a single row changes, it should be\nrequested with gtk_cell_area_get_preferred_height() again and then\nthe full height of the requested rows checked again with\ngtk_cell_area_context_get_preferred_height()."
+    },
+    "get_request_mode": {
+      "brief": "Gets whether the area prefers a height-for-width layout or a width-for-height layout.",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 1994,
+      "md": "Gets whether the area prefers a height-for-width layout\nor a width-for-height layout."
+    },
+    "is_activatable": {
+      "brief": "Returns whether the area can do anything when activated, after applying new attributes to `area`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 2840,
+      "md": "Returns whether the area can do anything when activated,\nafter applying new attributes to `area`."
+    },
+    "remove": {
+      "brief": "Removes `renderer` from `area`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 1607,
+      "md": "Removes `renderer` from `area`."
+    },
+    "set_cell_property": {
+      "brief": "This should be implemented to handle changes in child cell properties for a given `GtkCellRenderer` that were previously installed on the `GtkCellAreaClass` with gtk_cell_area_class_install_cell_property().",
+      "file": "gtk/deprecated/gtkcellarea.h",
+      "line": 154,
+      "md": "This should be implemented to handle changes in child\n  cell properties for a given `GtkCellRenderer` that were previously\n  installed on the `GtkCellAreaClass` with gtk_cell_area_class_install_cell_property()."
+    },
+    "snapshot": {
+      "brief": "Snapshots `area`’s cells according to `area`’s layout onto at the given coordinates.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellarea.c",
+      "line": 1781,
+      "md": "Snapshots `area`’s cells according to `area`’s layout onto at\nthe given coordinates."
+    }
+  }
+}

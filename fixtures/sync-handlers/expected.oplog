@@ -1,0 +1,32 @@
+create window #1
+set #1 title "Sync"
+listen #1 close-request on
+create box #2
+set #2 orientation "vertical"
+set #2 spacing 4
+create label #3
+set #3 label "idle / keys 0"
+insert #2 #3 before=end slot=default
+create entry #4
+listen #4 key-pressed on
+insert #2 #4 before=end slot=default
+create button #5
+listen #5 clicked on
+set #5 label "Toggle dirty"
+insert #2 #5 before=end slot=default
+insert #1 #2 before=end slot=default
+call #1 present []
+sync #1 close-request []
+result #1 true
+set #3 label "vetoed / keys 0"
+sync #4 key-pressed [97,38,0]
+result #4 true
+sync #4 key-pressed [98,56,0]
+result #4 null
+sync #4 key-pressed [99,54,0]
+result #4 false
+set #3 label "vetoed / keys 3"
+event #5 clicked []
+sync #1 close-request []
+result #1 null
+set #3 label "closing / keys 3"

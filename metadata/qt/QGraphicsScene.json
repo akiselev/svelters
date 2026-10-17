@@ -52,7 +52,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {
@@ -138,12 +138,16 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QGraphicsScene::ItemIndexMethod",
       "members": [
         {
+          "cpp": "QGraphicsScene::BspTreeIndex",
           "name": "BspTreeIndex",
           "value": "0"
         },
         {
+          "cpp": "QGraphicsScene::NoIndex",
           "name": "NoIndex",
           "value": "-1"
         }
@@ -157,35 +161,53 @@
         "scoped": false
       },
       "name": "ItemIndexMethod",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": "QGraphicsScene::SceneLayers",
+      "fullname": "QGraphicsScene::SceneLayer",
       "members": [
         {
+          "cpp": "QGraphicsScene::ItemLayer",
           "name": "ItemLayer",
           "value": "0x1"
         },
         {
+          "cpp": "QGraphicsScene::BackgroundLayer",
           "name": "BackgroundLayer",
           "value": "0x2"
         },
         {
+          "cpp": "QGraphicsScene::ForegroundLayer",
           "name": "ForegroundLayer",
           "value": "0x4"
         },
         {
+          "cpp": "QGraphicsScene::AllLayers",
           "name": "AllLayers",
           "value": "0xffff"
         }
       ],
       "metaobject": null,
       "name": "SceneLayer",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsScene",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsScene:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -261,7 +283,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {
@@ -271,7 +293,7 @@
             "native": "const QPen &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPen>"
           }
         },
         {
@@ -281,7 +303,7 @@
             "native": "const QBrush &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QBrush>"
           }
         }
       ],
@@ -358,7 +380,7 @@
             "native": "const QPen &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPen>"
           }
         },
         {
@@ -368,7 +390,7 @@
             "native": "const QBrush &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QBrush>"
           }
         }
       ],
@@ -452,7 +474,7 @@
             "native": "const QPen &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPen>"
           }
         }
       ],
@@ -529,7 +551,7 @@
             "native": "const QPen &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPen>"
           }
         }
       ],
@@ -566,7 +588,7 @@
             "native": "const QPainterPath &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPainterPath>"
           }
         },
         {
@@ -576,7 +598,7 @@
             "native": "const QPen &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPen>"
           }
         },
         {
@@ -586,7 +608,7 @@
             "native": "const QBrush &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QBrush>"
           }
         }
       ],
@@ -623,7 +645,7 @@
             "native": "const QPixmap &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPixmap>"
           }
         }
       ],
@@ -670,7 +692,7 @@
             "native": "const QPen &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPen>"
           }
         },
         {
@@ -680,7 +702,7 @@
             "native": "const QBrush &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QBrush>"
           }
         }
       ],
@@ -717,7 +739,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {
@@ -727,7 +749,7 @@
             "native": "const QPen &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPen>"
           }
         },
         {
@@ -737,7 +759,7 @@
             "native": "const QBrush &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QBrush>"
           }
         }
       ],
@@ -814,7 +836,7 @@
             "native": "const QPen &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPen>"
           }
         },
         {
@@ -824,7 +846,7 @@
             "native": "const QBrush &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QBrush>"
           }
         }
       ],
@@ -871,7 +893,7 @@
             "native": "const QFont &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QFont>"
           }
         }
       ],
@@ -918,7 +940,7 @@
             "native": "const QFont &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QFont>"
           }
         }
       ],
@@ -965,7 +987,7 @@
             "native": "Qt::WindowFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::WindowType>"
           }
         }
       ],
@@ -1025,7 +1047,7 @@
         "native": "QBrush",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QBrush>"
       },
       "signature": "QBrush backgroundBrush() const",
       "since": null,
@@ -1168,7 +1190,7 @@
             "native": "Qt::ItemSelectionMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ItemSelectionMode>"
           }
         }
       ],
@@ -1437,7 +1459,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -1484,7 +1506,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -1879,7 +1901,7 @@
         "native": "QFont",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QFont>"
       },
       "signature": "QFont font() const",
       "since": null,
@@ -1905,7 +1927,7 @@
         "native": "QBrush",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QBrush>"
       },
       "signature": "QBrush foregroundBrush() const",
       "since": null,
@@ -2060,7 +2082,7 @@
             "native": "Qt::InputMethodQuery",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::InputMethodQuery>"
           }
         }
       ],
@@ -2097,7 +2119,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {
@@ -2107,7 +2129,7 @@
             "native": "QGraphicsScene::SceneLayers",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QGraphicsScene::SceneLayer>"
           }
         }
       ],
@@ -2184,7 +2206,7 @@
             "native": "QGraphicsScene::SceneLayers",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QGraphicsScene::SceneLayer>"
           }
         }
       ],
@@ -2247,7 +2269,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         },
         {
@@ -2257,7 +2279,7 @@
             "native": "const QTransform &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QTransform>"
           }
         }
       ],
@@ -2314,7 +2336,7 @@
             "native": "const QTransform &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QTransform>"
           }
         }
       ],
@@ -2348,7 +2370,7 @@
         "native": "QGraphicsScene::ItemIndexMethod",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QGraphicsScene::ItemIndexMethod>"
       },
       "signature": "QGraphicsScene::ItemIndexMethod itemIndexMethod() const",
       "since": null,
@@ -2377,7 +2399,7 @@
             "native": "Qt::SortOrder",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::SortOrder>"
           }
         }
       ],
@@ -2414,7 +2436,7 @@
             "native": "const QPainterPath &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPainterPath>"
           }
         },
         {
@@ -2424,7 +2446,7 @@
             "native": "Qt::ItemSelectionMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ItemSelectionMode>"
           }
         },
         {
@@ -2434,7 +2456,7 @@
             "native": "Qt::SortOrder",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::SortOrder>"
           }
         },
         {
@@ -2444,7 +2466,7 @@
             "native": "const QTransform &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QTransform>"
           }
         }
       ],
@@ -2481,7 +2503,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         },
         {
@@ -2491,7 +2513,7 @@
             "native": "Qt::ItemSelectionMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ItemSelectionMode>"
           }
         },
         {
@@ -2501,7 +2523,7 @@
             "native": "Qt::SortOrder",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::SortOrder>"
           }
         },
         {
@@ -2511,7 +2533,7 @@
             "native": "const QTransform &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QTransform>"
           }
         }
       ],
@@ -2558,7 +2580,7 @@
             "native": "Qt::ItemSelectionMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ItemSelectionMode>"
           }
         },
         {
@@ -2568,7 +2590,7 @@
             "native": "Qt::SortOrder",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::SortOrder>"
           }
         },
         {
@@ -2578,7 +2600,7 @@
             "native": "const QTransform &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QTransform>"
           }
         }
       ],
@@ -2615,7 +2637,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {
@@ -2625,7 +2647,7 @@
             "native": "Qt::ItemSelectionMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ItemSelectionMode>"
           }
         },
         {
@@ -2635,7 +2657,7 @@
             "native": "Qt::SortOrder",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::SortOrder>"
           }
         },
         {
@@ -2645,7 +2667,7 @@
             "native": "const QTransform &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QTransform>"
           }
         }
       ],
@@ -2722,7 +2744,7 @@
             "native": "Qt::ItemSelectionMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ItemSelectionMode>"
           }
         },
         {
@@ -2732,7 +2754,7 @@
             "native": "Qt::SortOrder",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::SortOrder>"
           }
         },
         {
@@ -2742,7 +2764,7 @@
             "native": "const QTransform &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QTransform>"
           }
         }
       ],
@@ -2776,7 +2798,7 @@
         "native": "QRectF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRectF itemsBoundingRect() const",
       "since": null,
@@ -3076,7 +3098,7 @@
         "native": "QPalette",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPalette>"
       },
       "signature": "QPalette palette() const",
       "since": null,
@@ -3152,7 +3174,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {
@@ -3162,7 +3184,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {
@@ -3172,7 +3194,7 @@
             "native": "Qt::AspectRatioMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::AspectRatioMode>"
           }
         }
       ],
@@ -3206,7 +3228,7 @@
         "native": "QRectF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRectF sceneRect() const",
       "since": null,
@@ -3258,7 +3280,7 @@
         "native": "QPainterPath",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPainterPath>"
       },
       "signature": "QPainterPath selectionArea() const",
       "since": null,
@@ -3408,7 +3430,7 @@
             "native": "const QBrush &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QBrush>"
           }
         }
       ],
@@ -3482,7 +3504,7 @@
             "native": "Qt::FocusReason",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::FocusReason>"
           }
         }
       ],
@@ -3529,7 +3551,7 @@
             "native": "Qt::FocusReason",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::FocusReason>"
           }
         }
       ],
@@ -3603,7 +3625,7 @@
             "native": "const QFont &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QFont>"
           }
         }
       ],
@@ -3640,7 +3662,7 @@
             "native": "const QBrush &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QBrush>"
           }
         }
       ],
@@ -3677,7 +3699,7 @@
             "native": "QGraphicsScene::ItemIndexMethod",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QGraphicsScene::ItemIndexMethod>"
           }
         }
       ],
@@ -3751,7 +3773,7 @@
             "native": "const QPalette &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPalette>"
           }
         }
       ],
@@ -3788,7 +3810,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -3892,7 +3914,7 @@
             "native": "const QPainterPath &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPainterPath>"
           }
         },
         {
@@ -3902,7 +3924,7 @@
             "native": "Qt::ItemSelectionOperation",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ItemSelectionOperation>"
           }
         },
         {
@@ -3912,7 +3934,7 @@
             "native": "Qt::ItemSelectionMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ItemSelectionMode>"
           }
         },
         {
@@ -3922,7 +3944,7 @@
             "native": "const QTransform &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QTransform>"
           }
         }
       ],
@@ -3959,7 +3981,7 @@
             "native": "const QPainterPath &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPainterPath>"
           }
         },
         {
@@ -3969,7 +3991,7 @@
             "native": "const QTransform &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QTransform>"
           }
         }
       ],
@@ -4132,7 +4154,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -4233,7 +4255,7 @@
         "native": "QList<QGraphicsView *>",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<object<QGraphicsView>>"
       },
       "signature": "QList<QGraphicsView *> views() const",
       "since": null,
@@ -4477,6 +4499,7 @@
         "set": "setBackgroundBrush"
       },
       "brief": "The background brush of the scene",
+      "default": null,
       "js_name": "backgroundBrush",
       "metaobject": {
         "constant": false,
@@ -4497,12 +4520,13 @@
       "name": "backgroundBrush",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QBrush",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QBrush>"
       }
     },
     {
@@ -4517,6 +4541,8 @@
         "set": "setBspTreeDepth"
       },
       "brief": "The depth of QGraphicsScene's BSP index tree",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "bspTreeDepth",
       "metaobject": {
         "constant": false,
@@ -4537,6 +4563,7 @@
       "name": "bspTreeDepth",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -4557,6 +4584,8 @@
         "set": "setFocusOnTouch"
       },
       "brief": "Whether items gain focus when receiving a touch begin event",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "focusOnTouch",
       "metaobject": {
         "constant": false,
@@ -4577,6 +4606,7 @@
       "name": "focusOnTouch",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -4597,6 +4627,7 @@
         "set": "setFont"
       },
       "brief": "The scene's default font",
+      "default": null,
       "js_name": "font",
       "metaobject": {
         "constant": false,
@@ -4617,12 +4648,13 @@
       "name": "font",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QFont",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QFont>"
       }
     },
     {
@@ -4637,6 +4669,7 @@
         "set": "setForegroundBrush"
       },
       "brief": "The foreground brush of the scene",
+      "default": null,
       "js_name": "foregroundBrush",
       "metaobject": {
         "constant": false,
@@ -4657,12 +4690,13 @@
       "name": "foregroundBrush",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QBrush",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QBrush>"
       }
     },
     {
@@ -4677,6 +4711,8 @@
         "set": "setItemIndexMethod"
       },
       "brief": "The item indexing method",
+      "default": "BspTreeIndex",
+      "default_origin": "runtime",
       "js_name": "itemIndexMethod",
       "metaobject": {
         "constant": false,
@@ -4697,12 +4733,13 @@
       "name": "itemIndexMethod",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "ItemIndexMethod",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<ItemIndexMethod>"
+        "ref": "enum<QGraphicsScene::ItemIndexMethod>"
       }
     },
     {
@@ -4717,6 +4754,8 @@
         "set": "setMinimumRenderSize"
       },
       "brief": "The minimal view-transformed size an item must have to be drawn",
+      "default": 0.0,
+      "default_origin": "runtime",
       "js_name": "minimumRenderSize",
       "metaobject": {
         "constant": false,
@@ -4737,6 +4776,7 @@
       "name": "minimumRenderSize",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "qreal",
@@ -4757,6 +4797,7 @@
         "set": "setPalette"
       },
       "brief": "The scene's default palette",
+      "default": null,
       "js_name": "palette",
       "metaobject": {
         "constant": false,
@@ -4777,12 +4818,13 @@
       "name": "palette",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QPalette",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPalette>"
       }
     },
     {
@@ -4797,6 +4839,7 @@
         "set": "setSceneRect"
       },
       "brief": "The scene rectangle; the bounding rectangle of the scene",
+      "default": null,
       "js_name": "sceneRect",
       "metaobject": {
         "constant": false,
@@ -4817,12 +4860,13 @@
       "name": "sceneRect",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QRectF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       }
     },
     {
@@ -4837,6 +4881,8 @@
         "set": "setStickyFocus"
       },
       "brief": "Whether clicking into the scene background will clear focus",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "stickyFocus",
       "metaobject": {
         "constant": false,
@@ -4857,6 +4903,7 @@
       "name": "stickyFocus",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -4891,7 +4938,7 @@
             "native": "const QList<QRectF> &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<record<Rect>>"
           }
         }
       ],
@@ -4946,7 +4993,7 @@
             "native": "Qt::FocusReason",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::FocusReason>"
           }
         }
       ],
@@ -4981,7 +5028,7 @@
             "native": "const QRectF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],

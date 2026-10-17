@@ -1,0 +1,83 @@
+{
+  "doc": {
+    "brief": "The QGraphicsSceneMouseEvent class provides mouse events in the graphics view framework.",
+    "index_brief": "Mouse events in the graphics view framework",
+    "url": "https://doc.qt.io/qt-6/qgraphicsscenemouseevent.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsSceneMouseEvent",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QPoint buttonDownScreenPos(Qt::MouseButton button) const": {
+      "brief": "Returns the mouse cursor position in screen coordinates where the specified *button* was clicked.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscenemouseevent.html#buttonDownScreenPos"
+    },
+    "QPoint lastScreenPos() const": {
+      "brief": "Returns the last recorded mouse cursor position in screen coordinates.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscenemouseevent.html#lastScreenPos"
+    },
+    "QPoint screenPos() const": {
+      "brief": "Returns the mouse cursor position in screen coordinates.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscenemouseevent.html#screenPos"
+    },
+    "QPointF buttonDownPos(Qt::MouseButton button) const": {
+      "brief": "Returns the mouse cursor position in item coordinates where the specified *button* was clicked.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscenemouseevent.html#buttonDownPos"
+    },
+    "QPointF buttonDownScenePos(Qt::MouseButton button) const": {
+      "brief": "Returns the mouse cursor position in scene coordinates where the specified *button* was clicked.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscenemouseevent.html#buttonDownScenePos"
+    },
+    "QPointF lastPos() const": {
+      "brief": "Returns the last recorded mouse cursor position in item coordinates.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscenemouseevent.html#lastPos"
+    },
+    "QPointF lastScenePos() const": {
+      "brief": "Returns the last recorded mouse cursor position in scene coordinates.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscenemouseevent.html#lastScenePos"
+    },
+    "QPointF pos() const": {
+      "brief": "Returns the mouse cursor position in item coordinates.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscenemouseevent.html#pos"
+    },
+    "QPointF scenePos() const": {
+      "brief": "Returns the mouse cursor position in scene coordinates.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscenemouseevent.html#scenePos"
+    },
+    "Qt::KeyboardModifiers modifiers() const": {
+      "brief": "Returns the keyboard modifiers in use at the time the event was sent.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscenemouseevent.html#modifiers"
+    },
+    "Qt::MouseButton button() const": {
+      "brief": "Returns the mouse button (if any) that caused the event.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscenemouseevent.html#button"
+    },
+    "Qt::MouseButtons buttons() const": {
+      "brief": "Returns the combination of mouse buttons that were pressed at the time the event was sent.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscenemouseevent.html#buttons"
+    },
+    "Qt::MouseEventFlags flags() const": {
+      "brief": "Returns the mouse event flags.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscenemouseevent.html#flags"
+    },
+    "Qt::MouseEventSource source() const": {
+      "brief": "Returns information about the mouse event source.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscenemouseevent.html#source"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

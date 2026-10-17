@@ -1,0 +1,31 @@
+{
+  "doc": {
+    "brief": "The QStyleHintReturnMask class provides style hints that return a [QRegion](xref:qt:QRegion).",
+    "index_brief": "Style hints that return a QRegion",
+    "url": "https://doc.qt.io/qt-6/qstylehintreturnmask.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QStyleHintReturnMask",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QStyleHintReturnMask()": {
+      "brief": "Constructs a QStyleHintReturnMask.",
+      "url": "https://doc.qt.io/qt-6/qstylehintreturnmask.html#QStyleHintReturnMask"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

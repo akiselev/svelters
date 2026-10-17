@@ -1,0 +1,43 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "The relation between two terms of a constraint.",
+    "file": "gtk/gtkenums.h",
+    "line": 1127,
+    "md": "The relation between two terms of a constraint."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ConstraintRelation",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "eq": {
+      "brief": "Equal",
+      "file": "gtk/gtkenums.h",
+      "line": 1129,
+      "md": "Equal"
+    },
+    "ge": {
+      "brief": "Greater than, or equal",
+      "file": "gtk/gtkenums.h",
+      "line": 1131,
+      "md": "Greater than, or equal"
+    },
+    "le": {
+      "brief": "Less than, or equal",
+      "file": "gtk/gtkenums.h",
+      "line": 1130,
+      "md": "Less than, or equal"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

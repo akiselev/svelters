@@ -47,6 +47,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QTextBrowser",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QTextBrowser:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -148,7 +158,7 @@
             "native": "const QUrl &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QUrl>"
           }
         },
         {
@@ -158,7 +168,7 @@
             "native": "QTextDocument::ResourceType",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QTextDocument::ResourceType>"
           }
         }
       ],
@@ -403,7 +413,7 @@
         "native": "QUrl",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QUrl>"
       },
       "signature": "QUrl historyUrl(int i) const",
       "since": null,
@@ -557,7 +567,7 @@
             "native": "const QUrl &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QUrl>"
           }
         }
       ],
@@ -817,7 +827,7 @@
         "native": "QStringList",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<string>"
       },
       "signature": "QStringList searchPaths() const",
       "since": null,
@@ -920,7 +930,7 @@
             "native": "const QStringList &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<string>"
           }
         }
       ],
@@ -957,7 +967,7 @@
             "native": "const QUrl &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QUrl>"
           }
         },
         {
@@ -967,7 +977,7 @@
             "native": "QTextDocument::ResourceType",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QTextDocument::ResourceType>"
           }
         }
       ],
@@ -1001,7 +1011,7 @@
         "native": "QUrl",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QUrl>"
       },
       "signature": "QUrl source() const",
       "since": null,
@@ -1027,7 +1037,7 @@
         "native": "QTextDocument::ResourceType",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QTextDocument::ResourceType>"
       },
       "signature": "QTextDocument::ResourceType sourceType() const",
       "since": null,
@@ -1055,9 +1065,11 @@
         "set": null
       },
       "brief": "Whether the contents of the text browser have been modified",
+      "default": null,
       "js_name": "modified",
       "name": "modified",
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1078,6 +1090,8 @@
         "set": "setOpenExternalLinks"
       },
       "brief": null,
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "openExternalLinks",
       "metaobject": {
         "constant": false,
@@ -1098,6 +1112,7 @@
       "name": "openExternalLinks",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1118,6 +1133,8 @@
         "set": "setOpenLinks"
       },
       "brief": null,
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "openLinks",
       "metaobject": {
         "constant": false,
@@ -1138,6 +1155,7 @@
       "name": "openLinks",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1158,9 +1176,11 @@
         "set": null
       },
       "brief": "Whether the text browser is read-only",
+      "default": null,
       "js_name": "readOnly",
       "name": "readOnly",
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1181,6 +1201,7 @@
         "set": "setSearchPaths"
       },
       "brief": "The search paths used by the text browser to find supporting content",
+      "default": null,
       "js_name": "searchPaths",
       "metaobject": {
         "constant": false,
@@ -1201,12 +1222,13 @@
       "name": "searchPaths",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QStringList",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "list"
+        "ref": "list<string>"
       }
     },
     {
@@ -1221,6 +1243,7 @@
         "set": null
       },
       "brief": "The name of the displayed document",
+      "default": null,
       "js_name": "source",
       "metaobject": {
         "constant": false,
@@ -1241,12 +1264,13 @@
       "name": "source",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QUrl",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QUrl>"
       }
     },
     {
@@ -1261,6 +1285,7 @@
         "set": null
       },
       "brief": "The type of the displayed document",
+      "default": null,
       "js_name": "sourceType",
       "metaobject": {
         "constant": false,
@@ -1281,12 +1306,13 @@
       "name": "sourceType",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QTextDocument::ResourceType",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QTextDocument::ResourceType>"
       }
     },
     {
@@ -1301,9 +1327,11 @@
         "set": null
       },
       "brief": "Whether the text browser supports undo/redo operations",
+      "default": null,
       "js_name": "undoRedoEnabled",
       "name": "undoRedoEnabled",
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1338,7 +1366,7 @@
             "native": "const QUrl &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QUrl>"
           }
         }
       ],
@@ -1443,7 +1471,7 @@
             "native": "const QUrl &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QUrl>"
           }
         }
       ],
@@ -1502,7 +1530,7 @@
             "native": "const QUrl &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QUrl>"
           }
         }
       ],

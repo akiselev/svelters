@@ -116,6 +116,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QUndoView",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QUndoView:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -136,7 +146,7 @@
         "native": "QIcon",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QIcon>"
       },
       "signature": "QIcon cleanIcon() const",
       "since": null,
@@ -217,7 +227,7 @@
             "native": "const QIcon &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QIcon>"
           }
         }
       ],
@@ -423,6 +433,7 @@
         "set": "setCleanIcon"
       },
       "brief": "The icon used to represent the clean state",
+      "default": null,
       "js_name": "cleanIcon",
       "metaobject": {
         "constant": false,
@@ -443,12 +454,13 @@
       "name": "cleanIcon",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QIcon",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QIcon>"
       }
     },
     {
@@ -463,6 +475,8 @@
         "set": "setEmptyLabel"
       },
       "brief": "The label used for the empty state",
+      "default": "<empty>",
+      "default_origin": "runtime",
       "js_name": "emptyLabel",
       "metaobject": {
         "constant": false,
@@ -483,6 +497,7 @@
       "name": "emptyLabel",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",

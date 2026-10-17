@@ -1,0 +1,347 @@
+{
+  "doc": {
+    "brief": "The QTabWidget class provides a stack of tabbed widgets.",
+    "index_brief": "Stack of tabbed widgets",
+    "url": "https://doc.qt.io/qt-6/qtabwidget.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QTabWidget",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QIcon tabIcon(int index) const": {
+      "brief": "Returns the icon for the tab on the page at position *index*.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#tabIcon"
+    },
+    "QSize iconSize() const": {
+      "brief": "This property holds the size for icons in the tab bar",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#iconSize-prop"
+    },
+    "QSize minimumSizeHint() const override": {
+      "brief": "Reimplements an access function for property: [QWidget::minimumSizeHint](xref:qt:QWidget).",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#minimumSizeHint"
+    },
+    "QSize sizeHint() const override": {
+      "brief": "Reimplements an access function for property: [QWidget::sizeHint](xref:qt:QWidget).",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#sizeHint"
+    },
+    "QString tabText(int index) const": {
+      "brief": "Returns the label text for the tab on the page at position *index*.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#tabText"
+    },
+    "QString tabToolTip(int index) const": {
+      "brief": "Returns the tab tool tip for the page at position *index* or an empty string if no tool tip has been set.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#tabToolTip"
+    },
+    "QString tabWhatsThis(int index) const": {
+      "brief": "Returns the What's This help text for the page at position *index*, or an empty string if no help text has been set.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#tabWhatsThis"
+    },
+    "QTabBar * tabBar() const": {
+      "brief": "Returns the current [QTabBar](xref:qt:QTabBar).",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#tabBar"
+    },
+    "QTabWidget(QWidget *parent)": {
+      "brief": "Constructs a tabbed widget with parent *parent*.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#QTabWidget"
+    },
+    "QTabWidget::TabPosition tabPosition() const": {
+      "brief": "This property holds the position of the tabs in this tab widget",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#tabPosition-prop"
+    },
+    "QTabWidget::TabShape tabShape() const": {
+      "brief": "This property holds the shape of the tabs in this tab widget",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#tabShape-prop"
+    },
+    "QWidget * cornerWidget(Qt::Corner corner) const": {
+      "brief": "Returns the widget shown in the *corner* of the tab widget or `nullptr`.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#cornerWidget"
+    },
+    "QWidget * currentWidget() const": {
+      "brief": "Returns a pointer to the page currently being displayed by the tab dialog.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#currentWidget"
+    },
+    "QWidget * widget(int index) const": {
+      "brief": "Returns the tab page at index position *index* or `nullptr` if the *index* is out of range.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#widget"
+    },
+    "Qt::TextElideMode elideMode() const": {
+      "brief": "how to elide text in the tab bar",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#elideMode-prop"
+    },
+    "bool documentMode() const": {
+      "brief": "This property holds whether or not the tab widget is rendered in a mode suitable for document pages.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#documentMode-prop"
+    },
+    "bool event(QEvent *ev) override": {
+      "brief": "Reimplements: [QWidget::event](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#event"
+    },
+    "bool hasHeightForWidth() const override": {
+      "brief": "Reimplements: [QWidget::hasHeightForWidth](xref:qt:QWidget)() const.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#hasHeightForWidth"
+    },
+    "bool isMovable() const": {
+      "brief": "This property holds whether the user can move the tabs within the tabbar area.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#movable-prop"
+    },
+    "bool isTabEnabled(int index) const": {
+      "brief": "Returns `true` if the page at position *index* is enabled; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#isTabEnabled"
+    },
+    "bool isTabVisible(int index) const": {
+      "brief": "Returns true if the page at position *index* is visible; otherwise returns false.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#isTabVisible"
+    },
+    "bool tabBarAutoHide() const": {
+      "brief": "If true, the tab bar is automatically hidden when it contains less than 2 tabs.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#tabBarAutoHide-prop"
+    },
+    "bool tabsClosable() const": {
+      "brief": "This property holds whether close buttons are automatically added to each tab.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#tabsClosable-prop"
+    },
+    "bool usesScrollButtons() const": {
+      "brief": "This property holds whether or not a tab bar should use buttons to scroll tabs when it has many tabs.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#usesScrollButtons-prop"
+    },
+    "int addTab(QWidget *page, const QIcon &icon, const QString &label)": {
+      "brief": "Adds a tab with the given *page*, *icon*, and *label* to the tab widget, and returns the index of the tab in the tab bar.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#addTab-1"
+    },
+    "int addTab(QWidget *page, const QString &label)": {
+      "brief": "Adds a tab with the given *page* and *label* to the tab widget, and returns the index of the tab in the tab bar.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#addTab"
+    },
+    "int count() const": {
+      "brief": "This property holds the number of tabs in the tab bar",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#count-prop"
+    },
+    "int currentIndex() const": {
+      "brief": "This property holds the index position of the current tab page",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#currentIndex-prop"
+    },
+    "int heightForWidth(int width) const override": {
+      "brief": "Reimplements: [QWidget::heightForWidth](xref:qt:QWidget)(int w) const.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#heightForWidth"
+    },
+    "int indexOf(const QWidget *w) const": {
+      "brief": "Returns the index position of the page occupied by the widget *w*, or -1 if the widget cannot be found.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#indexOf"
+    },
+    "int insertTab(int index, QWidget *page, const QIcon &icon, const QString &label)": {
+      "brief": "Inserts a tab with the given *label*, *page*, and *icon* into the tab widget at the specified *index*, and returns the index of the inserted tab in the tab bar.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#insertTab-1"
+    },
+    "int insertTab(int index, QWidget *page, const QString &label)": {
+      "brief": "Inserts a tab with the given *label* and *page* into the tab widget at the specified *index*, and returns the index of the inserted tab in the tab bar.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#insertTab"
+    },
+    "void changeEvent(QEvent *ev) override": {
+      "brief": "Reimplements: [QWidget::changeEvent](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#changeEvent"
+    },
+    "void clear()": {
+      "brief": "Removes all the pages, but does not delete them.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#clear"
+    },
+    "void currentChanged(int index)": {
+      "brief": "This signal is emitted whenever the current page index changes.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#currentChanged"
+    },
+    "void initStyleOption(QStyleOptionTabWidgetFrame *option) const": {
+      "brief": "Initialize *option* with the values from this [QTabWidget](xref:qt:QTabWidget).",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#initStyleOption"
+    },
+    "void keyPressEvent(QKeyEvent *e) override": {
+      "brief": "Reimplements: [QWidget::keyPressEvent](xref:qt:QWidget)(QKeyEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#keyPressEvent"
+    },
+    "void paintEvent(QPaintEvent *event) override": {
+      "brief": "Reimplements: [QWidget::paintEvent](xref:qt:QWidget)(QPaintEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#paintEvent"
+    },
+    "void removeTab(int index)": {
+      "brief": "Removes the tab at position *index* from this stack of widgets.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#removeTab"
+    },
+    "void resizeEvent(QResizeEvent *e) override": {
+      "brief": "Reimplements: [QWidget::resizeEvent](xref:qt:QWidget)(QResizeEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#resizeEvent"
+    },
+    "void setCornerWidget(QWidget *widget, Qt::Corner corner)": {
+      "brief": "Sets the given *widget* to be shown in the specified *corner* of the tab widget.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#setCornerWidget"
+    },
+    "void setCurrentIndex(int index)": {
+      "brief": "This property holds the index position of the current tab page",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#currentIndex-prop"
+    },
+    "void setCurrentWidget(QWidget *widget)": {
+      "brief": "Makes *widget* the current widget.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#setCurrentWidget"
+    },
+    "void setDocumentMode(bool set)": {
+      "brief": "This property holds whether or not the tab widget is rendered in a mode suitable for document pages.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#documentMode-prop"
+    },
+    "void setElideMode(Qt::TextElideMode mode)": {
+      "brief": "how to elide text in the tab bar",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#elideMode-prop"
+    },
+    "void setIconSize(const QSize &size)": {
+      "brief": "This property holds the size for icons in the tab bar",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#iconSize-prop"
+    },
+    "void setMovable(bool movable)": {
+      "brief": "This property holds whether the user can move the tabs within the tabbar area.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#movable-prop"
+    },
+    "void setTabBar(QTabBar *tb)": {
+      "brief": "Replaces the dialog's [QTabBar](xref:qt:QTabBar) heading with the tab bar *tb*.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#setTabBar"
+    },
+    "void setTabBarAutoHide(bool enabled)": {
+      "brief": "If true, the tab bar is automatically hidden when it contains less than 2 tabs.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#tabBarAutoHide-prop"
+    },
+    "void setTabEnabled(int index, bool enable)": {
+      "brief": "If *enable* is true, the page at position *index* is enabled; otherwise the page at position *index* is disabled.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#setTabEnabled"
+    },
+    "void setTabIcon(int index, const QIcon &icon)": {
+      "brief": "Sets the *icon* for the tab at position *index*.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#setTabIcon"
+    },
+    "void setTabPosition(QTabWidget::TabPosition position)": {
+      "brief": "This property holds the position of the tabs in this tab widget",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#tabPosition-prop"
+    },
+    "void setTabShape(QTabWidget::TabShape s)": {
+      "brief": "This property holds the shape of the tabs in this tab widget",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#tabShape-prop"
+    },
+    "void setTabText(int index, const QString &label)": {
+      "brief": "Defines a new *label* for the page at position *index*'s tab.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#setTabText"
+    },
+    "void setTabToolTip(int index, const QString &tip)": {
+      "brief": "Sets the tab tool tip for the page at position *index* to *tip*.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#setTabToolTip"
+    },
+    "void setTabVisible(int index, bool visible)": {
+      "brief": "If *visible* is true, the page at position *index* is visible; otherwise the page at position *index* is hidden.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#setTabVisible"
+    },
+    "void setTabWhatsThis(int index, const QString &text)": {
+      "brief": "Sets the What's This help text for the page at position *index* to *text*.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#setTabWhatsThis"
+    },
+    "void setTabsClosable(bool closeable)": {
+      "brief": "This property holds whether close buttons are automatically added to each tab.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#tabsClosable-prop"
+    },
+    "void setUsesScrollButtons(bool useButtons)": {
+      "brief": "This property holds whether or not a tab bar should use buttons to scroll tabs when it has many tabs.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#usesScrollButtons-prop"
+    },
+    "void showEvent(QShowEvent *) override": {
+      "brief": "Reimplements: [QWidget::showEvent](xref:qt:QWidget)(QShowEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#showEvent"
+    },
+    "void tabBarClicked(int index)": {
+      "brief": "This signal is emitted when user clicks on a tab at an *index*.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#tabBarClicked"
+    },
+    "void tabBarDoubleClicked(int index)": {
+      "brief": "This signal is emitted when the user double clicks on a tab at an *index*.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#tabBarDoubleClicked"
+    },
+    "void tabCloseRequested(int index)": {
+      "brief": "This signal is emitted when the close button on a tab is clicked.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#tabCloseRequested"
+    },
+    "void tabInserted(int index)": {
+      "brief": "This virtual handler is called after a new tab was added or inserted at position *index*.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#tabInserted"
+    },
+    "void tabRemoved(int index)": {
+      "brief": "This virtual handler is called after a tab was removed from position *index*.",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#tabRemoved"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "count": {
+      "brief": "The number of tabs in the tab bar",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#count-prop"
+    },
+    "currentIndex": {
+      "brief": "The index position of the current tab page",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#currentIndex-prop"
+    },
+    "documentMode": {
+      "brief": "Whether or not the tab widget is rendered in a mode suitable for document pages. This is the same as document mode on macOS",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#documentMode-prop"
+    },
+    "elideMode": {
+      "brief": "How to elide text in the tab bar",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#elideMode-prop"
+    },
+    "iconSize": {
+      "brief": "Size for icons in the tab bar",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#iconSize-prop"
+    },
+    "movable": {
+      "brief": "This property holds whether the user can move the tabs within the tabbar area",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#movable-prop"
+    },
+    "tabBarAutoHide": {
+      "brief": "If true, the tab bar is automatically hidden when it contains less than 2 tabs",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#tabBarAutoHide-prop"
+    },
+    "tabPosition": {
+      "brief": "The position of the tabs in this tab widget",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#tabPosition-prop"
+    },
+    "tabShape": {
+      "brief": "The shape of the tabs in this tab widget",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#tabShape-prop"
+    },
+    "tabsClosable": {
+      "brief": "Whether close buttons are automatically added to each tab",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#tabsClosable-prop"
+    },
+    "usesScrollButtons": {
+      "brief": "Whether or not a tab bar should use buttons to scroll tabs when it has many tabs",
+      "url": "https://doc.qt.io/qt-6/qtabwidget.html#usesScrollButtons-prop"
+    }
+  },
+  "qss": {
+    "box_model": false,
+    "pseudo_states": [
+      ":bottom",
+      ":left",
+      ":right",
+      ":top"
+    ],
+    "sub_controls": [
+      "::left-corner",
+      "::pane",
+      "::right-corner",
+      "::tab-bar"
+    ],
+    "url": "https://doc.qt.io/qt-6/stylesheet-reference.html#qtabwidget-widget"
+  },
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

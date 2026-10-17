@@ -1,0 +1,88 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new event controller that will handle pointer motion events during drag and drop.",
+      "file": "gtk/gtkdropcontrollermotion.c",
+      "line": 326,
+      "md": "Creates a new event controller that will handle pointer motion\nevents during drag and drop."
+    }
+  },
+  "doc": {
+    "brief": "An event controller tracking the pointer during Drag-and-Drop operations.",
+    "file": "gtk/gtkdropcontrollermotion.c",
+    "line": 20,
+    "md": "An event controller tracking the pointer during Drag-and-Drop operations.\n\nIt is modeled after [`EventControllerMotion`](xref:gtk:Gtk.EventControllerMotion) so if you\nhave used that, this should feel really familiar.\n\nThis controller is not able to accept drops, use [`DropTarget`](xref:gtk:Gtk.DropTarget)\nfor that purpose."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:DropControllerMotion",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "contains_pointer": {
+      "brief": "Returns if a Drag-and-Drop operation is within the widget `self` or one of its children.",
+      "file": "gtk/gtkdropcontrollermotion.c",
+      "line": 341,
+      "md": "Returns if a Drag-and-Drop operation is within the widget\n`self` or one of its children."
+    },
+    "get_drop": {
+      "brief": "Returns the `GdkDrop` of a current Drag-and-Drop operation over the widget of `self`.",
+      "file": "gtk/gtkdropcontrollermotion.c",
+      "line": 358,
+      "md": "Returns the `GdkDrop` of a current Drag-and-Drop operation\nover the widget of `self`."
+    },
+    "is_pointer": {
+      "brief": "Returns if a Drag-and-Drop operation is within the widget `self`, not one of its children.",
+      "file": "gtk/gtkdropcontrollermotion.c",
+      "line": 376,
+      "md": "Returns if a Drag-and-Drop operation is within the widget\n`self`, not one of its children."
+    }
+  },
+  "properties": {
+    "contains-pointer": {
+      "brief": "Whether the pointer of a Drag-and-Drop operation is in the controller's widget or a descendant.",
+      "file": "gtk/gtkdropcontrollermotion.c",
+      "line": 208,
+      "md": "Whether the pointer of a Drag-and-Drop operation is in\nthe controller's widget or a descendant.\n\nSee also [`DropControllerMotion:is-pointer`](xref:gtk:Gtk.DropControllerMotion#property:is-pointer).\n\nWhen handling crossing events, this property is updated\nbefore [`DropControllerMotion::enter`](xref:gtk:Gtk.DropControllerMotion#event:enter), but after\n[`DropControllerMotion::leave`](xref:gtk:Gtk.DropControllerMotion#event:leave) is emitted."
+    },
+    "drop": {
+      "brief": "The ongoing drop operation over the controller's widget or its descendant.",
+      "file": "gtk/gtkdropcontrollermotion.c",
+      "line": 225,
+      "md": "The ongoing drop operation over the controller's widget or\nits descendant.\n\nIf no drop operation is going on, this property returns `NULL`.\n\nThe event controller should not modify the `drop`, but it might\nwant to query its properties.\n\nWhen handling crossing events, this property is updated\nbefore [`DropControllerMotion::enter`](xref:gtk:Gtk.DropControllerMotion#event:enter), but after\n[`DropControllerMotion::leave`](xref:gtk:Gtk.DropControllerMotion#event:leave) is emitted."
+    },
+    "is-pointer": {
+      "brief": "Whether the pointer is in the controllers widget itself, as opposed to in a descendent widget.",
+      "file": "gtk/gtkdropcontrollermotion.c",
+      "line": 245,
+      "md": "Whether the pointer is in the controllers widget itself,\nas opposed to in a descendent widget.\n\nSee also [`DropControllerMotion:contains-pointer`](xref:gtk:Gtk.DropControllerMotion#property:contains-pointer).\n\nWhen handling crossing events, this property is updated\nbefore [`DropControllerMotion::enter`](xref:gtk:Gtk.DropControllerMotion#event:enter), but after\n[`DropControllerMotion::leave`](xref:gtk:Gtk.DropControllerMotion#event:leave) is emitted."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "enter": {
+      "brief": "Signals that the pointer has entered the widget.",
+      "file": "gtk/gtkdropcontrollermotion.c",
+      "line": 264,
+      "md": "Signals that the pointer has entered the widget."
+    },
+    "leave": {
+      "brief": "Signals that the pointer has left the widget.",
+      "file": "gtk/gtkdropcontrollermotion.c",
+      "line": 285,
+      "md": "Signals that the pointer has left the widget."
+    },
+    "motion": {
+      "brief": "Emitted when the pointer moves inside the widget.",
+      "file": "gtk/gtkdropcontrollermotion.c",
+      "line": 299,
+      "md": "Emitted when the pointer moves inside the widget."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

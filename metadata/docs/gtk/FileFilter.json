@@ -1,0 +1,124 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkFileFilter` with no rules added to it.",
+      "file": "gtk/gtkfilefilter.c",
+      "line": 519,
+      "md": "Creates a new `GtkFileFilter` with no rules added to it.\n\nSuch a filter doesn’t accept any files, so is not\nparticularly useful until you add rules with\n[`FileFilter.add_mime_type()`](xref:gtk:Gtk.FileFilter#method:add_mime_type),\n[`FileFilter.add_pattern()`](xref:gtk:Gtk.FileFilter#method:add_pattern),\n[`FileFilter.add_suffix()`](xref:gtk:Gtk.FileFilter#method:add_suffix) or\n[`FileFilter.add_pixbuf_formats()`](xref:gtk:Gtk.FileFilter#method:add_pixbuf_formats).\n\nTo create a filter that accepts any file, use:\n```c\nGtkFileFilter *filter = gtk_file_filter_new ();\ngtk_file_filter_add_pattern (filter, \"*\");\n```"
+    },
+    "new_from_gvariant": {
+      "brief": "Deserialize a file filter from a `GVariant`.",
+      "file": "gtk/gtkfilefilter.c",
+      "line": 1133,
+      "md": "Deserialize a file filter from a `GVariant`.\n\nThe variant must be in the format produced by\n[`FileFilter.to_gvariant()`](xref:gtk:Gtk.FileFilter#method:to_gvariant)."
+    }
+  },
+  "doc": {
+    "brief": "Filters files by name or mime type.",
+    "file": "gtk/gtkfilefilter.c",
+    "line": 19,
+    "md": "Filters files by name or mime type.\n\n`GtkFileFilter` can be used to restrict the files being shown in a\nfile chooser. Files can be filtered based on their name (with\n[`FileFilter.add_pattern()`](xref:gtk:Gtk.FileFilter#method:add_pattern) or [`FileFilter.add_suffix()`](xref:gtk:Gtk.FileFilter#method:add_suffix))\nor on their mime type (with [`FileFilter.add_mime_type()`](xref:gtk:Gtk.FileFilter#method:add_mime_type)).\n\nFiltering by mime types handles aliasing and subclassing of mime\ntypes; e.g. a filter for text/plain also matches a file with mime\ntype application/rtf, since application/rtf is a subclass of\ntext/plain. Note that `GtkFileFilter` allows wildcards for the\nsubtype of a mime type, so you can e.g. filter for image/\\*.\n\nNormally, file filters are used by adding them to a file chooser\n(see [`FileDialog.set_filters()`](xref:gtk:Gtk.FileDialog#method:set_filters)), but it is also possible to\nmanually use a file filter on any [`FilterListModel`](xref:gtk:Gtk.FilterListModel) containing\n`GFileInfo` objects.\n\n# GtkFileFilter as GtkBuildable\n\nThe `GtkFileFilter` implementation of the `GtkBuildable` interface\nsupports adding rules using the `<mime-types>` and `<patterns>` and\n`<suffixes>` elements and listing the rules within. Specifying a\n`<mime-type>` or `<pattern>` or `<suffix>` has the same effect as\nas calling\n[`FileFilter.add_mime_type()`](xref:gtk:Gtk.FileFilter#method:add_mime_type) or\n[`FileFilter.add_pattern()`](xref:gtk:Gtk.FileFilter#method:add_pattern) or\n[`FileFilter.add_suffix()`](xref:gtk:Gtk.FileFilter#method:add_suffix).\n\nAn example of a UI definition fragment specifying `GtkFileFilter`\nrules:\n```xml\n<object class=\"GtkFileFilter\">\n  <property name=\"name\" translatable=\"yes\">Text and Images</property>\n  <mime-types>\n    <mime-type>text/plain</mime-type>\n    <mime-type>image/ *</mime-type>\n  </mime-types>\n  <patterns>\n    <pattern>*.txt</pattern>\n  </patterns>\n  <suffixes>\n    <suffix>png</suffix>\n  </suffixes>\n</object>\n```"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:FileFilter",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "add_mime_type": {
+      "brief": "Adds a rule allowing a given mime type.",
+      "file": "gtk/gtkfilefilter.c",
+      "line": 617,
+      "md": "Adds a rule allowing a given mime type."
+    },
+    "add_mime_types": {
+      "brief": "Adds a rule allowing a given array of mime types.",
+      "file": "gtk/gtkfilefilter.c",
+      "line": 642,
+      "md": "Adds a rule allowing a given array of mime types.\nIt can for example be used with\n[Gly.Loader.get_mime_types](https://gnome.pages.gitlab.gnome.org/glycin/libglycin/type_func.Loader.get_mime_types.html).\n\nThis is equivalent to calling [`FileFilter.add_mime_type()`](xref:gtk:Gtk.FileFilter#method:add_mime_type)\nfor all the supported mime types.",
+      "since": "4.22"
+    },
+    "add_pattern": {
+      "brief": "Adds a rule allowing a shell style glob pattern.",
+      "file": "gtk/gtkfilefilter.c",
+      "line": 672,
+      "md": "Adds a rule allowing a shell style glob pattern.\n\nNote that it depends on the platform whether pattern\nmatching ignores case or not. On Windows, it does, on\nother platforms, it doesn't."
+    },
+    "add_pixbuf_formats": {
+      "brief": "Adds a rule allowing image files in the formats supported by `GdkPixbuf`.",
+      "deprecated": "4.20",
+      "deprecated_md": "Use the api of your image loading framework (e.g. glycin)\n  to enumerate supported formats",
+      "file": "gtk/gtkfilefilter.c",
+      "line": 738,
+      "md": "Adds a rule allowing image files in the formats supported by `GdkPixbuf`.\n\nThis is equivalent to calling [`FileFilter.add_mime_type()`](xref:gtk:Gtk.FileFilter#method:add_mime_type)\nfor all the supported mime types."
+    },
+    "add_suffix": {
+      "brief": "Adds a suffix match rule to a filter.",
+      "file": "gtk/gtkfilefilter.c",
+      "line": 700,
+      "md": "Adds a suffix match rule to a filter.\n\nThis is similar to adding a match for the pattern \"*.`suffix`\"\n\nAn exaple to filter files with the suffix \".sub\":\n```c\ngtk_file_filter_add_suffix (filter, \"sub\");\n```\n\nFilters with multiple dots are allowed.\n\nIn contrast to pattern matches, suffix matches\nare *always* case-insensitive.",
+      "since": "4.4"
+    },
+    "get_attributes": {
+      "brief": "Gets the attributes that need to be filled in for the `GFileInfo` passed to this filter.",
+      "file": "gtk/gtkfilefilter.c",
+      "line": 787,
+      "md": "Gets the attributes that need to be filled in for the `GFileInfo`\npassed to this filter.\n\nThis function will not typically be used by applications;\nit is intended for use in file chooser implementation."
+    },
+    "get_name": {
+      "brief": "Gets the human-readable name for the filter.",
+      "file": "gtk/gtkfilefilter.c",
+      "line": 570,
+      "md": "Gets the human-readable name for the filter.\n\nSee [`FileFilter.set_name()`](xref:gtk:Gtk.FileFilter#method:set_name)."
+    },
+    "set_name": {
+      "brief": "Sets a human-readable name of the filter.",
+      "file": "gtk/gtkfilefilter.c",
+      "line": 545,
+      "md": "Sets a human-readable name of the filter.\n\nThis is the string that will be displayed in the user interface\nif there is a selectable list of filters."
+    },
+    "to_gvariant": {
+      "brief": "Serialize a file filter to an `a{sv}` variant.",
+      "file": "gtk/gtkfilefilter.c",
+      "line": 1055,
+      "md": "Serialize a file filter to an `a{sv}` variant."
+    }
+  },
+  "properties": {
+    "mime-types": {
+      "brief": "The MIME types that this filter matches.",
+      "file": "gtk/gtkfilefilter.c",
+      "line": 286,
+      "md": "The MIME types that this filter matches.",
+      "since": "4.10"
+    },
+    "name": {
+      "brief": "The human-readable name of the filter.",
+      "file": "gtk/gtkfilefilter.c",
+      "line": 261,
+      "md": "The human-readable name of the filter.\n\nThis is the string that will be displayed in the user interface\nif there is a selectable list of filters."
+    },
+    "patterns": {
+      "brief": "The patterns that this filter matches.",
+      "file": "gtk/gtkfilefilter.c",
+      "line": 274,
+      "md": "The patterns that this filter matches.",
+      "since": "4.10"
+    },
+    "suffixes": {
+      "brief": "The suffixes that this filter matches.",
+      "file": "gtk/gtkfilefilter.c",
+      "line": 298,
+      "md": "The suffixes that this filter matches.",
+      "since": "4.10"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

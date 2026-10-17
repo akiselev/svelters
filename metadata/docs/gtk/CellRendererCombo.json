@@ -1,0 +1,60 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkCellRendererCombo`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellrenderercombo.c",
+      "line": 220,
+      "md": "Creates a new `GtkCellRendererCombo`.\nAdjust how text is drawn using object properties.\nObject properties can be set globally (with g_object_set()).\nAlso, with `GtkTreeViewColumn`, you can bind a property to a value\nin a `GtkTreeModel`. For example, you can bind the “text” property\non the cell renderer to a string value in the model, thus rendering\na different string in each row of the `GtkTreeView`."
+    }
+  },
+  "doc": {
+    "brief": "Renders a combobox in a cell",
+    "deprecated": "4.10",
+    "deprecated_md": "List views use widgets to display their contents. You\n  should use [`DropDown`](xref:gtk:Gtk.DropDown) instead",
+    "file": "gtk/deprecated/gtkcellrenderercombo.c",
+    "line": 31,
+    "md": "Renders a combobox in a cell\n\n`GtkCellRendererCombo` renders text in a cell like `GtkCellRendererText` from\nwhich it is derived. But while `GtkCellRendererText` offers a simple entry to\nedit the text, `GtkCellRendererCombo` offers a `GtkComboBox`\nwidget to edit the text. The values to display in the combo box are taken from\nthe tree model specified in the `GtkCellRendererCombo`:model property.\n\nThe combo cell renderer takes care of adding a text cell renderer to the combo\nbox and sets it to display the column specified by its\n`GtkCellRendererCombo`:text-column property. Further properties of the combo box\ncan be set in a handler for the `GtkCellRenderer::editing-started` signal."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:CellRendererCombo",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {},
+  "properties": {
+    "has-entry": {
+      "brief": "If `TRUE`, the cell renderer will include an entry and allow to enter values other than the ones in the popup list.",
+      "file": "gtk/deprecated/gtkcellrenderercombo.c",
+      "line": 161,
+      "md": "If `TRUE`, the cell renderer will include an entry and allow to enter\nvalues other than the ones in the popup list."
+    },
+    "model": {
+      "brief": "Holds a tree model containing the possible values for the combo box.",
+      "file": "gtk/deprecated/gtkcellrenderercombo.c",
+      "line": 128,
+      "md": "Holds a tree model containing the possible values for the combo box.\nUse the text_column property to specify the column holding the values."
+    },
+    "text-column": {
+      "brief": "Specifies the model column which holds the possible values for the combo box.",
+      "file": "gtk/deprecated/gtkcellrenderercombo.c",
+      "line": 140,
+      "md": "Specifies the model column which holds the possible values for the\ncombo box.\n\nNote that this refers to the model specified in the model property,\nnot the model backing the tree view to which\nthis cell renderer is attached.\n\n`GtkCellRendererCombo` automatically adds a text cell renderer for\nthis column to its combo box."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "changed": {
+      "brief": "This signal is emitted each time after the user selected an item in the combo box, either by using the mouse or the arrow keys.",
+      "file": "gtk/deprecated/gtkcellrenderercombo.c",
+      "line": 174,
+      "md": "This signal is emitted each time after the user selected an item in\nthe combo box, either by using the mouse or the arrow keys.  Contrary\nto GtkComboBox, GtkCellRendererCombo::changed is not emitted for\nchanges made to a selected item in the entry.  The argument `new_iter`\ncorresponds to the newly selected item in the combo box and it is relative\nto the GtkTreeModel set via the model property on GtkCellRendererCombo.\n\nNote that as soon as you change the model displayed in the tree view,\nthe tree view will immediately cease the editing operating.  This\nmeans that you most probably want to refrain from changing the model\nuntil the combo cell renderer emits the edited or editing_canceled signal."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

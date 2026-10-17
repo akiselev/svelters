@@ -1,0 +1,50 @@
+{
+  "constructors": {
+    "parse_string": {
+      "brief": "Tries to parse the given string into an action.",
+      "file": "gtk/gtkshortcutaction.c",
+      "line": 194,
+      "md": "Tries to parse the given string into an action.\n\nOn success, the parsed action is returned. When parsing\nfailed, `NULL` is returned.\n\nThe accepted strings are:\n\n- `nothing`, for `GtkNothingAction`\n- `activate`, for `GtkActivateAction`\n- `mnemonic-activate`, for `GtkMnemonicAction`\n- `action(NAME)`, for a `GtkNamedAction` for the action named `NAME`\n- `signal(NAME)`, for a `GtkSignalAction` for the signal `NAME`"
+    }
+  },
+  "doc": {
+    "brief": "Encodes an action that can be triggered by a keyboard shortcut.",
+    "file": "gtk/gtkshortcutaction.c",
+    "line": 20,
+    "md": "Encodes an action that can be triggered by a keyboard shortcut.\n\n`GtkShortcutActions` contain functions that allow easy presentation\nto end users as well as being printed for debugging.\n\nAll `GtkShortcutActions` are immutable, you can only specify their\nproperties during construction. If you want to change a action, you\nhave to replace it with a new one. If you need to pass arguments to\nan action, these are specified by the higher-level `GtkShortcut` object.\n\nTo activate a `GtkShortcutAction` manually, [`ShortcutAction.activate()`](xref:gtk:Gtk.ShortcutAction#method:activate)\ncan be called.\n\nGTK provides various actions:\n\n - [`MnemonicAction`](xref:gtk:Gtk.MnemonicAction): a shortcut action that calls\n   gtk_widget_mnemonic_activate()\n - [`CallbackAction`](xref:gtk:Gtk.CallbackAction): a shortcut action that invokes\n   a given callback\n - [`SignalAction`](xref:gtk:Gtk.SignalAction): a shortcut action that emits a\n   given signal\n - [`ActivateAction`](xref:gtk:Gtk.ActivateAction): a shortcut action that calls\n   gtk_widget_activate()\n - [`NamedAction`](xref:gtk:Gtk.NamedAction): a shortcut action that calls\n   gtk_widget_activate_action()\n - [`NothingAction`](xref:gtk:Gtk.NothingAction): a shortcut action that does nothing"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ShortcutAction",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "activate": {
+      "brief": "Activates the action on the `widget` with the given `args`.",
+      "file": "gtk/gtkshortcutaction.c",
+      "line": 137,
+      "md": "Activates the action on the `widget` with the given `args`.\n\nNote that some actions ignore the passed in `flags`, `widget` or `args`.\n\nActivation of an action can fail for various reasons. If the action\nis not supported by the `widget`, if the `args` don't match the action\nor if the activation otherwise had no effect, `FALSE` will be returned."
+    },
+    "print": {
+      "brief": "Prints the given action into a string for the developer.",
+      "file": "gtk/gtkshortcutaction.c",
+      "line": 115,
+      "md": "Prints the given action into a string for the developer.\n\nThis is meant for debugging and logging.\n\nThe form of the representation may change at any time and is\nnot guaranteed to stay identical."
+    },
+    "to_string": {
+      "brief": "Prints the given action into a human-readable string.",
+      "file": "gtk/gtkshortcutaction.c",
+      "line": 91,
+      "md": "Prints the given action into a human-readable string.\n\nThis is a small wrapper around [`ShortcutAction.print()`](xref:gtk:Gtk.ShortcutAction#method:print)\nto help when debugging."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

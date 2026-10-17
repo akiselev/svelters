@@ -69,8 +69,27 @@ pub trait JsEngine {
     /// not leave it. Jobs may remain queued afterwards.
     fn load_module(&mut self, entry: &Path) -> Result<(), JsError>;
 
-    /// Calls `globalThis.__svelters_dispatch(handle, signal, args)`.
-    fn dispatch(&mut self, handle: u64, signal: &str, args: &[Value]) -> Result<(), JsError>;
+    /// Calls `globalThis.__svelters_dispatch(handle, signal, args, deferred)`. `deferred` marks
+    /// a sync signal that could not run synchronously (its result is ignored).
+    fn dispatch(
+        &mut self,
+        handle: u64,
+        signal: &str,
+        args: &[Value],
+        deferred: bool,
+    ) -> Result<(), JsError>;
+
+    /// Calls `globalThis.__svelters_dispatch_sync(handle, signal, args)` and returns its result:
+    /// `Null` for no decision, a bool for a stop flag, or the handler's explicit value.
+    fn dispatch_sync(
+        &mut self,
+        handle: u64,
+        signal: &str,
+        args: &[Value],
+    ) -> Result<Value, JsError>;
+
+    /// Runs the animation-frame callbacks (`__svelters_internal.frame`).
+    fn run_frame(&mut self) -> Result<(), JsError>;
 
     /// Calls `globalThis.__svelters_gone(handle, reason)` if the renderer installed it: the
     /// native object behind `handle` died (`reason` is a `gone_name`).
@@ -81,6 +100,10 @@ pub trait JsEngine {
 
     /// Runs at most `max` queued jobs (promise reactions, microtasks).
     fn run_jobs(&mut self, max: usize) -> JobStatus;
+
+    /// Runs a full garbage collection (finalization callbacks are queued as jobs). A test and
+    /// shutdown hook; the engine collects on its own otherwise.
+    fn collect_garbage(&mut self) {}
 
     /// Errors the engine collected outside a call it returned from: job exceptions and unhandled
     /// rejections. Drains the list.

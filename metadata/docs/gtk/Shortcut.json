@@ -1,0 +1,93 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkShortcut` that is triggered by `trigger` and then activates `action`.",
+      "file": "gtk/gtkshortcut.c",
+      "line": 193,
+      "md": "Creates a new `GtkShortcut` that is triggered by\n`trigger` and then activates `action`."
+    },
+    "new_with_arguments": {
+      "brief": "Creates a new `GtkShortcut` that is triggered by `trigger` and then activates `action` with arguments given by `format_string`.",
+      "file": "gtk/gtkshortcut.c",
+      "line": 223,
+      "md": "Creates a new `GtkShortcut` that is triggered by `trigger` and then activates\n`action` with arguments given by `format_string`."
+    }
+  },
+  "doc": {
+    "brief": "Describes a keyboard shortcut.",
+    "file": "gtk/gtkshortcut.c",
+    "line": 28,
+    "md": "Describes a keyboard shortcut.\n\nIt contains a description of how to trigger the shortcut via a\n[`ShortcutTrigger`](xref:gtk:Gtk.ShortcutTrigger) and a way to activate the shortcut\non a widget via a [`ShortcutAction`](xref:gtk:Gtk.ShortcutAction).\n\nThe actual work is usually done via [`ShortcutController`](xref:gtk:Gtk.ShortcutController),\nwhich decides if and when to activate a shortcut. Using that controller\ndirectly however is rarely necessary as various higher level\nconvenience APIs exist on `GtkWidget`s that make it easier to use\nshortcuts in GTK.\n\n`GtkShortcut` does provide functionality to make it easy for users\nto work with shortcuts, either by providing informational strings\nfor display purposes or by allowing shortcuts to be configured."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Shortcut",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_action": {
+      "brief": "Gets the action that is activated by this shortcut.",
+      "file": "gtk/gtkshortcut.c",
+      "line": 272,
+      "md": "Gets the action that is activated by this shortcut."
+    },
+    "get_arguments": {
+      "brief": "Gets the arguments that are passed when activating the shortcut.",
+      "file": "gtk/gtkshortcut.c",
+      "line": 352,
+      "md": "Gets the arguments that are passed when activating the shortcut."
+    },
+    "get_trigger": {
+      "brief": "Gets the trigger used to trigger `self`.",
+      "file": "gtk/gtkshortcut.c",
+      "line": 312,
+      "md": "Gets the trigger used to trigger `self`."
+    },
+    "set_action": {
+      "brief": "Sets the new action for `self` to be `action`.",
+      "file": "gtk/gtkshortcut.c",
+      "line": 288,
+      "md": "Sets the new action for `self` to be `action`."
+    },
+    "set_arguments": {
+      "brief": "Sets the arguments to pass when activating the shortcut.",
+      "file": "gtk/gtkshortcut.c",
+      "line": 368,
+      "md": "Sets the arguments to pass when activating the shortcut."
+    },
+    "set_trigger": {
+      "brief": "Sets the new trigger for `self` to be `trigger`.",
+      "file": "gtk/gtkshortcut.c",
+      "line": 328,
+      "md": "Sets the new trigger for `self` to be `trigger`."
+    }
+  },
+  "properties": {
+    "action": {
+      "brief": "The action that gets activated by this shortcut.",
+      "file": "gtk/gtkshortcut.c",
+      "line": 148,
+      "md": "The action that gets activated by this shortcut."
+    },
+    "arguments": {
+      "brief": "Arguments passed to activation.",
+      "file": "gtk/gtkshortcut.c",
+      "line": 160,
+      "md": "Arguments passed to activation."
+    },
+    "trigger": {
+      "brief": "The trigger that triggers this shortcut.",
+      "file": "gtk/gtkshortcut.c",
+      "line": 171,
+      "md": "The trigger that triggers this shortcut."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

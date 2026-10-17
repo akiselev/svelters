@@ -29,50 +29,71 @@
   ],
   "enums": [
     {
+      "flags_alias": "QStyleOptionFrame::FrameFeatures",
+      "fullname": "QStyleOptionFrame::FrameFeature",
       "members": [
         {
+          "cpp": "QStyleOptionFrame::None",
           "name": "None",
           "value": "0x00"
         },
         {
+          "cpp": "QStyleOptionFrame::Flat",
           "name": "Flat",
           "value": "0x01"
         },
         {
+          "cpp": "QStyleOptionFrame::Rounded",
           "name": "Rounded",
           "value": "0x02"
         }
       ],
       "metaobject": null,
       "name": "FrameFeature",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionFrame::StyleOptionType",
       "members": [
         {
+          "cpp": "QStyleOptionFrame::Type",
           "name": "Type",
           "value": "SO_Frame"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionType",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QStyleOptionFrame::StyleOptionVersion",
       "members": [
         {
+          "cpp": "QStyleOptionFrame::Version",
           "name": "Version",
           "value": "1"
         }
       ],
       "metaobject": null,
       "name": "StyleOptionVersion",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOptionFrame",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "borrowed_only",
+    "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOptionFrame:lifetime",
+    "native_refcount": "none",
+    "origin": "derived",
+    "provenance": "derived: abstract or not a QObject; JS cannot create it"
+  },
   "methods": [],
   "native": {
     "brief": "Used to describe the parameters for drawing a frame",

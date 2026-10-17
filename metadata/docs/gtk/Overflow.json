@@ -1,0 +1,37 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Defines how content overflowing a given area should be handled.",
+    "file": "gtk/gtkenums.h",
+    "line": 443,
+    "md": "Defines how content overflowing a given area should be handled.\n\nThis is used in [`Widget.set_overflow()`](xref:gtk:Gtk.Widget#method:set_overflow). The\n[`Widget:overflow`](xref:gtk:Gtk.Widget#property:overflow) property is modeled after the\nCSS overflow property, but implements it only partially."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Overflow",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "hidden": {
+      "brief": "Content is clipped to the bounds of the area.",
+      "file": "gtk/gtkenums.h",
+      "line": 447,
+      "md": "Content is clipped to the bounds of the area. Content\n  outside the area is not drawn and cannot be interacted with."
+    },
+    "visible": {
+      "brief": "No change is applied.",
+      "file": "gtk/gtkenums.h",
+      "line": 445,
+      "md": "No change is applied. Content is drawn at the specified\n  position."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

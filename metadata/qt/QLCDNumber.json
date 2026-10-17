@@ -77,20 +77,26 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QLCDNumber::Mode",
       "members": [
         {
+          "cpp": "QLCDNumber::Hex",
           "name": "Hex",
           "value": "0"
         },
         {
+          "cpp": "QLCDNumber::Dec",
           "name": "Dec",
           "value": "1"
         },
         {
+          "cpp": "QLCDNumber::Oct",
           "name": "Oct",
           "value": "2"
         },
         {
+          "cpp": "QLCDNumber::Bin",
           "name": "Bin",
           "value": "3"
         }
@@ -106,19 +112,25 @@
         "scoped": false
       },
       "name": "Mode",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QLCDNumber::SegmentStyle",
       "members": [
         {
+          "cpp": "QLCDNumber::Outline",
           "name": "Outline",
           "value": "0"
         },
         {
+          "cpp": "QLCDNumber::Filled",
           "name": "Filled",
           "value": "1"
         },
         {
+          "cpp": "QLCDNumber::Flat",
           "name": "Flat",
           "value": "2"
         }
@@ -133,12 +145,23 @@
         "scoped": false
       },
       "name": "SegmentStyle",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QLCDNumber",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QLCDNumber:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -433,7 +456,7 @@
         "native": "QLCDNumber::Mode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QLCDNumber::Mode>"
       },
       "signature": "QLCDNumber::Mode mode() const",
       "since": null,
@@ -496,7 +519,7 @@
         "native": "QLCDNumber::SegmentStyle",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QLCDNumber::SegmentStyle>"
       },
       "signature": "QLCDNumber::SegmentStyle segmentStyle() const",
       "since": null,
@@ -640,7 +663,7 @@
             "native": "QLCDNumber::Mode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QLCDNumber::Mode>"
           }
         }
       ],
@@ -703,7 +726,7 @@
             "native": "QLCDNumber::SegmentStyle",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QLCDNumber::SegmentStyle>"
           }
         }
       ],
@@ -774,7 +797,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,
@@ -854,6 +877,8 @@
         "set": "setDigitCount"
       },
       "brief": "The current number of digits displayed",
+      "default": 5,
+      "default_origin": "runtime",
       "js_name": "digitCount",
       "metaobject": {
         "constant": false,
@@ -874,6 +899,7 @@
       "name": "digitCount",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -894,6 +920,8 @@
         "set": null
       },
       "brief": "The displayed value rounded to the nearest integer",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "intValue",
       "metaobject": {
         "constant": false,
@@ -914,6 +942,7 @@
       "name": "intValue",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -934,6 +963,8 @@
         "set": "setMode"
       },
       "brief": "The current display mode (number base)",
+      "default": "Dec",
+      "default_origin": "runtime",
       "js_name": "mode",
       "metaobject": {
         "constant": false,
@@ -954,12 +985,13 @@
       "name": "mode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Mode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<Mode>"
+        "ref": "enum<QLCDNumber::Mode>"
       }
     },
     {
@@ -974,6 +1006,8 @@
         "set": "setSegmentStyle"
       },
       "brief": "The style of the LCDNumber",
+      "default": "Filled",
+      "default_origin": "runtime",
       "js_name": "segmentStyle",
       "metaobject": {
         "constant": false,
@@ -994,12 +1028,13 @@
       "name": "segmentStyle",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "SegmentStyle",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<SegmentStyle>"
+        "ref": "enum<QLCDNumber::SegmentStyle>"
       }
     },
     {
@@ -1014,6 +1049,8 @@
         "set": "setSmallDecimalPoint"
       },
       "brief": "The style of the decimal point",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "smallDecimalPoint",
       "metaobject": {
         "constant": false,
@@ -1034,6 +1071,7 @@
       "name": "smallDecimalPoint",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1054,6 +1092,8 @@
         "set": null
       },
       "brief": "The displayed value",
+      "default": 0.0,
+      "default_origin": "runtime",
       "js_name": "value",
       "metaobject": {
         "constant": false,
@@ -1074,6 +1114,7 @@
       "name": "value",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "double",

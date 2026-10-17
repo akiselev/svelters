@@ -1,0 +1,48 @@
+{
+  "constructors": {
+    "new_from_array": {
+      "brief": "Allocates a new list of accessible objects.",
+      "file": "gtk/gtkaccessible.c",
+      "line": 1332,
+      "md": "Allocates a new list of accessible objects.",
+      "since": "4.14"
+    },
+    "new_from_list": {
+      "brief": "Allocates a new `GtkAccessibleList`, doing a shallow copy of the passed list of accessible objects",
+      "file": "gtk/gtkaccessible.c",
+      "line": 1310,
+      "md": "Allocates a new `GtkAccessibleList`, doing a shallow copy\nof the passed list of accessible objects",
+      "since": "4.14"
+    }
+  },
+  "doc": {
+    "brief": "Wraps a list of references to [`Accessible`](xref:gtk:Gtk.Accessible) objects.",
+    "file": "gtk/gtkaccessible.h",
+    "line": 169,
+    "md": "Wraps a list of references to [`Accessible`](xref:gtk:Gtk.Accessible) objects.",
+    "since": "4.14"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:AccessibleList",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_objects": {
+      "brief": "Gets the list of objects this boxed type holds.",
+      "file": "gtk/gtkaccessible.c",
+      "line": 1377,
+      "md": "Gets the list of objects this boxed type holds.",
+      "since": "4.14"
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

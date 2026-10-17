@@ -1,0 +1,75 @@
+{
+  "constructors": {
+    "new_from_bytes": {
+      "brief": "Creates a new `GtkBuilderListItemFactory` that instantiates widgets using `bytes` as the data to pass to `GtkBuilder`.",
+      "file": "gtk/gtkbuilderlistitemfactory.c",
+      "line": 309,
+      "md": "Creates a new `GtkBuilderListItemFactory` that instantiates widgets\nusing `bytes` as the data to pass to `GtkBuilder`."
+    },
+    "new_from_resource": {
+      "brief": "Creates a new `GtkBuilderListItemFactory` that instantiates widgets using data read from the given `resource_path` to pass to `GtkBuilder`.",
+      "file": "gtk/gtkbuilderlistitemfactory.c",
+      "line": 331,
+      "md": "Creates a new `GtkBuilderListItemFactory` that instantiates widgets\nusing data read from the given `resource_path` to pass to `GtkBuilder`."
+    }
+  },
+  "doc": {
+    "brief": "Creates widgets by instantiating `GtkBuilder` UI templates.",
+    "file": "gtk/gtkbuilderlistitemfactory.c",
+    "line": 29,
+    "md": "Creates widgets by instantiating `GtkBuilder` UI templates.\n\nThe templates must extend the class that the parent widget expects.\nFor example, a factory provided to [`ListView:factory`](xref:gtk:Gtk.ListView#property:factory) must have\na template that extends [`ListItem`](xref:gtk:Gtk.ListItem).\n\nTemplates typically use [`Expression`](xref:gtk:Gtk.Expression) to obtain data from the items\nin the model.\n\nExample:\n```xml\n  <interface>\n    <template class=\"GtkListItem\">\n      <property name=\"child\">\n        <object class=\"GtkLabel\">\n          <property name=\"xalign\">0</property>\n          <binding name=\"label\">\n            <lookup name=\"name\" type=\"SettingsKey\">\n              <lookup name=\"item\">GtkListItem</lookup>\n            </lookup>\n          </binding>\n        </object>\n      </property>\n    </template>\n  </interface>\n```\n\nA common approach is to embed such templates as CDATA marked sections into\na surrounding UI file. Note that if you use this approach, extracting\ntranslatable strings with xgettext will not work for strings inside the\nmarked section."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:BuilderListItemFactory",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_bytes": {
+      "brief": "Gets the data used as the `GtkBuilder` UI template for constructing listitems.",
+      "file": "gtk/gtkbuilderlistitemfactory.c",
+      "line": 354,
+      "md": "Gets the data used as the `GtkBuilder` UI template for constructing\nlistitems."
+    },
+    "get_resource": {
+      "brief": "If the data references a resource, gets the path of that resource.",
+      "file": "gtk/gtkbuilderlistitemfactory.c",
+      "line": 371,
+      "md": "If the data references a resource, gets the path of that resource."
+    },
+    "get_scope": {
+      "brief": "Gets the scope used when constructing listitems.",
+      "file": "gtk/gtkbuilderlistitemfactory.c",
+      "line": 387,
+      "md": "Gets the scope used when constructing listitems."
+    }
+  },
+  "properties": {
+    "bytes": {
+      "brief": "`GBytes` containing the UI definition.",
+      "file": "gtk/gtkbuilderlistitemfactory.c",
+      "line": 271,
+      "md": "`GBytes` containing the UI definition."
+    },
+    "resource": {
+      "brief": "Path of the resource containing the UI definition.",
+      "file": "gtk/gtkbuilderlistitemfactory.c",
+      "line": 281,
+      "md": "Path of the resource containing the UI definition."
+    },
+    "scope": {
+      "brief": "`GtkBuilderScope` to use when instantiating listitems",
+      "file": "gtk/gtkbuilderlistitemfactory.c",
+      "line": 291,
+      "md": "`GtkBuilderScope` to use when instantiating listitems"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

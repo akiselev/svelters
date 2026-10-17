@@ -1,0 +1,49 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Types of user actions that may be blocked by `GtkApplication`.",
+    "file": "gtk/gtkapplication.c",
+    "line": 1050,
+    "md": "Types of user actions that may be blocked by `GtkApplication`.\n\nSee [`Application.inhibit()`](xref:gtk:Gtk.Application#method:inhibit)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ApplicationInhibitFlags",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "idle": {
+      "brief": "Inhibit the session being marked as idle (and possibly locked)",
+      "file": "gtk/gtkapplication.c",
+      "line": 1057,
+      "md": "Inhibit the session being\n  marked as idle (and possibly locked)"
+    },
+    "logout": {
+      "brief": "Inhibit ending the user session by logging out or by shutting down the computer",
+      "file": "gtk/gtkapplication.c",
+      "line": 1052,
+      "md": "Inhibit ending the user session\n  by logging out or by shutting down the computer"
+    },
+    "suspend": {
+      "brief": "Inhibit suspending the session or computer",
+      "file": "gtk/gtkapplication.c",
+      "line": 1055,
+      "md": "Inhibit suspending the\n  session or computer"
+    },
+    "switch": {
+      "brief": "Inhibit user switching",
+      "file": "gtk/gtkapplication.c",
+      "line": 1054,
+      "md": "Inhibit user switching"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

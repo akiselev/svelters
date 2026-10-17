@@ -1,0 +1,148 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkScale`.",
+      "file": "gtk/gtkscale.c",
+      "line": 936,
+      "md": "Creates a new `GtkScale`."
+    },
+    "new_with_range": {
+      "brief": "Creates a new scale widget with a range from `min` to `max`.",
+      "file": "gtk/gtkscale.c",
+      "line": 959,
+      "md": "Creates a new scale widget with a range from `min` to `max`.\n\nThe returns scale will have the given orientation and will let the\nuser input a number between `min` and `max` (including `min` and `max`)\nwith the increment `step`. `step` must be nonzero; it’s the distance\nthe slider moves when using the arrow keys to adjust the scale\nvalue.\n\nNote that the way in which the precision is derived works best if\n`step` is a power of ten. If the resulting precision is not suitable\nfor your needs, use [`Scale.set_digits()`](xref:gtk:Gtk.Scale#method:set_digits) to correct it."
+    }
+  },
+  "doc": {
+    "brief": "Allows to select a numeric value with a slider control.",
+    "file": "gtk/gtkscale.c",
+    "line": 46,
+    "md": "Allows to select a numeric value with a slider control.\n\nTo use it, you’ll probably want to investigate the methods on its base\nclass, [`Range`](xref:gtk:Gtk.Range), in addition to the methods for `GtkScale` itself.\nTo set the value of a scale, you would normally use [`Range.set_value()`](xref:gtk:Gtk.Range#method:set_value).\nTo detect changes to the value, you would normally use the\n[`Range::value-changed`](xref:gtk:Gtk.Range#event:value-changed) signal.\n\nNote that using the same upper and lower bounds for the `GtkScale` (through\nthe `GtkRange` methods) will hide the slider itself. This is useful for\napplications that want to show an undeterminate value on the scale, without\nchanging the layout of the application (such as movie or music players).\n\n# GtkScale as GtkBuildable\n\n`GtkScale` supports a custom `<marks>` element, which can contain multiple\n`<mark\\>` elements. The “value” and “position” attributes have the same\nmeaning as [`Scale.add_mark()`](xref:gtk:Gtk.Scale#method:add_mark) parameters of the same name. If\nthe element is not empty, its content is taken as the markup to show at\nthe mark. It can be translated with the usual ”translatable” and\n“context” attributes.\n\n# Shortcuts and Gestures\n\n`GtkPopoverMenu` supports the following keyboard shortcuts:\n\n- Arrow keys, <kbd>+</kbd> and <kbd>-</kbd> will increment or decrement\n  by step, or by page when combined with <kbd>Ctrl</kbd>.\n- <kbd>PgUp</kbd> and <kbd>PgDn</kbd> will increment or decrement by page.\n- <kbd>Home</kbd> and <kbd>End</kbd> will set the minimum or maximum value.\n\n# CSS nodes\n\n```\nscale[.fine-tune][.marks-before][.marks-after]\n├── [value][.top][.right][.bottom][.left]\n├── marks.top\n│   ├── mark\n│   ┊    ├── [label]\n│   ┊    ╰── indicator\n┊   ┊\n│   ╰── mark\n├── marks.bottom\n│   ├── mark\n│   ┊    ├── indicator\n│   ┊    ╰── [label]\n┊   ┊\n│   ╰── mark\n╰── trough\n    ├── [fill]\n    ├── [highlight]\n    ╰── slider\n```\n\n`GtkScale` has a main CSS node with name scale and a subnode for its contents,\nwith subnodes named trough and slider.\n\nThe main node gets the style class .fine-tune added when the scale is in\n'fine-tuning' mode.\n\nIf the scale has an origin (see [`Scale.set_has_origin()`](xref:gtk:Gtk.Scale#method:set_has_origin)), there is\na subnode with name highlight below the trough node that is used for rendering\nthe highlighted part of the trough.\n\nIf the scale is showing a fill level (see [`Range.set_show_fill_level()`](xref:gtk:Gtk.Range#method:set_show_fill_level)),\nthere is a subnode with name fill below the trough node that is used for\nrendering the filled in part of the trough.\n\nIf marks are present, there is a marks subnode before or after the trough\nnode, below which each mark gets a node with name mark. The marks nodes get\neither the .top or .bottom style class.\n\nThe mark node has a subnode named indicator. If the mark has text, it also\nhas a subnode named label. When the mark is either above or left of the\nscale, the label subnode is the first when present. Otherwise, the indicator\nsubnode is the first.\n\nThe main CSS node gets the 'marks-before' and/or 'marks-after' style classes\nadded depending on what marks are present.\n\nIf the scale is displaying the value (see [`Scale:draw-value`](xref:gtk:Gtk.Scale#property:draw-value)),\nthere is subnode with name value. This node will get the .top or .bottom style\nclasses similar to the marks node.\n\n# Accessibility\n\n`GtkScale` uses the [`AccessibleRole.slider`](xref:gtk:Gtk.AccessibleRole#value:slider) role."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Scale",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "add_mark": {
+      "brief": "Adds a mark at `value`.",
+      "file": "gtk/gtkscale.c",
+      "line": 1683,
+      "md": "Adds a mark at `value`.\n\nA mark is indicated visually by drawing a tick mark next to the scale,\nand GTK makes it easy for the user to position the scale exactly at the\nmarks value.\n\nIf `markup` is not `NULL`, text is shown next to the tick mark.\n\nTo remove marks from a scale, use [`Scale.clear_marks()`](xref:gtk:Gtk.Scale#method:clear_marks)."
+    },
+    "clear_marks": {
+      "brief": "Removes any marks that have been added.",
+      "file": "gtk/gtkscale.c",
+      "line": 1656,
+      "md": "Removes any marks that have been added."
+    },
+    "get_digits": {
+      "brief": "Gets the number of decimal places that are displayed in the value.",
+      "file": "gtk/gtkscale.c",
+      "line": 1059,
+      "md": "Gets the number of decimal places that are displayed in the value."
+    },
+    "get_draw_value": {
+      "brief": "Returns whether the current value is displayed as a string next to the slider.",
+      "file": "gtk/gtkscale.c",
+      "line": 1152,
+      "md": "Returns whether the current value is displayed as a string\nnext to the slider."
+    },
+    "get_has_origin": {
+      "brief": "Returns whether the scale has an origin.",
+      "file": "gtk/gtkscale.c",
+      "line": 1200,
+      "md": "Returns whether the scale has an origin."
+    },
+    "get_layout": {
+      "brief": "Gets the `PangoLayout` used to display the scale.",
+      "file": "gtk/gtkscale.c",
+      "line": 1581,
+      "md": "Gets the `PangoLayout` used to display the scale.\n\nThe returned object is owned by the scale so does not need\nto be freed by the caller."
+    },
+    "get_layout_offsets": {
+      "brief": "Obtains the coordinates where the scale will draw the `PangoLayout` representing the text in the scale.",
+      "file": "gtk/gtkscale.c",
+      "line": 1607,
+      "md": "Obtains the coordinates where the scale will draw the\n`PangoLayout` representing the text in the scale.\n\nRemember when using the `PangoLayout` function you need to\nconvert to and from pixels using `PANGO_PIXELS()` or `PANGO_SCALE`.\n\nIf the [`Scale:draw-value`](xref:gtk:Gtk.Scale#property:draw-value) property is `FALSE`, the return\nvalues are undefined."
+    },
+    "get_value_pos": {
+      "brief": "Gets the position in which the current value is displayed.",
+      "file": "gtk/gtkscale.c",
+      "line": 1242,
+      "md": "Gets the position in which the current value is displayed."
+    },
+    "set_digits": {
+      "brief": "Sets the number of decimal places that are displayed in the value.",
+      "file": "gtk/gtkscale.c",
+      "line": 1012,
+      "md": "Sets the number of decimal places that are displayed in the value.\n\nAlso causes the value of the adjustment to be rounded to this number\nof digits, so the retrieved value matches the displayed one, if\n[`Scale:draw-value`](xref:gtk:Gtk.Scale#property:draw-value) is `TRUE` when the value changes. If\nyou want to enforce rounding the value when [`Scale:draw-value`](xref:gtk:Gtk.Scale#property:draw-value)\nis `FALSE`, you can set [`Range:round-digits`](xref:gtk:Gtk.Range#property:round-digits) instead.\n\nNote that rounding to a small number of digits can interfere with\nthe smooth autoscrolling that is built into `GtkScale`. As an alternative,\nyou can use [`Scale.set_format_value_func()`](xref:gtk:Gtk.Scale#method:set_format_value_func) to format the displayed\nvalue yourself."
+    },
+    "set_draw_value": {
+      "brief": "Specifies whether the current value is displayed as a string next to the slider.",
+      "file": "gtk/gtkscale.c",
+      "line": 1110,
+      "md": "Specifies whether the current value is displayed as a string next\nto the slider."
+    },
+    "set_format_value_func": {
+      "brief": "`func` allows you to change how the scale value is displayed.",
+      "file": "gtk/gtkscale.c",
+      "line": 2056,
+      "md": "`func` allows you to change how the scale value is displayed.\n\nThe given function will return an allocated string representing\n`value`. That string will then be used to display the scale's value.\n\nIf #NULL is passed as `func`, the value will be displayed on\nits own, rounded according to the value of the\n[`Scale:digits`](xref:gtk:Gtk.Scale#property:digits) property."
+    },
+    "set_has_origin": {
+      "brief": "Sets whether the scale has an origin.",
+      "file": "gtk/gtkscale.c",
+      "line": 1171,
+      "md": "Sets whether the scale has an origin.\n\nIf [`Scale:has-origin`](xref:gtk:Gtk.Scale#property:has-origin) is set to `TRUE` (the default),\nthe scale will highlight the part of the trough between the origin\n(bottom or left side) and the current value."
+    },
+    "set_value_pos": {
+      "brief": "Sets the position in which the current value is displayed.",
+      "file": "gtk/gtkscale.c",
+      "line": 1216,
+      "md": "Sets the position in which the current value is displayed."
+    }
+  },
+  "properties": {
+    "digits": {
+      "brief": "The number of decimal places that are displayed in the value.",
+      "file": "gtk/gtkscale.c",
+      "line": 693,
+      "md": "The number of decimal places that are displayed in the value."
+    },
+    "draw-value": {
+      "brief": "Whether the current value is displayed as a string next to the slider.",
+      "file": "gtk/gtkscale.c",
+      "line": 704,
+      "md": "Whether the current value is displayed as a string next to the slider."
+    },
+    "has-origin": {
+      "brief": "Whether the scale has an origin.",
+      "file": "gtk/gtkscale.c",
+      "line": 714,
+      "md": "Whether the scale has an origin."
+    },
+    "value-pos": {
+      "brief": "The position in which the current value is displayed.",
+      "file": "gtk/gtkscale.c",
+      "line": 724,
+      "md": "The position in which the current value is displayed."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "get_layout_offsets": {
+      "brief": "Obtains the coordinates where the scale will draw the `PangoLayout` representing the text in the scale.",
+      "file": "gtk/gtkscale.c",
+      "line": 1607,
+      "md": "Obtains the coordinates where the scale will draw the\n`PangoLayout` representing the text in the scale.\n\nRemember when using the `PangoLayout` function you need to\nconvert to and from pixels using `PANGO_PIXELS()` or `PANGO_SCALE`.\n\nIf the [`Scale:draw-value`](xref:gtk:Gtk.Scale#property:draw-value) property is `FALSE`, the return\nvalues are undefined."
+    }
+  }
+}

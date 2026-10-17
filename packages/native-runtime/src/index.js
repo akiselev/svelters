@@ -179,13 +179,15 @@ export function token(node, prop, tok, on) {
   let t = node.tokens.get(prop);
   if (!t) {
     if (!node.last.has(prop)) node.last.set(prop, node.host.getProp(node.h, prop));
-    t = new Set(String(node.last.get(prop) ?? '').split(/\s+/).filter(Boolean));
+    const init = node.last.get(prop);
+    // ABI v3: a token list prop (GTK GStrv) travels as a list of strings
+    t = new Set(Array.isArray(init) ? init : String(init ?? '').split(/\s+/).filter(Boolean));
     node.tokens.set(prop, t);
   }
   if (t.has(tok) === !!on) return;
   if (on) t.add(tok);
   else t.delete(tok);
-  set(node, prop, [...t].join(' '));
+  set(node, prop, [...t]);
 }
 
 // ---------------------------------------------------------------------------------------------

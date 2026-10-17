@@ -1,0 +1,162 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new empty `GtkVideo`.",
+      "file": "gtk/gtkvideo.c",
+      "line": 491,
+      "md": "Creates a new empty `GtkVideo`."
+    },
+    "new_for_file": {
+      "brief": "Creates a `GtkVideo` to play back the given `file`.",
+      "file": "gtk/gtkvideo.c",
+      "line": 522,
+      "md": "Creates a `GtkVideo` to play back the given `file`."
+    },
+    "new_for_filename": {
+      "brief": "Creates a `GtkVideo` to play back the given `filename`.",
+      "file": "gtk/gtkvideo.c",
+      "line": 540,
+      "md": "Creates a `GtkVideo` to play back the given `filename`.\n\nThis is a utility function that calls [`Video.new_for_file()`](xref:gtk:Gtk.Video#constructor:new_for_file),\nSee that function for details."
+    },
+    "new_for_media_stream": {
+      "brief": "Creates a `GtkVideo` to play back the given `stream`.",
+      "file": "gtk/gtkvideo.c",
+      "line": 504,
+      "md": "Creates a `GtkVideo` to play back the given `stream`."
+    },
+    "new_for_resource": {
+      "brief": "Creates a `GtkVideo` to play back the resource at the given `resource_path`.",
+      "file": "gtk/gtkvideo.c",
+      "line": 570,
+      "md": "Creates a `GtkVideo` to play back the resource at the\ngiven `resource_path`.\n\nThis is a utility function that calls [`Video.new_for_file()`](xref:gtk:Gtk.Video#constructor:new_for_file)."
+    }
+  },
+  "doc": {
+    "brief": "Shows a `GtkMediaStream` with media controls.",
+    "file": "gtk/gtkvideo.c",
+    "line": 39,
+    "md": "Shows a `GtkMediaStream` with media controls.\n\nThe controls are available separately as [`MediaControls`](xref:gtk:Gtk.MediaControls).\nIf you just want to display a video without controls, you can treat it\nlike any other paintable and for example put it into a [`Picture`](xref:gtk:Gtk.Picture).\n\n`GtkVideo` aims to cover use cases such as previews, embedded animations,\netc. It supports autoplay, looping, and simple media controls. It does\nnot have support for video overlays, multichannel audio, device\nselection, or input. If you are writing a full-fledged video player,\nyou may want to use the [`Paintable`](xref:gtk:Gdk.Paintable) API and a media framework\nsuch as Gstreamer directly."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Video",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_autoplay": {
+      "brief": "Returns `TRUE` if videos have been set to loop.",
+      "file": "gtk/gtkvideo.c",
+      "line": 903,
+      "md": "Returns `TRUE` if videos have been set to loop."
+    },
+    "get_file": {
+      "brief": "Gets the file played by `self` or `NULL` if not playing back a file.",
+      "file": "gtk/gtkvideo.c",
+      "line": 771,
+      "md": "Gets the file played by `self` or `NULL` if not playing back\na file."
+    },
+    "get_graphics_offload": {
+      "brief": "Returns whether graphics offload is enabled.",
+      "file": "gtk/gtkvideo.c",
+      "line": 978,
+      "md": "Returns whether graphics offload is enabled.\n\nSee [`GraphicsOffload`](xref:gtk:Gtk.GraphicsOffload) for more information on graphics offload.",
+      "since": "4.14"
+    },
+    "get_loop": {
+      "brief": "Returns `TRUE` if videos have been set to loop.",
+      "file": "gtk/gtkvideo.c",
+      "line": 941,
+      "md": "Returns `TRUE` if videos have been set to loop."
+    },
+    "get_media_stream": {
+      "brief": "Gets the media stream managed by `self` or `NULL` if none.",
+      "file": "gtk/gtkvideo.c",
+      "line": 612,
+      "md": "Gets the media stream managed by `self` or `NULL` if none."
+    },
+    "set_autoplay": {
+      "brief": "Sets whether `self` automatically starts playback when it becomes visible or when a new file gets loaded.",
+      "file": "gtk/gtkvideo.c",
+      "line": 919,
+      "md": "Sets whether `self` automatically starts playback when it\nbecomes visible or when a new file gets loaded."
+    },
+    "set_file": {
+      "brief": "Makes `self` play the given `file`.",
+      "file": "gtk/gtkvideo.c",
+      "line": 788,
+      "md": "Makes `self` play the given `file`."
+    },
+    "set_filename": {
+      "brief": "Makes `self` play the given `filename`.",
+      "file": "gtk/gtkvideo.c",
+      "line": 835,
+      "md": "Makes `self` play the given `filename`.\n\nThis is a utility function that calls gtk_video_set_file(),"
+    },
+    "set_graphics_offload": {
+      "brief": "Sets whether to enable graphics offload.",
+      "file": "gtk/gtkvideo.c",
+      "line": 998,
+      "md": "Sets whether to enable graphics offload.\n\nSee [`GraphicsOffload`](xref:gtk:Gtk.GraphicsOffload) for more information on graphics offload.",
+      "since": "4.14"
+    },
+    "set_loop": {
+      "brief": "Sets whether new files loaded by `self` should be set to loop.",
+      "file": "gtk/gtkvideo.c",
+      "line": 957,
+      "md": "Sets whether new files loaded by `self` should be set to loop."
+    },
+    "set_media_stream": {
+      "brief": "Sets the media stream to be played back.",
+      "file": "gtk/gtkvideo.c",
+      "line": 700,
+      "md": "Sets the media stream to be played back.\n\n`self` will take full control of managing the media stream. If you\nwant to manage a media stream yourself, consider using a\n[`Picture`](xref:gtk:Gtk.Picture) for display.\n\nIf you want to display a file, consider using [`Video.set_file()`](xref:gtk:Gtk.Video#method:set_file)\ninstead."
+    },
+    "set_resource": {
+      "brief": "Makes `self` play the resource at the given `resource_path`.",
+      "file": "gtk/gtkvideo.c",
+      "line": 863,
+      "md": "Makes `self` play the resource at the given `resource_path`.\n\nThis is a utility function that calls [`Video.set_file()`](xref:gtk:Gtk.Video#method:set_file)."
+    }
+  },
+  "properties": {
+    "autoplay": {
+      "brief": "If the video should automatically begin playing.",
+      "file": "gtk/gtkvideo.c",
+      "line": 415,
+      "md": "If the video should automatically begin playing."
+    },
+    "file": {
+      "brief": "The file played by this video if the video is playing a file.",
+      "file": "gtk/gtkvideo.c",
+      "line": 425,
+      "md": "The file played by this video if the video is playing a file."
+    },
+    "graphics-offload": {
+      "brief": "Whether to enable graphics offload.",
+      "file": "gtk/gtkvideo.c",
+      "line": 455,
+      "md": "Whether to enable graphics offload.",
+      "since": "4.14"
+    },
+    "loop": {
+      "brief": "If new media files should be set to loop.",
+      "file": "gtk/gtkvideo.c",
+      "line": 435,
+      "md": "If new media files should be set to loop."
+    },
+    "media-stream": {
+      "brief": "The media-stream played",
+      "file": "gtk/gtkvideo.c",
+      "line": 445,
+      "md": "The media-stream played"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}
