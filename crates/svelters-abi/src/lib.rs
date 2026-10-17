@@ -5,7 +5,7 @@
 
 use std::ffi::{c_char, c_int, c_void};
 
-pub const SVL_ABI_VERSION: u32 = 1;
+pub const SVL_ABI_VERSION: u32 = 2;
 
 pub type svl_handle = u64;
 pub type svl_id = u32;
@@ -23,6 +23,26 @@ pub const SVL_PROP: u32 = 1;
 pub const SVL_SIGNAL: u32 = 2;
 pub const SVL_METHOD: u32 = 3;
 pub const SVL_SLOT: u32 = 4;
+
+pub const SVL_LIFE_OWNED: u32 = 1;
+pub const SVL_LIFE_TOPLEVEL: u32 = 2;
+pub const SVL_LIFE_BORROWED: u32 = 3;
+pub const SVL_LIFE_VALUE: u32 = 4;
+
+pub const SVL_GONE_UNKNOWN: u32 = 0;
+pub const SVL_GONE_CLOSED: u32 = 1;
+pub const SVL_GONE_PARENT: u32 = 2;
+pub const SVL_GONE_OWNER: u32 = 3;
+pub const SVL_GONE_REPLACED: u32 = 4;
+pub const SVL_GONE_SHUTDOWN: u32 = 5;
+
+#[repr(C)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct svl_handle_info {
+    pub kind: svl_id,
+    pub lifetime: u32,
+    pub flags: u32,
+}
 
 #[repr(C)]
 #[derive(Clone, Copy)]
@@ -69,7 +89,7 @@ pub struct svl_host {
         usize,
         *mut svl_value,
     ) -> c_int,
-    pub on_destroyed: unsafe extern "C" fn(*mut c_void, svl_handle),
+    pub on_destroyed: unsafe extern "C" fn(*mut c_void, svl_handle, u32),
 }
 
 #[repr(C)]
@@ -93,8 +113,10 @@ pub struct svl_backend {
         *mut svl_value,
     ) -> c_int,
     pub listen: unsafe extern "C" fn(*mut c_void, svl_handle, svl_id, bool) -> c_int,
+    pub handle_info: unsafe extern "C" fn(*mut c_void, svl_handle, *mut svl_handle_info) -> c_int,
     pub run: unsafe extern "C" fn(*mut c_void, *const svl_host) -> c_int,
     pub wake: unsafe extern "C" fn(*mut c_void),
+    pub schedule_wake: unsafe extern "C" fn(*mut c_void, i64),
     pub quit: unsafe extern "C" fn(*mut c_void),
     pub last_error: unsafe extern "C" fn(*mut c_void) -> *const c_char,
 }

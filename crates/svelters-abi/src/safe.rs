@@ -371,6 +371,20 @@ impl<'a> BackendRef<'a> {
         unsafe { (b.quit)(b.self_) }
     }
 
+    /// Arms the backend's single one-shot wakeup `ms` from now; `ms < 0` cancels. Main thread only.
+    pub fn schedule_wake(&self, ms: i64) {
+        let b = self.b();
+        unsafe { (b.schedule_wake)(b.self_, ms) }
+    }
+
+    /// Kind and lifetime class of a live handle; an error for a dead or foreign handle.
+    pub fn handle_info(&self, h: svl_handle) -> AbiResult<svl_handle_info> {
+        let b = self.b();
+        let mut out = svl_handle_info::default();
+        self.check(unsafe { (b.handle_info)(b.self_, h, &mut out) })?;
+        Ok(out)
+    }
+
     /// A `Send` handle to `wake`, for timer threads.
     ///
     /// The caller must stop using it before the backend is dropped.
@@ -432,9 +446,10 @@ impl<'a> HostRef<'a> {
         Ok(unsafe { Value::from_raw(&out) })
     }
 
-    pub fn on_destroyed(&self, h: svl_handle) {
+    /// `reason` is one of the `SVL_GONE_*` constants.
+    pub fn on_destroyed(&self, h: svl_handle, reason: u32) {
         let host = self.h();
-        unsafe { (host.on_destroyed)(host.self_, h) }
+        unsafe { (host.on_destroyed)(host.self_, h, reason) }
     }
 }
 
@@ -461,12 +476,17 @@ pub trait Backend: 'static {
     fn get_prop(&self, h: svl_handle, prop: svl_id) -> StrResult<Value>;
     fn call(&self, h: svl_handle, method: svl_id, args: &[Value]) -> StrResult<Value>;
     fn listen(&self, h: svl_handle, signal: svl_id, on: bool) -> StrResult<()>;
+    /// Kind and lifetime class of a live handle.
+    fn handle_info(&self, h: svl_handle) -> StrResult<svl_handle_info>;
     /// Owns the toolkit loop. Returns when the app quits.
     fn run(&self, host: &HostRef<'_>) -> StrResult<()>;
     /// Called once when the vtable is built. The returned closure implements `wake`: it may be
     /// called from any thread and must schedule a host checkpoint on the loop thread.
     fn waker(&self) -> Waker;
     fn quit(&self);
+    /// Arms a single one-shot wakeup `ms` from now, replacing any pending one; `ms < 0` cancels.
+    /// On expiry the backend calls `host.checkpoint`. Main thread only.
+    fn schedule_wake(&self, ms: i64);
 }
 
 type OutSlot = RefCell<Option<(Box<Value>, Vec<Vec<svl_value>>)>>;
@@ -638,6 +658,26 @@ unsafe extern "C" fn t_wake(s: *mut c_void) {
     waker();
 }
 
+unsafe extern "C" fn t_handle_info(
+    s: *mut c_void,
+    h: svl_handle,
+    out: *mut svl_handle_info,
+) -> c_int {
+    let s = unsafe { shim(s) };
+    if out.is_null() {
+        return s.fail("handle_info: null out");
+    }
+    s.rc(|b| {
+        unsafe { *out = b.handle_info(h)? };
+        Ok(())
+    })
+}
+
+unsafe extern "C" fn t_schedule_wake(s: *mut c_void, ms: i64) {
+    let s = unsafe { shim(s) };
+    let _ = catch_unwind(AssertUnwindSafe(|| s.backend.schedule_wake(ms)));
+}
+
 unsafe extern "C" fn t_quit(s: *mut c_void) {
     let s = unsafe { shim(s) };
     let _ = catch_unwind(AssertUnwindSafe(|| s.backend.quit()));
@@ -678,8 +718,10 @@ impl BackendVtable {
             get_prop: t_get_prop,
             call: t_call,
             listen: t_listen,
+            handle_info: t_handle_info,
             run: t_run,
             wake: t_wake,
+            schedule_wake: t_schedule_wake,
             quit: t_quit,
             last_error: t_last_error,
         });
@@ -709,7 +751,7 @@ pub trait HostCallbacks: 'static {
     fn post_event(&self, h: svl_handle, signal: svl_id, args: &[Value]);
     fn checkpoint(&self);
     fn call_sync(&self, h: svl_handle, signal: svl_id, args: &[Value]) -> StrResult<Value>;
-    fn on_destroyed(&self, h: svl_handle);
+    fn on_destroyed(&self, h: svl_handle, reason: u32);
 }
 
 struct HostShim {
@@ -757,9 +799,9 @@ unsafe extern "C" fn h_call_sync(
     }
 }
 
-unsafe extern "C" fn h_on_destroyed(s: *mut c_void, h: svl_handle) {
+unsafe extern "C" fn h_on_destroyed(s: *mut c_void, h: svl_handle, reason: u32) {
     let s = unsafe { hshim(s) };
-    let _ = catch_unwind(AssertUnwindSafe(|| s.cb.on_destroyed(h)));
+    let _ = catch_unwind(AssertUnwindSafe(|| s.cb.on_destroyed(h, reason)));
 }
 
 /// An `svl_host` backed by a [`HostCallbacks`] implementation.
