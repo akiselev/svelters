@@ -137,7 +137,12 @@ impl Backend for Typed {
             st.next_boxed += 1;
             return Ok(Value::Boxed { ty: ICON_T, handle: 1000 + st.next_boxed });
         }
-        Ok(st.props.get(&prop).cloned().unwrap_or(Value::Null))
+        let v = st.props.get(&prop).cloned().unwrap_or(Value::Null);
+        // A UTF-16 backend answers strings in UTF-16 (`SVL_CAP_UTF16_OUT`), as the Qt backend does.
+        Ok(match v {
+            Value::Str(s) if self.utf16 => Value::Str16(s.encode_utf16().collect()),
+            v => v,
+        })
     }
     fn call(&self, _: svl_handle, method: svl_id, args: &[Value]) -> StrResult<Value> {
         let name = METHODS[method as usize - 1];

@@ -298,6 +298,15 @@ impl<'js> JsWriter for QjsConv<'js> {
             .map_err(|e| self.err(e))
     }
 
+    fn string16(&self, s: &[u16]) -> R<Value<'js>> {
+        // SAFETY: the context is live, `s` is a valid slice, and the returned value is owned by us.
+        let raw = unsafe { qjs::JS_NewStringUTF16(self.ctx.as_raw().as_ptr(), s.as_ptr(), s.len() as _) };
+        if unsafe { qjs::JS_IsException(raw) } {
+            return Err(self.err(rquickjs::Error::Exception));
+        }
+        Ok(unsafe { Value::from_raw(self.ctx.clone(), raw) })
+    }
+
     fn array(&self, items: Vec<Value<'js>>) -> R<Value<'js>> {
         let arr = Array::new(self.ctx.clone()).map_err(|e| self.err(e))?;
         for (i, x) in items.into_iter().enumerate() {

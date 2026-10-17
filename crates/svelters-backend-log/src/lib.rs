@@ -138,6 +138,7 @@ fn write_json(v: &Value, out: &mut String) {
             let _ = write!(out, "{h}");
         }
         Value::Str(s) => out.push_str(&serde_json::to_string(s).expect("string serializes")),
+        Value::Str16(u) => out.push_str(&serde_json::to_string(&String::from_utf16_lossy(u)).expect("string serializes")),
         Value::List(items) => {
             out.push('[');
             for (i, x) in items.iter().enumerate() {

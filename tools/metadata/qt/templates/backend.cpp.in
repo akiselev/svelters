@@ -497,7 +497,7 @@ int b_cancel(void *, uint64_t callback) {
 // v3 members (caps, describe, describe_type, cancel) follow `last_error`.
 const svl_backend kBackend = {SVL_ABI_VERSION, &g, b_resolve, b_create, b_insert, b_remove, b_destroy,
                               b_set_prop, b_get_prop, b_call, b_listen, b_handle_info, b_run, b_wake, b_schedule_wake, b_quit,
-                              b_last_error, SVL_CAP_UTF16_IN, b_describe, b_describe_type, b_cancel};
+                              b_last_error, SVL_CAP_UTF16_IN | SVL_CAP_UTF16_OUT, b_describe, b_describe_type, b_cancel};
 
 }  // namespace
 

@@ -12,10 +12,12 @@
 // produces output (get_prop, call), as the ABI promises.
 struct OutArena {
   std::deque<std::string> strs;
+  std::deque<QString> wides;  // UTF-16 results: the QString shares its buffer, nothing is copied
   std::deque<QByteArray> bytes;
   std::deque<std::vector<svl_value>> lists;
   void clear() {
     strs.clear();
+    wides.clear();
     bytes.clear();
     lists.clear();
   }
@@ -184,12 +186,15 @@ struct Conv<QString> {
       o = QString::fromUtf8(static_cast<const char *>(v->u.s.ptr), static_cast<qsizetype>(v->u.s.len));
     return true;
   }
+  // UTF-16 with SVL_F_UTF16, as QString stores it: the host turns it into a JS string without
+  // transcoding through UTF-8 (SVL_CAP_UTF16_OUT).
   static void out(const QString &s, svl_value *o) {
-    QByteArray u = s.toUtf8();
-    g_out.strs.emplace_back(u.constData(), static_cast<size_t>(u.size()));
+    g_out.wides.push_back(s);
+    const QString &kept = g_out.wides.back();
     *o = mkv(SVL_STR);
-    o->u.s.ptr = g_out.strs.back().data();
-    o->u.s.len = g_out.strs.back().size();
+    o->flags = SVL_F_UTF16;
+    o->u.s.ptr = kept.constData();
+    o->u.s.len = static_cast<size_t>(kept.size());
   }
   static svl_slot_desc slot(const char *n) { return slot_desc(n, SVL_STR, SVL_D_NULLABLE); }
 };

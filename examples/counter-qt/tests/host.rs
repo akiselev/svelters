@@ -6,12 +6,30 @@ use std::path::PathBuf;
 use svelters_abi::BackendRef;
 use svelters_host::{Host, HostConfig};
 
+/// `SVL_BENCH=1`: getProp of strings through the host (see `tests/js/getprop_bench.js`).
+fn bench() {
+    if std::env::var_os("SVL_BENCH").is_none() {
+        return;
+    }
+    let br = unsafe { BackendRef::from_raw(counter_qt::backend()) }.expect("abi version");
+    let host = Host::new(br, HostConfig { echo_console: false, echo_errors: false, turn_budget: None, ..HostConfig::default() }).expect("host");
+    unsafe { counter_qt::set_host(host.host_callbacks()) };
+    host.load_bundle(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/js/getprop_bench.js")).expect("bundle");
+    for l in host.take_console() {
+        println!("{}", l.text);
+    }
+    for e in host.take_errors() {
+        println!("error: {e}");
+    }
+}
+
 fn main() {
     // SAFETY: single-threaded at this point. Tests must not touch the developer's session bus.
     unsafe {
         std::env::set_var("QT_ACCESSIBILITY", "0");
         std::env::set_var("DBUS_SESSION_BUS_ADDRESS", "unix:path=/nonexistent");
     }
+    counter_qt::run_as_test("qt_getprop_bench", bench);
     counter_qt::run_as_test("qt_services", || {
         let br = unsafe { BackendRef::from_raw(counter_qt::backend()) }.expect("abi version");
         let cfg = HostConfig { echo_console: false, echo_errors: false, quit_on_last_window: true, ..HostConfig::default() };

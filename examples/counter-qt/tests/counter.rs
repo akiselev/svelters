@@ -64,6 +64,10 @@ fn get_str(h: svl_handle, prop: svl_id) -> String {
     let mut out = svl_value::null();
     ok(unsafe { (be().get_prop)(be().self_, h, prop, &mut out) }, "get_prop");
     assert_eq!(out.tag, SVL_STR);
+    if out.flags & SVL_F_UTF16 != 0 {
+        let u = unsafe { std::slice::from_raw_parts(out.u.s.ptr.cast::<u16>(), out.u.s.len) };
+        return String::from_utf16(u).unwrap();
+    }
     let s = unsafe { std::slice::from_raw_parts(out.u.s.ptr.cast::<u8>(), out.u.s.len) };
     String::from_utf8(s.to_vec()).unwrap()
 }

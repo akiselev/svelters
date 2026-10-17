@@ -90,6 +90,8 @@ pub(crate) trait JsWriter {
     fn boolean(&self, b: bool) -> Result<Self::V, String>;
     fn number(&self, n: f64) -> Result<Self::V, String>;
     fn string(&self, s: &str) -> Result<Self::V, String>;
+    /// UTF-16 text from a backend with `SVL_CAP_UTF16_OUT`, without transcoding through UTF-8.
+    fn string16(&self, s: &[u16]) -> Result<Self::V, String>;
     fn array(&self, items: Vec<Self::V>) -> Result<Self::V, String>;
     fn object(&self, entries: Vec<(String, Self::V)>) -> Result<Self::V, String>;
     fn bytes(&self, b: &[u8]) -> Result<Self::V, String>;
@@ -854,6 +856,7 @@ fn decode_at<W: JsWriter>(w: &W, v: &Value, types: &dyn TypeSource, depth: u32) 
         Value::F64(f) => w.number(*f),
         Value::DateTime(ms) => w.date(*ms),
         Value::Str(s) => w.string(s),
+        Value::Str16(u) => w.string16(u),
         Value::Handle(h) => w.number(*h as f64),
         Value::List(items) => {
             let vs = items

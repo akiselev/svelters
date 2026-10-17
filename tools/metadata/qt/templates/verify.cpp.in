@@ -41,10 +41,17 @@ struct Rec {
   void clear() { events.clear(); destroyed.clear(); reasons.clear(); checkpoints = 0; }
 } rec;
 
+// Text of a STR value as UTF-8, whichever encoding the backend chose.
+std::string str_of(const svl_value &v) {
+  if (v.flags & SVL_F_UTF16)
+    return QString::fromUtf16(static_cast<const char16_t *>(v.u.s.ptr), static_cast<qsizetype>(v.u.s.len)).toStdString();
+  return std::string(static_cast<const char *>(v.u.s.ptr), v.u.s.len);
+}
+
 void h_post(void *, svl_handle h, svl_id sig, const svl_value *args, size_t n) {
   Ev e{h, sig, {}, n};
   for (size_t i = 0; i < n; ++i)
-    e.strs.push_back(args[i].tag == SVL_STR ? std::string(static_cast<const char *>(args[i].u.s.ptr), args[i].u.s.len) : std::string());
+    e.strs.push_back(args[i].tag == SVL_STR ? str_of(args[i]) : std::string());
   rec.events.push_back(std::move(e));
 }
 void h_checkpoint(void *) { rec.checkpoints++; }
@@ -106,7 +113,7 @@ int64_t enum_member_value(const svl_type_desc *td, const char *name) {
 std::string getstr(svl_handle h, svl_id p) {
   svl_value out{};
   if (B->get_prop(B->self, h, p, &out) != 0 || out.tag != SVL_STR) return "<err>";
-  return std::string(static_cast<const char *>(out.u.s.ptr), out.u.s.len);
+  return str_of(out);
 }
 
 struct TestCase {

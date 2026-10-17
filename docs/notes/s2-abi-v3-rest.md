@@ -15,3 +15,17 @@
 - Tests: `examples/counter-qt/tests/serdes.rs` (descriptors, invocation record, completion, cancel), and `examples/counter-qt/tests/host.rs` (real host, JS: Promise resolve/reject/abort, callback fired from the Qt loop, throwing callback reported, no callback left alive). New test hook `hooks::trigger_actions`.
 - Only the metadata classes (QtWidgets) are usable: `QTextDocument::setResourceProvider` (a std::function returning a value) would have been the better callback-with-result proof, but the Qt ingest only covers QtWidgets classes. A Qt API with a callback result is still unproven on Qt.
 - `Conv<T>::out` for a boxed argument of a callback mints a boxed handle (the JS side owns and disposes it).
+
+## 3. Qt UTF-16 strings (done)
+
+- `Conv<QString>::out` returns the QString's own buffer flagged UTF-16 (`OutArena::wides` keeps a shared copy alive); Qt advertises `SVL_CAP_UTF16_OUT`. Host: `Value::Str16`, `Value::from_raw_wide` (used for get_prop/call results and the `HostCallbacks` shim), `JsWriter::string16` -> `JS_NewStringUTF16`.
+- Raw readers in tests/templates had to learn the flag (`verify.cpp.in::str_of`, `counter.rs::get_str`).
+- Benchmark (release, loaded machine, ns per `getProp` of a QLabel text through the host, best of 7, JS loop included; `SVL_BENCH=1 xvfb-run -a cargo test --release -p counter-qt --test host qt_getprop_bench`):
+
+| string | UTF-8 out (before) | UTF-16 out (after) |
+|---|---:|---:|
+| 11 B ASCII | 1764 | 1635 |
+| 1 KiB ASCII | 5370 | 1823 |
+| 1 KiB Latin-1 | 15514 | 1728 |
+| 1 KiB wide (BMP) | 32592 | 1792 |
+| 1 KiB wide + astral | 24977 | 1974 |

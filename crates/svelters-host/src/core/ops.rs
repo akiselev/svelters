@@ -368,7 +368,7 @@ impl Core {
             let k = self.kind_of(h)?;
             let p = self.resolve_name(NameKind::Prop, k, prop)?;
             let raw = self.backend.get_prop_raw(h, p).map_err(|e| self.backend_err(e))?;
-            let v = unsafe { Value::from_raw(&raw) };
+            let v = unsafe { Value::from_raw_wide(&raw) };
             self.decode_result(w, &v)
         })
     }
@@ -468,7 +468,7 @@ impl Core {
             let out = self.backend.call_raw(h, m, &raw).map_err(|e| self.backend_err(e));
             self.finish_callbacks(&mut ar, out.is_ok());
             drop(ar);
-            let v = unsafe { Value::from_raw(&out?) };
+            let v = unsafe { Value::from_raw_wide(&out?) };
             match desc.as_ref().filter(|d| d.params.iter().any(|p| p.has(SVL_D_OUT | SVL_D_INOUT))) {
                 Some(d) => self.decode_outs(e, &mname, k, d, &v),
                 None => self.decode_result(e, &v),
