@@ -297,7 +297,33 @@ fn scheme_step_3() {
     assert_eq!(hex(hooks::palette_color(hd("win"), true).unwrap()), "f6f5f4");
 }
 
+/// Performance guard: class toggles re-polish only their widget (about 0.25 ms each), so 2000 of them on
+/// 1000 labels stay far below a generous budget, and the application sheet is not touched.
+fn perf_step() {
+    sheet("App", ".QLabel.on { color: #ff0000; }\n");
+    let bx = hd("bx");
+    let labels: Vec<svl_handle> = (0..1000)
+        .map(|_| {
+            let l = create("label");
+            insert(bx, l);
+            l
+        })
+        .collect();
+    let before = hooks::app_stylesheet();
+    let t = std::time::Instant::now();
+    for l in &labels {
+        style(SVL_STYLE_CLASSES, *l, Some("on"));
+    }
+    for l in &labels {
+        style(SVL_STYLE_CLASSES, *l, None);
+    }
+    let apply = t.elapsed();
+    assert!(apply < std::time::Duration::from_millis(3000), "2000 class ops took {apply:?}");
+    assert_eq!(hooks::app_stylesheet(), before, "class changes never touch the application sheet");
+}
+
 fn main() {
+    counter_qt::run_as_test("a_thousand_class_toggles_stay_cheap", || scenario(vec![perf_step]));
     counter_qt::run_as_test("target_is_qss", || scenario(vec![target]));
     counter_qt::run_as_test("class_toggling_restyles_the_widget", || scenario(vec![class_step_1, class_step_2, class_step_3, class_step_4]));
     counter_qt::run_as_test("color_reaches_the_palette", || scenario(vec![color_step_1, color_step_2]));

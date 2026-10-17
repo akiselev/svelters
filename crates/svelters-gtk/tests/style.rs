@@ -246,3 +246,36 @@ fn background_colour_is_painted() {
         assert_eq!(pixel(&h, label, 2, 2), (255, 0, 0));
     });
 }
+
+/// Performance guard (docs/notes/styling-gtk-css-qss.md 5.2): class changes are local and cheap, and
+/// a state change never reloads a provider, so 2000 class ops stay far below a generous budget.
+#[test]
+fn a_thousand_class_toggles_stay_cheap() {
+    on_gtk(|| {
+        let h = Harness::new();
+        h.style(SVL_STYLE_SHEET, 0, None).unwrap();
+        let win = h.create("window");
+        let boxx = h.create("box");
+        let buttons: Vec<u64> = (0..1000)
+            .map(|_| {
+                let b = h.create("button");
+                h.insert(boxx, b, None, None).unwrap();
+                b
+            })
+            .collect();
+        h.insert(win, boxx, None, None).unwrap();
+        h.call(win, "present").unwrap();
+        sheet(&h, "S", "button.on { color: #ff0000; }\n");
+        pump(300);
+        let t = std::time::Instant::now();
+        for b in &buttons {
+            h.style(SVL_STYLE_CLASSES, *b, Some("on")).unwrap();
+        }
+        for b in &buttons {
+            h.style(SVL_STYLE_CLASSES, *b, None).unwrap();
+        }
+        let apply = t.elapsed();
+        assert!(apply < std::time::Duration::from_millis(1500), "2000 class ops took {apply:?}");
+        assert!(h.style_errors().is_empty());
+    });
+}
