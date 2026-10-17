@@ -85,8 +85,17 @@ struct Entry {
   svl_id close_sig = 0;
 };
 
+// An async method in flight (see `async:` in the Qt overrides): the signal connection that completes it
+// and the optional way to stop it.
+struct AsyncOp {
+  QPointer<QObject> obj;
+  QMetaObject::Connection conn;
+  std::function<void()> cancel;
+};
+
 struct Core {
   const svl_host *host = nullptr;
+  std::unordered_map<uint64_t, AsyncOp> asyncs;  // by completion callback id
   std::unordered_map<svl_handle, Entry> table;
   std::unordered_map<QObject *, svl_handle> by_obj;  // reverse of `table`, for returning QObject* values
   std::unordered_map<svl_handle, QVariant> boxed;    // BOXED values (implicitly shared Qt value classes)
@@ -467,10 +476,28 @@ void b_quit(void *) {
 
 const char *b_last_error(void *) { return g.err.c_str(); }
 
+// The JS side aborted an async operation: stop it and reject its Promise.
+int b_cancel(void *, uint64_t callback) {
+  auto it = g.asyncs.find(callback);
+  if (it == g.asyncs.end()) return 0;
+  if (!it->second.cancel) return 0;
+  AsyncOp op = std::move(it->second);
+  QObject::disconnect(op.conn);
+  g.asyncs.erase(it);
+  if (!op.obj.isNull()) op.cancel();
+  svl_value err = mkv(SVL_NULL);
+  out_error(&err, "qt", "operation cancelled");
+  if (g.host && g.host->invoke_callback) {
+    svl_value res = mkv(SVL_NULL);
+    g.host->invoke_callback(g.host->self, callback, &err, 1, &res);
+  }
+  return 1;
+}
+
 // v3 members (caps, describe, describe_type, cancel) follow `last_error`.
 const svl_backend kBackend = {SVL_ABI_VERSION, &g, b_resolve, b_create, b_insert, b_remove, b_destroy,
                               b_set_prop, b_get_prop, b_call, b_listen, b_handle_info, b_run, b_wake, b_schedule_wake, b_quit,
-                              b_last_error, SVL_CAP_UTF16_IN, b_describe, b_describe_type, nullptr};
+                              b_last_error, SVL_CAP_UTF16_IN, b_describe, b_describe_type, b_cancel};
 
 }  // namespace
 
@@ -582,6 +609,15 @@ extern "C" int svl_qt_grab_png(svl_handle h, const char *path) {
   QPixmap px = w->grab();
   if (!path) return px.isNull() ? -1 : 0;
   return px.save(QString::fromUtf8(path)) ? 0 : -1;
+}
+
+// Triggers every QAction of the widget behind `h` (a menu's items), as a click on each would.
+extern "C" int svl_qt_trigger_actions(svl_handle h) {
+  auto *w = qobject_cast<QWidget *>(debug_obj(h));
+  if (!w) return -1;
+  const auto actions = w->actions();
+  for (QAction *a : actions) a->trigger();
+  return static_cast<int>(actions.size());
 }
 
 // Type `utf8` into the QLineEdit behind `h` through key events, replacing its content.

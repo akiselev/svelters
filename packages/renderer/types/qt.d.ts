@@ -52,6 +52,9 @@ export interface QtElementDescriptors {
     events: {
     };
     methods: {
+      open(options?: { signal?: AbortSignal }): Promise<number>;
+      accept(): void;
+      reject(): void;
     };
     slots: never;
   };
@@ -128,6 +131,16 @@ export interface QtElementDescriptors {
     methods: {
       setBuddy(buddy: number): void;
       buddy(): number;
+    };
+    slots: never;
+  };
+  menu: {
+    props: {
+    };
+    events: {
+    };
+    methods: {
+      addItem(text: string, functor: (checked: boolean) => void, shortcut: Boxed<"QKeySequence"> | string): void;
     };
     slots: never;
   };

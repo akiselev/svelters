@@ -885,3 +885,45 @@ inline void out_null(svl_value *out) {
 inline int bad_type(const char *what, const char *want) {
   return fail(std::string(what) + ": expected " + want);
 }
+
+// ---- callbacks (JS functions called by Qt) and async completion ----
+
+// Registers the descriptor of a callback type: its parameters (`fields`), result and scope.
+inline svl_id new_callback_type(const std::string &name, uint16_t scope,
+                                const std::vector<std::pair<std::string, svl_slot_desc>> &fields, svl_slot_desc ret) {
+  svl_id id = new_type(0, name, SVL_CALLBACK, {}, fields);
+  g_types[id]->desc.scope = scope;
+  g_types[id]->desc.ret = ret;
+  return id;
+}
+
+// Runs the JS function behind a CALLBACK id. A failure (the function threw, was released, or its owner
+// died) is reported by the host; the native caller sees a default-constructed result.
+template <class R, class... A>
+R js_invoke(uint64_t id, const A &...a) {
+  constexpr size_t N = sizeof...(A);
+  g_out.clear();
+  svl_value vals[N ? N : 1];
+  size_t i = 0;
+  ((Conv<A>::out(a, &vals[i++])), ...);
+  svl_value res = mkv(SVL_NULL);
+  const bool ok = g.host && g.host->invoke_callback && g.host->invoke_callback(g.host->self, id, N ? vals : nullptr, N, &res) == 0;
+  if constexpr (std::is_void_v<R>) {
+    (void)ok;
+  } else {
+    R r{};
+    std::string er;
+    if (ok && Conv<R>::in(&res, r, er)) return r;
+    return R{};
+  }
+}
+
+// An async operation ended: hands `v[0..n)` to the host's one-shot completion callback.
+inline void async_complete(uint64_t id, const svl_value *v, size_t n) {
+  auto it = g.asyncs.find(id);
+  if (it == g.asyncs.end()) return;
+  QObject::disconnect(it->second.conn);
+  g.asyncs.erase(it);
+  svl_value res = mkv(SVL_NULL);
+  if (g.host && g.host->invoke_callback) g.host->invoke_callback(g.host->self, id, v, n, &res);
+}

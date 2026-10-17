@@ -465,6 +465,98 @@ fn out_and_inout_params() {
     assert!(matches!(items[0], Value::Enum { value: 0, .. }), "Invalid: {:?}", items[0]);
 }
 
+/// A host that records every callback invocation and lets the test choose the answer.
+struct Recorder {
+    calls: std::rc::Rc<std::cell::RefCell<Vec<(u64, Vec<Value>)>>>,
+    answer: std::rc::Rc<std::cell::RefCell<Result<Value, String>>>,
+}
+
+impl HostCallbacks for Recorder {
+    fn post_event(&self, _: svl_handle, _: svl_id, _: &[Value]) {}
+    fn checkpoint(&self) {}
+    fn call_sync(&self, _: svl_handle, _: svl_id, _: &[Value]) -> StrResult<Value> {
+        Err("no sync handlers".into())
+    }
+    fn on_destroyed(&self, _: svl_handle, _: u32) {}
+    fn invoke_callback(&self, callback: u64, args: &[Value]) -> StrResult<Value> {
+        self.calls.borrow_mut().push((callback, args.to_vec()));
+        self.answer.borrow().clone()
+    }
+}
+
+type Calls = std::rc::Rc<std::cell::RefCell<Vec<(u64, Vec<Value>)>>>;
+type Answer = std::rc::Rc<std::cell::RefCell<Result<Value, String>>>;
+
+fn install_host() -> (Calls, Answer) {
+    let calls = Calls::default();
+    let answer: Answer = std::rc::Rc::new(std::cell::RefCell::new(Ok(Value::Null)));
+    let vt = Box::leak(Box::new(HostVtable::new(Recorder { calls: calls.clone(), answer: answer.clone() })));
+    // SAFETY: leaked above, so it outlives every call the backend can make.
+    unsafe { counter_qt::set_host(vt.as_raw()) };
+    (calls, answer)
+}
+
+fn callbacks_run_js_functions() {
+    let (calls, answer) = install_host();
+    let menu = mk("menu");
+    let d = be().describe(NameKind::Method, menu.kind, menu.mid("addItem")).unwrap();
+    assert_eq!(d.params.iter().map(|p| p.tag).collect::<Vec<_>>(), [SVL_STR, SVL_CALLBACK, SVL_BOXED]);
+    assert!(d.ret.is_void(), "the QAction the C++ call returns is not exposed");
+    let t = be().describe_type(d.params[1].ty).expect("callback type");
+    assert_eq!((t.kind, t.scope, t.name.as_str()), (SVL_CALLBACK, SVL_CB_NOTIFIED, "(checked: boolean) => void"));
+    assert_eq!(t.fields.len(), 1);
+    assert_eq!((t.fields[0].tag, t.fields[0].name.as_deref()), (SVL_BOOL, Some("checked")));
+    assert!(t.ret.is_void());
+
+    let cb = |id: u64| Value::Callback { id, ty: d.params[1].ty };
+    assert_eq!(menu.call("addItem", &[Value::Str("Open".into()), cb(7), Value::Str("Ctrl+O".into())]).unwrap(), Value::Null);
+    menu.call("addItem", &[Value::Str("Save".into()), cb(8), Value::Str("".into())]).unwrap();
+    // Triggering the actions (as a click would) runs each JS function with the signal's argument.
+    assert_eq!(counter_qt::hooks::trigger_actions(menu.h).unwrap(), 2);
+    assert_eq!(*calls.borrow(), [(7, vec![Value::Bool(false)]), (8, vec![Value::Bool(false)])]);
+    // A function the host refuses (threw, released, owner gone) is the host's business: Qt carries on.
+    *answer.borrow_mut() = Err("it threw".into());
+    assert_eq!(counter_qt::hooks::trigger_actions(menu.h).unwrap(), 2);
+    assert_eq!(calls.borrow().len(), 4);
+    // Validation: the slot must be a function.
+    let err = menu.call("addItem", &[Value::Str("Bad".into()), Value::Str("nope".into()), Value::Null]).unwrap_err();
+    assert!(err.contains("addItem(functor): expected a function"), "{err}");
+}
+
+fn async_methods_complete_through_signals() {
+    let (calls, _) = install_host();
+    let dlg = mk("colordialog");
+    let d = be().describe(NameKind::Method, dlg.kind, dlg.mid("open")).unwrap();
+    assert_eq!(d.flags & SVL_M_ASYNC, SVL_M_ASYNC);
+    let t = be().describe_type(d.params.last().unwrap().ty).unwrap();
+    assert_eq!((t.kind, t.scope, t.name.as_str()), (SVL_CALLBACK, SVL_CB_ASYNC, "(result: number) => void"));
+    let done = |id: u64| Value::Callback { id, ty: d.params[0].ty };
+
+    // accept() -> finished(1) -> the completion callback gets the result once.
+    dlg.call("open", &[done(9)]).unwrap();
+    assert!(calls.borrow().is_empty(), "nothing completes before the dialog finishes");
+    dlg.call("accept", &[]).unwrap();
+    assert_eq!(*calls.borrow(), [(9, vec![Value::I64(1)])]);
+    dlg.call("open", &[done(10)]).unwrap();
+    dlg.call("reject", &[]).unwrap();
+    assert_eq!(calls.borrow()[1], (10, vec![Value::I64(0)]));
+    dlg.call("accept", &[]).unwrap();
+    assert_eq!(calls.borrow().len(), 2, "a finished operation does not complete twice");
+
+    // Abort: backend.cancel(id) closes the dialog and completes with a NativeError, once.
+    dlg.call("open", &[done(11)]).unwrap();
+    assert!(be().cancel(11));
+    let calls = calls.borrow();
+    assert_eq!(calls.len(), 3);
+    let Value::Error(e) = &calls[2].1[0] else { panic!("error expected, got {:?}", calls[2]) };
+    assert_eq!((calls[2].0, e.domain.as_str(), e.message.as_str()), (11, "qt", "operation cancelled"));
+    drop(calls);
+    assert!(!be().cancel(11), "already settled");
+    assert!(!be().cancel(999), "unknown operation");
+    // Wrong arity: the completion callback is mandatory.
+    assert!(dlg.call("open", &[]).unwrap_err().contains("expected 1 argument"));
+}
+
 fn main() {
     // The AT-SPI bridge talks to a session bus that does not exist in CI.
     // SAFETY: single-threaded at this point.
@@ -488,5 +580,7 @@ fn main() {
         ("errors_cross_the_boundary_as_values", errors_cross_the_boundary_as_values),
         ("descriptors", descriptors),
         ("out_and_inout_params", out_and_inout_params),
+        ("callbacks_run_js_functions", callbacks_run_js_functions),
+        ("async_methods_complete_through_signals", async_methods_complete_through_signals),
     ]);
 }

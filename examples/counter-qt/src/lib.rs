@@ -16,6 +16,7 @@ unsafe extern "C" {
     fn svl_qt_grab_png(h: u64, path: *const std::ffi::c_char) -> i32;
     fn svl_qt_type_text(h: u64, utf8: *const std::ffi::c_char) -> i32;
     fn svl_qt_close(h: u64) -> i32;
+    fn svl_qt_trigger_actions(h: u64) -> i32;
     fn svl_qt_toplevel_count() -> i32;
     fn svl_qt_run_later(cb: extern "C" fn(*mut std::ffi::c_void), ud: *mut std::ffi::c_void, ms: i32);
     fn svl_qt_on_first_paint(cb: extern "C" fn(*mut std::ffi::c_void), ud: *mut std::ffi::c_void);
@@ -81,6 +82,14 @@ pub mod hooks {
         match unsafe { svl_qt_type_text(h, t.as_ptr()) } {
             0 => Ok(()),
             _ => Err(format!("handle {h} is not a line edit")),
+        }
+    }
+
+    /// Triggers every action of the widget behind `h` (a menu's items); returns how many there were.
+    pub fn trigger_actions(h: u64) -> Result<usize, String> {
+        match unsafe { svl_qt_trigger_actions(h) } {
+            n if n >= 0 => Ok(n as usize),
+            _ => Err(format!("handle {h} is not a widget")),
         }
     }
 
