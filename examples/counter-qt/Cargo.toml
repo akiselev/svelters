@@ -20,3 +20,7 @@ harness = false
 [[test]]
 name = "counter"
 harness = false
+
+[[test]]
+name = "borrowed"
+harness = false

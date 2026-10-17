@@ -42,3 +42,18 @@ Rejected with a message that names the feature (recorded as follow-ups): callbac
 - Static functions as `call` on the class (`Gtk.Widget.get_default_direction`).
 - Methods declared on a type more derived than the handle's kind (a borrowed `GtkBuiltinIcon` is kind 0 or its nearest ancestor): the typelib lookup keys on the kind. A per-object resolve would need `handle_info` to carry the GType.
 - Release builds: generated thunks (M6) can reuse `Plan`/`Slot` as their description.
+
+## Host and renderer
+
+- `adopt_handles` (host core) registers unseen handles in a result through `handle_info`. Known handles are left alone, so an owned object returned by a getter keeps its toplevel/tree bookkeeping.
+- `abi_to_js` calls `globalThis.__svelters_node` for every handle in a result (arrays included); `js_to_abi` accepts objects with a numeric `svlHandle` and rejects a node whose `svlHandle` is `null` with "no live native object".
+- Renderer: `nodeFor(h)` = realized element, else one `borrowed` node per handle (WeakRef map + FinalizationRegistry calling `destroy`; a newer wrapper for the same handle cancels the stale release). `gone()` also reaches borrowed nodes, so a call on one throws `StaleHandleError` with the native reason. Inserting a borrowed node, inserting into one, or listening on one throws.
+- A native death only queues a `gone` event; nothing wakes the host, so JS learns of it at the next checkpoint (the next event, timer or job). The `borrowed-walk` fixture relies on its Probe click for that. Waking on `native_gone` would be a small host change if prompt delivery matters (X2 territory).
+
+## Qt
+
+- Identity is `by_obj` (QObject* to handle), erased in the `destroyed` slot before any address can be reused, and in the native-close cascade and `destroy`. Borrowed entries hold a `QPointer` and the `destroyed` connection; the owner deleting the object reports `owner`, the window-close cascade reports `parent` (it walks the QObject parent chain, which covers borrowed children).
+- `destroy` marks an owned object with the dynamic property `_svl_dying` before `deleteLater`, so a getter cannot mint a borrowed handle for an object that is about to be deleted.
+- Universal getters (`gen_getter`) come from `getter_table`: qdoc metadata of every QObject-derived class, public non-static methods whose parameters all have defaults and whose result is a pointer to a QObject-derived class that has metadata. `take*`/`create*`/`new*`/`clone*`/`grab*`/`make*`/`release*`/`detach*` are skipped (the caller owns the result). `parent` (QObject::parent) is added by hand. About 110 getters; the generated file still compiles in the same time class as before (headers of the receiving classes are included).
+- Kinds of borrowed objects: nearest annotated class by `metaObject()` chain. Composite elements (`box` is a plain QWidget with a layout) are excluded because a borrowed plain QWidget cannot be told from a box and the box props cast the layout. Such objects get kind 0.
+- Not covered: methods with required arguments on un-annotated classes (they need override entries, A1), QObject methods that return lists, Qt reflection (`QMetaObject::invokeMethod`) for slots and invokables.
