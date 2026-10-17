@@ -1,0 +1,2 @@
+unexposed:
+  reason: "deprecated since GTK 4.10; compose a revealer with a box and buttons"

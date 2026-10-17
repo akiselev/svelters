@@ -391,11 +391,24 @@
   },
   "methods": [
     {
+      "annotated": {
+        "fields": [
+          "dispatch",
+          "expect",
+          "js_name",
+          "setup"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_window_close (Gtk 4 docs)"
+      },
+      "dispatch": "zero_arg",
+      "expect": "!w.is_visible()",
       "id": "svelters-api:v1:type:gtk:Gtk:Window:method:close",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "close",
       "name": "close",
       "native": "gtk_window_close",
       "origin": "gir",
@@ -406,6 +419,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "setup": "h.set_bool(o, \"hide-on-close\", true).unwrap(); h.widget(o).downcast_ref::<gtk::Window>().unwrap().present();",
       "unsupported_reason": null
     },
     {
@@ -427,11 +441,23 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "dispatch",
+          "expect",
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_window_fullscreen (Gtk 4 docs)"
+      },
+      "dispatch": "zero_arg",
+      "expect": "true",
       "id": "svelters-api:v1:type:gtk:Gtk:Window:method:fullscreen",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "fullscreen",
       "name": "fullscreen",
       "native": "gtk_window_fullscreen",
       "origin": "gir",
@@ -936,11 +962,23 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "dispatch",
+          "expect",
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_window_maximize (Gtk 4 docs)"
+      },
+      "dispatch": "zero_arg",
+      "expect": "true",
       "id": "svelters-api:v1:type:gtk:Gtk:Window:method:maximize",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "maximize",
       "name": "maximize",
       "native": "gtk_window_maximize",
       "origin": "gir",
@@ -954,11 +992,23 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "dispatch",
+          "expect",
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_window_minimize (Gtk 4 docs)"
+      },
+      "dispatch": "zero_arg",
+      "expect": "true",
       "id": "svelters-api:v1:type:gtk:Gtk:Window:method:minimize",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "minimize",
       "name": "minimize",
       "native": "gtk_window_minimize",
       "origin": "gir",
@@ -1599,11 +1649,23 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "dispatch",
+          "expect",
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_window_unfullscreen (Gtk 4 docs)"
+      },
+      "dispatch": "zero_arg",
+      "expect": "true",
       "id": "svelters-api:v1:type:gtk:Gtk:Window:method:unfullscreen",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "unfullscreen",
       "name": "unfullscreen",
       "native": "gtk_window_unfullscreen",
       "origin": "gir",
@@ -1617,11 +1679,23 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "dispatch",
+          "expect",
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_window_unmaximize (Gtk 4 docs)"
+      },
+      "dispatch": "zero_arg",
+      "expect": "true",
       "id": "svelters-api:v1:type:gtk:Gtk:Window:method:unmaximize",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "unmaximize",
       "name": "unmaximize",
       "native": "gtk_window_unmaximize",
       "origin": "gir",
@@ -1635,11 +1709,23 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "dispatch",
+          "expect",
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_window_unminimize (Gtk 4 docs)"
+      },
+      "dispatch": "zero_arg",
+      "expect": "true",
       "id": "svelters-api:v1:type:gtk:Gtk:Window:method:unminimize",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "unminimize",
       "name": "unminimize",
       "native": "gtk_window_unminimize",
       "origin": "gir",
@@ -1752,6 +1838,13 @@
         "get": "gtk_window_get_decorated",
         "set": "gtk_window_set_decorated"
       },
+      "annotated": {
+        "fields": [
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "GtkWindow:decorated (Gtk 4 docs)"
+      },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Window:prop:decorated",
       "invocation": "reflected",
@@ -1792,6 +1885,14 @@
         "get": null,
         "set": null
       },
+      "annotated": {
+        "fields": [
+          "js_name",
+          "sample"
+        ],
+        "origin": "manual",
+        "provenance": "GtkWindow:default-height (Gtk 4 docs)"
+      },
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Window:prop:default-height",
       "invocation": "reflected",
@@ -1817,6 +1918,7 @@
         "origin": "runtime",
         "owner": "GtkWindow"
       },
+      "sample": 300,
       "type": {
         "gtype": "gint",
         "native": "gint",
@@ -1875,6 +1977,14 @@
         "get": null,
         "set": null
       },
+      "annotated": {
+        "fields": [
+          "js_name",
+          "sample"
+        ],
+        "origin": "manual",
+        "provenance": "GtkWindow:default-width (Gtk 4 docs)"
+      },
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Window:prop:default-width",
       "invocation": "reflected",
@@ -1900,6 +2010,7 @@
         "origin": "runtime",
         "owner": "GtkWindow"
       },
+      "sample": 500,
       "type": {
         "gtype": "gint",
         "native": "gint",
@@ -1917,6 +2028,13 @@
       "accessors": {
         "get": "gtk_window_get_deletable",
         "set": "gtk_window_set_deletable"
+      },
+      "annotated": {
+        "fields": [
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "GtkWindow:deletable (Gtk 4 docs)"
       },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Window:prop:deletable",
@@ -2118,6 +2236,13 @@
         "get": "gtk_window_is_fullscreen",
         "set": null
       },
+      "annotated": {
+        "fields": [
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "GtkWindow:fullscreened (Gtk 4 docs)"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Window:prop:fullscreened",
       "invocation": "reflected",
@@ -2240,6 +2365,13 @@
         "get": "gtk_window_get_hide_on_close",
         "set": "gtk_window_set_hide_on_close"
       },
+      "annotated": {
+        "fields": [
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "GtkWindow:hide-on-close (Gtk 4 docs)"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Window:prop:hide-on-close",
       "invocation": "reflected",
@@ -2358,6 +2490,13 @@
         "get": "gtk_window_is_maximized",
         "set": null
       },
+      "annotated": {
+        "fields": [
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "GtkWindow:maximized (Gtk 4 docs)"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Window:prop:maximized",
       "invocation": "reflected",
@@ -2438,6 +2577,13 @@
         "get": "gtk_window_get_modal",
         "set": "gtk_window_set_modal"
       },
+      "annotated": {
+        "fields": [
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "GtkWindow:modal (Gtk 4 docs)"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Window:prop:modal",
       "invocation": "reflected",
@@ -2477,6 +2623,13 @@
       "accessors": {
         "get": "gtk_window_get_resizable",
         "set": "gtk_window_set_resizable"
+      },
+      "annotated": {
+        "fields": [
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "GtkWindow:resizable (Gtk 4 docs)"
       },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Window:prop:resizable",
