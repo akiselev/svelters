@@ -1,6 +1,6 @@
 ---
 title: How these docs are made
-description: The metadata-to-site pipeline: per-toolkit frontends, the toolkit-neutral docs IR, and the shared output generator.
+description: "The metadata-to-site pipeline, with per-toolkit frontends, the toolkit-neutral docs IR, and the shared output generator."
 ---
 
 The API reference, the support matrix and the coverage dashboard are generated. Hand-written guides sit next to them. The pipeline has three stages, and the boundaries between them are strict.

@@ -316,13 +316,13 @@ export function renderEntity(model, e) {
   // inheritance
   const anc = ancestors(model, e);
   if (e.bases.length || e.interfaces.length) {
-    const chain = (ids) => ids.map((id) => {
+    const chain = (ids, sep = ' → ') => ids.map((id) => {
       const a = model.byId.get(id);
       return a ? `[${a.name}](${model.link(id)})` : '`' + id.slice(id.indexOf(':') + 1) + '`';
-    }).join(' → ');
+    }).join(sep);
     o.push('## Inheritance', '');
     if (e.bases.length) o.push(`**Chain:** ${e.name} → ${chain(e.bases)}`, '');
-    if (e.interfaces.length) o.push(`**Interfaces:** ${chain(e.interfaces)}`, '');
+    if (e.interfaces.length) o.push(`**Interfaces:** ${chain(e.interfaces, ', ')}`, '');
   }
 
   if (e.description) o.push('## Description', '', renderText(model, e.description, { toolkit: tk, level: 4 }), '');

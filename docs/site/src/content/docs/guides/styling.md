@@ -1,6 +1,6 @@
 ---
 title: Styling
-description: The planned styling model: a portable vocabulary translated to GTK CSS and Qt stylesheets, with native escape hatches and theme tokens.
+description: "The planned styling model, a portable vocabulary translated to GTK CSS and Qt stylesheets, with native escape hatches and theme tokens."
 ---
 
 :::caution[Planned]
