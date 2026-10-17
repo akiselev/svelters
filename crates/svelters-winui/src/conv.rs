@@ -76,7 +76,7 @@ pub fn unboxed_value(o: Option<IInspectable>) -> Value {
     if let Ok(pv) = o.cast::<IPropertyValue>()
         && let Ok(s) = pv.GetString()
     {
-        return Value::Str(s.to_string());
+        return Value::Str(s.to_string_lossy());
     }
     match crate::backend::handle_of(&o) {
         Some(h) => Value::Handle(h),

@@ -60,6 +60,8 @@ impl IXamlMetadataProvider_Impl for App_Impl {
 pub struct Xaml {
     pub controller: DispatcherQueueController,
     pub queue: DispatcherQueue,
+    /// Kept alive: XAML resources hang off the Application for the lifetime of the thread.
+    #[allow(dead_code)]
     pub app: Application,
     pub manager: Option<WindowsXamlManager>,
     pub pretranslate: Option<PreTranslate>,
@@ -67,13 +69,18 @@ pub struct Xaml {
 
 fn exe_dir() -> Option<PathBuf> {
     let mut buf = vec![0u16; 1024];
-    let n = unsafe { GetModuleFileNameW(None, &mut buf) } as usize;
+    let n = unsafe { GetModuleFileNameW(None, windows_core::PWSTR(buf.as_mut_ptr()), buf.len() as u32) } as usize;
     let p = PathBuf::from(String::from_utf16_lossy(&buf[..n]));
     p.parent().map(|d| d.to_path_buf())
 }
 
 fn load(path: &str) -> Result<crate::bindings::Windows::Win32::HMODULE, String> {
-    unsafe { LoadLibraryW(&HSTRING::from(path)) }.map_err(|e| format!("LoadLibraryW({path}): {}", crate::conv::err(e)))
+    let wide = HSTRING::from(path);
+    let m = unsafe { LoadLibraryW(PCWSTR(wide.as_ptr())) };
+    if m.0.is_null() {
+        return Err(format!("LoadLibraryW({path}): {}", crate::conv::err(windows_core::Error::from_thread())));
+    }
+    Ok(m)
 }
 
 fn proc(module: crate::bindings::Windows::Win32::HMODULE, name: &[u8]) -> Option<unsafe extern "system" fn() -> isize> {
@@ -130,9 +137,9 @@ impl Xaml {
     /// Initializes WinUI on the calling thread. Call once per thread.
     pub fn init() -> Result<Xaml, String> {
         // S_FALSE (already initialized) is fine; a different apartment is not.
-        unsafe { RoInitialize(RO_INIT_SINGLETHREADED) }.map_err(|e| format!("RoInitialize(single-threaded): {}", crate::conv::err(e)))?;
+        unsafe { RoInitialize(RO_INIT_SINGLETHREADED) }.ok().map_err(|e| format!("RoInitialize(single-threaded): {}", crate::conv::err(e)))?;
         start_runtime()?;
-        let e = |what: &str| move |err: windows_core::Error| format!("{what}: {}", crate::conv::err(err));
+        let e = |what: &'static str| move |err: windows_core::Error| format!("{what}: {}", crate::conv::err(err));
         let controller = DispatcherQueueController::CreateOnCurrentThread().map_err(e("DispatcherQueueController::CreateOnCurrentThread"))?;
         let queue = controller.DispatcherQueue().map_err(e("DispatcherQueueController.DispatcherQueue"))?;
         let provider = XamlControlsXamlMetaDataProvider::new().map_err(e("XamlControlsXamlMetaDataProvider"))?;

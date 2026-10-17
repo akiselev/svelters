@@ -433,6 +433,47 @@ fn with_factory_shells(idx: &Index, filter: &str) -> String {
     out
 }
 
+/// windows-bindgen 0.100 emits `IntoIterator` impls for collection classes that call `First()`,
+/// which a member filter does not select (a known rough edge, docs/notes/windows-gui-backend.md
+/// section 2.2). The backend never iterates collections that way, so drop every such impl block.
+fn strip_into_iterator(path: &str) {
+    let text = std::fs::read_to_string(path).unwrap_or_else(|e| panic!("read {path}: {e}"));
+    let lines: Vec<&str> = text.lines().collect();
+    let mut out = Vec::with_capacity(lines.len());
+    let mut i = 0;
+    let mut removed = 0;
+    while i < lines.len() {
+        let t = lines[i].trim_start();
+        if t.starts_with("impl") && t.contains("IntoIterator for") {
+            // Skip the block: up to the line where braces balance again.
+            let mut depth = 0i32;
+            let mut seen = false;
+            while i < lines.len() {
+                for ch in lines[i].chars() {
+                    match ch {
+                        '{' => {
+                            depth += 1;
+                            seen = true;
+                        }
+                        '}' => depth -= 1,
+                        _ => {}
+                    }
+                }
+                i += 1;
+                if seen && depth == 0 {
+                    break;
+                }
+            }
+            removed += 1;
+            continue;
+        }
+        out.push(lines[i]);
+        i += 1;
+    }
+    std::fs::write(path, out.join("\n") + "\n").unwrap_or_else(|e| panic!("write {path}: {e}"));
+    eprintln!("winmd-tool: removed {removed} IntoIterator impls from {path}");
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let usage = "usage: winmd-tool dump <classes>... -- <winmds>... | winmd-tool bindgen --out <rs> --filter-file <txt> -- <winmds>...";
@@ -461,8 +502,12 @@ fn main() {
                 let path = rest[i + 1].clone();
                 rest[i + 1] = with_factory_shells(&Index::new(inputs(winmds)), &path);
             }
+            let out = rest.iter().position(|x| x == "--out").map(|i| rest[i + 1].clone());
             a.extend(rest);
             windows_bindgen::bindgen(a.iter().map(|s| s.as_str()));
+            if let Some(out) = out {
+                strip_into_iterator(&out);
+            }
         }
         _ => {
             eprintln!("{usage}");

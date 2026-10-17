@@ -26,6 +26,7 @@ use std::rc::{Rc, Weak};
 use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
 use svelters_abi::*;
+use windows_collections::IVector;
 use windows_core::{EventRevoker, IInspectable, IUnknown, Interface};
 
 thread_local! {
@@ -295,7 +296,7 @@ impl WinUiBackend {
         let end = std::time::Instant::now() + std::time::Duration::from_millis(ms);
         let mut msg = MSG::default();
         while std::time::Instant::now() < end {
-            let got = unsafe { PeekMessageW(&mut msg, None, 0, 0, PM_REMOVE) }.as_bool();
+            let got = unsafe { PeekMessageW(&mut msg, None, 0, 0, PM_REMOVE as u32) }.as_bool();
             if got {
                 self.dispatch(&msg);
             } else {
@@ -337,7 +338,7 @@ impl WinUiBackend {
         match &SLOT_OPS[slot as usize - 1] {
             SlotOps::Single { get, .. } => Ok(get(&obj).into_iter().map(|c| handle_of(&c)).collect()),
             SlotOps::Many { items } => {
-                let coll = items(&obj).map_err(conv::err)?;
+                let coll = items(&obj).and_then(|c| c.cast::<IVector<UIElement>>()).map_err(conv::err)?;
                 let n = coll.Size().map_err(conv::err)?;
                 let mut out = Vec::new();
                 for i in 0..n {
@@ -504,7 +505,7 @@ impl Backend for WinUiBackend {
                 set(&pobj, Some(&cobj)).map_err(conv::err)?;
             }
             SlotOps::Many { items } => {
-                let coll = items(&pobj).map_err(conv::err)?;
+                let coll = items(&pobj).and_then(|c| c.cast::<IVector<UIElement>>()).map_err(conv::err)?;
                 match before {
                     Some(b) => {
                         let (bobj, _) = inner.get(b)?;
@@ -541,7 +542,7 @@ impl Backend for WinUiBackend {
             match &SLOT_OPS[slot as usize - 1] {
                 SlotOps::Single { set, .. } => set(&pobj, None).map_err(conv::err)?,
                 SlotOps::Many { items } => {
-                    let coll = items(&pobj).map_err(conv::err)?;
+                    let coll = items(&pobj).and_then(|c| c.cast::<IVector<UIElement>>()).map_err(conv::err)?;
                     let elem = cobj.cast::<UIElement>().map_err(conv::err)?;
                     let mut idx = 0u32;
                     if coll.IndexOf(&elem, &mut idx).map_err(conv::err)? {
@@ -721,7 +722,7 @@ impl Backend for WinUiBackend {
             Some(e) if e.parent == Some(parent) && e.slot == a.slot => {}
             _ => return Err(format!("handle {child} is not in the {:?} slot of {parent}", table::slot(a.slot).map_or("?", |s| s.name))),
         }
-        let v = if v.is_null() { Value::I64(a.default) } else { v.clone() };
+        let v = if matches!(v, Value::Null) { Value::I64(a.default) } else { v.clone() };
         ATTR_SET[attr as usize - 1](&cobj, &v).map_err(|e| format!("{}: {e}", a.name))
     }
 

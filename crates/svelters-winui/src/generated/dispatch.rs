@@ -104,7 +104,7 @@ fn set_prop11_framework_element_name(o: &IInspectable, v: &Value) -> R<()> {
 }
 fn get_prop11_framework_element_name(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?;
-    Ok(Value::Str(t.Name().map_err(conv::err)?.to_string()))
+    Ok(Value::Str(t.Name().map_err(conv::err)?.to_string_lossy()))
 }
 fn get_prop12_framework_element_actual_width(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?;
@@ -229,7 +229,7 @@ fn set_prop30_text_block_text(o: &IInspectable, v: &Value) -> R<()> {
 }
 fn get_prop30_text_block_text(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?;
-    Ok(Value::Str(t.Text().map_err(conv::err)?.to_string()))
+    Ok(Value::Str(t.Text().map_err(conv::err)?.to_string_lossy()))
 }
 fn set_prop31_text_block_font_size(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?.SetFontSize(conv::f64_(v)?).map_err(conv::err)
@@ -264,14 +264,14 @@ fn set_prop35_text_box_text(o: &IInspectable, v: &Value) -> R<()> {
 }
 fn get_prop35_text_box_text(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?;
-    Ok(Value::Str(t.Text().map_err(conv::err)?.to_string()))
+    Ok(Value::Str(t.Text().map_err(conv::err)?.to_string_lossy()))
 }
 fn set_prop36_text_box_placeholder_text(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?.SetPlaceholderText(&conv::hstring(v)?).map_err(conv::err)
 }
 fn get_prop36_text_box_placeholder_text(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?;
-    Ok(Value::Str(t.PlaceholderText().map_err(conv::err)?.to_string()))
+    Ok(Value::Str(t.PlaceholderText().map_err(conv::err)?.to_string_lossy()))
 }
 fn set_prop37_text_box_is_read_only(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?.SetIsReadOnly(conv::bool_(v)?).map_err(conv::err)
@@ -348,7 +348,7 @@ fn set_prop47_window_title(o: &IInspectable, v: &Value) -> R<()> {
 }
 fn get_prop47_window_title(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Window>().map_err(conv::err)?;
-    Ok(Value::Str(t.Title().map_err(conv::err)?.to_string()))
+    Ok(Value::Str(t.Title().map_err(conv::err)?.to_string_lossy()))
 }
 
 pub static PROP_SET: &[Option<fn(&IInspectable, &Value) -> R<()>>] = &[
@@ -467,13 +467,13 @@ fn event1_range_base_value_changed(o: &IInspectable, sink: Sink) -> WinResult<wi
 fn event2_text_box_text_changed(o: &IInspectable, sink: Sink) -> WinResult<windows_core::EventRevoker> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>()?.TextChanged(move |s, _a| {
         let Some(s) = s.as_ref().and_then(|s| s.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().ok()) else { return };
-        sink.post(vec![s.Text().map(|x| Value::Str(x.to_string())).unwrap_or(Value::Null)]);
+        sink.post(vec![s.Text().map(|x| Value::Str(x.to_string_lossy())).unwrap_or(Value::Null)]);
     })
 }
 fn event3_text_box_before_text_changing(o: &IInspectable, sink: Sink) -> WinResult<windows_core::EventRevoker> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>()?.BeforeTextChanging(move |_s, a| {
         let Some(a) = a.as_ref() else { return };
-        let reply = sink.sync(vec![a.NewText().map(|x| Value::Str(x.to_string())).unwrap_or(Value::Null)]);
+        let reply = sink.sync(vec![a.NewText().map(|x| Value::Str(x.to_string_lossy())).unwrap_or(Value::Null)]);
         if conv::is_true(&reply) {
             let _ = a.SetCancel(true);
         }

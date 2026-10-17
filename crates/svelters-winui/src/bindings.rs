@@ -1576,9 +1576,7 @@ pub mod Microsoft {
             impl ResourceDictionary {
                 pub fn MergedDictionaries(
                     &self,
-                ) -> windows_core::Result<
-                    super::super::super::Windows::Foundation::Collections::IVector<Self>,
-                > {
+                ) -> windows_core::Result<windows_collections::IVector<Self>> {
                     unsafe {
                         let mut result__ = core::mem::zeroed();
                         (windows_core::Interface::vtable(self).MergedDictionaries)(
@@ -1645,26 +1643,6 @@ pub mod Microsoft {
             }
             unsafe impl Send for ResourceDictionary {}
             unsafe impl Sync for ResourceDictionary {}
-            impl IntoIterator for ResourceDictionary {
-                type Item = windows_collections::IKeyValuePair<
-                    windows_core::IInspectable,
-                    windows_core::IInspectable,
-                >;
-                type IntoIter = windows_collections::BufferedIterator<Self::Item>;
-                fn into_iter(self) -> Self::IntoIter {
-                    IntoIterator::into_iter(&self)
-                }
-            }
-            impl IntoIterator for &ResourceDictionary {
-                type Item = windows_collections::IKeyValuePair<
-                    windows_core::IInspectable,
-                    windows_core::IInspectable,
-                >;
-                type IntoIter = windows_collections::BufferedIterator<Self::Item>;
-                fn into_iter(self) -> Self::IntoIter {
-                    windows_collections::BufferedIterator::new(self.First().unwrap())
-                }
-            }
             #[repr(transparent)]
             #[derive(Clone, Debug, Eq, PartialEq)]
             pub struct RoutedEventArgs(windows_core::IUnknown);
@@ -3870,7 +3848,11 @@ pub mod Microsoft {
                     ColumnDefinitionCollection,
                     windows_core::IUnknown,
                     windows_core::IInspectable,
-                    super::super::super::super::Windows::Foundation::Collections::IVector<
+                    windows_collections::IVector<ColumnDefinition>
+                );
+                windows_core::imp::required_hierarchy!(
+                    ColumnDefinitionCollection,
+                    super::super::super::super::Windows::Foundation::Collections::IIterable<
                         ColumnDefinition,
                     >
                 );
@@ -3878,20 +3860,12 @@ pub mod Microsoft {
                     const SIGNATURE: windows_core::imp::ConstBuffer =
                         windows_core::imp::ConstBuffer::for_class::<
                             Self,
-                            super::super::super::super::Windows::Foundation::Collections::IVector<
-                                ColumnDefinition,
-                            >,
+                            windows_collections::IVector<ColumnDefinition>,
                         >();
                 }
                 unsafe impl windows_core::Interface for ColumnDefinitionCollection {
-                    type Vtable =
-                        <super::super::super::super::Windows::Foundation::Collections::IVector<
-                            ColumnDefinition,
-                        > as windows_core::Interface>::Vtable;
-                    const IID: windows_core::GUID =
-                        <super::super::super::super::Windows::Foundation::Collections::IVector<
-                            ColumnDefinition,
-                        > as windows_core::Interface>::IID;
+                    type Vtable = < windows_collections::IVector < ColumnDefinition > as windows_core::Interface >::Vtable ;
+                    const IID : windows_core::GUID = < windows_collections::IVector < ColumnDefinition > as windows_core::Interface >::IID ;
                 }
                 impl windows_core::RuntimeName for ColumnDefinitionCollection {
                     const NAME: &'static str =
@@ -3899,20 +3873,6 @@ pub mod Microsoft {
                 }
                 unsafe impl Send for ColumnDefinitionCollection {}
                 unsafe impl Sync for ColumnDefinitionCollection {}
-                impl IntoIterator for ColumnDefinitionCollection {
-                    type Item = ColumnDefinition;
-                    type IntoIter = windows_collections::BufferedIterator<Self::Item>;
-                    fn into_iter(self) -> Self::IntoIter {
-                        IntoIterator::into_iter(&self)
-                    }
-                }
-                impl IntoIterator for &ColumnDefinitionCollection {
-                    type Item = ColumnDefinition;
-                    type IntoIter = windows_collections::BufferedIterator<Self::Item>;
-                    fn into_iter(self) -> Self::IntoIter {
-                        windows_collections::BufferedIterator::new(self.First().unwrap())
-                    }
-                }
                 #[repr(transparent)]
                 #[derive(Clone, Debug, Eq, PartialEq)]
                 pub struct ContentControl(windows_core::IUnknown);
@@ -7040,7 +7000,11 @@ pub mod Microsoft {
                     RowDefinitionCollection,
                     windows_core::IUnknown,
                     windows_core::IInspectable,
-                    super::super::super::super::Windows::Foundation::Collections::IVector<
+                    windows_collections::IVector<RowDefinition>
+                );
+                windows_core::imp::required_hierarchy!(
+                    RowDefinitionCollection,
+                    super::super::super::super::Windows::Foundation::Collections::IIterable<
                         RowDefinition,
                     >
                 );
@@ -7048,40 +7012,18 @@ pub mod Microsoft {
                     const SIGNATURE: windows_core::imp::ConstBuffer =
                         windows_core::imp::ConstBuffer::for_class::<
                             Self,
-                            super::super::super::super::Windows::Foundation::Collections::IVector<
-                                RowDefinition,
-                            >,
+                            windows_collections::IVector<RowDefinition>,
                         >();
                 }
                 unsafe impl windows_core::Interface for RowDefinitionCollection {
-                    type Vtable =
-                        <super::super::super::super::Windows::Foundation::Collections::IVector<
-                            RowDefinition,
-                        > as windows_core::Interface>::Vtable;
-                    const IID: windows_core::GUID =
-                        <super::super::super::super::Windows::Foundation::Collections::IVector<
-                            RowDefinition,
-                        > as windows_core::Interface>::IID;
+                    type Vtable = < windows_collections::IVector < RowDefinition > as windows_core::Interface >::Vtable ;
+                    const IID : windows_core::GUID = < windows_collections::IVector < RowDefinition > as windows_core::Interface >::IID ;
                 }
                 impl windows_core::RuntimeName for RowDefinitionCollection {
                     const NAME: &'static str = "Microsoft.UI.Xaml.Controls.RowDefinitionCollection";
                 }
                 unsafe impl Send for RowDefinitionCollection {}
                 unsafe impl Sync for RowDefinitionCollection {}
-                impl IntoIterator for RowDefinitionCollection {
-                    type Item = RowDefinition;
-                    type IntoIter = windows_collections::BufferedIterator<Self::Item>;
-                    fn into_iter(self) -> Self::IntoIter {
-                        IntoIterator::into_iter(&self)
-                    }
-                }
-                impl IntoIterator for &RowDefinitionCollection {
-                    type Item = RowDefinition;
-                    type IntoIter = windows_collections::BufferedIterator<Self::Item>;
-                    fn into_iter(self) -> Self::IntoIter {
-                        windows_collections::BufferedIterator::new(self.First().unwrap())
-                    }
-                }
                 #[repr(transparent)]
                 #[derive(Clone, Debug, Eq, PartialEq)]
                 pub struct Slider(windows_core::IUnknown);
@@ -9565,7 +9507,11 @@ pub mod Microsoft {
                     UIElementCollection,
                     windows_core::IUnknown,
                     windows_core::IInspectable,
-                    super::super::super::super::Windows::Foundation::Collections::IVector<
+                    windows_collections::IVector<super::UIElement>
+                );
+                windows_core::imp::required_hierarchy!(
+                    UIElementCollection,
+                    super::super::super::super::Windows::Foundation::Collections::IIterable<
                         super::UIElement,
                     >
                 );
@@ -9573,40 +9519,18 @@ pub mod Microsoft {
                     const SIGNATURE: windows_core::imp::ConstBuffer =
                         windows_core::imp::ConstBuffer::for_class::<
                             Self,
-                            super::super::super::super::Windows::Foundation::Collections::IVector<
-                                super::UIElement,
-                            >,
+                            windows_collections::IVector<super::UIElement>,
                         >();
                 }
                 unsafe impl windows_core::Interface for UIElementCollection {
-                    type Vtable =
-                        <super::super::super::super::Windows::Foundation::Collections::IVector<
-                            super::UIElement,
-                        > as windows_core::Interface>::Vtable;
-                    const IID: windows_core::GUID =
-                        <super::super::super::super::Windows::Foundation::Collections::IVector<
-                            super::UIElement,
-                        > as windows_core::Interface>::IID;
+                    type Vtable = < windows_collections::IVector < super::UIElement > as windows_core::Interface >::Vtable ;
+                    const IID : windows_core::GUID = < windows_collections::IVector < super::UIElement > as windows_core::Interface >::IID ;
                 }
                 impl windows_core::RuntimeName for UIElementCollection {
                     const NAME: &'static str = "Microsoft.UI.Xaml.Controls.UIElementCollection";
                 }
                 unsafe impl Send for UIElementCollection {}
                 unsafe impl Sync for UIElementCollection {}
-                impl IntoIterator for UIElementCollection {
-                    type Item = super::UIElement;
-                    type IntoIter = windows_collections::BufferedIterator<Self::Item>;
-                    fn into_iter(self) -> Self::IntoIter {
-                        IntoIterator::into_iter(&self)
-                    }
-                }
-                impl IntoIterator for &UIElementCollection {
-                    type Item = super::UIElement;
-                    type IntoIter = windows_collections::BufferedIterator<Self::Item>;
-                    fn into_iter(self) -> Self::IntoIter {
-                        windows_collections::BufferedIterator::new(self.First().unwrap())
-                    }
-                }
                 #[repr(transparent)]
                 #[derive(Clone, Debug, Eq, PartialEq)]
                 pub struct XamlControlsResources(windows_core::IUnknown);
@@ -9638,11 +9562,8 @@ pub mod Microsoft {
                     }
                     pub fn MergedDictionaries(
                         &self,
-                    ) -> windows_core::Result<
-                        super::super::super::super::Windows::Foundation::Collections::IVector<
-                            super::ResourceDictionary,
-                        >,
-                    > {
+                    ) -> windows_core::Result<windows_collections::IVector<super::ResourceDictionary>>
+                    {
                         let this =
                             &windows_core::Interface::cast::<super::IResourceDictionary>(self)?;
                         unsafe {
@@ -9681,26 +9602,6 @@ pub mod Microsoft {
                 }
                 unsafe impl Send for XamlControlsResources {}
                 unsafe impl Sync for XamlControlsResources {}
-                impl IntoIterator for XamlControlsResources {
-                    type Item = windows_collections::IKeyValuePair<
-                        windows_core::IInspectable,
-                        windows_core::IInspectable,
-                    >;
-                    type IntoIter = windows_collections::BufferedIterator<Self::Item>;
-                    fn into_iter(self) -> Self::IntoIter {
-                        IntoIterator::into_iter(&self)
-                    }
-                }
-                impl IntoIterator for &XamlControlsResources {
-                    type Item = windows_collections::IKeyValuePair<
-                        windows_core::IInspectable,
-                        windows_core::IInspectable,
-                    >;
-                    type IntoIter = windows_collections::BufferedIterator<Self::Item>;
-                    fn into_iter(self) -> Self::IntoIter {
-                        windows_collections::BufferedIterator::new(self.First().unwrap())
-                    }
-                }
                 pub mod Primitives {
                     #[repr(transparent)]
                     #[derive(Clone, Debug, Eq, PartialEq)]
@@ -13297,73 +13198,6 @@ pub mod Windows {
             }
             #[repr(C)]
             pub struct IIterable_Vtbl<T>
-            where
-                T: windows_core::RuntimeType + 'static,
-            {
-                pub base__: windows_core::IInspectable_Vtbl,
-                T: core::marker::PhantomData<T>,
-            }
-            impl<T: windows_core::RuntimeType> IntoIterator for IIterable<T> {
-                type Item = T;
-                type IntoIter = windows_collections::BufferedIterator<Self::Item>;
-                fn into_iter(self) -> Self::IntoIter {
-                    IntoIterator::into_iter(&self)
-                }
-            }
-            impl<T: windows_core::RuntimeType> IntoIterator for &IIterable<T> {
-                type Item = T;
-                type IntoIter = windows_collections::BufferedIterator<Self::Item>;
-                fn into_iter(self) -> Self::IntoIter {
-                    windows_collections::BufferedIterator::new(self.First().unwrap())
-                }
-            }
-            #[repr(transparent)]
-            #[derive(Clone, Debug, Eq, PartialEq)]
-            pub struct IVector<T>(windows_core::IUnknown, core::marker::PhantomData<T>)
-            where
-                T: windows_core::RuntimeType + 'static;
-            impl<T: windows_core::RuntimeType + 'static>
-                windows_core::imp::CanInto<windows_core::IUnknown> for IVector<T>
-            {
-            }
-            impl<T: windows_core::RuntimeType + 'static>
-                windows_core::imp::CanInto<windows_core::IInspectable> for IVector<T>
-            {
-            }
-            unsafe impl<T: windows_core::RuntimeType + 'static> windows_core::Interface for IVector<T> {
-                type Vtable = IVector_Vtbl<T>;
-                const IID: windows_core::GUID = windows_core::GUID::from_signature(
-                    <Self as windows_core::RuntimeType>::SIGNATURE,
-                );
-            }
-            impl<T: windows_core::RuntimeType + 'static> windows_core::RuntimeType for IVector<T> {
-                const SIGNATURE: windows_core::imp::ConstBuffer =
-                    windows_core::imp::ConstBuffer::new()
-                        .push_slice(b"pinterface({913337e9-11a1-4345-a3a2-4e7f956e222d}")
-                        .push_slice(b";")
-                        .push_other(T::SIGNATURE)
-                        .push_slice(b")");
-                const NAME: windows_core::imp::ConstBuffer = windows_core::imp::ConstBuffer::new()
-                    .push_slice(b"Windows.Foundation.Collections.IVector`1<")
-                    .push_other(T::NAME)
-                    .push_slice(b">");
-            }
-            impl<T: windows_core::RuntimeType + 'static> IntoIterator for IVector<T> {
-                type Item = T;
-                type IntoIter = windows_collections::BufferedIterator<Self::Item>;
-                fn into_iter(self) -> Self::IntoIter {
-                    IntoIterator::into_iter(&self)
-                }
-            }
-            impl<T: windows_core::RuntimeType + 'static> IntoIterator for &IVector<T> {
-                type Item = T;
-                type IntoIter = windows_collections::BufferedIterator<Self::Item>;
-                fn into_iter(self) -> Self::IntoIter {
-                    windows_collections::BufferedIterator::new(self.First().unwrap())
-                }
-            }
-            #[repr(C)]
-            pub struct IVector_Vtbl<T>
             where
                 T: windows_core::RuntimeType + 'static,
             {

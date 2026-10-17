@@ -62,11 +62,11 @@ Microsoft.UI.Xaml.FrameworkElement::{}
 Microsoft.UI.Xaml.Window::{CreateInstance}
 Microsoft.UI.Xaml.WindowEventArgs::{get_Handled, put_Handled}
 Microsoft.UI.Xaml.Media.CompositionTarget::{add_Rendering, remove_Rendering}
-Microsoft.UI.Xaml.Controls.UIElementCollection::{InsertAt, RemoveAt, IndexOf, Append, get_Size, GetAt, Clear}
+Microsoft.UI.Xaml.Controls.UIElementCollection
 Microsoft.UI.Xaml.Controls.RowDefinition::{CreateInstance, get_Height, put_Height}
 Microsoft.UI.Xaml.Controls.ColumnDefinition::{CreateInstance, get_Width, put_Width}
-Microsoft.UI.Xaml.Controls.RowDefinitionCollection::{Append, Clear, get_Size, GetAt}
-Microsoft.UI.Xaml.Controls.ColumnDefinitionCollection::{Append, Clear, get_Size, GetAt}
+Microsoft.UI.Xaml.Controls.RowDefinitionCollection
+Microsoft.UI.Xaml.Controls.ColumnDefinitionCollection
 Microsoft.UI.Xaml.GridLength
 Microsoft.UI.Xaml.GridUnitType
 Microsoft.UI.Xaml.Thickness
@@ -396,7 +396,7 @@ def setter_expr(ty: dict, var: str = "v") -> str:
 def getter_expr(ty: dict, call: str) -> str:
     t = ty["t"]
     if t == "Str":
-        return f"Value::Str({call}.map_err(conv::err)?.to_string())"
+        return f"Value::Str({call}.map_err(conv::err)?.to_string_lossy())"
     if t == "Bool":
         return f"Value::Bool({call}.map_err(conv::err)?)"
     if t == "I32":
@@ -419,7 +419,7 @@ def payload_expr(item: dict, m: Model) -> str:
     src = "a" if item["from"] == "args" else "s"
     call = f"{src}.{item['prop']}()"
     if ref == "string":
-        return f"{call}.map(|x| Value::Str(x.to_string())).unwrap_or(Value::Null)"
+        return f"{call}.map(|x| Value::Str(x.to_string_lossy())).unwrap_or(Value::Null)"
     if ref == "f64":
         return f"{call}.map(Value::F64).unwrap_or(Value::Null)"
     if ref == "bool":
