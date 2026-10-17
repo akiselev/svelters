@@ -4,3 +4,4 @@ pub mod ast;
 pub mod errors;
 pub mod parse;
 pub mod scope;
+pub mod scope_errors;
