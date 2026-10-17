@@ -216,11 +216,26 @@
   },
   "methods": [
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name",
+          "setup"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_image_clear (Gtk 4 docs)"
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"icon-name\") == V::Null",
       "id": "svelters-api:v1:type:gtk:Gtk:Image:method:clear",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "clear",
       "name": "clear",
       "native": "gtk_image_clear",
       "origin": "gir",
@@ -231,6 +246,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "setup": "h.set_str(o, \"icon-name\", \"edit-find\").unwrap();",
       "unsupported_reason": null
     },
     {
@@ -394,11 +410,27 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_image_set_from_icon_name (Gtk 4 docs)"
+      },
+      "args": [
+        "edit-find"
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"icon-name\") == V::Str(\"edit-find\".into())",
       "id": "svelters-api:v1:type:gtk:Gtk:Image:method:set_from_icon_name",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "setFromIconName",
       "name": "set_from_icon_name",
       "native": "gtk_image_set_from_icon_name",
       "origin": "gir",
@@ -648,6 +680,14 @@
         "get": "gtk_image_get_icon_name",
         "set": "gtk_image_set_from_icon_name"
       },
+      "annotated": {
+        "fields": [
+          "js_name",
+          "sample"
+        ],
+        "origin": "manual",
+        "provenance": "GtkImage:icon-name (Gtk 4 docs)"
+      },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Image:prop:icon-name",
       "invocation": "reflected",
@@ -669,6 +709,7 @@
         "origin": "runtime",
         "owner": "GtkImage"
       },
+      "sample": "dialog-information",
       "type": {
         "gtype": "gchararray",
         "native": "gchar*",
@@ -686,6 +727,13 @@
       "accessors": {
         "get": "gtk_image_get_icon_size",
         "set": "gtk_image_set_icon_size"
+      },
+      "annotated": {
+        "fields": [
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "GtkImage:icon-size (Gtk 4 docs)"
       },
       "default": "inherit",
       "id": "svelters-api:v1:type:gtk:Gtk:Image:prop:icon-size",
@@ -765,6 +813,13 @@
       "accessors": {
         "get": "gtk_image_get_pixel_size",
         "set": "gtk_image_set_pixel_size"
+      },
+      "annotated": {
+        "fields": [
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "GtkImage:pixel-size (Gtk 4 docs)"
       },
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:Image:prop:pixel-size",
@@ -886,6 +941,13 @@
         "get": null,
         "set": null
       },
+      "annotated": {
+        "fields": [
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "GtkImage:use-fallback (Gtk 4 docs)"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Image:prop:use-fallback",
       "invocation": "reflected",
@@ -924,7 +986,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/Image.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"

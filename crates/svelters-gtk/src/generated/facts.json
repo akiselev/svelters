@@ -101,6 +101,127 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Calendar:signal:day-selected",
+   "fingerprint": "b24975e9d7095e28",
+   "kind": "Calendar",
+   "name": "day-selected",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_calendar_day_selected"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Calendar:signal:notify::day",
+   "fingerprint": "1bceeeebd5817661",
+   "kind": "Calendar",
+   "name": "notify::day",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_calendar_notify_day"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Calendar:prop:day",
+   "fingerprint": "44fea3aa72d19f97",
+   "kind": "Calendar",
+   "name": "day",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_calendar_day",
+    "generated::verify::echo_calendar_day"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Calendar:prop:month",
+   "fingerprint": "9a6cdb3cf50528ac",
+   "kind": "Calendar",
+   "name": "month",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_calendar_month"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Calendar:prop:show-day-names",
+   "fingerprint": "a192e1f3b93c6163",
+   "kind": "Calendar",
+   "name": "show-day-names",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_calendar_show_day_names"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Calendar:prop:show-heading",
+   "fingerprint": "3818d5e5dd27f72d",
+   "kind": "Calendar",
+   "name": "show-heading",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_calendar_show_heading"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Calendar:prop:show-week-numbers",
+   "fingerprint": "05d648900be4961a",
+   "kind": "Calendar",
+   "name": "show-week-numbers",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_calendar_show_week_numbers"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Calendar:prop:year",
+   "fingerprint": "74dc0026773c3987",
+   "kind": "Calendar",
+   "name": "year",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_calendar_year"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Calendar:method:select_day",
+   "fingerprint": "4a34e3fc674b56b4",
+   "kind": "Calendar",
+   "name": "select_day",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_calendar_select_day"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Calendar:binding:day",
+   "fingerprint": "4868947f9ed5c236",
+   "kind": "Calendar",
+   "name": "day",
+   "section": "bindings",
+   "tests": [
+    "generated::verify::binding_calendar_day"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:DrawingArea:prop:content-height",
+   "fingerprint": "466dfd47e48fe8c8",
+   "kind": "DrawingArea",
+   "name": "content-height",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_drawingarea_content_height"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:DrawingArea:prop:content-width",
+   "fingerprint": "cdaffa94a322bc15",
+   "kind": "DrawingArea",
+   "name": "content-width",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_drawingarea_content_width"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Editable:signal:changed",
    "fingerprint": "2d098ebc0e5e9d2b",
    "kind": "Editable",
@@ -152,6 +273,26 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:GraphicsOffload:prop:black-background",
+   "fingerprint": "a6ceec4b461d01ae",
+   "kind": "GraphicsOffload",
+   "name": "black-background",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_graphicsoffload_black_background"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:GraphicsOffload:prop:enabled",
+   "fingerprint": "cea82019dd2d7181",
+   "kind": "GraphicsOffload",
+   "name": "enabled",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_graphicsoffload_enabled"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:HeaderBar:prop:title",
    "fingerprint": "1d52bf0b599f7886",
    "kind": "HeaderBar",
@@ -159,6 +300,66 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_headerbar_title"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Image:prop:icon-name",
+   "fingerprint": "8823d9c5b8c49b7f",
+   "kind": "Image",
+   "name": "icon-name",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_image_icon_name"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Image:prop:icon-size",
+   "fingerprint": "b8256f603a979a06",
+   "kind": "Image",
+   "name": "icon-size",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_image_icon_size"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Image:prop:pixel-size",
+   "fingerprint": "8f127d1b74f7114f",
+   "kind": "Image",
+   "name": "pixel-size",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_image_pixel_size"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Image:prop:use-fallback",
+   "fingerprint": "ace4ceb04c1c1146",
+   "kind": "Image",
+   "name": "use-fallback",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_image_use_fallback"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Image:method:clear",
+   "fingerprint": "eb6d440962a874e6",
+   "kind": "Image",
+   "name": "clear",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_image_clear"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Image:method:set_from_icon_name",
+   "fingerprint": "c38a8fb7284688bd",
+   "kind": "Image",
+   "name": "set_from_icon_name",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_image_set_from_icon_name"
    ]
   },
   {
@@ -179,6 +380,97 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_orientable_orientation"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Picture:prop:alternative-text",
+   "fingerprint": "3602e38672846a8b",
+   "kind": "Picture",
+   "name": "alternative-text",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_picture_alternative_text"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Picture:prop:can-shrink",
+   "fingerprint": "25f233b53278417d",
+   "kind": "Picture",
+   "name": "can-shrink",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_picture_can_shrink"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Picture:prop:content-fit",
+   "fingerprint": "f2469a3ac44a0693",
+   "kind": "Picture",
+   "name": "content-fit",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_picture_content_fit"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Picture:prop:keep-aspect-ratio",
+   "fingerprint": "8730329745e55036",
+   "kind": "Picture",
+   "name": "keep-aspect-ratio",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_picture_keep_aspect_ratio"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Spinner:signal:notify::spinning",
+   "fingerprint": "9968c1f9de26569d",
+   "kind": "Spinner",
+   "name": "notify::spinning",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_spinner_notify_spinning"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Spinner:prop:spinning",
+   "fingerprint": "648665f615fc8cbe",
+   "kind": "Spinner",
+   "name": "spinning",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_spinner_spinning",
+    "generated::verify::echo_spinner_spinning"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Spinner:method:start",
+   "fingerprint": "70dde4e05add34e1",
+   "kind": "Spinner",
+   "name": "start",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_spinner_start"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Spinner:method:stop",
+   "fingerprint": "7a017b3efe94fdc6",
+   "kind": "Spinner",
+   "name": "stop",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_spinner_stop"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Spinner:binding:spinning",
+   "fingerprint": "b2d464fc5d531191",
+   "kind": "Spinner",
+   "name": "spinning",
+   "section": "bindings",
+   "tests": [
+    "generated::verify::binding_spinner_spinning"
    ]
   },
   {

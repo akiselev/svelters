@@ -1,0 +1,28 @@
+properties:
+  - name: icon-name
+    js_name: iconName
+    sample: "dialog-information"
+    provenance: "GtkImage:icon-name (Gtk 4 docs)"
+  - name: pixel-size
+    js_name: pixelSize
+    provenance: "GtkImage:pixel-size (Gtk 4 docs)"
+  - name: icon-size
+    js_name: iconSize
+    provenance: "GtkImage:icon-size (Gtk 4 docs)"
+  - name: use-fallback
+    js_name: useFallback
+    provenance: "GtkImage:use-fallback (Gtk 4 docs)"
+methods:
+  - name: set_from_icon_name
+    js_name: setFromIconName
+    dispatch: dynamic
+    args: ["edit-find"]
+    expect: 'h.get(o, "icon-name") == V::Str("edit-find".into())'
+    provenance: "gtk_image_set_from_icon_name (Gtk 4 docs)"
+  - name: clear
+    js_name: clear
+    dispatch: dynamic
+    args: []
+    setup: 'h.set_str(o, "icon-name", "edit-find").unwrap();'
+    expect: 'h.get(o, "icon-name") == V::Null'
+    provenance: "gtk_image_clear (Gtk 4 docs)"

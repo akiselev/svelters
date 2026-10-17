@@ -1,0 +1,58 @@
+properties:
+  - name: day
+    js_name: day
+    sample: 15
+    echo_suppress: ["notify::day", day-selected]
+    provenance: "GtkCalendar:day (Gtk 4 docs)"
+  - name: month
+    js_name: month
+    sample: 5
+    provenance: "GtkCalendar:month, 0-based (Gtk 4 docs)"
+  - name: year
+    js_name: year
+    sample: 2030
+    provenance: "GtkCalendar:year (Gtk 4 docs)"
+  - name: show-heading
+    js_name: showHeading
+    provenance: "GtkCalendar:show-heading (Gtk 4 docs)"
+  - name: show-day-names
+    js_name: showDayNames
+    provenance: "GtkCalendar:show-day-names (Gtk 4 docs)"
+  - name: show-week-numbers
+    js_name: showWeekNumbers
+    provenance: "GtkCalendar:show-week-numbers (Gtk 4 docs)"
+signals:
+  - name: day-selected
+    handler_result: none
+    sync_required: false
+    trigger: {property: day, values: [10, 11, 12]}
+    provenance: "GtkCalendar::day-selected (Gtk 4 docs)"
+  - name: "notify::day"
+    derived_from: {property: day}
+    js_event: "notify::day"
+    trigger: {property: day, values: [10, 11, 12]}
+    params: []
+    returns: {type: void}
+    handler_result: none
+    sync_required: false
+    phase: first
+    flags: [detailed]
+    connection: {disconnect_on: [handle_drop, native_destroy]}
+    provenance: "GObject::notify for GtkCalendar:day"
+bindings:
+  - name: day
+    direction: two_way
+    property: day
+    type: {ref: i32, nullable: false}
+    change: {signal: "notify::day", role: any_change, value: prop}
+    write: {natively_normalizes: false}
+    echo: {strategy: host_suppressed, compare_before_set: true, read_back: false, sync_signals_on_set: ["notify::day", day-selected]}
+    lifetime: {on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect}
+    provenance: "gtk_calendar_set_day notifies day (Gtk 4 docs)"
+methods:
+  - name: select_day
+    js_name: selectDay
+    dispatch: dynamic
+    args: [1905508800000]
+    expect: 'h.get(o, "day") == V::I64(20)'
+    provenance: "gtk_calendar_select_day (Gtk 4 docs)"
