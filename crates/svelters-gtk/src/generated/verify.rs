@@ -1685,7 +1685,7 @@ fn method_adjustment_configure() {
         let r = h.call_args(o, "configure", &[V::F64(7.0), V::F64(0.0), V::F64(50.0), V::F64(2.0), V::F64(10.0), V::F64(5.0)]).unwrap();
         let w = h.obj(o);
         let _ = (&w, &r);
-        assert!(h.get(o, "value") == V::F64(7.0) && h.get(o, "upper") == V::F64(50.0) && h.get(o, "pageSize") == V::F64(5.0), "postcondition: h.get(o, 'value') == V::F64(7.0) && h.get(o, 'upper') == V::F64(50.0) && h.get(o, 'pageSize') == V::F64(5.0)");
+        assert!(h.get(o, "value") == V::F64(7.0) && h.get(o, "upper") == V::F64(50.0) && h.get(o, "page-size") == V::F64(5.0), "postcondition: h.get(o, 'value') == V::F64(7.0) && h.get(o, 'upper') == V::F64(50.0) && h.get(o, 'page-size') == V::F64(5.0)");
     });
 }
 
@@ -1695,7 +1695,7 @@ fn method_adjustment_get_minimum_increment() {
     on_gtk(|| {
         let mut h = Harness::new();
         let o = h.borrow_from("scale", "get_adjustment");
-        h.set_f64(o, "stepIncrement", 4.0).unwrap(); h.set_f64(o, "pageIncrement", 2.0).unwrap();
+        h.set_f64(o, "step-increment", 4.0).unwrap(); h.set_f64(o, "page-increment", 2.0).unwrap();
         let r = h.call_args(o, "get_minimum_increment", &[]).unwrap();
         let w = h.obj(o);
         let _ = (&w, &r);
@@ -6265,35 +6265,35 @@ fn prop_range_lower() {
     });
 }
 
-/// property Range.pageIncrement (JS pageIncrement): GtkAdjustment:page-increment through GtkRange:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)
+/// property Range.page-increment (JS page-increment): GtkAdjustment:page-increment through GtkRange:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)
 #[test]
-fn prop_range_pageincrement() {
+fn prop_range_page_increment() {
     on_gtk(|| {
         let mut h = Harness::new();
         let o = h.create("range");
         
-        let id = h.resolve_prop("range", "pageIncrement");
+        let id = h.resolve_prop("range", "page-increment");
         assert_ne!(id, 0);
-        assert_eq!(id, h.resolve_prop("range", "pageIncrement"));
-        h.set_f64(o, "pageIncrement", 25.0).unwrap();
-        assert_eq!(h.get(o, "pageIncrement"), V::F64(25.0));
+        assert_eq!(id, h.resolve_prop("range", "page-increment"));
+        h.set_f64(o, "page-increment", 25.0).unwrap();
+        assert_eq!(h.get(o, "page-increment"), V::F64(25.0));
         let tgt = h.obj(o).property::<Option<gtk::glib::Object>>("adjustment").unwrap();
         assert_eq!(V::F64(tgt.property("page-increment")), V::F64(25.0), "the object behind `adjustment` holds the value");
     });
 }
 
-/// property Range.pageSize (JS pageSize): GtkAdjustment:page-size through GtkRange:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)
+/// property Range.page-size (JS page-size): GtkAdjustment:page-size through GtkRange:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)
 #[test]
-fn prop_range_pagesize() {
+fn prop_range_page_size() {
     on_gtk(|| {
         let mut h = Harness::new();
         let o = h.create("range");
         h.call_args(o, "set_range", &[V::F64(0.0), V::F64(100.0)]).unwrap();
-        let id = h.resolve_prop("range", "pageSize");
+        let id = h.resolve_prop("range", "page-size");
         assert_ne!(id, 0);
-        assert_eq!(id, h.resolve_prop("range", "pageSize"));
-        h.set_f64(o, "pageSize", 10.0).unwrap();
-        assert_eq!(h.get(o, "pageSize"), V::F64(10.0));
+        assert_eq!(id, h.resolve_prop("range", "page-size"));
+        h.set_f64(o, "page-size", 10.0).unwrap();
+        assert_eq!(h.get(o, "page-size"), V::F64(10.0));
         let tgt = h.obj(o).property::<Option<gtk::glib::Object>>("adjustment").unwrap();
         assert_eq!(V::F64(tgt.property("page-size")), V::F64(10.0), "the object behind `adjustment` holds the value");
     });
@@ -6329,18 +6329,18 @@ fn prop_range_show_fill_level() {
     });
 }
 
-/// property Range.stepIncrement (JS stepIncrement): GtkAdjustment:step-increment through GtkRange:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)
+/// property Range.step-increment (JS step-increment): GtkAdjustment:step-increment through GtkRange:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)
 #[test]
-fn prop_range_stepincrement() {
+fn prop_range_step_increment() {
     on_gtk(|| {
         let mut h = Harness::new();
         let o = h.create("range");
         
-        let id = h.resolve_prop("range", "stepIncrement");
+        let id = h.resolve_prop("range", "step-increment");
         assert_ne!(id, 0);
-        assert_eq!(id, h.resolve_prop("range", "stepIncrement"));
-        h.set_f64(o, "stepIncrement", 3.0).unwrap();
-        assert_eq!(h.get(o, "stepIncrement"), V::F64(3.0));
+        assert_eq!(id, h.resolve_prop("range", "step-increment"));
+        h.set_f64(o, "step-increment", 3.0).unwrap();
+        assert_eq!(h.get(o, "step-increment"), V::F64(3.0));
         let tgt = h.obj(o).property::<Option<gtk::glib::Object>>("adjustment").unwrap();
         assert_eq!(V::F64(tgt.property("step-increment")), V::F64(3.0), "the object behind `adjustment` holds the value");
     });
@@ -7340,18 +7340,18 @@ fn prop_spinbutton_numeric() {
     });
 }
 
-/// property SpinButton.pageIncrement (JS pageIncrement): GtkAdjustment:page-increment through GtkSpinButton:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)
+/// property SpinButton.page-increment (JS page-increment): GtkAdjustment:page-increment through GtkSpinButton:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)
 #[test]
-fn prop_spinbutton_pageincrement() {
+fn prop_spinbutton_page_increment() {
     on_gtk(|| {
         let mut h = Harness::new();
         let o = h.create("spin-button");
         
-        let id = h.resolve_prop("spin-button", "pageIncrement");
+        let id = h.resolve_prop("spin-button", "page-increment");
         assert_ne!(id, 0);
-        assert_eq!(id, h.resolve_prop("spin-button", "pageIncrement"));
-        h.set_f64(o, "pageIncrement", 25.0).unwrap();
-        assert_eq!(h.get(o, "pageIncrement"), V::F64(25.0));
+        assert_eq!(id, h.resolve_prop("spin-button", "page-increment"));
+        h.set_f64(o, "page-increment", 25.0).unwrap();
+        assert_eq!(h.get(o, "page-increment"), V::F64(25.0));
         let tgt = h.obj(o).property::<Option<gtk::glib::Object>>("adjustment").unwrap();
         assert_eq!(V::F64(tgt.property("page-increment")), V::F64(25.0), "the object behind `adjustment` holds the value");
     });
@@ -7372,18 +7372,18 @@ fn prop_spinbutton_snap_to_ticks() {
     });
 }
 
-/// property SpinButton.stepIncrement (JS stepIncrement): GtkAdjustment:step-increment through GtkSpinButton:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)
+/// property SpinButton.step-increment (JS step-increment): GtkAdjustment:step-increment through GtkSpinButton:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)
 #[test]
-fn prop_spinbutton_stepincrement() {
+fn prop_spinbutton_step_increment() {
     on_gtk(|| {
         let mut h = Harness::new();
         let o = h.create("spin-button");
         
-        let id = h.resolve_prop("spin-button", "stepIncrement");
+        let id = h.resolve_prop("spin-button", "step-increment");
         assert_ne!(id, 0);
-        assert_eq!(id, h.resolve_prop("spin-button", "stepIncrement"));
-        h.set_f64(o, "stepIncrement", 3.0).unwrap();
-        assert_eq!(h.get(o, "stepIncrement"), V::F64(3.0));
+        assert_eq!(id, h.resolve_prop("spin-button", "step-increment"));
+        h.set_f64(o, "step-increment", 3.0).unwrap();
+        assert_eq!(h.get(o, "step-increment"), V::F64(3.0));
         let tgt = h.obj(o).property::<Option<gtk::glib::Object>>("adjustment").unwrap();
         assert_eq!(V::F64(tgt.property("step-increment")), V::F64(3.0), "the object behind `adjustment` holds the value");
     });
@@ -8342,7 +8342,7 @@ fn method_textbuffer_undo() {
     on_gtk(|| {
         let mut h = Harness::new();
         let o = h.borrow_from("text-view", "get_buffer");
-        h.set_bool(o, "enableUndo", true).unwrap(); let b = h.obj(o).downcast::<gtk::TextBuffer>().unwrap(); b.begin_user_action(); b.insert_at_cursor("typed"); b.end_user_action();
+        h.set_bool(o, "enable-undo", true).unwrap(); let b = h.obj(o).downcast::<gtk::TextBuffer>().unwrap(); b.begin_user_action(); b.insert_at_cursor("typed"); b.end_user_action();
         let r = h.call_args(o, "undo", &[]).unwrap();
         let w = h.obj(o);
         let _ = (&w, &r);

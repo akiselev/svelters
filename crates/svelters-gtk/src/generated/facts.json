@@ -732,7 +732,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Adjustment:method:configure",
-   "fingerprint": "4861efac4acb7b7e",
+   "fingerprint": "0093f434c5947858",
    "kind": "Adjustment",
    "name": "configure",
    "section": "methods",
@@ -742,7 +742,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Adjustment:method:get_minimum_increment",
-   "fingerprint": "90fc718dfd88d2fc",
+   "fingerprint": "2f960303a61bf6d5",
    "kind": "Adjustment",
    "name": "get_minimum_increment",
    "section": "methods",
@@ -3078,23 +3078,23 @@
    ]
   },
   {
-   "fact": "svelters-api:v1:type:gtk:Gtk:Range:prop:pageIncrement",
-   "fingerprint": "2520bf6a454061f9",
+   "fact": "svelters-api:v1:type:gtk:Gtk:Range:prop:page-increment",
+   "fingerprint": "46ad34513f2363e8",
    "kind": "Range",
-   "name": "pageIncrement",
+   "name": "page-increment",
    "section": "properties",
    "tests": [
-    "generated::verify::prop_range_pageincrement"
+    "generated::verify::prop_range_page_increment"
    ]
   },
   {
-   "fact": "svelters-api:v1:type:gtk:Gtk:Range:prop:pageSize",
-   "fingerprint": "71469634b8324470",
+   "fact": "svelters-api:v1:type:gtk:Gtk:Range:prop:page-size",
+   "fingerprint": "b0c979d7cac7c0ce",
    "kind": "Range",
-   "name": "pageSize",
+   "name": "page-size",
    "section": "properties",
    "tests": [
-    "generated::verify::prop_range_pagesize"
+    "generated::verify::prop_range_page_size"
    ]
   },
   {
@@ -3118,13 +3118,13 @@
    ]
   },
   {
-   "fact": "svelters-api:v1:type:gtk:Gtk:Range:prop:stepIncrement",
-   "fingerprint": "386a2b6efc750479",
+   "fact": "svelters-api:v1:type:gtk:Gtk:Range:prop:step-increment",
+   "fingerprint": "dad4e0b38a03faee",
    "kind": "Range",
-   "name": "stepIncrement",
+   "name": "step-increment",
    "section": "properties",
    "tests": [
-    "generated::verify::prop_range_stepincrement"
+    "generated::verify::prop_range_step_increment"
    ]
   },
   {
@@ -3631,13 +3631,13 @@
    ]
   },
   {
-   "fact": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:pageIncrement",
-   "fingerprint": "08051e8bba80d800",
+   "fact": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:page-increment",
+   "fingerprint": "9764a52e6b6a900d",
    "kind": "SpinButton",
-   "name": "pageIncrement",
+   "name": "page-increment",
    "section": "properties",
    "tests": [
-    "generated::verify::prop_spinbutton_pageincrement"
+    "generated::verify::prop_spinbutton_page_increment"
    ]
   },
   {
@@ -3651,13 +3651,13 @@
    ]
   },
   {
-   "fact": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:stepIncrement",
-   "fingerprint": "15b22ed3651e8a3d",
+   "fact": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:step-increment",
+   "fingerprint": "7c5f9bc458ab2c54",
    "kind": "SpinButton",
-   "name": "stepIncrement",
+   "name": "step-increment",
    "section": "properties",
    "tests": [
-    "generated::verify::prop_spinbutton_stepincrement"
+    "generated::verify::prop_spinbutton_step_increment"
    ]
   },
   {
@@ -4125,7 +4125,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:TextBuffer:method:undo",
-   "fingerprint": "6ca5adb6dde906e9",
+   "fingerprint": "bfb9fc263958565d",
    "kind": "TextBuffer",
    "name": "undo",
    "section": "methods",

@@ -270,15 +270,15 @@
         "origin": "manual"
       },
       {
-        "fact": "svelters-api:v1:type:gtk:Gtk:Range:prop:pageIncrement",
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:prop:page-increment",
         "from": "svelters-api:v1:type:gtk:Gtk:Range",
-        "name": "pageIncrement",
+        "name": "page-increment",
         "origin": "manual"
       },
       {
-        "fact": "svelters-api:v1:type:gtk:Gtk:Range:prop:pageSize",
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:prop:page-size",
         "from": "svelters-api:v1:type:gtk:Gtk:Range",
-        "name": "pageSize",
+        "name": "page-size",
         "origin": "manual"
       },
       {
@@ -300,9 +300,9 @@
         "origin": "manual"
       },
       {
-        "fact": "svelters-api:v1:type:gtk:Gtk:Range:prop:stepIncrement",
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:prop:step-increment",
         "from": "svelters-api:v1:type:gtk:Gtk:Range",
-        "name": "stepIncrement",
+        "name": "step-increment",
         "origin": "manual"
       },
       {

@@ -1685,10 +1685,10 @@
         "provenance": "GtkAdjustment:step-increment through GtkSpinButton:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)"
       },
       "default": 0,
-      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:stepIncrement",
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:step-increment",
       "invocation": "virtual",
-      "js_name": "stepIncrement",
-      "name": "stepIncrement",
+      "js_name": "step-increment",
+      "name": "step-increment",
       "new": true,
       "notify": {
         "explicit": false,
@@ -1745,10 +1745,10 @@
         "provenance": "GtkAdjustment:page-increment through GtkSpinButton:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)"
       },
       "default": 0,
-      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:pageIncrement",
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:page-increment",
       "invocation": "virtual",
-      "js_name": "pageIncrement",
-      "name": "pageIncrement",
+      "js_name": "page-increment",
+      "name": "page-increment",
       "new": true,
       "notify": {
         "explicit": false,

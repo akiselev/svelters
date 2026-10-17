@@ -2357,7 +2357,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
-      "setup": "h.set_bool(o, \"enableUndo\", true).unwrap(); let b = h.obj(o).downcast::<gtk::TextBuffer>().unwrap(); b.begin_user_action(); b.insert_at_cursor(\"typed\"); b.end_user_action();",
+      "setup": "h.set_bool(o, \"enable-undo\", true).unwrap(); let b = h.obj(o).downcast::<gtk::TextBuffer>().unwrap(); b.begin_user_action(); b.insert_at_cursor(\"typed\"); b.end_user_action();",
       "unsupported_reason": null
     }
   ],

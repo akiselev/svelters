@@ -1390,7 +1390,7 @@
   "bindings": 0,
   "defaults": 4,
   "element": "menu",
-  "gallery": null,
+  "gallery": "11-menus",
   "inherited": 0,
   "kind": "QMenu",
   "lifetime": "owned",

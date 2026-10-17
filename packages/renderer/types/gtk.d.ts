@@ -1327,12 +1327,12 @@ export interface GtkRangeProps extends GtkWidgetProps, GtkAccessibleRangeProps, 
   "fill-level"?: number;
   inverted?: boolean;
   lower?: number;
-  pageIncrement?: number;
-  pageSize?: number;
+  "page-increment"?: number;
+  "page-size"?: number;
   "restrict-to-fill-level"?: boolean;
   "round-digits"?: number;
   "show-fill-level"?: boolean;
-  stepIncrement?: number;
+  "step-increment"?: number;
   upper?: number;
   value?: number;
   "onadjust-bounds"?: SvlHandler;
@@ -1575,9 +1575,9 @@ export interface GtkSpinButtonProps extends GtkWidgetProps, GtkAccessibleRangePr
   digits?: number;
   lower?: number;
   numeric?: boolean;
-  pageIncrement?: number;
+  "page-increment"?: number;
   "snap-to-ticks"?: boolean;
-  stepIncrement?: number;
+  "step-increment"?: number;
   "update-policy"?: "always" | "if-valid";
   upper?: number;
   value?: number;
