@@ -1,0 +1,4 @@
+# Minimal element so that the window `statusbar` slot can be exercised.
+elements:
+  - tag: statusbar
+    construct: { class: QStatusBar }

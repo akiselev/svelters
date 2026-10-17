@@ -1,0 +1,50 @@
+# Element `window`. Child policy follows uic's QMainWindow mapping (docs/notes/widget-metadata-ingestion.md 3.1).
+# Ownership facts are cross-checked against the PySide typesystem replace_child entries
+# (setCentralWidget/setMenuBar/setStatusBar) and then proved by generated tests.
+elements:
+  - tag: window
+    construct: { class: QMainWindow }
+    props:
+      - { js: title, native: windowTitle }
+    methods:
+      - { js: show, native: show }
+      - { js: present, native: show }
+      - { js: close, native: close }
+      - { js: resize, native: resize, params: [i32, i32] }
+    children:
+      policy: named_slots
+      default_slot: central
+      slots:
+        - name: central
+          cardinality: one
+          accepts: [QWidget]
+          host: self
+          ops:
+            set: { method: setCentralWidget }
+            take: { method: takeCentralWidget }
+            get: { method: centralWidget }
+          ownership: parent_owned
+          replace: deletes_old   # QMainWindow::setCentralWidget deletes the previous central widget
+          remove: released       # takeCentralWidget hands ownership back and reparents to null
+        - name: menubar
+          cardinality: one
+          accepts: [QMenuBar]
+          host: self
+          ops:
+            set: { method: setMenuBar }
+            clear: { method: setMenuBar, args: [null] }
+            get: { method: menuBar }
+          ownership: parent_owned
+          replace: deletes_old
+          remove: deletes_child  # no take op exists; clearing deletes the bar
+        - name: statusbar
+          cardinality: one
+          accepts: [QStatusBar]
+          host: self
+          ops:
+            set: { method: setStatusBar }
+            clear: { method: setStatusBar, args: [null] }
+            get: { method: statusBar }
+          ownership: parent_owned
+          replace: deletes_old
+          remove: deletes_child

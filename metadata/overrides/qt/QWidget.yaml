@@ -1,0 +1,35 @@
+# Element `box`: a plain QWidget carrying a QBoxLayout. Children are layout-managed and ordered.
+elements:
+  - tag: box
+    construct:
+      class: QWidget
+      composite:
+        layout: { class: QBoxLayout, args: ["QBoxLayout::TopToBottom"] }
+    props:
+      - js: orientation
+        target: layout
+        type: enum
+        getter: direction
+        setter: setDirection
+        values:
+          horizontal: QBoxLayout::LeftToRight
+          vertical: QBoxLayout::TopToBottom
+      - { js: spacing, target: layout, native: spacing }
+    children:
+      policy: layout_managed
+      default_slot: children
+      slots:
+        - name: children
+          cardinality: many
+          order: ordered
+          accepts: [QWidget]
+          host: layout
+          ops:
+            append: { method: addWidget }
+            insert: { method: insertWidget, args: [index, child] }
+            remove: { method: removeWidget }
+            index_of: { method: indexOf }
+            count: { method: count }
+            at: { method: itemAt, returns: layout_item_widget }
+          ownership: parent_owned   # the layout reparents the widget to the layout's widget
+          remove: released          # removeWidget leaves the child parented; backend reparents to null
