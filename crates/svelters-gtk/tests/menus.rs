@@ -121,6 +121,62 @@ fn activating_an_action_posts_activate_and_a_disabled_one_does_not() {
     });
 }
 
+fn model_button(root: &gtk::Widget, text: &str) -> Option<gtk::Widget> {
+    fn walk(w: &gtk::Widget, text: &str, out: &mut Option<gtk::Widget>) {
+        if w.type_().name() == "GtkModelButton" && w.property::<Option<String>>("text").as_deref() == Some(text) {
+            *out = Some(w.clone());
+        }
+        let mut c = w.first_child();
+        while let Some(x) = c {
+            walk(&x, text, out);
+            c = x.next_sibling();
+        }
+    }
+    let mut out = None;
+    walk(root, text, &mut out);
+    out
+}
+
+#[test]
+fn clicking_the_native_menu_items_runs_the_actions() {
+    on_gtk(|| {
+        let h = Harness::new();
+        let win = h.create("window");
+        let bar = h.create("menubar");
+        h.insert(win, bar, None, None).unwrap();
+        let file = mk(&h, "menu", &[("label", "File")]);
+        h.insert(bar, file, None, None).unwrap();
+        let open = action(&h, file, "Open");
+        let wrap = mk(&h, "action", &[("label", "Wrap")]);
+        h.set_bool(wrap, "checkable", true).unwrap();
+        h.insert(file, wrap, None, None).unwrap();
+        let sub = mk(&h, "menu", &[("label", "Recent")]);
+        h.insert(file, sub, None, None).unwrap();
+        let rec = action(&h, sub, "a.txt");
+        for a in [open, wrap, rec] {
+            h.listen(a, "activate", true).unwrap();
+        }
+        h.listen(wrap, "toggled", true).unwrap();
+        h.widget(win).downcast::<gtk::Window>().unwrap().present();
+        pump(200);
+        let root = h.widget(bar);
+        // The item buttons are the ones a user clicks; `clicked` runs the button's own handler, which activates its action.
+        model_button(&root, "Open").expect("Open button").emit_by_name::<()>("clicked", &[]);
+        assert_eq!(h.take_events_with_args(), vec![(open, "activate".to_string(), vec![V::Bool(false)])]);
+        model_button(&root, "Wrap").expect("Wrap button").emit_by_name::<()>("clicked", &[]);
+        let ev = h.take_events_with_args();
+        assert_eq!(ev[0], (wrap, "toggled".to_string(), vec![V::Bool(true)]));
+        assert_eq!(h.get(wrap, "checked"), V::Bool(true));
+        // A submenu's item sits in its own popover.
+        model_button(&root, "a.txt").expect("a.txt button").emit_by_name::<()>("clicked", &[]);
+        assert_eq!(h.take_events().len(), 1);
+        // After a reorder the new model still drives the buttons.
+        h.set_str(open, "label", "Open file").unwrap();
+        pump(50);
+        assert!(model_button(&root, "Open").is_none() && model_button(&root, "Open file").is_some());
+    });
+}
+
 #[test]
 fn check_actions_toggle_natively_and_js_writes_do_not_echo() {
     on_gtk(|| {

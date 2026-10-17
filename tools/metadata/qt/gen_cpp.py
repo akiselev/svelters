@@ -1829,6 +1829,7 @@ class Tests:
             "  auto *wd = static_cast<QWidget *>(O(w)); auto *menu = qobject_cast<QMenu *>(O(m));",
             "  CHECK(B->insert(B->self, w, m, 0, 0) == 0);",
             "  CHECK(wd->contextMenuPolicy() == Qt::CustomContextMenu && menu->parentWidget() == wd);  // owned by the widget",
+            f'  svl_handle it = mk("action"); CHECK(B->insert(B->self, m, it, 0, S("{t}", "items")) == 0);  // an empty menu does not open',
             "  Q_EMIT wd->customContextMenuRequested(QPoint(3, 4));",
             "  CHECK(menu->isVisible());  // popup(), not exec()",
             "  menu->hide();",
