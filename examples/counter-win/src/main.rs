@@ -106,6 +106,10 @@ mod win {
             Ok(b) => b,
             Err(e) => {
                 eprintln!("[counter-win] WinUI init failed: {e}");
+                if let Some(p) = &args.report {
+                    let rep = json!({ "backend": "winui", "ok": false, "failures": [format!("WinUI init: {e}")] });
+                    let _ = std::fs::write(p, serde_json::to_string_pretty(&rep).unwrap());
+                }
                 return 3;
             }
         };
@@ -207,7 +211,15 @@ mod win {
                 return 3;
             }
         }
-        if let Err(e) = host.run() {
+        let ran = host.run();
+        for e in host.take_errors() {
+            eprintln!("[counter-win] {e}");
+        }
+        // Close the windows and shut XAML down on this thread before the process exits (the
+        // backend in the leaked vtable never drops; exiting with live XAML fail-fasts).
+        drop(host);
+        driver.shutdown();
+        if let Err(e) = ran {
             eprintln!("[counter-win] run: {e}");
             return 5;
         }
@@ -215,9 +227,6 @@ mod win {
             let rep = report.borrow();
             println!("{}", serde_json::to_string_pretty(&*rep).unwrap());
             return if rep["ok"] == json!(true) { 0 } else { 1 };
-        }
-        for e in host.take_errors() {
-            eprintln!("[counter-win] {e}");
         }
         0
     }

@@ -46,22 +46,25 @@ struct Shared {
 }
 
 thread_local! {
-    static SHARED: RefCell<Option<Rc<Shared>>> = const { RefCell::new(None) };
+    /// The one backend of the UI thread, or why it could not start. Initialized once: WinUI can't
+    /// be set up twice on a thread, so later tests report the first error instead of retrying.
+    static SHARED: RefCell<Option<Result<Rc<Shared>, String>>> = const { RefCell::new(None) };
 }
 
 fn shared() -> Rc<Shared> {
-    SHARED.with(|s| {
+    let r = SHARED.with(|s| {
         s.borrow_mut()
             .get_or_insert_with(|| {
-                let backend: &'static WinUiBackend =
-                    Box::leak(Box::new(WinUiBackend::new().unwrap_or_else(|e| panic!("WinUI init failed: {e}"))));
+                let backend = WinUiBackend::new()?;
+                let backend: &'static WinUiBackend = Box::leak(Box::new(backend));
                 let record = Rc::new(RefCell::new(Record::default()));
                 let host: &'static HostVtable = Box::leak(Box::new(HostVtable::new(Recorder(record.clone()))));
                 backend.attach_host(host.as_raw());
-                Rc::new(Shared { backend, record, _host: host })
+                Ok(Rc::new(Shared { backend, record, _host: host }))
             })
             .clone()
-    })
+    });
+    r.unwrap_or_else(|e| panic!("WinUI init failed: {e}"))
 }
 
 /// One test's view of the shared backend. Handles it created are destroyed when it drops.
