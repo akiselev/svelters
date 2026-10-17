@@ -48,6 +48,9 @@ export interface QtElementDescriptors {
       iconSize?: Size;
       shortcut?: Boxed<"QKeySequence"> | string;
       checkable?: boolean;
+      flat?: boolean;
+      autoDefault?: boolean;
+      default?: boolean;
       autoRepeat?: boolean;
       autoExclusive?: boolean;
       enabled?: boolean;
@@ -66,6 +69,46 @@ export interface QtElementDescriptors {
       pressed: () => void;
       released: () => void;
       toggled: (checked: boolean) => void;
+    };
+    methods: {
+      click(): void;
+      toggle(): void;
+      animateClick(): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  checkbox: {
+    props: {
+      tristate?: boolean;
+      checkState?: "checked" | "partiallyChecked" | "unchecked";
+      label?: string;
+      checkable?: boolean;
+      autoRepeat?: boolean;
+      autoExclusive?: boolean;
+      shortcut?: Boxed<"QKeySequence"> | string;
+      checked?: boolean;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      pressed: () => void;
+      released: () => void;
+      stateChanged: (state: number) => void;
+      toggled: (checked: boolean) => void;
+      clicked: () => void;
     };
     methods: {
       click(): void;
@@ -134,6 +177,44 @@ export interface QtElementDescriptors {
     methods: {
       addItem(text: string, userData: Variant): void;
       itemData(index: number, role: number): Variant;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  commandlinkbutton: {
+    props: {
+      description?: string;
+      flat?: boolean;
+      label?: string;
+      checkable?: boolean;
+      autoRepeat?: boolean;
+      autoExclusive?: boolean;
+      shortcut?: Boxed<"QKeySequence"> | string;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      pressed: () => void;
+      released: () => void;
+      toggled: (checked: boolean) => void;
+      clicked: () => void;
+    };
+    methods: {
+      click(): void;
+      toggle(): void;
+      animateClick(): void;
       show(): void;
       hide(): void;
       setFocus(): void;
@@ -677,6 +758,43 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
+  radiobutton: {
+    props: {
+      label?: string;
+      checkable?: boolean;
+      autoRepeat?: boolean;
+      autoExclusive?: boolean;
+      shortcut?: Boxed<"QKeySequence"> | string;
+      checked?: boolean;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      pressed: () => void;
+      released: () => void;
+      toggled: (checked: boolean) => void;
+      clicked: () => void;
+    };
+    methods: {
+      click(): void;
+      toggle(): void;
+      animateClick(): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
   scrolledwindow: {
     props: {
       widgetResizable?: boolean;
@@ -919,6 +1037,47 @@ export interface QtElementDescriptors {
       changed: (index: number) => void;
     };
     methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  toolbutton: {
+    props: {
+      autoRaise?: boolean;
+      toolButtonStyle?: "follow-style" | "icon-only" | "text-beside-icon" | "text-only" | "text-under-icon";
+      arrowType?: "down-arrow" | "left-arrow" | "no-arrow" | "right-arrow" | "up-arrow";
+      popupMode?: "delayed-popup" | "instant-popup" | "menu-button-popup";
+      label?: string;
+      checkable?: boolean;
+      autoRepeat?: boolean;
+      autoExclusive?: boolean;
+      shortcut?: Boxed<"QKeySequence"> | string;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      pressed: () => void;
+      released: () => void;
+      toggled: (checked: boolean) => void;
+      clicked: () => void;
+    };
+    methods: {
+      setMenu(menu: number): void;
+      click(): void;
+      toggle(): void;
+      animateClick(): void;
       show(): void;
       hide(): void;
       setFocus(): void;
