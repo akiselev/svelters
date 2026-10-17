@@ -165,6 +165,12 @@ impl<'a> Host<'a> {
         self.core.backend().run(&self.vt)
     }
 
+    /// The `svl_host` callbacks this host gives its backend, for embedders and tests that pump the
+    /// toolkit loop themselves instead of calling [`Host::run`] (attach them to the backend first).
+    pub fn host_callbacks(&self) -> *const svelters_abi::svl_host {
+        self.vt.as_raw()
+    }
+
     /// Runs one checkpoint directly (what the backend triggers through `svl_host.checkpoint`).
     pub fn checkpoint(&self) {
         core::checkpoint(&self.core, &self.engine);

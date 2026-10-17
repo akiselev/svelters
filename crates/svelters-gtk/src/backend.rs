@@ -21,6 +21,9 @@ use std::sync::atomic::{AtomicPtr, Ordering};
 use std::sync::Arc;
 use svelters_abi::*;
 
+mod extras;
+use extras::CallErr;
+
 struct Entry {
     /// Weak: toplevels are kept alive by GTK itself, so natively closing one really destroys it.
     obj: glib::WeakRef<glib::Object>,
@@ -52,6 +55,8 @@ pub(crate) struct Inner {
     descs: DescStore,
     /// The pending `schedule_wake` source, if any. Cleared by the source's own callback.
     wake_timer: RefCell<Option<glib::SourceId>>,
+    /// State of the `gio-file` services (see `extras.rs`).
+    files: RefCell<HashMap<u64, extras::FileState>>,
 }
 
 type Res<T> = Result<T, String>;
@@ -100,6 +105,9 @@ impl Inner {
     }
 
     fn create(self: &Rc<Self>, kind: u32) -> Res<u64> {
+        if extras::is_extra(kind) {
+            return self.create_extra(kind);
+        }
         let k = KINDS.get((kind as usize).wrapping_sub(1)).ok_or("unknown kind")?;
         if k.is_abstract || k.is_interface {
             return Err(format!("{} is not instantiable", k.gtype));
@@ -198,6 +206,9 @@ impl Inner {
         if self.state.borrow_mut().boxed.remove(&h).is_some() {
             return Ok(());
         }
+        if self.extra_kind(h).is_some() {
+            self.destroy_extra(h);
+        }
         let entry = {
             let mut st = self.state.borrow_mut();
             let Some(e) = st.entries.remove(&h) else { return Ok(()) };
@@ -277,6 +288,9 @@ impl Inner {
     }
 
     fn set_prop(&self, h: u64, prop: u32, v: &svl_value) -> Res<()> {
+        if self.extra_kind(h).is_some() {
+            return self.extra_set_prop(h, prop, v);
+        }
         let (obj, kind) = self.obj_of(h)?;
         let p = PROPS.get((prop as usize).wrapping_sub(1)).ok_or("unknown property")?;
         if !lookup::in_chain(kind, p.kind) {
@@ -318,6 +332,9 @@ impl Inner {
     }
 
     fn get_prop(&self, h: u64, prop: u32, out: &mut svl_value) -> Res<()> {
+        if self.extra_kind(h).is_some() {
+            return self.extra_get_prop(h, prop, out);
+        }
         let (obj, kind) = self.obj_of(h)?;
         let p = PROPS.get((prop as usize).wrapping_sub(1)).ok_or("unknown property")?;
         if !lookup::in_chain(kind, p.kind) {
@@ -407,6 +424,9 @@ impl Inner {
     /// The descriptor of a property of the handle kind `kind` (`SVL_PROP` only; other member
     /// kinds have no value descriptors yet).
     fn describe_member(&self, what: u32, kind: u32, member: u32) -> Option<MemberDesc> {
+        if extras::is_extra(kind) {
+            return extras::describe_member(what, member);
+        }
         if what != SVL_PROP {
             return None;
         }
@@ -450,6 +470,9 @@ impl Inner {
     }
 
     fn describe_type(&self, id: u32) -> Option<TypeDesc> {
+        if let Some(t) = extras::describe_type(id) {
+            return Some(t);
+        }
         let mut table = self.types.borrow_mut();
         let t = table.lookup(id)?;
         Some(types::type_desc(&mut table, t))
@@ -500,6 +523,7 @@ impl GtkBackend {
             types: RefCell::new(TypeTable::default()),
             descs: DescStore::default(),
             wake_timer: RefCell::new(None),
+            files: RefCell::new(HashMap::new()),
         });
         let mut ctl = Box::new(Ctl { host, local: inner });
         let vtable = Box::new(svl_backend {
@@ -523,7 +547,7 @@ impl GtkBackend {
             caps: 0,
             describe: Some(b_describe),
             describe_type: Some(b_describe_type),
-            cancel: None,
+            cancel: Some(b_cancel),
         });
         Ok(GtkBackend { vtable, ctl })
     }
@@ -571,7 +595,11 @@ unsafe extern "C" fn b_resolve(p: *mut c_void, what: u32, kind: svl_id, name: *c
     let Ok(name) = std::str::from_utf8(bytes) else { return 0 };
     let _ = p;
     match what {
-        SVL_KIND => lookup::kind_by_name(name),
+        SVL_KIND => match extras::kind_by_name(name) {
+            0 => lookup::kind_by_name(name),
+            k => k,
+        },
+        _ if extras::is_extra(kind) => extras::find_member(what, kind, name),
         SVL_PROP => lookup::find_prop(kind, name),
         SVL_SIGNAL => lookup::find_signal(kind, name),
         SVL_METHOD => lookup::find_method(kind, name),
@@ -610,8 +638,38 @@ unsafe extern "C" fn b_get_prop(p: *mut c_void, h: svl_handle, prop: svl_id, out
     run_int(unsafe { ctl(p) }, |i| i.get_prop(h, prop, unsafe { &mut *out }))
 }
 
-unsafe extern "C" fn b_call(p: *mut c_void, h: svl_handle, method: svl_id, _args: *const svl_value, n: usize, out: *mut svl_value) -> c_int {
-    run_int(unsafe { ctl(p) }, |i| i.call(h, method, n, unsafe { &mut *out }))
+unsafe extern "C" fn b_call(p: *mut c_void, h: svl_handle, method: svl_id, args: *const svl_value, n: usize, out: *mut svl_value) -> c_int {
+    let c = unsafe { ctl(p) };
+    let _t = crate::timing::scope();
+    let out = unsafe { &mut *out };
+    let r = catch_unwind(AssertUnwindSafe(|| {
+        if c.local.extra_kind(h).is_some() {
+            c.local.extra_call(h, method, args, n, out)
+        } else {
+            c.local.call(h, method, n, out).map_err(CallErr::Plain)
+        }
+    }));
+    match r {
+        Ok(Ok(())) => 0,
+        Ok(Err(CallErr::Plain(e))) => {
+            c.local.set_error(e);
+            -1
+        }
+        // A GError crosses as an ERROR value in `out` (and its message as `last_error`).
+        Ok(Err(CallErr::Gerror(e))) => {
+            c.local.set_error(e.message().to_string());
+            c.local.write_error(&e, out);
+            -1
+        }
+        Err(_) => {
+            c.local.set_error("internal panic in svelters-gtk".into());
+            -1
+        }
+    }
+}
+
+unsafe extern "C" fn b_cancel(p: *mut c_void, callback: u64) -> c_int {
+    unsafe { ctl(p) }.local.cancel_callback(callback) as c_int
 }
 
 unsafe extern "C" fn b_listen(p: *mut c_void, h: svl_handle, signal: svl_id, on: bool) -> c_int {

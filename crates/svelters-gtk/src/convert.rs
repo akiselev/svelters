@@ -408,6 +408,16 @@ pub struct StrBuf {
 }
 
 impl StrBuf {
+    /// A `BYTES` value over a copy owned by this buffer.
+    pub fn bytes_value(&mut self, data: Vec<u8>) -> svl_value {
+        let b = data.into_boxed_slice();
+        let (ptr, len) = (b.as_ptr(), b.len());
+        self.strs.push(b);
+        svl_value::new(SVL_BYTES, svl_value_u { bytes: svl_bytes { ptr, len } })
+    }
+}
+
+impl StrBuf {
     pub fn str_value(&mut self, s: &str) -> svl_value {
         let b: Box<[u8]> = s.as_bytes().into();
         let ptr = b.as_ptr() as *const std::ffi::c_void;
