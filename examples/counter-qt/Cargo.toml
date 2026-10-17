@@ -33,6 +33,10 @@ name = "host_sync"
 harness = false
 
 [[test]]
+name = "host_events"
+harness = false
+
+[[test]]
 name = "borrowed"
 harness = false
 

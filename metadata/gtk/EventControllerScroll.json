@@ -51,6 +51,10 @@
       "origin": "runtime"
     }
   ],
+  "element": {
+    "origin": "manual",
+    "tag": "scrollcontroller"
+  },
   "enums": [
     "svelters-api:v1:type:gtk:Gtk:EventControllerScrollFlags"
   ],
@@ -150,6 +154,11 @@
         "get": "gtk_event_controller_scroll_get_flags",
         "set": "gtk_event_controller_scroll_set_flags"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkEventControllerScroll:flags, GtkEventControllerScrollFlags (Gtk 4 docs); NONE (default) delivers no scroll events"
+      },
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:EventControllerScroll:prop:flags",
       "invocation": "reflected",
@@ -218,6 +227,16 @@
       "sync_required": false
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GtkEventControllerScroll::scroll(dx, dy), run-last, returns gboolean: TRUE consumes the scroll (Gtk 4 docs)"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -250,9 +269,28 @@
         "origin": "runtime",
         "return_gtype": "gboolean"
       },
-      "sync_required": false
+      "sync_required": true,
+      "trigger": {
+        "origin": "manual",
+        "rust": "o.emit_by_name::<bool>(\"scroll\", &[&0.0f64, &(1.0f64 + i as f64)]);",
+        "values": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GtkEventControllerScroll::scroll-begin, run-first, void (Gtk 4 docs)"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -274,9 +312,28 @@
         "origin": "runtime",
         "return_gtype": "void"
       },
-      "sync_required": false
+      "sync_required": false,
+      "trigger": {
+        "origin": "manual",
+        "rust": "let _ = (v, i); o.emit_by_name::<()>(\"scroll-begin\", &[]);",
+        "values": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GtkEventControllerScroll::scroll-end, run-first, void (Gtk 4 docs)"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -298,7 +355,16 @@
         "origin": "runtime",
         "return_gtype": "void"
       },
-      "sync_required": false
+      "sync_required": false,
+      "trigger": {
+        "origin": "manual",
+        "rust": "let _ = (v, i); o.emit_by_name::<()>(\"scroll-end\", &[]);",
+        "values": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
     }
   ],
   "source": {
@@ -307,7 +373,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/EventControllerScroll.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"

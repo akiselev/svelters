@@ -5,3 +5,25 @@ properties:
   - name: content-height
     js_name: contentHeight
     provenance: "GtkDrawingArea:content-height (Gtk 4 docs)"
+  - id: "svelters-api:v1:type:gtk:Gtk:DrawingArea:prop:ops"
+    name: ops
+    js_name: ops
+    new: true
+    type: {ref: string, nullable: true, native: "gchar*", gtype: gchararray}
+    access: {read: true, write: true, construct: false, construct_only: false}
+    default: null
+    range: null
+    notify: {signal: null, explicit: false}
+    accessors: {get: null, set: null}
+    invocation: virtual
+    role: value
+    virtual: {op: canvas_ops, property: ops}
+    sample: '[["fillStyle","#ff0000"],["fillRect",0,0,4,4]]'
+    provenance: "X8 recording canvas: the display list (JSON array of [op, ...args]) replayed by the draw func (crates/svelters-gtk/src/backend/canvas.rs); pixels are checked by tests/canvas.rs"
+signals:
+  - name: resize
+    js_event: resize
+    handler_result: none
+    sync_required: false
+    trigger: {rust: 'o.emit_by_name::<()>("resize", &[&(10 + i as i32), &20i32]);', values: [a, b, c]}
+    provenance: "GtkDrawingArea::resize(width, height), run-last, void: the new content size (Gtk 4 docs); JS records a display list for it"

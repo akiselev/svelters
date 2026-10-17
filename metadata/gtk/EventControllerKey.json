@@ -43,6 +43,10 @@
       "origin": "runtime"
     }
   ],
+  "element": {
+    "origin": "manual",
+    "tag": "keycontroller"
+  },
   "enums": [],
   "id": "svelters-api:v1:type:gtk:Gtk:EventControllerKey",
   "interfaces": [],
@@ -182,6 +186,16 @@
       "sync_required": false
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GtkEventControllerKey::key-pressed, run-last, returns gboolean: TRUE stops propagation (Gtk 4 docs); X2 sync handler"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -219,9 +233,28 @@
         "origin": "runtime",
         "return_gtype": "gboolean"
       },
-      "sync_required": false
+      "sync_required": true,
+      "trigger": {
+        "origin": "manual",
+        "rust": "o.emit_by_name::<bool>(\"key-pressed\", &[&(65u32 + i as u32), &38u32, &gtk::gdk::ModifierType::empty()]);",
+        "values": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GtkEventControllerKey::key-released, run-last, void (Gtk 4 docs)"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -259,9 +292,28 @@
         "origin": "runtime",
         "return_gtype": "void"
       },
-      "sync_required": false
+      "sync_required": false,
+      "trigger": {
+        "origin": "manual",
+        "rust": "o.emit_by_name::<()>(\"key-released\", &[&(65u32 + i as u32), &38u32, &gtk::gdk::ModifierType::empty()]);",
+        "values": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GtkEventControllerKey::modifiers, run-last, returns gboolean (Gtk 4 docs)"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -289,7 +341,16 @@
         "origin": "runtime",
         "return_gtype": "gboolean"
       },
-      "sync_required": false
+      "sync_required": true,
+      "trigger": {
+        "origin": "manual",
+        "rust": "o.emit_by_name::<bool>(\"modifiers\", &[&gtk::gdk::ModifierType::empty()]);",
+        "values": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
     }
   ],
   "source": {
@@ -298,7 +359,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/EventControllerKey.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"

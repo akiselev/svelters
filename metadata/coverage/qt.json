@@ -2546,7 +2546,7 @@
   "defaults": 39,
   "element": "box, grid",
   "gallery": "00-overview",
-  "inherited": 15,
+  "inherited": 27,
   "kind": "QWidget",
   "lifetime": "owned",
   "methods": [
@@ -2569,8 +2569,8 @@
   "slots_own": 2,
   "unexposed": null,
   "verified": [
-   40,
-   40
+   52,
+   52
   ]
  },
  {

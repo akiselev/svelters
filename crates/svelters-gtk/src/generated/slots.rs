@@ -572,10 +572,6 @@ pub fn attr_object(attr: u32, parent: &gtk::Widget, child: &gtk::Widget) -> Resu
             let lm = parent.layout_manager().ok_or("parent has no layout manager")?;
             Ok(Some(lm.layout_child(child).upcast()))
         }
-        9 => {
-            let p = parent.downcast_ref::<gtk::Notebook>().ok_or("parent is not a gtk::Notebook")?;
-            Ok(Some(p.page(child).upcast()))
-        }
         10 => {
             let p = parent.downcast_ref::<gtk::Notebook>().ok_or("parent is not a gtk::Notebook")?;
             Ok(Some(p.page(child).upcast()))
@@ -588,8 +584,8 @@ pub fn attr_object(attr: u32, parent: &gtk::Widget, child: &gtk::Widget) -> Resu
             let p = parent.downcast_ref::<gtk::Notebook>().ok_or("parent is not a gtk::Notebook")?;
             Ok(Some(p.page(child).upcast()))
         }
-        15 => {
-            let p = parent.downcast_ref::<gtk::Stack>().ok_or("parent is not a gtk::Stack")?;
+        13 => {
+            let p = parent.downcast_ref::<gtk::Notebook>().ok_or("parent is not a gtk::Notebook")?;
             Ok(Some(p.page(child).upcast()))
         }
         16 => {
@@ -608,6 +604,10 @@ pub fn attr_object(attr: u32, parent: &gtk::Widget, child: &gtk::Widget) -> Resu
             let p = parent.downcast_ref::<gtk::Stack>().ok_or("parent is not a gtk::Stack")?;
             Ok(Some(p.page(child).upcast()))
         }
+        20 => {
+            let p = parent.downcast_ref::<gtk::Stack>().ok_or("parent is not a gtk::Stack")?;
+            Ok(Some(p.page(child).upcast()))
+        }
         _ => Ok(None),
     }
 }
@@ -618,10 +618,11 @@ pub fn attr_set_native(attr: u32, parent: &gtk::Widget, child: &gtk::Widget, v: 
     match attr {
         1 => attr_set_attr_11_x(parent, child, v),
         2 => attr_set_attr_11_y(parent, child, v),
-        7 => attr_set_attr_21_tablabel(parent, child, v),
-        8 => attr_set_attr_21_menulabel(parent, child, v),
-        13 => attr_set_attr_23_measure(parent, child, v),
-        14 => attr_set_attr_23_clip(parent, child, v),
+        7 => attr_set_attr_19_header(parent, child, v),
+        8 => attr_set_attr_21_tablabel(parent, child, v),
+        9 => attr_set_attr_21_menulabel(parent, child, v),
+        14 => attr_set_attr_23_measure(parent, child, v),
+        15 => attr_set_attr_23_clip(parent, child, v),
         _ => Err(format!("attribute {attr} has no native setter")),
     }
 }
@@ -632,10 +633,11 @@ pub fn attr_get_native(attr: u32, parent: &gtk::Widget, child: &gtk::Widget) -> 
     match attr {
         1 => attr_get_attr_11_x(parent, child),
         2 => attr_get_attr_11_y(parent, child),
-        7 => attr_get_attr_21_tablabel(parent, child),
-        8 => attr_get_attr_21_menulabel(parent, child),
-        13 => attr_get_attr_23_measure(parent, child),
-        14 => attr_get_attr_23_clip(parent, child),
+        7 => attr_get_attr_19_header(parent, child),
+        8 => attr_get_attr_21_tablabel(parent, child),
+        9 => attr_get_attr_21_menulabel(parent, child),
+        14 => attr_get_attr_23_measure(parent, child),
+        15 => attr_get_attr_23_clip(parent, child),
         _ => Err(format!("attribute {attr} has no native getter")),
     }
 }
@@ -664,6 +666,19 @@ fn attr_get_attr_11_y(parent: &gtk::Widget, child: &gtk::Widget) -> Result<AttrV
     let _ = child;
     let r = crate::util::fixed_position(p, child).1;
     Ok(AttrV::Float(r))
+}
+
+fn attr_set_attr_19_header(parent: &gtk::Widget, child: &gtk::Widget, v: &AttrV) -> Result<(), String> {
+    let p = parent.downcast_ref::<gtk::ListBox>().ok_or("parent is not a gtk::ListBox")?;
+    crate::util::set_row_header(p, child, v.as_str()?)?;
+    Ok(())
+}
+
+fn attr_get_attr_19_header(parent: &gtk::Widget, child: &gtk::Widget) -> Result<AttrV, String> {
+    let p = parent.downcast_ref::<gtk::ListBox>().ok_or("parent is not a gtk::ListBox")?;
+    let _ = child;
+    let r = crate::util::row_header(child);
+    Ok(AttrV::Str(r.to_string()))
 }
 
 fn attr_set_attr_21_tablabel(parent: &gtk::Widget, child: &gtk::Widget, v: &AttrV) -> Result<(), String> {
@@ -721,7 +736,8 @@ fn attr_get_attr_23_clip(parent: &gtk::Widget, child: &gtk::Widget) -> Result<At
 /// Set a virtual property (no native GObject property backs it).
 pub fn virtual_set(prop: u32, obj: &glib::Object, text: Option<&str>) -> Result<(), String> {
     match prop {
-        526 => {
+        313 => crate::backend::canvas::set_ops(obj, text),
+        527 => {
             let text = text.unwrap_or("");
             let cur = obj.property::<Option<gtk::Widget>>("title-widget");
             match cur.and_then(|w| w.downcast::<gtk::Label>().ok()).filter(|l| l.has_css_class(MANAGED_CLASS)) {
@@ -742,7 +758,8 @@ pub fn virtual_set(prop: u32, obj: &glib::Object, text: Option<&str>) -> Result<
 /// Read a virtual property.
 pub fn virtual_get(prop: u32, obj: &glib::Object) -> Result<Option<String>, String> {
     match prop {
-        526 => Ok(obj
+        313 => Ok(crate::backend::canvas::get_ops(obj)),
+        527 => Ok(obj
             .property::<Option<gtk::Widget>>("title-widget")
             .and_then(|w| w.downcast::<gtk::Label>().ok())
             .filter(|l| l.has_css_class(MANAGED_CLASS))

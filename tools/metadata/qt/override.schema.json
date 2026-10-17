@@ -481,7 +481,9 @@
         "synthetic": {
           "enum": [
             "close_request",
-            "key_press"
+            "key_press",
+            "key_release", "mouse_press", "mouse_release", "mouse_move", "mouse_double_click", "wheel",
+            "focus_in", "focus_out", "enter", "leave", "resize", "context_menu"
           ]
         },
         "provenance": {

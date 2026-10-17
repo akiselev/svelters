@@ -194,6 +194,12 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:cursor",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "cursor",
+        "origin": "manual"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Editable:prop:editable",
         "from": "svelters-api:v1:type:gtk:Gtk:Editable",
         "name": "editable",
@@ -1833,6 +1839,18 @@
       "sync_required": false
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "out_params",
+          "sync_required",
+          "sync_result",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GtkSpinButton::input, run-last, returns gint with a gdouble* out parameter: 1 = converted, 0 = not handled, GTK_INPUT_ERROR (-1) = failed (Gtk 4 docs); gtk_spin_button_update emits it"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -1840,11 +1858,19 @@
         ]
       },
       "flags": [],
-      "handler_result": "none",
+      "handler_result": "value",
       "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:signal:input",
       "js_event": "input",
       "name": "input",
       "origin": "gir",
+      "out_params": [
+        {
+          "index": 0,
+          "name": "newValue",
+          "origin": "manual",
+          "type": "f64"
+        }
+      ],
       "params": [
         {
           "gtype": "gpointer",
@@ -1860,9 +1886,34 @@
         "origin": "runtime",
         "return_gtype": "gint"
       },
-      "sync_required": false
+      "sync_required": true,
+      "sync_result": {
+        "expect": "h.get(o, \"value\") == V::F64(42.5)",
+        "origin": "manual",
+        "reply": "Value::Map(vec![(\"ret\".into(), Value::I64(1)), (\"newValue\".into(), Value::F64(42.5))])"
+      },
+      "trigger": {
+        "origin": "manual",
+        "rust": "let s = o.downcast_ref::<gtk::SpinButton>().unwrap(); s.set_range(0.0, 100.0); s.update();",
+        "values": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required",
+          "sync_result",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GtkSpinButton::output, run-last, returns gboolean: TRUE = the handler displayed the value, GTK leaves the text alone (Gtk 4 docs)"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -1884,7 +1935,22 @@
         "origin": "runtime",
         "return_gtype": "gboolean"
       },
-      "sync_required": false
+      "sync_required": true,
+      "sync_result": {
+        "expect": "w.downcast_ref::<gtk::Editable>().unwrap().text() == \"custom\"",
+        "origin": "manual",
+        "reply": "Value::Bool(true)",
+        "setup": "h.set_str(o, \"text\", \"custom\").unwrap();"
+      },
+      "trigger": {
+        "origin": "manual",
+        "rust": "let s = o.downcast_ref::<gtk::SpinButton>().unwrap(); s.set_range(0.0, 100.0); s.set_value(10.0 + i as f64);",
+        "values": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
     },
     {
       "annotated": {

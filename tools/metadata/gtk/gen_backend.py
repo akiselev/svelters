@@ -164,6 +164,8 @@ pub struct SignalInfo {
     pub result: &'static str,
     pub handler_result: u8,
     pub sync_required: bool,
+    /// Out-parameters the handler result fills (the `gpointer` params of the signal): (param index, JS name, type).
+    pub outs: &'static [(u8, &'static str, &'static str)],
     /// The signal is emitted by the object this property returns (GtkTextView `changed` comes from its buffer).
     pub via: &'static str,
 }
@@ -225,9 +227,10 @@ pub struct AttrInfo {
     o.append(f"\npub static SIGNALS: [SignalInfo; {len(m.signals)}] = [\n")
     for k, s in m.signals:
         params = ", ".join(rs(p["type"]) for p in s["params"])
+        outs = ", ".join(f"({q['index']}, {rs(q['name'])}, {rs(q['type'])})" for q in s.get("out_params", []))
         o.append(f"    SignalInfo {{ kind: {k}, name: {rs(s['name'])}, js_event: {rs(s['js_event'])}, params: &[{params}], "
                  f"result: {rs(s['returns']['type'])}, handler_result: {HANDLER_RESULT[s['handler_result']]}, "
-                 f"sync_required: {str(bool(s['sync_required'])).lower()}, via: {rs(s.get('via', ''))} }},\n")
+                 f"sync_required: {str(bool(s['sync_required'])).lower()}, outs: &[{outs}], via: {rs(s.get('via', ''))} }},\n")
     o.append("];\n")
 
     o.append(f"\npub static METHODS: [MethodInfo; {len(m.methods)}] = [\n")
@@ -401,8 +404,12 @@ def gen_slots(m: Model) -> str:
         v = p.get("virtual")
         if not v or is_via(p):
             continue
-        assert v["op"] == "managed_title_label", v
+        assert v["op"] in ("managed_title_label", "canvas_ops"), v
         prop = v["property"]
+        if v["op"] == "canvas_ops":
+            vset.append(f"        {i + 1} => crate::backend::canvas::set_ops(obj, text),\n")
+            vget.append(f"        {i + 1} => Ok(crate::backend::canvas::get_ops(obj)),\n")
+            continue
         vset.append(f"""        {i + 1} => {{
             let text = text.unwrap_or("");
             let cur = obj.property::<Option<gtk::Widget>>({rs(prop)});
@@ -599,8 +606,12 @@ def gen_attrs(m: Model):
         if "set" not in a or "get" not in a:
             raise ValueError(f"attribute {a['name']}: needs `property` + `via`, or both `set` and `get`")
         so, go = a["set"], a["get"]
-        scls, smeth, srec = native_parse(m, so["native"])
-        sargs = attr_native_args(m, sid, srec, so)
+        if "expr" in so:
+            # A setter written as Rust statements over `p` (the typed parent `so["class"]`), `child` and `v` (AttrV).
+            scls, smeth, sargs = so["class"], None, []
+        else:
+            scls, smeth, srec = native_parse(m, so["native"])
+            sargs = attr_native_args(m, sid, srec, so)
         if "expr" in go:
             # A getter written as a Rust expression over `p` (the typed parent) and `child`.
             gcls, call = go["class"], go["expr"]
@@ -612,6 +623,7 @@ def gen_attrs(m: Model):
             call = f"p.{RUST_KW.get(gmeth, gmeth)}({', '.join(gargs)})"
             conv = None
         smeth = so.get("rust", smeth)
+        set_body = so["expr"] if "expr" in so else f"p.{RUST_KW.get(smeth, smeth)}({', '.join(sargs)});"
         rtype = a["type"]
         if conv is not None:
             pass
@@ -627,7 +639,7 @@ def gen_attrs(m: Model):
         fns.append(f"""
 fn attr_set_{fid}(parent: &gtk::Widget, child: &gtk::Widget, v: &AttrV) -> Result<(), String> {{
     let p = parent.downcast_ref::<gtk::{scls}>().ok_or("parent is not a gtk::{scls}")?;
-    p.{RUST_KW.get(smeth, smeth)}({', '.join(sargs)});
+    {set_body}
     Ok(())
 }}
 
@@ -919,6 +931,35 @@ def signal_test(m: Model, d: dict, s: dict) -> tuple[str, str]:
     return wrap(name, f"signal {gir_name(d)}.{s['name']}: {ann_prov(s)}", body)
 
 
+def sync_result_test(m: Model, d: dict, s: dict) -> tuple[str, str]:
+    """The JS handler's typed result (`e.result`) reaches the toolkit: the harness host answers `call_sync` with
+    `reply`, GTK emits the signal, and `expect` (a Rust bool over `h`, `o` handle, `w` object) holds afterwards."""
+    sr = s["sync_result"]
+    subj = m.subject(d)
+    fire, vals = trigger_parts(m, d, s)
+    setup = (s.get("trigger") or {}).get("setup", "")
+    name = fn_ident("syncresult", gir_name(d), s["name"])
+    sig = rs(s["name"])
+    body = f"""        let e = h.create({rs(subj)});
+        let o = e;
+        {setup}
+        {sr.get('setup', '')}
+        h.set_sync_reply(SyncReply::Value({sr['reply']}));
+        h.listen(e, {sig}, true).unwrap();
+        {{
+            let o = &h.obj(e);
+            let (v, i) = ({rs(vals[0])}, 0usize);
+            let _ = (v, i);
+            {fire}
+        }}
+        let w = h.obj(e);
+        let _ = &w;
+        assert!(!h.take_sync_calls().is_empty(), "the signal went through call_sync");
+        assert!({sr['expect']}, "postcondition: {sr['expect'].replace('"', "'")}");
+"""
+    return wrap(name, f"typed sync result of {gir_name(d)}.{s['name']}: {ann_prov(s)}", body)
+
+
 def prop_tests(m: Model, d: dict, p: dict) -> list[tuple[str, str]]:
     subj = m.subject(d)
     js = rs(p["js_name"])
@@ -945,6 +986,8 @@ def prop_tests(m: Model, d: dict, p: dict) -> list[tuple[str, str]]:
         if wrap_v:
             extra = (f"        let tgt = h.obj(o).property::<Option<gtk::glib::Object>>({rs(v['via'])}).unwrap();\n"
                      f"        assert_eq!({wrap_v}(tgt.property({rs(v['property'])})), {expect}, \"the object behind `{v['via']}` holds the value\");\n")
+    elif (p.get("virtual") or {}).get("op") == "canvas_ops":
+        extra = ""
     elif p.get("virtual"):
         extra = (f"        let w = h.obj(o).property::<Option<gtk::Widget>>({rs(p['virtual']['property'])}).unwrap();\n"
                  f"        assert_eq!(w.downcast::<gtk::Label>().unwrap().label(), \"p3-sample\");\n")
@@ -1048,7 +1091,7 @@ def gen_verify(m: Model) -> tuple[str, list[dict], list[str]]:
         for s in d["signals"]:
             if "annotated" in s:
                 attempt(s["id"] if "id" in s else f"{d['id']}:signal:{s['name']}", "signals", d, s["name"], s,
-                        lambda s=s, d=d: [signal_test(m, d, s)])
+                        lambda s=s, d=d: [signal_test(m, d, s)] + ([sync_result_test(m, d, s)] if s.get("sync_result") else []))
         for p in sorted(d["properties"], key=lambda p: p["name"]):
             if "annotated" in p:
                 attempt(p.get("id") or f"{d['id']}:prop:{p['name']}", "properties", d, p["name"], p, lambda p=p, d=d: prop_tests(m, d, p))
@@ -1089,7 +1132,7 @@ def gen_verify(m: Model) -> tuple[str, list[dict], list[str]]:
         assert_eq!(h.handle_info(o).unwrap().lifetime, svelters_abi::{LIFE[life['class']]});
 """)]
             attempt(life["id"], "lifetime", d, "lifetime", life, mkl)
-    src = HEADER + "\n#![allow(unused_mut, unused_variables, clippy::all)]\nuse crate::testing::{on_gtk, Harness, V};\nuse gtk::prelude::*;\n" + "".join(f.tests)
+    src = HEADER + "\n#![allow(unused_mut, unused_variables, unused_imports, clippy::all)]\nuse crate::testing::{on_gtk, Harness, SyncReply, V};\nuse gtk::prelude::*;\nuse svelters_abi::Value;\n" + "".join(f.tests)
     return src, f.facts, f.errors
 
 

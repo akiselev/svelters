@@ -665,3 +665,15 @@ test('toplevel kinds: a dialog nested in a subtree that is not yet realized wait
   assert.ok(lines.indexOf(`call #${w} present []`) >= 0 && lines.indexOf(`call #${w} present []`) < lines.indexOf(`call #${d} present []`), lines.join('\n'));
   assert.ok(lines.includes(`insert #${w} #${d} before=end slot=default`), lines.join('\n'));
 });
+
+test('dispatchSync: a typed result object reaches the host unchanged (out-parameters)', () => {
+  const spin = el('spinbutton');
+  const w0 = el('window');
+  r.insert(w0, spin, null);
+  r.insert(root, w0, null);
+  const h = Number(take().split('\n').find((l) => l.startsWith('create spinbutton')).split('#')[1]);
+  r.addEventListener(spin, 'input', (e) => {
+    e.result = { ret: 1, newValue: 16 };
+  });
+  assert.deepEqual(dispatchSync(h, 'input', []), { ret: 1, newValue: 16 });
+});

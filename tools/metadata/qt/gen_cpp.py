@@ -501,9 +501,11 @@ class Model:
         if s.get("synthetic"):
             # Raised by the backend itself (an event filter), not by a QObject signal. Both are
             # sync signals: the JS handler's result decides (close_request: veto, key_press: consume).
-            if s["synthetic"] not in ("close_request", "key_press"):
+            if s["synthetic"] not in ("close_request", "key_press") and s["synthetic"] not in EVENT_FAMILIES:
                 raise GenError(f"{tag}: unknown synthetic signal {s['synthetic']}")
             s.setdefault("args", [])
+            for a in s["args"]:
+                a.setdefault("ref", {"int": "i32", "string": "string", "Point": "record<Point>", "Size": "record<Size>"}[a["type"]])
             s["decl_cls"], s["rec"], s["qparams"] = None, None, []
             return
         c, rec = self.find(cls, "signals", lambda r: r["name"] == s["native"])
@@ -1350,6 +1352,15 @@ def emit_attrs(m: Model) -> str:
     return "\n".join(out)
 
 
+# Synthetic signals backed by the event-family filter of backend.cpp.in (ABI v2.4): family -> EvFam enumerator.
+EVENT_FAMILIES = {
+    "key_release": "EV_KEY_RELEASE", "mouse_press": "EV_MOUSE_PRESS", "mouse_release": "EV_MOUSE_RELEASE",
+    "mouse_move": "EV_MOUSE_MOVE", "mouse_double_click": "EV_DOUBLE_CLICK", "wheel": "EV_WHEEL",
+    "focus_in": "EV_FOCUS_IN", "focus_out": "EV_FOCUS_OUT", "enter": "EV_ENTER", "leave": "EV_LEAVE",
+    "resize": "EV_RESIZE", "context_menu": "EV_CONTEXT_MENU",
+}
+
+
 def emit_listen(m: Model) -> str:
     out = ["int gen_listen(svl_handle h, Entry &e, svl_id sig, bool on, uint32_t flags) {", "  QObject *o = e.obj.data();",
            "  const ListenKey key{h, sig, flags};",
@@ -1365,6 +1376,8 @@ def emit_listen(m: Model) -> str:
             if s.get("synthetic"):
                 if s["synthetic"] == "key_press":
                     out.append(f"        case {sid}: return listen_key(h, e, sig, on, flags);")
+                elif s["synthetic"] in EVENT_FAMILIES:
+                    out.append(f"        case {sid}: return listen_event(h, e, sig, on, flags, {EVENT_FAMILIES[s['synthetic']]});")
                 else:
                     # onRequestClose: while listened, the JS handler decides each native close.
                     out.append(f"        case {sid}: {{")
@@ -1522,6 +1535,7 @@ def gen_backend(m: Model, digest: str, tmpl: str) -> str:
     parts["SERDES"] = (HERE / "templates" / "serdes.hpp.in").read_text()
     parts["VLIST"] = (HERE / "templates" / "vlist.hpp.in").read_text()
     parts["MENUS"] = (HERE / "templates" / "menus.hpp.in").read_text()
+    parts["CANVAS"] = (HERE / "templates" / "canvas.hpp.in").read_text()
     for k, v in parts.items():
         tmpl = tmpl.replace(f"@@{k}@@" if k == "DIGEST" else f"//@@{k}@@", v)
     return tmpl
@@ -1557,6 +1571,7 @@ class Tests:
     def __init__(self, m: Model):
         self.m = m
         self.fns: list[tuple[str, str]] = []
+        self.synthetic_done: set[str] = set()
         self.src: list[str] = []
         self.facts: dict[str, dict] = {}
         self.errors: list[str] = []
@@ -1786,6 +1801,9 @@ class Tests:
     def signal(self, e, s):
         t = e["tag"]
         if s.get("synthetic"):
+            if s.get("inherited_from") and s["js"] in self.synthetic_done:
+                return  # an inherited event family is verified on the first element that has it
+            self.synthetic_done.add(s["js"])
             self.add(f"signal/{t}.{s['js']}/synthetic_listen", "\n".join([
                 f'  svl_handle h = mk("{t}");', f'  svl_id sig = G("{t}", "{s["js"]}");', "  CHECK(sig != 0);",
                 "  CHECK(B->listen(B->self, h, sig, true) == 0);", "  CHECK(B->listen(B->self, h, sig, false) == 0);",
@@ -2274,7 +2292,7 @@ def main() -> int:
     try:
         m = Model(res(cfg["input"]["metadata"]), res(cfg["input"]["overrides"]), cfg.get("elements", {}).get("tags", []))
         templ = HERE / "templates"
-        digest = m.digest([HERE / "gen_cpp.py", templ / "backend.cpp.in", templ / "verify.cpp.in", templ / "serdes.hpp.in", templ / "vlist.hpp.in"])
+        digest = m.digest([HERE / "gen_cpp.py", templ / "backend.cpp.in", templ / "verify.cpp.in", templ / "serdes.hpp.in", templ / "vlist.hpp.in", templ / "menus.hpp.in", templ / "canvas.hpp.in"])
         o = cfg["output"]
         write_text(out / o["backend"], gen_backend(m, digest, (templ / "backend.cpp.in").read_text()))
         verify, facts = gen_verify(m, digest, (templ / "verify.cpp.in").read_text())

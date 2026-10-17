@@ -19,6 +19,7 @@ unsafe extern "C" {
     fn svl_qt_app_stylesheet() -> *const std::ffi::c_char;
     fn svl_qt_opacity(h: u64) -> f64;
     fn svl_qt_type_text(h: u64, utf8: *const std::ffi::c_char) -> i32;
+    fn svl_qt_send_mouse(h: u64, kind: i32, x: f64, y: f64, button: i32) -> i32;
     fn svl_qt_close(h: u64) -> i32;
     fn svl_qt_grid_cell(grid: u64, child: u64, row: *mut i32, col: *mut i32, row_span: *mut i32, col_span: *mut i32) -> i32;
     fn svl_qt_trigger_actions(h: u64) -> i32;
@@ -126,6 +127,15 @@ pub mod hooks {
     /// The opacity of the widget's `QGraphicsOpacityEffect` (1.0 without one).
     pub fn opacity(h: u64) -> f64 {
         unsafe { svl_qt_opacity(h) }
+    }
+
+    /// Sends a mouse event to the widget behind `h`: kind 0 press, 1 release, 2 move, 3 wheel (`button` is the
+    /// vertical angle delta). `button` is a `Qt::MouseButton` value (1 = left) for the others.
+    pub fn send_mouse(h: u64, kind: i32, x: f64, y: f64, button: i32) -> Result<(), String> {
+        match unsafe { svl_qt_send_mouse(h, kind, x, y, button) } {
+            -1 => Err(format!("handle {h} is not a widget")),
+            _ => Ok(()),
+        }
     }
 
     /// Types `text` into the `QLineEdit` behind `h` with key events, replacing its content.

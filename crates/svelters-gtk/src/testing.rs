@@ -169,7 +169,10 @@ unsafe extern "C" fn h_call_sync(p: *mut c_void, h: svl_handle, sig: svl_id, arg
         }
         SyncReply::Value(v) => {
             r.sync_calls.borrow_mut().push((h, sig, args));
-            v.with_raw(|raw| unsafe { *out = *raw });
+            // Lists and maps point into the raw storage: leak it (test harness) so the pointers stay valid.
+            let vals: &'static [Value] = Box::leak(vec![v].into_boxed_slice());
+            let raw: &'static RawValues<'static> = Box::leak(Box::new(RawValues::new(vals)));
+            unsafe { *out = *raw.as_ptr() };
             SVL_SYNC_OK
         }
     }

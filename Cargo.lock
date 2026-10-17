@@ -1062,6 +1062,7 @@ name = "svelters-gtk"
 version = "0.0.0"
 dependencies = [
  "gtk4",
+ "serde_json",
  "svelters-abi",
  "svelters-host",
 ]

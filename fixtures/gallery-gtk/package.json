@@ -9,6 +9,8 @@
     "watch": "svelters-build --watch"
   },
   "dependencies": {
+    "@svelters/canvas": "workspace:*",
+    "@svelters/lists": "workspace:*",
     "svelte": "5.57.2"
   },
   "devDependencies": {

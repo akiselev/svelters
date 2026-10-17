@@ -401,6 +401,16 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:ListBox:slot:children:attr:header",
+   "fingerprint": "e60b625a7aa44a9d",
+   "kind": "ListBox",
+   "name": "children.header",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_listbox_children_header"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Notebook:slot:pages:attr:tabLabel",
    "fingerprint": "4b2732ddaa71ac92",
    "kind": "Notebook",
@@ -1173,6 +1183,16 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:DrawingArea:signal:resize",
+   "fingerprint": "ca3ae553c46af6b0",
+   "kind": "DrawingArea",
+   "name": "resize",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_drawingarea_resize"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:DrawingArea:prop:content-height",
    "fingerprint": "466dfd47e48fe8c8",
    "kind": "DrawingArea",
@@ -1190,6 +1210,16 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_drawingarea_content_width"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:DrawingArea:prop:ops",
+   "fingerprint": "3290a6758578cc90",
+   "kind": "DrawingArea",
+   "name": "ops",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_drawingarea_ops"
    ]
   },
   {
@@ -1465,6 +1495,126 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:EventControllerFocus:signal:enter",
+   "fingerprint": "68ad2fcbdd365129",
+   "kind": "EventControllerFocus",
+   "name": "enter",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_eventcontrollerfocus_enter"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:EventControllerFocus:signal:leave",
+   "fingerprint": "961bddc9ff800f3b",
+   "kind": "EventControllerFocus",
+   "name": "leave",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_eventcontrollerfocus_leave"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:EventControllerKey:signal:key-pressed",
+   "fingerprint": "8f7c49ae714fead4",
+   "kind": "EventControllerKey",
+   "name": "key-pressed",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_eventcontrollerkey_key_pressed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:EventControllerKey:signal:key-released",
+   "fingerprint": "3f575528a86a9fbd",
+   "kind": "EventControllerKey",
+   "name": "key-released",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_eventcontrollerkey_key_released"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:EventControllerKey:signal:modifiers",
+   "fingerprint": "180a34cc0a0902ab",
+   "kind": "EventControllerKey",
+   "name": "modifiers",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_eventcontrollerkey_modifiers"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:EventControllerMotion:signal:enter",
+   "fingerprint": "30d638766ad0e406",
+   "kind": "EventControllerMotion",
+   "name": "enter",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_eventcontrollermotion_enter"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:EventControllerMotion:signal:leave",
+   "fingerprint": "9a8deb617ac4db65",
+   "kind": "EventControllerMotion",
+   "name": "leave",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_eventcontrollermotion_leave"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:EventControllerMotion:signal:motion",
+   "fingerprint": "c7b735e2b0d71e3a",
+   "kind": "EventControllerMotion",
+   "name": "motion",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_eventcontrollermotion_motion"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:EventControllerScroll:signal:scroll",
+   "fingerprint": "a757fd10d96b0cfc",
+   "kind": "EventControllerScroll",
+   "name": "scroll",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_eventcontrollerscroll_scroll"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:EventControllerScroll:signal:scroll-begin",
+   "fingerprint": "7bdc4db06da25687",
+   "kind": "EventControllerScroll",
+   "name": "scroll-begin",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_eventcontrollerscroll_scroll_begin"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:EventControllerScroll:signal:scroll-end",
+   "fingerprint": "361a91f82a3d801f",
+   "kind": "EventControllerScroll",
+   "name": "scroll-end",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_eventcontrollerscroll_scroll_end"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:EventControllerScroll:prop:flags",
+   "fingerprint": "7007e496fe49d253",
+   "kind": "EventControllerScroll",
+   "name": "flags",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_eventcontrollerscroll_flags"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Expander:signal:activate",
    "fingerprint": "ba7009796f8cd676",
    "kind": "Expander",
@@ -1683,6 +1833,36 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_frame_label_xalign"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:GestureClick:signal:pressed",
+   "fingerprint": "aa667bb4f7e34cb8",
+   "kind": "GestureClick",
+   "name": "pressed",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_gestureclick_pressed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:GestureClick:signal:released",
+   "fingerprint": "56f48010722c0ff7",
+   "kind": "GestureClick",
+   "name": "released",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_gestureclick_released"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:GestureClick:signal:stopped",
+   "fingerprint": "9f2e5492742f5eee",
+   "kind": "GestureClick",
+   "name": "stopped",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_gestureclick_stopped"
    ]
   },
   {
@@ -3359,6 +3539,28 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:SpinButton:signal:input",
+   "fingerprint": "76a71fc80367017a",
+   "kind": "SpinButton",
+   "name": "input",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_spinbutton_input",
+    "generated::verify::syncresult_spinbutton_input"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:SpinButton:signal:output",
+   "fingerprint": "40c16a38a2dd1ac5",
+   "kind": "SpinButton",
+   "name": "output",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_spinbutton_output",
+    "generated::verify::syncresult_spinbutton_output"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:SpinButton:signal:value-changed",
    "fingerprint": "12a97d8344ec58e5",
    "kind": "SpinButton",
@@ -4161,6 +4363,16 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_widget_css_classes"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:cursor",
+   "fingerprint": "accac54bb9c50e2d",
+   "kind": "Widget",
+   "name": "cursor",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_widget_cursor"
    ]
   },
   {

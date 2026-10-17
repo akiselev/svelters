@@ -292,6 +292,42 @@ void (*frame)(void *self);           /* a requested frame is due; runs requestAn
 - A throwing handler yields `0` with a `null` result and an error in the host's error list.
 - The result comes from the event object (`e.result`, `e.preventDefault()`, `e.stopPropagation()`), never from the handler's return value.
 
+### ABI v2.4 additive (X8: typed sync results, event families, canvas)
+
+No vtable change.
+
+**Typed sync results.** A `call_sync` result (`out`) may be a `MAP` (from a JS object) or a `LIST` (from an array) of primitives, besides null, bool, number and string. The handler sets it as `e.result = {ret?, <out>: v}`; it is still never read from the return value. Signals with out-parameters declare them in metadata (`out_params: [{index, name, type}]`, GTK `SignalInfo.outs`): the `gpointer` parameters GTK passes to the handler (`GtkSpinButton::input` has `gdouble *new_value`). The backend does not pass those to JS (the listener gets `(event)` only) and writes them from the result:
+
+- `{ret?, name: n}`: `name` is the out-parameter's name; `ret` is the signal's own return value (bool or int), default 1 ("handled") when an out-parameter was written, else 0.
+- a bare number is shorthand for `{ret: 1, <first out>: n}`.
+- `null` (or anything else): no decision; the toolkit default runs and nothing is written.
+- Busy (-2) and failed (-1) replies behave as `null`.
+
+`GtkSpinButton::input`: `ret` 1 = converted, 0 = not handled (GTK parses the text), -1 = GTK_INPUT_ERROR; out `newValue`. `output` is `bool_stop`: the handler displays the value with `text` and calls `e.preventDefault()`.
+
+**Event families.** Qt widgets (every `QWidget` element) have synthetic signals raised by an event filter, besides `key-press`: `key-release`, `mouse-press`, `mouse-release`, `mouse-move`, `double-click`, `wheel`, `context-menu` (sync: `e.preventDefault()` consumes the event before the widget sees it) and `focus-in`, `focus-out`, `enter`, `leave`, `resize` (posted, never consumed). Payloads (listeners get `(event, ...args)` for sync ones, `(...args)` for posted ones):
+
+| signal | args |
+|---|---|
+| `key-release` | `key`, `text`, `modifiers` |
+| `mouse-press`, `mouse-release`, `mouse-move`, `double-click` | `position` (Point), `button`, `buttons`, `modifiers` (Qt enum masks as integers) |
+| `wheel` | `position` (Point), `angleDelta` (Point), `buttons`, `modifiers` |
+| `context-menu` | `position` (Point), `globalPosition` (Point), `reason` |
+| `focus-in`, `focus-out` | `reason` |
+| `enter` | `position` (Point) |
+| `leave` | none |
+| `resize` | `size` (Size), `oldSize` (Size) |
+
+`listen_ex` with `SVL_LISTEN_CAPTURE` works for every family (an application-level filter calls the listeners of proper ancestors first, outermost first, then the target's own); `SVL_LISTEN_AFTER` is refused. Listening to `mouse-move` turns on mouse tracking for the widget.
+
+GTK: the same events are signals of declarative controller elements, not of widgets: `keycontroller` (`key-pressed`, `key-released`, `modifiers`), `clickgesture` (`pressed`, `released`, `stopped`), `motioncontroller` (`enter`, `motion`, `leave`), `scrollcontroller` (`scroll`, `scroll-begin`, `scroll-end`; prop `flags` must include `vertical` or `horizontal` to receive scrolls), `focuscontroller` (`enter`, `leave`). A controller element is a child of the widget it controls (inserted with `add_controller`, X2); `bind:this` and props work as for any element. `on<signal>capture` on a controller puts it in the capture phase (X3).
+
+**Recording canvas (draw func).** JS never runs while a toolkit paints. A `canvas` element (GTK: the `drawingarea`, also spelled `canvas`; Qt: the hand-written `canvas` kind, a `QWidget` whose `paintEvent` replays) takes one value, the property `ops`: a JSON array of `[name, ...args]` arrays, the display list recorded by `@svelters/canvas` (`Canvas2D`). Ops: `save restore translate rotate scale transform setTransform globalAlpha fillStyle strokeStyle lineWidth lineCap lineJoin setLineDash font textAlign textBaseline beginPath moveTo lineTo bezierCurveTo quadraticCurveTo arc rect closePath fill stroke clip fillRect strokeRect clearRect fillText strokeText`; colors are CSS colors, fonts the CSS shorthand (`bold 14px sans-serif`); unknown ops and bad arguments are skipped. Setting `ops` repaints (`queue_draw` / `update`); an invalid list is an error and keeps the old one. The size is not an argument of a draw callback: the widget posts `resize` (GTK `(width, height)`, Qt `(Size, oldSize)`) and JS records a list for it. `contentWidth`/`contentHeight` set the requested size (both toolkits), `hexpand`/`vexpand` on Qt. The Qt canvas also has the event-family signals above, so it is interactive.
+
+**ListBox headers.** `GtkListBox` sort, filter and header funcs are not exposed (they would call JS once per row pair during layout, X5's decision). JS renders the rows in the order and subset it wants, keyed, and a row child carries the attribute `parent:header="Section"` (child attribute `header` of the `children` slot, `""`/`null` removes it): a native header func turns the stored text into a heading label.
+
+**Gdk values.** A string converts to a `GdkCursor` (CSS cursor name) and, where a `GdkPaintable` or `GdkTexture` is wanted, to a texture loaded from a path or `file:` URI; a `BYTES` value is decoded as an image (PNG, JPEG, ...).
+
 ### Model-view protocol (M5)
 
 No vtable change. A backend may provide the portable composite widget kind `virtuallist` (an "extra" kind resolved by name, like `gio-file`). It wraps the toolkit's native model-view widget and speaks one protocol. The model lives in JS: the native side holds only an integer *row id* per item.

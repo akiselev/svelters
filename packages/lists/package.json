@@ -6,13 +6,14 @@
   "description": "Virtualized, model-backed lists for svelters: a JS array exposed to GtkListView/QListView, rows rendered by a recycled pool of Svelte components",
   "exports": {
     ".": { "svelte": "./src/index.js", "default": "./src/index.js" },
-    "./diff": "./src/diff.js"
+    "./diff": "./src/diff.js",
+    "./arrange": "./src/arrange.js"
   },
   "dependencies": {
     "@svelters/renderer": "workspace:*",
     "svelte": "5.57.2"
   },
   "scripts": {
-    "test": "node --test test/diff.test.mjs"
+    "test": "node --test test/diff.test.mjs test/arrange.test.mjs"
   }
 }
