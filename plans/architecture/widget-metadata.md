@@ -38,7 +38,7 @@ Agents draft the annotations, and generated tests verify them.
 
 ## Generator language
 
-The ingestion scripts and generators are Python during the prototype (P3/P4). They move to Rust in M3 so that a project's `build.rs` can run them in-process, with no Python at build time. Until then they must stay deterministic: inputs are only the metadata JSON, the overrides and the build config, and they write byte-identical output on rerun. The port can then be checked by diffing outputs.
+The ingestion scripts and generators are Python through development. Near release (M6), once the generators have stopped changing, the generators move to Rust so that a project's `build.rs` can run them in-process, with no Python at build time. The ingestion scripts stay Python: maintainers run them offline and check in their output. Until then they must stay deterministic: inputs are only the metadata JSON, the overrides and the build config, and they write byte-identical output on rerun. The port can then be checked by diffing outputs.
 
 Layout: `tools/metadata/{common,gtk,qt}/` holds the scripts, `metadata/{gtk,qt}/*.json` holds the generated, checked-in element kinds, and `metadata/overrides/{gtk,qt}/*.yaml` holds the annotations.
 

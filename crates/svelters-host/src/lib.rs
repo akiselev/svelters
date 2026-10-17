@@ -67,7 +67,7 @@ impl HostCallbacks for Callbacks {
         Err("call_sync is not supported yet (M4)".into())
     }
 
-    fn on_destroyed(&self, h: svl_handle) {
+    fn on_destroyed(&self, h: svl_handle, _reason: u32) {
         self.core.forget_handle(h);
     }
 }

@@ -42,7 +42,7 @@ Widget metadata and codegen run alongside these layers: upstream sources plus an
   - Handler return values reach the host directly, because the PR doesn't delegate events.
   - The DOM shim (`@svelters/dom`) stays as a fallback.
 - L2/L3 boundary: `plans/architecture/backend-abi.md`. The ABI is generic and never grows per native method. Per-method knowledge lives in generated backend code keyed by IDs.
-- Backends are generated from widget metadata from the first prototype. The generators are Python during P and move to Rust in M3 so that `build.rs` scripts are self-contained.
+- Backends are generated from widget metadata from the first prototype. The generators stay Python through development and move to Rust near release (M6), once their shape is final, so that `build.rs` scripts are self-contained. Ingestion scripts stay Python.
 - Qt backend: C++ generated from a project-level **leaf crate's** `build.rs`, compiled with `cc` and linked in. Only that crate's config/manifest changes rebuild it. See `plans/architecture/backend-abi.md#qt-build-leaf-crate`.
 - Metadata and annotations: `plans/architecture/widget-metadata.md`.
 
@@ -59,10 +59,10 @@ Widget metadata and codegen run alongside these layers: upstream sources plus an
 | P4 | Qt lane: Python qdoc/metaobject/typesystem ingestion → metadata → generated C++ backend, built by a leaf-crate `build.rs` | ABI draft, schema v0 |
 | P5 | Integration: P1 bundle runs in P2 host on P3 and P4 backends; Xvfb screenshot tests | P1b, P2–P4 |
 | M2 | ABI v2 (`plans/architecture/backend-abi.md#abi-v2`): native timers via `schedule_wake` replace the host timer thread; lifetime classes, `handle_info`, `on_destroyed` reasons, cascading native death, host-decided quit. Dev loop: Vite watch → reload bundle in the running host without Cargo; source-mapped errors | P5 |
-| M3 | Codegen at scale: port the Python generators to Rust (in-process from `build.rs`), annotate beyond the P kinds through the agent loop, GTK dynamic GI method invocation, full `.d.ts` | P5 |
+| M3 | Codegen at scale: annotate beyond the P kinds through the agent loop (A1), GTK dynamic GI method invocation, full `.d.ts`, widget gallery per toolkit | P5 |
 | M4 | Native semantics: named child slots/replaceable sub-widgets, sync handlers and return values, two-way binding, ownership/lifetime | M3, signals/slots research |
 | M5 | Virtualized lists/model-view (GListModel, QAbstractItemModel) | M4 |
-| M6 | Release builds: binding linker (tree-shaken native roots → thin generated bindings) | M3 |
+| M6 | Release builds: port the generators (not the ingestion scripts) to Rust so `build.rs` needs no Python; binding linker (tree-shaken native roots → thin generated bindings) | M3, generators stable |
 | M7 | egui backend | M4 |
 | Later | Styling, accessibility/semantic graph, devtools, packaging, upstream-compat automation, ecosystem integrations | — |
 

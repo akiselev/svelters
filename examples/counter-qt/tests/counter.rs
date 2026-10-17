@@ -72,7 +72,7 @@ unsafe extern "C" fn post_event(_: *mut c_void, h: svl_handle, sig: svl_id, _: *
     STATE.lock().unwrap().as_mut().unwrap().events.push((h, sig));
 }
 
-unsafe extern "C" fn on_destroyed(_: *mut c_void, _: svl_handle) {}
+unsafe extern "C" fn on_destroyed(_: *mut c_void, _: svl_handle, _: u32) {}
 
 unsafe extern "C" fn call_sync(_: *mut c_void, _: svl_handle, _: svl_id, _: *const svl_value, _: usize, _: *mut svl_value) -> i32 {
     -1

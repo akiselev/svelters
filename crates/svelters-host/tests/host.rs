@@ -3,7 +3,7 @@
 use std::cell::Cell;
 use std::path::PathBuf;
 use std::time::{Duration, Instant};
-use svelters_abi::{Backend, BackendVtable, HostRef, NameKind, Value, Waker, svl_handle, svl_id};
+use svelters_abi::{Backend, BackendVtable, HostRef, NameKind, Value, Waker, svl_handle, svl_handle_info, svl_id};
 use svelters_backend_log::{LogBackend, LogOptions, Step, parse_script};
 use svelters_host::testing::{fixture_config, run_bundle};
 use svelters_host::{ErrorKind, Host, HostConfig};
@@ -344,6 +344,12 @@ impl Backend for Nesting {
     }
     fn listen(&self, h: svl_handle, s: svl_id, on: bool) -> Result<(), String> {
         self.inner.listen(h, s, on)
+    }
+    fn handle_info(&self, h: svl_handle) -> Result<svl_handle_info, String> {
+        self.inner.handle_info(h)
+    }
+    fn schedule_wake(&self, ms: i64) {
+        self.inner.schedule_wake(ms)
     }
     fn run(&self, host: &HostRef<'_>) -> Result<(), String> {
         // SAFETY: the host outlives this call; the stashed copy is cleared before returning.

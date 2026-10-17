@@ -15,6 +15,7 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | S1 serdes main types | IN PROGRESS | | ABI v3 value model + converters; merges after P5 |
 | M2a ABI v2 | IN PROGRESS | | native timers via schedule_wake, lifetime classes, on_destroyed reasons, host-decided quit; interface delta lands first, then S1 merges |
 | M2b dev loop | IN PROGRESS | | watch build, in-process bundle reload, source-mapped errors, svelte-check |
+| A1 API surface + galleries | QUEUED | | starts when F1 merges; plans/milestones/A1-api-surface.md (1 lead spawning Sonnet workers, ≤8 concurrent) |
 | P5 integration | DONE | 1b22e76 | counter on GTK+Qt; 57/57 nextest incl. 12 integration; first frame GTK ~1.2 s / Qt ~0.2 s; binaries 3.4 / 2.6 MB; JS dominates the 1000-row split (host/ABI < 20 ms) |
 | M2 dev loop | QUEUED | | |
 | M3 metadata + codegen | QUEUED | | |
