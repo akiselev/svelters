@@ -533,6 +533,25 @@ impl Harness {
         Ok(self.name_value(&unsafe { Value::from_raw(&out) }))
     }
 
+    /// A styling op (ABI v2.3). `text` of `None` is `SVL_NULL`. Returns the op's result.
+    pub fn style(&self, op: u32, h: u64, text: Option<&str>) -> Result<i32, String> {
+        let vt = self.vt();
+        let f = vt.style.expect("style");
+        let v = match text {
+            Some(t) => Value::Str(t.to_string()),
+            None => Value::Null,
+        };
+        v.with_raw(|raw| {
+            let rc = unsafe { f(vt.self_, op, h, raw) };
+            if rc < 0 { Err(self.err()) } else { Ok(rc) }
+        })
+    }
+
+    /// CSS parse errors the backend's providers reported since the last call.
+    pub fn style_errors(&self) -> Vec<String> {
+        self.backend.take_style_errors()
+    }
+
     pub fn listen(&self, h: u64, signal: &str, on: bool) -> Result<(), String> {
         let id = self.resolve(SVL_SIGNAL, self.kind_of(h), signal);
         if id == 0 {
