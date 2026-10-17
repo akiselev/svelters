@@ -15,7 +15,8 @@ use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::{Arc, Condvar, Mutex, MutexGuard};
 use std::time::Duration;
 use svelters_abi::{
-    Backend, BackendVtable, HostRef, NameKind, SVL_LIFE_OWNED, Value, Waker, svl_handle, svl_handle_info, svl_id,
+    Backend, BackendVtable, HostRef, MemberDesc, NameKind, SVL_BOOL, SVL_F64, SVL_I64, SVL_LIFE_OWNED, SlotDesc, Value, Waker, svl_handle,
+    svl_handle_info, svl_id,
 };
 
 /// One scripted interaction step.
@@ -201,17 +202,31 @@ impl Names {
     }
 }
 
+/// Element tag -> prop -> coarse type (`integer`, `number`, `boolean`), as in
+/// `packages/testhost/src/schema.json`.
+pub type Schema = HashMap<String, HashMap<String, String>>;
+
+/// Parses the JSON form of a [`Schema`].
+pub fn parse_schema(json: &str) -> Result<Schema, String> {
+    serde_json::from_str(json).map_err(|e| format!("schema: {e}"))
+}
+
 /// Fake-loop tuning.
 #[derive(Clone, Debug)]
 pub struct LogOptions {
     /// How long the loop idles without a `wake` after the script before it returns.
     pub settle: Duration,
+    /// Stand-in for the descriptors of a real backend: with a schema the log backend publishes
+    /// property descriptors, so the host coerces attribute strings the way it does for a native
+    /// toolkit and the log matches the Node TestHost's, which uses the same schema.
+    pub schema: Option<Arc<Schema>>,
 }
 
 impl Default for LogOptions {
     fn default() -> Self {
         LogOptions {
             settle: Duration::from_millis(150),
+            schema: None,
         }
     }
 }
@@ -330,6 +345,29 @@ impl LogBackend {
 impl Backend for LogBackend {
     fn resolve(&self, what: NameKind, kind: svl_id, name: &str) -> svl_id {
         self.shared.lock().names.intern(what as u32, kind, name)
+    }
+
+    fn describe(&self, what: NameKind, kind: svl_id, member: svl_id) -> Option<MemberDesc> {
+        let schema = self.shared.opts.schema.as_ref()?;
+        if what != NameKind::Prop {
+            return None;
+        }
+        let st = self.shared.lock();
+        let (_, _, name) = st.names.rev.get((member as usize).checked_sub(1)?)?;
+        let ty = schema.get(st.names.name(kind))?.get(name)?;
+        let slot = match ty.as_str() {
+            "integer" => SlotDesc::new(SVL_I64),
+            "number" => SlotDesc::new(SVL_F64),
+            "boolean" => SlotDesc::new(SVL_BOOL),
+            _ => return None,
+        };
+        let slot = slot.named(name);
+        Some(MemberDesc {
+            name: name.clone(),
+            params: vec![slot.clone()],
+            ret: slot,
+            flags: 0,
+        })
     }
 
     fn create(&self, kind: svl_id) -> Result<svl_handle, String> {

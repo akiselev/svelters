@@ -13,7 +13,7 @@
     "svelte": "5.57.2"
   },
   "scripts": {
-    "test": "node --conditions=custom-renderer --test test/renderer.test.mjs"
+    "test": "node --conditions=custom-renderer --test test/renderer.test.mjs test/serdes.test.mjs"
   },
   "devDependencies": {
     "@svelters/testhost": "workspace:*"

@@ -35,6 +35,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent / "common"))
 import svmeta  # noqa: E402
+from tsvalues import write_values_dts  # noqa: E402
 
 
 class GenError(Exception):
@@ -1162,6 +1163,7 @@ def main() -> int:
         write_text(out / o["dts"], gen_dts(m))
         if a.dts:
             write_text(Path(a.dts), gen_dts(m))
+            write_values_dts(Path(a.dts).parent / "values.d.ts")
     except GenError as ex:
         print(f"gen_cpp: {ex}", file=sys.stderr)
         return 1

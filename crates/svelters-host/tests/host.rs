@@ -101,6 +101,7 @@ fn scripted_timers_run_on_virtual_clock_in_due_order() {
 fn real_timers_and_promises_complete_without_busy_polling() {
     let opts = LogOptions {
         settle: Duration::from_millis(150),
+        ..LogOptions::default()
     };
     let started = Instant::now();
     let r = run_bundle(&js("timers_promises.js"), vec![], quiet(), opts).unwrap();

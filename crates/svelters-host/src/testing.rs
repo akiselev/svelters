@@ -6,7 +6,7 @@
 use crate::{ConsoleLine, Host, HostConfig, JsError};
 use std::path::{Path, PathBuf};
 use std::time::Duration;
-use svelters_backend_log::{LogBackend, LogOptions, Step, parse_script};
+use svelters_backend_log::{LogBackend, LogOptions, Step, parse_schema, parse_script};
 
 /// Everything observable after a bundle ran to completion on the log backend.
 pub struct RunReport {
@@ -54,6 +54,10 @@ pub fn fixture_config() -> (HostConfig, LogOptions) {
         cfg,
         LogOptions {
             settle: Duration::ZERO,
+            // The descriptors the log backend stands in for; the Node TestHost loads the same file.
+            schema: parse_schema(include_str!("../../../packages/testhost/src/schema.json"))
+                .ok()
+                .map(std::sync::Arc::new),
         },
     )
 }
