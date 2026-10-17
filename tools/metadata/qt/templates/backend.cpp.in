@@ -58,6 +58,7 @@ struct Core {
   std::string strbuf;
   std::atomic<QObject *> waker{nullptr};
   std::atomic<bool> wake_pending{false};
+  std::atomic<bool> queued{false};  // a checkpoint is already queued on the loop
 };
 
 Core g;
@@ -103,6 +104,7 @@ void ensure_app() {
 }
 
 void run_checkpoint() {
+  g.queued.store(false);
   if (g.host && g.host->checkpoint) g.host->checkpoint(g.host->self);
 }
 
@@ -330,8 +332,10 @@ int b_run(void *, const svl_host *host) {
   g.host = host;
   ensure_app();
   // Like GTK's `activate`: one checkpoint when the loop starts, whether or not a wake was pending.
-  g.wake_pending.store(false);
-  QMetaObject::invokeMethod(g.waker.load(), [] { run_checkpoint(); }, Qt::QueuedConnection);
+  if (g.wake_pending.exchange(false) || !g.queued.load()) {
+    g.queued.store(true);
+    QMetaObject::invokeMethod(g.waker.load(), [] { run_checkpoint(); }, Qt::QueuedConnection);
+  }
   return QCoreApplication::exec();
 }
 
@@ -341,6 +345,7 @@ void b_wake(void *) {
     g.wake_pending.store(true);
     return;
   }
+  g.queued.store(true);
   QMetaObject::invokeMethod(w, [] { run_checkpoint(); }, Qt::QueuedConnection);
 }
 
