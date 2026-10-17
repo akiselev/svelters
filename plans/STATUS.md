@@ -6,6 +6,7 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | --- | --- | --- | --- |
 | P0 setup | DONE | e64b97c | tag `v1-legacy`, move 2021 tree to `legacy/`, new workspace skeleton |
 | P1 JS lane | DONE | 3f94c1a | 4 fixtures (19/87/35/9 ops) pass in Node TestHost |
+| P1b renderer fork | IN PROGRESS | | adopt PR #18042 as Svelte fork before P5 |
 | P2 host lane | IN PROGRESS | | |
 | P3 GTK lane | IN PROGRESS | | |
 | P4 Qt lane | IN PROGRESS | | |

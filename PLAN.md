@@ -36,7 +36,11 @@ L4  toolkit      GTK4 / Qt 6 / egui
 
 Widget metadata and codegen run alongside these layers: upstream sources plus annotations produce element-kind tables, the TypeScript typings, the Qt C++ dispatch code, and the GTK method bindings.
 
-- L1 decision: the shim works on released Svelte 5.57 (`docs/notes/svelte5-custom-renderer.md`). The official renderer PR is under trial (`docs/notes/custom-renderer-trial.md`). The host-op interface is shaped like the PR's 19-method renderer contract so either adapter can drive it.
+- L1 decision (2026-10-16): Svelte PR #18042 (custom renderer API) is our Svelte fork until it merges upstream (`docs/notes/custom-renderer-trial.md`).
+  - It's vendored as a tarball pinned in `vendor/svelte/PIN`.
+  - An agent tracks upstream weekly (`tests/renderer-conformance/WEEKLY.md`).
+  - Handler return values reach the host directly, because the PR doesn't delegate events.
+  - The DOM shim (`@svelters/dom`) stays as a fallback.
 - L2/L3 boundary: `plans/architecture/backend-abi.md`. The ABI is generic and never grows per native method. Per-method knowledge lives in generated backend code keyed by IDs.
 - Backends are generated from widget metadata from the first prototype. The generators are Python during P and move to Rust in M3 so that `build.rs` scripts are self-contained.
 - Qt backend: C++ generated from a project-level **leaf crate's** `build.rs`, compiled with `cc` and linked in. Only that crate's config/manifest changes rebuild it. See `plans/architecture/backend-abi.md#qt-build-leaf-crate`.
@@ -48,10 +52,11 @@ Widget metadata and codegen run alongside these layers: upstream sources plus an
 | --- | --- | --- |
 | **P** | **Prototype: counter + keyed list on screen in GTK4 and Qt from one JS bundle** | — |
 | P1 | JS lane: build pipeline, `@svelters/dom` shim, fixtures, op-log TestHost in Node | — |
+| P1b | Switch L1 to the vendored renderer fork (`@svelters/renderer`), renderer conformance suite, weekly upstream tracking | P1 |
 | P2 | Host lane: Rust workspace, ABI crate + C header, rquickjs host, log backend | ABI draft |
 | P3 | GTK lane: Python GIR/PyGObject ingestion → metadata → generated GTK4 backend tables + verification tests | ABI draft, schema v0 |
 | P4 | Qt lane: Python qdoc/metaobject/typesystem ingestion → metadata → generated C++ backend, built by a leaf-crate `build.rs` | ABI draft, schema v0 |
-| P5 | Integration: P1 bundle runs in P2 host on P3 and P4 backends; Xvfb screenshot tests | P1–P4 |
+| P5 | Integration: P1 bundle runs in P2 host on P3 and P4 backends; Xvfb screenshot tests | P1b, P2–P4 |
 | M2 | Dev loop: Vite watch → reload bundle in the running host without Cargo; source-mapped errors | P5 |
 | M3 | Codegen at scale: port the Python generators to Rust (in-process from `build.rs`), annotate beyond the P kinds through the agent loop, GTK dynamic GI method invocation, full `.d.ts` | P5 |
 | M4 | Native semantics: named child slots/replaceable sub-widgets, sync handlers and return values, two-way binding, ownership/lifetime | M3, signals/slots research |
