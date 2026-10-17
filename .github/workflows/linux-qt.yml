@@ -1,0 +1,83 @@
+name: linux-qt
+
+on:
+  push:
+    branches: [master, 'ci/**']
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  # svelters-qt-build runs the generator with `python3 -I`; install-qt-action puts its own Python
+  # first on PATH, so point the build at the system one (which has python3-yaml).
+  SVELTERS_PYTHON: /usr/bin/python3
+
+jobs:
+  qt:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: System packages (Xvfb, xcb, fonts)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            xvfb xauth libgl1-mesa-dev libegl1 libxkbcommon-x11-0 libxcb-cursor0 libxcb-icccm4 \
+            libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-shape0 \
+            libxcb-xinerama0 libxcb-xfixes0 libfontconfig1 libdbus-1-3 \
+            fonts-dejavu-core fonts-noto-core python3-yaml python3-jsonschema
+
+      # Local development uses Qt 6.11 (metadata/qt was ingested from it).
+      - uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.11.*'
+          cache: true
+
+      - name: Point pkg-config at Qt
+        run: |
+          echo "PKG_CONFIG_PATH=$QT_ROOT_DIR/lib/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}" >> "$GITHUB_ENV"
+          echo "LD_LIBRARY_PATH=$QT_ROOT_DIR/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}" >> "$GITHUB_ENV"
+          ls "$QT_ROOT_DIR/lib/pkgconfig" | head -20 || true
+      - name: Check Qt6Widgets via pkg-config
+        run: pkg-config --modversion Qt6Widgets && pkg-config --cflags --libs Qt6Widgets
+
+      - name: Rust toolchain (rust-toolchain.toml)
+        run: rustup toolchain install --profile minimal && rustc --version
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: linux-qt
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-nextest
+
+      - uses: ./.github/actions/setup-pnpm
+      - name: Build bundles
+        run: pnpm --filter './fixtures/*' build
+
+      # counter is built with only its Qt feature; its *_gtk tests run in linux-gtk.yml.
+      - name: Build tests
+        run: cargo nextest run --no-run -p svelters-qt-build -p counter-qt -p counter --no-default-features --features counter/qt
+
+      - name: nextest (Qt)
+        timeout-minutes: 30
+        run: >
+          xvfb-run -a -s "-screen 0 1920x1080x24"
+          cargo nextest run --no-fail-fast
+          -p svelters-qt-build -p counter-qt -p counter --no-default-features --features counter/qt
+          -E '(not package(counter)) | test(/qt/)'
+
+      - name: Upload screenshots and reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-qt-artifacts
+          if-no-files-found: ignore
+          path: |
+            target/gallery/
+            target/p5/
+            target/*.png

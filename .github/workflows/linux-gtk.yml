@@ -1,0 +1,83 @@
+name: linux-gtk
+
+on:
+  push:
+    branches: [master, 'ci/**']
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  # Software GL under Xvfb is slow and flaky; the cairo renderer is deterministic.
+  GSK_RENDERER: cairo
+  NO_AT_BRIDGE: "1"
+
+jobs:
+  gtk:
+    # Ubuntu 24.04 ships GTK 4.14 (local development uses 4.22).
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: System packages (GTK4, Xvfb, fonts)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libgtk-4-dev xvfb xauth dbus-x11 at-spi2-core \
+            fonts-dejavu-core fonts-noto-core fonts-noto-color-emoji \
+            imagemagick python3-yaml python3-jsonschema
+          pkg-config --modversion gtk4
+
+      - name: Rust toolchain (rust-toolchain.toml)
+        run: rustup toolchain install --profile minimal && rustc --version
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: linux-gtk
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-nextest
+
+      - uses: ./.github/actions/setup-pnpm
+
+      - name: Build svelters-compile (needed by pnpm build)
+        run: cargo build -p svelters-compiler --bin svelters-compile
+      - name: Build bundles
+        run: pnpm build
+
+      # counter is built without its Qt feature; its *_qt tests run in linux-qt.yml.
+      - name: Build tests
+        run: >
+          cargo nextest run --no-run
+          -p svelters-abi -p svelters-backend-log -p svelters-host -p svelters-compiler -p svelters-gtk
+          -p counter --no-default-features --features counter/gtk
+
+      - name: nextest (GTK, host, compiler)
+        timeout-minutes: 30
+        run: >
+          xvfb-run -a -s "-screen 0 1920x1080x24" dbus-run-session --
+          cargo nextest run --no-fail-fast
+          -p svelters-abi -p svelters-backend-log -p svelters-host -p svelters-compiler -p svelters-gtk
+          -p counter --no-default-features --features counter/gtk
+          -E 'not (package(counter) & test(/qt/))'
+
+      # Platform-neutral parts of the other backends (tables, parsers); empty suites off-platform.
+      - name: nextest (portable backend crates)
+        if: ${{ !cancelled() }}
+        run: cargo nextest run --no-fail-fast -p svelters-apple -p svelters-appkit -p svelters-winui -p counter-mac -p counter-win
+
+      - name: Upload screenshots and reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-gtk-artifacts
+          if-no-files-found: ignore
+          path: |
+            target/gallery/
+            target/p5/
+            target/m2b/
+            target/*.png

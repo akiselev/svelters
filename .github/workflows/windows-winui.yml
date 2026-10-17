@@ -1,0 +1,119 @@
+name: windows-winui
+
+# Windows minutes cost 2x on a private repo: only run when something the WinUI build uses changed.
+on:
+  push:
+    branches: [master, 'ci/**']
+    paths: &paths
+      - 'crates/svelters-abi/**'
+      - 'crates/svelters-host/**'
+      - 'crates/svelters-backend-log/**'
+      - 'crates/svelters-winui/**'
+      - 'examples/counter-win/**'
+      - 'fixtures/counter-win/**'
+      - 'packages/**'
+      - 'vendor/**'
+      - 'tools/metadata/winui/fetch.py'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - 'rust-toolchain.toml'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/windows-winui.yml'
+      - '.github/actions/**'
+  pull_request:
+    paths: *paths
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: "1"
+  WINAPPRT_VERSION: "2.5.1"
+
+jobs:
+  winui:
+    runs-on: windows-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      # Keep LF checkouts: generated files and fingerprints are compared byte for byte.
+      - name: git config
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.longpaths true
+      - uses: actions/checkout@v4
+
+      - name: Environment
+        run: |
+          [Environment]::OSVersion.Version
+          (Get-CimInstance Win32_OperatingSystem).Caption
+
+      - name: Install Windows App Runtime (NuGet MSIX packages)
+        run: |
+          $v = $env:WINAPPRT_VERSION
+          $dir = "$env:RUNNER_TEMP\winapprt"
+          New-Item -ItemType Directory -Force $dir | Out-Null
+          Invoke-WebRequest "https://api.nuget.org/v3-flatcontainer/microsoft.windowsappsdk.runtime/$v/microsoft.windowsappsdk.runtime.$v.nupkg" -OutFile "$dir\rt.zip"
+          Expand-Archive "$dir\rt.zip" "$dir\rt"
+          Get-ChildItem "$dir\rt\tools\MSIX\win10-x64\*.msix" | Sort-Object { if ($_.Name -match 'Main|Singleton|DDLM') { 1 } else { 0 } } | ForEach-Object {
+            Write-Host "Add-AppxPackage $($_.Name)"
+            try { Add-AppxPackage -Path $_.FullName -ErrorAction Stop } catch { Write-Warning "$($_.Name): $_" }
+          }
+          Get-AppxPackage *WindowsAppRuntime* | Select-Object Name, Version | Format-Table -AutoSize
+
+      - name: Rust toolchain (rust-toolchain.toml)
+        run: rustup toolchain install --profile minimal; rustc --version
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: windows-winui
+
+      - uses: ./.github/actions/setup-pnpm
+      - name: Build bundles
+        run: pnpm --filter './fixtures/*' build
+
+      - name: Fetch the Windows App SDK bootstrapper
+        run: python tools/metadata/winui/fetch.py --bootstrap
+
+      - name: Build tests
+        run: cargo test --no-run -p svelters-winui -p counter-win
+
+      - name: svelters-winui lib
+        timeout-minutes: 10
+        run: cargo test -p svelters-winui --lib
+      - name: svelters-winui generated
+        if: ${{ !cancelled() }}
+        timeout-minutes: 15
+        run: cargo test -p svelters-winui --test generated
+      - name: counter-win selftest
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: |
+          cargo run -p counter-win -- --selftest --report report.json
+          $code = $LASTEXITCODE
+          if (Test-Path report.json) { Get-Content report.json }
+          exit $code
+      - name: counter-win test
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: cargo test -p counter-win --test counter
+
+      - name: Application event log (crashes)
+        if: ${{ failure() }}
+        run: |
+          Get-WinEvent -FilterHashtable @{LogName='Application'; StartTime=(Get-Date).AddHours(-1)} -MaxEvents 30 -ErrorAction SilentlyContinue |
+            Where-Object { $_.LevelDisplayName -in 'Error','Critical' } | Format-List TimeCreated, ProviderName, Message
+
+      - name: Upload report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-winui-report
+          if-no-files-found: ignore
+          path: |
+            report.json
+            target/*.png
