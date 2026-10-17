@@ -179,6 +179,7 @@ fn run(setup: Setup) -> Result<Json, String> {
     let reloads: Rc<RefCell<Vec<Json>>> = Rc::default();
     let reload_dump: Rc<RefCell<Option<Json>>> = Rc::default();
     let native_toplevels: Rc<Cell<Option<usize>>> = Rc::default();
+    let watch_timed_out: Rc<Cell<bool>> = Rc::default();
     if args.watch {
         let weak = Rc::downgrade(&host);
         let (reloads, reload_dump, tk, backend, native_toplevels) = (reloads.clone(), reload_dump.clone(), setup.toolkit.clone(), setup.backend, native_toplevels.clone());
@@ -209,6 +210,18 @@ fn run(setup: Setup) -> Result<Json, String> {
             }
         });
         host.watch().map_err(|e| format!("watch {}: {e}", bundle.display()))?;
+        if args.reload_exit.is_some() {
+            // A bounded dev-loop run (tests): end at --timeout even if the awaited reload never comes
+            // (a bundle that fails to load leaves no window, and the loop would otherwise run forever).
+            let (flag, backend) = (watch_timed_out.clone(), setup.backend);
+            setup.toolkit.schedule(
+                args.timeout.as_millis().min(u32::MAX as u128) as u32,
+                Box::new(move || {
+                    flag.set(true);
+                    backend.quit();
+                }),
+            );
+        }
     }
 
     let driven = !args.watch && (args.script.is_some() || args.screenshot.is_some() || args.report.is_some());
@@ -243,6 +256,9 @@ fn run(setup: Setup) -> Result<Json, String> {
     let mut failures = Vec::new();
     if let Err(e) = &run_result {
         failures.push(format!("run() failed: {e}"));
+    }
+    if watch_timed_out.get() {
+        failures.push(format!("watch: timed out after {:?} waiting for reload {}", args.timeout, args.reload_exit.unwrap_or(0)));
     }
     let mut dump_all = Json::Null;
     let (mut dump, steps) = match driver.as_ref().map(|d| d.report()) {
