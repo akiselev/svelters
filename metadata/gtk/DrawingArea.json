@@ -361,6 +361,13 @@
         "get": "gtk_drawing_area_get_content_height",
         "set": "gtk_drawing_area_set_content_height"
       },
+      "annotated": {
+        "fields": [
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "GtkDrawingArea:content-height (Gtk 4 docs)"
+      },
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:DrawingArea:prop:content-height",
       "invocation": "reflected",
@@ -403,6 +410,13 @@
       "accessors": {
         "get": "gtk_drawing_area_get_content_width",
         "set": "gtk_drawing_area_set_content_width"
+      },
+      "annotated": {
+        "fields": [
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "GtkDrawingArea:content-width (Gtk 4 docs)"
       },
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:DrawingArea:prop:content-width",
@@ -481,7 +495,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/DrawingArea.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"

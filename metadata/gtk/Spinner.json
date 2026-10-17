@@ -9,6 +9,46 @@
     "GObject.InitiallyUnowned",
     "GObject.Object"
   ],
+  "bindings": [
+    {
+      "change": {
+        "origin": "manual",
+        "role": "any_change",
+        "signal": "notify::spinning",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "manual",
+        "read_back": false,
+        "strategy": "host_suppressed",
+        "sync_signals_on_set": [
+          "notify::spinning"
+        ]
+      },
+      "id": "svelters-api:v1:type:gtk:Gtk:Spinner:binding:spinning",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "manual"
+      },
+      "name": "spinning",
+      "origin": "manual",
+      "property": "spinning",
+      "provenance": "g_object_set emits notify::spinning only on change (GObject docs)",
+      "type": {
+        "nullable": false,
+        "origin": "manual",
+        "ref": "bool"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "manual"
+      }
+    }
+  ],
   "children": {
     "candidates": {
       "child_ops": [],
@@ -258,11 +298,23 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "dispatch",
+          "expect",
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_spinner_start (Gtk 4 docs)"
+      },
+      "dispatch": "zero_arg",
+      "expect": "h.get(o, \"spinning\") == V::Bool(true)",
       "id": "svelters-api:v1:type:gtk:Gtk:Spinner:method:start",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "start",
       "name": "start",
       "native": "gtk_spinner_start",
       "origin": "gir",
@@ -276,11 +328,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "dispatch",
+          "expect",
+          "js_name",
+          "setup"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_spinner_stop (Gtk 4 docs)"
+      },
+      "dispatch": "zero_arg",
+      "expect": "h.get(o, \"spinning\") == V::Bool(false)",
       "id": "svelters-api:v1:type:gtk:Gtk:Spinner:method:stop",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "stop",
       "name": "stop",
       "native": "gtk_spinner_stop",
       "origin": "gir",
@@ -291,6 +356,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "setup": "h.set_bool(o, \"spinning\", true).unwrap();",
       "unsupported_reason": null
     }
   ],
@@ -313,7 +379,18 @@
         "get": "gtk_spinner_get_spinning",
         "set": "gtk_spinner_set_spinning"
       },
+      "annotated": {
+        "fields": [
+          "echo_suppress",
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "GtkSpinner:spinning (Gtk 4 docs)"
+      },
       "default": false,
+      "echo_suppress": [
+        "notify::spinning"
+      ],
       "id": "svelters-api:v1:type:gtk:Gtk:Spinner:prop:spinning",
       "invocation": "reflected",
       "js_name": "spinning",
@@ -344,14 +421,67 @@
     }
   ],
   "schema": "svelters-element-kind/v0",
-  "signals": [],
+  "signals": [
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GObject::notify for GtkSpinner:spinning"
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "manual"
+      },
+      "derived_from": {
+        "origin": "manual",
+        "property": "spinning"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::spinning",
+      "name": "notify::spinning",
+      "origin": "manual",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "manual",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "manual",
+        "property": "spinning",
+        "values": [
+          true,
+          false,
+          true
+        ]
+      }
+    }
+  ],
   "source": {
     "gir": {
       "file": "Gtk-4.0.gir",
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/Spinner.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"

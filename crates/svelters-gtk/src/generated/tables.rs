@@ -452,7 +452,7 @@ pub static PROPS: [PropInfo; 1304] = [
     PropInfo { kind: 34, name: "label", js_name: "label", ty: ValueTy::Str, gtype: "gchararray", flags: 19, echo: &[] },
     PropInfo { kind: 34, name: "use-underline", js_name: "useUnderline", ty: ValueTy::Bool, gtype: "gboolean", flags: 19, echo: &[] },
     PropInfo { kind: 36, name: "date", js_name: "date", ty: ValueTy::Boxed, gtype: "GDateTime", flags: 19, echo: &[] },
-    PropInfo { kind: 36, name: "day", js_name: "day", ty: ValueTy::I32, gtype: "gint", flags: 19, echo: &[] },
+    PropInfo { kind: 36, name: "day", js_name: "day", ty: ValueTy::I32, gtype: "gint", flags: 19, echo: &["notify::day", "day-selected"] },
     PropInfo { kind: 36, name: "month", js_name: "month", ty: ValueTy::I32, gtype: "gint", flags: 19, echo: &[] },
     PropInfo { kind: 36, name: "show-day-names", js_name: "showDayNames", ty: ValueTy::Bool, gtype: "gboolean", flags: 19, echo: &[] },
     PropInfo { kind: 36, name: "show-heading", js_name: "showHeading", ty: ValueTy::Bool, gtype: "gboolean", flags: 19, echo: &[] },
@@ -1350,7 +1350,7 @@ pub static PROPS: [PropInfo; 1304] = [
     PropInfo { kind: 249, name: "update-policy", js_name: "updatePolicy", ty: ValueTy::Enum, gtype: "GtkSpinButtonUpdatePolicy", flags: 19, echo: &[] },
     PropInfo { kind: 249, name: "value", js_name: "value", ty: ValueTy::F64, gtype: "gdouble", flags: 19, echo: &[] },
     PropInfo { kind: 249, name: "wrap", js_name: "wrap", ty: ValueTy::Bool, gtype: "gboolean", flags: 19, echo: &[] },
-    PropInfo { kind: 250, name: "spinning", js_name: "spinning", ty: ValueTy::Bool, gtype: "gboolean", flags: 19, echo: &[] },
+    PropInfo { kind: 250, name: "spinning", js_name: "spinning", ty: ValueTy::Bool, gtype: "gboolean", flags: 19, echo: &["notify::spinning"] },
     PropInfo { kind: 251, name: "hhomogeneous", js_name: "hhomogeneous", ty: ValueTy::Bool, gtype: "gboolean", flags: 19, echo: &[] },
     PropInfo { kind: 251, name: "interpolate-size", js_name: "interpolateSize", ty: ValueTy::Bool, gtype: "gboolean", flags: 19, echo: &[] },
     PropInfo { kind: 251, name: "pages", js_name: "pages", ty: ValueTy::Object, gtype: "GtkSelectionModel", flags: 1, echo: &[] },
@@ -1662,7 +1662,7 @@ pub static PROPS: [PropInfo; 1304] = [
     PropInfo { kind: 298, name: "child", js_name: "child", ty: ValueTy::Object, gtype: "GtkWidget", flags: 19, echo: &[] },
 ];
 
-pub static SIGNALS: [SignalInfo; 351] = [
+pub static SIGNALS: [SignalInfo; 353] = [
     SignalInfo { kind: 1, name: "state-change", js_event: "state-change", params: &[], result: "void", handler_result: 0, sync_required: false },
     SignalInfo { kind: 2, name: "activate-link", js_event: "activate-link", params: &["string"], result: "bool", handler_result: 1, sync_required: false },
     SignalInfo { kind: 11, name: "changed", js_event: "changed", params: &[], result: "void", handler_result: 0, sync_required: false },
@@ -1685,6 +1685,7 @@ pub static SIGNALS: [SignalInfo; 351] = [
     SignalInfo { kind: 36, name: "day-selected", js_event: "day-selected", params: &[], result: "void", handler_result: 0, sync_required: false },
     SignalInfo { kind: 36, name: "next-month", js_event: "next-month", params: &[], result: "void", handler_result: 0, sync_required: false },
     SignalInfo { kind: 36, name: "next-year", js_event: "next-year", params: &[], result: "void", handler_result: 0, sync_required: false },
+    SignalInfo { kind: 36, name: "notify::day", js_event: "notify::day", params: &[], result: "void", handler_result: 0, sync_required: false },
     SignalInfo { kind: 36, name: "prev-month", js_event: "prev-month", params: &[], result: "void", handler_result: 0, sync_required: false },
     SignalInfo { kind: 36, name: "prev-year", js_event: "prev-year", params: &[], result: "void", handler_result: 0, sync_required: false },
     SignalInfo { kind: 38, name: "add-editable", js_event: "add-editable", params: &["object<svelters-api:v1:type:gtk:Gtk:CellRenderer>", "object<svelters-api:v1:type:gtk:Gtk:CellEditable>", "boxed<svelters-api:v1:type:gtk:Gdk:Rectangle>", "string"], result: "void", handler_result: 0, sync_required: false },
@@ -1922,6 +1923,7 @@ pub static SIGNALS: [SignalInfo; 351] = [
     SignalInfo { kind: 249, name: "output", js_event: "output", params: &[], result: "bool", handler_result: 1, sync_required: false },
     SignalInfo { kind: 249, name: "value-changed", js_event: "value-changed", params: &[], result: "void", handler_result: 0, sync_required: false },
     SignalInfo { kind: 249, name: "wrapped", js_event: "wrapped", params: &[], result: "void", handler_result: 0, sync_required: false },
+    SignalInfo { kind: 250, name: "notify::spinning", js_event: "notify::spinning", params: &[], result: "void", handler_result: 0, sync_required: false },
     SignalInfo { kind: 255, name: "text-popped", js_event: "text-popped", params: &["u32", "string"], result: "void", handler_result: 0, sync_required: false },
     SignalInfo { kind: 255, name: "text-pushed", js_event: "text-pushed", params: &["u32", "string"], result: "void", handler_result: 0, sync_required: false },
     SignalInfo { kind: 261, name: "gtk-private-changed", js_event: "gtk-private-changed", params: &[], result: "void", handler_result: 0, sync_required: false },
@@ -2016,7 +2018,9 @@ pub static SIGNALS: [SignalInfo; 351] = [
     SignalInfo { kind: 295, name: "keys-changed", js_event: "keys-changed", params: &[], result: "void", handler_result: 0, sync_required: false },
 ];
 
-pub static METHODS: [MethodInfo; 3] = [
+pub static METHODS: [MethodInfo; 5] = [
+    MethodInfo { kind: 250, name: "start" },
+    MethodInfo { kind: 250, name: "stop" },
     MethodInfo { kind: 293, name: "queueDraw" },
     MethodInfo { kind: 293, name: "queueResize" },
     MethodInfo { kind: 295, name: "present" },

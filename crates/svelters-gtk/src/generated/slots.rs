@@ -448,14 +448,22 @@ pub fn virtual_get(prop: u32, obj: &glib::Object) -> Result<Option<String>, Stri
 pub fn call_method(method: u32, obj: &glib::Object) -> Result<(), String> {
     match method {
         1 => {
-            obj.downcast_ref::<gtk::Widget>().ok_or("receiver is not a gtk::Widget")?.queue_draw();
+            obj.downcast_ref::<gtk::Spinner>().ok_or("receiver is not a gtk::Spinner")?.start();
             Ok(())
         }
         2 => {
-            obj.downcast_ref::<gtk::Widget>().ok_or("receiver is not a gtk::Widget")?.queue_resize();
+            obj.downcast_ref::<gtk::Spinner>().ok_or("receiver is not a gtk::Spinner")?.stop();
             Ok(())
         }
         3 => {
+            obj.downcast_ref::<gtk::Widget>().ok_or("receiver is not a gtk::Widget")?.queue_draw();
+            Ok(())
+        }
+        4 => {
+            obj.downcast_ref::<gtk::Widget>().ok_or("receiver is not a gtk::Widget")?.queue_resize();
+            Ok(())
+        }
+        5 => {
             obj.downcast_ref::<gtk::Window>().ok_or("receiver is not a gtk::Window")?.present();
             Ok(())
         }

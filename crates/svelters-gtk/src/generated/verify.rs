@@ -706,6 +706,244 @@ fn prop_button_label() {
     });
 }
 
+/// signal Calendar.day-selected: GtkCalendar::day-selected (Gtk 4 docs)
+#[test]
+fn signal_calendar_day_selected() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("calendar");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("day", 10i32),
+                1 => o.set_property("day", 11i32),
+                2 => o.set_property("day", 12i32),
+                _ => unreachable!(),
+            }
+        };
+        assert_ne!(h.resolve_signal("calendar", "day-selected"), 0);
+        assert_eq!(h.resolve_signal("calendar", "day-selected"), h.resolve_signal("calendar", "day-selected"));
+        h.listen(e, "day-selected", true).unwrap();
+        fire(&h.obj(e), "10", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "day-selected".to_string())), "delivered: {ev:?}");
+        h.listen(e, "day-selected", false).unwrap();
+        fire(&h.obj(e), "11", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "day-selected", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "12", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "day-selected", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal Calendar.notify::day: GObject::notify for GtkCalendar:day
+#[test]
+fn signal_calendar_notify_day() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("calendar");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("day", 10i32),
+                1 => o.set_property("day", 11i32),
+                2 => o.set_property("day", 12i32),
+                _ => unreachable!(),
+            }
+        };
+        assert_ne!(h.resolve_signal("calendar", "notify::day"), 0);
+        assert_eq!(h.resolve_signal("calendar", "notify::day"), h.resolve_signal("calendar", "notify::day"));
+        h.listen(e, "notify::day", true).unwrap();
+        fire(&h.obj(e), "10", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "notify::day".to_string())), "delivered: {ev:?}");
+        h.listen(e, "notify::day", false).unwrap();
+        fire(&h.obj(e), "11", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "notify::day", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "12", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "notify::day", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// property Calendar.day (JS day): GtkCalendar:day (Gtk 4 docs)
+#[test]
+fn prop_calendar_day() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("calendar");
+        
+        let id = h.resolve_prop("calendar", "day");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("calendar", "day"));
+        h.set_i64(o, "day", 15).unwrap();
+        assert_eq!(h.get(o, "day"), V::I64(15));
+    });
+}
+
+/// echo suppression for Calendar.day: programmatic sets do not reach listeners, native edits do.
+#[test]
+fn echo_calendar_day() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("calendar");
+        
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("day", 10i32),
+                1 => o.set_property("day", 11i32),
+                2 => o.set_property("day", 12i32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::day", true).unwrap();
+        h.listen(o, "day-selected", true).unwrap();
+        h.set_i64(o, "day", 15).unwrap();
+        assert!(h.take_events().is_empty(), "programmatic set is suppressed");
+        fire(&h.obj(o), "11", 1);
+        let mut got: Vec<String> = h.take_events().into_iter().map(|(_, s)| s).collect();
+        got.sort();
+        got.dedup();
+        let mut want: Vec<String> = ["notify::day", "day-selected"].iter().map(|s| s.to_string()).collect();
+        want.sort();
+        assert_eq!(got, want, "native edit still delivers");
+        h.set_i64(o, "day", 15).unwrap();
+        assert!(h.take_events().is_empty(), "handlers are unblocked after a programmatic set, and the next set is suppressed again");
+    });
+}
+
+/// property Calendar.month (JS month): GtkCalendar:month, 0-based (Gtk 4 docs)
+#[test]
+fn prop_calendar_month() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("calendar");
+        
+        let id = h.resolve_prop("calendar", "month");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("calendar", "month"));
+        h.set_i64(o, "month", 5).unwrap();
+        assert_eq!(h.get(o, "month"), V::I64(5));
+    });
+}
+
+/// property Calendar.show-day-names (JS showDayNames): GtkCalendar:show-day-names (Gtk 4 docs)
+#[test]
+fn prop_calendar_show_day_names() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("calendar");
+        
+        let id = h.resolve_prop("calendar", "showDayNames");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("calendar", "show-day-names"));
+        h.set_bool(o, "showDayNames", false).unwrap();
+        assert_eq!(h.get(o, "showDayNames"), V::Bool(false));
+    });
+}
+
+/// property Calendar.show-heading (JS showHeading): GtkCalendar:show-heading (Gtk 4 docs)
+#[test]
+fn prop_calendar_show_heading() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("calendar");
+        
+        let id = h.resolve_prop("calendar", "showHeading");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("calendar", "show-heading"));
+        h.set_bool(o, "showHeading", false).unwrap();
+        assert_eq!(h.get(o, "showHeading"), V::Bool(false));
+    });
+}
+
+/// property Calendar.show-week-numbers (JS showWeekNumbers): GtkCalendar:show-week-numbers (Gtk 4 docs)
+#[test]
+fn prop_calendar_show_week_numbers() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("calendar");
+        
+        let id = h.resolve_prop("calendar", "showWeekNumbers");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("calendar", "show-week-numbers"));
+        h.set_bool(o, "showWeekNumbers", true).unwrap();
+        assert_eq!(h.get(o, "showWeekNumbers"), V::Bool(true));
+    });
+}
+
+/// property Calendar.year (JS year): GtkCalendar:year (Gtk 4 docs)
+#[test]
+fn prop_calendar_year() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("calendar");
+        
+        let id = h.resolve_prop("calendar", "year");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("calendar", "year"));
+        h.set_i64(o, "year", 2030).unwrap();
+        assert_eq!(h.get(o, "year"), V::I64(2030));
+    });
+}
+
+/// method Calendar.select_day (dynamic GI call): gtk_calendar_select_day (Gtk 4 docs)
+#[test]
+fn method_calendar_select_day() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("calendar");
+        
+        let r = h.call_args(o, "selectDay", &[V::I64(1905508800000)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "day") == V::I64(20), "postcondition: h.get(o, 'day') == V::I64(20)");
+    });
+}
+
+/// bind:day on Calendar: gtk_calendar_set_day notifies day (Gtk 4 docs)
+#[test]
+fn binding_calendar_day() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("calendar");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("day", 10i32),
+                1 => o.set_property("day", 11i32),
+                2 => o.set_property("day", 12i32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::day", true).unwrap();
+        fire(&h.obj(o), "10", 0);
+        fire(&h.obj(o), "11", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_ne!(h.get(o, "day"), V::Null, "the property reads the new value");
+    });
+}
+
 /// property CenterBox.baseline-position (JS baselinePosition): GtkCenterBox:baseline-position (Gtk 4 docs); P prop
 #[test]
 fn prop_centerbox_baseline_position() {
@@ -733,6 +971,36 @@ fn prop_centerbox_shrink_center_last() {
         assert_eq!(id, h.resolve_prop("centerbox", "shrink-center-last"));
         h.set_bool(o, "shrinkCenterLast", false).unwrap();
         assert_eq!(h.get(o, "shrinkCenterLast"), V::Bool(false));
+    });
+}
+
+/// property DrawingArea.content-height (JS contentHeight): GtkDrawingArea:content-height (Gtk 4 docs)
+#[test]
+fn prop_drawingarea_content_height() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("drawingarea");
+        
+        let id = h.resolve_prop("drawingarea", "contentHeight");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("drawingarea", "content-height"));
+        h.set_i64(o, "contentHeight", 7).unwrap();
+        assert_eq!(h.get(o, "contentHeight"), V::I64(7));
+    });
+}
+
+/// property DrawingArea.content-width (JS contentWidth): GtkDrawingArea:content-width (Gtk 4 docs)
+#[test]
+fn prop_drawingarea_content_width() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("drawingarea");
+        
+        let id = h.resolve_prop("drawingarea", "contentWidth");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("drawingarea", "content-width"));
+        h.set_i64(o, "contentWidth", 7).unwrap();
+        assert_eq!(h.get(o, "contentWidth"), V::I64(7));
     });
 }
 
@@ -1534,6 +1802,36 @@ fn prop_frame_label_xalign() {
     });
 }
 
+/// property GraphicsOffload.black-background (JS blackBackground): GtkGraphicsOffload:black-background (Gtk 4 docs)
+#[test]
+fn prop_graphicsoffload_black_background() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("graphicsoffload");
+        
+        let id = h.resolve_prop("graphicsoffload", "blackBackground");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("graphicsoffload", "black-background"));
+        h.set_bool(o, "blackBackground", true).unwrap();
+        assert_eq!(h.get(o, "blackBackground"), V::Bool(true));
+    });
+}
+
+/// property GraphicsOffload.enabled (JS enabled): GtkGraphicsOffload:enabled (Gtk 4 docs)
+#[test]
+fn prop_graphicsoffload_enabled() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("graphicsoffload");
+        
+        let id = h.resolve_prop("graphicsoffload", "enabled");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("graphicsoffload", "enabled"));
+        h.set_str(o, "enabled", "disabled").unwrap();
+        assert_eq!(h.get(o, "enabled"), V::Str("disabled".into()));
+    });
+}
+
 /// property HeaderBar.title (JS title): GTK4 GtkHeaderBar has only title-widget; P1 fixtures emit 'set #h title'
 #[test]
 fn prop_headerbar_title() {
@@ -1548,6 +1846,94 @@ fn prop_headerbar_title() {
         assert_eq!(h.get(o, "title"), V::Str("p3-sample".into()));
         let w = h.obj(o).property::<Option<gtk::Widget>>("title-widget").unwrap();
         assert_eq!(w.downcast::<gtk::Label>().unwrap().label(), "p3-sample");
+    });
+}
+
+/// property Image.icon-name (JS iconName): GtkImage:icon-name (Gtk 4 docs)
+#[test]
+fn prop_image_icon_name() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("image");
+        
+        let id = h.resolve_prop("image", "iconName");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("image", "icon-name"));
+        h.set_str(o, "iconName", "dialog-information").unwrap();
+        assert_eq!(h.get(o, "iconName"), V::Str("dialog-information".into()));
+    });
+}
+
+/// property Image.icon-size (JS iconSize): GtkImage:icon-size (Gtk 4 docs)
+#[test]
+fn prop_image_icon_size() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("image");
+        
+        let id = h.resolve_prop("image", "iconSize");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("image", "icon-size"));
+        h.set_str(o, "iconSize", "normal").unwrap();
+        assert_eq!(h.get(o, "iconSize"), V::Str("normal".into()));
+    });
+}
+
+/// property Image.pixel-size (JS pixelSize): GtkImage:pixel-size (Gtk 4 docs)
+#[test]
+fn prop_image_pixel_size() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("image");
+        
+        let id = h.resolve_prop("image", "pixelSize");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("image", "pixel-size"));
+        h.set_i64(o, "pixelSize", 7).unwrap();
+        assert_eq!(h.get(o, "pixelSize"), V::I64(7));
+    });
+}
+
+/// property Image.use-fallback (JS useFallback): GtkImage:use-fallback (Gtk 4 docs)
+#[test]
+fn prop_image_use_fallback() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("image");
+        
+        let id = h.resolve_prop("image", "useFallback");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("image", "use-fallback"));
+        h.set_bool(o, "useFallback", true).unwrap();
+        assert_eq!(h.get(o, "useFallback"), V::Bool(true));
+    });
+}
+
+/// method Image.clear (dynamic GI call): gtk_image_clear (Gtk 4 docs)
+#[test]
+fn method_image_clear() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("image");
+        h.set_str(o, "icon-name", "edit-find").unwrap();
+        let r = h.call_args(o, "clear", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "icon-name") == V::Null, "postcondition: h.get(o, 'icon-name') == V::Null");
+    });
+}
+
+/// method Image.set_from_icon_name (dynamic GI call): gtk_image_set_from_icon_name (Gtk 4 docs)
+#[test]
+fn method_image_set_from_icon_name() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("image");
+        
+        let r = h.call_args(o, "setFromIconName", &[V::Str("edit-find".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "icon-name") == V::Str("edit-find".into()), "postcondition: h.get(o, 'icon-name') == V::Str('edit-find'.into())");
     });
 }
 
@@ -2064,6 +2450,66 @@ fn binding_passwordentry_text() {
     });
 }
 
+/// property Picture.alternative-text (JS alternativeText): GtkPicture:alternative-text (Gtk 4 docs)
+#[test]
+fn prop_picture_alternative_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("picture");
+        
+        let id = h.resolve_prop("picture", "alternativeText");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("picture", "alternative-text"));
+        h.set_str(o, "alternativeText", "p3-sample").unwrap();
+        assert_eq!(h.get(o, "alternativeText"), V::Str("p3-sample".into()));
+    });
+}
+
+/// property Picture.can-shrink (JS canShrink): GtkPicture:can-shrink (Gtk 4 docs)
+#[test]
+fn prop_picture_can_shrink() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("picture");
+        
+        let id = h.resolve_prop("picture", "canShrink");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("picture", "can-shrink"));
+        h.set_bool(o, "canShrink", false).unwrap();
+        assert_eq!(h.get(o, "canShrink"), V::Bool(false));
+    });
+}
+
+/// property Picture.content-fit (JS contentFit): GtkPicture:content-fit (Gtk 4 docs)
+#[test]
+fn prop_picture_content_fit() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("picture");
+        
+        let id = h.resolve_prop("picture", "contentFit");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("picture", "content-fit"));
+        h.set_str(o, "contentFit", "fill").unwrap();
+        assert_eq!(h.get(o, "contentFit"), V::Str("fill".into()));
+    });
+}
+
+/// property Picture.keep-aspect-ratio (JS keepAspectRatio): GtkPicture:keep-aspect-ratio (Gtk 4 docs)
+#[test]
+fn prop_picture_keep_aspect_ratio() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("picture");
+        
+        let id = h.resolve_prop("picture", "keepAspectRatio");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("picture", "keep-aspect-ratio"));
+        h.set_bool(o, "keepAspectRatio", false).unwrap();
+        assert_eq!(h.get(o, "keepAspectRatio"), V::Bool(false));
+    });
+}
+
 /// property Revealer.reveal-child (JS revealChild): GtkRevealer:reveal-child (Gtk 4 docs); P prop
 #[test]
 fn prop_revealer_reveal_child() {
@@ -2506,6 +2952,145 @@ fn prop_shortcutlabel_accelerator() {
         assert_eq!(id, h.resolve_prop("shortcutlabel", "accelerator"));
         h.set_str(o, "accelerator", "p3-sample").unwrap();
         assert_eq!(h.get(o, "accelerator"), V::Str("p3-sample".into()));
+    });
+}
+
+/// signal Spinner.notify::spinning: GObject::notify for GtkSpinner:spinning
+#[test]
+fn signal_spinner_notify_spinning() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("spinner");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("spinning", true),
+                1 => o.set_property("spinning", false),
+                2 => o.set_property("spinning", true),
+                _ => unreachable!(),
+            }
+        };
+        assert_ne!(h.resolve_signal("spinner", "notify::spinning"), 0);
+        assert_eq!(h.resolve_signal("spinner", "notify::spinning"), h.resolve_signal("spinner", "notify::spinning"));
+        h.listen(e, "notify::spinning", true).unwrap();
+        fire(&h.obj(e), "True", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "notify::spinning".to_string())), "delivered: {ev:?}");
+        h.listen(e, "notify::spinning", false).unwrap();
+        fire(&h.obj(e), "False", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "notify::spinning", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "True", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "notify::spinning", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// property Spinner.spinning (JS spinning): GtkSpinner:spinning (Gtk 4 docs)
+#[test]
+fn prop_spinner_spinning() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spinner");
+        
+        let id = h.resolve_prop("spinner", "spinning");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("spinner", "spinning"));
+        h.set_bool(o, "spinning", true).unwrap();
+        assert_eq!(h.get(o, "spinning"), V::Bool(true));
+    });
+}
+
+/// echo suppression for Spinner.spinning: programmatic sets do not reach listeners, native edits do.
+#[test]
+fn echo_spinner_spinning() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spinner");
+        
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("spinning", true),
+                1 => o.set_property("spinning", false),
+                2 => o.set_property("spinning", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::spinning", true).unwrap();
+        h.set_bool(o, "spinning", true).unwrap();
+        assert!(h.take_events().is_empty(), "programmatic set is suppressed");
+        fire(&h.obj(o), "False", 1);
+        let mut got: Vec<String> = h.take_events().into_iter().map(|(_, s)| s).collect();
+        got.sort();
+        got.dedup();
+        let mut want: Vec<String> = ["notify::spinning"].iter().map(|s| s.to_string()).collect();
+        want.sort();
+        assert_eq!(got, want, "native edit still delivers");
+        h.set_bool(o, "spinning", true).unwrap();
+        assert!(h.take_events().is_empty(), "handlers are unblocked after a programmatic set, and the next set is suppressed again");
+    });
+}
+
+/// method Spinner.start: gtk_spinner_start (Gtk 4 docs)
+#[test]
+fn method_spinner_start() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spinner");
+        
+        h.call(o, "start").unwrap();
+        let w = h.widget(o);
+        let _ = &w;
+        assert!(h.get(o, "spinning") == V::Bool(true), "postcondition: h.get(o, 'spinning') == V::Bool(true)");
+    });
+}
+
+/// method Spinner.stop: gtk_spinner_stop (Gtk 4 docs)
+#[test]
+fn method_spinner_stop() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spinner");
+        h.set_bool(o, "spinning", true).unwrap();
+        h.call(o, "stop").unwrap();
+        let w = h.widget(o);
+        let _ = &w;
+        assert!(h.get(o, "spinning") == V::Bool(false), "postcondition: h.get(o, 'spinning') == V::Bool(false)");
+    });
+}
+
+/// bind:spinning on Spinner: g_object_set emits notify::spinning only on change (GObject docs)
+#[test]
+fn binding_spinner_spinning() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spinner");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("spinning", true),
+                1 => o.set_property("spinning", false),
+                2 => o.set_property("spinning", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::spinning", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_ne!(h.get(o, "spinning"), V::Null, "the property reads the new value");
     });
 }
 

@@ -187,7 +187,7 @@ GTK batches are about verified facts, slots, bindings, signal semantics and the 
   media streams (G7).
 - Gallery: `09-display.svelte`.
 - Tests `<re>`: `_(image|picture|separator|spinner|calendar|video|mediacontrols|drawingarea|graphicsoffload)_`.
-- Status: todo
+- Status: done (31 generated tests: 18 props, 2 notify signals + day-selected, 2 bindings (spinning, day) with echo tests, 5 methods; dropped: Calendar.date (no generated test for boxed props), Image.file/resource/gicon/paintable, Picture.file/paintable (no verifiable generated test form), Calendar next/prev-month/year signals (no trigger); blocked: gap:G7 for Video/MediaControls, gap:G8 for DrawingArea drawing/resize; Separator has no own facts)
 
 ### gtk-leftovers: everything not worth exposing yet
 

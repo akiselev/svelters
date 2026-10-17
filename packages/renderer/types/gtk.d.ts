@@ -180,6 +180,7 @@ export interface GtkCalendarProps extends GtkWidgetProps {
   "onday-selected"?: SvlHandler;
   "onnext-month"?: SvlHandler;
   "onnext-year"?: SvlHandler;
+  "onnotify::day"?: SvlHandler;
   "onprev-month"?: SvlHandler;
   "onprev-year"?: SvlHandler;
 }
@@ -1576,6 +1577,7 @@ export interface GtkSpinButtonProps extends GtkWidgetProps, GtkAccessibleRangePr
 }
 export interface GtkSpinnerProps extends GtkWidgetProps {
   spinning?: boolean;
+  "onnotify::spinning"?: SvlHandler;
 }
 export interface GtkStackProps extends GtkWidgetProps {
   hhomogeneous?: boolean;
