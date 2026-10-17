@@ -1,7 +1,6 @@
 elements:
   - tag: filedialog
     construct: { class: QFileDialog }
-    exclude: [accept, done]   # protected in QFileDialog; generated thunks call them on the subclass
     props:
       - { js: fileMode, native: fileMode, provenance: "QFileDialog::fileMode (qdoc); enum by name (ABI v3)" }
       - { js: acceptMode, native: acceptMode, provenance: "QFileDialog::acceptMode (qdoc); enum by name (ABI v3)" }
