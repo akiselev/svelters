@@ -1,0 +1,15 @@
+info FinalizationRegistry+WeakRef available: true
+  create 1
+  release 1 via explicit-destroy: freed
+  create 2
+  create 3
+  release 3 via explicit-destroy: freed
+  release 3 via class-drop: stale no-op
+  create 4
+  --- after run_gc, before jobs ---
+  release 1 via FinalizationRegistry: stale no-op
+  release 2 via FinalizationRegistry: freed
+  --- after jobs ---
+  live after gc: [4]
+  after runtime drop, last log: Some("release 4 via class-drop: freed")
+  live after runtime drop: {}

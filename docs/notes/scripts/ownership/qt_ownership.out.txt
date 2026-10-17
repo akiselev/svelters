@@ -1,0 +1,42 @@
+info quitOnLastWindowClosed default=1
+CASE detach_reinsert
+  ok   a->parent() == win
+  ok   a->parent() == nullptr && a->isWindow() && !a->isVisible()
+  ok   T.live(ha)
+  ok   !T.live(hb)
+  ok   !T.live(hw)
+    log: destroyed #1 qpointer=set cast=QWidget
+    log: destroyed #4 qpointer=set cast=QWidget
+  ok   a->parent() == other && a->isVisible()
+  ok   a->parent() == third
+  ok   lay2->indexOf(a) == -1
+CASE native_close
+  ok   T.live(h1) && T.live(hc1) && !w1->isVisible()
+  ok   T.live(h2)
+  ok   !T.live(h2) && !T.live(hc2)
+    log: destroyed #3 qpointer=set cast=QWidget
+    log: destroyed #4 qpointer=set cast=QWidget
+CASE borrowed
+  ok   !T.live(hle)
+    log: destroyed #2 qpointer=set cast=QWidget
+  ok   combo->lineEdit() != nullptr
+  ok   !T.live(hvp)
+  ok   !T.live(hl) && !T.live(hf)
+  ok   !T.live(hc1)
+  ok   taken == c2 && c2->parent() == nullptr
+    log: destroyed #4 qpointer=set cast=QWidget
+    log: destroyed #5 qpointer=set cast=QWidget
+    log: destroyed #6 qpointer=set cast=QWidget
+    log: destroyed #7 qpointer=set cast=QWidget
+CASE delete_in_signal
+  ok   second == 1
+  ok   !T.live(hb)
+  info sync-delete: later slot ran=0, guard null=1
+  ok   !T.live(hw) && !T.live(hb)
+    log: destroyed #3 qpointer=set cast=QWidget
+CASE destroyed_timing
+    log: destroyed #4 qpointer=null cast=QObject
+    log: destroyed #1 qpointer=set cast=QWidget
+    log: destroyed #2 qpointer=set cast=QWidget
+    log: destroyed #3 qpointer=null cast=QObject
+FAILURES 0

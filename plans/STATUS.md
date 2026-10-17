@@ -32,6 +32,6 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | Windows GUI backend (Win32 / WinUI 3) | windows-gui-backend.md | done: WinUI 3 via windows-rs; Win32 fallback |
 | Apple GUI backends (AppKit / UIKit / SwiftUI) + JavaScriptCore | apple-gui-backend.md | done: AppKit+UIKit via objc2; JSC optional engine |
 | JS ↔ native serdes | js-native-serdes.md | in progress |
-| Ownership and lifetimes | ownership-and-lifetimes.md | in progress |
+| Ownership and lifetimes | ownership-and-lifetimes.md | done: explicit tree-driven lifetime, 4 lifetime classes, ABI v2 proposal |
 | Svelte feature survey (lists, snippets, bindings) | svelte-feature-survey.md | in progress |
 | Styling: GTK CSS and Qt QSS | styling-gtk-css-qss.md | in progress |

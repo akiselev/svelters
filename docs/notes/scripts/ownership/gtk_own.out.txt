@@ -1,0 +1,33 @@
+CASE detach_reinsert
+  ok   a.parent().is_none()
+  ok   win_fin.get()
+  ok   !a_fin.get()
+  ok   a.parent().as_ref() == Some(bx2.upcast_ref()) && a.is_mapped()
+  ok   b_fin.get()
+CASE native_close
+  ok   wd.get() && wf.get()
+  ok   !bd.get() && !bf.get()
+  ok   bx.parent().is_none()
+  ok   btn.parent().as_ref() == Some(bx.upcast_ref())
+  ok   bf.get()
+  info strong-held window after close: destroy-signal=false finalized=false visible=false
+  ok   win2.is_visible()
+  ok   !win3.is_visible() && !d3.get()
+CASE borrowed
+  ok   vp.is::<gtk::Viewport>()
+  ok   vp_fin.get() && vpw.upgrade().is_none()
+  ok   !vp2_fin.get() && vp2.parent().is_none()
+  info label parent after viewport detach: None
+  ok   vp2_fin.get()
+  info entry internal child: GtkText
+  ok   tf.get() && tw.upgrade().is_none()
+CASE delete_in_signal
+  ok   second.get()
+  ok   !fin_during.get()
+  ok   fin.get()
+  ok   d.get() && ww2.upgrade().is_none()
+CASE dispose_vs_finalize
+  info held window after destroy(): destroy-signal=false finalized=false child-still-set=true
+  info set_child on disposed window accepted: true
+  info finalized after last ref: true
+FAILURES 0
