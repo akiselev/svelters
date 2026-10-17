@@ -13,6 +13,6 @@
     "svelte": "5.57.2"
   },
   "scripts": {
-    "test": "node --test test/translate.test.mjs"
+    "test": "node --test test/translate.test.mjs test/docs.test.mjs"
   }
 }

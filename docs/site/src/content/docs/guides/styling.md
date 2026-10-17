@@ -1,130 +1,237 @@
 ---
 title: Styling
-description: "The planned styling model, a portable vocabulary translated to GTK CSS and Qt stylesheets, with native escape hatches and theme tokens."
+description: "Style native widgets from Svelte: class, class:, style:, scoped style blocks, --sv-* design tokens and dark mode, translated to GTK CSS and Qt stylesheets."
 ---
 
-:::caution[Planned]
-Styling is not implemented. Today the renderer drops `class`, `style` and `id` (`JS_ONLY_ATTRS` in `packages/renderer/src/index.js`), and `<style>` blocks compile but are not applied to native widgets. This page is the research outcome (2026-10-17) that feeds the "Later: Styling" row of `PLAN.md`. It is a design, not a plan with a date.
-:::
+Svelte's `class`, `class:`, `style:` and `style` work on native elements, and a component's `<style>` block styles them. The build translates the stylesheet into GTK CSS and Qt stylesheets (QSS) and reports everything it had to drop, naming the toolkit. Colours and sizes can come from `--sv-*` tokens that switch with the colour scheme at runtime.
 
-## Four-layer model
+```svelte
+<script>
+  import { setColorScheme, setTokens } from '@svelters/renderer/style';
+  let count = $state(0);
+  let warn = $state(false);
+</script>
 
-```text
-(d) widget props      layout & geometry: spacing, margins, halign/valign, hexpand, width-request,
-                      xalign, wrap, ellipsize. Never CSS.
-(a) portable style    <style> + class/class: + style/style:, validated against a small vocabulary,
-                      translated per backend (GTK CSS / QSS / egui Style / WinUI XAML resources / AppKit)
-(b) native escape     @native gtk { ... } / @native qt { ... } inside <style>, or app.gtk.css / app.qss in
-                      config: passed through for that backend only, still scoped by Svelte, unvalidated
-(c) theme             token set (--sv-*) -> GTK named colours/libadwaita vars, QPalette, egui Visuals,
-                      WinUI ThemeResources, NSColor system colours; dark mode + accent come from here
+<box class="card" orientation="vertical" spacing="8">
+  <label class="count" class:warn style:font-weight={count > 2 ? 'bold' : null}>Count: {count}</label>
+  <button class="primary" onclick={() => count++}>Increment</button>
+  <button onclick={() => setColorScheme('dark')}>Dark</button>
+  <button onclick={() => setTokens({ '--sv-accent': '#e5a50a' })}>Amber accent</button>
+</box>
+
+<style>
+  .card { background-color: var(--sv-surface); border: 1px solid var(--sv-border); border-radius: var(--sv-radius); padding: var(--sv-space-3); }
+  .count.warn { color: var(--sv-danger); }
+  button.primary { background-color: var(--sv-accent); color: var(--sv-accent-fg); border-radius: 6px; padding: 6px 14px; }
+  button.primary:hover { background-color: var(--sv-accent-hover); }
+  @media (prefers-color-scheme: dark) { .card { border-color: #666; } }
+</style>
 ```
 
-Layout stays out of CSS. GTK has no layout properties in CSS, Qt's are per widget and fight layouts, and egui and WinUI have no CSS. In the counter experiment the same component looked different mainly because `QVBoxLayout` distributes extra height while `GtkBox` does not, and no CSS can fix that.
+The same component, light and dark, on both toolkits (the `styling` and `styling dark` pages of the widget galleries):
 
-## Portable vocabulary
-
-Deliberately small, limited to what egui, WinUI and AppKit can also honour per widget:
-
-- `color`, `background-color` (solid colours and `var(--sv-*)` only)
-- `font-family`, `font-size`, `font-weight`, `font-style`
-- `padding` (on widgets with a visible box)
-- `border-width`, `border-color`, `border-radius`
-- `opacity`
-- `min-width`, `min-height`
-
-Selectors: type (svelters element names), class, id, descendant and child, and `:hover :active :focus :disabled :checked`. Media: `prefers-color-scheme`, `prefers-contrast`, `prefers-reduced-motion`. Named parts (`scale::slider`, `checkbutton::indicator`) map to GTK subnodes and Qt sub-controls through metadata. Transitions are best effort: native on GTK, dropped with a warning on Qt.
-
-## Native escape hatch
-
-`@native gtk { ... }` and `@native qt { ... }` at-rules pass through for one backend. Svelte keeps and scopes unknown block at-rules (verified with `@backend gtk { ... }`). Internal nodes and Qt class names inside them need `:global()`, because Svelte prunes selectors it cannot match to its own element tags. For app-wide themes, config files: `style: { gtk: 'theme.gtk.css', qt: 'theme.qss' }`.
-
-## Svelte scoped CSS mapping
-
-- `css: 'injected'` is a compile error with a custom renderer. `css: 'external'` works, and `compile().css.code` is the scoped sheet plus a source map.
-- Scoping rides in `class`: the compiler appends the hash (`card svelte-5iljjr`). The renderer only has to forward `class`.
-- `svelte/compiler`'s `parseCss()` returns the selector AST, so a translator is an AST walk with no third-party CSS parser.
-- Svelte emits `:where(.svelte-h)` for later compounds. GTK rejects the whole rule, so the translator flattens it.
-
-Translation table:
-
-| Svelte output | GTK CSS | QSS |
+| | Light | Dark |
 | --- | --- | --- |
-| `.card.svelte-h` | same (style classes) | same (dynamic property `class`) |
-| `button.primary:where(.svelte-h)` | `button.primary.svelte-h` | `.QPushButton.primary.svelte-h` |
-| `:hover :focus :disabled :checked` | same | same; `:active` becomes `:pressed`, `:not(:x)` becomes `:!x` |
-| `[attr="v"]` | error | `[attr="v"]` on a dynamic or Q_PROPERTY |
-| `:first-child`, `+`, `~` | native | error (never matches) |
-| `:has`, `:is()`, `@media (min-width)` | error | error |
-| `@media (prefers-color-scheme: dark)` | passed through | a separate dark sheet the host appends |
-| `@keyframes`, `transition` | passed through | dropped with a warning |
-| `var(--tok)` | passed through | `${--tok}` placeholder filled by the host |
+| GTK 4 | ![GTK, light scheme](../../../assets/styling/gtk-light.png) | ![GTK, dark scheme with an amber accent token](../../../assets/styling/gtk-dark.png) |
+| Qt 6 | ![Qt, light scheme](../../../assets/styling/qt-light.png) | ![Qt, dark scheme with an amber accent token](../../../assets/styling/qt-dark.png) |
 
-An unsupported selector drops the whole rule (error). An unsupported property drops that declaration (warning, error in `strict`). For Qt this is a correctness requirement, not polish: the QSS parser stops at the first construct it cannot parse and drops every following rule.
+The Qt window stretches the page vertically because `QVBoxLayout` distributes spare height; that is layout, which CSS never controls (see [Layout stays in props](#layout-stays-in-props)).
 
-## GTK CSS
+## Four layers
 
-GTK CSS is a real appearance engine: cascade, inheritance, `var()`, `@media prefers-color-scheme`, transitions, keyframes. It has no layout (`width`, `height`, `display`, flex, `gap`, `position`, `overflow` are rejected), no attribute selectors, and no `:is()`, `:where()` or `:has()`.
+| Layer | What | Where |
+| --- | --- | --- |
+| Layout | spacing, alignment, expand, size requests, wrapping, ellipsizing | widget props, never CSS |
+| Portable style | `<style>`, `class`, `class:`, `style:`, `style` limited to a defined vocabulary | translated to GTK CSS and QSS |
+| Native escape | `@native gtk { }` and `@native qt { }` inside `<style>` | passed through verbatim to one toolkit |
+| Tokens | `--sv-*` custom properties and the colour scheme | one token set mapped per toolkit |
 
-- Type selectors match the widget's CSS name, not the GType. Of 93 kinds with an element tag, 60 have tag equal to CSS name and 33 differ. Twelve CSS names are shared (`button` covers button, togglebutton, linkbutton and lockbutton). The renderer would add an `sv-k-<tag>` class only to kinds flagged `css.ambiguous`.
-- `class` maps to `gtk_widget_set_css_classes`: cheap and local.
-- Providers are display-wide. Adding, removing or reloading one restyles everything (about 240 to 260 ms for 1000 buttons here), so use them for HMR and theme switches only.
-- The per-widget `GtkStyleContext` provider is deprecated since 4.10 and removed in GTK 5.
-- GTK 4.20+ evaluates `prefers-color-scheme` per provider, so the host must set that property on every provider it creates.
-- libadwaita variables (`--accent-bg-color`, ...) do not exist in plain GTK. Adopting `AdwApplication` would supply them; whether to adopt libadwaita is an open decision.
+## How it works
 
-## Qt QSS
+```text
+<style> in App.svelte
+  | Svelte compile (css: 'external'): scoped hash on selectors and on the elements' class
+  | svelters:style Vite plugin -> @svelters/style translator
+  v
+registerStyles("src/App.svelte", { gtk, qt, qtDark })      (data in the bundle, no <style> tag)
+  v
+renderer: class / id / style attributes + sheets + tokens -> host.style(op, handle, text)   (ABI v2.3)
+  v
+GTK: one GtkCssProvider per component, widget css classes          Qt: one application stylesheet, class property
+```
 
-QSS is CSS syntax with brittle semantics: no variables, no media queries, fail-stop parsing, and the nearest sheet wins regardless of specificity.
+- **Scoping.** Svelte appends its hash class (`svelte-1n46o8q`) to every selector and every element that carries a class, so a component's rules only match its own elements. The renderer forwards the class string unchanged.
+- **Type selectors use Svelters element names** (`button`, `label`, `entry`), not toolkit names. The translator maps them: `button` becomes the CSS node `button` on GTK and `.QPushButton` on Qt. Kinds that share a toolkit name with another kind (for instance `button`, `togglebutton` and `linkbutton` are all the CSS node `button`) get a marker class `sv-k-<tag>` from the renderer, and the selector uses it, so `button` never matches a toggle button. An element that does not exist on a toolkit (`togglebutton` on Qt) drops the rule there with a warning.
+- **Classes are cheap and local.** GTK adds and removes only the classes the app set (the widget keeps its own `text-button` or `toggle`). Qt sets the dynamic property `class` to `"<QtClass> your classes"`, so `.QPushButton` keeps matching, and re-polishes that one widget.
+- **`id`** sets the widget name (GTK) or object name (Qt), so `#id` selectors match.
 
-- **Parse failure.** Unknown properties are skipped; unknown syntax (`--x: red`, `@media`, `:not()`, `:where()`, `&`) stops parsing, dropping every later rule. Unparseable values clobber earlier valid declarations.
-- **Box trap.** `QPushButton { background: red; }` does nothing under Fusion until the box is customised (add `border: none`). Customising a box also loses native drawing for that widget.
-- **The `class` trap.** QSS implements `.QPushButton` through a pseudo-property named `class`. Setting a dynamic property named `class` shadows it. The recommended fix: the renderer sets `class = "<QtClassName> <user classes>"`, for example `QPushButton primary svelte-h`.
-- **Dynamic properties need a re-polish** (`unpolish`, `polish`, `update`) before they restyle.
-- Set the app stylesheet before widgets are shown: 36 ms versus about 900 ms afterwards for 1000 buttons.
-- Plan: Fusion plus `QPalette` by default, QSS only from the translator.
+## `style` and `style:`
 
-## Tokens and theming
+Inline style is parsed in JavaScript, checked against the [support matrix](#support-matrix) and sent to the backend as declarations in its dialect. Raw toolkit CSS is not accepted in `style`; use `@native`.
 
-One portable token set, `--sv-*`, is defined by the host per backend and per scheme.
+- GTK deduplicates by content: each distinct declaration set becomes a shared class `sv-s<n>` in one append-only provider, flushed once per main-loop turn. Changing a widget to an already seen style is a class swap. Inline rules sit above component rules, as inline style does on the web.
+- Qt gives the widget its own stylesheet, wrapped in the widget's exact class (a bare declaration list would leak to its descendants).
+- `opacity` in `style` never goes through CSS: it is `gtk_widget_set_opacity` on GTK and a `QGraphicsOpacityEffect` on Qt, which is also why Qt supports `opacity` only inline.
+- Several `style:` directives that change in one update arrive as one operation.
 
-| Token | GTK (plain theme) | GTK + libadwaita | Qt |
+Continuously animated values (`style:opacity={t}` every frame) are better driven through props or `opacity`; every new distinct style string is a new GTK class, and a Qt widget sheet re-polishes its widget.
+
+## Selectors
+
+| Selector | GTK | Qt |
+| --- | --- | --- |
+| element name, `.class`, `#id`, `*` | yes | yes |
+| descendant and child (`a b`, `a > b`) | yes | yes |
+| `:hover`, `:focus`, `:disabled`, `:checked` | yes | yes |
+| `:active` | yes | becomes `:pressed` |
+| `:focus-visible` | yes | approximated by `:focus` (warning) |
+| `:first-child`, `:last-child`, `:only-child`, `:focus-within`, `:backdrop`, `:selected` | yes | `:selected` only; the rest is an error |
+| `:not(.x)` | yes | `:not(:state)` becomes `:!state`; otherwise an error |
+| `+`, `~` | yes | error (QSS parses them but they never match) |
+| `[attr]` selectors, `:is()`, `:has()`, `::part`, nesting `&` outside Svelte's output | error | error |
+| `@media (prefers-color-scheme: dark)` | yes | yes (a dark sheet appended while the dark scheme is active) |
+| `@media (prefers-contrast)`, `(prefers-reduced-motion)` | yes | error |
+| `@keyframes` | yes | dropped with a warning |
+
+An unsupported selector drops the whole rule and reports an error. Svelte's own `:where(.svelte-h)` on later compounds is flattened, because GTK rejects the whole rule otherwise.
+
+## Support matrix
+
+Properties the translator accepts, per toolkit. Everything else is dropped with a warning that names the toolkit and, for layout properties, the prop to use instead.
+
+| Property | GTK | Qt | Notes |
 | --- | --- | --- | --- |
-| `--sv-accent` | `@accent_color` | `var(--accent-bg-color)` | `QPalette::Accent` (6.6+) |
-| `--sv-accent-fg` | `white` | `var(--accent-fg-color)` | `QPalette::HighlightedText` |
-| `--sv-fg` / `--sv-bg` | `@theme_fg_color` / `@theme_bg_color` | `var(--window-fg-color)` / `var(--window-bg-color)` | `WindowText` / `Window` |
-| `--sv-surface` | `@theme_base_color` | `var(--view-bg-color)` | `Base` |
-| `--sv-border` | `@borders` | `var(--border-color)` | `Mid` |
-| `--sv-radius`, `--sv-space-*`, `--sv-font-*` | literals | literals | literals |
+| `color`, `background-color`, `border`, `border-width`, `border-style`, `border-color`, `border-radius`, `padding`, `font-family`, `font-size`, `font-weight`, `font-style`, `min-width`, `min-height`, `border-top`, `padding-top`, `border-top-width`, `border-top-style`, `border-top-color`, `border-right`, `padding-right`, `border-right-width`, `border-right-style`, `border-right-color`, `border-bottom`, `padding-bottom`, `border-bottom-width`, `border-bottom-style`, `border-bottom-color`, `border-left`, `padding-left`, `border-left-width`, `border-left-style`, `border-left-color`, `border-top-left-radius`, `border-top-right-radius`, `border-bottom-left-radius`, `border-bottom-right-radius` | yes | yes | |
+| `background` | yes | yes | colour only on Qt: gradients are not translated |
+| `margin`, `margin-top`, `margin-right`, `margin-bottom`, `margin-left` | yes | yes | layout: prefer widget props (margin-start, spacing, ...) |
+| `opacity` | yes | inline | QSS has no opacity: Qt honours it for style= / style: only (QGraphicsOpacityEffect) |
+| `text-decoration` | yes | no | QSS has text-decoration on some widgets only; not translated |
+| `letter-spacing`, `box-shadow`, `text-shadow` | yes | no | |
+| `transition`, `transition-property`, `transition-duration`, `transition-timing-function`, `transition-delay` | yes | no | QSS has no transitions |
+| `animation`, `animation-name`, `animation-duration`, `animation-timing-function`, `animation-delay`, `animation-iteration-count`, `animation-direction`, `animation-fill-mode`, `animation-play-state` | yes | no | QSS has no animations |
 
-On Qt without a platform theme, `setColorScheme(Dark)` was a no-op under Xvfb, so the host supplies the dark palette itself.
+`yes` is translated, `inline` means only in `style=` and `style:`, `no` is dropped with a warning.
 
-## `style` and `class`
+Values are checked per toolkit. Qt is strict because QSS clobbers earlier declarations with a value it cannot parse: `oklch()`, `color-mix()`, `calc()`, `rem` units, percentages, gradients and `!important` are errors there. GTK rejects `!important` and percentage padding.
 
-`class=` and `class:` arrive as one flattened string. GTK sets the class list; Qt sets the `class` property and re-polishes (about 0.25 ms per widget).
+Two compensations are applied for you:
 
-`style=` and `style:` arrive flattened too, and neither toolkit has inline style. The recommendation is a structured channel: parse in JS, validate against the portable vocabulary, send structured setters to the host. GTK applies them as deduplicated style classes (an append-only provider flushed once per frame), Qt as a widget sheet wrapped in the exact class or as `QPalette`/`QFont` setters. Raw toolkit CSS in `style=` is not supported.
+- **Qt boxes.** A QSS background on a button, combo box or spin box only paints once the box is customised, so `border: none` is added to a rule that sets a background but no border (not on labels, frames and windows).
+- **GTK themes.** The theme paints buttons and entries with a `background-image` gradient that hides `background-color`, so `background-image: none` is added next to it.
 
-## Measured costs (1000 buttons, software rendering)
+### Layout stays in props
 
-| Toolkit | Operation | Cost |
+`width`, `height`, `max-width`, `max-height`, `display`, `position`, `flex`, `gap`, `text-align` and `cursor` are refused with a pointer to the right tool. GTK CSS has no layout properties, QSS's are per widget and fight layouts, and the other planned toolkits have no CSS at all.
+
+| You want | Use |
+| --- | --- |
+| space between children | the container's `spacing` prop |
+| children the same size | `homogeneous` |
+| grow to fill | `hexpand`, `vexpand`, `halign`, `valign` (and per-child attributes such as `parent:column`) |
+| fixed size | `width-request`, `height-request` (`min-width`, `min-height` in CSS only set a minimum) |
+| text alignment, wrapping, ellipsis | `xalign`, `justify`, `wrap`, `ellipsize` |
+| outer spacing | the margin props; CSS `margin` is accepted but is a layout property in disguise |
+
+## Diagnostics
+
+The Vite plugin prints one line per dropped construct, naming the toolkit, with the position inside the file:
+
+```text
+[plugin svelters:style] warning [qt] property 'box-shadow' is not supported on qt
+[plugin svelters:style] warning [qt] <togglebutton> is not an element on qt; rule dropped
+[plugin svelters:style] error [qt] value 'oklch(0.6 0.1 250)' for background-color uses 'oklch', which QSS cannot parse
+[plugin svelters:style] error [qt] combinator '+' never matches in QSS; rule dropped
+```
+
+Nothing is dropped silently. Build all targets from one source and read the output of each toolkit. A component that is clean on every toolkit you ship prints nothing. Inline `style` problems are reported once per distinct message at runtime with `console.warn`.
+
+Options (the third argument of `svelteConfig` in `vite.config.js`, or environment variables):
+
+```js
+export default defineConfig(svelteConfig(import.meta.dirname, undefined, {
+  style: {
+    strict: true,          // or SVELTERS_STYLE_STRICT=1: every warning and error fails the build
+    verbose: false,        // or SVELTERS_STYLE_VERBOSE=1: also print the info lines (compensations)
+    tokens: ['--sv-brand'] // token names you define with setTokens(), so they are not reported as unknown
+  },
+}));
+```
+
+## Tokens and the colour scheme
+
+`--sv-*` tokens are the portable way to pick colours and sizes. The defaults come in a light and a dark set:
+
+| Token | Light | Dark |
 | --- | --- | --- |
-| GTK | toggle a shared class on all 1000 | about 5 ms apply |
-| GTK | provider load, add or remove | about 240 to 260 ms (global restyle) |
-| GTK | one provider per inline style | 1751 ms apply (quadratic) |
-| Qt | class toggled on all 1000 with repolish | 246 ms |
-| Qt | app sheet reload (HMR) | about 0.7 s apply plus 0.5 s frame |
-| Qt | per-widget `setStyleSheet` | about 0.3 ms per widget |
+| `--sv-bg` | `#f6f5f4` | `#242424` |
+| `--sv-fg` | `#2e3436` | `#ffffff` |
+| `--sv-surface` | `#ffffff` | `#303030` |
+| `--sv-border` | `#cdc7c2` | `#4a4a4a` |
+| `--sv-accent` | `#3584e4` | `#3584e4` |
+| `--sv-accent-hover` | `#1c71d8` | `#4a90e8` |
+| `--sv-accent-fg` | `#ffffff` | `#ffffff` |
+| `--sv-muted` | `#77767b` | `#9a9996` |
+| `--sv-danger` | `#c01c28` | `#ff7b63` |
+| `--sv-radius` | `6px` | `6px` |
+| `--sv-space-1` to `--sv-space-4` | `4px`, `8px`, `12px`, `16px` | same |
+| `--sv-font-size`, `--sv-font-family` | `11pt`, `sans-serif` | same |
 
-## Work items
+```js
+import { setTokens, getTokens, setColorScheme, getColorScheme } from '@svelters/renderer/style';
 
-1. Renderer: stop dropping `class`, `style`, `id`; add `set_classes` and `set_style` (or reserved `setProp` names), decided in `backend-abi.md`.
-2. Vite plugin: intercept the style module, run the per-backend translators, surface diagnostics.
-3. Translator package `@svelters/style`.
-4. GTK backend: provider per module, token provider, inline-style dedupe store.
-5. Qt backend: module to template map, token substitution, `class` property plus re-polish.
-6. Define the `--sv-*` tokens and an override API.
-7. Screenshot golden tests per backend.
-8. Decide on libadwaita.
+setColorScheme('dark');                       // tokens, Qt palette, GTK prefers-color-scheme and dark sheets follow
+setTokens({ '--sv-accent': '#e5a50a' });      // override app-wide
+setTokens({ '--sv-accent': null });           // back to the scheme's default
+```
 
-Sources: `docs/notes/styling-gtk-css-qss.md`, `PLAN.md`, `packages/renderer/src/index.js`.
+Calls in the same job are batched, and a token set that did not change sends nothing.
+
+- **GTK.** Tokens are a `:root { --sv-x: value; }` rule in one small provider below the component providers. Component CSS keeps `var(--sv-x)` and GTK resolves it, so a token change rewrites that one provider. The scheme is set as the `prefers-color-scheme` property of every provider the host owns (GTK evaluates `@media (prefers-color-scheme)` per provider) and as the toolkit's dark preference, so the theme's own widgets follow too.
+- **Qt.** QSS has no variables. The translator keeps component rules as templates with `${--sv-x}` placeholders; the renderer fills them from the active token set and the backend concatenates the sheets into one application stylesheet. The same tokens become the application `QPalette` (`--sv-bg` is Window and Button, `--sv-fg` the text roles, `--sv-surface` is Base, `--sv-accent` and `--sv-accent-fg` are Highlight and HighlightedText), so widgets you did not style match. A token without a value and without a `var()` fallback removes its declaration rather than emitting something QSS would mis-parse. Qt sets the sheet at once while no window is visible (startup) and one zero-delay timer turn later after that, so a theme switch is one re-polish.
+- Tokens are app-wide on both toolkits. A per-subtree override works on GTK only through `@native gtk`.
+- `@media (prefers-color-scheme: dark)` in a component follows `setColorScheme`, not the operating system. Following the system setting is an open item.
+- Dark mode on Qt under X11 without a platform theme is the palette above: `QStyleHints::setColorScheme` did not change it in testing, so Svelters does not rely on it.
+
+## `@native`
+
+`@native gtk { }` and `@native qt { }` inside `<style>` are passed to that toolkit only, as written, after the translated rules:
+
+```svelte
+<style>
+  .field { color: var(--sv-fg); }
+
+  @native gtk {
+    entry > text { color: red; }
+    button.text-button:hover { box-shadow: inset 0 0 0 1px @accent_color; }
+  }
+
+  @native qt {
+    .QLineEdit { selection-background-color: ${--sv-accent}; }
+    QPushButton::menu-indicator { image: none; }
+  }
+</style>
+```
+
+- Nothing in a native block is validated or scoped to the component: Svelte would prune the toolkit's own selectors (`entry > text`) as unused, so the blocks are lifted out before the compile. Use your own classes to limit them.
+- Qt token placeholders (`${--sv-accent}`) are filled; everything else is verbatim, and QSS stops parsing at the first construct it does not understand, so a typo in a Qt block can disable every rule after it.
+- GTK reports a native block's parse errors on stderr (`[svelters-gtk] css parse error`).
+- Use native blocks for internal nodes (`entry > text`, `scale > trough > slider`), Qt sub-controls (`::indicator`, `::handle`), gradients, shadows and anything outside the vocabulary.
+
+## Performance notes
+
+- A class change costs a class change: GTK about 3 to 6 ms for 1000 buttons when no rule changes the look, Qt about 0.25 ms per widget for the re-polish.
+- Providers and the Qt application stylesheet are the expensive path (about 240 ms on GTK and 0.7 s on Qt per 1000 widgets, software rendering). They are used for sheet registration, hot reload and token or scheme changes, never per interaction.
+- The Qt sheet is applied before the first window is shown (36 ms against about 900 ms after, measured over 1000 buttons).
+- Hot reload (`svelters-build --watch`) re-registers sheets under the same ids, which reloads one GTK provider or one Qt sheet.
+
+Measurements: `docs/notes/styling-gtk-css-qss.md`.
+
+## Limits and open items
+
+- Parts (`scale::slider`, `checkbutton::indicator`) are not in the portable vocabulary yet; use `@native`.
+- No libadwaita: tokens are literal values on both toolkits, so the system accent colour is not followed.
+- The scheme is chosen by the app, not read from the system.
+- Svelte's `transition:` and `animate:` stay compile errors; CSS `transition` works on GTK only.
+- Unscoped `@native` content is global to its toolkit.
+
+Sources: `docs/notes/styling-gtk-css-qss.md`, `docs/notes/x6-styling.md`, `plans/milestones/X6-styling.md`, `plans/architecture/backend-abi.md` (ABI v2.3).

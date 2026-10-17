@@ -31,7 +31,7 @@ export default defineConfig({
             guide('guides/lists-and-snippets', 'Snippets, lists, virtual lists'),
             guide('guides/events', 'Events and modifiers'),
             guide('guides/bindings', 'Bindings'),
-            guide('guides/styling', 'Styling (planned)'),
+            guide('guides/styling', 'Styling'),
             guide('guides/annotation-workflow', 'Metadata and annotations'),
             guide('guides/platforms', 'Platform status'),
           ],

@@ -1,7 +1,7 @@
 // The portable style vocabulary and its per-toolkit support matrix. Plain ES2022 with no imports:
 // the renderer bundles this into apps (inline `style`), the build plugin and tests use it for
-// translation. Everything the docs say about support is generated from MATRIX
-// (docs/site: styling guide; `pnpm --filter @svelters/style test` checks the page against it).
+// translation. Everything the docs say about support comes from MATRIX
+// (docs/site: styling guide; test/docs.test.mjs checks the page against it).
 
 /** Separator inside the string payloads of the `style` host op. */
 export const SEP = '\u0001';
