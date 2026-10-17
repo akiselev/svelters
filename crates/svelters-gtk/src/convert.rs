@@ -136,15 +136,11 @@ pub enum Rec {
 
 impl Rec {
     pub fn of(t: Type) -> Option<Rec> {
-        Some(match t.name() {
-            "graphene_rect_t" => Rec::RectF,
-            "GdkRectangle" => Rec::RectI,
-            "graphene_size_t" => Rec::SizeF,
-            "graphene_point_t" => Rec::PointF,
-            "GtkBorder" => Rec::Insets,
-            "GdkRGBA" => Rec::Color,
-            _ => return None,
-        })
+        // Compare GTypes, not names: graphene registers `GrapheneRect` where the C library says
+        // `graphene_rect_t`.
+        [Rec::RectF, Rec::RectI, Rec::SizeF, Rec::PointF, Rec::Insets, Rec::Color]
+            .into_iter()
+            .find(|r| r.gtype() == t)
     }
 
     /// Portable field names, in wire order.
@@ -518,4 +514,91 @@ pub fn from_value(v: &glib::Value, env: &dyn Env, buf: &mut StrBuf) -> svl_value
 #[allow(dead_code)]
 fn _keep(_: *const c_char) {
     let _ = types::FIRST_BACKEND_TYPE;
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::testing::on_gtk;
+
+    struct NoEnv;
+    impl Env for NoEnv {
+        fn object(&self, _: u64) -> Option<glib::Object> {
+            None
+        }
+        fn boxed(&self, _: u64) -> Option<glib::Value> {
+            None
+        }
+        fn handle_of(&self, _: &glib::Object) -> u64 {
+            0
+        }
+        fn mint_boxed(&self, _: glib::Value) -> u64 {
+            0
+        }
+        fn type_id(&self, t: Type) -> svl_id {
+            Rec::of(t).and_then(Rec::well_known).unwrap_or(SVL_T_FIRST_BACKEND)
+        }
+    }
+
+    fn record(ty: svl_id, fields: Vec<Value>) -> Value {
+        Value::Record { ty, fields }
+    }
+
+    /// Converts `v` to a GValue of `t` and back; returns the GValue and the value that comes out.
+    fn round_trip(t: Type, v: &Value) -> (glib::Value, Value) {
+        let gv = v.with_raw(|raw| unsafe { to_value(t, raw, &NoEnv) }).expect("to_value");
+        let mut buf = StrBuf::default();
+        let out = from_value(&gv, &NoEnv, &mut buf);
+        (gv, unsafe { Value::from_raw(&out) })
+    }
+
+    #[test]
+    fn graphene_and_border_records_round_trip() {
+        on_gtk(|| {
+            let (gv, back) = round_trip(
+                gtk::graphene::Rect::static_type(),
+                &record(SVL_T_RECT, vec![Value::F64(1.5), Value::F64(2.5), Value::F64(30.0), Value::F64(40.0)]),
+            );
+            let r = gv.get::<gtk::graphene::Rect>().unwrap();
+            assert_eq!((r.x(), r.y(), r.width(), r.height()), (1.5, 2.5, 30.0, 40.0));
+            assert_eq!(back, record(SVL_T_RECT, vec![Value::F64(1.5), Value::F64(2.5), Value::F64(30.0), Value::F64(40.0)]));
+
+            let (gv, back) = round_trip(
+                gtk::graphene::Size::static_type(),
+                &record(SVL_T_SIZE, vec![Value::F64(8.0), Value::I64(9)]),
+            );
+            let s = gv.get::<gtk::graphene::Size>().unwrap();
+            assert_eq!((s.width(), s.height()), (8.0, 9.0));
+            assert_eq!(back, record(SVL_T_SIZE, vec![Value::F64(8.0), Value::F64(9.0)]));
+
+            let (gv, back) = round_trip(
+                gtk::graphene::Point::static_type(),
+                &record(SVL_T_POINT, vec![Value::F64(-3.0), Value::F64(4.5)]),
+            );
+            let p = gv.get::<gtk::graphene::Point>().unwrap();
+            assert_eq!((p.x(), p.y()), (-3.0, 4.5));
+            assert_eq!(back, record(SVL_T_POINT, vec![Value::F64(-3.0), Value::F64(4.5)]));
+
+            // Insets: top, right, bottom, left, integral and i16-ranged.
+            let (gv, back) = round_trip(
+                gtk::Border::static_type(),
+                &record(SVL_T_INSETS, vec![Value::I64(1), Value::I64(2), Value::I64(3), Value::I64(4)]),
+            );
+            let b = gv.get::<gtk::Border>().unwrap();
+            assert_eq!((b.top(), b.right(), b.bottom(), b.left()), (1, 2, 3, 4));
+            assert_eq!(back, record(SVL_T_INSETS, vec![Value::I64(1), Value::I64(2), Value::I64(3), Value::I64(4)]));
+            let too_big = record(SVL_T_INSETS, vec![Value::I64(100_000), Value::I64(0), Value::I64(0), Value::I64(0)]);
+            assert!(too_big.with_raw(|raw| unsafe { to_value(gtk::Border::static_type(), raw, &NoEnv) }).is_err());
+        });
+    }
+
+    #[test]
+    fn null_boxed_record_property_is_null() {
+        on_gtk(|| {
+            let gv = glib::Value::from_type(gtk::gdk::RGBA::static_type());
+            let mut buf = StrBuf::default();
+            let out = from_value(&gv, &NoEnv, &mut buf);
+            assert_eq!(out.tag, SVL_NULL);
+        });
+    }
 }
