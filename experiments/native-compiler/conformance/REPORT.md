@@ -133,7 +133,6 @@ A sample counts once per distinct reason, so this shows what fixing one feature 
 | mismatch: expected 'Expected a runtime error' to include 'snippet_without_render_tag' | 2 |
 | mismatch: expected [Function] to throw an error | 2 |
 | mismatch: expected [] to deeply equal [ …(N) ] | 2 |
-| runtime_error: Cannot find module '/home/user/svelters/.claude/worktrees/agent-aNeNfNdeaN/experiments/nat | 2 |
 | runtime_error: Cannot read properties of undefined (reading 'loc') | 2 |
 | runtime_error: Unexpected reserved word | 2 |
 | mismatch: Expected a runtime error | 1 |
@@ -162,6 +161,7 @@ A sample counts once per distinct reason, so this shows what fixing one feature 
 | mismatch: expected [ 'a', 'b', 'c', 'pending' ] to deeply equal [ 'pending', 'a', 'b', 'c', 'pending | 1 |
 | mismatch: expected [ 'invoked', 'invoked' ] to deeply equal [ 'invoked' ] | 1 |
 | mismatch: expected [ 'parent: render N', …(N) ] to deeply equal [ 'N: $effect.pre N', …(N) ] | 1 |
+| mismatch: expected [ 'rendering then block' ] to deeply equal [ 'rendering pending block', …(N) ] | 1 |
 
 ## Failing samples (runtime error / mismatch / timeout)
 
@@ -207,7 +207,7 @@ honoured. 54 of the 102 failing samples set compile options.
 | flush-sync-inside-attachment | runtime_error |  | parent.appendChild is not a function |
 | form-default-value | mismatch |  | field 0: expected '' to equal 'x' |
 | get-abort-signal | mismatch |  | expected '<button>increment</button>' to deeply equal '<button>increment</button>\n<p>loadin…' |
-| hmr-dynamic-component | runtime_error | { dev: true, hmr: true } | Cannot find module '/home/user/svelters/.claude/worktrees/agent-a0630e0f19dea4598/experiments/native-compiler/conformance/out/hmr-dynamic-component/_output/clie |
+| hmr-dynamic-component | runtime_error | { dev: true, hmr: true } | Cannot find module '/home/user/svelters/experiments/native-compiler/conformance/out/hmr-dynamic-component/_output/client/Component.svelte.js' imported from /hom |
 | input-type-before-value-spread | mismatch |  | expected 'line1line2line3' to equal 'line1\nline2\nline3' |
 | inspect | mismatch | { dev: true } | expected [ +0, 1, 'at dispatch' ] to deeply equal [ +0, 1, 'at HTMLButtonElement.click' ] |
 | inspect-console-trace | mismatch | { dev: true } | expected false to be truthy |
@@ -246,7 +246,7 @@ honoured. 54 of the 102 failing samples set compile options.
 | mount-props-updates | runtime_error |  | parent.appendChild is not a function |
 | mount-unmount-anchor | runtime_error |  | parent.appendChild is not a function |
 | non-local-mutation-discouraged | mismatch | { dev: true } | expected [] to deeply equal [ Array(1) ] |
-| non-local-mutation-inherited-owner-2 | runtime_error | { dev: true } | Cannot find module '/home/user/svelters/.claude/worktrees/agent-a0630e0f19dea4598/experiments/native-compiler/conformance/out/non-local-mutation-inherited-owner |
+| non-local-mutation-inherited-owner-2 | runtime_error | { dev: true } | Cannot find module '/home/user/svelters/experiments/native-compiler/conformance/out/non-local-mutation-inherited-owner-2/state.svelte' imported from /home/user/ |
 | non-local-mutation-inherited-owner-3 | mismatch | { dev: true } | expected +0 to deeply equal 1 |
 | non-local-mutation-with-binding-2 | mismatch | { dev: true } | expected [] to deeply equal [ Array(1) ] |
 | non-local-mutation-with-binding-3 | mismatch | { dev: true } | expected [] to deeply equal [ Array(1) ] |
