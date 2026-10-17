@@ -1,0 +1,72 @@
+===== HMR
+--- mount  [ops 17; tree el=2 text=2 comment=0]
+    op: create #2t text ""
+    op: insert #2t into #1<window> before null
+    op: create #3f fragment
+    op: create #4<box>
+    op: create #5f fragment
+    op: create #6<button>
+    op: create #7f fragment
+    op: create #8t text " "
+    op: insert #8t into #7f before null
+    op: insert #8t into #6<button> before null
+    op: insert #6<button> into #5f before null
+    op: insert #6<button> into #4<box> before null
+    op: insert #4<box> into #3f before null
+    op: set #6<button>.disabled = false [boolean]
+    op: text #8t = "Clicked 0"
+    op: listen #6<button> click {}
+    op: move #4<box> into #1<window> before #2t
+    | <window>
+    |   <box>
+    |     <button disabled=false>
+    |       "Clicked 0"
+    |   ""
+    |
+--- click x2  [ops 2; tree el=2 text=2 comment=0]
+    op: text #8t = "Clicked 1"
+    op: text #8t = "Clicked 2"
+    | <window>
+    |   <box>
+    |     <button disabled=false>
+    |       "Clicked 2"
+    |   ""
+    |
+--- hot swap Counter -> CounterV2  [ops 17; tree el=2 text=2 comment=0]
+    op: remove #4<box>
+    op: create #9f fragment
+    op: create #10<box>
+    op: create #11f fragment
+    op: create #12<button>
+    op: create #13f fragment
+    op: create #14t text " "
+    op: insert #14t into #13f before null
+    op: insert #14t into #12<button> before null
+    op: insert #12<button> into #11f before null
+    op: insert #12<button> into #10<box> before null
+    op: insert #10<box> into #9f before null
+    op: set #10<box>.version = 2 [number]
+    op: set #12<button>.disabled = false [boolean]
+    op: text #14t = "Count is 0"
+    op: listen #12<button> click {}
+    op: move #10<box> into #1<window> before #2t
+    | <window>
+    |   <box version=2>
+    |     <button disabled=false>
+    |       "Count is 0"
+    |   ""
+    |
+--- click after swap  [ops 1; tree el=2 text=2 comment=0]
+    op: text #14t = "Count is 1"
+    | <window>
+    |   <box version=2>
+    |     <button disabled=false>
+    |       "Count is 1"
+    |   ""
+    |
+--- unmount  [ops 2; tree el=0 text=0 comment=0]
+    op: remove #10<box>
+    op: remove #2t
+    | <window>
+    |
+leftover after unmount: {"element":0,"text":0,"comment":0}
