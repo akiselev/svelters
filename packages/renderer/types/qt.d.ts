@@ -24,6 +24,7 @@ export interface QtElementDescriptors {
       saveGeometry(): Uint8Array;
       restoreGeometry(geometry: Uint8Array): boolean;
       resizeTo(arg0: Size): void;
+      getContentsMargins(): { left: number; top: number; right: number; bottom: number };
     };
     slots: "children";
   };
@@ -159,6 +160,8 @@ export interface QtElementDescriptors {
     events: {
     };
     methods: {
+      validate(input: string, pos: number): { ret: "acceptable" | "intermediate" | "invalid"; input: string; pos: number };
+      fixup(input: string): { input: string };
     };
     slots: never;
   };

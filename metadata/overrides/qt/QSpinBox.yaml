@@ -7,3 +7,7 @@ elements:
       - { js: maximum, native: maximum }
       - { js: singleStep, native: singleStep }
       - { js: prefix, native: prefix }
+    methods:
+      # In-out parameters: JS passes (input, pos) and gets {ret, input, pos}.
+      - { js: validate, native: validate, inout: [input, pos] }
+      - { js: fixup, native: fixup, inout: [input] }

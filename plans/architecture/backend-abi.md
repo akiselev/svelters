@@ -273,3 +273,19 @@ Things to do now, with no ABI change:
 - Strings are borrowed.
 - Descriptor-driven prop coercion replaces the renderer's hand-written `INT_PROPS`.
 - Enums go out as names on both toolkits.
+
+### As implemented (S1, S2): the value model
+
+The header (`crates/svelters-abi/include/svelters_backend.h`) is the reference; `docs/notes/serdes-impl.md` records the decisions. This section records additions made after the first v3 merge. All are additive within v3.
+
+#### Out and in-out parameters (S2)
+
+A method descriptor may flag a parameter `SVL_D_OUT` (the callee fills it in; JS does not supply it) or `SVL_D_INOUT` (JS supplies the input, the callee returns the updated value).
+
+- **Arguments.** JS supplies the parameters that are not `OUT`, in declaration order. The host encodes only those and calls `call(h, method, args, n)` with `n` = their count. `OUT` parameters are never sent, so a backend does not need placeholder values.
+- **Result.** If the method has at least one `OUT` or `INOUT` parameter, the backend answers a `LIST` of `1 + k` values: the return value first (`NULL` when the method is void), then one value per `OUT`/`INOUT` parameter, in declaration order. A list of any other length is an error reported by the host.
+- **JS shape.** The host turns the list into one object: `ret` (omitted when the descriptor's return is void), then one key per out parameter, named by the slot's `name` (`out<i>` when unnamed). `getContentsMargins()` gives `{left, top, right, bottom}`; `validate(text, pos)` gives `{ret, input, pos}`. The shape is the same for one out parameter or many.
+- **Errors.** A `SVL_M_THROWS` method that fails answers `ERROR`/error status as usual; no out list is built.
+- **Not supported.** `SVL_M_ASYNC` methods with out parameters (an async completion carries one value), and `OUT` parameters on callback types.
+- **Backend recipe.** Report outs by building `[ret, out1, out2...]` as an ordinary `LIST` out value: Rust `Value::List(vec![ret, ...])`; Qt generated code (`out:` / `inout:` keys, below); GTK a `StrBuf::list_value(SVL_LIST, 0, ...)` (`gio-file` `loadContentsEtag`). Descriptors of `OUT` slots describe the output type (so enums become names, records objects, and so on) exactly like a return slot.
+- **Qt overrides.** A method entry may carry `out: [names]` and `inout: [names]` naming C++ parameters of type `T *` or `T &` (`int`, `uint`, `bool`, `double`, `float`, `qint64`, `QString`); `target: layout` calls the method on the element's layout. Example: `{ js: getContentsMargins, target: layout, native: getContentsMargins, out: [left, top, right, bottom] }`.

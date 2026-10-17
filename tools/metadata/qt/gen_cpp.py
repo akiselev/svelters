@@ -114,6 +114,16 @@ def enum_member_names(members: list[dict]) -> dict[str, str]:
     return out
 
 
+# Parameter types an `out:` / `inout:` annotation may name: the C++ core type -> neutral ref.
+OUT_PRIM = {"bool": "bool", "int": "i32", "uint": "u32", "unsigned int": "u32", "qint64": "i64", "qreal": "f64",
+            "double": "f64", "float": "f32", "QString": "string"}
+
+
+def out_core(native: str) -> str:
+    """`int *` / `QString &` / `const int &` -> `int` / `QString`."""
+    return re.sub(r"\bconst\b", "", native).replace("&", "").replace("*", "").strip()
+
+
 def strip_cv(native: str) -> str:
     return re.sub(r"\bconst\b", "", native).replace("&", "").strip()
 
@@ -333,11 +343,29 @@ class Model:
         return c, m
 
     def _resolve_method(self, el: dict, m: dict) -> None:
-        tag, cls = el["tag"], el["cls"]
+        tag, cls = el["tag"], self.target_cls(el, m.get("target"))
         want = m.get("params")
+        # `out:` / `inout:` name C++ parameters (`int *left`, `QString &input`) that the call fills in.
+        # JS passes only the in / inout ones; the result is the object {ret?, <out name>...}.
+        modes = {n: "out" for n in m.get("out", [])}
+        modes.update({n: "inout" for n in m.get("inout", [])})
+        if len(modes) != len(m.get("out", [])) + len(m.get("inout", [])):
+            raise GenError(f"{tag}.{m['js']}: a parameter is listed twice in out / inout")
+
+        def eff_ref(q):
+            if q["name"] in modes:
+                core = out_core(q["type"]["native"])
+                ref = OUT_PRIM.get(core)
+                if ref is None:
+                    raise GenError(f"{tag}.{m['js']}: out parameter {q['name']} of type {core} has no converter yet")
+                return ref
+            return q["type"]["ref"]
+
         def match(r):
-            if r["name"] != m["native"] or r["static"]:
+            if r["name"] != m["native"] or r["static"] or r.get("access", "public") != "public":
                 return False
+            if modes:
+                return set(modes) <= {q["name"] for q in r["params"]} and (want is None or [eff_ref(q) for q in r["params"]] == want)
             if want is None:
                 return not [q for q in r["params"] if not q["default"]] or len(r["params"]) == 0
             return [q["type"]["ref"] for q in r["params"]] == want
@@ -347,12 +375,23 @@ class Model:
         m["rec"], m["decl_cls"] = rec, c
         m["ret"] = rec["returns"]["ref"]
         m["ret_native"] = rec["returns"]["native"]
-        m["argrefs"] = want or []
+        params = rec["params"] if modes else rec["params"][:len(want or [])]
+        m["argrefs"] = [eff_ref(q) for q in params] if modes else (want or [])
         m["argtypes"] = []
-        for i, q in enumerate(rec["params"][:len(m["argrefs"])]):
-            self.use(q["type"]["ref"], f"{tag}.{m['js']} arg {i}")
-            m["argtypes"].append(self.cpp_type(q["type"]["ref"], q["type"]["native"]))
-        m["argnames"] = [q["name"] or f"arg{i}" for i, q in enumerate(rec["params"][:len(m["argrefs"])])]
+        m["modes"] = []
+        m["ptrs"] = []
+        for i, q in enumerate(params):
+            ref = m["argrefs"][i]
+            self.use(ref, f"{tag}.{m['js']} arg {i}")
+            if q["name"] in modes:
+                m["argtypes"].append(out_core(q["type"]["native"]))
+                m["ptrs"].append(out_core(q["type"]["native"]) != strip_cv(q["type"]["native"]))
+            else:
+                m["argtypes"].append(self.cpp_type(ref, q["type"]["native"]))
+                m["ptrs"].append(False)
+            m["modes"].append(modes.get(q["name"], "in"))
+        m["argnames"] = [q["name"] or f"arg{i}" for i, q in enumerate(params)]
+        m["nin"] = sum(1 for x in m["modes"] if x != "out")
         if m["ret"] != "void":
             self.use(m["ret"], f"{tag}.{m['js']} return")
 
@@ -525,6 +564,10 @@ def host_expr(el: dict, s_host: str, obj: str = "o") -> str:
     return f"static_cast<{el['cls']} *>({obj})"
 
 
+def self_cls(el: dict, p: dict) -> str:
+    return el["layout_cls"] if p.get("target") == "layout" else el["cls"]
+
+
 def target_expr(el: dict, p: dict, obj: str = "o") -> str:
     return host_expr(el, "layout" if p.get("target") == "layout" else "self", obj)
 
@@ -641,19 +684,35 @@ def emit_call(m: Model) -> str:
             continue
         out.append(f"    case K_{t}:\n      switch (method) {{")
         for me in e["methods"]:
-            n = len(me["argrefs"])
+            n = me["nin"]
             out.append(f"        case M_{t}_{cident(me['js'])}: {{")
             out.append(f"          if (n != {n}) return fail(\"{me['js']}: expected {n} argument(s)\");")
-            names = []
-            for i, (ty, an) in enumerate(zip(me["argtypes"], me["argnames"])):
+            names, j = [], 0
+            for i, (ty, an, mode, ptr) in enumerate(zip(me["argtypes"], me["argnames"], me["modes"], me["ptrs"])):
                 out.append(f"          {ty} a{i}{{}};")
-                out.append(f'          if (!conv_in(&args[{i}], a{i}, "{me["js"]}({an})", er)) return fail(er);')
-                names.append(f"a{i}")
-            call = f"static_cast<{e['cls']} *>(o)->{me['native']}({', '.join(names)})"
+                if mode != "out":
+                    out.append(f'          if (!conv_in(&args[{j}], a{i}, "{me["js"]}({an})", er)) return fail(er);')
+                    j += 1
+                names.append(f"&a{i}" if ptr else f"a{i}")
+            # Through the declaring class: an override may make the method protected in the element's class.
+            recv = target_expr(e, me)
+            if me["decl_cls"] != self_cls(e, me):
+                recv = f"static_cast<{me['decl_cls']} *>({recv})"
+            call = f"{recv}->{me['native']}({', '.join(names)})"
+            outs = [i for i, mode in enumerate(me["modes"]) if mode != "in"]
             if me["ret"] == "void":
                 out.append(f"          {call};")
             else:
                 out.append(f"          auto r = {call};")
+            if outs:
+                # [ret, outs...] in parameter order; the host shapes the object.
+                out.append(f"          if (out) {{\n            g_out.lists.emplace_back({len(outs) + 1}, mkv(SVL_NULL));\n            auto &vec = g_out.lists.back();")
+                if me["ret"] != "void":
+                    out.append("            Conv<Plain<decltype(r)>>::out(r, &vec[0]);")
+                for k, i in enumerate(outs):
+                    out.append(f"            Conv<Plain<decltype(a{i})>>::out(a{i}, &vec[{k + 1}]);")
+                out.append("            *out = mkv(SVL_LIST);\n            out->u.l.ptr = vec.data();\n            out->u.l.len = vec.size();\n          }")
+            elif me["ret"] != "void":
                 out.append("          if (out) Conv<Plain<decltype(r)>>::out(r, out);")
             out.append("          return 0;\n        }")
         out.append("        default: break;\n      }\n      break;")
@@ -690,7 +749,10 @@ def emit_describe(m: Model) -> str:
                     mid = f"M_{t}_{cident(it['js'])}"
                     n = len(it["argrefs"])
                     out.append(f"            case {mid}: {{")
-                    slots = ", ".join(f'Conv<{ty}>::slot("{an}")' for ty, an in zip(it["argtypes"], it["argnames"])) or "slot_desc(nullptr, SVL_NULL)"
+                    flag = {"out": "SVL_D_OUT", "inout": "SVL_D_INOUT"}
+                    slots = ", ".join(
+                        f'with_flags(Conv<{ty}>::slot("{an}"), {flag[mode]})' if mode != "in" else f'Conv<{ty}>::slot("{an}")'
+                        for ty, an, mode in zip(it["argtypes"], it["argnames"], it["modes"])) or "slot_desc(nullptr, SVL_NULL)"
                     out.append(f"              static svl_slot_desc ps[{max(n, 1)}] = {{{slots}}};")
                     if it["ret"] == "void":
                         ret = "slot_desc(nullptr, SVL_NULL)"
@@ -967,12 +1029,13 @@ class Tests:
         for me in e.get("methods", []):
             if any(classify(r)[0] not in ("int", "float") for r in me["argrefs"]):
                 continue  # non-numeric arguments are exercised by examples/counter-qt/tests/serdes.rs
-            args = ", ".join(f"vi64({i + 10})" for i, _ in enumerate(me["argrefs"]))
+            nin = me["nin"]
+            args = ", ".join(f"vi64({i + 10})" for i in range(nin))
             lines = [f'  svl_handle h = mk("{t}");']
-            if me["argrefs"]:
+            if nin:
                 lines.append(f"  svl_value a[] = {{{args}}};")
-            lines += [f'  CHECK(B->call(B->self, h, M("{t}", "{me["js"]}"), {"a" if me["argrefs"] else "nullptr"}, {len(me["argrefs"])}, nullptr) == 0);',
-                      f'  CHECK(B->call(B->self, h, M("{t}", "{me["js"]}"), nullptr, {len(me["argrefs"]) + 1}, nullptr) < 0);',
+            lines += [f'  CHECK(B->call(B->self, h, M("{t}", "{me["js"]}"), {"a" if nin else "nullptr"}, {nin}, nullptr) == 0);',
+                      f'  CHECK(B->call(B->self, h, M("{t}", "{me["js"]}"), nullptr, {nin + 1}, nullptr) < 0);',
                       "  B->destroy(B->self, h);"]
             self.add(f"method/{t}.{me['js']}", "\n".join(lines))
 
@@ -1151,8 +1214,12 @@ def gen_dts(m: Model) -> str:
         out.append("    };")
         out.append("    methods: {")
         for me in e.get("methods", []):
-            args = ", ".join(f"{an}: {ts_type(m, r)}" for an, r in zip(me["argnames"], me["argrefs"]))
+            args = ", ".join(f"{an}: {ts_type(m, r)}" for an, r, mode in zip(me["argnames"], me["argrefs"], me["modes"]) if mode != "out")
             ret = "void" if me["ret"] == "void" else ts_type(m, me["ret"])
+            if any(mode != "in" for mode in me["modes"]):
+                fields = ([] if me["ret"] == "void" else [f"ret: {ret}"]) + [
+                    f"{an}: {ts_type(m, r)}" for an, r, mode in zip(me["argnames"], me["argrefs"], me["modes"]) if mode != "in"]
+                ret = "{ " + "; ".join(fields) + " }"
             out.append(f"      {me['js']}({args}): {ret};")
         out.append("    };")
         ch = e.get("children")

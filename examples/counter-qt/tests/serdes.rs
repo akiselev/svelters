@@ -437,6 +437,34 @@ fn descriptors() {
     assert_eq!(m.params[0].tag, SVL_RECORD);
 }
 
+fn out_and_inout_params() {
+    // Out only: the backend is called without arguments and answers [ret, outs...] (ret is null for void).
+    let e = mk("box");
+    let d = be().describe(NameKind::Method, e.kind, e.mid("getContentsMargins")).unwrap();
+    let flags: Vec<u16> = d.params.iter().map(|p| p.flags & SVL_D_OUT).collect();
+    assert_eq!(flags, [SVL_D_OUT; 4]);
+    assert!(d.ret.is_void());
+    let Value::List(items) = e.call("getContentsMargins", &[]).unwrap() else { panic!("list") };
+    assert_eq!(items.len(), 5);
+    assert_eq!(items[0], Value::Null);
+    e.set("contentsMargins", &record_of(&e, "contentsMargins", &[i(1), i(2), i(3), i(4)])).unwrap();
+    let Value::List(items) = e.call("getContentsMargins", &[]).unwrap() else { panic!("list") };
+    assert_eq!(items[1..], [Value::I64(4), Value::I64(1), Value::I64(2), Value::I64(3)], "left, top, right, bottom");
+    assert!(e.call("getContentsMargins", &[i(1)]).unwrap_err().contains("expected 0 argument"));
+    // In-out: QAbstractSpinBox::validate(QString &input, int &pos) -> State.
+    let s = mk("spinbox");
+    let d = be().describe(NameKind::Method, s.kind, s.mid("validate")).unwrap();
+    assert_eq!(d.params.iter().map(|p| p.flags & SVL_D_INOUT).collect::<Vec<_>>(), [SVL_D_INOUT; 2]);
+    assert_eq!(d.ret.tag, SVL_ENUM);
+    s.set("maximum", &i(100)).unwrap();
+    let Value::List(items) = s.call("validate", &[Value::Str("42".into()), i(2)]).unwrap() else { panic!("list") };
+    assert_eq!(items.len(), 3);
+    assert!(matches!(items[0], Value::Enum { value: 2, .. }), "Acceptable: {:?}", items[0]);
+    assert_eq!((&items[1], &items[2]), (&Value::Str("42".into()), &Value::I64(2)));
+    let Value::List(items) = s.call("validate", &[Value::Str("abc".into()), i(3)]).unwrap() else { panic!("list") };
+    assert!(matches!(items[0], Value::Enum { value: 0, .. }), "Invalid: {:?}", items[0]);
+}
+
 fn main() {
     // The AT-SPI bridge talks to a session bus that does not exist in CI.
     // SAFETY: single-threaded at this point.
@@ -459,5 +487,6 @@ fn main() {
         ("variants", variants),
         ("errors_cross_the_boundary_as_values", errors_cross_the_boundary_as_values),
         ("descriptors", descriptors),
+        ("out_and_inout_params", out_and_inout_params),
     ]);
 }
