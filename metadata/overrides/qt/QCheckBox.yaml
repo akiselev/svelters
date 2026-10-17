@@ -1,0 +1,53 @@
+elements:
+  - tag: checkbox
+    construct: { class: QCheckBox }
+    props:
+      - { js: checked, native: checked, suppress_signals: true, provenance: "QAbstractButton::checked (qdoc); declared here because gen_bindings reads element props only" }
+      - { js: tristate, native: tristate, provenance: "QCheckBox::tristate (qdoc)" }
+      - js: checkState
+        type: enum
+        getter: checkState
+        setter: setCheckState
+        values:
+          unchecked: Qt::Unchecked
+          partially-checked: Qt::PartiallyChecked
+          checked: Qt::Checked
+        provenance: "QCheckBox::checkState (qdoc accessor, not a Q_PROPERTY)"
+    bindings:
+      - name: checked
+        direction: two_way
+        property: checked
+        type: { ref: bool, nullable: false }
+        change: { signal: toggled, role: any_change, value: arg0 }
+        write: { natively_normalizes: false }
+        echo: { strategy: host_suppressed, compare_before_set: true, read_back: false, sync_signals_on_set: ["toggled(bool)"] }
+        lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
+        provenance: "QAbstractButton::toggled(bool) is emitted by setChecked only on change (qdoc)"
+    signals:
+      - js: toggled
+        native: toggled
+        connect: "toggled(bool)"
+        args: [{ name: checked, type: bool }]
+        trigger: "$w->setChecked(!$w->isChecked())"
+        expect_args: ["true"]
+        provenance: "toggled(bool) (qdoc); trigger flips so every call emits (the binding test calls it with $i=1)"
+      - js: pressed
+        native: pressed
+        connect: "pressed()"
+        args: []
+        # a check box/radio only hits inside its indicator/label rect, so the widget needs a size first
+        trigger: "{ $w->resize(200, 40); QMouseEvent p(QEvent::MouseButtonPress, QPointF(10, 20), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier); QCoreApplication::sendEvent($w, &p); }"
+        provenance: "pressed() (qdoc); trigger sizes the widget first"
+      - js: released
+        native: released
+        connect: "released()"
+        args: []
+        trigger: "{ $w->resize(200, 40); QMouseEvent p(QEvent::MouseButtonPress, QPointF(10, 20), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier); QCoreApplication::sendEvent($w, &p); QMouseEvent r(QEvent::MouseButtonRelease, QPointF(10, 20), Qt::LeftButton, Qt::NoButton, Qt::NoModifier); QCoreApplication::sendEvent($w, &r); }"
+        provenance: "released() (qdoc); trigger sizes the widget first"
+      - js: stateChanged
+        native: stateChanged
+        connect: "stateChanged(int)"
+        args: [{ name: state, type: i32 }]
+        trigger: '$w->setCheckState(($i % 2) == 0 ? Qt::Checked : Qt::Unchecked)'
+        expect_args: ["2"]
+        provenance: "QCheckBox::stateChanged(int) (qdoc, deprecated; checkStateChanged carries an enum)"

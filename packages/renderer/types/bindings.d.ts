@@ -4,6 +4,9 @@ export interface BindableProps {
   calendar: {
     day: number; // gtk
   };
+  checkbox: {
+    checked: boolean; // qt
+  };
   checkbutton: {
     active: boolean; // gtk
   };
@@ -24,6 +27,9 @@ export interface BindableProps {
   };
   passwordentry: {
     text: string; // gtk
+  };
+  radiobutton: {
+    checked: boolean; // qt
   };
   searchentry: {
     text: string; // gtk
