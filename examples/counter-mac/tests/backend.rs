@@ -30,6 +30,7 @@ mod mac {
     }
 
     guarded![
+        frame_path_probe,
         handles_are_never_reused,
         unknown_names_resolve_to_zero,
         stale_handle_is_an_error,
@@ -48,6 +49,110 @@ mod mac {
         run_returns_after_quit,
         no_leaked_handles,
     ];
+
+    mod probe {
+        use std::ffi::c_void;
+        use std::sync::atomic::{AtomicU32, Ordering};
+        pub static CV_TICKS: AtomicU32 = AtomicU32::new(0);
+        type Cb = unsafe extern "C" fn(*mut c_void, *const c_void, *const c_void, u64, *mut u64, *mut c_void) -> i32;
+        #[link(name = "CoreVideo", kind = "framework")]
+        unsafe extern "C" {
+            fn CVDisplayLinkCreateWithActiveCGDisplays(out: *mut *mut c_void) -> i32;
+            fn CVDisplayLinkSetOutputCallback(l: *mut c_void, cb: Cb, ctx: *mut c_void) -> i32;
+            fn CVDisplayLinkStart(l: *mut c_void) -> i32;
+            fn CVDisplayLinkStop(l: *mut c_void) -> i32;
+        }
+        #[link(name = "CoreGraphics", kind = "framework")]
+        unsafe extern "C" {
+            fn CGMainDisplayID() -> u32;
+            fn CGDisplayCopyDisplayMode(d: u32) -> *mut c_void;
+            fn CGDisplayModeGetRefreshRate(m: *mut c_void) -> f64;
+            fn CGDisplayPixelsWide(d: u32) -> usize;
+        }
+        unsafe extern "C" fn cb(_: *mut c_void, _: *const c_void, _: *const c_void, _: u64, _: *mut u64, _: *mut c_void) -> i32 {
+            CV_TICKS.fetch_add(1, Ordering::Relaxed);
+            0
+        }
+        /// (main display id, width, refresh rate, CVDisplayLink ticks in `ms`)
+        pub fn cv(ms: u64) -> (u32, usize, f64, i32, u32) {
+            unsafe {
+                let d = CGMainDisplayID();
+                let m = CGDisplayCopyDisplayMode(d);
+                let hz = if m.is_null() { -1.0 } else { CGDisplayModeGetRefreshRate(m) };
+                let mut l = std::ptr::null_mut();
+                let rc = CVDisplayLinkCreateWithActiveCGDisplays(&mut l);
+                if rc != 0 || l.is_null() {
+                    return (d, CGDisplayPixelsWide(d), hz, rc, 0);
+                }
+                CVDisplayLinkSetOutputCallback(l, cb, std::ptr::null_mut());
+                CVDisplayLinkStart(l);
+                std::thread::sleep(std::time::Duration::from_millis(ms));
+                CVDisplayLinkStop(l);
+                (d, CGDisplayPixelsWide(d), hz, rc, CV_TICKS.load(Ordering::Relaxed))
+            }
+        }
+    }
+
+    /// Diagnostics for CI (only with SVELTERS_APPKIT_TRACE_FRAMES): does the display tick at all,
+    /// and how late are run-loop timers, before and after `finishLaunching` / an activity token.
+    fn frame_path_probe() {
+        use objc2::runtime::AnyObject;
+        use objc2::{class, msg_send, rc::Retained};
+        if std::env::var_os("SVELTERS_APPKIT_TRACE_FRAMES").is_none() {
+            return;
+        }
+        let h = Harness::shared();
+        eprintln!("[probe] CoreGraphics/CVDisplayLink (display, width, Hz, rc, ticks/300ms): {:?}", probe::cv(300));
+        unsafe {
+            let scr: Option<Retained<AnyObject>> = msg_send![class!(NSScreen), mainScreen];
+            if let Some(s) = scr {
+                let fps: isize = msg_send![&*s, maximumFramesPerSecond];
+                eprintln!("[probe] NSScreen.mainScreen maximumFramesPerSecond={fps}");
+            } else {
+                eprintln!("[probe] no NSScreen.mainScreen");
+            }
+        }
+        let w = h.create("window");
+        h.call(w, "make-key-and-order-front", vec![]).unwrap();
+        let measure = |label: &str| {
+            for _ in 0..3 {
+                let before = h.frames();
+                let t = std::time::Instant::now();
+                h.backend_trait().request_frame();
+                while h.frames() == before && t.elapsed().as_millis() < 1000 {
+                    h.pump(2);
+                }
+                eprintln!("[probe] {label}: frame after {:?}", t.elapsed());
+            }
+            let t = std::time::Instant::now();
+            let c = h.checkpoints();
+            h.backend_trait().schedule_wake(10);
+            while h.checkpoints() == c && t.elapsed().as_millis() < 1000 {
+                h.pump(2);
+            }
+            eprintln!("[probe] {label}: 10 ms schedule_wake fired after {:?}", t.elapsed());
+        };
+        measure("fresh");
+        unsafe {
+            let app: Retained<AnyObject> = msg_send![class!(NSApplication), sharedApplication];
+            let _: () = msg_send![&*app, finishLaunching];
+            let _: () = msg_send![&*app, activateIgnoringOtherApps: true];
+            let active: bool = msg_send![&*app, isActive];
+            eprintln!("[probe] after finishLaunching+activate: isActive={active}");
+        }
+        h.pump(100);
+        measure("launched");
+        unsafe {
+            let pi: Retained<AnyObject> = msg_send![class!(NSProcessInfo), processInfo];
+            let reason = objc2_foundation::NSString::from_str("svelters tests");
+            // NSActivityUserInitiated | NSActivityLatencyCritical
+            let opts: u64 = 0x00FFFFFF | 0xFF00000000;
+            let tok: Option<Retained<AnyObject>> = msg_send![&*pi, beginActivityWithOptions: opts, reason: &*reason];
+            std::mem::forget(tok);
+        }
+        measure("activity");
+        h.destroy(w);
+    }
 
     fn handles_are_never_reused() {
         let h = Harness::shared();

@@ -13,6 +13,10 @@ on:
       - 'examples/counter-mac/**'
       - 'fixtures/counter-mac/**'
       - 'fixtures/gallery-appkit/**'
+      - 'metadata/appkit/**'
+      - 'metadata/overrides/appkit/**'
+      - 'tools/metadata/appkit/**'
+      - 'tools/metadata/common/**'
       - 'packages/**'
       - 'vendor/**'
       - 'Cargo.toml'
@@ -34,6 +38,51 @@ env:
   RUST_BACKTRACE: "1"
 
 jobs:
+  # metadata/appkit/*.json is derived from Apple's SDK, so it is generated here, on Apple hardware
+  # with Xcode, never on Linux. This re-runs the ingest and the generator and fails if the
+  # committed output differs (determinism + freshness against the real SDK). The regenerated files
+  # are uploaded either way, so updating them is: download the artifact, commit.
+  appkit-metadata:
+    runs-on: macos-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pick the Xcode whose SDK the committed metadata came from
+        run: |
+          want=$(python3 -c 'import json;print(json.load(open("metadata/appkit/_enums.json"))["sdk"].removeprefix("MacOSX"))')
+          have=$(xcrun --sdk macosx --show-sdk-version)
+          echo "committed SDK: $want; default Xcode: $(xcode-select -p) (SDK $have)"
+          if [ "$want" != "$have" ]; then
+            for x in /Applications/Xcode*.app; do
+              v=$(DEVELOPER_DIR="$x/Contents/Developer" xcrun --sdk macosx --show-sdk-version 2>/dev/null || true)
+              echo "  $x: SDK $v"
+              if [ "$v" = "$want" ]; then echo "DEVELOPER_DIR=$x/Contents/Developer" >> "$GITHUB_ENV"; found=1; break; fi
+            done
+            [ -n "$found" ] || echo "::warning::no Xcode with the macOS $want SDK on this runner; ingesting with $have (expect a diff: commit the uploaded output to move to it)"
+          fi
+      - name: Environment
+        run: sw_vers; xcode-select -p; xcrun --sdk macosx --show-sdk-path; xcrun --sdk macosx --show-sdk-version; xcrun clang --version
+      - name: Python with the libclang bindings
+        run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install --quiet clang==18.1.8 pyyaml jsonschema
+      - name: Ingest from the Xcode SDK
+        run: '"$RUNNER_TEMP/venv/bin/python" -I tools/metadata/appkit/ingest.py'
+      - name: Generate tables and tests
+        run: '"$RUNNER_TEMP/venv/bin/python" -I tools/metadata/appkit/gen_backend.py'
+      - name: Committed output is current
+        run: |
+          git status --short
+          git diff --stat
+          git diff --exit-code -- metadata/appkit crates/svelters-appkit/src/generated examples/counter-mac/tests/generated.rs
+      - name: Upload regenerated metadata
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: appkit-metadata
+          path: |
+            metadata/appkit/
+            crates/svelters-appkit/src/generated/
+            examples/counter-mac/tests/generated.rs
+
   appkit:
     runs-on: macos-latest
     timeout-minutes: 45

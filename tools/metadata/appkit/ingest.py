@@ -6,15 +6,19 @@ metadata/overrides/appkit/*.yaml and each of its superclasses up to NSResponder 
 properties (type, access, memory, accessors, availability), the instance methods the overrides
 name, and the enums those use (metadata/appkit/_enums.json).
 
-Licence: the SDK is Apple's (Xcode and Apple SDKs Agreement). Only derived facts are written:
-names, types, numeric enum values, availability versions. No header text, no doc comments. Run it
-on a Mac (`--sdk $(xcrun --show-sdk-path)`); the output is checked in, so Linux never needs the SDK.
+Licence: the SDK is Apple's (Xcode and Apple SDKs Agreement), so this runs on a Mac with Xcode
+(the macos-appkit CI job's `appkit-metadata` check does exactly that). Only derived facts are
+written: names, types, numeric enum values, availability versions. No header text, no doc
+comments. The output is checked in, so Linux never needs the SDK.
 
-Usage:
-  python3 -I tools/metadata/appkit/ingest.py --sdk /path/to/MacOSX.sdk [--check]
+Usage (on a Mac):
+  python3 -I tools/metadata/appkit/ingest.py [--sdk PATH] [--libclang PATH] [--check]
 
-Needs the libclang Python bindings (`pip install libclang` or the distro's python-clang) matching
-a libclang that knows the SDK's language features (clang 17+ is fine).
+Nothing is tied to an install path: the SDK defaults to `xcrun --sdk macosx --show-sdk-path`
+(honours DEVELOPER_DIR / xcode-select), and libclang defaults to the active toolchain's
+`libclang.dylib` next to `xcrun --find clang`. The recorded SDK name comes from the SDK's own
+SDKSettings.json (`MacOSX<Version>`), not from its directory name. Needs the libclang Python
+bindings (`pip install clang`; they are version-tolerant) plus pyyaml.
 """
 from __future__ import annotations
 
@@ -259,17 +263,54 @@ def load_overrides() -> dict[str, dict]:
     return {path.stem: svmeta.load_yaml(path) for path in sorted(OVERRIDES.glob("*.yaml"))}
 
 
+def xcrun(*args: str) -> str:
+    try:
+        r = subprocess.run(["xcrun", *args], capture_output=True, text=True)
+    except FileNotFoundError:
+        return ""
+    return r.stdout.strip() if r.returncode == 0 else ""
+
+
+def sdk_name_of(sdk: Path) -> str:
+    """`MacOSX<Version>` from the SDK's SDKSettings.json (the directory may be a bare MacOSX.sdk)."""
+    settings = sdk / "SDKSettings.json"
+    if settings.exists():
+        version = json.loads(settings.read_text()).get("Version")
+        if version:
+            return f"MacOSX{version}"
+    return sdk.name.removesuffix(".sdk")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--sdk", required=True, help="path to MacOSX*.sdk (on a Mac: $(xcrun --show-sdk-path))")
+    ap.add_argument("--sdk", help="path to a MacOSX SDK (default: xcrun --sdk macosx --show-sdk-path)")
+    ap.add_argument("--libclang", help="libclang to load (default: the active Xcode toolchain's libclang.dylib)")
     ap.add_argument("--target", default="arm64-apple-macos14")
     ap.add_argument("--check", action="store_true", help="fail if the checked-in metadata differs")
     a = ap.parse_args()
 
+    sdk_arg = a.sdk or xcrun("--sdk", "macosx", "--show-sdk-path")
+    if not sdk_arg:
+        print("ingest: no SDK (pass --sdk, or run on a Mac with Xcode so xcrun can find it)", file=sys.stderr)
+        return 1
+    sdk = Path(sdk_arg).resolve()
+    clang_bin = xcrun("--find", "clang") or "clang"
+    libclang = a.libclang
+    if not libclang and clang_bin != "clang":
+        cand = Path(clang_bin).resolve().parent.parent / "lib/libclang.dylib"
+        libclang = str(cand) if cand.exists() else None
+
     import clang.cindex as ci
+    if libclang:
+        ci.Config.set_library_file(libclang)
+    # Older/newer libclang builds lack a few functions the bindings declare; none of them are used.
+    ci.Config.set_compatibility_check(False)
     lib = setup_lib(ci)
-    sdk = Path(a.sdk).resolve()
-    res = subprocess.run(["clang", "-print-resource-dir"], capture_output=True, text=True).stdout.strip()
+    lib.clang_getClangVersion.argtypes = []
+    lib.clang_getClangVersion.restype = ci._CXString
+    print(f"ingest: {sdk_name_of(sdk)} ({sdk}), libclang {libclang or 'default'}: "
+          f"{ci._CXString.from_result(lib.clang_getClangVersion())}", file=sys.stderr)
+    res = subprocess.run([clang_bin, "-print-resource-dir"], capture_output=True, text=True).stdout.strip()
     args = ["-x", "objective-c", "-target", a.target, "-isysroot", str(sdk), "-fobjc-arc"]
     if res:
         args += ["-resource-dir", res]
@@ -300,7 +341,7 @@ def main() -> int:
     # methods named on a class may be declared on a base: look them up along the chain
     all_sels = set().union(*wanted.values())
 
-    sdk_name = sdk.name.removesuffix(".sdk")
+    sdk_name = sdk_name_of(sdk)
     outs: dict[Path, object] = {}
     for cls in sorted(wanted):
         props, methods = ing.members(cls, all_sels)
