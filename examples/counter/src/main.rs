@@ -295,7 +295,7 @@ fn run_gtk(args: &Args, start: Instant) -> Result<Json, String> {
             // The default `GApplication` is the one the GTK backend created. A hold keeps its loop
             // running with no window; the guard releases it on drop.
             match gtk::gio::Application::default() {
-                Some(app) => Box::new(app.hold()),
+                Some(app) => Box::new(gtk::gio::prelude::ApplicationExtManual::hold(&app)),
                 None => Box::new(()),
             }
         },
