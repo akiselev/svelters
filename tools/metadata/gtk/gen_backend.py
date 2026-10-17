@@ -1180,7 +1180,7 @@ def coarse_type(ref: str) -> str | None:
 
 
 def gen_schema(m: "Model") -> str:
-    """Element tag -> prop -> coarse type, for hosts without a backend (packages/testhost)."""
+    """Element tag -> every settable prop -> coarse type, for hosts without a backend (packages/testhost)."""
     def chain(d):
         out = [d]
         for b in d["bases"]:
@@ -1196,11 +1196,11 @@ def gen_schema(m: "Model") -> str:
         props = {}
         for d in chain(m.tags[tag]):
             for p in d["properties"]:
-                c = coarse_type(p["type"]["ref"])
-                # Only the types attribute coercion acts on: strings, enums and records need no help.
-                if c in ("boolean", "integer", "number") and (p["access"]["write"] or p.get("virtual")):
+                c = coarse_type(p["type"]["ref"]) or "value"
+                # Every settable prop is listed (a host that knows the kind resolves only these), with
+                # the coarse type attribute coercion acts on (booleans and numbers need it).
+                if p["access"]["write"] or p.get("virtual"):
                     props.setdefault(p["js_name"], c)
-                    props.setdefault(p["name"], c)
         schema[tag] = dict(sorted(props.items()))
     return json.dumps(schema, indent=2, sort_keys=True) + "\n"
 

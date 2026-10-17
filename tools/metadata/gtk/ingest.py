@@ -520,6 +520,8 @@ def main() -> int:
             doc = apply_override(doc, overrides[name], errors)
             kinds[name] = doc
         for p in doc.get("properties", []):
+            if naming.kebab(p["name"]) != p["name"]:
+                errors.append(f"{name}: property {p['name']!r} must be kebab-case ({naming.kebab(p['name'])!r})")
             p["js_name"] = p["name"]  # GObject property names are already kebab-case (naming.py)
         refs = sorted({r for p in doc.get("properties", []) for r in [(p.get("type") or {}).get("ref", "")] if r.startswith(("enum<", "flags<"))})
         doc["enums"] = [r[r.index("<") + 1:-1] for r in refs]

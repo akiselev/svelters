@@ -2332,8 +2332,8 @@ def gen_dts(m: Model) -> str:
 # --------------------------------------------------------------------------------------------
 
 def gen_schema(m: Model) -> str:
-    """Element tag -> prop -> coarse type for hosts without a backend (packages/testhost), like the GTK
-    schema.json: only the types attribute coercion acts on (booleans and numbers)."""
+    """Element tag -> every settable prop -> coarse type for hosts without a backend (packages/testhost),
+    like the GTK schema.json; a host that knows a kind resolves only these props."""
     schema = {}
     for e in m.elements:
         props = {}
@@ -2341,9 +2341,8 @@ def gen_schema(m: Model) -> str:
             if p.get("readonly"):
                 continue
             cat = p.get("cat")
-            c = {"bool": "boolean", "int": "integer", "float": "number"}.get(cat)
-            if c:
-                props[p["js"]] = c
+            props[p["js"]] = {"bool": "boolean", "int": "integer", "float": "number", "string": "string",
+                              "enum": "enum", "flags": "flags"}.get(cat, "value")
         schema[e["tag"]] = dict(sorted(props.items()))
     return json.dumps(schema, indent=2, sort_keys=True) + "\n"
 

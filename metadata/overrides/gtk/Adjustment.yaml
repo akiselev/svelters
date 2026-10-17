@@ -39,7 +39,7 @@ methods:
     js_name: configure
     dispatch: dynamic
     args: [7.0, 0.0, 50.0, 2.0, 10.0, 5.0]
-    expect: 'h.get(o, "value") == V::F64(7.0) && h.get(o, "upper") == V::F64(50.0) && h.get(o, "pageSize") == V::F64(5.0)'
+    expect: 'h.get(o, "value") == V::F64(7.0) && h.get(o, "upper") == V::F64(50.0) && h.get(o, "page-size") == V::F64(5.0)'
     provenance: "gtk_adjustment_configure (Gtk 4 docs); called through GIRepository (X1)"
   - name: clamp_page
     js_name: clamp_page
@@ -58,7 +58,7 @@ methods:
   - name: get_minimum_increment
     js_name: get_minimum_increment
     dispatch: dynamic
-    setup: 'h.set_f64(o, "stepIncrement", 4.0).unwrap(); h.set_f64(o, "pageIncrement", 2.0).unwrap();'
+    setup: 'h.set_f64(o, "step-increment", 4.0).unwrap(); h.set_f64(o, "page-increment", 2.0).unwrap();'
     args: []
     expect: 'r == V::F64(2.0)'
     provenance: "gtk_adjustment_get_minimum_increment is the smaller of step and page increment (Gtk 4 docs)"

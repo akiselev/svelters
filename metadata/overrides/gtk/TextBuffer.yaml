@@ -62,7 +62,7 @@ methods:
   - name: undo
     js_name: undo
     dispatch: dynamic
-    setup: 'h.set_bool(o, "enableUndo", true).unwrap(); let b = h.obj(o).downcast::<gtk::TextBuffer>().unwrap(); b.begin_user_action(); b.insert_at_cursor("typed"); b.end_user_action();'
+    setup: 'h.set_bool(o, "enable-undo", true).unwrap(); let b = h.obj(o).downcast::<gtk::TextBuffer>().unwrap(); b.begin_user_action(); b.insert_at_cursor("typed"); b.end_user_action();'
     args: []
     expect: 'h.get(o, "text") == V::Str("".into())'
     provenance: "gtk_text_buffer_undo reverts the last user action when enable-undo is set (Gtk 4 docs)"
