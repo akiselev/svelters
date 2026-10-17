@@ -112,12 +112,12 @@ fn field_names(o: &Obj, prop: &str) -> Vec<String> {
 }
 
 fn scalars() {
-    let w = mk("box");
+    let w = mk("box-layout");
     w.set("enabled", &Value::Bool(false)).unwrap();
     assert!(w.native("enabled").contains("false"), "{}", w.native("enabled"));
     assert_eq!(w.get("enabled"), Value::Bool(false));
     // Integers are range checked, floats are rejected where an integer is expected.
-    let s = mk("spinbox");
+    let s = mk("spin-box");
     s.set("maximum", &i(1000)).unwrap();
     s.set("value", &i(42)).unwrap();
     assert!(s.native("value").contains("42"));
@@ -133,7 +133,7 @@ fn scalars() {
     let slot = &s.desc("value").params[0];
     assert_eq!((slot.tag, slot.min, slot.max), (SVL_I64, i32::MIN as f64, i32::MAX as f64));
     // f64
-    let d = mk("doublespinbox");
+    let d = mk("double-spin-box");
     d.set("decimals", &i(3)).unwrap();
     d.set("value", &f(2.5)).unwrap();
     assert_eq!(d.get("value"), Value::F64(2.5));
@@ -142,11 +142,11 @@ fn scalars() {
 }
 
 fn strings() {
-    let w = mk("box");
+    let w = mk("box-layout");
     // UTF-8, with a non-Latin-1 character.
     let s = "h\u{e9}llo \u{2713} \u{1F600}";
-    w.set("toolTip", &Value::Str(s.into())).unwrap();
-    assert_eq!(w.get("toolTip"), Value::Str(s.into()));
+    w.set("tool-tip", &Value::Str(s.into())).unwrap();
+    assert_eq!(w.get("tool-tip"), Value::Str(s.into()));
     // UTF-16 straight from the engine: no transcoding on the way in.
     let u16s: Vec<u16> = "w\u{f6}rld \u{2603}".encode_utf16().collect();
     let mut v = svl_value::new(
@@ -154,47 +154,47 @@ fn strings() {
         svl_value_u { s: svl_str { ptr: u16s.as_ptr().cast(), len: u16s.len() } },
     );
     v.flags = SVL_F_UTF16;
-    be().set_prop_raw(w.h, w.pid("toolTip"), &v).unwrap();
-    assert_eq!(w.get("toolTip"), Value::Str("w\u{f6}rld \u{2603}".into()));
+    be().set_prop_raw(w.h, w.pid("tool-tip"), &v).unwrap();
+    assert_eq!(w.get("tool-tip"), Value::Str("w\u{f6}rld \u{2603}".into()));
     // Embedded NULs survive: lengths are explicit.
-    w.set("toolTip", &Value::Str("a\0b".into())).unwrap();
-    assert_eq!(w.get("toolTip"), Value::Str("a\0b".into()));
+    w.set("tool-tip", &Value::Str("a\0b".into())).unwrap();
+    assert_eq!(w.get("tool-tip"), Value::Str("a\0b".into()));
     // null clears; a number is not a string.
-    w.set("toolTip", &Value::Null).unwrap();
-    assert_eq!(w.get("toolTip"), Value::Str(String::new()));
-    let e = w.set("toolTip", &i(3)).unwrap_err();
+    w.set("tool-tip", &Value::Null).unwrap();
+    assert_eq!(w.get("tool-tip"), Value::Str(String::new()));
+    let e = w.set("tool-tip", &i(3)).unwrap_err();
     assert!(e.contains("expected string"), "{e}");
     assert_ne!(be().caps() & SVL_CAP_UTF16_IN, 0);
 }
 
 fn enums() {
     let l = mk("label");
-    let t = l.tdesc("textFormat");
+    let t = l.tdesc("text-format");
     assert_eq!(t.kind, SVL_ENUM);
     let names: Vec<_> = t.members.iter().map(|m| m.name.as_str()).collect();
     assert!(names.contains(&"rich-text") && names.contains(&"plain-text"), "{names:?}");
-    l.set("textFormat", &l.named("textFormat", &["rich-text"])).unwrap();
+    l.set("text-format", &l.named("text-format", &["rich-text"])).unwrap();
     assert!(l.native("textFormat").contains("RichText"), "{}", l.native("textFormat"));
-    let back = l.get("textFormat");
+    let back = l.get("text-format");
     assert_eq!(names_of(&back), vec!["rich-text".to_string()]);
     // The type id on the wire matches the descriptor; a foreign or unknown value is refused.
-    let slot_ty = l.desc("textFormat").params[0].ty;
+    let slot_ty = l.desc("text-format").params[0].ty;
     assert!(matches!(back, Value::Enum { ty, .. } if ty == slot_ty));
-    let e = l.set("textFormat", &Value::Enum { ty: slot_ty, value: 9999 }).unwrap_err();
+    let e = l.set("text-format", &Value::Enum { ty: slot_ty, value: 9999 }).unwrap_err();
     assert!(e.contains("not a Qt::TextFormat value"), "{e}");
-    // Class-scoped enum, and the override that renames members (orientation).
-    let en = mk("entry");
-    en.set("echoMode", &en.named("echoMode", &["password-echo-on-edit"])).unwrap();
+    // Class-scoped enums (QLineEdit::EchoMode, QBoxLayout::Direction).
+    let en = mk("line-edit");
+    en.set("echo-mode", &en.named("echo-mode", &["password-echo-on-edit"])).unwrap();
     assert!(en.native("echoMode").contains("PasswordEchoOnEdit"));
-    assert_eq!(names_of(&en.get("echoMode")), vec!["password-echo-on-edit".to_string()]);
-    let bx = mk("box");
-    assert_eq!(bx.tdesc("orientation").members.iter().map(|m| m.name.clone()).collect::<Vec<_>>(), vec!["horizontal", "vertical"]);
-    bx.set("orientation", &bx.named("orientation", &["vertical"])).unwrap();
-    assert_eq!(names_of(&bx.get("orientation")), vec!["vertical".to_string()]);
+    assert_eq!(names_of(&en.get("echo-mode")), vec!["password-echo-on-edit".to_string()]);
+    let bx = mk("box-layout");
+    assert_eq!(bx.tdesc("direction").members.iter().map(|m| m.name.clone()).collect::<Vec<_>>(), vec!["left-to-right", "right-to-left", "top-to-bottom", "bottom-to-top"]);
+    bx.set("direction", &bx.named("direction", &["top-to-bottom"])).unwrap();
+    assert_eq!(names_of(&bx.get("direction")), vec!["top-to-bottom".to_string()]);
     // Names are also accepted by the backend (the host normally resolves them).
-    en.set("echoMode", &Value::Str("no-echo".into())).unwrap();
-    assert_eq!(names_of(&en.get("echoMode")), vec!["no-echo".to_string()]);
-    assert!(en.set("echoMode", &Value::Str("bogus".into())).unwrap_err().contains("unknown"));
+    en.set("echo-mode", &Value::Str("no-echo".into())).unwrap();
+    assert_eq!(names_of(&en.get("echo-mode")), vec!["no-echo".to_string()]);
+    assert!(en.set("echo-mode", &Value::Str("bogus".into())).unwrap_err().contains("unknown"));
 }
 
 fn flags() {
@@ -214,7 +214,7 @@ fn flags() {
     l.set("alignment", &Value::Flags { ty, mask: 0 }).unwrap();
     assert!(matches!(l.get("alignment"), Value::Flags { mask: 0, .. }));
     // Flags of a class-scoped enum.
-    let c = mk("colordialog");
+    let c = mk("color-dialog");
     c.set("options", &c.named("options", &["show-alpha-channel", "no-buttons"])).unwrap();
     let mut got = names_of(&c.get("options"));
     got.sort();
@@ -222,9 +222,9 @@ fn flags() {
 }
 
 fn records() {
-    let w = mk("box");
+    let w = mk("box-layout");
     assert_eq!(field_names(&w, "geometry"), ["x", "y", "width", "height"]);
-    assert_eq!(field_names(&w, "minimumSize"), ["width", "height"]);
+    assert_eq!(field_names(&w, "minimum-size"), ["width", "height"]);
     assert_eq!(field_names(&w, "pos"), ["x", "y"]);
     // Rect (QRect: integral fields).
     w.set("geometry", &record_of(&w, "geometry", &[i(10), i(20), i(300), i(400)])).unwrap();
@@ -239,16 +239,16 @@ fn records() {
     assert!(w.set("geometry", &Value::Record { ty, fields: vec![i(1)] }).unwrap_err().contains("4 fields"));
     assert!(w.set("geometry", &i(1)).unwrap_err().contains("Rect record"));
     // Size
-    w.set("minimumSize", &record_of(&w, "minimumSize", &[i(64), i(48)])).unwrap();
+    w.set("minimum-size", &record_of(&w, "minimum-size", &[i(64), i(48)])).unwrap();
     assert!(w.native("minimumSize").contains("64, 48"), "{}", w.native("minimumSize"));
-    assert_eq!(w.get("minimumSize"), record_of(&w, "minimumSize", &[i(64), i(48)]));
+    assert_eq!(w.get("minimum-size"), record_of(&w, "minimum-size", &[i(64), i(48)]));
     // Insets live on the layout.
-    let ty = w.desc("contentsMargins").params[0].ty;
+    let ty = w.desc("contents-margins").params[0].ty;
     let m = Value::Record { ty, fields: vec![i(1), i(2), i(3), i(4)] };
-    w.set("contentsMargins", &m).unwrap();
+    w.set("contents-margins", &m).unwrap();
     let margins = native_prop(w.h, "contentsMargins", true);
     assert!(margins.contains("1") && !margins.is_empty(), "{margins}");
-    assert_eq!(w.get("contentsMargins"), m, "top, right, bottom, left");
+    assert_eq!(w.get("contents-margins"), m, "top, right, bottom, left");
     // Point and the read-only size/pos.
     w.set("geometry", &record_of(&w, "geometry", &[i(7), i(9), i(100), i(80)])).unwrap();
     assert_eq!(w.get("pos"), record_of(&w, "pos", &[i(7), i(9)]));
@@ -262,28 +262,28 @@ fn records() {
 }
 
 fn color() {
-    let c = mk("colordialog");
-    assert_eq!(field_names(&c, "currentColor"), ["red", "green", "blue", "alpha"]);
-    let slot = c.desc("currentColor").params[0].clone();
+    let c = mk("color-dialog");
+    assert_eq!(field_names(&c, "current-color"), ["red", "green", "blue", "alpha"]);
+    let slot = c.desc("current-color").params[0].clone();
     assert!(slot.has(SVL_D_STRING_FORM));
     let ty = slot.ty;
-    c.set("currentColor", &Value::Record { ty, fields: vec![f(1.0), f(0.0), f(0.0), f(1.0)] }).unwrap();
-    let Value::Record { fields, .. } = c.get("currentColor") else { panic!() };
+    c.set("current-color", &Value::Record { ty, fields: vec![f(1.0), f(0.0), f(0.0), f(1.0)] }).unwrap();
+    let Value::Record { fields, .. } = c.get("current-color") else { panic!() };
     assert_eq!(fields, vec![f(1.0), f(0.0), f(0.0), f(1.0)]);
     // The CSS-ish string form is parsed by the backend.
-    c.set("currentColor", &Value::Str("#00ff00".into())).unwrap();
-    let Value::Record { fields, .. } = c.get("currentColor") else { panic!() };
+    c.set("current-color", &Value::Str("#00ff00".into())).unwrap();
+    let Value::Record { fields, .. } = c.get("current-color") else { panic!() };
     assert_eq!(fields, vec![f(0.0), f(1.0), f(0.0), f(1.0)]);
-    c.set("currentColor", &Value::Str("purple".into())).unwrap();
-    let e = c.set("currentColor", &Value::Str("not-a-color".into())).unwrap_err();
+    c.set("current-color", &Value::Str("purple".into())).unwrap();
+    let e = c.set("current-color", &Value::Str("not-a-color".into())).unwrap_err();
     assert!(e.contains("cannot parse color"), "{e}");
-    let e = c.set("currentColor", &Value::Record { ty, fields: vec![f(2.0), f(0.0), f(0.0), f(1.0)] }).unwrap_err();
+    let e = c.set("current-color", &Value::Record { ty, fields: vec![f(2.0), f(0.0), f(0.0), f(1.0)] }).unwrap_err();
     assert!(e.contains("0..1"), "{e}");
 }
 
 fn handles_and_nullable() {
     let label = mk("label");
-    let entry = mk("entry");
+    let entry = mk("line-edit");
     assert_eq!(label.call("buddy", &[]).unwrap(), Value::Null);
     label.call("setBuddy", &[Value::Handle(entry.h)]).unwrap();
     assert_eq!(label.call("buddy", &[]).unwrap(), Value::Handle(entry.h));
@@ -298,8 +298,8 @@ fn handles_and_nullable() {
 }
 
 fn boxed_values() {
-    let b1 = mk("button");
-    let b2 = mk("button");
+    let b1 = mk("push-button");
+    let b2 = mk("push-button");
     // A string form builds the value; reading it back gives an opaque handle.
     b1.set("icon", &Value::Str("document-new".into())).unwrap();
     let Value::Boxed { ty, handle } = b1.get("icon") else { panic!("boxed") };
@@ -331,13 +331,13 @@ fn boxed_values() {
     // Null boxed is a null value.
     b2.set("icon", &Value::Null).unwrap();
     // Size record next to it.
-    let ty = b1.desc("iconSize").params[0].ty;
-    b1.set("iconSize", &Value::Record { ty, fields: vec![i(32), i(32)] }).unwrap();
+    let ty = b1.desc("icon-size").params[0].ty;
+    b1.set("icon-size", &Value::Record { ty, fields: vec![i(32), i(32)] }).unwrap();
     assert!(b1.native("iconSize").contains("32, 32"), "{}", b1.native("iconSize"));
 }
 
 fn bytes() {
-    let w = mk("box");
+    let w = mk("box-layout");
     let Value::Bytes(saved) = w.call("saveGeometry", &[]).unwrap() else { panic!("bytes") };
     assert!(!saved.is_empty());
     // BYTES in: borrowed for the call, copied by the backend.
@@ -350,7 +350,7 @@ fn bytes() {
 }
 
 fn dates_and_times() {
-    let d = mk("dateedit");
+    let d = mk("date-edit");
     let ty = d.desc("date").params[0].ty;
     let td = be().describe_type(ty).unwrap();
     assert_eq!(td.fields.iter().map(|f| f.name.clone().unwrap()).collect::<Vec<_>>(), ["year", "month", "day"]);
@@ -359,24 +359,24 @@ fn dates_and_times() {
     assert_eq!(d.get("date"), Value::Record { ty, fields: vec![i(2024), i(2), i(29)] });
     let e = d.set("date", &Value::Record { ty, fields: vec![i(2023), i(2), i(29)] }).unwrap_err();
     assert!(e.contains("invalid date"), "{e}");
-    let t = mk("timeedit");
+    let t = mk("time-edit");
     let ty = t.desc("time").params[0].ty;
     t.set("time", &Value::Record { ty, fields: vec![i(13), i(5), i(9), i(250)] }).unwrap();
     assert_eq!(t.get("time"), Value::Record { ty, fields: vec![i(13), i(5), i(9), i(250)] });
     assert!(t.set("time", &Value::Record { ty, fields: vec![i(25), i(0), i(0), i(0)] }).is_err());
     // A datetime is epoch milliseconds, typed so JS can make it a Date.
-    let dt = mk("datetimeedit");
+    let dt = mk("date-time-edit");
     let ms = 1_700_000_000_123.0;
     let mut v = svl_value::typed(SVL_F64, SVL_T_DATETIME, svl_value_u { f: ms });
     v.flags = 0;
-    be().set_prop_raw(dt.h, dt.pid("dateTime"), &v).unwrap();
-    let raw = be().get_prop_raw(dt.h, dt.pid("dateTime")).unwrap();
+    be().set_prop_raw(dt.h, dt.pid("date-time"), &v).unwrap();
+    let raw = be().get_prop_raw(dt.h, dt.pid("date-time")).unwrap();
     assert_eq!((raw.tag, raw.type_), (SVL_F64, SVL_T_DATETIME));
     assert_eq!(unsafe { raw.u.f }, ms);
 }
 
 fn variants() {
-    let c = mk("combobox");
+    let c = mk("combo-box");
     let tree = Value::Map(vec![
         ("name".into(), Value::Str("caf\u{e9}".into())),
         ("n".into(), i(7)),
@@ -397,10 +397,10 @@ fn variants() {
     assert_eq!(c.call("itemData", &[i(1), i(256)]).unwrap(), Value::Str("just a string".into()));
     assert_eq!(c.call("itemData", &[i(2), i(256)]).unwrap(), Value::Null);
     // The read-only variant property follows the current item (the first one).
-    let cd = c.get("currentData");
+    let cd = c.get("current-data");
     let Value::Map(cur) = cd else { panic!("map, got {cd:?}") };
     assert_eq!(cur.len(), 5);
-    assert!(c.set("currentData", &Value::Null).is_err(), "currentData has no setter");
+    assert!(c.set("current-data", &Value::Null).is_err(), "currentData has no setter");
     // variant(signature, value): a basic signature fixes the QMetaType and range, the rest is the value.
     let typed = |sig: &str, v: Value| Value::Record { ty: SVL_T_TYPED_VARIANT, fields: vec![Value::Str(sig.into()), v] };
     c.call("addItem", &[Value::Str("u".into()), typed("u", i(5))]).unwrap();
@@ -414,14 +414,14 @@ fn variants() {
     let e = c.call("addItem", &[Value::Str("x".into()), typed("s", i(1))]).unwrap_err();
     assert!(e.contains("does not match the signature"), "{e}");
     // A typed record cannot be nested in a variant.
-    let ty = mk("box").desc("geometry").params[0].ty;
+    let ty = mk("box-layout").desc("geometry").params[0].ty;
     let rec = Value::Record { ty, fields: vec![i(1), i(2), i(3), i(4)] };
     let e = c.call("addItem", &[Value::Str("x".into()), rec]).unwrap_err();
     assert!(e.contains("cannot be held in a variant"), "{e}");
 }
 
 fn errors_cross_the_boundary_as_values() {
-    let w = mk("box");
+    let w = mk("box-layout");
     // A C++ exception never unwinds into the host: it becomes an ERROR out value (domain "c++").
     counter_qt::hooks::test_throw_next();
     let err = be().call(w.h, w.mid("saveGeometry"), &[]).unwrap_err();
@@ -436,7 +436,7 @@ fn errors_cross_the_boundary_as_values() {
 }
 
 fn descriptors() {
-    let w = mk("box");
+    let w = mk("box-layout");
     // Every typed prop has a descriptor; the unknown ones do not.
     let d = w.desc("geometry");
     assert_eq!((d.params.len(), d.params[0].tag, d.ret.tag), (1, SVL_RECORD, SVL_RECORD));
@@ -454,7 +454,7 @@ fn descriptors() {
 
 fn out_and_inout_params() {
     // Out only: the backend is called without arguments and answers [ret, outs...] (ret is null for void).
-    let e = mk("box");
+    let e = mk("box-layout");
     let d = be().describe(NameKind::Method, e.kind, e.mid("getContentsMargins")).unwrap();
     let flags: Vec<u16> = d.params.iter().map(|p| p.flags & SVL_D_OUT).collect();
     assert_eq!(flags, [SVL_D_OUT; 4]);
@@ -462,12 +462,12 @@ fn out_and_inout_params() {
     let Value::List(items) = e.call("getContentsMargins", &[]).unwrap() else { panic!("list") };
     assert_eq!(items.len(), 5);
     assert_eq!(items[0], Value::Null);
-    e.set("contentsMargins", &record_of(&e, "contentsMargins", &[i(1), i(2), i(3), i(4)])).unwrap();
+    e.set("contents-margins", &record_of(&e, "contents-margins", &[i(1), i(2), i(3), i(4)])).unwrap();
     let Value::List(items) = e.call("getContentsMargins", &[]).unwrap() else { panic!("list") };
     assert_eq!(items[1..], [Value::I64(4), Value::I64(1), Value::I64(2), Value::I64(3)], "left, top, right, bottom");
     assert!(e.call("getContentsMargins", &[i(1)]).unwrap_err().contains("expected 0 argument"));
     // In-out: QAbstractSpinBox::validate(QString &input, int &pos) -> State.
-    let s = mk("spinbox");
+    let s = mk("spin-box");
     let d = be().describe(NameKind::Method, s.kind, s.mid("validate")).unwrap();
     assert_eq!(d.params.iter().map(|p| p.flags & SVL_D_INOUT).collect::<Vec<_>>(), [SVL_D_INOUT; 2]);
     assert_eq!(d.ret.tag, SVL_ENUM);
@@ -541,7 +541,7 @@ fn callbacks_run_js_functions() {
 
 fn async_methods_complete_through_signals() {
     let (calls, _) = install_host();
-    let dlg = mk("colordialog");
+    let dlg = mk("color-dialog");
     let d = be().describe(NameKind::Method, dlg.kind, dlg.mid("open")).unwrap();
     assert_eq!(d.flags & SVL_M_ASYNC, SVL_M_ASYNC);
     let t = be().describe_type(d.params.last().unwrap().ty).unwrap();

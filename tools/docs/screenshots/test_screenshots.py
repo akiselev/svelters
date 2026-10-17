@@ -46,10 +46,10 @@ class Generate(unittest.TestCase):
             self.skipTest("missing: " + ", ".join(missing))
         with tempfile.TemporaryDirectory() as tmp:
             subprocess.run([sys.executable, str(HERE / "run.py"), "--toolkit", "all",
-                            "--only", "button", "--jobs", "2", "--out", tmp],
+                            "--only", "button,push-button", "--jobs", "2", "--out", tmp],
                            check=True, timeout=300)
             manifest = json.loads((Path(tmp) / "manifest.json").read_text())
-            for key in ("gtk/button", "qt/button"):
+            for key in ("gtk/button", "qt/push-button"):
                 self.assertIn(key, manifest["keys"])
                 data = (Path(tmp) / (key + ".png")).read_bytes()
                 self.assertTrue(data.startswith(PNG_MAGIC))

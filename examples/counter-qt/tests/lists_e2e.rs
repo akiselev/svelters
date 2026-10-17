@@ -1,4 +1,4 @@
-//! M5 on Qt, end to end: the real Svelte `ListView` (fixtures/lists-stress, built by `pnpm build`)
+//! M5 on Qt, end to end: the real Svelte `ListView` (fixtures/lists-stress-qt, built by `pnpm build`)
 //! running in the QuickJS host on the pooled `QListView`. The twin of
 //! `crates/svelters-gtk/tests/lists_e2e.rs`: it clicks the fixture's buttons by label and watches
 //! the native model's notifications, the row pool, the visible row text, selection and activation,
@@ -96,8 +96,8 @@ fn poll(st: Rc<RefCell<Poll>>, quit: BackendRef<'static>) {
 }
 
 fn body() {
-    let bundle = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../fixtures/lists-stress/dist/app.js");
-    assert!(bundle.is_file(), "build the fixture first: pnpm --filter @svelters-fixtures/lists-stress build");
+    let bundle = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../fixtures/lists-stress-qt/dist/app.js");
+    assert!(bundle.is_file(), "build the fixture first: pnpm --filter @svelters-fixtures/lists-stress-qt build");
     let raw: BackendRef<'static> = unsafe { BackendRef::from_raw(counter_qt::backend()) }.unwrap();
     let cfg = HostConfig { echo_console: false, echo_errors: false, ..HostConfig::default() };
     let host = Host::new(raw, cfg).unwrap();

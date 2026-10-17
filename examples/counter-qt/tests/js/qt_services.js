@@ -4,7 +4,7 @@ const h = globalThis.__svelters_host;
 const log = (...a) => console.log(a.join(' '));
 
 async function main() {
-  const dlg = h.create('colordialog');
+  const dlg = h.create('color-dialog');
 
   // accept() -> finished(1): the Promise resolves with the result.
   const p = h.call(dlg, 'open', []);

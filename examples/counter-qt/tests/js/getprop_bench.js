@@ -2,7 +2,7 @@
 // Run with SVL_BENCH=1: `SVL_BENCH=1 xvfb-run -a cargo test --release -p counter-qt --test host`.
 const h = globalThis.__svelters_host;
 const t = h.create('label');
-const pLabel = h.propId ? h.propId(h.kindId('label'), 'label') : 'label';
+const pLabel = h.propId ? h.propId(h.kindId('label'), 'text') : 'text';
 function bench(name, text, n) {
   h.setProp(t, pLabel, text);
   const f = (k) => {

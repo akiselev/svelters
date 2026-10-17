@@ -1,34 +1,34 @@
-// Handles in creation order: window 1, box 2, entry 3, label 4.
+// Handles in creation order: main-window 1, box-layout 2, line-edit 3, label 4.
 const h = globalThis.__svelters_host;
-const win = h.create('window');
-h.setProp(win, 'title', 'Sync');
-const box = h.create('box');
-const entry = h.create('entry');
+const win = h.create('main-window');
+h.setProp(win, 'window-title', 'Sync');
+const box = h.create('box-layout');
+const entry = h.create('line-edit');
 const label = h.create('label');
 h.insert(box, entry, null);
 h.insert(box, label, null);
 h.insert(win, box, null);
 h.listen(entry, 'key-press', true);
-h.listen(win, 'close-request', true);
+h.listen(win, 'close', true);
 
 const log = [];
 let veto = true;
 const note = (s) => {
   log.push(s);
-  h.setProp(label, 'label', log.join('|'));
+  h.setProp(label, 'text', log.join('|'));
 };
 
 globalThis.__svelters_dispatch_sync = (_h, signal, args) => {
-  if (signal === 'close-request') {
+  if (signal === 'close') {
     note(`close veto=${veto}`);
     return veto ? true : null;
   }
   const text = args[1];
   note(`key ${text}`);
-  if (text === 'a') return true; // consumed: the entry never sees it
+  if (text === 'a') return true; // consumed: the line edit never sees it
   if (text === 'c') throw new Error('key boom');
   if (text === 'd') {
-    // Closing from inside the handler raises close-request natively: a sync signal inside a sync handler.
+    // Closing from inside the handler raises close natively: a sync signal inside a sync handler.
     h.call(win, 'close', []);
     return null;
   }
