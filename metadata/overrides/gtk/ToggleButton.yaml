@@ -1,6 +1,5 @@
 properties:
   - name: active
-    js_name: active
     echo_suppress: [toggled, "notify::active"]
     provenance: "GtkToggleButton:active (Gtk 4 docs)"
 signals:

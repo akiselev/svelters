@@ -20,7 +20,7 @@ MAX_W, MAX_H = 480, 320
 MARGIN = 12
 WINDOW_SIZE = (360, 220)
 
-_TAG_RE = re.compile(r"^  - tag: (\w+)\s*$", re.M)
+_TAG_RE = re.compile(r"^  - tag: ([\w-]+)\s*$", re.M)
 
 
 def metadata():
@@ -32,9 +32,9 @@ def metadata():
     return out
 
 
-# ---- recipes: r_<tag>(QtWidgets) -> widget ---------------------------------
+# ---- recipes: r_<tag with - as _>(QtWidgets) -> widget ----------------------
 
-def r_window(W):
+def r_main_window(W):
     win = W.QMainWindow()
     win.setWindowTitle("Counter")
     central = W.QWidget()
@@ -46,7 +46,7 @@ def r_window(W):
     return win
 
 
-def r_box(W):
+def r_box_layout(W):
     box = W.QWidget()
     lay = W.QBoxLayout(W.QBoxLayout.TopToBottom, box)
     lay.setSpacing(8)
@@ -59,31 +59,31 @@ def r_label(W):
     return W.QLabel("Hello")
 
 
-def r_button(W):
+def r_push_button(W):
     return W.QPushButton("Click me")
 
 
-def r_entry(W):
+def r_line_edit(W):
     e = W.QLineEdit()
     e.setText("Some text")
     return e
 
 
-def r_scrolledwindow(W):
+def r_scroll_area(W):
     s = W.QScrollArea()
     s.setWidget(W.QLabel("Scrolled content"))
     s.setFixedSize(200, 80)
     return s
 
 
-def r_statusbar(W):
+def r_status_bar(W):
     s = W.QStatusBar()
     s.showMessage("Ready")
     s.setFixedWidth(200)
     return s
 
 
-def r_menubar(W):
+def r_menu_bar(W):
     m = W.QMenuBar()
     m.addMenu("File")
     m.addMenu("Edit")
@@ -92,7 +92,7 @@ def r_menubar(W):
 
 
 RECIPES = {
-    name[2:]: fn for name, fn in sorted(globals().items())
+    name[2:].replace("_", "-"): fn for name, fn in sorted(globals().items())
     if name.startswith("r_") and callable(fn)
 }
 

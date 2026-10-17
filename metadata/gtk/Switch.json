@@ -420,8 +420,7 @@
       },
       "annotated": {
         "fields": [
-          "echo_suppress",
-          "js_name"
+          "echo_suppress"
         ],
         "origin": "manual",
         "provenance": "GtkSwitch:active (Gtk 4 docs)"

@@ -102,7 +102,7 @@
           {
             "default": 1,
             "expect": "pw.downcast_ref::<gtk::Grid>().unwrap().query_child(&w).2 == 2",
-            "name": "columnSpan",
+            "name": "column-span",
             "origin": "manual",
             "property": "column-span",
             "provenance": [
@@ -125,7 +125,7 @@
           {
             "default": 1,
             "expect": "pw.downcast_ref::<gtk::Grid>().unwrap().query_child(&w).3 == 2",
-            "name": "rowSpan",
+            "name": "row-span",
             "origin": "manual",
             "property": "row-span",
             "provenance": [
@@ -1072,7 +1072,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Grid:prop:baseline-row",
       "invocation": "reflected",
-      "js_name": "baselineRow",
+      "js_name": "baseline-row",
       "name": "baseline-row",
       "notify": {
         "explicit": true,
@@ -1120,7 +1120,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Grid:prop:column-homogeneous",
       "invocation": "reflected",
-      "js_name": "columnHomogeneous",
+      "js_name": "column-homogeneous",
       "name": "column-homogeneous",
       "notify": {
         "explicit": true,
@@ -1165,7 +1165,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Grid:prop:column-spacing",
       "invocation": "reflected",
-      "js_name": "columnSpacing",
+      "js_name": "column-spacing",
       "name": "column-spacing",
       "notify": {
         "explicit": true,
@@ -1213,7 +1213,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Grid:prop:row-homogeneous",
       "invocation": "reflected",
-      "js_name": "rowHomogeneous",
+      "js_name": "row-homogeneous",
       "name": "row-homogeneous",
       "notify": {
         "explicit": true,
@@ -1258,7 +1258,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Grid:prop:row-spacing",
       "invocation": "reflected",
-      "js_name": "rowSpacing",
+      "js_name": "row-spacing",
       "name": "row-spacing",
       "notify": {
         "explicit": true,

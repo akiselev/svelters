@@ -304,7 +304,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:StringSorter:prop:ignore-case",
       "invocation": "reflected",
-      "js_name": "ignoreCase",
+      "js_name": "ignore-case",
       "name": "ignore-case",
       "notify": {
         "explicit": true,

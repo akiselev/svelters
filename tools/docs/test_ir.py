@@ -60,7 +60,10 @@ class SchemaTests(unittest.TestCase):
 
 
 class FrontendTests(unittest.TestCase):
-    COUNTER_TAGS = ("window", "box", "label", "button", "entry")
+    # The counter app's elements, in each toolkit's native names (docs/notes/n1-rename-map.md).
+    COUNTER_TAGS = {"gtk": ("window", "box", "label", "button", "entry"),
+                    "qt": ("main-window", "box-layout", "label", "push-button", "line-edit")}
+    BUTTON = {"gtk": "button", "qt": "push-button"}
 
     def check_frontend(self, tk: str):
         ir = ir_of(tk)
@@ -68,7 +71,7 @@ class FrontendTests(unittest.TestCase):
         self.assertEqual(irlib.check_unique(ir), [])
         self.assertEqual(ir["toolkit"]["id"], tk)
         by_tag = {t: e for e in ir["entities"] for t in e["tags"]}
-        for tag in self.COUNTER_TAGS:
+        for tag in self.COUNTER_TAGS[tk]:
             self.assertIn(tag, by_tag, f"{tk}: no entity for <{tag}>")
             e = by_tag[tag]
             self.assertEqual(e["status"]["tier"], "annotated", f"{tk}:{tag}")
@@ -78,7 +81,7 @@ class FrontendTests(unittest.TestCase):
         for e in ir["entities"]:
             for b in e["bases"]:
                 self.assertTrue(b.startswith(tk + ":"))
-        self.assertIn(by_tag["button"]["id"], ids)
+        self.assertIn(by_tag[self.BUTTON[tk]]["id"], ids)
         self.assertEqual(ir["coverage"]["serdes"]["status"], "unknown")
 
     def test_gtk_frontend(self):
@@ -87,7 +90,8 @@ class FrontendTests(unittest.TestCase):
         button = next(e for e in ir["entities"] if e["tags"] == ["button"])
         self.assertTrue(any(p["name"] == "label" and p["annotated"] for p in button["properties"]))
         ev = next(x for x in button["events"] if x["name"] == "clicked")
-        self.assertEqual(ev["handler_aliases"], ["onclick"])
+        self.assertEqual(ev["handler_prop"], "onclicked")
+        self.assertNotIn("handler_aliases", ev)  # no DOM-style aliases (N1)
         # one entity per element kind (kinds marked `unexposed` in the overrides have no tag)
         tagged = sum(1 for p in (ROOT / "metadata/gtk").glob("*.json") if "element" in json.loads(p.read_text()))
         self.assertEqual(len([e for e in ir["entities"] if e["tags"]]), tagged)
@@ -96,11 +100,21 @@ class FrontendTests(unittest.TestCase):
     def test_qt_frontend(self):
         self.check_frontend("qt")
         ir = ir_of("qt")
-        button = next(e for e in ir["entities"] if e["tags"] == ["button"])
-        label = next(p for p in button["properties"] if p["js_name"] == "label")
-        self.assertEqual(label["name"], "text")
-        self.assertTrue(label["annotated"])
+        button = next(e for e in ir["entities"] if e["tags"] == ["push-button"])
+        text = next(p for p in button["properties"] if p["js_name"] == "text")
+        self.assertEqual(text["name"], "text")
+        self.assertTrue(text["annotated"])
         self.assertTrue(any(x["name"] == "clicked" and x["annotated"] for x in button["events"]))
+        # every annotated element is in the docs: one entity per element class, every tag on it
+        import yaml
+        tags, classes = set(), set()
+        for p in (ROOT / "metadata/overrides/qt").glob("*.yaml"):
+            for el in (yaml.safe_load(p.read_text()) or {}).get("elements", []) or []:
+                tags.add(el["tag"])
+                classes.add(el["construct"]["class"])
+        self.assertEqual({t for e in ir["entities"] for t in e["tags"]}, tags)
+        self.assertEqual(len([e for e in ir["entities"] if e["tags"]]), len(classes))
+        self.assertGreater(len(tags), 50)
 
     def test_qt_text_policy(self):
         brief = ir_of("qt", text_policy="brief")

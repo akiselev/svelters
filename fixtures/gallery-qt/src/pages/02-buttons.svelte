@@ -13,15 +13,15 @@
   });
 </script>
 
-<box orientation="vertical" spacing="6">
-  <button label="Flat default push button" flat={true} autoDefault={false} default={false} onclick={() => clicks++} />
-  <label label="clicks: {clicks}" />
-  <checkbox label="Check box" bind:checked={checked} ontoggled={() => echoChecked++} />
-  <label label="echo checked: {echoChecked}" />
-  <checkbox label="Tristate" tristate={true} checkState="partially-checked" onstateChanged={() => states++} />
-  <label label="state changes: {states}" />
-  <radiobutton label="Radio button" bind:checked={radio} ontoggled={() => echoRadio++} />
-  <label label="echo radio: {echoRadio}" />
-  <toolbutton label="Tool button" autoRaise={true} toolButtonStyle="text-only" arrowType="no-arrow" popupMode="delayed-popup" />
-  <commandlinkbutton label="Command link" description="Explains what happens next" flat={false} />
-</box>
+<box-layout direction="top-to-bottom" spacing="6">
+  <push-button text="Flat default push button" flat={true} auto-default={false} default={false} onclicked={() => clicks++} />
+  <label text="clicks: {clicks}" />
+  <check-box text="Check box" bind:checked={checked} ontoggled={() => echoChecked++} />
+  <label text="echo checked: {echoChecked}" />
+  <check-box text="Tristate" tristate={true} check-state="partially-checked" onstate-changed={() => states++} />
+  <label text="state changes: {states}" />
+  <radio-button text="Radio button" bind:checked={radio} ontoggled={() => echoRadio++} />
+  <label text="echo radio: {echoRadio}" />
+  <tool-button text="Tool button" auto-raise={true} tool-button-style="text-only" arrow-type="no-arrow" popup-mode="delayed-popup" />
+  <command-link-button text="Command link" description="Explains what happens next" flat={false} />
+</box-layout>

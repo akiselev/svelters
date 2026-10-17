@@ -94,7 +94,7 @@
   ],
   "element": {
     "origin": "gir",
-    "tag": "editablelabel"
+    "tag": "editable-label"
   },
   "enums": [],
   "id": "svelters-api:v1:type:gtk:Gtk:EditableLabel",

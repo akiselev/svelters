@@ -525,7 +525,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:FontChooser:prop:font-desc",
       "invocation": "reflected",
-      "js_name": "fontDesc",
+      "js_name": "font-desc",
       "name": "font-desc",
       "notify": {
         "explicit": false,
@@ -565,7 +565,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:FontChooser:prop:font-features",
       "invocation": "reflected",
-      "js_name": "fontFeatures",
+      "js_name": "font-features",
       "name": "font-features",
       "notify": {
         "explicit": false,
@@ -686,7 +686,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:FontChooser:prop:preview-text",
       "invocation": "reflected",
-      "js_name": "previewText",
+      "js_name": "preview-text",
       "name": "preview-text",
       "notify": {
         "explicit": false,
@@ -726,7 +726,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:FontChooser:prop:show-preview-entry",
       "invocation": "reflected",
-      "js_name": "showPreviewEntry",
+      "js_name": "show-preview-entry",
       "name": "show-preview-entry",
       "notify": {
         "explicit": true,

@@ -3004,7 +3004,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TreeView:prop:activate-on-single-click",
       "invocation": "reflected",
-      "js_name": "activateOnSingleClick",
+      "js_name": "activate-on-single-click",
       "name": "activate-on-single-click",
       "notify": {
         "explicit": true,
@@ -3044,7 +3044,7 @@
       "default": "none",
       "id": "svelters-api:v1:type:gtk:Gtk:TreeView:prop:enable-grid-lines",
       "invocation": "reflected",
-      "js_name": "enableGridLines",
+      "js_name": "enable-grid-lines",
       "name": "enable-grid-lines",
       "notify": {
         "explicit": true,
@@ -3084,7 +3084,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:TreeView:prop:enable-search",
       "invocation": "reflected",
-      "js_name": "enableSearch",
+      "js_name": "enable-search",
       "name": "enable-search",
       "notify": {
         "explicit": true,
@@ -3124,7 +3124,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TreeView:prop:enable-tree-lines",
       "invocation": "reflected",
-      "js_name": "enableTreeLines",
+      "js_name": "enable-tree-lines",
       "name": "enable-tree-lines",
       "notify": {
         "explicit": true,
@@ -3164,7 +3164,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:TreeView:prop:expander-column",
       "invocation": "reflected",
-      "js_name": "expanderColumn",
+      "js_name": "expander-column",
       "name": "expander-column",
       "notify": {
         "explicit": false,
@@ -3203,7 +3203,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TreeView:prop:fixed-height-mode",
       "invocation": "reflected",
-      "js_name": "fixedHeightMode",
+      "js_name": "fixed-height-mode",
       "name": "fixed-height-mode",
       "notify": {
         "explicit": true,
@@ -3243,7 +3243,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:TreeView:prop:headers-clickable",
       "invocation": "reflected",
-      "js_name": "headersClickable",
+      "js_name": "headers-clickable",
       "name": "headers-clickable",
       "notify": {
         "explicit": true,
@@ -3283,7 +3283,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:TreeView:prop:headers-visible",
       "invocation": "reflected",
-      "js_name": "headersVisible",
+      "js_name": "headers-visible",
       "name": "headers-visible",
       "notify": {
         "explicit": true,
@@ -3323,7 +3323,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TreeView:prop:hover-expand",
       "invocation": "reflected",
-      "js_name": "hoverExpand",
+      "js_name": "hover-expand",
       "name": "hover-expand",
       "notify": {
         "explicit": true,
@@ -3363,7 +3363,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TreeView:prop:hover-selection",
       "invocation": "reflected",
-      "js_name": "hoverSelection",
+      "js_name": "hover-selection",
       "name": "hover-selection",
       "notify": {
         "explicit": true,
@@ -3403,7 +3403,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:TreeView:prop:level-indentation",
       "invocation": "reflected",
-      "js_name": "levelIndentation",
+      "js_name": "level-indentation",
       "name": "level-indentation",
       "notify": {
         "explicit": true,
@@ -3525,7 +3525,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TreeView:prop:rubber-banding",
       "invocation": "reflected",
-      "js_name": "rubberBanding",
+      "js_name": "rubber-banding",
       "name": "rubber-banding",
       "notify": {
         "explicit": true,
@@ -3565,7 +3565,7 @@
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:TreeView:prop:search-column",
       "invocation": "reflected",
-      "js_name": "searchColumn",
+      "js_name": "search-column",
       "name": "search-column",
       "notify": {
         "explicit": true,
@@ -3608,7 +3608,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:TreeView:prop:show-expanders",
       "invocation": "reflected",
-      "js_name": "showExpanders",
+      "js_name": "show-expanders",
       "name": "show-expanders",
       "notify": {
         "explicit": true,
@@ -3648,7 +3648,7 @@
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:TreeView:prop:tooltip-column",
       "invocation": "reflected",
-      "js_name": "tooltipColumn",
+      "js_name": "tooltip-column",
       "name": "tooltip-column",
       "notify": {
         "explicit": true,

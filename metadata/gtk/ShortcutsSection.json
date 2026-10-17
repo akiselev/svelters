@@ -278,7 +278,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:ShortcutsSection:prop:max-height",
       "invocation": "reflected",
-      "js_name": "maxHeight",
+      "js_name": "max-height",
       "name": "max-height",
       "notify": {
         "explicit": true,
@@ -322,7 +322,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:ShortcutsSection:prop:section-name",
       "invocation": "reflected",
-      "js_name": "sectionName",
+      "js_name": "section-name",
       "name": "section-name",
       "notify": {
         "explicit": false,
@@ -402,7 +402,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:ShortcutsSection:prop:view-name",
       "invocation": "reflected",
-      "js_name": "viewName",
+      "js_name": "view-name",
       "name": "view-name",
       "notify": {
         "explicit": true,

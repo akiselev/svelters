@@ -87,9 +87,7 @@
         "set": "gtk_orientable_set_orientation"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkOrientable:orientation (Gtk 4 docs); P prop; interface-owned, tested through GtkBox"
       },

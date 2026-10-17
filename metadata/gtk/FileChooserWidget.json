@@ -253,7 +253,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:FileChooserWidget:prop:search-mode",
       "invocation": "reflected",
-      "js_name": "searchMode",
+      "js_name": "search-mode",
       "name": "search-mode",
       "notify": {
         "explicit": false,
@@ -292,7 +292,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:FileChooserWidget:prop:show-time",
       "invocation": "reflected",
-      "js_name": "showTime",
+      "js_name": "show-time",
       "name": "show-time",
       "notify": {
         "explicit": false,

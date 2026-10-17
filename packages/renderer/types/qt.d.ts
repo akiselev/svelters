@@ -5,21 +5,22 @@ import type { Boxed, DateParts, Insets, Point, Rect, Size, TimeParts, Color, Var
 export interface QtElementDescriptors {
   action: {
     props: {
-      label?: string;
+      text?: string;
       icon?: Boxed<"QIcon"> | string;
       shortcut?: Boxed<"QKeySequence"> | string;
-      tooltip?: string;
-      statusTip?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
       enabled?: boolean;
       visible?: boolean;
       checkable?: boolean;
       checked?: boolean;
+      separator?: boolean;
       group?: string;
     };
     events: {
       toggled: (checked: boolean) => void;
-      activate: (checked: boolean) => void;
-      hover: () => void;
+      triggered: (checked: boolean) => void;
+      hovered: () => void;
     };
     methods: {
       trigger(): void;
@@ -27,28 +28,28 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
-  box: {
+  "box-layout": {
     props: {
-      orientation?: "horizontal" | "vertical";
+      direction?: "bottom-to-top" | "left-to-right" | "right-to-left" | "top-to-bottom";
       spacing?: number;
       geometry?: Rect;
-      minimumSize?: Size;
-      maximumSize?: Size;
-      sizeIncrement?: Size;
+      "minimum-size"?: Size;
+      "maximum-size"?: Size;
+      "size-increment"?: Size;
       readonly pos?: Point;
       readonly size?: Size;
-      contentsMargins?: Insets;
-      focusPolicy?: "click-focus" | "no-focus" | "strong-focus" | "tab-focus" | "wheel-focus";
-      toolTip?: string;
+      "contents-margins"?: Insets;
+      "focus-policy"?: "click-focus" | "no-focus" | "strong-focus" | "tab-focus" | "wheel-focus";
+      "tool-tip"?: string;
       enabled?: boolean;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
       "key-press": () => void;
@@ -56,7 +57,7 @@ export interface QtElementDescriptors {
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -78,93 +79,40 @@ export interface QtElementDescriptors {
     };
     slots: "children";
   };
-  button: {
+  "calendar-widget": {
     props: {
-      label?: string;
-      icon?: Boxed<"QIcon"> | string;
-      iconSize?: Size;
-      shortcut?: Boxed<"QKeySequence"> | string;
-      checkable?: boolean;
-      flat?: boolean;
-      autoDefault?: boolean;
-      default?: boolean;
-      autoRepeat?: boolean;
-      autoExclusive?: boolean;
+      "grid-visible"?: boolean;
+      "navigation-bar-visible"?: boolean;
+      "first-day-of-week"?: "friday" | "monday" | "saturday" | "sunday" | "thursday" | "tuesday" | "wednesday";
+      "horizontal-header-format"?: "long-day-names" | "no-horizontal-header" | "short-day-names" | "single-letter-day-names";
+      "vertical-header-format"?: "iso-week-numbers" | "no-vertical-header";
+      "date-edit-enabled"?: boolean;
+      "date-edit-accept-delay"?: number;
+      "selection-mode"?: "no-selection" | "single-selection";
+      "selected-date"?: DateParts;
+      "minimum-date"?: DateParts;
+      "maximum-date"?: DateParts;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
-    };
-    events: {
-      clicked: () => void;
-      pressed: () => void;
-      released: () => void;
-      toggled: (checked: boolean) => void;
-      "key-release": (key: number, text: string, modifiers: number) => void;
-      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
-      "focus-in": (reason: number) => void;
-      "focus-out": (reason: number) => void;
-      enter: (position: Point) => void;
-      leave: () => void;
-      resize: (size: Size, oldSize: Size) => void;
-      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
-    };
-    methods: {
-      click(): void;
-      toggle(): void;
-      animateClick(): void;
-      show(): void;
-      hide(): void;
-      setFocus(): void;
-      update(): void;
-      adjustSize(): void;
-    };
-    slots: never;
-  };
-  calendar: {
-    props: {
-      gridVisible?: boolean;
-      navigationBarVisible?: boolean;
-      firstDayOfWeek?: "friday" | "monday" | "saturday" | "sunday" | "thursday" | "tuesday" | "wednesday";
-      horizontalHeaderFormat?: "long-day-names" | "no-horizontal-header" | "short-day-names" | "single-letter-day-names";
-      verticalHeaderFormat?: "iso-week-numbers" | "no-vertical-header";
-      dateEditEnabled?: boolean;
-      dateEditAcceptDelay?: number;
-      selectionMode?: "no-selection" | "single-selection";
-      selectedDate?: DateParts;
-      minimumDate?: DateParts;
-      maximumDate?: DateParts;
-      enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
       "selection-changed": () => void;
-      "page-changed": (year: number, month: number) => void;
+      "current-page-changed": (year: number, month: number) => void;
       clicked: (date: DateParts) => void;
       activated: (date: DateParts) => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -189,38 +137,38 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
-  checkbox: {
+  "check-box": {
     props: {
       checked?: boolean;
       tristate?: boolean;
-      checkState?: "checked" | "partially-checked" | "unchecked";
-      label?: string;
+      "check-state"?: "checked" | "partially-checked" | "unchecked";
+      text?: string;
       checkable?: boolean;
-      autoRepeat?: boolean;
-      autoExclusive?: boolean;
+      "auto-repeat"?: boolean;
+      "auto-exclusive"?: boolean;
       shortcut?: Boxed<"QKeySequence"> | string;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
       toggled: (checked: boolean) => void;
       pressed: () => void;
       released: () => void;
-      stateChanged: (state: number) => void;
+      "state-changed": (state: number) => void;
       clicked: () => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -241,25 +189,25 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
-  colordialog: {
+  "color-dialog": {
     props: {
-      currentColor?: Color | string;
+      "current-color"?: Color | string;
       options?: Array<"dont-use-native-dialog" | "no-buttons" | "no-eye-dropper-button" | "show-alpha-channel">;
       modal?: boolean;
-      sizeGripEnabled?: boolean;
+      "size-grip-enabled"?: boolean;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
-      currentColorChanged: (color: Color | string) => void;
+      "current-color-changed": (color: Color | string) => void;
       accepted: () => void;
       rejected: () => void;
       finished: (result: number) => void;
@@ -267,7 +215,7 @@ export interface QtElementDescriptors {
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -290,37 +238,37 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
-  combobox: {
+  "combo-box": {
     props: {
       readonly count?: number;
-      currentData?: number;
+      "current-data"?: number;
       editable?: boolean;
-      currentIndex?: number;
-      currentText?: string;
-      maxVisibleItems?: number;
-      placeholderText?: string;
-      insertPolicy?: "insert-after-current" | "insert-alphabetically" | "insert-at-bottom" | "insert-at-current" | "insert-at-top" | "insert-before-current" | "no-insert";
-      duplicatesEnabled?: boolean;
+      "current-index"?: number;
+      "current-text"?: string;
+      "max-visible-items"?: number;
+      "placeholder-text"?: string;
+      "insert-policy"?: "insert-after-current" | "insert-alphabetically" | "insert-at-bottom" | "insert-at-current" | "insert-at-top" | "insert-before-current" | "no-insert";
+      "duplicates-enabled"?: boolean;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
-      changed: (index: number) => void;
-      "text-changed": (text: string) => void;
+      "current-index-changed": (index: number) => void;
+      "current-text-changed": (text: string) => void;
       activated: (index: number) => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -343,25 +291,25 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
-  commandlinkbutton: {
+  "command-link-button": {
     props: {
       description?: string;
       flat?: boolean;
-      label?: string;
+      text?: string;
       checkable?: boolean;
-      autoRepeat?: boolean;
-      autoExclusive?: boolean;
+      "auto-repeat"?: boolean;
+      "auto-exclusive"?: boolean;
       shortcut?: Boxed<"QKeySequence"> | string;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
       pressed: () => void;
@@ -372,7 +320,7 @@ export interface QtElementDescriptors {
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -393,77 +341,38 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
-  contextmenu: {
-    props: {
-      label?: string;
-      enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
-    };
-    events: {
-      "key-release": (key: number, text: string, modifiers: number) => void;
-      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
-      "focus-in": (reason: number) => void;
-      "focus-out": (reason: number) => void;
-      enter: (position: Point) => void;
-      leave: () => void;
-      resize: (size: Size, oldSize: Size) => void;
-      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
-    };
-    methods: {
-      popup(p: Point, atAction: number): void;
-      popdown(): void;
-      show(): void;
-      hide(): void;
-      setFocus(): void;
-      update(): void;
-      adjustSize(): void;
-    };
-    slots: "items";
-  };
-  dateedit: {
+  "date-edit": {
     props: {
       date?: DateParts;
-      displayFormat?: string;
-      calendarPopup?: boolean;
-      minimumDate?: DateParts;
-      maximumDate?: DateParts;
-      readOnly?: boolean;
+      "display-format"?: string;
+      "calendar-popup"?: boolean;
+      "minimum-date"?: DateParts;
+      "maximum-date"?: DateParts;
+      "read-only"?: boolean;
       wrapping?: boolean;
       frame?: boolean;
-      specialValueText?: string;
-      buttonSymbols?: "no-buttons" | "plus-minus" | "up-down-arrows";
+      "special-value-text"?: string;
+      "button-symbols"?: "no-buttons" | "plus-minus" | "up-down-arrows";
       accelerated?: boolean;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
       "date-changed": (date: DateParts) => void;
-      editingFinished: () => void;
+      "editing-finished": () => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -481,42 +390,42 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
-  datetimeedit: {
+  "date-time-edit": {
     props: {
-      dateTime?: Date;
-      displayFormat?: string;
-      calendarPopup?: boolean;
-      minimumDate?: DateParts;
-      maximumDate?: DateParts;
-      minimumTime?: TimeParts;
-      maximumTime?: TimeParts;
-      minimumDateTime?: Date;
-      maximumDateTime?: Date;
-      readOnly?: boolean;
+      "date-time"?: Date;
+      "display-format"?: string;
+      "calendar-popup"?: boolean;
+      "minimum-date"?: DateParts;
+      "maximum-date"?: DateParts;
+      "minimum-time"?: TimeParts;
+      "maximum-time"?: TimeParts;
+      "minimum-date-time"?: Date;
+      "maximum-date-time"?: Date;
+      "read-only"?: boolean;
       wrapping?: boolean;
       frame?: boolean;
-      specialValueText?: string;
-      buttonSymbols?: "no-buttons" | "plus-minus" | "up-down-arrows";
+      "special-value-text"?: string;
+      "button-symbols"?: "no-buttons" | "plus-minus" | "up-down-arrows";
       accelerated?: boolean;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
       "date-time-changed": (datetime: Date) => void;
-      editingFinished: () => void;
+      "editing-finished": () => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -537,36 +446,36 @@ export interface QtElementDescriptors {
   dial: {
     props: {
       value?: number;
-      notchesVisible?: boolean;
+      "notches-visible"?: boolean;
       wrapping?: boolean;
-      notchTarget?: number;
+      "notch-target"?: number;
       minimum?: number;
       maximum?: number;
-      singleStep?: number;
-      pageStep?: number;
+      "single-step"?: number;
+      "page-step"?: number;
       tracking?: boolean;
-      invertedAppearance?: boolean;
+      "inverted-appearance"?: boolean;
       orientation?: "horizontal" | "vertical";
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
-      valueChanged: (value: number) => void;
-      sliderMoved: (value: number) => void;
-      rangeChanged: (min: number, max: number) => void;
+      "value-changed": (value: number) => void;
+      "slider-moved": (value: number) => void;
+      "range-changed": (min: number, max: number) => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -586,19 +495,19 @@ export interface QtElementDescriptors {
   };
   dialog: {
     props: {
-      title?: string;
+      "window-title"?: string;
       modal?: boolean;
-      sizeGripEnabled?: boolean;
+      "size-grip-enabled"?: boolean;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
       accepted: () => void;
@@ -608,7 +517,7 @@ export interface QtElementDescriptors {
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -631,21 +540,21 @@ export interface QtElementDescriptors {
     };
     slots: "children";
   };
-  dialogbuttonbox: {
+  "dialog-button-box": {
     props: {
       orientation?: "horizontal" | "vertical";
-      centerButtons?: boolean;
-      standardButtons?: Array<"abort" | "apply" | "cancel" | "close" | "discard" | "first-button" | "help" | "ignore" | "last-button" | "no" | "no-button" | "no-to-all" | "ok" | "open" | "reset" | "restore-defaults" | "retry" | "save" | "save-all" | "yes" | "yes-to-all">;
+      "center-buttons"?: boolean;
+      "standard-buttons"?: Array<"abort" | "apply" | "cancel" | "close" | "discard" | "first-button" | "help" | "ignore" | "last-button" | "no" | "no-button" | "no-to-all" | "ok" | "open" | "reset" | "restore-defaults" | "retry" | "save" | "save-all" | "yes" | "yes-to-all">;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
       accepted: () => void;
@@ -655,7 +564,7 @@ export interface QtElementDescriptors {
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -674,22 +583,22 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
-  dockwidget: {
+  "dock-widget": {
     props: {
       features?: Array<"dock-widget-closable" | "dock-widget-feature-mask" | "dock-widget-floatable" | "dock-widget-movable" | "dock-widget-vertical-title-bar" | "no-dock-widget-features" | "reserved">;
-      allowedAreas?: Array<"all-dock-widget-areas" | "bottom-dock-widget-area" | "dock-widget-area-mask" | "left-dock-widget-area" | "no-dock-widget-area" | "right-dock-widget-area" | "top-dock-widget-area">;
+      "allowed-areas"?: Array<"all-dock-widget-areas" | "bottom-dock-widget-area" | "dock-widget-area-mask" | "left-dock-widget-area" | "no-dock-widget-area" | "right-dock-widget-area" | "top-dock-widget-area">;
       floating?: boolean;
-      windowTitle?: string;
+      "window-title"?: string;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
       "top-level-changed": (topLevel: boolean) => void;
@@ -700,7 +609,7 @@ export interface QtElementDescriptors {
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -718,38 +627,38 @@ export interface QtElementDescriptors {
     };
     slots: "widget";
   };
-  doublespinbox: {
+  "double-spin-box": {
     props: {
       value?: number;
       decimals?: number;
       minimum?: number;
       maximum?: number;
-      singleStep?: number;
-      readOnly?: boolean;
+      "single-step"?: number;
+      "read-only"?: boolean;
       wrapping?: boolean;
       frame?: boolean;
-      specialValueText?: string;
-      buttonSymbols?: "no-buttons" | "plus-minus" | "up-down-arrows";
+      "special-value-text"?: string;
+      "button-symbols"?: "no-buttons" | "plus-minus" | "up-down-arrows";
       accelerated?: boolean;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
-      valueChanged: (d: number) => void;
-      editingFinished: () => void;
+      "value-changed": (d: number) => void;
+      "editing-finished": () => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -767,79 +676,20 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
-  entry: {
-    props: {
-      text?: string;
-      placeholder?: string;
-      echoMode?: "no-echo" | "normal" | "password" | "password-echo-on-edit";
-      alignment?: Array<"absolute" | "baseline" | "bottom" | "center" | "hcenter" | "horizontal-mask" | "justify" | "leading" | "left" | "right" | "top" | "trailing" | "vcenter" | "vertical-mask">;
-      maxLength?: number;
-      readOnly?: boolean;
-      clearButtonEnabled?: boolean;
-      frame?: boolean;
-      inputMask?: string;
-      dragEnabled?: boolean;
-      cursorPosition?: number;
-      enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
-    };
-    events: {
-      "key-press": () => void;
-      changed: (text: string) => void;
-      returnPressed: () => void;
-      editingFinished: () => void;
-      textEdited: (text: string) => void;
-      selectionChanged: () => void;
-      "key-release": (key: number, text: string, modifiers: number) => void;
-      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
-      "focus-in": (reason: number) => void;
-      "focus-out": (reason: number) => void;
-      enter: (position: Point) => void;
-      leave: () => void;
-      resize: (size: Size, oldSize: Size) => void;
-      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
-    };
-    methods: {
-      clear(): void;
-      selectAll(): void;
-      undo(): void;
-      redo(): void;
-      copy(): void;
-      setSelection(start: number, length: number): void;
-      show(): void;
-      hide(): void;
-      setFocus(): void;
-      update(): void;
-      adjustSize(): void;
-    };
-    slots: never;
-  };
-  errormessage: {
+  "error-message": {
     props: {
       modal?: boolean;
-      sizeGripEnabled?: boolean;
+      "size-grip-enabled"?: boolean;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
       accepted: () => void;
@@ -849,7 +699,7 @@ export interface QtElementDescriptors {
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -873,24 +723,24 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
-  filedialog: {
+  "file-dialog": {
     props: {
-      fileMode?: "any-file" | "directory" | "existing-file" | "existing-files";
-      acceptMode?: "open" | "save";
-      viewMode?: "detail" | "list";
-      defaultSuffix?: string;
+      "file-mode"?: "any-file" | "directory" | "existing-file" | "existing-files";
+      "accept-mode"?: "open" | "save";
+      "view-mode"?: "detail" | "list";
+      "default-suffix"?: string;
       modal?: boolean;
-      sizeGripEnabled?: boolean;
+      "size-grip-enabled"?: boolean;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
       accepted: () => void;
@@ -900,7 +750,7 @@ export interface QtElementDescriptors {
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -924,28 +774,28 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
-  fontcombobox: {
+  "font-combo-box": {
     props: {
-      currentFont?: Boxed<"QFont"> | string;
-      writingSystem?: "any" | "arabic" | "armenian" | "bengali" | "cyrillic" | "devanagari" | "georgian" | "greek" | "gujarati" | "gurmukhi" | "hebrew" | "japanese" | "kannada" | "khmer" | "korean" | "lao" | "latin" | "malayalam" | "myanmar" | "nko" | "ogham" | "oriya" | "other" | "runic" | "simplified-chinese" | "sinhala" | "symbol" | "syriac" | "tamil" | "telugu" | "thaana" | "thai" | "tibetan" | "traditional-chinese" | "vietnamese" | "writing-systems-count";
-      fontFilters?: Array<"all-fonts" | "monospaced-fonts" | "non-scalable-fonts" | "proportional-fonts" | "scalable-fonts">;
+      "current-font"?: Boxed<"QFont"> | string;
+      "writing-system"?: "any" | "arabic" | "armenian" | "bengali" | "cyrillic" | "devanagari" | "georgian" | "greek" | "gujarati" | "gurmukhi" | "hebrew" | "japanese" | "kannada" | "khmer" | "korean" | "lao" | "latin" | "malayalam" | "myanmar" | "nko" | "ogham" | "oriya" | "other" | "runic" | "simplified-chinese" | "sinhala" | "symbol" | "syriac" | "tamil" | "telugu" | "thaana" | "thai" | "tibetan" | "traditional-chinese" | "vietnamese" | "writing-systems-count";
+      "font-filters"?: Array<"all-fonts" | "monospaced-fonts" | "non-scalable-fonts" | "proportional-fonts" | "scalable-fonts">;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -963,22 +813,22 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
-  fontdialog: {
+  "font-dialog": {
     props: {
-      currentFont?: Boxed<"QFont"> | string;
+      "current-font"?: Boxed<"QFont"> | string;
       options?: Array<"dont-use-native-dialog" | "monospaced-fonts" | "no-buttons" | "non-scalable-fonts" | "proportional-fonts" | "scalable-fonts">;
       modal?: boolean;
-      sizeGripEnabled?: boolean;
+      "size-grip-enabled"?: boolean;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
       accepted: () => void;
@@ -988,7 +838,7 @@ export interface QtElementDescriptors {
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -1013,28 +863,28 @@ export interface QtElementDescriptors {
   };
   frame: {
     props: {
-      orientation?: "horizontal" | "vertical";
-      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
-      frameShadow?: "plain" | "raised" | "sunken";
-      lineWidth?: number;
-      midLineWidth?: number;
+      direction?: "bottom-to-top" | "left-to-right" | "right-to-left" | "top-to-bottom";
+      "frame-shape"?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      "frame-shadow"?: "plain" | "raised" | "sunken";
+      "line-width"?: number;
+      "mid-line-width"?: number;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -1052,25 +902,25 @@ export interface QtElementDescriptors {
     };
     slots: "children";
   };
-  grid: {
+  "grid-layout": {
     props: {
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -1088,24 +938,24 @@ export interface QtElementDescriptors {
     };
     slots: "cells";
   };
-  groupbox: {
+  "group-box": {
     props: {
-      orientation?: "horizontal" | "vertical";
+      direction?: "bottom-to-top" | "left-to-right" | "right-to-left" | "top-to-bottom";
       title?: string;
       checkable?: boolean;
       checked?: boolean;
       flat?: boolean;
       alignment?: Array<"absolute" | "baseline" | "bottom" | "center" | "hcenter" | "horizontal-mask" | "justify" | "leading" | "left" | "right" | "top" | "trailing" | "vcenter" | "vertical-mask">;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
       toggled: (on: boolean) => void;
@@ -1114,7 +964,7 @@ export interface QtElementDescriptors {
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -1132,33 +982,33 @@ export interface QtElementDescriptors {
     };
     slots: "children";
   };
-  inputdialog: {
+  "input-dialog": {
     props: {
-      labelText?: string;
-      textValue?: string;
-      intValue?: number;
-      doubleValue?: number;
-      intMinimum?: number;
-      intMaximum?: number;
-      inputMode?: "double-input" | "int-input" | "text-input";
-      okButtonText?: string;
-      cancelButtonText?: string;
+      "label-text"?: string;
+      "text-value"?: string;
+      "int-value"?: number;
+      "double-value"?: number;
+      "int-minimum"?: number;
+      "int-maximum"?: number;
+      "input-mode"?: "double-input" | "int-input" | "text-input";
+      "ok-button-text"?: string;
+      "cancel-button-text"?: string;
       modal?: boolean;
-      sizeGripEnabled?: boolean;
+      "size-grip-enabled"?: boolean;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
-      textValueChanged: (text: string) => void;
-      intValueChanged: (value: number) => void;
+      "text-value-changed": (text: string) => void;
+      "int-value-changed": (value: number) => void;
       accepted: () => void;
       rejected: () => void;
       finished: (result: number) => void;
@@ -1166,7 +1016,7 @@ export interface QtElementDescriptors {
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -1189,28 +1039,28 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
-  keysequenceedit: {
+  "key-sequence-edit": {
     props: {
-      keySequence?: Boxed<"QKeySequence"> | string;
-      clearButtonEnabled?: boolean;
+      "key-sequence"?: Boxed<"QKeySequence"> | string;
+      "clear-button-enabled"?: boolean;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
-      editingFinished: () => void;
+      "editing-finished": () => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -1231,39 +1081,39 @@ export interface QtElementDescriptors {
   };
   label: {
     props: {
-      label?: string;
+      text?: string;
       alignment?: Array<"absolute" | "baseline" | "bottom" | "center" | "hcenter" | "horizontal-mask" | "justify" | "leading" | "left" | "right" | "top" | "trailing" | "vcenter" | "vertical-mask">;
-      textFormat?: "auto-text" | "markdown-text" | "plain-text" | "rich-text";
+      "text-format"?: "auto-text" | "markdown-text" | "plain-text" | "rich-text";
       pixmap?: Boxed<"QPixmap">;
       indent?: number;
-      wordWrap?: boolean;
-      openExternalLinks?: boolean;
+      "word-wrap"?: boolean;
+      "open-external-links"?: boolean;
       margin?: number;
-      scaledContents?: boolean;
-      textInteractionFlags?: Array<"links-accessible-by-keyboard" | "links-accessible-by-mouse" | "no-text-interaction" | "text-browser-interaction" | "text-editable" | "text-editor-interaction" | "text-selectable-by-keyboard" | "text-selectable-by-mouse">;
-      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
-      frameShadow?: "plain" | "raised" | "sunken";
-      lineWidth?: number;
-      midLineWidth?: number;
+      "scaled-contents"?: boolean;
+      "text-interaction-flags"?: Array<"links-accessible-by-keyboard" | "links-accessible-by-mouse" | "no-text-interaction" | "text-browser-interaction" | "text-editable" | "text-editor-interaction" | "text-selectable-by-keyboard" | "text-selectable-by-mouse">;
+      "frame-shape"?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      "frame-shadow"?: "plain" | "raised" | "sunken";
+      "line-width"?: number;
+      "mid-line-width"?: number;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
-      linkActivated: (link: string) => void;
-      linkHovered: (link: string) => void;
+      "link-activated": (link: string) => void;
+      "link-hovered": (link: string) => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -1283,27 +1133,27 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
-  lcdnumber: {
+  "lcd-number": {
     props: {
-      digitCount?: number;
-      intValue?: number;
+      "digit-count"?: number;
+      "int-value"?: number;
       value?: number;
       mode?: "bin" | "dec" | "hex" | "oct";
-      segmentStyle?: "filled" | "flat" | "outline";
-      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
-      frameShadow?: "plain" | "raised" | "sunken";
-      lineWidth?: number;
-      midLineWidth?: number;
+      "segment-style"?: "filled" | "flat" | "outline";
+      "frame-shape"?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      "frame-shadow"?: "plain" | "raised" | "sunken";
+      "line-width"?: number;
+      "mid-line-width"?: number;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
       overflow: () => void;
@@ -1311,7 +1161,7 @@ export interface QtElementDescriptors {
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -1330,36 +1180,95 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
-  listwidget: {
+  "line-edit": {
     props: {
-      readonly count?: number;
-      currentRow?: number;
-      sortingEnabled?: boolean;
-      selectionMode?: "contiguous-selection" | "extended-selection" | "multi-selection" | "no-selection" | "single-selection";
-      alternatingRowColors?: boolean;
-      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
-      frameShadow?: "plain" | "raised" | "sunken";
-      lineWidth?: number;
-      midLineWidth?: number;
+      text?: string;
+      "placeholder-text"?: string;
+      "echo-mode"?: "no-echo" | "normal" | "password" | "password-echo-on-edit";
+      alignment?: Array<"absolute" | "baseline" | "bottom" | "center" | "hcenter" | "horizontal-mask" | "justify" | "leading" | "left" | "right" | "top" | "trailing" | "vcenter" | "vertical-mask">;
+      "max-length"?: number;
+      "read-only"?: boolean;
+      "clear-button-enabled"?: boolean;
+      frame?: boolean;
+      "input-mask"?: string;
+      "drag-enabled"?: boolean;
+      "cursor-position"?: number;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
-      "row-changed": (currentRow: number) => void;
+      "key-press": () => void;
+      "text-changed": (text: string) => void;
+      "return-pressed": () => void;
+      "editing-finished": () => void;
+      "text-edited": (text: string) => void;
       "selection-changed": () => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
+    };
+    methods: {
+      clear(): void;
+      selectAll(): void;
+      undo(): void;
+      redo(): void;
+      copy(): void;
+      setSelection(start: number, length: number): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  "list-widget": {
+    props: {
+      readonly count?: number;
+      "current-row"?: number;
+      "sorting-enabled"?: boolean;
+      "selection-mode"?: "contiguous-selection" | "extended-selection" | "multi-selection" | "no-selection" | "single-selection";
+      "alternating-row-colors"?: boolean;
+      "frame-shape"?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      "frame-shadow"?: "plain" | "raised" | "sunken";
+      "line-width"?: number;
+      "mid-line-width"?: number;
+      enabled?: boolean;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
+    };
+    events: {
+      "current-row-changed": (currentRow: number) => void;
+      "item-selection-changed": () => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -1380,36 +1289,82 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
-  mdiarea: {
+  "main-window": {
     props: {
-      activationOrder?: "activation-history-order" | "creation-order" | "stacking-order";
-      documentMode?: boolean;
-      tabPosition?: "east" | "north" | "south" | "west";
-      tabShape?: "rounded" | "triangular";
-      tabsClosable?: boolean;
-      tabsMovable?: boolean;
-      viewMode?: "sub-window-view" | "tabbed-view";
-      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
-      frameShadow?: "plain" | "raised" | "sunken";
-      lineWidth?: number;
-      midLineWidth?: number;
+      "window-title"?: string;
+      "document-mode"?: boolean;
+      animated?: boolean;
+      "dock-nesting-enabled"?: boolean;
+      "tab-shape"?: "rounded" | "triangular";
+      "tool-button-style"?: "follow-style" | "icon-only" | "text-beside-icon" | "text-only" | "text-under-icon";
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
+    };
+    events: {
+      close: () => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
+    };
+    methods: {
+      show(): void;
+      present(): void;
+      close(): boolean;
+      resize(w: number, h: number): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: "central" | "menubar" | "statusbar" | "toolbars" | "docks";
+  };
+  "mdi-area": {
+    props: {
+      "activation-order"?: "activation-history-order" | "creation-order" | "stacking-order";
+      "document-mode"?: boolean;
+      "tab-position"?: "east" | "north" | "south" | "west";
+      "tab-shape"?: "rounded" | "triangular";
+      "tabs-closable"?: boolean;
+      "tabs-movable"?: boolean;
+      "view-mode"?: "sub-window-view" | "tabbed-view";
+      "frame-shape"?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      "frame-shadow"?: "plain" | "raised" | "sunken";
+      "line-width"?: number;
+      "mid-line-width"?: number;
+      enabled?: boolean;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -1432,28 +1387,28 @@ export interface QtElementDescriptors {
   };
   menu: {
     props: {
-      label?: string;
+      title?: string;
       icon?: Boxed<"QIcon"> | string;
-      tearOffEnabled?: boolean;
-      separatorsCollapsible?: boolean;
-      toolTipsVisible?: boolean;
+      "tear-off-enabled"?: boolean;
+      "separators-collapsible"?: boolean;
+      "tool-tips-visible"?: boolean;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -1463,6 +1418,8 @@ export interface QtElementDescriptors {
       "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
+      popup(p: Point, atAction: number): void;
+      popdown(): void;
       addItem(text: string, functor: (checked: boolean) => void, shortcut: Boxed<"QKeySequence"> | string): void;
       show(): void;
       hide(): void;
@@ -1472,26 +1429,26 @@ export interface QtElementDescriptors {
     };
     slots: "items";
   };
-  menubar: {
+  "menu-bar": {
     props: {
-      defaultUp?: boolean;
+      "default-up"?: boolean;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -1510,36 +1467,26 @@ export interface QtElementDescriptors {
     };
     slots: "items";
   };
-  menuseparator: {
-    props: {
-      visible?: boolean;
-    };
-    events: {
-    };
-    methods: {
-    };
-    slots: never;
-  };
-  messagebox: {
+  "message-box": {
     props: {
       text?: string;
-      informativeText?: string;
-      detailedText?: string;
+      "informative-text"?: string;
+      "detailed-text"?: string;
       icon?: "critical" | "information" | "no-icon" | "question" | "warning";
-      textFormat?: "auto-text" | "markdown-text" | "plain-text" | "rich-text";
-      standardButtons?: Array<"abort" | "apply" | "button-mask" | "cancel" | "close" | "default" | "discard" | "escape" | "first-button" | "flag-mask" | "help" | "ignore" | "last-button" | "no" | "no-all" | "no-button" | "no-to-all" | "ok" | "open" | "reset" | "restore-defaults" | "retry" | "save" | "save-all" | "yes" | "yes-all" | "yes-to-all">;
+      "text-format"?: "auto-text" | "markdown-text" | "plain-text" | "rich-text";
+      "standard-buttons"?: Array<"abort" | "apply" | "button-mask" | "cancel" | "close" | "default" | "discard" | "escape" | "first-button" | "flag-mask" | "help" | "ignore" | "last-button" | "no" | "no-all" | "no-button" | "no-to-all" | "ok" | "open" | "reset" | "restore-defaults" | "retry" | "save" | "save-all" | "yes" | "yes-all" | "yes-to-all">;
       modal?: boolean;
-      sizeGripEnabled?: boolean;
+      "size-grip-enabled"?: boolean;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
       accepted: () => void;
@@ -1549,7 +1496,7 @@ export interface QtElementDescriptors {
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -1572,47 +1519,47 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
-  plaintextedit: {
+  "plain-text-edit": {
     props: {
-      plainText?: string;
-      readOnly?: boolean;
-      placeholderText?: string;
-      lineWrapMode?: "no-wrap" | "widget-width";
-      tabChangesFocus?: boolean;
-      overwriteMode?: boolean;
-      wordWrapMode?: "manual-wrap" | "no-wrap" | "word-wrap" | "wrap-anywhere" | "wrap-at-word-boundary-or-anywhere";
-      undoRedoEnabled?: boolean;
-      maximumBlockCount?: number;
-      cursorWidth?: number;
-      tabStopDistance?: number;
-      textInteractionFlags?: Array<"links-accessible-by-keyboard" | "links-accessible-by-mouse" | "no-text-interaction" | "text-browser-interaction" | "text-editable" | "text-editor-interaction" | "text-selectable-by-keyboard" | "text-selectable-by-mouse">;
-      documentTitle?: string;
-      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
-      frameShadow?: "plain" | "raised" | "sunken";
-      lineWidth?: number;
-      midLineWidth?: number;
+      "plain-text"?: string;
+      "read-only"?: boolean;
+      "placeholder-text"?: string;
+      "line-wrap-mode"?: "no-wrap" | "widget-width";
+      "tab-changes-focus"?: boolean;
+      "overwrite-mode"?: boolean;
+      "word-wrap-mode"?: "manual-wrap" | "no-wrap" | "word-wrap" | "wrap-anywhere" | "wrap-at-word-boundary-or-anywhere";
+      "undo-redo-enabled"?: boolean;
+      "maximum-block-count"?: number;
+      "cursor-width"?: number;
+      "tab-stop-distance"?: number;
+      "text-interaction-flags"?: Array<"links-accessible-by-keyboard" | "links-accessible-by-mouse" | "no-text-interaction" | "text-browser-interaction" | "text-editable" | "text-editor-interaction" | "text-selectable-by-keyboard" | "text-selectable-by-mouse">;
+      "document-title"?: string;
+      "frame-shape"?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      "frame-shadow"?: "plain" | "raised" | "sunken";
+      "line-width"?: number;
+      "mid-line-width"?: number;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
       "key-press": () => void;
-      changed: () => void;
-      selectionChanged: () => void;
-      cursorPositionChanged: () => void;
-      blockCountChanged: (newBlockCount: number) => void;
+      "text-changed": () => void;
+      "selection-changed": () => void;
+      "cursor-position-changed": () => void;
+      "block-count-changed": (newBlockCount: number) => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -1641,33 +1588,33 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
-  progressbar: {
+  "progress-bar": {
     props: {
       value?: number;
       minimum?: number;
       maximum?: number;
       format?: string;
-      textVisible?: boolean;
+      "text-visible"?: boolean;
       orientation?: "horizontal" | "vertical";
-      invertedAppearance?: boolean;
+      "inverted-appearance"?: boolean;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
-      valueChanged: (value: number) => void;
+      "value-changed": (value: number) => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -1686,27 +1633,27 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
-  progressdialog: {
+  "progress-dialog": {
     props: {
       value?: number;
       minimum?: number;
       maximum?: number;
-      labelText?: string;
-      minimumDuration?: number;
-      autoClose?: boolean;
-      autoReset?: boolean;
+      "label-text"?: string;
+      "minimum-duration"?: number;
+      "auto-close"?: boolean;
+      "auto-reset"?: boolean;
       modal?: boolean;
-      sizeGripEnabled?: boolean;
+      "size-grip-enabled"?: boolean;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
       canceled: () => void;
@@ -1717,7 +1664,7 @@ export interface QtElementDescriptors {
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -1742,35 +1689,39 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
-  radiobutton: {
+  "push-button": {
     props: {
-      checked?: boolean;
-      label?: string;
-      checkable?: boolean;
-      autoRepeat?: boolean;
-      autoExclusive?: boolean;
+      text?: string;
+      icon?: Boxed<"QIcon"> | string;
+      "icon-size"?: Size;
       shortcut?: Boxed<"QKeySequence"> | string;
+      checkable?: boolean;
+      flat?: boolean;
+      "auto-default"?: boolean;
+      default?: boolean;
+      "auto-repeat"?: boolean;
+      "auto-exclusive"?: boolean;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
+      clicked: () => void;
       pressed: () => void;
       released: () => void;
       toggled: (checked: boolean) => void;
-      clicked: () => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -1791,36 +1742,35 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
-  scrollbar: {
+  "radio-button": {
     props: {
-      value?: number;
-      minimum?: number;
-      maximum?: number;
-      singleStep?: number;
-      pageStep?: number;
-      tracking?: boolean;
-      invertedAppearance?: boolean;
-      orientation?: "horizontal" | "vertical";
+      checked?: boolean;
+      text?: string;
+      checkable?: boolean;
+      "auto-repeat"?: boolean;
+      "auto-exclusive"?: boolean;
+      shortcut?: Boxed<"QKeySequence"> | string;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
-      valueChanged: (value: number) => void;
-      sliderMoved: (value: number) => void;
-      rangeChanged: (min: number, max: number) => void;
+      pressed: () => void;
+      released: () => void;
+      toggled: (checked: boolean) => void;
+      clicked: () => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -1830,6 +1780,9 @@ export interface QtElementDescriptors {
       "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
+      click(): void;
+      toggle(): void;
+      animateClick(): void;
       show(): void;
       hide(): void;
       setFocus(): void;
@@ -1838,32 +1791,32 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
-  scrolledwindow: {
+  "scroll-area": {
     props: {
-      widgetResizable?: boolean;
-      horizontalScrollBarPolicy?: "always-off" | "always-on" | "as-needed";
-      verticalScrollBarPolicy?: "always-off" | "always-on" | "as-needed";
-      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
-      frameShadow?: "plain" | "raised" | "sunken";
-      lineWidth?: number;
-      midLineWidth?: number;
+      "widget-resizable"?: boolean;
+      "horizontal-scroll-bar-policy"?: "always-off" | "always-on" | "as-needed";
+      "vertical-scroll-bar-policy"?: "always-off" | "always-on" | "as-needed";
+      "frame-shape"?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      "frame-shadow"?: "plain" | "raised" | "sunken";
+      "line-width"?: number;
+      "mid-line-width"?: number;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -1881,38 +1834,36 @@ export interface QtElementDescriptors {
     };
     slots: "child";
   };
-  slider: {
+  "scroll-bar": {
     props: {
       value?: number;
-      tickPosition?: "no-ticks" | "ticks-above" | "ticks-below" | "ticks-both-sides" | "ticks-left" | "ticks-right";
-      tickInterval?: number;
       minimum?: number;
       maximum?: number;
-      singleStep?: number;
-      pageStep?: number;
+      "single-step"?: number;
+      "page-step"?: number;
       tracking?: boolean;
-      invertedAppearance?: boolean;
+      "inverted-appearance"?: boolean;
       orientation?: "horizontal" | "vertical";
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
-      valueChanged: (value: number) => void;
-      sliderMoved: (value: number) => void;
-      rangeChanged: (min: number, max: number) => void;
+      "value-changed": (value: number) => void;
+      "slider-moved": (value: number) => void;
+      "range-changed": (min: number, max: number) => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -1930,41 +1881,90 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
-  spinbox: {
+  slider: {
     props: {
       value?: number;
+      "tick-position"?: "no-ticks" | "ticks-above" | "ticks-below" | "ticks-both-sides" | "ticks-left" | "ticks-right";
+      "tick-interval"?: number;
       minimum?: number;
       maximum?: number;
-      singleStep?: number;
-      suffix?: string;
-      displayIntegerBase?: number;
-      prefix?: string;
-      readOnly?: boolean;
-      wrapping?: boolean;
-      frame?: boolean;
-      specialValueText?: string;
-      buttonSymbols?: "no-buttons" | "plus-minus" | "up-down-arrows";
-      accelerated?: boolean;
+      "single-step"?: number;
+      "page-step"?: number;
+      tracking?: boolean;
+      "inverted-appearance"?: boolean;
+      orientation?: "horizontal" | "vertical";
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
-      valueChanged: (i: number) => void;
-      textChanged: (text: string) => void;
-      editingFinished: () => void;
+      "value-changed": (value: number) => void;
+      "slider-moved": (value: number) => void;
+      "range-changed": (min: number, max: number) => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
+      "focus-in": (reason: number) => void;
+      "focus-out": (reason: number) => void;
+      enter: (position: Point) => void;
+      leave: () => void;
+      resize: (size: Size, oldSize: Size) => void;
+      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
+    };
+    methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  "spin-box": {
+    props: {
+      value?: number;
+      minimum?: number;
+      maximum?: number;
+      "single-step"?: number;
+      suffix?: string;
+      "display-integer-base"?: number;
+      prefix?: string;
+      "read-only"?: boolean;
+      wrapping?: boolean;
+      frame?: boolean;
+      "special-value-text"?: string;
+      "button-symbols"?: "no-buttons" | "plus-minus" | "up-down-arrows";
+      accelerated?: boolean;
+      enabled?: boolean;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
+    };
+    events: {
+      "value-changed": (i: number) => void;
+      "text-changed": (text: string) => void;
+      "editing-finished": () => void;
+      "key-release": (key: number, text: string, modifiers: number) => void;
+      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -1987,23 +1987,23 @@ export interface QtElementDescriptors {
   splitter: {
     props: {
       orientation?: "horizontal" | "vertical";
-      childrenCollapsible?: boolean;
-      handleWidth?: number;
-      opaqueResize?: boolean;
-      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
-      frameShadow?: "plain" | "raised" | "sunken";
-      lineWidth?: number;
-      midLineWidth?: number;
+      "children-collapsible"?: boolean;
+      "handle-width"?: number;
+      "opaque-resize"?: boolean;
+      "frame-shape"?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      "frame-shadow"?: "plain" | "raised" | "sunken";
+      "line-width"?: number;
+      "mid-line-width"?: number;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
       "splitter-moved": (pos: number, index: number) => void;
@@ -2011,7 +2011,7 @@ export interface QtElementDescriptors {
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -2029,31 +2029,31 @@ export interface QtElementDescriptors {
     };
     slots: "children";
   };
-  stackedwidget: {
+  "stacked-widget": {
     props: {
-      currentIndex?: number;
-      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
-      frameShadow?: "plain" | "raised" | "sunken";
-      lineWidth?: number;
-      midLineWidth?: number;
+      "current-index"?: number;
+      "frame-shape"?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      "frame-shadow"?: "plain" | "raised" | "sunken";
+      "line-width"?: number;
+      "mid-line-width"?: number;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
-      changed: (index: number) => void;
+      "current-changed": (index: number) => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -2071,27 +2071,27 @@ export interface QtElementDescriptors {
     };
     slots: "pages";
   };
-  statusbar: {
+  "status-bar": {
     props: {
-      sizeGripEnabled?: boolean;
+      "size-grip-enabled"?: boolean;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
-      messageChanged: (message: string) => void;
+      "message-changed": (message: string) => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -2111,32 +2111,32 @@ export interface QtElementDescriptors {
     };
     slots: "widgets" | "permanent";
   };
-  tabbar: {
+  "tab-bar": {
     props: {
-      currentIndex?: number;
+      "current-index"?: number;
       readonly count?: number;
-      tabsClosable?: boolean;
+      "tabs-closable"?: boolean;
       movable?: boolean;
       shape?: "rounded-east" | "rounded-north" | "rounded-south" | "rounded-west" | "triangular-east" | "triangular-north" | "triangular-south" | "triangular-west";
       expanding?: boolean;
-      drawBase?: boolean;
-      documentMode?: boolean;
-      usesScrollButtons?: boolean;
-      autoHide?: boolean;
-      elideMode?: "left" | "middle" | "none" | "right";
+      "draw-base"?: boolean;
+      "document-mode"?: boolean;
+      "uses-scroll-buttons"?: boolean;
+      "auto-hide"?: boolean;
+      "elide-mode"?: "left" | "middle" | "none" | "right";
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
-      changed: (index: number) => void;
+      "current-changed": (index: number) => void;
       "tab-close-requested": (index: number) => void;
       "tab-bar-clicked": (index: number) => void;
       "tab-bar-double-clicked": (index: number) => void;
@@ -2145,7 +2145,7 @@ export interface QtElementDescriptors {
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -2167,35 +2167,35 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
-  tabwidget: {
+  "tab-widget": {
     props: {
-      tabPosition?: "east" | "north" | "south" | "west";
-      tabShape?: "rounded" | "triangular";
-      tabsClosable?: boolean;
+      "tab-position"?: "east" | "north" | "south" | "west";
+      "tab-shape"?: "rounded" | "triangular";
+      "tabs-closable"?: boolean;
       movable?: boolean;
-      documentMode?: boolean;
-      usesScrollButtons?: boolean;
-      currentIndex?: number;
+      "document-mode"?: boolean;
+      "uses-scroll-buttons"?: boolean;
+      "current-index"?: number;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
-      changed: (index: number) => void;
+      "current-changed": (index: number) => void;
       "tab-close-requested": (index: number) => void;
       "tab-bar-clicked": (index: number) => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -2213,35 +2213,35 @@ export interface QtElementDescriptors {
     };
     slots: "pages";
   };
-  textbrowser: {
+  "text-browser": {
     props: {
-      openExternalLinks?: boolean;
-      openLinks?: boolean;
+      "open-external-links"?: boolean;
+      "open-links"?: boolean;
       readonly source?: Boxed<"QUrl"> | string;
-      readonly sourceType?: "html-resource" | "image-resource" | "markdown-resource" | "style-sheet-resource" | "unknown-resource" | "user-resource";
-      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
-      frameShadow?: "plain" | "raised" | "sunken";
-      lineWidth?: number;
-      midLineWidth?: number;
+      readonly "source-type"?: "html-resource" | "image-resource" | "markdown-resource" | "style-sheet-resource" | "unknown-resource" | "user-resource";
+      "frame-shape"?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      "frame-shadow"?: "plain" | "raised" | "sunken";
+      "line-width"?: number;
+      "mid-line-width"?: number;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
-      historyChanged: () => void;
-      backwardAvailable: (available: boolean) => void;
+      "history-changed": () => void;
+      "backward-available": (available: boolean) => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -2264,22 +2264,22 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
-  textdocument: {
+  "text-document": {
     props: {
-      undoRedoEnabled?: boolean;
+      "undo-redo-enabled"?: boolean;
       modified?: boolean;
-      maximumBlockCount?: number;
-      documentMargin?: number;
-      indentWidth?: number;
-      textWidth?: number;
-      useDesignMetrics?: boolean;
-      defaultStyleSheet?: string;
-      readonly blockCount?: number;
+      "maximum-block-count"?: number;
+      "document-margin"?: number;
+      "indent-width"?: number;
+      "text-width"?: number;
+      "use-design-metrics"?: boolean;
+      "default-style-sheet"?: string;
+      readonly "block-count"?: number;
     };
     events: {
-      contentsChanged: () => void;
-      blockCountChanged: (newBlockCount: number) => void;
-      modificationChanged: (changed: boolean) => void;
+      "contents-changed": () => void;
+      "block-count-changed": (newBlockCount: number) => void;
+      "modification-changed": (changed: boolean) => void;
     };
     methods: {
       setPlainText(text: string): void;
@@ -2294,49 +2294,49 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
-  textedit: {
+  "text-edit": {
     props: {
-      plainText?: string;
+      "plain-text"?: string;
       markdown?: string;
-      acceptRichText?: boolean;
-      readOnly?: boolean;
-      placeholderText?: string;
-      lineWrapMode?: "fixed-column-width" | "fixed-pixel-width" | "no-wrap" | "widget-width";
-      tabChangesFocus?: boolean;
-      overwriteMode?: boolean;
-      wordWrapMode?: "manual-wrap" | "no-wrap" | "word-wrap" | "wrap-anywhere" | "wrap-at-word-boundary-or-anywhere";
-      undoRedoEnabled?: boolean;
-      cursorWidth?: number;
-      lineWrapColumnOrWidth?: number;
-      tabStopDistance?: number;
-      textInteractionFlags?: Array<"links-accessible-by-keyboard" | "links-accessible-by-mouse" | "no-text-interaction" | "text-browser-interaction" | "text-editable" | "text-editor-interaction" | "text-selectable-by-keyboard" | "text-selectable-by-mouse">;
-      documentTitle?: string;
-      autoFormatting?: Array<"all" | "bullet-list" | "none">;
-      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
-      frameShadow?: "plain" | "raised" | "sunken";
-      lineWidth?: number;
-      midLineWidth?: number;
+      "accept-rich-text"?: boolean;
+      "read-only"?: boolean;
+      "placeholder-text"?: string;
+      "line-wrap-mode"?: "fixed-column-width" | "fixed-pixel-width" | "no-wrap" | "widget-width";
+      "tab-changes-focus"?: boolean;
+      "overwrite-mode"?: boolean;
+      "word-wrap-mode"?: "manual-wrap" | "no-wrap" | "word-wrap" | "wrap-anywhere" | "wrap-at-word-boundary-or-anywhere";
+      "undo-redo-enabled"?: boolean;
+      "cursor-width"?: number;
+      "line-wrap-column-or-width"?: number;
+      "tab-stop-distance"?: number;
+      "text-interaction-flags"?: Array<"links-accessible-by-keyboard" | "links-accessible-by-mouse" | "no-text-interaction" | "text-browser-interaction" | "text-editable" | "text-editor-interaction" | "text-selectable-by-keyboard" | "text-selectable-by-mouse">;
+      "document-title"?: string;
+      "auto-formatting"?: Array<"all" | "bullet-list" | "none">;
+      "frame-shape"?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      "frame-shadow"?: "plain" | "raised" | "sunken";
+      "line-width"?: number;
+      "mid-line-width"?: number;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
       "key-press": () => void;
-      changed: () => void;
-      selectionChanged: () => void;
-      cursorPositionChanged: () => void;
+      "text-changed": () => void;
+      "selection-changed": () => void;
+      "cursor-position-changed": () => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -2365,37 +2365,37 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
-  timeedit: {
+  "time-edit": {
     props: {
       time?: TimeParts;
-      displayFormat?: string;
-      minimumTime?: TimeParts;
-      maximumTime?: TimeParts;
-      readOnly?: boolean;
+      "display-format"?: string;
+      "minimum-time"?: TimeParts;
+      "maximum-time"?: TimeParts;
+      "read-only"?: boolean;
       wrapping?: boolean;
       frame?: boolean;
-      specialValueText?: string;
-      buttonSymbols?: "no-buttons" | "plus-minus" | "up-down-arrows";
+      "special-value-text"?: string;
+      "button-symbols"?: "no-buttons" | "plus-minus" | "up-down-arrows";
       accelerated?: boolean;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
       "time-changed": (time: TimeParts) => void;
-      editingFinished: () => void;
+      "editing-finished": () => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -2413,23 +2413,23 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
-  toolbar: {
+  "tool-bar": {
     props: {
       movable?: boolean;
       floatable?: boolean;
       orientation?: "horizontal" | "vertical";
-      toolButtonStyle?: "follow-style" | "icon-only" | "text-beside-icon" | "text-only" | "text-under-icon";
-      iconSize?: Size;
+      "tool-button-style"?: "follow-style" | "icon-only" | "text-beside-icon" | "text-only" | "text-under-icon";
+      "icon-size"?: Size;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
       "movable-changed": (movable: boolean) => void;
@@ -2438,7 +2438,7 @@ export interface QtElementDescriptors {
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -2457,31 +2457,31 @@ export interface QtElementDescriptors {
     };
     slots: "items";
   };
-  toolbox: {
+  "tool-box": {
     props: {
-      currentIndex?: number;
-      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
-      frameShadow?: "plain" | "raised" | "sunken";
-      lineWidth?: number;
-      midLineWidth?: number;
+      "current-index"?: number;
+      "frame-shape"?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      "frame-shadow"?: "plain" | "raised" | "sunken";
+      "line-width"?: number;
+      "mid-line-width"?: number;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
-      changed: (index: number) => void;
+      "current-changed": (index: number) => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -2499,27 +2499,27 @@ export interface QtElementDescriptors {
     };
     slots: "pages";
   };
-  toolbutton: {
+  "tool-button": {
     props: {
-      autoRaise?: boolean;
-      toolButtonStyle?: "follow-style" | "icon-only" | "text-beside-icon" | "text-only" | "text-under-icon";
-      arrowType?: "down-arrow" | "left-arrow" | "no-arrow" | "right-arrow" | "up-arrow";
-      popupMode?: "delayed-popup" | "instant-popup" | "menu-button-popup";
-      label?: string;
+      "auto-raise"?: boolean;
+      "tool-button-style"?: "follow-style" | "icon-only" | "text-beside-icon" | "text-only" | "text-under-icon";
+      "arrow-type"?: "down-arrow" | "left-arrow" | "no-arrow" | "right-arrow" | "up-arrow";
+      "popup-mode"?: "delayed-popup" | "instant-popup" | "menu-button-popup";
+      text?: string;
       checkable?: boolean;
-      autoRepeat?: boolean;
-      autoExclusive?: boolean;
+      "auto-repeat"?: boolean;
+      "auto-exclusive"?: boolean;
       shortcut?: Boxed<"QKeySequence"> | string;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
       pressed: () => void;
@@ -2530,7 +2530,7 @@ export interface QtElementDescriptors {
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -2552,71 +2552,25 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
-  window: {
-    props: {
-      title?: string;
-      documentMode?: boolean;
-      animated?: boolean;
-      dockNestingEnabled?: boolean;
-      tabShape?: "rounded" | "triangular";
-      toolButtonStyle?: "follow-style" | "icon-only" | "text-beside-icon" | "text-only" | "text-under-icon";
-      enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
-    };
-    events: {
-      "close-request": () => void;
-      "key-release": (key: number, text: string, modifiers: number) => void;
-      "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
-      "focus-in": (reason: number) => void;
-      "focus-out": (reason: number) => void;
-      enter: (position: Point) => void;
-      leave: () => void;
-      resize: (size: Size, oldSize: Size) => void;
-      "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
-    };
-    methods: {
-      show(): void;
-      present(): void;
-      close(): boolean;
-      resize(w: number, h: number): void;
-      hide(): void;
-      setFocus(): void;
-      update(): void;
-      adjustSize(): void;
-    };
-    slots: "central" | "menubar" | "statusbar" | "toolbars" | "docks";
-  };
   wizard: {
     props: {
-      wizardStyle?: "aero-style" | "classic-style" | "mac-style" | "modern-style" | "nstyles";
+      "wizard-style"?: "aero-style" | "classic-style" | "mac-style" | "modern-style" | "nstyles";
       options?: Array<"cancel-button-on-left" | "disabled-back-button-on-last-page" | "extended-watermark-pixmap" | "have-custom-button1" | "have-custom-button2" | "have-custom-button3" | "have-finish-button-on-early-pages" | "have-help-button" | "have-next-button-on-last-page" | "help-button-on-right" | "ignore-sub-titles" | "independent-pages" | "no-back-button-on-last-page" | "no-back-button-on-start-page" | "no-cancel-button" | "no-cancel-button-on-last-page" | "no-default-button" | "stretch-banner">;
       modal?: boolean;
-      sizeGripEnabled?: boolean;
+      "size-grip-enabled"?: boolean;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
-      currentIdChanged: (id: number) => void;
+      "current-id-changed": (id: number) => void;
       accepted: () => void;
       rejected: () => void;
       finished: (result: number) => void;
@@ -2624,7 +2578,7 @@ export interface QtElementDescriptors {
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -2647,27 +2601,27 @@ export interface QtElementDescriptors {
     };
     slots: "pages";
   };
-  wizardpage: {
+  "wizard-page": {
     props: {
       title?: string;
-      subTitle?: string;
+      "sub-title"?: string;
       enabled?: boolean;
-      toolTip?: string;
-      statusTip?: string;
-      whatsThis?: string;
-      minimumWidth?: number;
-      minimumHeight?: number;
-      maximumWidth?: number;
-      maximumHeight?: number;
-      styleSheet?: string;
-      accessibleName?: string;
+      "tool-tip"?: string;
+      "status-tip"?: string;
+      "whats-this"?: string;
+      "minimum-width"?: number;
+      "minimum-height"?: number;
+      "maximum-width"?: number;
+      "maximum-height"?: number;
+      "style-sheet"?: string;
+      "accessible-name"?: string;
     };
     events: {
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-move": (position: Point, button: number, buttons: number, modifiers: number) => void;
-      "double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
+      "mouse-double-click": (position: Point, button: number, buttons: number, modifiers: number) => void;
       wheel: (position: Point, angleDelta: Point, buttons: number, modifiers: number) => void;
       "focus-in": (reason: number) => void;
       "focus-out": (reason: number) => void;
@@ -2691,15 +2645,15 @@ export type QtElementTag = keyof QtElementDescriptors;
 
 /** `parent:<name>` attributes any child element can carry; which apply depends on the parent and the slot. */
 export interface QtChildAttrs {
-  'parent:align'?: ("bottom" | "center" | "hcenter" | "left" | "none" | "right" | "top" | "vcenter");
+  'parent:alignment'?: ("bottom" | "center" | "hcenter" | "left" | "none" | "right" | "top" | "vcenter");
   'parent:area'?: ("bottom" | "left" | "right" | "top");
-  'parent:breakBefore'?: boolean;
   'parent:column'?: number;
-  'parent:columnSpan'?: number;
+  'parent:column-span'?: number;
   'parent:row'?: number;
-  'parent:rowSpan'?: number;
+  'parent:row-span'?: number;
   'parent:stretch'?: number;
-  'parent:tabEnabled'?: boolean;
-  'parent:tabLabel'?: string;
-  'parent:tabToolTip'?: string;
+  'parent:tab-enabled'?: boolean;
+  'parent:tab-text'?: string;
+  'parent:tab-tool-tip'?: string;
+  'parent:tool-bar-break'?: boolean;
 }

@@ -758,16 +758,14 @@
         "set": "gtk_picture_set_alternative_text"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkPicture:alternative-text (Gtk 4 docs)"
       },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Picture:prop:alternative-text",
       "invocation": "reflected",
-      "js_name": "alternativeText",
+      "js_name": "alternative-text",
       "name": "alternative-text",
       "notify": {
         "explicit": true,
@@ -805,16 +803,14 @@
         "set": "gtk_picture_set_can_shrink"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkPicture:can-shrink (Gtk 4 docs)"
       },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Picture:prop:can-shrink",
       "invocation": "reflected",
-      "js_name": "canShrink",
+      "js_name": "can-shrink",
       "name": "can-shrink",
       "notify": {
         "explicit": true,
@@ -852,16 +848,14 @@
         "set": "gtk_picture_set_content_fit"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkPicture:content-fit (Gtk 4 docs)"
       },
       "default": "contain",
       "id": "svelters-api:v1:type:gtk:Gtk:Picture:prop:content-fit",
       "invocation": "reflected",
-      "js_name": "contentFit",
+      "js_name": "content-fit",
       "name": "content-fit",
       "notify": {
         "explicit": true,
@@ -947,7 +941,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Picture:prop:isolate-contents",
       "invocation": "reflected",
-      "js_name": "isolateContents",
+      "js_name": "isolate-contents",
       "name": "isolate-contents",
       "notify": {
         "explicit": true,
@@ -986,9 +980,7 @@
         "set": "gtk_picture_set_keep_aspect_ratio"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkPicture:keep-aspect-ratio (Gtk 4 docs)"
       },
@@ -996,7 +988,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Picture:prop:keep-aspect-ratio",
       "invocation": "reflected",
-      "js_name": "keepAspectRatio",
+      "js_name": "keep-aspect-ratio",
       "name": "keep-aspect-ratio",
       "notify": {
         "explicit": true,

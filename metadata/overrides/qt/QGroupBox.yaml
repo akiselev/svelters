@@ -1,20 +1,22 @@
 # Element `groupbox`: a QGroupBox carrying a QBoxLayout. Children are layout-managed.
 elements:
-  - tag: groupbox
+  - tag: group-box
     construct:
       class: QGroupBox
       composite:
         layout: { class: QBoxLayout, args: ["QBoxLayout::TopToBottom"] }
     props:
-      - js: orientation
+      - js: direction
         target: layout
         type: enum
         getter: direction
         setter: setDirection
         values:
-          horizontal: QBoxLayout::LeftToRight
-          vertical: QBoxLayout::TopToBottom
-        provenance: "QBoxLayout::direction (qdoc); GTK orientation vocabulary"
+          left-to-right: QBoxLayout::LeftToRight
+          right-to-left: QBoxLayout::RightToLeft
+          top-to-bottom: QBoxLayout::TopToBottom
+          bottom-to-top: QBoxLayout::BottomToTop
+        provenance: "QBoxLayout::direction (qdoc)"
       - { js: title, native: title, provenance: "QGroupBox::title (qdoc)" }
       - { js: checkable, native: checkable, provenance: "QGroupBox::checkable (qdoc)" }
       - { js: checked, native: checked, setup: "$w->setCheckable(true)", suppress_signals: true, provenance: "QGroupBox::checked (qdoc); ignored unless checkable, so the test makes the box checkable first" }

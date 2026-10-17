@@ -8,3 +8,6 @@ gui = { max-threads = 2 }
 filter = 'package(counter) | package(svelters-gtk) | package(counter-qt)'
 test-group = 'gui'
 retries = 1
+# A GUI test that hangs (a run loop waiting for an event that never comes) is killed instead of
+# holding a build slot for hours: reported slow at 2 min, terminated at 6 min.
+slow-timeout = { period = "120s", terminate-after = 3 }

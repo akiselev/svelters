@@ -13,8 +13,8 @@
     <label class="muted">Colours come from --sv-* tokens.</label>
     <label class="count" class:warn style:font-weight={count > 2 ? 'bold' : null}>Count: {count}</label>
     <box orientation="horizontal" spacing="8">
-      <button class="primary" onclick={() => count++}>Increment</button>
-      <button class="ghost" class:active={warn} onclick={() => (warn = !warn)}>Toggle warning</button>
+      <button class="primary" onclicked={() => count++}>Increment</button>
+      <button class="ghost" class:active={warn} onclicked={() => (warn = !warn)}>Toggle warning</button>
     </box>
     <entry class="field" />
     <box class="setters" class:dense={warn}>

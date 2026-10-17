@@ -1,6 +1,6 @@
 <!-- kinds: QComboBox QFontComboBox QListWidget -->
 <script>
-  // Selection: combobox, fontcombobox, listwidget. Items are added with call() after mount; the
+  // Selection: combo-box, font-combo-box, list-widget. Items are added with call() after mount; the
   // bound indices are written once after that (echo suppression: the echo labels must stay 0).
   // QTreeWidget, QTableWidget and QButtonGroup are not exposed (see their override files).
   let combo = $state(null);
@@ -22,16 +22,16 @@
   });
 </script>
 
-<box orientation="vertical" spacing="4">
-  <combobox bind:this={combo} bind:currentIndex={comboIndex} editable={false} maxVisibleItems={8}
-            duplicatesEnabled={false} placeholderText="pick one"
-            onchanged={() => { if (armed) echoCombo++; }} onactivated={() => activated++} />
-  <label label="activated: {activated}" />
-  <label label="echo currentIndex: {echoCombo}" />
-  <fontcombobox />
-  <listwidget bind:this={list} bind:currentRow={listRow} alternatingRowColors={true} sortingEnabled={false}
-              onrow-changed={() => { if (armed) echoList++; }}
-              onselection-changed={() => selected++} />
-  <label label="selection changes: {selected}" />
-  <label label="echo currentRow: {echoList}" />
-</box>
+<box-layout direction="top-to-bottom" spacing="4">
+  <combo-box bind:this={combo} bind:current-index={comboIndex} editable={false} max-visible-items={8}
+            duplicates-enabled={false} placeholder-text="pick one"
+            oncurrent-index-changed={() => { if (armed) echoCombo++; }} onactivated={() => activated++} />
+  <label text="activated: {activated}" />
+  <label text="echo current-index: {echoCombo}" />
+  <font-combo-box />
+  <list-widget bind:this={list} bind:current-row={listRow} alternating-row-colors={true} sorting-enabled={false}
+              oncurrent-row-changed={() => { if (armed) echoList++; }}
+              onitem-selection-changed={() => selected++} />
+  <label text="selection changes: {selected}" />
+  <label text="echo current-row: {echoList}" />
+</box-layout>

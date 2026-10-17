@@ -1,34 +1,34 @@
-create window #1
-set #1 title "Stores"
-create box #2
-set #2 orientation "vertical"
+create main-window #1
+set #1 window-title "Stores"
+create box-layout #2
+set #2 direction "top-to-bottom"
 set #2 spacing 4
 create label #3
-set #3 label "1 x2=2 Ada"
+set #3 text "1 x2=2 Ada"
 insert #2 #3 before=end slot=default
-create button #4
+create push-button #4
 listen #4 clicked on
-set #4 label "Inc"
+set #4 text "Inc"
 insert #2 #4 before=end slot=default
-create button #5
+create push-button #5
 listen #5 clicked on
-set #5 label "Triple"
+set #5 text "Triple"
 insert #2 #5 before=end slot=default
-create button #6
+create push-button #6
 listen #6 clicked on
-set #6 label "Shout"
+set #6 text "Shout"
 insert #2 #6 before=end slot=default
-create button #7
+create push-button #7
 listen #7 clicked on
-set #7 label "Reset"
+set #7 text "Reset"
 insert #2 #7 before=end slot=default
 insert #1 #2 before=end slot=default
 call #1 present []
 event #4 clicked []
-set #3 label "2 x2=4 Ada"
+set #3 text "2 x2=4 Ada"
 event #5 clicked []
-set #3 label "6 x2=12 Ada"
+set #3 text "6 x2=12 Ada"
 event #6 clicked []
-set #3 label "6 x2=12 Ada!"
+set #3 text "6 x2=12 Ada!"
 event #7 clicked []
-set #3 label "0 x2=0 Ada!"
+set #3 text "0 x2=0 Ada!"

@@ -619,8 +619,8 @@ pub fn attr_set_native(attr: u32, parent: &gtk::Widget, child: &gtk::Widget, v: 
         1 => attr_set_attr_11_x(parent, child, v),
         2 => attr_set_attr_11_y(parent, child, v),
         7 => attr_set_attr_19_header(parent, child, v),
-        8 => attr_set_attr_21_tablabel(parent, child, v),
-        9 => attr_set_attr_21_menulabel(parent, child, v),
+        8 => attr_set_attr_21_tab_label(parent, child, v),
+        9 => attr_set_attr_21_menu_label(parent, child, v),
         14 => attr_set_attr_23_measure(parent, child, v),
         15 => attr_set_attr_23_clip(parent, child, v),
         _ => Err(format!("attribute {attr} has no native setter")),
@@ -634,8 +634,8 @@ pub fn attr_get_native(attr: u32, parent: &gtk::Widget, child: &gtk::Widget) -> 
         1 => attr_get_attr_11_x(parent, child),
         2 => attr_get_attr_11_y(parent, child),
         7 => attr_get_attr_19_header(parent, child),
-        8 => attr_get_attr_21_tablabel(parent, child),
-        9 => attr_get_attr_21_menulabel(parent, child),
+        8 => attr_get_attr_21_tab_label(parent, child),
+        9 => attr_get_attr_21_menu_label(parent, child),
         14 => attr_get_attr_23_measure(parent, child),
         15 => attr_get_attr_23_clip(parent, child),
         _ => Err(format!("attribute {attr} has no native getter")),
@@ -681,26 +681,26 @@ fn attr_get_attr_19_header(parent: &gtk::Widget, child: &gtk::Widget) -> Result<
     Ok(AttrV::Str(r.to_string()))
 }
 
-fn attr_set_attr_21_tablabel(parent: &gtk::Widget, child: &gtk::Widget, v: &AttrV) -> Result<(), String> {
+fn attr_set_attr_21_tab_label(parent: &gtk::Widget, child: &gtk::Widget, v: &AttrV) -> Result<(), String> {
     let p = parent.downcast_ref::<gtk::Notebook>().ok_or("parent is not a gtk::Notebook")?;
     p.set_tab_label_text(child, v.as_str()?);
     Ok(())
 }
 
-fn attr_get_attr_21_tablabel(parent: &gtk::Widget, child: &gtk::Widget) -> Result<AttrV, String> {
+fn attr_get_attr_21_tab_label(parent: &gtk::Widget, child: &gtk::Widget) -> Result<AttrV, String> {
     let p = parent.downcast_ref::<gtk::Notebook>().ok_or("parent is not a gtk::Notebook")?;
     let _ = child;
     let r = p.tab_label_text(child);
     Ok(AttrV::Str(r.map(|x| x.to_string()).unwrap_or_default()))
 }
 
-fn attr_set_attr_21_menulabel(parent: &gtk::Widget, child: &gtk::Widget, v: &AttrV) -> Result<(), String> {
+fn attr_set_attr_21_menu_label(parent: &gtk::Widget, child: &gtk::Widget, v: &AttrV) -> Result<(), String> {
     let p = parent.downcast_ref::<gtk::Notebook>().ok_or("parent is not a gtk::Notebook")?;
     p.set_menu_label_text(child, v.as_str()?);
     Ok(())
 }
 
-fn attr_get_attr_21_menulabel(parent: &gtk::Widget, child: &gtk::Widget) -> Result<AttrV, String> {
+fn attr_get_attr_21_menu_label(parent: &gtk::Widget, child: &gtk::Widget) -> Result<AttrV, String> {
     let p = parent.downcast_ref::<gtk::Notebook>().ok_or("parent is not a gtk::Notebook")?;
     let _ = child;
     let r = p.menu_label_text(child);

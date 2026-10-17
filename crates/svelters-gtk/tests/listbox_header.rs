@@ -21,7 +21,7 @@ fn a_header_attribute_shows_a_label_above_the_row_and_null_removes_it() {
     on_gtk(|| {
         let mut h = Harness::new();
         let win = h.create("window");
-        let lb = h.create("listbox");
+        let lb = h.create("list-box");
         let a = h.create("label");
         let b = h.create("label");
         h.set_str(a, "label", "apple").unwrap();

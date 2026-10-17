@@ -9,4 +9,4 @@ rune_invalid_arguments: `$effect.tracking` cannot be called with arguments @14:3
 constant_assignment: Cannot assign to constant @16:5
 inspect_trace_invalid_placement: `$inspect.trace(...)` must be the first statement of a function body @18:5
 constant_assignment: Cannot assign to import @20:19
-each_item_invalid_assignment: Cannot reassign or bind to each block argument in runes mode. Use the array and index variables instead (e.g. `array[i] = value` instead of `entry = value`, or `bind:value={array[i]}` instead of `bind:value={entry}`) @24:27
+each_item_invalid_assignment: Cannot reassign or bind to each block argument in runes mode. Use the array and index variables instead (e.g. `array[i] = value` instead of `entry = value`, or `bind:value={array[i]}` instead of `bind:value={entry}`) @24:29

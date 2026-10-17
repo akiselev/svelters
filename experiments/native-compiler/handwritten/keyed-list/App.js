@@ -31,7 +31,7 @@ export default function App($$anchor, $$props) {
   $n.set(n3, 'orientation', 'horizontal');
   $n.set(n3, 'spacing', 6);
   const n4 = $n.element('entry');
-  $n.set(n4, 'placeholder', 'New item');
+  $n.set(n4, 'placeholder-text', 'New item');
   $.template_effect(() => $n.set(n4, 'text', $.get(draft)));
   // entry.text has a spec binding (changed, arg 0): the one-way prop is tracked, no echo.
   $n.track(n4, 'text', 'changed', 0);
@@ -46,7 +46,7 @@ export default function App($$anchor, $$props) {
   $n.set(n6, 'label', 'Reverse');
   $n.append($n.slot(n3, null), n6);
   $n.append($n.slot(n2, null), n3);
-  const n7 = $n.element('scrolledwindow');
+  const n7 = $n.element('scrolled-window');
   const n8 = $n.element('box');
   $n.set(n8, 'orientation', 'vertical');
   $n.set(n8, 'spacing', 2);

@@ -1,0 +1,6 @@
+[{"checkpoint":true},
+ {"event":[3,"text-changed",["Ada"]]},{"checkpoint":true},
+ {"event":[3,"text-changed",["Ada"]]},{"checkpoint":true},
+ {"event":[6,"clicked",[]]},{"checkpoint":true},
+ {"event":[3,"text-changed",["ADA"]]},{"checkpoint":true},
+ {"event":[5,"clicked",[]]},{"checkpoint":true}]

@@ -759,7 +759,7 @@
       "properties": {
         "name": {
           "type": "string",
-          "pattern": "^[a-z][A-Za-z0-9]*$"
+          "pattern": "^[a-z][a-z0-9-]*$"
         },
         "type": {
           "enum": [
@@ -797,7 +797,7 @@
               "type": "array",
               "items": {
                 "type": "string",
-                "pattern": "^(child|value|child_index|attr\\.[A-Za-z0-9]+|const:.+)$"
+                "pattern": "^(child|value|child_index|attr\\.[a-z0-9-]+|const:.+)$"
               }
             },
             "readd": {
@@ -825,7 +825,7 @@
               "type": "array",
               "items": {
                 "type": "string",
-                "pattern": "^(child|child_index|attr\\.[A-Za-z0-9]+|const:.+)$"
+                "pattern": "^(child|child_index|attr\\.[a-z0-9-]+|const:.+)$"
               }
             },
             "member": {

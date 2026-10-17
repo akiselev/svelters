@@ -86,7 +86,7 @@ if (runIt) {
     let ours;
     let theirs;
     try {
-      ours = await runBundle({ bundlePath: path.join(dir, 'dist/app.js'), script });
+      ours = await runBundle({ bundlePath: path.join(dir, 'dist/app.js'), script, toolkit: backend });
       fs.writeFileSync(path.join(dir, 'actual.oplog'), ours);
     } catch (e) {
       failed = true;
@@ -98,7 +98,7 @@ if (runIt) {
       console.log(`SKIP ${tag} comparison: ${path.relative(repo, js)} not built`);
       continue;
     }
-    theirs = await runBundle({ bundlePath: js, script });
+    theirs = await runBundle({ bundlePath: js, script, toolkit: backend });
     fs.writeFileSync(path.join(dir, 'js.oplog'), theirs);
     const r = compare(theirs, ours, { defaults: { label: '' }, camelProps: true });
     if (!r.equal) failed = true;

@@ -1,10 +1,10 @@
-[plugin svelters-native-compiler] experiments/native-compiler/fixtures/diagnostics/App.svelte:8:7
-bad_attribute_value (qt): `orientation`: "diagonal" is not one of horizontal, vertical
-  App.svelte:8:43: text_not_allowed: <box> cannot contain text on qt
-  App.svelte:10:12: bind_no_plan: bind:label is not supported on <label> (qt): QLabel::text has no change notification
-  App.svelte:11:13: unknown_event: <button> has no event `klick` on qt
-  App.svelte:12:12: unknown_property: <entry> has no property `colour` on qt (only annotated properties exist on qt: metadata/overrides/qt)
-  App.svelte:13:6: unknown_element: <frobnicator> is not an element of the qt backend
-  App.svelte:19:9: style_bad_value: `spacing`: unit `dp` is not supported on qt (lengths are unitless or in px) (did you mean 4px?) (in a rule matching <box>)
-  App.svelte:20:3: style_state_unsupported: setter properties (`minimum-height`) only take type, class and id selectors: states are CSS-only
-  App.svelte:21:3: style_unsupported_combinator: setter properties (`spacing`) only take type, class and id selectors: combinators are not supported
+[plugin svelters-native-compiler] experiments/native-compiler/fixtures/diagnostics/qt/App.svelte:9:14
+bad_attribute_value (qt): `direction`: "diagonal" is not one of bottom-to-top, left-to-right, right-to-left, top-to-bottom
+  App.svelte:9:48: text_not_allowed: <box-layout> cannot contain text on qt
+  App.svelte:11:12: bind_no_plan: bind:text is not supported on <label> (qt): QLabel::text has no change notification
+  App.svelte:12:18: unknown_event: <push-button> has no event `klick` on qt
+  App.svelte:13:16: unknown_property: <line-edit> has no property `colour` on qt (only annotated properties exist on qt: metadata/overrides/qt)
+  App.svelte:14:6: unknown_element: <frobnicator> is not an element of the qt backend
+  App.svelte:20:16: style_bad_value: `spacing`: unit `dp` is not supported on qt (lengths are unitless or in px) (did you mean 4px?) (in a rule matching <box-layout>)
+  App.svelte:21:3: style_state_unsupported: setter properties (`minimum-height`) only take type, class and id selectors: states are CSS-only
+  App.svelte:22:3: style_unsupported_combinator: setter properties (`spacing`) only take type, class and id selectors: combinators are not supported

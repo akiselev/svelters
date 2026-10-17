@@ -326,7 +326,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:SingleSelection:prop:can-unselect",
       "invocation": "reflected",
-      "js_name": "canUnselect",
+      "js_name": "can-unselect",
       "name": "can-unselect",
       "notify": {
         "explicit": true,
@@ -366,7 +366,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:SingleSelection:prop:item-type",
       "invocation": "reflected",
-      "js_name": "itemType",
+      "js_name": "item-type",
       "name": "item-type",
       "notify": {
         "explicit": false,
@@ -445,7 +445,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:SingleSelection:prop:n-items",
       "invocation": "reflected",
-      "js_name": "nItems",
+      "js_name": "n-items",
       "name": "n-items",
       "notify": {
         "explicit": false,
@@ -530,7 +530,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:SingleSelection:prop:selected-item",
       "invocation": "reflected",
-      "js_name": "selectedItem",
+      "js_name": "selected-item",
       "name": "selected-item",
       "notify": {
         "explicit": false,

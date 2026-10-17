@@ -1,13 +1,10 @@
 properties:
   - name: content-width
-    js_name: contentWidth
     provenance: "GtkDrawingArea:content-width (Gtk 4 docs)"
   - name: content-height
-    js_name: contentHeight
     provenance: "GtkDrawingArea:content-height (Gtk 4 docs)"
   - id: "svelters-api:v1:type:gtk:Gtk:DrawingArea:prop:ops"
     name: ops
-    js_name: ops
     new: true
     type: {ref: string, nullable: true, native: "gchar*", gtype: gchararray}
     access: {read: true, write: true, construct: false, construct_only: false}

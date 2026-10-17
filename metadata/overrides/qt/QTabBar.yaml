@@ -1,30 +1,30 @@
 elements:
-  - tag: tabbar
+  - tag: tab-bar
     construct: { class: QTabBar }
     props:
-      - { js: currentIndex, native: currentIndex, sample: 1, setup: "$w->addTab(QString()); $w->addTab(QString())", suppress_signals: true, provenance: "QTabBar::currentIndex (qdoc); the test adds two tabs first" }
+      - { js: current-index, native: currentIndex, sample: 1, setup: "$w->addTab(QString()); $w->addTab(QString())", suppress_signals: true, provenance: "QTabBar::currentIndex (qdoc); the test adds two tabs first" }
       - { js: count, native: count, provenance: "QTabBar::count (qdoc)" }       # read-only
-      - { js: tabsClosable, native: tabsClosable, provenance: "QTabBar::tabsClosable (qdoc)" }
+      - { js: tabs-closable, native: tabsClosable, provenance: "QTabBar::tabsClosable (qdoc)" }
       - { js: movable, native: movable, provenance: "QTabBar::movable (qdoc)" }
       - { js: shape, native: shape, provenance: "QTabBar::shape (qdoc); enum typed by the S1 value model (ABI v3)" }
       - { js: expanding, native: expanding, provenance: "QTabBar::expanding (qdoc)" }
-      - { js: drawBase, native: drawBase, provenance: "QTabBar::drawBase (qdoc)" }
-      - { js: documentMode, native: documentMode, provenance: "QTabBar::documentMode (qdoc)" }
-      - { js: usesScrollButtons, native: usesScrollButtons, provenance: "QTabBar::usesScrollButtons (qdoc)" }
-      - { js: autoHide, native: autoHide, provenance: "QTabBar::autoHide (qdoc)" }
-      - { js: elideMode, native: elideMode, provenance: "QTabBar::elideMode (qdoc); enum typed by the S1 value model (ABI v3)" }
+      - { js: draw-base, native: drawBase, provenance: "QTabBar::drawBase (qdoc)" }
+      - { js: document-mode, native: documentMode, provenance: "QTabBar::documentMode (qdoc)" }
+      - { js: uses-scroll-buttons, native: usesScrollButtons, provenance: "QTabBar::usesScrollButtons (qdoc)" }
+      - { js: auto-hide, native: autoHide, provenance: "QTabBar::autoHide (qdoc)" }
+      - { js: elide-mode, native: elideMode, provenance: "QTabBar::elideMode (qdoc); enum typed by the S1 value model (ABI v3)" }
     bindings:
-      - name: currentIndex
+      - name: current-index
         direction: two_way
-        property: currentIndex
+        property: current-index
         type: { ref: i32, nullable: false }
-        change: { signal: changed, role: any_change, value: arg0 }
+        change: { signal: current-changed, role: any_change, value: arg0 }
         write: { natively_normalizes: false }
         echo: { strategy: host_suppressed, compare_before_set: true, read_back: false, sync_signals_on_set: ["currentChanged(int)"] }
         lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
         provenance: "QTabBar::setCurrentIndex emits currentChanged only on change (qdoc)"
     signals:
-      - js: changed
+      - js: current-changed
         native: currentChanged
         connect: "currentChanged(int)"
         args: [{ name: index, type: i32 }]

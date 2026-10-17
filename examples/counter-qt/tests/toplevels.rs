@@ -162,9 +162,9 @@ fn t() -> Tree {
 }
 
 fn build() {
-    let win = create("window");
-    let bx = create("box");
-    let dlg = create("messagebox");
+    let win = create("main-window");
+    let bx = create("box-layout");
+    let dlg = create("message-box");
     insert(win, bx).unwrap();
     *TREE.lock().unwrap() = Some(Tree { win, bx, dlg });
 }
@@ -236,8 +236,8 @@ fn set_attr_str(parent: svl_handle, child: svl_handle, name: &str, v: &str) {
 fn areas_route_by_kind() {
     let t = t();
     let central = create("label");
-    let tb = create("toolbar");
-    let dock = create("dockwidget");
+    let tb = create("tool-bar");
+    let dock = create("dock-widget");
     insert(t.win, central).unwrap();
     insert(t.win, tb).unwrap();
     insert(t.win, dock).unwrap();

@@ -1,11 +1,12 @@
 // Timing comparison for virtualized lists on the real toolkits: the lists-stress fixture
 // (`<ListView>`, 1k / 10k rows) built by the JS pipeline (fixtures/lists-stress/dist) and by the
-// NC1 compiler (out/<backend>/lists-stress, `node build.mjs lists-stress`), plus the eager
-// `{#each}` baseline bench/keyed-bench (1000 rows of box + label + button) on both pipelines.
+// NC1 compiler (out/<backend>/lists-stress, `node build.mjs lists-stress lists-stress-qt`), plus the
+// eager `{#each}` baseline bench/keyed-bench (1000 rows of box + label + button) on both pipelines.
+// Qt runs the Qt-vocabulary twins (fixtures/lists-stress-qt, bench/keyed-bench-qt).
 // Each step is one click, timed by the counter driver (`--timing`: wall time from the click to idle).
 // Runs every configuration RUNS times and prints the median per step.
 // Needs `cargo build -p counter` (release is closer to P5 numbers: SVELTERS_COUNTER=target/release/counter),
-// `pnpm -r --filter "./fixtures/*" build`, `pnpm --dir bench/keyed-bench build`, a display (xvfb-run).
+// `pnpm -r --filter "./fixtures/*" build`, `pnpm -r --filter "./bench/*" build`, a display (xvfb-run).
 import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
@@ -32,10 +33,14 @@ function writeScript(name, steps) {
   return p;
 }
 
+// The shared fixtures and bench/keyed-bench are written in the GTK vocabulary; Qt runs their twins.
+const twin = (backend, name) => (backend === 'qt' ? `${name}-qt` : name);
+const benchDir = (backend) => `bench/${twin(backend, 'keyed-bench')}`;
+
 async function compileBench(backend) {
   const dir = path.join(out, `${backend}-keyed-bench`);
   fs.mkdirSync(dir, { recursive: true });
-  const src = path.join(repo, 'bench/keyed-bench/src/App.svelte');
+  const src = path.join(repo, benchDir(backend), 'src/App.svelte');
   fs.writeFileSync(path.join(dir, 'main.js'), `import * as $n from '@svelters/native-runtime';\nimport App from ${JSON.stringify(src)};\n\n$n.mount(App, { props: {} });\n`);
   await build(nativeConfig(dir, { entry: 'main.js', outDir: 'dist', plugins: [svelteNative({ backend })] }));
   return dir;
@@ -60,8 +65,8 @@ const listScript = writeScript('lists', listSteps);
 const eachScript = writeScript('each', eachSteps);
 for (const backend of ['gtk', 'qt']) {
   const configs = [
-    ['ListView', listSteps, listScript, path.join(repo, 'fixtures/lists-stress'), path.join(here, 'out', backend, 'lists-stress')],
-    ['{#each}', eachSteps, eachScript, path.join(repo, 'bench/keyed-bench'), await compileBench(backend)],
+    ['ListView', listSteps, listScript, path.join(repo, 'fixtures', twin(backend, 'lists-stress')), path.join(here, 'out', backend, twin(backend, 'lists-stress'))],
+    ['{#each}', eachSteps, eachScript, path.join(repo, benchDir(backend)), await compileBench(backend)],
   ];
   for (const [what, steps, script, jsDir, ncDir] of configs) {
     const runs = { js: [], nc: [] };

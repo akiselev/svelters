@@ -1,10 +1,10 @@
-//! X6 end to end on Qt: the real host runs the `fixtures/styles` Svelte bundle. Component styles,
+//! X6 end to end on Qt: the real host runs the `fixtures/styles-qt` Svelte bundle. Component styles,
 //! `class:`, `style:`, tokens and the colour scheme all come from JS; the results are read back
 //! natively (rendered pixels, palette, class property). Needs a display (xvfb-run), the main thread
 //! (no libtest harness) and the built fixture (`pnpm -r build`); skipped without the bundle.
 //!
-//! Handles in the fixture: window #1, card box #2, label #3, toggle button #4, togglebutton #5,
-//! theme button #6, accent button #7.
+//! Handles in the fixture: main-window #1, card box-layout #2, label #3, toggle push-button #4, line-edit #5,
+//! theme push-button #6, accent push-button #7.
 
 use counter_qt::hooks;
 use std::cell::RefCell;
@@ -29,7 +29,7 @@ fn main() {
 }
 
 fn body() {
-    let bundle = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../fixtures/styles/dist/app.js");
+    let bundle = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../fixtures/styles-qt/dist/app.js");
     if !bundle.exists() {
         eprintln!("skipped: {} is not built", bundle.display());
         return;
@@ -40,7 +40,7 @@ fn body() {
     host.load_bundle(bundle).unwrap();
 
     let click = move |h: u64| {
-        let k = raw.resolve(NameKind::Kind, 0, "button");
+        let k = raw.resolve(NameKind::Kind, 0, "push-button");
         let m = raw.resolve(NameKind::Method, k, "click");
         raw.call(h, m, &[]).unwrap();
     };
@@ -89,7 +89,7 @@ fn body() {
     assert!(get("label class after toggle").contains("big"));
     assert_eq!(get("label fg (style:color)"), "c01c28");
     assert!(get("button class after toggle").contains("active"));
-    assert_eq!(get("button border (class:active)"), "c01c28", "2px --sv-danger border from button.primary.active");
+    assert_eq!(get("button border (class:active)"), "c01c28", "2px --sv-danger border from push-button.primary.active");
     assert_eq!(get("win bg dark"), "242424");
     assert_eq!(get("card bg dark"), "303030");
     assert_eq!(get("window palette dark"), "242424");

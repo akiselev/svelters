@@ -1,4 +1,4 @@
-//! M5 on GTK: the `virtuallist` kind end to end with the real host. JS (tests/js/vlist.js) plays the
+//! M5 on GTK: the `virtual-list` kind end to end with the real host. JS (tests/js/vlist.js) plays the
 //! list controller by hand; this test watches the native model and view. Needs a display
 //! (xvfb-run); `GSK_RENDERER=cairo` avoids the GPU path.
 

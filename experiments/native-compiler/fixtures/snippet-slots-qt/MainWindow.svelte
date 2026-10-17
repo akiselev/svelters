@@ -6,10 +6,10 @@
 </script>
 
 {#snippet defaultStatus()}
-  <statusbar />
+  <status-bar />
 {/snippet}
 
-<window title="Main">
+<main-window window-title="Main">
   {#if menu}
     <sv-slot name="menubar">{@render menu()}</sv-slot>
   {/if}
@@ -19,4 +19,4 @@
   {:else}
     {@render defaultStatus()}
   {/if}
-</window>
+</main-window>

@@ -1,28 +1,18 @@
-"""Native name -> JS name rules for AppKit. Mirrors crates/svelters-apple/src/names.rs; both are
+"""Native name -> JS name rules for AppKit (kebab and tags: the shared tools/metadata/common/naming.py). Mirrors crates/svelters-apple/src/names.rs; both are
 tested against the same pairs (test_names.py, `names::tests::PAIRS`)."""
 from __future__ import annotations
 
+import sys
+from pathlib import Path
 
-def kebab(ident: str) -> str:
-    """camelCase / PascalCase -> kebab-case. A run of capitals is one word, except that its last
-    capital starts the next word when a lowercase letter follows (URLString -> url-string)."""
-    out: list[str] = []
-    for i, c in enumerate(ident):
-        if c in "_:-":
-            if out and out[-1] != "-":
-                out.append("-")
-            continue
-        if c.isascii() and c.isupper() and i > 0 and out and out[-1] != "-":
-            prev = ident[i - 1]
-            nxt = ident[i + 1] if i + 1 < len(ident) else ""
-            if (prev.isascii() and (prev.islower() or prev.isdigit())) or (prev.isupper() and nxt.isascii() and nxt.islower()):
-                out.append("-")
-        out.append(c.lower() if c.isascii() else c)
-    return "".join(out).rstrip("-")
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "common"))
+import naming  # noqa: E402  (the shared rule: tools/metadata/common/naming.py)
+
+kebab = naming.kebab
 
 
 def class_tag(cls: str, prefix: str = "NS") -> str:
-    return kebab(cls[len(prefix):] if cls.startswith(prefix) else cls)
+    return naming.class_tag(cls, prefix)
 
 
 def selector_name(sel: str) -> str:

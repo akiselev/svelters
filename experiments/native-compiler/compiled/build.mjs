@@ -7,7 +7,7 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { build } from 'vite';
 import { nativeConfig, svelteNative } from '@svelters/native-runtime/vite';
-import { TARGETS, cases, targetsOf } from './cases.mjs';
+import { TARGETS, cases, sourceOf, targetsOf } from './cases.mjs';
 
 const here = import.meta.dirname;
 const repo = path.resolve(here, '../../..');
@@ -41,7 +41,7 @@ for (const c of cases()) {
     const dir = path.join(here, 'out', t.name, c.name);
     fs.rmSync(dir, { recursive: true, force: true });
     fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(path.join(dir, 'main.js'), `import * as $n from '@svelters/native-runtime';\nimport App from ${JSON.stringify(c.source)};\n\n$n.mount(App, { props: {} });\n`);
+    fs.writeFileSync(path.join(dir, 'main.js'), `import * as $n from '@svelters/native-runtime';\nimport App from ${JSON.stringify(sourceOf(c, t.name))};\n\n$n.mount(App, { props: {} });\n`);
     try {
       await build(nativeConfig(dir, { entry: 'main.js', outDir: 'dist', plugins: [svelteNative({ backend: t.backend, spec: t.spec })] }));
       console.log(`built ${t.name}/${c.name}`);

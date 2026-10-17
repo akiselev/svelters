@@ -2,7 +2,7 @@
 // tag -> { gtk: { css, classes }, qt: <class>, ambiguous?: [toolkits] }. `ambiguous` kinds share a GTK CSS
 // name or a Qt class with another tag; the renderer adds `sv-k-<tag>` and type selectors use it.
 export const KINDS = {
- "aboutdialog": {
+ "about-dialog": {
   "ambiguous": [
    "gtk"
   ],
@@ -16,18 +16,26 @@ export const KINDS = {
   }
  },
  "action": {
-  "ambiguous": [
-   "qt"
-  ],
   "qt": "QAction"
  },
- "actionbar": {
+ "action-bar": {
   "gtk": {
    "classes": [],
    "css": "actionbar"
   }
  },
- "aspectframe": {
+ "application-window": {
+  "ambiguous": [
+   "gtk"
+  ],
+  "gtk": {
+   "classes": [
+    "background"
+   ],
+   "css": "window"
+  }
+ },
+ "aspect-frame": {
   "gtk": {
    "classes": [],
    "css": "aspectframe"
@@ -35,15 +43,19 @@ export const KINDS = {
  },
  "box": {
   "ambiguous": [
-   "gtk",
-   "qt"
+   "gtk"
   ],
   "gtk": {
    "classes": [
     "horizontal"
    ],
    "css": "box"
-  },
+  }
+ },
+ "box-layout": {
+  "ambiguous": [
+   "qt"
+  ],
   "qt": "QWidget"
  },
  "button": {
@@ -53,8 +65,7 @@ export const KINDS = {
   "gtk": {
    "classes": [],
    "css": "button"
-  },
-  "qt": "QPushButton"
+  }
  },
  "calendar": {
   "gtk": {
@@ -62,10 +73,12 @@ export const KINDS = {
     "view"
    ],
    "css": "calendar"
-  },
+  }
+ },
+ "calendar-widget": {
   "qt": "QCalendarWidget"
  },
- "centerbox": {
+ "center-box": {
   "ambiguous": [
    "gtk"
   ],
@@ -74,41 +87,34 @@ export const KINDS = {
    "css": "box"
   }
  },
- "checkbox": {
+ "check-box": {
   "qt": "QCheckBox"
  },
- "checkbutton": {
+ "check-button": {
   "gtk": {
    "classes": [],
    "css": "checkbutton"
   }
  },
- "clickgesture": {},
- "colordialog": {
+ "color-dialog": {
   "qt": "QColorDialog"
  },
- "colordialogbutton": {
+ "color-dialog-button": {
   "gtk": {
    "classes": [],
    "css": "colorbutton"
   }
  },
- "combobox": {
+ "combo-box": {
   "qt": "QComboBox"
  },
- "commandlinkbutton": {
+ "command-link-button": {
   "qt": "QCommandLinkButton"
  },
- "contextmenu": {
-  "ambiguous": [
-   "qt"
-  ],
-  "qt": "QMenu"
- },
- "dateedit": {
+ "date-edit": {
   "qt": "QDateEdit"
  },
- "datetimeedit": {
+ "date-time-edit": {
   "qt": "QDateTimeEdit"
  },
  "dial": {
@@ -117,16 +123,16 @@ export const KINDS = {
  "dialog": {
   "qt": "QDialog"
  },
- "dialogbuttonbox": {
+ "dialog-button-box": {
   "qt": "QDialogButtonBox"
  },
- "dockwidget": {
+ "dock-widget": {
   "qt": "QDockWidget"
  },
- "doublespinbox": {
+ "double-spin-box": {
   "qt": "QDoubleSpinBox"
  },
- "drawingarea": {
+ "drawing-area": {
   "ambiguous": [
    "gtk"
   ],
@@ -135,13 +141,13 @@ export const KINDS = {
    "css": "widget"
   }
  },
- "editablelabel": {
+ "editable-label": {
   "gtk": {
    "classes": [],
    "css": "editablelabel"
   }
  },
- "emojichooser": {
+ "emoji-chooser": {
   "ambiguous": [
    "gtk"
   ],
@@ -160,19 +166,22 @@ export const KINDS = {
   "gtk": {
    "classes": [],
    "css": "entry"
-  },
-  "qt": "QLineEdit"
+  }
  },
- "errormessage": {
+ "error-message": {
   "qt": "QErrorMessage"
  },
+ "event-controller-focus": {},
+ "event-controller-key": {},
+ "event-controller-motion": {},
+ "event-controller-scroll": {},
  "expander": {
   "gtk": {
    "classes": [],
    "css": "expander-widget"
   }
  },
- "filedialog": {
+ "file-dialog": {
   "qt": "QFileDialog"
  },
  "fixed": {
@@ -184,7 +193,7 @@ export const KINDS = {
    "css": "widget"
   }
  },
- "flowbox": {
+ "flow-box": {
   "gtk": {
    "classes": [
     "horizontal"
@@ -192,20 +201,19 @@ export const KINDS = {
    "css": "flowbox"
   }
  },
- "flowboxchild": {
+ "flow-box-child": {
   "gtk": {
    "classes": [],
    "css": "flowboxchild"
   }
  },
- "focuscontroller": {},
- "fontcombobox": {
+ "font-combo-box": {
   "qt": "QFontComboBox"
  },
- "fontdialog": {
+ "font-dialog": {
   "qt": "QFontDialog"
  },
- "fontdialogbutton": {
+ "font-dialog-button": {
   "gtk": {
    "classes": [],
    "css": "fontbutton"
@@ -218,28 +226,31 @@ export const KINDS = {
   },
   "qt": "QFrame"
  },
- "graphicsoffload": {
+ "gesture-click": {},
+ "graphics-offload": {
   "gtk": {
    "classes": [],
    "css": "graphicsoffload"
   }
  },
  "grid": {
-  "ambiguous": [
-   "qt"
-  ],
   "gtk": {
    "classes": [
     "horizontal"
    ],
    "css": "grid"
-  },
+  }
+ },
+ "grid-layout": {
+  "ambiguous": [
+   "qt"
+  ],
   "qt": "QWidget"
  },
- "groupbox": {
+ "group-box": {
   "qt": "QGroupBox"
  },
- "headerbar": {
+ "header-bar": {
   "gtk": {
    "classes": [],
    "css": "headerbar"
@@ -251,7 +262,7 @@ export const KINDS = {
    "css": "image"
   }
  },
- "inputdialog": {
+ "input-dialog": {
   "qt": "QInputDialog"
  },
  "inscription": {
@@ -263,8 +274,7 @@ export const KINDS = {
    "css": "label"
   }
  },
- "keycontroller": {},
- "keysequenceedit": {
+ "key-sequence-edit": {
   "qt": "QKeySequenceEdit"
  },
  "label": {
@@ -277,10 +287,10 @@ export const KINDS = {
   },
   "qt": "QLabel"
  },
- "lcdnumber": {
+ "lcd-number": {
   "qt": "QLCDNumber"
  },
- "levelbar": {
+ "level-bar": {
   "gtk": {
    "classes": [
     "continuous",
@@ -289,7 +299,10 @@ export const KINDS = {
    "css": "levelbar"
   }
  },
- "linkbutton": {
+ "line-edit": {
+  "qt": "QLineEdit"
+ },
+ "link-button": {
   "ambiguous": [
    "gtk"
   ],
@@ -301,13 +314,13 @@ export const KINDS = {
    "css": "button"
   }
  },
- "listbox": {
+ "list-box": {
   "gtk": {
    "classes": [],
    "css": "list"
   }
  },
- "listboxrow": {
+ "list-box-row": {
   "gtk": {
    "classes": [
     "activatable"
@@ -315,10 +328,10 @@ export const KINDS = {
    "css": "row"
   }
  },
- "listwidget": {
+ "list-widget": {
   "qt": "QListWidget"
  },
- "lockbutton": {
+ "lock-button": {
   "ambiguous": [
    "gtk"
   ],
@@ -329,25 +342,25 @@ export const KINDS = {
    "css": "button"
   }
  },
- "mdiarea": {
+ "main-window": {
+  "qt": "QMainWindow"
+ },
+ "mdi-area": {
   "qt": "QMdiArea"
  },
- "mediacontrols": {
+ "media-controls": {
   "gtk": {
    "classes": [],
    "css": "controls"
   }
  },
  "menu": {
-  "ambiguous": [
-   "qt"
-  ],
   "qt": "QMenu"
  },
- "menubar": {
+ "menu-bar": {
   "qt": "QMenuBar"
  },
- "menubutton": {
+ "menu-button": {
   "gtk": {
    "classes": [
     "popup"
@@ -355,16 +368,9 @@ export const KINDS = {
    "css": "menubutton"
   }
  },
- "menuseparator": {
-  "ambiguous": [
-   "qt"
-  ],
-  "qt": "QAction"
- },
- "messagebox": {
+ "message-box": {
   "qt": "QMessageBox"
  },
- "motioncontroller": {},
  "notebook": {
   "gtk": {
    "classes": [
@@ -387,7 +393,7 @@ export const KINDS = {
    "css": "paned"
   }
  },
- "passwordentry": {
+ "password-entry": {
   "ambiguous": [
    "gtk"
   ],
@@ -404,7 +410,7 @@ export const KINDS = {
    "css": "picture"
   }
  },
- "plaintextedit": {
+ "plain-text-edit": {
   "qt": "QPlainTextEdit"
  },
  "popover": {
@@ -418,7 +424,7 @@ export const KINDS = {
    "css": "popover"
   }
  },
- "popovermenu": {
+ "popover-menu": {
   "ambiguous": [
    "gtk"
   ],
@@ -430,13 +436,13 @@ export const KINDS = {
    "css": "popover"
   }
  },
- "popovermenubar": {
+ "popover-menu-bar": {
   "gtk": {
    "classes": [],
    "css": "menubar"
   }
  },
- "progressbar": {
+ "progress-bar": {
   "gtk": {
    "classes": [
     "horizontal"
@@ -445,10 +451,13 @@ export const KINDS = {
   },
   "qt": "QProgressBar"
  },
- "progressdialog": {
+ "progress-dialog": {
   "qt": "QProgressDialog"
  },
- "radiobutton": {
+ "push-button": {
+  "qt": "QPushButton"
+ },
+ "radio-button": {
   "qt": "QRadioButton"
  },
  "range": {
@@ -473,7 +482,7 @@ export const KINDS = {
    "css": "scale"
   }
  },
- "scalebutton": {
+ "scale-button": {
   "ambiguous": [
    "gtk"
   ],
@@ -484,30 +493,33 @@ export const KINDS = {
    "css": "scalebutton"
   }
  },
+ "scroll-area": {
+  "qt": "QScrollArea"
+ },
+ "scroll-bar": {
+  "qt": "QScrollBar"
+ },
  "scrollbar": {
   "gtk": {
    "classes": [
     "horizontal"
    ],
    "css": "scrollbar"
-  },
-  "qt": "QScrollBar"
+  }
  },
- "scrollcontroller": {},
- "scrolledwindow": {
+ "scrolled-window": {
   "gtk": {
    "classes": [],
    "css": "scrolledwindow"
-  },
-  "qt": "QScrollArea"
+  }
  },
- "searchbar": {
+ "search-bar": {
   "gtk": {
    "classes": [],
    "css": "searchbar"
   }
  },
- "searchentry": {
+ "search-entry": {
   "ambiguous": [
    "gtk"
   ],
@@ -526,7 +538,7 @@ export const KINDS = {
    "css": "separator"
   }
  },
- "shortcutlabel": {
+ "shortcut-label": {
   "gtk": {
    "classes": [],
    "css": "shortcut"
@@ -535,10 +547,10 @@ export const KINDS = {
  "slider": {
   "qt": "QSlider"
  },
- "spinbox": {
+ "spin-box": {
   "qt": "QSpinBox"
  },
- "spinbutton": {
+ "spin-button": {
   "gtk": {
    "classes": [
     "horizontal"
@@ -561,10 +573,7 @@ export const KINDS = {
    "css": "stack"
   }
  },
- "stackedwidget": {
-  "qt": "QStackedWidget"
- },
- "stacksidebar": {
+ "stack-sidebar": {
   "gtk": {
    "classes": [
     "sidebar"
@@ -572,7 +581,7 @@ export const KINDS = {
    "css": "stacksidebar"
   }
  },
- "stackswitcher": {
+ "stack-switcher": {
   "gtk": {
    "classes": [
     "linked"
@@ -580,7 +589,10 @@ export const KINDS = {
    "css": "stackswitcher"
   }
  },
- "statusbar": {
+ "stacked-widget": {
+  "qt": "QStackedWidget"
+ },
+ "status-bar": {
   "qt": "QStatusBar"
  },
  "switch": {
@@ -589,10 +601,10 @@ export const KINDS = {
    "css": "switch"
   }
  },
- "tabbar": {
+ "tab-bar": {
   "qt": "QTabBar"
  },
- "tabwidget": {
+ "tab-widget": {
   "qt": "QTabWidget"
  },
  "text": {
@@ -601,16 +613,16 @@ export const KINDS = {
    "css": "text"
   }
  },
- "textbrowser": {
+ "text-browser": {
   "qt": "QTextBrowser"
  },
- "textdocument": {
+ "text-document": {
   "qt": "QTextDocument"
  },
- "textedit": {
+ "text-edit": {
   "qt": "QTextEdit"
  },
- "textview": {
+ "text-view": {
   "gtk": {
    "classes": [
     "view"
@@ -618,10 +630,10 @@ export const KINDS = {
    "css": "textview"
   }
  },
- "timeedit": {
+ "time-edit": {
   "qt": "QTimeEdit"
  },
- "togglebutton": {
+ "toggle-button": {
   "ambiguous": [
    "gtk"
   ],
@@ -632,13 +644,13 @@ export const KINDS = {
    "css": "button"
   }
  },
- "toolbar": {
+ "tool-bar": {
   "qt": "QToolBar"
  },
- "toolbox": {
+ "tool-box": {
   "qt": "QToolBox"
  },
- "toolbutton": {
+ "tool-button": {
   "qt": "QToolButton"
  },
  "video": {
@@ -653,7 +665,7 @@ export const KINDS = {
    "css": "viewport"
   }
  },
- "volumebutton": {
+ "volume-button": {
   "ambiguous": [
    "gtk"
   ],
@@ -673,10 +685,9 @@ export const KINDS = {
     "background"
    ],
    "css": "window"
-  },
-  "qt": "QMainWindow"
+  }
  },
- "windowcontrols": {
+ "window-controls": {
   "gtk": {
    "classes": [
     "empty",
@@ -685,7 +696,7 @@ export const KINDS = {
    "css": "windowcontrols"
   }
  },
- "windowhandle": {
+ "window-handle": {
   "gtk": {
    "classes": [],
    "css": "windowhandle"
@@ -694,7 +705,7 @@ export const KINDS = {
  "wizard": {
   "qt": "QWizard"
  },
- "wizardpage": {
+ "wizard-page": {
   "qt": "QWizardPage"
  }
 };

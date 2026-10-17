@@ -82,12 +82,12 @@ insert #2 #11 before=end slot=default
 create label #22
 set #22 label "items=0 selected=-1 activated=-"
 insert #2 #22 before=end slot=default
-create virtuallist #23
+create virtual-list #23
 set #23 layout "list"
 set #23 selection "single"
-set #23 rowHeight 32
+set #23 row-height 32
 set #23 vexpand true
-set #23 minHeight 300
+set #23 min-height 300
 listen #23 setup on
 listen #23 bind on
 listen #23 unbind on

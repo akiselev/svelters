@@ -127,7 +127,7 @@
   ],
   "element": {
     "origin": "gir",
-    "tag": "searchbar"
+    "tag": "search-bar"
   },
   "enums": [],
   "id": "svelters-api:v1:type:gtk:Gtk:SearchBar",
@@ -572,7 +572,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:SearchBar:prop:key-capture-widget",
       "invocation": "reflected",
-      "js_name": "keyCaptureWidget",
+      "js_name": "key-capture-widget",
       "name": "key-capture-widget",
       "notify": {
         "explicit": true,
@@ -618,7 +618,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:SearchBar:prop:search-mode-enabled",
       "invocation": "reflected",
-      "js_name": "searchModeEnabled",
+      "js_name": "search-mode-enabled",
       "name": "search-mode-enabled",
       "notify": {
         "explicit": true,
@@ -663,7 +663,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:SearchBar:prop:show-close-button",
       "invocation": "reflected",
-      "js_name": "showCloseButton",
+      "js_name": "show-close-button",
       "name": "show-close-button",
       "notify": {
         "explicit": true,

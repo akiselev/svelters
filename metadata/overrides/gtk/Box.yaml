@@ -1,6 +1,5 @@
 properties:
   - name: spacing
-    js_name: spacing
     provenance: "GtkBox:spacing (Gtk 4 docs); P prop"
 children:
   policy: ordered

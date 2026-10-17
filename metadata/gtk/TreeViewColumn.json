@@ -1465,7 +1465,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:TreeViewColumn:prop:cell-area",
       "invocation": "reflected",
-      "js_name": "cellArea",
+      "js_name": "cell-area",
       "name": "cell-area",
       "notify": {
         "explicit": false,
@@ -1585,7 +1585,7 @@
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:TreeViewColumn:prop:fixed-width",
       "invocation": "reflected",
-      "js_name": "fixedWidth",
+      "js_name": "fixed-width",
       "name": "fixed-width",
       "notify": {
         "explicit": true,
@@ -1628,7 +1628,7 @@
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:TreeViewColumn:prop:max-width",
       "invocation": "reflected",
-      "js_name": "maxWidth",
+      "js_name": "max-width",
       "name": "max-width",
       "notify": {
         "explicit": true,
@@ -1671,7 +1671,7 @@
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:TreeViewColumn:prop:min-width",
       "invocation": "reflected",
-      "js_name": "minWidth",
+      "js_name": "min-width",
       "name": "min-width",
       "notify": {
         "explicit": true,
@@ -1834,7 +1834,7 @@
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:TreeViewColumn:prop:sort-column-id",
       "invocation": "reflected",
-      "js_name": "sortColumnId",
+      "js_name": "sort-column-id",
       "name": "sort-column-id",
       "notify": {
         "explicit": true,
@@ -1877,7 +1877,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TreeViewColumn:prop:sort-indicator",
       "invocation": "reflected",
-      "js_name": "sortIndicator",
+      "js_name": "sort-indicator",
       "name": "sort-indicator",
       "notify": {
         "explicit": true,
@@ -1917,7 +1917,7 @@
       "default": "ascending",
       "id": "svelters-api:v1:type:gtk:Gtk:TreeViewColumn:prop:sort-order",
       "invocation": "reflected",
-      "js_name": "sortOrder",
+      "js_name": "sort-order",
       "name": "sort-order",
       "notify": {
         "explicit": true,
@@ -2159,7 +2159,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:TreeViewColumn:prop:x-offset",
       "invocation": "reflected",
-      "js_name": "xOffset",
+      "js_name": "x-offset",
       "name": "x-offset",
       "notify": {
         "explicit": false,

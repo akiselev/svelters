@@ -33,7 +33,7 @@ insert #2 #10 before=end slot=default
 create label #11
 set #11 label "(none)"
 insert #2 #11 before=end slot=default
-create scrolledwindow #12
+create scrolled-window #12
 create box #13
 set #13 orientation "vertical"
 set #13 spacing 2

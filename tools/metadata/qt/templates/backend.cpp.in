@@ -57,6 +57,7 @@
 #include <QtGui/QActionGroup>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QToolBar>
+#include <QtWidgets/QMenuBar>
 #include <QtWidgets/QToolButton>
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QGraphicsEffect>
@@ -126,7 +127,7 @@ struct Entry {
   bool toplevel = false;      // a parentless widget: lifetime class TOPLEVEL
   uint32_t life = SVL_LIFE_OWNED;  // SVL_LIFE_*: BORROWED entries are native-made objects we never delete
   svl_handle owner = 0;       // BORROWED: the handle whose getter first returned the object
-  bool close_listen = false;  // JS listens for close-request: the handler decides (call_sync)
+  bool close_listen = false;  // JS listens for close: the handler decides (call_sync)
   svl_id close_sig = 0;
   int suppress = 0;           // > 0 while JS writes an echo-suppressed property: posts are dropped
   bool key_listen = false;    // JS listens for key-press: the handler may consume the key
@@ -339,7 +340,7 @@ bool sync_stop(int rc, const svl_value &out) {
 }
 
 // onRequestClose for toplevels (see backend-abi.md, ABI v2 and v2.1): while JS listens for
-// close-request its handler decides each close through call_sync (`true` vetoes). A busy host
+// close its handler decides each close through call_sync (`true` vetoes). A busy host
 // (JS is running) queued the event itself: the close is vetoed so the late handler can decide.
 // Without a listener, or when the handler does not veto, the window is closed for good.
 struct CloseFilter : QObject {
@@ -500,7 +501,7 @@ void post(svl_handle h, svl_id sig, const svl_value *args, size_t n) {
 
 // ---- event families (synthetic signals, ABI v2.4) ----------------------------------------------
 //
-// An event filter turns QEvents into signals: key-release, mouse-press/release/move/double-click, wheel,
+// An event filter turns QEvents into signals: key-release, mouse-press/release/move, mouse-double-click, wheel,
 // context-menu (consumable: the JS handler's result decides through call_sync, `true` consumes the event
 // before the widget sees it) and focus-in/out, enter, leave, resize (informational: posted, never consumed).
 // Payloads are v3 values: positions are Point records, sizes Size records, buttons and modifiers integer masks.
@@ -717,7 +718,7 @@ T from_int(int v) {
 
 svl_id b_resolve(void *, uint32_t what, svl_id kind, const char *name, size_t len) {
   std::string_view n(name, len);
-  if (what == SVL_KIND && n == "virtuallist") return kVListKind;
+  if (what == SVL_KIND && n == "virtual-list") return kVListKind;
   if (what == SVL_KIND && n == "canvas") return kCanvasKind;
   if (kind == kVListKind) return vl_resolve(what, n);
   if (kind == kCanvasKind) return cv_resolve(what, n);
@@ -784,7 +785,7 @@ int b_insert(void *, svl_handle parent, svl_handle child, svl_handle before, svl
     return 0;
   }
   svl_id used = slot;
-  int rc = gen_is_context(c->kind) ? ctx_attach(p->obj.data(), c->obj.data()) : gen_insert(*p, c->obj.data(), b, used);
+  int rc = gen_is_context(c->kind) && ctx_role(p->obj.data()) ? ctx_attach(p->obj.data(), c->obj.data()) : gen_insert(*p, c->obj.data(), b, used);
   if (rc == 0) {
     c->placed = parent;
     c->slot = used;
@@ -807,7 +808,7 @@ int b_remove(void *, svl_handle parent, svl_handle child) {
     c->placed = 0;
     return 0;
   }
-  int rc = gen_is_context(c->kind) ? ctx_detach(p->obj.data(), c->obj.data()) : gen_remove(*p, c->obj.data());
+  int rc = gen_is_context(c->kind) && ctx_role(p->obj.data()) ? ctx_detach(p->obj.data(), c->obj.data()) : gen_remove(*p, c->obj.data());
   if (rc == 0) {
     c->placed = 0;
     c->slot = 0;
@@ -1459,7 +1460,7 @@ extern "C" int svl_qt_close(svl_handle h) {
 // Number of top-level widgets that still exist (pending deleteLater included until the loop runs).
 extern "C" int svl_qt_toplevel_count(void) { return QApplication::topLevelWidgets().size(); }
 
-// ---- virtuallist test hooks (M5; not part of the backend ABI) --------------------------------------
+// ---- virtual-list test hooks (M5; not part of the backend ABI) --------------------------------------
 // The tests find widgets by what they show, not by handle: the Svelte app decides creation order.
 namespace {
 SvVirtualList *vl_find() {

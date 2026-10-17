@@ -530,7 +530,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:AppChooserWidget:prop:default-text",
       "invocation": "reflected",
-      "js_name": "defaultText",
+      "js_name": "default-text",
       "name": "default-text",
       "notify": {
         "explicit": true,
@@ -570,7 +570,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:AppChooserWidget:prop:show-all",
       "invocation": "reflected",
-      "js_name": "showAll",
+      "js_name": "show-all",
       "name": "show-all",
       "notify": {
         "explicit": true,
@@ -611,7 +611,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:AppChooserWidget:prop:show-default",
       "invocation": "reflected",
-      "js_name": "showDefault",
+      "js_name": "show-default",
       "name": "show-default",
       "notify": {
         "explicit": true,
@@ -652,7 +652,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:AppChooserWidget:prop:show-fallback",
       "invocation": "reflected",
-      "js_name": "showFallback",
+      "js_name": "show-fallback",
       "name": "show-fallback",
       "notify": {
         "explicit": true,
@@ -693,7 +693,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:AppChooserWidget:prop:show-other",
       "invocation": "reflected",
-      "js_name": "showOther",
+      "js_name": "show-other",
       "name": "show-other",
       "notify": {
         "explicit": true,
@@ -734,7 +734,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:AppChooserWidget:prop:show-recommended",
       "invocation": "reflected",
-      "js_name": "showRecommended",
+      "js_name": "show-recommended",
       "name": "show-recommended",
       "notify": {
         "explicit": true,

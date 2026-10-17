@@ -368,7 +368,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:FileLauncher:prop:always-ask",
       "invocation": "reflected",
-      "js_name": "alwaysAsk",
+      "js_name": "always-ask",
       "name": "always-ask",
       "notify": {
         "explicit": true,

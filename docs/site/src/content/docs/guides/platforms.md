@@ -33,7 +33,7 @@ Two toolkit backends run today (GTK4 and QtWidgets). Everything else on this pag
 
 - C++ generated from metadata and compiled by `cc` in a leaf crate's `build.rs`, linked via `pkg-config Qt6Widgets`. Tested on Qt 6.11.
 - First frame about 0.20 s; peak RSS 55 MB in the counter baseline.
-- Known gaps: moves reparent to null and re-show, which makes reorders very slow; no `headerbar` (the if-toggle fixture is GTK-only); native close does not report `on_destroyed`.
+- Known gaps: moves reparent to null and re-show, which makes reorders very slow; no `header-bar` (the if-toggle fixture is GTK-only); native close does not report `on_destroyed`.
 - Element pages: [Qt elements](/api/qt/).
 
 ## WinUI 3 (research)

@@ -533,7 +533,7 @@
       "default": "[]",
       "id": "svelters-api:v1:type:gtk:Gtk:IconTheme:prop:icon-names",
       "invocation": "reflected",
-      "js_name": "iconNames",
+      "js_name": "icon-names",
       "name": "icon-names",
       "notify": {
         "explicit": false,
@@ -571,7 +571,7 @@
       "default": "[]",
       "id": "svelters-api:v1:type:gtk:Gtk:IconTheme:prop:resource-path",
       "invocation": "reflected",
-      "js_name": "resourcePath",
+      "js_name": "resource-path",
       "name": "resource-path",
       "notify": {
         "explicit": true,
@@ -611,7 +611,7 @@
       "default": "[]",
       "id": "svelters-api:v1:type:gtk:Gtk:IconTheme:prop:search-path",
       "invocation": "reflected",
-      "js_name": "searchPath",
+      "js_name": "search-path",
       "name": "search-path",
       "notify": {
         "explicit": true,
@@ -651,7 +651,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:IconTheme:prop:theme-name",
       "invocation": "reflected",
-      "js_name": "themeName",
+      "js_name": "theme-name",
       "name": "theme-name",
       "notify": {
         "explicit": true,

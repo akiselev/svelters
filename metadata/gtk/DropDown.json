@@ -699,7 +699,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:DropDown:prop:enable-search",
       "invocation": "reflected",
-      "js_name": "enableSearch",
+      "js_name": "enable-search",
       "name": "enable-search",
       "notify": {
         "explicit": true,
@@ -819,7 +819,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:DropDown:prop:header-factory",
       "invocation": "reflected",
-      "js_name": "headerFactory",
+      "js_name": "header-factory",
       "name": "header-factory",
       "notify": {
         "explicit": true,
@@ -860,7 +860,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:DropDown:prop:list-factory",
       "invocation": "reflected",
-      "js_name": "listFactory",
+      "js_name": "list-factory",
       "name": "list-factory",
       "notify": {
         "explicit": true,
@@ -940,7 +940,7 @@
       "default": "prefix",
       "id": "svelters-api:v1:type:gtk:Gtk:DropDown:prop:search-match-mode",
       "invocation": "reflected",
-      "js_name": "searchMatchMode",
+      "js_name": "search-match-mode",
       "name": "search-match-mode",
       "notify": {
         "explicit": true,
@@ -1024,7 +1024,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:DropDown:prop:selected-item",
       "invocation": "reflected",
-      "js_name": "selectedItem",
+      "js_name": "selected-item",
       "name": "selected-item",
       "notify": {
         "explicit": false,
@@ -1062,7 +1062,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:DropDown:prop:show-arrow",
       "invocation": "reflected",
-      "js_name": "showArrow",
+      "js_name": "show-arrow",
       "name": "show-arrow",
       "notify": {
         "explicit": true,

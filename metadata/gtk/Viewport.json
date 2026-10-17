@@ -509,7 +509,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Viewport:prop:scroll-to-focus",
       "invocation": "reflected",
-      "js_name": "scrollToFocus",
+      "js_name": "scroll-to-focus",
       "name": "scroll-to-focus",
       "notify": {
         "explicit": true,

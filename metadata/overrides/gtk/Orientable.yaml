@@ -1,5 +1,4 @@
 verify_subject: {tag: box}
 properties:
   - name: orientation
-    js_name: orientation
     provenance: "GtkOrientable:orientation (Gtk 4 docs); P prop; interface-owned, tested through GtkBox"

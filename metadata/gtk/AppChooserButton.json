@@ -606,7 +606,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:AppChooserButton:prop:show-default-item",
       "invocation": "reflected",
-      "js_name": "showDefaultItem",
+      "js_name": "show-default-item",
       "name": "show-default-item",
       "notify": {
         "explicit": true,
@@ -647,7 +647,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:AppChooserButton:prop:show-dialog-item",
       "invocation": "reflected",
-      "js_name": "showDialogItem",
+      "js_name": "show-dialog-item",
       "name": "show-dialog-item",
       "notify": {
         "explicit": true,

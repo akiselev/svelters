@@ -133,7 +133,7 @@ fn run_steps(steps: Vec<Step>) {
     }
 }
 
-/// window > box > [entry, scrolledwindow > box > label]
+/// main-window > box-layout > [line-edit, scroll-area > box-layout > label]
 #[derive(Clone, Copy)]
 struct Tree {
     win: svl_handle,
@@ -153,11 +153,11 @@ fn t() -> Tree {
 }
 
 fn build() {
-    let win = create("window");
-    let bx = create("box");
-    let entry = create("entry");
-    let scroll = create("scrolledwindow");
-    let inner = create("box");
+    let win = create("main-window");
+    let bx = create("box-layout");
+    let entry = create("line-edit");
+    let scroll = create("scroll-area");
+    let inner = create("box-layout");
     let label = create("label");
     insert(inner, label).unwrap();
     insert(scroll, inner).unwrap();
@@ -191,7 +191,7 @@ fn identity() {
 
 fn guards() {
     let t = t();
-    let other = create("box");
+    let other = create("box-layout");
     assert!(insert(t.bx, t.vp).unwrap_err().contains("borrowed"));
     assert!(insert(t.vp, other).unwrap_err().contains("borrowed"));
     assert!(remove(t.scroll, t.vp).unwrap_err().contains("borrowed"));
@@ -257,27 +257,27 @@ fn bool_value(v: bool) -> svl_value {
 /// X7 (G12): a QTextEdit's document is a borrowed handle with its own generated kind, so its
 /// properties, methods and signals work on it.
 fn document_kind() {
-    let edit = create("textedit");
+    let edit = create("text-edit");
     let doc = getter(edit, "document").unwrap().expect("a text edit has a document");
     assert_eq!(info(doc).unwrap().lifetime, SVL_LIFE_BORROWED);
-    assert_eq!(info(doc).unwrap().kind, kind("textdocument"), "borrowed objects get the kind of their class");
+    assert_eq!(info(doc).unwrap().kind, kind("text-document"), "borrowed objects get the kind of their class");
     assert_eq!(getter(edit, "document").unwrap(), Some(doc), "same object, same handle");
 
-    let k = kind("textdocument");
+    let k = kind("text-document");
     let a = str_value("one\ntwo");
     let mut out = svl_value::null();
     assert_eq!(unsafe { (be().call)(be().self_, doc, id(SVL_METHOD, k, "setPlainText"), &a, 1, &mut out) }, 0, "{}", err());
-    assert_eq!(unsafe { (be().get_prop)(be().self_, doc, id(SVL_PROP, k, "blockCount"), &mut out) }, 0, "{}", err());
+    assert_eq!(unsafe { (be().get_prop)(be().self_, doc, id(SVL_PROP, k, "block-count"), &mut out) }, 0, "{}", err());
     assert_eq!((out.tag, unsafe { out.u.i }), (SVL_I64, 2));
     // the editor shows what the document holds
     let mut text = svl_value::null();
-    let ek = kind("textedit");
-    assert_eq!(unsafe { (be().get_prop)(be().self_, edit, id(SVL_PROP, ek, "plainText"), &mut text) }, 0);
+    let ek = kind("text-edit");
+    assert_eq!(unsafe { (be().get_prop)(be().self_, edit, id(SVL_PROP, ek, "plain-text"), &mut text) }, 0);
     // Qt returns UTF-16 (SVL_CAP_UTF16_OUT); len counts code units
     let units = unsafe { std::slice::from_raw_parts(text.u.s.ptr.cast::<u16>(), text.u.s.len) };
     assert_eq!(String::from_utf16(units).unwrap(), "one\ntwo");
     let v = bool_value(false);
-    assert_eq!(unsafe { (be().set_prop)(be().self_, doc, id(SVL_PROP, k, "undoRedoEnabled"), &v) }, 0, "{}", err());
+    assert_eq!(unsafe { (be().set_prop)(be().self_, doc, id(SVL_PROP, k, "undo-redo-enabled"), &v) }, 0, "{}", err());
     destroy(doc);
     destroy(edit);
 }

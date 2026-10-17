@@ -4,7 +4,7 @@ export type SvlHandler = (e: SvlEvent) => void;
 import type { Boxed, Color, Insets, Point, Rect, Size } from './values';
 
 export interface GtkATContextProps {
-  accessibleRole?: "alert" | "alert-dialog" | "banner" | "button" | "caption" | "cell" | "checkbox" | "column-header" | "combo-box" | "command" | "composite" | "dialog" | "document" | "feed" | "form" | "generic" | "grid" | "grid-cell" | "group" | "heading" | "img" | "input" | "label" | "landmark" | "legend" | "link" | "list" | "list-box" | "list-item" | "log" | "main" | "marquee" | "math" | "meter" | "menu" | "menu-bar" | "menu-item" | "menu-item-checkbox" | "menu-item-radio" | "navigation" | "none" | "note" | "option" | "presentation" | "progress-bar" | "radio" | "radio-group" | "range" | "region" | "row" | "row-group" | "row-header" | "scrollbar" | "search" | "search-box" | "section" | "section-head" | "select" | "separator" | "slider" | "spin-button" | "status" | "structure" | "switch" | "tab" | "table" | "tab-list" | "tab-panel" | "text-box" | "time" | "timer" | "toolbar" | "tooltip" | "tree" | "tree-grid" | "tree-item" | "widget" | "window" | "toggle-button" | "application" | "paragraph" | "block-quote" | "article" | "comment" | "terminal";
+  "accessible-role"?: "alert" | "alert-dialog" | "banner" | "button" | "caption" | "cell" | "checkbox" | "column-header" | "combo-box" | "command" | "composite" | "dialog" | "document" | "feed" | "form" | "generic" | "grid" | "grid-cell" | "group" | "heading" | "img" | "input" | "label" | "landmark" | "legend" | "link" | "list" | "list-box" | "list-item" | "log" | "main" | "marquee" | "math" | "meter" | "menu" | "menu-bar" | "menu-item" | "menu-item-checkbox" | "menu-item-radio" | "navigation" | "none" | "note" | "option" | "presentation" | "progress-bar" | "radio" | "radio-group" | "range" | "region" | "row" | "row-group" | "row-header" | "scrollbar" | "search" | "search-box" | "section" | "section-head" | "select" | "separator" | "slider" | "spin-button" | "status" | "structure" | "switch" | "tab" | "table" | "tab-list" | "tab-panel" | "text-box" | "time" | "timer" | "toolbar" | "tooltip" | "tree" | "tree-grid" | "tree-item" | "widget" | "window" | "toggle-button" | "application" | "paragraph" | "block-quote" | "article" | "comment" | "terminal";
   display?: number;
   "onstate-change"?: SvlHandler;
 }
@@ -15,20 +15,20 @@ export interface GtkAboutDialogProps extends GtkWindowProps {
   copyright?: string;
   documenters?: string[];
   license?: string;
-  licenseType?: "unknown" | "custom" | "gpl-2-0" | "gpl-3-0" | "lgpl-2-1" | "lgpl-3-0" | "bsd" | "mit-x11" | "artistic" | "gpl-2-0-only" | "gpl-3-0-only" | "lgpl-2-1-only" | "lgpl-3-0-only" | "agpl-3-0" | "agpl-3-0-only" | "bsd-3" | "apache-2-0" | "mpl-2-0" | "0bsd";
+  "license-type"?: "unknown" | "custom" | "gpl-2-0" | "gpl-3-0" | "lgpl-2-1" | "lgpl-3-0" | "bsd" | "mit-x11" | "artistic" | "gpl-2-0-only" | "gpl-3-0-only" | "lgpl-2-1-only" | "lgpl-3-0-only" | "agpl-3-0" | "agpl-3-0-only" | "bsd-3" | "apache-2-0" | "mpl-2-0" | "0bsd";
   logo?: number | Boxed;
-  logoIconName?: string;
-  programName?: string;
-  systemInformation?: string;
-  translatorCredits?: string;
+  "logo-icon-name"?: string;
+  "program-name"?: string;
+  "system-information"?: string;
+  "translator-credits"?: string;
   version?: string;
   website?: string;
-  websiteLabel?: string;
-  wrapLicense?: boolean;
+  "website-label"?: string;
+  "wrap-license"?: boolean;
   "onactivate-link"?: SvlHandler;
 }
 export interface GtkAccessibleProps {
-  accessibleRole?: "alert" | "alert-dialog" | "banner" | "button" | "caption" | "cell" | "checkbox" | "column-header" | "combo-box" | "command" | "composite" | "dialog" | "document" | "feed" | "form" | "generic" | "grid" | "grid-cell" | "group" | "heading" | "img" | "input" | "label" | "landmark" | "legend" | "link" | "list" | "list-box" | "list-item" | "log" | "main" | "marquee" | "math" | "meter" | "menu" | "menu-bar" | "menu-item" | "menu-item-checkbox" | "menu-item-radio" | "navigation" | "none" | "note" | "option" | "presentation" | "progress-bar" | "radio" | "radio-group" | "range" | "region" | "row" | "row-group" | "row-header" | "scrollbar" | "search" | "search-box" | "section" | "section-head" | "select" | "separator" | "slider" | "spin-button" | "status" | "structure" | "switch" | "tab" | "table" | "tab-list" | "tab-panel" | "text-box" | "time" | "timer" | "toolbar" | "tooltip" | "tree" | "tree-grid" | "tree-item" | "widget" | "window" | "toggle-button" | "application" | "paragraph" | "block-quote" | "article" | "comment" | "terminal";
+  "accessible-role"?: "alert" | "alert-dialog" | "banner" | "button" | "caption" | "cell" | "checkbox" | "column-header" | "combo-box" | "command" | "composite" | "dialog" | "document" | "feed" | "form" | "generic" | "grid" | "grid-cell" | "group" | "heading" | "img" | "input" | "label" | "landmark" | "legend" | "link" | "list" | "list-box" | "list-item" | "log" | "main" | "marquee" | "math" | "meter" | "menu" | "menu-bar" | "menu-item" | "menu-item-checkbox" | "menu-item-radio" | "navigation" | "none" | "note" | "option" | "presentation" | "progress-bar" | "radio" | "radio-group" | "range" | "region" | "row" | "row-group" | "row-header" | "scrollbar" | "search" | "search-box" | "section" | "section-head" | "select" | "separator" | "slider" | "spin-button" | "status" | "structure" | "switch" | "tab" | "table" | "tab-list" | "tab-panel" | "text-box" | "time" | "timer" | "toolbar" | "tooltip" | "tree" | "tree-grid" | "tree-item" | "widget" | "window" | "toggle-button" | "application" | "paragraph" | "block-quote" | "article" | "comment" | "terminal";
 }
 export interface GtkAccessibleHyperlinkProps extends GtkAccessibleProps {
 }
@@ -42,25 +42,25 @@ export interface GtkActionBarProps extends GtkWidgetProps {
   revealed?: boolean;
 }
 export interface GtkActionableProps {
-  actionName?: string;
-  actionTarget?: unknown;
+  "action-name"?: string;
+  "action-target"?: unknown;
 }
 export interface GtkActivateActionProps extends GtkShortcutActionProps {
 }
 export interface GtkAdjustmentProps {
   lower?: number;
-  pageIncrement?: number;
-  pageSize?: number;
-  stepIncrement?: number;
+  "page-increment"?: number;
+  "page-size"?: number;
+  "step-increment"?: number;
   upper?: number;
   value?: number;
-  onchange?: SvlHandler;
+  onchanged?: SvlHandler;
   "onvalue-changed"?: SvlHandler;
 }
 export interface GtkAlertDialogProps {
   buttons?: string[];
-  cancelButton?: number;
-  defaultButton?: number;
+  "cancel-button"?: number;
+  "default-button"?: number;
   detail?: string;
   message?: string;
   modal?: boolean;
@@ -74,38 +74,38 @@ export interface GtkAppChooserProps {
 export interface GtkAppChooserButtonProps extends GtkWidgetProps, GtkAppChooserProps {
   heading?: string;
   modal?: boolean;
-  showDefaultItem?: boolean;
-  showDialogItem?: boolean;
+  "show-default-item"?: boolean;
+  "show-dialog-item"?: boolean;
   onactivate?: SvlHandler;
-  onchange?: SvlHandler;
+  onchanged?: SvlHandler;
   "oncustom-item-activated"?: SvlHandler;
 }
 export interface GtkAppChooserDialogProps extends GtkDialogProps, GtkAppChooserProps {
   heading?: string;
 }
 export interface GtkAppChooserWidgetProps extends GtkWidgetProps, GtkAppChooserProps {
-  defaultText?: string;
-  showAll?: boolean;
-  showDefault?: boolean;
-  showFallback?: boolean;
-  showOther?: boolean;
-  showRecommended?: boolean;
+  "default-text"?: string;
+  "show-all"?: boolean;
+  "show-default"?: boolean;
+  "show-fallback"?: boolean;
+  "show-other"?: boolean;
+  "show-recommended"?: boolean;
   "onapplication-activated"?: SvlHandler;
   "onapplication-selected"?: SvlHandler;
 }
 export interface GtkApplicationProps {
   menubar?: number;
-  registerSession?: boolean;
+  "register-session"?: boolean;
   "onquery-end"?: SvlHandler;
   "onwindow-added"?: SvlHandler;
   "onwindow-removed"?: SvlHandler;
 }
 export interface GtkApplicationWindowProps extends GtkWindowProps {
-  showMenubar?: boolean;
+  "show-menubar"?: boolean;
 }
 export interface GtkAspectFrameProps extends GtkWidgetProps {
   child?: number;
-  obeyChild?: boolean;
+  "obey-child"?: boolean;
   ratio?: number;
   xalign?: number;
   yalign?: number;
@@ -119,37 +119,37 @@ export interface GtkAssistantProps extends GtkWindowProps {
 }
 export interface GtkAssistantPageProps {
   complete?: boolean;
-  pageType?: "content" | "intro" | "confirm" | "summary" | "progress" | "custom";
+  "page-type"?: "content" | "intro" | "confirm" | "summary" | "progress" | "custom";
   title?: string;
 }
 export interface GtkBinLayoutProps extends GtkLayoutManagerProps {
 }
 export interface GtkBookmarkListProps {
   attributes?: string;
-  ioPriority?: number;
+  "io-priority"?: number;
 }
 export interface GtkBoolFilterProps extends GtkFilterProps {
   expression?: number;
   invert?: boolean;
 }
 export interface GtkBoxProps extends GtkWidgetProps, GtkOrientableProps {
-  baselineChild?: number;
-  baselinePosition?: "top" | "center" | "bottom";
+  "baseline-child"?: number;
+  "baseline-position"?: "top" | "center" | "bottom";
   homogeneous?: boolean;
   spacing?: number;
 }
 export interface GtkBoxLayoutProps extends GtkLayoutManagerProps, GtkOrientableProps {
-  baselineChild?: number;
-  baselinePosition?: "top" | "center" | "bottom";
+  "baseline-child"?: number;
+  "baseline-position"?: "top" | "center" | "bottom";
   homogeneous?: boolean;
   spacing?: number;
 }
 export interface GtkBuildableProps {
 }
 export interface GtkBuilderProps {
-  currentObject?: number;
+  "current-object"?: number;
   scope?: number;
-  translationDomain?: string;
+  "translation-domain"?: string;
 }
 export interface GtkBuilderCScopeProps extends GtkBuilderScopeProps {
 }
@@ -158,14 +158,14 @@ export interface GtkBuilderListItemFactoryProps extends GtkListItemFactoryProps 
 export interface GtkBuilderScopeProps {
 }
 export interface GtkButtonProps extends GtkWidgetProps, GtkActionableProps {
-  canShrink?: boolean;
+  "can-shrink"?: boolean;
   child?: number;
-  hasFrame?: boolean;
-  iconName?: string;
+  "has-frame"?: boolean;
+  "icon-name"?: string;
   label?: string;
-  useUnderline?: boolean;
+  "use-underline"?: boolean;
   onactivate?: SvlHandler;
-  onclick?: SvlHandler;
+  onclicked?: SvlHandler;
 }
 export interface GtkCClosureExpressionProps extends GtkExpressionProps {
 }
@@ -173,9 +173,9 @@ export interface GtkCalendarProps extends GtkWidgetProps {
   date?: Boxed<"GLib.DateTime">;
   day?: number;
   month?: number;
-  showDayNames?: boolean;
-  showHeading?: boolean;
-  showWeekNumbers?: boolean;
+  "show-day-names"?: boolean;
+  "show-heading"?: boolean;
+  "show-week-numbers"?: boolean;
   year?: number;
   "onday-selected"?: SvlHandler;
   "onnext-month"?: SvlHandler;
@@ -187,7 +187,7 @@ export interface GtkCalendarProps extends GtkWidgetProps {
 export interface GtkCallbackActionProps extends GtkShortcutActionProps {
 }
 export interface GtkCellAreaProps extends GtkBuildableProps, GtkCellLayoutProps {
-  focusCell?: number;
+  "focus-cell"?: number;
   "onadd-editable"?: SvlHandler;
   "onapply-attributes"?: SvlHandler;
   "onfocus-changed"?: SvlHandler;
@@ -199,19 +199,19 @@ export interface GtkCellAreaBoxProps extends GtkCellAreaProps, GtkOrientableProp
 export interface GtkCellAreaContextProps {
 }
 export interface GtkCellEditableProps {
-  editingCanceled?: boolean;
+  "editing-canceled"?: boolean;
   "onediting-done"?: SvlHandler;
   "onremove-widget"?: SvlHandler;
 }
 export interface GtkCellLayoutProps {
 }
 export interface GtkCellRendererProps {
-  cellBackground?: string;
-  cellBackgroundRgba?: Color | string;
-  cellBackgroundSet?: boolean;
+  "cell-background"?: string;
+  "cell-background-rgba"?: Color | string;
+  "cell-background-set"?: boolean;
   height?: number;
-  isExpanded?: boolean;
-  isExpander?: boolean;
+  "is-expanded"?: boolean;
+  "is-expander"?: boolean;
   mode?: "inert" | "activatable" | "editable";
   sensitive?: boolean;
   visible?: boolean;
@@ -224,39 +224,39 @@ export interface GtkCellRendererProps {
   "onediting-started"?: SvlHandler;
 }
 export interface GtkCellRendererAccelProps extends GtkCellRendererTextProps {
-  accelKey?: number;
-  accelMode?: "gtk" | "other";
-  accelMods?: string[];
+  "accel-key"?: number;
+  "accel-mode"?: "gtk" | "other";
+  "accel-mods"?: string[];
   keycode?: number;
   "onaccel-cleared"?: SvlHandler;
   "onaccel-edited"?: SvlHandler;
 }
 export interface GtkCellRendererComboProps extends GtkCellRendererTextProps {
-  hasEntry?: boolean;
+  "has-entry"?: boolean;
   model?: number;
-  textColumn?: number;
-  onchange?: SvlHandler;
+  "text-column"?: number;
+  onchanged?: SvlHandler;
 }
 export interface GtkCellRendererPixbufProps extends GtkCellRendererProps {
   gicon?: number | Boxed;
-  iconName?: string;
-  iconSize?: "inherit" | "normal" | "large";
+  "icon-name"?: string;
+  "icon-size"?: "inherit" | "normal" | "large";
   pixbuf?: number;
-  pixbufExpanderClosed?: number;
-  pixbufExpanderOpen?: number;
+  "pixbuf-expander-closed"?: number;
+  "pixbuf-expander-open"?: number;
   texture?: number;
 }
 export interface GtkCellRendererProgressProps extends GtkCellRendererProps, GtkOrientableProps {
   inverted?: boolean;
   pulse?: number;
   text?: string;
-  textXalign?: number;
-  textYalign?: number;
+  "text-xalign"?: number;
+  "text-yalign"?: number;
   value?: number;
 }
 export interface GtkCellRendererSpinProps extends GtkCellRendererTextProps {
   adjustment?: number;
-  climbRate?: number;
+  "climb-rate"?: number;
   digits?: number;
 }
 export interface GtkCellRendererSpinnerProps extends GtkCellRendererProps {
@@ -265,52 +265,52 @@ export interface GtkCellRendererSpinnerProps extends GtkCellRendererProps {
   size?: "inherit" | "normal" | "large";
 }
 export interface GtkCellRendererTextProps extends GtkCellRendererProps {
-  alignSet?: boolean;
+  "align-set"?: boolean;
   alignment?: string;
   attributes?: Boxed<"Pango.AttrList">;
   background?: string;
-  backgroundRgba?: Color | string;
-  backgroundSet?: boolean;
+  "background-rgba"?: Color | string;
+  "background-set"?: boolean;
   editable?: boolean;
-  editableSet?: boolean;
+  "editable-set"?: boolean;
   ellipsize?: string;
-  ellipsizeSet?: boolean;
+  "ellipsize-set"?: boolean;
   family?: string;
-  familySet?: boolean;
+  "family-set"?: boolean;
   font?: string;
-  fontDesc?: Boxed<"Pango.FontDescription"> | string;
+  "font-desc"?: Boxed<"Pango.FontDescription"> | string;
   foreground?: string;
-  foregroundRgba?: Color | string;
-  foregroundSet?: boolean;
+  "foreground-rgba"?: Color | string;
+  "foreground-set"?: boolean;
   language?: string;
-  languageSet?: boolean;
+  "language-set"?: boolean;
   markup?: string;
-  maxWidthChars?: number;
-  placeholderText?: string;
+  "max-width-chars"?: number;
+  "placeholder-text"?: string;
   rise?: number;
-  riseSet?: boolean;
+  "rise-set"?: boolean;
   scale?: number;
-  scaleSet?: boolean;
-  singleParagraphMode?: boolean;
+  "scale-set"?: boolean;
+  "single-paragraph-mode"?: boolean;
   size?: number;
-  sizePoints?: number;
-  sizeSet?: boolean;
+  "size-points"?: number;
+  "size-set"?: boolean;
   stretch?: string;
-  stretchSet?: boolean;
+  "stretch-set"?: boolean;
   strikethrough?: boolean;
-  strikethroughSet?: boolean;
+  "strikethrough-set"?: boolean;
   style?: string;
-  styleSet?: boolean;
+  "style-set"?: boolean;
   text?: string;
   underline?: string;
-  underlineSet?: boolean;
+  "underline-set"?: boolean;
   variant?: string;
-  variantSet?: boolean;
+  "variant-set"?: boolean;
   weight?: number;
-  weightSet?: boolean;
-  widthChars?: number;
-  wrapMode?: string;
-  wrapWidth?: number;
+  "weight-set"?: boolean;
+  "width-chars"?: number;
+  "wrap-mode"?: string;
+  "wrap-width"?: number;
   onedited?: SvlHandler;
 }
 export interface GtkCellRendererToggleProps extends GtkCellRendererProps {
@@ -321,19 +321,19 @@ export interface GtkCellRendererToggleProps extends GtkCellRendererProps {
   ontoggled?: SvlHandler;
 }
 export interface GtkCellViewProps extends GtkWidgetProps, GtkCellLayoutProps, GtkOrientableProps {
-  drawSensitive?: boolean;
-  fitModel?: boolean;
+  "draw-sensitive"?: boolean;
+  "fit-model"?: boolean;
   model?: number;
 }
 export interface GtkCenterBoxProps extends GtkWidgetProps, GtkOrientableProps {
-  baselinePosition?: "top" | "center" | "bottom";
-  centerWidget?: number;
-  endWidget?: number;
-  shrinkCenterLast?: boolean;
-  startWidget?: number;
+  "baseline-position"?: "top" | "center" | "bottom";
+  "center-widget"?: number;
+  "end-widget"?: number;
+  "shrink-center-last"?: boolean;
+  "start-widget"?: number;
 }
 export interface GtkCenterLayoutProps extends GtkLayoutManagerProps {
-  shrinkCenterLast?: boolean;
+  "shrink-center-last"?: boolean;
 }
 export interface GtkCheckButtonProps extends GtkWidgetProps, GtkActionableProps {
   active?: boolean;
@@ -341,7 +341,7 @@ export interface GtkCheckButtonProps extends GtkWidgetProps, GtkActionableProps 
   group?: number;
   inconsistent?: boolean;
   label?: string;
-  useUnderline?: boolean;
+  "use-underline"?: boolean;
   onactivate?: SvlHandler;
   "onnotify::active"?: SvlHandler;
   ontoggled?: SvlHandler;
@@ -350,26 +350,26 @@ export interface GtkClosureExpressionProps extends GtkExpressionProps {
 }
 export interface GtkColorButtonProps extends GtkWidgetProps, GtkColorChooserProps {
   modal?: boolean;
-  showEditor?: boolean;
+  "show-editor"?: boolean;
   title?: string;
   onactivate?: SvlHandler;
   "oncolor-set"?: SvlHandler;
 }
 export interface GtkColorChooserProps {
   rgba?: Color | string;
-  useAlpha?: boolean;
+  "use-alpha"?: boolean;
   "oncolor-activated"?: SvlHandler;
 }
 export interface GtkColorChooserDialogProps extends GtkDialogProps, GtkColorChooserProps {
-  showEditor?: boolean;
+  "show-editor"?: boolean;
 }
 export interface GtkColorChooserWidgetProps extends GtkWidgetProps, GtkColorChooserProps {
-  showEditor?: boolean;
+  "show-editor"?: boolean;
 }
 export interface GtkColorDialogProps {
   modal?: boolean;
   title?: string;
-  withAlpha?: boolean;
+  "with-alpha"?: boolean;
 }
 export interface GtkColorDialogButtonProps extends GtkWidgetProps {
   dialog?: number;
@@ -377,15 +377,15 @@ export interface GtkColorDialogButtonProps extends GtkWidgetProps {
   onactivate?: SvlHandler;
 }
 export interface GtkColumnViewProps extends GtkWidgetProps, GtkScrollableProps {
-  enableRubberband?: boolean;
-  headerFactory?: number;
+  "enable-rubberband"?: boolean;
+  "header-factory"?: number;
   model?: number;
   reorderable?: boolean;
-  rowFactory?: number;
-  showColumnSeparators?: boolean;
-  showRowSeparators?: boolean;
-  singleClickActivate?: boolean;
-  tabBehavior?: "all" | "item" | "cell";
+  "row-factory"?: number;
+  "show-column-separators"?: boolean;
+  "show-row-separators"?: boolean;
+  "single-click-activate"?: boolean;
+  "tab-behavior"?: "all" | "item" | "cell";
   onactivate?: SvlHandler;
 }
 export interface GtkColumnViewCellProps extends GtkListItemProps {
@@ -395,8 +395,8 @@ export interface GtkColumnViewCellProps extends GtkListItemProps {
 export interface GtkColumnViewColumnProps {
   expand?: boolean;
   factory?: number;
-  fixedWidth?: number;
-  headerMenu?: number;
+  "fixed-width"?: number;
+  "header-menu"?: number;
   id?: string;
   resizable?: boolean;
   sorter?: number;
@@ -404,8 +404,8 @@ export interface GtkColumnViewColumnProps {
   visible?: boolean;
 }
 export interface GtkColumnViewRowProps {
-  accessibleDescription?: string;
-  accessibleLabel?: string;
+  "accessible-description"?: string;
+  "accessible-label"?: string;
   activatable?: boolean;
   focusable?: boolean;
   selectable?: boolean;
@@ -414,16 +414,16 @@ export interface GtkColumnViewSorterProps extends GtkSorterProps {
 }
 export interface GtkComboBoxProps extends GtkWidgetProps, GtkCellEditableProps, GtkCellLayoutProps {
   active?: number;
-  activeId?: string;
-  buttonSensitivity?: "auto" | "on" | "off";
+  "active-id"?: string;
+  "button-sensitivity"?: "auto" | "on" | "off";
   child?: number;
-  entryTextColumn?: number;
-  hasFrame?: boolean;
-  idColumn?: number;
+  "entry-text-column"?: number;
+  "has-frame"?: boolean;
+  "id-column"?: number;
   model?: number;
-  popupFixedWidth?: boolean;
+  "popup-fixed-width"?: boolean;
   onactivate?: SvlHandler;
-  onchange?: SvlHandler;
+  onchanged?: SvlHandler;
   "onformat-entry-text"?: SvlHandler;
   "onmove-active"?: SvlHandler;
   onpopdown?: SvlHandler;
@@ -436,13 +436,13 @@ export interface GtkConstantExpressionProps extends GtkExpressionProps {
 export interface GtkConstraintProps {
 }
 export interface GtkConstraintGuideProps extends GtkConstraintTargetProps {
-  maxHeight?: number;
-  maxWidth?: number;
-  minHeight?: number;
-  minWidth?: number;
+  "max-height"?: number;
+  "max-width"?: number;
+  "min-height"?: number;
+  "min-width"?: number;
   name?: string;
-  natHeight?: number;
-  natWidth?: number;
+  "nat-height"?: number;
+  "nat-width"?: number;
   strength?: "required" | "strong" | "medium" | "weak";
 }
 export interface GtkConstraintLayoutProps extends GtkLayoutManagerProps, GtkBuildableProps {
@@ -452,9 +452,9 @@ export interface GtkConstraintLayoutChildProps extends GtkLayoutChildProps {
 export interface GtkConstraintTargetProps {
 }
 export interface GtkCssProviderProps extends GtkStyleProviderProps {
-  prefersColorScheme?: "unsupported" | "default" | "dark" | "light";
-  prefersContrast?: "unsupported" | "no-preference" | "more" | "less";
-  prefersReducedMotion?: "no-preference" | "reduce";
+  "prefers-color-scheme"?: "unsupported" | "default" | "dark" | "light";
+  "prefers-contrast"?: "unsupported" | "no-preference" | "more" | "less";
+  "prefers-reduced-motion"?: "no-preference" | "reduce";
   "onparsing-error"?: SvlHandler;
 }
 export interface GtkCustomFilterProps extends GtkFilterProps {
@@ -470,7 +470,7 @@ export interface GtkDialogProps extends GtkWindowProps {
 export interface GtkDirectoryListProps {
   attributes?: string;
   file?: number;
-  ioPriority?: number;
+  "io-priority"?: number;
   monitored?: boolean;
 }
 export interface GtkDragIconProps extends GtkWidgetProps, GtkNativeProps, GtkRootProps {
@@ -485,8 +485,8 @@ export interface GtkDragSourceProps extends GtkGestureSingleProps {
   onprepare?: SvlHandler;
 }
 export interface GtkDrawingAreaProps extends GtkWidgetProps {
-  contentHeight?: number;
-  contentWidth?: number;
+  "content-height"?: number;
+  "content-width"?: number;
   ops?: string;
   onresize?: SvlHandler;
 }
@@ -496,15 +496,15 @@ export interface GtkDropControllerMotionProps extends GtkEventControllerProps {
   onmotion?: SvlHandler;
 }
 export interface GtkDropDownProps extends GtkWidgetProps {
-  enableSearch?: boolean;
+  "enable-search"?: boolean;
   expression?: number;
   factory?: number;
-  headerFactory?: number;
-  listFactory?: number;
+  "header-factory"?: number;
+  "list-factory"?: number;
   model?: number;
-  searchMatchMode?: "exact" | "substring" | "prefix";
+  "search-match-mode"?: "exact" | "substring" | "prefix";
   selected?: number;
-  showArrow?: boolean;
+  "show-arrow"?: boolean;
   onactivate?: SvlHandler;
 }
 export interface GtkDropTargetProps extends GtkEventControllerProps {
@@ -527,12 +527,12 @@ export interface GtkDropTargetAsyncProps extends GtkEventControllerProps {
 }
 export interface GtkEditableProps {
   editable?: boolean;
-  enableUndo?: boolean;
-  maxWidthChars?: number;
+  "enable-undo"?: boolean;
+  "max-width-chars"?: number;
   text?: string;
-  widthChars?: number;
+  "width-chars"?: number;
   xalign?: number;
-  onchange?: SvlHandler;
+  onchanged?: SvlHandler;
   "ondelete-text"?: SvlHandler;
   "oninsert-text"?: SvlHandler;
   "onnotify::text"?: SvlHandler;
@@ -545,62 +545,62 @@ export interface GtkEmojiChooserProps extends GtkPopoverProps {
   "onemoji-picked"?: SvlHandler;
 }
 export interface GtkEntryProps extends GtkWidgetProps, GtkCellEditableProps, GtkEditableProps {
-  activatesDefault?: boolean;
+  "activates-default"?: boolean;
   attributes?: Boxed<"Pango.AttrList">;
   buffer?: number;
   completion?: number;
-  enableEmojiCompletion?: boolean;
-  extraMenu?: number;
-  hasFrame?: boolean;
-  imModule?: string;
-  inputHints?: Array<"spellcheck" | "no-spellcheck" | "word-completion" | "lowercase" | "uppercase-chars" | "uppercase-words" | "uppercase-sentences" | "inhibit-osk" | "vertical-writing" | "emoji" | "no-emoji" | "private">;
-  inputPurpose?: "free-form" | "alpha" | "digits" | "number" | "phone" | "url" | "email" | "name" | "password" | "pin" | "terminal";
-  invisibleChar?: number;
-  invisibleCharSet?: boolean;
-  maxLength?: number;
-  menuEntryIconPrimaryText?: string;
-  menuEntryIconSecondaryText?: string;
-  overwriteMode?: boolean;
-  placeholder?: string;
-  primaryIconActivatable?: boolean;
-  primaryIconGicon?: number | Boxed;
-  primaryIconName?: string;
-  primaryIconPaintable?: number | Boxed;
-  primaryIconSensitive?: boolean;
-  primaryIconTooltipMarkup?: string;
-  primaryIconTooltipText?: string;
-  progressFraction?: number;
-  progressPulseStep?: number;
-  secondaryIconActivatable?: boolean;
-  secondaryIconGicon?: number | Boxed;
-  secondaryIconName?: string;
-  secondaryIconPaintable?: number | Boxed;
-  secondaryIconSensitive?: boolean;
-  secondaryIconTooltipMarkup?: string;
-  secondaryIconTooltipText?: string;
-  showEmojiIcon?: boolean;
+  "enable-emoji-completion"?: boolean;
+  "extra-menu"?: number;
+  "has-frame"?: boolean;
+  "im-module"?: string;
+  "input-hints"?: Array<"spellcheck" | "no-spellcheck" | "word-completion" | "lowercase" | "uppercase-chars" | "uppercase-words" | "uppercase-sentences" | "inhibit-osk" | "vertical-writing" | "emoji" | "no-emoji" | "private">;
+  "input-purpose"?: "free-form" | "alpha" | "digits" | "number" | "phone" | "url" | "email" | "name" | "password" | "pin" | "terminal";
+  "invisible-char"?: number;
+  "invisible-char-set"?: boolean;
+  "max-length"?: number;
+  "menu-entry-icon-primary-text"?: string;
+  "menu-entry-icon-secondary-text"?: string;
+  "overwrite-mode"?: boolean;
+  "placeholder-text"?: string;
+  "primary-icon-activatable"?: boolean;
+  "primary-icon-gicon"?: number | Boxed;
+  "primary-icon-name"?: string;
+  "primary-icon-paintable"?: number | Boxed;
+  "primary-icon-sensitive"?: boolean;
+  "primary-icon-tooltip-markup"?: string;
+  "primary-icon-tooltip-text"?: string;
+  "progress-fraction"?: number;
+  "progress-pulse-step"?: number;
+  "secondary-icon-activatable"?: boolean;
+  "secondary-icon-gicon"?: number | Boxed;
+  "secondary-icon-name"?: string;
+  "secondary-icon-paintable"?: number | Boxed;
+  "secondary-icon-sensitive"?: boolean;
+  "secondary-icon-tooltip-markup"?: string;
+  "secondary-icon-tooltip-text"?: string;
+  "show-emoji-icon"?: boolean;
   tabs?: Boxed<"Pango.TabArray">;
-  truncateMultiline?: boolean;
+  "truncate-multiline"?: boolean;
   visibility?: boolean;
   onactivate?: SvlHandler;
   "onicon-press"?: SvlHandler;
   "onicon-release"?: SvlHandler;
 }
 export interface GtkEntryBufferProps {
-  maxLength?: number;
+  "max-length"?: number;
   text?: string;
   "ondeleted-text"?: SvlHandler;
   "oninserted-text"?: SvlHandler;
 }
 export interface GtkEntryCompletionProps extends GtkBuildableProps, GtkCellLayoutProps {
-  inlineCompletion?: boolean;
-  inlineSelection?: boolean;
-  minimumKeyLength?: number;
+  "inline-completion"?: boolean;
+  "inline-selection"?: boolean;
+  "minimum-key-length"?: number;
   model?: number;
-  popupCompletion?: boolean;
-  popupSetWidth?: boolean;
-  popupSingleMatch?: boolean;
-  textColumn?: number;
+  "popup-completion"?: boolean;
+  "popup-set-width"?: boolean;
+  "popup-single-match"?: boolean;
+  "text-column"?: number;
   "oncursor-on-match"?: SvlHandler;
   "oninsert-prefix"?: SvlHandler;
   "onmatch-selected"?: SvlHandler;
@@ -608,8 +608,8 @@ export interface GtkEntryCompletionProps extends GtkBuildableProps, GtkCellLayou
 }
 export interface GtkEventControllerProps {
   name?: string;
-  propagationLimit?: "none" | "same-native";
-  propagationPhase?: "none" | "capture" | "bubble" | "target";
+  "propagation-limit"?: "none" | "same-native";
+  "propagation-phase"?: "none" | "capture" | "bubble" | "target";
 }
 export interface GtkEventControllerFocusProps extends GtkEventControllerProps {
   onenter?: SvlHandler;
@@ -642,10 +642,10 @@ export interface GtkExpanderProps extends GtkWidgetProps {
   child?: number;
   expanded?: boolean;
   label?: string;
-  labelWidget?: number;
-  resizeToplevel?: boolean;
-  useMarkup?: boolean;
-  useUnderline?: boolean;
+  "label-widget"?: number;
+  "resize-toplevel"?: boolean;
+  "use-markup"?: boolean;
+  "use-underline"?: boolean;
   onactivate?: SvlHandler;
   "onnotify::expanded"?: SvlHandler;
 }
@@ -653,18 +653,18 @@ export interface GtkExpressionProps {
 }
 export interface GtkFileChooserProps {
   action?: "open" | "save" | "select-folder";
-  createFolders?: boolean;
+  "create-folders"?: boolean;
   filter?: number;
-  selectMultiple?: boolean;
+  "select-multiple"?: boolean;
 }
 export interface GtkFileChooserDialogProps extends GtkDialogProps, GtkFileChooserProps {
 }
 export interface GtkFileChooserNativeProps extends GtkNativeDialogProps, GtkFileChooserProps {
-  acceptLabel?: string;
-  cancelLabel?: string;
+  "accept-label"?: string;
+  "cancel-label"?: string;
 }
 export interface GtkFileChooserWidgetProps extends GtkWidgetProps, GtkFileChooserProps {
-  searchMode?: boolean;
+  "search-mode"?: boolean;
   "ondesktop-folder"?: SvlHandler;
   "ondown-folder"?: SvlHandler;
   "onhome-folder"?: SvlHandler;
@@ -679,12 +679,12 @@ export interface GtkFileChooserWidgetProps extends GtkWidgetProps, GtkFileChoose
   "onup-folder"?: SvlHandler;
 }
 export interface GtkFileDialogProps {
-  acceptLabel?: string;
-  defaultFilter?: number;
+  "accept-label"?: string;
+  "default-filter"?: number;
   filters?: number;
-  initialFile?: number;
-  initialFolder?: number;
-  initialName?: string;
+  "initial-file"?: number;
+  "initial-folder"?: number;
+  "initial-name"?: string;
   modal?: boolean;
   title?: string;
 }
@@ -692,18 +692,18 @@ export interface GtkFileFilterProps extends GtkFilterProps, GtkBuildableProps {
   name?: string;
 }
 export interface GtkFileLauncherProps {
-  alwaysAsk?: boolean;
+  "always-ask"?: boolean;
   file?: number;
   writable?: boolean;
 }
 export interface GtkFilterProps {
-  onchange?: SvlHandler;
+  onchanged?: SvlHandler;
 }
 export interface GtkFilterListModelProps extends GtkSectionModelProps {
   filter?: number;
   incremental?: boolean;
   model?: number;
-  watchItems?: boolean;
+  "watch-items"?: boolean;
 }
 export interface GtkFixedProps extends GtkWidgetProps {
 }
@@ -716,14 +716,14 @@ export interface GtkFlattenListModelProps extends GtkSectionModelProps {
   model?: number;
 }
 export interface GtkFlowBoxProps extends GtkWidgetProps, GtkOrientableProps {
-  acceptUnpairedRelease?: boolean;
-  activateOnSingleClick?: boolean;
-  columnSpacing?: number;
+  "accept-unpaired-release"?: boolean;
+  "activate-on-single-click"?: boolean;
+  "column-spacing"?: number;
   homogeneous?: boolean;
-  maxChildrenPerLine?: number;
-  minChildrenPerLine?: number;
-  rowSpacing?: number;
-  selectionMode?: "none" | "single" | "browse" | "multiple";
+  "max-children-per-line"?: number;
+  "min-children-per-line"?: number;
+  "row-spacing"?: number;
+  "selection-mode"?: "none" | "single" | "browse" | "multiple";
   "onactivate-cursor-child"?: SvlHandler;
   "onchild-activated"?: SvlHandler;
   "onmove-cursor"?: SvlHandler;
@@ -739,18 +739,18 @@ export interface GtkFlowBoxChildProps extends GtkWidgetProps {
 export interface GtkFontButtonProps extends GtkWidgetProps, GtkFontChooserProps {
   modal?: boolean;
   title?: string;
-  useFont?: boolean;
-  useSize?: boolean;
+  "use-font"?: boolean;
+  "use-size"?: boolean;
   onactivate?: SvlHandler;
   "onfont-set"?: SvlHandler;
 }
 export interface GtkFontChooserProps {
   font?: string;
-  fontDesc?: Boxed<"Pango.FontDescription"> | string;
+  "font-desc"?: Boxed<"Pango.FontDescription"> | string;
   language?: string;
   level?: Array<"style" | "size" | "variations" | "features">;
-  previewText?: string;
-  showPreviewEntry?: boolean;
+  "preview-text"?: string;
+  "show-preview-entry"?: boolean;
   "onfont-activated"?: SvlHandler;
 }
 export interface GtkFontChooserDialogProps extends GtkDialogProps, GtkFontChooserProps {
@@ -759,33 +759,33 @@ export interface GtkFontChooserWidgetProps extends GtkWidgetProps, GtkFontChoose
 }
 export interface GtkFontDialogProps {
   filter?: number;
-  fontMap?: number;
+  "font-map"?: number;
   language?: Boxed<"Pango.Language">;
   modal?: boolean;
   title?: string;
 }
 export interface GtkFontDialogButtonProps extends GtkWidgetProps {
   dialog?: number;
-  fontDesc?: Boxed<"Pango.FontDescription"> | string;
-  fontFeatures?: string;
+  "font-desc"?: Boxed<"Pango.FontDescription"> | string;
+  "font-features"?: string;
   language?: Boxed<"Pango.Language">;
   level?: "family" | "face" | "font" | "features";
-  useFont?: boolean;
-  useSize?: boolean;
+  "use-font"?: boolean;
+  "use-size"?: boolean;
   onactivate?: SvlHandler;
 }
 export interface GtkFrameProps extends GtkWidgetProps {
   child?: number;
   label?: string;
-  labelWidget?: number;
-  labelXalign?: number;
+  "label-widget"?: number;
+  "label-xalign"?: number;
 }
 export interface GtkGLAreaProps extends GtkWidgetProps {
-  allowedApis?: string[];
-  autoRender?: boolean;
-  hasDepthBuffer?: boolean;
-  hasStencilBuffer?: boolean;
-  useEs?: boolean;
+  "allowed-apis"?: string[];
+  "auto-render"?: boolean;
+  "has-depth-buffer"?: boolean;
+  "has-stencil-buffer"?: boolean;
+  "use-es"?: boolean;
   "oncreate-context"?: SvlHandler;
   onrender?: SvlHandler;
   onresize?: SvlHandler;
@@ -809,7 +809,7 @@ export interface GtkGestureDragProps extends GtkGestureSingleProps {
   "ondrag-update"?: SvlHandler;
 }
 export interface GtkGestureLongPressProps extends GtkGestureSingleProps {
-  delayFactor?: number;
+  "delay-factor"?: number;
   oncancelled?: SvlHandler;
   onpressed?: SvlHandler;
 }
@@ -823,10 +823,10 @@ export interface GtkGestureRotateProps extends GtkGestureProps {
 export interface GtkGestureSingleProps extends GtkGestureProps {
   button?: number;
   exclusive?: boolean;
-  touchOnly?: boolean;
+  "touch-only"?: boolean;
 }
 export interface GtkGestureStylusProps extends GtkGestureSingleProps {
-  stylusOnly?: boolean;
+  "stylus-only"?: boolean;
   ondown?: SvlHandler;
   onmotion?: SvlHandler;
   onproximity?: SvlHandler;
@@ -839,50 +839,50 @@ export interface GtkGestureZoomProps extends GtkGestureProps {
   "onscale-changed"?: SvlHandler;
 }
 export interface GtkGraphicsOffloadProps extends GtkWidgetProps {
-  blackBackground?: boolean;
+  "black-background"?: boolean;
   child?: number;
   enabled?: "enabled" | "disabled";
 }
 export interface GtkGridProps extends GtkWidgetProps, GtkOrientableProps {
-  baselineRow?: number;
-  columnHomogeneous?: boolean;
-  columnSpacing?: number;
-  rowHomogeneous?: boolean;
-  rowSpacing?: number;
+  "baseline-row"?: number;
+  "column-homogeneous"?: boolean;
+  "column-spacing"?: number;
+  "row-homogeneous"?: boolean;
+  "row-spacing"?: number;
 }
 export interface GtkGridLayoutProps extends GtkLayoutManagerProps {
-  baselineRow?: number;
-  columnHomogeneous?: boolean;
-  columnSpacing?: number;
-  rowHomogeneous?: boolean;
-  rowSpacing?: number;
+  "baseline-row"?: number;
+  "column-homogeneous"?: boolean;
+  "column-spacing"?: number;
+  "row-homogeneous"?: boolean;
+  "row-spacing"?: number;
 }
 export interface GtkGridLayoutChildProps extends GtkLayoutChildProps {
   column?: number;
-  columnSpan?: number;
+  "column-span"?: number;
   row?: number;
-  rowSpan?: number;
+  "row-span"?: number;
 }
 export interface GtkGridViewProps extends GtkListBaseProps {
-  enableRubberband?: boolean;
+  "enable-rubberband"?: boolean;
   factory?: number;
-  maxColumns?: number;
-  minColumns?: number;
+  "max-columns"?: number;
+  "min-columns"?: number;
   model?: number;
-  singleClickActivate?: boolean;
-  tabBehavior?: "all" | "item" | "cell";
+  "single-click-activate"?: boolean;
+  "tab-behavior"?: "all" | "item" | "cell";
   onactivate?: SvlHandler;
 }
 export interface GtkHeaderBarProps extends GtkWidgetProps {
-  decorationLayout?: string;
-  showTitleButtons?: boolean;
+  "decoration-layout"?: string;
+  "show-title-buttons"?: boolean;
   title?: string;
-  titleWidget?: number;
-  useNativeControls?: boolean;
+  "title-widget"?: number;
+  "use-native-controls"?: boolean;
 }
 export interface GtkIMContextProps {
-  inputHints?: Array<"spellcheck" | "no-spellcheck" | "word-completion" | "lowercase" | "uppercase-chars" | "uppercase-words" | "uppercase-sentences" | "inhibit-osk" | "vertical-writing" | "emoji" | "no-emoji" | "private">;
-  inputPurpose?: "free-form" | "alpha" | "digits" | "number" | "phone" | "url" | "email" | "name" | "password" | "pin" | "terminal";
+  "input-hints"?: Array<"spellcheck" | "no-spellcheck" | "word-completion" | "lowercase" | "uppercase-chars" | "uppercase-words" | "uppercase-sentences" | "inhibit-osk" | "vertical-writing" | "emoji" | "no-emoji" | "private">;
+  "input-purpose"?: "free-form" | "alpha" | "digits" | "number" | "phone" | "url" | "email" | "name" | "password" | "pin" | "terminal";
   oncommit?: SvlHandler;
   "ondelete-surrounding"?: SvlHandler;
   "oninvalid-composition"?: SvlHandler;
@@ -896,34 +896,34 @@ export interface GtkIMContextSimpleProps extends GtkIMContextProps {
 export interface GtkIMMulticontextProps extends GtkIMContextProps {
 }
 export interface GtkIconPaintableProps extends GtkSymbolicPaintableProps {
-  isSymbolic?: boolean;
+  "is-symbolic"?: boolean;
   scale?: number;
   size?: number;
 }
 export interface GtkIconThemeProps {
   display?: number;
-  resourcePath?: string[];
-  searchPath?: string[];
-  themeName?: string;
-  onchange?: SvlHandler;
+  "resource-path"?: string[];
+  "search-path"?: string[];
+  "theme-name"?: string;
+  onchanged?: SvlHandler;
 }
 export interface GtkIconViewProps extends GtkWidgetProps, GtkCellLayoutProps, GtkScrollableProps {
-  activateOnSingleClick?: boolean;
-  columnSpacing?: number;
+  "activate-on-single-click"?: boolean;
+  "column-spacing"?: number;
   columns?: number;
-  itemOrientation?: "horizontal" | "vertical";
-  itemPadding?: number;
-  itemWidth?: number;
+  "item-orientation"?: "horizontal" | "vertical";
+  "item-padding"?: number;
+  "item-width"?: number;
   margin?: number;
-  markupColumn?: number;
+  "markup-column"?: number;
   model?: number;
-  pixbufColumn?: number;
+  "pixbuf-column"?: number;
   reorderable?: boolean;
-  rowSpacing?: number;
-  selectionMode?: "none" | "single" | "browse" | "multiple";
+  "row-spacing"?: number;
+  "selection-mode"?: "none" | "single" | "browse" | "multiple";
   spacing?: number;
-  textColumn?: number;
-  tooltipColumn?: number;
+  "text-column"?: number;
+  "tooltip-column"?: number;
   "onactivate-cursor-item"?: SvlHandler;
   "onitem-activated"?: SvlHandler;
   "onmove-cursor"?: SvlHandler;
@@ -936,30 +936,30 @@ export interface GtkIconViewProps extends GtkWidgetProps, GtkCellLayoutProps, Gt
 export interface GtkImageProps extends GtkWidgetProps {
   file?: string;
   gicon?: number | Boxed;
-  iconName?: string;
-  iconSize?: "inherit" | "normal" | "large";
+  "icon-name"?: string;
+  "icon-size"?: "inherit" | "normal" | "large";
   paintable?: number | Boxed;
-  pixelSize?: number;
+  "pixel-size"?: number;
   resource?: string;
-  useFallback?: boolean;
+  "use-fallback"?: boolean;
 }
 export interface GtkInfoBarProps extends GtkWidgetProps {
-  messageType?: "info" | "warning" | "question" | "error" | "other";
+  "message-type"?: "info" | "warning" | "question" | "error" | "other";
   revealed?: boolean;
-  showCloseButton?: boolean;
+  "show-close-button"?: boolean;
   onclose?: SvlHandler;
   onresponse?: SvlHandler;
 }
 export interface GtkInscriptionProps extends GtkWidgetProps, GtkAccessibleTextProps {
   attributes?: Boxed<"Pango.AttrList">;
   markup?: string;
-  minChars?: number;
-  minLines?: number;
-  natChars?: number;
-  natLines?: number;
+  "min-chars"?: number;
+  "min-lines"?: number;
+  "nat-chars"?: number;
+  "nat-lines"?: number;
   text?: string;
-  textOverflow?: "clip" | "ellipsize-start" | "ellipsize-middle" | "ellipsize-end";
-  wrapMode?: string;
+  "text-overflow"?: "clip" | "ellipsize-start" | "ellipsize-middle" | "ellipsize-end";
+  "wrap-mode"?: string;
   xalign?: number;
   yalign?: number;
 }
@@ -968,21 +968,21 @@ export interface GtkKeyvalTriggerProps extends GtkShortcutTriggerProps {
 export interface GtkLabelProps extends GtkWidgetProps, GtkAccessibleHypertextProps, GtkAccessibleTextProps {
   attributes?: Boxed<"Pango.AttrList">;
   ellipsize?: string;
-  extraMenu?: number;
+  "extra-menu"?: number;
   justify?: "left" | "right" | "center" | "fill";
   label?: string;
   lines?: number;
-  maxWidthChars?: number;
-  mnemonicWidget?: number;
-  naturalWrapMode?: "inherit" | "none" | "word";
+  "max-width-chars"?: number;
+  "mnemonic-widget"?: number;
+  "natural-wrap-mode"?: "inherit" | "none" | "word";
   selectable?: boolean;
-  singleLineMode?: boolean;
+  "single-line-mode"?: boolean;
   tabs?: Boxed<"Pango.TabArray">;
-  useMarkup?: boolean;
-  useUnderline?: boolean;
-  widthChars?: number;
+  "use-markup"?: boolean;
+  "use-underline"?: boolean;
+  "width-chars"?: number;
   wrap?: boolean;
-  wrapMode?: string;
+  "wrap-mode"?: string;
   xalign?: number;
   yalign?: number;
   "onactivate-current-link"?: SvlHandler;
@@ -996,8 +996,8 @@ export interface GtkLayoutManagerProps {
 }
 export interface GtkLevelBarProps extends GtkWidgetProps, GtkAccessibleRangeProps, GtkOrientableProps {
   inverted?: boolean;
-  maxValue?: number;
-  minValue?: number;
+  "max-value"?: number;
+  "min-value"?: number;
   mode?: "continuous" | "discrete";
   value?: number;
   "onnotify::value"?: SvlHandler;
@@ -1012,11 +1012,11 @@ export interface GtkListBaseProps extends GtkWidgetProps, GtkOrientableProps, Gt
   orientation?: "horizontal" | "vertical";
 }
 export interface GtkListBoxProps extends GtkWidgetProps {
-  acceptUnpairedRelease?: boolean;
-  activateOnSingleClick?: boolean;
-  selectionMode?: "none" | "single" | "browse" | "multiple";
-  showSeparators?: boolean;
-  tabBehavior?: "all" | "item" | "cell";
+  "accept-unpaired-release"?: boolean;
+  "activate-on-single-click"?: boolean;
+  "selection-mode"?: "none" | "single" | "browse" | "multiple";
+  "show-separators"?: boolean;
+  "tab-behavior"?: "all" | "item" | "cell";
   "onactivate-cursor-row"?: SvlHandler;
   "onmove-cursor"?: SvlHandler;
   "onrow-activated"?: SvlHandler;
@@ -1036,8 +1036,8 @@ export interface GtkListHeaderProps {
   child?: number;
 }
 export interface GtkListItemProps {
-  accessibleDescription?: string;
-  accessibleLabel?: string;
+  "accessible-description"?: string;
+  "accessible-label"?: string;
   activatable?: boolean;
   child?: number;
   focusable?: boolean;
@@ -1048,32 +1048,32 @@ export interface GtkListItemFactoryProps {
 export interface GtkListStoreProps extends GtkBuildableProps, GtkTreeDragDestProps, GtkTreeDragSourceProps, GtkTreeModelProps, GtkTreeSortableProps {
 }
 export interface GtkListViewProps extends GtkListBaseProps {
-  enableRubberband?: boolean;
+  "enable-rubberband"?: boolean;
   factory?: number;
-  headerFactory?: number;
+  "header-factory"?: number;
   model?: number;
-  showSeparators?: boolean;
-  singleClickActivate?: boolean;
-  tabBehavior?: "all" | "item" | "cell";
+  "show-separators"?: boolean;
+  "single-click-activate"?: boolean;
+  "tab-behavior"?: "all" | "item" | "cell";
   onactivate?: SvlHandler;
 }
 export interface GtkLockButtonProps extends GtkButtonProps {
   permission?: number;
-  textLock?: string;
-  textUnlock?: string;
-  tooltipLock?: string;
-  tooltipNotAuthorized?: string;
-  tooltipUnlock?: string;
+  "text-lock"?: string;
+  "text-unlock"?: string;
+  "tooltip-lock"?: string;
+  "tooltip-not-authorized"?: string;
+  "tooltip-unlock"?: string;
 }
 export interface GtkMapListModelProps extends GtkSectionModelProps {
   model?: number;
 }
 export interface GtkMediaControlsProps extends GtkWidgetProps {
-  mediaStream?: number;
+  "media-stream"?: number;
 }
 export interface GtkMediaFileProps extends GtkMediaStreamProps {
   file?: number;
-  inputStream?: number;
+  "input-stream"?: number;
 }
 export interface GtkMediaStreamProps {
   loop?: boolean;
@@ -1083,25 +1083,25 @@ export interface GtkMediaStreamProps {
 }
 export interface GtkMenuButtonProps extends GtkWidgetProps {
   active?: boolean;
-  alwaysShowArrow?: boolean;
-  canShrink?: boolean;
+  "always-show-arrow"?: boolean;
+  "can-shrink"?: boolean;
   child?: number;
   direction?: "up" | "down" | "left" | "right" | "none";
-  hasFrame?: boolean;
-  iconName?: string;
+  "has-frame"?: boolean;
+  "icon-name"?: string;
   label?: string;
-  menuModel?: number;
+  "menu-model"?: number;
   popover?: number;
   primary?: boolean;
-  useUnderline?: boolean;
+  "use-underline"?: boolean;
   onactivate?: SvlHandler;
 }
 export interface GtkMessageDialogProps extends GtkDialogProps {
-  messageType?: "info" | "warning" | "question" | "error" | "other";
-  secondaryText?: string;
-  secondaryUseMarkup?: boolean;
+  "message-type"?: "info" | "warning" | "question" | "error" | "other";
+  "secondary-text"?: string;
+  "secondary-use-markup"?: boolean;
   text?: string;
-  useMarkup?: boolean;
+  "use-markup"?: boolean;
 }
 export interface GtkMnemonicActionProps extends GtkShortcutActionProps {
 }
@@ -1125,7 +1125,7 @@ export interface GtkNativeProps {
 export interface GtkNativeDialogProps {
   modal?: boolean;
   title?: string;
-  transientFor?: number;
+  "transient-for"?: number;
   visible?: boolean;
   onresponse?: SvlHandler;
 }
@@ -1135,13 +1135,13 @@ export interface GtkNoSelectionProps extends GtkSectionModelProps, GtkSelectionM
   model?: number;
 }
 export interface GtkNotebookProps extends GtkWidgetProps {
-  enablePopup?: boolean;
-  groupName?: string;
+  "enable-popup"?: boolean;
+  "group-name"?: string;
   page?: number;
   scrollable?: boolean;
-  showBorder?: boolean;
-  showTabs?: boolean;
-  tabPos?: "left" | "right" | "top" | "bottom";
+  "show-border"?: boolean;
+  "show-tabs"?: boolean;
+  "tab-pos"?: "left" | "right" | "top" | "bottom";
   "onchange-current-page"?: SvlHandler;
   "oncreate-window"?: SvlHandler;
   "onfocus-tab"?: SvlHandler;
@@ -1156,18 +1156,18 @@ export interface GtkNotebookProps extends GtkWidgetProps {
 }
 export interface GtkNotebookPageProps {
   detachable?: boolean;
-  menuLabel?: string;
+  "menu-label"?: string;
   position?: number;
   reorderable?: boolean;
-  tabExpand?: boolean;
-  tabFill?: boolean;
-  tabLabel?: string;
+  "tab-expand"?: boolean;
+  "tab-fill"?: boolean;
+  "tab-label"?: string;
 }
 export interface GtkNothingActionProps extends GtkShortcutActionProps {
 }
 export interface GtkNumericSorterProps extends GtkSorterProps {
   expression?: number;
-  sortOrder?: "ascending" | "descending";
+  "sort-order"?: "ascending" | "descending";
 }
 export interface GtkObjectExpressionProps extends GtkExpressionProps {
 }
@@ -1181,7 +1181,7 @@ export interface GtkOverlayProps extends GtkWidgetProps {
 export interface GtkOverlayLayoutProps extends GtkLayoutManagerProps {
 }
 export interface GtkOverlayLayoutChildProps extends GtkLayoutChildProps {
-  clipOverlay?: boolean;
+  "clip-overlay"?: boolean;
   measure?: boolean;
 }
 export interface GtkPadControllerProps extends GtkEventControllerProps {
@@ -1191,15 +1191,15 @@ export interface GtkPageSetupProps {
 export interface GtkPageSetupUnixDialogProps extends GtkDialogProps {
 }
 export interface GtkPanedProps extends GtkWidgetProps, GtkAccessibleRangeProps, GtkOrientableProps {
-  endChild?: number;
+  "end-child"?: number;
   position?: number;
-  positionSet?: boolean;
-  resizeEndChild?: boolean;
-  resizeStartChild?: boolean;
-  shrinkEndChild?: boolean;
-  shrinkStartChild?: boolean;
-  startChild?: number;
-  wideHandle?: boolean;
+  "position-set"?: boolean;
+  "resize-end-child"?: boolean;
+  "resize-start-child"?: boolean;
+  "shrink-end-child"?: boolean;
+  "shrink-start-child"?: boolean;
+  "start-child"?: number;
+  "wide-handle"?: boolean;
   "onaccept-position"?: SvlHandler;
   "oncancel-position"?: SvlHandler;
   "oncycle-child-focus"?: SvlHandler;
@@ -1210,78 +1210,78 @@ export interface GtkPanedProps extends GtkWidgetProps, GtkAccessibleRangeProps, 
 export interface GtkParamSpecExpressionProps {
 }
 export interface GtkPasswordEntryProps extends GtkWidgetProps, GtkEditableProps {
-  activatesDefault?: boolean;
-  extraMenu?: number;
-  placeholder?: string;
-  showPeekIcon?: boolean;
+  "activates-default"?: boolean;
+  "extra-menu"?: number;
+  "placeholder-text"?: string;
+  "show-peek-icon"?: boolean;
   onactivate?: SvlHandler;
 }
 export interface GtkPasswordEntryBufferProps extends GtkEntryBufferProps {
 }
 export interface GtkPictureProps extends GtkWidgetProps {
-  alternativeText?: string;
-  canShrink?: boolean;
-  contentFit?: "fill" | "contain" | "cover" | "scale-down";
+  "alternative-text"?: string;
+  "can-shrink"?: boolean;
+  "content-fit"?: "fill" | "contain" | "cover" | "scale-down";
   file?: number;
-  isolateContents?: boolean;
-  keepAspectRatio?: boolean;
+  "isolate-contents"?: boolean;
+  "keep-aspect-ratio"?: boolean;
   paintable?: number | Boxed;
 }
 export interface GtkPopoverProps extends GtkWidgetProps, GtkNativeProps, GtkShortcutManagerProps {
   autohide?: boolean;
-  cascadePopdown?: boolean;
+  "cascade-popdown"?: boolean;
   child?: number;
-  defaultWidget?: number;
-  hasArrow?: boolean;
-  mnemonicsVisible?: boolean;
-  pointingTo?: Rect;
+  "default-widget"?: number;
+  "has-arrow"?: boolean;
+  "mnemonics-visible"?: boolean;
+  "pointing-to"?: Rect;
   position?: "left" | "right" | "top" | "bottom";
   "onactivate-default"?: SvlHandler;
   onclosed?: SvlHandler;
 }
 export interface GtkPopoverBinProps extends GtkWidgetProps {
   child?: number;
-  handleInput?: boolean;
-  menuModel?: number;
+  "handle-input"?: boolean;
+  "menu-model"?: number;
   popover?: number;
 }
 export interface GtkPopoverMenuProps extends GtkPopoverProps {
   flags?: Array<"nested">;
-  menuModel?: number;
-  visibleSubmenu?: string;
+  "menu-model"?: number;
+  "visible-submenu"?: string;
 }
 export interface GtkPopoverMenuBarProps extends GtkWidgetProps {
-  menuModel?: number;
+  "menu-model"?: number;
 }
 export interface GtkPrintContextProps {
 }
 export interface GtkPrintDialogProps {
-  acceptLabel?: string;
+  "accept-label"?: string;
   modal?: boolean;
-  pageSetup?: number;
-  printSettings?: number;
+  "page-setup"?: number;
+  "print-settings"?: number;
   title?: string;
 }
 export interface GtkPrintJobProps {
-  trackPrintStatus?: boolean;
+  "track-print-status"?: boolean;
   "onstatus-changed"?: SvlHandler;
 }
 export interface GtkPrintOperationProps extends GtkPrintOperationPreviewProps {
-  allowAsync?: boolean;
-  currentPage?: number;
-  customTabLabel?: string;
-  defaultPageSetup?: number;
-  embedPageSetup?: boolean;
-  exportFilename?: string;
-  hasSelection?: boolean;
-  jobName?: string;
-  nPages?: number;
-  printSettings?: number;
-  showProgress?: boolean;
-  supportSelection?: boolean;
-  trackPrintStatus?: boolean;
+  "allow-async"?: boolean;
+  "current-page"?: number;
+  "custom-tab-label"?: string;
+  "default-page-setup"?: number;
+  "embed-page-setup"?: boolean;
+  "export-filename"?: string;
+  "has-selection"?: boolean;
+  "job-name"?: string;
+  "n-pages"?: number;
+  "print-settings"?: number;
+  "show-progress"?: boolean;
+  "support-selection"?: boolean;
+  "track-print-status"?: boolean;
   unit?: "none" | "points" | "inch" | "mm";
-  useFullPage?: boolean;
+  "use-full-page"?: boolean;
   "onbegin-print"?: SvlHandler;
   "oncreate-custom-widget"?: SvlHandler;
   "oncustom-widget-apply"?: SvlHandler;
@@ -1301,13 +1301,13 @@ export interface GtkPrintOperationPreviewProps {
 export interface GtkPrintSettingsProps {
 }
 export interface GtkPrintUnixDialogProps extends GtkDialogProps {
-  currentPage?: number;
-  embedPageSetup?: boolean;
-  hasSelection?: boolean;
-  manualCapabilities?: Array<"page-set" | "copies" | "collate" | "reverse" | "scale" | "generate-pdf" | "generate-ps" | "preview" | "number-up" | "number-up-layout">;
-  pageSetup?: number;
-  printSettings?: number;
-  supportSelection?: boolean;
+  "current-page"?: number;
+  "embed-page-setup"?: boolean;
+  "has-selection"?: boolean;
+  "manual-capabilities"?: Array<"page-set" | "copies" | "collate" | "reverse" | "scale" | "generate-pdf" | "generate-ps" | "preview" | "number-up" | "number-up-layout">;
+  "page-setup"?: number;
+  "print-settings"?: number;
+  "support-selection"?: boolean;
 }
 export interface GtkPrinterProps {
   "ondetails-acquired"?: SvlHandler;
@@ -1316,23 +1316,23 @@ export interface GtkProgressBarProps extends GtkWidgetProps, GtkAccessibleRangeP
   ellipsize?: string;
   fraction?: number;
   inverted?: boolean;
-  pulseStep?: number;
-  showText?: boolean;
+  "pulse-step"?: number;
+  "show-text"?: boolean;
   text?: string;
 }
 export interface GtkPropertyExpressionProps extends GtkExpressionProps {
 }
 export interface GtkRangeProps extends GtkWidgetProps, GtkAccessibleRangeProps, GtkOrientableProps {
   adjustment?: number;
-  fillLevel?: number;
+  "fill-level"?: number;
   inverted?: boolean;
   lower?: number;
-  pageIncrement?: number;
-  pageSize?: number;
-  restrictToFillLevel?: boolean;
-  roundDigits?: number;
-  showFillLevel?: boolean;
-  stepIncrement?: number;
+  "page-increment"?: number;
+  "page-size"?: number;
+  "restrict-to-fill-level"?: boolean;
+  "round-digits"?: number;
+  "show-fill-level"?: boolean;
+  "step-increment"?: number;
   upper?: number;
   value?: number;
   "onadjust-bounds"?: SvlHandler;
@@ -1341,25 +1341,25 @@ export interface GtkRangeProps extends GtkWidgetProps, GtkAccessibleRangeProps, 
   "onvalue-changed"?: SvlHandler;
 }
 export interface GtkRecentManagerProps {
-  onchange?: SvlHandler;
+  onchanged?: SvlHandler;
 }
 export interface GtkRevealerProps extends GtkWidgetProps {
   child?: number;
-  revealChild?: boolean;
-  transitionDuration?: number;
-  transitionType?: "none" | "crossfade" | "slide-right" | "slide-left" | "slide-up" | "slide-down" | "swing-right" | "swing-left" | "swing-up" | "swing-down" | "fade-slide-right" | "fade-slide-left" | "fade-slide-up" | "fade-slide-down";
+  "reveal-child"?: boolean;
+  "transition-duration"?: number;
+  "transition-type"?: "none" | "crossfade" | "slide-right" | "slide-left" | "slide-up" | "slide-down" | "swing-right" | "swing-left" | "swing-up" | "swing-down" | "fade-slide-right" | "fade-slide-left" | "fade-slide-up" | "fade-slide-down";
 }
 export interface GtkRootProps {
 }
 export interface GtkScaleProps extends GtkRangeProps {
   digits?: number;
-  drawValue?: boolean;
-  hasOrigin?: boolean;
-  valuePos?: "left" | "right" | "top" | "bottom";
+  "draw-value"?: boolean;
+  "has-origin"?: boolean;
+  "value-pos"?: "left" | "right" | "top" | "bottom";
 }
 export interface GtkScaleButtonProps extends GtkWidgetProps, GtkAccessibleRangeProps, GtkOrientableProps {
   adjustment?: number;
-  hasFrame?: boolean;
+  "has-frame"?: boolean;
   icons?: string[];
   value?: number;
   onpopdown?: SvlHandler;
@@ -1368,9 +1368,9 @@ export interface GtkScaleButtonProps extends GtkWidgetProps, GtkAccessibleRangeP
 }
 export interface GtkScrollableProps {
   hadjustment?: number;
-  hscrollPolicy?: "minimum" | "natural";
+  "hscroll-policy"?: "minimum" | "natural";
   vadjustment?: number;
-  vscrollPolicy?: "minimum" | "natural";
+  "vscroll-policy"?: "minimum" | "natural";
 }
 export interface GtkScrollbarProps extends GtkWidgetProps, GtkAccessibleRangeProps, GtkOrientableProps {
   adjustment?: number;
@@ -1378,19 +1378,19 @@ export interface GtkScrollbarProps extends GtkWidgetProps, GtkAccessibleRangePro
 export interface GtkScrolledWindowProps extends GtkWidgetProps {
   child?: number;
   hadjustment?: number;
-  hasFrame?: boolean;
-  hscrollbarPolicy?: "always" | "automatic" | "never" | "external";
-  kineticScrolling?: boolean;
-  maxContentHeight?: number;
-  maxContentWidth?: number;
-  minContentHeight?: number;
-  minContentWidth?: number;
-  overlayScrolling?: boolean;
-  propagateNaturalHeight?: boolean;
-  propagateNaturalWidth?: boolean;
+  "has-frame"?: boolean;
+  "hscrollbar-policy"?: "always" | "automatic" | "never" | "external";
+  "kinetic-scrolling"?: boolean;
+  "max-content-height"?: number;
+  "max-content-width"?: number;
+  "min-content-height"?: number;
+  "min-content-width"?: number;
+  "overlay-scrolling"?: boolean;
+  "propagate-natural-height"?: boolean;
+  "propagate-natural-width"?: boolean;
   vadjustment?: number;
-  vscrollbarPolicy?: "always" | "automatic" | "never" | "external";
-  windowPlacement?: "top-left" | "bottom-left" | "top-right" | "bottom-right";
+  "vscrollbar-policy"?: "always" | "automatic" | "never" | "external";
+  "window-placement"?: "top-left" | "bottom-left" | "top-right" | "bottom-right";
   "onedge-overshot"?: SvlHandler;
   "onedge-reached"?: SvlHandler;
   "onmove-focus-out"?: SvlHandler;
@@ -1398,17 +1398,17 @@ export interface GtkScrolledWindowProps extends GtkWidgetProps {
 }
 export interface GtkSearchBarProps extends GtkWidgetProps {
   child?: number;
-  keyCaptureWidget?: number;
-  searchModeEnabled?: boolean;
-  showCloseButton?: boolean;
+  "key-capture-widget"?: number;
+  "search-mode-enabled"?: boolean;
+  "show-close-button"?: boolean;
 }
 export interface GtkSearchEntryProps extends GtkWidgetProps, GtkEditableProps {
-  activatesDefault?: boolean;
-  inputHints?: Array<"spellcheck" | "no-spellcheck" | "word-completion" | "lowercase" | "uppercase-chars" | "uppercase-words" | "uppercase-sentences" | "inhibit-osk" | "vertical-writing" | "emoji" | "no-emoji" | "private">;
-  inputPurpose?: "free-form" | "alpha" | "digits" | "number" | "phone" | "url" | "email" | "name" | "password" | "pin" | "terminal";
-  keyCaptureWidget?: number;
-  placeholder?: string;
-  searchDelay?: number;
+  "activates-default"?: boolean;
+  "input-hints"?: Array<"spellcheck" | "no-spellcheck" | "word-completion" | "lowercase" | "uppercase-chars" | "uppercase-words" | "uppercase-sentences" | "inhibit-osk" | "vertical-writing" | "emoji" | "no-emoji" | "private">;
+  "input-purpose"?: "free-form" | "alpha" | "digits" | "number" | "phone" | "url" | "email" | "name" | "password" | "pin" | "terminal";
+  "key-capture-widget"?: number;
+  "placeholder-text"?: string;
+  "search-delay"?: number;
   onactivate?: SvlHandler;
   "onnext-match"?: SvlHandler;
   "onprevious-match"?: SvlHandler;
@@ -1428,61 +1428,61 @@ export interface GtkSelectionModelProps {
 export interface GtkSeparatorProps extends GtkWidgetProps, GtkOrientableProps {
 }
 export interface GtkSettingsProps extends GtkStyleProviderProps {
-  gtkAlternativeButtonOrder?: boolean;
-  gtkAlternativeSortArrows?: boolean;
-  gtkApplicationPreferDarkTheme?: boolean;
-  gtkCursorAspectRatio?: number;
-  gtkCursorBlink?: boolean;
-  gtkCursorBlinkTime?: number;
-  gtkCursorBlinkTimeout?: number;
-  gtkCursorThemeName?: string;
-  gtkCursorThemeSize?: number;
-  gtkDecorationLayout?: string;
-  gtkDialogsUseHeader?: boolean;
-  gtkDndDragThreshold?: number;
-  gtkDoubleClickDistance?: number;
-  gtkDoubleClickTime?: number;
-  gtkEnableAccels?: boolean;
-  gtkEnableAnimations?: boolean;
-  gtkEnableEventSounds?: boolean;
-  gtkEnableInputFeedbackSounds?: boolean;
-  gtkEnablePrimaryPaste?: boolean;
-  gtkEntryPasswordHintTimeout?: number;
-  gtkEntrySelectOnFocus?: boolean;
-  gtkErrorBell?: boolean;
-  gtkFontName?: string;
-  gtkFontRendering?: "automatic" | "manual";
-  gtkFontconfigTimestamp?: number;
-  gtkHintFontMetrics?: boolean;
-  gtkIconThemeName?: string;
-  gtkImModule?: string;
-  gtkInterfaceColorScheme?: "unsupported" | "default" | "dark" | "light";
-  gtkInterfaceContrast?: "unsupported" | "no-preference" | "more" | "less";
-  gtkInterfaceReducedMotion?: "no-preference" | "reduce";
-  gtkKeynavUseCaret?: boolean;
-  gtkLabelSelectOnFocus?: boolean;
-  gtkLongPressTime?: number;
-  gtkOverlayScrolling?: boolean;
-  gtkPrimaryButtonWarpsSlider?: boolean;
-  gtkPrintBackends?: string;
-  gtkPrintPreviewCommand?: string;
-  gtkRecentFilesEnabled?: boolean;
-  gtkRecentFilesMaxAge?: number;
-  gtkShellShowsAppMenu?: boolean;
-  gtkShellShowsDesktop?: boolean;
-  gtkShellShowsMenubar?: boolean;
-  gtkShowStatusShapes?: boolean;
-  gtkSoundThemeName?: string;
-  gtkSplitCursor?: boolean;
-  gtkThemeName?: string;
-  gtkTitlebarDoubleClick?: string;
-  gtkTitlebarMiddleClick?: string;
-  gtkTitlebarRightClick?: string;
-  gtkXftAntialias?: number;
-  gtkXftDpi?: number;
-  gtkXftHinting?: number;
-  gtkXftHintstyle?: string;
-  gtkXftRgba?: string;
+  "gtk-alternative-button-order"?: boolean;
+  "gtk-alternative-sort-arrows"?: boolean;
+  "gtk-application-prefer-dark-theme"?: boolean;
+  "gtk-cursor-aspect-ratio"?: number;
+  "gtk-cursor-blink"?: boolean;
+  "gtk-cursor-blink-time"?: number;
+  "gtk-cursor-blink-timeout"?: number;
+  "gtk-cursor-theme-name"?: string;
+  "gtk-cursor-theme-size"?: number;
+  "gtk-decoration-layout"?: string;
+  "gtk-dialogs-use-header"?: boolean;
+  "gtk-dnd-drag-threshold"?: number;
+  "gtk-double-click-distance"?: number;
+  "gtk-double-click-time"?: number;
+  "gtk-enable-accels"?: boolean;
+  "gtk-enable-animations"?: boolean;
+  "gtk-enable-event-sounds"?: boolean;
+  "gtk-enable-input-feedback-sounds"?: boolean;
+  "gtk-enable-primary-paste"?: boolean;
+  "gtk-entry-password-hint-timeout"?: number;
+  "gtk-entry-select-on-focus"?: boolean;
+  "gtk-error-bell"?: boolean;
+  "gtk-font-name"?: string;
+  "gtk-font-rendering"?: "automatic" | "manual";
+  "gtk-fontconfig-timestamp"?: number;
+  "gtk-hint-font-metrics"?: boolean;
+  "gtk-icon-theme-name"?: string;
+  "gtk-im-module"?: string;
+  "gtk-interface-color-scheme"?: "unsupported" | "default" | "dark" | "light";
+  "gtk-interface-contrast"?: "unsupported" | "no-preference" | "more" | "less";
+  "gtk-interface-reduced-motion"?: "no-preference" | "reduce";
+  "gtk-keynav-use-caret"?: boolean;
+  "gtk-label-select-on-focus"?: boolean;
+  "gtk-long-press-time"?: number;
+  "gtk-overlay-scrolling"?: boolean;
+  "gtk-primary-button-warps-slider"?: boolean;
+  "gtk-print-backends"?: string;
+  "gtk-print-preview-command"?: string;
+  "gtk-recent-files-enabled"?: boolean;
+  "gtk-recent-files-max-age"?: number;
+  "gtk-shell-shows-app-menu"?: boolean;
+  "gtk-shell-shows-desktop"?: boolean;
+  "gtk-shell-shows-menubar"?: boolean;
+  "gtk-show-status-shapes"?: boolean;
+  "gtk-sound-theme-name"?: string;
+  "gtk-split-cursor"?: boolean;
+  "gtk-theme-name"?: string;
+  "gtk-titlebar-double-click"?: string;
+  "gtk-titlebar-middle-click"?: string;
+  "gtk-titlebar-right-click"?: string;
+  "gtk-xft-antialias"?: number;
+  "gtk-xft-dpi"?: number;
+  "gtk-xft-hinting"?: number;
+  "gtk-xft-hintstyle"?: string;
+  "gtk-xft-rgba"?: string;
 }
 export interface GtkShortcutProps {
   action?: number;
@@ -1492,46 +1492,46 @@ export interface GtkShortcutProps {
 export interface GtkShortcutActionProps {
 }
 export interface GtkShortcutControllerProps extends GtkEventControllerProps, GtkBuildableProps {
-  mnemonicModifiers?: string[];
+  "mnemonic-modifiers"?: string[];
   scope?: "local" | "managed" | "global";
 }
 export interface GtkShortcutLabelProps extends GtkWidgetProps {
   accelerator?: string;
-  disabledText?: string;
+  "disabled-text"?: string;
 }
 export interface GtkShortcutManagerProps {
 }
 export interface GtkShortcutTriggerProps {
 }
 export interface GtkShortcutsGroupProps extends GtkBoxProps {
-  accelSizeGroup?: number;
+  "accel-size-group"?: number;
   title?: string;
-  titleSizeGroup?: number;
+  "title-size-group"?: number;
   view?: string;
 }
 export interface GtkShortcutsSectionProps extends GtkBoxProps {
-  maxHeight?: number;
-  sectionName?: string;
+  "max-height"?: number;
+  "section-name"?: string;
   title?: string;
-  viewName?: string;
+  "view-name"?: string;
   "onchange-current-page"?: SvlHandler;
 }
 export interface GtkShortcutsShortcutProps extends GtkWidgetProps {
-  accelSizeGroup?: number;
+  "accel-size-group"?: number;
   accelerator?: string;
-  actionName?: string;
+  "action-name"?: string;
   direction?: "none" | "ltr" | "rtl";
   icon?: number | Boxed;
-  iconSet?: boolean;
-  shortcutType?: "accelerator" | "gesture-pinch" | "gesture-stretch" | "gesture-rotate-clockwise" | "gesture-rotate-counterclockwise" | "gesture-two-finger-swipe-left" | "gesture-two-finger-swipe-right" | "gesture" | "gesture-swipe-left" | "gesture-swipe-right";
+  "icon-set"?: boolean;
+  "shortcut-type"?: "accelerator" | "gesture-pinch" | "gesture-stretch" | "gesture-rotate-clockwise" | "gesture-rotate-counterclockwise" | "gesture-two-finger-swipe-left" | "gesture-two-finger-swipe-right" | "gesture" | "gesture-swipe-left" | "gesture-swipe-right";
   subtitle?: string;
-  subtitleSet?: boolean;
+  "subtitle-set"?: boolean;
   title?: string;
-  titleSizeGroup?: number;
+  "title-size-group"?: number;
 }
 export interface GtkShortcutsWindowProps extends GtkWindowProps {
-  sectionName?: string;
-  viewName?: string;
+  "section-name"?: string;
+  "view-name"?: string;
   onclose?: SvlHandler;
   onsearch?: SvlHandler;
 }
@@ -1545,7 +1545,7 @@ export interface GtkSignalListItemFactoryProps extends GtkListItemFactoryProps {
 }
 export interface GtkSingleSelectionProps extends GtkSectionModelProps, GtkSelectionModelProps {
   autoselect?: boolean;
-  canUnselect?: boolean;
+  "can-unselect"?: boolean;
   model?: number;
   selected?: number;
 }
@@ -1562,23 +1562,23 @@ export interface GtkSnapshotProps {
 export interface GtkSortListModelProps extends GtkSectionModelProps {
   incremental?: boolean;
   model?: number;
-  sectionSorter?: number;
+  "section-sorter"?: number;
   sorter?: number;
 }
 export interface GtkSorterProps {
-  onchange?: SvlHandler;
+  onchanged?: SvlHandler;
 }
 export interface GtkSpinButtonProps extends GtkWidgetProps, GtkAccessibleRangeProps, GtkCellEditableProps, GtkEditableProps, GtkOrientableProps {
-  activatesDefault?: boolean;
+  "activates-default"?: boolean;
   adjustment?: number;
-  climbRate?: number;
+  "climb-rate"?: number;
   digits?: number;
   lower?: number;
   numeric?: boolean;
-  pageIncrement?: number;
-  snapToTicks?: boolean;
-  stepIncrement?: number;
-  updatePolicy?: "always" | "if-valid";
+  "page-increment"?: number;
+  "snap-to-ticks"?: boolean;
+  "step-increment"?: number;
+  "update-policy"?: "always" | "if-valid";
   upper?: number;
   value?: number;
   wrap?: boolean;
@@ -1596,19 +1596,19 @@ export interface GtkSpinnerProps extends GtkWidgetProps {
 }
 export interface GtkStackProps extends GtkWidgetProps {
   hhomogeneous?: boolean;
-  interpolateSize?: boolean;
-  transitionDuration?: number;
-  transitionType?: "none" | "crossfade" | "slide-right" | "slide-left" | "slide-up" | "slide-down" | "slide-left-right" | "slide-up-down" | "over-up" | "over-down" | "over-left" | "over-right" | "under-up" | "under-down" | "under-left" | "under-right" | "over-up-down" | "over-down-up" | "over-left-right" | "over-right-left" | "rotate-left" | "rotate-right" | "rotate-left-right";
+  "interpolate-size"?: boolean;
+  "transition-duration"?: number;
+  "transition-type"?: "none" | "crossfade" | "slide-right" | "slide-left" | "slide-up" | "slide-down" | "slide-left-right" | "slide-up-down" | "over-up" | "over-down" | "over-left" | "over-right" | "under-up" | "under-down" | "under-left" | "under-right" | "over-up-down" | "over-down-up" | "over-left-right" | "over-right-left" | "rotate-left" | "rotate-right" | "rotate-left-right";
   vhomogeneous?: boolean;
-  visibleChild?: number;
-  visibleChildName?: string;
+  "visible-child"?: number;
+  "visible-child-name"?: string;
 }
 export interface GtkStackPageProps extends GtkAccessibleProps {
-  iconName?: string;
+  "icon-name"?: string;
   name?: string;
-  needsAttention?: boolean;
+  "needs-attention"?: boolean;
   title?: string;
-  useUnderline?: boolean;
+  "use-underline"?: boolean;
   visible?: boolean;
 }
 export interface GtkStackSidebarProps extends GtkWidgetProps {
@@ -1623,8 +1623,8 @@ export interface GtkStatusbarProps extends GtkWidgetProps {
 }
 export interface GtkStringFilterProps extends GtkFilterProps {
   expression?: number;
-  ignoreCase?: boolean;
-  matchMode?: "exact" | "substring" | "prefix";
+  "ignore-case"?: boolean;
+  "match-mode"?: "exact" | "substring" | "prefix";
   search?: string;
 }
 export interface GtkStringListProps extends GtkBuildableProps {
@@ -1634,7 +1634,7 @@ export interface GtkStringObjectProps {
 export interface GtkStringSorterProps extends GtkSorterProps {
   collation?: "none" | "unicode" | "filename";
   expression?: number;
-  ignoreCase?: boolean;
+  "ignore-case"?: boolean;
 }
 export interface GtkStyleContextProps {
   display?: number;
@@ -1660,22 +1660,22 @@ export interface GtkSwitchProps extends GtkWidgetProps, GtkActionableProps {
 export interface GtkSymbolicPaintableProps {
 }
 export interface GtkTextProps extends GtkWidgetProps, GtkAccessibleTextProps, GtkEditableProps {
-  activatesDefault?: boolean;
+  "activates-default"?: boolean;
   attributes?: Boxed<"Pango.AttrList">;
   buffer?: number;
-  enableEmojiCompletion?: boolean;
-  extraMenu?: number;
-  imModule?: string;
-  inputHints?: Array<"spellcheck" | "no-spellcheck" | "word-completion" | "lowercase" | "uppercase-chars" | "uppercase-words" | "uppercase-sentences" | "inhibit-osk" | "vertical-writing" | "emoji" | "no-emoji" | "private">;
-  inputPurpose?: "free-form" | "alpha" | "digits" | "number" | "phone" | "url" | "email" | "name" | "password" | "pin" | "terminal";
-  invisibleChar?: number;
-  invisibleCharSet?: boolean;
-  maxLength?: number;
-  overwriteMode?: boolean;
-  placeholder?: string;
-  propagateTextWidth?: boolean;
+  "enable-emoji-completion"?: boolean;
+  "extra-menu"?: number;
+  "im-module"?: string;
+  "input-hints"?: Array<"spellcheck" | "no-spellcheck" | "word-completion" | "lowercase" | "uppercase-chars" | "uppercase-words" | "uppercase-sentences" | "inhibit-osk" | "vertical-writing" | "emoji" | "no-emoji" | "private">;
+  "input-purpose"?: "free-form" | "alpha" | "digits" | "number" | "phone" | "url" | "email" | "name" | "password" | "pin" | "terminal";
+  "invisible-char"?: number;
+  "invisible-char-set"?: boolean;
+  "max-length"?: number;
+  "overwrite-mode"?: boolean;
+  "placeholder-text"?: string;
+  "propagate-text-width"?: boolean;
   tabs?: Boxed<"Pango.TabArray">;
-  truncateMultiline?: boolean;
+  "truncate-multiline"?: boolean;
   visibility?: boolean;
   onactivate?: SvlHandler;
   onbackspace?: SvlHandler;
@@ -1690,11 +1690,11 @@ export interface GtkTextProps extends GtkWidgetProps, GtkAccessibleTextProps, Gt
   "ontoggle-overwrite"?: SvlHandler;
 }
 export interface GtkTextBufferProps {
-  enableUndo?: boolean;
+  "enable-undo"?: boolean;
   text?: string;
   "onapply-tag"?: SvlHandler;
   "onbegin-user-action"?: SvlHandler;
-  onchange?: SvlHandler;
+  onchanged?: SvlHandler;
   "ondelete-range"?: SvlHandler;
   "onend-user-action"?: SvlHandler;
   "oninsert-child-anchor"?: SvlHandler;
@@ -1713,94 +1713,94 @@ export interface GtkTextChildAnchorProps {
 export interface GtkTextMarkProps {
 }
 export interface GtkTextTagProps {
-  accumulativeMargin?: boolean;
-  allowBreaks?: boolean;
-  allowBreaksSet?: boolean;
+  "accumulative-margin"?: boolean;
+  "allow-breaks"?: boolean;
+  "allow-breaks-set"?: boolean;
   background?: string;
-  backgroundFullHeight?: boolean;
-  backgroundFullHeightSet?: boolean;
-  backgroundRgba?: Color | string;
-  backgroundSet?: boolean;
+  "background-full-height"?: boolean;
+  "background-full-height-set"?: boolean;
+  "background-rgba"?: Color | string;
+  "background-set"?: boolean;
   direction?: "none" | "ltr" | "rtl";
   editable?: boolean;
-  editableSet?: boolean;
+  "editable-set"?: boolean;
   fallback?: boolean;
-  fallbackSet?: boolean;
+  "fallback-set"?: boolean;
   family?: string;
-  familySet?: boolean;
+  "family-set"?: boolean;
   font?: string;
-  fontDesc?: Boxed<"Pango.FontDescription"> | string;
-  fontFeatures?: string;
-  fontFeaturesSet?: boolean;
+  "font-desc"?: Boxed<"Pango.FontDescription"> | string;
+  "font-features"?: string;
+  "font-features-set"?: boolean;
   foreground?: string;
-  foregroundRgba?: Color | string;
-  foregroundSet?: boolean;
+  "foreground-rgba"?: Color | string;
+  "foreground-set"?: boolean;
   indent?: number;
-  indentSet?: boolean;
-  insertHyphens?: boolean;
-  insertHyphensSet?: boolean;
+  "indent-set"?: boolean;
+  "insert-hyphens"?: boolean;
+  "insert-hyphens-set"?: boolean;
   invisible?: boolean;
-  invisibleSet?: boolean;
+  "invisible-set"?: boolean;
   justification?: "left" | "right" | "center" | "fill";
-  justificationSet?: boolean;
+  "justification-set"?: boolean;
   language?: string;
-  languageSet?: boolean;
-  leftMargin?: number;
-  leftMarginSet?: boolean;
-  letterSpacing?: number;
-  letterSpacingSet?: boolean;
-  lineHeight?: number;
-  lineHeightSet?: boolean;
+  "language-set"?: boolean;
+  "left-margin"?: number;
+  "left-margin-set"?: boolean;
+  "letter-spacing"?: number;
+  "letter-spacing-set"?: boolean;
+  "line-height"?: number;
+  "line-height-set"?: boolean;
   overline?: string;
-  overlineRgba?: Color | string;
-  overlineRgbaSet?: boolean;
-  overlineSet?: boolean;
-  paragraphBackground?: string;
-  paragraphBackgroundRgba?: Color | string;
-  paragraphBackgroundSet?: boolean;
-  pixelsAboveLines?: number;
-  pixelsAboveLinesSet?: boolean;
-  pixelsBelowLines?: number;
-  pixelsBelowLinesSet?: boolean;
-  pixelsInsideWrap?: number;
-  pixelsInsideWrapSet?: boolean;
-  rightMargin?: number;
-  rightMarginSet?: boolean;
+  "overline-rgba"?: Color | string;
+  "overline-rgba-set"?: boolean;
+  "overline-set"?: boolean;
+  "paragraph-background"?: string;
+  "paragraph-background-rgba"?: Color | string;
+  "paragraph-background-set"?: boolean;
+  "pixels-above-lines"?: number;
+  "pixels-above-lines-set"?: boolean;
+  "pixels-below-lines"?: number;
+  "pixels-below-lines-set"?: boolean;
+  "pixels-inside-wrap"?: number;
+  "pixels-inside-wrap-set"?: boolean;
+  "right-margin"?: number;
+  "right-margin-set"?: boolean;
   rise?: number;
-  riseSet?: boolean;
+  "rise-set"?: boolean;
   scale?: number;
-  scaleSet?: boolean;
+  "scale-set"?: boolean;
   sentence?: boolean;
-  sentenceSet?: boolean;
-  showSpaces?: string[];
-  showSpacesSet?: boolean;
+  "sentence-set"?: boolean;
+  "show-spaces"?: string[];
+  "show-spaces-set"?: boolean;
   size?: number;
-  sizePoints?: number;
-  sizeSet?: boolean;
+  "size-points"?: number;
+  "size-set"?: boolean;
   stretch?: string;
-  stretchSet?: boolean;
+  "stretch-set"?: boolean;
   strikethrough?: boolean;
-  strikethroughRgba?: Color | string;
-  strikethroughRgbaSet?: boolean;
-  strikethroughSet?: boolean;
+  "strikethrough-rgba"?: Color | string;
+  "strikethrough-rgba-set"?: boolean;
+  "strikethrough-set"?: boolean;
   style?: string;
-  styleSet?: boolean;
+  "style-set"?: boolean;
   tabs?: Boxed<"Pango.TabArray">;
-  tabsSet?: boolean;
-  textTransform?: string;
-  textTransformSet?: boolean;
+  "tabs-set"?: boolean;
+  "text-transform"?: string;
+  "text-transform-set"?: boolean;
   underline?: string;
-  underlineRgba?: Color | string;
-  underlineRgbaSet?: boolean;
-  underlineSet?: boolean;
+  "underline-rgba"?: Color | string;
+  "underline-rgba-set"?: boolean;
+  "underline-set"?: boolean;
   variant?: string;
-  variantSet?: boolean;
+  "variant-set"?: boolean;
   weight?: number;
-  weightSet?: boolean;
+  "weight-set"?: boolean;
   word?: boolean;
-  wordSet?: boolean;
-  wrapMode?: "none" | "char" | "word" | "word-char";
-  wrapModeSet?: boolean;
+  "word-set"?: boolean;
+  "wrap-mode"?: "none" | "char" | "word" | "word-char";
+  "wrap-mode-set"?: boolean;
 }
 export interface GtkTextTagTableProps extends GtkBuildableProps {
   "ontag-added"?: SvlHandler;
@@ -1808,30 +1808,30 @@ export interface GtkTextTagTableProps extends GtkBuildableProps {
   "ontag-removed"?: SvlHandler;
 }
 export interface GtkTextViewProps extends GtkWidgetProps, GtkAccessibleTextProps, GtkScrollableProps {
-  acceptsTab?: boolean;
-  bottomMargin?: number;
+  "accepts-tab"?: boolean;
+  "bottom-margin"?: number;
   buffer?: number;
-  cursorVisible?: boolean;
+  "cursor-visible"?: boolean;
   editable?: boolean;
-  extraMenu?: number;
-  imModule?: string;
+  "extra-menu"?: number;
+  "im-module"?: string;
   indent?: number;
-  inputHints?: Array<"spellcheck" | "no-spellcheck" | "word-completion" | "lowercase" | "uppercase-chars" | "uppercase-words" | "uppercase-sentences" | "inhibit-osk" | "vertical-writing" | "emoji" | "no-emoji" | "private">;
-  inputPurpose?: "free-form" | "alpha" | "digits" | "number" | "phone" | "url" | "email" | "name" | "password" | "pin" | "terminal";
+  "input-hints"?: Array<"spellcheck" | "no-spellcheck" | "word-completion" | "lowercase" | "uppercase-chars" | "uppercase-words" | "uppercase-sentences" | "inhibit-osk" | "vertical-writing" | "emoji" | "no-emoji" | "private">;
+  "input-purpose"?: "free-form" | "alpha" | "digits" | "number" | "phone" | "url" | "email" | "name" | "password" | "pin" | "terminal";
   justification?: "left" | "right" | "center" | "fill";
-  leftMargin?: number;
+  "left-margin"?: number;
   monospace?: boolean;
   overwrite?: boolean;
-  pixelsAboveLines?: number;
-  pixelsBelowLines?: number;
-  pixelsInsideWrap?: number;
-  rightMargin?: number;
+  "pixels-above-lines"?: number;
+  "pixels-below-lines"?: number;
+  "pixels-inside-wrap"?: number;
+  "right-margin"?: number;
   tabs?: Boxed<"Pango.TabArray">;
   text?: string;
-  topMargin?: number;
-  wrapMode?: "none" | "char" | "word" | "word-char";
+  "top-margin"?: number;
+  "wrap-mode"?: "none" | "char" | "word" | "word-char";
   onbackspace?: SvlHandler;
-  onchange?: SvlHandler;
+  onchanged?: SvlHandler;
   "oncopy-clipboard"?: SvlHandler;
   "oncut-clipboard"?: SvlHandler;
   "ondelete-from-cursor"?: SvlHandler;
@@ -1861,10 +1861,10 @@ export interface GtkTreeDragSourceProps {
 }
 export interface GtkTreeExpanderProps extends GtkWidgetProps {
   child?: number;
-  hideExpander?: boolean;
-  indentForDepth?: boolean;
-  indentForIcon?: boolean;
-  listRow?: number;
+  "hide-expander"?: boolean;
+  "indent-for-depth"?: boolean;
+  "indent-for-icon"?: boolean;
+  "list-row"?: number;
 }
 export interface GtkTreeListModelProps {
   autoexpand?: boolean;
@@ -1888,7 +1888,7 @@ export interface GtkTreeModelSortProps extends GtkTreeDragSourceProps, GtkTreeMo
 }
 export interface GtkTreeSelectionProps {
   mode?: "none" | "single" | "browse" | "multiple";
-  onchange?: SvlHandler;
+  onchanged?: SvlHandler;
 }
 export interface GtkTreeSortableProps {
   "onsort-column-changed"?: SvlHandler;
@@ -1896,23 +1896,23 @@ export interface GtkTreeSortableProps {
 export interface GtkTreeStoreProps extends GtkBuildableProps, GtkTreeDragDestProps, GtkTreeDragSourceProps, GtkTreeModelProps, GtkTreeSortableProps {
 }
 export interface GtkTreeViewProps extends GtkWidgetProps, GtkScrollableProps {
-  activateOnSingleClick?: boolean;
-  enableGridLines?: "none" | "horizontal" | "vertical" | "both";
-  enableSearch?: boolean;
-  enableTreeLines?: boolean;
-  expanderColumn?: number;
-  fixedHeightMode?: boolean;
-  headersClickable?: boolean;
-  headersVisible?: boolean;
-  hoverExpand?: boolean;
-  hoverSelection?: boolean;
-  levelIndentation?: number;
+  "activate-on-single-click"?: boolean;
+  "enable-grid-lines"?: "none" | "horizontal" | "vertical" | "both";
+  "enable-search"?: boolean;
+  "enable-tree-lines"?: boolean;
+  "expander-column"?: number;
+  "fixed-height-mode"?: boolean;
+  "headers-clickable"?: boolean;
+  "headers-visible"?: boolean;
+  "hover-expand"?: boolean;
+  "hover-selection"?: boolean;
+  "level-indentation"?: number;
   model?: number;
   reorderable?: boolean;
-  rubberBanding?: boolean;
-  searchColumn?: number;
-  showExpanders?: boolean;
-  tooltipColumn?: number;
+  "rubber-banding"?: boolean;
+  "search-column"?: number;
+  "show-expanders"?: boolean;
+  "tooltip-column"?: number;
   "oncolumns-changed"?: SvlHandler;
   "oncursor-changed"?: SvlHandler;
   "onexpand-collapse-cursor-row"?: SvlHandler;
@@ -1933,20 +1933,20 @@ export interface GtkTreeViewColumnProps extends GtkBuildableProps, GtkCellLayout
   alignment?: number;
   clickable?: boolean;
   expand?: boolean;
-  fixedWidth?: number;
-  maxWidth?: number;
-  minWidth?: number;
+  "fixed-width"?: number;
+  "max-width"?: number;
+  "min-width"?: number;
   reorderable?: boolean;
   resizable?: boolean;
   sizing?: "grow-only" | "autosize" | "fixed";
-  sortColumnId?: number;
-  sortIndicator?: boolean;
-  sortOrder?: "ascending" | "descending";
+  "sort-column-id"?: number;
+  "sort-indicator"?: boolean;
+  "sort-order"?: "ascending" | "descending";
   spacing?: number;
   title?: string;
   visible?: boolean;
   widget?: number;
-  onclick?: SvlHandler;
+  onclicked?: SvlHandler;
 }
 export interface GtkTryExpressionProps extends GtkExpressionProps {
 }
@@ -1956,65 +1956,65 @@ export interface GtkUriLauncherProps {
 export interface GtkVideoProps extends GtkWidgetProps {
   autoplay?: boolean;
   file?: number;
-  graphicsOffload?: "enabled" | "disabled";
+  "graphics-offload"?: "enabled" | "disabled";
   loop?: boolean;
-  mediaStream?: number;
+  "media-stream"?: number;
 }
 export interface GtkViewportProps extends GtkWidgetProps, GtkScrollableProps {
   child?: number;
-  scrollToFocus?: boolean;
+  "scroll-to-focus"?: boolean;
 }
 export interface GtkVolumeButtonProps extends GtkScaleButtonProps {
-  useSymbolic?: boolean;
+  "use-symbolic"?: boolean;
 }
 export interface GtkWidgetProps extends GtkAccessibleProps, GtkBuildableProps, GtkConstraintTargetProps {
-  canFocus?: boolean;
-  canTarget?: boolean;
-  cssClasses?: string[];
+  "can-focus"?: boolean;
+  "can-target"?: boolean;
+  "css-classes"?: string[];
   cursor?: number;
-  focusOnClick?: boolean;
+  "focus-on-click"?: boolean;
   focusable?: boolean;
   halign?: "fill" | "start" | "end" | "center" | "baseline-fill" | "baseline" | "baseline-center";
-  hasTooltip?: boolean;
-  heightRequest?: number;
+  "has-tooltip"?: boolean;
+  "height-request"?: number;
   hexpand?: boolean;
-  hexpandSet?: boolean;
-  layoutManager?: number;
-  limitEvents?: boolean;
-  marginBottom?: number;
-  marginEnd?: number;
-  marginStart?: number;
-  marginTop?: number;
+  "hexpand-set"?: boolean;
+  "layout-manager"?: number;
+  "limit-events"?: boolean;
+  "margin-bottom"?: number;
+  "margin-end"?: number;
+  "margin-start"?: number;
+  "margin-top"?: number;
   name?: string;
   opacity?: number;
   overflow?: "visible" | "hidden";
-  receivesDefault?: boolean;
+  "receives-default"?: boolean;
   sensitive?: boolean;
-  tooltipMarkup?: string;
-  tooltipText?: string;
+  "tooltip-markup"?: string;
+  "tooltip-text"?: string;
   valign?: "fill" | "start" | "end" | "center" | "baseline-fill" | "baseline" | "baseline-center";
   vexpand?: boolean;
-  vexpandSet?: boolean;
+  "vexpand-set"?: boolean;
   visible?: boolean;
-  widthRequest?: number;
+  "width-request"?: number;
   'parent:clip'?: boolean;
   'parent:column'?: number;
-  'parent:columnSpan'?: number;
+  'parent:column-span'?: number;
   'parent:detachable'?: boolean;
   'parent:header'?: string;
-  'parent:iconName'?: string;
+  'parent:icon-name'?: string;
   'parent:measure'?: boolean;
-  'parent:menuLabel'?: string;
+  'parent:menu-label'?: string;
   'parent:name'?: string;
-  'parent:needsAttention'?: boolean;
+  'parent:needs-attention'?: boolean;
   'parent:reorderable'?: boolean;
   'parent:row'?: number;
-  'parent:rowSpan'?: number;
-  'parent:tabExpand'?: boolean;
-  'parent:tabFill'?: boolean;
-  'parent:tabLabel'?: string;
+  'parent:row-span'?: number;
+  'parent:tab-expand'?: boolean;
+  'parent:tab-fill'?: boolean;
+  'parent:tab-label'?: string;
   'parent:title'?: string;
-  'parent:useUnderline'?: boolean;
+  'parent:use-underline'?: boolean;
   'parent:x'?: number;
   'parent:y'?: number;
   ondestroy?: SvlHandler;
@@ -2038,27 +2038,27 @@ export interface GtkWindowProps extends GtkWidgetProps, GtkNativeProps, GtkRootP
   application?: number;
   child?: number;
   decorated?: boolean;
-  defaultHeight?: number;
-  defaultWidget?: number;
-  defaultWidth?: number;
+  "default-height"?: number;
+  "default-widget"?: number;
+  "default-width"?: number;
   deletable?: boolean;
-  destroyWithParent?: boolean;
+  "destroy-with-parent"?: boolean;
   display?: number;
-  focusVisible?: boolean;
-  focusWidget?: number;
+  "focus-visible"?: boolean;
+  "focus-widget"?: number;
   fullscreened?: boolean;
   gravity?: "top-left" | "top" | "top-right" | "left" | "center" | "right" | "bottom-left" | "bottom" | "bottom-right" | "top-start" | "top-end" | "start" | "end" | "bottom-start" | "bottom-end";
-  handleMenubarAccel?: boolean;
-  hideOnClose?: boolean;
-  iconName?: string;
+  "handle-menubar-accel"?: boolean;
+  "hide-on-close"?: boolean;
+  "icon-name"?: string;
   maximized?: boolean;
-  mnemonicsVisible?: boolean;
+  "mnemonics-visible"?: boolean;
   modal?: boolean;
   resizable?: boolean;
-  startupId?: string;
+  "startup-id"?: string;
   title?: string;
   titlebar?: number;
-  transientFor?: number;
+  "transient-for"?: number;
   "onactivate-default"?: SvlHandler;
   "onactivate-focus"?: SvlHandler;
   "onclose-request"?: SvlHandler;
@@ -2066,9 +2066,9 @@ export interface GtkWindowProps extends GtkWidgetProps, GtkNativeProps, GtkRootP
   "onkeys-changed"?: SvlHandler;
 }
 export interface GtkWindowControlsProps extends GtkWidgetProps {
-  decorationLayout?: string;
+  "decoration-layout"?: string;
   side?: "start" | "end";
-  useNativeControls?: boolean;
+  "use-native-controls"?: boolean;
 }
 export interface GtkWindowGroupProps {
 }
@@ -2077,75 +2077,76 @@ export interface GtkWindowHandleProps extends GtkWidgetProps {
 }
 
 export interface GtkElements {
-  aboutdialog: GtkAboutDialogProps;
-  actionbar: GtkActionBarProps;
-  aspectframe: GtkAspectFrameProps;
+  "about-dialog": GtkAboutDialogProps;
+  "action-bar": GtkActionBarProps;
+  "application-window": GtkApplicationWindowProps;
+  "aspect-frame": GtkAspectFrameProps;
   box: GtkBoxProps;
   button: GtkButtonProps;
   calendar: GtkCalendarProps;
-  centerbox: GtkCenterBoxProps;
-  checkbutton: GtkCheckButtonProps;
-  clickgesture: GtkGestureClickProps;
-  colordialogbutton: GtkColorDialogButtonProps;
-  drawingarea: GtkDrawingAreaProps;
-  editablelabel: GtkEditableLabelProps;
-  emojichooser: GtkEmojiChooserProps;
+  "center-box": GtkCenterBoxProps;
+  "check-button": GtkCheckButtonProps;
+  "color-dialog-button": GtkColorDialogButtonProps;
+  "drawing-area": GtkDrawingAreaProps;
+  "editable-label": GtkEditableLabelProps;
+  "emoji-chooser": GtkEmojiChooserProps;
   entry: GtkEntryProps;
+  "event-controller-focus": GtkEventControllerFocusProps;
+  "event-controller-key": GtkEventControllerKeyProps;
+  "event-controller-motion": GtkEventControllerMotionProps;
+  "event-controller-scroll": GtkEventControllerScrollProps;
   expander: GtkExpanderProps;
   fixed: GtkFixedProps;
-  flowbox: GtkFlowBoxProps;
-  flowboxchild: GtkFlowBoxChildProps;
-  focuscontroller: GtkEventControllerFocusProps;
-  fontdialogbutton: GtkFontDialogButtonProps;
+  "flow-box": GtkFlowBoxProps;
+  "flow-box-child": GtkFlowBoxChildProps;
+  "font-dialog-button": GtkFontDialogButtonProps;
   frame: GtkFrameProps;
-  graphicsoffload: GtkGraphicsOffloadProps;
+  "gesture-click": GtkGestureClickProps;
+  "graphics-offload": GtkGraphicsOffloadProps;
   grid: GtkGridProps;
-  headerbar: GtkHeaderBarProps;
+  "header-bar": GtkHeaderBarProps;
   image: GtkImageProps;
   inscription: GtkInscriptionProps;
-  keycontroller: GtkEventControllerKeyProps;
   label: GtkLabelProps;
-  levelbar: GtkLevelBarProps;
-  linkbutton: GtkLinkButtonProps;
-  listbox: GtkListBoxProps;
-  listboxrow: GtkListBoxRowProps;
-  lockbutton: GtkLockButtonProps;
-  mediacontrols: GtkMediaControlsProps;
-  menubutton: GtkMenuButtonProps;
-  motioncontroller: GtkEventControllerMotionProps;
+  "level-bar": GtkLevelBarProps;
+  "link-button": GtkLinkButtonProps;
+  "list-box": GtkListBoxProps;
+  "list-box-row": GtkListBoxRowProps;
+  "lock-button": GtkLockButtonProps;
+  "media-controls": GtkMediaControlsProps;
+  "menu-button": GtkMenuButtonProps;
   notebook: GtkNotebookProps;
   overlay: GtkOverlayProps;
   paned: GtkPanedProps;
-  passwordentry: GtkPasswordEntryProps;
+  "password-entry": GtkPasswordEntryProps;
   picture: GtkPictureProps;
   popover: GtkPopoverProps;
-  popovermenu: GtkPopoverMenuProps;
-  popovermenubar: GtkPopoverMenuBarProps;
-  progressbar: GtkProgressBarProps;
+  "popover-menu": GtkPopoverMenuProps;
+  "popover-menu-bar": GtkPopoverMenuBarProps;
+  "progress-bar": GtkProgressBarProps;
   range: GtkRangeProps;
   revealer: GtkRevealerProps;
   scale: GtkScaleProps;
-  scalebutton: GtkScaleButtonProps;
+  "scale-button": GtkScaleButtonProps;
   scrollbar: GtkScrollbarProps;
-  scrollcontroller: GtkEventControllerScrollProps;
-  scrolledwindow: GtkScrolledWindowProps;
-  searchbar: GtkSearchBarProps;
-  searchentry: GtkSearchEntryProps;
+  "scrolled-window": GtkScrolledWindowProps;
+  "search-bar": GtkSearchBarProps;
+  "search-entry": GtkSearchEntryProps;
   separator: GtkSeparatorProps;
-  shortcutlabel: GtkShortcutLabelProps;
-  spinbutton: GtkSpinButtonProps;
+  "shortcut-label": GtkShortcutLabelProps;
+  "spin-button": GtkSpinButtonProps;
   spinner: GtkSpinnerProps;
   stack: GtkStackProps;
-  stacksidebar: GtkStackSidebarProps;
-  stackswitcher: GtkStackSwitcherProps;
+  "stack-sidebar": GtkStackSidebarProps;
+  "stack-switcher": GtkStackSwitcherProps;
   switch: GtkSwitchProps;
   text: GtkTextProps;
-  textview: GtkTextViewProps;
-  togglebutton: GtkToggleButtonProps;
+  "text-view": GtkTextViewProps;
+  "toggle-button": GtkToggleButtonProps;
   video: GtkVideoProps;
   viewport: GtkViewportProps;
-  volumebutton: GtkVolumeButtonProps;
-  window: GtkApplicationWindowProps;
-  windowcontrols: GtkWindowControlsProps;
-  windowhandle: GtkWindowHandleProps;
+  "volume-button": GtkVolumeButtonProps;
+  window: GtkWindowProps;
+  "window-controls": GtkWindowControlsProps;
+  "window-handle": GtkWindowHandleProps;
 }

@@ -3,7 +3,7 @@
   // Calendar and date/time edits. Dates are {year, month, day} records, times {hour, minute,
   // second, ms}, date-times JS Dates. The date/time edits are two-way bound: the app writes new
   // values after mount, which must not come back as change events (echo labels stay 0).
-  // Item views are covered by the portable virtuallist; QGraphicsView, QSplashScreen, QRhiWidget,
+  // Item views are covered by the portable virtual-list; QGraphicsView, QSplashScreen, QRhiWidget,
   // QRubberBand, QFocusFrame, QSizeGrip and QSplitterHandle are not exposed.
   let cal = $state(null);
   let selected = $state(0);
@@ -25,16 +25,16 @@
   });
 </script>
 
-<box orientation="vertical" spacing="4">
-  <calendar bind:this={cal} minimumDate={{ year: 2024, month: 1, day: 1 }} maximumDate={{ year: 2024, month: 12, day: 31 }} selectedDate={{ year: 2024, month: 3, day: 15 }} gridVisible={true}
-            navigationBarVisible={true} firstDayOfWeek="monday" horizontalHeaderFormat="short-day-names"
-            verticalHeaderFormat="no-vertical-header" dateEditEnabled={true}
-            onselection-changed={() => selected++} onpage-changed={() => pages++} />
-  <label label="selection changes: {selected}, page changes: {pages}" />
-  <dateedit minimumDate={{ year: 2024, month: 1, day: 1 }} maximumDate={{ year: 2024, month: 12, day: 31 }} bind:date displayFormat="yyyy-MM-dd" calendarPopup={true} ondate-changed={() => { if (armed) echoDate++; }} />
-  <label label="echo date: {echoDate}" />
-  <timeedit minimumTime={{ hour: 8, minute: 0, second: 0, ms: 0 }} maximumTime={{ hour: 18, minute: 0, second: 0, ms: 0 }} bind:time displayFormat="HH:mm" ontime-changed={() => { if (armed) echoTime++; }} />
-  <label label="echo time: {echoTime}" />
-  <datetimeedit bind:dateTime displayFormat="yyyy-MM-dd HH:mm" ondate-time-changed={() => { if (armed) echoDateTime++; }} />
-  <label label="echo dateTime: {echoDateTime}" />
-</box>
+<box-layout direction="top-to-bottom" spacing="4">
+  <calendar-widget bind:this={cal} minimum-date={{ year: 2024, month: 1, day: 1 }} maximum-date={{ year: 2024, month: 12, day: 31 }} selected-date={{ year: 2024, month: 3, day: 15 }} grid-visible={true}
+            navigation-bar-visible={true} first-day-of-week="monday" horizontal-header-format="short-day-names"
+            vertical-header-format="no-vertical-header" date-edit-enabled={true}
+            onselection-changed={() => selected++} oncurrent-page-changed={() => pages++} />
+  <label text="selection changes: {selected}, page changes: {pages}" />
+  <date-edit minimum-date={{ year: 2024, month: 1, day: 1 }} maximum-date={{ year: 2024, month: 12, day: 31 }} bind:date display-format="yyyy-MM-dd" calendar-popup={true} ondate-changed={() => { if (armed) echoDate++; }} />
+  <label text="echo date: {echoDate}" />
+  <time-edit minimum-time={{ hour: 8, minute: 0, second: 0, ms: 0 }} maximum-time={{ hour: 18, minute: 0, second: 0, ms: 0 }} bind:time display-format="HH:mm" ontime-changed={() => { if (armed) echoTime++; }} />
+  <label text="echo time: {echoTime}" />
+  <date-time-edit bind:date-time={dateTime} display-format="yyyy-MM-dd HH:mm" ondate-time-changed={() => { if (armed) echoDateTime++; }} />
+  <label text="echo date-time: {echoDateTime}" />
+</box-layout>

@@ -234,7 +234,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:MountOperation:prop:is-showing",
       "invocation": "reflected",
-      "js_name": "isShowing",
+      "js_name": "is-showing",
       "name": "is-showing",
       "notify": {
         "explicit": false,

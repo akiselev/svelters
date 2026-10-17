@@ -127,7 +127,7 @@
       "default": 1.0,
       "id": "svelters-api:v1:type:gtk:Gtk:GestureLongPress:prop:delay-factor",
       "invocation": "reflected",
-      "js_name": "delayFactor",
+      "js_name": "delay-factor",
       "name": "delay-factor",
       "notify": {
         "explicit": true,

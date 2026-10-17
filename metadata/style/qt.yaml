@@ -58,16 +58,16 @@ properties:
   min-height: { via: css, note: "the QSS minimum; minimum-height is the widget property" }
 
   # ---- QWidget properties ----
-  minimum-width: { via: setter, prop: minimumWidth, type: length, kinds: [QWidget] }
-  minimum-height: { via: setter, prop: minimumHeight, type: length, kinds: [QWidget] }
-  maximum-width: { via: setter, prop: maximumWidth, type: length, kinds: [QWidget] }
-  maximum-height: { via: setter, prop: maximumHeight, type: length, kinds: [QWidget] }
+  minimum-width: { via: setter, prop: minimum-width, type: length, kinds: [QWidget] }
+  minimum-height: { via: setter, prop: minimum-height, type: length, kinds: [QWidget] }
+  maximum-width: { via: setter, prop: maximum-width, type: length, kinds: [QWidget] }
+  maximum-height: { via: setter, prop: maximum-height, type: length, kinds: [QWidget] }
   enabled: { via: setter, prop: enabled, type: bool, kinds: [QWidget] }
 
-  # ---- layouts (the box kind is a QWidget with a QBoxLayout) ----
-  orientation: { via: setter, prop: orientation, type: enum, kinds: [box] }
-  spacing: { via: setter, prop: spacing, type: length, kinds: [box] }
-  contents-margins: { via: setter, prop: contentsMargins, type: insets, kinds: [box] }
+  # ---- layouts (the box-layout kind is a QWidget with a QBoxLayout) ----
+  direction: { via: setter, prop: direction, type: enum, kinds: [box-layout] }
+  spacing: { via: setter, prop: spacing, type: length, kinds: [box-layout] }
+  contents-margins: { via: setter, prop: contents-margins, type: insets, kinds: [box-layout] }
   # QBoxLayout::setStretchFactor(widget, stretch) and QLayout::setAlignment(widget, alignment)
-  stretch: { via: child-attr, attr: stretch, type: int, parents: [box] }
-  align: { via: child-attr, attr: align, type: enum, parents: [box], note: "the alignment of the widget in its layout cell (parent:align)" }
+  stretch: { via: child-attr, attr: stretch, type: int, parents: [box-layout] }
+  alignment: { via: child-attr, attr: alignment, type: enum, parents: [box-layout], note: "the alignment of the widget in its layout cell (parent:alignment)" }

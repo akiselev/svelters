@@ -1,16 +1,16 @@
 elements:
-  - tag: progressbar
+  - tag: progress-bar
     construct: { class: QProgressBar }
     props:
       - { js: value, native: value, suppress_signals: true, provenance: "QProgressBar::value (qdoc)" }
       - { js: minimum, native: minimum, provenance: "QProgressBar::minimum (qdoc)" }
       - { js: maximum, native: maximum, provenance: "QProgressBar::maximum (qdoc)" }
       - { js: format, native: format, provenance: "QProgressBar::format (qdoc)" }
-      - { js: textVisible, native: textVisible, provenance: "QProgressBar::textVisible (qdoc)" }
+      - { js: text-visible, native: textVisible, provenance: "QProgressBar::textVisible (qdoc)" }
       - { js: orientation, native: orientation, provenance: "QProgressBar::orientation (qdoc)" }
-      - { js: invertedAppearance, native: invertedAppearance, provenance: "QProgressBar::invertedAppearance (qdoc)" }
+      - { js: inverted-appearance, native: invertedAppearance, provenance: "QProgressBar::invertedAppearance (qdoc)" }
     signals:
-      - js: valueChanged
+      - js: value-changed
         native: valueChanged
         connect: "valueChanged(int)"
         args: [{ name: value, type: i32 }]

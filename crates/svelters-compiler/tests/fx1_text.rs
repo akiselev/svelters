@@ -23,9 +23,9 @@ fn js(backend: &str, src: &str) -> String {
 
 #[test]
 fn text_children_set_each_toolkits_text_prop() {
-    for (b, tag, prop) in [("gtk", "button", "label"), ("qt", "button", "label"), ("appkit", "button", "title"), ("winui", "button", "content"), ("winui", "text-block", "text")] {
-        let window = if b == "appkit" { "<window><stack-view>" } else if b == "winui" { "<window><stack-panel>" } else { "<window><box>" };
-        let close = if b == "appkit" { "</stack-view></window>" } else if b == "winui" { "</stack-panel></window>" } else { "</box></window>" };
+    for (b, tag, prop) in [("gtk", "button", "label"), ("qt", "push-button", "text"), ("appkit", "button", "title"), ("winui", "button", "content"), ("winui", "text-block", "text")] {
+        let window = if b == "appkit" { "<window><stack-view>" } else if b == "winui" { "<window><stack-panel>" } else if b == "qt" { "<main-window><box-layout>" } else { "<window><box>" };
+        let close = if b == "appkit" { "</stack-view></window>" } else if b == "winui" { "</stack-panel></window>" } else if b == "qt" { "</box-layout></main-window>" } else { "</box></window>" };
         let out = js(b, &format!("<script>let n = $state(1);</script>{window}<{tag}>Save</{tag}><{tag}>n = {{n}}</{tag}>{close}"));
         assert!(out.contains(&format!(r#"$n.set($$n3, "{prop}", "Save")"#)), "{b}:\n{out}");
         assert!(out.contains(&format!(r#"$n.set($$n4, "{prop}", `n = "#)), "{b}:\n{out}");

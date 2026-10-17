@@ -13,6 +13,10 @@ pub struct Spec {
     pub backend: String,
     pub framework: String,
     pub event_aliases: BTreeMap<String, String>,
+    /// Tag of the container a virtualized list renders each row into (`box` on GTK, `box-layout` on
+    /// Qt); absent when the backend has none.
+    #[serde(default)]
+    pub row_outlet: Option<String>,
     /// Element tag -> kind id.
     pub tags: BTreeMap<String, String>,
     pub kinds: BTreeMap<String, KindSpec>,

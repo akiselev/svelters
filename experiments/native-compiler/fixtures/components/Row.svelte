@@ -4,6 +4,6 @@
 
 <box orientation="horizontal" spacing="4">
   <label>{done ? '✓' : '·'} {label}</label>
-  <button onclick={() => (done = !done)}>Toggle</button>
-  <button onclick={onremove}>Remove</button>
+  <button onclicked={() => (done = !done)}>Toggle</button>
+  <button onclicked={onremove}>Remove</button>
 </box>

@@ -11,8 +11,9 @@
 // exclusive QActionGroup, a child of the holder named `svl-group:<name>`. Names, not group objects,
 // are what JS sees, so keyed lists and reordering need no group node.
 //
-// Context menus: an element flagged `context_menu` attaches to the widget it is inserted into
-// (Qt::CustomContextMenu + QMenu::popup at the request position; never exec()).
+// Context menus: an element flagged `context_menu` (the `menu` element) attaches to the widget it is
+// inserted into (Qt::CustomContextMenu + QMenu::popup at the request position; never exec()), unless that
+// widget holds menu items (a menu, menu bar or tool bar): there it is a submenu, an item of the `items` slot.
 
 QAction *menu_item_action(QObject *c) {
   if (auto *a = qobject_cast<QAction *>(c)) return a;
@@ -97,10 +98,15 @@ std::unordered_map<QObject *, QMetaObject::Connection> &ctx_connections() {
   return m;
 }
 
+// The parent decides the popup role of a `context_menu` kind: a menu holder takes it as an item.
+bool ctx_role(QObject *parent) {
+  return !qobject_cast<QMenu *>(parent) && !qobject_cast<QMenuBar *>(parent) && !qobject_cast<QToolBar *>(parent);
+}
+
 int ctx_attach(QObject *parent, QObject *menu) {
   auto *w = qobject_cast<QWidget *>(parent);
   auto *m = qobject_cast<QMenu *>(menu);
-  if (!w || !m) return fail("insert: a contextmenu attaches to a widget");
+  if (!w || !m) return fail("insert: a context menu attaches to a widget");
   if (ctx_connections().count(m)) return fail("insert: the contextmenu is already attached to a widget");
   m->setParent(w, m->windowFlags());  // owned by the widget; stays a popup window
   w->setContextMenuPolicy(Qt::CustomContextMenu);

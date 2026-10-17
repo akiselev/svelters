@@ -1,25 +1,25 @@
 elements:
-  - tag: inputdialog
+  - tag: input-dialog
     construct: { class: QInputDialog }
     props:
-      - { js: labelText, native: labelText, provenance: "QInputDialog::labelText (qdoc)" }
-      - { js: textValue, native: textValue, provenance: "QInputDialog::textValue (qdoc)" }
-      - { js: intValue, native: intValue, provenance: "QInputDialog::intValue (qdoc)" }
-      - { js: doubleValue, native: doubleValue, setup: "$w->setInputMode(QInputDialog::DoubleInput); $w->setDoubleDecimals(2)", provenance: "QInputDialog::doubleValue (qdoc); type from the getter (qdoc's dataType says int)" }
-      - { js: intMinimum, native: intMinimum, provenance: "QInputDialog::intMinimum (qdoc)" }
-      - { js: intMaximum, native: intMaximum, provenance: "QInputDialog::intMaximum (qdoc)" }
-      - { js: inputMode, native: inputMode, provenance: "QInputDialog::inputMode (qdoc); enum by name (ABI v3)" }
-      - { js: okButtonText, native: okButtonText, provenance: "QInputDialog::okButtonText (qdoc)" }
-      - { js: cancelButtonText, native: cancelButtonText, provenance: "QInputDialog::cancelButtonText (qdoc)" }
+      - { js: label-text, native: labelText, provenance: "QInputDialog::labelText (qdoc)" }
+      - { js: text-value, native: textValue, provenance: "QInputDialog::textValue (qdoc)" }
+      - { js: int-value, native: intValue, provenance: "QInputDialog::intValue (qdoc)" }
+      - { js: double-value, native: doubleValue, setup: "$w->setInputMode(QInputDialog::DoubleInput); $w->setDoubleDecimals(2)", provenance: "QInputDialog::doubleValue (qdoc); type from the getter (qdoc's dataType says int)" }
+      - { js: int-minimum, native: intMinimum, provenance: "QInputDialog::intMinimum (qdoc)" }
+      - { js: int-maximum, native: intMaximum, provenance: "QInputDialog::intMaximum (qdoc)" }
+      - { js: input-mode, native: inputMode, provenance: "QInputDialog::inputMode (qdoc); enum by name (ABI v3)" }
+      - { js: ok-button-text, native: okButtonText, provenance: "QInputDialog::okButtonText (qdoc)" }
+      - { js: cancel-button-text, native: cancelButtonText, provenance: "QInputDialog::cancelButtonText (qdoc)" }
     signals:
-      - js: textValueChanged
+      - js: text-value-changed
         native: textValueChanged
         connect: "textValueChanged(QString)"
         args: [{ name: text, type: string }]
         trigger: '$w->setTextValue(QStringLiteral("v") + QString::number($i))'
         expect_args: ["v0"]
         provenance: "QInputDialog::textValueChanged(const QString &) (qdoc)"
-      - js: intValueChanged
+      - js: int-value-changed
         native: intValueChanged
         connect: "intValueChanged(int)"
         args: [{ name: value, type: i32 }]

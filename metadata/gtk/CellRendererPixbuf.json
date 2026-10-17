@@ -123,7 +123,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRendererPixbuf:prop:icon-name",
       "invocation": "reflected",
-      "js_name": "iconName",
+      "js_name": "icon-name",
       "name": "icon-name",
       "notify": {
         "explicit": false,
@@ -162,7 +162,7 @@
       "default": "inherit",
       "id": "svelters-api:v1:type:gtk:Gtk:CellRendererPixbuf:prop:icon-size",
       "invocation": "reflected",
-      "js_name": "iconSize",
+      "js_name": "icon-size",
       "name": "icon-size",
       "notify": {
         "explicit": true,
@@ -240,7 +240,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRendererPixbuf:prop:pixbuf-expander-closed",
       "invocation": "reflected",
-      "js_name": "pixbufExpanderClosed",
+      "js_name": "pixbuf-expander-closed",
       "name": "pixbuf-expander-closed",
       "notify": {
         "explicit": false,
@@ -279,7 +279,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRendererPixbuf:prop:pixbuf-expander-open",
       "invocation": "reflected",
-      "js_name": "pixbufExpanderOpen",
+      "js_name": "pixbuf-expander-open",
       "name": "pixbuf-expander-open",
       "notify": {
         "explicit": false,

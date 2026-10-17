@@ -1,7 +1,6 @@
 verify_subject: {tag: entry}
 properties:
   - name: text
-    js_name: text
     # Programmatic sets from JS block these handlers so the app does not see its own write.
     echo_suppress: [changed, "notify::text"]
     provenance: "GtkEditable:text (Gtk 4 docs); P prop; interface-owned, tested through GtkEntry"

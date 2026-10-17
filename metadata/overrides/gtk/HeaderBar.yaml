@@ -1,7 +1,6 @@
 properties:
   - id: "svelters-api:v1:type:gtk:Gtk:HeaderBar:prop:title"
     name: title
-    js_name: title
     type: {ref: string, nullable: true, native: "gchar*", gtype: gchararray}
     access: {read: true, write: true, construct: false, construct_only: false}
     default: null
@@ -15,14 +14,11 @@ properties:
     virtual: {op: managed_title_label, property: title-widget}
     provenance: "GTK4 GtkHeaderBar has only title-widget; P1 fixtures emit 'set #h title'"
   - name: show-title-buttons
-    js_name: showTitleButtons
     provenance: "GtkHeaderBar:show-title-buttons (Gtk 4 docs)"
   - name: decoration-layout
-    js_name: decorationLayout
     sample: "menu:close"
     provenance: "GtkHeaderBar:decoration-layout (Gtk 4 docs)"
   - name: use-native-controls
-    js_name: useNativeControls
     provenance: "GtkHeaderBar:use-native-controls (Gtk 4.18 docs)"
 children:
   policy: named_slots

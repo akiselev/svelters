@@ -1031,7 +1031,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Assistant:prop:use-header-bar",
       "invocation": "reflected",
-      "js_name": "useHeaderBar",
+      "js_name": "use-header-bar",
       "name": "use-header-bar",
       "notify": {
         "explicit": false,

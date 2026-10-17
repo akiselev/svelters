@@ -1,11 +1,11 @@
 elements:
-  - tag: colordialog
+  - tag: color-dialog
     construct: { class: QColorDialog }
     props:
-      - { js: currentColor, native: currentColor, provenance: "QColorDialog::currentColor (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: current-color, native: currentColor, provenance: "QColorDialog::currentColor (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: options, native: options, provenance: "QColorDialog::options (qdoc); typed by the S1 value model (ABI v3)" }
     signals:
-      - js: currentColorChanged
+      - js: current-color-changed
         native: currentColorChanged
         connect: "currentColorChanged(QColor)"
         args: [{ name: color, type: "record<Color>" }]

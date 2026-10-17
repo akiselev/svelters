@@ -1,26 +1,26 @@
 elements:
-  - tag: tabwidget
+  - tag: tab-widget
     construct: { class: QTabWidget }
     props:
-      - { js: tabPosition, native: tabPosition, provenance: "QTabWidget::tabPosition (qdoc); typed by the S1 value model (ABI v3)" }
-      - { js: tabShape, native: tabShape, provenance: "QTabWidget::tabShape (qdoc); typed by the S1 value model (ABI v3)" }
-      - { js: tabsClosable, native: tabsClosable, provenance: "QTabWidget::tabsClosable (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: tab-position, native: tabPosition, provenance: "QTabWidget::tabPosition (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: tab-shape, native: tabShape, provenance: "QTabWidget::tabShape (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: tabs-closable, native: tabsClosable, provenance: "QTabWidget::tabsClosable (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: movable, native: movable, provenance: "QTabWidget::movable (qdoc); typed by the S1 value model (ABI v3)" }
-      - { js: documentMode, native: documentMode, provenance: "QTabWidget::documentMode (qdoc); typed by the S1 value model (ABI v3)" }
-      - { js: usesScrollButtons, native: usesScrollButtons, provenance: "QTabWidget::usesScrollButtons (qdoc); typed by the S1 value model (ABI v3)" }
-      - { js: currentIndex, native: currentIndex, sample: 1, setup: "$w->addTab(new QWidget(), QString()); $w->addTab(new QWidget(), QString())", suppress_signals: true, provenance: "QTabWidget::currentIndex (qdoc); the test adds two pages first" }
+      - { js: document-mode, native: documentMode, provenance: "QTabWidget::documentMode (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: uses-scroll-buttons, native: usesScrollButtons, provenance: "QTabWidget::usesScrollButtons (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: current-index, native: currentIndex, sample: 1, setup: "$w->addTab(new QWidget(), QString()); $w->addTab(new QWidget(), QString())", suppress_signals: true, provenance: "QTabWidget::currentIndex (qdoc); the test adds two pages first" }
     bindings:
-      - name: currentIndex
+      - name: current-index
         direction: two_way
-        property: currentIndex
+        property: current-index
         type: { ref: i32, nullable: false }
-        change: { signal: changed, role: any_change, value: arg0 }
+        change: { signal: current-changed, role: any_change, value: arg0 }
         write: { natively_normalizes: false }
         echo: { strategy: host_suppressed, compare_before_set: true, read_back: false, sync_signals_on_set: ["currentChanged(int)"] }
         lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
         provenance: "QTabWidget::setCurrentIndex emits currentChanged only on change (qdoc)"
     signals:
-      - js: changed
+      - js: current-changed
         native: currentChanged
         connect: "currentChanged(int)"
         args: [{ name: index, type: i32 }]
@@ -55,7 +55,7 @@ elements:
           default: { kind: none }
           on_remove: empty
           attrs:
-            - name: tabLabel
+            - name: tab-text
               type: string
               default: ""
               samples: ["First", "Second"]
@@ -63,7 +63,7 @@ elements:
               get: { native: "QTabWidget::tabText(int) const", args: [child_index] }
               expect: "static_cast<QTabWidget *>($p)->tabText(static_cast<QTabWidget *>($p)->indexOf($w)) == QString(\"First\")"
               provenance: "QTabWidget::setTabText(int, QString) (qdoc); X3 child attribute"
-            - name: tabToolTip
+            - name: tab-tool-tip
               type: string
               default: ""
               samples: ["tip one", "tip two"]
@@ -71,7 +71,7 @@ elements:
               get: { native: "QTabWidget::tabToolTip(int) const", args: [child_index] }
               expect: "static_cast<QTabWidget *>($p)->tabToolTip(static_cast<QTabWidget *>($p)->indexOf($w)) == QString(\"tip one\")"
               provenance: "QTabWidget::setTabToolTip(int, QString) (qdoc); X3 child attribute"
-            - name: tabEnabled
+            - name: tab-enabled
               type: bool
               default: true
               samples: [false, true]

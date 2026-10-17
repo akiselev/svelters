@@ -277,7 +277,7 @@
   ],
   "element": {
     "origin": "gir",
-    "tag": "centerbox"
+    "tag": "center-box"
   },
   "enums": [
     "svelters-api:v1:type:gtk:Gtk:BaselinePosition"
@@ -713,7 +713,7 @@
       "default": "center",
       "id": "svelters-api:v1:type:gtk:Gtk:CenterBox:prop:baseline-position",
       "invocation": "reflected",
-      "js_name": "baselinePosition",
+      "js_name": "baseline-position",
       "name": "baseline-position",
       "notify": {
         "explicit": true,
@@ -753,7 +753,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:CenterBox:prop:center-widget",
       "invocation": "reflected",
-      "js_name": "centerWidget",
+      "js_name": "center-widget",
       "name": "center-widget",
       "notify": {
         "explicit": true,
@@ -794,7 +794,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:CenterBox:prop:end-widget",
       "invocation": "reflected",
-      "js_name": "endWidget",
+      "js_name": "end-widget",
       "name": "end-widget",
       "notify": {
         "explicit": true,
@@ -840,7 +840,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:CenterBox:prop:shrink-center-last",
       "invocation": "reflected",
-      "js_name": "shrinkCenterLast",
+      "js_name": "shrink-center-last",
       "name": "shrink-center-last",
       "notify": {
         "explicit": true,
@@ -881,7 +881,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:CenterBox:prop:start-widget",
       "invocation": "reflected",
-      "js_name": "startWidget",
+      "js_name": "start-widget",
       "name": "start-widget",
       "notify": {
         "explicit": true,

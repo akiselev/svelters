@@ -11,5 +11,5 @@
 
 <box orientation="horizontal" spacing="4">
   <label>{mark(done)} {label as string}</label>
-  <button onclick={ontoggle}>Toggle</button>
+  <button onclicked={ontoggle}>Toggle</button>
 </box>

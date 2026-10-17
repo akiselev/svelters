@@ -202,7 +202,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:NotebookPage:prop:menu-label",
       "invocation": "reflected",
-      "js_name": "menuLabel",
+      "js_name": "menu-label",
       "name": "menu-label",
       "notify": {
         "explicit": false,
@@ -363,7 +363,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:NotebookPage:prop:tab-expand",
       "invocation": "reflected",
-      "js_name": "tabExpand",
+      "js_name": "tab-expand",
       "name": "tab-expand",
       "notify": {
         "explicit": true,
@@ -403,7 +403,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:NotebookPage:prop:tab-fill",
       "invocation": "reflected",
-      "js_name": "tabFill",
+      "js_name": "tab-fill",
       "name": "tab-fill",
       "notify": {
         "explicit": true,
@@ -443,7 +443,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:NotebookPage:prop:tab-label",
       "invocation": "reflected",
-      "js_name": "tabLabel",
+      "js_name": "tab-label",
       "name": "tab-label",
       "notify": {
         "explicit": false,

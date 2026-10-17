@@ -23,11 +23,11 @@
 <window title="Lists recycle">
   <box orientation="vertical" spacing="4">
     <box orientation="horizontal" spacing="4">
-      <button onclick={removeFirst}>removeFirst</button>
-      <button onclick={rename}>rename</button>
-      <button onclick={() => (selected = 2)}>select2</button>
-      <button onclick={() => list?.scrollTo(items.length - 1)}>scrollEnd</button>
-      <button onclick={() => (show = !show)}>toggle</button>
+      <button onclicked={removeFirst}>removeFirst</button>
+      <button onclicked={rename}>rename</button>
+      <button onclicked={() => (selected = 2)}>select2</button>
+      <button onclicked={() => list?.scrollTo(items.length - 1)}>scrollEnd</button>
+      <button onclicked={() => (show = !show)}>toggle</button>
       <label>{`selected=${selected} activated=${activated}`}</label>
     </box>
     {#if show}
@@ -36,7 +36,7 @@
         {items}
         key={(it) => it.id}
         bind:selected
-        minHeight={200}
+        min-height={200}
         onactivate={(item, pos) => (activated = `${pos}:${item.id}`)}
       >
         {#snippet row(item, index)}

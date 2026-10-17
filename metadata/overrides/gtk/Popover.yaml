@@ -1,15 +1,11 @@
 properties:
   - name: autohide
-    js_name: autohide
     provenance: "GtkPopover:autohide (Gtk 4 docs)"
   - name: has-arrow
-    js_name: hasArrow
     provenance: "GtkPopover:has-arrow (Gtk 4 docs)"
   - name: position
-    js_name: position
     provenance: "GtkPopover:position (Gtk 4 docs); PositionType nick"
   - name: cascade-popdown
-    js_name: cascadePopdown
     provenance: "GtkPopover:cascade-popdown (Gtk 4 docs)"
 signals:
   - name: closed

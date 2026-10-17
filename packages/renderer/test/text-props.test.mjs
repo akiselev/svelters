@@ -11,11 +11,11 @@ const take = () => th.lines.splice(0).join('\n');
 
 test('TEXT_PROPS is generated: button has a candidate per toolkit, togglebutton inherits the GTK prop', () => {
   assert.deepEqual(TEXT_PROPS.button.slice(0, 2), ['label', 'title']);
-  assert.deepEqual(TEXT_PROPS.togglebutton, ['label']);
+  assert.deepEqual(TEXT_PROPS['toggle-button'], ['label']);
   assert.deepEqual([...LABEL_KINDS].sort(), Object.keys(TEXT_PROPS).sort());
 });
 
-for (const tag of ['button', 'togglebutton']) {
+for (const tag of ['button', 'toggle-button']) {
   test(`<${tag}> folds a text child and an {expr} text child into its text prop`, () => {
     const win = r.createElement('window');
     const e = r.createElement(tag);

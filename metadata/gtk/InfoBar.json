@@ -691,7 +691,7 @@
       "default": "info",
       "id": "svelters-api:v1:type:gtk:Gtk:InfoBar:prop:message-type",
       "invocation": "reflected",
-      "js_name": "messageType",
+      "js_name": "message-type",
       "name": "message-type",
       "notify": {
         "explicit": true,
@@ -772,7 +772,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:InfoBar:prop:show-close-button",
       "invocation": "reflected",
-      "js_name": "showCloseButton",
+      "js_name": "show-close-button",
       "name": "show-close-button",
       "notify": {
         "explicit": true,

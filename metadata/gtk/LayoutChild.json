@@ -88,7 +88,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:LayoutChild:prop:child-widget",
       "invocation": "reflected",
-      "js_name": "childWidget",
+      "js_name": "child-widget",
       "name": "child-widget",
       "notify": {
         "explicit": false,
@@ -128,7 +128,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:LayoutChild:prop:layout-manager",
       "invocation": "reflected",
-      "js_name": "layoutManager",
+      "js_name": "layout-manager",
       "name": "layout-manager",
       "notify": {
         "explicit": false,

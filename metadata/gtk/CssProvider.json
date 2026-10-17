@@ -302,7 +302,7 @@
       "default": "default",
       "id": "svelters-api:v1:type:gtk:Gtk:CssProvider:prop:prefers-color-scheme",
       "invocation": "reflected",
-      "js_name": "prefersColorScheme",
+      "js_name": "prefers-color-scheme",
       "name": "prefers-color-scheme",
       "notify": {
         "explicit": true,
@@ -343,7 +343,7 @@
       "default": "no-preference",
       "id": "svelters-api:v1:type:gtk:Gtk:CssProvider:prop:prefers-contrast",
       "invocation": "reflected",
-      "js_name": "prefersContrast",
+      "js_name": "prefers-contrast",
       "name": "prefers-contrast",
       "notify": {
         "explicit": true,
@@ -384,7 +384,7 @@
       "default": "no-preference",
       "id": "svelters-api:v1:type:gtk:Gtk:CssProvider:prop:prefers-reduced-motion",
       "invocation": "reflected",
-      "js_name": "prefersReducedMotion",
+      "js_name": "prefers-reduced-motion",
       "name": "prefers-reduced-motion",
       "notify": {
         "explicit": true,

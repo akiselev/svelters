@@ -509,7 +509,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn:prop:column-view",
       "invocation": "reflected",
-      "js_name": "columnView",
+      "js_name": "column-view",
       "name": "column-view",
       "notify": {
         "explicit": true,
@@ -628,7 +628,7 @@
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn:prop:fixed-width",
       "invocation": "reflected",
-      "js_name": "fixedWidth",
+      "js_name": "fixed-width",
       "name": "fixed-width",
       "notify": {
         "explicit": true,
@@ -671,7 +671,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn:prop:header-menu",
       "invocation": "reflected",
-      "js_name": "headerMenu",
+      "js_name": "header-menu",
       "name": "header-menu",
       "notify": {
         "explicit": true,

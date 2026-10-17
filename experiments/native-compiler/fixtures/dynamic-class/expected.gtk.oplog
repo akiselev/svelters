@@ -3,7 +3,7 @@ set #1 title "Classes"
 create box #2
 set #2 spacing 8
 create button #3
-set #3 heightRequest 36
+set #3 height-request 36
 set #3 label "Save"
 insert #2 #3 before=end slot=default
 create button #4
@@ -26,16 +26,16 @@ style #2 classes "toolbar"
 style #3 classes "primary"
 style #4 classes "big"
 event #5 clicked []
-set #3 heightRequest -1
-set #4 heightRequest 36
+set #3 height-request -1
+set #4 height-request 36
 style #3 classes "plain"
 style #4 classes "big primary"
 event #6 clicked []
 set #2 spacing 2
-set #4 heightRequest 20
+set #4 height-request 20
 style #2 classes "toolbar dense"
 style #4 classes "big primary dense"
 event #5 clicked []
-set #3 heightRequest 36
+set #3 height-request 36
 style #3 classes "primary"
 style #4 classes "big dense"

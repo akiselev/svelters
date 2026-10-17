@@ -170,7 +170,7 @@
   ],
   "element": {
     "origin": "gir",
-    "tag": "listbox"
+    "tag": "list-box"
   },
   "enums": [
     "svelters-api:v1:type:gtk:Gtk:ListTabBehavior",
@@ -1224,7 +1224,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:ListBox:prop:accept-unpaired-release",
       "invocation": "reflected",
-      "js_name": "acceptUnpairedRelease",
+      "js_name": "accept-unpaired-release",
       "name": "accept-unpaired-release",
       "notify": {
         "explicit": true,
@@ -1269,7 +1269,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:ListBox:prop:activate-on-single-click",
       "invocation": "reflected",
-      "js_name": "activateOnSingleClick",
+      "js_name": "activate-on-single-click",
       "name": "activate-on-single-click",
       "notify": {
         "explicit": true,
@@ -1314,7 +1314,7 @@
       "default": "single",
       "id": "svelters-api:v1:type:gtk:Gtk:ListBox:prop:selection-mode",
       "invocation": "reflected",
-      "js_name": "selectionMode",
+      "js_name": "selection-mode",
       "name": "selection-mode",
       "notify": {
         "explicit": true,
@@ -1359,7 +1359,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:ListBox:prop:show-separators",
       "invocation": "reflected",
-      "js_name": "showSeparators",
+      "js_name": "show-separators",
       "name": "show-separators",
       "notify": {
         "explicit": true,
@@ -1399,7 +1399,7 @@
       "default": "all",
       "id": "svelters-api:v1:type:gtk:Gtk:ListBox:prop:tab-behavior",
       "invocation": "reflected",
-      "js_name": "tabBehavior",
+      "js_name": "tab-behavior",
       "name": "tab-behavior",
       "notify": {
         "explicit": true,

@@ -821,9 +821,7 @@
         "set": "gtk_popover_set_autohide"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkPopover:autohide (Gtk 4 docs)"
       },
@@ -868,16 +866,14 @@
         "set": "gtk_popover_set_cascade_popdown"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkPopover:cascade-popdown (Gtk 4 docs)"
       },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Popover:prop:cascade-popdown",
       "invocation": "reflected",
-      "js_name": "cascadePopdown",
+      "js_name": "cascade-popdown",
       "name": "cascade-popdown",
       "notify": {
         "explicit": true,
@@ -957,7 +953,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Popover:prop:default-widget",
       "invocation": "reflected",
-      "js_name": "defaultWidget",
+      "js_name": "default-widget",
       "name": "default-widget",
       "notify": {
         "explicit": true,
@@ -995,16 +991,14 @@
         "set": "gtk_popover_set_has_arrow"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkPopover:has-arrow (Gtk 4 docs)"
       },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Popover:prop:has-arrow",
       "invocation": "reflected",
-      "js_name": "hasArrow",
+      "js_name": "has-arrow",
       "name": "has-arrow",
       "notify": {
         "explicit": true,
@@ -1044,7 +1038,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Popover:prop:mnemonics-visible",
       "invocation": "reflected",
-      "js_name": "mnemonicsVisible",
+      "js_name": "mnemonics-visible",
       "name": "mnemonics-visible",
       "notify": {
         "explicit": true,
@@ -1084,7 +1078,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Popover:prop:pointing-to",
       "invocation": "reflected",
-      "js_name": "pointingTo",
+      "js_name": "pointing-to",
       "name": "pointing-to",
       "notify": {
         "explicit": false,
@@ -1121,9 +1115,7 @@
         "set": "gtk_popover_set_position"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkPopover:position (Gtk 4 docs); PositionType nick"
       },

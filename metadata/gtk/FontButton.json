@@ -534,7 +534,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:FontButton:prop:use-font",
       "invocation": "reflected",
-      "js_name": "useFont",
+      "js_name": "use-font",
       "name": "use-font",
       "notify": {
         "explicit": true,
@@ -574,7 +574,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:FontButton:prop:use-size",
       "invocation": "reflected",
-      "js_name": "useSize",
+      "js_name": "use-size",
       "name": "use-size",
       "notify": {
         "explicit": true,

@@ -45,7 +45,7 @@
   ],
   "element": {
     "origin": "manual",
-    "tag": "focuscontroller"
+    "tag": "event-controller-focus"
   },
   "enums": [],
   "id": "svelters-api:v1:type:gtk:Gtk:EventControllerFocus",
@@ -121,7 +121,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:EventControllerFocus:prop:contains-focus",
       "invocation": "reflected",
-      "js_name": "containsFocus",
+      "js_name": "contains-focus",
       "name": "contains-focus",
       "notify": {
         "explicit": false,
@@ -159,7 +159,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:EventControllerFocus:prop:is-focus",
       "invocation": "reflected",
-      "js_name": "isFocus",
+      "js_name": "is-focus",
       "name": "is-focus",
       "notify": {
         "explicit": false,

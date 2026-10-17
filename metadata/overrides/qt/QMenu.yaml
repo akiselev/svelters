@@ -1,18 +1,23 @@
-# Elements `menu` (a submenu of a menu or menu bar) and `contextmenu` (a menu attached to its parent widget).
-# Items are QActions (`action`, `menuseparator`, see QAction.yaml) or other menus, held by the `items` slot:
+# Element `menu`. Its parent decides the popup role: inserted into a menu, menu bar or tool bar it is a
+# submenu (an item of the parent's `items` slot); inserted into any other widget it is that widget's context
+# menu (`construct.context_menu`: menus.hpp.in ctx_attach, opened with popup() on the context-menu request).
+# Items are QActions (`action`, `separator={true}` for a separator, see QAction.yaml) or other menus, held by the `items` slot:
 # QWidget::insertAction/removeAction, with a QMenu child contributing its menuAction(). The slot's glue is
 # menus.hpp.in (`menu_insert`, `menu_remove`): it parents the item to the holder, so deleting the holder
 # deletes its items, and puts actions that share a `group` into one exclusive QActionGroup.
 elements:
   - tag: menu
-    construct: { class: QMenu }
+    construct: { class: QMenu, context_menu: true }
     props:
-      - { js: label, native: title, provenance: "QMenu::title (qdoc)" }
+      - { js: title, native: title, provenance: "QMenu::title (qdoc)" }
       - { js: icon, native: icon, provenance: "QMenu::icon (qdoc); a theme icon name converts to QIcon::fromTheme" }
-      - { js: tearOffEnabled, native: tearOffEnabled, provenance: "QMenu::tearOffEnabled (qdoc)" }
-      - { js: separatorsCollapsible, native: separatorsCollapsible, provenance: "QMenu::separatorsCollapsible (qdoc)" }
-      - { js: toolTipsVisible, native: toolTipsVisible, provenance: "QMenu::toolTipsVisible (qdoc)" }
+      - { js: tear-off-enabled, native: tearOffEnabled, provenance: "QMenu::tearOffEnabled (qdoc)" }
+      - { js: separators-collapsible, native: separatorsCollapsible, provenance: "QMenu::separatorsCollapsible (qdoc)" }
+      - { js: tool-tips-visible, native: toolTipsVisible, provenance: "QMenu::toolTipsVisible (qdoc)" }
     methods:
+      # `popup`, never `exec`: the menu opens and the event loop goes on.
+      - { js: popup, native: popup, params: ["record<Point>", "object<QAction>"], provenance: "QMenu::popup(const QPoint &, QAction *) (qdoc); no blocking exec()" }
+      - { js: popdown, native: hide, provenance: "QWidget::hide() (qdoc)" }
       # Callback: `fn(checked)` runs whenever the new action is triggered. It lives as long as the menu
       # (notified scope: the host drops it when the menu's handle dies).
       - js: addItem
@@ -36,25 +41,3 @@ elements:
           on_remove: empty
           ops: {}
           provenance: "QWidget::insertAction/removeAction (qdoc); a QMenu item is its menuAction() (QMenu::menuAction, qdoc); X4"
-  - tag: contextmenu
-    construct: { class: QMenu, context_menu: true }
-    props:
-      - { js: label, native: title, provenance: "QMenu::title (qdoc)" }
-    methods:
-      # `popup`, never `exec`: the menu opens and the event loop goes on.
-      - { js: popup, native: popup, params: ["record<Point>", "object<QAction>"], provenance: "QMenu::popup(const QPoint &, QAction *) (qdoc); no blocking exec()" }
-      - { js: popdown, native: hide, provenance: "QWidget::hide() (qdoc)" }
-    children:
-      policy: ordered
-      default_slot: items
-      slots:
-        - name: items
-          content: widget
-          accepts: [QAction, QMenu]
-          cardinality: many
-          order: actions
-          host: self
-          default: { kind: none }
-          on_remove: empty
-          ops: {}
-          provenance: "QWidget::insertAction/removeAction (qdoc); X4"

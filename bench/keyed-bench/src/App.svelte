@@ -29,21 +29,21 @@
 <window title="Keyed bench">
   <box orientation="vertical" spacing="4">
     <box orientation="horizontal" spacing="4">
-      <button onclick={fill}>Fill</button>
-      <button onclick={update}>Update</button>
-      <button onclick={reverse}>Reverse</button>
-      <button onclick={swap}>Swap</button>
-      <button onclick={clear}>Clear</button>
+      <button onclicked={fill}>Fill</button>
+      <button onclicked={update}>Update</button>
+      <button onclicked={reverse}>Reverse</button>
+      <button onclicked={swap}>Swap</button>
+      <button onclicked={clear}>Clear</button>
     </box>
-    <scrolledwindow>
+    <scrolled-window>
       <box orientation="vertical" spacing="2">
         {#each rows as row (row.id)}
           <box orientation="horizontal" spacing="6">
             <label>{row.text}</label>
-            <button onclick={() => remove(row.id)}>Remove</button>
+            <button onclicked={() => remove(row.id)}>Remove</button>
           </box>
         {/each}
       </box>
-    </scrolledwindow>
+    </scrolled-window>
   </box>
 </window>

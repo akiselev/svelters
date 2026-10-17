@@ -15,14 +15,14 @@
   <box orientation="horizontal" spacing="12">
     <box orientation="vertical" spacing="4">
       {#each pages as p, i}
-        <button label={title(p.name)} onclick={() => (current = i)} />
+        <button label={title(p.name)} onclicked={() => (current = i)} />
       {/each}
     </box>
-    <scrolledwindow hexpand={true} vexpand={true}>
+    <scrolled-window hexpand={true} vexpand={true}>
       <box orientation="vertical" spacing="8">
         <label label={title(pages[current].name)} />
         <Page />
       </box>
-    </scrolledwindow>
+    </scrolled-window>
   </box>
 </window>

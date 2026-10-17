@@ -27,6 +27,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
+import naming  # noqa: E402
 import svmeta  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -184,9 +185,7 @@ APPKIT_META = ROOT / "metadata/appkit"
 WINUI_META = ROOT / "metadata/winui"
 
 
-def kebab(name: str) -> str:
-    """Native PascalCase -> kebab-case, as tools/metadata/winui/gen_backend.py: IsChecked -> is-checked."""
-    return re.sub(r"(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])", "-", name).lower()
+kebab = naming.kebab  # the shared rule (tools/metadata/common/naming.py): IsChecked -> is-checked
 
 
 def _add_binding(out: dict, tag: str, b: dict, tk: str, props: dict, signals: dict) -> None:
@@ -334,7 +333,7 @@ def winui_toplevels() -> dict[str, dict]:
         if el.get("lifetime") != "toplevel":
             continue
         short = data["class"].rsplit(".", 1)[1]
-        tag = el.get("tag") or "".join(("-" + c.lower()) if c.isupper() and i else c.lower() for i, c in enumerate(short))
+        tag = el.get("tag") or naming.tag_for("winui", short)
         out[tag] = {"open": ["activate"], "modeless": ["activate"], "modalProp": False, "dialog": False}
     return out
 
@@ -455,6 +454,22 @@ def js_toplevels(top: dict) -> str:
     return "".join(o)
 
 
+def row_outlets() -> list[str]:
+    """Candidate tags of the per-row outlet of virtualized lists (`row_outlet` of each semantic spec)."""
+    out = []
+    for tk in ("gtk", "qt", "appkit", "winui"):
+        path = SEMANTICS / f"{tk}.json"
+        t = svmeta.load_json(path).get("row_outlet") if path.exists() else None
+        if t and t not in out:
+            out.append(t)
+    return out
+
+
+def js_row_outlets(outlets: list[str]) -> str:
+    return ("\n// Candidate tags of the container a virtualized list renders each row into (the first the host resolves).\n"
+            f"export const ROW_OUTLETS = {json.dumps(outlets)};\n")
+
+
 def js(table: dict) -> str:
     o = [HEADER, "// tag -> bind:<name> -> descriptor, or an array of candidate descriptors when the toolkits differ (the first one\n",
          "// the host resolves wins). `signal` is the JS event name of the change signal.\n"]
@@ -505,7 +520,7 @@ def main() -> int:
     except GenError as e:
         print(f"gen_bindings: {e}", file=sys.stderr)
         return 1
-    outs = {OUT_JS: js(table) + js_text_props(text_props()) + js_toplevels(top), OUT_DTS: dts(table, top)}
+    outs = {OUT_JS: js(table) + js_text_props(text_props()) + js_toplevels(top) + js_row_outlets(row_outlets()), OUT_DTS: dts(table, top)}
     stale = [p for p, text in outs.items() if not p.exists() or p.read_text() != text]
     if args.check:
         for p in stale:

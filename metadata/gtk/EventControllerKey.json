@@ -45,7 +45,7 @@
   ],
   "element": {
     "origin": "manual",
-    "tag": "keycontroller"
+    "tag": "event-controller-key"
   },
   "enums": [],
   "id": "svelters-api:v1:type:gtk:Gtk:EventControllerKey",

@@ -1,2 +1,2 @@
-[plugin svelters-native-compiler] experiments/native-compiler/fixtures/slot-cardinality/App.svelte:9:3
-slot_cardinality (qt): <window>'s `central` slot takes one child on qt, and it already has <label> (help: wrap the children in a container such as <box>)
+[plugin svelters-native-compiler] experiments/native-compiler/fixtures/slot-cardinality/qt/App.svelte:10:3
+slot_cardinality (qt): <main-window>'s `central` slot takes one child on qt, and it already has <label> (help: wrap the children in a container such as <box>)

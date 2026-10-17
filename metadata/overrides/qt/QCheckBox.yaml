@@ -1,10 +1,10 @@
 elements:
-  - tag: checkbox
+  - tag: check-box
     construct: { class: QCheckBox }
     props:
       - { js: checked, native: checked, suppress_signals: true, provenance: "QAbstractButton::checked (qdoc); declared here because gen_bindings reads element props only" }
       - { js: tristate, native: tristate, provenance: "QCheckBox::tristate (qdoc)" }
-      - js: checkState
+      - js: check-state
         type: enum
         getter: checkState
         setter: setCheckState
@@ -44,7 +44,7 @@ elements:
         args: []
         trigger: "{ $w->resize(200, 40); QMouseEvent p(QEvent::MouseButtonPress, QPointF(10, 20), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier); QCoreApplication::sendEvent($w, &p); QMouseEvent r(QEvent::MouseButtonRelease, QPointF(10, 20), Qt::LeftButton, Qt::NoButton, Qt::NoModifier); QCoreApplication::sendEvent($w, &r); }"
         provenance: "released() (qdoc); trigger sizes the widget first"
-      - js: stateChanged
+      - js: state-changed
         native: stateChanged
         connect: "stateChanged(int)"
         args: [{ name: state, type: i32 }]

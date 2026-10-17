@@ -1,4 +1,4 @@
-//! X4 on GTK: menus and actions (`menubar`, `menu`, `action`, `separator`, `contextmenu`, `toolbar`).
+//! X4 on GTK: menus and actions (`menu-bar`, `menu`, `action`, `separator`, `context-menu`, `tool-bar`).
 //! Drives the backend through its vtable. Needs a display (xvfb-run).
 
 use gtk::gio::prelude::*;
@@ -40,13 +40,13 @@ fn a_menubar_follows_inserts_removes_and_reorders() {
         let h = Harness::new();
         let win = h.create("window");
         let bx = h.create("box");
-        let bar = h.create("menubar");
+        let bar = h.create("menu-bar");
         h.insert(win, bx, None, None).unwrap();
         h.insert(bx, bar, None, None).unwrap();
         let file = mk(&h, "menu", &[("label", "File")]);
         h.insert(bar, file, None, None).unwrap();
         let open = action(&h, file, "Open");
-        let sep = h.create("menuseparator");
+        let sep = h.create("menu-separator");
         h.insert(file, sep, None, None).unwrap();
         let quit = action(&h, file, "Quit");
         let recent = mk(&h, "menu", &[("label", "Recent")]);
@@ -83,10 +83,10 @@ fn sections_split_at_separators() {
         let h = Harness::new();
         let m = h.create("menu");
         let a = action(&h, m, "A");
-        let s1 = h.create("menuseparator");
+        let s1 = h.create("menu-separator");
         h.insert(m, s1, None, None).unwrap();
         let b = action(&h, m, "B");
-        let s2 = h.create("menuseparator");
+        let s2 = h.create("menu-separator");
         h.insert(m, s2, None, None).unwrap();
         let _c = action(&h, m, "C");
         assert_eq!(h.backend.menu_dump(m), "{A,}{B,}{C,}");
@@ -104,7 +104,7 @@ fn sections_split_at_separators() {
 fn activating_an_action_posts_activate_and_a_disabled_one_does_not() {
     on_gtk(|| {
         let h = Harness::new();
-        let bar = h.create("menubar");
+        let bar = h.create("menu-bar");
         let m = mk(&h, "menu", &[("label", "File")]);
         h.insert(bar, m, None, None).unwrap();
         let a = action(&h, m, "Open");
@@ -142,7 +142,7 @@ fn clicking_the_native_menu_items_runs_the_actions() {
     on_gtk(|| {
         let h = Harness::new();
         let win = h.create("window");
-        let bar = h.create("menubar");
+        let bar = h.create("menu-bar");
         h.insert(win, bar, None, None).unwrap();
         let file = mk(&h, "menu", &[("label", "File")]);
         h.insert(bar, file, None, None).unwrap();
@@ -181,7 +181,7 @@ fn clicking_the_native_menu_items_runs_the_actions() {
 fn check_actions_toggle_natively_and_js_writes_do_not_echo() {
     on_gtk(|| {
         let h = Harness::new();
-        let bar = h.create("menubar");
+        let bar = h.create("menu-bar");
         let m = mk(&h, "menu", &[("label", "View")]);
         h.insert(bar, m, None, None).unwrap();
         let a = mk(&h, "action", &[("label", "Wrap")]);
@@ -251,7 +251,7 @@ fn shortcuts_run_the_action_and_show_in_the_model() {
     on_gtk(|| {
         let h = Harness::new();
         let win = h.create("window");
-        let bar = h.create("menubar");
+        let bar = h.create("menu-bar");
         h.insert(win, bar, None, None).unwrap();
         let m = mk(&h, "menu", &[("label", "File")]);
         h.insert(bar, m, None, None).unwrap();
@@ -288,7 +288,7 @@ fn a_contextmenu_attaches_to_its_parent_widget_and_pops_up() {
         let win = h.create("window");
         let btn = h.create("button");
         h.insert(win, btn, None, None).unwrap();
-        let cm = h.create("contextmenu");
+        let cm = h.create("context-menu");
         let a = action(&h, cm, "Paste");
         h.insert(btn, cm, None, None).unwrap();
         h.widget(win).downcast::<gtk::Window>().unwrap().present();
@@ -331,7 +331,7 @@ fn a_menubutton_takes_a_menu_child() {
     on_gtk(|| {
         let h = Harness::new();
         let win = h.create("window");
-        let btn = h.create("menubutton");
+        let btn = h.create("menu-button");
         h.insert(win, btn, None, None).unwrap();
         let m = h.create("menu");
         let a = action(&h, m, "One");
@@ -350,10 +350,10 @@ fn a_menubutton_takes_a_menu_child() {
 fn a_toolbar_shows_one_button_per_action() {
     on_gtk(|| {
         let h = Harness::new();
-        let tb = h.create("toolbar");
+        let tb = h.create("tool-bar");
         let copy = mk(&h, "action", &[("label", "Copy"), ("icon", "edit-copy")]);
         h.insert(tb, copy, None, None).unwrap();
-        let sep = h.create("menuseparator");
+        let sep = h.create("menu-separator");
         h.insert(tb, sep, None, None).unwrap();
         let bold = mk(&h, "action", &[("label", "Bold")]);
         h.set_bool(bold, "checkable", true).unwrap();

@@ -2,7 +2,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "aboutdialog",
+  "element": "about-dialog",
   "gallery": "08-dialogs",
   "inherited": 46,
   "kind": "AboutDialog",
@@ -34,7 +34,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "actionbar",
+  "element": "action-bar",
   "gallery": "06-layout",
   "inherited": 25,
   "kind": "ActionBar",
@@ -226,7 +226,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "window",
+  "element": "application-window",
   "gallery": null,
   "inherited": 46,
   "kind": "ApplicationWindow",
@@ -258,7 +258,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "aspectframe",
+  "element": "aspect-frame",
   "gallery": "05-containers",
   "inherited": 25,
   "kind": "AspectFrame",
@@ -482,7 +482,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "centerbox",
+  "element": "center-box",
   "gallery": "05-containers",
   "inherited": 26,
   "kind": "CenterBox",
@@ -514,7 +514,7 @@
  {
   "abstract": false,
   "bindings": 1,
-  "element": "checkbutton",
+  "element": "check-button",
   "gallery": "02-buttons",
   "inherited": 27,
   "kind": "CheckButton",
@@ -674,7 +674,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "colordialogbutton",
+  "element": "color-dialog-button",
   "gallery": null,
   "inherited": 25,
   "kind": "ColorDialogButton",
@@ -866,7 +866,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "drawingarea",
+  "element": "drawing-area",
   "gallery": "09-display",
   "inherited": 25,
   "kind": "DrawingArea",
@@ -962,7 +962,7 @@
  {
   "abstract": false,
   "bindings": 1,
-  "element": "editablelabel",
+  "element": "editable-label",
   "gallery": "03-text",
   "inherited": 36,
   "kind": "EditableLabel",
@@ -994,7 +994,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "emojichooser",
+  "element": "emoji-chooser",
   "gallery": "08-dialogs",
   "inherited": 34,
   "kind": "EmojiChooser",
@@ -1218,7 +1218,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "flowbox",
+  "element": "flow-box",
   "gallery": "06-layout",
   "inherited": 26,
   "kind": "FlowBox",
@@ -1250,7 +1250,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "flowboxchild",
+  "element": "flow-box-child",
   "gallery": "06-layout",
   "inherited": 25,
   "kind": "FlowBoxChild",
@@ -1410,7 +1410,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "fontdialogbutton",
+  "element": "font-dialog-button",
   "gallery": null,
   "inherited": 25,
   "kind": "FontDialogButton",
@@ -1506,7 +1506,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "graphicsoffload",
+  "element": "graphics-offload",
   "gallery": "09-display",
   "inherited": 25,
   "kind": "GraphicsOffload",
@@ -1602,7 +1602,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "headerbar",
+  "element": "header-bar",
   "gallery": "07-bars",
   "inherited": 25,
   "kind": "HeaderBar",
@@ -1794,7 +1794,7 @@
  {
   "abstract": false,
   "bindings": 1,
-  "element": "levelbar",
+  "element": "level-bar",
   "gallery": "04-ranges",
   "inherited": 26,
   "kind": "LevelBar",
@@ -1826,7 +1826,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "linkbutton",
+  "element": "link-button",
   "gallery": "02-buttons",
   "inherited": 35,
   "kind": "LinkButton",
@@ -1890,7 +1890,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "listbox",
+  "element": "list-box",
   "gallery": "06-layout",
   "inherited": 25,
   "kind": "ListBox",
@@ -1922,7 +1922,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "listboxrow",
+  "element": "list-box-row",
   "gallery": null,
   "inherited": 27,
   "kind": "ListBoxRow",
@@ -1986,7 +1986,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "lockbutton",
+  "element": "lock-button",
   "gallery": "02-buttons",
   "inherited": 35,
   "kind": "LockButton",
@@ -2018,7 +2018,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "mediacontrols",
+  "element": "media-controls",
   "gallery": null,
   "inherited": 25,
   "kind": "MediaControls",
@@ -2050,7 +2050,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "menubutton",
+  "element": "menu-button",
   "gallery": "02-buttons",
   "inherited": 25,
   "kind": "MenuButton",
@@ -2274,7 +2274,7 @@
  {
   "abstract": false,
   "bindings": 1,
-  "element": "passwordentry",
+  "element": "password-entry",
   "gallery": "03-text",
   "inherited": 36,
   "kind": "PasswordEntry",
@@ -2402,7 +2402,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "popovermenu",
+  "element": "popover-menu",
   "gallery": null,
   "inherited": 34,
   "kind": "PopoverMenu",
@@ -2434,7 +2434,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "popovermenubar",
+  "element": "popover-menu-bar",
   "gallery": "07-bars",
   "inherited": 25,
   "kind": "PopoverMenuBar",
@@ -2498,7 +2498,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "progressbar",
+  "element": "progress-bar",
   "gallery": "04-ranges",
   "inherited": 26,
   "kind": "ProgressBar",
@@ -2626,7 +2626,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "scalebutton",
+  "element": "scale-button",
   "gallery": "02-buttons",
   "inherited": 26,
   "kind": "ScaleButton",
@@ -2722,7 +2722,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "scrolledwindow",
+  "element": "scrolled-window",
   "gallery": "00-overview",
   "inherited": 25,
   "kind": "ScrolledWindow",
@@ -2754,7 +2754,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "searchbar",
+  "element": "search-bar",
   "gallery": "05-containers",
   "inherited": 25,
   "kind": "SearchBar",
@@ -2786,7 +2786,7 @@
  {
   "abstract": false,
   "bindings": 1,
-  "element": "searchentry",
+  "element": "search-entry",
   "gallery": "03-text",
   "inherited": 36,
   "kind": "SearchEntry",
@@ -2850,7 +2850,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "shortcutlabel",
+  "element": "shortcut-label",
   "gallery": "03-text",
   "inherited": 25,
   "kind": "ShortcutLabel",
@@ -3010,7 +3010,7 @@
  {
   "abstract": false,
   "bindings": 1,
-  "element": "spinbutton",
+  "element": "spin-button",
   "gallery": "04-ranges",
   "inherited": 37,
   "kind": "SpinButton",
@@ -3106,7 +3106,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "stacksidebar",
+  "element": "stack-sidebar",
   "gallery": "06-layout",
   "inherited": 25,
   "kind": "StackSidebar",
@@ -3138,7 +3138,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "stackswitcher",
+  "element": "stack-switcher",
   "gallery": "06-layout",
   "inherited": 26,
   "kind": "StackSwitcher",
@@ -3266,7 +3266,7 @@
  {
   "abstract": false,
   "bindings": 1,
-  "element": "textview",
+  "element": "text-view",
   "gallery": "03-text",
   "inherited": 25,
   "kind": "TextView",
@@ -3298,7 +3298,7 @@
  {
   "abstract": false,
   "bindings": 1,
-  "element": "togglebutton",
+  "element": "toggle-button",
   "gallery": "02-buttons",
   "inherited": 35,
   "kind": "ToggleButton",
@@ -3458,7 +3458,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "volumebutton",
+  "element": "volume-button",
   "gallery": "02-buttons",
   "inherited": 30,
   "kind": "VolumeButton",
@@ -3522,7 +3522,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": null,
+  "element": "window",
   "gallery": "08-dialogs",
   "inherited": 25,
   "kind": "Window",
@@ -3554,7 +3554,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "windowcontrols",
+  "element": "window-controls",
   "gallery": "07-bars",
   "inherited": 25,
   "kind": "WindowControls",
@@ -3586,7 +3586,7 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "windowhandle",
+  "element": "window-handle",
   "gallery": "05-containers",
   "inherited": 25,
   "kind": "WindowHandle",

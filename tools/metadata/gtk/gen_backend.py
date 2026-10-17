@@ -32,7 +32,6 @@ VALUE_TY = {"bool": "Bool", "i32": "I32", "u32": "U32", "i64": "I64", "u64": "U6
             "string": "Str", "variant": "Variant"}
 F_READ, F_WRITE, F_CONSTRUCT, F_CONSTRUCT_ONLY, F_EXPLICIT_NOTIFY, F_VIRTUAL, F_VIA = 1, 2, 4, 8, 16, 32, 64
 HANDLER_RESULT = {"none": 0, "bool_stop": 1, "value": 2}
-DOM_EVENT = {"clicked": "click", "changed": "change"}
 
 
 def rs(s: str) -> str:
@@ -1181,7 +1180,7 @@ def coarse_type(ref: str) -> str | None:
 
 
 def gen_schema(m: "Model") -> str:
-    """Element tag -> prop -> coarse type, for hosts without a backend (packages/testhost)."""
+    """Element tag -> every settable prop -> coarse type, for hosts without a backend (packages/testhost)."""
     def chain(d):
         out = [d]
         for b in d["bases"]:
@@ -1197,11 +1196,11 @@ def gen_schema(m: "Model") -> str:
         props = {}
         for d in chain(m.tags[tag]):
             for p in d["properties"]:
-                c = coarse_type(p["type"]["ref"])
-                # Only the types attribute coercion acts on: strings, enums and records need no help.
-                if c in ("boolean", "integer", "number") and (p["access"]["write"] or p.get("virtual")):
+                c = coarse_type(p["type"]["ref"]) or "value"
+                # Every settable prop is listed (a host that knows the kind resolves only these), with
+                # the coarse type attribute coercion acts on (booleans and numbers need it).
+                if p["access"]["write"] or p.get("virtual"):
                     props.setdefault(p["js_name"], c)
-                    props.setdefault(p["name"], c)
         schema[tag] = dict(sorted(props.items()))
     return json.dumps(schema, indent=2, sort_keys=True) + "\n"
 
@@ -1233,13 +1232,12 @@ def gen_dts(m: Model) -> str:
         lines = []
         for p in sorted(d["properties"], key=lambda p: p["js_name"]):
             if p["access"]["write"] and not p["access"]["construct_only"] or p.get("virtual"):
-                lines.append(f"  {p['js_name']}?: {ts_type(p['type']['ref'], m)};\n")
+                lines.append(f"  {ts_key(p['js_name'])}?: {ts_type(p['type']['ref'], m)};\n")
         if name == "Widget":
             for an, aty in sorted(attr_types(m).items()):
                 lines.append(f"  'parent:{an}'?: {aty};\n")
         for s in sorted(d["signals"], key=lambda s: s["name"]):
-            dom = DOM_EVENT.get(s["js_event"], s["js_event"])
-            key = f"on{dom}"
+            key = f"on{s['js_event']}"
             if not key.isidentifier():
                 key = rs(key)
             lines.append(f"  {key}?: SvlHandler;\n")
@@ -1247,9 +1245,14 @@ def gen_dts(m: Model) -> str:
         o.append(f"export interface Gtk{name}Props{e} {{\n{''.join(lines)}}}\n")
     o.append("\nexport interface GtkElements {\n")
     for tag in sorted(m.tags):
-        o.append(f"  {tag}: Gtk{gir_name(m.tags[tag])}Props;\n")
+        o.append(f"  {ts_key(tag)}: Gtk{gir_name(m.tags[tag])}Props;\n")
     o.append("}\n")
     return "".join(o)
+
+
+def ts_key(name: str) -> str:
+    """A TS property key: bare when it is an identifier, else quoted (`'can-shrink'`)."""
+    return name if name.isidentifier() else rs(name)
 
 
 def gen_types(m: Model) -> str:

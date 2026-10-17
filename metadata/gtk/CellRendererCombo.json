@@ -83,7 +83,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRendererCombo:prop:has-entry",
       "invocation": "reflected",
-      "js_name": "hasEntry",
+      "js_name": "has-entry",
       "name": "has-entry",
       "notify": {
         "explicit": true,
@@ -162,7 +162,7 @@
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRendererCombo:prop:text-column",
       "invocation": "reflected",
-      "js_name": "textColumn",
+      "js_name": "text-column",
       "name": "text-column",
       "notify": {
         "explicit": true,

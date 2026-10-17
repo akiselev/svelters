@@ -125,7 +125,7 @@
   ],
   "element": {
     "origin": "gir",
-    "tag": "windowhandle"
+    "tag": "window-handle"
   },
   "enums": [],
   "id": "svelters-api:v1:type:gtk:Gtk:WindowHandle",

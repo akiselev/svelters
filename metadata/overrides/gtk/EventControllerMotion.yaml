@@ -1,4 +1,4 @@
-element: {tag: motioncontroller}
+element: {}
 signals:
   - name: enter
     js_event: enter

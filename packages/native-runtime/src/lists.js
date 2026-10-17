@@ -19,7 +19,7 @@ import * as $ from 'svelte/internal/client';
 // without the browser condition); resolved by the alias in ../vite.js and test/register.mjs.
 import { getAllContexts, setContext } from 'svelte/internal/client/context';
 import { diffKeys } from '@svelters/lists/diff';
-import { append, element, mount, on, set } from './index.js';
+import { append, element, mount, on, rowOutlet, set } from './index.js';
 
 export { diffKeys, applySplices, lis } from '@svelters/lists/diff';
 
@@ -90,7 +90,7 @@ export class ListController {
    */
   constructor(opts) {
     this.opts = opts;
-    this.view = null; // the virtuallist native
+    this.view = null; // the virtual-list native
     this.keys = []; // key per position
     this.ids = []; // native id per position
     this.entries = new Map(); // key -> id
@@ -172,7 +172,7 @@ export class ListController {
     const s = { outlet: null, unmountOutlet: null, unmountRow: null, item: $.state(undefined), index: $.state(-1), id: -1, pos: -1, gen: 0 };
     // The outlet is a root of its own: it belongs to the slot, not to the component tree.
     s.unmountOutlet = mount(() => {
-      s.outlet = element('box');
+      s.outlet = element(rowOutlet());
     });
     this.slots.set(row, s);
     this.view.call('setRow', row, s.outlet);
@@ -234,13 +234,13 @@ export class ListController {
   }
 }
 
-const OWN_PROPS = new Set(['$$slots', '$$events', '$$legacy', 'items', 'key', 'row', 'layout', 'selection', 'selected', 'rowHeight', 'onactivate', 'children']);
+const OWN_PROPS = new Set(['$$slots', '$$events', '$$legacy', 'items', 'key', 'row', 'layout', 'selection', 'selected', 'row-height', 'onactivate', 'children']);
 
 /**
- * `<ListView items key row layout selection bind:selected rowHeight onactivate ...rest>`, the
+ * `<ListView items key row layout selection bind:selected row-height onactivate ...rest>`, the
  * component API of @svelters/lists, in the shape the compiler generates for a component
  * (`ListView(container, $$props)`, returns its exports `{ scrollTo, controller }`). Other props go
- * to the native `virtuallist` unchanged (`vexpand`, `minHeight`, ...).
+ * to the native `virtual-list` unchanged (`vexpand`, `min-height`, ...).
  */
 export function ListView($$anchor, $$props) {
   $.push($$props, true);
@@ -249,7 +249,7 @@ export function ListView($$anchor, $$props) {
   const layout = $.prop($$props, 'layout', 3, 'list');
   const selection = $.prop($$props, 'selection', 3, 'single');
   const selected = $.prop($$props, 'selected', 31, () => -1);
-  const rowHeight = $.prop($$props, 'rowHeight', 3, 32);
+  const rowHeight = $.prop($$props, 'row-height', 3, 32);
   const rest = $.rest_props($$props, OWN_PROPS);
 
   const contexts = getAllContexts();
@@ -261,10 +261,10 @@ export function ListView($$anchor, $$props) {
   });
   let lastSelected = -1; // last position known natively: a native change is not echoed back
 
-  const view = element('virtuallist');
+  const view = element('virtual-list');
   $.template_effect(() => set(view, 'layout', layout()));
   $.template_effect(() => set(view, 'selection', selection()));
-  $.template_effect(() => set(view, 'rowHeight', rowHeight()));
+  $.template_effect(() => set(view, 'row-height', rowHeight()));
   let restKeys = [];
   $.template_effect(() => {
     const keys = Object.keys(rest).filter((k) => !(k.startsWith('on') && typeof rest[k] === 'function'));

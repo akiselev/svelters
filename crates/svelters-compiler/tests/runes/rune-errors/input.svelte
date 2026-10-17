@@ -21,5 +21,5 @@
 </script>
 
 {#each items as item}
-  <button onclick={() => (item = 2)}>x</button>
+  <button onclicked={() => (item = 2)}>x</button>
 {/each}

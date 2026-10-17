@@ -254,12 +254,12 @@ bool t_runtime_parent_destroy_notifies_children(std::string &why) {
 }
 
 bool t_runtime_handle_info_and_idempotent_destroy(std::string &why) {
-  CHECK(K("window") && K("label"));
-  svl_handle w = mk("window");
+  CHECK(K("main-window") && K("label"));
+  svl_handle w = mk("main-window");
   svl_handle l = mk("label");
   svl_handle_info info{};
   CHECK(B->handle_info(B->self, w, &info) == 0);
-  CHECK(info.kind == K("window"));
+  CHECK(info.kind == K("main-window"));
   CHECK(info.lifetime == SVL_LIFE_TOPLEVEL);
   CHECK(B->handle_info(B->self, l, &info) == 0);
   CHECK(info.kind == K("label"));
@@ -276,7 +276,7 @@ bool t_runtime_handle_info_and_idempotent_destroy(std::string &why) {
 }
 
 bool t_runtime_uncontrolled_close_cascades(std::string &why) {
-  svl_handle w = mk("window");
+  svl_handle w = mk("main-window");
   svl_handle l = mk("label");
   CHECK(B->insert(B->self, w, l, 0, 0) == 0);
   auto *widget = qobject_cast<QWidget *>(O(w));
@@ -297,8 +297,8 @@ bool t_runtime_uncontrolled_close_cascades(std::string &why) {
 
 bool t_runtime_controlled_close_is_vetoed(std::string &why) {
   reply = Reply::Busy;
-  svl_handle w = mk("window");
-  svl_id sig = G("window", "close-request");
+  svl_handle w = mk("main-window");
+  svl_id sig = G("main-window", "close");
   CHECK(sig != 0);
   CHECK(B->listen(B->self, w, sig, true) == 0);
   auto *widget = qobject_cast<QWidget *>(O(w));
@@ -315,8 +315,8 @@ bool t_runtime_controlled_close_is_vetoed(std::string &why) {
 }
 
 bool t_runtime_close_handler_decides_through_call_sync(std::string &why) {
-  svl_handle w = mk("window");
-  svl_id sig = G("window", "close-request");
+  svl_handle w = mk("main-window");
+  svl_id sig = G("main-window", "close");
   CHECK(B->listen(B->self, w, sig, true) == 0);
   auto *widget = qobject_cast<QWidget *>(O(w));
   CHECK(widget);
@@ -330,8 +330,8 @@ bool t_runtime_close_handler_decides_through_call_sync(std::string &why) {
   CHECK(widget->close());
   CHECK(rec.destroyed.size() == 1 && rec.destroyed[0] == w && rec.reasons[0] == SVL_GONE_CLOSED);
   // A failing call (no handler ran) also falls back to the toolkit default.
-  svl_handle w2 = mk("window");
-  CHECK(B->listen(B->self, w2, G("window", "close-request"), true) == 0);
+  svl_handle w2 = mk("main-window");
+  CHECK(B->listen(B->self, w2, G("main-window", "close"), true) == 0);
   reply = Reply::Failed;
   CHECK(qobject_cast<QWidget *>(O(w2))->close());
   CHECK(rec.destroyed.size() == 2 && rec.destroyed[1] == w2);
@@ -339,8 +339,8 @@ bool t_runtime_close_handler_decides_through_call_sync(std::string &why) {
 }
 
 bool t_runtime_key_press_handler_consumes_the_key(std::string &why) {
-  svl_handle e = mk("entry");
-  svl_id sig = G("entry", "key-press");
+  svl_handle e = mk("line-edit");
+  svl_id sig = G("line-edit", "key-press");
   CHECK(sig != 0);
   auto *edit = qobject_cast<QLineEdit *>(O(e));
   CHECK(edit);
@@ -378,8 +378,8 @@ bool t_runtime_key_press_handler_consumes_the_key(std::string &why) {
 // ---- event families (X8) -------------------------------------------------------------------------
 
 bool t_runtime_mouse_press_handler_consumes_and_reports_a_point(std::string &why) {
-  svl_handle e = mk("entry");
-  svl_id sig = G("entry", "mouse-press");
+  svl_handle e = mk("line-edit");
+  svl_id sig = G("line-edit", "mouse-press");
   CHECK(sig != 0);
   auto *edit = qobject_cast<QLineEdit *>(O(e));
   edit->setText("hello");
@@ -407,27 +407,27 @@ bool t_runtime_mouse_press_handler_consumes_and_reports_a_point(std::string &why
 }
 
 bool t_runtime_other_event_families_deliver_their_payloads(std::string &why) {
-  svl_handle e = mk("entry");
+  svl_handle e = mk("line-edit");
   auto *edit = qobject_cast<QLineEdit *>(O(e));
   // Consumable families: call_sync with the payload.
   reply = Reply::Continue;
-  CHECK(B->listen(B->self, e, G("entry", "key-release"), true) == 0);
+  CHECK(B->listen(B->self, e, G("line-edit", "key-release"), true) == 0);
   QKeyEvent kr(QEvent::KeyRelease, Qt::Key_Q, Qt::ShiftModifier, QStringLiteral("Q"));
   QCoreApplication::sendEvent(edit, &kr);
   CHECK(sync_calls.size() == 1 && sync_calls[0].n == 3 && sync_calls[0].key == Qt::Key_Q && sync_calls[0].text == "Q");
-  CHECK(B->listen(B->self, e, G("entry", "wheel"), true) == 0);
+  CHECK(B->listen(B->self, e, G("line-edit", "wheel"), true) == 0);
   QWheelEvent wh(QPointF(1, 2), QPointF(3, 4), QPoint(), QPoint(0, 120), Qt::NoButton, Qt::NoModifier, Qt::NoScrollPhase, false);
   QCoreApplication::sendEvent(edit, &wh);
   CHECK(sync_calls.size() == 2 && sync_calls[1].n == 4 && sync_calls[1].tags[0] == SVL_RECORD && sync_calls[1].tags[1] == SVL_RECORD);
-  CHECK(B->listen(B->self, e, G("entry", "context-menu"), true) == 0);
+  CHECK(B->listen(B->self, e, G("line-edit", "context-menu"), true) == 0);
   QContextMenuEvent cm(QContextMenuEvent::Mouse, QPoint(3, 4), QPoint(13, 14));
   QCoreApplication::sendEvent(edit, &cm);
   CHECK(sync_calls.size() == 3 && sync_calls[2].n == 3);
   // Informational families are posted and never consume.
-  CHECK(B->listen(B->self, e, G("entry", "resize"), true) == 0);
-  CHECK(B->listen(B->self, e, G("entry", "focus-in"), true) == 0);
-  CHECK(B->listen(B->self, e, G("entry", "enter"), true) == 0);
-  CHECK(B->listen(B->self, e, G("entry", "leave"), true) == 0);
+  CHECK(B->listen(B->self, e, G("line-edit", "resize"), true) == 0);
+  CHECK(B->listen(B->self, e, G("line-edit", "focus-in"), true) == 0);
+  CHECK(B->listen(B->self, e, G("line-edit", "enter"), true) == 0);
+  CHECK(B->listen(B->self, e, G("line-edit", "leave"), true) == 0);
   rec.events.clear();
   QResizeEvent rs(QSize(5, 6), QSize(1, 2));
   QCoreApplication::sendEvent(edit, &rs);
@@ -438,22 +438,22 @@ bool t_runtime_other_event_families_deliver_their_payloads(std::string &why) {
   QEvent lv(QEvent::Leave);
   QCoreApplication::sendEvent(edit, &lv);
   CHECK(rec.events.size() == 4);
-  CHECK(rec.events[0].sig == G("entry", "resize") && rec.events[0].n == 2);
-  CHECK(rec.events[1].sig == G("entry", "focus-in") && rec.events[1].n == 1 && rec.events[1].strs[0] == std::to_string(Qt::TabFocusReason));
-  CHECK(rec.events[2].sig == G("entry", "enter") && rec.events[2].n == 1);
-  CHECK(rec.events[3].sig == G("entry", "leave") && rec.events[3].n == 0);
+  CHECK(rec.events[0].sig == G("line-edit", "resize") && rec.events[0].n == 2);
+  CHECK(rec.events[1].sig == G("line-edit", "focus-in") && rec.events[1].n == 1 && rec.events[1].strs[0] == std::to_string(Qt::TabFocusReason));
+  CHECK(rec.events[2].sig == G("line-edit", "enter") && rec.events[2].n == 1);
+  CHECK(rec.events[3].sig == G("line-edit", "leave") && rec.events[3].n == 0);
   B->destroy(B->self, e);
   return true;
 }
 
 bool t_runtime_capture_reaches_descendant_mouse_press_first(std::string &why) {
-  svl_handle box = mk("box");
-  svl_handle e = mk("entry");
+  svl_handle box = mk("box-layout");
+  svl_handle e = mk("line-edit");
   CHECK(B->insert(B->self, box, e, 0, 0) == 0);
   auto *edit = qobject_cast<QLineEdit *>(O(e));
   edit->setText("hello");
   edit->setCursorPosition(5);
-  svl_id bsig = G("box", "mouse-press");
+  svl_id bsig = G("box-layout", "mouse-press");
   CHECK(B->listen_ex(B->self, box, bsig, true, SVL_LISTEN_CAPTURE) == 0);
   CHECK(B->listen_ex(B->self, box, bsig, true, SVL_LISTEN_AFTER) != 0);  // no after phase
   auto press = [&]() {
@@ -562,15 +562,15 @@ bool t_runtime_listen_phase_refusals(std::string &why) {
   CHECK(B->listen_ex(B->self, h, sig, true, SVL_LISTEN_CAPTURE | SVL_LISTEN_AFTER) < 0);
   CHECK(B->listen_ex(B->self, h, sig, true, 8) < 0);  // unknown flag
   B->destroy(B->self, h);
-  svl_handle e = mk("entry");
-  svl_id key = G("entry", "key-press");
+  svl_handle e = mk("line-edit");
+  svl_id key = G("line-edit", "key-press");
   CHECK(B->listen_ex(B->self, e, key, true, SVL_LISTEN_AFTER) < 0);
   CHECK(std::strstr(B->last_error(B->self), "no after phase") != nullptr);
   CHECK(B->listen_ex(B->self, e, key, true, SVL_LISTEN_CAPTURE) == 0);  // allowed (a capture listener on the entry itself never fires)
   CHECK(B->listen_ex(B->self, e, key, false, SVL_LISTEN_CAPTURE) == 0);
   B->destroy(B->self, e);
-  svl_handle w = mk("window");
-  svl_id close = G("window", "close-request");
+  svl_handle w = mk("main-window");
+  svl_id close = G("main-window", "close");
   CHECK(B->listen_ex(B->self, w, close, true, SVL_LISTEN_CAPTURE) < 0);
   CHECK(B->listen_ex(B->self, w, close, true, SVL_LISTEN_AFTER) < 0);
   CHECK(std::strstr(B->last_error(B->self), "event-filter") != nullptr);
@@ -579,13 +579,13 @@ bool t_runtime_listen_phase_refusals(std::string &why) {
 }
 
 bool t_runtime_capture_reaches_descendant_key_before_its_own_listener(std::string &why) {
-  svl_handle box = mk("box");
-  svl_handle e = mk("entry");
+  svl_handle box = mk("box-layout");
+  svl_handle e = mk("line-edit");
   CHECK(B->insert(B->self, box, e, 0, 0) == 0);
   auto *edit = qobject_cast<QLineEdit *>(O(e));
   CHECK(edit);
-  svl_id bsig = G("box", "key-press");
-  svl_id esig = G("entry", "key-press");
+  svl_id bsig = G("box-layout", "key-press");
+  svl_id esig = G("line-edit", "key-press");
   CHECK(bsig != 0 && esig != 0);
   auto press = [&](QWidget *w, int key, const char *text) {
     QKeyEvent ev(QEvent::KeyPress, key, Qt::NoModifier, QString::fromUtf8(text));
@@ -637,7 +637,7 @@ bool t_runtime_request_frame_delivers_once_per_request(std::string &why) {
   }
   CHECK(frames == 1);
   // A visible window: QWindow::requestUpdate drives it.
-  svl_handle w = mk("window");
+  svl_handle w = mk("main-window");
   auto *widget = qobject_cast<QWidget *>(O(w));
   widget->show();
   for (int i = 0; i < 40; ++i) QCoreApplication::processEvents(QEventLoop::AllEvents, 10);

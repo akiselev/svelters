@@ -393,8 +393,7 @@
       },
       "annotated": {
         "fields": [
-          "echo_suppress",
-          "js_name"
+          "echo_suppress"
         ],
         "origin": "manual",
         "provenance": "GtkSpinner:spinning (Gtk 4 docs)"

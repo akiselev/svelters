@@ -1,13 +1,13 @@
 inherit:
   props:
-    - { js: readOnly, native: readOnly, provenance: "QAbstractSpinBox::readOnly (qdoc)" }
+    - { js: read-only, native: readOnly, provenance: "QAbstractSpinBox::readOnly (qdoc)" }
     - { js: wrapping, native: wrapping, provenance: "QAbstractSpinBox::wrapping (qdoc)" }
     - { js: frame, native: frame, provenance: "QAbstractSpinBox::frame (qdoc)" }
-    - { js: specialValueText, native: specialValueText, provenance: "QAbstractSpinBox::specialValueText (qdoc)" }
-    - { js: buttonSymbols, native: buttonSymbols, provenance: "QAbstractSpinBox::buttonSymbols (qdoc)" }
+    - { js: special-value-text, native: specialValueText, provenance: "QAbstractSpinBox::specialValueText (qdoc)" }
+    - { js: button-symbols, native: buttonSymbols, provenance: "QAbstractSpinBox::buttonSymbols (qdoc)" }
     - { js: accelerated, native: accelerated, provenance: "QAbstractSpinBox::accelerated (qdoc)" }
   signals:
-    - js: editingFinished
+    - js: editing-finished
       native: editingFinished
       connect: "editingFinished()"
       args: []

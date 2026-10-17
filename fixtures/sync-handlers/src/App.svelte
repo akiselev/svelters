@@ -6,7 +6,7 @@
 
 <window
   title="Sync"
-  onclose={(e) => {
+  onclose-request={(e) => {
     if (dirty) {
       e.preventDefault();
       status = 'vetoed';
@@ -24,6 +24,6 @@
         if (keyval === 99) e.result = false;
       }}
     />
-    <button onclick={() => (dirty = !dirty)}>Toggle dirty</button>
+    <button onclicked={() => (dirty = !dirty)}>Toggle dirty</button>
   </box>
 </window>

@@ -15,7 +15,8 @@ fn root() -> PathBuf {
 }
 
 fn watch_reload(backend: &str) {
-    let fixture = root().join("fixtures/counter");
+    // Fixtures are written in each toolkit's native names: Qt runs the Qt twin.
+    let fixture = root().join(if backend == "qt" { "fixtures/counter-qt" } else { "fixtures/counter" });
     let dir = root().join("target/m2b").join(format!("counter-watch-{backend}"));
     let _ = std::fs::remove_dir_all(&dir);
     std::fs::create_dir_all(dir.join("src")).unwrap();

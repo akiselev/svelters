@@ -2,10 +2,10 @@ elements:
   - tag: wizard
     construct: { class: QWizard }
     props:
-      - { js: wizardStyle, native: wizardStyle, provenance: "QWizard::wizardStyle (qdoc); enum by name (ABI v3)" }
+      - { js: wizard-style, native: wizardStyle, provenance: "QWizard::wizardStyle (qdoc); enum by name (ABI v3)" }
       - { js: options, native: options, provenance: "QWizard::options (qdoc); flags (ABI v3)" }
     signals:
-      - js: currentIdChanged
+      - js: current-id-changed
         native: currentIdChanged
         connect: "currentIdChanged(int)"
         args: [{ name: id, type: i32 }]

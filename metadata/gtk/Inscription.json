@@ -823,7 +823,7 @@
       "default": 3,
       "id": "svelters-api:v1:type:gtk:Gtk:Inscription:prop:min-chars",
       "invocation": "reflected",
-      "js_name": "minChars",
+      "js_name": "min-chars",
       "name": "min-chars",
       "notify": {
         "explicit": true,
@@ -872,7 +872,7 @@
       "default": 1,
       "id": "svelters-api:v1:type:gtk:Gtk:Inscription:prop:min-lines",
       "invocation": "reflected",
-      "js_name": "minLines",
+      "js_name": "min-lines",
       "name": "min-lines",
       "notify": {
         "explicit": true,
@@ -921,7 +921,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Inscription:prop:nat-chars",
       "invocation": "reflected",
-      "js_name": "natChars",
+      "js_name": "nat-chars",
       "name": "nat-chars",
       "notify": {
         "explicit": true,
@@ -965,7 +965,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Inscription:prop:nat-lines",
       "invocation": "reflected",
-      "js_name": "natLines",
+      "js_name": "nat-lines",
       "name": "nat-lines",
       "notify": {
         "explicit": true,
@@ -1055,7 +1055,7 @@
       "default": "clip",
       "id": "svelters-api:v1:type:gtk:Gtk:Inscription:prop:text-overflow",
       "invocation": "reflected",
-      "js_name": "textOverflow",
+      "js_name": "text-overflow",
       "name": "text-overflow",
       "notify": {
         "explicit": true,
@@ -1096,7 +1096,7 @@
       "default": "word-char",
       "id": "svelters-api:v1:type:gtk:Gtk:Inscription:prop:wrap-mode",
       "invocation": "reflected",
-      "js_name": "wrapMode",
+      "js_name": "wrap-mode",
       "name": "wrap-mode",
       "notify": {
         "explicit": true,

@@ -4,12 +4,11 @@
 # Every fact carries a provenance. See docs/notes/native-compiler/semantic-spec.md.
 framework: "GTK 4 (svelters-gtk, gtk4-rs)"
 
-# DOM-style event names accepted in `on<event>` attributes, as @svelters/renderer maps them.
-event_aliases:
-  click: clicked
-  change: changed
-  close: close-request
-event_aliases_provenance: "@svelters/renderer EVENT_TO_SIGNAL"
+# Events are the native signal names (`onclicked`, `onclose-request`): no DOM-style aliases (N1).
+
+# The container a virtualized list renders each row into (lower/lists.rs, @svelters/lists).
+row_outlet: box
+row_outlet_provenance: "@svelters/lists controller: one GtkBox outlet per row, handed to the virtual-list's setRow"
 
 # Kind rules are inherited along the kind chain (a rule on Gtk.Window applies to every window kind).
 kinds:

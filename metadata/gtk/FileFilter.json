@@ -310,7 +310,7 @@
       "default": "[]",
       "id": "svelters-api:v1:type:gtk:Gtk:FileFilter:prop:mime-types",
       "invocation": "reflected",
-      "js_name": "mimeTypes",
+      "js_name": "mime-types",
       "name": "mime-types",
       "notify": {
         "explicit": false,

@@ -713,7 +713,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:FileChooser:prop:create-folders",
       "invocation": "reflected",
-      "js_name": "createFolders",
+      "js_name": "create-folders",
       "name": "create-folders",
       "notify": {
         "explicit": false,
@@ -832,7 +832,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:FileChooser:prop:select-multiple",
       "invocation": "reflected",
-      "js_name": "selectMultiple",
+      "js_name": "select-multiple",
       "name": "select-multiple",
       "notify": {
         "explicit": false,
@@ -872,7 +872,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:FileChooser:prop:shortcut-folders",
       "invocation": "reflected",
-      "js_name": "shortcutFolders",
+      "js_name": "shortcut-folders",
       "name": "shortcut-folders",
       "notify": {
         "explicit": false,

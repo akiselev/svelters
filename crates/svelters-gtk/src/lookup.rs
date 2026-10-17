@@ -26,7 +26,7 @@ pub fn in_chain(k: u32, owner: u32) -> bool {
 /// Resolve by element tag, GType name (`GtkButton`) or GIR name (`Gtk.Button`, `Button`).
 pub fn kind_by_name(name: &str) -> u32 {
     // `canvas` is the portable tag of the recording canvas (X8): on GTK it is the drawing area.
-    let name = if name == "canvas" { "drawingarea" } else { name };
+    let name = if name == "canvas" { "drawing-area" } else { name };
     let gir = name.strip_prefix("Gtk.").unwrap_or(name);
     for (i, k) in KINDS.iter().enumerate() {
         if (!k.tag.is_empty() && k.tag == name) || k.gtype == name {

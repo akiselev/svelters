@@ -107,7 +107,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:SignalAction:prop:signal-name",
       "invocation": "reflected",
-      "js_name": "signalName",
+      "js_name": "signal-name",
       "name": "signal-name",
       "notify": {
         "explicit": false,

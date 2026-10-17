@@ -929,7 +929,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:ComboBox:prop:active-id",
       "invocation": "reflected",
-      "js_name": "activeId",
+      "js_name": "active-id",
       "name": "active-id",
       "notify": {
         "explicit": true,
@@ -969,7 +969,7 @@
       "default": "auto",
       "id": "svelters-api:v1:type:gtk:Gtk:ComboBox:prop:button-sensitivity",
       "invocation": "reflected",
-      "js_name": "buttonSensitivity",
+      "js_name": "button-sensitivity",
       "name": "button-sensitivity",
       "notify": {
         "explicit": true,
@@ -1049,7 +1049,7 @@
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:ComboBox:prop:entry-text-column",
       "invocation": "reflected",
-      "js_name": "entryTextColumn",
+      "js_name": "entry-text-column",
       "name": "entry-text-column",
       "notify": {
         "explicit": true,
@@ -1092,7 +1092,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:ComboBox:prop:has-entry",
       "invocation": "reflected",
-      "js_name": "hasEntry",
+      "js_name": "has-entry",
       "name": "has-entry",
       "notify": {
         "explicit": false,
@@ -1132,7 +1132,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:ComboBox:prop:has-frame",
       "invocation": "reflected",
-      "js_name": "hasFrame",
+      "js_name": "has-frame",
       "name": "has-frame",
       "notify": {
         "explicit": true,
@@ -1172,7 +1172,7 @@
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:ComboBox:prop:id-column",
       "invocation": "reflected",
-      "js_name": "idColumn",
+      "js_name": "id-column",
       "name": "id-column",
       "notify": {
         "explicit": true,
@@ -1255,7 +1255,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:ComboBox:prop:popup-fixed-width",
       "invocation": "reflected",
-      "js_name": "popupFixedWidth",
+      "js_name": "popup-fixed-width",
       "name": "popup-fixed-width",
       "notify": {
         "explicit": true,
@@ -1295,7 +1295,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:ComboBox:prop:popup-shown",
       "invocation": "reflected",
-      "js_name": "popupShown",
+      "js_name": "popup-shown",
       "name": "popup-shown",
       "notify": {
         "explicit": false,

@@ -46,7 +46,7 @@
   ],
   "element": {
     "origin": "gir",
-    "tag": "drawingarea"
+    "tag": "drawing-area"
   },
   "enums": [],
   "id": "svelters-api:v1:type:gtk:Gtk:DrawingArea",
@@ -374,16 +374,14 @@
         "set": "gtk_drawing_area_set_content_height"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkDrawingArea:content-height (Gtk 4 docs)"
       },
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:DrawingArea:prop:content-height",
       "invocation": "reflected",
-      "js_name": "contentHeight",
+      "js_name": "content-height",
       "name": "content-height",
       "notify": {
         "explicit": true,
@@ -424,16 +422,14 @@
         "set": "gtk_drawing_area_set_content_width"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkDrawingArea:content-width (Gtk 4 docs)"
       },
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:DrawingArea:prop:content-width",
       "invocation": "reflected",
-      "js_name": "contentWidth",
+      "js_name": "content-width",
       "name": "content-width",
       "notify": {
         "explicit": true,
@@ -482,7 +478,6 @@
           "default",
           "id",
           "invocation",
-          "js_name",
           "new",
           "notify",
           "range",

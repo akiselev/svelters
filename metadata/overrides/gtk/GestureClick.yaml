@@ -1,4 +1,4 @@
-element: {tag: clickgesture}
+element: {}
 signals:
   - name: pressed
     js_event: pressed

@@ -34,8 +34,8 @@
 <window title={todos.title}>
   <box orientation="vertical" spacing="4">
     <label>{todos.summary}</label>
-    <button onclick={() => todos.add(`task ${todos.items.length + 1}`)}>Add</button>
-    <button onclick={() => todos.toggleFirst()}>Toggle first</button>
-    <button onclick={() => todos.rename()}>Rename</button>
+    <button onclicked={() => todos.add(`task ${todos.items.length + 1}`)}>Add</button>
+    <button onclicked={() => todos.toggleFirst()}>Toggle first</button>
+    <button onclicked={() => todos.rename()}>Rename</button>
   </box>
 </window>

@@ -47,7 +47,7 @@
   ],
   "element": {
     "origin": "manual",
-    "tag": "clickgesture"
+    "tag": "gesture-click"
   },
   "enums": [],
   "id": "svelters-api:v1:type:gtk:Gtk:GestureClick",

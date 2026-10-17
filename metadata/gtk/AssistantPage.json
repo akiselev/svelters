@@ -168,7 +168,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:AssistantPage:prop:page-type",
       "invocation": "reflected",
-      "js_name": "pageType",
+      "js_name": "page-type",
       "name": "page-type",
       "notify": {
         "explicit": true,

@@ -1,10 +1,10 @@
 elements:
-  - tag: messagebox
+  - tag: message-box
     construct: { class: QMessageBox }
     props:
       - { js: text, native: text, provenance: "QMessageBox::text (qdoc)" }
-      - { js: informativeText, native: informativeText, provenance: "QMessageBox::informativeText (qdoc)" }
-      - { js: detailedText, native: detailedText, provenance: "QMessageBox::detailedText (qdoc)" }
+      - { js: informative-text, native: informativeText, provenance: "QMessageBox::informativeText (qdoc)" }
+      - { js: detailed-text, native: detailedText, provenance: "QMessageBox::detailedText (qdoc)" }
       - { js: icon, native: icon, provenance: "QMessageBox::icon (qdoc); enum by name (ABI v3)" }
-      - { js: textFormat, native: textFormat, provenance: "QMessageBox::textFormat (qdoc); enum by name (ABI v3)" }
-      - { js: standardButtons, native: standardButtons, provenance: "QMessageBox::standardButtons (qdoc); flags (ABI v3)" }
+      - { js: text-format, native: textFormat, provenance: "QMessageBox::textFormat (qdoc); enum by name (ABI v3)" }
+      - { js: standard-buttons, native: standardButtons, provenance: "QMessageBox::standardButtons (qdoc); flags (ABI v3)" }

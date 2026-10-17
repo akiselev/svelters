@@ -1,5 +1,5 @@
-//! Menus and actions (X4, gap G7): the kinds `menubar`, `toolbar`, `contextmenu`, `menu`, `action`
-//! and `menuseparator`.
+//! Menus and actions (X4, gap G7): the kinds `menu-bar`, `tool-bar`, `context-menu`, `menu`, `action`
+//! and `menu-separator`.
 //!
 //! GTK describes menus with a `GMenuModel` and handles them with `GAction`s found through
 //! `insert_action_group`; neither is a widget, so the generated widget tables have no kind for them.
@@ -7,12 +7,12 @@
 //!
 //! | node | native |
 //! |---|---|
-//! | `menubar` | `GtkPopoverMenuBar` over the root `GMenu` |
-//! | `toolbar` | `GtkBox` of buttons rebuilt from the child nodes |
-//! | `contextmenu` | `GtkPopoverMenu` parented to the target widget, popped up by a secondary-button gesture |
+//! | `menu-bar` | `GtkPopoverMenuBar` over the root `GMenu` |
+//! | `tool-bar` | `GtkBox` of buttons rebuilt from the child nodes |
+//! | `context-menu` | `GtkPopoverMenu` parented to the target widget, popped up by a secondary-button gesture |
 //! | `menu` | a `GMenu` referenced as a submenu item by its parent, or the `menu-model` of a `GtkMenuButton` |
 //! | `action` | a `GSimpleAction` (stateless, boolean state for `checkable`, or a member of the string-state action of its radio `group`) |
-//! | `menuseparator` | a section boundary of the parent `GMenu` |
+//! | `menu-separator` | a section boundary of the parent `GMenu` |
 //!
 //! Every structural or presentational change re-syncs the whole tree of its root: the root's
 //! `GSimpleActionGroup` (prefix `svl`, inserted on the widget that shows the menu), the `GMenu`
@@ -60,12 +60,12 @@ fn is_container(k: u32) -> bool {
 
 pub fn kind_by_name(name: &str) -> u32 {
     match name {
-        "menubar" => KIND_MENUBAR,
-        "toolbar" => KIND_TOOLBAR,
-        "contextmenu" => KIND_CONTEXT,
+        "menu-bar" => KIND_MENUBAR,
+        "tool-bar" => KIND_TOOLBAR,
+        "context-menu" => KIND_CONTEXT,
         "menu" => KIND_MENU,
         "action" => KIND_ACTION,
-        "menuseparator" => KIND_SEPARATOR,
+        "menu-separator" => KIND_SEPARATOR,
         _ => 0,
     }
 }
@@ -135,7 +135,7 @@ pub(super) struct Node {
     actions: gio::SimpleActionGroup,
     /// Containers: the string-state action of each radio group, with its action name.
     radio: HashMap<String, (String, gio::SimpleAction)>,
-    /// `menubar` and `toolbar`: the widget.
+    /// `menu-bar` and `tool-bar`: the widget.
     widget: Option<gtk::Widget>,
     /// Where the root's action group is inserted and its shortcut controller added.
     group_on: Option<gtk::Widget>,
@@ -143,10 +143,10 @@ pub(super) struct Node {
     ctrl: Option<gtk::ShortcutController>,
     ctrl_sig: String,
     bar_sig: String,
-    /// `contextmenu`: the popover, and the widget and gesture it is attached to.
+    /// `context-menu`: the popover, and the widget and gesture it is attached to.
     popover: Option<gtk::PopoverMenu>,
     gesture: Option<gtk::GestureClick>,
-    /// `contextmenu` target widget / `menu` owner button.
+    /// `context-menu` target widget / `menu` owner button.
     attached: Option<gtk::Widget>,
 }
 
@@ -364,7 +364,7 @@ impl Inner {
             (Some(_), _) => return Err("a menu holds only actions, separators and menus".into()),
             (None, KIND_CONTEXT) => return self.menu_attach_context(parent, child),
             (None, KIND_MENU) => return self.menu_attach_button(parent, child),
-            (None, _) => return Err("only a contextmenu or a menu (of a menubutton) can be inserted into a widget".into()),
+            (None, _) => return Err("only a context-menu or a menu (of a menu-button) can be inserted into a widget".into()),
         }
         {
             let mut nodes = self.menus.borrow_mut();
@@ -430,11 +430,11 @@ impl Inner {
         Ok(())
     }
 
-    /// A `contextmenu` attaches to the widget it is inserted into.
+    /// A `context-menu` attaches to the widget it is inserted into.
     fn menu_attach_context(self: &Rc<Self>, parent: u64, child: u64) -> Res<()> {
         let (w, _) = self.widget_of(parent)?;
         if self.menus.borrow().get(&child).is_some_and(|n| n.attached.is_some()) {
-            return Err("the contextmenu is already attached".into());
+            return Err("the context-menu is already attached".into());
         }
         let (model, group) = {
             let nodes = self.menus.borrow();
@@ -483,7 +483,7 @@ impl Inner {
     fn menu_attach_button(self: &Rc<Self>, parent: u64, child: u64) -> Res<()> {
         let (w, _) = self.widget_of(parent)?;
         let Some(btn) = w.downcast_ref::<gtk::MenuButton>() else {
-            return Err("a menu can only be inserted into a menu, a menubar or a menubutton".into());
+            return Err("a menu can only be inserted into a menu, a menu-bar or a menu-button".into());
         };
         if self.menus.borrow().get(&child).is_some_and(|n| n.attached.is_some() || n.parent != 0) {
             return Err("the menu is already inserted".into());
@@ -1031,7 +1031,7 @@ impl Inner {
 
     pub(super) fn menus_call(&self, h: u64, method: u32, args: &[svl_value]) -> Res<()> {
         let pop = self.menus.borrow().get(&h).and_then(|n| n.popover.clone());
-        let Some(pop) = pop else { return Err("the contextmenu is not attached to a widget".into()) };
+        let Some(pop) = pop else { return Err("the context-menu is not attached to a widget".into()) };
         match method {
             M_POPUP => {
                 let num = |i: usize| -> i32 {
@@ -1107,7 +1107,7 @@ impl Inner {
         }
     }
 
-    /// Test hook: the first node of kind `kind` (`action`, `menu`, `menubar`, ...) with this label.
+    /// Test hook: the first node of kind `kind` (`action`, `menu`, `menu-bar`, ...) with this label.
     pub fn menu_find(&self, kind: &str, label: &str) -> Option<u64> {
         let k = kind_by_name(kind);
         let nodes = self.menus.borrow();

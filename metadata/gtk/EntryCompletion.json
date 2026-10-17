@@ -621,7 +621,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:prop:cell-area",
       "invocation": "reflected",
-      "js_name": "cellArea",
+      "js_name": "cell-area",
       "name": "cell-area",
       "notify": {
         "explicit": false,
@@ -661,7 +661,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:prop:inline-completion",
       "invocation": "reflected",
-      "js_name": "inlineCompletion",
+      "js_name": "inline-completion",
       "name": "inline-completion",
       "notify": {
         "explicit": true,
@@ -701,7 +701,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:prop:inline-selection",
       "invocation": "reflected",
-      "js_name": "inlineSelection",
+      "js_name": "inline-selection",
       "name": "inline-selection",
       "notify": {
         "explicit": true,
@@ -741,7 +741,7 @@
       "default": 1,
       "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:prop:minimum-key-length",
       "invocation": "reflected",
-      "js_name": "minimumKeyLength",
+      "js_name": "minimum-key-length",
       "name": "minimum-key-length",
       "notify": {
         "explicit": true,
@@ -823,7 +823,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:prop:popup-completion",
       "invocation": "reflected",
-      "js_name": "popupCompletion",
+      "js_name": "popup-completion",
       "name": "popup-completion",
       "notify": {
         "explicit": true,
@@ -863,7 +863,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:prop:popup-set-width",
       "invocation": "reflected",
-      "js_name": "popupSetWidth",
+      "js_name": "popup-set-width",
       "name": "popup-set-width",
       "notify": {
         "explicit": true,
@@ -903,7 +903,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:prop:popup-single-match",
       "invocation": "reflected",
-      "js_name": "popupSingleMatch",
+      "js_name": "popup-single-match",
       "name": "popup-single-match",
       "notify": {
         "explicit": true,
@@ -943,7 +943,7 @@
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:prop:text-column",
       "invocation": "reflected",
-      "js_name": "textColumn",
+      "js_name": "text-column",
       "name": "text-column",
       "notify": {
         "explicit": false,

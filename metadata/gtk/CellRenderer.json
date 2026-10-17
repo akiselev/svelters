@@ -988,7 +988,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:prop:cell-background",
       "invocation": "reflected",
-      "js_name": "cellBackground",
+      "js_name": "cell-background",
       "name": "cell-background",
       "notify": {
         "explicit": false,
@@ -1026,7 +1026,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:prop:cell-background-rgba",
       "invocation": "reflected",
-      "js_name": "cellBackgroundRgba",
+      "js_name": "cell-background-rgba",
       "name": "cell-background-rgba",
       "notify": {
         "explicit": false,
@@ -1065,7 +1065,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:prop:cell-background-set",
       "invocation": "reflected",
-      "js_name": "cellBackgroundSet",
+      "js_name": "cell-background-set",
       "name": "cell-background-set",
       "notify": {
         "explicit": true,
@@ -1186,7 +1186,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:prop:is-expanded",
       "invocation": "reflected",
-      "js_name": "isExpanded",
+      "js_name": "is-expanded",
       "name": "is-expanded",
       "notify": {
         "explicit": true,
@@ -1226,7 +1226,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRenderer:prop:is-expander",
       "invocation": "reflected",
-      "js_name": "isExpander",
+      "js_name": "is-expander",
       "name": "is-expander",
       "notify": {
         "explicit": true,

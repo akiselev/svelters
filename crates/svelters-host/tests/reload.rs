@@ -99,7 +99,7 @@ const APP_TEMPLATE: &str = r#"<script>
 <window title="Reload test">
   <box orientation="vertical" spacing="8">
     <label>LABEL: {count}</label>
-    <button onclick={() => count++}>Increment</button>
+    <button onclicked={() => count++}>Increment</button>
   </box>
 </window>
 "#;

@@ -1,6 +1,5 @@
 properties:
   - name: label
-    js_name: label
     provenance: "GtkButton:label (Gtk 4 docs); P prop"
   - name: has-frame
     provenance: "GtkButton:has-frame (Gtk 4 docs)"

@@ -1,5 +1,5 @@
 //! Demo test: builds the counter tree from a hand-written op sequence (the same ops as
-//! fixtures/counter/expected.oplog), shows the window, clicks the button through
+//! fixtures/counter-qt/expected.oplog), shows the window, clicks the button through
 //! `QPushButton::click()` (the `click` method), and checks that the `clicked` events reached a
 //! stub `svl_host`, whose "JS" handler updates the label. Writes target/p4-counter.png.
 //!
@@ -132,22 +132,22 @@ fn demo() {
     let host = svl_host { self_: std::ptr::null_mut(), post_event, checkpoint, call_sync, on_destroyed, invoke_callback, release_callback, frame };
 
     let kind = |name: &str| id(SVL_KIND, 0, name);
-    let (k_window, k_box, k_label, k_button) = (kind("window"), kind("box"), kind("label"), kind("button"));
+    let (k_window, k_box, k_label, k_button) = (kind("main-window"), kind("box-layout"), kind("label"), kind("push-button"));
     assert!(k_window != 0 && k_box != 0 && k_label != 0 && k_button != 0);
 
-    // create window #1, set title; box #2 vertical, spacing 8; label #3; button #4
+    // create main-window #1, set window-title; box-layout #2 top-to-bottom, spacing 8; label #3; push-button #4
     let window = unsafe { (b.create)(b.self_, k_window) };
-    set(window, k_window, "title", s("Counter"));
+    set(window, k_window, "window-title", s("Counter"));
     let bx = unsafe { (b.create)(b.self_, k_box) };
-    set(bx, k_box, "orientation", s("vertical"));
+    set(bx, k_box, "direction", s("top-to-bottom"));
     set(bx, k_box, "spacing", i(8));
     let label = unsafe { (b.create)(b.self_, k_label) };
-    set(label, k_label, "label", s("Count: 0"));
+    set(label, k_label, "text", s("Count: 0"));
     insert(bx, label);
     let button = unsafe { (b.create)(b.self_, k_button) };
     let clicked = id(SVL_SIGNAL, k_button, "clicked");
     ok(unsafe { (b.listen)(b.self_, button, clicked, true) }, "listen");
-    set(button, k_button, "label", s("Increment"));
+    set(button, k_button, "text", s("Increment"));
     insert(bx, button);
     insert(window, bx);
     let present = id(SVL_METHOD, k_window, "present");
@@ -160,7 +160,7 @@ fn demo() {
         button,
         label,
         clicked,
-        label_prop: id(SVL_PROP, k_label, "label"),
+        label_prop: id(SVL_PROP, k_label, "text"),
         click_method: id(SVL_METHOD, k_button, "click"),
         failure: None,
     });

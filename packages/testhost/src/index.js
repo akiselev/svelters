@@ -3,13 +3,17 @@
 import vm from 'node:vm';
 import fs from 'node:fs';
 
-const defaultSchema = JSON.parse(fs.readFileSync(new URL('./schema.json', import.meta.url), 'utf8'));
+const readSchema = (file) => JSON.parse(fs.readFileSync(new URL(file, import.meta.url), 'utf8'));
+/** Coarse prop types per toolkit vocabulary: `gtk` (the default) and `qt` (Qt-vocabulary fixtures). */
+export const schemas = { gtk: readSchema('./schema.json'), qt: readSchema('./schema.qt.json') };
+const defaultSchema = schemas.gtk;
 
 /**
  * `schema` maps element tags to `{ prop: coarse type }` (`integer`, `number`, `boolean`, `string`,
  * `enum`, `flags`, `record`, ...). It stands in for the descriptors a real backend publishes, so the
  * renderer coerces attribute strings the same way on this host as on the native one. The default is
- * generated from the GTK metadata (`tools/metadata/gtk/gen_backend.py`).
+ * generated from the GTK metadata (`tools/metadata/gtk/gen_backend.py`); `toolkit: 'qt'` picks the one
+ * generated from the Qt metadata (`tools/metadata/qt/gen_cpp.py --schema`).
  */
 const COARSE = { i32: 'integer', u32: 'integer', i64: 'integer', f64: 'number', bool: 'boolean', string: 'string', enum: 'enum', flags: 'flags', record: 'record' };
 
@@ -49,7 +53,8 @@ export function toolkitTables(toolkit) {
 export function createTestHost({ schema: schemaOpt, toolkit } = {}) {
   const tables = toolkit ? toolkitTables(toolkit) : null;
   const schema = schemaOpt ?? tables?.schema ?? defaultSchema;
-  const knows = (kid, set, name) => !tables || tables.tags[kindNames[kid]]?.[set].has(name) === true;
+  // A kind the toolkit's spec does not know (synthetic: virtual-list, canvas, GTK menus) resolves any name.
+  const knows = (kid, set, name) => !tables || !tables.tags[kindNames[kid]] || tables.tags[kindNames[kid]][set].has(name);
   const lines = [];
   // Ids exist only to exercise the renderer's id path; the log always prints names.
   const kindNames = [null];
@@ -296,7 +301,8 @@ const MAX_TIMER_FIRINGS = 10_000;
 
 /**
  * Run a fixture bundle in a fresh vm context that only has the globals a QuickJS host provides
- * (no Node globals), then play `script`. Returns the op-log text.
+ * (no Node globals), then play `script`. Returns the op-log text. `toolkit` (`gtk` or `qt`) picks the
+ * prop schema and the style dialect the host answers (`css` / `qss`); `styleDialect` overrides the latter.
  *
  * Step semantics (the contract P2 must reproduce):
  *   { event: [h, signal, args] }  append `event #h signal args` to the log, then call
@@ -313,7 +319,7 @@ const MAX_TIMER_FIRINGS = 10_000;
  *                                 fire the earliest one (advancing virtual time); else stop }.
  * The bundle is evaluated before step 1, with no implicit checkpoint.
  */
-export async function runBundle({ bundlePath, script, styleDialect, toolkit }) {
+export async function runBundle({ bundlePath, script, toolkit, styleDialect = toolkit === 'qt' ? 'qss' : 'css' }) {
   const th = createTestHost({ toolkit });
   if (styleDialect === 'qss') {
     // answer the Qt dialect (style target 2), so the bundle applies the Qt style table

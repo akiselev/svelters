@@ -163,14 +163,14 @@ fn objects_that_are_not_widgets_travel_as_boxed_values() {
     });
 }
 
-/// A1 gap G3/G2 repro: `textview.getProp('buffer')` is a borrowed handle that takes method calls
+/// A1 gap G3/G2 repro: `text-view.getProp('buffer')` is a borrowed handle that takes method calls
 /// with arguments and dies with its owner.
 #[test]
 fn text_buffer_is_a_borrowed_handle_with_working_methods() {
     on_gtk(|| {
         let h = Harness::new();
         let win = h.create("window");
-        let tv = h.create("textview");
+        let tv = h.create("text-view");
         h.insert(win, tv, None, None).unwrap();
         let buf = handle(h.get(tv, "buffer"));
         assert_eq!(h.handle_info(buf).unwrap().lifetime, SVL_LIFE_BORROWED);

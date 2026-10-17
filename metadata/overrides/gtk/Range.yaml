@@ -12,7 +12,6 @@ properties:
     provenance: "GtkRange:fill-level (Gtk 4 docs); needs a non-empty adjustment range"
   - id: "svelters-api:v1:type:gtk:Gtk:Range:prop:value"
     name: value
-    js_name: value
     new: true
     type: {ref: f64, nullable: false, native: gdouble, gtype: gdouble}
     access: {read: true, write: true, construct: false, construct_only: false}
@@ -29,7 +28,6 @@ properties:
     provenance: "GtkAdjustment:value through GtkRange:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)"
   - id: "svelters-api:v1:type:gtk:Gtk:Range:prop:lower"
     name: lower
-    js_name: lower
     new: true
     type: {ref: f64, nullable: false, native: gdouble, gtype: gdouble}
     access: {read: true, write: true, construct: false, construct_only: false}
@@ -44,7 +42,6 @@ properties:
     provenance: "GtkAdjustment:lower through GtkRange:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)"
   - id: "svelters-api:v1:type:gtk:Gtk:Range:prop:upper"
     name: upper
-    js_name: upper
     new: true
     type: {ref: f64, nullable: false, native: gdouble, gtype: gdouble}
     access: {read: true, write: true, construct: false, construct_only: false}
@@ -57,9 +54,8 @@ properties:
     virtual: {op: via_object, via: adjustment, property: upper}
     sample: 80.0
     provenance: "GtkAdjustment:upper through GtkRange:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)"
-  - id: "svelters-api:v1:type:gtk:Gtk:Range:prop:stepIncrement"
-    name: stepIncrement
-    js_name: stepIncrement
+  - id: "svelters-api:v1:type:gtk:Gtk:Range:prop:step-increment"
+    name: step-increment
     new: true
     type: {ref: f64, nullable: false, native: gdouble, gtype: gdouble}
     access: {read: true, write: true, construct: false, construct_only: false}
@@ -72,9 +68,8 @@ properties:
     virtual: {op: via_object, via: adjustment, property: step-increment}
     sample: 3.0
     provenance: "GtkAdjustment:step-increment through GtkRange:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)"
-  - id: "svelters-api:v1:type:gtk:Gtk:Range:prop:pageIncrement"
-    name: pageIncrement
-    js_name: pageIncrement
+  - id: "svelters-api:v1:type:gtk:Gtk:Range:prop:page-increment"
+    name: page-increment
     new: true
     type: {ref: f64, nullable: false, native: gdouble, gtype: gdouble}
     access: {read: true, write: true, construct: false, construct_only: false}
@@ -87,9 +82,8 @@ properties:
     virtual: {op: via_object, via: adjustment, property: page-increment}
     sample: 25.0
     provenance: "GtkAdjustment:page-increment through GtkRange:adjustment (Gtk 4 docs); forwarded by the backend (X7, G12)"
-  - id: "svelters-api:v1:type:gtk:Gtk:Range:prop:pageSize"
-    name: pageSize
-    js_name: pageSize
+  - id: "svelters-api:v1:type:gtk:Gtk:Range:prop:page-size"
+    name: page-size
     new: true
     type: {ref: f64, nullable: false, native: gdouble, gtype: gdouble}
     access: {read: true, write: true, construct: false, construct_only: false}

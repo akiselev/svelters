@@ -5,12 +5,14 @@
 //   JS-pipeline comparisons (handwritten: null): native state == the JS pipeline's only;
 //   own fixtures: op log == <dir>/expected.<backend>.oplog, or, when <dir>/expected.<backend>.diagnostics
 //     exists, that compilation was rejected with exactly those diagnostic codes.
+// Bundles run on the TestHost in their target's vocabulary (`toolkit`: the qt target's prop schema
+// and QSS dialect for qt, GTK for gtk and testhost).
 // UPDATE=1 rewrites the own fixtures' expectations (review the diff!).
 import fs from 'node:fs';
 import path from 'node:path';
 import { runBundle } from '@svelters/testhost';
 import { compare } from '../../../tools/oplog-compare.mjs';
-import { cases, targetsOf } from './cases.mjs';
+import { cases, scriptOf, targetsOf } from './cases.mjs';
 
 const here = import.meta.dirname;
 const update = process.env.UPDATE === '1';
@@ -20,7 +22,7 @@ const DEFAULTS = { label: '' };
 
 for (const c of cases()) {
   if (only.length && !only.includes(c.name)) continue;
-  for (const { name: backend } of targetsOf(c)) {
+  for (const { name: backend, backend: toolkit } of targetsOf(c)) {
     const dir = path.join(here, 'out', backend, c.name);
     const diagFile = path.join(dir, 'diagnostics.txt');
     const tag = `${backend}/${c.name}`;
@@ -48,10 +50,10 @@ for (const c of cases()) {
       console.log(`FAIL ${tag}: did not compile\n${fs.readFileSync(diagFile, 'utf8')}`);
       continue;
     }
-    const script = JSON.parse(fs.readFileSync(c.script, 'utf8'));
+    const script = JSON.parse(fs.readFileSync(scriptOf(c, backend), 'utf8'));
     let actual;
     try {
-      actual = await runBundle({ bundlePath: path.join(dir, 'dist/app.js'), script, toolkit: c.toolkit });
+      actual = await runBundle({ bundlePath: path.join(dir, 'dist/app.js'), script, toolkit: c.toolkit ?? toolkit });
     } catch (e) {
       failed = true;
       console.log(`FAIL ${tag}: runtime error: ${e.stack ?? e}`);
@@ -80,8 +82,8 @@ for (const c of cases()) {
       const xtag = `${tag} [${path.basename(extra)}]`;
       let js, ours;
       try {
-        js = await runBundle({ bundlePath: path.join(path.dirname(c.jsExpected), 'dist/app.js'), script: steps });
-        ours = await runBundle({ bundlePath: path.join(dir, 'dist/app.js'), script: steps });
+        js = await runBundle({ bundlePath: path.join(path.dirname(c.jsExpected), 'dist/app.js'), script: steps, toolkit });
+        ours = await runBundle({ bundlePath: path.join(dir, 'dist/app.js'), script: steps, toolkit });
       } catch (e) {
         failed = true;
         console.log(`FAIL ${xtag}: runtime error: ${e.stack ?? e}`);

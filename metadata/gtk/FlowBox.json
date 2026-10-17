@@ -134,7 +134,7 @@
   ],
   "element": {
     "origin": "gir",
-    "tag": "flowbox"
+    "tag": "flow-box"
   },
   "enums": [
     "svelters-api:v1:type:gtk:Gtk:SelectionMode"
@@ -1195,7 +1195,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:prop:accept-unpaired-release",
       "invocation": "reflected",
-      "js_name": "acceptUnpairedRelease",
+      "js_name": "accept-unpaired-release",
       "name": "accept-unpaired-release",
       "notify": {
         "explicit": true,
@@ -1235,7 +1235,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:prop:activate-on-single-click",
       "invocation": "reflected",
-      "js_name": "activateOnSingleClick",
+      "js_name": "activate-on-single-click",
       "name": "activate-on-single-click",
       "notify": {
         "explicit": true,
@@ -1280,7 +1280,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:prop:column-spacing",
       "invocation": "reflected",
-      "js_name": "columnSpacing",
+      "js_name": "column-spacing",
       "name": "column-spacing",
       "notify": {
         "explicit": true,
@@ -1373,7 +1373,7 @@
       "default": 7,
       "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:prop:max-children-per-line",
       "invocation": "reflected",
-      "js_name": "maxChildrenPerLine",
+      "js_name": "max-children-per-line",
       "name": "max-children-per-line",
       "notify": {
         "explicit": true,
@@ -1421,7 +1421,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:prop:min-children-per-line",
       "invocation": "reflected",
-      "js_name": "minChildrenPerLine",
+      "js_name": "min-children-per-line",
       "name": "min-children-per-line",
       "notify": {
         "explicit": true,
@@ -1469,7 +1469,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:prop:row-spacing",
       "invocation": "reflected",
-      "js_name": "rowSpacing",
+      "js_name": "row-spacing",
       "name": "row-spacing",
       "notify": {
         "explicit": true,
@@ -1517,7 +1517,7 @@
       "default": "single",
       "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:prop:selection-mode",
       "invocation": "reflected",
-      "js_name": "selectionMode",
+      "js_name": "selection-mode",
       "name": "selection-mode",
       "notify": {
         "explicit": true,

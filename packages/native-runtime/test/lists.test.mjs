@@ -68,7 +68,7 @@ function mountList(props = {}) {
           set selected(v) {
             $.set(selected, v);
           },
-          minHeight: 100,
+          'min-height': 100,
         });
       },
     );
@@ -79,16 +79,16 @@ function mountList(props = {}) {
   return { items, show, selected, unmount, api: () => api };
 }
 
-test('creation: the virtuallist gets its props, listens to the row lifecycle and receives the ids', () => {
+test('creation: the virtual-list gets its props, listens to the row lifecycle and receives the ids', () => {
   const t = harness();
   mountList();
   assert.deepEqual(t.take(), [
     'create window #1',
-    'create virtuallist #2',
+    'create virtual-list #2',
     'set #2 layout "list"',
     'set #2 selection "single"',
-    'set #2 rowHeight 32',
-    'set #2 minHeight 100',
+    'set #2 row-height 32',
+    'set #2 min-height 100',
     'listen #2 setup on',
     'listen #2 bind on',
     'listen #2 unbind on',

@@ -9,7 +9,7 @@
 <window title="Styled">
   <box class="toolbar">
     <button class="primary">Save</button>
-    <button class:primary={active} onclick={() => (active = !active)}>Toggle</button>
+    <button class:primary={active} onclicked={() => (active = !active)}>Toggle</button>
     <button style="height-request: 30px; minimum-height: 30px; font-weight: bold">Plain</button>
   </box>
 </window>

@@ -14,9 +14,9 @@ Svelte's `class`, `class:`, `style:` and `style` work on native elements, and a 
 
 <box class="card" orientation="vertical" spacing="8">
   <label class="count" class:warn style:font-weight={count > 2 ? 'bold' : null}>Count: {count}</label>
-  <button class="primary" onclick={() => count++}>Increment</button>
-  <button onclick={() => setColorScheme('dark')}>Dark</button>
-  <button onclick={() => setTokens({ '--sv-accent': '#e5a50a' })}>Amber accent</button>
+  <button class="primary" onclicked={() => count++}>Increment</button>
+  <button onclicked={() => setColorScheme('dark')}>Dark</button>
+  <button onclicked={() => setTokens({ '--sv-accent': '#e5a50a' })}>Amber accent</button>
 </box>
 
 <style>
@@ -28,7 +28,7 @@ Svelte's `class`, `class:`, `style:` and `style` work on native elements, and a 
 </style>
 ```
 
-The same component, light and dark, on both toolkits (the `styling` and `styling dark` pages of the widget galleries):
+This is the GTK vocabulary; the Qt version of the component writes `<box-layout class="card" direction="top-to-bottom">`, `<push-button>` and `push-button.primary`, since element names are each toolkit's own. The component, light and dark, on both toolkits (the `styling` and `styling dark` pages of the widget galleries):
 
 | | Light | Dark |
 | --- | --- | --- |
@@ -64,7 +64,7 @@ GTK: one GtkCssProvider per component, widget css classes          Qt: one appli
 ```
 
 - **Scoping.** Svelte appends its hash class (`svelte-1n46o8q`) to every selector and every element that carries a class, so a component's rules only match its own elements. The renderer forwards the class string unchanged.
-- **Type selectors use Svelters element names** (`button`, `label`, `entry`), not toolkit names. The translator maps them: `button` becomes the CSS node `button` on GTK and `.QPushButton` on Qt. Kinds that share a toolkit name with another kind (for instance `button`, `togglebutton` and `linkbutton` are all the CSS node `button`) get a marker class `sv-k-<tag>` from the renderer, and the selector uses it, so `button` never matches a toggle button. An element that does not exist on a toolkit (`togglebutton` on Qt) drops the rule there with a warning.
+- **Type selectors use Svelters element names** (`button`, `label`, `entry`), not toolkit names. Each toolkit has its own element names, and the translator maps them: `button` becomes the CSS node `button` on GTK, `push-button` becomes `.QPushButton` on Qt. Kinds that share a toolkit name with another kind (for instance `button`, `toggle-button` and `link-button` are all the CSS node `button`) get a marker class `sv-k-<tag>` from the renderer, and the selector uses it, so `button` never matches a toggle button. An element that does not exist on a toolkit (`toggle-button` on Qt) drops the rule there with a warning.
 - **Classes are cheap and local.** GTK adds and removes only the classes the app set (the widget keeps its own `text-button` or `toggle`). Nothing writes the whole `css-classes` list. Qt sets the dynamic property `class` to `"<QtClass> your classes"`, so `.QPushButton` keeps matching, and re-polishes that one widget.
 - **`id`** sets the widget name (GTK) or object name (Qt), so `#id` selectors match.
 
@@ -73,7 +73,7 @@ GTK: one GtkCssProvider per component, widget css classes          Qt: one appli
 Each toolkit has a table, generated from `metadata/style/<toolkit>.yaml` and checked against the toolkit's metadata (a setter must be a writable property of every element it applies to). The reference pages list every property: [GTK 4](/api/styling/gtk/), [Qt 6](/api/styling/qt/).
 
 - **GTK 4.** GTK CSS styles the widget's CSS nodes (`button`, `entry > text`, `scale > trough`) and its classes. Layout is not CSS in GTK: spacing, expansion, alignment and size requests are `GtkWidget` and container properties, so they are setter properties under their GObject names (`width-request`, `hexpand`, `halign`, `margin-start`, `spacing`). GTK CSS keeps `min-width` and `min-height` (a CSS minimum) and the CSS box `margin`; `margin-top` and `margin-bottom` are the widget margins, like `margin-start` and `margin-end`.
-- **Qt 6.** QSS styles widgets by class (`.QPushButton`) and the dynamic `class` property. Layout belongs to `QLayout`: `spacing` and `contents-margins` are setters on `box`, and a child's `stretch` and `align` in its layout are child attributes of the parent (the same as `parent:stretch`). `minimum-width`, `maximum-height` and friends are the `QWidget` properties; `min-width` is the QSS one.
+- **Qt 6.** QSS styles widgets by class (`.QPushButton`) and the dynamic `class` property. Layout belongs to `QLayout`: `spacing`, `direction` and `contents-margins` are setters on `box-layout`, and a child's `stretch` and `alignment` in its layout are child attributes of the parent (the same as `parent:stretch`). `minimum-width`, `maximum-height` and friends are the `QWidget` properties; `min-width` is the QSS one.
 - **Planned toolkits.** WinUI 3 and UIKit have no stylesheet language Svelters can target, so their tables will be setters only (`dialect: none`), and their setter rules take element names, `.class` and, where the platform supports it, `#id`.
 
 Names are never translated between toolkits: `minimum-width` on GTK is reported as a Qt property, not mapped to `width-request`. A component that targets both toolkits writes both names; each toolkit applies its own and warns about the other's.
@@ -106,25 +106,25 @@ A rule whose declarations include setter properties becomes a setter rule for th
 
 | Property | Applied through | Applies to |
 | --- | --- | --- |
-| `column-homogeneous` | setter `columnHomogeneous` | `Gtk.Grid` |
-| `column-spacing` | setter `columnSpacing` | `Gtk.Grid`, `Gtk.FlowBox` |
+| `column-homogeneous` | setter `column-homogeneous` | `Gtk.Grid` |
+| `column-spacing` | setter `column-spacing` | `Gtk.Grid`, `Gtk.FlowBox` |
 | `halign` | setter `halign` | `Gtk.Widget` |
-| `height-request` | setter `heightRequest` | `Gtk.Widget` |
+| `height-request` | setter `height-request` | `Gtk.Widget` |
 | `hexpand` | setter `hexpand` | `Gtk.Widget` |
 | `homogeneous` | setter `homogeneous` | `Gtk.Box`, `Gtk.FlowBox` |
 | `justify` | setter `justify` | `Gtk.Label` |
-| `margin-bottom` | setter `marginBottom` | `Gtk.Widget` |
-| `margin-end` | setter `marginEnd` | `Gtk.Widget` |
-| `margin-start` | setter `marginStart` | `Gtk.Widget` |
-| `margin-top` | setter `marginTop` | `Gtk.Widget` |
+| `margin-bottom` | setter `margin-bottom` | `Gtk.Widget` |
+| `margin-end` | setter `margin-end` | `Gtk.Widget` |
+| `margin-start` | setter `margin-start` | `Gtk.Widget` |
+| `margin-top` | setter `margin-top` | `Gtk.Widget` |
 | `orientation` | setter `orientation` | `Gtk.Orientable` |
-| `row-homogeneous` | setter `rowHomogeneous` | `Gtk.Grid` |
-| `row-spacing` | setter `rowSpacing` | `Gtk.Grid`, `Gtk.FlowBox` |
+| `row-homogeneous` | setter `row-homogeneous` | `Gtk.Grid` |
+| `row-spacing` | setter `row-spacing` | `Gtk.Grid`, `Gtk.FlowBox` |
 | `sensitive` | setter `sensitive` | `Gtk.Widget` |
 | `spacing` | setter `spacing` | `Gtk.Box` |
 | `valign` | setter `valign` | `Gtk.Widget` |
 | `vexpand` | setter `vexpand` | `Gtk.Widget` |
-| `width-request` | setter `widthRequest` | `Gtk.Widget` |
+| `width-request` | setter `width-request` | `Gtk.Widget` |
 | `wrap` | setter `wrap` | `Gtk.Label` |
 | `xalign` | setter `xalign` | `Gtk.Label` |
 | `yalign` | setter `yalign` | `Gtk.Label` |
@@ -133,16 +133,16 @@ A rule whose declarations include setter properties becomes a setter rule for th
 
 | Property | Applied through | Applies to |
 | --- | --- | --- |
-| `align` | child attribute `align` | `box` |
-| `contents-margins` | setter `contentsMargins` | `box` |
+| `alignment` | child attribute `alignment` | `box-layout` |
+| `contents-margins` | setter `contents-margins` | `box-layout` |
+| `direction` | setter `direction` | `box-layout` |
 | `enabled` | setter `enabled` | `QWidget` |
-| `maximum-height` | setter `maximumHeight` | `QWidget` |
-| `maximum-width` | setter `maximumWidth` | `QWidget` |
-| `minimum-height` | setter `minimumHeight` | `QWidget` |
-| `minimum-width` | setter `minimumWidth` | `QWidget` |
-| `orientation` | setter `orientation` | `box` |
-| `spacing` | setter `spacing` | `box` |
-| `stretch` | child attribute `stretch` | `box` |
+| `maximum-height` | setter `maximum-height` | `QWidget` |
+| `maximum-width` | setter `maximum-width` | `QWidget` |
+| `minimum-height` | setter `minimum-height` | `QWidget` |
+| `minimum-width` | setter `minimum-width` | `QWidget` |
+| `spacing` | setter `spacing` | `box-layout` |
+| `stretch` | child attribute `stretch` | `box-layout` |
 
 ## `style` and `style:`
 
@@ -198,7 +198,7 @@ The Vite plugin prints one line per dropped construct, naming the toolkit, with 
 
 ```text
 [plugin svelters:style] warning [qt] property 'box-shadow' is not supported on qt
-[plugin svelters:style] warning [qt] <togglebutton> is not an element on qt; rule dropped
+[plugin svelters:style] warning [qt] <toggle-button> is not an element on qt; rule dropped
 [plugin svelters:style] error [qt] value 'oklch(0.6 0.1 250)' for background-color uses 'oklch', which QSS cannot parse
 [plugin svelters:style] error [qt] combinator '+' never matches in QSS; rule dropped
 ```
@@ -288,7 +288,7 @@ Measurements: `docs/notes/styling-gtk-css-qss.md`.
 
 ## Limits and open items
 
-- Parts (`scale::slider`, `checkbutton::indicator`) are not in the style tables yet; use `@native`.
+- Parts (`scale::slider`, `check-button::indicator`) are not in the style tables yet; use `@native`.
 - No libadwaita: tokens are literal values on both toolkits, so the system accent colour is not followed.
 - The scheme is chosen by the app, not read from the system.
 - Svelte's `transition:` and `animate:` stay compile errors; CSS `transition` works on GTK only.

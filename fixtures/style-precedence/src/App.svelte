@@ -25,7 +25,7 @@
     <box spacing={1} style={inline}></box>
     <!-- the dynamic inline style wins over the rule; without it the rule applies again -->
     <box class="row" style={inline}></box>
-    <button onclick={next}>Next</button>
+    <button onclicked={next}>Next</button>
   </box>
 </window>
 

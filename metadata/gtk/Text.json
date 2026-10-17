@@ -1142,7 +1142,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Text:prop:activates-default",
       "invocation": "reflected",
-      "js_name": "activatesDefault",
+      "js_name": "activates-default",
       "name": "activates-default",
       "notify": {
         "explicit": true,
@@ -1263,7 +1263,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Text:prop:enable-emoji-completion",
       "invocation": "reflected",
-      "js_name": "enableEmojiCompletion",
+      "js_name": "enable-emoji-completion",
       "name": "enable-emoji-completion",
       "notify": {
         "explicit": true,
@@ -1303,7 +1303,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Text:prop:extra-menu",
       "invocation": "reflected",
-      "js_name": "extraMenu",
+      "js_name": "extra-menu",
       "name": "extra-menu",
       "notify": {
         "explicit": true,
@@ -1343,7 +1343,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Text:prop:im-module",
       "invocation": "reflected",
-      "js_name": "imModule",
+      "js_name": "im-module",
       "name": "im-module",
       "notify": {
         "explicit": true,
@@ -1383,7 +1383,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Text:prop:input-hints",
       "invocation": "reflected",
-      "js_name": "inputHints",
+      "js_name": "input-hints",
       "name": "input-hints",
       "notify": {
         "explicit": true,
@@ -1423,7 +1423,7 @@
       "default": "free-form",
       "id": "svelters-api:v1:type:gtk:Gtk:Text:prop:input-purpose",
       "invocation": "reflected",
-      "js_name": "inputPurpose",
+      "js_name": "input-purpose",
       "name": "input-purpose",
       "notify": {
         "explicit": true,
@@ -1463,7 +1463,7 @@
       "default": 42,
       "id": "svelters-api:v1:type:gtk:Gtk:Text:prop:invisible-char",
       "invocation": "reflected",
-      "js_name": "invisibleChar",
+      "js_name": "invisible-char",
       "name": "invisible-char",
       "notify": {
         "explicit": true,
@@ -1503,7 +1503,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Text:prop:invisible-char-set",
       "invocation": "reflected",
-      "js_name": "invisibleCharSet",
+      "js_name": "invisible-char-set",
       "name": "invisible-char-set",
       "notify": {
         "explicit": false,
@@ -1547,7 +1547,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Text:prop:max-length",
       "invocation": "reflected",
-      "js_name": "maxLength",
+      "js_name": "max-length",
       "name": "max-length",
       "notify": {
         "explicit": true,
@@ -1595,7 +1595,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Text:prop:overwrite-mode",
       "invocation": "reflected",
-      "js_name": "overwriteMode",
+      "js_name": "overwrite-mode",
       "name": "overwrite-mode",
       "notify": {
         "explicit": true,
@@ -1633,16 +1633,14 @@
         "set": "gtk_text_set_placeholder_text"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkText:placeholder-text (Gtk 4 docs)"
       },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Text:prop:placeholder-text",
       "invocation": "reflected",
-      "js_name": "placeholder",
+      "js_name": "placeholder-text",
       "name": "placeholder-text",
       "notify": {
         "explicit": true,
@@ -1682,7 +1680,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Text:prop:propagate-text-width",
       "invocation": "reflected",
-      "js_name": "propagateTextWidth",
+      "js_name": "propagate-text-width",
       "name": "propagate-text-width",
       "notify": {
         "explicit": true,
@@ -1722,7 +1720,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Text:prop:scroll-offset",
       "invocation": "reflected",
-      "js_name": "scrollOffset",
+      "js_name": "scroll-offset",
       "name": "scroll-offset",
       "notify": {
         "explicit": true,
@@ -1804,7 +1802,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Text:prop:truncate-multiline",
       "invocation": "reflected",
-      "js_name": "truncateMultiline",
+      "js_name": "truncate-multiline",
       "name": "truncate-multiline",
       "notify": {
         "explicit": true,

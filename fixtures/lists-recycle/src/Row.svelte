@@ -9,5 +9,5 @@
 
 <box orientation="horizontal" spacing="6">
   <label>{`${tag} ${index}: ${item.text}`}</label>
-  <button onclick={() => clicks++}>{`clicks ${clicks}`}</button>
+  <button onclicked={() => clicks++}>{`clicks ${clicks}`}</button>
 </box>

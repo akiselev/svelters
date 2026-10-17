@@ -20,19 +20,19 @@
   <label>scrolls: {scrolls}</label>
   <label>focus: {focused}</label>
   <entry text="type here">
-    <keycontroller
+    <event-controller-key
       onkey-pressed={(e, keyval) => {
         keys++;
         last = String(keyval);
         if (keyval === 120) e.preventDefault(); // 'x' is consumed: the entry never sees it
       }}
     />
-    <focuscontroller onenter={() => (focused = 'yes')} onleave={() => (focused = 'no')} />
+    <event-controller-focus onenter={() => (focused = 'yes')} onleave={() => (focused = 'no')} />
   </entry>
   <box orientation="vertical" spacing={4}>
     <label>click, move or scroll over this box</label>
-    <clickgesture onpressed={(n, x, y) => presses++} />
-    <motioncontroller onmotion={(x, y) => (pos = `${Math.round(x)},${Math.round(y)}`)} />
-    <scrollcontroller flags="vertical" onscroll={(e, dx, dy) => { scrolls++; e.preventDefault(); }} />
+    <gesture-click onpressed={(n, x, y) => presses++} />
+    <event-controller-motion onmotion={(x, y) => (pos = `${Math.round(x)},${Math.round(y)}`)} />
+    <event-controller-scroll flags="vertical" onscroll={(e, dx, dy) => { scrolls++; e.preventDefault(); }} />
   </box>
 </box>

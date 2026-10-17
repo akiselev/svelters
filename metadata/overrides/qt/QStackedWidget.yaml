@@ -1,20 +1,20 @@
 elements:
-  - tag: stackedwidget
+  - tag: stacked-widget
     construct: { class: QStackedWidget }
     props:
-      - { js: currentIndex, native: currentIndex, sample: 1, setup: "$w->addWidget(new QWidget()); $w->addWidget(new QWidget())", suppress_signals: true, provenance: "QStackedWidget::currentIndex (qdoc); the test adds two pages first" }
+      - { js: current-index, native: currentIndex, sample: 1, setup: "$w->addWidget(new QWidget()); $w->addWidget(new QWidget())", suppress_signals: true, provenance: "QStackedWidget::currentIndex (qdoc); the test adds two pages first" }
     bindings:
-      - name: currentIndex
+      - name: current-index
         direction: two_way
-        property: currentIndex
+        property: current-index
         type: { ref: i32, nullable: false }
-        change: { signal: changed, role: any_change, value: arg0 }
+        change: { signal: current-changed, role: any_change, value: arg0 }
         write: { natively_normalizes: false }
         echo: { strategy: host_suppressed, compare_before_set: true, read_back: false, sync_signals_on_set: ["currentChanged(int)"] }
         lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
         provenance: "QStackedWidget::setCurrentIndex emits currentChanged only on change (qdoc)"
     signals:
-      - js: changed
+      - js: current-changed
         native: currentChanged
         connect: "currentChanged(int)"
         args: [{ name: index, type: i32 }]

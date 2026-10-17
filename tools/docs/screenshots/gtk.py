@@ -25,12 +25,12 @@ WINDOW_SIZE = (360, 220)
 # Kinds that cannot be shown as a standalone screenshot.
 UNSUPPORTED = {
     "popover": "popover needs a parent widget and a grab",
-    "popovermenu": "popover needs a parent widget and a grab",
-    "emojichooser": "popover needs a parent widget and a grab",
-    "dragicon": "drag icon exists only during a drag operation",
-    "glarea": "needs a GL context, unavailable under Xvfb",
+    "popover-menu": "popover needs a parent widget and a grab",
+    "emoji-chooser": "popover needs a parent widget and a grab",
+    "drag-icon": "drag icon exists only during a drag operation",
+    "gl-area": "needs a GL context, unavailable under Xvfb",
     "video": "needs a media backend",
-    "mediacontrols": "needs a media stream",
+    "media-controls": "needs a media stream",
 }
 
 
@@ -44,10 +44,10 @@ def metadata():
     return out
 
 
-# ---- recipes: r_<tag>(Gtk) -> widget ---------------------------------------
+# ---- recipes: r_<tag with - as _>(Gtk) -> widget -------------------------
 
-def r_window(Gtk):
-    w = Gtk.ApplicationWindow(title="Counter")
+def r_window(Gtk, cls=None):
+    w = (cls or Gtk.Window)(title="Counter")
     box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
     for side in ("top", "bottom", "start", "end"):
         getattr(box, "set_margin_" + side)(12)
@@ -55,6 +55,10 @@ def r_window(Gtk):
     box.append(Gtk.Button(label="Increment"))
     w.set_child(box)
     return w
+
+
+def r_application_window(Gtk):
+    return r_window(Gtk, Gtk.ApplicationWindow)
 
 
 def r_box(Gtk):
@@ -78,11 +82,11 @@ def r_entry(Gtk):
     return e
 
 
-def r_checkbutton(Gtk):
+def r_check_button(Gtk):
     return Gtk.CheckButton(label="Check me", active=True)
 
 
-def r_togglebutton(Gtk):
+def r_toggle_button(Gtk):
     return Gtk.ToggleButton(label="Toggle", active=True)
 
 
@@ -97,17 +101,17 @@ def r_scale(Gtk):
     return s
 
 
-def r_progressbar(Gtk):
+def r_progress_bar(Gtk):
     p = Gtk.ProgressBar(fraction=0.6)
     p.set_size_request(200, -1)
     return p
 
 
-def r_spinbutton(Gtk):
+def r_spin_button(Gtk):
     return Gtk.SpinButton.new_with_range(0, 100, 1)
 
 
-def r_headerbar(Gtk):
+def r_header_bar(Gtk):
     h = Gtk.HeaderBar()
     h.set_title_widget(Gtk.Label(label="Title"))
     h.pack_start(Gtk.Button(label="Back"))
@@ -136,7 +140,7 @@ def r_stack(Gtk):
     return s
 
 
-def r_listbox(Gtk):
+def r_list_box(Gtk):
     lb = Gtk.ListBox()
     for t in ("First", "Second", "Third"):
         lb.append(Gtk.Label(label=t, xalign=0))
@@ -144,18 +148,18 @@ def r_listbox(Gtk):
     return lb
 
 
-def r_textview(Gtk):
+def r_text_view(Gtk):
     tv = Gtk.TextView()
     tv.get_buffer().set_text("Some text\nOn two lines")
     tv.set_size_request(200, 80)
     return tv
 
 
-def r_dropdown(Gtk):
+def r_drop_down(Gtk):
     return Gtk.DropDown.new_from_strings(["Apple", "Banana", "Cherry"])
 
 
-def r_linkbutton(Gtk):
+def r_link_button(Gtk):
     return Gtk.LinkButton.new_with_label("https://example.org", "Example")
 
 
@@ -165,19 +169,19 @@ def r_separator(Gtk):
     return s
 
 
-def r_searchentry(Gtk):
+def r_search_entry(Gtk):
     e = Gtk.SearchEntry()
     e.set_text("query")
     return e
 
 
-def r_passwordentry(Gtk):
+def r_password_entry(Gtk):
     e = Gtk.PasswordEntry(show_peek_icon=True)
     e.set_text("secret")
     return e
 
 
-def r_levelbar(Gtk):
+def r_level_bar(Gtk):
     lb = Gtk.LevelBar.new_for_interval(0, 10)
     lb.set_value(6)
     lb.set_size_request(200, -1)
@@ -205,7 +209,7 @@ def r_paned(Gtk):
     return p
 
 
-def r_comboboxtext(Gtk):
+def r_combo_box_text(Gtk):
     c = Gtk.ComboBoxText()
     for t in ("Apple", "Banana", "Cherry"):
         c.append_text(t)
@@ -213,7 +217,7 @@ def r_comboboxtext(Gtk):
     return c
 
 
-def r_scrolledwindow(Gtk):
+def r_scrolled_window(Gtk):
     s = Gtk.ScrolledWindow()
     s.set_child(Gtk.Label(label="Scrolled content"))
     s.set_size_request(200, 80)
@@ -231,7 +235,7 @@ def r_image(Gtk):
     return Gtk.Image.new_from_icon_name("document-open-symbolic")
 
 
-def r_actionbar(Gtk):
+def r_action_bar(Gtk):
     a = Gtk.ActionBar()
     a.pack_start(Gtk.Button(label="Action"))
     a.set_size_request(240, -1)
@@ -239,7 +243,7 @@ def r_actionbar(Gtk):
 
 
 RECIPES = {
-    name[2:]: fn for name, fn in sorted(globals().items())
+    name[2:].replace("_", "-"): fn for name, fn in sorted(globals().items())
     if name.startswith("r_") and callable(fn)
 }
 

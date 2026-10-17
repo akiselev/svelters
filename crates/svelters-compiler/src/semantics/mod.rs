@@ -242,6 +242,10 @@ pub trait BackendSemantics {
     /// `gtk`, `qt`, ...
     fn backend(&self) -> &str;
     fn framework(&self) -> &str;
+    /// Tag of the per-row outlet of virtualized lists (the spec's `row_outlet`), if the backend has one.
+    fn row_outlet(&self) -> Option<&str> {
+        None
+    }
 
     fn resolve_element(&self, tag: &str) -> Result<ElementRef, Unresolved>;
     fn lifetime(&self, el: &ElementRef) -> LifetimePlan;
@@ -261,7 +265,7 @@ pub trait BackendSemantics {
         }
         Ok(p)
     }
-    /// An event attribute: `onclick`, `click`, `onclose-request`, a signal or `js_event` name.
+    /// An event attribute: `on<event>` (`onclicked`, `onclose-request`), a signal or `js_event` name.
     fn event(&self, el: &ElementRef, attr: &str) -> Result<EventSpec, Unresolved>;
     /// `bind:<name>` — only where the spec declares a binding (by binding name or property).
     fn plan_binding(&self, el: &ElementRef, prop: &str) -> Result<BindingPlan, Unresolved>;

@@ -1,12 +1,12 @@
 elements:
-  - tag: dateedit
+  - tag: date-edit
     construct: { class: QDateEdit }
     props:
       - { js: date, native: date, suppress_signals: true, provenance: "QDateEdit::date (qdoc); typed by the S1 value model (ABI v3)" }
-      - { js: displayFormat, native: displayFormat, sample: "yyyy-MM-dd", provenance: "QDateEdit::displayFormat (qdoc); typed by the S1 value model (ABI v3)" }
-      - { js: calendarPopup, native: calendarPopup, provenance: "QDateEdit::calendarPopup (qdoc); typed by the S1 value model (ABI v3)" }
-      - { js: minimumDate, native: minimumDate, provenance: "QDateEdit::minimumDate (qdoc); typed by the S1 value model (ABI v3)" }
-      - { js: maximumDate, native: maximumDate, provenance: "QDateEdit::maximumDate (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: display-format, native: displayFormat, sample: "yyyy-MM-dd", provenance: "QDateEdit::displayFormat (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: calendar-popup, native: calendarPopup, provenance: "QDateEdit::calendarPopup (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: minimum-date, native: minimumDate, provenance: "QDateEdit::minimumDate (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: maximum-date, native: maximumDate, provenance: "QDateEdit::maximumDate (qdoc); typed by the S1 value model (ABI v3)" }
     bindings:
       - name: date
         direction: two_way

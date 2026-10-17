@@ -86,7 +86,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRendererAccel:prop:accel-key",
       "invocation": "reflected",
-      "js_name": "accelKey",
+      "js_name": "accel-key",
       "name": "accel-key",
       "notify": {
         "explicit": true,
@@ -129,7 +129,7 @@
       "default": "gtk",
       "id": "svelters-api:v1:type:gtk:Gtk:CellRendererAccel:prop:accel-mode",
       "invocation": "reflected",
-      "js_name": "accelMode",
+      "js_name": "accel-mode",
       "name": "accel-mode",
       "notify": {
         "explicit": true,
@@ -169,7 +169,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRendererAccel:prop:accel-mods",
       "invocation": "reflected",
-      "js_name": "accelMods",
+      "js_name": "accel-mods",
       "name": "accel-mods",
       "notify": {
         "explicit": true,
