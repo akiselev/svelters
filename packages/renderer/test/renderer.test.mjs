@@ -5,7 +5,7 @@ import { createTestHost } from '@svelters/testhost';
 
 const th = createTestHost();
 globalThis.__svelters_host = th.host;
-const { default: r, root, dispatch, StaleHandleError, BINDINGS } = await import('../src/index.js');
+const { default: r, root, dispatch, dispatchSync, StaleHandleError, BINDINGS } = await import('../src/index.js');
 
 const el = (tag, attrs = {}) => {
   const e = r.createElement(tag);
@@ -335,4 +335,77 @@ test('bind: read-back reports a value the native side changed', async () => {
   r.remove(win);
   await tick();
   take();
+});
+
+test('dispatchSync: result comes from the event object, not the return value', () => {
+  const win = el('window');
+  const seen = [];
+  r.addEventListener(win, 'close', (e, ...rest) => {
+    seen.push([e.type, e.signal, e.deferred, rest]);
+    return 'ignored';
+  });
+  r.insert(root, win, null);
+  const h = Number(take().split('\n').find((l) => l.startsWith('create window')).split('#')[1]);
+  // no flags: no decision
+  assert.equal(dispatchSync(h, 'close-request', []), null);
+  assert.deepEqual(seen[0], ['close', 'close-request', false, []]);
+  // a second listener (signal name alias) vetoes
+  r.addEventListener(win, 'close-request', (e) => e.preventDefault());
+  assert.equal(dispatchSync(h, 'close-request', []), true);
+  // stopPropagation counts as a stop too; extra args follow the event
+  const key = el('entry');
+  r.insert(win, key, null);
+  const kh = Number(take().split('\n').find((l) => l.startsWith('create entry')).split('#')[1]);
+  r.addEventListener(key, 'key-pressed', (e, keyval, keycode, state) => {
+    seen.push([keyval, keycode, state]);
+    if (keyval === 97) e.stopPropagation();
+  });
+  assert.equal(dispatchSync(kh, 'key-pressed', [97, 38, 0]), true);
+  assert.equal(dispatchSync(kh, 'key-pressed', [98, 56, 0]), null);
+  assert.deepEqual(seen.slice(-2), [[97, 38, 0], [98, 56, 0]]);
+  // an explicit result wins over the flags
+  r.addEventListener(key, 'key-pressed', (e) => {
+    e.result = false;
+  });
+  assert.equal(dispatchSync(kh, 'key-pressed', [97, 38, 0]), false);
+});
+
+test('dispatchSync: stopImmediatePropagation, throwing listeners, unknown handles', () => {
+  const win = el('window');
+  const order = [];
+  r.addEventListener(win, 'close', (e) => {
+    order.push(1);
+    e.preventDefault();
+    e.stopImmediatePropagation();
+  });
+  r.addEventListener(win, 'close', () => order.push(2));
+  r.insert(root, win, null);
+  const h = Number(take().split('\n').find((l) => l.startsWith('create window')).split('#')[1]);
+  assert.equal(dispatchSync(h, 'close-request', []), true);
+  assert.deepEqual(order, [1]);
+  r.addEventListener(win, 'close-request', () => {
+    throw new Error('boom');
+  });
+  const w2 = el('window');
+  r.addEventListener(w2, 'close', () => {
+    throw new Error('boom');
+  });
+  r.insert(root, w2, null);
+  const h2 = Number(take().split('\n').find((l) => l.startsWith('create window')).split('#')[1]);
+  assert.throws(() => dispatchSync(h2, 'close-request', []), /boom/);
+  assert.throws(() => dispatchSync(999999, 'close-request', []), /unknown handle/);
+});
+
+test('dispatch with deferred=true gives listeners the same event shape and ignores the flags', () => {
+  const win = el('window');
+  let got;
+  r.addEventListener(win, 'close', (e, ...rest) => {
+    got = [e.deferred, e.cancelable, rest];
+    e.preventDefault();
+  });
+  r.insert(root, win, null);
+  const h = Number(take().split('\n').find((l) => l.startsWith('create window')).split('#')[1]);
+  const out = dispatch(h, 'close-request', [], true);
+  assert.deepEqual(got, [true, false, []]);
+  assert.equal(out.event.defaultPrevented, false, 'a late event cannot veto anything');
 });

@@ -161,7 +161,13 @@ impl JsEngine for QjsEngine {
         })
     }
 
-    fn dispatch(&mut self, handle: u64, signal: &str, args: &[AV]) -> Result<(), JsError> {
+    fn dispatch(
+        &mut self,
+        handle: u64,
+        signal: &str,
+        args: &[AV],
+        deferred: bool,
+    ) -> Result<(), JsError> {
         self.call_guarded(|ctx| {
             let f: Value = ctx.globals().get("__svelters_dispatch")?;
             let Some(f) = f.as_function() else {
@@ -171,8 +177,34 @@ impl JsEngine for QjsEngine {
                 ));
             };
             let list = abi_to_js(ctx, &AV::List(args.to_vec()))?;
-            f.call::<_, Value>((handle as f64, signal, list))
+            f.call::<_, Value>((handle as f64, signal, list, deferred))
                 .map(|_| ())
+        })
+    }
+
+    fn dispatch_sync(&mut self, handle: u64, signal: &str, args: &[AV]) -> Result<AV, JsError> {
+        self.call_guarded(|ctx| {
+            let f: Value = ctx.globals().get("__svelters_dispatch_sync")?;
+            let Some(f) = f.as_function() else {
+                return Err(Exception::throw_message(
+                    ctx,
+                    "globalThis.__svelters_dispatch_sync is not registered",
+                ));
+            };
+            let list = abi_to_js(ctx, &AV::List(args.to_vec()))?;
+            let res: Value = f.call((handle as f64, signal, list))?;
+            if res.is_undefined() {
+                return Ok(AV::Null);
+            }
+            js_to_abi(ctx, &res, 0)
+        })
+    }
+
+    fn run_frame(&mut self) -> Result<(), JsError> {
+        self.call_guarded(|ctx| {
+            let internal: Object = ctx.globals().get("__svelters_internal")?;
+            let frame: Function = internal.get("frame")?;
+            frame.call::<_, ()>(())
         })
     }
 
@@ -383,6 +415,13 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, base: Instant) -> Res<()> {
                 if let Some(c) = w.upgrade() {
                     c.timer_clear(id);
                 }
+            })?,
+        )?;
+        let w = core.clone();
+        native.set(
+            "frame_request",
+            Function::new(ctx.clone(), move || -> bool {
+                w.upgrade().is_some_and(|c| c.frame_request())
             })?,
         )?;
         native.set(

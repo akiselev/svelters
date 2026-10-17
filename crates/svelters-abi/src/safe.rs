@@ -402,6 +402,12 @@ impl<'a> BackendRef<'a> {
         unsafe { (b.schedule_wake)(b.self_, ms) }
     }
 
+    /// ABI v2.1: asks for one `host.frame` on the toolkit's next frame. Main thread only.
+    pub fn request_frame(&self) {
+        let b = self.b();
+        unsafe { (b.request_frame)(b.self_) }
+    }
+
     /// Kind and lifetime class of a live handle; an error for a dead or foreign handle.
     pub fn handle_info(&self, h: svl_handle) -> AbiResult<svl_handle_info> {
         let b = self.b();
@@ -456,6 +462,8 @@ impl<'a> HostRef<'a> {
         unsafe { (host.checkpoint)(host.self_) }
     }
 
+    /// Synchronous handler call. `Err` carries the `SVL_SYNC_*` code: [`SVL_SYNC_BUSY`] means the
+    /// host queued the event for async delivery. A `null` result means "no decision".
     pub fn call_sync(&self, h: svl_handle, signal: svl_id, args: &[Value]) -> AbiResult<Value> {
         let host = self.h();
         let raw = RawValues::new(args);
@@ -465,10 +473,20 @@ impl<'a> HostRef<'a> {
         if rc < 0 {
             return Err(AbiError {
                 code: rc,
-                message: "call_sync failed".into(),
+                message: if rc == SVL_SYNC_BUSY {
+                    "call_sync: JS is running, event queued".into()
+                } else {
+                    "call_sync failed".into()
+                },
             });
         }
         Ok(unsafe { Value::from_raw(&out) })
+    }
+
+    /// ABI v2.1: a frame requested with `request_frame` is due.
+    pub fn frame(&self) {
+        let host = self.h();
+        unsafe { (host.frame)(host.self_) }
     }
 
     /// `reason` is one of the `SVL_GONE_*` constants.
@@ -512,6 +530,9 @@ pub trait Backend: 'static {
     /// Arms a single one-shot wakeup `ms` from now, replacing any pending one; `ms < 0` cancels.
     /// On expiry the backend calls `host.checkpoint`. Main thread only.
     fn schedule_wake(&self, ms: i64);
+    /// ABI v2.1: arranges one `host.frame` call on the toolkit's next frame. Idempotent while a
+    /// request is pending. Main thread only.
+    fn request_frame(&self);
 }
 
 type OutSlot = RefCell<Option<(Box<Value>, Vec<Vec<svl_value>>)>>;
@@ -703,6 +724,11 @@ unsafe extern "C" fn t_schedule_wake(s: *mut c_void, ms: i64) {
     let _ = catch_unwind(AssertUnwindSafe(|| s.backend.schedule_wake(ms)));
 }
 
+unsafe extern "C" fn t_request_frame(s: *mut c_void) {
+    let s = unsafe { shim(s) };
+    let _ = catch_unwind(AssertUnwindSafe(|| s.backend.request_frame()));
+}
+
 unsafe extern "C" fn t_quit(s: *mut c_void) {
     let s = unsafe { shim(s) };
     let _ = catch_unwind(AssertUnwindSafe(|| s.backend.quit()));
@@ -749,6 +775,7 @@ impl BackendVtable {
             schedule_wake: t_schedule_wake,
             quit: t_quit,
             last_error: t_last_error,
+            request_frame: t_request_frame,
         });
         BackendVtable { raw, shim }
     }
@@ -775,8 +802,20 @@ impl Drop for BackendVtable {
 pub trait HostCallbacks: 'static {
     fn post_event(&self, h: svl_handle, signal: svl_id, args: &[Value]);
     fn checkpoint(&self);
-    fn call_sync(&self, h: svl_handle, signal: svl_id, args: &[Value]) -> StrResult<Value>;
+    /// Runs the JS listeners now. `Err(SyncError::Busy)` when JS is running (the event was
+    /// queued for async delivery instead).
+    fn call_sync(&self, h: svl_handle, signal: svl_id, args: &[Value]) -> Result<Value, SyncError>;
     fn on_destroyed(&self, h: svl_handle, reason: u32);
+    /// A frame requested through `request_frame` is due.
+    fn frame(&self);
+}
+
+/// Why [`HostCallbacks::call_sync`] produced no result.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum SyncError {
+    /// JS is already running; the event was queued for async delivery.
+    Busy,
+    Failed(String),
 }
 
 struct HostShim {
@@ -818,15 +857,21 @@ unsafe extern "C" fn h_call_sync(
     match catch_unwind(AssertUnwindSafe(|| s.cb.call_sync(h, sig, &args))) {
         Ok(Ok(v)) => {
             write_out(&s.out, out, v);
-            0
+            SVL_SYNC_OK
         }
-        _ => -1,
+        Ok(Err(SyncError::Busy)) => SVL_SYNC_BUSY,
+        _ => SVL_SYNC_FAILED,
     }
 }
 
 unsafe extern "C" fn h_on_destroyed(s: *mut c_void, h: svl_handle, reason: u32) {
     let s = unsafe { hshim(s) };
     let _ = catch_unwind(AssertUnwindSafe(|| s.cb.on_destroyed(h, reason)));
+}
+
+unsafe extern "C" fn h_frame(s: *mut c_void) {
+    let s = unsafe { hshim(s) };
+    let _ = catch_unwind(AssertUnwindSafe(|| s.cb.frame()));
 }
 
 /// An `svl_host` backed by a [`HostCallbacks`] implementation.
@@ -847,6 +892,7 @@ impl HostVtable {
             checkpoint: h_checkpoint,
             call_sync: h_call_sync,
             on_destroyed: h_on_destroyed,
+            frame: h_frame,
         });
         HostVtable { raw, shim }
     }

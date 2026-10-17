@@ -1,4 +1,4 @@
-/* svelters backend ABI, version 2. Source of truth: plans/architecture/backend-abi.md */
+/* svelters backend ABI, version 2 (2.1 additive tail members). Source of truth: plans/architecture/backend-abi.md */
 #ifndef SVELTERS_BACKEND_H
 #define SVELTERS_BACKEND_H
 
@@ -88,7 +88,16 @@ typedef struct svl_host {
   void (*checkpoint)(void *self);
   int (*call_sync)(void *self, svl_handle h, svl_id signal, const svl_value *args, size_t n, svl_value *out);
   void (*on_destroyed)(void *self, svl_handle h, uint32_t reason /* svl_gone */);
+  /* ABI v2.1: a frame requested with backend->request_frame is due. Main thread, from the
+     toolkit's frame clock. The host runs requestAnimationFrame callbacks. */
+  void (*frame)(void *self);
 } svl_host;
+
+/* call_sync return codes (ABI v2.1 semantics). `out` holds the handler result when 0:
+   null = no decision (use the toolkit default), true/false = stop/continue for bool_stop signals. */
+#define SVL_SYNC_OK 0
+#define SVL_SYNC_FAILED (-1) /* nothing ran or the host failed: use the default */
+#define SVL_SYNC_BUSY (-2)   /* JS is running: the host queued the event for async delivery */
 
 typedef struct svl_backend {
   uint32_t abi_version; /* SVL_ABI_VERSION */
@@ -117,6 +126,10 @@ typedef struct svl_backend {
   void (*quit)(void *self);
 
   const char *(*last_error)(void *self); /* NUL-terminated, valid until the next call */
+
+  /* ABI v2.1: ask for one host->frame callback on the toolkit's next frame (vsync). Idempotent
+     while a request is pending. Main thread only. */
+  void (*request_frame)(void *self);
 } svl_backend;
 
 /* Values written to `out` by a backend stay valid until the backend's next call. */

@@ -76,6 +76,9 @@ impl Backend for Recorder {
     fn schedule_wake(&self, ms: i64) {
         self.calls.borrow_mut().push(format!("schedule_wake {ms}"));
     }
+    fn request_frame(&self) {
+        self.calls.borrow_mut().push("request_frame".into());
+    }
     fn run(&self, host: &HostRef<'_>) -> Result<(), String> {
         host.post_event(42, 5, &[Value::Str("x".into())]);
         host.checkpoint();
@@ -131,10 +134,17 @@ impl HostCallbacks for Rc2 {
     fn checkpoint(&self) {
         self.0.checkpoints.set(self.0.checkpoints.get() + 1);
     }
-    fn call_sync(&self, _: svl_handle, _: svl_id, _: &[Value]) -> Result<Value, String> {
-        Ok(Value::Bool(true))
+    fn call_sync(&self, _: svl_handle, s: svl_id, _: &[Value]) -> Result<Value, SyncError> {
+        match s {
+            2 => Err(SyncError::Busy),
+            3 => Err(SyncError::Failed("no".into())),
+            _ => Ok(Value::Bool(true)),
+        }
     }
     fn on_destroyed(&self, _: svl_handle, _: u32) {}
+    fn frame(&self) {
+        self.0.checkpoints.set(self.0.checkpoints.get() + 100);
+    }
 }
 
 struct Rc2(std::rc::Rc<Host>);
@@ -157,4 +167,11 @@ fn backend_run_drives_host_callbacks() {
         hvt.host_ref().call_sync(1, 1, &[]).unwrap(),
         Value::Bool(true)
     );
+    // Sync failures keep their code: busy means "queued for async delivery".
+    assert_eq!(hvt.host_ref().call_sync(1, 2, &[]).unwrap_err().code, SVL_SYNC_BUSY);
+    assert_eq!(hvt.host_ref().call_sync(1, 3, &[]).unwrap_err().code, SVL_SYNC_FAILED);
+    // v2.1 frame request and delivery.
+    bvt.backend_ref().request_frame();
+    hvt.host_ref().frame();
+    assert_eq!(host.checkpoints.get(), 101);
 }
