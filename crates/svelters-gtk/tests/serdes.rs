@@ -215,6 +215,66 @@ fn handles_nullable_and_boxed() {
 }
 
 #[test]
+fn variants_dates_and_string_forms() {
+    on_gtk(|| {
+        let h = Harness::new();
+        // GVariant <-> JSON-like trees: GtkActionable:action-target
+        let b = h.create("Button");
+        let d = h.prop_desc(b, "action-target").unwrap();
+        assert_eq!((d.params[0].tag, d.params[0].ty), (SVL_NULL, SVL_T_VARIANT));
+        let tree = Value::Map(vec![
+            ("name".into(), Value::Str("x".into())),
+            ("n".into(), i(7)),
+            ("list".into(), Value::List(vec![Value::Bool(true), f(0.5), Value::Bytes(vec![1, 2])])),
+        ]);
+        h.set_value(b, "action-target", &tree).unwrap();
+        let v = h.obj(b).property::<Option<glib::Variant>>("action-target").expect("variant set");
+        assert_eq!(v.type_().as_str(), "a{sv}");
+        let Value::Map(mut got) = h.get_value(b, "action-target") else { panic!("map") };
+        got.sort_by(|a, b| a.0.cmp(&b.0));
+        assert_eq!(
+            got,
+            vec![
+                ("list".into(), Value::List(vec![Value::Bool(true), f(0.5), Value::Bytes(vec![1, 2])])),
+                ("n".into(), i(7)),
+                ("name".into(), Value::Str("x".into())),
+            ]
+        );
+        h.set_value(b, "action-target", &Value::Str("plain".into())).unwrap();
+        assert_eq!(h.get_value(b, "action-target"), Value::Str("plain".into()));
+        h.set_value(b, "action-target", &Value::Null).unwrap();
+        assert_eq!(h.get_value(b, "action-target"), Value::Null);
+        assert!(h.set_value(b, "action-target", &Value::List(vec![Value::Null])).unwrap_err().contains("null cannot be nested"));
+
+        // GDateTime <-> a Date (epoch milliseconds typed DATETIME): GtkCalendar:date
+        let c = h.create("Calendar");
+        let slot = h.prop_desc(c, "date").unwrap().params[0].clone();
+        assert_eq!((slot.tag, slot.ty), (SVL_F64, SVL_T_DATETIME));
+        let ms = 1_700_000_123_456.0;
+        h.set_value(c, "date", &Value::DateTime(ms)).unwrap();
+        let dt = h.obj(c).property::<glib::DateTime>("date");
+        assert_eq!(dt.to_unix(), 1_700_000_123);
+        let Value::DateTime(back) = h.get_value(c, "date") else { panic!("datetime") };
+        assert!((back - ms).abs() < 1.0, "{back} vs {ms}");
+
+        // string forms: a shortcut trigger and a GFile (path or URI)
+        let sc = h.create("Shortcut");
+        assert!(h.prop_desc(sc, "trigger").unwrap().params[0].has(SVL_D_STRING_FORM));
+        h.set_value(sc, "trigger", &Value::Str("<Control>s".into())).unwrap();
+        let trig = h.obj(sc).property::<Option<gtk::ShortcutTrigger>>("trigger").unwrap();
+        assert!(trig.to_str().contains("s"), "{}", trig.to_str());
+        assert!(h.set_value(sc, "trigger", &Value::Str("<<nonsense".into())).unwrap_err().contains("cannot parse shortcut"));
+        let fl = h.create("FileLauncher");
+        h.set_value(fl, "file", &Value::Str("/tmp/some file.txt".into())).unwrap();
+        let file = h.obj(fl).property::<Option<gtk::gio::File>>("file").unwrap();
+        assert_eq!(file.path().unwrap().to_str().unwrap(), "/tmp/some file.txt");
+        h.set_value(fl, "file", &Value::Str("file:///tmp/other.txt".into())).unwrap();
+        let file = h.obj(fl).property::<Option<gtk::gio::File>>("file").unwrap();
+        assert_eq!(file.uri().as_str(), "file:///tmp/other.txt");
+    });
+}
+
+#[test]
 fn descriptors_cover_properties_and_types() {
     on_gtk(|| {
         let h = Harness::new();

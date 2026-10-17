@@ -442,9 +442,9 @@
           "name": "member",
           "type": {
             "native": "const char *",
-            "nullable": true,
+            "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "cstring"
           }
         }
       ],

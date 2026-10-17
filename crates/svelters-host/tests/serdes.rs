@@ -66,7 +66,7 @@ impl Typed {
 
 const PROP_NAMES: &[&str] = &[
     "spacing", "label", "orientation", "align", "geometry", "color", "data", "icon", "tags", "ratio", "enabled", "loose",
-    "readonly", "when",
+    "readonly", "when", "meta",
 ];
 
 fn prop_slot(id: u32) -> Option<SlotDesc> {
@@ -84,6 +84,7 @@ fn prop_slot(id: u32) -> Option<SlotDesc> {
         11 => SlotDesc::new(SVL_BOOL),
         13 => SlotDesc::new(SVL_I64),
         14 => SlotDesc::new(SVL_F64).typed(SVL_T_DATETIME),
+        15 => SlotDesc::new(SVL_NULL).typed(SVL_T_VARIANT).flags(SVL_D_NULLABLE),
         _ => return None, // 12 "loose": no descriptor, converted dynamically
     })
 }
@@ -457,6 +458,23 @@ fn values_round_trip_through_the_host() {
     assert_eq!(st.props[&7], Value::Bytes(vec![1, 2, 3, 4]));
     assert_eq!(st.props[&9], Value::List(vec![Value::Str("a".into()), Value::Str("b\u{e9}".into())]));
     assert_eq!(st.props[&14], Value::DateTime(1_700_000_000_000.0));
+    assert_eq!(
+        st.props[&15],
+        Value::Map(vec![
+            ("a".into(), Value::I64(1)),
+            (
+                "b".into(),
+                Value::List(vec![
+                    Value::Bool(true),
+                    Value::Str("x".into()),
+                    Value::Map(vec![("c".into(), Value::Null), ("d".into(), Value::F64(0.5))]),
+                    Value::DateTime(1_700_000_000_000.0),
+                    Value::Bytes(vec![1, 2]),
+                ]),
+            ),
+        ]),
+        "a variant slot takes JSON-like trees: objects are maps"
+    );
     assert_eq!(st.props[&6], Value::Str("#ff8800".into()), "string forms pass through for the backend to parse");
     assert_eq!(st.props[&12], Value::List(vec![Value::I64(1), Value::Str("x".into())]), "no descriptor: dynamic conversion");
 }

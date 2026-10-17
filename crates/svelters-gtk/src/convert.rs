@@ -263,9 +263,111 @@ fn rec_out(rec: Rec, v: &glib::Value, env: &dyn Env, buf: &mut StrBuf) -> Option
 
 // ---- inbound ----
 
+/// A `GVariant` from a JSON-like value: bool `b`, integer `x` (`t` when unsigned), float `d`, string
+/// `s`, bytes `ay`, list `av`, map `a{sv}`. The variant type of a value is inferred, not declared:
+/// a property that needs an exact type (`GtkActionable:action-target`) takes what these map to.
+fn variant_in(v: &svl_value) -> Result<glib::Variant, String> {
+    use glib::prelude::ToVariant;
+    Ok(match v.tag {
+        SVL_BOOL => unsafe { v.u.b }.to_variant(),
+        SVL_I64 if v.flags & SVL_F_UNSIGNED != 0 => unsafe { v.u.u }.to_variant(),
+        SVL_I64 => unsafe { v.u.i }.to_variant(),
+        SVL_F64 => unsafe { v.u.f }.to_variant(),
+        SVL_STR => unsafe { as_str(v) }.ok_or("invalid utf-8")?.as_ref().to_variant(),
+        SVL_BYTES => {
+            let b = unsafe { v.u.bytes };
+            let data: &[u8] = if b.ptr.is_null() || b.len == 0 { &[] } else { unsafe { std::slice::from_raw_parts(b.ptr, b.len) } };
+            glib::Variant::array_from_fixed_array(data)
+        }
+        SVL_LIST => {
+            let items: Vec<glib::Variant> =
+                items(v).iter().map(|e| variant_in(e).map(|x| glib::Variant::from_variant(&x))).collect::<Result<_, _>>()?;
+            glib::Variant::array_from_iter_with_type(glib::VariantTy::VARIANT, items)
+        }
+        SVL_MAP => {
+            let dict = glib::VariantDict::new(None);
+            for kv in items(v).chunks(2) {
+                let [k, val] = kv else { return Err("malformed map".into()) };
+                let key = unsafe { as_str(k) }.ok_or("map keys must be strings")?;
+                dict.insert_value(&key, &variant_in(val)?);
+            }
+            dict.end()
+        }
+        SVL_NULL => return Err("null cannot be nested in a GVariant".into()),
+        t => return Err(format!("cannot convert tag {t} to a GVariant")),
+    })
+}
+
+fn variant_out(var: &glib::Variant, buf: &mut StrBuf) -> svl_value {
+    use glib::VariantClass as K;
+    let int = |x: i64| svl_value::new(SVL_I64, svl_value_u { i: x });
+    match var.classify() {
+        K::Boolean => svl_value::new(SVL_BOOL, svl_value_u { b: var.get::<bool>().unwrap_or(false) }),
+        K::Byte => int(var.get::<u8>().unwrap_or(0) as i64),
+        K::Int16 => int(var.get::<i16>().unwrap_or(0) as i64),
+        K::Uint16 => int(var.get::<u16>().unwrap_or(0) as i64),
+        K::Int32 => int(var.get::<i32>().unwrap_or(0) as i64),
+        K::Handle => int(var.get::<glib::variant::Handle>().map(|h| h.0 as i64).unwrap_or(0)),
+        K::Uint32 => int(var.get::<u32>().unwrap_or(0) as i64),
+        K::Int64 => int(var.get::<i64>().unwrap_or(0)),
+        K::Uint64 => {
+            let mut r = svl_value::new(SVL_I64, svl_value_u { u: var.get::<u64>().unwrap_or(0) });
+            r.flags = SVL_F_UNSIGNED;
+            r
+        }
+        K::Double => svl_value::new(SVL_F64, svl_value_u { f: var.get::<f64>().unwrap_or(0.0) }),
+        K::String | K::ObjectPath | K::Signature => buf.str_value(var.str().unwrap_or("")),
+        K::Variant => variant_out(&var.as_variant().unwrap_or_else(|| ().to_variant()), buf),
+        K::Maybe => match var.as_maybe() {
+            Some(inner) => variant_out(&inner, buf),
+            None => null_value(),
+        },
+        K::Array | K::Tuple | K::DictEntry => {
+            let ty = var.type_();
+            if var.classify() == K::Array {
+                let elem = ty.element();
+                if elem.as_str() == "y" {
+                    return buf.bytes_value(var.fixed_array::<u8>().map(|s| s.to_vec()).unwrap_or_default());
+                }
+                // An array of string-keyed dict entries is a map.
+                if elem.as_str().starts_with("{s") {
+                    let mut flat = Vec::new();
+                    for i in 0..var.n_children() {
+                        let e = var.child_value(i);
+                        flat.push(variant_out(&e.child_value(0), buf));
+                        flat.push(variant_out(&e.child_value(1), buf));
+                    }
+                    return buf.list_value(SVL_MAP, 0, flat);
+                }
+            }
+            let kids: Vec<svl_value> = (0..var.n_children()).map(|i| variant_out(&var.child_value(i), buf)).collect();
+            buf.list_value(SVL_LIST, 0, kids)
+        }
+        _ => null_value(),
+    }
+}
+
+fn datetime_in(ms: f64) -> Result<glib::DateTime, String> {
+    let secs = (ms / 1000.0).floor();
+    let rest = ms - secs * 1000.0;
+    glib::DateTime::from_unix_utc(secs as i64)
+        .and_then(|d| d.add_seconds(rest / 1000.0))
+        .and_then(|d| d.to_local())
+        .map_err(|e| e.to_string())
+}
+
 /// String forms: the canonical text of boxed or interface types that have one.
 fn from_string_form(t: Type, s: &str) -> Option<Result<glib::Value, String>> {
     match t.name() {
+        "GtkShortcutTrigger" => Some(
+            gtk::ShortcutTrigger::parse_string(s)
+                .map(|x| x.upcast::<glib::Object>().to_value())
+                .ok_or_else(|| format!("cannot parse shortcut {s:?}")),
+        ),
+        // A URI when it has a scheme, else a path.
+        "GFile" => Some(Ok(if s.contains("://") { gtk::gio::File::for_uri(s) } else { gtk::gio::File::for_path(s) }
+            .upcast::<glib::Object>()
+            .to_value())),
         "PangoFontDescription" => Some(Ok(gtk::pango::FontDescription::from_string(s).to_value())),
         "GIcon" => Some(Ok(gtk::gio::ThemedIcon::new(s).upcast::<glib::Object>().to_value())),
         _ => None,
@@ -334,6 +436,17 @@ pub unsafe fn to_value(vt: Type, v: &svl_value, env: &dyn Env) -> Result<glib::V
                 t => return Err(format!("expected flags, got tag {t}")),
             }
             .ok_or_else(|| format!("invalid {} value", vt.name()))?
+        } else if vt == Type::VARIANT {
+            match v.tag {
+                SVL_NULL => None::<glib::Variant>.to_value(),
+                _ => Some(variant_in(v)?).to_value(),
+            }
+        } else if vt == glib::DateTime::static_type() {
+            match v.tag {
+                SVL_NULL => glib::Value::from_type(vt),
+                SVL_F64 | SVL_I64 => datetime_in(as_f64(v)?)?.to_value(),
+                _ => return Err("expected a Date".into()),
+            }
         } else if vt == strv() {
             match v.tag {
                 SVL_NULL => Vec::<String>::new().to_value(),
@@ -459,6 +572,21 @@ pub fn from_value(v: &glib::Value, env: &dyn Env, buf: &mut StrBuf) -> svl_value
     if t.is_a(Type::FLAGS) {
         let n = unsafe { glib::gobject_ffi::g_value_get_flags(v.to_glib_none().0) };
         return svl_value::typed(SVL_FLAGS, env.type_id(t), svl_value_u { u: n as u64 });
+    }
+    if t == Type::VARIANT {
+        return match v.get::<Option<glib::Variant>>() {
+            Ok(Some(var)) => variant_out(&var, buf),
+            _ => null_value(),
+        };
+    }
+    if t == glib::DateTime::static_type() {
+        return match v.get::<Option<glib::DateTime>>() {
+            Ok(Some(d)) => {
+                let ms = d.to_unix() as f64 * 1000.0 + (d.microsecond() / 1000) as f64;
+                svl_value::typed(SVL_F64, SVL_T_DATETIME, svl_value_u { f: ms })
+            }
+            _ => null_value(),
+        };
     }
     if t == strv() {
         let strs = v.get::<Vec<String>>().unwrap_or_default();

@@ -95,6 +95,8 @@ def neutral_type(native, qobjects, enums, ctx=()) -> dict:
     en = None if ptr else enums.resolve(core, ctx)
     if ptr and core in qobjects:
         out.update(ref=f"object<{core}>", nullable=True)
+    elif ptr and core == "char":
+        out.update(ref="cstring", nullable=False)
     elif core in PRIM and not ptr:
         out.update(ref=PRIM[core], nullable=False)
     elif en and not ptr:

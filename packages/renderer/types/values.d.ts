@@ -13,6 +13,9 @@ export interface Color { red: number; green: number; blue: number; alpha: number
 export interface DateParts { year: number; month: number; day: number }
 export interface TimeParts { hour: number; minute: number; second: number; ms: number }
 
+/** A JSON-like tree plus `Date`, bytes and boxed values: what `QVariant` / `GVariant` slots take and give. */
+export type Variant = null | boolean | number | string | Date | Uint8Array | Variant[] | { [key: string]: Variant };
+
 /**
  * An opaque native value (QIcon, QFont, GIcon, PangoFontDescription, ...). `dispose()` releases
  * it at once and is idempotent; a value that is only dropped is released at a later checkpoint.

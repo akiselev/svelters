@@ -44,6 +44,11 @@ check(h.call(t, 'setBoth', [3, 'x']) === true, 'method result');
 check(h.call(t, 'setBoth', [3]) === true, 'optional trailing argument');
 check(h.call(t, 'bounds', []).height === 4, 'record result');
 check(h.call(t, 'raw', [1, 'two', [3], null]).length === 4, 'untyped method');
+// variants: JSON-like trees, plus Date and bytes; objects are string-keyed maps
+h.setProp(t, 'meta', { a: 1, b: [true, 'x', { c: null, d: 0.5 }, new Date(1700000000000), new Uint8Array([1, 2])] });
+const meta = h.getProp(t, 'meta');
+check(meta.a === 1 && meta.b[0] === true && meta.b[2].d === 0.5 && meta.b[2].c === null, JSON.stringify(meta));
+check(meta.b[3] instanceof Date && meta.b[4] instanceof Uint8Array, 'date and bytes inside a variant');
 let bad = 0;
 try {
   h.setProp(t, 'geometry', {

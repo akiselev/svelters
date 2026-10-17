@@ -372,6 +372,39 @@ fn dates_and_times() {
     assert_eq!(unsafe { raw.u.f }, ms);
 }
 
+fn variants() {
+    let c = mk("combobox");
+    let tree = Value::Map(vec![
+        ("name".into(), Value::Str("caf\u{e9}".into())),
+        ("n".into(), i(7)),
+        ("ratio".into(), f(0.5)),
+        ("when".into(), Value::DateTime(1_700_000_000_000.0)),
+        ("tags".into(), Value::List(vec![Value::Str("a".into()), Value::Bool(true), Value::Null, Value::Bytes(vec![1, 2])])),
+    ]);
+    // addItem(text, QVariant): a tree goes in; itemData(index, role) gives it back.
+    c.call("addItem", &[Value::Str("first".into()), tree.clone()]).unwrap();
+    c.call("addItem", &[Value::Str("second".into()), Value::Str("just a string".into())]).unwrap();
+    c.call("addItem", &[Value::Str("third".into()), Value::Null]).unwrap();
+    assert_eq!(c.get("count"), Value::I64(3));
+    let Value::Map(mut got) = c.call("itemData", &[i(0), i(256)]).unwrap() else { panic!("map") };
+    got.sort_by(|a, b| a.0.cmp(&b.0));
+    let Value::Map(mut want) = tree else { unreachable!() };
+    want.sort_by(|a, b| a.0.cmp(&b.0));
+    assert_eq!(got, want);
+    assert_eq!(c.call("itemData", &[i(1), i(256)]).unwrap(), Value::Str("just a string".into()));
+    assert_eq!(c.call("itemData", &[i(2), i(256)]).unwrap(), Value::Null);
+    // The read-only variant property follows the current item (the first one).
+    let cd = c.get("currentData");
+    let Value::Map(cur) = cd else { panic!("map, got {cd:?}") };
+    assert_eq!(cur.len(), 5);
+    assert!(c.set("currentData", &Value::Null).is_err(), "currentData has no setter");
+    // A typed record cannot be nested in a variant.
+    let ty = mk("box").desc("geometry").params[0].ty;
+    let rec = Value::Record { ty, fields: vec![i(1), i(2), i(3), i(4)] };
+    let e = c.call("addItem", &[Value::Str("x".into()), rec]).unwrap_err();
+    assert!(e.contains("cannot be held in a variant"), "{e}");
+}
+
 fn errors_cross_the_boundary_as_values() {
     let w = mk("box");
     // A C++ exception never unwinds into the host: it becomes an ERROR out value (domain "c++").
@@ -423,6 +456,7 @@ fn main() {
         ("boxed_values", boxed_values),
         ("bytes", bytes),
         ("dates_and_times", dates_and_times),
+        ("variants", variants),
         ("errors_cross_the_boundary_as_values", errors_cross_the_boundary_as_values),
         ("descriptors", descriptors),
     ]);

@@ -61,7 +61,7 @@ fn rec_gtype(r: Rec) -> Type {
 }
 
 fn has_string_form(t: Type) -> bool {
-    matches!(t.name(), "PangoFontDescription" | "GIcon" | "GdkRGBA")
+    matches!(t.name(), "PangoFontDescription" | "GIcon" | "GdkRGBA" | "GtkShortcutTrigger" | "GFile")
 }
 
 fn bounds(ps: Option<&glib::ParamSpec>, t: Type) -> (f64, f64) {
@@ -112,12 +112,20 @@ pub fn slot_for(table: &mut TypeTable, t: Type, ps: Option<&glib::ParamSpec>) ->
         SlotDesc::new(SVL_ENUM).typed(table.id(t))
     } else if t.is_a(Type::FLAGS) {
         SlotDesc::new(SVL_FLAGS).typed(table.id(t))
+    } else if t == Type::VARIANT {
+        SlotDesc::new(SVL_NULL).typed(SVL_T_VARIANT).flags(SVL_D_NULLABLE)
+    } else if t == glib::DateTime::static_type() {
+        SlotDesc::new(SVL_F64).typed(SVL_T_DATETIME).flags(SVL_D_NULLABLE)
     } else if t == strv() {
         SlotDesc::new(SVL_LIST).typed(table.id(t)).flags(SVL_D_NULLABLE)
     } else if t.is_a(Type::OBJECT) || is_iface(t) {
         let kind = lookup::kind_by_name(t.name());
         if kind != 0 {
-            SlotDesc::new(SVL_HANDLE).typed(kind).flags(SVL_D_NULLABLE)
+            let mut s = SlotDesc::new(SVL_HANDLE).typed(kind).flags(SVL_D_NULLABLE);
+            if has_string_form(t) {
+                s = s.flags(SVL_D_STRING_FORM);
+            }
+            s
         } else {
             let mut s = SlotDesc::new(SVL_BOXED).typed(table.id(t)).flags(SVL_D_NULLABLE);
             if has_string_form(t) {

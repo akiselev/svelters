@@ -351,6 +351,7 @@ int b_set_prop(void *, svl_handle h, svl_id prop, const svl_value *v) {
   Entry *e = find(h);
   if (!e) return fail("set_prop: stale or unknown handle");
   if (!v) return fail("set_prop: null value");
+  g_in.clear();
   try {
     return gen_set_prop(*e, prop, v);
   } catch (const std::exception &x) {
@@ -381,6 +382,7 @@ int b_call(void *, svl_handle h, svl_id method, const svl_value *args, size_t n,
   Entry *e = find(h);
   if (!e) return fail("call: stale or unknown handle");
   g_out.clear();
+  g_in.clear();
   out_null(out);
   try {
     if (g_test_throw) {  // test hook: make the next call throw, to exercise the boundary

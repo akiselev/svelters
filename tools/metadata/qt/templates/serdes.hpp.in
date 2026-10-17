@@ -22,6 +22,10 @@ struct OutArena {
 };
 OutArena g_out;
 
+// Strings and byte ranges that a converted argument points into, alive for one ABI call
+// (`const char *` parameters: the backend must not keep them).
+std::deque<std::string> g_in;
+
 inline svl_value mkv(uint16_t tag, svl_id type = 0) {
   svl_value v;
   v.tag = tag;
@@ -181,6 +185,25 @@ struct Conv<QString> {
     *o = mkv(SVL_STR);
     o->u.s.ptr = g_out.strs.back().data();
     o->u.s.len = g_out.strs.back().size();
+  }
+  static svl_slot_desc slot(const char *n) { return slot_desc(n, SVL_STR, SVL_D_NULLABLE); }
+};
+
+// A `const char *` parameter: the argument text, NUL terminated, valid for the call.
+template <>
+struct Conv<const char *> {
+  static bool in(const svl_value *v, const char *&o, std::string &e) {
+    if (v->tag == SVL_NULL) { o = nullptr; return true; }
+    if (v->tag != SVL_STR) { e = "expected string"; return false; }
+    QString s;
+    if (!Conv<QString>::in(v, s, e)) return false;
+    g_in.push_back(s.toStdString());
+    o = g_in.back().c_str();
+    return true;
+  }
+  static void out(const char *s, svl_value *o) {
+    if (!s) { *o = mkv(SVL_NULL); return; }
+    Conv<QString>::out(QString::fromUtf8(s), o);
   }
   static svl_slot_desc slot(const char *n) { return slot_desc(n, SVL_STR, SVL_D_NULLABLE); }
 };
@@ -686,6 +709,115 @@ struct Conv<QDateTime> {
   static svl_slot_desc slot(const char *n) { return slot_desc(n, SVL_F64, 0, SVL_T_DATETIME); }
 };
 
+// ---- QVariant: any JSON-like tree ----
+//
+// null, bool, integer (qlonglong), float, string, bytes, a Date (F64 typed DATETIME), a list
+// (QVariantList), a map (QVariantMap, string keys). Going out, the QVariant's own type decides;
+// types without a JS shape become null.
+
+template <>
+struct Conv<QVariant> {
+  static bool in(const svl_value *v, QVariant &o, std::string &e) {
+    switch (v->tag) {
+      case SVL_NULL: o = QVariant(); return true;
+      case SVL_BOOL: o = QVariant(v->u.b); return true;
+      case SVL_I64:
+        if (v->flags & SVL_F_UNSIGNED) o = QVariant(static_cast<qulonglong>(v->u.u));
+        else o = QVariant(static_cast<qlonglong>(v->u.i));
+        return true;
+      case SVL_F64:
+        if (v->type == SVL_T_DATETIME) { o = QVariant(QDateTime::fromMSecsSinceEpoch(static_cast<qint64>(v->u.f))); return true; }
+        o = QVariant(v->u.f);
+        return true;
+      case SVL_STR: { QString s; if (!Conv<QString>::in(v, s, e)) return false; o = QVariant(s); return true; }
+      case SVL_BYTES: { QByteArray b; if (!Conv<QByteArray>::in(v, b, e)) return false; o = QVariant(b); return true; }
+      case SVL_LIST: {
+        QVariantList l;
+        for (size_t i = 0; i < v->u.l.len; ++i) {
+          QVariant x;
+          if (!in(&v->u.l.ptr[i], x, e)) { e = "[" + std::to_string(i) + "]: " + e; return false; }
+          l.push_back(x);
+        }
+        o = QVariant(l);
+        return true;
+      }
+      case SVL_MAP: {
+        QVariantMap m;
+        if (v->u.l.len % 2) { e = "malformed map"; return false; }
+        for (size_t i = 0; i + 1 < v->u.l.len; i += 2) {
+          QString k;
+          if (v->u.l.ptr[i].tag != SVL_STR || !Conv<QString>::in(&v->u.l.ptr[i], k, e)) { e = "map keys must be strings"; return false; }
+          QVariant x;
+          if (!in(&v->u.l.ptr[i + 1], x, e)) { e = "." + k.toStdString() + ": " + e; return false; }
+          m.insert(k, x);
+        }
+        o = QVariant(m);
+        return true;
+      }
+      default: e = "this value cannot be held in a variant"; return false;
+    }
+  }
+  static void out(const QVariant &v, svl_value *o) {
+    switch (v.typeId()) {
+      case QMetaType::UnknownType: *o = mkv(SVL_NULL); return;
+      case QMetaType::Bool: Conv<bool>::out(v.toBool(), o); return;
+      case QMetaType::Char: case QMetaType::Short: case QMetaType::Int: case QMetaType::Long: case QMetaType::LongLong:
+      case QMetaType::UChar: case QMetaType::UShort: case QMetaType::UInt:
+        Conv<qlonglong>::out(v.toLongLong(), o); return;
+      case QMetaType::ULong: case QMetaType::ULongLong: Conv<qulonglong>::out(v.toULongLong(), o); return;
+      case QMetaType::Float: case QMetaType::Double: Conv<double>::out(v.toDouble(), o); return;
+      case QMetaType::QString: Conv<QString>::out(v.toString(), o); return;
+      case QMetaType::QByteArray: Conv<QByteArray>::out(v.toByteArray(), o); return;
+      case QMetaType::QDateTime: Conv<QDateTime>::out(v.toDateTime(), o); return;
+      case QMetaType::QDate: Conv<QDate>::out(v.toDate(), o); return;
+      case QMetaType::QTime: Conv<QTime>::out(v.toTime(), o); return;
+      case QMetaType::QColor: Conv<QColor>::out(qvariant_cast<QColor>(v), o); return;
+      case QMetaType::QRect: Conv<QRect>::out(v.toRect(), o); return;
+      case QMetaType::QRectF: Conv<QRectF>::out(v.toRectF(), o); return;
+      case QMetaType::QSize: Conv<QSize>::out(v.toSize(), o); return;
+      case QMetaType::QSizeF: Conv<QSizeF>::out(v.toSizeF(), o); return;
+      case QMetaType::QPoint: Conv<QPoint>::out(v.toPoint(), o); return;
+      case QMetaType::QPointF: Conv<QPointF>::out(v.toPointF(), o); return;
+      case QMetaType::QStringList: {
+        QStringList sl = v.toStringList();
+        g_out.lists.emplace_back(static_cast<size_t>(sl.size()), mkv(SVL_NULL));
+        auto &vec = g_out.lists.back();
+        for (qsizetype i = 0; i < sl.size(); ++i) Conv<QString>::out(sl[i], &vec[static_cast<size_t>(i)]);
+        *o = mkv(SVL_LIST);
+        o->u.l.ptr = vec.data();
+        o->u.l.len = vec.size();
+        return;
+      }
+      case QMetaType::QVariantList: {
+        QVariantList l = v.toList();
+        g_out.lists.emplace_back(static_cast<size_t>(l.size()), mkv(SVL_NULL));
+        auto &vec = g_out.lists.back();
+        for (qsizetype i = 0; i < l.size(); ++i) out(l[i], &vec[static_cast<size_t>(i)]);
+        *o = mkv(SVL_LIST);
+        o->u.l.ptr = vec.data();
+        o->u.l.len = vec.size();
+        return;
+      }
+      case QMetaType::QVariantMap: {
+        QVariantMap m = v.toMap();
+        g_out.lists.emplace_back(static_cast<size_t>(m.size()) * 2, mkv(SVL_NULL));
+        auto &vec = g_out.lists.back();
+        size_t i = 0;
+        for (auto it = m.cbegin(); it != m.cend(); ++it) {
+          Conv<QString>::out(it.key(), &vec[i++]);
+          out(it.value(), &vec[i++]);
+        }
+        *o = mkv(SVL_MAP);
+        o->u.l.ptr = vec.data();
+        o->u.l.len = vec.size();
+        return;
+      }
+      default: *o = mkv(SVL_NULL); return;
+    }
+  }
+  static svl_slot_desc slot(const char *n) { return slot_desc(n, SVL_NULL, SVL_D_NULLABLE, SVL_T_VARIANT); }
+};
+
 // ---- helpers used by the generated dispatch ----
 
 template <class T>
@@ -735,24 +867,15 @@ inline void out_null(svl_value *out) {
 [[maybe_unused]] inline void out_f64(svl_value *out, double f) { if (out) Conv<double>::out(f, out); }
 [[maybe_unused]] inline void out_str(svl_value *out, const QString &s) { if (out) Conv<QString>::out(s, out); }
 
+// The QMetaProperty fallback (properties without direct accessors) goes through QVariant.
 [[maybe_unused]] inline QVariant to_variant(const svl_value *v) {
-  switch (v->tag) {
-    case SVL_BOOL: return QVariant(v->u.b);
-    case SVL_I64: return QVariant(static_cast<qlonglong>(v->u.i));
-    case SVL_F64: return QVariant(v->u.f);
-    case SVL_STR: { QString s; std::string e; Conv<QString>::in(v, s, e); return QVariant(s); }
-    default: return QVariant();
-  }
+  QVariant x;
+  std::string e;
+  Conv<QVariant>::in(v, x, e);
+  return x;
 }
 [[maybe_unused]] inline void out_variant(svl_value *out, const QVariant &v) {
-  switch (v.typeId()) {
-    case QMetaType::Bool: out_bool(out, v.toBool()); break;
-    case QMetaType::Int: case QMetaType::UInt: case QMetaType::LongLong: case QMetaType::ULongLong:
-      out_i64(out, v.toLongLong()); break;
-    case QMetaType::Double: case QMetaType::Float: out_f64(out, v.toDouble()); break;
-    case QMetaType::QString: out_str(out, v.toString()); break;
-    default: out_null(out);
-  }
+  if (out) Conv<QVariant>::out(v, out);
 }
 inline int bad_type(const char *what, const char *want) {
   return fail(std::string(what) + ": expected " + want);

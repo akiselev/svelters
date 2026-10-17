@@ -350,7 +350,7 @@ fn encode_at<R: JsReader>(
     }
 
     match slot.tag {
-        SVL_NULL => dynamic(r, v, kind, cx, ar, depth),
+        SVL_NULL => dynamic(r, v, kind, slot.ty == SVL_T_VARIANT, cx, ar, depth),
         SVL_BOOL => encode_bool(r, v, kind),
         SVL_I64 => encode_int(r, v, kind, slot),
         SVL_F64 => encode_float(r, v, kind, slot),
@@ -360,6 +360,10 @@ fn encode_at<R: JsReader>(
         SVL_RECORD => encode_record(r, v, kind, slot, cx, ar, depth),
         SVL_LIST => encode_list(r, v, kind, slot, cx, ar, depth),
         SVL_HANDLE => {
+            if kind == JsKind::String && slot.has(SVL_D_STRING_FORM) {
+                // An object that has a canonical string form (a shortcut trigger, a file path).
+                return encode_str(r, v, kind, slot, cx, ar);
+            }
             if kind != JsKind::Number {
                 return Err(expected(r, v, "object handle"));
             }
@@ -722,7 +726,7 @@ fn encode_map<R: JsReader>(
     if kind != JsKind::Object {
         return Err(expected(r, v, "object"));
     }
-    let any = SlotDesc::new(SVL_NULL);
+    let any = variant_slot();
     let mut items = Vec::new();
     for k in r.keys(v)? {
         let fv = r.field(v, &k)?;
@@ -748,11 +752,17 @@ fn encode_map<R: JsReader>(
     Ok(svl_value::new(SVL_MAP, svl_value_u { l }))
 }
 
+/// The slot of an element inside a variant: anything JSON-like, plus Date, bytes and boxed values.
+fn variant_slot() -> SlotDesc {
+    SlotDesc::new(SVL_NULL).typed(SVL_T_VARIANT).flags(SVL_D_NULLABLE)
+}
+
 /// Conversion without a descriptor: the P-era rules (numbers, strings, booleans, null, arrays).
 fn dynamic<R: JsReader>(
     r: &R,
     v: &R::V,
     kind: JsKind,
+    variant: bool,
     cx: &Cx,
     ar: &mut Arena,
     depth: u32,
@@ -773,7 +783,8 @@ fn dynamic<R: JsReader>(
         },
         JsKind::String => encode_str(r, v, kind, &SlotDesc::new(SVL_STR), cx, ar),
         JsKind::Array => {
-            let any = SlotDesc::new(SVL_NULL);
+            // Inside a variant the elements are variants too (objects become MAPs).
+            let any = if variant { variant_slot() } else { SlotDesc::new(SVL_NULL) };
             let n = r.len(v)?;
             let mut items = Vec::with_capacity(n);
             for i in 0..n {
@@ -801,6 +812,8 @@ fn dynamic<R: JsReader>(
         }
         JsKind::Object => match r.boxed(v)? {
             Some((h, ty)) => Ok(svl_value::typed(SVL_BOXED, ty, svl_value_u { h })),
+            // A plain object in a variant slot is a string-keyed map.
+            None if variant => encode_map(r, v, kind, cx, ar, depth),
             None => Err(ConvError::type_(
                 "unsupported value type 'object' in host call (no descriptor for this slot)",
             )),
