@@ -123,6 +123,12 @@ fn bundle_path(fixture: &str) -> PathBuf {
     dir.join("dist/app.js")
 }
 
+/// Names of this process's threads (Linux), to show the host starts none of its own.
+fn thread_names() -> Vec<String> {
+    let Ok(rd) = std::fs::read_dir("/proc/self/task") else { return Vec::new() };
+    rd.filter_map(|e| std::fs::read_to_string(e.ok()?.path().join("comm")).ok()).map(|s| s.trim().to_string()).collect()
+}
+
 /// `VmHWM` / `VmRSS` in KiB from /proc/self/status.
 fn memory_kb() -> (u64, u64) {
     let status = std::fs::read_to_string("/proc/self/status").unwrap_or_default();
@@ -261,6 +267,7 @@ fn run(setup: Setup) -> Result<Json, String> {
         "dump": dump,
         "reloads": reloads.borrow().clone(),
         "native_toplevels": native_toplevels.get(),
+        "threads": thread_names(),
         "steps": steps,
         "checkpoints": host.checkpoint_count(),
         "load_ms": loaded.as_secs_f64() * 1e3,

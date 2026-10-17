@@ -69,6 +69,9 @@ impl Run {
         assert_eq!(r["failures"], serde_json::json!([]), "driver failures");
         assert_eq!(r["errors"], serde_json::json!([]), "host errors (stale handles show up here)");
         assert_eq!(r["run_returned"], true);
+        // Timers run on the toolkit: the host has no timer thread (the `ps -T` check).
+        let threads = r["threads"].as_array().expect("threads");
+        assert!(!threads.is_empty() && threads.iter().all(|t| !t.as_str().unwrap_or("").starts_with("svelters-timer")), "{threads:?}");
         let err = self.stderr();
         for bad in ["stale", "CRITICAL", "foreign handle"] {
             assert!(!err.contains(bad), "stderr mentions '{bad}':\n{err}");

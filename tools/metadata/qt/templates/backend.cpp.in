@@ -300,6 +300,8 @@ struct Table {
 
 //@@LISTEN@@
 
+//@@TOPLEVEL@@
+
 // ---- vtable ----------------------------------------------------------------------------------
 
 svl_id b_resolve(void *, uint32_t what, svl_id kind, const char *name, size_t len) {
@@ -323,7 +325,7 @@ svl_handle b_create(void *, svl_id kind) {
   e.obj = o;
   e.kind = kind;
   e.destroyed = QObject::connect(o, &QObject::destroyed, [h](QObject *obj) { native_destroyed(h, obj); });
-  if (auto *w = qobject_cast<QWidget *>(o); w && w->isWindow()) {
+  if (auto *w = qobject_cast<QWidget *>(o); w && gen_is_toplevel(kind)) {
     e.toplevel = true;
     static CloseFilter *filter = new CloseFilter;
     w->installEventFilter(filter);
@@ -361,12 +363,13 @@ void b_destroy(void *, svl_handle h) {
   auto it = g.table.find(h);
   if (it == g.table.end()) return;
   QObject *o = it->second.obj.data();
+  const bool toplevel = it->second.toplevel;
   QObject::disconnect(it->second.destroyed);
   g.table.erase(it);
   drop_listeners(h);
   // Never delete synchronously: the caller may be inside one of this object's signals.
   if (o) {
-    if (auto *w = qobject_cast<QWidget *>(o); w && w->isWindow()) w->hide();
+    if (auto *w = qobject_cast<QWidget *>(o); w && toplevel) w->hide();
     o->deleteLater();
   }
 }

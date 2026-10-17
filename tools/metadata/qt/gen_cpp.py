@@ -627,6 +627,16 @@ def emit_listen(m: Model) -> str:
     return "\n".join(out)
 
 
+def emit_toplevel(m: Model) -> str:
+    """Kinds of the toplevel lifetime class: windows and dialogs. A parentless QWidget is a Qt
+    window too (until it is inserted somewhere), so the class cannot be read off the object."""
+    tops = [e for e in m.elements if m.derives(e["cls"], "QMainWindow") or m.derives(e["cls"], "QDialog")]
+    out = ["bool gen_is_toplevel(svl_id kind) {", "  switch (kind) {"]
+    out += [f"    case K_{cident(e['tag'])}: return true;" for e in tops]
+    out += ["    default: return false;", "  }", "}"]
+    return "\n".join(out)
+
+
 def gen_backend(m: Model, digest: str, tmpl: str) -> str:
     classes = set()
     for e in m.elements:
@@ -642,6 +652,7 @@ def gen_backend(m: Model, digest: str, tmpl: str) -> str:
         "DIGEST": digest, "INCLUDES": inc(m, classes), "IDS": emit_ids(m), "TABLES": emit_tables(m),
         "CREATE": emit_create(m), "SET_PROP": prop_cases(m, True), "GET_PROP": prop_cases(m, False),
         "CALL": emit_call(m), "INSERT": emit_insert(m), "REMOVE": emit_remove(m), "LISTEN": emit_listen(m),
+        "TOPLEVEL": emit_toplevel(m),
     }
     for k, v in parts.items():
         tmpl = tmpl.replace(f"@@{k}@@" if k == "DIGEST" else f"//@@{k}@@", v)
