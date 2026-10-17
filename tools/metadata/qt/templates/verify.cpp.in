@@ -48,7 +48,7 @@ void h_post(void *, svl_handle h, svl_id sig, const svl_value *args, size_t n) {
 }
 void h_checkpoint(void *) { rec.checkpoints++; }
 int h_call_sync(void *, svl_handle, svl_id, const svl_value *, size_t, svl_value *) { return -1; }
-void h_destroyed(void *, svl_handle h) { rec.destroyed.push_back(h); }
+void h_destroyed(void *, svl_handle h, uint32_t) { rec.destroyed.push_back(h); }
 const svl_host kHost = {nullptr, h_post, h_checkpoint, h_call_sync, h_destroyed};
 
 const svl_backend *B = nullptr;

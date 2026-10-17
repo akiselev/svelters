@@ -71,6 +71,26 @@ pub const SVL_SIGNAL: u32 = 2;
 pub const SVL_METHOD: u32 = 3;
 pub const SVL_SLOT: u32 = 4;
 
+pub const SVL_LIFE_OWNED: u32 = 1;
+pub const SVL_LIFE_TOPLEVEL: u32 = 2;
+pub const SVL_LIFE_BORROWED: u32 = 3;
+pub const SVL_LIFE_VALUE: u32 = 4;
+
+pub const SVL_GONE_UNKNOWN: u32 = 0;
+pub const SVL_GONE_CLOSED: u32 = 1;
+pub const SVL_GONE_PARENT: u32 = 2;
+pub const SVL_GONE_OWNER: u32 = 3;
+pub const SVL_GONE_REPLACED: u32 = 4;
+pub const SVL_GONE_SHUTDOWN: u32 = 5;
+
+#[repr(C)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct svl_handle_info {
+    pub kind: svl_id,
+    pub lifetime: u32,
+    pub flags: u32,
+}
+
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub struct svl_str {
@@ -190,7 +210,7 @@ pub struct svl_host {
         usize,
         *mut svl_value,
     ) -> c_int,
-    pub on_destroyed: unsafe extern "C" fn(*mut c_void, svl_handle),
+    pub on_destroyed: unsafe extern "C" fn(*mut c_void, svl_handle, u32),
     pub invoke_callback:
         unsafe extern "C" fn(*mut c_void, u64, *const svl_value, usize, *mut svl_value) -> c_int,
     pub release_callback: unsafe extern "C" fn(*mut c_void, u64),
@@ -217,14 +237,12 @@ pub struct svl_backend {
         *mut svl_value,
     ) -> c_int,
     pub listen: unsafe extern "C" fn(*mut c_void, svl_handle, svl_id, bool) -> c_int,
+    pub handle_info: unsafe extern "C" fn(*mut c_void, svl_handle, *mut svl_handle_info) -> c_int,
     pub run: unsafe extern "C" fn(*mut c_void, *const svl_host) -> c_int,
     pub wake: unsafe extern "C" fn(*mut c_void),
+    pub schedule_wake: unsafe extern "C" fn(*mut c_void, i64),
     pub quit: unsafe extern "C" fn(*mut c_void),
     pub last_error: unsafe extern "C" fn(*mut c_void) -> *const c_char,
-    /// Reserved for ABI v2 `schedule_wake`; null until v2 lands.
-    pub reserved_v2_schedule_wake: *const c_void,
-    /// Reserved for ABI v2 `handle_info`; null until v2 lands.
-    pub reserved_v2_handle_info: *const c_void,
     pub caps: u32,
     pub describe: Option<unsafe extern "C" fn(*mut c_void, u32, svl_id, svl_id) -> *const svl_member_desc>,
     pub describe_type: Option<unsafe extern "C" fn(*mut c_void, svl_id) -> *const svl_type_desc>,

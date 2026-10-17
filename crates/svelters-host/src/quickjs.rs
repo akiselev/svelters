@@ -110,7 +110,19 @@ impl QjsEngine {
         self.arm();
         let r = self.ctx.with(|ctx| f(&ctx).map_err(|e| js_err(&ctx, e)));
         self.disarm();
-        r
+        r.map_err(|mut e| {
+            // QuickJS throws `null` when it cannot even allocate the out-of-memory error, so the
+            // message alone is unreliable; a failure at the memory limit is an OOM.
+            if e.kind == ErrorKind::Exception && self.near_memory_limit() {
+                e.kind = ErrorKind::OutOfMemory;
+            }
+            e
+        })
+    }
+
+    fn near_memory_limit(&self) -> bool {
+        let u = self.rt.memory_usage();
+        u.malloc_limit > 0 && u.malloc_size + (u.malloc_limit / 8).max(256 * 1024) >= u.malloc_limit
     }
 }
 

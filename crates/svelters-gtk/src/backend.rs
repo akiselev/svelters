@@ -169,7 +169,7 @@ impl Inner {
             }
             drop(e.hold);
             if !host.is_null() {
-                unsafe { ((*host).on_destroyed)((*host).self_, k) };
+                unsafe { ((*host).on_destroyed)((*host).self_, k, SVL_GONE_UNKNOWN) };
             }
         }
     }
@@ -485,12 +485,12 @@ impl GtkBackend {
             get_prop: b_get_prop,
             call: b_call,
             listen: b_listen,
+            handle_info: b_handle_info,
             run: b_run,
             wake: b_wake,
+            schedule_wake: b_schedule_wake,
             quit: b_quit,
             last_error: b_last_error,
-            reserved_v2_schedule_wake: std::ptr::null(),
-            reserved_v2_handle_info: std::ptr::null(),
             caps: 0,
             describe: Some(b_describe),
             describe_type: Some(b_describe_type),
@@ -588,6 +588,19 @@ unsafe extern "C" fn b_call(p: *mut c_void, h: svl_handle, method: svl_id, _args
 unsafe extern "C" fn b_listen(p: *mut c_void, h: svl_handle, signal: svl_id, on: bool) -> c_int {
     run_int(unsafe { ctl(p) }, |i| i.listen(h, signal, on))
 }
+
+unsafe extern "C" fn b_handle_info(p: *mut c_void, h: svl_handle, out: *mut svl_handle_info) -> c_int {
+    run_int(unsafe { ctl(p) }, |i| {
+        let st = i.state.borrow();
+        let e = st.entries.get(&h).ok_or_else(|| format!("stale or foreign handle {h}"))?;
+        let lifetime = if e.hold.is_none() { SVL_LIFE_TOPLEVEL } else { SVL_LIFE_OWNED };
+        unsafe { *out = svl_handle_info { kind: e.kind, lifetime, flags: 0 } };
+        Ok(())
+    })
+}
+
+/// Placeholder until native timers land: the host still drives its own timer thread.
+unsafe extern "C" fn b_schedule_wake(_p: *mut c_void, _ms: i64) {}
 
 unsafe extern "C" fn b_run(p: *mut c_void, host: *const svl_host) -> c_int {
     let c = unsafe { ctl(p) };

@@ -1,8 +1,7 @@
 /* svelters backend ABI, version 3 (draft). Source of truth: plans/architecture/backend-abi.md
  *
- * v3 = the value model from docs/notes/js-native-serdes.md section 5.1 on top of v1. The approved
- * v2 additions (schedule_wake, handle_info, on_destroyed reason) are not implemented yet; their
- * vtable slots are reserved below so that v2 lands without moving any v3 member. */
+ * v3 = the value model from docs/notes/js-native-serdes.md section 5.1 on top of v2 (timers, handle
+ * lifetime). */
 #ifndef SVELTERS_BACKEND_H
 #define SVELTERS_BACKEND_H
 
@@ -161,6 +160,30 @@ typedef enum svl_name_kind {
 
 enum { SVL_CAP_UTF16_IN = 1, SVL_CAP_UTF16_OUT = 2, SVL_CAP_BYTES_RETAIN = 4 };
 
+/* Lifetime class of a handle; see plans/architecture/backend-abi.md "ABI v2". */
+typedef enum svl_lifetime {
+  SVL_LIFE_OWNED = 1,
+  SVL_LIFE_TOPLEVEL = 2,
+  SVL_LIFE_BORROWED = 3,
+  SVL_LIFE_VALUE = 4
+} svl_lifetime;
+
+/* Why a handle died; the `reason` of host->on_destroyed. */
+typedef enum svl_gone {
+  SVL_GONE_UNKNOWN = 0,
+  SVL_GONE_CLOSED = 1,
+  SVL_GONE_PARENT = 2,
+  SVL_GONE_OWNER = 3,
+  SVL_GONE_REPLACED = 4,
+  SVL_GONE_SHUTDOWN = 5
+} svl_gone;
+
+typedef struct svl_handle_info {
+  svl_id kind;
+  uint32_t lifetime; /* svl_lifetime */
+  uint32_t flags;
+} svl_handle_info;
+
 /* ---- host callbacks ----------------------------------------------------------------------------- */
 
 struct svl_host;
@@ -170,7 +193,7 @@ typedef struct svl_host {
   void (*post_event)(void *self, svl_handle h, svl_id signal, const svl_value *args, size_t n);
   void (*checkpoint)(void *self);
   int (*call_sync)(void *self, svl_handle h, svl_id signal, const svl_value *args, size_t n, svl_value *out);
-  void (*on_destroyed)(void *self, svl_handle h);
+  void (*on_destroyed)(void *self, svl_handle h, uint32_t reason /* svl_gone */);
   /* v3: run the JS function behind a CALLBACK value. A call after release_callback (or after the owner
    * died) is a clean error (-1), never a crash. Returns the callback's result in `out`. */
   int (*invoke_callback)(void *self, uint64_t callback, const svl_value *args, size_t n, svl_value *out);
@@ -197,9 +220,13 @@ typedef struct svl_backend {
   int (*call)(void *self, svl_handle h, svl_id method, const svl_value *args, size_t n, svl_value *out);
 
   int (*listen)(void *self, svl_handle h, svl_id signal, bool on);
+  int (*handle_info)(void *self, svl_handle h, svl_handle_info *out);
 
   int (*run)(void *self, const svl_host *host); /* owns the toolkit loop; returns on quit */
   void (*wake)(void *self);                     /* thread-safe: schedule a host checkpoint */
+  /* (re)arm a single one-shot wakeup `ms` from now, replacing any pending one; ms < 0 cancels.
+     On expiry the backend calls host->checkpoint. Main thread only. */
+  void (*schedule_wake)(void *self, int64_t ms);
   void (*quit)(void *self);
 
   const char *(*last_error)(void *self); /* NUL-terminated, valid until the next call */
