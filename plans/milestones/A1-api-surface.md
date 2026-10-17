@@ -9,10 +9,10 @@ Goal: as much of the GTK4 and QtWidgets API surface as possible works from Svelt
 | Phase | Who | Output |
 | --- | --- | --- |
 | 1. Tooling + inventory | 1 lead agent (Opus) | per-toolkit override schemas, strict merge, verified ledger, coverage report, `metadata/A1-TODO.md` |
-| 2. Annotation batches | Sonnet workers, dispatched by the coordinator from the TODO list | per-family override YAML + passing generated tests + a gallery page |
-| 3. Integration | coordinator (inline) | merged batches, galleries complete, coverage report, completion record |
+| 2. Annotation batches | Sonnet workers, spawned and dispatched by the lead from the TODO list | per-family override YAML + passing generated tests + a gallery page |
+| 3. Integration | lead merges batches into the A1 branch; coordinator merges A1 to master in increments | galleries complete, coverage report, completion record |
 
-Agent budget: 1 lead plus at most 6 Sonnet workers, about 7 in all. At most 4 workers run at once. A worker that finishes a batch is given the next batch, rather than a new worker being spawned. Verification is the generated tests plus the coordinator's review inline; there are no reviewer agents.
+Agent budget (user-approved 2026-10-17): 1 lead, which spawns its own Sonnet workers, **at most 8 running at a time**. Batches are sized so a worker finishes one in a session. Verification is the generated tests plus the lead's own review; there are no reviewer agents. With 8 workers the builds contend hard, so each worker builds with `CARGO_BUILD_JOBS=2` and nextest `--test-threads 2`, and runs only its batch's tests until its final full-gate run.
 
 ## Phase 1: tooling and inventory (lead)
 
@@ -56,7 +56,7 @@ Phase 1 ends with all gates green and the TODO list committed.
 
 ## Phase 2: Sonnet workers
 
-The coordinator (the main session) dispatches batches from `metadata/A1-TODO.md`:
+The lead spawns Sonnet workers (`model: sonnet`) and dispatches batches from `metadata/A1-TODO.md`, keeping at most 8 running:
 - one worktree per worker;
 - Sonnet model;
 - the prompt is the toolkit's `A1-WORKER-<toolkit>.md` plus the batch.
@@ -70,7 +70,7 @@ A worker:
 
 Facts it can't verify are left unannotated and listed in the batch's status line. They are never merged unverified.
 
-The coordinator merges each batch to master after its gates pass, then hands that worker the next batch whose dependencies are done.
+The lead reviews each batch's diff, merges it into the A1 branch after its gates pass, marks it done, and spawns a worker for the next batch whose dependencies are done. The lead sends the coordinator a short progress message after each wave; the coordinator merges the A1 branch to master in increments.
 
 ## Rules
 
