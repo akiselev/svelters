@@ -30,7 +30,7 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | Node / Deno runtime integration | node-deno-integration.md | done |
 | QuickJS JIT (quickjs-jit, Cranelift) | quickjs-jit-cranelift.md | done: no JIT for now; V8 if perf demands |
 | Windows GUI backend (Win32 / WinUI 3) | windows-gui-backend.md | done: WinUI 3 via windows-rs; Win32 fallback |
-| Apple GUI backends (AppKit / UIKit / SwiftUI) | apple-gui-backend.md | in progress |
+| Apple GUI backends (AppKit / UIKit / SwiftUI) + JavaScriptCore | apple-gui-backend.md | done: AppKit+UIKit via objc2; JSC optional engine |
 | JS ↔ native serdes | js-native-serdes.md | in progress |
 | Ownership and lifetimes | ownership-and-lifetimes.md | in progress |
 | Svelte feature survey (lists, snippets, bindings) | svelte-feature-survey.md | in progress |
