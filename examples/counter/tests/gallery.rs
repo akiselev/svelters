@@ -124,6 +124,7 @@ gallery_page!(gtk_02_buttons, "gtk", "02-buttons", ["GtkButton", "GtkToggleButto
 gallery_page!(gtk_07_bars, "gtk", "07-bars", ["GtkHeaderBar", "GtkWindowControls"]);
 gallery_page!(gtk_08_dialogs, "gtk", "08-dialogs", ["GtkMenuButton", "GtkPopover", "GtkEmojiChooser"]);
 
+gallery_page!(gtk_10_menus, "gtk", "10-menus", ["GtkPopoverMenuBar", "GtkBox", "GtkButton", "GtkLabel"]);
 // Styling pages (X6): the light page paints the card (--sv-surface) and the accent button; the dark
 // variant switches the scheme and overrides the accent token, so its pixels are the dark palette.
 gallery_page!(gtk_10_styling, "gtk", "10-styling", ["GtkBox", "GtkLabel", "GtkButton", "GtkEntry"], [("f6f5f4", 0.05), ("ffffff", 0.02), ("3584e4", 0.005)]);
@@ -142,6 +143,7 @@ gallery_page!(qt_07_selection, "qt", "07-selection", ["QComboBox", "QFontComboBo
 gallery_page!(qt_08_bars, "qt", "08-bars", ["QTabBar", "QDialogButtonBox", "QStatusBar", "QMenuBar", "QToolBar"]);
 gallery_page!(qt_10_display, "qt", "10-display", ["QCalendarWidget", "QDateEdit", "QTimeEdit", "QDateTimeEdit"]);
 gallery_page!(qt_09_dialogs, "qt", "09-dialogs", ["QLabel"]);
+gallery_page!(qt_11_menus, "qt", "11-menus", ["QMenuBar", "QToolBar", "QPushButton", "QLabel"]);
 gallery_page!(qt_11_styling, "qt", "11-styling", ["QWidget", "QLabel", "QPushButton", "QLineEdit"], [("f6f5f4", 0.05), ("ffffff", 0.02), ("3584e4", 0.005)]);
 gallery_page!(qt_12_styling_dark, "qt", "12-styling-dark", ["QWidget", "QLabel", "QPushButton", "QLineEdit"], [("242424", 0.05), ("303030", 0.02), ("e5a50a", 0.005)]);
 gallery_page!(qt_03_text, "qt", "03-text", ["QLineEdit", "QLabel", "QPlainTextEdit", "QTextEdit", "QTextBrowser", "QKeySequenceEdit"]);

@@ -173,6 +173,28 @@ def qt_bindings() -> dict[str, dict[str, dict]]:
     return out
 
 
+GTK_EXTRAS = ROOT / "metadata/extras"
+
+
+def gtk_extra_bindings() -> dict[str, dict[str, dict]]:
+    """Bindings of the hand-written GTK kinds (no GIR class): metadata/extras/gtk-*.yaml."""
+    out: dict[str, dict[str, dict]] = {}
+    for path in sorted(GTK_EXTRAS.glob("gtk-*.yaml")):
+        for el in svmeta.load_yaml(path).get("elements", []):
+            tag = el["tag"]
+            for b in el.get("bindings", []):
+                where = f"gtk <{tag}>"
+                fields = common_fields(where, b)
+                if b["property"] not in el.get("props", []):
+                    raise GenError(f"{where} bind:{b['name']}: unknown property {b['property']}")
+                if fields["signal"] and fields["signal"] not in el.get("signals", []):
+                    raise GenError(f"{where} bind:{b['name']}: unknown signal {fields['signal']}")
+                if b["name"] in out.setdefault(tag, {}):
+                    raise GenError(f"{where}: duplicate bind:{b['name']}")
+                out[tag][b["name"]] = fields
+    return out
+
+
 def merge(gtk: dict, qt: dict) -> dict[str, dict[str, dict]]:
     """Union by tag and name. A binding both toolkits define must agree on what the renderer sees."""
     out: dict[str, dict[str, dict]] = {}
@@ -222,7 +244,10 @@ def main() -> int:
     ap.add_argument("--check", action="store_true", help="fail if the checked-in outputs are stale")
     args = ap.parse_args()
     try:
-        table = merge(gtk_bindings(), qt_bindings())
+        gtk = gtk_bindings()
+        for tag, names in gtk_extra_bindings().items():
+            gtk.setdefault(tag, {}).update(names)
+        table = merge(gtk, qt_bindings())
     except GenError as e:
         print(f"gen_bindings: {e}", file=sys.stderr)
         return 1

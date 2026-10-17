@@ -46,6 +46,15 @@ BOXED = {"QIcon", "QFont", "QPixmap", "QImage", "QBrush", "QPalette", "QCursor",
 DATES = {"QDate": "date", "QTime": "time", "QDateTime": "datetime"}
 
 
+# QtGui classes the menu model needs (X4): actions are non-widget children of menus, menu bars and tool bars.
+QTGUI_CLASSES = {"QAction", "QActionGroup"}
+_MODULES: dict = {}
+
+
+def n_module(name):
+    return _MODULES.get(name, "qtwidgets")
+
+
 class EnumIndex:
     """Enums and flags typedefs from the qdoc indexes, by fully qualified name.
 
@@ -233,7 +242,7 @@ def instance_defaults(cls, mo, QtCore) -> dict:
 
 def metaobject_dump(names):
     os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
-    from PySide6 import QtCore, QtWidgets, __version__ as pyside
+    from PySide6 import QtCore, QtGui, QtWidgets, __version__ as pyside
 
     app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841 - widgets need one
 
@@ -244,7 +253,7 @@ def metaobject_dump(names):
 
     dumps = {}
     for n in names:
-        cls = getattr(QtWidgets, n, None)
+        cls = getattr(QtWidgets, n, None) or getattr(QtGui, n, None)
         if not (isinstance(cls, type) and issubclass(cls, QtCore.QObject)):
             continue
         mo = cls.staticMetaObject
@@ -397,7 +406,7 @@ def build_kind(name, c, classes, qobjects, enums, meta, tsys, src):
     return {
         "schema": svmeta.SCHEMA, "toolkit": "qt",
         "id": f"{prefix}:{name}",
-        "native": {"name": name, "header": c.get("location"), "module": "QtWidgets", "brief": c.get("brief")},
+        "native": {"name": name, "header": c.get("location"), "module": "QtGui" if n_module(name) == "qtgui" else "QtWidgets", "brief": c.get("brief")},
         "kind": "object", "abstract": any(f.get("virtual") == "pure" for f in c.findall("function")),
         "qobject": md is not None,
         "bases": base_chain(name, classes), "interfaces": [],
@@ -449,9 +458,10 @@ def main() -> int:
     a = ap.parse_args()
     docdir = Path(a.docdir)
     classes, files, namespaces = parse_qdoc(docdir)
+    _MODULES.update({n: m for n, (m, _) in classes.items()})
     widget_classes = sorted(
         n for n, (m, c) in classes.items()
-        if m == "qtwidgets" and c.get("access") == "public" and c.get("status") in ("active", "deprecated")
+        if (m == "qtwidgets" or (m == "qtgui" and n in QTGUI_CLASSES)) and c.get("access") == "public" and c.get("status") in ("active", "deprecated")
         and c.get("location") and "::" not in n and "<" not in n)
     qobjects = {n for n in classes if n == "QObject" or "QObject" in base_chain(n, classes)}
     owners = [(n, c) for n, (_, c) in sorted(classes.items())] + [(n, c) for n, (_, c) in sorted(namespaces.items())]

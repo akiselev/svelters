@@ -3,6 +3,30 @@
 import type { Boxed, DateParts, Insets, Point, Rect, Size, TimeParts, Color, Variant } from './values';
 
 export interface QtElementDescriptors {
+  action: {
+    props: {
+      label?: string;
+      icon?: Boxed<"QIcon"> | string;
+      shortcut?: Boxed<"QKeySequence"> | string;
+      tooltip?: string;
+      statusTip?: string;
+      enabled?: boolean;
+      visible?: boolean;
+      checkable?: boolean;
+      checked?: boolean;
+      group?: string;
+    };
+    events: {
+      toggled: (checked: boolean) => void;
+      activate: (checked: boolean) => void;
+      hover: () => void;
+    };
+    methods: {
+      trigger(): void;
+      toggle(): void;
+    };
+    slots: never;
+  };
   box: {
     props: {
       orientation?: "horizontal" | "vertical";
@@ -283,6 +307,33 @@ export interface QtElementDescriptors {
       adjustSize(): void;
     };
     slots: never;
+  };
+  contextmenu: {
+    props: {
+      label?: string;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+    };
+    methods: {
+      popup(p: Point, atAction: number): void;
+      popdown(): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: "items";
   };
   dateedit: {
     props: {
@@ -1027,6 +1078,11 @@ export interface QtElementDescriptors {
   };
   menu: {
     props: {
+      label?: string;
+      icon?: Boxed<"QIcon"> | string;
+      tearOffEnabled?: boolean;
+      separatorsCollapsible?: boolean;
+      toolTipsVisible?: boolean;
       enabled?: boolean;
       toolTip?: string;
       statusTip?: string;
@@ -1048,7 +1104,7 @@ export interface QtElementDescriptors {
       update(): void;
       adjustSize(): void;
     };
-    slots: never;
+    slots: "items";
   };
   menubar: {
     props: {
@@ -1073,6 +1129,16 @@ export interface QtElementDescriptors {
       setFocus(): void;
       update(): void;
       adjustSize(): void;
+    };
+    slots: "items";
+  };
+  menuseparator: {
+    props: {
+      visible?: boolean;
+    };
+    events: {
+    };
+    methods: {
     };
     slots: never;
   };
@@ -1763,7 +1829,7 @@ export interface QtElementDescriptors {
       update(): void;
       adjustSize(): void;
     };
-    slots: never;
+    slots: "items";
   };
   toolbox: {
     props: {

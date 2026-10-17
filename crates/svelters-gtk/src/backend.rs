@@ -29,6 +29,8 @@ use std::sync::Arc;
 use svelters_abi::*;
 
 mod extras;
+mod menus;
+pub(crate) use menus::signal_name as menus_signal_name;
 mod style;
 mod vlist;
 use extras::CallErr;
@@ -109,6 +111,8 @@ pub(crate) struct Inner {
     files: RefCell<HashMap<u64, extras::FileState>>,
     /// `virtuallist` widgets (see `vlist.rs`).
     vlists: RefCell<HashMap<u64, Rc<vlist::VList>>>,
+    /// Menu and action nodes (see `menus.rs`).
+    menus: RefCell<HashMap<u64, menus::Node>>,
     /// Styling state (see `style.rs`).
     style: RefCell<style::StyleState>,
     style_flush_queued: Cell<bool>,
@@ -176,7 +180,13 @@ impl Inner {
 
     /// The kind the generated tables use for `kind`: a `virtuallist` is a `ScrolledWindow` there.
     fn table_kind(&self, kind: u32) -> u32 {
-        if kind == vlist::KIND_VLIST { lookup::kind_by_name("ScrolledWindow") } else { kind }
+        if kind == vlist::KIND_VLIST {
+            lookup::kind_by_name("ScrolledWindow")
+        } else if let Some(n) = menus::table_name(kind) {
+            lookup::kind_by_name(n)
+        } else {
+            kind
+        }
     }
 
     fn widget_of(&self, h: u64) -> Res<(gtk::Widget, u32)> {
@@ -304,6 +314,9 @@ impl Inner {
         if kind == vlist::KIND_VLIST {
             return self.create_vlist();
         }
+        if menus::is_menu_kind(kind) {
+            return self.create_menu_node(kind);
+        }
         if extras::is_extra(kind) {
             return self.create_extra(kind);
         }
@@ -392,6 +405,7 @@ impl Inner {
                 self.untag_object(win.upcast_ref(), k);
             }
             drop(e.hold.take());
+            self.menus_forget(k);
             if !host.is_null() {
                 let reason = if k == h { SVL_GONE_CLOSED } else { SVL_GONE_PARENT };
                 unsafe { ((*host).on_destroyed)((*host).self_, k, reason) };
@@ -403,13 +417,15 @@ impl Inner {
     /// handle that already died) does nothing. Nothing is finalized synchronously, because the
     /// caller may be inside a signal emission: a toplevel is hidden now and destroyed from an
     /// idle, and the table's strong reference is dropped from an idle.
-    fn destroy(&self, h: u64) -> Res<()> {
+    fn destroy(self: &Rc<Self>, h: u64) -> Res<()> {
         self.style_forget(h);
         // A boxed handle: drop the held value (idempotent).
         if self.state.borrow_mut().boxed.remove(&h).is_some() {
             return Ok(());
         }
-        if self.extra_kind(h) == Some(vlist::KIND_VLIST) {
+        if self.menu_kind(h).is_some() {
+            self.destroy_menu_node(h);
+        } else if self.extra_kind(h) == Some(vlist::KIND_VLIST) {
             self.destroy_vlist(h);
         } else if self.extra_kind(h).is_some() {
             self.destroy_extra(h);
@@ -458,7 +474,10 @@ impl Inner {
         }
     }
 
-    fn insert(&self, parent: u64, child: u64, before: u64, slot: u32) -> Res<()> {
+    fn insert(self: &Rc<Self>, parent: u64, child: u64, before: u64, slot: u32) -> Res<()> {
+        if self.menu_kind(child).is_some_and(|k| !matches!(k, menus::KIND_MENUBAR | menus::KIND_TOOLBAR)) {
+            return self.menus_insert(parent, child, before);
+        }
         if let Ok((co, _)) = self.obj_of(child) {
             if let Some(ctrl) = co.downcast_ref::<gtk::EventController>() {
                 return self.insert_controller(parent, child, ctrl);
@@ -505,7 +524,10 @@ impl Inner {
         Ok(())
     }
 
-    fn remove(&self, parent: u64, child: u64) -> Res<()> {
+    fn remove(self: &Rc<Self>, parent: u64, child: u64) -> Res<()> {
+        if self.menu_kind(child).is_some_and(|k| !matches!(k, menus::KIND_MENUBAR | menus::KIND_TOOLBAR)) {
+            return self.menus_remove(parent, child);
+        }
         let (pw, _) = self.widget_of(parent)?;
         if let Ok((co, _)) = self.obj_of(child) {
             if let Some(ctrl) = co.downcast_ref::<gtk::EventController>() {
@@ -603,6 +625,13 @@ impl Inner {
     }
 
     fn set_prop(self: &Rc<Self>, h: u64, prop: u32, v: &svl_value) -> Res<()> {
+        if let Some(k) = self.menu_kind(h) {
+            if menus::is_own_member(prop) {
+                return self.menus_set_prop(h, prop, v);
+            } else if menus::table_name(k).is_none() {
+                return Err("unknown property".into());
+            }
+        }
         match self.extra_kind(h) {
             Some(vlist::KIND_VLIST) if vlist::is_own_member(prop) => return self.vlist_set_prop(h, prop, v),
             Some(vlist::KIND_VLIST) | None => {}
@@ -649,6 +678,13 @@ impl Inner {
     }
 
     fn get_prop(&self, h: u64, prop: u32, out: &mut svl_value) -> Res<()> {
+        if let Some(k) = self.menu_kind(h) {
+            if menus::is_own_member(prop) {
+                return self.menus_get_prop(h, prop, out);
+            } else if menus::table_name(k).is_none() {
+                return Err("unknown property".into());
+            }
+        }
         match self.extra_kind(h) {
             Some(vlist::KIND_VLIST) if vlist::is_own_member(prop) => return self.vlist_get_prop(h, prop, out),
             Some(vlist::KIND_VLIST) | None => {}
@@ -742,6 +778,13 @@ impl Inner {
     ///   phase puts the controller itself into `PropagationPhase::Capture` for as long as any capture
     ///   listener exists (the previous phase is restored after the last). Any other object is refused.
     fn listen_ex(self: &Rc<Self>, h: u64, signal: u32, on: bool, flags: u32) -> Res<()> {
+        if let Some(k) = self.menu_kind(h) {
+            if menus::is_own_member(signal) {
+                return self.menus_listen(h, signal, on, flags);
+            } else if menus::table_name(k).is_none() {
+                return Err("unknown signal".into());
+            }
+        }
         if vlist::is_own_member(signal) && self.extra_kind(h) == Some(vlist::KIND_VLIST) {
             self.vlist_listen(h, signal, on)?;
             return Ok(());
@@ -918,6 +961,15 @@ impl Inner {
     /// kinds have no value descriptors yet).
     fn describe_member(&self, what: u32, kind: u32, member: u32) -> Option<MemberDesc> {
         let kind = if kind == vlist::KIND_VLIST && !vlist::is_own_member(member) { self.table_kind(kind) } else { kind };
+        if menus::is_menu_kind(kind) {
+            if menus::is_own_member(member) {
+                return menus::describe_member(what, member);
+            }
+            if menus::table_name(kind).is_none() {
+                return None;
+            }
+            return self.describe_member(what, self.table_kind(kind), member);
+        }
         if extras::is_extra(kind) {
             return extras::describe_member(what, member);
         }
@@ -1031,6 +1083,7 @@ impl GtkBackend {
             frames_by_clock: Cell::new(0),
             files: RefCell::new(HashMap::new()),
             vlists: RefCell::new(HashMap::new()),
+            menus: RefCell::new(HashMap::new()),
             style: RefCell::default(),
             style_flush_queued: Cell::new(false),
         });
@@ -1098,6 +1151,26 @@ impl GtkBackend {
     pub fn object(&self, h: u64) -> Option<glib::Object> {
         self.ctl.local.obj_of(h).ok().map(|x| x.0)
     }
+
+    /// Test hook: the items of a menu container as text (`a,b,{c,d},Sub[e],`).
+    pub fn menu_dump(&self, h: u64) -> String {
+        self.ctl.local.menu_dump(h)
+    }
+
+    /// Test hook: the first menu node of a kind (`action`, `menu`, `menubar`, ...) with this label.
+    pub fn menu_find(&self, kind: &str, label: &str) -> Option<u64> {
+        self.ctl.local.menu_find(kind, label)
+    }
+
+    /// Test hook: the root action group of a menu node.
+    pub fn menu_group(&self, h: u64) -> Option<gtk::gio::SimpleActionGroup> {
+        self.ctl.local.menu_group(h)
+    }
+
+    /// Test hook: the full action name (`svl.a5`) behind an action node.
+    pub fn menu_action_name(&self, h: u64) -> Option<String> {
+        self.ctl.local.menu_action_name(h)
+    }
 }
 
 unsafe fn ctl<'a>(p: *mut c_void) -> &'a Ctl {
@@ -1137,9 +1210,19 @@ unsafe extern "C" fn b_resolve(p: *mut c_void, what: u32, kind: svl_id, name: *c
     let Ok(name) = std::str::from_utf8(bytes) else { return 0 };
     match what {
         SVL_KIND if name == "virtuallist" => vlist::KIND_VLIST,
-        SVL_KIND => match extras::kind_by_name(name) {
-            0 => lookup::kind_by_name(name),
-            k => k,
+        SVL_KIND => match (menus::kind_by_name(name), extras::kind_by_name(name)) {
+            (0, 0) => lookup::kind_by_name(name),
+            (0, k) | (k, _) => k,
+        },
+        _ if menus::is_menu_kind(kind) => match menus::find_member(what, kind, name) {
+            0 if menus::table_name(kind).is_some() => {
+                let tk = unsafe { ctl(p) }.local.table_kind(kind);
+                match what {
+                    SVL_ATTR => lookup::find_attr(tk, name),
+                    _ => resolve_generic(p, what, tk, name),
+                }
+            }
+            id => id,
         },
         _ if kind == vlist::KIND_VLIST => match vlist::find_member(what, name) {
             0 => resolve_generic(p, what, unsafe { ctl(p) }.local.table_kind(kind), name),
@@ -1193,7 +1276,11 @@ unsafe extern "C" fn b_call(p: *mut c_void, h: svl_handle, method: svl_id, args:
     let _t = crate::timing::scope();
     let out = unsafe { &mut *out };
     let r = catch_unwind(AssertUnwindSafe(|| {
-        if c.local.extra_kind(h) == Some(vlist::KIND_VLIST) && vlist::is_own_member(method) {
+        if let Some(k) = c.local.menu_kind(h).filter(|k| menus::is_own_member(method) || menus::table_name(*k).is_none()) {
+            *out = convert::null_value();
+            let _ = k;
+            c.local.menus_call(h, method, extras::args_of(args, n)).map_err(CallErr::Plain)
+        } else if c.local.extra_kind(h) == Some(vlist::KIND_VLIST) && vlist::is_own_member(method) {
             c.local.vlist_call(h, method, extras::args_of(args, n), out)
         } else if c.local.extra_kind(h).is_some_and(|k| k != vlist::KIND_VLIST) {
             c.local.extra_call(h, method, args, n, out)

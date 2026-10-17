@@ -336,6 +336,12 @@ class Model:
         tag = el["tag"]
         tcls = self.target_cls(el, p.get("target"))
         p["readonly"] = False
+        if p.get("dynamic"):
+            # A dynamic QObject property (QObject::setProperty with an undeclared name): not part of the
+            # class's API, so the backend (template glue) gives it meaning through `after_set`.
+            p.update({"native": p["dynamic"], "decl_cls": tcls, "prop": {"access": {"write": True}}, "decl_ref": "string",
+                      "ref": "string", "getter": None, "setter": None, "qprop": True, "cat": "string", "direct": False})
+            return
         if p.get("type") == "enum":
             # An override that narrows or renames an enum's members (QBoxLayout::Direction -> orientation).
             for key in ("getter", "setter"):
@@ -557,6 +563,13 @@ class Model:
             if not self.kind(a):
                 raise GenError(f"{where}: unknown accepted class {a}")
         raw, ops = s["ops"], {}
+        if s.get("order") == "actions":
+            # Menu items (X4): QWidget::insertAction/removeAction on a menu, menu bar or tool bar. A QAction child
+            # is the item; a QMenu child is its menuAction(). The glue is `menu_insert` / `menu_remove` (menus.hpp.in).
+            if s["cardinality"] != "many" or s["host"] != "self":
+                raise GenError(f"{where}: order actions needs a many slot on the element itself")
+            s.update({"actions": True, "ops": {}, "replace": None, "remove_effect": "released", "append_only": False})
+            return
         if s["cardinality"] == "one":
             for need in ("get", "set", "remove"):
                 if need not in raw:
@@ -744,10 +757,13 @@ def cident(s: str) -> str:
 
 
 def inc(model: Model, classes) -> str:
-    seen = {f"QtWidgets/{model.kind(c)['native']['header']}" for c in classes if model.kind(c)}
+    def header(c):
+        n = model.kind(c)["native"]
+        return f"{n.get('module', 'QtWidgets')}/{n['header']}"
+    seen = {header(c) for c in classes if model.kind(c)}
     for o in model.owners_used:
         if model.kind(o) and o != "Qt":
-            seen.add(f"QtWidgets/{model.kind(o)['native']['header']}")
+            seen.add(header(o))
         elif o in GUI_HEADERS:
             seen.add(GUI_HEADERS[o])
     return "\n".join(f"#include <{h}>" for h in sorted(seen))
@@ -818,7 +834,7 @@ def emit_create(m: Model) -> str:
     out = ["QObject *gen_create(svl_id kind) {", "  switch (kind) {"]
     for e in m.elements:
         out.append(f"    case K_{cident(e['tag'])}: {{")
-        out.append(f"      auto *w = new {e['cls']}();")
+        out.append(f"      auto *w = new {e['cls']}({', '.join(e['construct'].get('args', []))});")
         for ini in e["construct"].get("init", []):
             iargs = ", ".join({True: "true", False: "false"}.get(a, str(a)) if isinstance(a, bool) else str(a)
                               for a in ini.get("args", []))
@@ -863,7 +879,12 @@ def prop_cases(m: Model, setter: bool) -> str:
                 if setter:
                     if p.get("suppress_signals"):
                         out.append("          Suppress quiet(e);")
-                    out.append(f"          return {tgt}->setProperty(\"{p['native']}\", to_variant(v)) ? 0 : fail(\"{p['js']}: setProperty failed\");")
+                    if p.get("dynamic"):
+                        # setProperty() returns false when it creates (or updates) a dynamic property: not an error.
+                        out.append(f"          {tgt}->setProperty(\"{p['native']}\", to_variant(v));")
+                        out.append(f"          return {p['after_set']}(e, o);" if p.get("after_set") else "          return 0;")
+                    else:
+                        out.append(f"          return {tgt}->setProperty(\"{p['native']}\", to_variant(v)) ? 0 : fail(\"{p['js']}: setProperty failed\");")
                 else:
                     out.append(f"          out_variant(out, {tgt}->property(\"{p['native']}\")); return 0;")
             out.append("        }")
@@ -1099,6 +1120,9 @@ def emit_insert(m: Model) -> str:
         for s in ch["slots"]:
             ops = s["ops"]
             ctype = s["accepts"][0]
+            if s.get("actions"):
+                out.append(f"        case S_{t}_{cident(s['name'])}: return menu_insert(o, child, before);")
+                continue
             out.append(f"        case S_{t}_{cident(s['name'])}: {{")
             out.append(f"          auto *ch = qobject_cast<{ctype} *>(child);")
             out.append(f"          if (!ch) return fail(\"slot {s['name']} of <{e['tag']}> does not accept this child\");")
@@ -1147,6 +1171,9 @@ def emit_remove(m: Model) -> str:
         for s in ch["slots"]:
             ops = s["ops"]
             ctype = s["accepts"][0]
+            if s.get("actions"):
+                out.append("      if (menu_is_item(child)) return menu_remove(o, child);")
+                continue
             out.append(f"      if (auto *ch = qobject_cast<{ctype} *>(child)) {{")
             out.append(f"        auto *h = {host_expr(e, s['host'])};")
             if s["cardinality"] == "one":
@@ -1456,6 +1483,14 @@ def emit_toplevel(m: Model) -> str:
     return "\n".join(out)
 
 
+def emit_context(m: Model) -> str:
+    """Kinds that attach to the widget they are inserted into and pop up on its context-menu request."""
+    out = ["bool gen_is_context(svl_id kind) {", "  switch (kind) {"]
+    out += [f"    case K_{cident(e['tag'])}: return true;" for e in m.elements if e["construct"].get("context_menu")]
+    out += ["    default: return false;", "  }", "}"]
+    return "\n".join(out)
+
+
 def gen_backend(m: Model, digest: str, tmpl: str) -> str:
     classes = set()
     for e in m.elements:
@@ -1472,10 +1507,11 @@ def gen_backend(m: Model, digest: str, tmpl: str) -> str:
         "DIGEST": digest, "INCLUDES": inc(m, classes), "IDS": emit_ids(m), "TABLES": emit_tables(m),
         "CREATE": emit_create(m), "SET_PROP": prop_cases(m, True), "GET_PROP": prop_cases(m, False),
         "CALL": emit_call(m), "DESCRIBE": emit_describe(m), "ENUMS": emit_enums(m), "ATTRS": emit_attrs(m), "INSERT": emit_insert(m), "REMOVE": emit_remove(m), "LISTEN": emit_listen(m),
-        "TOPLEVEL": emit_toplevel(m), "GETTERS": emit_getters(m),
+        "TOPLEVEL": emit_toplevel(m), "GETTERS": emit_getters(m), "CONTEXT": emit_context(m),
     }
     parts["SERDES"] = (HERE / "templates" / "serdes.hpp.in").read_text()
     parts["VLIST"] = (HERE / "templates" / "vlist.hpp.in").read_text()
+    parts["MENUS"] = (HERE / "templates" / "menus.hpp.in").read_text()
     for k, v in parts.items():
         tmpl = tmpl.replace(f"@@{k}@@" if k == "DIGEST" else f"//@@{k}@@", v)
     return tmpl
@@ -1564,6 +1600,8 @@ class Tests:
                                   lambda e=e, sl=sl, a=a: self.attr(e, sl, a))
             for b in e.get("bindings", []):
                 self.fact(fact_id(e, "binding", b["name"]), b["_raw"], "bindings", e, b["name"], lambda e=e, b=b: self.binding(e, b))
+            if e["construct"].get("context_menu"):
+                self.fact(fact_id(e, "construct", "context_menu"), e["construct"], "construct", e, "context_menu", lambda e=e: self.context_menu(e))
         return "\n".join(self.src), "\n".join(f'    {{"{n}", {i}}},' for n, i in self.fns)
 
     def manifest(self, version: str) -> dict:
@@ -1783,6 +1821,29 @@ class Tests:
         lines.append("  B->destroy(B->self, h);")
         self.add(f"binding/{t}.{b['name']}", "\n".join(lines))
 
+    def context_menu(self, e):
+        """`context_menu` elements attach to the widget they are inserted into (menus.hpp.in)."""
+        t = e["tag"]
+        self.add(f"construct/{t}.context_menu", "\n".join([
+            f'  svl_handle w = mk("box"); svl_handle m = mk("{t}");',
+            "  auto *wd = static_cast<QWidget *>(O(w)); auto *menu = qobject_cast<QMenu *>(O(m));",
+            "  CHECK(B->insert(B->self, w, m, 0, 0) == 0);",
+            "  CHECK(wd->contextMenuPolicy() == Qt::CustomContextMenu && menu->parentWidget() == wd);  // owned by the widget",
+            f'  svl_handle it = mk("action"); CHECK(B->insert(B->self, m, it, 0, S("{t}", "items")) == 0);  // an empty menu does not open',
+            "  Q_EMIT wd->customContextMenuRequested(QPoint(3, 4));",
+            "  CHECK(menu->isVisible());  // popup(), not exec()",
+            "  menu->hide();",
+            "  CHECK(B->insert(B->self, w, m, 0, 0) < 0);  // already attached",
+            "  CHECK(B->remove(B->self, w, m) == 0);",
+            "  CHECK(wd->contextMenuPolicy() == Qt::DefaultContextMenu && menu->parent() == nullptr);  // released",
+            "  CHECK(B->remove(B->self, w, m) < 0);",
+            "  CHECK(B->insert(B->self, w, m, 0, 0) == 0);  // can be attached again",
+            "  QPointer<QObject> pm(O(m));",
+            "  B->destroy(B->self, w);",
+            "  flush();",
+            "  CHECK(pm.isNull());  // deleting the widget deletes its context menu",
+            "  B->destroy(B->self, m);"]))
+
     def item_widget(self, ops, expr: str) -> str:
         """`list.item` may return a QLayoutItem* (layouts) or the QWidget* itself (QTabWidget::widget)."""
         return f"{expr}->widget()" if ops.get("at_layout_item", True) else expr
@@ -1925,7 +1986,90 @@ class Tests:
             lines.insert(-1, f'  {{ std::string bad = "no-such-value"; svl_value vb = vstr(bad); CHECK({setc("c", "vb")} < 0); }}')
         self.add(f"attr/{t}.{sn}.{an}", "\n".join(lines))
 
+    def slot_actions(self, e, s):
+        """`order: actions` slots: QWidget::actions() order, submenus, radio sets and ownership (menus.hpp.in)."""
+        m, t, sn = self.m, e["tag"], s["name"]
+        sid = f'S("{t}", "{sn}")'
+        A = lambda h: f"qobject_cast<QAction *>(O({h}))"
+        acts = lambda p: f"static_cast<QWidget *>(O({p}))->actions()"
+        lst = lambda *hs: "(QList<QAction *>{" + ", ".join(A(h) for h in hs) + "})"
+        mk = [f'  svl_handle p = mk("{t}"); svl_handle a0 = mk("action"); svl_handle a1 = mk("action"); svl_handle a2 = mk("action");']
+        clean = "  B->destroy(B->self, p); B->destroy(B->self, a0); B->destroy(B->self, a1); B->destroy(B->self, a2);"
+        self.add(f"slot/{t}.{sn}/order", "\n".join(mk + [
+            f"  CHECK(B->insert(B->self, p, a0, 0, {sid}) == 0);",
+            f"  CHECK(B->insert(B->self, p, a2, 0, {sid}) == 0);",
+            f"  CHECK(B->insert(B->self, p, a1, a2, {sid}) == 0);  // before=a2",
+            f"  CHECK({acts('p')} == {lst('a0', 'a1', 'a2')});",
+            f"  CHECK(O(a1)->parent() == O(p));  // owned by the holder",
+            f"  CHECK(B->insert(B->self, p, a2, a0, {sid}) == 0);  // move an existing item to the front",
+            f"  CHECK({acts('p')} == {lst('a2', 'a0', 'a1')});",
+            f"  CHECK(B->insert(B->self, p, a0, a0, {sid}) == 0);  // before itself: unchanged",
+            f"  CHECK({acts('p')} == {lst('a2', 'a0', 'a1')});",
+            f'  {{ svl_handle x = mk("action"); CHECK(B->insert(B->self, p, x, a0 + 1000, {sid}) < 0); B->destroy(B->self, x); }}  // unknown before',
+            clean]))
+        self.add(f"slot/{t}.{sn}/default_slot_is_slot_0", "\n".join(mk + [
+            "  CHECK(B->insert(B->self, p, a0, 0, 0) == 0);", f"  CHECK({acts('p')} == {lst('a0')});", clean]))
+        self.add(f"slot/{t}.{sn}/separator_and_submenu", "\n".join(mk + [
+            '  svl_handle sep = mk("menuseparator"); svl_handle sub = mk("menu");',
+            f"  CHECK(B->insert(B->self, p, a0, 0, {sid}) == 0);",
+            f"  CHECK(B->insert(B->self, p, sep, 0, {sid}) == 0);",
+            f"  CHECK(B->insert(B->self, p, sub, 0, {sid}) == 0);",
+            "  auto *menu = qobject_cast<QMenu *>(O(sub));",
+            f"  CHECK({acts('p')}.size() == 3 && {acts('p')}[1]->isSeparator() && {acts('p')}[2] == menu->menuAction());",
+            "  CHECK(menu->parentWidget() == static_cast<QWidget *>(O(p)));  // the holder owns the submenu",
+            '  CHECK(B->insert(B->self, sub, a1, 0, S("menu", "items")) == 0);  // submenus hold items too',
+            f"  CHECK(menu->actions() == {lst('a1')});",
+            f"  CHECK(B->remove(B->self, p, sub) == 0 && !{acts('p')}.contains(menu->menuAction()) && menu->parent() == nullptr);",
+            "  B->destroy(B->self, sep); B->destroy(B->self, sub);",
+            clean]))
+        wrong = m.wrong_child_tag(s)
+        if wrong:
+            self.add(f"slot/{t}.{sn}/rejects_{wrong}", "\n".join([
+                f'  svl_handle p = mk("{t}"); svl_handle w = mk("{wrong}");',
+                f"  CHECK(B->insert(B->self, p, w, 0, {sid}) < 0);",
+                "  B->destroy(B->self, p); B->destroy(B->self, w);"]))
+        self.add(f"ownership/{t}.{sn}/remove_released", "\n".join(mk + [
+            f"  CHECK(B->insert(B->self, p, a0, 0, {sid}) == 0);",
+            f"  CHECK(B->insert(B->self, p, a1, 0, {sid}) == 0);",
+            "  QPointer<QObject> p1(O(a1));",
+            "  CHECK(B->remove(B->self, p, a1) == 0);",
+            "  flush();",
+            f"  CHECK({acts('p')} == {lst('a0')});",
+            "  CHECK(!p1.isNull() && p1->parent() == nullptr);  // released, not deleted",
+            "  CHECK(!was_destroyed(a1));",
+            "  CHECK(B->remove(B->self, p, a1) < 0);",
+            f"  CHECK(B->insert(B->self, p, a1, 0, {sid}) == 0);  // a released item can be inserted again",
+            f"  CHECK({acts('p')} == {lst('a0', 'a1')});",
+            clean]))
+        self.add(f"ownership/{t}.{sn}/parent_destroy_deletes_children", "\n".join(mk + [
+            f"  CHECK(B->insert(B->self, p, a0, 0, {sid}) == 0);",
+            "  QPointer<QObject> pc(O(a0));",
+            "  B->destroy(B->self, p);",
+            "  flush();",
+            "  CHECK(pc.isNull());",
+            "  CHECK(was_destroyed(a0));",
+            clean]))
+        self.add(f"slot/{t}.{sn}/radio_group", "\n".join(mk + [
+            '  std::string g = "size"; svl_value gv = vstr(g);',
+            '  CHECK(B->set_prop(B->self, a0, P("action", "group"), &gv) == 0);',
+            '  CHECK(B->set_prop(B->self, a1, P("action", "group"), &gv) == 0);',
+            f"  CHECK(B->insert(B->self, p, a0, 0, {sid}) == 0);",
+            f"  CHECK(B->insert(B->self, p, a1, 0, {sid}) == 0);",
+            f"  CHECK(B->insert(B->self, p, a2, 0, {sid}) == 0);  // no group",
+            f"  CHECK({A('a0')}->actionGroup() && {A('a0')}->actionGroup() == {A('a1')}->actionGroup() && !{A('a2')}->actionGroup());",
+            f"  CHECK({A('a0')}->isCheckable() && {A('a0')}->actionGroup()->isExclusive());",
+            f"  {A('a0')}->setChecked(true);",
+            f"  {A('a1')}->trigger();  // the user picks the other one",
+            f"  CHECK(!{A('a0')}->isChecked() && {A('a1')}->isChecked());",
+            '  std::string none = ""; svl_value nv = vstr(none);',
+            '  CHECK(B->set_prop(B->self, a1, P("action", "group"), &nv) == 0);  // leaving the set',
+            f"  CHECK(!{A('a1')}->actionGroup());",
+            f"  CHECK(B->remove(B->self, p, a0) == 0 && !{A('a0')}->actionGroup());",
+            clean]))
+
     def slot_many(self, e, s):
+        if s.get("actions"):
+            return self.slot_actions(e, s)
         if s.get("append_only"):
             return self.slot_append_only(e, s)
         m, t, sn = self.m, e["tag"], s["name"]

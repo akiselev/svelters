@@ -159,7 +159,7 @@ fn callback_id(v: &svl_value) -> Result<u64, String> {
 
 impl Inner {
     pub(super) fn extra_kind(&self, h: u64) -> Option<u32> {
-        self.state.borrow().entries.get(&h).map(|e| e.kind).filter(|k| is_extra(*k))
+        self.state.borrow().entries.get(&h).map(|e| e.kind).filter(|k| is_extra(*k) && !super::menus::is_menu_kind(*k))
     }
 
     pub(super) fn create_extra(&self, kind: u32) -> Res<u64> {
