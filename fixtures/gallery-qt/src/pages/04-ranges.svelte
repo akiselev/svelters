@@ -22,11 +22,11 @@
 </script>
 
 <box orientation="vertical" spacing="4">
-  <slider orientation="Horizontal" minimum={0} maximum={100} tickPosition="TicksBelow" tickInterval={10} bind:value={level} onvalueChanged={() => echoSlider++} />
+  <slider orientation="horizontal" minimum={0} maximum={100} tickPosition="ticks-below" tickInterval={10} bind:value={level} onvalueChanged={() => echoSlider++} />
   <label label="echo slider: {echoSlider}" />
   <dial notchesVisible={true} wrapping={false} maximumHeight={70} bind:value={angle} onvalueChanged={() => echoDial++} />
   <label label="echo dial: {echoDial}" />
-  <scrollbar orientation="Horizontal" bind:value={scroll} onvalueChanged={() => echoScroll++} />
+  <scrollbar orientation="horizontal" bind:value={scroll} onvalueChanged={() => echoScroll++} />
   <label label="echo scroll: {echoScroll}" />
   <spinbox minimum={0} maximum={20} prefix="n=" suffix=" items" bind:value={count} onvalueChanged={() => echoSpin++} />
   <label label="echo spin: {echoSpin}" />

@@ -7,6 +7,9 @@ export interface BindableProps {
   checkbutton: {
     active: boolean; // gtk
   };
+  combobox: {
+    currentIndex: number; // qt
+  };
   dial: {
     value: number; // qt
   };
@@ -21,6 +24,9 @@ export interface BindableProps {
   };
   expander: {
     expanded: boolean; // gtk
+  };
+  listwidget: {
+    currentRow: number; // qt
   };
   passwordentry: {
     text: string; // gtk

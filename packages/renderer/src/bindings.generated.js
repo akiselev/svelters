@@ -7,6 +7,9 @@ export const BINDINGS = {
   checkbutton: {
     active: { prop: "active", signal: "toggled", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
   },
+  combobox: {
+    currentIndex: { prop: "currentIndex", signal: "changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
+  },
   dial: {
     value: { prop: "value", signal: "valueChanged", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
@@ -21,6 +24,9 @@ export const BINDINGS = {
   },
   expander: {
     expanded: { prop: "expanded", signal: "notify::expanded", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
+  },
+  listwidget: {
+    currentRow: { prop: "currentRow", signal: "row-changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
   passwordentry: {
     text: { prop: "text", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["gtk"] },

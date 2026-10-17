@@ -1,7 +1,6 @@
 elements:
   - tag: colordialog
     construct: { class: QColorDialog }
-    exclude: [done]   # protected in QColorDialog; generated thunks call it on the subclass
     props:
       - { js: currentColor, native: currentColor, provenance: "QColorDialog::currentColor (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: options, native: options, provenance: "QColorDialog::options (qdoc); typed by the S1 value model (ABI v3)" }

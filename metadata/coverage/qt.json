@@ -127,8 +127,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   9,
+   9
   ]
  },
  {
@@ -331,35 +331,35 @@
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "defaults": 14,
   "element": "combobox",
-  "gallery": null,
+  "gallery": "07-selection",
   "inherited": 0,
   "kind": "QComboBox",
   "lifetime": "owned",
   "methods": [
-   2,
+   5,
    82
   ],
   "native": "QComboBox",
   "ownership": false,
   "props": [
-   2,
+   9,
    16
   ],
-  "props_annotated": 2,
+  "props_annotated": 9,
   "signal_results": 0,
   "signals": [
-   0,
+   3,
    7
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   4,
-   4
+   18,
+   18
   ]
  },
  {
@@ -463,10 +463,10 @@
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "defaults": 4,
-  "element": null,
-  "gallery": null,
+  "element": "dial",
+  "gallery": "04-ranges",
   "inherited": 0,
   "kind": "QDial",
   "lifetime": "owned",
@@ -477,10 +477,10 @@
   "native": "QDial",
   "ownership": false,
   "props": [
-   0,
+   3,
    4
   ],
-  "props_annotated": 0,
+  "props_annotated": 3,
   "signal_results": 0,
   "signals": [
    0,
@@ -490,8 +490,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   6,
+   6
   ]
  },
  {
@@ -595,10 +595,10 @@
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "defaults": 9,
   "element": "doublespinbox",
-  "gallery": null,
+  "gallery": "04-ranges",
   "inherited": 0,
   "kind": "QDoubleSpinBox",
   "lifetime": "owned",
@@ -609,21 +609,21 @@
   "native": "QDoubleSpinBox",
   "ownership": false,
   "props": [
-   2,
+   5,
    9
   ],
-  "props_annotated": 2,
+  "props_annotated": 5,
   "signal_results": 0,
   "signals": [
-   0,
+   1,
    2
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   2,
-   2
+   7,
+   7
   ]
  },
  {
@@ -729,8 +729,8 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 1,
-  "element": null,
-  "gallery": null,
+  "element": "fontcombobox",
+  "gallery": "07-selection",
   "inherited": 0,
   "kind": "QFontComboBox",
   "lifetime": "owned",
@@ -741,10 +741,10 @@
   "native": "QFontComboBox",
   "ownership": false,
   "props": [
-   0,
+   3,
    3
   ],
-  "props_annotated": 0,
+  "props_annotated": 3,
   "signal_results": 0,
   "signals": [
    0,
@@ -754,8 +754,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   3,
+   3
   ]
  },
  {
@@ -1092,33 +1092,33 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 6,
-  "element": null,
-  "gallery": null,
+  "element": "lcdnumber",
+  "gallery": "04-ranges",
   "inherited": 0,
   "kind": "QLCDNumber",
   "lifetime": "owned",
   "methods": [
-   0,
+   1,
    19
   ],
   "native": "QLCDNumber",
   "ownership": false,
   "props": [
-   0,
+   5,
    6
   ],
-  "props_annotated": 0,
+  "props_annotated": 5,
   "signal_results": 0,
   "signals": [
-   0,
+   1,
    1
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   7,
+   7
   ]
  },
  {
@@ -1255,35 +1255,35 @@
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "defaults": 4,
-  "element": null,
-  "gallery": null,
+  "element": "listwidget",
+  "gallery": "07-selection",
   "inherited": 0,
   "kind": "QListWidget",
   "lifetime": "owned",
   "methods": [
-   0,
+   3,
    40
   ],
   "native": "QListWidget",
   "ownership": false,
   "props": [
-   0,
+   3,
    4
   ],
-  "props_annotated": 0,
+  "props_annotated": 3,
   "signal_results": 0,
   "signals": [
-   0,
+   2,
    10
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   11,
+   11
   ]
  },
  {
@@ -1521,33 +1521,33 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 10,
-  "element": null,
-  "gallery": null,
+  "element": "progressbar",
+  "gallery": "04-ranges",
   "inherited": 0,
   "kind": "QProgressBar",
   "lifetime": "owned",
   "methods": [
-   0,
+   1,
    27
   ],
   "native": "QProgressBar",
   "ownership": false,
   "props": [
-   0,
+   7,
    10
   ],
-  "props_annotated": 0,
+  "props_annotated": 7,
   "signal_results": 0,
   "signals": [
-   0,
+   1,
    1
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   9,
+   9
   ]
  },
  {
@@ -1750,10 +1750,10 @@
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "defaults": 0,
-  "element": null,
-  "gallery": null,
+  "element": "scrollbar",
+  "gallery": "04-ranges",
   "inherited": 0,
   "kind": "QScrollBar",
   "lifetime": "owned",
@@ -1777,8 +1777,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   3,
+   3
   ]
  },
  {
@@ -1816,10 +1816,10 @@
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "defaults": 2,
-  "element": null,
-  "gallery": null,
+  "element": "slider",
+  "gallery": "04-ranges",
   "inherited": 0,
   "kind": "QSlider",
   "lifetime": "owned",
@@ -1830,10 +1830,10 @@
   "native": "QSlider",
   "ownership": false,
   "props": [
-   0,
+   2,
    2
   ],
-  "props_annotated": 0,
+  "props_annotated": 2,
   "signal_results": 0,
   "signals": [
    0,
@@ -1843,16 +1843,16 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   5,
+   5
   ]
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "defaults": 9,
   "element": "spinbox",
-  "gallery": null,
+  "gallery": "04-ranges",
   "inherited": 0,
   "kind": "QSpinBox",
   "lifetime": "owned",
@@ -1863,21 +1863,21 @@
   "native": "QSpinBox",
   "ownership": false,
   "props": [
-   5,
+   7,
    9
   ],
-  "props_annotated": 5,
+  "props_annotated": 7,
   "signal_results": 0,
   "signals": [
-   0,
+   2,
    2
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   7,
-   7
+   12,
+   12
   ]
  },
  {
@@ -2204,7 +2204,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "Items are non-widget objects (gap G7) and the item-view surface needs models (gap G6); revisit with the item-model work.",
   "verified": [
    0,
    0
@@ -2468,7 +2468,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "Items are non-widget objects (gap G7) and the item-view surface needs models (gap G6); revisit with the item-model work.",
   "verified": [
    0,
    0

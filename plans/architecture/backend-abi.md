@@ -292,6 +292,37 @@ void (*frame)(void *self);           /* a requested frame is due; runs requestAn
 - A throwing handler yields `0` with a `null` result and an error in the host's error list.
 - The result comes from the event object (`e.result`, `e.preventDefault()`, `e.stopPropagation()`), never from the handler's return value.
 
+### Model-view protocol (M5)
+
+No vtable change. A backend may provide the portable composite widget kind `virtuallist` (an "extra" kind resolved by name, like `gio-file`). It wraps the toolkit's native model-view widget and speaks one protocol. The model lives in JS: the native side holds only an integer *row id* per item.
+
+```text
+kind   virtuallist          a widget (insertable anywhere); also takes the generic widget props of its toolkit base
+props  selected   i64       selected position, -1 for none (setting it never raises `select`)
+       selection  string    "none" | "single"
+       layout     string    "list" | "grid"
+       rowHeight  i64       Qt: the uniform row height of the pooled rows. GTK: minimum height of a row slot (default 32; 0 = none),
+                            which keeps a row that is still empty from measuring 0px and making the first layout create a slot per item
+calls  splice(pos, removed, ids[])   replace `removed` ids at `pos` with `ids` (u64 as I64, no duplicates). One call = one
+                                      items-changed (GTK) / beginRemoveRows or beginInsertRows (Qt). Never a reset
+       count() -> i64                native item count
+       scrollTo(pos)
+       setRow(row, widget)           put a widget handle into row slot `row` (called from `setup`); null clears it
+       rowAt(pos) -> i64             slot bound to `pos`, or -1
+sync   setup(row)                    a row slot was created; give it content with setRow
+       bind(row, pos, id, gen)       slot `row` now shows item `id` at `pos`; gen counts binds of that slot
+       unbind(row, gen)              slot `row` is no longer showing that binding
+       teardown(row)                 slot destroyed; JS releases its widget
+async  activate(pos)                 user activated an item (double click, Enter)
+       select(pos)                   user selection changed
+```
+
+- **Snapshot, not call_sync, for the model.** The native model answers `n_items`/`get_item`/`rowCount`/`data` from its own id vector; JS changes it only through `splice`. A toolkit may query the model at any time, including inside our own `splice`, where `call_sync` would answer busy.
+- **Row content is lazy.** The four row signals use `call_sync` so content is in place before the first paint. They are listened like any other signal. When JS is already running (`-2`), the host queues them as deferred events; the `unbind`/`teardown` of rows that `splice` itself removes usually take that path. `gen` lets JS ignore a late `unbind` for a binding that was replaced meanwhile. A deferred `bind` is valid as long as the id is still in the list (JS re-finds its position).
+- **Row slots are recycled** by the toolkit (GTK `GtkListItemFactory` recycling; Qt: a pool of `visible + 2` slots placed `slot = pos mod N`). The widget handed to `setRow` stays owned by the JS handle (destroying the handle drops only the host's reference).
+- **Handles and accounting.** `setRow` takes a widget handle, so every row costs exactly one `create` for its container plus whatever the row component mounts; all of them are destroyed at `teardown`. Tests assert `live handles after teardown == baseline`.
+- **Sort/filter** are done in JS: the app sorts or filters its array and the keyed diff turns the new order into minimal splices.
+
 Later ABI additions, not part of v2:
 
 - `set_child_attr` (M4);
