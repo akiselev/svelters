@@ -218,6 +218,9 @@ impl Harness {
     pub fn set_i64(&self, h: u64, prop: &str, i: i64) -> Result<(), String> {
         self.set(h, prop, svl_value { tag: SVL_I64, u: svl_value_u { i } })
     }
+    pub fn set_f64(&self, h: u64, prop: &str, f: f64) -> Result<(), String> {
+        self.set(h, prop, svl_value { tag: SVL_F64, u: svl_value_u { f } })
+    }
     pub fn set_bool(&self, h: u64, prop: &str, b: bool) -> Result<(), String> {
         self.set(h, prop, svl_value { tag: SVL_BOOL, u: svl_value_u { b } })
     }

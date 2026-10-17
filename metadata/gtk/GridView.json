@@ -68,6 +68,16 @@
     "svelters-api:v1:type:gtk:Gtk:ListTabBehavior"
   ],
   "id": "svelters-api:v1:type:gtk:Gtk:GridView",
+  "inherited": {
+    "properties": [
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Orientable:prop:orientation",
+        "from": "svelters-api:v1:type:gtk:Gtk:Orientable",
+        "name": "orientation",
+        "origin": "manual"
+      }
+    ]
+  },
   "interfaces": [
     "Gtk.Accessible",
     "Gtk.Buildable",
@@ -76,6 +86,16 @@
     "Gtk.Scrollable"
   ],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "unref"
+    },
+    "id": "svelters-api:v1:type:gtk:Gtk:GridView:lifetime",
+    "native_refcount": "gobject_floating",
+    "origin": "derived",
+    "provenance": "derived: GtkWidget (floating ref sunk by the handle table; the parent holds a ref while inserted)"
+  },
   "methods": [
     {
       "id": "svelters-api:v1:type:gtk:Gtk:GridView:method:get_enable_rubberband",

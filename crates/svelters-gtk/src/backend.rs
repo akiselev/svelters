@@ -205,7 +205,8 @@ impl Inner {
             if !si.ordered {
                 return Err(format!("slot {} does not support insert-before", si.name));
             }
-            if b.parent().as_ref() != Some(&pw) {
+            // Wrapping containers (GtkListBox rows, GtkFlowBox children) put a wrapper in between.
+            if !b.is_ancestor(&pw) {
                 return Err("`before` is not a child of the parent".into());
             }
         }

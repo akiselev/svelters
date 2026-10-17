@@ -23,6 +23,16 @@
     "svelters-api:v1:type:gtk:Gtk:Orientation"
   ],
   "id": "svelters-api:v1:type:gtk:Gtk:ListBase",
+  "inherited": {
+    "properties": [
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Orientable:prop:orientation",
+        "from": "svelters-api:v1:type:gtk:Gtk:Orientable",
+        "name": "orientation",
+        "origin": "manual"
+      }
+    ]
+  },
   "interfaces": [
     "Gtk.Accessible",
     "Gtk.Buildable",
@@ -31,6 +41,13 @@
     "Gtk.Scrollable"
   ],
   "kind": "object",
+  "lifetime": {
+    "class": "borrowed_only",
+    "id": "svelters-api:v1:type:gtk:Gtk:ListBase:lifetime",
+    "native_refcount": "gobject_floating",
+    "origin": "derived",
+    "provenance": "derived: abstract type, JS cannot create it"
+  },
   "methods": [],
   "native": {
     "c_type": "GtkListBase",
