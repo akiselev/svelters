@@ -1,6 +1,7 @@
 {
   "name": "@svelters/lists",
   "version": "0.0.0",
+  "license": "MIT",
   "private": true,
   "type": "module",
   "description": "Virtualized, model-backed lists for svelters: a JS array exposed to GtkListView/QListView, rows rendered by a recycled pool of Svelte components",

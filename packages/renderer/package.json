@@ -1,6 +1,7 @@
 {
   "name": "@svelters/renderer",
   "version": "0.0.0",
+  "license": "MIT",
   "private": true,
   "type": "module",
   "description": "Svelte custom renderer (PR #18042 API) that drives a SveltersHost",

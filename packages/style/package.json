@@ -1,6 +1,7 @@
 {
   "name": "@svelters/style",
   "version": "0.0.0",
+  "license": "MIT",
   "private": true,
   "type": "module",
   "description": "Portable style vocabulary, GTK CSS / QSS translator and --sv-* tokens",

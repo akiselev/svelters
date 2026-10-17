@@ -1,6 +1,7 @@
 {
   "name": "@svelters/build",
   "version": "0.0.0",
+  "license": "MIT",
   "private": true,
   "type": "module",
   "description": "Shared Vite config for building a Svelters app into a single ESM bundle",
