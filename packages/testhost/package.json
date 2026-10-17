@@ -1,0 +1,13 @@
+{
+  "name": "@svelters/testhost",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Node SveltersHost that records the op log, plus a fixture runner",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "bin": {
+    "svelters-test": "./bin/svelters-test.mjs"
+  }
+}
