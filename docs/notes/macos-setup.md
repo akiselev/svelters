@@ -73,11 +73,11 @@ cargo nextest run -p counter-mac                          # same, through nextes
 
 Run one case: `cargo test -p counter-mac --test generated -- slot_nsstackview_arranged_subviews`.
 
-Optional, re-ingest the metadata from your SDK (the checked-in JSON came from the macOS 26.1 SDK on Linux; a diff here is interesting):
+Optional, re-ingest the metadata from your Xcode (CI's `appkit-metadata` job does this on every push with Xcode 26.1.1 / macOS 26.1 SDK; with a different SDK version a diff is expected and interesting):
 
 ```sh
-python3 -m venv /tmp/mac1-venv && /tmp/mac1-venv/bin/pip install libclang pyyaml jsonschema
-/tmp/mac1-venv/bin/python -I tools/metadata/appkit/ingest.py --sdk "$(xcrun --show-sdk-path)"
+python3 -m venv /tmp/mac1-venv && /tmp/mac1-venv/bin/pip install clang==21.1.7 pyyaml jsonschema
+/tmp/mac1-venv/bin/python -I tools/metadata/appkit/ingest.py   # SDK and libclang via xcrun
 /tmp/mac1-venv/bin/python -I tools/metadata/appkit/gen_backend.py
 git diff --stat metadata/appkit crates/svelters-appkit/src/generated
 ```
