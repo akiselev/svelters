@@ -1,0 +1,24 @@
+create window #1
+set #1 title "Counter"
+create stack-view #2
+set #2 orientation "vertical"
+set #2 spacing "8"
+set #2 edge-insets {"top":20,"right":20,"bottom":20,"left":20}
+create text-field #3
+set #3 editable false
+set #3 selectable false
+set #3 bezeled false
+set #3 draws-background false
+set #3 string-value "Count: 0"
+insert #2 #3 before=end slot=default
+create button #4
+set #4 title "Increment"
+listen #4 action on
+insert #2 #4 before=end slot=default
+insert #1 #2 before=end slot=default
+call #1 present []
+event #4 action []
+set #3 string-value "Count: 1"
+event #4 action []
+event #4 action []
+set #3 string-value "Count: 3"

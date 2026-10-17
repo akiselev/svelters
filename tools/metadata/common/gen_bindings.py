@@ -205,11 +205,26 @@ def qt_toplevels() -> dict[str, dict]:
     return out
 
 
-def merge_toplevels(gtk: dict, qt: dict) -> dict[str, dict]:
+APPKIT_OVERRIDES = ROOT / "metadata/overrides/appkit"
+
+
+def appkit_toplevels() -> dict[str, dict]:
+    """AppKit elements of lifetime `toplevel` (metadata/overrides/appkit/*.yaml). Windows are shown
+    with `make-key-and-order-front` (NSWindow has no `present`)."""
+    out: dict[str, dict] = {}
+    for path in sorted(APPKIT_OVERRIDES.glob("*.yaml")):
+        el = svmeta.load_yaml(path).get("element") or {}
+        if el.get("lifetime") == "toplevel":
+            out[el["tag"]] = {"open": ["make-key-and-order-front"], "modeless": ["make-key-and-order-front"],
+                              "modalProp": False, "dialog": False}
+    return out
+
+
+def merge_toplevels(gtk: dict, qt: dict, appkit: dict | None = None) -> dict[str, dict]:
     """Union by tag; where both toolkits define a tag the renderer must be able to serve both:
     candidate method lists are merged (first resolvable wins at run time)."""
     out: dict[str, dict] = {}
-    for tk, table in (("gtk", gtk), ("qt", qt)):
+    for tk, table in (("gtk", gtk), ("qt", qt), ("appkit", appkit or {})):
         for tag, f in table.items():
             cur = out.get(tag)
             if cur is None:
@@ -316,7 +331,7 @@ def main() -> int:
         for tag, names in gtk_extra_bindings().items():
             gtk.setdefault(tag, {}).update(names)
         table = merge(gtk, qt_bindings())
-        top = merge_toplevels(gtk_toplevels(), qt_toplevels())
+        top = merge_toplevels(gtk_toplevels(), qt_toplevels(), appkit_toplevels())
     except GenError as e:
         print(f"gen_bindings: {e}", file=sys.stderr)
         return 1
