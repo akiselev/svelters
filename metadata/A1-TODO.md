@@ -48,7 +48,7 @@ GTK batches are about verified facts, slots, bindings, signal semantics and the 
 - M: Widget `grab_focus` (G2: returns bool), `queue_draw`, `queue_resize` (expect: true).
 - Gallery: `01-widget.svelte` (sensitive/tooltip/align/margins/opacity on labels and buttons).
 - Tests `<re>`: `_(widget|editable|orientable|actionable)_`.
-- Status: todo
+- Status: done (54 facts in the gtk ledger touched by this batch incl. 19 P, 3 S, 4 M; dropped: Widget.css-classes (no list property test), Widget map/unmap (no mapped toplevel in harness); handler_result/sync_required left as derived, no triggers; note: gi_calls.rs asserts resolve_method(present) <= 1, brittle once more generated methods exist)
 
 ### gtk-buttons: buttons and toggles
 

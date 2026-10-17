@@ -2015,7 +2015,9 @@ pub static SIGNALS: [SignalInfo; 350] = [
     SignalInfo { kind: 295, name: "keys-changed", js_event: "keys-changed", params: &[], result: "void", handler_result: 0, sync_required: false },
 ];
 
-pub static METHODS: [MethodInfo; 1] = [
+pub static METHODS: [MethodInfo; 3] = [
+    MethodInfo { kind: 293, name: "queueDraw" },
+    MethodInfo { kind: 293, name: "queueResize" },
     MethodInfo { kind: 295, name: "present" },
 ];
 
