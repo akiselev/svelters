@@ -47,5 +47,12 @@ the log backend, GTK and Qt; styling + named-slot extension; report.
 
 ## Environment notes (not committed)
 
-GTK 4.14 lacks four >= 4.16 `*_get_type` symbols that the generated GTK tables reference; local
-test runs link a stub archive (`RUSTFLAGS="-L <dir> -l static=gtkshim"`).
+The cloud container has Ubuntu 24.04 (GTK 4.14, Qt 6.4); the repo targets GTK 4.22 / Qt 6.11.
+- GTK: `apt-get install libgtk-4-dev libgirepository-2.0-dev xvfb`. Four >= 4.16 `*_get_type`
+  symbols in the generated tables are stubbed by a local archive
+  (`RUSTFLAGS="-L <dir> -l static=gtkshim"`). Tests that need newer GTK API fail here (e.g.
+  `serdes::variants_dates_and_string_forms`: `GtkCalendar:date` is 4.20+).
+- Qt: Qt 6.11.0 from aqtinstall (`python3 -m aqt install-qt linux desktop 6.11.0 linux_gcc_64 -O /opt/Qt`)
+  plus `libxcb-cursor0`; `PKG_CONFIG_PATH=/opt/Qt/6.11.0/gcc_64/lib/pkgconfig LD_LIBRARY_PATH=/opt/Qt/6.11.0/gcc_64/lib`.
+- `svelters-host` `sync_frame::raf_runs_on_the_backend_frame_clock_with_no_host_thread` counts
+  process threads and fails when cargo runs tests in parallel; it passes with `--test-threads=1`.
