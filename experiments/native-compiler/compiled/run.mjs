@@ -44,7 +44,7 @@ for (const backend of BACKENDS) {
     const script = JSON.parse(fs.readFileSync(c.script, 'utf8'));
     let actual;
     try {
-      actual = await runBundle({ bundlePath: path.join(dir, 'app.js'), script });
+      actual = await runBundle({ bundlePath: path.join(dir, 'dist/app.js'), script });
     } catch (e) {
       failed = true;
       console.log(`FAIL ${tag}: runtime error: ${e.stack ?? e}`);

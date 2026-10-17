@@ -1,5 +1,5 @@
 // Compiles every case for every backend with the Rust compiler (svelteNative plugin) into
-// out/<backend>/<name>/app.js. A case whose component is rejected on a backend (diagnostics) is
+// out/<backend>/<name>/dist/app.js. A case whose component is rejected on a backend (diagnostics) is
 // recorded in out/<backend>/<name>/diagnostics.txt instead; run.mjs checks those expectations.
 import fs from 'node:fs';
 import path from 'node:path';
@@ -17,7 +17,7 @@ for (const backend of BACKENDS) {
     fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(path.join(dir, 'main.js'), `import * as $n from '@svelters/native-runtime';\nimport App from ${JSON.stringify(c.source)};\n\n$n.mount(App, { props: {} });\n`);
     try {
-      await build({ ...nativeConfig(dir, { entry: 'main.js', outDir: '.', plugins: [svelteNative({ backend })] }), build: { ...nativeConfig(dir, { entry: 'main.js', outDir: '.' }).build, emptyOutDir: false } });
+      await build(nativeConfig(dir, { entry: 'main.js', outDir: 'dist', plugins: [svelteNative({ backend })] }));
       console.log(`built ${backend}/${c.name}`);
     } catch (e) {
       fs.writeFileSync(path.join(dir, 'diagnostics.txt'), String(e.message) + '\n');
