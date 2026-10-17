@@ -508,6 +508,18 @@ fn from_string_form(t: Type, s: &str) -> Option<Result<glib::Value, String>> {
             .to_value())),
         "PangoFontDescription" => Some(Ok(gtk::pango::FontDescription::from_string(s).to_value())),
         "GIcon" => Some(Ok(gtk::gio::ThemedIcon::new(s).upcast::<glib::Object>().to_value())),
+        // A CSS cursor name ("pointer", "text", "wait", "not-allowed", ...).
+        "GdkCursor" => Some(
+            gtk::gdk::Cursor::from_name(s, None)
+                .map(|c| c.upcast::<glib::Object>().to_value())
+                .ok_or_else(|| format!("unknown cursor name {s:?}")),
+        ),
+        // An image file (PNG, JPEG, SVG, ...) by path or file: URI becomes a GdkTexture.
+        "GdkPaintable" | "GdkTexture" => Some(
+            gtk::gdk::Texture::from_file(&if s.contains("://") { gtk::gio::File::for_uri(s) } else { gtk::gio::File::for_path(s) })
+                .map(|t| t.upcast::<glib::Object>().to_value())
+                .map_err(|e| format!("cannot load image {s:?}: {e}")),
+        ),
         _ => None,
     }
 }
@@ -626,6 +638,13 @@ pub unsafe fn to_value(vt: Type, v: &svl_value, env: &dyn Env) -> Result<glib::V
                     Some(r) => r?,
                     None => return Err(format!("{} has no string form", vt.name())),
                 },
+                // Encoded image data (PNG, JPEG, ...) becomes a GdkTexture where a paintable is wanted.
+                SVL_BYTES if matches!(vt.name(), "GdkPaintable" | "GdkTexture") => {
+                    let data = unsafe { std::slice::from_raw_parts(v.u.bytes.ptr, v.u.bytes.len) };
+                    gtk::gdk::Texture::from_bytes(&glib::Bytes::from(data))
+                        .map(|t| t.upcast::<glib::Object>().to_value())
+                        .map_err(|e| format!("cannot decode image data: {e}"))?
+                }
                 _ => return Err("expected handle".into()),
             }
         } else if vt.is_a(Type::BOXED) {

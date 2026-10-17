@@ -89,6 +89,26 @@ signals:
     sync_required: false
     trigger: {rust: 'let s = o.downcast_ref::<gtk::SpinButton>().unwrap(); s.set_wrap(true); s.set_range(0.0, 10.0); s.set_value(10.0); s.spin(gtk::SpinType::StepForward, 1.0);', values: [a, b, c]}
     provenance: "GtkSpinButton::wrapped, run-last, void (Gtk 4 docs); emitted when a wrapping spin goes past the end"
+  - name: input
+    js_event: input
+    handler_result: value
+    sync_required: true
+    out_params: [{index: 0, name: newValue, type: f64}]
+    trigger: {rust: 'let s = o.downcast_ref::<gtk::SpinButton>().unwrap(); s.set_range(0.0, 100.0); s.update();', values: [a, b, c]}
+    sync_result:
+      reply: 'Value::Map(vec![("ret".into(), Value::I64(1)), ("newValue".into(), Value::F64(42.5))])'
+      expect: 'h.get(o, "value") == V::F64(42.5)'
+    provenance: "GtkSpinButton::input, run-last, returns gint with a gdouble* out parameter: 1 = converted, 0 = not handled, GTK_INPUT_ERROR (-1) = failed (Gtk 4 docs); gtk_spin_button_update emits it"
+  - name: output
+    js_event: output
+    handler_result: bool_stop
+    sync_required: true
+    trigger: {rust: 'let s = o.downcast_ref::<gtk::SpinButton>().unwrap(); s.set_range(0.0, 100.0); s.set_value(10.0 + i as f64);', values: [a, b, c]}
+    sync_result:
+      setup: 'h.set_str(o, "text", "custom").unwrap();'
+      reply: 'Value::Bool(true)'
+      expect: 'w.downcast_ref::<gtk::Editable>().unwrap().text() == "custom"'
+    provenance: "GtkSpinButton::output, run-last, returns gboolean: TRUE = the handler displayed the value, GTK leaves the text alone (Gtk 4 docs)"
   - name: "notify::value"
     derived_from: {property: value}
     js_event: "notify::value"

@@ -131,3 +131,47 @@ impl AttrV {
         }
     }
 }
+
+const ROW_HEADER_KEY: &str = "svelters-row-header";
+const HEADER_FUNC_KEY: &str = "svelters-header-func";
+
+/// The row of a ListBox child: the child itself when it is a row, else the row GTK wrapped it in.
+fn row_of(child: &gtk::Widget) -> Result<gtk::ListBoxRow, String> {
+    use gtk::prelude::*;
+    child.ancestor(gtk::ListBoxRow::static_type()).and_downcast::<gtk::ListBoxRow>().ok_or_else(|| "the child is not in a row".to_string())
+}
+
+/// Section header text of a ListBox child's row ("" = none). GtkListBox only places headers from its header
+/// func, so the text is kept on the row and one native func (installed on first use) turns it into a label.
+pub fn row_header(child: &gtk::Widget) -> String {
+    row_of(child).ok().and_then(|r| unsafe { r.data::<String>(ROW_HEADER_KEY).map(|t| t.as_ref().clone()) }).unwrap_or_default()
+}
+
+pub fn set_row_header(list: &gtk::ListBox, child: &gtk::Widget, text: &str) -> Result<(), String> {
+    use gtk::prelude::*;
+    let row = row_of(child)?;
+    unsafe { row.set_data(ROW_HEADER_KEY, text.to_string()) };
+    if unsafe { list.data::<bool>(HEADER_FUNC_KEY) }.is_none() {
+        unsafe { list.set_data(HEADER_FUNC_KEY, true) };
+        list.set_header_func(|row, _before| {
+            let text = unsafe { row.data::<String>(ROW_HEADER_KEY).map(|t| t.as_ref().clone()) }.unwrap_or_default();
+            if text.is_empty() {
+                if row.header().is_some() {
+                    row.set_header(None::<&gtk::Widget>);
+                }
+                return;
+            }
+            match row.header().and_then(|w| w.downcast::<gtk::Label>().ok()) {
+                Some(l) => l.set_label(&text),
+                None => {
+                    let l = gtk::Label::new(Some(&text));
+                    l.add_css_class("heading");
+                    l.set_xalign(0.0);
+                    row.set_header(Some(&l));
+                }
+            }
+        });
+    }
+    list.invalidate_headers();
+    Ok(())
+}

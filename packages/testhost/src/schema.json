@@ -340,6 +340,14 @@
     "width-request": "integer",
     "widthRequest": "integer"
   },
+  "clickgesture": {
+    "button": "integer",
+    "exclusive": "boolean",
+    "n-points": "integer",
+    "nPoints": "integer",
+    "touch-only": "boolean",
+    "touchOnly": "boolean"
+  },
   "colordialogbutton": {
     "can-focus": "boolean",
     "can-target": "boolean",
@@ -745,6 +753,7 @@
     "width-request": "integer",
     "widthRequest": "integer"
   },
+  "focuscontroller": {},
   "fontdialogbutton": {
     "can-focus": "boolean",
     "can-target": "boolean",
@@ -1033,6 +1042,7 @@
     "xalign": "number",
     "yalign": "number"
   },
+  "keycontroller": {},
   "label": {
     "can-focus": "boolean",
     "can-target": "boolean",
@@ -1373,6 +1383,7 @@
     "width-request": "integer",
     "widthRequest": "integer"
   },
+  "motioncontroller": {},
   "notebook": {
     "can-focus": "boolean",
     "can-target": "boolean",
@@ -1978,6 +1989,7 @@
     "width-request": "integer",
     "widthRequest": "integer"
   },
+  "scrollcontroller": {},
   "scrolledwindow": {
     "can-focus": "boolean",
     "can-target": "boolean",

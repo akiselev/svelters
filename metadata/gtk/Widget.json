@@ -4112,6 +4112,11 @@
         "get": "gtk_widget_get_cursor",
         "set": "gtk_widget_set_cursor"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkWidget:cursor, GdkCursor (G11, X8): a CSS cursor name string (\"pointer\", \"text\", ...) converts to a GdkCursor; round trip, name checked by tests/gdk_kinds.rs; inherited, tested through GtkLabel"
+      },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:cursor",
       "invocation": "reflected",

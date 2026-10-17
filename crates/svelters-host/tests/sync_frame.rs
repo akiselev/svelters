@@ -37,6 +37,7 @@ fn sync_results_come_from_the_handler_and_failures_give_the_default() {
             {"sync":[1,"close-request",["throw"]]},
             {"sync":[1,"close-request",["undef"]]},
             {"sync":[1,"close-request",["object"]]},
+            {"sync":[1,"close-request",["nested"]]},
             {"sync":[2,"close-request",[]]}]"#,
     )
     .unwrap();
@@ -47,7 +48,8 @@ fn sync_results_come_from_the_handler_and_failures_give_the_default() {
          sync #1 close-request [\"none\"]\nresult #1 null\n\
          sync #1 close-request [\"throw\"]\nresult #1 null\n\
          sync #1 close-request [\"undef\"]\nresult #1 null\n\
-         sync #1 close-request [\"object\"]\nresult #1 null\n\
+         sync #1 close-request [\"object\"]\nresult #1 {{\"a\":1}}\n\
+         sync #1 close-request [\"nested\"]\nresult #1 null\n\
          sync #2 close-request []\nresult #2 error\n"
     );
     assert_eq!(r.oplog, want);

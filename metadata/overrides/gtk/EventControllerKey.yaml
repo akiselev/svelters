@@ -1,0 +1,22 @@
+# X8: event controllers are declarative children. A controller element inserted into a widget is attached
+# with gtk_widget_add_controller (X2, `insert` of any slot); removing it detaches it.
+element: {tag: keycontroller}
+signals:
+  - name: key-pressed
+    js_event: key-pressed
+    handler_result: bool_stop
+    sync_required: true
+    trigger: {rust: 'o.emit_by_name::<bool>("key-pressed", &[&(65u32 + i as u32), &38u32, &gtk::gdk::ModifierType::empty()]);', values: [a, b, c]}
+    provenance: "GtkEventControllerKey::key-pressed, run-last, returns gboolean: TRUE stops propagation (Gtk 4 docs); X2 sync handler"
+  - name: key-released
+    js_event: key-released
+    handler_result: none
+    sync_required: false
+    trigger: {rust: 'o.emit_by_name::<()>("key-released", &[&(65u32 + i as u32), &38u32, &gtk::gdk::ModifierType::empty()]);', values: [a, b, c]}
+    provenance: "GtkEventControllerKey::key-released, run-last, void (Gtk 4 docs)"
+  - name: modifiers
+    js_event: modifiers
+    handler_result: bool_stop
+    sync_required: true
+    trigger: {rust: 'o.emit_by_name::<bool>("modifiers", &[&gtk::gdk::ModifierType::empty()]);', values: [a, b, c]}
+    provenance: "GtkEventControllerKey::modifiers, run-last, returns gboolean (Gtk 4 docs)"

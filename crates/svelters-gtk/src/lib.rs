@@ -13,4 +13,5 @@ pub mod timing;
 mod types;
 mod util;
 
+pub use backend::canvas;
 pub use backend::GtkBackend;

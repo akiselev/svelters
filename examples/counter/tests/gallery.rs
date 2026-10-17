@@ -157,6 +157,11 @@ gallery_page!(gtk_10_menus, "gtk", "10-menus", ["GtkPopoverMenuBar", "GtkBox", "
 gallery_page!(gtk_10_styling, "gtk", "10-styling", ["GtkBox", "GtkLabel", "GtkButton", "GtkEntry"], [("f6f5f4", 0.05), ("ffffff", 0.02), ("3584e4", 0.005)]);
 gallery_page!(gtk_11_styling_dark, "gtk", "11-styling-dark", ["GtkBox", "GtkLabel", "GtkButton", "GtkEntry"], [("242424", 0.05), ("303030", 0.02), ("e5a50a", 0.005)]);
 
+// X8: event controllers as elements; the recording canvas (the screenshot holds the three colours it draws).
+gallery_page!(gtk_12_events, "gtk", "12-events", ["GtkEntry", "GtkLabel", "GtkBox"]);
+gallery_page!(gtk_13_canvas, "gtk", "13-canvas", ["GtkDrawingArea", "GtkButton", "GtkLabel"], [("e01b24", 0.006), ("3584e4", 0.003), ("33d17a", 0.001)]);
+gallery_page!(gtk_14_arrange, "gtk", "14-arrange", ["GtkListBox", "GtkFlowBox", "GtkListBoxRow", "GtkLabel"]);
+
 gallery_page!(gtk_04_ranges, "gtk", "04-ranges", ["GtkProgressBar", "GtkLevelBar", "GtkScale", "GtkSpinButton", "GtkScrollbar"]);
 
 // ---- Qt pages (fixtures/gallery-qt/src/pages) ----
@@ -184,6 +189,8 @@ fn qt_09_dialogs_all_kinds() {
 gallery_page!(qt_11_menus, "qt", "11-menus", ["QMenuBar", "QToolBar", "QPushButton", "QLabel"]);
 gallery_page!(qt_11_styling, "qt", "11-styling", ["QWidget", "QLabel", "QPushButton", "QLineEdit"], [("f6f5f4", 0.05), ("ffffff", 0.02), ("3584e4", 0.005)]);
 gallery_page!(qt_12_styling_dark, "qt", "12-styling-dark", ["QWidget", "QLabel", "QPushButton", "QLineEdit"], [("242424", 0.05), ("303030", 0.02), ("e5a50a", 0.005)]);
+gallery_page!(qt_12_events, "qt", "12-events", ["QLineEdit", "QLabel", "QWidget"]);
+gallery_page!(qt_13_canvas, "qt", "13-canvas", ["QWidget", "QPushButton", "QLabel"], [("e01b24", 0.006), ("3584e4", 0.003), ("33d17a", 0.001)]);
 gallery_page!(qt_03_text, "qt", "03-text", ["QLineEdit", "QLabel", "QPlainTextEdit", "QTextEdit", "QTextBrowser", "QKeySequenceEdit"]);
 
 /// G12: the page edits a QTextDocument through a borrowed handle (`browser.call('document')`).

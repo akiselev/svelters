@@ -1,0 +1,361 @@
+// ---- canvas (X8, G8 draw func) ------------------------------------------------------------------
+//
+// The hand-written element `canvas`: a QWidget whose paintEvent replays a display list that JS records
+// (`ops`: a JSON array of [name, ...args] arrays, the same list GTK's drawingarea replays with cairo).
+// No JS runs while Qt paints. The widget has the event-family signals (resize tells JS the size, the
+// mouse events make it interactive), and a few layout props.
+//
+// Ops: state save restore translate rotate scale transform setTransform globalAlpha fillStyle strokeStyle
+// lineWidth lineCap lineJoin setLineDash font textAlign textBaseline; path beginPath moveTo lineTo
+// bezierCurveTo quadraticCurveTo arc rect closePath; paint fill stroke clip fillRect strokeRect clearRect
+// fillText strokeText. Colors are CSS colors; unknown ops and bad arguments are skipped.
+// Paths are kept in device space (points go through the current matrix when added), like canvas does.
+
+constexpr svl_id kCanvasKind = 0x4003;
+constexpr svl_id CV_P_OPS = 0x4131, CV_P_CONTENT_W = 0x4132, CV_P_CONTENT_H = 0x4133, CV_P_HEXPAND = 0x4134, CV_P_VEXPAND = 0x4135;
+constexpr svl_id CV_S_BASE = 0x4140;  // + EvFam
+
+QColor cv_color(const QString &css, bool *ok) {
+  QString s = css.trimmed();
+  *ok = true;
+  if (s.startsWith(QLatin1String("rgb"), Qt::CaseInsensitive)) {
+    const int a = s.indexOf(QLatin1Char('(')), b = s.lastIndexOf(QLatin1Char(')'));
+    if (a > 0 && b > a) {
+      const QStringList p = s.mid(a + 1, b - a - 1).split(QRegularExpression(QStringLiteral("[,\\s/]+")), Qt::SkipEmptyParts);
+      if (p.size() >= 3) {
+        auto ch = [](const QString &t) { return t.endsWith(QLatin1Char('%')) ? t.chopped(1).toDouble() * 2.55 : t.toDouble(); };
+        QColor c(qBound(0, int(ch(p[0]) + 0.5), 255), qBound(0, int(ch(p[1]) + 0.5), 255), qBound(0, int(ch(p[2]) + 0.5), 255));
+        if (p.size() >= 4) c.setAlphaF(qBound(0.0, p[3].endsWith(QLatin1Char('%')) ? p[3].chopped(1).toDouble() / 100.0 : p[3].toDouble(), 1.0));
+        return c;
+      }
+    }
+    *ok = false;
+    return QColor();
+  }
+  QColor c = QColor::fromString(s);
+  *ok = c.isValid();
+  return c;
+}
+
+struct CvState {
+  QColor fill = Qt::black, stroke = Qt::black;
+  qreal alpha = 1, lineWidth = 1;
+  Qt::PenCapStyle cap = Qt::FlatCap;
+  Qt::PenJoinStyle join = Qt::MiterJoin;
+  QList<qreal> dash;
+  QFont font;
+  QString align = QStringLiteral("left"), baseline = QStringLiteral("alphabetic");
+  QTransform ctm;
+  QPainterPath clip;
+  bool has_clip = false;
+};
+
+void cv_parse_font(const QString &spec, CvState &st) {
+  QStringList family;
+  bool bold = false, italic = false;
+  qreal size = -1;
+  for (const QString &tok : spec.split(QRegularExpression(QStringLiteral("\\s+")), Qt::SkipEmptyParts)) {
+    if (size < 0) {
+      bool ok = false;
+      if (tok.endsWith(QLatin1String("px")) && (size = tok.chopped(2).toDouble(&ok), ok)) continue;
+      if (tok.endsWith(QLatin1String("pt")) && (size = tok.chopped(2).toDouble(&ok) * 4.0 / 3.0, ok)) continue;
+      size = -1;
+      if (tok == QLatin1String("bold") || tok == QLatin1String("bolder")) bold = true;
+      else if (tok == QLatin1String("italic") || tok == QLatin1String("oblique")) italic = true;
+      else if (int w = tok.toInt(&ok); ok) bold = w >= 600;
+    } else {
+      QString f = tok;
+      f.remove(QLatin1Char('"')).remove(QLatin1Char('\'')).remove(QLatin1Char(','));
+      family << f;
+    }
+  }
+  if (size < 0) return;
+  QFont f;
+  if (!family.isEmpty()) {
+    const QString fam = family.join(QLatin1Char(' '));
+    if (fam == QLatin1String("sans-serif")) f.setStyleHint(QFont::SansSerif);
+    else if (fam == QLatin1String("serif")) f.setStyleHint(QFont::Serif);
+    else if (fam == QLatin1String("monospace")) f.setStyleHint(QFont::Monospace);
+    else f.setFamily(fam);
+  }
+  f.setPixelSize(qMax(1, int(size + 0.5)));
+  f.setBold(bold);
+  f.setItalic(italic);
+  st.font = f;
+}
+
+void cv_replay(QPainter &p, const QJsonArray &ops) {
+  p.setRenderHint(QPainter::Antialiasing);
+  p.setRenderHint(QPainter::TextAntialiasing);
+  CvState st;
+  st.font.setPixelSize(10);
+  std::vector<CvState> stack;
+  QPainterPath path;
+  auto num = [](const QJsonArray &a, int i, double &out) {
+    if (i >= a.size() || !a[i].isDouble()) return false;
+    out = a[i].toDouble();
+    return true;
+  };
+  auto nums = [&](const QJsonArray &a, int n, double *v) {
+    for (int i = 0; i < n; ++i)
+      if (!num(a, i, v[i])) return false;
+    return true;
+  };
+  auto paint_color = [&](const QColor &c) {
+    QColor k = c;
+    k.setAlphaF(k.alphaF() * st.alpha);
+    return k;
+  };
+  auto fill_path = [&](const QPainterPath &pp) { p.fillPath(pp, QBrush(paint_color(st.fill))); };
+  auto stroke_path = [&](const QPainterPath &pp) {
+    QPen pen(paint_color(st.stroke));
+    pen.setWidthF(st.lineWidth * std::sqrt(std::abs(st.ctm.determinant())));
+    pen.setCapStyle(st.cap);
+    pen.setJoinStyle(st.join);
+    if (!st.dash.isEmpty()) pen.setDashPattern(st.dash);
+    p.strokePath(pp, pen);
+  };
+  auto apply_clip = [&]() {
+    if (st.has_clip) p.setClipPath(st.clip, Qt::ReplaceClip);
+    else p.setClipping(false);
+  };
+  auto rect_path = [&](double x, double y, double w, double h) {
+    QPainterPath r;
+    r.addPolygon(st.ctm.map(QPolygonF(QRectF(x, y, w, h))));
+    r.closeSubpath();
+    return r;
+  };
+  for (const QJsonValue &opv : ops) {
+    const QJsonArray arr = opv.toArray();
+    if (arr.isEmpty() || !arr[0].isString()) continue;
+    const QString name = arr[0].toString();
+    QJsonArray a;
+    for (int i = 1; i < arr.size(); ++i) a.append(arr[i]);
+    double v[6] = {};
+    if (name == QLatin1String("save")) {
+      stack.push_back(st);
+    } else if (name == QLatin1String("restore")) {
+      if (!stack.empty()) {
+        st = stack.back();
+        stack.pop_back();
+        apply_clip();
+      }
+    } else if (name == QLatin1String("translate")) {
+      if (nums(a, 2, v)) st.ctm.translate(v[0], v[1]);
+    } else if (name == QLatin1String("rotate")) {
+      if (nums(a, 1, v)) st.ctm.rotateRadians(v[0]);
+    } else if (name == QLatin1String("scale")) {
+      if (nums(a, 2, v)) st.ctm.scale(v[0], v[1]);
+    } else if (name == QLatin1String("transform")) {
+      if (nums(a, 6, v)) st.ctm = QTransform(v[0], v[1], v[2], v[3], v[4], v[5]) * st.ctm;
+    } else if (name == QLatin1String("setTransform")) {
+      if (nums(a, 6, v)) st.ctm = QTransform(v[0], v[1], v[2], v[3], v[4], v[5]);
+    } else if (name == QLatin1String("globalAlpha")) {
+      if (nums(a, 1, v)) st.alpha = qBound(0.0, v[0], 1.0);
+    } else if (name == QLatin1String("fillStyle") || name == QLatin1String("strokeStyle")) {
+      bool ok = false;
+      QColor c = a.size() > 0 && a[0].isString() ? cv_color(a[0].toString(), &ok) : QColor();
+      if (ok) (name == QLatin1String("fillStyle") ? st.fill : st.stroke) = c;
+    } else if (name == QLatin1String("lineWidth")) {
+      if (nums(a, 1, v) && v[0] > 0) st.lineWidth = v[0];
+    } else if (name == QLatin1String("lineCap")) {
+      const QString s = a.size() > 0 ? a[0].toString() : QString();
+      if (s == QLatin1String("round")) st.cap = Qt::RoundCap;
+      else if (s == QLatin1String("square")) st.cap = Qt::SquareCap;
+      else if (s == QLatin1String("butt")) st.cap = Qt::FlatCap;
+    } else if (name == QLatin1String("lineJoin")) {
+      const QString s = a.size() > 0 ? a[0].toString() : QString();
+      if (s == QLatin1String("round")) st.join = Qt::RoundJoin;
+      else if (s == QLatin1String("bevel")) st.join = Qt::BevelJoin;
+      else if (s == QLatin1String("miter")) st.join = Qt::MiterJoin;
+    } else if (name == QLatin1String("setLineDash")) {
+      st.dash.clear();
+      for (const QJsonValue &d : (a.size() > 0 ? a[0].toArray() : QJsonArray())) st.dash << d.toDouble();
+    } else if (name == QLatin1String("font")) {
+      if (a.size() > 0 && a[0].isString()) cv_parse_font(a[0].toString(), st);
+    } else if (name == QLatin1String("textAlign")) {
+      if (a.size() > 0) st.align = a[0].toString();
+    } else if (name == QLatin1String("textBaseline")) {
+      if (a.size() > 0) st.baseline = a[0].toString();
+    } else if (name == QLatin1String("beginPath")) {
+      path = QPainterPath();
+    } else if (name == QLatin1String("moveTo")) {
+      if (nums(a, 2, v)) path.moveTo(st.ctm.map(QPointF(v[0], v[1])));
+    } else if (name == QLatin1String("lineTo")) {
+      if (nums(a, 2, v)) {
+        const QPointF pt = st.ctm.map(QPointF(v[0], v[1]));
+        if (path.elementCount() == 0) path.moveTo(pt);
+        else path.lineTo(pt);
+      }
+    } else if (name == QLatin1String("bezierCurveTo")) {
+      if (nums(a, 6, v)) {
+        if (path.elementCount() == 0) path.moveTo(st.ctm.map(QPointF(v[0], v[1])));
+        path.cubicTo(st.ctm.map(QPointF(v[0], v[1])), st.ctm.map(QPointF(v[2], v[3])), st.ctm.map(QPointF(v[4], v[5])));
+      }
+    } else if (name == QLatin1String("quadraticCurveTo")) {
+      if (nums(a, 4, v)) {
+        if (path.elementCount() == 0) path.moveTo(st.ctm.map(QPointF(v[0], v[1])));
+        path.quadTo(st.ctm.map(QPointF(v[0], v[1])), st.ctm.map(QPointF(v[2], v[3])));
+      }
+    } else if (name == QLatin1String("arc")) {
+      double w[5];
+      if (nums(a, 5, w)) {
+        const bool ccw = a.size() > 5 && a[5].toBool();
+        constexpr double tau = 6.283185307179586;
+        double delta = w[4] - w[3];
+        if (!ccw) delta = delta >= tau ? tau : (delta < 0 ? std::fmod(delta, tau) + tau : delta);
+        else delta = delta <= -tau ? -tau : (delta > 0 ? std::fmod(delta, tau) - tau : delta);
+        QPainterPath t;
+        const QTransform inv = st.ctm.inverted();
+        if (path.elementCount() > 0) t.moveTo(inv.map(path.currentPosition()));
+        t.arcTo(QRectF(w[0] - w[2], w[1] - w[2], 2 * w[2], 2 * w[2]), -w[3] * 180.0 / M_PI, -delta * 180.0 / M_PI);
+        if (path.elementCount() > 0) path.connectPath(st.ctm.map(t));
+        else path = st.ctm.map(t);
+      }
+    } else if (name == QLatin1String("rect")) {
+      if (nums(a, 4, v)) {
+        path.addPath(rect_path(v[0], v[1], v[2], v[3]));
+        path.moveTo(st.ctm.map(QPointF(v[0], v[1])));
+      }
+    } else if (name == QLatin1String("closePath")) {
+      path.closeSubpath();
+    } else if (name == QLatin1String("fill")) {
+      fill_path(path);
+    } else if (name == QLatin1String("stroke")) {
+      stroke_path(path);
+    } else if (name == QLatin1String("clip")) {
+      st.clip = st.has_clip ? st.clip.intersected(path) : path;
+      st.has_clip = true;
+      apply_clip();
+    } else if (name == QLatin1String("fillRect")) {
+      if (nums(a, 4, v)) fill_path(rect_path(v[0], v[1], v[2], v[3]));
+    } else if (name == QLatin1String("strokeRect")) {
+      if (nums(a, 4, v)) stroke_path(rect_path(v[0], v[1], v[2], v[3]));
+    } else if (name == QLatin1String("clearRect")) {
+      if (nums(a, 4, v)) {
+        p.setCompositionMode(QPainter::CompositionMode_Clear);
+        p.fillPath(rect_path(v[0], v[1], v[2], v[3]), QBrush(Qt::black));
+        p.setCompositionMode(QPainter::CompositionMode_SourceOver);
+      }
+    } else if (name == QLatin1String("fillText") || name == QLatin1String("strokeText")) {
+      double xy[2];
+      if (a.size() > 0 && a[0].isString() && num(a, 1, xy[0]) && num(a, 2, xy[1])) {
+        const QString text = a[0].toString();
+        const QFontMetricsF fm(st.font);
+        double x = xy[0], y = xy[1];
+        const qreal width = fm.horizontalAdvance(text);
+        if (st.align == QLatin1String("center")) x -= width / 2;
+        else if (st.align == QLatin1String("right") || st.align == QLatin1String("end")) x -= width;
+        if (st.baseline == QLatin1String("top") || st.baseline == QLatin1String("hanging")) y += fm.ascent();
+        else if (st.baseline == QLatin1String("middle")) y += (fm.ascent() - fm.descent()) / 2;
+        else if (st.baseline == QLatin1String("bottom") || st.baseline == QLatin1String("ideographic")) y -= fm.descent();
+        QPainterPath tp;
+        tp.addText(QPointF(x, y), st.font, text);
+        if (name == QLatin1String("fillText")) fill_path(st.ctm.map(tp));
+        else stroke_path(st.ctm.map(tp));
+      }
+    }
+  }
+}
+
+class SvCanvas : public QWidget {
+ public:
+  QString json;
+  QJsonArray ops;
+  int cw = 0, ch = 0;
+  SvCanvas() { setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed); }  // like GtkDrawingArea: no expansion unless asked
+  QSize sizeHint() const override { return QSize(cw, ch); }
+ protected:
+  void paintEvent(QPaintEvent *) override {
+    QPainter p(this);
+    cv_replay(p, ops);
+  }
+};
+
+svl_id cv_resolve(uint32_t what, std::string_view n) {
+  struct Row { uint32_t what; std::string_view name; svl_id id; };
+  static const Row rows[] = {
+      {SVL_PROP, "ops", CV_P_OPS}, {SVL_PROP, "contentWidth", CV_P_CONTENT_W}, {SVL_PROP, "contentHeight", CV_P_CONTENT_H},
+      {SVL_PROP, "hexpand", CV_P_HEXPAND}, {SVL_PROP, "vexpand", CV_P_VEXPAND},
+      {SVL_SIGNAL, "key-release", CV_S_BASE + EV_KEY_RELEASE}, {SVL_SIGNAL, "mouse-press", CV_S_BASE + EV_MOUSE_PRESS},
+      {SVL_SIGNAL, "mouse-release", CV_S_BASE + EV_MOUSE_RELEASE}, {SVL_SIGNAL, "mouse-move", CV_S_BASE + EV_MOUSE_MOVE},
+      {SVL_SIGNAL, "double-click", CV_S_BASE + EV_DOUBLE_CLICK}, {SVL_SIGNAL, "wheel", CV_S_BASE + EV_WHEEL},
+      {SVL_SIGNAL, "focus-in", CV_S_BASE + EV_FOCUS_IN}, {SVL_SIGNAL, "focus-out", CV_S_BASE + EV_FOCUS_OUT},
+      {SVL_SIGNAL, "enter", CV_S_BASE + EV_ENTER}, {SVL_SIGNAL, "leave", CV_S_BASE + EV_LEAVE},
+      {SVL_SIGNAL, "resize", CV_S_BASE + EV_RESIZE}, {SVL_SIGNAL, "context-menu", CV_S_BASE + EV_CONTEXT_MENU},
+  };
+  for (const Row &r : rows)
+    if (r.what == what && r.name == n) return r.id;
+  return 0;
+}
+
+QObject *cv_create() { return new SvCanvas; }
+
+SvCanvas *cv_of(Entry &e) { return dynamic_cast<SvCanvas *>(e.obj.data()); }
+
+int cv_set_prop(Entry &e, svl_id prop, const svl_value *val) {
+  SvCanvas *c = cv_of(e);
+  if (!c) return fail("set_prop: the canvas is gone");
+  switch (prop) {
+    case CV_P_OPS: {
+      QString qs;
+      std::string er;
+      if (val->tag == SVL_NULL) qs.clear();
+      else if (val->tag != SVL_STR || !Conv<QString>::in(val, qs, er)) return fail("ops: expected a JSON string");
+      QJsonArray arr;
+      if (!qs.isEmpty()) {
+        QJsonParseError pe;
+        const QJsonDocument d = QJsonDocument::fromJson(qs.toUtf8(), &pe);
+        if (pe.error != QJsonParseError::NoError) return fail("ops: invalid JSON: " + pe.errorString().toStdString());
+        if (!d.isArray()) return fail("ops: expected a JSON array of [name, ...args] arrays");
+        arr = d.array();
+      }
+      c->json = qs;
+      c->ops = arr;
+      c->update();
+      return 0;
+    }
+    case CV_P_CONTENT_W:
+    case CV_P_CONTENT_H: {
+      qint64 i = 0;
+      if (!vl_i64(val, i)) return fail("contentWidth/contentHeight: expected a number");
+      (prop == CV_P_CONTENT_W ? c->cw : c->ch) = int(i);
+      c->setMinimumSize(c->cw, c->ch);
+      c->updateGeometry();
+      return 0;
+    }
+    case CV_P_HEXPAND:
+    case CV_P_VEXPAND: {
+      bool on = false;
+      if (val->tag == SVL_BOOL) on = val->u.b;
+      else if (val->tag == SVL_STR) {
+        QString qs;
+        std::string er;
+        if (!Conv<QString>::in(val, qs, er)) return fail(er);
+        on = qs.isEmpty() || qs == QLatin1String("true");
+      } else return fail("hexpand/vexpand: expected a boolean");
+      QSizePolicy sp = c->sizePolicy();
+      if (prop == CV_P_HEXPAND) sp.setHorizontalPolicy(on ? QSizePolicy::Expanding : QSizePolicy::Preferred);
+      else sp.setVerticalPolicy(on ? QSizePolicy::Expanding : QSizePolicy::Fixed);
+      c->setSizePolicy(sp);
+      return 0;
+    }
+    default: return fail("set_prop: unknown canvas property");
+  }
+}
+
+int cv_get_prop(Entry &e, svl_id prop, svl_value *out) {
+  SvCanvas *c = cv_of(e);
+  if (!c) return fail("get_prop: the canvas is gone");
+  switch (prop) {
+    case CV_P_OPS: Conv<QString>::out(c->json, out); return 0;
+    case CV_P_CONTENT_W: Conv<int>::out(c->cw, out); return 0;
+    case CV_P_CONTENT_H: Conv<int>::out(c->ch, out); return 0;
+    default: return fail("get_prop: the property is write-only");
+  }
+}
+
+int cv_listen(svl_handle h, Entry &e, svl_id sig, bool on, uint32_t flags) {
+  if (sig < CV_S_BASE || sig >= CV_S_BASE + EV_N) return fail("listen: unknown canvas signal");
+  return listen_event(h, e, sig, on, flags, int(sig - CV_S_BASE));
+}

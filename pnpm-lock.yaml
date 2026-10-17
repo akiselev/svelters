@@ -153,6 +153,12 @@ importers:
 
   fixtures/gallery-gtk:
     dependencies:
+      '@svelters/canvas':
+        specifier: workspace:*
+        version: link:../../packages/canvas
+      '@svelters/lists':
+        specifier: workspace:*
+        version: link:../../packages/lists
       svelte:
         specifier: file:../../vendor/svelte/svelte-5.57.2-27b7dfb.tgz
         version: file:vendor/svelte/svelte-5.57.2-27b7dfb.tgz
@@ -169,6 +175,9 @@ importers:
 
   fixtures/gallery-qt:
     dependencies:
+      '@svelters/canvas':
+        specifier: workspace:*
+        version: link:../../packages/canvas
       svelte:
         specifier: file:../../vendor/svelte/svelte-5.57.2-27b7dfb.tgz
         version: file:vendor/svelte/svelte-5.57.2-27b7dfb.tgz
@@ -391,6 +400,15 @@ importers:
       vite:
         specifier: 8.3.4
         version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
+
+  packages/canvas:
+    dependencies:
+      '@svelters/renderer':
+        specifier: workspace:*
+        version: link:../renderer
+      svelte:
+        specifier: file:../../vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+        version: file:vendor/svelte/svelte-5.57.2-27b7dfb.tgz
 
   packages/dom:
     dependencies:

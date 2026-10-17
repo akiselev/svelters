@@ -301,27 +301,9 @@ impl JsEngine for QjsEngine {
             let list = convert::decode(&conv, &AV::List(args.to_vec()), &*conv.core)
                 .map_err(|m| Exception::throw_message(ctx, &m))?;
             let res: Value = f.call((handle as f64, signal, list, flags))?;
-            // A sync result is a primitive: no decision (null/undefined), a flag, a number or a string.
-            Ok(match res.type_of() {
-                rquickjs::Type::Null | rquickjs::Type::Undefined | rquickjs::Type::Uninitialized => AV::Null,
-                rquickjs::Type::Bool => AV::Bool(res.as_bool().unwrap_or(false)),
-                rquickjs::Type::Int => AV::I64(res.as_int().unwrap_or(0) as i64),
-                rquickjs::Type::Float => {
-                    let x = res.as_float().unwrap_or(0.0);
-                    if x.is_finite() && x.fract() == 0.0 && x.abs() < 9_007_199_254_740_992.0 {
-                        AV::I64(x as i64)
-                    } else {
-                        AV::F64(x)
-                    }
-                }
-                rquickjs::Type::String => AV::Str(res.as_string().map(|s| s.to_string()).transpose()?.unwrap_or_default()),
-                other => {
-                    return Err(Exception::throw_type(
-                        ctx,
-                        &format!("unsupported value type '{}' in a sync handler result", other.as_str()),
-                    ));
-                }
-            })
+            // A sync result is a primitive (no decision, a flag, a number, a string) or, for signals with
+            // out-parameters, a plain object `{ret, name: primitive}` / an array of primitives.
+            sync_result_value(ctx, res, true)
         })
     }
 
@@ -882,4 +864,45 @@ impl Loader for BundleLoader {
             .map_err(|e| rquickjs::Error::new_loading_message(name, e.to_string()))?;
         Module::declare(ctx.clone(), name, source)
     }
+}
+
+/// Reads a sync handler result. `nested` allows one level of object/array whose members must be primitives.
+fn sync_result_value<'js>(ctx: &rquickjs::Ctx<'js>, res: Value<'js>, nested: bool) -> rquickjs::Result<AV> {
+    Ok(match res.type_of() {
+        rquickjs::Type::Null | rquickjs::Type::Undefined | rquickjs::Type::Uninitialized => AV::Null,
+        rquickjs::Type::Bool => AV::Bool(res.as_bool().unwrap_or(false)),
+        rquickjs::Type::Int => AV::I64(res.as_int().unwrap_or(0) as i64),
+        rquickjs::Type::Float => {
+            let x = res.as_float().unwrap_or(0.0);
+            if x.is_finite() && x.fract() == 0.0 && x.abs() < 9_007_199_254_740_992.0 {
+                AV::I64(x as i64)
+            } else {
+                AV::F64(x)
+            }
+        }
+        rquickjs::Type::String => AV::Str(res.as_string().map(|s| s.to_string()).transpose()?.unwrap_or_default()),
+        rquickjs::Type::Array if nested => {
+            let arr = res.as_array().cloned().unwrap();
+            let mut out = Vec::new();
+            for i in 0..arr.len() {
+                out.push(sync_result_value(ctx, arr.get(i)?, false)?);
+            }
+            AV::List(out)
+        }
+        rquickjs::Type::Object if nested => {
+            let obj = res.as_object().cloned().unwrap();
+            let mut out = Vec::new();
+            for kv in obj.props::<String, Value>() {
+                let (k, v) = kv?;
+                out.push((k, sync_result_value(ctx, v, false)?));
+            }
+            AV::Map(out)
+        }
+        other => {
+            return Err(Exception::throw_type(
+                ctx,
+                &format!("unsupported value type '{}' in a sync handler result", other.as_str()),
+            ));
+        }
+    })
 }
