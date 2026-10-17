@@ -55,10 +55,13 @@ enum Class {
 fn classify(arena: &ScopeArena<'_>, id: &Identifier) -> Class {
     let Some(b) = arena.resolve(id) else { return Class::Other };
     let b = arena.binding(b);
+    // `let` deriveds are writable (Svelte >= 5.25: the value is overridden until a dependency
+    // changes); `const` bindings are not (constant_assignment)
+    let writable = b.declaration_kind != crate::svelte::scope::DeclarationKind::Const;
     match b.kind {
-        BindingKind::State => Class::Source { proxied: true, writable: true },
-        BindingKind::RawState => Class::Source { proxied: false, writable: true },
-        BindingKind::Derived => Class::Source { proxied: false, writable: false },
+        BindingKind::State => Class::Source { proxied: true, writable },
+        BindingKind::RawState => Class::Source { proxied: false, writable },
+        BindingKind::Derived => Class::Source { proxied: false, writable },
         BindingKind::Prop | BindingKind::BindableProp => Class::Prop,
         BindingKind::Each => Class::EachSource,
         BindingKind::Template | BindingKind::Static if matches!(b.initial, Some(Initial::EachBlock(_))) => Class::EachSource,

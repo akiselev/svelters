@@ -44,7 +44,12 @@ export class DomHost {
   }
 
   insert(parent, child, before, _slot) {
-    this.node(parent).insertBefore(this.node(child), before == null ? null : this.node(before));
+    const p = this.node(parent);
+    p.insertBefore(this.node(child), before == null ? null : this.node(before));
+    // A <select>'s value is written before its options exist (children are inserted after the
+    // node's props); re-select it as options arrive, as Svelte's select binding does on mutation.
+    const select = p.localName === 'select' ? p : p.localName === 'optgroup' && p.parentNode?.localName === 'select' ? p.parentNode : null;
+    if (select && select.__svelters_value !== undefined) selectValue(select, select.__svelters_value);
   }
 
   remove(parent, child) {
@@ -80,6 +85,11 @@ export class DomHost {
       else n.setAttribute('class', c);
       return;
     }
+    if (name === 'value' && n.localName === 'select') {
+      n.__svelters_value = value;
+      selectValue(n, value);
+      return;
+    }
     if (PROPERTIES.has(name) && name in n) {
       if (name === 'value') n.value = value == null ? '' : value;
       else n[name] = value;
@@ -99,6 +109,11 @@ export class DomHost {
     const n = this.node(h);
     if (n.nodeType === 3) return n.data;
     if (name === 'class') return (n.getAttribute('class') ?? '').split(/\s+/).filter(Boolean);
+    if (name === 'value' && n.localName === 'select') {
+      const v = n.multiple ? [...n.selectedOptions].map((o) => o.value) : n.selectedOptions[0]?.value;
+      n.__svelters_value = v;
+      return v;
+    }
     if (name === 'value' && n.localName === 'input' && (n.type === 'number' || n.type === 'range')) {
       // Svelte's bind:value on numeric inputs (to_number)
       return n.value === '' ? null : +n.value;
@@ -128,6 +143,14 @@ export class DomHost {
       this.listeners.delete(key);
     }
   }
+}
+
+/** Svelte's select_option: select the option(s) whose value matches (an array for `multiple`). */
+function selectValue(select, value) {
+  for (const o of select.options) {
+    o.selected = select.multiple ? Array.isArray(value) && value.includes(o.value) : o.value === String(value);
+  }
+  if (!select.multiple && ![...select.options].some((o) => o.selected)) select.selectedIndex = -1;
 }
 
 function eventType(signal) {

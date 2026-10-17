@@ -1,6 +1,6 @@
 {
  "note": "samples that pass; run.mjs --check fails if one stops passing",
- "count": 205,
+ "count": 212,
  "pass": [
   "1000-reading-derived-effects",
   "array-delete-item",
@@ -15,12 +15,14 @@
   "bigint-increment",
   "bigint-increment-mutation",
   "bigint-invalid",
+  "bind-getter-setter",
   "bind-this-destroy-timing2",
   "bind-value-state",
   "binding-property-non-reactive-ignored-2",
   "binding-update-in-each",
   "binding-update-while-focused",
   "binding-update-while-focused-2",
+  "binding-update-while-focused-3",
   "block-dependency-sequence",
   "checkbox-binding-derived",
   "class-directive-memoize",
@@ -37,6 +39,7 @@
   "derived-disconnect",
   "derived-fn-recursive",
   "derived-get-context",
+  "derived-leading-comments",
   "derived-map",
   "derived-shadowed",
   "derived-unowned-11",
@@ -132,6 +135,7 @@
   "object-has-own-reactive",
   "optgroup-rich-content",
   "option-rich-content",
+  "ownership-function-bindings",
   "ownership-invalid-binding-bindable-fallback",
   "ownership-invalid-binding-ignored",
   "ownership-invalid-mutation-bindable-fallback",
@@ -172,6 +176,7 @@
   "rich-option-component",
   "rune-name-used-by-rune",
   "runes-from-func",
+  "select-function-binding-derived",
   "select-option-added",
   "select-value-with-call",
   "set-context-after-mount",
@@ -206,6 +211,8 @@
   "untracked-write-pre",
   "value-attribute-isolated-update",
   "value-attribute-null-undefined",
-  "var-declarations"
+  "var-declarations",
+  "writable-derived",
+  "writable-derived-4"
  ]
 }

@@ -165,17 +165,34 @@ impl Codegen<'_, '_> {
             }
             Op::Bind { prop, signal, arg, target, span } => {
                 self.w.map(span.start);
-                self.w.write(&format!("$n.bind({n}, {}, {}, {arg}, () => ", js_str(prop), js_str(signal)));
-                self.expr_text(target, Mode::Read);
-                let set = self.rw.assign(target, "$$value");
-                self.w.write(&format!(", ($$value) => {{ {set}; }});"));
+                self.w.write(&format!("$n.bind({n}, {}, {}, {arg}, ", js_str(prop), js_str(signal)));
+                if let Some((get, set)) = function_binding(target) {
+                    // `bind:value={get, set}` (Svelte >= 5.9): the functions are the accessors
+                    self.paren_expr(get, Mode::Read);
+                    self.w.write(", ");
+                    self.paren_expr(set, Mode::Read);
+                    self.w.write(");");
+                } else {
+                    self.w.write("() => ");
+                    self.expr_text(target, Mode::Read);
+                    let set = self.rw.assign(target, "$$value");
+                    self.w.write(&format!(", ($$value) => {{ {set}; }});"));
+                }
             }
             Op::BindThis { target, span } => {
                 self.w.map(span.start);
-                let set = self.rw.assign(target, "$$value");
-                self.w.write(&format!("$.bind_this({n}, ($$value) => {{ {set}; }}, () => "));
-                self.expr_text(target, Mode::Read);
-                self.w.write(");");
+                if let Some((get, set)) = function_binding(target) {
+                    self.w.write(&format!("$.bind_this({n}, "));
+                    self.paren_expr(set, Mode::Read);
+                    self.w.write(", ");
+                    self.paren_expr(get, Mode::Read);
+                    self.w.write(");");
+                } else {
+                    let set = self.rw.assign(target, "$$value");
+                    self.w.write(&format!("$.bind_this({n}, ($$value) => {{ {set}; }}, () => "));
+                    self.expr_text(target, Mode::Read);
+                    self.w.write(");");
+                }
             }
             Op::Track { prop, signal, arg } => {
                 self.w.write(&format!("$n.track({n}, {}, {}, {arg});", js_str(prop), js_str(signal)));
@@ -385,6 +402,14 @@ impl Codegen<'_, '_> {
                     }
                     self.w.write("; }");
                 }
+                ComponentProp::Bind { name, target } if function_binding(target).is_some() => {
+                    let (get, set) = function_binding(target).unwrap();
+                    self.w.write(&format!("get {}() {{ return (", js_key(name)));
+                    self.paren_expr(get, Mode::Read);
+                    self.w.write(&format!(")(); }}, set {}($$value) {{ (", js_key(name)));
+                    self.paren_expr(set, Mode::Read);
+                    self.w.write(")($$value); }");
+                }
                 ComponentProp::Bind { name, target } => {
                     self.w.write(&format!("get {}() {{ return ", js_key(name)));
                     self.expr_text(target, Mode::Read);
@@ -394,6 +419,14 @@ impl Codegen<'_, '_> {
             }
         }
         self.w.write(" });");
+    }
+}
+
+/// `bind:x={get, set}`: the getter and setter of a function binding.
+fn function_binding<'e>(target: &'e Expression) -> Option<(&'e Expression, &'e Expression)> {
+    match target {
+        Expression::SequenceExpression(s) if s.expressions.len() == 2 => Some((&s.expressions[0], &s.expressions[1])),
+        _ => None,
     }
 }
 

@@ -285,9 +285,12 @@ ${table(tally(failing, (r) => `${r.outcome}: ${firstLine(r.message).replace(/\d+
 
 ## Failing samples (runtime error / mismatch / timeout)
 
-| sample | outcome | message |
-| --- | --- | --- |
-${failing.map(([n, r]) => `| ${n} | ${r.outcome} | ${firstLine(r.message)} |`).join('\n')}
+\`compileOptions\` (e.g. \`dev: true\`, whose ownership/mutation warnings and checks these samples
+assert) are not honoured by the native compiler; ${failing.filter(([, r]) => r.compileOptions).length} of the ${failing.length} failing samples set them.
+
+| sample | outcome | compileOptions | message |
+| --- | --- | --- | --- |
+${failing.map(([n, r]) => `| ${n} | ${r.outcome} | ${(r.compileOptions ?? '').replace(/\|/g, '\\|')} | ${firstLine(r.message)} |`).join('\n')}
 
 ## Passing samples
 
