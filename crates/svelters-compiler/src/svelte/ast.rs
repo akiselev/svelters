@@ -35,7 +35,10 @@ node! {
         pub options: Option<SvelteOptions>,
         pub fragment: Fragment,
         pub css: Option<StyleBlock>,
+        /// Absent (not null) in Svelte's JSON when there is no instance script.
+        #[serde(skip_serializing_if = "Option::is_none")]
         pub instance: Option<Script>,
+        #[serde(skip_serializing_if = "Option::is_none")]
         pub module: Option<Script>,
         /// Comments found in `<script>` and `{expressions}`.
         pub comments: Vec<JsComment>,
@@ -60,6 +63,9 @@ node! {
         pub namespace: Option<String>,
         #[serde(skip_serializing_if = "Option::is_none")]
         pub css: Option<String>,
+        /// `customRenderer` option of the custom-renderer fork: a module path, or null to opt out.
+        #[serde(rename = "customRenderer", skip_serializing_if = "Option::is_none")]
+        pub custom_renderer: Option<Option<String>>,
         /// `customElement` is accepted by the parser but unsupported by this compiler: kept raw.
         #[serde(skip)]
         pub custom_element: Option<Span>,
