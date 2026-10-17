@@ -299,7 +299,9 @@ Later ABI additions, not part of v2:
 - the foreign-runtime hooks;
 - the value-model changes from the serdes research.
 
-## Planned ABI v3: value model (M3)
+## ABI v3: value model (M3)
+
+**Status: implemented (S1, S2).** The text below is the original plan; "As implemented" at the end of this section records what was built and the additions made later.
 
 From `docs/notes/js-native-serdes.md` §5.1, which has the exact C proposal.
 
@@ -314,3 +316,43 @@ Things to do now, with no ABI change:
 - Strings are borrowed.
 - Descriptor-driven prop coercion replaces the renderer's hand-written `INT_PROPS`.
 - Enums go out as names on both toolkits.
+
+### As implemented (S1, S2): the value model
+
+The header (`crates/svelters-abi/include/svelters_backend.h`) is the reference; `docs/notes/serdes-impl.md` records the decisions. This section records additions made after the first v3 merge. All are additive within v3.
+
+#### Out and in-out parameters (S2)
+
+A method descriptor may flag a parameter `SVL_D_OUT` (the callee fills it in; JS does not supply it) or `SVL_D_INOUT` (JS supplies the input, the callee returns the updated value).
+
+- **Arguments.** JS supplies the parameters that are not `OUT`, in declaration order. The host encodes only those and calls `call(h, method, args, n)` with `n` = their count. `OUT` parameters are never sent, so a backend does not need placeholder values.
+- **Result.** If the method has at least one `OUT` or `INOUT` parameter, the backend answers a `LIST` of `1 + k` values: the return value first (`NULL` when the method is void), then one value per `OUT`/`INOUT` parameter, in declaration order. A list of any other length is an error reported by the host.
+- **JS shape.** The host turns the list into one object: `ret` (omitted when the descriptor's return is void), then one key per out parameter, named by the slot's `name` (`out<i>` when unnamed). `getContentsMargins()` gives `{left, top, right, bottom}`; `validate(text, pos)` gives `{ret, input, pos}`. The shape is the same for one out parameter or many.
+- **Errors.** A `SVL_M_THROWS` method that fails answers `ERROR`/error status as usual; no out list is built.
+- **Not supported.** `SVL_M_ASYNC` methods with out parameters (an async completion carries one value), and `OUT` parameters on callback types.
+- **Backend recipe.** Report outs by building `[ret, out1, out2...]` as an ordinary `LIST` out value: Rust `Value::List(vec![ret, ...])`; Qt generated code (`out:` / `inout:` keys, below); GTK a `StrBuf::list_value(SVL_LIST, 0, ...)` (`gio-file` `loadContentsEtag`). Descriptors of `OUT` slots describe the output type (so enums become names, records objects, and so on) exactly like a return slot.
+- **Qt overrides.** A method entry may carry `out: [names]` and `inout: [names]` naming C++ parameters of type `T *` or `T &` (`int`, `uint`, `bool`, `double`, `float`, `qint64`, `QString`); `target: layout` calls the method on the element's layout. Example: `{ js: getContentsMargins, target: layout, native: getContentsMargins, out: [left, top, right, bottom] }`.
+
+#### Qt callbacks and async (S2)
+
+Both are generated from the Qt override YAML (`tools/metadata/qt/gen_cpp.py`), with the host side unchanged.
+
+- **Callbacks.** A method entry lists `callbacks: [{ param, scope, args: [{name, cpp, ref}], returns?: {cpp, ref} }]` for `Functor` / `std::function` parameters (`scope`: `call` or `notified`). The parameter becomes a `CALLBACK` slot whose type descriptor (`describe_type`) carries the argument slots, the result slot and the scope. The generated call passes a C++ lambda that runs `js_invoke<R>(id, args...)`, which calls `host->invoke_callback`; a failure (the function threw, was released, or its owner died) is reported by the host and Qt sees a default-constructed result. `discard_return: true` hides a C++ return value JS cannot use (`QMenu::addAction` returns the `QAction`). Proof: `menu.addItem(text, fn, shortcut)` on `QMenu::addAction(text, Functor, shortcut)`.
+- **Async.** A method entry with `async: { signal, connect, result?, cancel? }` starts a native operation that ends with a signal. The descriptor is `SVL_M_ASYNC` with the host's one-shot completion callback appended as the last parameter. The generated call connects the signal, calls the method, and on emission passes the named signal argument to `invoke_callback`. `backend.cancel(id)` calls the `cancel` method (a zero-argument method of the same object) and completes the callback with `ERROR` (domain `qt`, message `operation cancelled`), once. Proof: `colordialog.open()` on `QDialog::open()` + `finished(int)` (`accept()` resolves `1`, `reject()` resolves `0`, an `AbortSignal` rejects).
+- Not covered: callbacks with a result on a real Qt API (the host/ABI path is covered by the Rust test backend), `forever` scope (refused by the host).
+
+#### UTF-16 string results (S2)
+
+A backend that advertises `SVL_CAP_UTF16_OUT` may return `STR` values flagged `SVL_F_UTF16` (pointer to `char16_t`, length in code units) from `get_prop`, `call`, and in event, sync-handler and callback arguments. The host (`Value::from_raw_wide`, `Value::Str16`) builds the JS string with `JS_NewStringUTF16` and does not transcode. Consumers of raw values must honour the flag (`str_of_raw` does); `Value::from_raw` still transcodes to `Value::Str` for callers that want text. Strings inside `ERROR` values and `MAP` keys may stay UTF-8. The Qt backend returns every `QString` this way and shares the `QString` buffer, so no copy is made.
+
+#### Exact variant types and GValue-typed properties (S2)
+
+- **Typed variants.** `variant(signature, value)` (a global in the JS prelude; class `NativeVariant`) wraps a value with an exact GVariant type signature. On the wire it is a `RECORD` of well-known type `SVL_T_TYPED_VARIANT` (10) with fields `[signature: string, value]`, valid wherever a variant slot accepts a value (and nested inside variants and maps). Without it a variant's type is inferred (integers `x`, floats `d`, strings `s`, bytes `ay`, lists `av`, objects `a{sv}`).
+  - GTK builds exactly that type: basic types with range checks, `aX`, `a{sV}` from objects (string-like keys only), `(..)`, `mX` (null = nothing), `v`, `ay` from bytes. A mismatch fails the set with a message naming the signature and the path.
+  - Qt has no signatures: a basic one fixes the `QMetaType` and the range (`y n q i u x t d b s o g`); a container signature passes the value as it is.
+  - Reading a variant still yields the inferred JS shape; the signature does not come back.
+- **GValue props.** A property of boxed type `G_TYPE_VALUE` (e.g. `GtkDropTarget:value`) has a variant-like dynamic slot: the JS value is converted to a GValue by inference (bool, int64, double, string, bytes -> `GBytes`, boxed or object handles as themselves, typed variants as `GVariant`) and read back by unwrapping the contained GValue.
+
+#### VALUE-class handles (S2)
+
+A `BOXED` value is the v2 VALUE lifetime class: a refcounted, immutable native value behind a handle in the same never-reused handle space. `destroy(h)` (the wrapper's `dispose()`, or the finalizer at the next checkpoint) is the unref and is idempotent. `handle_info(h)` answers `lifetime = SVL_LIFE_VALUE` with `kind = 0` (the value's type is the `BOXED` type descriptor it travelled with) until it is released; afterwards the handle is stale. No tree operation accepts a VALUE handle. Both backends implement it.

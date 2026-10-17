@@ -1050,6 +1050,11 @@ unsafe extern "C" fn b_listen(p: *mut c_void, h: svl_handle, signal: svl_id, on:
 unsafe extern "C" fn b_handle_info(p: *mut c_void, h: svl_handle, out: *mut svl_handle_info) -> c_int {
     run_int(unsafe { ctl(p) }, |i| {
         let st = i.state.borrow();
+        // A boxed value is a VALUE handle: refcounted and immutable, released by `destroy`.
+        if st.boxed.contains_key(&h) {
+            unsafe { *out = svl_handle_info { kind: 0, lifetime: SVL_LIFE_VALUE, flags: 0 } };
+            return Ok(());
+        }
         let e = st.entries.get(&h).ok_or_else(|| format!("stale or foreign handle {h}"))?;
         unsafe { *out = svl_handle_info { kind: e.kind, lifetime: e.class, flags: 0 } };
         Ok(())

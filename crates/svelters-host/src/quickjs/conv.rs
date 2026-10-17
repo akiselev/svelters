@@ -246,6 +246,15 @@ impl<'js> JsReader for QjsConv<'js> {
         }
     }
 
+    fn typed_variant(&self, v: &Value<'js>) -> R<Option<(String, Value<'js>)>> {
+        let Some(o) = v.as_object() else { return Ok(None) };
+        let marker: Value = o.get("__svlVariant").map_err(|e| self.err(e))?;
+        let Some(a) = marker.as_array() else { return Ok(None) };
+        let sig: String = a.get(0).map_err(|e| self.err(e))?;
+        let value: Value = a.get(1).map_err(|e| self.err(e))?;
+        Ok(Some((sig, value)))
+    }
+
     fn node_handle(&self, v: &Value<'js>) -> R<Option<Option<f64>>> {
         let Some(o) = v.as_object() else { return Ok(None) };
         let h: Value = o.get("svlHandle").map_err(|e| self.err(e))?;
@@ -305,6 +314,15 @@ impl<'js> JsWriter for QjsConv<'js> {
         rquickjs::String::from_str(self.ctx.clone(), s)
             .map(|s| s.into_value())
             .map_err(|e| self.err(e))
+    }
+
+    fn string16(&self, s: &[u16]) -> R<Value<'js>> {
+        // SAFETY: the context is live, `s` is a valid slice, and the returned value is owned by us.
+        let raw = unsafe { qjs::JS_NewStringUTF16(self.ctx.as_raw().as_ptr(), s.as_ptr(), s.len() as _) };
+        if unsafe { qjs::JS_IsException(raw) } {
+            return Err(self.err(rquickjs::Error::Exception));
+        }
+        Ok(unsafe { Value::from_raw(self.ctx.clone(), raw) })
     }
 
     fn array(&self, items: Vec<Value<'js>>) -> R<Value<'js>> {

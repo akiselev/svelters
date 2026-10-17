@@ -14,6 +14,9 @@ async function main() {
   log('exists', h.call(f, 'exists', []));
   const bytes = h.call(f, 'loadContents', []);
   log('loadContents', bytes instanceof Uint8Array, JSON.stringify(text(bytes)));
+  // out parameters: the call answers {ret, contents, etag}
+  const withEtag = h.call(f, 'loadContentsEtag', []);
+  log('loadContentsEtag', Object.keys(withEtag).join(), withEtag.ret, withEtag.contents instanceof Uint8Array, JSON.stringify(text(withEtag.contents)), withEtag.etag === null || typeof withEtag.etag === 'string');
 
   // sync GError -> NativeError (domain, GIOErrorEnum member name, message)
   h.setProp(f, 'path', DIR + '/missing.txt');

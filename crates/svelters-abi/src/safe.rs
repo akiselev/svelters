@@ -124,6 +124,9 @@ pub enum Value {
     DateTime(f64),
     /// UTF-8 text. UTF-16 input is transcoded when copied into an owned value.
     Str(String),
+    /// UTF-16 text, kept as the backend sent it. Only [`Value::from_raw_wide`] makes these (the host reading
+    /// from a backend with `SVL_CAP_UTF16_OUT`); [`Value::from_raw`] always transcodes to `Str`.
+    Str16(Vec<u16>),
     Handle(svl_handle),
     List(Vec<Value>),
     Enum { ty: svl_id, value: i64 },
@@ -178,6 +181,11 @@ fn build_raw(v: &Value, lists: &mut Vec<Vec<svl_value>>) -> svl_value {
                 },
             },
         ),
+        Value::Str16(s) => {
+            let mut r = svl_value::new(SVL_STR, svl_value_u { s: svl_str { ptr: s.as_ptr().cast(), len: s.len() } });
+            r.flags = SVL_F_UTF16;
+            r
+        }
         Value::List(items) => {
             let inner: Vec<svl_value> = items.iter().map(|x| build_raw(x, lists)).collect();
             svl_value::new(SVL_LIST, svl_value_u { l: list_of(inner, lists) })
@@ -281,6 +289,18 @@ impl Value {
     /// # Safety
     /// `v` must be a valid `svl_value` whose pointers are valid for reads.
     pub unsafe fn from_raw(v: &svl_value) -> Value {
+        unsafe { Value::from_raw_with(v, false) }
+    }
+
+    /// Like [`Value::from_raw`], but UTF-16 strings stay UTF-16 (`Value::Str16`).
+    ///
+    /// # Safety
+    /// As [`Value::from_raw`].
+    pub unsafe fn from_raw_wide(v: &svl_value) -> Value {
+        unsafe { Value::from_raw_with(v, true) }
+    }
+
+    unsafe fn from_raw_with(v: &svl_value, wide: bool) -> Value {
         unsafe {
             match v.tag {
                 SVL_BOOL => Value::Bool(v.u.b),
@@ -292,8 +312,12 @@ impl Value {
                 SVL_F64 if v.type_ == SVL_T_DATETIME => Value::DateTime(v.u.f),
                 SVL_F64 => Value::F64(v.u.f),
                 SVL_HANDLE => Value::Handle(v.u.h),
+                SVL_STR if wide && v.flags & SVL_F_UTF16 != 0 => {
+                    let s = v.u.s;
+                    Value::Str16(if s.ptr.is_null() || s.len == 0 { Vec::new() } else { std::slice::from_raw_parts(s.ptr.cast::<u16>(), s.len).to_vec() })
+                }
                 SVL_STR => Value::Str(str_of_raw(v).into_owned()),
-                SVL_LIST => Value::List(Value::vec_from_raw(v.u.l.ptr, v.u.l.len)),
+                SVL_LIST => Value::List(Value::vec_from_raw_with(v.u.l.ptr, v.u.l.len, wide)),
                 SVL_ENUM => Value::Enum {
                     ty: v.type_,
                     value: v.u.i,
@@ -304,7 +328,7 @@ impl Value {
                 },
                 SVL_RECORD => Value::Record {
                     ty: v.type_,
-                    fields: Value::vec_from_raw(v.u.l.ptr, v.u.l.len),
+                    fields: Value::vec_from_raw_with(v.u.l.ptr, v.u.l.len, wide),
                 },
                 SVL_BYTES => {
                     let b = v.u.bytes;
@@ -323,12 +347,13 @@ impl Value {
                     ty: v.type_,
                 },
                 SVL_MAP => {
-                    let items = Value::vec_from_raw(v.u.l.ptr, v.u.l.len);
+                    let items = Value::vec_from_raw_with(v.u.l.ptr, v.u.l.len, wide);
                     let mut it = items.into_iter();
                     let mut out = Vec::new();
                     while let (Some(k), Some(x)) = (it.next(), it.next()) {
                         let k = match k {
                             Value::Str(s) => s,
+                            Value::Str16(u) => String::from_utf16_lossy(&u),
                             _ => String::new(),
                         };
                         out.push((k, x));
@@ -362,13 +387,25 @@ impl Value {
     /// # Safety
     /// `ptr` must be null (only if `n == 0`) or point to `n` valid values.
     pub unsafe fn vec_from_raw(ptr: *const svl_value, n: usize) -> Vec<Value> {
+        unsafe { Value::vec_from_raw_with(ptr, n, false) }
+    }
+
+    /// [`Value::vec_from_raw`] keeping UTF-16 strings (see [`Value::from_raw_wide`]).
+    ///
+    /// # Safety
+    /// As [`Value::vec_from_raw`].
+    pub unsafe fn vec_from_raw_wide(ptr: *const svl_value, n: usize) -> Vec<Value> {
+        unsafe { Value::vec_from_raw_with(ptr, n, true) }
+    }
+
+    unsafe fn vec_from_raw_with(ptr: *const svl_value, n: usize, wide: bool) -> Vec<Value> {
         if ptr.is_null() || n == 0 {
             return Vec::new();
         }
         unsafe {
             std::slice::from_raw_parts(ptr, n)
                 .iter()
-                .map(|v| Value::from_raw(v))
+                .map(|v| Value::from_raw_with(v, wide))
                 .collect()
         }
     }
@@ -1536,7 +1573,7 @@ unsafe extern "C" fn h_post_event(
     n: usize,
 ) {
     let s = unsafe { hshim(s) };
-    let args = unsafe { Value::vec_from_raw(args, n) };
+    let args = unsafe { Value::vec_from_raw_wide(args, n) };
     let _ = catch_unwind(AssertUnwindSafe(|| s.cb.post_event(h, sig, &args)));
 }
 
@@ -1554,7 +1591,7 @@ unsafe extern "C" fn h_call_sync(
     out: *mut svl_value,
 ) -> c_int {
     let s = unsafe { hshim(s) };
-    let args = unsafe { Value::vec_from_raw(args, n) };
+    let args = unsafe { Value::vec_from_raw_wide(args, n) };
     match catch_unwind(AssertUnwindSafe(|| s.cb.call_sync(h, sig, &args))) {
         Ok(Ok(v)) => {
             write_out(&s.out, out, v);
@@ -1578,7 +1615,7 @@ unsafe extern "C" fn h_invoke_callback(
     out: *mut svl_value,
 ) -> c_int {
     let s = unsafe { hshim(s) };
-    let args = unsafe { Value::vec_from_raw(args, n) };
+    let args = unsafe { Value::vec_from_raw_wide(args, n) };
     match catch_unwind(AssertUnwindSafe(|| s.cb.invoke_callback(id, &args))) {
         Ok(Ok(v)) => {
             write_out(&s.out, out, v);

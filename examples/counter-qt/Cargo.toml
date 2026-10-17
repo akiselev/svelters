@@ -35,3 +35,7 @@ harness = false
 [[test]]
 name = "borrowed"
 harness = false
+
+[[test]]
+name = "host"
+harness = false

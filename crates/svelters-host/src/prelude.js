@@ -194,6 +194,34 @@
       writable: true,
     });
   }
+  // A value with an exact GVariant type: `variant('(ii)', [1, 2])`, `variant('a{ss}', {a: 'b'})`.
+  // Without it a variant's type is inferred from the JS value (integers `x`, floats `d`, ...).
+  class NativeVariant {
+    #sig;
+    #value;
+    constructor(signature, value) {
+      if (typeof signature !== 'string' || signature === '') {
+        throw new TypeError('variant(signature, value): the signature must be a non-empty GVariant type string');
+      }
+      this.#sig = signature;
+      this.#value = value;
+    }
+    get signature() {
+      return this.#sig;
+    }
+    get value() {
+      return this.#value;
+    }
+    get __svlVariant() {
+      return [this.#sig, this.#value];
+    }
+  }
+  Object.defineProperty(global, 'NativeVariant', { value: NativeVariant, writable: true, configurable: true });
+  Object.defineProperty(global, 'variant', {
+    value: (signature, value) => new NativeVariant(signature, value),
+    writable: true,
+    configurable: true,
+  });
   const makeBoxed = (h, t, name) => new NativeBoxed(h, t, name);
   const makeNativeError = (domain, code, message) => new NativeError(domain, code, message);
   // An async native method returns a Promise; the backend completes it through a one-shot callback.
