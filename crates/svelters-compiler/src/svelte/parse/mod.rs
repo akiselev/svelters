@@ -322,12 +322,6 @@ impl Parser {
         let match_lang = regex_lang_attribute(template);
         parser.ts = match_lang.as_ref().is_some_and(|(_, lang)| lang == "ts");
 
-        // SVELTERS: acorn-typescript is not ported (deviations.md).
-        if parser.ts {
-            let (pos, _) = match_lang.unwrap();
-            return Err(e::svelters_typescript_unsupported(pos));
-        }
-
         parser.nodes.push(TemplateNode::Root);
         let root_fragment = parser.create_fragment(false);
         parser.stack.push(0);

@@ -1,8 +1,8 @@
 //! Port of `phases/1-parse/state/tag.js` (Svelte 5.57.2 @ f3de3f2).
 
 use crate::estree::{
-    ArrowFunctionExpression, Expression, Identifier, Pattern, Spanned, Statement, VariableDeclaration, VariableDeclarator,
-    VariableKind,
+    ArrowBody, ArrowFunctionExpression, Expression, Identifier, Pattern, Spanned, Statement, ThisExpression,
+    VariableDeclaration, VariableDeclarator, VariableKind,
 };
 use crate::svelte::ast::{ConstTag, DebugTag, DeclarationTag, ExpressionTag, FragmentNode, HtmlTag, RenderTag};
 use crate::svelte::errors as e;
@@ -110,7 +110,7 @@ fn read_declaration(parser: &mut Parser) -> PResult<Option<VariableDeclaration>>
 
     let initial_comment_count = parser.root.comments.len();
 
-    let declaration = match parse_statement_at(&parser.template, &mut parser.root.comments, start) {
+    let declaration = match parse_statement_at(&parser.template, &mut parser.root.comments, start, parser.ts) {
         Ok(d) => d,
         Err(error) => {
             if !parser.loose {
@@ -243,8 +243,19 @@ fn open(parser: &mut Parser) -> PResult<()> {
                 expression = seq.expressions.remove(0);
             }
 
-            // SVELTERS: the `TSAsExpression` unwrapping that follows upstream cannot apply:
-            // TypeScript is not supported, so the expression contains no TS nodes.
+            // walk(expression, null, { TSAsExpression(node, context) { if (node.end === expression.end) ... } })
+            let root_end = expression.span().end;
+            if let Some((end, type_start)) = unwrap_trailing_ts_as(&mut expression, root_end) {
+                set_expression_end(&mut expression, end);
+                // we can't reset `parser.index` to `expression.expression.end` because
+                // it will ignore any parentheses — we need to jump through this hoop
+                let mut end = type_start as usize - 2;
+                while parser.template.get(end..end + 2) != Some("as") {
+                    end -= 1;
+                }
+
+                parser.index = end;
+            }
         }
 
         let mut context: Option<Pattern> = None;
@@ -484,7 +495,7 @@ fn open(parser: &mut Parser) -> PResult<()> {
 
         let parameters = if matched {
             let source = format!("{} => {{}}", &parser.template[..parser.index]);
-            match parse_expression_at(&source, &mut parser.root.comments, params_start)? {
+            match parse_expression_at(&source, &mut parser.root.comments, params_start, parser.ts)? {
                 Expression::ArrowFunctionExpression(ArrowFunctionExpression { params, .. }) => params,
                 // `.params` of anything else is undefined; unreachable for `(...) => {}`
                 _ => Vec::new(),
@@ -827,4 +838,79 @@ fn special(parser: &mut Parser) -> PResult<()> {
         return Ok(());
     }
     Err(e::expected_tag(parser.index))
+}
+
+/// The `TSAsExpression` visitor of the `{#each}` fix-up: replaces the `as` expression that ends
+/// where the whole expression ends by its operand. Returns the operand's end and the type's start.
+/// (Only nodes ending at `root_end` can contain it, so the search follows the last child.)
+fn unwrap_trailing_ts_as(e: &mut Expression, root_end: u32) -> Option<(u32, u32)> {
+    if let Expression::TSAsExpression(n) = e {
+        if n.end == root_end {
+            let end = n.expression.span().end;
+            let type_start = n.type_annotation.span().start;
+            let inner = std::mem::replace(&mut *n.expression, Expression::ThisExpression(ThisExpression { start: 0, end: 0 }));
+            *e = inner;
+            return Some((end, type_start));
+        }
+    }
+    let child: Option<&mut Expression> = match e {
+        Expression::BinaryExpression(n) => Some(&mut n.right),
+        Expression::LogicalExpression(n) => Some(&mut n.right),
+        Expression::ConditionalExpression(n) => Some(&mut n.alternate),
+        Expression::AssignmentExpression(n) => Some(&mut n.right),
+        Expression::SequenceExpression(n) => n.expressions.last_mut(),
+        Expression::UnaryExpression(n) => Some(&mut n.argument),
+        Expression::AwaitExpression(n) => Some(&mut n.argument),
+        Expression::YieldExpression(n) => n.argument.as_deref_mut(),
+        Expression::ArrowFunctionExpression(n) => match &mut n.body {
+            ArrowBody::Expression(b) => Some(b),
+            ArrowBody::Block(_) => None,
+        },
+        Expression::TSAsExpression(n) | Expression::TSSatisfiesExpression(n) => Some(&mut n.expression),
+        Expression::TSTypeAssertion(n) => Some(&mut n.expression),
+        _ => None,
+    };
+    let child = child?;
+    if child.span().end != root_end {
+        return None;
+    }
+    unwrap_trailing_ts_as(child, root_end)
+}
+
+/// `expression.end = end`
+fn set_expression_end(e: &mut Expression, end: u32) {
+    match e {
+        Expression::Identifier(n) => n.end = end,
+        Expression::Literal(n) => n.end = end,
+        Expression::ThisExpression(n) => n.end = end,
+        Expression::Super(n) => n.end = end,
+        Expression::ArrayExpression(n) => n.end = end,
+        Expression::ObjectExpression(n) => n.end = end,
+        Expression::FunctionExpression(n) => n.end = end,
+        Expression::ArrowFunctionExpression(n) => n.end = end,
+        Expression::ClassExpression(n) => n.end = end,
+        Expression::TemplateLiteral(n) => n.end = end,
+        Expression::TaggedTemplateExpression(n) => n.end = end,
+        Expression::UnaryExpression(n) => n.end = end,
+        Expression::UpdateExpression(n) => n.end = end,
+        Expression::BinaryExpression(n) => n.end = end,
+        Expression::LogicalExpression(n) => n.end = end,
+        Expression::AssignmentExpression(n) => n.end = end,
+        Expression::ConditionalExpression(n) => n.end = end,
+        Expression::CallExpression(n) => n.end = end,
+        Expression::NewExpression(n) => n.end = end,
+        Expression::MemberExpression(n) => n.end = end,
+        Expression::ChainExpression(n) => n.end = end,
+        Expression::SequenceExpression(n) => n.end = end,
+        Expression::YieldExpression(n) => n.end = end,
+        Expression::AwaitExpression(n) => n.end = end,
+        Expression::ImportExpression(n) => n.end = end,
+        Expression::MetaProperty(n) => n.end = end,
+        Expression::ParenthesizedExpression(n) => n.end = end,
+        Expression::TSAsExpression(n) | Expression::TSSatisfiesExpression(n) => n.end = end,
+        Expression::TSTypeAssertion(n) => n.end = end,
+        Expression::TSNonNullExpression(n) => n.end = end,
+        Expression::TSInstantiationExpression(n) => n.end = end,
+        Expression::TSTypeCastExpression(n) => n.end = end,
+    }
 }

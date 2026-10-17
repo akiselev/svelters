@@ -1,7 +1,8 @@
 //! Port of `phases/1-parse/acorn.js` (Svelte 5.57.2 @ f3de3f2): the wrapper around acorn.
 //!
+//! `TSParser` (`acorn.Parser.extend(tsPlugin())`) is `crate::acorn` with `typescript` set.
+//!
 //! SVELTERS deviations (docs/notes/native-compiler/deviations.md):
-//! - no TypeScript parser (`lang="ts"` is rejected before parsing);
 //! - `add_comments` (attaching `leadingComments`/`trailingComments` to ESTree nodes) is not
 //!   ported: `crate::estree` has no such fields. `onComment` (the `root.comments` list) is.
 //! - `startLocation`/`locations` are not needed (no `loc` in our ESTree).
@@ -11,34 +12,34 @@ use crate::estree::*;
 use crate::svelte::errors as e;
 use crate::svelte::parse::PResult;
 
-fn options(preserve_parens: bool, allow_undefined_exports: bool) -> Options {
-    Options { ecma_version: 16, source_type: SourceType::Module, preserve_parens, allow_undefined_exports, typescript: false }
+fn options(preserve_parens: bool, allow_undefined_exports: bool, typescript: bool) -> Options {
+    Options { ecma_version: 16, source_type: SourceType::Module, preserve_parens, allow_undefined_exports, typescript }
 }
 
 /// `parse(source, comments, typescript, is_script)`
-pub fn parse(source: &str, comments: &mut Vec<Comment>, _typescript: bool, is_script: bool) -> PResult<Program> {
+pub fn parse(source: &str, comments: &mut Vec<Comment>, typescript: bool, is_script: bool) -> PResult<Program> {
     let mut raw = Vec::new();
     // If we're dealing with a <script> then it might contain an export
     // for something that doesn't exist directly inside but is inside the
     // component instead, so we need to ensure that Acorn doesn't throw
     // an error in these cases (`allow_undefined_exports`)
-    let result = acorn_impl::parse(source, &options(false, is_script), &mut raw);
+    let result = acorn_impl::parse(source, &options(false, is_script, typescript), &mut raw);
     on_comments(source, comments, raw);
     result.map_err(|err| handle_parse_error(&err))
 }
 
-/// `parse_expression_at(parser, source, index)`
-pub fn parse_expression_at(source: &str, comments: &mut Vec<Comment>, index: usize) -> PResult<Expression> {
+/// `parse_expression_at(parser, source, index)`; `ts`: `parser.ts`.
+pub fn parse_expression_at(source: &str, comments: &mut Vec<Comment>, index: usize, ts: bool) -> PResult<Expression> {
     let mut raw = Vec::new();
-    let result = acorn_impl::parse_expression_at(source, index as u32, &options(true, false), &mut raw);
+    let result = acorn_impl::parse_expression_at(source, index as u32, &options(true, false, ts), &mut raw);
     on_comments(source, comments, raw);
     result.map_err(|err| handle_parse_error(&err))
 }
 
-/// `parse_statement_at(parser, source, index)`
-pub fn parse_statement_at(source: &str, comments: &mut Vec<Comment>, index: usize) -> PResult<Statement> {
+/// `parse_statement_at(parser, source, index)`; `ts`: `parser.ts`.
+pub fn parse_statement_at(source: &str, comments: &mut Vec<Comment>, index: usize, ts: bool) -> PResult<Statement> {
     let mut raw = Vec::new();
-    let result = acorn_impl::parse_statement_at(source, index as u32, &options(false, false), &mut raw);
+    let result = acorn_impl::parse_statement_at(source, index as u32, &options(false, false, ts), &mut raw);
     on_comments(source, comments, raw);
     result.map_err(|err| {
         // A statement that runs to the end of the source (e.g. an unterminated declaration tag)

@@ -24,7 +24,7 @@ pub fn read_expression(parser: &mut Parser, opening_token: Option<char>, disallo
         return Ok(simple);
     }
 
-    let result = parse_expression_at(&parser.template, &mut parser.root.comments, parser.index);
+    let result = parse_expression_at(&parser.template, &mut parser.root.comments, parser.index, parser.ts);
     match result {
         Ok(node) => {
             use crate::estree::Spanned;
