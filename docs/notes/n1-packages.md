@@ -33,9 +33,10 @@ Sub-lane of N1 (see `n1-rename.md`). Scope: package tests/sources (not testhost)
 - style test cases: tags renamed; the cross-toolkit cases (`card`, `setters`, `unsupported`) got Qt
   twins (`push-button`, `line-edit`, `box-layout`, `main-window`, `direction`) in selector lists, since
   `button`/`entry`/`box`/`window` are no longer Qt elements. Goldens regenerated.
-- native-runtime tests: `virtual-list`, `listen('clicked')`. (`ListView`'s `rowHeight` prop became
-  `row-height` in packages/lists and native-runtime `lists.js` during this lane, by another sub-lane;
-  tests pass with it.)
+- native-runtime tests: `virtual-list`, `listen('clicked')`. packages/lists/src and native-runtime
+  `src/lists.js` belong to n1-fixtures (`row-height`, `min-height`); the lists test already uses the
+  new names and passes.
+- canvas: doc comment of `draw()` uses `content-width` / `content-height`.
 - compiler tests: `native_x3.rs` and `semantics_specs.rs` use each backend's vocabulary (GTK `window`,
   `grid`, `entry`; Qt `main-window`, `grid-layout`, `box-layout`, `line-edit`, `push-button`,
   `key-sequence-edit`), kebab props/attrs (`column-span`, `row-span`, `tab-label`, `alignment`,

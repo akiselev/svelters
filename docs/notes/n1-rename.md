@@ -14,7 +14,7 @@ Lane N1, branched from master at ff0fcb4. Full old -> new map: `docs/notes/n1-re
 ## Survey (start)
 
 - `tools/metadata/appkit/names.py` already had the rule (mirrored by `crates/svelters-apple/src/names.rs`);
-  WinUI had an equivalent regex. Those become the shared `tools/metadata/common/names.py`.
+  WinUI had an equivalent regex. Those become the shared `tools/metadata/common/naming.py`.
 - GTK: tags were `name.lower()` (`textview`), props `camel(name)`, child attrs camel; overrides renamed a
   few (`window` = ApplicationWindow, `clickgesture`, `keycontroller`, ...).
 - Qt: every tag and JS name was hand-written in `metadata/overrides/qt/*.yaml` (`js:` / `tag:`), in the
