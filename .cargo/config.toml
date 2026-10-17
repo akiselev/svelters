@@ -1,0 +1,5 @@
+# Keep intermediate build artifacts per checkout. The user-global build-dir is shared across
+# checkouts, and parallel git worktrees with different versions of the same path crates
+# (e.g. svelters-abi) overwrite each other's artifacts there.
+[build]
+build-dir = "{workspace-root}/target/build"
