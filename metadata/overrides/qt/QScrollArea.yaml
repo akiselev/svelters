@@ -1,0 +1,28 @@
+# Element `scrolledwindow` (name shared with GTK, used by the keyed-list fixture).
+elements:
+  - tag: scrolledwindow
+    construct:
+      class: QScrollArea
+      init:
+        - { method: setWidgetResizable, args: [true] }   # content follows the viewport width
+    children:
+      policy: single_child
+      default_slot: child
+      slots:
+        - name: child
+          content: widget
+          accepts: [QWidget]
+          cardinality: one
+          host: self
+          default: { kind: none }
+          on_remove: empty
+          ops:
+            get: { native: "QScrollArea::widget() const" }
+            set:
+              native: "QScrollArea::setWidget(QWidget*)"
+              args: [child]
+              effects: { child: parented, old: deleted }
+            remove:                                       # setWidget(nullptr) is ignored; take instead
+              native: "QScrollArea::takeWidget()"
+              effects: { child: unparented }
+          provenance: [{ origin: uic, ref: "WriteInitialization::acceptWidget" }, { origin: probe, ref: qt_slot_ownership_probe.py }]

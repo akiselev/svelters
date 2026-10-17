@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import re
 import sys
 import tomllib
 from pathlib import Path
@@ -191,30 +192,82 @@ class Model:
             if a["name"] not in names:
                 raise GenError(f"{tag}: signal arg {a['name']} not a parameter of {rec['signature']}")
 
+    _NATIVE = re.compile(r"^(\w+)::([\w<>*:, ]+?)\((.*)\)(?:\s+const)?$")
+
+    def parse_native(self, where: str, native: str) -> tuple[str, str, int]:
+        mt = self._NATIVE.match(native.strip())
+        if not mt:
+            raise GenError(f"{where}: cannot parse native symbol {native!r}")
+        cls, name, params = mt.group(1), mt.group(2), mt.group(3).strip()
+        arity = 0 if not params else params.count(",") + 1
+        base = name.split("<")[0]
+        if self.kind(cls) is not None and "<" not in name:
+            self._need_method(where, cls, base, arity)
+        return cls, name, arity
+
+    def _op(self, where: str, host_cls: str, d: dict, arity_args: bool = True) -> dict:
+        """Normalise a section 2.5.2 op descriptor into {method, args, on, then}."""
+        cls, name, arity = self.parse_native(where, d["native"])
+        on = d.get("receiver")
+        recv = host_cls if on is None else "QWidget"
+        if self.kind(cls) is not None and cls not in self.chain(recv) and not (on == "child"):
+            raise GenError(f"{where}: {cls} is not a base of {recv}")
+        args = d.get("args", [])
+        if arity and "args" not in d:
+            raise GenError(f"{where}: native {d['native']} takes {arity} argument(s); list them in args")
+        return {"method": name, "args": args, "receiver": on,
+                "then": [self._op(where + ".then", host_cls, t) for t in d.get("then", [])]}
+
     def _resolve_slot(self, el: dict, s: dict) -> None:
         tag = el["tag"]
+        where = f"{tag}.{s['name']}"
         host_cls = el["layout_cls"] if s["host"] == "layout" else el["cls"]
         s["host_cls"] = host_cls
         for a in s["accepts"]:
             if not self.kind(a):
-                raise GenError(f"{tag}.{s['name']}: unknown accepted class {a}")
-        ops = s["ops"]
-        for op, d in ops.items():
-            self._need_method(f"{tag}.{s['name']}.{op}", host_cls, d["method"], None)
-        need = ({"set", "get"} | ({"take"} if s["remove"] == "released" else {"clear"})) if s["cardinality"] == "one" \
-            else {"append", "insert", "remove", "index_of", "count", "at"}
-        if s["cardinality"] == "one" and "take" not in ops and "clear" not in ops:
-            raise GenError(f"{tag}.{s['name']}: need take or clear")
-        miss = {n for n in need if n not in ops and not (n in ("take", "clear") and ("take" in ops or "clear" in ops))}
-        if miss:
-            raise GenError(f"{tag}.{s['name']}: missing ops {sorted(miss)}")
-        if s["replace" if "replace" in s else "ownership"] not in ("deletes_old", "releases_old", "parent_owned"):
-            raise GenError(f"{tag}.{s['name']}: bad replace/ownership")
-        # typesystem cross-check (informational): replace_child with getter == ops.get
+                raise GenError(f"{where}: unknown accepted class {a}")
+        raw, ops = s["ops"], {}
         if s["cardinality"] == "one":
-            k = self.kind(el["cls"])
-            hits = [o for o in k["ownership"] if o["fact"] == "replace_child" and o["method"].startswith(ops["set"]["method"] + "(")]
+            for need in ("get", "set", "remove"):
+                if need not in raw:
+                    raise GenError(f"{where}: missing op {need}")
+            ops["get"] = self._op(where + ".get", host_cls, raw["get"])
+            ops["set"] = self._op(where + ".set", host_cls, raw["set"])
+            rm = self._op(where + ".remove", host_cls, raw["remove"])
+            ops["clear" if None in rm["args"] else "take"] = rm
+            old = raw["set"].get("effects", {}).get("old")
+            s["replace"] = {"deleted": "deletes_old", "unparented": "releases_old"}.get(old)
+            rc = raw["remove"].get("effects", {}).get("child")
+            s["remove_effect"] = {"deleted": "deletes_child", "unparented": "released"}.get(rc)
+            if s["replace"] is None or s["remove_effect"] is None:
+                raise GenError(f"{where}: set.effects.old must be deleted|unparented and remove.effects.child deleted|unparented")
+            if (s.get("on_remove") == "destroys_child") != (s["remove_effect"] == "deletes_child"):
+                raise GenError(f"{where}: on_remove disagrees with remove.effects.child")
+            hits = [o for o in self.kind(el["cls"])["ownership"]
+                    if o["fact"] == "replace_child" and o["method"].startswith(ops["set"]["method"] + "(")]
             s["typesystem_replace_child"] = hits[0]["get_old"] if hits else None
+        else:
+            for need in ("insert", "remove", "index_of", "list"):
+                if need not in raw:
+                    raise GenError(f"{where}: missing op {need}")
+            ins = raw["insert"]
+            ops["append"] = self._op(where + ".insert", host_cls, ins)
+            var = [v for v in ins.get("variants", []) if v.get("when") == "before != null"]
+            if not var:
+                raise GenError(f"{where}: insert needs a `before != null` variant")
+            ops["insert"] = self._op(where + ".insert.variant", host_cls, var[0])
+            ops["remove"] = self._op(where + ".remove", host_cls, raw["remove"])
+            ops["index_of"] = self._op(where + ".index_of", host_cls, raw["index_of"])
+            lst = raw["list"]
+            ops["count"] = self._op(where + ".list", host_cls, lst)
+            _, item, _ = self.parse_native(where + ".list.item", lst["item"])
+            ops["at"] = {"method": item, "args": ["index"], "receiver": None, "then": []}
+            rc = raw["remove"].get("effects", {}).get("child")
+            s["remove_effect"] = {"unparented": "released"}.get(rc)
+            if s["remove_effect"] is None:
+                raise GenError(f"{where}: remove.effects.child must be unparented")
+            s["replace"] = None
+        s["ops"] = ops
 
     def accepted_child_tag(self, el: dict, s: dict) -> str:
         for e in self.elements:
@@ -342,6 +395,10 @@ def emit_create(m: Model) -> str:
     for e in m.elements:
         out.append(f"    case K_{cident(e['tag'])}: {{")
         out.append(f"      auto *w = new {e['cls']}();")
+        for ini in e["construct"].get("init", []):
+            iargs = ", ".join({True: "true", False: "false"}.get(a, str(a)) if isinstance(a, bool) else str(a)
+                              for a in ini.get("args", []))
+            out.append(f"      w->{ini['method']}({iargs});")
         lay = e["construct"].get("composite", {}).get("layout")
         if lay:
             args = ", ".join(lay.get("args", []) + ["w"])
@@ -432,17 +489,25 @@ def emit_call(m: Model) -> str:
 
 
 def op_call(host: str, op: dict, child: str | None = None, extra: dict | None = None) -> str:
-    args = []
-    for a in op.get("args", ["child"] if child else []):
-        if a == "child":
-            args.append(child)
-        elif a is None or a == "null":
-            args.append("nullptr")
-        elif a == "index":
-            args.append((extra or {})["index"])
-        else:
-            raise GenError(f"unknown op arg {a}")
-    return f"{host}->{op['method']}({', '.join(args)})"
+    """C++ statement(s) for a normalised op: the call plus its `then` steps (joined with `; `)."""
+    def one(o: dict) -> str:
+        args = []
+        for a in o["args"]:
+            if a == "child":
+                args.append(child)
+            elif a == "before":
+                args.append((extra or {})["before"])
+            elif a is None or a == "null":
+                args.append("nullptr")
+            elif a == "index":
+                args.append((extra or {})["index"])
+            elif isinstance(a, str) and a.startswith("const:"):
+                args.append(a[6:])
+            else:
+                raise GenError(f"unknown op arg {a}")
+        recv = child if o.get("receiver") == "child" else host
+        return f"{recv}->{o['method']}({', '.join(args)})"
+    return "; ".join([one(op)] + [one(t) for t in op["then"]])
 
 
 def emit_insert(m: Model) -> str:
@@ -467,7 +532,7 @@ def emit_insert(m: Model) -> str:
                 out.append(f"          {op_call('h', ops['set'], 'ch')};")
             else:
                 out.append("          if (before == child) return 0;")
-                out.append(f"          if ({op_call('h', ops['index_of'], 'ch')} >= 0) {op_call('h', ops['remove'], 'ch')};")
+                out.append(f"          if ({op_call('h', ops['index_of'], 'ch')} >= 0) {{ {op_call('h', ops['remove'], 'ch')}; }}")
                 out.append("          if (before) {")
                 out.append(f"            auto *bw = qobject_cast<QWidget *>(before);")
                 out.append(f"            int i = bw ? {op_call('h', ops['index_of'], 'bw')} : -1;")
@@ -494,18 +559,15 @@ def emit_remove(m: Model) -> str:
             out.append(f"      if (auto *ch = qobject_cast<{ctype} *>(child)) {{")
             out.append(f"        auto *h = {host_expr(e, s['host'])};")
             if s["cardinality"] == "one":
-                out.append(f"        if (child->parent() == o && {op_call('h', ops['get'])} == ch) {{")
+                out.append(f"        if (static_cast<QWidget *>(o)->isAncestorOf(ch) && {op_call('h', ops['get'])} == ch) {{")
                 if "take" in ops:
                     out.append(f"          {op_call('h', ops['take'])};")
-                    out.append("          if (ch->parent()) ch->setParent(nullptr);")
                 else:
                     out.append(f"          {op_call('h', ops['clear'])};")
                 out.append("          return 0;\n        }")
             else:
                 out.append(f"        if ({op_call('h', ops['index_of'], 'ch')} >= 0) {{")
                 out.append(f"          {op_call('h', ops['remove'], 'ch')};")
-                if s["remove"] == "released":
-                    out.append("          ch->setParent(nullptr);")
                 out.append("          return 0;\n        }")
             out.append("      }")
         out.append("      break;\n    }")
@@ -687,7 +749,7 @@ class Tests:
             f"  // set then read back through {ops['get']['method']}{note}",
             f"  CHECK(B->insert(B->self, p, a, 0, {sid}) == 0);",
             f"  CHECK({get('p')} == O(a));",
-            f"  CHECK(O(a)->parent() == O(p));",
+            f"  CHECK(static_cast<QWidget *>(O(p))->isAncestorOf(static_cast<QWidget *>(O(a))));",
             "  B->destroy(B->self, p); B->destroy(B->self, a); B->destroy(B->self, b);"]))
         if sn == ((e.get("children") or {}).get("default_slot")):
             self.add(f"slot/{t}.{sn}/default_slot_is_slot_0", "\n".join(base + [
@@ -703,16 +765,17 @@ class Tests:
             f"  CHECK({old_alive});"] + extra + [
             f"  CHECK({get('p')} == O(b));",
             "  B->destroy(B->self, p); B->destroy(B->self, a); B->destroy(B->self, b);"]))
-        if s["remove"] == "released":
+        if s["remove_effect"] == "released":
             check = ["  CHECK(!pa.isNull());", "  CHECK(O(a)->parent() == nullptr);", "  CHECK(!was_destroyed(a));"]
         else:
             check = ["  CHECK(pa.isNull());", "  CHECK(was_destroyed(a));"]
-        self.add(f"ownership/{t}.{sn}/remove_{s['remove']}", "\n".join(base + [
+        self.add(f"ownership/{t}.{sn}/remove_{s['remove_effect']}", "\n".join(base + [
             f"  CHECK(B->insert(B->self, p, a, 0, {sid}) == 0);",
             "  QPointer<QObject> pa(O(a));",
+            "  QObject *ra = O(a);",
             "  CHECK(B->remove(B->self, p, a) == 0);",
             "  flush();",
-            f"  CHECK({get('p')} != pa.data());"] + check + [
+            f"  CHECK({get('p')} != ra);"] + check + [
             "  CHECK(B->remove(B->self, p, a) < 0);  // second remove: not a child any more",
             "  B->destroy(B->self, p); B->destroy(B->self, a); B->destroy(B->self, b);"]))
         wrong = m.wrong_child_tag(s)
@@ -728,7 +791,7 @@ class Tests:
         ops, sid = s["ops"], f'S("{t}", "{sn}")'
         host = lambda p: host_expr(e, s["host"], f"O({p})")
         at = lambda p, i: f"{host(p)}->{ops['at']['method']}({i})->widget()"
-        cnt = lambda p: f"{host(p)}->{ops['count']['method']}()"
+        cnt = lambda p: op_call(host(p), ops['count'])
         mk3 = [f'  svl_handle p = mk("{t}"); svl_handle c0 = mk("{child}"); svl_handle c1 = mk("{child}"); svl_handle c2 = mk("{child}");']
         clean = "  B->destroy(B->self, p); B->destroy(B->self, c0); B->destroy(B->self, c1); B->destroy(B->self, c2);"
         self.add(f"slot/{t}.{sn}/order", "\n".join(mk3 + [
@@ -746,7 +809,7 @@ class Tests:
             clean]))
         self.add(f"slot/{t}.{sn}/default_slot_is_slot_0", "\n".join(mk3 + [
             "  CHECK(B->insert(B->self, p, c0, 0, 0) == 0);", f"  CHECK({at('p', 0)} == O(c0));", clean]))
-        self.add(f"ownership/{t}.{sn}/remove_{s['remove']}", "\n".join(mk3 + [
+        self.add(f"ownership/{t}.{sn}/remove_{s['remove_effect']}", "\n".join(mk3 + [
             f"  CHECK(B->insert(B->self, p, c0, 0, {sid}) == 0);",
             f"  CHECK(B->insert(B->self, p, c1, 0, {sid}) == 0);",
             f"  CHECK(B->insert(B->self, p, c2, 0, {sid}) == 0);",

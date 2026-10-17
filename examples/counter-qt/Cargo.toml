@@ -11,3 +11,12 @@ svelters-abi.workspace = true
 
 [build-dependencies]
 svelters-qt-build.workspace = true
+
+# Both run under a display (xvfb-run) and need the main thread for Qt, so no libtest harness.
+[[test]]
+name = "generated"
+harness = false
+
+[[test]]
+name = "counter"
+harness = false
