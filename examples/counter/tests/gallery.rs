@@ -151,6 +151,7 @@ fn gtk_08_dialogs_toplevels() {
     assert_eq!(windows, vec![(false, false, true), (false, true, true)], "main window, then the tool window (modeless, transient, visible)");
 }
 
+gallery_page!(gtk_10_menus, "gtk", "10-menus", ["GtkPopoverMenuBar", "GtkBox", "GtkButton", "GtkLabel"]);
 // Styling pages (X6): the light page paints the card (--sv-surface) and the accent button; the dark
 // variant switches the scheme and overrides the accent token, so its pixels are the dark palette.
 gallery_page!(gtk_10_styling, "gtk", "10-styling", ["GtkBox", "GtkLabel", "GtkButton", "GtkEntry"], [("f6f5f4", 0.05), ("ffffff", 0.02), ("3584e4", 0.005)]);
@@ -174,12 +175,13 @@ gallery_page!(qt_09_dialogs, "qt", "09-dialogs", ["QLabel", "QMessageBox"]);
 /// window-modal (`open()`), visible.
 #[test]
 fn qt_09_dialogs_all_kinds() {
-    // The "open all dialogs" button is handle 26 (the overview page mounted first and took the handles after the sidebar; see the TestHost op log).
-    let dump = run_page_clicks("qt", "09-dialogs", &["QMessageBox"], &[26], "-all", &[]);
+    // the page opens every kind when it mounts (the "open all dialogs" button reopens them)
+    let dump = run_page_clicks("qt", "09-dialogs", &["QMessageBox"], &[], "-all", &[]);
     for c in ["QMessageBox", "QInputDialog", "QProgressDialog", "QColorDialog", "QFontDialog", "QFileDialog", "QDialog"] {
         assert_eq!(toplevel_flags(&dump, c), vec![(true, true, true)], "{c}: modal, transient, visible");
     }
 }
+gallery_page!(qt_11_menus, "qt", "11-menus", ["QMenuBar", "QToolBar", "QPushButton", "QLabel"]);
 gallery_page!(qt_11_styling, "qt", "11-styling", ["QWidget", "QLabel", "QPushButton", "QLineEdit"], [("f6f5f4", 0.05), ("ffffff", 0.02), ("3584e4", 0.005)]);
 gallery_page!(qt_12_styling_dark, "qt", "12-styling-dark", ["QWidget", "QLabel", "QPushButton", "QLineEdit"], [("242424", 0.05), ("303030", 0.02), ("e5a50a", 0.005)]);
 gallery_page!(qt_03_text, "qt", "03-text", ["QLineEdit", "QLabel", "QPlainTextEdit", "QTextEdit", "QTextBrowser", "QKeySequenceEdit"]);

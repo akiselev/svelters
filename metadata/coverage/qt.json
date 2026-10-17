@@ -1389,33 +1389,33 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 4,
-  "element": "menu",
+  "element": "menu, contextmenu",
   "gallery": null,
   "inherited": 0,
   "kind": "QMenu",
   "lifetime": "owned",
   "methods": [
-   1,
+   2,
    51
   ],
   "native": "QMenu",
   "ownership": false,
   "props": [
-   0,
+   5,
    5
   ],
-  "props_annotated": 0,
+  "props_annotated": 5,
   "signal_results": 0,
   "signals": [
    0,
    4
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 2,
+  "slots_own": 2,
   "unexposed": null,
   "verified": [
-   1,
-   1
+   12,
+   12
   ]
  },
  {
@@ -1443,12 +1443,12 @@
    0,
    2
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   2,
-   2
+   3,
+   3
   ]
  },
  {
@@ -2334,12 +2334,12 @@
    2,
    8
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   8,
-   8
+   9,
+   9
   ]
  },
  {

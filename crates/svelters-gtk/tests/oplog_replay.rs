@@ -174,6 +174,18 @@ fn replay(name: &str, log: String) {
                     let (o, sig) = (hd(parts[1]), parts[2]);
                     h.take_events();
                     match sig {
+                        // Menu actions (X4): activating the action is what a click or shortcut does. A
+                        // radio member turning off is the consequence of its sibling turning on.
+                        "activate" | "toggled" if h.backend.menu_action_name(o).is_some() => {
+                            if sig == "toggled" && parts[3] == "[false]" {
+                                continue;
+                            }
+                            let name = h.backend.menu_action_name(o).unwrap();
+                            let (_, short) = name.split_once('.').unwrap();
+                            let radio = !short.starts_with('a') || short.starts_with("g");
+                            let target = radio.then(|| format!("a{o}").to_variant());
+                            h.backend.menu_group(o).unwrap().activate_action(short, target.as_ref());
+                        }
                         "clicked" => h.widget(o).downcast::<gtk::Button>().unwrap().emit_clicked(),
                         "changed" => {
                             let Val::Str(s) = parse_val(parts[3].trim_start_matches('[').trim_end_matches(']')) else { panic!() };

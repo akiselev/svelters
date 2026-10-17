@@ -114,6 +114,14 @@ pub fn shape(v: &impl std::fmt::Debug) -> String {
     out
 }
 
+/// The name of a signal id: generated table, or one of the hand-written kinds (menu actions).
+fn signal_name(id: u32) -> String {
+    match SIGNALS.get((id as usize).wrapping_sub(1)) {
+        Some(s) if id < 0x4000 => s.name.to_string(),
+        _ => crate::backend::menus_signal_name(id).to_string(),
+    }
+}
+
 /// What the harness host answers to `call_sync`.
 #[derive(Debug, Clone, PartialEq, Default)]
 pub enum SyncReply {
@@ -599,7 +607,7 @@ impl Harness {
     }
     pub fn take_events_with_args(&self) -> Vec<(u64, String, Vec<V>)> {
         let evs: Vec<_> = self.rec.events.borrow_mut().drain(..).collect();
-        evs.into_iter().map(|(h, s, a)| (h, SIGNALS[(s & SVL_SIGNAL_ID_MASK) as usize - 1].name.to_string(), a.iter().map(|x| self.name_value(x)).collect())).collect()
+        evs.into_iter().map(|(h, s, a)| (h, signal_name(s & SVL_SIGNAL_ID_MASK), a.iter().map(|x| self.name_value(x)).collect())).collect()
     }
     pub fn take_destroyed(&self) -> Vec<u64> {
         self.rec.destroyed.borrow_mut().drain(..).map(|(h, _)| h).collect()

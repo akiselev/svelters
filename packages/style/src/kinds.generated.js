@@ -15,6 +15,12 @@ export const KINDS = {
    "css": "window"
   }
  },
+ "action": {
+  "ambiguous": [
+   "qt"
+  ],
+  "qt": "QAction"
+ },
  "actionbar": {
   "gtk": {
    "classes": [],
@@ -91,6 +97,12 @@ export const KINDS = {
  },
  "commandlinkbutton": {
   "qt": "QCommandLinkButton"
+ },
+ "contextmenu": {
+  "ambiguous": [
+   "qt"
+  ],
+  "qt": "QMenu"
  },
  "dateedit": {
   "qt": "QDateEdit"
@@ -324,6 +336,9 @@ export const KINDS = {
   }
  },
  "menu": {
+  "ambiguous": [
+   "qt"
+  ],
   "qt": "QMenu"
  },
  "menubar": {
@@ -336,6 +351,12 @@ export const KINDS = {
    ],
    "css": "menubutton"
   }
+ },
+ "menuseparator": {
+  "ambiguous": [
+   "qt"
+  ],
+  "qt": "QAction"
  },
  "messagebox": {
   "qt": "QMessageBox"

@@ -1,0 +1,8 @@
+[{"checkpoint":true},
+ {"event":[5,"activate",[false]]},
+ {"event":[6,"toggled",[true]]},
+ {"event":[13,"toggled",[false]]},
+ {"event":[14,"toggled",[true]]},
+ {"checkpoint":true},
+ {"event":[17,"clicked",[]]},
+ {"checkpoint":true}]

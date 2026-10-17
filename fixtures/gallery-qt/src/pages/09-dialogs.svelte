@@ -6,7 +6,7 @@
   // `bind:this` + `.call('open')`. Leaving the block destroys the dialog. `finished` reports how
   // it ended; a dialog closed with its window button is reported natively as closed.
   const kinds = ['messagebox', 'inputdialog', 'progressdialog', 'colordialog', 'fontdialog', 'filedialog', 'dialog'];
-  let open = $state({ messagebox: true });
+  let open = $state(Object.fromEntries(kinds.map((k) => [k, true])));
   let finished = $state(0);
   let last = $state('none');
 

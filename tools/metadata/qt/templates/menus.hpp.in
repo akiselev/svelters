@@ -1,0 +1,122 @@
+// ---- menus and actions (X4, gap G7) -------------------------------------------------------------
+//
+// Items of a menu, menu bar or tool bar are QActions in QWidget::actions(); a QMenu item is its
+// menuAction(). The generated `items` slots (`order: actions`) call menu_insert / menu_remove.
+//
+// Ownership: an item is parented to the widget that holds it, so deleting the holder (the backend's
+// destroy is deleteLater) deletes its QAction children and submenus, like QMenu::addMenu(title) does.
+// A removed item is released (parentless), not deleted, and can be inserted again.
+//
+// Radio sets: actions of one holder whose dynamic `svlGroup` property is the same name belong to one
+// exclusive QActionGroup, a child of the holder named `svl-group:<name>`. Names, not group objects,
+// are what JS sees, so keyed lists and reordering need no group node.
+//
+// Context menus: an element flagged `context_menu` attaches to the widget it is inserted into
+// (Qt::CustomContextMenu + QMenu::popup at the request position; never exec()).
+
+QAction *menu_item_action(QObject *c) {
+  if (auto *a = qobject_cast<QAction *>(c)) return a;
+  if (auto *m = qobject_cast<QMenu *>(c)) return m->menuAction();
+  return nullptr;
+}
+
+bool menu_is_item(QObject *c) { return menu_item_action(c) != nullptr; }
+
+QActionGroup *menu_group_for(QWidget *host, const QString &name) {
+  const QString key = QStringLiteral("svl-group:") + name;
+  for (QObject *c : host->children())
+    if (auto *g = qobject_cast<QActionGroup *>(c); g && g->objectName() == key) return g;
+  auto *g = new QActionGroup(host);
+  g->setObjectName(key);
+  g->setExclusive(true);
+  return g;
+}
+
+bool menu_is_svl_group(const QActionGroup *g) { return g && g->objectName().startsWith(QStringLiteral("svl-group:")); }
+
+// Puts `a` into the exclusive set its `svlGroup` names (or takes it out when the name is empty).
+void menu_apply_group(QAction *a, QWidget *host) {
+  const QString name = a->property("svlGroup").toString();
+  if (name.isEmpty() || !host) {
+    if (menu_is_svl_group(a->actionGroup())) a->setActionGroup(nullptr);
+    return;
+  }
+  a->setCheckable(true);
+  a->setActionGroup(menu_group_for(host, name));
+}
+
+// `group` was written: regroup the action if it is already held by a menu.
+int menu_regroup(Entry &, QObject *o) {
+  if (auto *a = qobject_cast<QAction *>(o)) menu_apply_group(a, qobject_cast<QWidget *>(a->parent()));
+  return 0;
+}
+
+int menu_insert(QObject *o, QObject *child, QObject *before) {
+  auto *w = qobject_cast<QWidget *>(o);
+  QAction *act = menu_item_action(child);
+  if (!w || !act) return fail("insert: only actions and menus can be items of a menu");
+  QAction *bact = before ? menu_item_action(before) : nullptr;
+  if (before && (!bact || !w->actions().contains(bact))) return fail("insert: `before` is not an item of this menu");
+  if (before == child) return 0;
+  if (w->actions().contains(act)) {
+    w->removeAction(act);  // a move: take it out, then put it back at its new place
+  } else if (act->parent() && act->parent() != o && qobject_cast<QWidget *>(act->parent()) &&
+             qobject_cast<QWidget *>(act->parent())->actions().contains(act)) {
+    return fail("insert: the item is already held by another menu");
+  }
+  if (auto *m = qobject_cast<QMenu *>(child)) {
+    if (m->parent() != w) m->setParent(w, m->windowFlags());
+  } else if (act->parent() != o) {
+    act->setParent(o);
+  }
+  w->insertAction(bact, act);
+  menu_apply_group(act, w);
+  if (auto *tb = qobject_cast<QToolBar *>(w); tb && qobject_cast<QMenu *>(child))
+    if (auto *btn = qobject_cast<QToolButton *>(tb->widgetForAction(act))) btn->setPopupMode(QToolButton::InstantPopup);
+  return 0;
+}
+
+int menu_remove(QObject *o, QObject *child) {
+  auto *w = qobject_cast<QWidget *>(o);
+  QAction *act = menu_item_action(child);
+  if (!w || !act || !w->actions().contains(act)) return fail("remove: child is not in this parent");
+  w->removeAction(act);
+  if (menu_is_svl_group(act->actionGroup())) act->setActionGroup(nullptr);
+  if (auto *m = qobject_cast<QMenu *>(child)) {
+    if (m->parent() == w) m->setParent(nullptr, m->windowFlags());
+  } else if (act->parent() == o) {
+    act->setParent(nullptr);
+  }
+  return 0;
+}
+
+// ---- context menus ------------------------------------------------------------------------------
+
+std::unordered_map<QObject *, QMetaObject::Connection> &ctx_connections() {
+  static std::unordered_map<QObject *, QMetaObject::Connection> m;
+  return m;
+}
+
+int ctx_attach(QObject *parent, QObject *menu) {
+  auto *w = qobject_cast<QWidget *>(parent);
+  auto *m = qobject_cast<QMenu *>(menu);
+  if (!w || !m) return fail("insert: a contextmenu attaches to a widget");
+  if (ctx_connections().count(m)) return fail("insert: the contextmenu is already attached to a widget");
+  m->setParent(w, m->windowFlags());  // owned by the widget; stays a popup window
+  w->setContextMenuPolicy(Qt::CustomContextMenu);
+  ctx_connections()[m] = QObject::connect(w, &QWidget::customContextMenuRequested, m, [w, m](const QPoint &p) { m->popup(w->mapToGlobal(p)); });
+  QObject::connect(m, &QObject::destroyed, [m] { ctx_connections().erase(m); });
+  return 0;
+}
+
+int ctx_detach(QObject *parent, QObject *menu) {
+  auto *w = qobject_cast<QWidget *>(parent);
+  auto *m = qobject_cast<QMenu *>(menu);
+  auto it = m ? ctx_connections().find(m) : ctx_connections().end();
+  if (!w || it == ctx_connections().end() || m->parent() != w) return fail("remove: child is not in this parent");
+  QObject::disconnect(it->second);
+  ctx_connections().erase(it);
+  w->setContextMenuPolicy(Qt::DefaultContextMenu);
+  m->setParent(nullptr, m->windowFlags());
+  return 0;
+}

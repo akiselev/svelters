@@ -10,9 +10,12 @@
 #include <QtCore/QEvent>
 #include <QtCore/QPointer>
 #include <QtCore/QString>
+#include <QtGui/QAction>
+#include <QtGui/QActionGroup>
 #include <QtGui/QKeyEvent>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QLineEdit>
+#include <QtWidgets/QMenu>
 #include <QtWidgets/QWidget>
 //@@INCLUDES@@
 

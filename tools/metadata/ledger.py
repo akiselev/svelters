@@ -45,8 +45,32 @@ def qt_facts() -> dict:
         return json.loads(out.read_text())
 
 
+GTK_EXTRAS = ROOT / "metadata/extras/gtk-menus.yaml"
+GTK_EXTRA_TESTS = ROOT / "crates/svelters-gtk/tests"
+
+
+def gtk_extra_facts() -> list[dict]:
+    """Facts of the hand-written GTK kinds (X4 menus): tests are `<binary>::<fn>` of crates/svelters-gtk/tests.
+    The fingerprint covers the fact record and the source of the test files it names."""
+    import hashlib
+    sys.path.insert(0, str(ROOT / "tools/metadata/common"))
+    import svmeta
+    out = []
+    for f in svmeta.load_yaml(GTK_EXTRAS).get("facts", []):
+        h = hashlib.sha256(json.dumps(f, sort_keys=True).encode())
+        for b in sorted({t.split("::")[0] for t in f["tests"]}):
+            h.update((GTK_EXTRA_TESTS / f"{b}.rs").read_bytes())
+        out.append({"fact": f"svelters-api:v1:extra:gtk:menus:{f['id']}", "fingerprint": h.hexdigest()[:16], "tests": list(f["tests"]),
+                    "kind": "menus", "name": f["id"], "section": "extras"})
+    return out
+
+
 def manifest(tk: str) -> dict:
-    return json.loads(GTK_FACTS.read_text()) if tk == "gtk" else qt_facts()
+    if tk == "gtk":
+        m = json.loads(GTK_FACTS.read_text())
+        m["facts"] = m["facts"] + gtk_extra_facts()
+        return m
+    return qt_facts()
 
 
 def load(tk: str) -> dict:
@@ -95,6 +119,13 @@ def run_gtk() -> dict[str, str]:
     if not res:
         sys.stderr.write(text[-6000:])
         raise SystemExit("ledger: no GTK test results (build failure?)")
+    # Hand-written kinds: integration tests named `<binary>::<fn>`.
+    bins = sorted({t.split("::")[0] for f in gtk_extra_facts() for t in f["tests"]})
+    cmd = display_prefix() + ["cargo", "nextest", "run", "-p", "svelters-gtk", "--no-fail-fast"] + [a for b in bins for a in ("--test", b)]
+    p = subprocess.run(cmd, cwd=ROOT, env=env(), capture_output=True, text=True)
+    text = p.stdout + p.stderr
+    for m in re.finditer(r"^\s*(PASS|FLAKY|FAIL|TIMEOUT|SIG\w+)\b.*?\]\s+(?:\(\s*\d+/\d+\)\s+)?svelters-gtk::(\w+) (\w+)", text, re.M):
+        res[f"{m.group(2)}::{m.group(3)}"] = "pass" if m.group(1) in ("PASS", "FLAKY") else "fail"
     return res
 
 

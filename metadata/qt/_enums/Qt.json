@@ -1201,6 +1201,125 @@
     },
     {
       "flags_alias": null,
+      "fullname": "QAction::ActionEvent",
+      "members": [
+        {
+          "cpp": "QAction::Trigger",
+          "name": "Trigger",
+          "value": "0"
+        },
+        {
+          "cpp": "QAction::Hover",
+          "name": "Hover",
+          "value": "1"
+        }
+      ],
+      "metaobject": null,
+      "name": "ActionEvent",
+      "origin": "qdoc",
+      "owner": "QAction",
+      "scoped": false
+    },
+    {
+      "flags_alias": null,
+      "fullname": "QAction::MenuRole",
+      "members": [
+        {
+          "cpp": "QAction::NoRole",
+          "name": "NoRole",
+          "value": "0"
+        },
+        {
+          "cpp": "QAction::TextHeuristicRole",
+          "name": "TextHeuristicRole",
+          "value": "1"
+        },
+        {
+          "cpp": "QAction::ApplicationSpecificRole",
+          "name": "ApplicationSpecificRole",
+          "value": "2"
+        },
+        {
+          "cpp": "QAction::AboutQtRole",
+          "name": "AboutQtRole",
+          "value": "3"
+        },
+        {
+          "cpp": "QAction::AboutRole",
+          "name": "AboutRole",
+          "value": "4"
+        },
+        {
+          "cpp": "QAction::PreferencesRole",
+          "name": "PreferencesRole",
+          "value": "5"
+        },
+        {
+          "cpp": "QAction::QuitRole",
+          "name": "QuitRole",
+          "value": "6"
+        }
+      ],
+      "metaobject": null,
+      "name": "MenuRole",
+      "origin": "qdoc",
+      "owner": "QAction",
+      "scoped": false
+    },
+    {
+      "flags_alias": null,
+      "fullname": "QAction::Priority",
+      "members": [
+        {
+          "cpp": "QAction::LowPriority",
+          "name": "LowPriority",
+          "value": "0"
+        },
+        {
+          "cpp": "QAction::NormalPriority",
+          "name": "NormalPriority",
+          "value": "128"
+        },
+        {
+          "cpp": "QAction::HighPriority",
+          "name": "HighPriority",
+          "value": "256"
+        }
+      ],
+      "metaobject": null,
+      "name": "Priority",
+      "origin": "qdoc",
+      "owner": "QAction",
+      "scoped": false
+    },
+    {
+      "flags_alias": null,
+      "fullname": "QActionGroup::ExclusionPolicy",
+      "members": [
+        {
+          "cpp": "QActionGroup::None",
+          "name": "None",
+          "value": "0"
+        },
+        {
+          "cpp": "QActionGroup::Exclusive",
+          "name": "Exclusive",
+          "value": "1"
+        },
+        {
+          "cpp": "QActionGroup::ExclusiveOptional",
+          "name": "ExclusiveOptional",
+          "value": "2"
+        }
+      ],
+      "metaobject": null,
+      "name": "ExclusionPolicy",
+      "origin": "qdoc",
+      "owner": "QActionGroup",
+      "scoped": false
+    },
+    {
+      "flags_alias": null,
       "fullname": "QBoxLayout::Direction",
       "members": [
         {
@@ -3430,6 +3549,372 @@
       "name": "SelectionFlag",
       "origin": "qdoc",
       "owner": "QItemSelectionModel",
+      "scoped": false
+    },
+    {
+      "flags_alias": null,
+      "fullname": "QKeySequence::StandardKey",
+      "members": [
+        {
+          "cpp": "QKeySequence::UnknownKey",
+          "name": "UnknownKey",
+          "value": "0"
+        },
+        {
+          "cpp": "QKeySequence::HelpContents",
+          "name": "HelpContents",
+          "value": "1"
+        },
+        {
+          "cpp": "QKeySequence::WhatsThis",
+          "name": "WhatsThis",
+          "value": "2"
+        },
+        {
+          "cpp": "QKeySequence::Open",
+          "name": "Open",
+          "value": "3"
+        },
+        {
+          "cpp": "QKeySequence::Close",
+          "name": "Close",
+          "value": "4"
+        },
+        {
+          "cpp": "QKeySequence::Save",
+          "name": "Save",
+          "value": "5"
+        },
+        {
+          "cpp": "QKeySequence::New",
+          "name": "New",
+          "value": "6"
+        },
+        {
+          "cpp": "QKeySequence::Delete",
+          "name": "Delete",
+          "value": "7"
+        },
+        {
+          "cpp": "QKeySequence::Cut",
+          "name": "Cut",
+          "value": "8"
+        },
+        {
+          "cpp": "QKeySequence::Copy",
+          "name": "Copy",
+          "value": "9"
+        },
+        {
+          "cpp": "QKeySequence::Paste",
+          "name": "Paste",
+          "value": "10"
+        },
+        {
+          "cpp": "QKeySequence::Undo",
+          "name": "Undo",
+          "value": "11"
+        },
+        {
+          "cpp": "QKeySequence::Redo",
+          "name": "Redo",
+          "value": "12"
+        },
+        {
+          "cpp": "QKeySequence::Back",
+          "name": "Back",
+          "value": "13"
+        },
+        {
+          "cpp": "QKeySequence::Forward",
+          "name": "Forward",
+          "value": "14"
+        },
+        {
+          "cpp": "QKeySequence::Refresh",
+          "name": "Refresh",
+          "value": "15"
+        },
+        {
+          "cpp": "QKeySequence::ZoomIn",
+          "name": "ZoomIn",
+          "value": "16"
+        },
+        {
+          "cpp": "QKeySequence::ZoomOut",
+          "name": "ZoomOut",
+          "value": "17"
+        },
+        {
+          "cpp": "QKeySequence::Print",
+          "name": "Print",
+          "value": "18"
+        },
+        {
+          "cpp": "QKeySequence::AddTab",
+          "name": "AddTab",
+          "value": "19"
+        },
+        {
+          "cpp": "QKeySequence::NextChild",
+          "name": "NextChild",
+          "value": "20"
+        },
+        {
+          "cpp": "QKeySequence::PreviousChild",
+          "name": "PreviousChild",
+          "value": "21"
+        },
+        {
+          "cpp": "QKeySequence::Find",
+          "name": "Find",
+          "value": "22"
+        },
+        {
+          "cpp": "QKeySequence::FindNext",
+          "name": "FindNext",
+          "value": "23"
+        },
+        {
+          "cpp": "QKeySequence::FindPrevious",
+          "name": "FindPrevious",
+          "value": "24"
+        },
+        {
+          "cpp": "QKeySequence::Replace",
+          "name": "Replace",
+          "value": "25"
+        },
+        {
+          "cpp": "QKeySequence::SelectAll",
+          "name": "SelectAll",
+          "value": "26"
+        },
+        {
+          "cpp": "QKeySequence::Bold",
+          "name": "Bold",
+          "value": "27"
+        },
+        {
+          "cpp": "QKeySequence::Italic",
+          "name": "Italic",
+          "value": "28"
+        },
+        {
+          "cpp": "QKeySequence::Underline",
+          "name": "Underline",
+          "value": "29"
+        },
+        {
+          "cpp": "QKeySequence::MoveToNextChar",
+          "name": "MoveToNextChar",
+          "value": "30"
+        },
+        {
+          "cpp": "QKeySequence::MoveToPreviousChar",
+          "name": "MoveToPreviousChar",
+          "value": "31"
+        },
+        {
+          "cpp": "QKeySequence::MoveToNextWord",
+          "name": "MoveToNextWord",
+          "value": "32"
+        },
+        {
+          "cpp": "QKeySequence::MoveToPreviousWord",
+          "name": "MoveToPreviousWord",
+          "value": "33"
+        },
+        {
+          "cpp": "QKeySequence::MoveToNextLine",
+          "name": "MoveToNextLine",
+          "value": "34"
+        },
+        {
+          "cpp": "QKeySequence::MoveToPreviousLine",
+          "name": "MoveToPreviousLine",
+          "value": "35"
+        },
+        {
+          "cpp": "QKeySequence::MoveToNextPage",
+          "name": "MoveToNextPage",
+          "value": "36"
+        },
+        {
+          "cpp": "QKeySequence::MoveToPreviousPage",
+          "name": "MoveToPreviousPage",
+          "value": "37"
+        },
+        {
+          "cpp": "QKeySequence::MoveToStartOfLine",
+          "name": "MoveToStartOfLine",
+          "value": "38"
+        },
+        {
+          "cpp": "QKeySequence::MoveToEndOfLine",
+          "name": "MoveToEndOfLine",
+          "value": "39"
+        },
+        {
+          "cpp": "QKeySequence::MoveToStartOfBlock",
+          "name": "MoveToStartOfBlock",
+          "value": "40"
+        },
+        {
+          "cpp": "QKeySequence::MoveToEndOfBlock",
+          "name": "MoveToEndOfBlock",
+          "value": "41"
+        },
+        {
+          "cpp": "QKeySequence::MoveToStartOfDocument",
+          "name": "MoveToStartOfDocument",
+          "value": "42"
+        },
+        {
+          "cpp": "QKeySequence::MoveToEndOfDocument",
+          "name": "MoveToEndOfDocument",
+          "value": "43"
+        },
+        {
+          "cpp": "QKeySequence::SelectNextChar",
+          "name": "SelectNextChar",
+          "value": "44"
+        },
+        {
+          "cpp": "QKeySequence::SelectPreviousChar",
+          "name": "SelectPreviousChar",
+          "value": "45"
+        },
+        {
+          "cpp": "QKeySequence::SelectNextWord",
+          "name": "SelectNextWord",
+          "value": "46"
+        },
+        {
+          "cpp": "QKeySequence::SelectPreviousWord",
+          "name": "SelectPreviousWord",
+          "value": "47"
+        },
+        {
+          "cpp": "QKeySequence::SelectNextLine",
+          "name": "SelectNextLine",
+          "value": "48"
+        },
+        {
+          "cpp": "QKeySequence::SelectPreviousLine",
+          "name": "SelectPreviousLine",
+          "value": "49"
+        },
+        {
+          "cpp": "QKeySequence::SelectNextPage",
+          "name": "SelectNextPage",
+          "value": "50"
+        },
+        {
+          "cpp": "QKeySequence::SelectPreviousPage",
+          "name": "SelectPreviousPage",
+          "value": "51"
+        },
+        {
+          "cpp": "QKeySequence::SelectStartOfLine",
+          "name": "SelectStartOfLine",
+          "value": "52"
+        },
+        {
+          "cpp": "QKeySequence::SelectEndOfLine",
+          "name": "SelectEndOfLine",
+          "value": "53"
+        },
+        {
+          "cpp": "QKeySequence::SelectStartOfBlock",
+          "name": "SelectStartOfBlock",
+          "value": "54"
+        },
+        {
+          "cpp": "QKeySequence::SelectEndOfBlock",
+          "name": "SelectEndOfBlock",
+          "value": "55"
+        },
+        {
+          "cpp": "QKeySequence::SelectStartOfDocument",
+          "name": "SelectStartOfDocument",
+          "value": "56"
+        },
+        {
+          "cpp": "QKeySequence::SelectEndOfDocument",
+          "name": "SelectEndOfDocument",
+          "value": "57"
+        },
+        {
+          "cpp": "QKeySequence::DeleteStartOfWord",
+          "name": "DeleteStartOfWord",
+          "value": "58"
+        },
+        {
+          "cpp": "QKeySequence::DeleteEndOfWord",
+          "name": "DeleteEndOfWord",
+          "value": "59"
+        },
+        {
+          "cpp": "QKeySequence::DeleteEndOfLine",
+          "name": "DeleteEndOfLine",
+          "value": "60"
+        },
+        {
+          "cpp": "QKeySequence::InsertParagraphSeparator",
+          "name": "InsertParagraphSeparator",
+          "value": "61"
+        },
+        {
+          "cpp": "QKeySequence::InsertLineSeparator",
+          "name": "InsertLineSeparator",
+          "value": "62"
+        },
+        {
+          "cpp": "QKeySequence::SaveAs",
+          "name": "SaveAs",
+          "value": "63"
+        },
+        {
+          "cpp": "QKeySequence::Preferences",
+          "name": "Preferences",
+          "value": "64"
+        },
+        {
+          "cpp": "QKeySequence::Quit",
+          "name": "Quit",
+          "value": "65"
+        },
+        {
+          "cpp": "QKeySequence::FullScreen",
+          "name": "FullScreen",
+          "value": "66"
+        },
+        {
+          "cpp": "QKeySequence::Deselect",
+          "name": "Deselect",
+          "value": "67"
+        },
+        {
+          "cpp": "QKeySequence::DeleteCompleteLine",
+          "name": "DeleteCompleteLine",
+          "value": "68"
+        },
+        {
+          "cpp": "QKeySequence::Backspace",
+          "name": "Backspace",
+          "value": "69"
+        },
+        {
+          "cpp": "QKeySequence::Cancel",
+          "name": "Cancel",
+          "value": "70"
+        }
+      ],
+      "metaobject": null,
+      "name": "StandardKey",
+      "origin": "qdoc",
+      "owner": "QKeySequence",
       "scoped": false
     },
     {

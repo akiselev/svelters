@@ -82,6 +82,10 @@ impl Inner {
     }
 
     pub(crate) fn style_op(&self, op: u32, h: u64, text: Option<&str>) -> Res<i32> {
+        // Menu items, menus and context menus are not widgets (menus.rs): nothing to style.
+        if h != 0 && self.menu_kind(h).is_some_and(|k| !matches!(k, super::menus::KIND_MENUBAR | super::menus::KIND_TOOLBAR)) {
+            return Ok(0);
+        }
         match op {
             SVL_STYLE_TARGET => return Ok(SVL_STYLE_TARGET_CSS),
             SVL_STYLE_CLASSES => self.style_classes(h, text.unwrap_or(""))?,

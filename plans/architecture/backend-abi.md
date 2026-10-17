@@ -357,6 +357,22 @@ enum { SVL_LISTEN_AFTER = 1, SVL_LISTEN_CAPTURE = 2 };   /* listen_ex flags; 4 i
 - Support is per backend and per signal. A combination that has no honest native meaning fails with an error that names the reason; see "Listener phases per backend" in `docs/notes/x3-childattr-listen.md`.
 - The op log gets one more word on `listen` lines (`listen #1 key-pressed on after+capture`, only when flags are set) and one line type `attr #<parent> #<child> <name> <json>` (`null` = reset).
 
+
+### Non-widget kinds: menus and actions (X4, no ABI change)
+
+Menu nodes are ordinary kinds of the existing ops; nothing is added to the vtable. The conventions both backends follow:
+
+- **Kinds.** `menubar` and `toolbar` are widgets (insertable into any widget slot). `menu`, `action`, `menuseparator` and `contextmenu` are non-widget kinds of lifetime class `owned`. `menuseparator` is not called `separator` because GTK's `separator` is a widget.
+- **Placement.** The slot is always the default (0); the backend decides by the kinds of parent and child:
+  - `action`, `menuseparator` and `menu` go into a `menu`, `menubar`, `toolbar` or `contextmenu`;
+  - a `menu` also goes into a `menubutton` (GTK `menu-model`);
+  - a `contextmenu` goes into any widget and attaches to it.
+- **Order.** `insert(parent, child, before)` with a `before` that is already in the parent is a move, so a keyed `{#each}` reorder is `insert` with an anchor and needs no `remove`. `before` that is not an item of the parent fails. `remove` releases the child (Qt: parentless, not deleted); `destroy` ends it.
+- **Properties.** `label`, `icon` (theme icon name), `shortcut` (`Ctrl+O`), `tooltip`, `enabled`, `visible`, `checkable`, `checked`, `group` on `action`; `label`, `icon`, `enabled` on `menu`. A bare attribute (`<action checkable>`) arrives as the text `""` when the host has no descriptor, which both backends accept for booleans.
+- **Signals.** `activate(checked)` (a click, Enter or the shortcut) and `toggled(checked)` (the check state changed because of the user). Writing `checked` from JS never posts `toggled` for that action (no echo). In a radio `group` the user's pick posts `toggled(false)` for the previous member and `toggled(true)` for the new one; Qt also posts `toggled(false)` for the previous member when JS selects another one (the member really changed state).
+- **Radio.** Actions of one parent with the same `group` name are exclusive; each keeps its own `checked`. GTK: one string-state `GSimpleAction` per (parent, group). Qt: an exclusive `QActionGroup` per (parent, group), a child of the parent.
+- **Methods.** `contextmenu.popup(...)` and `popdown()` (never a blocking `exec`). GTK takes `popup(x, y)`; Qt takes a `Point` record.
+
 ### ABI v2.3 additive (X6: styling)
 
 One optional member appended after `listen_ex` (a backend without it answers every styling op with "styling is not supported by this backend"). No existing member changes. Design: `plans/milestones/X6-styling.md`, user guide: `docs/site` styling page.

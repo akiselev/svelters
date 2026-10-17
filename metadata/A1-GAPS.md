@@ -17,7 +17,7 @@ some blocked facts are not worth exposing anyway.
 | G4 | Boxed/value types: **closed by S1 + S2** (typed values, out/in-out params, exact GVariant, GValue props, VALUE handles); open: GTK time-only/date-only records, model data | few | - |
 | G5 | Sync signal handlers: **bool results closed by X2 (master ba5bb65)**; **listen phases (after, capture) closed by X3**; open: typed `value` results, Qt `key_release`/generic events | GTK: `handler_result: value` signals; Qt event families | gtk-ranges (SpinButton input/output), qt-text |
 | G6 | Model-backed views (GListModel, QAbstractItemModel): **closed by X5 (branch worktree-agent-a8dce564007788244, 28a8e17 GTK, abd7024 Qt)** through the portable `virtuallist` kind (`packages/lists`, `plans/milestones/M5-lists.md`). Open: ColumnView/TableView/TreeView columns, `GtkDropDown`/`GtkComboBox`/`QComboBox` models, `GtkTreeView`/`QTreeView` hierarchies | the 12 GTK / 11 Qt view kinds map to `virtuallist` (list, grid); the rest stay as listed | gtk-lists-b, qt-lists-b (re-run) |
-| G7 | Non-widget child objects (QAction, GMenuModel); S2 added `QMenu.yaml` (tag `menu`) with callbacks as a proof: extend it | QMenu, QMenuBar, QToolBar actions; GtkPopoverMenu(Bar) | qt-menus, gtk-menus |
+| G7 | Non-widget child objects (QAction, GMenuModel): **closed by lane X4** (menus, actions, check/radio, shortcuts, context menus, toolbar actions on both toolkits; see the G7 section) | QMenu, QMenuBar, QToolBar actions; GtkPopoverMenu(Bar) | qt-menus, gtk-menus |
 | G8 | Native-to-JS callbacks: **closed on Qt by S2** (`callbacks:`, async methods); **sort/filter for model-backed views closed by X5 by design** (JS sorts and filters, keyed diff pushes minimal splices; see M5-lists.md). Open on GTK: DrawingArea draw func, `GtkListBox`/`GtkFlowBox` sort/filter/header funcs, `scale_format_value_func` | DrawingArea, ListBox/FlowBox sort/filter/header funcs | gtk-display (DrawingArea), gtk-lists-a (sort/filter) |
 | G9 | Toplevel kinds other than `window` cannot be mounted (renderer): **closed by X7** (`docs/notes/x7-toplevels-kinds.md`): toplevels are declared anywhere in a component, transient for the enclosing window, shown by `show="modal|modeless|none"`; Qt dialogs open with `open()`, GTK `AboutDialog` and secondary windows verified in the galleries. Not done: `Qt::WizardPage` wizard flows, GTK deprecated dialogs stay unexposed | every Qt dialog element's gallery presence; GTK AboutDialog, Popover-like toplevels | qt-dialogs (gallery), gtk-dialogs |
 | G10 | GTK slots whose native ops take a widget subclass: **closed by the A1 lead** (generator downcasts to `accepts`, upcasts getters; MenuButton `popover` verified) | MenuButton `popover`, Popover-typed slots, Notebook menu labels | gtk-buttons, gtk-dialogs |
@@ -156,6 +156,18 @@ handlers are listed under "Later ABI additions".
   only after G4, `GtkComboBoxText`/`QComboBox::addItem(QString)` as methods.
 
 ## G7: non-widget child objects
+
+**Status 2026-10-17: closed by lane X4** (`plans/milestones/X4-menus.md`, notes `docs/notes/x4-menus.md`, ABI text
+"Non-widget kinds: menus and actions" in `backend-abi.md`: no ABI change). Commits b3b7572 (plan), 3a2ac52 (GTK
+`menus.rs` and tests), d8b939b (GTK end to end: fixture `menus`, host test, bindings), b16cad5 (GTK ledger facts), f2e129d
+(Qt: QAction ingest, generator `order: actions`, `menus.hpp.in`, generated tests), a1c03ee (Qt host test, galleries), plus the
+follow-up commits of the lane. JS: `<menubar>`, `<toolbar>`, `<menu label>`, `<action label icon shortcut tooltip enabled visible
+checkable checked group onactivate ontoggled bind:checked>`, `<menuseparator>`, `<contextmenu>` (a child of any widget). Qt: elements
+`action`, `menuseparator`, `menu`, `contextmenu`, `menubar`, `toolbar`; the slot `items` (`order: actions`) is
+`QWidget::insertAction/removeAction`, radio sets are `QActionGroup`s keyed by `group`. GTK: hand-written `GMenu` models kept in sync
+(`GSimpleActionGroup`, `GtkPopoverMenuBar`, `GtkPopoverMenu`, `GtkShortcutController`, `GtkMenuButton:menu-model`). Still open from
+this gap: Qt `toolbutton` `menu` slot, `contextmenu.popup` argument shape (GTK `(x, y)`, Qt `Point`), window-level menu bar and tool bar
+slots (G1's QMainWindow areas). The original text follows.
 
 Menus and toolbars hold actions (`QAction`, `GMenuItem`), which are not widgets and have no element kind.
 
