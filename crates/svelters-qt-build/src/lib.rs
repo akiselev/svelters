@@ -34,6 +34,7 @@ pub struct Config {
     tags: Vec<String>,
     verification_tests: bool,
     fat: bool,
+    dts_out: Option<PathBuf>,
 }
 
 impl Default for Config {
@@ -52,6 +53,7 @@ impl Config {
             tags: Vec::new(),
             verification_tests: false,
             fat: true,
+            dts_out: None,
         }
     }
 
@@ -100,6 +102,13 @@ impl Config {
         self
     }
 
+    /// Also write the element `.d.ts` to a stable path (for example in a checked-in `types/`
+    /// directory). The file is only rewritten when its content changes.
+    pub fn dts_out(mut self, path: impl Into<PathBuf>) -> Self {
+        self.dts_out = Some(path.into());
+        self
+    }
+
     /// Run the generator, compile, and print cargo directives. Panics with a message on failure.
     pub fn build(self) {
         if let Err(e) = self.try_build() {
@@ -144,13 +153,12 @@ impl Config {
         std::fs::write(&cfg_path, toml).map_err(|e| e.to_string())?;
 
         let python = env::var("SVELTERS_PYTHON").unwrap_or_else(|_| "python3".into());
-        let status = Command::new(&python)
-            .arg("-I")
-            .arg(root.join(GENERATOR))
-            .arg("--config")
-            .arg(&cfg_path)
-            .arg("--out")
-            .arg(&gen_dir)
+        let mut gen_cmd = Command::new(&python);
+        gen_cmd.arg("-I").arg(root.join(GENERATOR)).arg("--config").arg(&cfg_path).arg("--out").arg(&gen_dir);
+        if let Some(dts) = &self.dts_out {
+            gen_cmd.arg("--dts").arg(root.join(dts));
+        }
+        let status = gen_cmd
             .status()
             .map_err(|e| format!("cannot run {python}: {e}"))?;
         if !status.success() {

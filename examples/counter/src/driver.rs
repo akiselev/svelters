@@ -256,6 +256,9 @@ impl Driver {
         let ms = |ns: u64| ns as f64 / 1e6;
         let js_only = host.js_ns.saturating_sub(host.ops_ns);
         let abi = host.ops_ns.saturating_sub(tk_ns);
+        // Everything between the action and the first idle poll that is neither JS, host/ABI nor a
+        // synchronous backend call: the toolkit's own event handling, layout and show/polish.
+        let deferred = (wall.as_secs_f64() * 1e3 - ms(js_only) - ms(abi) - ms(tk_ns)).max(0.0);
         self.st.borrow_mut().step_log.push(json!({
             "step": p.index,
             "what": p.what,
@@ -263,6 +266,7 @@ impl Driver {
             "js_ms": ms(js_only),
             "host_abi_ms": ms(abi),
             "toolkit_calls_ms": ms(tk_ns),
+            "toolkit_deferred_ms": deferred,
             "host_ops": host.ops,
             "toolkit_calls": tk_calls,
             "checkpoints": host.checkpoints,

@@ -908,6 +908,7 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", required=True)
     ap.add_argument("--out", required=True)
+    ap.add_argument("--dts", help="also write the .d.ts to this stable path (only rewritten when it changes)")
     a = ap.parse_args()
     cfgp = Path(a.config).resolve()
     cfg = tomllib.loads(cfgp.read_text())
@@ -922,6 +923,8 @@ def main() -> int:
         write_text(out / o["backend"], gen_backend(m, digest, (templ / "backend.cpp.in").read_text()))
         write_text(out / o["verify"], gen_verify(m, digest, (templ / "verify.cpp.in").read_text()))
         write_text(out / o["dts"], gen_dts(m))
+        if a.dts:
+            write_text(Path(a.dts), gen_dts(m))
     except GenError as ex:
         print(f"gen_cpp: {ex}", file=sys.stderr)
         return 1

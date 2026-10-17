@@ -1,6 +1,7 @@
 packages:
   - "packages/*"
   - "fixtures/*"
+  - "bench/*"
   - "tests/*"
 
 # Every package resolves svelte to the vendored custom-renderer fork (see vendor/svelte/PIN).
