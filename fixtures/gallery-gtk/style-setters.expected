@@ -1,0 +1,8 @@
+# Ops the setter row of the styling page must produce in the TestHost (check-pages.mjs; #N is any handle).
+# rules: .setters { spacing; orientation; margin-top }, .grow { hexpand }; inline: valign, width-request
+set #N spacing 16
+set #N orientation "horizontal"
+set #N marginTop 4
+set #N hexpand true
+set #N valign "center"
+set #N widthRequest 120

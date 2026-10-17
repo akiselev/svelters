@@ -47,34 +47,4 @@ element_hints:
     hint: "QtWidgets has no header bar: the title comes from the window `title`, buttons go in the window's menubar slot (or a QToolBar once annotated)"
     provenance: "QMainWindow docs (window decoration is native); GTK HeaderBar has no QtWidgets equivalent"
 
-style:
-  units:
-    dp: { scale: 1, provenance: "Qt 6 widget geometry is in device-independent pixels (high-DPI scaling is always on)" }
-  declarations:
-    orientation:
-      prop: orientation
-      value: enum
-      applies_to: box
-      contract: common
-      provenance: "box.orientation (QWidget.yaml) maps to QBoxLayout::setDirection"
-    spacing:
-      prop: spacing
-      value: length
-      applies_to: box
-      contract: common
-      provenance: "box.spacing (QWidget.yaml) is QLayout::spacing in device-independent pixels"
-    min-height:
-      prop: minimumHeight
-      value: length
-      applies_to: QWidget
-      contract: common
-      provenance: "QWidget::minimumHeight (Qt docs); annotated on button and entry"
-    emphasis:
-      applies_to: QPushButton
-      contract: native_intent
-      intents:
-        normal: {}
-        accent: { set: { prop: default, value: true } }
-      unsupported:
-        destructive: "Qt has no destructive-action button convention (no style class or role marks it)"
-      provenance: "Qt's convention for the emphasized button of a form is the default button (QPushButton::default); Qt has no destructive-action convention"
+# Style properties (setters, child attributes, native CSS) live in metadata/style/qt.yaml.

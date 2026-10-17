@@ -1,0 +1,114 @@
+# Style properties of the GTK 4 backend: how each declaration in a `<style>` rule, `style=` or
+# `style:` is applied. Hand-written; checked and expanded by tools/metadata/style/style_table.py
+# (through tools/metadata/semantics/gen_semantics.py, which embeds the result in
+# metadata/semantics/gtk.json) and rendered by tools/metadata/style/gen_props.py into
+# packages/style/src/props.generated.js and the per-toolkit styling reference of the docs.
+#
+# Names follow the native API in kebab-case, never a portable alias:
+#   via: css        GTK CSS (the X6 translator, @svelters/style): the CSS property of the same name.
+#   via: setter     a widget property written with setProp. `prop` is the GObject property name;
+#                   `kinds` are the classes it applies to (every tag whose kind chain holds one).
+#   via: child-attr a per-child attribute of the parent, written with setChildAttr. `attr` is the
+#                   child attribute; `parents` are the parent classes.
+# `type` of a setter or child attribute: length (a number of pixels, unitless or in a unit of
+# `units`), int, number, bool, enum (one of the property's values), insets (1 to 4 lengths).
+toolkit: gtk
+# The native styling dialect: css (GTK CSS), qss (Qt stylesheets) or none (a setter-only toolkit).
+dialect: css
+# Selectors a setter rule takes: a compound of these and nothing else.
+setter_selectors: [type, class, id]
+units:
+  px: { scale: 1, provenance: "GTK 4 sizes are logical pixels; GDK applies the scale factor" }
+
+properties:
+  # ---- GTK CSS (https://docs.gtk.org/gtk4/css-properties.html) ----
+  color: { via: css }
+  background: { via: css }
+  background-color: { via: css }
+  background-image: { via: css }
+  border: { via: css }
+  border-width: { via: css }
+  border-style: { via: css }
+  border-color: { via: css }
+  border-radius: { via: css }
+  border-top: { via: css }
+  border-right: { via: css }
+  border-bottom: { via: css }
+  border-left: { via: css }
+  border-top-width: { via: css }
+  border-right-width: { via: css }
+  border-bottom-width: { via: css }
+  border-left-width: { via: css }
+  border-top-style: { via: css }
+  border-right-style: { via: css }
+  border-bottom-style: { via: css }
+  border-left-style: { via: css }
+  border-top-color: { via: css }
+  border-right-color: { via: css }
+  border-bottom-color: { via: css }
+  border-left-color: { via: css }
+  border-top-left-radius: { via: css }
+  border-top-right-radius: { via: css }
+  border-bottom-left-radius: { via: css }
+  border-bottom-right-radius: { via: css }
+  padding: { via: css }
+  padding-top: { via: css }
+  padding-right: { via: css }
+  padding-bottom: { via: css }
+  padding-left: { via: css }
+  margin: { via: css, note: "the CSS box margin; margin-top and margin-bottom are the widget's margin properties" }
+  margin-left: { via: css, note: "the CSS box margin; the widget margins are margin-start and margin-end" }
+  margin-right: { via: css, note: "the CSS box margin; the widget margins are margin-start and margin-end" }
+  font-family: { via: css }
+  font-size: { via: css }
+  font-weight: { via: css }
+  font-style: { via: css }
+  opacity: { via: css, note: "in style= and style: it is gtk_widget_set_opacity" }
+  min-width: { via: css, note: "a CSS minimum; width-request is the widget's size request" }
+  min-height: { via: css, note: "a CSS minimum; height-request is the widget's size request" }
+  text-decoration: { via: css }
+  letter-spacing: { via: css }
+  box-shadow: { via: css }
+  text-shadow: { via: css }
+  transition: { via: css }
+  transition-property: { via: css }
+  transition-duration: { via: css }
+  transition-timing-function: { via: css }
+  transition-delay: { via: css }
+  animation: { via: css }
+  animation-name: { via: css }
+  animation-duration: { via: css }
+  animation-timing-function: { via: css }
+  animation-delay: { via: css }
+  animation-iteration-count: { via: css }
+  animation-direction: { via: css }
+  animation-fill-mode: { via: css }
+  animation-play-state: { via: css }
+
+  # ---- GtkWidget properties ----
+  width-request: { via: setter, prop: width-request, type: length, kinds: [Gtk.Widget] }
+  height-request: { via: setter, prop: height-request, type: length, kinds: [Gtk.Widget] }
+  hexpand: { via: setter, prop: hexpand, type: bool, kinds: [Gtk.Widget] }
+  vexpand: { via: setter, prop: vexpand, type: bool, kinds: [Gtk.Widget] }
+  halign: { via: setter, prop: halign, type: enum, kinds: [Gtk.Widget] }
+  valign: { via: setter, prop: valign, type: enum, kinds: [Gtk.Widget] }
+  margin-start: { via: setter, prop: margin-start, type: length, kinds: [Gtk.Widget] }
+  margin-end: { via: setter, prop: margin-end, type: length, kinds: [Gtk.Widget] }
+  margin-top: { via: setter, prop: margin-top, type: length, kinds: [Gtk.Widget], note: "the widget margin, not the CSS one" }
+  margin-bottom: { via: setter, prop: margin-bottom, type: length, kinds: [Gtk.Widget], note: "the widget margin, not the CSS one" }
+  sensitive: { via: setter, prop: sensitive, type: bool, kinds: [Gtk.Widget] }
+
+  # ---- containers ----
+  orientation: { via: setter, prop: orientation, type: enum, kinds: [Gtk.Orientable] }
+  spacing: { via: setter, prop: spacing, type: length, kinds: [Gtk.Box] }
+  homogeneous: { via: setter, prop: homogeneous, type: bool, kinds: [Gtk.Box, Gtk.FlowBox] }
+  row-spacing: { via: setter, prop: row-spacing, type: length, kinds: [Gtk.Grid, Gtk.FlowBox] }
+  column-spacing: { via: setter, prop: column-spacing, type: length, kinds: [Gtk.Grid, Gtk.FlowBox] }
+  row-homogeneous: { via: setter, prop: row-homogeneous, type: bool, kinds: [Gtk.Grid] }
+  column-homogeneous: { via: setter, prop: column-homogeneous, type: bool, kinds: [Gtk.Grid] }
+
+  # ---- text ----
+  xalign: { via: setter, prop: xalign, type: number, kinds: [Gtk.Label] }
+  yalign: { via: setter, prop: yalign, type: number, kinds: [Gtk.Label] }
+  justify: { via: setter, prop: justify, type: enum, kinds: [Gtk.Label] }
+  wrap: { via: setter, prop: wrap, type: bool, kinds: [Gtk.Label] }

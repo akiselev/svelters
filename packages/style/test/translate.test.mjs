@@ -34,8 +34,9 @@ function report(name) {
   const gtk = translateSheet(css, 'gtk', { native: native.gtk });
   const qt = translateSheet(css, 'qt', { native: native.qt });
   const diags = [...gtk.diagnostics, ...qt.diagnostics].map(formatDiagnostic);
+  const rules = (r) => (r.rules.length ? [`=== ${r === gtk ? 'gtk' : 'qt'} setter rules ===`, ...r.rules.map((x) => JSON.stringify(x)), ''] : []);
   return [
-    '=== gtk ===', gtk.css, '=== qt ===', qt.css, '=== qt dark ===', qt.dark, '=== diagnostics ===', diags.join('\n'), '',
+    '=== gtk ===', gtk.css, '=== qt ===', qt.css, '=== qt dark ===', qt.dark, ...rules(gtk), ...rules(qt), '=== diagnostics ===', diags.join('\n'), '',
   ].join('\n');
 }
 
@@ -46,6 +47,35 @@ test('unsupported: every drop is diagnosed and names the toolkit', () => {
   const diags = text.split('=== diagnostics ===')[1].trim().split('\n');
   for (const d of diags) assert.match(d, /^(error|warning|info) \[(gtk|qt)\] /);
 });
+test('setters: per-property split, setter rules with specificity and order, selector and value diagnostics', () => {
+  const text = report('setters');
+  golden('setters', text);
+  const { css } = styleOf('setters');
+  const r = translateAll(css);
+  assert.ok(r.sheets.rules.gtk.length > 0 && r.sheets.rules.qt.length > 0, 'both toolkits get setter rules');
+  // css declarations of the same rule still reach the dialect
+  assert.match(r.sheets.gtk, /\.toolbar\.svelte-setters \{\n  color: #333;/);
+  assert.doesNotMatch(r.sheets.gtk, /spacing/);
+});
+
+test('sheets without setter properties carry no rules', () => {
+  const { css } = styleOf('card');
+  assert.equal(translateAll(css).sheets.rules, undefined);
+});
+
+test('inline setters are parsed per toolkit; names are native', () => {
+  const g = inlineToNative('spacing: 8px; hexpand: true; halign: center; color: red; minimum-width: 10', 'gtk');
+  assert.equal(g.text, 'color: red;');
+  assert.deepEqual(g.setters.map((x) => [x.name, x.value]), [['spacing', 8], ['hexpand', true], ['halign', 'center']]);
+  assert.match(formatDiagnostic(g.diagnostics[0]), /'minimum-width' is not a gtk style property \(it is one on qt\)/);
+  const q = inlineToNative('minimum-width: 40; contents-margins: 1 2; stretch: 2; spacing: 4dp', 'qt');
+  assert.deepEqual(q.setters.map((x) => [x.name, x.value]), [['minimum-width', 40], ['contents-margins', { top: 1, right: 2, bottom: 1, left: 2 }], ['stretch', 2]]);
+  assert.match(formatDiagnostic(q.diagnostics[0]), /spacing: '4dp' is not a length/);
+  const bad = inlineToNative('halign: middle; hexpand: yes; spacing: var(--sv-space-1)', 'gtk');
+  assert.deepEqual(bad.setters, []);
+  assert.equal(bad.diagnostics.length, 3);
+});
+
 test('native: blocks pass through verbatim to their own toolkit only', () => golden('native', report('native')));
 
 test('qt output never contains constructs QSS cannot parse', () => {
@@ -77,7 +107,7 @@ test('inline style: gtk keeps var(), qt gets placeholders, opacity goes to the w
   assert.equal(l.text, 'background: red;');
   const bad = inlineToNative('display: none; color: red', 'qt');
   assert.equal(bad.text, 'color: red;');
-  assert.match(formatDiagnostic(bad.diagnostics[0]), /^warning \[qt\] property 'display' is not supported/);
+  assert.match(formatDiagnostic(bad.diagnostics[0]), /^warning \[qt\] property 'display' is not a qt style property/);
 });
 
 test('parseDeclarations handles parentheses, quotes and trailing semicolons', () => {

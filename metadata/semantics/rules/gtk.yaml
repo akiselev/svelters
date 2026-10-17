@@ -39,45 +39,4 @@ kinds:
 # GTK defaults come from GParamSpec (metadata/gtk/*.json); entries here override or fill gaps.
 defaults: {}
 
-style:
-  units:
-    dp: { scale: 1, provenance: "GTK 4 sizes are logical pixels; the scale factor is applied by GDK" }
-  declarations:
-    orientation:
-      prop: orientation
-      value: enum
-      applies_to: Gtk.Orientable
-      contract: common
-      provenance: "GtkOrientable:orientation (Gtk 4 docs)"
-    spacing:
-      prop: spacing
-      value: length
-      applies_to: Gtk.Box
-      contract: common
-      provenance: "GtkBox:spacing, logical pixels (Gtk 4 docs)"
-    min-width:
-      prop: width-request
-      value: length
-      applies_to: Gtk.Widget
-      contract: common
-      provenance: "GtkWidget:width-request is a minimum size request (default -1 = natural)"
-    min-height:
-      prop: height-request
-      value: length
-      applies_to: Gtk.Widget
-      contract: common
-      provenance: "GtkWidget:height-request is a minimum size request (default -1 = natural)"
-    enabled:
-      prop: sensitive
-      value: bool
-      applies_to: Gtk.Widget
-      contract: common
-      provenance: "GtkWidget:sensitive (Gtk 4 docs)"
-    emphasis:
-      applies_to: Gtk.Button
-      contract: native_intent
-      intents:
-        normal: {}
-        accent: { add_token: { prop: css-classes, token: suggested-action } }
-        destructive: { add_token: { prop: css-classes, token: destructive-action } }
-      provenance: "GNOME HIG / Adwaita style classes .suggested-action and .destructive-action on GtkButton"
+# Style properties (setters, child attributes, native CSS) live in metadata/style/gtk.yaml.

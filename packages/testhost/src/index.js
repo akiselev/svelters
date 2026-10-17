@@ -271,8 +271,13 @@ const MAX_TIMER_FIRINGS = 10_000;
  *                                 fire the earliest one (advancing virtual time); else stop }.
  * The bundle is evaluated before step 1, with no implicit checkpoint.
  */
-export async function runBundle({ bundlePath, script }) {
+export async function runBundle({ bundlePath, script, styleDialect }) {
   const th = createTestHost();
+  if (styleDialect === 'qss') {
+    // answer the Qt dialect (style target 2), so the bundle applies the Qt style table
+    const style = th.host.style;
+    th.host.style = (op, h, text) => (op === 0 ? 2 : style(op, h, text));
+  }
   const timers = createTimers();
   const errors = [];
   const onRejection = (e) => errors.push(e);

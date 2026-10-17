@@ -6,7 +6,8 @@ Inputs (nothing else; output is byte-identical on rerun):
        merged), cross-checked against crates/svelters-gtk/src/generated/tables.rs;
   Qt:  metadata/overrides/qt/*.yaml resolved against metadata/qt/*.json by
        tools/metadata/qt/gen_cpp.py's Model (only annotated elements exist at runtime);
-  both: metadata/semantics/rules/{gtk,qt}.yaml (hand-written facts, each with a provenance).
+  both: metadata/semantics/rules/{gtk,qt}.yaml (hand-written facts, each with a provenance) and
+        metadata/style/{gtk,qt}.yaml (the style property table, tools/metadata/style/style_table.py).
 Outputs: metadata/semantics/{gtk,qt}.json.
 
   python3 tools/metadata/semantics/gen_semantics.py           # write
@@ -43,6 +44,7 @@ def _load(name: str, path: Path):
 
 gen_backend = _load("svelters_gen_backend", TOOLS / "gtk/gen_backend.py")
 gen_cpp = _load("svelters_gen_cpp", TOOLS / "qt/gen_cpp.py")
+style_table = _load("svelters_style_table", TOOLS / "style/style_table.py")
 
 
 class SpecError(Exception):
@@ -61,8 +63,6 @@ PROP_TYPE = {"bool": "bool", "i32": "i32", "u32": "u32", "i64": "i64", "u64": "i
 # Types the compiler only passes through as dynamic values (no static coercion): the raw `ref` is kept.
 SCALARS = {"bool", "i32", "u32", "i64", "f64", "string"}
 LIFETIMES = {"owned", "toplevel"}
-VALUE_KINDS = {"enum", "length", "bool"}
-CONTRACTS = {"common", "native_intent"}
 
 
 def ptype(ref: str) -> str:
@@ -109,76 +109,6 @@ def render(doc: dict) -> str:
             lines.append(f"{compact(k)}:{compact(v)}{comma}")
     lines.append("}")
     return "\n".join(lines) + "\n"
-
-
-def style_section(rules: dict, where: str, kind_exists, prop_on, coerce_ok) -> dict:
-    """Validate and normalise `style` rules. `prop_on(applies_to, prop)` returns the property record
-    (as emitted) if some kind matching `applies_to` has it, else None."""
-    st = rules.get("style") or {}
-    check_keys(f"{where}.style", st, {"units", "declarations"})
-    units = {}
-    for u, rec in sorted((st.get("units") or {}).items()):
-        check_keys(f"{where}.style.units.{u}", rec, {"scale", "provenance"})
-        if not isinstance(rec.get("scale"), (int, float)) or rec["scale"] <= 0:
-            fail(f"{where}.style.units.{u}: scale must be a positive number")
-        units[u] = {"scale": rec["scale"], "provenance": need_prov(f"{where}.style.units.{u}", rec)}
-    decls = {}
-    for name, rec in sorted((st.get("declarations") or {}).items()):
-        w = f"{where}.style.declarations.{name}"
-        check_keys(w, rec, {"prop", "value", "applies_to", "contract", "intents", "unsupported", "provenance"})
-        prov = need_prov(w, rec)
-        if rec.get("contract") not in CONTRACTS:
-            fail(f"{w}: contract must be one of {sorted(CONTRACTS)}")
-        if not kind_exists(rec.get("applies_to", "")):
-            fail(f"{w}: applies_to {rec.get('applies_to')!r} is not a kind or class of this backend")
-        out = {"applies_to": rec["applies_to"], "contract": rec["contract"], "provenance": prov}
-        if rec["contract"] == "common":
-            if rec.get("value") not in VALUE_KINDS:
-                fail(f"{w}: value must be one of {sorted(VALUE_KINDS)}")
-            p = prop_on(rec["applies_to"], rec.get("prop", ""))
-            if p is None:
-                fail(f"{w}: no kind matching {rec['applies_to']} has property {rec.get('prop')!r}")
-            want = {"enum": {"enum"}, "length": {"i32", "u32", "i64", "f64"}, "bool": {"bool"}}[rec["value"]]
-            if p["type"] not in want:
-                fail(f"{w}: value {rec['value']} needs a {sorted(want)} property, {rec['prop']} is {p['type']}")
-            if not p["writable"]:
-                fail(f"{w}: property {rec['prop']} is read-only")
-            out.update(prop=p["js"], value=rec["value"])
-        else:
-            intents = {}
-            for iname, irec in sorted((rec.get("intents") or {}).items()):
-                iw = f"{w}.intents.{iname}"
-                check_keys(iw, irec, {"set", "add_token"})
-                actions = []
-                for op in sorted(irec):
-                    a = irec[op]
-                    p = prop_on(rec["applies_to"], a.get("prop", ""))
-                    if p is None:
-                        fail(f"{iw}: no kind matching {rec['applies_to']} has property {a.get('prop')!r}")
-                    if not p["writable"]:
-                        fail(f"{iw}: property {a['prop']} is read-only")
-                    if op == "set":
-                        check_keys(iw + ".set", a, {"prop", "value"})
-                        if not coerce_ok(p, a.get("value")):
-                            fail(f"{iw}: value {a.get('value')!r} does not fit {a['prop']} ({p['type']})")
-                        actions.append({"op": "set", "prop": p["js"], "value": a["value"]})
-                    else:
-                        check_keys(iw + ".add_token", a, {"prop", "token"})
-                        if p["type"] != "list" or p.get("of") != "string":
-                            fail(f"{iw}: add_token needs a list<string> property, {a['prop']} is {p['type']}")
-                        if not re.fullmatch(r"[A-Za-z0-9_-]+", a.get("token") or ""):
-                            fail(f"{iw}: bad token {a.get('token')!r}")
-                        actions.append({"op": "add_token", "prop": p["js"], "token": a["token"]})
-                intents[iname] = actions
-            if not intents:
-                fail(f"{w}: native_intent needs intents")
-            uns = rec.get("unsupported") or {}
-            for k in uns:
-                if k in intents:
-                    fail(f"{w}: {k} is both an intent and unsupported")
-            out.update(intents=intents, unsupported=dict(sorted(uns.items())))
-        decls[name] = out
-    return {"units": units, "declarations": decls}
 
 
 def aliases(rules: dict, where: str, signal_exists) -> dict:
@@ -328,7 +258,7 @@ def parse_gtk_tables() -> dict:
 def gtk_spec() -> dict:
     m = gen_backend.Model()
     rules = svmeta.load_yaml(RULES / "gtk.yaml")
-    check_keys("gtk rules", rules, {"framework", "event_aliases", "event_aliases_provenance", "kinds", "defaults", "style"})
+    check_keys("gtk rules", rules, {"framework", "event_aliases", "event_aliases_provenance", "kinds", "defaults"})
     tables = parse_gtk_tables()
     by_id = {gir_id(d["id"]): d for d in m.kinds}
     gid = {d["id"]: gir_id(d["id"]) for d in m.kinds}
@@ -541,20 +471,14 @@ def gtk_spec() -> dict:
     if emitted_attrs != tables["attrs"]:
         fail(f"child attributes differ from svelters-gtk tables: {sorted(emitted_attrs ^ tables['attrs'])}")
 
-    def kind_exists(name: str) -> bool:
-        return name in kinds
-
-    def prop_on(applies: str, prop: str):
-        return find_prop(applies, prop) if applies in kinds else None
-
-    style = style_section(rules, "gtk rules", kind_exists, prop_on, coerce_ok)
+    style = style_table.build("gtk", style_table.load("gtk"), tags, kinds)
     al = aliases(rules, "gtk rules", lambda s: any(s in kinds[k]["signals"] for k in kinds))
     return {"schema": SCHEMA, "backend": "gtk", "framework": rules["framework"], "event_aliases": al,
             "tags": tags, "kinds": kinds, "style": style,
             # `methods` lists the annotated (verified) calls; any other GIR method of the kind is
             # still callable through GIRepository at runtime (X1), unchecked.
             "method_lookup": "typelib",
-            "source": {"metadata": "metadata/gtk/*.json", "rules": "metadata/semantics/rules/gtk.yaml",
+            "source": {"metadata": "metadata/gtk/*.json", "rules": "metadata/semantics/rules/gtk.yaml", "style": "metadata/style/gtk.yaml",
                        "gir": m.docs["Widget"]["source"]["gir"]["version"]}}
 
 
@@ -578,7 +502,7 @@ def qt_spec() -> dict:
     m = gen_cpp.Model(ROOT / "metadata/qt", ROOT / "metadata/overrides/qt", [])
     rules = svmeta.load_yaml(RULES / "qt.yaml")
     check_keys("qt rules", rules, {"framework", "event_aliases", "event_aliases_provenance", "signal_defaults", "kinds",
-                                   "defaults", "element_hints", "style"})
+                                   "defaults", "element_hints"})
     sd = rules.get("signal_defaults") or {}
     check_keys("qt rules signal_defaults", sd, {"disconnect_on_drop", "provenance"})
     need_prov("qt rules signal_defaults", sd)
@@ -710,25 +634,14 @@ def qt_spec() -> dict:
                 if not any(a in o["chain"] for o in kinds.values()):
                     print(f"note: no Qt element is a {a}", file=sys.stderr)
 
-    def kind_exists(name: str) -> bool:
-        return any(name in kd["chain"] for kd in kinds.values())
-
-    def prop_on(applies: str, prop: str):
-        for kd in kinds.values():
-            if applies in kd["chain"]:
-                for p in kd["props"].values():
-                    if prop in (p["js"], p["native"]):
-                        return p
-        return None
-
-    style = style_section(rules, "qt rules", kind_exists, prop_on, coerce_ok)
+    style = style_table.build("qt", style_table.load("qt"), {t: t for t in kinds}, kinds)
     al = aliases(rules, "qt rules", lambda s: any(s in kd["signals"] for kd in kinds.values()))
     return {"schema": SCHEMA, "backend": "qt", "framework": rules["framework"], "event_aliases": al,
             "tags": {t: t for t in sorted(kinds)}, "kinds": kinds, "style": style, "element_hints": hints,
             # only annotated methods exist at runtime
             "method_lookup": "annotated",
             "source": {"metadata": "metadata/qt/*.json + metadata/overrides/qt/*.yaml",
-                       "rules": "metadata/semantics/rules/qt.yaml"}}
+                       "rules": "metadata/semantics/rules/qt.yaml", "style": "metadata/style/qt.yaml"}}
 
 
 def main() -> int:
@@ -737,7 +650,7 @@ def main() -> int:
     a = ap.parse_args()
     try:
         outs = {"gtk.json": render(gtk_spec()), "qt.json": render(qt_spec())}
-    except (SpecError, gen_cpp.GenError) as ex:
+    except (SpecError, gen_cpp.GenError, style_table.StyleError) as ex:
         print(f"gen_semantics: {ex}", file=sys.stderr)
         return 1
     stale = []
