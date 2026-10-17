@@ -64,3 +64,15 @@ Lane notes, written as the work goes. Spec: `plans/milestones/ST1-style-unificat
   - In a dynamic `style={expr}`, setter declarations are applied at runtime and win even over an explicit attribute (the runtime cannot see explicit props).
   - `style:<setter>={undefined}` writes null instead of falling back to rules.
   - A dynamic `id` matches no `#id` setter rule.
+
+## Docs (step 6) and gates
+
+- `docs/site/scripts/lib/styling.mjs` renders `api/styling/{gtk,qt}` from the table; both pages are in the sidebar.
+- The guide was rewritten around the table, covering how each platform styles, setter rules, precedence and restoring, compiled components, and the WinUI / UIKit plan.
+- `packages/style/test/docs.test.mjs` checks the guide's setter tables and the reference pages.
+- Gates on the lane branch:
+  - nextest: 889 passed, 7 skipped.
+  - `pnpm test`: green, including 75 compiled-experiment checks and 125 node:test passes in the runner summaries. Conformance skips because there is no upstream clone.
+  - `pnpm docs:test`: 14 passed, 1 skipped.
+  - `pnpm docs:build`: 895 pages, links valid.
+- The coordinator later made the compiled path the only frontend. That path is complete: setter rules (static, dynamic `class`, `class:`), CLASSES through `host.style`, CSS forwarded to X6, and `style=` / `style:`. The renderer setter rules were already done, so nothing was skipped.
