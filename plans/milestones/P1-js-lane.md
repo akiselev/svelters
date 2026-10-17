@@ -32,3 +32,22 @@ Owns `packages/`, `fixtures/` and root JS config.
 ## Acceptance
 - `pnpm test` runs all fixtures in Node through the TestHost. The op-log snapshots are stable, and the scripted interactions produce the expected ops.
 - The bundle has no references to Node built-ins and runs with only the shim's globals defined.
+
+## Completion record
+
+Versions: svelte 5.57.2, vite 8.3.4, @sveltejs/vite-plugin-svelte 7.3.1, pnpm 10.33.0, Node 22.22.2. Contract for P2 and mapping table: `docs/notes/p1-js-lane.md`.
+
+Commands run from the repo root:
+
+```text
+$ pnpm install
+$ pnpm test            # = pnpm -r --workspace-concurrency=4 test; each fixture runs vite build, then svelters-test
+fixtures/counter test: PASS counter (19 ops)
+fixtures/keyed-list test: PASS keyed-list (87 ops)
+fixtures/if-toggle test: PASS if-toggle (35 ops)
+fixtures/timers test: PASS timers (9 ops)
+```
+
+- Bundles: `fixtures/<name>/dist/app.js`, 137-163 kB unminified each (counter 140010 B), source maps on, `fragments: "tree"`, `browser` condition, no `{@html}`.
+- `svelters-test` rejects bundles containing `node:`, `require(`, `process.`, `Buffer`, top-level `import`/`export` or dynamic `import()`: all four bundles pass. The runner evaluates each bundle with `vm.SourceTextModule` in a context that has only `console`, `queueMicrotask`, virtual-time `setTimeout`/`setInterval`/`clear*` and `__svelters_host`.
+- Op-log snapshots are `fixtures/<name>/expected.oplog`; scripts are `fixtures/<name>/script.json`. Known unsupported: see "Not done" in the notes.
