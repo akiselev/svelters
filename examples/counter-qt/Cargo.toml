@@ -55,3 +55,7 @@ harness = false
 [[test]]
 name = "style"
 harness = false
+
+[[test]]
+name = "host_style"
+harness = false

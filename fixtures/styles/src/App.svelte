@@ -10,7 +10,7 @@
   <box orientation="vertical" spacing="8" class="card">
     <label class="title" class:big={on} style:color={on ? '#c01c28' : null}>Styled</label>
     <button class="primary" class:active={on} id="toggle" onclick={() => (on = !on)}>Toggle</button>
-    <togglebutton class="tog">T</togglebutton>
+    <entry class="field" placeholder="type here" />
     <button
       onclick={() => {
         dark = !dark;
@@ -26,13 +26,14 @@
 
 <style>
   .app { background-color: var(--sv-bg); }
-  .card { padding: var(--sv-space-3); background-color: var(--sv-surface); border: 1px solid var(--sv-border); border-radius: var(--sv-radius); }
+  .card { margin: var(--sv-space-3); padding: var(--sv-space-3); background-color: var(--sv-surface); border: 1px solid var(--sv-border); border-radius: var(--sv-radius); }
   .title { color: var(--sv-fg); font-size: 14pt; }
   .title.big { font-weight: bold; }
   button.primary { background-color: var(--sv-accent); color: var(--sv-accent-fg); border-radius: 6px; padding: 6px 14px; }
   button.primary:hover { background-color: var(--sv-accent-hover); }
   button.primary.active { border: 2px solid var(--sv-danger); }
-  togglebutton.tog:checked { background-color: #26a269; }
+  entry.field { color: var(--sv-fg); }
+  entry.field:focus { border-color: var(--sv-accent); }
   @media (prefers-color-scheme: dark) {
     .card { border-color: #666; }
   }

@@ -68,7 +68,7 @@ test('translateAll bundles sheets and diagnostics', () => {
 test('inline style: gtk keeps var(), qt gets placeholders, opacity goes to the widget API', () => {
   const s = 'color: var(--sv-accent); font-weight: bold; opacity: 0.5; background-color: #fff';
   const g = inlineToNative(s, 'gtk');
-  assert.equal(g.text, 'color: var(--sv-accent);\nfont-weight: bold;\nbackground-color: #fff;');
+  assert.equal(g.text, 'color: var(--sv-accent);\nfont-weight: bold;\nbackground-color: #fff;\nbackground-image: none;');
   assert.equal(g.opacity, '0.5');
   const q = inlineToNative(s, 'qt', 'QPushButton');
   assert.equal(q.text, 'color: ${--sv-accent};\nfont-weight: bold;\nbackground-color: #fff;\nborder: none;');

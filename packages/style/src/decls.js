@@ -97,6 +97,7 @@ export function translateDecls(decls, toolkit, { where = 'rule', qtClass = null,
   const err = (m) => diagnostics.push(diag('error', toolkit, m, offset));
   let hasBg = false;
   let hasBorder = false;
+  let hasBgColor = false;
 
   for (const { prop, value } of decls) {
     if (prop.startsWith('--')) {
@@ -144,8 +145,13 @@ export function translateDecls(decls, toolkit, { where = 'rule', qtClass = null,
     if (toolkit === 'qt') {
       if (/^background(-color)?$/.test(prop) && !/^\s*(none|transparent)?\s*$/.test(v)) hasBg = true;
       if (BORDER_PROP.test(prop)) hasBorder = true;
-    }
+    } else if (prop === 'background-color') hasBgColor = true;
     lines.push(`${prop}: ${v};`);
+  }
+  if (toolkit === 'gtk' && hasBgColor) {
+    // The theme paints buttons and entries with a background-image gradient that hides a colour.
+    lines.push('background-image: none;');
+    diagnostics.push(diag('info', toolkit, `background-color needs 'background-image: none' to show over the theme's gradients; added`, offset));
   }
   if (toolkit === 'qt' && hasBg && !hasBorder && !(qtClass && QT_PLAIN_BOX.has(qtClass))) {
     lines.push('border: none;');
