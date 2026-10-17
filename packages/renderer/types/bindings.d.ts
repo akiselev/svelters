@@ -19,6 +19,9 @@ export interface BindableProps {
   passwordentry: {
     text: string; // gtk
   };
+  plaintextedit: {
+    plainText: string; // qt
+  };
   searchentry: {
     text: string; // gtk
   };
@@ -33,6 +36,9 @@ export interface BindableProps {
   };
   text: {
     text: string; // gtk
+  };
+  textedit: {
+    plainText: string; // qt
   };
   togglebutton: {
     active: boolean; // gtk

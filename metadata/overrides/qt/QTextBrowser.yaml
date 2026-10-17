@@ -1,0 +1,28 @@
+elements:
+  - tag: textbrowser
+    construct: { class: QTextBrowser }
+    props:
+      - { js: openExternalLinks, native: openExternalLinks, provenance: "QTextBrowser::openExternalLinks (qdoc)" }
+      - { js: openLinks, native: openLinks, provenance: "QTextBrowser::openLinks (qdoc)" }
+      - { js: source, native: source, provenance: "QTextBrowser::source (qdoc)" }
+      - { js: sourceType, native: sourceType, provenance: "QTextBrowser::sourceType (qdoc)" }
+    methods:
+      - { js: home, native: home, provenance: "QTextBrowser::home (qdoc)" }
+      - { js: reload, native: reload, provenance: "QTextBrowser::reload (qdoc)" }
+      - { js: backward, native: backward, provenance: "QTextBrowser::backward (qdoc)" }
+      - { js: forward, native: forward, provenance: "QTextBrowser::forward (qdoc)" }
+      - { js: clearHistory, native: clearHistory, provenance: "QTextBrowser::clearHistory (qdoc)" }
+    signals:
+      - js: historyChanged
+        native: historyChanged
+        connect: "historyChanged()"
+        args: []
+        trigger: 'Q_EMIT $w->historyChanged()'
+        provenance: "QTextBrowser::historyChanged() (qdoc)"
+      - js: backwardAvailable
+        native: backwardAvailable
+        connect: "backwardAvailable(bool)"
+        args: [{ name: available, type: bool }]
+        trigger: 'Q_EMIT $w->backwardAvailable(($i % 2) == 0)'
+        expect_args: ["true"]
+        provenance: "QTextBrowser::backwardAvailable(bool) (qdoc)"

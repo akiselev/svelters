@@ -19,6 +19,9 @@ export const BINDINGS = {
   passwordentry: {
     text: { prop: "text", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["gtk"] },
   },
+  plaintextedit: {
+    plainText: { prop: "plainText", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["qt"] },
+  },
   searchentry: {
     text: { prop: "text", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["gtk"] },
   },
@@ -33,6 +36,9 @@ export const BINDINGS = {
   },
   text: {
     text: { prop: "text", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["gtk"] },
+  },
+  textedit: {
+    plainText: { prop: "plainText", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["qt"] },
   },
   togglebutton: {
     active: { prop: "active", signal: "toggled", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },

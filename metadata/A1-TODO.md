@@ -262,7 +262,7 @@ otherwise the lower-case Qt class name without the Q (`checkbox`, `slider`, `spi
 - B: QPlainTextEdit/QTextEdit `bind:plainText` (textChanged(), value: prop, suppress_signals on the prop).
 - Blocked: QTextBrowser `source` (G4 QUrl), QKeySequenceEdit (G4 QKeySequence), `document()` (G3).
 - Gallery: `03-text.svelte`.
-- Status: todo
+- Status: done (see ledger; dropped: QTextEdit html (toHtml returns a full document); not tried: QTextBrowser QUrl signals, QKeySequenceEdit keySequenceChanged (boxed signal args), QTextBrowser readOnly/undoRedoEnabled (no accessors))
 
 ### qt-ranges: sliders, spin boxes, progress
 
