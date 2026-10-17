@@ -1,0 +1,32 @@
+[
+ {
+  "class": "QMainWindow",
+  "d": 0,
+  "text": "Binding"
+ },
+ {
+  "class": "QWidget",
+  "d": 1,
+  "text": ""
+ },
+ {
+  "class": "QLineEdit",
+  "d": 2,
+  "text": ""
+ },
+ {
+  "class": "QLabel",
+  "d": 2,
+  "text": "Nobody (9 edits)"
+ },
+ {
+  "class": "QPushButton",
+  "d": 2,
+  "text": "Clear"
+ },
+ {
+  "class": "QPushButton",
+  "d": 2,
+  "text": "Shout"
+ }
+]

@@ -1,0 +1,80 @@
+# Hand-written native semantics for the QtWidgets backend. Merged over the annotated elements of
+# metadata/overrides/qt/*.yaml (as resolved by tools/metadata/qt/gen_cpp.py) into
+# metadata/semantics/qt.json. Only annotated elements/props/signals exist at runtime on Qt.
+# Every fact carries a provenance. See docs/notes/native-compiler/semantic-spec.md.
+framework: "Qt 6 Widgets (generated C++ backend)"
+
+# DOM-style event names accepted in `on<event>` attributes, as @svelters/renderer maps them.
+event_aliases:
+  click: clicked
+  change: changed
+  close: close-request
+event_aliases_provenance: "@svelters/renderer EVENT_TO_SIGNAL"
+
+# Applied to every annotated signal unless a kind rule says otherwise.
+signal_defaults:
+  disconnect_on_drop: true
+  provenance: "generated backend: destroy deletes the QObject (deleteLater), which drops its connections; runtime-contract.md 'no explicit listen off'"
+
+kinds:
+  window:
+    present: present
+    provenance: "QMainWindow.yaml methods: present = show(); runtime-contract.md element(kind, present)"
+  label:
+    text_content: label
+    provenance: "@svelters/renderer LABEL_KINDS"
+  button:
+    text_content: label
+    provenance: "@svelters/renderer LABEL_KINDS"
+  # entry bind:text comes from the `bindings` annotation in metadata/overrides/qt/QLineEdit.yaml.
+
+# Qt metaobject dumps carry no defaults for these properties; values from the Qt 6 docs.
+defaults:
+  window.title: { value: "", provenance: "QWidget::windowTitle default empty QString (Qt docs)" }
+  label.label: { value: "", provenance: "QLabel::text default empty QString (Qt docs)" }
+  button.label: { value: "", provenance: "QAbstractButton::text default empty QString (Qt docs)" }
+  button.minimumHeight: { value: 0, provenance: "QWidget::minimumHeight default 0 (Qt docs)" }
+  button.default: { value: false, provenance: "QPushButton::default is false unless set (Qt docs)" }
+  box.spacing: { value: -1, provenance: "QLayout::spacing -1 = style default (Qt docs)" }
+  box.orientation: { value: vertical, provenance: "box constructs QBoxLayout::TopToBottom (QWidget.yaml)" }
+  entry.text: { value: "", provenance: "QLineEdit::text default empty QString (Qt docs)" }
+  entry.placeholder: { value: "", provenance: "QLineEdit::placeholderText default empty QString (Qt docs)" }
+  entry.minimumHeight: { value: 0, provenance: "QWidget::minimumHeight default 0 (Qt docs)" }
+
+# Elements other backends have that Qt does not; used for diagnostics only.
+element_hints:
+  headerbar:
+    hint: "QtWidgets has no header bar: the title comes from the window `title`, buttons go in the window's menubar slot (or a QToolBar once annotated)"
+    provenance: "QMainWindow docs (window decoration is native); GTK HeaderBar has no QtWidgets equivalent"
+
+style:
+  units:
+    dp: { scale: 1, provenance: "Qt 6 widget geometry is in device-independent pixels (high-DPI scaling is always on)" }
+  declarations:
+    orientation:
+      prop: orientation
+      value: enum
+      applies_to: box
+      contract: common
+      provenance: "box.orientation (QWidget.yaml) maps to QBoxLayout::setDirection"
+    spacing:
+      prop: spacing
+      value: length
+      applies_to: box
+      contract: common
+      provenance: "box.spacing (QWidget.yaml) is QLayout::spacing in device-independent pixels"
+    min-height:
+      prop: minimumHeight
+      value: length
+      applies_to: QWidget
+      contract: common
+      provenance: "QWidget::minimumHeight (Qt docs); annotated on button and entry"
+    emphasis:
+      applies_to: QPushButton
+      contract: native_intent
+      intents:
+        normal: {}
+        accent: { set: { prop: default, value: true } }
+      unsupported:
+        destructive: "Qt has no destructive-action button convention (no style class or role marks it)"
+      provenance: "Qt's convention for the emphasized button of a form is the default button (QPushButton::default); Qt has no destructive-action convention"

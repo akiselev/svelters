@@ -1,0 +1,32 @@
+[
+ {
+  "class": "QMainWindow",
+  "d": 0,
+  "text": "Module"
+ },
+ {
+  "class": "QWidget",
+  "d": 1,
+  "text": ""
+ },
+ {
+  "class": "QLabel",
+  "d": 2,
+  "text": "6 (last 6, 2 steps) x18 mounted 1"
+ },
+ {
+  "class": "QPushButton",
+  "d": 2,
+  "text": "+1"
+ },
+ {
+  "class": "QPushButton",
+  "d": 2,
+  "text": "+5"
+ },
+ {
+  "class": "QPushButton",
+  "d": 2,
+  "text": "Factor"
+ }
+]

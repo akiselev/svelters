@@ -1,0 +1,32 @@
+[
+ {
+  "class": "GtkApplicationWindow",
+  "d": 0,
+  "text": "Todos!"
+ },
+ {
+  "class": "GtkBox",
+  "d": 1,
+  "text": ""
+ },
+ {
+  "class": "GtkLabel",
+  "d": 2,
+  "text": "Todos!: 1/2 left (next #3)"
+ },
+ {
+  "class": "GtkButton",
+  "d": 2,
+  "text": "Add"
+ },
+ {
+  "class": "GtkButton",
+  "d": 2,
+  "text": "Toggle first"
+ },
+ {
+  "class": "GtkButton",
+  "d": 2,
+  "text": "Rename"
+ }
+]

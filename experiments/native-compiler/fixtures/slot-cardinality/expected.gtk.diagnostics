@@ -1,0 +1,2 @@
+[plugin svelters-native-compiler] experiments/native-compiler/fixtures/slot-cardinality/App.svelte:9:3
+slot_cardinality (gtk): <window>'s `child` slot takes one child on gtk, and it already has <label> (help: wrap the children in a container such as <box>)

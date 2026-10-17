@@ -1,0 +1,35 @@
+create window #1
+set #1 title "Classes"
+create box #2
+set #2 spacing 8
+set #2 orientation "horizontal"
+create button #3
+set #3 minimumHeight 36
+set #3 default true
+set #3 label "Save"
+insert #2 #3 before=end slot=default
+create button #4
+set #4 label "Other"
+insert #2 #4 before=end slot=default
+create button #5
+listen #5 clicked on
+set #5 label "Mode"
+insert #2 #5 before=end slot=default
+create button #6
+listen #6 clicked on
+set #6 label "Dense"
+insert #2 #6 before=end slot=default
+insert #1 #2 before=end slot=default
+call #1 present []
+event #5 clicked []
+set #3 minimumHeight 0
+set #3 default false
+set #4 minimumHeight 36
+set #4 default true
+event #6 clicked []
+set #2 spacing 2
+set #4 minimumHeight 20
+event #5 clicked []
+set #3 minimumHeight 36
+set #3 default true
+set #4 default false

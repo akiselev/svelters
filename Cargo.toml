@@ -6,6 +6,7 @@ members = [
     "crates/svelters-backend-log",
     "crates/svelters-gtk",
     "crates/svelters-qt-build",
+    "crates/svelters-compiler",
     "examples/counter",
     "examples/counter-qt",
 ]

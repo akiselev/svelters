@@ -1,0 +1,12 @@
+[
+ {
+  "class": "QMainWindow",
+  "d": 0,
+  "text": "Names x"
+ },
+ {
+  "class": "QPushButton",
+  "d": 1,
+  "text": "n1 = 2"
+ }
+]
