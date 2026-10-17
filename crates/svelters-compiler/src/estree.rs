@@ -167,14 +167,38 @@ node! {
 node! { pub struct ThrowStatement { pub argument: Expression } }
 node! {
     pub struct TryStatement {
+        #[serde(serialize_with = "ser_block")]
         pub block: BlockStatement,
         pub handler: Option<CatchClause>,
+        #[serde(serialize_with = "ser_opt_block")]
         pub finalizer: Option<BlockStatement>,
     }
 }
 node! {
     #[serde(tag = "type", rename = "CatchClause")]
-    pub struct CatchClause { pub param: Option<Pattern>, pub body: BlockStatement }
+    pub struct CatchClause {
+        pub param: Option<Pattern>,
+        #[serde(serialize_with = "ser_block")]
+        pub body: BlockStatement,
+    }
+}
+
+/// Serializes a `BlockStatement` held in a field position with its `type` tag.
+#[derive(Serialize)]
+#[serde(tag = "type")]
+enum BlockStatementRef<'a> {
+    BlockStatement(&'a BlockStatement),
+}
+
+fn ser_block<S: serde::Serializer>(b: &BlockStatement, s: S) -> Result<S::Ok, S::Error> {
+    BlockStatementRef::BlockStatement(b).serialize(s)
+}
+
+fn ser_opt_block<S: serde::Serializer>(b: &Option<BlockStatement>, s: S) -> Result<S::Ok, S::Error> {
+    match b {
+        Some(b) => s.serialize_some(&BlockStatementRef::BlockStatement(b)),
+        None => s.serialize_none(),
+    }
 }
 node! { pub struct WhileStatement { pub test: Expression, pub body: Box<Statement> } }
 node! { pub struct DoWhileStatement { pub body: Box<Statement>, pub test: Expression } }
