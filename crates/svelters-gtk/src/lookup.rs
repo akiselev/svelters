@@ -75,6 +75,23 @@ pub fn find_slot(k: u32, name: &str) -> u32 {
     0
 }
 
+/// A child attribute by JS name: the id of any `ATTRS` entry of that name on `k` or its bases. The
+/// backend picks the entry of the child's own slot at call time (`attr_for_slot`).
+pub fn find_attr(k: u32, name: &str) -> u32 {
+    for owner in chain(k) {
+        if let Some(i) = ATTRS.iter().position(|a| a.kind == owner && a.name == name) {
+            return i as u32 + 1;
+        }
+    }
+    0
+}
+
+/// The `ATTRS` id of attribute `attr` as it applies to a child in `slot` of a parent of kind `k`.
+pub fn attr_for_slot(k: u32, attr: u32, slot: u32) -> Option<u32> {
+    let name = ATTRS.get((attr as usize).checked_sub(1)?)?.name;
+    ATTRS.iter().position(|a| a.name == name && a.slot == slot && in_chain(k, a.kind)).map(|i| i as u32 + 1)
+}
+
 /// The default slot of `k`: the nearest ancestor that declares one.
 pub fn default_slot(k: u32) -> u32 {
     for owner in chain(k) {

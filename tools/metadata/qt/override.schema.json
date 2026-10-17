@@ -543,7 +543,8 @@
           "enum": [
             "none",
             "append_only",
-            "native_index"
+            "native_index",
+            "unordered"
           ]
         },
         "host": {
@@ -595,6 +596,12 @@
         "nested": {
           "type": "boolean",
           "description": "Qt reparents children into an internal widget (QTabWidget, QToolBox): tests check isAncestorOf instead of parent()."
+        },
+        "attrs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/attr"
+          }
         }
       }
     },
@@ -691,6 +698,110 @@
             "string",
             "null"
           ]
+        },
+        "provenance": {
+          "$ref": "#/$defs/provenance"
+        }
+      }
+    },
+    "attr": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "type",
+        "set",
+        "get",
+        "provenance"
+      ],
+      "description": "A per-child attribute of a slot (ABI v2.2 set_child_attr), spelled `parent:<name>` on the child. `set`/`get` are native calls on the slot host; args use child, value, child_index, attr.<other>, const:<c++ literal>.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-z][A-Za-z0-9]*$"
+        },
+        "type": {
+          "enum": [
+            "bool",
+            "i32",
+            "f64",
+            "string",
+            "enum"
+          ]
+        },
+        "values": {
+          "type": "object",
+          "description": "enum: JS name -> C++ expression"
+        },
+        "default": {
+          "description": "Value after `null` (reset) and after remove + insert; an enum's default is a key of `values`."
+        },
+        "samples": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "description": "Two different non-default values the generated test writes."
+        },
+        "set": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "native",
+            "args"
+          ],
+          "properties": {
+            "native": {
+              "type": "string"
+            },
+            "args": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^(child|value|child_index|attr\\.[A-Za-z0-9]+|const:.+)$"
+              }
+            },
+            "readd": {
+              "type": "boolean",
+              "description": "Remove the child from the host (the slot's remove call, without its `then` steps) before the call; the argument values are read first. For positions fixed at add time."
+            }
+          }
+        },
+        "get": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "expr": {
+              "type": "string",
+              "description": "Instead of `native`: a C++ expression over `h` (the slot host), `ch` (the child widget) and `ci` (its index)."
+            },
+            "native": {
+              "type": "string"
+            },
+            "args": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^(child|child_index|attr\\.[A-Za-z0-9]+|const:.+)$"
+              }
+            },
+            "member": {
+              "type": "string",
+              "description": "A method called on the object the native call returns (QLayout::itemAt(int) -> alignment)."
+            },
+            "out": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Index of the pointer parameter that receives the value (pointer parameters are not listed in args)."
+            }
+          }
+        },
+        "reset": {
+          "type": "boolean",
+          "description": "State that outlives the slot (a size policy): apply the default on insert and before remove."
+        },
+        "expect": {
+          "type": "string",
+          "description": "C++ bool expression checked after sample 1 is set: $w = the child widget, $p = the parent element object."
         },
         "provenance": {
           "$ref": "#/$defs/provenance"

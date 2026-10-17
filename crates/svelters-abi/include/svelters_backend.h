@@ -1,4 +1,4 @@
-/* svelters backend ABI, version 3 (draft; 2.1 additive tail members: request_frame, frame). Source of truth: plans/architecture/backend-abi.md
+/* svelters backend ABI, version 3 (draft; additive tail members: 2.1 request_frame, frame; 2.2 set_child_attr, get_child_attr, listen_ex). Source of truth: plans/architecture/backend-abi.md
  *
  * v3 = the value model from docs/notes/js-native-serdes.md section 5.1 on top of v2 (timers, handle
  * lifetime). */
@@ -156,8 +156,14 @@ typedef enum svl_name_kind {
   SVL_PROP = 1,
   SVL_SIGNAL = 2,
   SVL_METHOD = 3,
-  SVL_SLOT = 4
+  SVL_SLOT = 4,
+  SVL_ATTR = 5 /* ABI v2.2: child attribute, scoped by the parent's kind */
 } svl_name_kind;
+
+/* ABI v2.2: listen_ex flags, and where they ride back in the signal id of post_event/call_sync. */
+enum { SVL_LISTEN_AFTER = 1, SVL_LISTEN_CAPTURE = 2 };
+#define SVL_SIGNAL_FLAGS_SHIFT 28
+#define SVL_SIGNAL_ID_MASK 0x0FFFFFFFu
 
 /* Lifetime scope of a CALLBACK argument, from the callable's GIR annotation. */
 enum {
@@ -263,6 +269,15 @@ typedef struct svl_backend {
   /* ABI v2.1: ask for one host->frame callback on the toolkit's next frame (vsync). Idempotent
      while a request is pending. Main thread only. */
   void (*request_frame)(void *self);
+
+  /* ABI v2.2 (all three may be NULL). Child attributes: a per-child fact owned by the parent (grid
+     cell, tab label). Valid only while `child` is inserted into `parent`; SVL_NULL resets to the
+     default. `attr` comes from resolve(SVL_ATTR, parent_kind, name). */
+  int (*set_child_attr)(void *self, svl_handle parent, svl_handle child, svl_id attr, const svl_value *v);
+  int (*get_child_attr)(void *self, svl_handle parent, svl_handle child, svl_id attr, svl_value *out);
+  /* Like `listen` with SVL_LISTEN_* flags; events of that connection carry
+     `signal | flags << SVL_SIGNAL_FLAGS_SHIFT` in post_event/call_sync. */
+  int (*listen_ex)(void *self, svl_handle h, svl_id signal, bool on, uint32_t flags);
 } svl_backend;
 
 /* Values written to `out` by a backend stay valid until the backend's next call. A backend returning an

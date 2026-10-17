@@ -16,6 +16,7 @@ unsafe extern "C" {
     fn svl_qt_grab_png(h: u64, path: *const std::ffi::c_char) -> i32;
     fn svl_qt_type_text(h: u64, utf8: *const std::ffi::c_char) -> i32;
     fn svl_qt_close(h: u64) -> i32;
+    fn svl_qt_grid_cell(grid: u64, child: u64, row: *mut i32, col: *mut i32, row_span: *mut i32, col_span: *mut i32) -> i32;
     fn svl_qt_trigger_actions(h: u64) -> i32;
     fn svl_qt_toplevel_count() -> i32;
     fn svl_qt_run_later(cb: extern "C" fn(*mut std::ffi::c_void), ud: *mut std::ffi::c_void, ms: i32);
@@ -107,6 +108,15 @@ pub mod hooks {
     /// Top-level widgets alive in the application (hidden ones included).
     pub fn toplevel_count() -> usize {
         unsafe { svl_qt_toplevel_count() }.max(0) as usize
+    }
+
+    /// `(row, column, row_span, column_span)` of the cell holding `child` in the `QGridLayout` of `grid`.
+    pub fn grid_cell(grid: u64, child: u64) -> Option<(i32, i32, i32, i32)> {
+        let (mut r, mut c, mut rs, mut cs) = (0, 0, 0, 0);
+        match unsafe { svl_qt_grid_cell(grid, child, &mut r, &mut c, &mut rs, &mut cs) } {
+            0 => Some((r, c, rs, cs)),
+            _ => None,
+        }
     }
 
     /// Closes the top-level widget behind `h` like the window's close button.

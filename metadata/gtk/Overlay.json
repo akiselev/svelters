@@ -126,7 +126,72 @@
             }
           ]
         },
-        "attrs": [],
+        "attrs": [
+          {
+            "default": false,
+            "get": {
+              "args": [
+                "child"
+              ],
+              "native": "GtkOverlay::get_measure_overlay(GtkWidget*)",
+              "origin": "manual",
+              "rust": "is_measure_overlay"
+            },
+            "name": "measure",
+            "origin": "manual",
+            "provenance": [
+              {
+                "origin": "gir",
+                "ref": "gtk_overlay_set_measure_overlay"
+              }
+            ],
+            "samples": [
+              true,
+              false
+            ],
+            "set": {
+              "args": [
+                "child",
+                "value"
+              ],
+              "native": "GtkOverlay::set_measure_overlay(GtkWidget*, gboolean)",
+              "origin": "manual"
+            },
+            "type": "bool"
+          },
+          {
+            "default": false,
+            "get": {
+              "args": [
+                "child"
+              ],
+              "native": "GtkOverlay::get_clip_overlay(GtkWidget*)",
+              "origin": "manual",
+              "rust": "is_clip_overlay"
+            },
+            "name": "clip",
+            "origin": "manual",
+            "provenance": [
+              {
+                "origin": "gir",
+                "ref": "gtk_overlay_set_clip_overlay"
+              }
+            ],
+            "samples": [
+              true,
+              false
+            ],
+            "set": {
+              "args": [
+                "child",
+                "value"
+              ],
+              "native": "GtkOverlay::set_clip_overlay(GtkWidget*, gboolean)",
+              "origin": "manual"
+            },
+            "type": "bool"
+          }
+        ],
         "cardinality": "many",
         "content": "widget",
         "default": {

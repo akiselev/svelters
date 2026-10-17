@@ -220,7 +220,9 @@ class Model:
                 for r in e.get(key, []):
                     r["_raw"] = copy.deepcopy({k: v for k, v in r.items() if k != "_raw"})
             for sl in (e.get("children") or {}).get("slots", []):
-                sl["_raw"] = copy.deepcopy(sl)
+                sl["_raw"] = copy.deepcopy({k: v for k, v in sl.items() if k != "attrs"})
+                for a in sl.get("attrs", []):
+                    a["_raw"] = copy.deepcopy(a)
             for b in e.get("bindings", []):
                 b["_raw"] = copy.deepcopy(b)
         for e in self.elements:
@@ -581,9 +583,13 @@ class Model:
             ins = raw["insert"]
             ops["append"] = self._op(where + ".insert", host_cls, ins)
             var = [v for v in ins.get("variants", []) if v.get("when") == "before != null"]
-            if not var:
+            if s.get("order") == "unordered":
+                # Position is not the order (a grid): `before` is ignored, so there is no variant.
+                ops["insert"] = ops["append"]
+            elif not var:
                 raise GenError(f"{where}: insert needs a `before != null` variant")
-            ops["insert"] = self._op(where + ".insert.variant", host_cls, var[0])
+            else:
+                ops["insert"] = self._op(where + ".insert.variant", host_cls, var[0])
             ops["remove"] = self._op(where + ".remove", host_cls, raw["remove"])
             ops["index_of"] = self._op(where + ".index_of", host_cls, raw["index_of"])
             lst = raw["list"]
@@ -598,6 +604,76 @@ class Model:
                 raise GenError(f"{where}: remove.effects.child must be unparented")
             s["replace"] = None
         s["ops"] = ops
+        if s.get("attrs") and s["cardinality"] != "many":
+            raise GenError(f"{where}: child attributes need a `many` slot")
+        for a in s.get("attrs", []):
+            self._resolve_attr(el, s, a, f"{where}.{a['name']}", host_cls)
+
+    VALUE_CPP = {"bool": "bool", "i32": "int", "f64": "double", "string": "QString", "enum": "int"}
+
+    def native_params(self, where: str, native: str) -> tuple[str, str, list[str]]:
+        """Class, method and the declared parameter types of a native symbol (checked against the metadata)."""
+        cls, name, arity = self.parse_native(where, native)
+        params = self._NATIVE.match(native.strip()).group(3).strip()
+        types, depth, cur = [], 0, ""
+        for ch in params:
+            depth += ch in "<(" 
+            depth -= ch in ">)"
+            if ch == "," and depth == 0:
+                types.append(cur.strip())
+                cur = ""
+            else:
+                cur += ch
+        if cur.strip():
+            types.append(cur.strip())
+        return cls, name, [strip_cv(t) for t in types]
+
+    def _resolve_attr(self, el: dict, s: dict, a: dict, where: str, host_cls: str) -> None:
+        sibs = {x["name"] for x in s["attrs"]}
+        if a["type"] == "enum" and not a.get("values"):
+            raise GenError(f"{where}: an enum attribute needs `values`")
+        if a["type"] == "enum" and a.get("default") is not None and a["default"] not in a["values"]:
+            raise GenError(f"{where}: default {a['default']!r} is not a key of `values`")
+        if "default" not in a:
+            raise GenError(f"{where}: needs a `default` (what `null` resets to)")
+        a["vcpp"] = self.VALUE_CPP[a["type"]]
+        for key in ("set", "get"):
+            op = a[key]
+            if key == "get" and "expr" in op:
+                if "native" in op:
+                    raise GenError(f"{where}.get: give `native` or `expr`, not both")
+                op.update({"args": [], "ptypes": [], "out_params": []})
+                continue
+            if "native" not in op:
+                raise GenError(f"{where}.{key}: needs `native`")
+            for arg in op["args"]:
+                if arg.startswith("attr.") and arg[5:] not in sibs:
+                    raise GenError(f"{where}.{key}: {arg} names no attribute of slot {s['name']}")
+            cls, name, types = self.native_params(f"{where}.{key}", op["native"])
+            if cls not in self.chain(host_cls):
+                raise GenError(f"{where}.{key}: {cls} is not a base of {host_cls}")
+            op["cls"], op["method"], op["ptypes"] = cls, name, types
+            if op.get("member"):
+                _, rec = self.find(cls, "methods", lambda r: r["name"] == name and len(r["params"]) >= len(types))
+                rcls = re.sub(r"[\s*]|\bconst\b", "", rec["returns"]["native"]) if rec else ""
+                if not rec or not self.kind(rcls):
+                    raise GenError(f"{where}.{key}: cannot resolve the class of the value `member` is called on")
+                self._need_method(where, rcls, op["member"], 0)
+            ptr = [i for i, t in enumerate(types) if t.endswith("*") and t != "QWidget*"] if key == "get" else []
+            op["out_params"] = ptr
+            if key == "get":
+                if ptr and op.get("out") not in ptr:
+                    raise GenError(f"{where}.get: `out` must name one of the pointer parameters {ptr}")
+                if not ptr and "out" in op:
+                    raise GenError(f"{where}.get: `out` given but {op['native']} has no pointer parameter")
+                if len(op["args"]) != len(types) - len(ptr) and not any(
+                        q["default"] for c in self.chain(cls) for r in self.kind(c)["methods"] if r["name"] == name for q in r["params"]):
+                    raise GenError(f"{where}.get: {len(op['args'])} args for {len(types) - len(ptr)} in-parameters")
+            elif "value" not in op["args"]:
+                raise GenError(f"{where}.set: args must contain `value`")
+            elif len(op["args"]) > len(types):
+                raise GenError(f"{where}.{key}: {len(op['args'])} args for {len(types)} parameters")
+        a["value_ptype"] = a["set"]["ptypes"][a["set"]["args"].index("value")]
 
     def accepted_child_tag(self, el: dict, s: dict) -> str:
         for e in self.elements:
@@ -619,7 +695,7 @@ class Model:
     # ids ---------------------------------------------------------------------------------
     def _assign_ids(self) -> None:
         self.kind_id = {e["tag"]: i + 1 for i, e in enumerate(self.elements)}
-        self.ids = {"prop": {}, "signal": {}, "method": {}, "slot": {}}
+        self.ids = {"prop": {}, "signal": {}, "method": {}, "slot": {}, "attr": {}}
         for e in self.elements:
             e["props_by_name"] = {p["js"]: p for p in e.get("props", [])}
             for key, items, field in (("prop", e.get("props", []), "js"), ("signal", e.get("signals", []), "js"),
@@ -628,6 +704,13 @@ class Model:
                 for it in items:
                     it["id"] = len(self.ids[key]) + 1
                     self.ids[key][(e["tag"], it[field])] = it["id"]
+            # One id per (element, attribute name); slots of one element may share a name.
+            e["attr_names"] = []
+            for sl in (e.get("children") or {}).get("slots", []):
+                for a in sl.get("attrs", []):
+                    if a["name"] not in e["attr_names"]:
+                        e["attr_names"].append(a["name"])
+                        self.ids["attr"][(e["tag"], a["name"])] = len(self.ids["attr"]) + 1
 
     def digest(self, extra: list[Path]) -> str:
         h = hashlib.sha256()
@@ -681,7 +764,7 @@ def emit_ids(m: Model) -> str:
     out = []
     for e in m.elements:
         out.append(f"constexpr svl_id K_{cident(e['tag'])} = {m.kind_id[e['tag']]};")
-    for key, pre in (("prop", "P"), ("signal", "G"), ("method", "M"), ("slot", "S")):
+    for key, pre in (("prop", "P"), ("signal", "G"), ("method", "M"), ("slot", "S"), ("attr", "A")):
         for (tag, name), i in sorted(m.ids[key].items(), key=lambda kv: kv[1]):
             out.append(f"constexpr svl_id {pre}_{cident(tag)}_{cident(name)} = {i};")
     return "\n".join(out)
@@ -696,14 +779,15 @@ def emit_tables(m: Model) -> str:
         t = cident(e["tag"])
         for key, pre, items, f in (("prop", "P", e.get("props", []), "js"), ("signal", "G", e.get("signals", []), "js"),
                                    ("method", "M", e.get("methods", []), "js"),
-                                   ("slot", "S", (e.get("children") or {}).get("slots", []), "name")):
+                                   ("slot", "S", (e.get("children") or {}).get("slots", []), "name"),
+                                   ("attr", "A", [{"name": n} for n in e["attr_names"]], "name")):
             rows = ", ".join(f'{{"{it[f]}", {pre}_{t}_{cident(it[f])}}}' for it in items)
             out.append(f"const NameId k{pre}_{t}[] = {{{rows}{', ' if rows else ''}{{\"\", 0}}}};")
             names.append((key, e["tag"], f"k{pre}_{t}", len(items)))
     out.append("Table table_for(uint32_t what, svl_id kind) {")
     out.append(f"  if (what == SVL_KIND) return {{kKinds, {len(m.elements)}}};")
     out.append("  switch (what) {")
-    for key, what in (("prop", "SVL_PROP"), ("signal", "SVL_SIGNAL"), ("method", "SVL_METHOD"), ("slot", "SVL_SLOT")):
+    for key, what in (("prop", "SVL_PROP"), ("signal", "SVL_SIGNAL"), ("method", "SVL_METHOD"), ("slot", "SVL_SLOT"), ("attr", "SVL_ATTR")):
         out.append(f"    case {what}:")
         out.append("      switch (kind) {")
         for k, tag, arr, n in names:
@@ -986,7 +1070,7 @@ def op_call(host: str, op: dict, child: str | None = None, extra: dict | None = 
 
 
 def emit_insert(m: Model) -> str:
-    out = ["int gen_insert(Entry &pe, QObject *child, QObject *before, svl_id slot) {",
+    out = ["int gen_insert(Entry &pe, QObject *child, QObject *before, svl_id &slot) {",
            "  QObject *o = pe.obj.data();", "  (void)before;", "  switch (pe.kind) {"]
     for e in m.elements:
         ch = e.get("children")
@@ -1005,6 +1089,10 @@ def emit_insert(m: Model) -> str:
                 if s["replace"] == "releases_old" and "take" in ops:
                     out.append(f"          if (auto *old = {op_call('h', ops['get'])}; old && old != ch) {op_call('h', ops['take'])};")
                 out.append(f"          {op_call('h', ops['set'], 'ch')};")
+            elif s.get("order") == "unordered":
+                # No order: `before` is ignored, and a child already in the host stays where it is (with its attributes).
+                out.append(f"          if ({op_call('h', ops['index_of'], 'ch')} >= 0) return 0;")
+                out.append(f"          {op_call('h', ops['append'], 'ch')};")
             else:
                 out.append("          if (before == child) return 0;")
                 out.append(f"          if (int i = {op_call('h', ops['index_of'], 'ch')}; i >= 0) {{ {op_call('h', ops['remove'], 'ch', {'index': 'i'})}; }}")
@@ -1014,6 +1102,9 @@ def emit_insert(m: Model) -> str:
                 out.append(f"            if (i < 0) return fail(\"insert: `before` is not a child of this slot\");")
                 out.append(f"            {op_call('h', ops['insert'], 'ch', {'index': 'i'})};")
                 out.append(f"          }} else {{ {op_call('h', ops['append'], 'ch')}; }}")
+                for a in s.get("attrs", []):
+                    if a.get("reset"):
+                        out.append(f"          a_set_{attr_fn(e, s, a)}(h, ch, {attr_default_cpp(a)});  // state that outlives the slot")
             out.append("          return 0;\n        }")
         out.append("        default: break;\n      }\n      break;")
     out.append("    default: break;\n  }")
@@ -1042,6 +1133,9 @@ def emit_remove(m: Model) -> str:
                 out.append("          return 0;\n        }")
             else:
                 out.append(f"        if (int i = {op_call('h', ops['index_of'], 'ch')}; i >= 0) {{")
+                for a in s.get("attrs", []):
+                    if a.get("reset"):
+                        out.append(f"          a_set_{attr_fn(e, s, a)}(h, ch, {attr_default_cpp(a)});  // state that outlives the slot")
                 out.append(f"          {op_call('h', ops['remove'], 'ch', {'index': 'i'})};")
                 out.append("          return 0;\n        }")
             out.append("      }")
@@ -1051,9 +1145,145 @@ def emit_remove(m: Model) -> str:
     return "\n".join(out)
 
 
+# ---- child attributes (X3) ---------------------------------------------------------------------
+#
+# Per (element, slot, attribute) the generator emits `a_get_*` / `a_set_*` helpers that wrap the
+# annotated native calls on the slot host, and two dispatchers keyed by parent kind, attribute id and
+# the slot the child was inserted through (`Entry::slot`). State lives in Qt: nothing is cached.
+
+def attr_fn(e: dict, s: dict, a: dict) -> str:
+    return f"{cident(e['tag'])}_{cident(s['name'])}_{cident(a['name'])}"
+
+
+def attr_default_cpp(a: dict) -> str:
+    d, t = a["default"], a["type"]
+    if t == "bool":
+        return "true" if d else "false"
+    if t == "i32":
+        return str(int(d))
+    if t == "f64":
+        return repr(float(d))
+    if t == "string":
+        return 'QString::fromUtf8("%s")' % str(d).replace("\\", "\\\\").replace('"', '\\"')
+    return f"static_cast<int>({a['values'][d]})"
+
+
+def attr_arg(e: dict, s: dict, a: dict, arg: str, ptype: str) -> str:
+    if arg == "child":
+        return "ch"
+    if arg == "value":
+        return f"from_int<{ptype}>(x)" if a["type"] == "enum" else "x"
+    if arg == "child_index":
+        return "ci"
+    if arg.startswith("attr."):
+        o = next(x for x in s["attrs"] if x["name"] == arg[5:])
+        call = f"a_get_{attr_fn(e, s, o)}(h, ch)"
+        return f"from_int<{ptype}>({call})" if o["type"] == "enum" else call
+    if arg.startswith("const:"):
+        return arg[6:]
+    raise GenError(f"unknown attribute argument {arg}")
+
+
+def emit_attr_helpers(m: Model) -> list[str]:
+    dget, dset, tabs = [], [], []
+    for e in m.elements:
+        for s in (e.get("children") or {}).get("slots", []):
+            if not s.get("attrs"):
+                continue
+            ops = s["ops"]
+            hostt = e["layout_cls"] if s["host"] == "layout" else e["cls"]
+            idx = op_call("h", ops["index_of"], "ch")
+            for a in s.get("attrs", []):
+                fn = attr_fn(e, s, a)
+                vt = a["vcpp"]
+                if a["type"] == "enum":
+                    rows = ", ".join(f'{{"{k}", static_cast<int>({v})}}' for k, v in sorted(a["values"].items()))
+                    tabs.append(f"const std::pair<const char *, int> kAE_{fn}[] = {{{rows}}};")
+                g = a["get"]
+                gargs = iter(g["args"])
+                call_args = []
+                for i, pt in enumerate(g["ptypes"]):
+                    call_args.append(f"&o{i}" if i in g["out_params"] else attr_arg(e, s, a, next(gargs), pt))
+                body = [f"{vt} a_get_{fn}({hostt} *h, QWidget *ch) {{", f"  int ci = {idx};", "  (void)ci; (void)h;"]
+                for i in g["out_params"]:
+                    body.append(f"  {g['ptypes'][i][:-1].strip()} o{i} = 0;")
+                call = g["expr"] if "expr" in g else f"h->{g['method']}({', '.join(call_args)})"
+                if g.get("member"):
+                    call += f"->{g['member']}()"
+                if g["out_params"]:
+                    body += [f"  {call};", f"  return static_cast<{vt}>(o{g['out']});"]
+                else:
+                    body += [f"  return static_cast<{vt}>({call});"]
+                body.append("}")
+                dget.append("\n".join(body))
+                st = a["set"]
+                sargs = [attr_arg(e, s, a, x, pt) for x, pt in zip(st["args"], st["ptypes"])]
+                body = [f"void a_set_{fn}({hostt} *h, QWidget *ch, {vt} x) {{", f"  int ci = {idx};", "  (void)ci;"]
+                if st.get("readd"):
+                    # Read every argument first: removing the widget drops the layout item that holds them.
+                    for i, x in enumerate(sargs):
+                        body.append(f"  auto r{i} = {x};")
+                    body.append(f"  {op_call('h', {**ops['remove'], 'then': []}, 'ch', {'index': 'ci'})};")
+                    sargs = [f"r{i}" for i in range(len(sargs))]
+                body += [f"  h->{st['method']}({', '.join(sargs)});", "}"]
+                dset.append("\n".join(body))
+    return tabs + dget + dset
+
+
+def emit_attrs(m: Model) -> str:
+    out = emit_attr_helpers(m)
+    for setter in (True, False):
+        w = "set_child_attr" if setter else "get_child_attr"
+        out += [("int gen_set_child_attr(Entry &pe, Entry &ce, svl_id attr, const svl_value *v) {" if setter else
+                 "int gen_get_child_attr(Entry &pe, Entry &ce, svl_id attr, svl_value *out) {"),
+                "  QObject *o = pe.obj.data();", "  QObject *co = ce.obj.data();", "  (void)o; (void)co;",
+                "  std::string er; (void)er;", "  switch (pe.kind) {"]
+        for e in m.elements:
+            if not e["attr_names"]:
+                continue
+            t = cident(e["tag"])
+            out += [f"    case K_{t}:", "      switch (attr) {"]
+            for an in e["attr_names"]:
+                out += [f"        case A_{t}_{cident(an)}:", "          switch (ce.slot) {"]
+                for s in e["children"]["slots"]:
+                    a = next((x for x in s.get("attrs", []) if x["name"] == an), None)
+                    if not a:
+                        continue
+                    fn = attr_fn(e, s, a)
+                    out += [f"            case S_{t}_{cident(s['name'])}: {{",
+                            f"              auto *h = {host_expr(e, s['host'])};",
+                            "              auto *ch = qobject_cast<QWidget *>(co);",
+                            f"              if (!ch || {op_call('h', s['ops']['index_of'], 'ch')} < 0) return fail(\"{w}: child attributes need an inserted child\");"]
+                    if setter:
+                        out += [f"              {a['vcpp']} x{{}};", f"              if (v->tag == SVL_NULL) x = {attr_default_cpp(a)};", "              else {"]
+                        if a["type"] == "enum":
+                            out += ["                QString q;", f'                if (!conv_in(v, q, "{an}", er)) return fail(er);',
+                                    "                bool found = false;",
+                                    f"                for (const auto &kv : kAE_{fn}) if (q == QLatin1String(kv.first)) {{ x = kv.second; found = true; break; }}",
+                                    f'                if (!found) return fail("{an}: unknown value \\"" + q.toStdString() + "\\"");']
+                        else:
+                            out.append(f'                if (!conv_in(v, x, "{an}", er)) return fail(er);')
+                        out += ["              }", f"              a_set_{fn}(h, ch, x);", "              return 0;", "            }"]
+                    else:
+                        out.append(f"              auto r = a_get_{fn}(h, ch);")
+                        if a["type"] == "enum":
+                            out += [f"              for (const auto &kv : kAE_{fn}) if (kv.second == r) {{ out_str(out, QString::fromUtf8(kv.first)); return 0; }}",
+                                    f'              return fail("{an}: the native value " + std::to_string(r) + " has no name");']
+                        else:
+                            out += ["              Conv<Plain<decltype(r)>>::out(r, out);", "              return 0;"]
+                        out.append("            }")
+                out += ["            default: break;", "          }",
+                        f'          return fail("{w}: attribute {an} does not apply to the slot the child is in");']
+            out += ["        default: break;", "      }", "      break;"]
+        out += ["    default: break;", "  }", f'  return fail("{w}: unknown attribute id for this parent kind");', "}"]
+    return "\n".join(out)
+
+
 def emit_listen(m: Model) -> str:
-    out = ["int gen_listen(svl_handle h, Entry &e, svl_id sig, bool on) {", "  QObject *o = e.obj.data();",
-           "  auto key = std::make_pair(h, sig);", "  switch (e.kind) {"]
+    out = ["int gen_listen(svl_handle h, Entry &e, svl_id sig, bool on, uint32_t flags) {", "  QObject *o = e.obj.data();",
+           "  const ListenKey key{h, sig, flags};",
+           "  const svl_id wire = sig | (flags << SVL_SIGNAL_FLAGS_SHIFT);  // what post_event / call_sync carry",
+           "  switch (e.kind) {"]
     for e in m.elements:
         if not e.get("signals"):
             continue
@@ -1063,10 +1293,13 @@ def emit_listen(m: Model) -> str:
             sid = f"G_{t}_{cident(s['js'])}"
             if s.get("synthetic"):
                 if s["synthetic"] == "key_press":
-                    out.append(f"        case {sid}: return listen_key(e, sig, on);")
+                    out.append(f"        case {sid}: return listen_key(h, e, sig, on, flags);")
                 else:
                     # onRequestClose: while listened, the JS handler decides each native close.
-                    out.append(f"        case {sid}: {{ e.close_listen = on; e.close_sig = sig; return 0; }}")
+                    out.append(f"        case {sid}: {{")
+                    out.append('          if (flags && on) return fail("listen: no capture or after phase for event-filter signals (the close handler decides through call_sync)");')
+                    out.append("          if (!flags) { e.close_listen = on; e.close_sig = sig; }")
+                    out.append("          return 0;\n        }")
                 continue
             ptypes = ", ".join(tn for _, tn in s["qparams"])
             lam_params = ", ".join(f"{tn} a{i}" for i, (_, tn) in enumerate(s["qparams"]))
@@ -1074,7 +1307,9 @@ def emit_listen(m: Model) -> str:
             out.append("          if (!on) {")
             out.append("            auto it = g.listeners.find(key);")
             out.append("            if (it != g.listeners.end()) { QObject::disconnect(it->second); g.listeners.erase(it); }")
+            out.append("            g.after_make.erase(key);")
             out.append("            return 0;\n          }")
+            out.append('          if (flags & SVL_LISTEN_CAPTURE) return fail("listen: signals of QObjects have no capture phase (only key-press, an event filter, can be captured)");')
             out.append("          if (g.listeners.count(key)) return 0;")
             out.append(f"          auto *w = static_cast<{s['decl_cls']} *>(o);")
             body = []
@@ -1084,11 +1319,16 @@ def emit_listen(m: Model) -> str:
                 for i, a in enumerate(s["args"]):
                     pi = names.index(a["name"])
                     body.append(f"Conv<Plain<decltype(a{pi})>>::out(a{pi}, &vals[{i}]);")
-                body.append(f"post(h, {sid}, vals, {len(s['args'])});")
+                body.append(f"post(h, wire, vals, {len(s['args'])});")
             else:
-                body.append(f"post(h, {sid}, nullptr, 0);")
-            out.append(f"          g.listeners[key] = QObject::connect(w, static_cast<void ({s['decl_cls']}::*)({ptypes})>(&{s['decl_cls']}::{s['native']}), w,")
-            out.append(f"              [h]({lam_params}) {{ {' '.join(body)} }});")
+                body.append("post(h, wire, nullptr, 0);")
+            # `after`: Qt runs slots in connection order, so an after-connection is kept behind every plain one
+            # (keep_after_last re-makes it whenever a plain connection is added).
+            out.append(f"          auto make = [w, h, wire]() {{ return QObject::connect(w, static_cast<void ({s['decl_cls']}::*)({ptypes})>(&{s['decl_cls']}::{s['native']}), w,")
+            out.append(f"              [h, wire]({lam_params}) {{ {' '.join(body)} }}); }};")
+            out.append("          g.listeners[key] = make();")
+            out.append("          if (flags & SVL_LISTEN_AFTER) g.after_make[key] = make;")
+            out.append("          else keep_after_last(h, sig);")
             out.append("          return 0;\n        }")
         out.append("        default: break;\n      }\n      break;")
     out.append("    default: break;\n  }")
@@ -1197,7 +1437,7 @@ def gen_backend(m: Model, digest: str, tmpl: str) -> str:
     parts = {
         "DIGEST": digest, "INCLUDES": inc(m, classes), "IDS": emit_ids(m), "TABLES": emit_tables(m),
         "CREATE": emit_create(m), "SET_PROP": prop_cases(m, True), "GET_PROP": prop_cases(m, False),
-        "CALL": emit_call(m), "DESCRIBE": emit_describe(m), "ENUMS": emit_enums(m), "INSERT": emit_insert(m), "REMOVE": emit_remove(m), "LISTEN": emit_listen(m),
+        "CALL": emit_call(m), "DESCRIBE": emit_describe(m), "ENUMS": emit_enums(m), "ATTRS": emit_attrs(m), "INSERT": emit_insert(m), "REMOVE": emit_remove(m), "LISTEN": emit_listen(m),
         "TOPLEVEL": emit_toplevel(m), "GETTERS": emit_getters(m),
     }
     parts["SERDES"] = (HERE / "templates" / "serdes.hpp.in").read_text()
@@ -1285,6 +1525,9 @@ class Tests:
                 for sl in ch["slots"]:
                     fn = (lambda e=e, sl=sl: self.slot_one(e, sl)) if sl["cardinality"] == "one" else (lambda e=e, sl=sl: self.slot_many(e, sl))
                     self.fact(fact_id(e, "slot", sl["name"]), sl["_raw"], "slots", e, sl["name"], fn)
+                    for a in sl.get("attrs", []):
+                        self.fact(fact_id(e, "slot", f"{sl['name']}:attr:{a['name']}"), a["_raw"], "attrs", e, f"{sl['name']}.{a['name']}",
+                                  lambda e=e, sl=sl, a=a: self.attr(e, sl, a))
             for b in e.get("bindings", []):
                 self.fact(fact_id(e, "binding", b["name"]), b["_raw"], "bindings", e, b["name"], lambda e=e, b=b: self.binding(e, b))
         return "\n".join(self.src), "\n".join(f'    {{"{n}", {i}}},' for n, i in self.fns)
@@ -1542,6 +1785,64 @@ class Tests:
                 f"  CHECK(B->insert(B->self, p, w, 0, {sid}) < 0);",
                 "  B->destroy(B->self, p); B->destroy(B->self, w);"]))
 
+    @staticmethod
+    def attr_value(a: dict, v, name: str) -> tuple[str, str]:
+        """(C++ declaration of an svl_value `name`, C++ string literal `valstr` gives for it)."""
+        ty = a["type"]
+        if ty == "bool":
+            return f"svl_value {name} = vbool({'true' if v else 'false'});", '"true"' if v else '"false"'
+        if ty == "i32":
+            return f"svl_value {name} = vi64({int(v)});", f'"{int(v)}"'
+        if ty == "f64":
+            return f"svl_value {name} = vf64({float(v)!r});", f'"{float(v):g}"'
+        lit = json.dumps(str(v))
+        return f"std::string s_{name} = {lit}; svl_value {name} = vstr(s_{name});", lit
+
+    def attr(self, e, s, a):
+        t, sn, an = e["tag"], s["name"], a["name"]
+        if len(a.get("samples", [])) != 2:
+            raise GenError(f"attribute {an} needs two `samples` (non-default, different)")
+        if a["samples"][0] == a["samples"][1] or a["samples"][0] == a["default"] or (a["default"] == a["samples"][1] and a["type"] != "bool"):
+            raise GenError(f"attribute {an}: samples must differ from each other and from the default (a bool's second sample may be the default)")
+        if a["type"] == "enum" and any(x not in a["values"] for x in a["samples"]):
+            raise GenError(f"attribute {an}: samples must be keys of `values`")
+        child = self.m.accepted_child_tag(e, s)
+        d1, e1 = self.attr_value(a, a["samples"][0], "v1")
+        d2, e2 = self.attr_value(a, a["samples"][1], "v2")
+        if a["type"] == "enum":
+            dd, ed = self.attr_value({"type": "string"}, a["default"], "dv")
+        else:
+            dd, ed = self.attr_value(a, a["default"], "dv")
+        sid, aid = f'S("{t}", "{sn}")', f'A("{t}", "{an}")'
+        setc = lambda who, v: f"B->set_child_attr(B->self, p, {who}, {aid}, &{v})"
+        getc = lambda who: f"B->get_child_attr(B->self, p, {who}, {aid}, &out)"
+        lines = [f'  svl_handle p = mk("{t}"); svl_handle c = mk("{child}"); svl_handle stray = mk("{child}");',
+                 f"  CHECK({aid} != 0);", f"  {d1}", f"  {d2}", f"  {dd}", "  svl_value out{}; svl_value nul{};  // nul: SVL_NULL",
+                 f"  CHECK(B->insert(B->self, p, c, 0, {sid}) == 0);",
+                 f"  CHECK({setc('stray', 'v1')} < 0);  // a child that is not inserted has no attributes",
+                 '  CHECK(std::strstr(B->last_error(B->self), "inserted child") != nullptr);',
+                 f"  CHECK({getc('stray')} < 0);",
+                 f"  CHECK({setc('c', 'v1')} == 0);",
+                 f"  CHECK({getc('c')} == 0 && valstr(out) == {e1});"]
+        if a.get("expect"):
+            ex = a["expect"].replace("$w", "w").replace("$p", "pw")
+            lines += [f"  {{ auto *pw = static_cast<{e['cls']} *>(O(p)); auto *w = static_cast<QWidget *>(O(c)); (void)pw; (void)w;",
+                      f"    CHECK(({ex})); }}  // the toolkit really holds it"]
+        lines += [f"  CHECK({setc('c', 'v2')} == 0);",
+                  f"  CHECK({getc('c')} == 0 && valstr(out) == {e2});",
+                  f"  CHECK({setc('c', 'nul')} == 0);  // null resets",
+                  f"  CHECK({getc('c')} == 0 && valstr(out) == {ed});",
+                  f"  CHECK({setc('c', 'v1')} == 0);",
+                  "  CHECK(B->remove(B->self, p, c) == 0);",
+                  f"  CHECK({setc('c', 'v1')} < 0);  // a removed child has no attributes",
+                  f"  CHECK({getc('c')} < 0);",
+                  f"  CHECK(B->insert(B->self, p, c, 0, {sid}) == 0);",
+                  f"  CHECK({getc('c')} == 0 && valstr(out) == {ed});  // remove + insert: back to the default",
+                  "  B->destroy(B->self, p); B->destroy(B->self, c); B->destroy(B->self, stray);"]
+        if a["type"] == "enum":
+            lines.insert(-1, f'  {{ std::string bad = "no-such-value"; svl_value vb = vstr(bad); CHECK({setc("c", "vb")} < 0); }}')
+        self.add(f"attr/{t}.{sn}.{an}", "\n".join(lines))
+
     def slot_many(self, e, s):
         m, t, sn = self.m, e["tag"], s["name"]
         child = m.accepted_child_tag(e, s)
@@ -1551,7 +1852,20 @@ class Tests:
         cnt = lambda p: op_call(host(p), ops['count'])
         mk3 = [f'  svl_handle p = mk("{t}"); svl_handle c0 = mk("{child}"); svl_handle c1 = mk("{child}"); svl_handle c2 = mk("{child}");']
         clean = "  B->destroy(B->self, p); B->destroy(B->self, c0); B->destroy(B->self, c1); B->destroy(B->self, c2);"
-        self.add(f"slot/{t}.{sn}/order", "\n".join(mk3 + [
+        if s.get("order") == "unordered":
+            self.add(f"slot/{t}.{sn}/unordered_ignores_before", "\n".join(mk3 + [
+                f"  CHECK(B->insert(B->self, p, c0, 0, {sid}) == 0);",
+                f"  CHECK(B->insert(B->self, p, c2, 0, {sid}) == 0);",
+                f"  CHECK(B->insert(B->self, p, c1, c2, {sid}) == 0);  // before=c2 is ignored: c1 is appended",
+                f"  CHECK({cnt('p')} == 3);",
+                f"  CHECK({at('p', 0)} == O(c0) && {at('p', 1)} == O(c2) && {at('p', 2)} == O(c1));",
+                f"  CHECK(B->insert(B->self, p, c2, c0, {sid}) == 0);  // a child already in the host stays where it is",
+                f"  CHECK({cnt('p')} == 3);",
+                f"  CHECK({at('p', 0)} == O(c0) && {at('p', 1)} == O(c2) && {at('p', 2)} == O(c1));",
+                "  CHECK(static_cast<QWidget *>(O(p))->isAncestorOf(static_cast<QWidget *>(O(c1))));  // the page may sit in an inner container (QTabWidget)",
+                clean]))
+        else:
+          self.add(f"slot/{t}.{sn}/order", "\n".join(mk3 + [
             f"  CHECK(B->insert(B->self, p, c0, 0, {sid}) == 0);",
             f"  CHECK(B->insert(B->self, p, c2, 0, {sid}) == 0);",
             f"  CHECK(B->insert(B->self, p, c1, c2, {sid}) == 0);  // before=c2",
@@ -1611,7 +1925,13 @@ def gen_verify(m: Model, digest: str, tmpl: str) -> tuple[str, dict]:
     any_tag = next(e["tag"] for e in simple if e["tag"] == "label") if any(e["tag"] == "label" for e in simple) else simple[0]["tag"]
     child_tag = m.accepted_child_tag(parent, next(s for s in parent["children"]["slots"] if s["name"] == parent["children"]["default_slot"]))
     prop = next(p for p in val["props"] if p.get("cat") == "string")
-    subs = {"@@ANY_TAG@@": any_tag, "@@PARENT_TAG@@": parent["tag"], "@@CHILD_TAG@@": child_tag,
+    # A plain QObject signal with a trigger, for the listener-phase tests.
+    sig = next(((e, sg) for e in simple for sg in e.get("signals", []) if not sg.get("synthetic") and sg.get("trigger")), None)
+    if not sig:
+        raise GenError("need an element with a triggerable signal")
+    sig_e, sig_s = sig
+    subs = {"@@SIG_TAG@@": sig_e["tag"], "@@SIG_NAME@@": sig_s["js"], "@@SIG_CLASS@@": sig_e["cls"],
+            "@@SIG_TRIGGER@@": sig_s["trigger"].replace("$w", "w").replace("$i", "i"), "@@ANY_TAG@@": any_tag, "@@PARENT_TAG@@": parent["tag"], "@@CHILD_TAG@@": child_tag,
             "@@VALUE_TAG@@": val["tag"], "@@VALUE_PROP@@": prop["js"], "@@DIGEST@@": digest}
     out = tmpl.replace("//@@INCLUDES@@", inc(m, classes)).replace("//@@TESTS@@", tests).replace("//@@TEST_TABLE@@", table)
     for k, v in subs.items():
@@ -1672,6 +1992,20 @@ def gen_dts(m: Model) -> str:
     out.append("}")
     out.append("")
     out.append("export type QtElementTag = keyof QtElementDescriptors;")
+    out.append("")
+    out.append("/** `parent:<name>` attributes any child element can carry; which apply depends on the parent and the slot. */")
+    out.append("export interface QtChildAttrs {")
+    types: dict[str, list[str]] = {}
+    for e in m.elements:
+        for s in (e.get("children") or {}).get("slots", []):
+            for a in s.get("attrs", []):
+                ty = ("(" + " | ".join(f'"{k}"' for k in sorted(a["values"])) + ")") if a["type"] == "enum" else \
+                    {"bool": "boolean", "i32": "number", "f64": "number", "string": "string"}[a["type"]]
+                if ty not in types.setdefault(a["name"], []):
+                    types[a["name"]].append(ty)
+    for n in sorted(types):
+        out.append(f"  'parent:{n}'?: {' | '.join(types[n])};")
+    out.append("}")
     return "\n".join(out) + "\n"
 
 

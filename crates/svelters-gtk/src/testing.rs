@@ -442,6 +442,79 @@ impl Harness {
     pub fn resolve_method(&self, h: u64, method: &str) -> u32 {
         self.resolve(SVL_METHOD, self.kind_of(h), method)
     }
+    /// `listen_ex` with `SVL_LISTEN_*` flags (ABI v2.2).
+    pub fn listen_ex(&self, h: u64, signal: &str, on: bool, flags: u32) -> Result<(), String> {
+        let id = self.resolve(SVL_SIGNAL, self.kind_of(h), signal);
+        if id == 0 {
+            return Err(format!("unknown signal {signal}"));
+        }
+        let vt = self.vt();
+        let f = vt.listen_ex.expect("listen_ex");
+        self.check(unsafe { f(vt.self_, h, id, on, flags) })
+    }
+
+    /// Events posted since the last call with the listener flags of the connection that fired:
+    /// (handle, signal name, flags).
+    pub fn take_events_flags(&self) -> Vec<(u64, String, u32)> {
+        let evs: Vec<_> = self.rec.events.borrow_mut().drain(..).collect();
+        evs.into_iter()
+            .map(|(h, s, _)| (h, SIGNALS[(s & SVL_SIGNAL_ID_MASK) as usize - 1].name.to_string(), s >> SVL_SIGNAL_FLAGS_SHIFT))
+            .collect()
+    }
+
+    /// `call_sync` calls so far with the listener flags: (handle, signal name, flags).
+    pub fn take_sync_flags(&self) -> Vec<(u64, String, u32)> {
+        let calls: Vec<_> = self.rec.sync_calls.borrow_mut().drain(..).collect();
+        calls
+            .into_iter()
+            .map(|(h, s, _)| (h, SIGNALS[(s & SVL_SIGNAL_ID_MASK) as usize - 1].name.to_string(), s >> SVL_SIGNAL_FLAGS_SHIFT))
+            .collect()
+    }
+
+    fn attr_value(v: &V) -> Value {
+        match v {
+            V::Null => Value::Null,
+            V::Bool(b) => Value::Bool(*b),
+            V::I64(i) => Value::I64(*i),
+            V::F64(f) => Value::F64(*f),
+            V::Str(s) => Value::Str(s.clone()),
+            other => panic!("unsupported attribute value {other:?}"),
+        }
+    }
+
+    /// The id `resolve(SVL_ATTR)` gives `name` on `parent`'s kind (0: unknown).
+    pub fn resolve_attr(&self, parent: u64, name: &str) -> u32 {
+        self.resolve(SVL_ATTR, self.kind_of(parent), name)
+    }
+
+    /// Sets a per-child attribute (ABI v2.2); `V::Null` resets it.
+    pub fn set_child_attr(&self, parent: u64, child: u64, attr: &str, v: &V) -> Result<(), String> {
+        let id = self.resolve_attr(parent, attr);
+        if id == 0 {
+            return Err(format!("unknown child attribute {attr}"));
+        }
+        let vt = self.vt();
+        let f = vt.set_child_attr.expect("set_child_attr");
+        Self::attr_value(v).with_raw(|raw| self.check(unsafe { f(vt.self_, parent, child, id, raw) }))
+    }
+
+    /// Reads a per-child attribute back.
+    pub fn get_child_attr(&self, parent: u64, child: u64, attr: &str) -> V {
+        self.try_get_child_attr(parent, child, attr).unwrap_or_else(|e| panic!("get_child_attr {attr}: {e}"))
+    }
+
+    pub fn try_get_child_attr(&self, parent: u64, child: u64, attr: &str) -> Result<V, String> {
+        let id = self.resolve_attr(parent, attr);
+        if id == 0 {
+            return Err(format!("unknown child attribute {attr}"));
+        }
+        let vt = self.vt();
+        let f = vt.get_child_attr.expect("get_child_attr");
+        let mut out = svl_value::null();
+        self.check(unsafe { f(vt.self_, parent, child, id, &mut out) })?;
+        Ok(self.name_value(&unsafe { Value::from_raw(&out) }))
+    }
+
     pub fn listen(&self, h: u64, signal: &str, on: bool) -> Result<(), String> {
         let id = self.resolve(SVL_SIGNAL, self.kind_of(h), signal);
         if id == 0 {
@@ -459,7 +532,7 @@ impl Harness {
     /// `call_sync` calls answered with a value or a failure since the last take.
     pub fn take_sync_calls(&self) -> Vec<(u64, String, Vec<Value>)> {
         let calls: Vec<_> = self.rec.sync_calls.borrow_mut().drain(..).collect();
-        calls.into_iter().map(|(h, sig, a)| (h, crate::generated::tables::SIGNALS[sig as usize - 1].name.to_string(), a)).collect()
+        calls.into_iter().map(|(h, sig, a)| (h, crate::generated::tables::SIGNALS[(sig & SVL_SIGNAL_ID_MASK) as usize - 1].name.to_string(), a)).collect()
     }
 
     /// `host.frame` calls received since the last take.
@@ -479,7 +552,7 @@ impl Harness {
     }
     pub fn take_events_with_args(&self) -> Vec<(u64, String, Vec<V>)> {
         let evs: Vec<_> = self.rec.events.borrow_mut().drain(..).collect();
-        evs.into_iter().map(|(h, s, a)| (h, SIGNALS[s as usize - 1].name.to_string(), a.iter().map(|x| self.name_value(x)).collect())).collect()
+        evs.into_iter().map(|(h, s, a)| (h, SIGNALS[(s & SVL_SIGNAL_ID_MASK) as usize - 1].name.to_string(), a.iter().map(|x| self.name_value(x)).collect())).collect()
     }
     pub fn take_destroyed(&self) -> Vec<u64> {
         self.rec.destroyed.borrow_mut().drain(..).map(|(h, _)| h).collect()

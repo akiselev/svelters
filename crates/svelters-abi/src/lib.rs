@@ -76,6 +76,15 @@ pub const SVL_PROP: u32 = 1;
 pub const SVL_SIGNAL: u32 = 2;
 pub const SVL_METHOD: u32 = 3;
 pub const SVL_SLOT: u32 = 4;
+/// ABI v2.2: child attribute, scoped by the parent's kind.
+pub const SVL_ATTR: u32 = 5;
+
+/// ABI v2.2 `listen_ex` flags.
+pub const SVL_LISTEN_AFTER: u32 = 1;
+pub const SVL_LISTEN_CAPTURE: u32 = 2;
+/// Listener flags ride in these bits of the signal id of `post_event` / `call_sync`.
+pub const SVL_SIGNAL_FLAGS_SHIFT: u32 = 28;
+pub const SVL_SIGNAL_ID_MASK: u32 = (1 << SVL_SIGNAL_FLAGS_SHIFT) - 1;
 
 pub const SVL_LIFE_OWNED: u32 = 1;
 pub const SVL_LIFE_TOPLEVEL: u32 = 2;
@@ -263,6 +272,16 @@ pub struct svl_backend {
     pub cancel: Option<unsafe extern "C" fn(*mut c_void, u64) -> c_int>,
     /// ABI v2.1: one `host.frame` on the toolkit's next frame.
     pub request_frame: unsafe extern "C" fn(*mut c_void),
+    /// ABI v2.2: set a per-child attribute (`SVL_NULL` resets). Optional.
+    pub set_child_attr: Option<
+        unsafe extern "C" fn(*mut c_void, svl_handle, svl_handle, svl_id, *const svl_value) -> c_int,
+    >,
+    /// ABI v2.2: read a per-child attribute back. Optional.
+    pub get_child_attr: Option<
+        unsafe extern "C" fn(*mut c_void, svl_handle, svl_handle, svl_id, *mut svl_value) -> c_int,
+    >,
+    /// ABI v2.2: `listen` with `SVL_LISTEN_*` flags. Optional.
+    pub listen_ex: Option<unsafe extern "C" fn(*mut c_void, svl_handle, svl_id, bool, u32) -> c_int>,
 }
 
 // Backends are driven from the UI thread; `wake` is the only thread-safe entry point.

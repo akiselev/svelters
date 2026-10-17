@@ -30,3 +30,59 @@ elements:
         trigger: '$w->tabBarClicked(1 + $i)'
         expect_args: ["1"]
         provenance: "QTabWidget::tabBarClicked(int) (qdoc); emitted directly (a click needs a shown widget)"
+    children:
+      policy: named_slots
+      default_slot: pages
+      slots:
+        - name: pages
+          content: widget
+          accepts: [QWidget]
+          cardinality: many
+          order: native_index
+          nested: true
+          host: self
+          default: { kind: none }
+          on_remove: empty
+          attrs:
+            - name: tabLabel
+              type: string
+              default: ""
+              samples: ["First", "Second"]
+              set: { native: "QTabWidget::setTabText(int, const QString&)", args: [child_index, value] }
+              get: { native: "QTabWidget::tabText(int) const", args: [child_index] }
+              expect: "static_cast<QTabWidget *>($p)->tabText(static_cast<QTabWidget *>($p)->indexOf($w)) == QString(\"First\")"
+              provenance: "QTabWidget::setTabText(int, QString) (qdoc); X3 child attribute"
+            - name: tabToolTip
+              type: string
+              default: ""
+              samples: ["tip one", "tip two"]
+              set: { native: "QTabWidget::setTabToolTip(int, const QString&)", args: [child_index, value] }
+              get: { native: "QTabWidget::tabToolTip(int) const", args: [child_index] }
+              expect: "static_cast<QTabWidget *>($p)->tabToolTip(static_cast<QTabWidget *>($p)->indexOf($w)) == QString(\"tip one\")"
+              provenance: "QTabWidget::setTabToolTip(int, QString) (qdoc); X3 child attribute"
+            - name: tabEnabled
+              type: bool
+              default: true
+              samples: [false, true]
+              set: { native: "QTabWidget::setTabEnabled(int, bool)", args: [child_index, value] }
+              get: { native: "QTabWidget::isTabEnabled(int) const", args: [child_index] }
+              expect: "!static_cast<QTabWidget *>($p)->isTabEnabled(static_cast<QTabWidget *>($p)->indexOf($w))"
+              provenance: "QTabWidget::setTabEnabled(int, bool) (qdoc); X3 child attribute"
+          ops:
+            insert:
+              native: "QTabWidget::addTab(QWidget*, const QString&)"
+              args: [child, "const:QString()"]
+              variants:
+                - when: "before != null"
+                  native: "QTabWidget::insertTab(int, QWidget*, const QString&)"
+                  args: [index, child, "const:QString()"]
+              effects: { child: parented }
+            remove:                                   # removeTab leaves the page parented to the tab stack
+              native: "QTabWidget::removeTab(int)"
+              args: [index]
+              then:
+                - { native: "QWidget::setParent(QWidget*)", receiver: child, args: [null] }
+              effects: { child: unparented }
+            index_of: { native: "QTabWidget::indexOf(const QWidget*) const", args: [child] }
+            list: { native: "QTabWidget::count() const", item: "QTabWidget::widget(int) const" }
+          provenance: [{ origin: uic, ref: "QTabWidget/widget" }, { origin: docs, ref: "QTabWidget::insertTab" }, { origin: probe, ref: qt_slot_ownership_probe.py }]

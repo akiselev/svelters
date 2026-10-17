@@ -1,0 +1,69 @@
+# GtkNotebook pages. Tab label text, menu label and the page flags are properties of the child's
+# GtkNotebookPage (X3 child attributes). Reordering tabs by hand is the user's `reorderable` choice.
+# Svelte: <notebook><label parent:tabLabel="One">x</label></notebook>
+children:
+  policy: pages
+  default_slot: pages
+  slots:
+    - name: pages
+      content: widget
+      accepts: [Gtk.Widget]
+      route_by_kind: false
+      cardinality: many
+      order: native_index
+      default: {kind: none}
+      on_remove: empty
+      attrs:
+        - name: tabLabel
+          type: string
+          default: ""
+          samples: ["Tab one", "Tab two"]
+          set: {native: "GtkNotebook::set_tab_label_text(GtkWidget*, const char*)", args: [child, value]}
+          get: {native: "GtkNotebook::get_tab_label_text(GtkWidget*)", args: [child]}
+          expect: 'pw.downcast_ref::<gtk::Notebook>().unwrap().tab_label_text(&w).as_deref() == Some("Tab one")'
+          provenance: [{origin: gir, ref: "gtk_notebook_set_tab_label_text"}, {origin: runtime, ref: "the GtkNotebookPage:tab-label property only stores a string; it does not create the visible tab label (GTK 4.22)"}]
+        - name: menuLabel
+          type: string
+          default: ""
+          samples: ["Menu one", "Menu two"]
+          set: {native: "GtkNotebook::set_menu_label_text(GtkWidget*, const char*)", args: [child, value]}
+          get: {native: "GtkNotebook::get_menu_label_text(GtkWidget*)", args: [child]}
+          provenance: [{origin: gir, ref: "gtk_notebook_set_menu_label_text"}]
+        - name: reorderable
+          type: bool
+          default: false
+          samples: [true, false]
+          via: {native: "GtkNotebook::get_page(GtkWidget*)"}
+          property: reorderable
+          expect: 'pw.downcast_ref::<gtk::Notebook>().unwrap().tab_is_reorderable(&w)'
+          provenance: [{origin: gir, ref: "GtkNotebookPage:reorderable"}, {origin: gir, ref: "gtk_notebook_get_tab_reorderable"}]
+        - name: detachable
+          type: bool
+          default: false
+          samples: [true, false]
+          via: {native: "GtkNotebook::get_page(GtkWidget*)"}
+          property: detachable
+          expect: 'pw.downcast_ref::<gtk::Notebook>().unwrap().tab_is_detachable(&w)'
+          provenance: [{origin: gir, ref: "GtkNotebookPage:detachable"}, {origin: gir, ref: "gtk_notebook_get_tab_detachable"}]
+        - name: tabExpand
+          type: bool
+          default: false
+          samples: [true, false]
+          via: {native: "GtkNotebook::get_page(GtkWidget*)"}
+          property: tab-expand
+          provenance: [{origin: gir, ref: "GtkNotebookPage:tab-expand"}]
+        - name: tabFill
+          type: bool
+          default: true
+          samples: [false, true]
+          via: {native: "GtkNotebook::get_page(GtkWidget*)"}
+          property: tab-fill
+          provenance: [{origin: gir, ref: "GtkNotebookPage:tab-fill"}]
+      requires: []
+      ops:
+        get:      {contains: ancestor}
+        index_of: {native: "GtkNotebook::page_num(GtkWidget*)"}
+        insert:   {native: "GtkNotebook::insert_page(GtkWidget*, GtkWidget*, int)", args: [child, null, index_opt], effects: {child: parented}}
+        remove:   {native: "GtkNotebook::remove_page(int)", args: [child_index_opt], effects: {child: unparented}}
+      verify: {}
+      provenance: [{origin: gir, ref: "gtk_notebook_insert_page"}, {origin: gir, ref: "gtk_notebook_remove_page"}]

@@ -31,6 +31,7 @@
 #include <QtWidgets/QStyledItemDelegate>
 #include <QtWidgets/QAbstractButton>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QGridLayout>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLayout>
 #include <QtWidgets/QLineEdit>
@@ -77,12 +78,16 @@
 #include <map>
 #include <string>
 #include <string_view>
+#include <tuple>
 #include <unordered_map>
 #include <utility>
 
 namespace {
 
 //@@IDS@@
+
+// (handle, signal, listen flags): one connection per phase of a signal.
+using ListenKey = std::tuple<svl_handle, svl_id, uint32_t>;
 
 struct Entry {
   QPointer<QObject> obj;
@@ -96,6 +101,10 @@ struct Entry {
   int suppress = 0;           // > 0 while JS writes an echo-suppressed property: posts are dropped
   bool key_listen = false;    // JS listens for key-press: the handler may consume the key
   svl_id key_sig = 0;
+  bool key_capture = false;   // JS listens for key-press in the capture phase (descendants' keys)
+  svl_id key_capture_sig = 0; // the wire id of that listener (signal | flags << SVL_SIGNAL_FLAGS_SHIFT)
+  svl_handle placed = 0;      // the parent this child is inserted into through the backend (0: none)
+  svl_id slot = 0;            // ... and the slot it went through, which picks the child attributes
 };
 
 // Echo suppression for programmatic sets: our own connections drop their posts for this handle
@@ -122,7 +131,10 @@ struct Core {
   // can never alias another handle.
   std::unordered_map<QObject *, svl_handle> by_obj;
   std::unordered_map<svl_handle, QVariant> boxed;    // BOXED values (implicitly shared Qt value classes)
-  std::map<std::pair<svl_handle, svl_id>, QMetaObject::Connection> listeners;
+  std::map<ListenKey, QMetaObject::Connection> listeners;
+  // `after` connections: how to make them again, so they can be moved behind a later plain connection.
+  std::map<ListenKey, std::function<QMetaObject::Connection()>> after_make;
+  bool capture_filter_on = false;
   svl_handle next = 1;
   std::string err;
   std::string strbuf;
@@ -196,9 +208,20 @@ Entry *find(svl_handle h) {
 }
 
 void drop_listeners(svl_handle h) {
-  auto lo = g.listeners.lower_bound({h, 0});
-  auto hi = g.listeners.lower_bound({h + 1, 0});
-  g.listeners.erase(lo, hi);
+  g.listeners.erase(g.listeners.lower_bound({h, 0, 0}), g.listeners.lower_bound({h + 1, 0, 0}));
+  g.after_make.erase(g.after_make.lower_bound({h, 0, 0}), g.after_make.lower_bound({h + 1, 0, 0}));
+}
+
+// Qt runs the slots of a signal in connection order, and a signal is emitted after the widget changed
+// its own state, so the `after` phase is "behind every plain listener": whenever a plain connection is
+// added, the after-connections of the same signal are re-made, which puts them last.
+void keep_after_last(svl_handle h, svl_id sig) {
+  for (auto it = g.after_make.lower_bound({h, sig, 0});
+       it != g.after_make.end() && std::get<0>(it->first) == h && std::get<1>(it->first) == sig; ++it) {
+    auto lit = g.listeners.find(it->first);
+    if (lit != g.listeners.end()) QObject::disconnect(lit->second);
+    g.listeners[it->first] = it->second();
+  }
 }
 
 svl_id gen_kind_of(QObject *o);
@@ -307,15 +330,8 @@ struct CloseFilter : QObject {
 // key-press (synthetic): while JS listens, every key press on the object goes through call_sync
 // with [key, text, modifiers]; a handler result of `true` consumes the key, so the widget never
 // sees it (a QLineEdit does not insert the text).
-struct KeyFilter : QObject {
-  bool eventFilter(QObject *o, QEvent *ev) override {
-    if (ev->type() != QEvent::KeyPress || !g.host || !g.host->call_sync) return false;
-    svl_handle h = handle_of(o);
-    if (!h) return false;
-    auto it = g.table.find(h);
-    if (it == g.table.end() || !it->second.key_listen) return false;
-    const svl_id sig = it->second.key_sig;
-    auto *k = static_cast<QKeyEvent *>(ev);
+bool key_sync(svl_handle h, svl_id sig, QKeyEvent *k) {
+  {
     const QByteArray text = k->text().toUtf8();
     svl_value args[3] = {};
     args[0].tag = SVL_I64;
@@ -329,9 +345,67 @@ struct KeyFilter : QObject {
     int rc = g.host->call_sync(g.host->self, h, sig, args, 3, &out);
     return sync_stop(rc, out);
   }
+}
+
+struct KeyFilter : QObject {
+  bool eventFilter(QObject *o, QEvent *ev) override {
+    if (ev->type() != QEvent::KeyPress || !g.host || !g.host->call_sync) return false;
+    svl_handle h = handle_of(o);
+    if (!h) return false;
+    auto it = g.table.find(h);
+    if (it == g.table.end() || !it->second.key_listen) return false;
+    return key_sync(h, it->second.key_sig, static_cast<QKeyEvent *>(ev));
+  }
 };
 
-int listen_key(Entry &e, svl_id sig, bool on) {
+// key-press, capture phase: an application-level filter sees a key before its receiver does. For each
+// listened widget that is a proper ancestor of the receiver (outermost first) the handler is called
+// through call_sync with the capture wire id; a handler result of `true` consumes the key before the
+// receiver or any plain listener sees it.
+struct CaptureFilter : QObject {
+  bool eventFilter(QObject *o, QEvent *ev) override {
+    if (ev->type() != QEvent::KeyPress || !g.host || !g.host->call_sync) return false;
+    auto *recv = qobject_cast<QWidget *>(o);
+    if (!recv) return false;
+    std::vector<std::pair<int, svl_handle>> hits;
+    for (auto &kv : g.table) {
+      const Entry &e = kv.second;
+      if (!e.key_capture || e.obj.isNull()) continue;
+      auto *w = qobject_cast<QWidget *>(e.obj.data());
+      if (!w || w == recv || !w->isAncestorOf(recv)) continue;
+      int depth = 0;
+      for (QWidget *p = w; p; p = p->parentWidget()) ++depth;
+      hits.emplace_back(depth, kv.first);
+    }
+    std::sort(hits.begin(), hits.end());
+    for (const auto &hit : hits) {
+      auto it = g.table.find(hit.second);  // an earlier handler may have changed the tree
+      if (it == g.table.end() || !it->second.key_capture) continue;
+      if (key_sync(hit.second, it->second.key_capture_sig, static_cast<QKeyEvent *>(ev))) return true;
+    }
+    return false;
+  }
+};
+
+int listen_key(svl_handle h, Entry &e, svl_id sig, bool on, uint32_t flags) {
+  (void)h;
+  if (flags & SVL_LISTEN_AFTER)
+    return on ? fail("listen: no after phase for event-filter signals (a key-press handler runs before the widget sees the key)") : 0;
+  if (flags & SVL_LISTEN_CAPTURE) {
+    static CaptureFilter *capture = new CaptureFilter;
+    e.key_capture = on;
+    e.key_capture_sig = sig | (flags << SVL_SIGNAL_FLAGS_SHIFT);
+    bool any = false;
+    for (auto &kv : g.table) any = any || kv.second.key_capture;
+    if (any && !g.capture_filter_on) {
+      QCoreApplication::instance()->installEventFilter(capture);
+      g.capture_filter_on = true;
+    } else if (!any && g.capture_filter_on) {
+      QCoreApplication::instance()->removeEventFilter(capture);
+      g.capture_filter_on = false;
+    }
+    return 0;
+  }
   static KeyFilter *filter = new KeyFilter;
   e.key_listen = on;
   e.key_sig = sig;
@@ -412,6 +486,14 @@ struct Table {
 
 //@@CALL@@
 
+template <class T>
+T from_int(int v) {
+  if constexpr (std::is_enum_v<T>) return static_cast<T>(v);
+  else return T(QFlag(v));
+}
+
+//@@ATTRS@@
+
 //@@INSERT@@
 
 //@@REMOVE@@
@@ -479,7 +561,13 @@ int b_insert(void *, svl_handle parent, svl_handle child, svl_handle before, svl
     if (!be) return fail("insert: stale or unknown `before` handle");
     b = be->obj.data();
   }
-  return gen_insert(*p, c->obj.data(), b, slot);
+  svl_id used = slot;
+  int rc = gen_insert(*p, c->obj.data(), b, used);
+  if (rc == 0) {
+    c->placed = parent;
+    c->slot = used;
+  }
+  return rc;
 }
 
 int b_remove(void *, svl_handle parent, svl_handle child) {
@@ -490,7 +578,12 @@ int b_remove(void *, svl_handle parent, svl_handle child) {
   if (!c) return fail("remove: stale or unknown child handle");
   if (p->life == SVL_LIFE_BORROWED || c->life == SVL_LIFE_BORROWED)
     return fail("remove: a borrowed native object cannot be inserted or removed through the tree");
-  return gen_remove(*p, c->obj.data());
+  int rc = gen_remove(*p, c->obj.data());
+  if (rc == 0) {
+    c->placed = 0;
+    c->slot = 0;
+  }
+  return rc;
 }
 
 void b_destroy(void *, svl_handle h) {
@@ -589,12 +682,52 @@ const svl_member_desc *b_describe(void *, uint32_t what, svl_id kind, svl_id mem
 
 const svl_type_desc *b_describe_type(void *, svl_id type) { return type_desc_for(type); }
 
-int b_listen(void *, svl_handle h, svl_id sig, bool on) {
+int b_listen_ex(void *, svl_handle h, svl_id sig, bool on, uint32_t flags) {
   TimeScope timing_;
   Entry *e = find(h);
   if (!e) return fail("listen: stale or unknown handle");
+  if (flags & ~static_cast<uint32_t>(SVL_LISTEN_AFTER | SVL_LISTEN_CAPTURE)) return fail("listen: unknown listener flags");
   if (e->kind == kVListKind) return vl_listen(*e, sig, on);
-  return gen_listen(h, *e, sig, on);
+  return gen_listen(h, *e, sig, on, flags);
+}
+
+int b_listen(void *self, svl_handle h, svl_id sig, bool on) { return b_listen_ex(self, h, sig, on, 0); }
+
+// ABI v2.2 child attributes. The state lives in Qt (a grid cell, a tab label): nothing is cached, and
+// removing the child from its parent takes the attributes with it.
+int b_set_child_attr(void *, svl_handle parent, svl_handle child, svl_id attr, const svl_value *v) {
+  TimeScope timing_;
+  Entry *p = find(parent);
+  if (!p) return fail("set_child_attr: stale or unknown parent handle");
+  Entry *c = find(child);
+  if (!c) return fail("set_child_attr: stale or unknown child handle");
+  if (!v) return fail("set_child_attr: null value");
+  if (c->placed != parent) return fail("set_child_attr: child attributes need an inserted child (this child is not inserted in this parent)");
+  g_in.clear();
+  try {
+    return gen_set_child_attr(*p, *c, attr, v);
+  } catch (const std::exception &x) {
+    return fail(std::string("set_child_attr: C++ exception: ") + x.what());
+  } catch (...) {
+    return fail("set_child_attr: unknown C++ exception");
+  }
+}
+
+int b_get_child_attr(void *, svl_handle parent, svl_handle child, svl_id attr, svl_value *out) {
+  TimeScope timing_;
+  Entry *p = find(parent);
+  if (!p) return fail("get_child_attr: stale or unknown parent handle");
+  Entry *c = find(child);
+  if (!c) return fail("get_child_attr: stale or unknown child handle");
+  if (c->placed != parent) return fail("get_child_attr: child attributes need an inserted child (this child is not inserted in this parent)");
+  g_out.clear();
+  try {
+    return gen_get_child_attr(*p, *c, attr, out);
+  } catch (const std::exception &x) {
+    return fail(std::string("get_child_attr: C++ exception: ") + x.what());
+  } catch (...) {
+    return fail("get_child_attr: unknown C++ exception");
+  }
 }
 
 int b_handle_info(void *, svl_handle h, svl_handle_info *out) {
@@ -706,10 +839,11 @@ void b_request_frame(void *) {
   g.frame_timer->start(delay);
 }
 
-// v3 members (caps, describe, describe_type, cancel) follow `last_error`.
+// v3 members (caps, describe, describe_type, cancel) follow `last_error`; v2.1/v2.2 members follow those.
 const svl_backend kBackend = {SVL_ABI_VERSION, &g, b_resolve, b_create, b_insert, b_remove, b_destroy,
                               b_set_prop, b_get_prop, b_call, b_listen, b_handle_info, b_run, b_wake, b_schedule_wake, b_quit,
-                              b_last_error, SVL_CAP_UTF16_IN | SVL_CAP_UTF16_OUT, b_describe, b_describe_type, b_cancel, b_request_frame};
+                              b_last_error, SVL_CAP_UTF16_IN | SVL_CAP_UTF16_OUT, b_describe, b_describe_type, b_cancel, b_request_frame,
+                              b_set_child_attr, b_get_child_attr, b_listen_ex};
 
 }  // namespace
 
@@ -849,6 +983,19 @@ extern "C" int svl_qt_type_text(svl_handle h, const char *utf8) {
     QKeyEvent release(QEvent::KeyRelease, 0, Qt::NoModifier, QString(c));
     QApplication::sendEvent(e, &release);
   }
+  return 0;
+}
+
+// Row, column, row span and column span of the cell of the widget `child` in the QGridLayout of the
+// widget `grid`; -1 when `child` is not in such a layout. For tests that check what the toolkit holds.
+extern "C" int svl_qt_grid_cell(svl_handle grid, svl_handle child, int *row, int *col, int *row_span, int *col_span) {
+  auto *p = qobject_cast<QWidget *>(debug_obj(grid));
+  auto *c = qobject_cast<QWidget *>(debug_obj(child));
+  auto *l = p ? qobject_cast<QGridLayout *>(p->layout()) : nullptr;
+  if (!l || !c) return -1;
+  int i = l->indexOf(c);
+  if (i < 0) return -1;
+  l->getItemPosition(i, row, col, row_span, col_span);
   return 0;
 }
 

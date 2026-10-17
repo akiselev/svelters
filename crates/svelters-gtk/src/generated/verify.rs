@@ -175,6 +175,29 @@ fn slot_expander_label() {
     });
 }
 
+/// slot Fixed.children: gir: gtk_fixed_put; gir: gtk_fixed_remove
+#[test]
+fn slot_fixed_children() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("fixed");
+        let a = h.create("label");
+        let b = h.create("label");
+        h.insert(parent, a, None, Some("children")).unwrap();
+        assert!((h.widget(a).parent().as_ref() == Some(&h.widget(parent))), "a in children");
+        h.insert(parent, b, None, Some("children")).unwrap();
+        assert!((h.widget(b).parent().as_ref() == Some(&h.widget(parent))), "b in children");
+        h.remove(parent, a).unwrap();
+        assert!(!(h.widget(a).parent().as_ref() == Some(&h.widget(parent))), "a in children");
+        assert!((h.widget(b).parent().as_ref() == Some(&h.widget(parent))), "b in children");
+        h.insert(parent, a, None, Some("children")).unwrap();
+        assert!((h.widget(a).parent().as_ref() == Some(&h.widget(parent))), "a in children");
+        h.remove(parent, a).unwrap();
+        h.remove(parent, b).unwrap();
+        assert!(!(h.widget(b).parent().as_ref() == Some(&h.widget(parent))), "b in children");
+    });
+}
+
 /// slot Frame.child: gir: gtk_frame_set_child
 #[test]
 fn slot_frame_child() {
@@ -220,6 +243,29 @@ fn slot_frame_label() {
         assert!((h.widget(parent).downcast_ref::<gtk::Frame>().unwrap().label_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in label");
         h.remove(parent, a).unwrap();
         assert!(!(h.widget(parent).downcast_ref::<gtk::Frame>().unwrap().label_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in label");
+    });
+}
+
+/// slot Grid.cells: gir: gtk_grid_attach; gir: gtk_grid_remove
+#[test]
+fn slot_grid_cells() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("grid");
+        let a = h.create("label");
+        let b = h.create("label");
+        h.insert(parent, a, None, Some("cells")).unwrap();
+        assert!((h.widget(a).parent().as_ref() == Some(&h.widget(parent))), "a in cells");
+        h.insert(parent, b, None, Some("cells")).unwrap();
+        assert!((h.widget(b).parent().as_ref() == Some(&h.widget(parent))), "b in cells");
+        h.remove(parent, a).unwrap();
+        assert!(!(h.widget(a).parent().as_ref() == Some(&h.widget(parent))), "a in cells");
+        assert!((h.widget(b).parent().as_ref() == Some(&h.widget(parent))), "b in cells");
+        h.insert(parent, a, None, Some("cells")).unwrap();
+        assert!((h.widget(a).parent().as_ref() == Some(&h.widget(parent))), "a in cells");
+        h.remove(parent, a).unwrap();
+        h.remove(parent, b).unwrap();
+        assert!(!(h.widget(b).parent().as_ref() == Some(&h.widget(parent))), "b in cells");
     });
 }
 
@@ -314,6 +360,33 @@ fn slot_menubutton_popover() {
         assert!((h.widget(parent).downcast_ref::<gtk::MenuButton>().unwrap().popover().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in popover");
         h.remove(parent, a).unwrap();
         assert!(!(h.widget(parent).downcast_ref::<gtk::MenuButton>().unwrap().popover().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in popover");
+    });
+}
+
+/// slot Notebook.pages: gir: gtk_notebook_insert_page; gir: gtk_notebook_remove_page
+#[test]
+fn slot_notebook_pages() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("notebook");
+        let a = h.create("label");
+        let b = h.create("label");
+        let c = h.create("label");
+        h.insert(parent, a, None, Some("pages")).unwrap();
+        assert!((h.widget(a).ancestor(h.widget(parent).type_()).as_ref() == Some(&h.widget(parent))), "a in pages");
+        let pw = h.widget(parent);
+        let idx = |c: u64| -> Option<u32> { let parent = &pw; let w = h.widget(c); crate::util::Idx::idx(parent.downcast_ref::<gtk::Notebook>().unwrap().page_num(&w)) };
+        h.insert(parent, b, Some(a), Some("pages")).unwrap();
+        h.insert(parent, c, None, None).unwrap();
+        assert!(idx(b) < idx(a) && idx(a) < idx(c), "order b a c: {:?}", (idx(b), idx(a), idx(c)));
+        h.remove(parent, a).unwrap();
+        assert!(!(h.widget(a).ancestor(h.widget(parent).type_()).as_ref() == Some(&h.widget(parent))), "a in pages");
+        assert!(h.widget(a).parent().is_none());
+        h.insert(parent, a, Some(c), Some("pages")).unwrap();
+        assert!(idx(b) < idx(a) && idx(a) < idx(c), "order b a c after re-insert");
+        for x in [a, b, c] { h.remove(parent, x).unwrap(); }
+        assert!(!(h.widget(a).ancestor(h.widget(parent).type_()).as_ref() == Some(&h.widget(parent))), "a in pages");
+        assert!(!(h.widget(b).ancestor(h.widget(parent).type_()).as_ref() == Some(&h.widget(parent))), "b in pages");
     });
 }
 
@@ -484,6 +557,29 @@ fn slot_searchbar_child() {
     });
 }
 
+/// slot Stack.pages: gir: gtk_stack_add_child; gir: gtk_stack_remove
+#[test]
+fn slot_stack_pages() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("stack");
+        let a = h.create("label");
+        let b = h.create("label");
+        h.insert(parent, a, None, Some("pages")).unwrap();
+        assert!((h.widget(a).parent().as_ref() == Some(&h.widget(parent))), "a in pages");
+        h.insert(parent, b, None, Some("pages")).unwrap();
+        assert!((h.widget(b).parent().as_ref() == Some(&h.widget(parent))), "b in pages");
+        h.remove(parent, a).unwrap();
+        assert!(!(h.widget(a).parent().as_ref() == Some(&h.widget(parent))), "a in pages");
+        assert!((h.widget(b).parent().as_ref() == Some(&h.widget(parent))), "b in pages");
+        h.insert(parent, a, None, Some("pages")).unwrap();
+        assert!((h.widget(a).parent().as_ref() == Some(&h.widget(parent))), "a in pages");
+        h.remove(parent, a).unwrap();
+        h.remove(parent, b).unwrap();
+        assert!(!(h.widget(b).parent().as_ref() == Some(&h.widget(parent))), "b in pages");
+    });
+}
+
 /// slot Viewport.child: gir: gtk_viewport_set_child
 #[test]
 fn slot_viewport_child() {
@@ -577,6 +673,512 @@ fn slot_windowhandle_child() {
         assert!((h.widget(parent).downcast_ref::<gtk::WindowHandle>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
         h.remove(parent, a).unwrap();
         assert!(!(h.widget(parent).downcast_ref::<gtk::WindowHandle>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
+    });
+}
+
+/// attribute Fixed.children.x: gir: gtk_fixed_move; runtime: gtk_fixed_get_child_position returns 0,0 on GTK 4.22; the layout child transform is the position
+#[test]
+fn attr_fixed_children_x() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("fixed");
+        let c = h.create("label");
+        let stray = h.create("label");
+        h.insert(parent, c, None, Some("children")).unwrap();
+        assert!(h.set_child_attr(parent, stray, "x", &V::F64(12.0)).is_err(), "a child that is not inserted has no attributes");
+        h.set_child_attr(parent, c, "x", &V::F64(12.0)).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "x"), V::F64(12.0), "set x");
+        h.set_child_attr(parent, c, "x", &V::F64(30.5)).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "x"), V::F64(30.5), "change x");
+        h.set_child_attr(parent, c, "x", &V::F64(12.0)).unwrap();
+        let w = h.widget(c);
+        let pw = h.widget(parent);
+        let _ = (&w, &pw);
+        assert!(crate::util::fixed_position(pw.downcast_ref::<gtk::Fixed>().unwrap(), &w).0 == 12.0, "postcondition: crate::util::fixed_position(pw.downcast_ref::<gtk::Fixed>().unwrap(), &w).0 == 12.0");
+        h.set_child_attr(parent, c, "x", &V::Null).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "x"), V::F64(0.0), "null resets x");
+        h.set_child_attr(parent, c, "x", &V::F64(12.0)).unwrap();
+        h.remove(parent, c).unwrap();
+        assert!(h.set_child_attr(parent, c, "x", &V::F64(12.0)).is_err(), "a removed child has no attributes");
+        h.insert(parent, c, None, Some("children")).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "x"), V::F64(0.0), "x is back to its default after remove + insert");
+    });
+}
+
+/// attribute Fixed.children.y: gir: gtk_fixed_move; runtime: gtk_fixed_get_child_position returns 0,0 on GTK 4.22; the layout child transform is the position
+#[test]
+fn attr_fixed_children_y() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("fixed");
+        let c = h.create("label");
+        let stray = h.create("label");
+        h.insert(parent, c, None, Some("children")).unwrap();
+        assert!(h.set_child_attr(parent, stray, "y", &V::F64(7.0)).is_err(), "a child that is not inserted has no attributes");
+        h.set_child_attr(parent, c, "y", &V::F64(7.0)).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "y"), V::F64(7.0), "set y");
+        h.set_child_attr(parent, c, "y", &V::F64(41.25)).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "y"), V::F64(41.25), "change y");
+        h.set_child_attr(parent, c, "y", &V::F64(7.0)).unwrap();
+        let w = h.widget(c);
+        let pw = h.widget(parent);
+        let _ = (&w, &pw);
+        assert!(crate::util::fixed_position(pw.downcast_ref::<gtk::Fixed>().unwrap(), &w).1 == 7.0, "postcondition: crate::util::fixed_position(pw.downcast_ref::<gtk::Fixed>().unwrap(), &w).1 == 7.0");
+        h.set_child_attr(parent, c, "y", &V::Null).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "y"), V::F64(0.0), "null resets y");
+        h.set_child_attr(parent, c, "y", &V::F64(7.0)).unwrap();
+        h.remove(parent, c).unwrap();
+        assert!(h.set_child_attr(parent, c, "y", &V::F64(7.0)).is_err(), "a removed child has no attributes");
+        h.insert(parent, c, None, Some("children")).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "y"), V::F64(0.0), "y is back to its default after remove + insert");
+    });
+}
+
+/// attribute Grid.cells.column: gir: GtkGridLayoutChild:column; gir: gtk_grid_query_child
+#[test]
+fn attr_grid_cells_column() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("grid");
+        let c = h.create("label");
+        let stray = h.create("label");
+        h.insert(parent, c, None, Some("cells")).unwrap();
+        assert!(h.set_child_attr(parent, stray, "column", &V::I64(2)).is_err(), "a child that is not inserted has no attributes");
+        h.set_child_attr(parent, c, "column", &V::I64(2)).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "column"), V::I64(2), "set column");
+        h.set_child_attr(parent, c, "column", &V::I64(5)).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "column"), V::I64(5), "change column");
+        h.set_child_attr(parent, c, "column", &V::I64(2)).unwrap();
+        let w = h.widget(c);
+        let pw = h.widget(parent);
+        let _ = (&w, &pw);
+        assert!(pw.downcast_ref::<gtk::Grid>().unwrap().query_child(&w).0 == 2, "postcondition: pw.downcast_ref::<gtk::Grid>().unwrap().query_child(&w).0 == 2");
+        h.set_child_attr(parent, c, "column", &V::Null).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "column"), V::I64(0), "null resets column");
+        h.set_child_attr(parent, c, "column", &V::I64(2)).unwrap();
+        h.remove(parent, c).unwrap();
+        assert!(h.set_child_attr(parent, c, "column", &V::I64(2)).is_err(), "a removed child has no attributes");
+        h.insert(parent, c, None, Some("cells")).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "column"), V::I64(0), "column is back to its default after remove + insert");
+    });
+}
+
+/// attribute Grid.cells.row: gir: GtkGridLayoutChild:row; gir: gtk_grid_query_child
+#[test]
+fn attr_grid_cells_row() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("grid");
+        let c = h.create("label");
+        let stray = h.create("label");
+        h.insert(parent, c, None, Some("cells")).unwrap();
+        assert!(h.set_child_attr(parent, stray, "row", &V::I64(3)).is_err(), "a child that is not inserted has no attributes");
+        h.set_child_attr(parent, c, "row", &V::I64(3)).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "row"), V::I64(3), "set row");
+        h.set_child_attr(parent, c, "row", &V::I64(1)).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "row"), V::I64(1), "change row");
+        h.set_child_attr(parent, c, "row", &V::I64(3)).unwrap();
+        let w = h.widget(c);
+        let pw = h.widget(parent);
+        let _ = (&w, &pw);
+        assert!(pw.downcast_ref::<gtk::Grid>().unwrap().query_child(&w).1 == 3, "postcondition: pw.downcast_ref::<gtk::Grid>().unwrap().query_child(&w).1 == 3");
+        h.set_child_attr(parent, c, "row", &V::Null).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "row"), V::I64(0), "null resets row");
+        h.set_child_attr(parent, c, "row", &V::I64(3)).unwrap();
+        h.remove(parent, c).unwrap();
+        assert!(h.set_child_attr(parent, c, "row", &V::I64(3)).is_err(), "a removed child has no attributes");
+        h.insert(parent, c, None, Some("cells")).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "row"), V::I64(0), "row is back to its default after remove + insert");
+    });
+}
+
+/// attribute Grid.cells.columnSpan: gir: GtkGridLayoutChild:column-span; gir: gtk_grid_query_child
+#[test]
+fn attr_grid_cells_columnspan() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("grid");
+        let c = h.create("label");
+        let stray = h.create("label");
+        h.insert(parent, c, None, Some("cells")).unwrap();
+        assert!(h.set_child_attr(parent, stray, "columnSpan", &V::I64(2)).is_err(), "a child that is not inserted has no attributes");
+        h.set_child_attr(parent, c, "columnSpan", &V::I64(2)).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "columnSpan"), V::I64(2), "set columnSpan");
+        h.set_child_attr(parent, c, "columnSpan", &V::I64(3)).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "columnSpan"), V::I64(3), "change columnSpan");
+        h.set_child_attr(parent, c, "columnSpan", &V::I64(2)).unwrap();
+        let w = h.widget(c);
+        let pw = h.widget(parent);
+        let _ = (&w, &pw);
+        assert!(pw.downcast_ref::<gtk::Grid>().unwrap().query_child(&w).2 == 2, "postcondition: pw.downcast_ref::<gtk::Grid>().unwrap().query_child(&w).2 == 2");
+        h.set_child_attr(parent, c, "columnSpan", &V::Null).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "columnSpan"), V::I64(1), "null resets columnSpan");
+        h.set_child_attr(parent, c, "columnSpan", &V::I64(2)).unwrap();
+        h.remove(parent, c).unwrap();
+        assert!(h.set_child_attr(parent, c, "columnSpan", &V::I64(2)).is_err(), "a removed child has no attributes");
+        h.insert(parent, c, None, Some("cells")).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "columnSpan"), V::I64(1), "columnSpan is back to its default after remove + insert");
+    });
+}
+
+/// attribute Grid.cells.rowSpan: gir: GtkGridLayoutChild:row-span; gir: gtk_grid_query_child
+#[test]
+fn attr_grid_cells_rowspan() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("grid");
+        let c = h.create("label");
+        let stray = h.create("label");
+        h.insert(parent, c, None, Some("cells")).unwrap();
+        assert!(h.set_child_attr(parent, stray, "rowSpan", &V::I64(2)).is_err(), "a child that is not inserted has no attributes");
+        h.set_child_attr(parent, c, "rowSpan", &V::I64(2)).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "rowSpan"), V::I64(2), "set rowSpan");
+        h.set_child_attr(parent, c, "rowSpan", &V::I64(4)).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "rowSpan"), V::I64(4), "change rowSpan");
+        h.set_child_attr(parent, c, "rowSpan", &V::I64(2)).unwrap();
+        let w = h.widget(c);
+        let pw = h.widget(parent);
+        let _ = (&w, &pw);
+        assert!(pw.downcast_ref::<gtk::Grid>().unwrap().query_child(&w).3 == 2, "postcondition: pw.downcast_ref::<gtk::Grid>().unwrap().query_child(&w).3 == 2");
+        h.set_child_attr(parent, c, "rowSpan", &V::Null).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "rowSpan"), V::I64(1), "null resets rowSpan");
+        h.set_child_attr(parent, c, "rowSpan", &V::I64(2)).unwrap();
+        h.remove(parent, c).unwrap();
+        assert!(h.set_child_attr(parent, c, "rowSpan", &V::I64(2)).is_err(), "a removed child has no attributes");
+        h.insert(parent, c, None, Some("cells")).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "rowSpan"), V::I64(1), "rowSpan is back to its default after remove + insert");
+    });
+}
+
+/// attribute Notebook.pages.tabLabel: gir: gtk_notebook_set_tab_label_text; runtime: the GtkNotebookPage:tab-label property only stores a string; it does not create the visible tab label (GTK 4.22)
+#[test]
+fn attr_notebook_pages_tablabel() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("notebook");
+        let c = h.create("label");
+        let stray = h.create("label");
+        h.insert(parent, c, None, Some("pages")).unwrap();
+        assert!(h.set_child_attr(parent, stray, "tabLabel", &V::Str("Tab one".into())).is_err(), "a child that is not inserted has no attributes");
+        h.set_child_attr(parent, c, "tabLabel", &V::Str("Tab one".into())).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "tabLabel"), V::Str("Tab one".into()), "set tabLabel");
+        h.set_child_attr(parent, c, "tabLabel", &V::Str("Tab two".into())).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "tabLabel"), V::Str("Tab two".into()), "change tabLabel");
+        h.set_child_attr(parent, c, "tabLabel", &V::Str("Tab one".into())).unwrap();
+        let w = h.widget(c);
+        let pw = h.widget(parent);
+        let _ = (&w, &pw);
+        assert!(pw.downcast_ref::<gtk::Notebook>().unwrap().tab_label_text(&w).as_deref() == Some("Tab one"), "postcondition: pw.downcast_ref::<gtk::Notebook>().unwrap().tab_label_text(&w).as_deref() == Some('Tab one')");
+        h.set_child_attr(parent, c, "tabLabel", &V::Null).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "tabLabel"), V::Str("".into()), "null resets tabLabel");
+        h.set_child_attr(parent, c, "tabLabel", &V::Str("Tab one".into())).unwrap();
+        h.remove(parent, c).unwrap();
+        assert!(h.set_child_attr(parent, c, "tabLabel", &V::Str("Tab one".into())).is_err(), "a removed child has no attributes");
+        h.insert(parent, c, None, Some("pages")).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "tabLabel"), V::Str("".into()), "tabLabel is back to its default after remove + insert");
+    });
+}
+
+/// attribute Notebook.pages.menuLabel: gir: gtk_notebook_set_menu_label_text
+#[test]
+fn attr_notebook_pages_menulabel() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("notebook");
+        let c = h.create("label");
+        let stray = h.create("label");
+        h.insert(parent, c, None, Some("pages")).unwrap();
+        assert!(h.set_child_attr(parent, stray, "menuLabel", &V::Str("Menu one".into())).is_err(), "a child that is not inserted has no attributes");
+        h.set_child_attr(parent, c, "menuLabel", &V::Str("Menu one".into())).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "menuLabel"), V::Str("Menu one".into()), "set menuLabel");
+        h.set_child_attr(parent, c, "menuLabel", &V::Str("Menu two".into())).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "menuLabel"), V::Str("Menu two".into()), "change menuLabel");
+        h.set_child_attr(parent, c, "menuLabel", &V::Null).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "menuLabel"), V::Str("".into()), "null resets menuLabel");
+        h.set_child_attr(parent, c, "menuLabel", &V::Str("Menu one".into())).unwrap();
+        h.remove(parent, c).unwrap();
+        assert!(h.set_child_attr(parent, c, "menuLabel", &V::Str("Menu one".into())).is_err(), "a removed child has no attributes");
+        h.insert(parent, c, None, Some("pages")).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "menuLabel"), V::Str("".into()), "menuLabel is back to its default after remove + insert");
+    });
+}
+
+/// attribute Notebook.pages.reorderable: gir: GtkNotebookPage:reorderable; gir: gtk_notebook_get_tab_reorderable
+#[test]
+fn attr_notebook_pages_reorderable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("notebook");
+        let c = h.create("label");
+        let stray = h.create("label");
+        h.insert(parent, c, None, Some("pages")).unwrap();
+        assert!(h.set_child_attr(parent, stray, "reorderable", &V::Bool(true)).is_err(), "a child that is not inserted has no attributes");
+        h.set_child_attr(parent, c, "reorderable", &V::Bool(true)).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "reorderable"), V::Bool(true), "set reorderable");
+        h.set_child_attr(parent, c, "reorderable", &V::Bool(false)).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "reorderable"), V::Bool(false), "change reorderable");
+        h.set_child_attr(parent, c, "reorderable", &V::Bool(true)).unwrap();
+        let w = h.widget(c);
+        let pw = h.widget(parent);
+        let _ = (&w, &pw);
+        assert!(pw.downcast_ref::<gtk::Notebook>().unwrap().tab_is_reorderable(&w), "postcondition: pw.downcast_ref::<gtk::Notebook>().unwrap().tab_is_reorderable(&w)");
+        h.set_child_attr(parent, c, "reorderable", &V::Null).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "reorderable"), V::Bool(false), "null resets reorderable");
+        h.set_child_attr(parent, c, "reorderable", &V::Bool(true)).unwrap();
+        h.remove(parent, c).unwrap();
+        assert!(h.set_child_attr(parent, c, "reorderable", &V::Bool(true)).is_err(), "a removed child has no attributes");
+        h.insert(parent, c, None, Some("pages")).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "reorderable"), V::Bool(false), "reorderable is back to its default after remove + insert");
+    });
+}
+
+/// attribute Notebook.pages.detachable: gir: GtkNotebookPage:detachable; gir: gtk_notebook_get_tab_detachable
+#[test]
+fn attr_notebook_pages_detachable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("notebook");
+        let c = h.create("label");
+        let stray = h.create("label");
+        h.insert(parent, c, None, Some("pages")).unwrap();
+        assert!(h.set_child_attr(parent, stray, "detachable", &V::Bool(true)).is_err(), "a child that is not inserted has no attributes");
+        h.set_child_attr(parent, c, "detachable", &V::Bool(true)).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "detachable"), V::Bool(true), "set detachable");
+        h.set_child_attr(parent, c, "detachable", &V::Bool(false)).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "detachable"), V::Bool(false), "change detachable");
+        h.set_child_attr(parent, c, "detachable", &V::Bool(true)).unwrap();
+        let w = h.widget(c);
+        let pw = h.widget(parent);
+        let _ = (&w, &pw);
+        assert!(pw.downcast_ref::<gtk::Notebook>().unwrap().tab_is_detachable(&w), "postcondition: pw.downcast_ref::<gtk::Notebook>().unwrap().tab_is_detachable(&w)");
+        h.set_child_attr(parent, c, "detachable", &V::Null).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "detachable"), V::Bool(false), "null resets detachable");
+        h.set_child_attr(parent, c, "detachable", &V::Bool(true)).unwrap();
+        h.remove(parent, c).unwrap();
+        assert!(h.set_child_attr(parent, c, "detachable", &V::Bool(true)).is_err(), "a removed child has no attributes");
+        h.insert(parent, c, None, Some("pages")).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "detachable"), V::Bool(false), "detachable is back to its default after remove + insert");
+    });
+}
+
+/// attribute Notebook.pages.tabExpand: gir: GtkNotebookPage:tab-expand
+#[test]
+fn attr_notebook_pages_tabexpand() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("notebook");
+        let c = h.create("label");
+        let stray = h.create("label");
+        h.insert(parent, c, None, Some("pages")).unwrap();
+        assert!(h.set_child_attr(parent, stray, "tabExpand", &V::Bool(true)).is_err(), "a child that is not inserted has no attributes");
+        h.set_child_attr(parent, c, "tabExpand", &V::Bool(true)).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "tabExpand"), V::Bool(true), "set tabExpand");
+        h.set_child_attr(parent, c, "tabExpand", &V::Bool(false)).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "tabExpand"), V::Bool(false), "change tabExpand");
+        h.set_child_attr(parent, c, "tabExpand", &V::Null).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "tabExpand"), V::Bool(false), "null resets tabExpand");
+        h.set_child_attr(parent, c, "tabExpand", &V::Bool(true)).unwrap();
+        h.remove(parent, c).unwrap();
+        assert!(h.set_child_attr(parent, c, "tabExpand", &V::Bool(true)).is_err(), "a removed child has no attributes");
+        h.insert(parent, c, None, Some("pages")).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "tabExpand"), V::Bool(false), "tabExpand is back to its default after remove + insert");
+    });
+}
+
+/// attribute Notebook.pages.tabFill: gir: GtkNotebookPage:tab-fill
+#[test]
+fn attr_notebook_pages_tabfill() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("notebook");
+        let c = h.create("label");
+        let stray = h.create("label");
+        h.insert(parent, c, None, Some("pages")).unwrap();
+        assert!(h.set_child_attr(parent, stray, "tabFill", &V::Bool(false)).is_err(), "a child that is not inserted has no attributes");
+        h.set_child_attr(parent, c, "tabFill", &V::Bool(false)).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "tabFill"), V::Bool(false), "set tabFill");
+        h.set_child_attr(parent, c, "tabFill", &V::Bool(true)).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "tabFill"), V::Bool(true), "change tabFill");
+        h.set_child_attr(parent, c, "tabFill", &V::Null).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "tabFill"), V::Bool(true), "null resets tabFill");
+        h.set_child_attr(parent, c, "tabFill", &V::Bool(false)).unwrap();
+        h.remove(parent, c).unwrap();
+        assert!(h.set_child_attr(parent, c, "tabFill", &V::Bool(false)).is_err(), "a removed child has no attributes");
+        h.insert(parent, c, None, Some("pages")).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "tabFill"), V::Bool(true), "tabFill is back to its default after remove + insert");
+    });
+}
+
+/// attribute Overlay.overlays.measure: gir: gtk_overlay_set_measure_overlay
+#[test]
+fn attr_overlay_overlays_measure() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("overlay");
+        let c = h.create("label");
+        let stray = h.create("label");
+        h.insert(parent, c, None, Some("overlays")).unwrap();
+        assert!(h.set_child_attr(parent, stray, "measure", &V::Bool(true)).is_err(), "a child that is not inserted has no attributes");
+        h.set_child_attr(parent, c, "measure", &V::Bool(true)).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "measure"), V::Bool(true), "set measure");
+        h.set_child_attr(parent, c, "measure", &V::Bool(false)).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "measure"), V::Bool(false), "change measure");
+        h.set_child_attr(parent, c, "measure", &V::Null).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "measure"), V::Bool(false), "null resets measure");
+        h.set_child_attr(parent, c, "measure", &V::Bool(true)).unwrap();
+        h.remove(parent, c).unwrap();
+        assert!(h.set_child_attr(parent, c, "measure", &V::Bool(true)).is_err(), "a removed child has no attributes");
+        h.insert(parent, c, None, Some("overlays")).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "measure"), V::Bool(false), "measure is back to its default after remove + insert");
+    });
+}
+
+/// attribute Overlay.overlays.clip: gir: gtk_overlay_set_clip_overlay
+#[test]
+fn attr_overlay_overlays_clip() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("overlay");
+        let c = h.create("label");
+        let stray = h.create("label");
+        h.insert(parent, c, None, Some("overlays")).unwrap();
+        assert!(h.set_child_attr(parent, stray, "clip", &V::Bool(true)).is_err(), "a child that is not inserted has no attributes");
+        h.set_child_attr(parent, c, "clip", &V::Bool(true)).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "clip"), V::Bool(true), "set clip");
+        h.set_child_attr(parent, c, "clip", &V::Bool(false)).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "clip"), V::Bool(false), "change clip");
+        h.set_child_attr(parent, c, "clip", &V::Null).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "clip"), V::Bool(false), "null resets clip");
+        h.set_child_attr(parent, c, "clip", &V::Bool(true)).unwrap();
+        h.remove(parent, c).unwrap();
+        assert!(h.set_child_attr(parent, c, "clip", &V::Bool(true)).is_err(), "a removed child has no attributes");
+        h.insert(parent, c, None, Some("overlays")).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "clip"), V::Bool(false), "clip is back to its default after remove + insert");
+    });
+}
+
+/// attribute Stack.pages.name: gir: GtkStackPage:name; gir: gtk_stack_get_child_by_name
+#[test]
+fn attr_stack_pages_name() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("stack");
+        let c = h.create("label");
+        let stray = h.create("label");
+        h.insert(parent, c, None, Some("pages")).unwrap();
+        assert!(h.set_child_attr(parent, stray, "name", &V::Str("first".into())).is_err(), "a child that is not inserted has no attributes");
+        h.set_child_attr(parent, c, "name", &V::Str("first".into())).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "name"), V::Str("first".into()), "set name");
+        h.set_child_attr(parent, c, "name", &V::Str("second".into())).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "name"), V::Str("second".into()), "change name");
+        h.set_child_attr(parent, c, "name", &V::Str("first".into())).unwrap();
+        let w = h.widget(c);
+        let pw = h.widget(parent);
+        let _ = (&w, &pw);
+        assert!(pw.downcast_ref::<gtk::Stack>().unwrap().child_by_name("first").as_ref() == Some(&w), "postcondition: pw.downcast_ref::<gtk::Stack>().unwrap().child_by_name('first').as_ref() == Some(&w)");
+        h.set_child_attr(parent, c, "name", &V::Null).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "name"), V::Null, "null resets name");
+        h.set_child_attr(parent, c, "name", &V::Str("first".into())).unwrap();
+        h.remove(parent, c).unwrap();
+        assert!(h.set_child_attr(parent, c, "name", &V::Str("first".into())).is_err(), "a removed child has no attributes");
+        h.insert(parent, c, None, Some("pages")).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "name"), V::Null, "name is back to its default after remove + insert");
+    });
+}
+
+/// attribute Stack.pages.title: gir: GtkStackPage:title
+#[test]
+fn attr_stack_pages_title() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("stack");
+        let c = h.create("label");
+        let stray = h.create("label");
+        h.insert(parent, c, None, Some("pages")).unwrap();
+        assert!(h.set_child_attr(parent, stray, "title", &V::Str("First page".into())).is_err(), "a child that is not inserted has no attributes");
+        h.set_child_attr(parent, c, "title", &V::Str("First page".into())).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "title"), V::Str("First page".into()), "set title");
+        h.set_child_attr(parent, c, "title", &V::Str("Second page".into())).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "title"), V::Str("Second page".into()), "change title");
+        h.set_child_attr(parent, c, "title", &V::Null).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "title"), V::Null, "null resets title");
+        h.set_child_attr(parent, c, "title", &V::Str("First page".into())).unwrap();
+        h.remove(parent, c).unwrap();
+        assert!(h.set_child_attr(parent, c, "title", &V::Str("First page".into())).is_err(), "a removed child has no attributes");
+        h.insert(parent, c, None, Some("pages")).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "title"), V::Null, "title is back to its default after remove + insert");
+    });
+}
+
+/// attribute Stack.pages.iconName: gir: GtkStackPage:icon-name
+#[test]
+fn attr_stack_pages_iconname() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("stack");
+        let c = h.create("label");
+        let stray = h.create("label");
+        h.insert(parent, c, None, Some("pages")).unwrap();
+        assert!(h.set_child_attr(parent, stray, "iconName", &V::Str("document-new".into())).is_err(), "a child that is not inserted has no attributes");
+        h.set_child_attr(parent, c, "iconName", &V::Str("document-new".into())).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "iconName"), V::Str("document-new".into()), "set iconName");
+        h.set_child_attr(parent, c, "iconName", &V::Str("edit-copy".into())).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "iconName"), V::Str("edit-copy".into()), "change iconName");
+        h.set_child_attr(parent, c, "iconName", &V::Null).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "iconName"), V::Null, "null resets iconName");
+        h.set_child_attr(parent, c, "iconName", &V::Str("document-new".into())).unwrap();
+        h.remove(parent, c).unwrap();
+        assert!(h.set_child_attr(parent, c, "iconName", &V::Str("document-new".into())).is_err(), "a removed child has no attributes");
+        h.insert(parent, c, None, Some("pages")).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "iconName"), V::Null, "iconName is back to its default after remove + insert");
+    });
+}
+
+/// attribute Stack.pages.needsAttention: gir: GtkStackPage:needs-attention
+#[test]
+fn attr_stack_pages_needsattention() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("stack");
+        let c = h.create("label");
+        let stray = h.create("label");
+        h.insert(parent, c, None, Some("pages")).unwrap();
+        assert!(h.set_child_attr(parent, stray, "needsAttention", &V::Bool(true)).is_err(), "a child that is not inserted has no attributes");
+        h.set_child_attr(parent, c, "needsAttention", &V::Bool(true)).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "needsAttention"), V::Bool(true), "set needsAttention");
+        h.set_child_attr(parent, c, "needsAttention", &V::Bool(false)).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "needsAttention"), V::Bool(false), "change needsAttention");
+        h.set_child_attr(parent, c, "needsAttention", &V::Null).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "needsAttention"), V::Bool(false), "null resets needsAttention");
+        h.set_child_attr(parent, c, "needsAttention", &V::Bool(true)).unwrap();
+        h.remove(parent, c).unwrap();
+        assert!(h.set_child_attr(parent, c, "needsAttention", &V::Bool(true)).is_err(), "a removed child has no attributes");
+        h.insert(parent, c, None, Some("pages")).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "needsAttention"), V::Bool(false), "needsAttention is back to its default after remove + insert");
+    });
+}
+
+/// attribute Stack.pages.useUnderline: gir: GtkStackPage:use-underline
+#[test]
+fn attr_stack_pages_useunderline() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("stack");
+        let c = h.create("label");
+        let stray = h.create("label");
+        h.insert(parent, c, None, Some("pages")).unwrap();
+        assert!(h.set_child_attr(parent, stray, "useUnderline", &V::Bool(true)).is_err(), "a child that is not inserted has no attributes");
+        h.set_child_attr(parent, c, "useUnderline", &V::Bool(true)).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "useUnderline"), V::Bool(true), "set useUnderline");
+        h.set_child_attr(parent, c, "useUnderline", &V::Bool(false)).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "useUnderline"), V::Bool(false), "change useUnderline");
+        h.set_child_attr(parent, c, "useUnderline", &V::Null).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "useUnderline"), V::Bool(false), "null resets useUnderline");
+        h.set_child_attr(parent, c, "useUnderline", &V::Bool(true)).unwrap();
+        h.remove(parent, c).unwrap();
+        assert!(h.set_child_attr(parent, c, "useUnderline", &V::Bool(true)).is_err(), "a removed child has no attributes");
+        h.insert(parent, c, None, Some("pages")).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "useUnderline"), V::Bool(false), "useUnderline is back to its default after remove + insert");
     });
 }
 

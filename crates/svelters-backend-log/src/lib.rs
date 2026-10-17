@@ -26,6 +26,8 @@ pub enum Step {
         handle: svl_handle,
         signal: String,
         args: Vec<Value>,
+        /// `SVL_LISTEN_*` bits of the connection that fires (logged as a trailing word).
+        flags: u32,
     },
     /// The native object behind `handle` dies for `reason` (an `SVL_GONE_*` code), taking its
     /// descendants with it. Logs `gone #h <reason>` for each and reports them to the host.
@@ -40,12 +42,41 @@ pub enum Step {
         handle: svl_handle,
         signal: String,
         args: Vec<Value>,
+        flags: u32,
     },
     Checkpoint,
 }
 
-/// Parses a fixture's `script.json`: an array of `{"event": [h, signal, args]}`,
-/// `{"sync": [h, signal, args]}`, `{"gone": [h, reason]}` and `{"checkpoint": true}` steps.
+/// The op-log spelling of listener flags: `after`, `capture` or `after+capture`; empty for 0.
+pub fn flags_word(flags: u32) -> String {
+    let mut w = Vec::new();
+    if flags & svelters_abi::SVL_LISTEN_AFTER != 0 {
+        w.push("after");
+    }
+    if flags & svelters_abi::SVL_LISTEN_CAPTURE != 0 {
+        w.push("capture");
+    }
+    w.join("+")
+}
+
+fn flags_suffix(flags: u32) -> String {
+    if flags == 0 { String::new() } else { format!(" {}", flags_word(flags)) }
+}
+
+fn flags_from_word(w: &str) -> Result<u32, String> {
+    let mut f = 0;
+    for part in w.split('+').filter(|p| !p.is_empty()) {
+        f |= match part {
+            "after" => svelters_abi::SVL_LISTEN_AFTER,
+            "capture" => svelters_abi::SVL_LISTEN_CAPTURE,
+            other => return Err(format!("unknown listener flag `{other}`")),
+        };
+    }
+    Ok(f)
+}
+
+/// Parses a fixture's `script.json`: an array of `{"event": [h, signal, args, flags?]}`
+/// (`flags` is `"after"`, `"capture"` or `"after+capture"`), `{"sync": [h, signal, args, flags?]}`, `{"gone": [h, reason]}` and `{"checkpoint": true}` steps.
 pub fn parse_script(json: &str) -> Result<Vec<Step>, String> {
     let root: serde_json::Value = serde_json::from_str(json).map_err(|e| format!("script: {e}"))?;
     let steps = root.as_array().ok_or("script: expected a JSON array")?;
@@ -81,17 +112,23 @@ fn parse_step(s: &serde_json::Value) -> Result<Step, String> {
                 .map(json_to_value)
                 .collect::<Result<_, _>>()?,
         };
+        let flags = match ev.get(3) {
+            None => 0,
+            Some(w) => flags_from_word(w.as_str().ok_or("event: flags must be a string")?)?,
+        };
         if is_sync {
             return Ok(Step::Sync {
                 handle,
                 signal,
                 args,
+                flags,
             });
         }
         Ok(Step::Event {
             handle,
             signal,
             args,
+            flags,
         })
     } else if let Some(g) = obj.get("gone") {
         let g = g.as_array().ok_or("gone: expected [handle, reason]")?;
@@ -270,6 +307,8 @@ struct State {
     next_handle: u64,
     live: HashMap<svl_handle, svl_id>,
     props: HashMap<(svl_handle, svl_id), Value>,
+    /// Child attributes by (child, attr); cleared when the child is removed.
+    attrs: HashMap<(svl_handle, svl_id), Value>,
     parent: HashMap<svl_handle, svl_handle>,
     children: HashMap<svl_handle, Vec<svl_handle>>,
     names: Names,
@@ -320,6 +359,7 @@ impl LogBackend {
                     next_handle: 1,
                     live: HashMap::new(),
                     props: HashMap::new(),
+                    attrs: HashMap::new(),
                     parent: HashMap::new(),
                     children: HashMap::new(),
                     names: Names::default(),
@@ -541,6 +581,7 @@ impl Backend for LogBackend {
             return Err(format!("#{child} is not a child of #{parent}"));
         }
         st.parent.remove(&child);
+        st.attrs.retain(|(c, _), _| *c != child);
         if let Some(c) = st.children.get_mut(&parent) {
             c.retain(|x| *x != child);
         }
@@ -604,6 +645,46 @@ impl Backend for LogBackend {
         Ok(())
     }
 
+    fn listen_ex(&self, h: svl_handle, signal: svl_id, on: bool, flags: u32) -> Result<(), String> {
+        self.check_live(h)?;
+        let mut st = self.shared.lock();
+        let name = st.names.name(signal).to_string();
+        let _ = writeln!(
+            st.log,
+            "listen #{h} {name} {} {}",
+            if on { "on" } else { "off" },
+            flags_word(flags)
+        );
+        Ok(())
+    }
+
+    fn set_child_attr(&self, parent: svl_handle, child: svl_handle, attr: svl_id, v: &Value) -> Result<(), String> {
+        self.check_live(parent)?;
+        self.check_live(child)?;
+        let mut st = self.shared.lock();
+        if st.parent.get(&child) != Some(&parent) {
+            return Err(format!("#{child} is not a child of #{parent}"));
+        }
+        let name = st.names.name(attr).to_string();
+        let _ = writeln!(st.log, "attr #{parent} #{child} {name} {}", json_string(v));
+        if matches!(v, Value::Null) {
+            st.attrs.remove(&(child, attr));
+        } else {
+            st.attrs.insert((child, attr), v.clone());
+        }
+        Ok(())
+    }
+
+    fn get_child_attr(&self, parent: svl_handle, child: svl_handle, attr: svl_id) -> Result<Value, String> {
+        self.check_live(parent)?;
+        self.check_live(child)?;
+        let st = self.shared.lock();
+        if st.parent.get(&child) != Some(&parent) {
+            return Err(format!("#{child} is not a child of #{parent}"));
+        }
+        Ok(st.attrs.get(&(child, attr)).cloned().unwrap_or(Value::Null))
+    }
+
     fn handle_info(&self, h: svl_handle) -> Result<svl_handle_info, String> {
         let kind = self.check_live(h)?;
         let toplevel = self.shared.lock().names.name(kind) == "window";
@@ -646,6 +727,7 @@ impl Backend for LogBackend {
                     handle,
                     signal,
                     args,
+                    flags,
                 } => {
                     let kind = self.check_live(handle)?;
                     let sig =
@@ -654,8 +736,8 @@ impl Backend for LogBackend {
                             .names
                             .intern(NameKind::Signal as u32, kind, &signal);
                     let list = Value::List(args.clone());
-                    self.append(format_args!("sync #{handle} {signal} {}", json_string(&list)));
-                    match host.call_sync(handle, sig, &args) {
+                    self.append(format_args!("sync #{handle} {signal} {}{}", json_string(&list), flags_suffix(flags)));
+                    match host.call_sync(handle, sig | (flags << svelters_abi::SVL_SIGNAL_FLAGS_SHIFT), &args) {
                         Ok(v) => self.append(format_args!("result #{handle} {}", json_string(&v))),
                         Err(e) if e.code == svelters_abi::SVL_SYNC_BUSY => {
                             self.append(format_args!("result #{handle} busy"))
@@ -674,6 +756,7 @@ impl Backend for LogBackend {
                     handle,
                     signal,
                     args,
+                    flags,
                 } => {
                     let kind = self.check_live(handle)?;
                     let sig =
@@ -682,10 +765,11 @@ impl Backend for LogBackend {
                             .names
                             .intern(NameKind::Signal as u32, kind, &signal);
                     self.append(format_args!(
-                        "event #{handle} {signal} {}",
-                        json_string(&Value::List(args.clone()))
+                        "event #{handle} {signal} {}{}",
+                        json_string(&Value::List(args.clone())),
+                        flags_suffix(flags)
                     ));
-                    host.post_event(handle, sig, &args);
+                    host.post_event(handle, sig | (flags << svelters_abi::SVL_SIGNAL_FLAGS_SHIFT), &args);
                     self.checkpoint(host);
                 }
             }
@@ -782,7 +866,8 @@ mod tests {
                 Step::Event {
                     handle: 1,
                     signal: "click".into(),
-                    args: vec![]
+                    args: vec![],
+                    flags: 0
                 },
                 Step::Checkpoint
             ]

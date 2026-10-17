@@ -27,6 +27,7 @@ export interface QtElementDescriptors {
       accessibleName?: string;
     };
     events: {
+      "key-press": () => void;
     };
     methods: {
       saveGeometry(): Uint8Array;
@@ -436,6 +437,30 @@ export interface QtElementDescriptors {
       adjustSize(): void;
     };
     slots: "children";
+  };
+  grid: {
+    props: {
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+    };
+    methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: "cells";
   };
   groupbox: {
     props: {
@@ -864,7 +889,7 @@ export interface QtElementDescriptors {
       update(): void;
       adjustSize(): void;
     };
-    slots: never;
+    slots: "pages";
   };
   timeedit: {
     props: {
@@ -1020,3 +1045,16 @@ export interface QtElementDescriptors {
 }
 
 export type QtElementTag = keyof QtElementDescriptors;
+
+/** `parent:<name>` attributes any child element can carry; which apply depends on the parent and the slot. */
+export interface QtChildAttrs {
+  'parent:align'?: ("bottom" | "center" | "hcenter" | "left" | "none" | "right" | "top" | "vcenter");
+  'parent:column'?: number;
+  'parent:columnSpan'?: number;
+  'parent:row'?: number;
+  'parent:rowSpan'?: number;
+  'parent:stretch'?: number;
+  'parent:tabEnabled'?: boolean;
+  'parent:tabLabel'?: string;
+  'parent:tabToolTip'?: string;
+}

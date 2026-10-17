@@ -28,6 +28,16 @@ elements:
           host: self
           default: { kind: none }
           on_remove: empty
+          attrs:
+            - name: stretch
+              type: i32
+              default: 0
+              samples: [1, 3]
+              reset: true
+              set: { native: "QSplitter::setStretchFactor(int, int)", args: [child_index, value] }
+              get: { expr: "ch->sizePolicy().horizontalStretch()" }     # QSplitter has no getter; setStretchFactor writes the size policy
+              expect: "$w->sizePolicy().horizontalStretch() == 1"
+              provenance: "QSplitter::setStretchFactor(int, int) (qdoc); X3 child attribute"
           ops:
             insert:
               native: "QSplitter::addWidget(QWidget*)"
