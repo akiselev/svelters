@@ -5,31 +5,31 @@
   "defaults": 0,
   "element": null,
   "gallery": null,
-  "inherited": 0,
+  "inherited": 13,
   "kind": "QAbstractButton",
   "lifetime": "borrowed_only",
   "methods": [
-   0,
+   3,
    40
   ],
   "native": "QAbstractButton",
   "ownership": false,
   "props": [
-   0,
+   6,
    11
   ],
-  "props_annotated": 0,
+  "props_annotated": 6,
   "signal_results": 0,
   "signals": [
-   0,
+   4,
    4
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   7,
+   7
   ]
  },
  {
@@ -104,7 +104,7 @@
   "defaults": 10,
   "element": null,
   "gallery": null,
-  "inherited": 0,
+  "inherited": 11,
   "kind": "QAbstractSlider",
   "lifetime": "owned",
   "methods": [
@@ -114,13 +114,13 @@
   "native": "QAbstractSlider",
   "ownership": false,
   "props": [
-   0,
+   8,
    11
   ],
-  "props_annotated": 0,
+  "props_annotated": 8,
   "signal_results": 0,
   "signals": [
-   0,
+   3,
    6
   ],
   "slots": 0,
@@ -137,7 +137,7 @@
   "defaults": 11,
   "element": null,
   "gallery": null,
-  "inherited": 0,
+  "inherited": 7,
   "kind": "QAbstractSpinBox",
   "lifetime": "owned",
   "methods": [
@@ -147,21 +147,21 @@
   "native": "QAbstractSpinBox",
   "ownership": false,
   "props": [
-   0,
+   6,
    12
   ],
-  "props_annotated": 0,
+  "props_annotated": 6,
   "signal_results": 0,
   "signals": [
-   0,
+   1,
    2
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   7,
+   7
   ]
  },
  {
@@ -830,7 +830,7 @@
   "defaults": 5,
   "element": null,
   "gallery": null,
-  "inherited": 0,
+  "inherited": 4,
   "kind": "QFrame",
   "lifetime": "owned",
   "methods": [
@@ -840,10 +840,10 @@
   "native": "QFrame",
   "ownership": false,
   "props": [
-   0,
+   4,
    6
   ],
-  "props_annotated": 0,
+  "props_annotated": 4,
   "signal_results": 0,
   "signals": [
    0,
@@ -853,8 +853,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   4,
+   4
   ]
  },
  {
@@ -2546,20 +2546,20 @@
   "defaults": 39,
   "element": "box",
   "gallery": "00-overview",
-  "inherited": 0,
+  "inherited": 15,
   "kind": "QWidget",
   "lifetime": "owned",
   "methods": [
-   3,
+   8,
    258
   ],
   "native": "QWidget",
   "ownership": true,
   "props": [
-   9,
+   17,
    61
   ],
-  "props_annotated": 9,
+  "props_annotated": 17,
   "signal_results": 0,
   "signals": [
    0,
@@ -2569,8 +2569,8 @@
   "slots_own": 1,
   "unexposed": null,
   "verified": [
-   16,
-   16
+   31,
+   31
   ]
  },
  {

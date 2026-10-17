@@ -225,7 +225,7 @@ otherwise the lower-case Qt class name without the Q (`checkbox`, `slider`, `spi
   name are skipped, so keep or drop those duplicates deliberately.
 - Gallery: `01-widget.svelte` (enabled, toolTip, sizes on existing elements).
 - Tests: the generated Qt suite (`cargo nextest run -p counter-qt`), filter output for `QWidget|button|...`.
-- Status: todo
+- Status: done (inherit facts verified through existing elements: QWidget 10 props + 5 methods; QAbstractButton props label/checkable/autoRepeat/autoExclusive/shortcut, signals clicked/pressed/released/toggled, methods click/toggle/animateClick; QAbstractSpinBox 6 props + editingFinished; QFrame 4 props; QAbstractSlider 8 props + 3 signals declared but untested until a slider element exists; dropped: `visible` (by brief), `checked` excluded on button (not checkable by default; verified with checkbox batch); blocked: bind:checked/bind:value, inherit blocks have no bindings, subclass elements add them in their batches)
 
 ### qt-buttons: buttons and toggles
 

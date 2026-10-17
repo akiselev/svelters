@@ -1,0 +1,6 @@
+inherit:
+  props:
+    - { js: frameShape, native: frameShape, provenance: "QFrame::frameShape (qdoc)" }
+    - { js: frameShadow, native: frameShadow, provenance: "QFrame::frameShadow (qdoc)" }
+    - { js: lineWidth, native: lineWidth, provenance: "QFrame::lineWidth (qdoc)" }
+    - { js: midLineWidth, native: midLineWidth, provenance: "QFrame::midLineWidth (qdoc)" }

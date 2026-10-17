@@ -17,6 +17,14 @@ export interface QtElementDescriptors {
       focusPolicy?: "click-focus" | "no-focus" | "strong-focus" | "tab-focus" | "wheel-focus";
       toolTip?: string;
       enabled?: boolean;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
     };
     events: {
     };
@@ -24,6 +32,11 @@ export interface QtElementDescriptors {
       saveGeometry(): Uint8Array;
       restoreGeometry(geometry: Uint8Array): boolean;
       resizeTo(arg0: Size): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
     };
     slots: "children";
   };
@@ -34,12 +47,34 @@ export interface QtElementDescriptors {
       iconSize?: Size;
       shortcut?: Boxed<"QKeySequence"> | string;
       checkable?: boolean;
+      autoRepeat?: boolean;
+      autoExclusive?: boolean;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
     };
     events: {
       clicked: () => void;
+      pressed: () => void;
+      released: () => void;
+      toggled: (checked: boolean) => void;
     };
     methods: {
       click(): void;
+      toggle(): void;
+      animateClick(): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
     };
     slots: never;
   };
@@ -47,10 +82,25 @@ export interface QtElementDescriptors {
     props: {
       currentColor?: Color | string;
       options?: Array<"dont-use-native-dialog" | "no-buttons" | "no-eye-dropper-button" | "show-alpha-channel">;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
     };
     events: {
     };
     methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
     };
     slots: never;
   };
@@ -58,22 +108,59 @@ export interface QtElementDescriptors {
     props: {
       readonly count?: number;
       currentData?: number;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
     };
     events: {
     };
     methods: {
       addItem(text: string, userData: Variant): void;
       itemData(index: number, role: number): Variant;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
     };
     slots: never;
   };
   dateedit: {
     props: {
       date?: DateParts;
+      readOnly?: boolean;
+      wrapping?: boolean;
+      frame?: boolean;
+      specialValueText?: string;
+      buttonSymbols?: "no-buttons" | "plus-minus" | "up-down-arrows";
+      accelerated?: boolean;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
     };
     events: {
+      editingFinished: () => void;
     };
     methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
     };
     slots: never;
   };
@@ -81,10 +168,32 @@ export interface QtElementDescriptors {
     props: {
       dateTime?: Date;
       displayFormat?: string;
+      readOnly?: boolean;
+      wrapping?: boolean;
+      frame?: boolean;
+      specialValueText?: string;
+      buttonSymbols?: "no-buttons" | "plus-minus" | "up-down-arrows";
+      accelerated?: boolean;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
     };
     events: {
+      editingFinished: () => void;
     };
     methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
     };
     slots: never;
   };
@@ -92,10 +201,32 @@ export interface QtElementDescriptors {
     props: {
       value?: number;
       decimals?: number;
+      readOnly?: boolean;
+      wrapping?: boolean;
+      frame?: boolean;
+      specialValueText?: string;
+      buttonSymbols?: "no-buttons" | "plus-minus" | "up-down-arrows";
+      accelerated?: boolean;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
     };
     events: {
+      editingFinished: () => void;
     };
     methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
     };
     slots: never;
   };
@@ -106,12 +237,27 @@ export interface QtElementDescriptors {
       echoMode?: "no-echo" | "normal" | "password" | "password-echo-on-edit";
       alignment?: Array<"absolute" | "baseline" | "bottom" | "center" | "hcenter" | "horizontal-mask" | "justify" | "leading" | "left" | "right" | "top" | "trailing" | "vcenter" | "vertical-mask">;
       maxLength?: number;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
     };
     events: {
       "key-press": () => void;
       changed: (text: string) => void;
     };
     methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
     };
     slots: never;
   };
@@ -122,30 +268,83 @@ export interface QtElementDescriptors {
       textFormat?: "auto-text" | "markdown-text" | "plain-text" | "rich-text";
       pixmap?: Boxed<"QPixmap">;
       indent?: number;
+      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      frameShadow?: "plain" | "raised" | "sunken";
+      lineWidth?: number;
+      midLineWidth?: number;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
     };
     events: {
     };
     methods: {
       setBuddy(buddy: number): void;
       buddy(): number;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
     };
     slots: never;
   };
   menubar: {
     props: {
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
     };
     events: {
     };
     methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
     };
     slots: never;
   };
   scrolledwindow: {
     props: {
+      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      frameShadow?: "plain" | "raised" | "sunken";
+      lineWidth?: number;
+      midLineWidth?: number;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
     };
     events: {
     };
     methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
     };
     slots: "child";
   };
@@ -156,35 +355,104 @@ export interface QtElementDescriptors {
       maximum?: number;
       singleStep?: number;
       prefix?: string;
+      readOnly?: boolean;
+      wrapping?: boolean;
+      frame?: boolean;
+      specialValueText?: string;
+      buttonSymbols?: "no-buttons" | "plus-minus" | "up-down-arrows";
+      accelerated?: boolean;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
     };
     events: {
+      editingFinished: () => void;
     };
     methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
     };
     slots: never;
   };
   statusbar: {
     props: {
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
     };
     events: {
     };
     methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
     };
     slots: never;
   };
   timeedit: {
     props: {
       time?: TimeParts;
+      readOnly?: boolean;
+      wrapping?: boolean;
+      frame?: boolean;
+      specialValueText?: string;
+      buttonSymbols?: "no-buttons" | "plus-minus" | "up-down-arrows";
+      accelerated?: boolean;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
     };
     events: {
+      editingFinished: () => void;
     };
     methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
     };
     slots: never;
   };
   window: {
     props: {
       title?: string;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
     };
     events: {
       "close-request": () => void;
@@ -194,6 +462,10 @@ export interface QtElementDescriptors {
       present(): void;
       close(): boolean;
       resize(w: number, h: number): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
     };
     slots: "central" | "menubar" | "statusbar";
   };
