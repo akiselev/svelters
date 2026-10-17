@@ -60,6 +60,8 @@ function configFacts(text) {
     skip_async: /\bskip_async\s*:\s*true/.test(text),
     compileOptions: /\bcompileOptions\s*:/.test(text) ? (/\bcompileOptions\s*:\s*(\{[^}]*\})/.exec(text)?.[1] ?? '{...}').replace(/\s+/g, ' ') : null,
     error: /^\s*error\s*:/m.test(text),
+    // compileOptions.dev (passed to svelters-compile as --dev)
+    dev: /\bcompileOptions\s*:\s*\{[^}]*\bdev\s*:\s*true/.test(text),
   };
 }
 
@@ -83,9 +85,9 @@ function walk(dir, rel = '') {
   return out;
 }
 
-function compileFile(src, name) {
+function compileFile(src, name, dev) {
   return new Promise((resolve) => {
-    execFile(bin, ['--spec', spec, '--json', '--filename', name, src], { maxBuffer: 64 << 20 }, (err, stdout, stderr) => {
+    execFile(bin, ['--spec', spec, '--json', ...(dev ? ['--dev'] : []), '--filename', name, src], { maxBuffer: 64 << 20 }, (err, stdout, stderr) => {
       try {
         resolve(JSON.parse(stdout));
       } catch {
@@ -149,12 +151,12 @@ async function prepare(name) {
     fs.copyFileSync(path.join(src, f), path.join(dst, f));
   }
   for (const f of files) {
-    if (/\.svelte\.(js|ts)$/.test(f)) {
-      diags.push({ file: f, code: 'svelte_module_unsupported', message: `${f}: runes in .svelte.js/.svelte.ts modules (compileModule) are not supported by the native compiler`, severity: 'error' });
+    if (/\.svelte\.ts$/.test(f)) {
+      diags.push({ file: f, code: 'svelters_typescript_unsupported', message: `${f}: TypeScript .svelte.ts modules are not supported by the native compiler`, severity: 'error' });
       continue;
     }
-    if (!f.endsWith('.svelte')) continue;
-    const res = await compileFile(path.join(src, f), f);
+    if (!f.endsWith('.svelte') && !f.endsWith('.svelte.js')) continue;
+    const res = await compileFile(path.join(src, f), f, facts.dev);
     const errs = res.diagnostics.filter((d) => d.severity === 'error').map((d) => ({ file: f, code: d.code, message: d.message, line: d.line, column: d.column }));
     diags.push(...errs);
     if (res.js) {
@@ -285,8 +287,8 @@ ${table(tally(failing, (r) => `${r.outcome}: ${firstLine(r.message).replace(/\d+
 
 ## Failing samples (runtime error / mismatch / timeout)
 
-\`compileOptions\` (e.g. \`dev: true\`, whose ownership/mutation warnings and checks these samples
-assert) are not honoured by the native compiler; ${failing.filter(([, r]) => r.compileOptions).length} of the ${failing.length} failing samples set them.
+\`compileOptions.dev\` is passed through (\`svelters-compile --dev\`); other compile options are not
+honoured. ${failing.filter(([, r]) => r.compileOptions).length} of the ${failing.length} failing samples set compile options.
 
 | sample | outcome | compileOptions | message |
 | --- | --- | --- | --- |

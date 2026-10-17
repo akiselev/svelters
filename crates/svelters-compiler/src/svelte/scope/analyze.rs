@@ -293,6 +293,50 @@ pub fn analyze_component_scopes<'a>(
     Ok(analysis)
 }
 
+/// The scopes of a `.svelte.js` module (`analysis.module` of `analyze_module`).
+#[derive(Debug)]
+pub struct ModuleScopeAnalysis<'a> {
+    pub arena: ScopeArena<'a>,
+    pub module: Js,
+}
+
+/// Scope creation of `analyze_module(source, options)` (runes mode): the module scope, the
+/// `$name` reference checks and the `VariableDeclarator` binding kinds.
+pub fn analyze_module_scopes<'a>(ast: &'a Program) -> Result<ModuleScopeAnalysis<'a>, CompileError> {
+    let mut arena = ScopeArena::new();
+    let module = create_scopes(&mut arena, NodeRef::Program(ast), false, None)?;
+
+    for (name, references) in arena.scope(module.scope).references.iter() {
+        if !name.starts_with('$') || RESERVED.contains(&name) {
+            continue;
+        }
+        let first = arena.reference_record(references[0]).node.span();
+        if name == "$" || name.as_bytes().get(1) == Some(&b'$') {
+            return Err(e::global_reference_invalid(first, name));
+        }
+        let binding = arena.get(module.scope, &name[1..]);
+        if binding.is_some() && !is_rune(name) {
+            return Err(e::store_invalid_subscription_module(first));
+        }
+    }
+
+    let mut v = DeclaratorKinds {
+        arena: &mut arena,
+        scopes: &module.scopes,
+        component_scopes: &module.component_scopes,
+        runes: true,
+        ast_type: AstType::Module,
+        module_scope: module.scope,
+        instance_scope: module.scope,
+        error: None,
+    };
+    Walker::walk(NodeRef::Program(ast), &module.scope, &mut v);
+    if let Some(err) = v.error {
+        return Err(err);
+    }
+    Ok(ModuleScopeAnalysis { arena, module })
+}
+
 #[derive(Clone, Copy, PartialEq, Eq)]
 enum AstType {
     Module,

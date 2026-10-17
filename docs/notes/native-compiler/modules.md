@@ -18,6 +18,7 @@ out: build cost). Dependencies stay minimal (`serde`, `serde_json`, `sourcemap`)
 | `semantics` | none: `metadata/semantics/*.json` model | agent G | `BackendSemantics` trait + spec loader |
 | `tests/oracle*`, `tools/oracle/` | harness | agent F | corpus generation with real acorn/svelte, JSON diff |
 | `packages/native-runtime` | none | agent H | runtime API in `runtime-contract.md` |
+| `transform` (`mod`, `visit`, `classes`, `paths`), `compile::compile_module` | `phases/3-transform/client` script visitors, `client_module`, class/store/export analysis | agent R2 | `ScopeRewriter` (`codegen::component::Rewriter`), `transform_module`; subset in `language-subset.md` |
 
 ## Porting rules (A, B, D, E)
 

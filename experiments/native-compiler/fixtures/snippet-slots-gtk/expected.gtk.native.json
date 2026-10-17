@@ -1,0 +1,27 @@
+[
+ {
+  "class": "GtkApplicationWindow",
+  "d": 0,
+  "text": "Slots"
+ },
+ {
+  "class": "GtkBox",
+  "d": 1,
+  "text": ""
+ },
+ {
+  "class": "GtkLabel",
+  "d": 2,
+  "text": "2 items"
+ },
+ {
+  "class": "GtkButton",
+  "d": 2,
+  "text": "Toggle"
+ },
+ {
+  "class": "GtkHeaderBar",
+  "d": 1,
+  "text": ""
+ }
+]

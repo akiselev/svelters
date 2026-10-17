@@ -1,17 +1,22 @@
-//! `svelters-compile --backend gtk|qt [--spec path.json] [--filename name] [--json] <file.svelte | ->`
+//! `svelters-compile --backend gtk|qt [--spec path.json] [--filename name] [--dev] [--module] [--json] <file | ->`
 //!
+//! Compiles a component (or, with `--module` or a `.svelte.js` input, a module with runes).
 //! Prints the generated JS (or, with `--json`, `{js, map, diagnostics, backend, timings}`).
 //! Diagnostics go to stderr; exit status 1 when there are errors.
 
 use std::io::Read;
-use svelters_compiler::compile::{CompileOptions, compile};
+use svelters_compiler::compile::{CompileOptions, ModuleOptions, compile, compile_module};
 use svelters_compiler::semantics::SpecBackend;
+
+const USAGE: &str = "usage: svelters-compile --backend gtk|qt [--spec spec.json] [--filename name] [--dev] [--module] [--json] <file.svelte | file.svelte.js | ->";
 
 fn main() {
     let mut backend = "gtk".to_string();
     let mut spec: Option<String> = None;
     let mut filename: Option<String> = None;
     let mut json = false;
+    let mut dev = false;
+    let mut module = false;
     let mut input: Option<String> = None;
     let mut args = std::env::args().skip(1);
     while let Some(a) = args.next() {
@@ -20,8 +25,10 @@ fn main() {
             "--spec" => spec = args.next(),
             "--filename" => filename = args.next(),
             "--json" => json = true,
+            "--dev" => dev = true,
+            "--module" => module = true,
             "-h" | "--help" => {
-                eprintln!("usage: svelters-compile --backend gtk|qt [--spec spec.json] [--filename name] [--json] <file.svelte | ->");
+                eprintln!("{USAGE}");
                 return;
             }
             _ => input = Some(a),
@@ -35,16 +42,21 @@ fn main() {
     } else {
         std::fs::read_to_string(&input).unwrap_or_else(|e| panic!("{input}: {e}"))
     };
-    let sem = match &spec {
-        Some(p) => SpecBackend::from_path(p),
-        None => SpecBackend::builtin(&backend),
-    }
-    .unwrap_or_else(|e| {
-        eprintln!("svelters-compile: {e}");
-        std::process::exit(2)
-    });
-    let filename = filename.unwrap_or_else(|| if input == "-" { "Component.svelte".into() } else { input.clone() });
-    let res = compile(&src, &CompileOptions { filename: filename.clone(), backend: &sem });
+    let filename = filename.unwrap_or_else(|| if input == "-" { if module { "module.svelte.js".into() } else { "Component.svelte".into() } } else { input.clone() });
+    let is_module = module || filename.ends_with(".svelte.js");
+    let res = if is_module {
+        compile_module(&src, &ModuleOptions { filename: filename.clone(), dev })
+    } else {
+        let sem = match &spec {
+            Some(p) => SpecBackend::from_path(p),
+            None => SpecBackend::builtin(&backend),
+        }
+        .unwrap_or_else(|e| {
+            eprintln!("svelters-compile: {e}");
+            std::process::exit(2)
+        });
+        compile(&src, &CompileOptions { filename: filename.clone(), backend: &sem, dev })
+    };
     for d in &res.diagnostics {
         eprintln!("{}", d.render(&filename));
     }

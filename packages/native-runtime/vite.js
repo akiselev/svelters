@@ -65,18 +65,23 @@ export function compilerPath() {
 
 /**
  * Vite plugin: compiles `.svelte` modules with the experimental Rust compiler (NC1) for one
- * backend. Diagnostics become Vite errors/warnings with positions; the compiler's source map
- * maps generated code back to the component.
+ * backend, and `.svelte.js` modules (runes outside components: Svelte's `compileModule`).
+ * Diagnostics become Vite errors/warnings with positions; the compiler's source map maps
+ * generated code back to the source. `dev: true` keeps `$inspect` / `$inspect.trace` and labels
+ * signals (Svelte's `dev` option); otherwise they are stripped.
  */
-export function svelteNative({ backend = 'gtk', spec } = {}) {
+export function svelteNative({ backend = 'gtk', spec, dev = false } = {}) {
   const bin = compilerPath();
   return {
     name: 'svelters-native-compiler',
     enforce: 'pre',
     transform(code, id) {
-      if (!id.endsWith('.svelte')) return null;
-      const args = ['--backend', backend, '--json', '--filename', id];
-      if (spec) args.push('--spec', spec);
+      const file = id.split('?')[0];
+      const isModule = file.endsWith('.svelte.js');
+      if (!isModule && !file.endsWith('.svelte')) return null;
+      const args = isModule ? ['--module', '--json', '--filename', file] : ['--backend', backend, '--json', '--filename', file];
+      if (spec && !isModule) args.push('--spec', spec);
+      if (dev) args.push('--dev');
       args.push('-');
       let out;
       try {
@@ -92,7 +97,7 @@ export function svelteNative({ backend = 'gtk', spec } = {}) {
       const errors = res.diagnostics.filter((d) => d.severity === 'error');
       if (errors.length) {
         const d = errors[0];
-        const more = errors.length > 1 ? `\n${errors.slice(1).map((x) => `  ${path.basename(id)}:${x.line}:${x.column}: ${x.code}: ${x.message}`).join('\n')}` : '';
+        const more = errors.length > 1 ? `\n${errors.slice(1).map((x) => `  ${path.basename(file)}:${x.line}:${x.column}: ${x.code}: ${x.message}`).join('\n')}` : '';
         this.error({ message: `${d.code}${d.backend ? ` (${d.backend})` : ''}: ${d.message}${d.help ? ` (help: ${d.help})` : ''}${more}`, id, loc: { line: d.line, column: d.column - 1 } });
       }
       return { code: res.js, map: res.map };

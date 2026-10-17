@@ -1,6 +1,6 @@
 // Node module hooks for running Svelte's runtime samples on the native runtime:
 // - the hidden Svelte effects module (same alias as packages/native-runtime/vite.js);
-// - `.svelte` files load the output the runner already compiled with svelters-compile
+// - `.svelte` and `.svelte.js` files load the output the runner already compiled with svelters-compile
 //   (`<dir>/_compiled/<file>.js`, see run.mjs);
 // - the imports Svelte's `_config.js` files make into Svelte's test tree (`../../test`,
 //   `../../../helpers.js`, `../../../../src/index-client.js`) go to local shims / the installed Svelte.
@@ -24,7 +24,7 @@ export async function resolve(specifier, context, next) {
 }
 
 export async function load(url, context, next) {
-  if (url.startsWith('file:') && url.endsWith('.svelte')) {
+  if (url.startsWith('file:') && (url.endsWith('.svelte') || url.endsWith('.svelte.js'))) {
     const file = fileURLToPath(url);
     const compiled = path.join(path.dirname(file), '_compiled', path.basename(file) + '.js');
     if (!fs.existsSync(compiled)) throw new Error(`${path.basename(file)} was not compiled (no ${compiled})`);

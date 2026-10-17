@@ -1,0 +1,10 @@
+[plugin svelters-native-compiler] experiments/native-compiler/fixtures/blocks-diagnostics/App.svelte:17:23
+unsupported_feature: destructured or defaulted snippet parameters are not supported by the native compiler yet; use plain identifiers
+  App.svelte:21:2: slot_proxy_placement: <sv-slot> must be a direct child of a native element (it names one of that element's slots)
+  App.svelte:25:5: const_tag_invalid_placement: `{@const}` must be the immediate child of `{#snippet}`, `{#if}`, `{:else if}`, `{:else}`, `{#each}`, `{:then}`, `{:catch}`, `<svelte:fragment>`, `<svelte:boundary>` or `<Component>`
+  App.svelte:26:13: native_spread_unsupported: spread attributes on native elements cannot be checked against the qt spec of <button> at compile time, so the native compiler rejects them
+  App.svelte:27:12: text_content_children: <label> holds text only on qt; it cannot contain this
+  App.svelte:29:15: unsupported_feature: destructuring in {@const} is not supported by the native compiler yet; declare one {@const} per value
+  App.svelte:32:20: unsupported_feature: destructuring in {:then} is not supported by the native compiler yet; use a plain identifier
+  App.svelte:36:27: slot_rejects_child: {@render bar()} places <label> (a root element of snippet `bar`) in <window>: slot `menubar` of <window> accepts QMenuBar, not <label> (QLabel)
+  App.svelte:37:3: block_mixed_slots: the root elements of snippet `pair` go to different child slots of <window>; a rendered snippet fills one slot
