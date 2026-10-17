@@ -22,3 +22,5 @@ svelters-host = { path = "crates/svelters-host" }
 svelters-backend-log = { path = "crates/svelters-backend-log" }
 svelters-gtk = { path = "crates/svelters-gtk" }
 svelters-qt-build = { path = "crates/svelters-qt-build" }
+rquickjs = { version = "0.14.0", default-features = false, features = ["std", "loader"] }
+serde_json = "1"
