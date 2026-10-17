@@ -384,3 +384,25 @@ otherwise the lower-case Qt class name without the Q (`checkbox`, `slider`, `spi
   QRubberBand/QFocusFrame/QSizeGrip/QSplitterHandle (internal), item views (G6).
 - Gallery: `10-display.svelte`.
 - Status: done (calendar 7 P + 5 M + 4 S; dateedit/timeedit/datetimeedit 4+4+4 P, 1 S each, verified by generated tests; 13 classes unexposed with reasons; dropped: min/max Date/Time/DateTime props (ingest resolves getter to clearMinimumX(), generated C++ does not compile; new gap), date/time bindings and calendar selectedDate binding (suppress_signals test is scalar-only; selectionChanged has no arg; new gap))
+
+## Follow-ups (after waves 1-2 and the framework lanes S1, S2, X1, X2, X3, X5)
+
+### gtk-followups
+
+- Re-check every GTK batch's `dropped`/`blocked` list against what is now available: X3 child attributes
+  (`parent:` attrs on grid, fixed, notebook, stack, overlay; `on<event>capture`, `listen(..., {after})`),
+  the lead's generator fixes (typed slots G10, Pango/Gdk enums G11, round-trip props, `wrapper` arg G14),
+  X1 dynamic methods. Annotate what now passes; list what still does not, with the gap.
+- Gallery: show attribute use on `06-layout` (grid cells, notebook tab labels, stack names/titles, overlay
+  measure/clip), ListBox children (now a verified slot), MenuButton with a popover on `02-buttons`.
+- Status: todo
+
+### qt-followups
+
+- QDockWidget `widget` slot (G15: remove = `setWidget(nullptr)` + `then` setParent(nullptr) on the child; old released).
+- QMdiArea `subwindows` (append-only many-slot, G13; `nested: true`; probe what removeSubWindow does to the wrapper).
+- QToolBox `pages` (`nested: true`), `currentIndex` (prop `setup:`) and `bind:currentIndex`; QTabWidget pages/attrs from X3: add `currentIndex` + binding if missing.
+- Min/max date/time props on calendar and date/time edits (G17 fixed in ingest).
+- QGroupBox `checked` with `setup: "$w->setCheckable(true)"`; QInputDialog `doubleValue` (re-check its type); QWizard `pages`.
+- Gallery: Qt `grid`/`box` attributes from X3 on `06-layout`.
+- Status: todo
