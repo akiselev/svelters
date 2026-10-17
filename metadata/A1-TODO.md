@@ -312,7 +312,7 @@ otherwise the lower-case Qt class name without the Q (`checkbox`, `slider`, `spi
   layout-managed widget), QStackedLayout (use `stackedwidget`).
 - Blocked: QMainWindow docks/toolbars areas (G1).
 - Gallery: `06-layout.svelte`.
-- Status: todo
+- Status: done (mdiarea: 7 props, 3 methods; dockwidget: 4 props, 4 signals; dropped: dockwidget `widget` slot (setWidget leaves the old widget parented, ops cannot express it), mdiarea subWindowActivated (QMdiSubWindow* arg), dockLocation; blocked: gap:G13 for mdiarea subwindows slot, gap:G1 for grid/form/dock-area attributes; unexposed: QBoxLayout, QHBoxLayout, QVBoxLayout, QGridLayout, QFormLayout, QStackedLayout, QMdiSubWindow)
 
 ### qt-selection: combo boxes and list widgets
 

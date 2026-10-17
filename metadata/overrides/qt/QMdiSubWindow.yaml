@@ -1,0 +1,2 @@
+unexposed:
+  reason: "Created by QMdiArea::addSubWindow as the wrapper of a child, never constructed by the app; the mdiarea subwindows slot is blocked by gap:G13."
