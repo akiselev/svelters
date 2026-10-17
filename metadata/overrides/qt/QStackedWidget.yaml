@@ -1,0 +1,53 @@
+elements:
+  - tag: stackedwidget
+    construct: { class: QStackedWidget }
+    props:
+      - { js: currentIndex, native: currentIndex, sample: 1, setup: "$w->addWidget(new QWidget()); $w->addWidget(new QWidget())", suppress_signals: true, provenance: "QStackedWidget::currentIndex (qdoc); the test adds two pages first" }
+    bindings:
+      - name: currentIndex
+        direction: two_way
+        property: currentIndex
+        type: { ref: i32, nullable: false }
+        change: { signal: changed, role: any_change, value: arg0 }
+        write: { natively_normalizes: false }
+        echo: { strategy: host_suppressed, compare_before_set: true, read_back: false, sync_signals_on_set: ["currentChanged(int)"] }
+        lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
+        provenance: "QStackedWidget::setCurrentIndex emits currentChanged only on change (qdoc)"
+    signals:
+      - js: changed
+        native: currentChanged
+        connect: "currentChanged(int)"
+        args: [{ name: index, type: i32 }]
+        trigger: '$w->addWidget(new QWidget()); $w->setCurrentIndex($w->count() - 1)'
+        expect_args: ["0"]
+        provenance: "QStackedWidget::currentChanged(int) (qdoc)"
+    children:
+      policy: named_slots
+      default_slot: pages
+      slots:
+        - name: pages
+          content: widget
+          accepts: [QWidget]
+          cardinality: many
+          order: native_index
+          host: self
+          default: { kind: none }
+          on_remove: empty
+          ops:
+            insert:
+              native: "QStackedWidget::addWidget(QWidget*)"
+              args: [child]
+              variants:
+                - when: "before != null"
+                  native: "QStackedWidget::insertWidget(int, QWidget*)"
+                  args: [index, child]
+              effects: { child: parented }
+            remove:
+              native: "QStackedWidget::removeWidget(QWidget*)"
+              args: [child]
+              then:
+                - { native: "QWidget::setParent(QWidget*)", receiver: child, args: [null] }
+              effects: { child: unparented }
+            index_of: { native: "QStackedWidget::indexOf(const QWidget*) const", args: [child] }
+            list: { native: "QStackedWidget::count() const", item: "QStackedWidget::widget(int) const" }
+          provenance: [{ origin: typesystem, ref: addownership-1 }, { origin: probe, ref: qt_slot_ownership_probe.py }]

@@ -1,0 +1,7 @@
+properties:
+  - name: content-width
+    js_name: contentWidth
+    provenance: "GtkDrawingArea:content-width (Gtk 4 docs)"
+  - name: content-height
+    js_name: contentHeight
+    provenance: "GtkDrawingArea:content-height (Gtk 4 docs)"

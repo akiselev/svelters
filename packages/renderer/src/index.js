@@ -25,6 +25,25 @@ const JS_ONLY_ATTRS = new Set(['class', 'style', 'id']);
 const PROXY_TAG = 'sv-slot';
 
 /**
+ * Attributes named `parent:<name>` are per-child attributes owned by the native parent (a grid
+ * cell, a tab label, a dock area): `<entry parent:row={1} parent:columnSpan={2}>`. They never
+ * become props of the child; they are sent with `setChildAttr` once the child is inserted, again
+ * on every change, and again when it is inserted into another parent.
+ */
+const CHILD_ATTR_PREFIX = 'parent:';
+
+/** `listen_ex` flags (ABI v2.2). */
+export const LISTEN_AFTER = 1;
+export const LISTEN_CAPTURE = 2;
+
+/** Listener flags for `addEventListener` options: `capture` (Svelte's `on<event>capture`) and `after`. */
+const flagsOf = (options) => {
+  if (options === true) return LISTEN_CAPTURE;
+  if (!options || typeof options !== 'object') return 0;
+  return (options.capture ? LISTEN_CAPTURE : 0) | (options.after ? LISTEN_AFTER : 0);
+};
+
+/**
  * Thrown by the native-access methods of a node (`call`, `getProp`) when it has no live native
  * widget. `reason` is 'destroyed' once the renderer destroyed it, or the native death reason.
  */
@@ -58,9 +77,10 @@ class WNode {
     if (kind === 'element') {
       this.attrs = {}; // raw attribute values, for getAttribute/hasAttribute
       this.props = new Map(); // host props, insertion-ordered
-      this.listeners = {}; // event type -> handlers
-      this.counts = {}; // native signal -> listener count
-      this.signals = new Set(); // native signals with >= 1 listener
+      this.listeners = {}; // event type -> [{ f, flags }]
+      this.counts = {}; // `${native signal}\0${flags}` -> listener count
+      this.signals = new Map(); // `${native signal}\0${flags}` -> { sig, flags } with >= 1 listener
+      this.cattrs = new Map(); // `parent:` attributes, by name
       this.slot = null; // from data-slot / slot
       this.h = null; // native handle once realized
       this.dead = null; // why the native widget is gone: 'destroyed' or a native death reason
@@ -78,6 +98,12 @@ class WNode {
   /** What the host converts a node argument to (`call(h, 'set_child', [node])`); null when dead. */
   get svlHandle() {
     return this.h ?? null;
+  }
+
+  /** Set a native property through the bound node (`bind:this`); throws StaleHandleError when dead. */
+  setProp(name, value) {
+    const hs = host();
+    hs.setProp(liveHandle(this), propRef(hs, this.tag, name), value);
   }
 
   /** Call a native method through the bound node (`bind:this`); throws StaleHandleError when dead. */
@@ -159,7 +185,26 @@ function placement(n) {
 function isAttached(el) {
   let n = el;
   while (n.parent) n = n.parent;
-  return n === root;
+  return n === root || n.outlet === true;
+}
+
+/**
+ * A realized element that is not part of the window tree: a mount target for content a backend
+ * hosts itself (a recycled list row). Its children are inserted natively as they are mounted, and
+ * it is never swept. The owner passes it to a native call (`view.call('setRow', row, outlet)`) and
+ * ends it with `releaseOutlet`.
+ */
+export function outlet(tag = 'box') {
+  const el = new WNode('element', tag);
+  el.outlet = true;
+  realize(el);
+  return el;
+}
+
+/** Destroys an outlet and everything mounted in it (the native widget handles are released). */
+export function releaseOutlet(el) {
+  el.outlet = false;
+  destroyTree(el);
 }
 
 const enqueue = (fn) => {
@@ -221,12 +266,13 @@ function realize(el) {
   el.dead = null;
   byHandle.set(el.h, el);
   for (const [k, v] of el.props) hs.setProp(el.h, propRef(hs, el.tag, k), v);
-  for (const sig of el.signals) hs.listen(el.h, sig, true);
+  for (const { sig, flags } of el.signals.values()) nativeListen(el, sig, true, flags);
   updateLabel(el);
   for (const { el: c, slot } of flat(el, null, [])) {
     realize(c);
     hs.insert(el.h, c.h, null, slot ?? undefined);
     c.np = el;
+    applyChildAttrs(c);
   }
 }
 
@@ -264,6 +310,21 @@ function nativeInsert(parent, el, slot) {
   }
   host().insert(parent.h, el.h, before, slot ?? undefined);
   el.np = parent;
+  applyChildAttrs(el);
+}
+
+// Sends every `parent:` attribute of `el` to its native parent; called right after an insert.
+function applyChildAttrs(el) {
+  if (el.cattrs.size === 0 || el.h == null || el.np?.h == null) return;
+  for (const [name, value] of el.cattrs) host().setChildAttr(el.np.h, el.h, name, value);
+}
+
+function setChildAttr(el, name, value) {
+  if (value === undefined) value = null;
+  if (el.cattrs.has(name) && el.cattrs.get(name) === value) return;
+  if (value === null) el.cattrs.delete(name);
+  else el.cattrs.set(name, value);
+  if (el.h != null && el.np?.h != null) host().setChildAttr(el.np.h, el.h, name, value);
 }
 
 function attachNative(el) {
@@ -317,18 +378,25 @@ function setNativeProp(el, name, value) {
   if (el.h != null) host().setProp(el.h, propRef(host(), el.tag, name), value);
 }
 
-// listener bookkeeping per native signal: listen on 0 -> 1, off on 1 -> 0
-function bumpListener(el, type, delta) {
+// `listen` for flags 0, `listen_ex` (a 4th argument) otherwise.
+function nativeListen(el, sig, on, flags) {
+  if (flags) host().listen(el.h, sig, on, flags);
+  else host().listen(el.h, sig, on);
+}
+
+// listener bookkeeping per (native signal, flags): listen on 0 -> 1, off on 1 -> 0
+function bumpListener(el, type, delta, flags) {
   if (el === root || isProxy(el)) return;
   const sig = signalFor(type);
-  const n = (el.counts[sig] ?? 0) + delta;
-  el.counts[sig] = n;
+  const key = `${sig}\0${flags}`;
+  const n = (el.counts[key] ?? 0) + delta;
+  el.counts[key] = n;
   if (delta > 0 && n === 1) {
-    el.signals.add(sig);
-    if (el.h != null) host().listen(el.h, sig, true);
+    el.signals.set(key, { sig, flags });
+    if (el.h != null) nativeListen(el, sig, true, flags);
   } else if (delta < 0 && n === 0) {
-    el.signals.delete(sig);
-    if (el.h != null) host().listen(el.h, sig, false);
+    el.signals.delete(key);
+    if (el.h != null) nativeListen(el, sig, false, flags);
   }
 }
 
@@ -395,12 +463,15 @@ const renderer = createRenderer({
   hasAttribute: (el, name) => name in el.attrs,
   setAttribute(el, key, value) {
     el.attrs[key] = value;
-    if (key === 'slot' || key === 'data-slot') el.slot = String(value);
+    if (key.startsWith(CHILD_ATTR_PREFIX)) {
+      if (!isProxy(el)) setChildAttr(el, key.slice(CHILD_ATTR_PREFIX.length), value);
+    } else if (key === 'slot' || key === 'data-slot') el.slot = String(value);
     else if (!JS_ONLY_ATTRS.has(key) && !isProxy(el)) setNativeProp(el, key, coerceAttribute(host(), el.tag, key, value));
   },
   removeAttribute(el, name) {
     delete el.attrs[name];
-    if (name === 'slot' || name === 'data-slot') el.slot = null;
+    if (name.startsWith(CHILD_ATTR_PREFIX)) setChildAttr(el, name.slice(CHILD_ATTR_PREFIX.length), null);
+    else if (name === 'slot' || name === 'data-slot') el.slot = null;
     else if (el.props.has(name)) {
       el.props.delete(name);
       if (el.h != null) host().setProp(el.h, propRef(host(), el.tag, name), null);
@@ -448,23 +519,43 @@ const renderer = createRenderer({
     }
   },
   remove: (node) => detach(node),
-  addEventListener(target, type, handler) {
+  // `options` is Svelte's `{ capture }` for `on<event>capture`, or `{ after, capture }` from `listen()`.
+  addEventListener(target, type, handler, options) {
     if (target.borrowed) throw new Error('events of a borrowed native object cannot be listened to through the renderer');
-    (target.listeners[type] ??= []).push(handler);
-    bumpListener(target, type, 1);
+    const flags = flagsOf(options);
+    (target.listeners[type] ??= []).push({ f: handler, flags });
+    bumpListener(target, type, 1, flags);
   },
-  removeEventListener(target, type, handler) {
+  removeEventListener(target, type, handler, options) {
     const a = target.listeners[type];
-    const i = a ? a.indexOf(handler) : -1;
+    const flags = flagsOf(options);
+    const i = a ? a.findIndex((l) => l.f === handler && l.flags === flags) : -1;
     if (i >= 0) {
       a.splice(i, 1);
-      bumpListener(target, type, -1);
+      bumpListener(target, type, -1, flags);
     }
   },
   bind,
 });
 
 export default renderer;
+
+/**
+ * An attachment that listens to a native signal with phase flags:
+ * `<entry {@attach listen('key-pressed', fn, { after: true })} />`, `{ capture: true }` for the
+ * capture phase. The handler gets the same arguments as `on<signal>` and is removed with the node.
+ */
+export function listen(type, handler, options = {}) {
+  return (node) => {
+    renderer.addEventListener(node, type, handler, options);
+    return () => renderer.removeEventListener(node, type, handler, options);
+  };
+}
+
+/** The listeners of `el` registered under `type` with exactly `flags`, in registration order. */
+function listenersFor(el, type, flags) {
+  return (el.listeners[type] ?? []).filter((l) => l.flags === flags).map((l) => l.f);
+}
 
 /**
  * The host reports that the native object behind handle `h` died (`reason`: 'closed' | 'parent' |
@@ -532,12 +623,12 @@ function syncResult(ev) {
  * a NativeEvent, and return the result for the toolkit (see NativeEvent). An exception from a
  * listener propagates; the host reports it and the toolkit gets the default.
  */
-export function dispatchSync(h, signal, args = []) {
+export function dispatchSync(h, signal, args = [], flags = 0) {
   const el = byHandle.get(h);
   if (!el) throw new Error(`dispatchSync: unknown handle ${h}`);
   const ev = new NativeEvent(eventFor(signal), signal, el, args, false);
   run: for (const type of new Set([eventFor(signal), signal])) {
-    for (const f of [...(el.listeners[type] ?? [])]) {
+    for (const f of listenersFor(el, type, flags)) {
       const r = f.call(el, ev, ...args);
       if (r !== null && typeof r === 'object' && typeof r.then === 'function') {
         console.warn(`sync handler for '${signal}' returned a Promise: flags set after its first await come too late and are ignored`);
@@ -558,7 +649,7 @@ export function dispatchSync(h, signal, args = []) {
  *            such as defaultPrevented/cancelBubble/returnValue the handlers set on it), else null
  * Exceptions from handlers propagate to the caller.
  */
-export function dispatch(h, signal, args = [], deferred = false) {
+export function dispatch(h, signal, args = [], deferred = false, flags = 0) {
   const el = byHandle.get(h);
   if (!el) throw new Error(`dispatch: unknown handle ${h}`);
   if (deferred) {
@@ -566,7 +657,7 @@ export function dispatch(h, signal, args = [], deferred = false) {
     const ev = new NativeEvent(eventFor(signal), signal, el, args, true);
     const results = [];
     for (const type of new Set([eventFor(signal), signal])) {
-      for (const f of [...(el.listeners[type] ?? [])]) results.push(f.call(el, ev, ...args));
+      for (const f of listenersFor(el, type, flags)) results.push(f.call(el, ev, ...args));
     }
     return { results, event: ev };
   }
@@ -574,7 +665,7 @@ export function dispatch(h, signal, args = [], deferred = false) {
   if (signal === 'changed' && el.tag === 'entry' && typeof args[0] === 'string') el.props.set('text', args[0]);
   const results = [];
   for (const type of new Set([eventFor(signal), signal])) {
-    for (const f of [...(el.listeners[type] ?? [])]) results.push(f.apply(el, args));
+    for (const f of listenersFor(el, type, flags)) results.push(f.apply(el, args));
   }
   const first = args[0];
   return { results, event: first !== null && typeof first === 'object' ? first : null };

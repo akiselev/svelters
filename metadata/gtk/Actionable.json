@@ -142,11 +142,27 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_actionable_set_detailed_action_name (Gtk 4 docs); called through GIRepository (X1)"
+      },
+      "args": [
+        "win.close"
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"action-name\") == V::Str(\"win.close\".into())",
       "id": "svelters-api:v1:type:gtk:Gtk:Actionable:method:set_detailed_action_name",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "setDetailedActionName",
       "name": "set_detailed_action_name",
       "native": "gtk_actionable_set_detailed_action_name",
       "origin": "gir",
@@ -186,6 +202,11 @@
       "accessors": {
         "get": "gtk_actionable_get_action_name",
         "set": "gtk_actionable_set_action_name"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkActionable:action-name (Gtk 4 docs); P prop; interface-owned, tested through GtkButton"
       },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Actionable:prop:action-name",
@@ -263,11 +284,14 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/Actionable.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"
     }
   },
-  "toolkit": "gtk"
+  "toolkit": "gtk",
+  "verify_subject": {
+    "tag": "button"
+  }
 }

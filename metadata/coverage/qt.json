@@ -5,31 +5,31 @@
   "defaults": 0,
   "element": null,
   "gallery": null,
-  "inherited": 0,
+  "inherited": 13,
   "kind": "QAbstractButton",
   "lifetime": "borrowed_only",
   "methods": [
-   0,
+   3,
    40
   ],
   "native": "QAbstractButton",
   "ownership": false,
   "props": [
-   0,
+   6,
    11
   ],
-  "props_annotated": 0,
+  "props_annotated": 6,
   "signal_results": 0,
   "signals": [
-   0,
+   4,
    4
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   12,
+   12
   ]
  },
  {
@@ -104,7 +104,7 @@
   "defaults": 10,
   "element": null,
   "gallery": null,
-  "inherited": 0,
+  "inherited": 11,
   "kind": "QAbstractSlider",
   "lifetime": "owned",
   "methods": [
@@ -114,21 +114,21 @@
   "native": "QAbstractSlider",
   "ownership": false,
   "props": [
-   0,
+   8,
    11
   ],
-  "props_annotated": 0,
+  "props_annotated": 8,
   "signal_results": 0,
   "signals": [
-   0,
+   3,
    6
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   9,
+   9
   ]
  },
  {
@@ -137,7 +137,7 @@
   "defaults": 11,
   "element": null,
   "gallery": null,
-  "inherited": 0,
+  "inherited": 7,
   "kind": "QAbstractSpinBox",
   "lifetime": "owned",
   "methods": [
@@ -147,21 +147,21 @@
   "native": "QAbstractSpinBox",
   "ownership": false,
   "props": [
-   0,
+   6,
    12
   ],
-  "props_annotated": 0,
+  "props_annotated": 6,
   "signal_results": 0,
   "signals": [
-   0,
+   1,
    2
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   7,
+   7
   ]
  },
  {
@@ -169,7 +169,7 @@
   "bindings": 0,
   "defaults": 0,
   "element": null,
-  "gallery": null,
+  "gallery": "06-layout",
   "inherited": 0,
   "kind": "QBoxLayout",
   "lifetime": "owned",
@@ -191,7 +191,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "A standalone layout is not an element: the box and frame elements are the layout-managed widgets (each owns a QBoxLayout, orientation is their prop).",
   "verified": [
    0,
    0
@@ -201,41 +201,41 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 8,
-  "element": null,
-  "gallery": null,
+  "element": "calendar",
+  "gallery": "10-display",
   "inherited": 0,
   "kind": "QCalendarWidget",
   "lifetime": "owned",
   "methods": [
-   0,
+   7,
    52
   ],
   "native": "QCalendarWidget",
   "ownership": false,
   "props": [
-   0,
+   9,
    11
   ],
-  "props_annotated": 0,
+  "props_annotated": 9,
   "signal_results": 0,
   "signals": [
-   0,
+   4,
    4
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   20,
+   20
   ]
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "defaults": 1,
-  "element": null,
-  "gallery": null,
+  "element": "checkbox",
+  "gallery": "02-buttons",
   "inherited": 0,
   "kind": "QCheckBox",
   "lifetime": "owned",
@@ -246,21 +246,21 @@
   "native": "QCheckBox",
   "ownership": false,
   "props": [
-   0,
+   1,
    1
   ],
-  "props_annotated": 0,
+  "props_annotated": 1,
   "signal_results": 0,
   "signals": [
-   0,
+   1,
    2
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   8,
+   8
   ]
  },
  {
@@ -273,7 +273,7 @@
   "kind": "QColorDialog",
   "lifetime": "toplevel",
   "methods": [
-   0,
+   1,
    17
   ],
   "native": "QColorDialog",
@@ -285,15 +285,15 @@
   "props_annotated": 2,
   "signal_results": 0,
   "signals": [
-   0,
+   1,
    2
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   2,
-   2
+   6,
+   6
   ]
  },
  {
@@ -323,7 +323,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "Item views are covered by the portable virtuallist element (X5, gap G6 closed that way); the model/view API is not exposed.",
   "verified": [
    0,
    0
@@ -331,43 +331,43 @@
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "defaults": 14,
   "element": "combobox",
-  "gallery": null,
+  "gallery": "07-selection",
   "inherited": 0,
   "kind": "QComboBox",
   "lifetime": "owned",
   "methods": [
-   2,
+   5,
    82
   ],
   "native": "QComboBox",
   "ownership": false,
   "props": [
-   2,
+   9,
    16
   ],
-  "props_annotated": 2,
+  "props_annotated": 9,
   "signal_results": 0,
   "signals": [
-   0,
+   3,
    7
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   4,
-   4
+   18,
+   18
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "defaults": 2,
-  "element": null,
-  "gallery": null,
+  "element": "commandlinkbutton",
+  "gallery": "02-buttons",
   "inherited": 0,
   "kind": "QCommandLinkButton",
   "lifetime": "owned",
@@ -378,10 +378,10 @@
   "native": "QCommandLinkButton",
   "ownership": false,
   "props": [
-   0,
+   2,
    2
   ],
-  "props_annotated": 0,
+  "props_annotated": 2,
   "signal_results": 0,
   "signals": [
    0,
@@ -391,8 +391,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   2,
+   2
   ]
  },
  {
@@ -400,7 +400,7 @@
   "bindings": 0,
   "defaults": 0,
   "element": "dateedit",
-  "gallery": null,
+  "gallery": "10-display",
   "inherited": 0,
   "kind": "QDateEdit",
   "lifetime": "owned",
@@ -424,8 +424,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   1,
-   1
+   4,
+   4
   ]
  },
  {
@@ -433,7 +433,7 @@
   "bindings": 0,
   "defaults": 7,
   "element": "datetimeedit",
-  "gallery": null,
+  "gallery": "10-display",
   "inherited": 0,
   "kind": "QDateTimeEdit",
   "lifetime": "owned",
@@ -444,29 +444,29 @@
   "native": "QDateTimeEdit",
   "ownership": false,
   "props": [
-   2,
+   3,
    17
   ],
-  "props_annotated": 2,
+  "props_annotated": 3,
   "signal_results": 0,
   "signals": [
-   0,
+   1,
    3
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   2,
-   2
+   4,
+   4
   ]
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "defaults": 4,
-  "element": null,
-  "gallery": null,
+  "element": "dial",
+  "gallery": "04-ranges",
   "inherited": 0,
   "kind": "QDial",
   "lifetime": "owned",
@@ -477,10 +477,10 @@
   "native": "QDial",
   "ownership": false,
   "props": [
-   0,
+   3,
    4
   ],
-  "props_annotated": 0,
+  "props_annotated": 3,
   "signal_results": 0,
   "signals": [
    0,
@@ -490,82 +490,82 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   6,
+   6
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "defaults": 2,
-  "element": null,
+  "element": "dialog",
   "gallery": null,
-  "inherited": 0,
+  "inherited": 9,
   "kind": "QDialog",
   "lifetime": "toplevel",
   "methods": [
-   0,
+   4,
    19
   ],
   "native": "QDialog",
-  "ownership": false,
+  "ownership": true,
   "props": [
-   0,
+   2,
    2
   ],
-  "props_annotated": 0,
+  "props_annotated": 2,
   "signal_results": 0,
   "signals": [
-   0,
+   3,
    3
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   11,
+   11
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "defaults": 3,
-  "element": null,
-  "gallery": null,
+  "element": "dialogbuttonbox",
+  "gallery": "08-bars",
   "inherited": 0,
   "kind": "QDialogButtonBox",
   "lifetime": "owned",
   "methods": [
-   0,
+   1,
    15
   ],
   "native": "QDialogButtonBox",
   "ownership": false,
   "props": [
-   0,
+   3,
    3
   ],
-  "props_annotated": 0,
+  "props_annotated": 3,
   "signal_results": 0,
   "signals": [
-   0,
+   3,
    4
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   7,
+   7
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "defaults": 5,
-  "element": null,
-  "gallery": null,
+  "element": "dockwidget",
+  "gallery": "06-layout",
   "inherited": 0,
   "kind": "QDockWidget",
   "lifetime": "owned",
@@ -576,29 +576,29 @@
   "native": "QDockWidget",
   "ownership": false,
   "props": [
-   0,
+   4,
    5
   ],
-  "props_annotated": 0,
+  "props_annotated": 4,
   "signal_results": 0,
   "signals": [
-   0,
+   4,
    5
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   8,
+   8
   ]
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "defaults": 9,
   "element": "doublespinbox",
-  "gallery": null,
+  "gallery": "04-ranges",
   "inherited": 0,
   "kind": "QDoubleSpinBox",
   "lifetime": "owned",
@@ -609,34 +609,34 @@
   "native": "QDoubleSpinBox",
   "ownership": false,
   "props": [
-   2,
+   5,
    9
   ],
-  "props_annotated": 2,
+  "props_annotated": 5,
   "signal_results": 0,
   "signals": [
-   0,
+   1,
    2
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   2,
-   2
+   7,
+   7
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "defaults": 0,
-  "element": null,
+  "element": "errormessage",
   "gallery": null,
   "inherited": 0,
   "kind": "QErrorMessage",
   "lifetime": "toplevel",
   "methods": [
-   0,
+   1,
    4
   ],
   "native": "QErrorMessage",
@@ -655,30 +655,30 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   1,
+   1
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "defaults": 5,
-  "element": null,
+  "element": "filedialog",
   "gallery": null,
   "inherited": 0,
   "kind": "QFileDialog",
   "lifetime": "toplevel",
   "methods": [
-   0,
+   1,
    62
   ],
   "native": "QFileDialog",
   "ownership": false,
   "props": [
-   0,
+   4,
    6
   ],
-  "props_annotated": 0,
+  "props_annotated": 4,
   "signal_results": 0,
   "signals": [
    0,
@@ -688,8 +688,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   6,
+   6
   ]
  },
  {
@@ -719,7 +719,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "Internal focus-rectangle helper attached to another widget by pointer.",
   "verified": [
    0,
    0
@@ -729,8 +729,8 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 1,
-  "element": null,
-  "gallery": null,
+  "element": "fontcombobox",
+  "gallery": "07-selection",
   "inherited": 0,
   "kind": "QFontComboBox",
   "lifetime": "owned",
@@ -741,10 +741,10 @@
   "native": "QFontComboBox",
   "ownership": false,
   "props": [
-   0,
+   3,
    3
   ],
-  "props_annotated": 0,
+  "props_annotated": 3,
   "signal_results": 0,
   "signals": [
    0,
@@ -754,15 +754,15 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   3,
+   3
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "defaults": 0,
-  "element": null,
+  "element": "fontdialog",
   "gallery": null,
   "inherited": 0,
   "kind": "QFontDialog",
@@ -774,10 +774,10 @@
   "native": "QFontDialog",
   "ownership": false,
   "props": [
-   0,
+   2,
    2
   ],
-  "props_annotated": 0,
+  "props_annotated": 2,
   "signal_results": 0,
   "signals": [
    0,
@@ -787,8 +787,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   2,
+   2
   ]
  },
  {
@@ -796,7 +796,7 @@
   "bindings": 0,
   "defaults": 6,
   "element": null,
-  "gallery": null,
+  "gallery": "06-layout",
   "inherited": 0,
   "kind": "QFormLayout",
   "lifetime": "owned",
@@ -818,7 +818,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "Label/field rows are child attributes, blocked by gap:G1; not a standalone layout element either (layouts are reached through layout-managed widgets).",
   "verified": [
    0,
    0
@@ -828,9 +828,9 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 5,
-  "element": null,
-  "gallery": null,
-  "inherited": 0,
+  "element": "frame",
+  "gallery": "05-containers",
+  "inherited": 4,
   "kind": "QFrame",
   "lifetime": "owned",
   "methods": [
@@ -838,23 +838,23 @@
    18
   ],
   "native": "QFrame",
-  "ownership": false,
+  "ownership": true,
   "props": [
-   0,
+   4,
    6
   ],
-  "props_annotated": 0,
+  "props_annotated": 4,
   "signal_results": 0,
   "signals": [
    0,
    0
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   6,
+   6
   ]
  },
  {
@@ -884,7 +884,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "Needs a QGraphicsScene of non-widget items (gap G7); no widget surface of its own worth exposing.",
   "verified": [
    0,
    0
@@ -895,7 +895,7 @@
   "bindings": 0,
   "defaults": 0,
   "element": null,
-  "gallery": null,
+  "gallery": "06-layout",
   "inherited": 0,
   "kind": "QGridLayout",
   "lifetime": "owned",
@@ -917,7 +917,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "Cells (row, column, spans) are child attributes, blocked by gap:G1; not a standalone layout element either (layouts are reached through layout-managed widgets).",
   "verified": [
    0,
    0
@@ -927,8 +927,8 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 5,
-  "element": null,
-  "gallery": null,
+  "element": "groupbox",
+  "gallery": "05-containers",
   "inherited": 0,
   "kind": "QGroupBox",
   "lifetime": "owned",
@@ -937,23 +937,23 @@
    21
   ],
   "native": "QGroupBox",
-  "ownership": false,
+  "ownership": true,
   "props": [
-   0,
+   4,
    5
   ],
-  "props_annotated": 0,
+  "props_annotated": 4,
   "signal_results": 0,
   "signals": [
-   0,
+   2,
    2
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   8,
+   8
   ]
  },
  {
@@ -961,7 +961,7 @@
   "bindings": 0,
   "defaults": 0,
   "element": null,
-  "gallery": null,
+  "gallery": "06-layout",
   "inherited": 0,
   "kind": "QHBoxLayout",
   "lifetime": "owned",
@@ -983,7 +983,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "A standalone layout is not an element: the box and frame elements are the layout-managed widgets (orientation horizontal is their prop).",
   "verified": [
    0,
    0
@@ -1016,7 +1016,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "Item views are covered by the portable virtuallist element (X5, gap G6 closed that way); headers belong to a view.",
   "verified": [
    0,
    0
@@ -1026,7 +1026,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 0,
-  "element": null,
+  "element": "inputdialog",
   "gallery": null,
   "inherited": 0,
   "kind": "QInputDialog",
@@ -1038,87 +1038,87 @@
   "native": "QInputDialog",
   "ownership": false,
   "props": [
-   0,
+   8,
    18
   ],
-  "props_annotated": 0,
+  "props_annotated": 8,
   "signal_results": 0,
   "signals": [
-   0,
+   2,
    6
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   10,
+   10
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "defaults": 2,
-  "element": null,
-  "gallery": null,
+  "element": "keysequenceedit",
+  "gallery": "03-text",
   "inherited": 0,
   "kind": "QKeySequenceEdit",
   "lifetime": "owned",
   "methods": [
-   0,
+   1,
    14
   ],
   "native": "QKeySequenceEdit",
   "ownership": false,
   "props": [
-   0,
+   2,
    4
   ],
-  "props_annotated": 0,
+  "props_annotated": 2,
   "signal_results": 0,
   "signals": [
-   0,
+   1,
    2
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   4,
+   4
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "defaults": 6,
-  "element": null,
-  "gallery": null,
+  "element": "lcdnumber",
+  "gallery": "04-ranges",
   "inherited": 0,
   "kind": "QLCDNumber",
   "lifetime": "owned",
   "methods": [
-   0,
+   1,
    19
   ],
   "native": "QLCDNumber",
   "ownership": false,
   "props": [
-   0,
+   5,
    6
   ],
-  "props_annotated": 0,
+  "props_annotated": 5,
   "signal_results": 0,
   "signals": [
-   0,
+   1,
    1
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   7,
+   7
   ]
  },
  {
@@ -1137,21 +1137,21 @@
   "native": "QLabel",
   "ownership": false,
   "props": [
-   5,
+   10,
    12
   ],
-  "props_annotated": 5,
+  "props_annotated": 10,
   "signal_results": 0,
   "signals": [
-   0,
+   2,
    2
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   7,
-   7
+   14,
+   14
   ]
  },
  {
@@ -1197,27 +1197,27 @@
   "kind": "QLineEdit",
   "lifetime": "owned",
   "methods": [
-   0,
+   6,
    85
   ],
   "native": "QLineEdit",
   "ownership": false,
   "props": [
-   5,
+   11,
    19
   ],
-  "props_annotated": 5,
+  "props_annotated": 11,
   "signal_results": 1,
   "signals": [
-   1,
+   5,
    7
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   8,
-   8
+   24,
+   24
   ]
  },
  {
@@ -1247,7 +1247,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "Item views are covered by the portable virtuallist element (X5, gap G6 closed that way); the model/view API is not exposed.",
   "verified": [
    0,
    0
@@ -1255,35 +1255,35 @@
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "defaults": 4,
-  "element": null,
-  "gallery": null,
+  "element": "listwidget",
+  "gallery": "07-selection",
   "inherited": 0,
   "kind": "QListWidget",
   "lifetime": "owned",
   "methods": [
-   0,
+   3,
    40
   ],
   "native": "QListWidget",
   "ownership": false,
   "props": [
-   0,
+   3,
    4
   ],
-  "props_annotated": 0,
+  "props_annotated": 3,
   "signal_results": 0,
   "signals": [
-   0,
+   2,
    10
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   11,
+   11
   ]
  },
  {
@@ -1302,10 +1302,10 @@
   "native": "QMainWindow",
   "ownership": true,
   "props": [
-   0,
+   5,
    8
   ],
-  "props_annotated": 0,
+  "props_annotated": 5,
   "signal_results": 1,
   "signals": [
    0,
@@ -1315,30 +1315,30 @@
   "slots_own": 3,
   "unexposed": null,
   "verified": [
-   9,
-   9
+   14,
+   14
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "defaults": 5,
-  "element": null,
-  "gallery": null,
+  "element": "mdiarea",
+  "gallery": "06-layout",
   "inherited": 0,
   "kind": "QMdiArea",
   "lifetime": "owned",
   "methods": [
-   0,
+   3,
    42
   ],
   "native": "QMdiArea",
   "ownership": false,
   "props": [
-   0,
+   7,
    8
   ],
-  "props_annotated": 0,
+  "props_annotated": 7,
   "signal_results": 0,
   "signals": [
    0,
@@ -1348,8 +1348,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   10,
+   10
   ]
  },
  {
@@ -1357,7 +1357,7 @@
   "bindings": 0,
   "defaults": 2,
   "element": null,
-  "gallery": null,
+  "gallery": "06-layout",
   "inherited": 0,
   "kind": "QMdiSubWindow",
   "lifetime": "owned",
@@ -1379,7 +1379,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "Created by QMdiArea::addSubWindow as the wrapper of a child, never constructed by the app; the mdiarea subwindows slot is blocked by gap:G13.",
   "verified": [
    0,
    0
@@ -1389,13 +1389,13 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 4,
-  "element": null,
+  "element": "menu",
   "gallery": null,
   "inherited": 0,
   "kind": "QMenu",
   "lifetime": "owned",
   "methods": [
-   0,
+   1,
    51
   ],
   "native": "QMenu",
@@ -1414,8 +1414,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   1,
+   1
   ]
  },
  {
@@ -1423,21 +1423,21 @@
   "bindings": 0,
   "defaults": 2,
   "element": "menubar",
-  "gallery": null,
+  "gallery": "08-bars",
   "inherited": 0,
   "kind": "QMenuBar",
   "lifetime": "owned",
   "methods": [
-   0,
+   1,
    35
   ],
   "native": "QMenuBar",
   "ownership": false,
   "props": [
-   0,
+   1,
    2
   ],
-  "props_annotated": 0,
+  "props_annotated": 1,
   "signal_results": 0,
   "signals": [
    0,
@@ -1447,15 +1447,15 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   2,
+   2
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "defaults": 7,
-  "element": null,
+  "element": "messagebox",
   "gallery": null,
   "inherited": 0,
   "kind": "QMessageBox",
@@ -1467,10 +1467,10 @@
   "native": "QMessageBox",
   "ownership": false,
   "props": [
-   0,
+   6,
    9
   ],
-  "props_annotated": 0,
+  "props_annotated": 6,
   "signal_results": 0,
   "signals": [
    0,
@@ -1480,107 +1480,107 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   6,
+   6
   ]
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "defaults": 15,
-  "element": null,
-  "gallery": null,
+  "element": "plaintextedit",
+  "gallery": "03-text",
   "inherited": 0,
   "kind": "QPlainTextEdit",
   "lifetime": "owned",
   "methods": [
-   0,
+   11,
    93
   ],
   "native": "QPlainTextEdit",
   "ownership": false,
   "props": [
-   0,
+   13,
    16
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 13,
+  "signal_results": 1,
   "signals": [
-   0,
+   4,
    9
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   30,
+   30
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "defaults": 10,
-  "element": null,
-  "gallery": null,
+  "element": "progressbar",
+  "gallery": "04-ranges",
   "inherited": 0,
   "kind": "QProgressBar",
   "lifetime": "owned",
   "methods": [
-   0,
+   1,
    27
   ],
   "native": "QProgressBar",
   "ownership": false,
   "props": [
-   0,
+   7,
    10
   ],
-  "props_annotated": 0,
+  "props_annotated": 7,
   "signal_results": 0,
   "signals": [
-   0,
+   1,
    1
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   9,
+   9
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "defaults": 8,
-  "element": null,
+  "element": "progressdialog",
   "gallery": null,
   "inherited": 0,
   "kind": "QProgressDialog",
   "lifetime": "toplevel",
   "methods": [
-   0,
+   2,
    29
   ],
   "native": "QProgressDialog",
   "ownership": false,
   "props": [
-   0,
+   7,
    8
   ],
-  "props_annotated": 0,
+  "props_annotated": 7,
   "signal_results": 0,
   "signals": [
-   0,
+   1,
    1
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   10,
+   10
   ]
  },
  {
@@ -1599,10 +1599,10 @@
   "native": "QPushButton",
   "ownership": false,
   "props": [
-   0,
+   3,
    3
   ],
-  "props_annotated": 0,
+  "props_annotated": 3,
   "signal_results": 0,
   "signals": [
    0,
@@ -1612,16 +1612,16 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   7,
-   7
+   10,
+   10
   ]
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "defaults": 0,
-  "element": null,
-  "gallery": null,
+  "element": "radiobutton",
+  "gallery": "02-buttons",
   "inherited": 0,
   "kind": "QRadioButton",
   "lifetime": "owned",
@@ -1645,8 +1645,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   5,
+   5
   ]
  },
  {
@@ -1676,7 +1676,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "GPU rendering surface driven by QRhi commands; no declarative surface.",
   "verified": [
    0,
    0
@@ -1709,7 +1709,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "Internal selection-rectangle helper that applications position by hand; no declarative use.",
   "verified": [
    0,
    0
@@ -1731,10 +1731,10 @@
   "native": "QScrollArea",
   "ownership": true,
   "props": [
-   0,
+   1,
    2
   ],
-  "props_annotated": 0,
+  "props_annotated": 1,
   "signal_results": 0,
   "signals": [
    0,
@@ -1744,16 +1744,16 @@
   "slots_own": 1,
   "unexposed": null,
   "verified": [
-   1,
-   1
+   4,
+   4
   ]
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "defaults": 0,
-  "element": null,
-  "gallery": null,
+  "element": "scrollbar",
+  "gallery": "04-ranges",
   "inherited": 0,
   "kind": "QScrollBar",
   "lifetime": "owned",
@@ -1777,8 +1777,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   3,
+   3
   ]
  },
  {
@@ -1808,7 +1808,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "Internal resize handle created by QStatusBar/QMainWindow.",
   "verified": [
    0,
    0
@@ -1816,10 +1816,10 @@
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "defaults": 2,
-  "element": null,
-  "gallery": null,
+  "element": "slider",
+  "gallery": "04-ranges",
   "inherited": 0,
   "kind": "QSlider",
   "lifetime": "owned",
@@ -1830,47 +1830,14 @@
   "native": "QSlider",
   "ownership": false,
   "props": [
-   0,
+   2,
    2
   ],
-  "props_annotated": 0,
+  "props_annotated": 2,
   "signal_results": 0,
   "signals": [
    0,
    0
-  ],
-  "slots": 0,
-  "slots_own": 0,
-  "unexposed": null,
-  "verified": [
-   0,
-   0
-  ]
- },
- {
-  "abstract": false,
-  "bindings": 0,
-  "defaults": 9,
-  "element": "spinbox",
-  "gallery": null,
-  "inherited": 0,
-  "kind": "QSpinBox",
-  "lifetime": "owned",
-  "methods": [
-   0,
-   23
-  ],
-  "native": "QSpinBox",
-  "ownership": false,
-  "props": [
-   5,
-   9
-  ],
-  "props_annotated": 5,
-  "signal_results": 0,
-  "signals": [
-   0,
-   2
   ],
   "slots": 0,
   "slots_own": 0,
@@ -1878,6 +1845,39 @@
   "verified": [
    5,
    5
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 1,
+  "defaults": 9,
+  "element": "spinbox",
+  "gallery": "04-ranges",
+  "inherited": 0,
+  "kind": "QSpinBox",
+  "lifetime": "owned",
+  "methods": [
+   2,
+   23
+  ],
+  "native": "QSpinBox",
+  "ownership": false,
+  "props": [
+   7,
+   9
+  ],
+  "props_annotated": 7,
+  "signal_results": 0,
+  "signals": [
+   2,
+   2
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   12,
+   12
   ]
  },
  {
@@ -1907,7 +1907,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "Startup-only top-level window shown before the main window exists; not part of an app page.",
   "verified": [
    0,
    0
@@ -1917,8 +1917,8 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 4,
-  "element": null,
-  "gallery": null,
+  "element": "splitter",
+  "gallery": "05-containers",
   "inherited": 0,
   "kind": "QSplitter",
   "lifetime": "owned",
@@ -1927,23 +1927,23 @@
    34
   ],
   "native": "QSplitter",
-  "ownership": false,
+  "ownership": true,
   "props": [
-   0,
+   4,
    4
   ],
-  "props_annotated": 0,
+  "props_annotated": 4,
   "signal_results": 0,
   "signals": [
-   0,
+   1,
    1
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   7,
+   7
   ]
  },
  {
@@ -1973,7 +1973,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "Internal widget created and owned by QSplitter.",
   "verified": [
    0,
    0
@@ -1984,7 +1984,7 @@
   "bindings": 0,
   "defaults": 2,
   "element": null,
-  "gallery": null,
+  "gallery": "06-layout",
   "inherited": 0,
   "kind": "QStackedLayout",
   "lifetime": "owned",
@@ -2006,7 +2006,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "Use the stackedwidget element, which owns a QStackedLayout; a standalone layout is not an element.",
   "verified": [
    0,
    0
@@ -2014,10 +2014,10 @@
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "defaults": 2,
-  "element": null,
-  "gallery": null,
+  "element": "stackedwidget",
+  "gallery": "05-containers",
   "inherited": 0,
   "kind": "QStackedWidget",
   "lifetime": "owned",
@@ -2026,23 +2026,23 @@
    11
   ],
   "native": "QStackedWidget",
-  "ownership": false,
+  "ownership": true,
   "props": [
-   0,
+   1,
    2
   ],
-  "props_annotated": 0,
+  "props_annotated": 1,
   "signal_results": 0,
   "signals": [
-   0,
+   1,
    3
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   4,
+   4
   ]
  },
  {
@@ -2050,73 +2050,73 @@
   "bindings": 0,
   "defaults": 1,
   "element": "statusbar",
-  "gallery": null,
+  "gallery": "08-bars",
   "inherited": 0,
   "kind": "QStatusBar",
   "lifetime": "owned",
   "methods": [
-   0,
+   2,
    16
   ],
   "native": "QStatusBar",
-  "ownership": false,
+  "ownership": true,
   "props": [
-   0,
+   1,
    1
   ],
-  "props_annotated": 0,
+  "props_annotated": 1,
   "signal_results": 0,
   "signals": [
-   0,
+   1,
    1
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 2,
+  "slots_own": 2,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   6,
+   6
   ]
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "defaults": 12,
-  "element": null,
-  "gallery": null,
+  "element": "tabbar",
+  "gallery": "08-bars",
   "inherited": 0,
   "kind": "QTabBar",
   "lifetime": "owned",
   "methods": [
-   0,
+   4,
    74
   ],
   "native": "QTabBar",
   "ownership": false,
   "props": [
-   0,
+   11,
    14
   ],
-  "props_annotated": 0,
+  "props_annotated": 11,
   "signal_results": 0,
   "signals": [
-   0,
+   5,
    5
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   21,
+   21
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "defaults": 10,
-  "element": null,
-  "gallery": null,
+  "element": "tabwidget",
+  "gallery": "05-containers",
   "inherited": 0,
   "kind": "QTabWidget",
   "lifetime": "owned",
@@ -2125,23 +2125,23 @@
    58
   ],
   "native": "QTabWidget",
-  "ownership": false,
+  "ownership": true,
   "props": [
-   0,
+   6,
    11
   ],
-  "props_annotated": 0,
+  "props_annotated": 6,
   "signal_results": 0,
   "signals": [
-   0,
+   3,
    4
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   13,
+   13
   ]
  },
  {
@@ -2171,7 +2171,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "Item views are covered by the portable virtuallist element (X5, gap G6 closed that way); the model/view API is not exposed.",
   "verified": [
    0,
    0
@@ -2204,7 +2204,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "Items are non-widget objects (gap G7) and the item-view surface needs models (gap G6); revisit with the item-model work.",
   "verified": [
    0,
    0
@@ -2214,66 +2214,66 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 2,
-  "element": null,
-  "gallery": null,
+  "element": "textbrowser",
+  "gallery": "03-text",
   "inherited": 0,
   "kind": "QTextBrowser",
   "lifetime": "owned",
   "methods": [
-   0,
+   5,
    30
   ],
   "native": "QTextBrowser",
   "ownership": false,
   "props": [
-   0,
+   4,
    8
   ],
-  "props_annotated": 0,
+  "props_annotated": 4,
   "signal_results": 0,
   "signals": [
-   0,
+   2,
    6
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   11,
+   11
   ]
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "defaults": 16,
-  "element": null,
-  "gallery": null,
+  "element": "textedit",
+  "gallery": "03-text",
   "inherited": 0,
   "kind": "QTextEdit",
   "lifetime": "owned",
   "methods": [
-   0,
+   11,
    110
   ],
   "native": "QTextEdit",
   "ownership": false,
   "props": [
-   0,
+   16,
    18
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 16,
+  "signal_results": 1,
   "signals": [
-   0,
+   3,
    7
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   32,
+   32
   ]
  },
  {
@@ -2281,7 +2281,7 @@
   "bindings": 0,
   "defaults": 0,
   "element": "timeedit",
-  "gallery": null,
+  "gallery": "10-display",
   "inherited": 0,
   "kind": "QTimeEdit",
   "lifetime": "owned",
@@ -2305,49 +2305,49 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   1,
-   1
+   3,
+   3
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "defaults": 6,
-  "element": null,
-  "gallery": null,
+  "element": "toolbar",
+  "gallery": "08-bars",
   "inherited": 0,
   "kind": "QToolBar",
   "lifetime": "owned",
   "methods": [
-   0,
+   1,
    26
   ],
   "native": "QToolBar",
   "ownership": false,
   "props": [
-   0,
+   5,
    7
   ],
-  "props_annotated": 0,
+  "props_annotated": 5,
   "signal_results": 0,
   "signals": [
-   0,
+   2,
    8
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   8,
+   8
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "defaults": 2,
-  "element": null,
-  "gallery": null,
+  "element": "toolbox",
+  "gallery": "05-containers",
   "inherited": 0,
   "kind": "QToolBox",
   "lifetime": "owned",
@@ -2364,37 +2364,37 @@
   "props_annotated": 0,
   "signal_results": 0,
   "signals": [
-   0,
+   1,
    1
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   1,
+   1
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "defaults": 4,
-  "element": null,
-  "gallery": null,
+  "element": "toolbutton",
+  "gallery": "02-buttons",
   "inherited": 0,
   "kind": "QToolButton",
   "lifetime": "owned",
   "methods": [
-   0,
+   1,
    28
   ],
   "native": "QToolButton",
   "ownership": false,
   "props": [
-   0,
+   4,
    4
   ],
-  "props_annotated": 0,
+  "props_annotated": 4,
   "signal_results": 0,
   "signals": [
    0,
@@ -2404,8 +2404,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   5,
+   5
   ]
  },
  {
@@ -2435,7 +2435,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "Item views are covered by the portable virtuallist element (X5, gap G6 closed that way); the model/view API is not exposed.",
   "verified": [
    0,
    0
@@ -2468,7 +2468,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "Items are non-widget objects (gap G7) and the item-view surface needs models (gap G6); revisit with the item-model work.",
   "verified": [
    0,
    0
@@ -2501,7 +2501,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "Item views are covered by the portable virtuallist element (X5, gap G6 closed that way); needs a QUndoStack object.",
   "verified": [
    0,
    0
@@ -2512,7 +2512,7 @@
   "bindings": 0,
   "defaults": 0,
   "element": null,
-  "gallery": null,
+  "gallery": "06-layout",
   "inherited": 0,
   "kind": "QVBoxLayout",
   "lifetime": "owned",
@@ -2534,7 +2534,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "A standalone layout is not an element: the box and frame elements are the layout-managed widgets (orientation vertical is their prop).",
   "verified": [
    0,
    0
@@ -2544,40 +2544,40 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 39,
-  "element": "box",
+  "element": "box, grid",
   "gallery": "00-overview",
-  "inherited": 0,
+  "inherited": 15,
   "kind": "QWidget",
   "lifetime": "owned",
   "methods": [
-   3,
+   8,
    258
   ],
   "native": "QWidget",
   "ownership": true,
   "props": [
-   9,
+   17,
    61
   ],
-  "props_annotated": 9,
-  "signal_results": 0,
+  "props_annotated": 17,
+  "signal_results": 1,
   "signals": [
    0,
    4
   ],
-  "slots": 1,
-  "slots_own": 1,
+  "slots": 2,
+  "slots_own": 2,
   "unexposed": null,
   "verified": [
-   16,
-   16
+   40,
+   40
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "defaults": 6,
-  "element": null,
+  "element": "wizard",
   "gallery": null,
   "inherited": 0,
   "kind": "QWizard",
@@ -2589,28 +2589,28 @@
   "native": "QWizard",
   "ownership": false,
   "props": [
-   0,
+   2,
    6
   ],
-  "props_annotated": 0,
+  "props_annotated": 2,
   "signal_results": 0,
   "signals": [
-   0,
+   1,
    5
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   3,
+   3
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "defaults": 2,
-  "element": null,
+  "element": "wizardpage",
   "gallery": null,
   "inherited": 0,
   "kind": "QWizardPage",
@@ -2622,10 +2622,10 @@
   "native": "QWizardPage",
   "ownership": false,
   "props": [
-   0,
+   2,
    2
   ],
-  "props_annotated": 0,
+  "props_annotated": 2,
   "signal_results": 0,
   "signals": [
    0,
@@ -2635,8 +2635,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   2,
+   2
   ]
  }
 ]

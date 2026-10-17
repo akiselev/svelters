@@ -111,6 +111,8 @@ enum Event {
         /// A sync signal that found JS running (`call_sync` answered busy): delivered late, so
         /// its handlers get an event object whose result is ignored.
         deferred: bool,
+        /// `SVL_LISTEN_*` flags of the connection that fired (ABI v2.2).
+        flags: u32,
     },
     /// The native object behind `handle` died (`reason` is an `SVL_GONE_*` code).
     Gone { handle: svl_handle, reason: u32 },
@@ -124,6 +126,7 @@ pub(crate) enum DispatchEvent {
         signal: String,
         args: Vec<Value>,
         deferred: bool,
+        flags: u32,
     },
     Gone {
         handle: svl_handle,
@@ -427,11 +430,13 @@ impl Core {
     // ---- events ----
 
     pub(crate) fn push_event(&self, handle: svl_handle, signal: svl_id, args: Vec<Value>) {
+        let (signal, flags) = split_signal(signal);
         self.st.borrow_mut().events.push_back(Event::Signal {
             handle,
             signal,
             args,
             deferred: false,
+            flags,
         });
     }
 
@@ -454,7 +459,7 @@ impl Core {
         let events: Vec<Event> = self.st.borrow_mut().events.drain(..).collect();
         let mut out = Vec::new();
         for e in events {
-            let (handle, signal, args, deferred) = match e {
+            let (handle, signal, args, deferred, flags) = match e {
                 Event::Gone { handle, reason } => {
                     out.push(DispatchEvent::Gone {
                         handle,
@@ -467,7 +472,8 @@ impl Core {
                     signal,
                     args,
                     deferred,
-                } => (handle, signal, args, deferred),
+                    flags,
+                } => (handle, signal, args, deferred, flags),
             };
             let name = {
                 let st = self.st.borrow();
@@ -485,6 +491,7 @@ impl Core {
                     signal,
                     args,
                     deferred,
+                    flags,
                 }),
                 None => self.report(JsError::new(
                     ErrorKind::Host,
@@ -733,6 +740,7 @@ pub(crate) fn call_sync(
     signal: svl_id,
     args: &[Value],
 ) -> Result<Value, SyncError> {
+    let (signal, flags) = split_signal(signal);
     let Some(name) = core.listened_signal(h, signal) else {
         return Err(SyncError::Failed(format!(
             "call_sync: no listener for signal id {signal} on handle {h}"
@@ -744,6 +752,7 @@ pub(crate) fn call_sync(
             signal,
             args: args.to_vec(),
             deferred: true,
+            flags,
         });
         if !core.cfg.scripted {
             core.backend.wake();
@@ -754,7 +763,7 @@ pub(crate) fn call_sync(
         return Err(SyncError::Busy);
     };
     let mut eng = engine.borrow_mut();
-    let result = match eng.dispatch_sync(h, &name, args) {
+    let result = match eng.dispatch_sync(h, &name, args, flags) {
         Ok(v) => v,
         Err(e) => {
             core.report(e);
@@ -770,6 +779,11 @@ pub(crate) fn call_sync(
     Ok(result)
 }
 
+/// Splits a signal id from a backend into the id and its `SVL_LISTEN_*` flags (ABI v2.2).
+fn split_signal(signal: svl_id) -> (svl_id, u32) {
+    (signal & svelters_abi::SVL_SIGNAL_ID_MASK, signal >> svelters_abi::SVL_SIGNAL_FLAGS_SHIFT)
+}
+
 fn deliver(eng: &mut Box<dyn JsEngine>, ev: DispatchEvent) -> Result<(), JsError> {
     match ev {
         DispatchEvent::Signal {
@@ -777,7 +791,8 @@ fn deliver(eng: &mut Box<dyn JsEngine>, ev: DispatchEvent) -> Result<(), JsError
             signal,
             args,
             deferred,
-        } => eng.dispatch(handle, &signal, &args, deferred),
+            flags,
+        } => eng.dispatch(handle, &signal, &args, deferred, flags),
         DispatchEvent::Gone { handle, reason } => eng.dispatch_gone(handle, reason),
     }
 }

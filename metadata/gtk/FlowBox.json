@@ -19,9 +19,92 @@
       ],
       "widget_props": []
     },
-    "default_slot": null,
-    "policy": "unknown",
-    "slots": []
+    "default_slot": "children",
+    "policy": "ordered",
+    "slots": [
+      {
+        "accepts": [
+          "Gtk.Widget"
+        ],
+        "annotated": {
+          "fields": [
+            "accepts",
+            "attrs",
+            "cardinality",
+            "content",
+            "default",
+            "on_remove",
+            "ops",
+            "order",
+            "requires",
+            "route_by_kind",
+            "verify"
+          ],
+          "origin": "manual",
+          "provenance": [
+            {
+              "origin": "gir",
+              "ref": "gtk_flow_box_insert"
+            },
+            {
+              "origin": "gir",
+              "ref": "gtk_flow_box_remove"
+            },
+            {
+              "origin": "manual",
+              "ref": "docs: the child is wrapped in a GtkFlowBoxChild"
+            }
+          ]
+        },
+        "attrs": [],
+        "cardinality": "many",
+        "content": "widget",
+        "default": {
+          "kind": "none",
+          "origin": "manual"
+        },
+        "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:slot:children",
+        "name": "children",
+        "on_remove": "empty",
+        "ops": {
+          "get": {
+            "contains": "ancestor",
+            "origin": "manual"
+          },
+          "insert": {
+            "args": [
+              "child",
+              "index"
+            ],
+            "effects": {
+              "child": "wrapped:FlowBoxChild",
+              "origin": "manual"
+            },
+            "native": "GtkFlowBox::insert(GtkWidget*, int)",
+            "origin": "manual"
+          },
+          "origin": "manual",
+          "remove": {
+            "args": [
+              "child"
+            ],
+            "effects": {
+              "child": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkFlowBox::remove(GtkWidget*)",
+            "origin": "manual"
+          }
+        },
+        "order": "native_index",
+        "origin": "manual",
+        "requires": [],
+        "route_by_kind": false,
+        "verify": {
+          "origin": "manual"
+        }
+      }
+    ]
   },
   "constructors": [
     {
@@ -58,11 +141,159 @@
   ],
   "id": "svelters-api:v1:type:gtk:Gtk:FlowBox",
   "inherited": {
+    "methods": [
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:grab_focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "grab_focus",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:queue_draw",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "queue_draw",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:queue_resize",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "queue_resize",
+        "origin": "manual"
+      }
+    ],
     "properties": [
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:can-focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "can-focus",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:css-classes",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "css-classes",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:focusable",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "focusable",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:halign",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "halign",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:height-request",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "height-request",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:hexpand",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "hexpand",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-bottom",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "margin-bottom",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-end",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "margin-end",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-start",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "margin-start",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-top",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "margin-top",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:name",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "name",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:opacity",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "opacity",
+        "origin": "manual"
+      },
       {
         "fact": "svelters-api:v1:type:gtk:Gtk:Orientable:prop:orientation",
         "from": "svelters-api:v1:type:gtk:Gtk:Orientable",
         "name": "orientation",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:sensitive",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "sensitive",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:tooltip-markup",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "tooltip-markup",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:tooltip-text",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "tooltip-text",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:valign",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "valign",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:vexpand",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "vexpand",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:visible",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "visible",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:width-request",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "width-request",
+        "origin": "manual"
+      }
+    ],
+    "signals": [
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:signal:hide",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "hide",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:signal:show",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "show",
         "origin": "manual"
       }
     ]
@@ -1035,6 +1266,11 @@
         "get": "gtk_flow_box_get_column_spacing",
         "set": "gtk_flow_box_set_column_spacing"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkFlowBox:column-spacing (Gtk 4 docs); P prop"
+      },
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:prop:column-spacing",
       "invocation": "reflected",
@@ -1078,6 +1314,11 @@
         "get": "gtk_flow_box_get_homogeneous",
         "set": "gtk_flow_box_set_homogeneous"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkFlowBox:homogeneous (Gtk 4 docs); P prop"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:prop:homogeneous",
       "invocation": "reflected",
@@ -1117,6 +1358,11 @@
       "accessors": {
         "get": "gtk_flow_box_get_max_children_per_line",
         "set": "gtk_flow_box_set_max_children_per_line"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkFlowBox:max-children-per-line (Gtk 4 docs); P prop"
       },
       "default": 7,
       "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:prop:max-children-per-line",
@@ -1161,6 +1407,11 @@
         "get": "gtk_flow_box_get_min_children_per_line",
         "set": "gtk_flow_box_set_min_children_per_line"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkFlowBox:min-children-per-line (Gtk 4 docs); P prop"
+      },
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:prop:min-children-per-line",
       "invocation": "reflected",
@@ -1204,6 +1455,11 @@
         "get": "gtk_flow_box_get_row_spacing",
         "set": "gtk_flow_box_set_row_spacing"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkFlowBox:row-spacing (Gtk 4 docs); P prop"
+      },
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:prop:row-spacing",
       "invocation": "reflected",
@@ -1246,6 +1502,11 @@
       "accessors": {
         "get": "gtk_flow_box_get_selection_mode",
         "set": "gtk_flow_box_set_selection_mode"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkFlowBox:selection-mode (Gtk 4 docs); P prop"
       },
       "default": "single",
       "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:prop:selection-mode",
@@ -1306,6 +1567,16 @@
       "sync_required": false
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GtkFlowBox::child-activated, run-last, void; emitted by activating the FlowBoxChild (Gtk 4 docs)"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -1333,7 +1604,17 @@
         "origin": "runtime",
         "return_gtype": "void"
       },
-      "sync_required": false
+      "sync_required": false,
+      "trigger": {
+        "origin": "manual",
+        "rust": "o.downcast_ref::<gtk::FlowBox>().unwrap().child_at_index(0).unwrap().emit_by_name::<()>(\"activate\", &[]);",
+        "setup": "let fb = h.obj(o).downcast::<gtk::FlowBox>().unwrap(); fb.insert(&gtk::Label::new(None), -1);",
+        "values": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
     },
     {
       "connection": {
@@ -1409,6 +1690,16 @@
       "sync_required": false
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GtkFlowBox::selected-children-changed, run-first, void (Gtk 4 docs)"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -1430,7 +1721,17 @@
         "origin": "runtime",
         "return_gtype": "void"
       },
-      "sync_required": false
+      "sync_required": false,
+      "trigger": {
+        "origin": "manual",
+        "rust": "let fb = o.downcast_ref::<gtk::FlowBox>().unwrap(); fb.select_child(&fb.child_at_index((i % 2) as i32).unwrap());",
+        "setup": "let fb = h.obj(o).downcast::<gtk::FlowBox>().unwrap(); fb.insert(&gtk::Label::new(None), -1); fb.insert(&gtk::Label::new(None), -1);",
+        "values": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
     },
     {
       "connection": {
@@ -1491,7 +1792,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/FlowBox.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"

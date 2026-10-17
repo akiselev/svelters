@@ -1,0 +1,26 @@
+properties:
+  - name: selection-mode
+    provenance: "GtkListBox:selection-mode (Gtk 4 docs); P prop"
+  - name: show-separators
+    provenance: "GtkListBox:show-separators (Gtk 4 docs); P prop"
+  - name: activate-on-single-click
+    provenance: "GtkListBox:activate-on-single-click (Gtk 4 docs); P prop"
+signals:
+  - name: row-activated
+    js_event: row-activated
+    handler_result: none
+    sync_required: false
+    trigger:
+      setup: 'let lb = h.obj(o).downcast::<gtk::ListBox>().unwrap(); lb.append(&gtk::Label::new(None));'
+      rust: 'o.downcast_ref::<gtk::ListBox>().unwrap().row_at_index(0).unwrap().emit_by_name::<()>("activate", &[]);'
+      values: [a, b, c]
+    provenance: "GtkListBox::row-activated, run-last, void; emitted by activating the row (Gtk 4 docs)"
+  - name: row-selected
+    js_event: row-selected
+    handler_result: none
+    sync_required: false
+    trigger:
+      setup: 'let lb = h.obj(o).downcast::<gtk::ListBox>().unwrap(); lb.append(&gtk::Label::new(None)); lb.append(&gtk::Label::new(None));'
+      rust: 'let lb = o.downcast_ref::<gtk::ListBox>().unwrap(); lb.select_row(lb.row_at_index((i % 2) as i32).as_ref());'
+      values: [a, b, c]
+    provenance: "GtkListBox::row-selected, run-first, void (Gtk 4 docs)"

@@ -1,0 +1,62 @@
+properties:
+  - name: label
+    provenance: "GtkMenuButton:label (Gtk 4 docs)"
+  - name: icon-name
+    provenance: "GtkMenuButton:icon-name (Gtk 4 docs)"
+  - name: direction
+    provenance: "GtkMenuButton:direction (Gtk 4 docs)"
+  - name: has-frame
+    provenance: "GtkMenuButton:has-frame (Gtk 4 docs)"
+  - name: always-show-arrow
+    provenance: "GtkMenuButton:always-show-arrow (Gtk 4 docs)"
+  - name: primary
+    provenance: "GtkMenuButton:primary (Gtk 4 docs)"
+  - name: use-underline
+    provenance: "GtkMenuButton:use-underline (Gtk 4 docs)"
+  - name: can-shrink
+    provenance: "GtkMenuButton:can-shrink (Gtk 4 docs)"
+signals:
+  - name: activate
+    js_event: activate
+    handler_result: none
+    sync_required: false
+    provenance: "GtkMenuButton::activate is an action signal with void return (Gtk 4 docs)"
+methods:
+  - name: popup
+    js_name: popup
+    dispatch: zero_arg
+    setup: 'let w = h.widget(o); let win = gtk::Window::new(); win.set_child(Some(&w)); win.present(); let mb = w.downcast_ref::<gtk::MenuButton>().unwrap(); mb.set_popover(Some(&gtk::Popover::new())); std::mem::forget(win);'
+    expect: 'h.get(o, "active") == V::Bool(true)'
+    provenance: "gtk_menu_button_popup (Gtk 4 docs)"
+  - name: popdown
+    js_name: popdown
+    dispatch: zero_arg
+    setup: 'let w = h.widget(o); let win = gtk::Window::new(); win.set_child(Some(&w)); win.present(); let mb = w.downcast_ref::<gtk::MenuButton>().unwrap(); mb.set_popover(Some(&gtk::Popover::new())); mb.popup(); std::mem::forget(win);'
+    expect: 'h.get(o, "active") == V::Bool(false)'
+    provenance: "gtk_menu_button_popdown (Gtk 4 docs)"
+  - name: set_direction
+    js_name: set_direction
+    dispatch: dynamic
+    args: ["up"]
+    expect: 'h.get(o, "direction") == V::Str("up".into())'
+    provenance: "gtk_menu_button_set_direction (Gtk 4 docs); enum nick argument (S1)"
+children:
+  policy: named_slots
+  default_slot: popover
+  slots:
+    - name: popover
+      content: widget
+      accepts: [Gtk.Popover]
+      route_by_kind: true
+      cardinality: one
+      order: none
+      default: {kind: none}
+      on_remove: empty
+      attrs: []
+      requires: []
+      ops:
+        get:    {native: "GtkMenuButton::get_popover() const"}
+        set:    {native: "GtkMenuButton::set_popover(GtkWidget*)", args: [child], effects: {child: parented, old: unparented}}
+        remove: {native: "GtkMenuButton::set_popover(GtkWidget*)", args: [null], effects: {child: unparented}}
+      verify: {}
+      provenance: [{origin: gir, ref: "gtk_menu_button_set_popover"}, {origin: manual, ref: "the popover is parented to the button (Gtk 4 docs)"}]

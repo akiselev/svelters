@@ -7,7 +7,19 @@ elements:
       - { js: echoMode, native: echoMode, provenance: "QLineEdit::echoMode (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: alignment, native: alignment, provenance: "QLineEdit::alignment (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: maxLength, native: maxLength, provenance: "QLineEdit::maxLength (qdoc); typed by the S1 value model (ABI v3)" }
-      - { js: minimumHeight, native: minimumHeight, provenance: "QWidget::minimumHeight Q_PROPERTY (qdoc); native styling min-height (native compiler experiment)" }
+      - { js: readOnly, native: readOnly, provenance: "QLineEdit::readOnly (qdoc)" }
+      - { js: clearButtonEnabled, native: clearButtonEnabled, provenance: "QLineEdit::clearButtonEnabled (qdoc)" }
+      - { js: frame, native: frame, provenance: "QLineEdit::frame (qdoc)" }
+      - { js: inputMask, native: inputMask, sample: "AAA", provenance: "QLineEdit::inputMask (qdoc)" }
+      - { js: dragEnabled, native: dragEnabled, provenance: "QLineEdit::dragEnabled (qdoc)" }
+      - { js: cursorPosition, native: cursorPosition, sample: 3, setup: '$w->setText(QStringLiteral("hello world"))', provenance: "QLineEdit::cursorPosition (qdoc); clamped to the text length, so the test sets text first" }
+    methods:
+      - { js: clear, native: clear, expect: "$w->text().isEmpty()", provenance: "QLineEdit::clear() slot (qdoc)" }
+      - { js: selectAll, native: selectAll, provenance: "QLineEdit::selectAll() slot (qdoc)" }
+      - { js: undo, native: undo, provenance: "QLineEdit::undo() slot (qdoc)" }
+      - { js: redo, native: redo, provenance: "QLineEdit::redo() slot (qdoc)" }
+      - { js: copy, native: copy, provenance: "QLineEdit::copy() slot (qdoc)" }
+      - { js: setSelection, native: setSelection, params: [i32, i32], args: [0, 0], provenance: "QLineEdit::setSelection(int, int) (qdoc)" }
     bindings:
       # Binding metadata (schema extension `bindings`, docs/notes/fork-bindings.md section 6).
       - name: text
@@ -34,3 +46,28 @@ elements:
         trigger: '$w->setText(QStringLiteral("v") + QString::number($i))'
         expect_args: ["v0"]
         provenance: "QLineEdit::textChanged(const QString &) (qdoc); emitted for programmatic and user edits"
+      - js: returnPressed
+        native: returnPressed
+        connect: "returnPressed()"
+        args: []
+        trigger: "Q_EMIT $w->returnPressed()"
+        provenance: "QLineEdit::returnPressed() (qdoc)"
+      - js: editingFinished
+        native: editingFinished
+        connect: "editingFinished()"
+        args: []
+        trigger: "Q_EMIT $w->editingFinished()"
+        provenance: "QLineEdit::editingFinished() (qdoc)"
+      - js: textEdited
+        native: textEdited
+        connect: "textEdited(QString)"
+        args: [{ name: text, type: string }]
+        trigger: 'Q_EMIT $w->textEdited(QStringLiteral("e") + QString::number($i))'
+        expect_args: ["e0"]
+        provenance: "QLineEdit::textEdited(const QString &) (qdoc); user edits only (qt_sync_probe.py)"
+      - js: selectionChanged
+        native: selectionChanged
+        connect: "selectionChanged()"
+        args: []
+        trigger: 'Q_EMIT $w->selectionChanged()'
+        provenance: "QLineEdit::selectionChanged() (qdoc)"

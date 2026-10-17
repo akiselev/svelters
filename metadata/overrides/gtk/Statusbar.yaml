@@ -1,0 +1,2 @@
+unexposed:
+  reason: "deprecated since GTK 4.10 (push/pop need out-of-scope calls); build a status area from label/box"

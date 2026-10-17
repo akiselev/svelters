@@ -45,10 +45,17 @@ struct Rec {
   void clear() { events.clear(); destroyed.clear(); reasons.clear(); checkpoints = 0; }
 } rec;
 
+// Text of a STR value as UTF-8, whichever encoding the backend chose.
+std::string str_of(const svl_value &v) {
+  if (v.flags & SVL_F_UTF16)
+    return QString::fromUtf16(static_cast<const char16_t *>(v.u.s.ptr), static_cast<qsizetype>(v.u.s.len)).toStdString();
+  return std::string(static_cast<const char *>(v.u.s.ptr), v.u.s.len);
+}
+
 // Signal args and property values as strings, so tests compare any scalar type the same way.
 std::string valstr(const svl_value &v) {
   switch (v.tag) {
-    case SVL_STR: return std::string(static_cast<const char *>(v.u.s.ptr), v.u.s.len);
+    case SVL_STR: return str_of(v);
     case SVL_BOOL: return v.u.b ? "true" : "false";
     case SVL_I64: return std::to_string(v.u.i);
     case SVL_F64: { char b[64]; std::snprintf(b, sizeof b, "%g", v.u.f); return b; }
@@ -113,6 +120,7 @@ svl_id P(const char *tag, const char *n) { return R(SVL_PROP, K(tag), n); }
 svl_id G(const char *tag, const char *n) { return R(SVL_SIGNAL, K(tag), n); }
 svl_id M(const char *tag, const char *n) { return R(SVL_METHOD, K(tag), n); }
 svl_id S(const char *tag, const char *n) { return R(SVL_SLOT, K(tag), n); }
+svl_id A(const char *tag, const char *n) { return R(SVL_ATTR, K(tag), n); }
 svl_handle mk(const char *tag) { return B->create(B->self, K(tag)); }
 QObject *O(svl_handle h) { return static_cast<QObject *>(svl_qt_debug_object(h)); }
 void flush() {
@@ -160,7 +168,7 @@ int64_t enum_member_value(const svl_type_desc *td, const char *name) {
 std::string getstr(svl_handle h, svl_id p) {
   svl_value out{};
   if (B->get_prop(B->self, h, p, &out) != 0 || out.tag != SVL_STR) return "<err>";
-  return std::string(static_cast<const char *>(out.u.s.ptr), out.u.s.len);
+  return str_of(out);
 }
 
 struct TestCase {
@@ -350,6 +358,103 @@ bool t_runtime_key_press_handler_consumes_the_key(std::string &why) {
   return true;
 }
 
+// ---- listener phases (ABI v2.2 listen_ex) ----------------------------------------------------
+
+constexpr svl_id wire_id(svl_id sig, uint32_t flags) { return sig | (flags << SVL_SIGNAL_FLAGS_SHIFT); }
+
+bool t_runtime_listen_after_runs_behind_plain(std::string &why) {
+  svl_handle h = mk("@@SIG_TAG@@");
+  svl_id sig = G("@@SIG_TAG@@", "@@SIG_NAME@@");
+  CHECK(sig != 0 && B->listen_ex != nullptr);
+  auto fire = [&](int i) { auto *w = static_cast<@@SIG_CLASS@@ *>(O(h)); (void)w; (void)i; @@SIG_TRIGGER@@; };
+  // The after-connection is made first and the plain one later: the plain listener is still reported first.
+  CHECK(B->listen_ex(B->self, h, sig, true, SVL_LISTEN_AFTER) == 0);
+  CHECK(B->listen_ex(B->self, h, sig, true, SVL_LISTEN_AFTER) == 0);  // idempotent
+  CHECK(B->listen(B->self, h, sig, true) == 0);
+  fire(0);
+  CHECK(rec.events.size() == 2);
+  CHECK(rec.events[0].sig == sig && rec.events[1].sig == wire_id(sig, SVL_LISTEN_AFTER));
+  rec.events.clear();
+  // off removes only the matching connection.
+  CHECK(B->listen_ex(B->self, h, sig, false, SVL_LISTEN_AFTER) == 0);
+  fire(1);
+  CHECK(rec.events.size() == 1 && rec.events[0].sig == sig);
+  rec.events.clear();
+  CHECK(B->listen_ex(B->self, h, sig, true, SVL_LISTEN_AFTER) == 0);
+  CHECK(B->listen(B->self, h, sig, false) == 0);
+  fire(2);
+  CHECK(rec.events.size() == 1 && rec.events[0].sig == wire_id(sig, SVL_LISTEN_AFTER));
+  B->destroy(B->self, h);
+  return true;
+}
+
+bool t_runtime_listen_phase_refusals(std::string &why) {
+  svl_handle h = mk("@@SIG_TAG@@");
+  svl_id sig = G("@@SIG_TAG@@", "@@SIG_NAME@@");
+  CHECK(B->listen_ex(B->self, h, sig, true, SVL_LISTEN_CAPTURE) < 0);
+  CHECK(std::strstr(B->last_error(B->self), "capture") != nullptr);
+  CHECK(B->listen_ex(B->self, h, sig, true, SVL_LISTEN_CAPTURE | SVL_LISTEN_AFTER) < 0);
+  CHECK(B->listen_ex(B->self, h, sig, true, 8) < 0);  // unknown flag
+  B->destroy(B->self, h);
+  svl_handle e = mk("entry");
+  svl_id key = G("entry", "key-press");
+  CHECK(B->listen_ex(B->self, e, key, true, SVL_LISTEN_AFTER) < 0);
+  CHECK(std::strstr(B->last_error(B->self), "no after phase") != nullptr);
+  CHECK(B->listen_ex(B->self, e, key, true, SVL_LISTEN_CAPTURE) == 0);  // allowed (a capture listener on the entry itself never fires)
+  CHECK(B->listen_ex(B->self, e, key, false, SVL_LISTEN_CAPTURE) == 0);
+  B->destroy(B->self, e);
+  svl_handle w = mk("window");
+  svl_id close = G("window", "close-request");
+  CHECK(B->listen_ex(B->self, w, close, true, SVL_LISTEN_CAPTURE) < 0);
+  CHECK(B->listen_ex(B->self, w, close, true, SVL_LISTEN_AFTER) < 0);
+  CHECK(std::strstr(B->last_error(B->self), "event-filter") != nullptr);
+  B->destroy(B->self, w);
+  return true;
+}
+
+bool t_runtime_capture_reaches_descendant_key_before_its_own_listener(std::string &why) {
+  svl_handle box = mk("box");
+  svl_handle e = mk("entry");
+  CHECK(B->insert(B->self, box, e, 0, 0) == 0);
+  auto *edit = qobject_cast<QLineEdit *>(O(e));
+  CHECK(edit);
+  svl_id bsig = G("box", "key-press");
+  svl_id esig = G("entry", "key-press");
+  CHECK(bsig != 0 && esig != 0);
+  auto press = [&](QWidget *w, int key, const char *text) {
+    QKeyEvent ev(QEvent::KeyPress, key, Qt::NoModifier, QString::fromUtf8(text));
+    QCoreApplication::sendEvent(w, &ev);
+  };
+  CHECK(B->listen_ex(B->self, box, bsig, true, SVL_LISTEN_CAPTURE) == 0);
+  CHECK(B->listen_ex(B->self, box, bsig, true, SVL_LISTEN_CAPTURE) == 0);  // idempotent
+  CHECK(B->listen(B->self, e, esig, true) == 0);
+  reply = Reply::Continue;
+  press(edit, Qt::Key_A, "a");
+  CHECK(sync_calls.size() == 2);
+  CHECK(sync_calls[0].h == box && sync_calls[0].sig == wire_id(bsig, SVL_LISTEN_CAPTURE));  // capture first
+  CHECK(sync_calls[1].h == e && sync_calls[1].sig == esig);
+  CHECK(sync_calls[0].n == 3 && sync_calls[0].key == Qt::Key_A && sync_calls[0].text == "a");
+  CHECK(edit->text() == "a");
+  // The capture handler consumes the key: neither the entry's listener nor the entry see it.
+  sync_calls.clear();
+  reply = Reply::Stop;
+  press(edit, Qt::Key_B, "b");
+  CHECK(sync_calls.size() == 1 && sync_calls[0].h == box);
+  CHECK(edit->text() == "a");
+  // A key sent to the box itself is not a descendant's key.
+  sync_calls.clear();
+  press(qobject_cast<QWidget *>(O(box)), Qt::Key_C, "c");
+  CHECK(sync_calls.empty());
+  // off removes the capture listener (and the application filter with the last one).
+  CHECK(B->listen_ex(B->self, box, bsig, false, SVL_LISTEN_CAPTURE) == 0);
+  reply = Reply::Continue;
+  press(edit, Qt::Key_D, "d");
+  CHECK(sync_calls.size() == 1 && sync_calls[0].h == e);
+  CHECK(edit->text() == "ad");
+  B->destroy(B->self, box);
+  return true;
+}
+
 bool t_runtime_request_frame_delivers_once_per_request(std::string &why) {
   // No visible window: the fallback timer stands in for the frame clock.
   B->request_frame(B->self);
@@ -420,6 +525,9 @@ const TestCase kTests[] = {
     {"runtime/controlled_close_is_vetoed", t_runtime_controlled_close_is_vetoed},
     {"runtime/close_handler_decides_through_call_sync", t_runtime_close_handler_decides_through_call_sync},
     {"runtime/key_press_handler_consumes_the_key", t_runtime_key_press_handler_consumes_the_key},
+    {"runtime/listen_after_runs_behind_plain", t_runtime_listen_after_runs_behind_plain},
+    {"runtime/listen_phase_refusals", t_runtime_listen_phase_refusals},
+    {"runtime/capture_reaches_descendant_key_before_its_own_listener", t_runtime_capture_reaches_descendant_key_before_its_own_listener},
     {"runtime/request_frame_delivers_once_per_request", t_runtime_request_frame_delivers_once_per_request},
     {"runtime/wake_queues_checkpoint", t_runtime_wake_queues_checkpoint},
     {"runtime/wrong_value_type_is_error", t_runtime_wrong_value_type_is_error},

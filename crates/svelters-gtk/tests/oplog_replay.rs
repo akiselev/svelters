@@ -3,7 +3,7 @@
 
 use gtk::prelude::*;
 use std::collections::HashMap;
-use svelters_gtk::testing::{on_gtk, Harness};
+use svelters_gtk::testing::{on_gtk, Harness, V};
 
 enum Val {
     Null,
@@ -86,7 +86,35 @@ fn replay(name: &str, log: String) {
                     r.unwrap_or_else(|e| panic!("{ctx}: {e}"));
                 }
                 "call" => h.call(hd(parts[1]), parts[2]).unwrap_or_else(|e| panic!("{ctx}: {e}")),
-                "listen" => h.listen(hd(parts[1]), parts[2], parts[3] == "on").unwrap_or_else(|e| panic!("{ctx}: {e}")),
+                "listen" => {
+                    let mut words = parts[3].split(' ');
+                    let on = words.next() == Some("on");
+                    let mut flags = 0;
+                    for w in words.next().unwrap_or("").split('+').filter(|w| !w.is_empty()) {
+                        flags |= match w {
+                            "after" => svelters_abi::SVL_LISTEN_AFTER,
+                            "capture" => svelters_abi::SVL_LISTEN_CAPTURE,
+                            other => panic!("{ctx}: unknown listener flag {other}"),
+                        };
+                    }
+                    let r = if flags == 0 { h.listen(hd(parts[1]), parts[2], on) } else { h.listen_ex(hd(parts[1]), parts[2], on, flags) };
+                    r.unwrap_or_else(|e| panic!("{ctx}: {e}"));
+                }
+                // ABI v2.2 child attribute: `attr #parent #child name json`.
+                "attr" => {
+                    let rest: Vec<&str> = line.splitn(5, ' ').collect();
+                    let v = match parse_val(rest[4]) {
+                        Val::Null => V::Null,
+                        Val::Bool(b) => V::Bool(b),
+                        Val::Int(i) => V::I64(i),
+                        Val::Float(f) => V::F64(f),
+                        Val::Str(s) => V::Str(s),
+                    };
+                    h.set_child_attr(hd(rest[1]), hd(rest[2]), rest[3], &v).unwrap_or_else(|e| panic!("{ctx}: {e}"));
+                    if !matches!(v, V::Null) {
+                        assert_eq!(h.get_child_attr(hd(rest[1]), hd(rest[2]), rest[3]), v, "{ctx}: read back");
+                    }
+                }
                 // A native death in the log: the first `gone` of a run is produced by closing
                 // the window natively; the descendants it lists (`parent`) must be reported by the
                 // backend's cascade, in order.
@@ -138,6 +166,12 @@ fn replay_all_fixtures() {
             // Sync results (close vetoes, handled keys) change what the toolkit does next, which a
             // flat replay cannot follow; `tests/sync.rs` and `tests/host_sync.rs` cover them natively.
             eprintln!("{}: skipped (sync handlers)", e.file_name().to_string_lossy());
+            continue;
+        }
+        if log.lines().any(|l| l.starts_with("create virtuallist ")) {
+            // Model-view fixtures splice list arguments and bind rows from toolkit callbacks; the
+            // flat replay has neither. `tests/vlist.rs` and `tests/lists_e2e.rs` run them natively.
+            eprintln!("{}: skipped (virtuallist)", e.file_name().to_string_lossy());
             continue;
         }
         replay(&e.file_name().to_string_lossy(), log);

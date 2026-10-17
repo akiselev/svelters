@@ -1,0 +1,2 @@
+unexposed:
+  reason: "Use the stackedwidget element, which owns a QStackedLayout; a standalone layout is not an element."

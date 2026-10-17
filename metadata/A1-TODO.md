@@ -18,6 +18,10 @@ Changes since the inventory was written (2026-10-17):
   `sync_required` (see `docs/notes/x2-sync-frame.md`, "What A1 should annotate"); items marked G5
   with bool results are now doable. Qt input widgets in your batch can get `synthetic: key_press`.
 
+- X1 is merged: GTK methods are callable through GIRepository (`dispatch: dynamic` annotations
+  with `args`/`expect`), and object getters on both toolkits return borrowed handles. Items marked
+  G2 or G3 are now doable (except out params, callbacks and arrays: S2).
+
 Common to every batch:
 - **Facts to annotate**, by column: P = properties (JS name, sample, echo suppression), S =
   signals (trigger, handler result), M = methods, C = child slots (ops + effects = ownership),
@@ -44,7 +48,7 @@ GTK batches are about verified facts, slots, bindings, signal semantics and the 
 - M: Widget `grab_focus` (G2: returns bool), `queue_draw`, `queue_resize` (expect: true).
 - Gallery: `01-widget.svelte` (sensitive/tooltip/align/margins/opacity on labels and buttons).
 - Tests `<re>`: `_(widget|editable|orientable|actionable)_`.
-- Status: todo
+- Status: done (54 facts in the gtk ledger touched by this batch incl. 19 P, 3 S, 4 M; dropped: Widget.css-classes (no list property test), Widget map/unmap (no mapped toplevel in harness); handler_result/sync_required left as derived, no triggers; note: gi_calls.rs asserts resolve_method(present) <= 1, brittle once more generated methods exist)
 
 ### gtk-buttons: buttons and toggles
 
@@ -62,7 +66,7 @@ GTK batches are about verified facts, slots, bindings, signal semantics and the 
 - M: MenuButton `popup`, `popdown` (zero-arg; expect on `active`/visibility of the popover).
 - Gallery: `02-buttons.svelte`.
 - Tests `<re>`: `_(button|togglebutton|checkbutton|switch|linkbutton|lockbutton|menubutton|scalebutton|volumebutton)_`.
-- Status: todo
+- Status: done (~45 facts verified: props, signals incl. sync state-set/activate-link, 4 bindings, popup/popdown + 8 dynamic methods; not attempted: CheckButton.group, ScaleButton.icons, LockButton.permission; blocked: MenuButton `popover` slot (new gap: typed child slots, generator casts to gtk::Widget); see docs/notes/a1-gtk-buttons.md)
 
 ### gtk-text: text entry and display text
 
@@ -81,7 +85,7 @@ GTK batches are about verified facts, slots, bindings, signal semantics and the 
 - Blocked: TextView text (G3: buffer), Label `attributes` (G4).
 - Gallery: `03-text.svelte`.
 - Tests `<re>`: `_(entry|passwordentry|searchentry|text|editablelabel|label|inscription|textview|shortcutlabel)_`.
-- Status: todo
+- Status: done (~64 facts verified: 40 props, 8 signals, 5 bindings, 8 methods, plus the 4 bind:text; dropped: Label.ellipsize and Label.wrap-mode (Pango enums not in metadata); blocked: TextView text and buffer methods (GtkTextBuffer has no kind; only get_buffer verified), Label.attributes (no value form for Pango AttrList), Label activate-link verified as bool_stop sync; see docs/notes/a1-gtk-text.md)
 
 ### gtk-ranges: ranges, progress and levels
 
@@ -98,7 +102,7 @@ GTK batches are about verified facts, slots, bindings, signal semantics and the 
   `set_range` needs G2); SpinButton `input`/`output` (G5).
 - Gallery: `04-ranges.svelte`.
 - Tests `<re>`: `_(progressbar|levelbar|scale|spinbutton|scrollbar|range)_`.
-- Status: todo
+- Status: done (44 facts, 47 tests: 27 P (ProgressBar 6, LevelBar 5, Scale 4, SpinButton 7, Range 4, Scrollbar 1), 6 S incl. 2 notify::value, 9 M, 2 B; dropped: none; blocked: gap:G5 for SpinButton input/output, gap:G12 for adjustment object facts, Scale bind:value (no value prop))
 
 ### gtk-containers-a: single-child and two-pane containers
 
@@ -116,7 +120,7 @@ GTK batches are about verified facts, slots, bindings, signal semantics and the 
 - B: Expander `bind:expanded` (notify::expanded); Revealer `bind:reveal-child`? (one-way: read_only `child-revealed`).
 - Gallery: `05-containers.svelte`.
 - Tests `<re>`: `_(centerbox|paned|frame|expander|revealer|aspectframe|overlay|windowhandle|viewport|scrolledwindow|searchbar)_`.
-- Status: todo
+- Status: done (79 facts verified across gtk ledger incl. 63 batch tests; dropped: Viewport.scroll_to and SearchBar.connect_entry (need object/adjustment args, not useful), Revealer bind (child-revealed read-only), Overlay get-child-position (needs sync value result, G5), Paned/Frame/Expander child attributes (G1); edge-reached delivery-only via emit_by_name; one test flaky once, passed on rerun)
 
 ### gtk-containers-b: multi-child layouts and pages
 
@@ -136,7 +140,7 @@ GTK batches are about verified facts, slots, bindings, signal semantics and the 
   ListBox/FlowBox sort/filter (G8).
 - Gallery: `06-layout.svelte`.
 - Tests `<re>`: `_(stack|stackswitcher|stacksidebar|notebook|flowbox|flowboxchild|listbox|listboxrow|actionbar|grid|fixed)_`.
-- Status: todo
+- Status: done (dropped: ListBox.children, generator gap: GtkListBox::remove needs the wrapper row and no op arg yields it; blocked: gap:G1 for Grid/Fixed children, Notebook tab labels, Stack names/titles; gap:G8 sort/filter; Fixed has no props/signals to annotate)
 
 ### gtk-bars: header bars, window controls, status
 
@@ -148,7 +152,7 @@ GTK batches are about verified facts, slots, bindings, signal semantics and the 
 - Blocked: PopoverMenuBar, PopoverMenu (G7: GMenuModel).
 - Gallery: `07-bars.svelte`.
 - Tests `<re>`: `_(headerbar|windowcontrols)_`.
-- Status: todo
+- Status: done (HeaderBar 3 P, WindowControls 3 P; Statusbar, InfoBar unexposed; dropped: none; blocked: gap:G7 for PopoverMenuBar; note: tools/docs/test_ir.py hard-codes 101 tagged entities, now 89 after unexposing 12 kinds)
 
 ### gtk-dialogs: windows, popovers and non-blocking dialogs
 
@@ -167,7 +171,7 @@ GTK batches are about verified facts, slots, bindings, signal semantics and the 
   marked unexposed with the reason.
 - Gallery: `08-dialogs.svelte` (a button that opens an AboutDialog and a MenuButton with a popover).
 - Tests `<re>`: `_(window|popover|aboutdialog|emojichooser)_`.
-- Status: todo
+- Status: done (Window 9 P + 7 methods; Popover 4 P, child slot, 2 S, 2 M; AboutDialog 7 P; EmojiChooser 1 S; deprecated dialogs, Assistant, ShortcutsWindow unexposed; dropped: Window.transient-for (reference, not tried); AboutDialog not mounted in gallery (gap:G9))
 
 ### gtk-display: images, separators, spinners, calendar
 
@@ -183,7 +187,7 @@ GTK batches are about verified facts, slots, bindings, signal semantics and the 
   media streams (G7).
 - Gallery: `09-display.svelte`.
 - Tests `<re>`: `_(image|picture|separator|spinner|calendar|video|mediacontrols|drawingarea|graphicsoffload)_`.
-- Status: todo
+- Status: done (31 generated tests: 18 props, 2 notify signals + day-selected, 2 bindings (spinning, day) with echo tests, 5 methods; dropped: Calendar.date (no generated test for boxed props), Image.file/resource/gicon/paintable, Picture.file/paintable (no verifiable generated test form), Calendar next/prev-month/year signals (no trigger); blocked: gap:G7 for Video/MediaControls, gap:G8 for DrawingArea drawing/resize; Separator has no own facts)
 
 ### gtk-leftovers: everything not worth exposing yet
 
@@ -225,7 +229,7 @@ otherwise the lower-case Qt class name without the Q (`checkbox`, `slider`, `spi
   name are skipped, so keep or drop those duplicates deliberately.
 - Gallery: `01-widget.svelte` (enabled, toolTip, sizes on existing elements).
 - Tests: the generated Qt suite (`cargo nextest run -p counter-qt`), filter output for `QWidget|button|...`.
-- Status: todo
+- Status: done (inherit facts verified through existing elements: QWidget 10 props + 5 methods; QAbstractButton props label/checkable/autoRepeat/autoExclusive/shortcut, signals clicked/pressed/released/toggled, methods click/toggle/animateClick; QAbstractSpinBox 6 props + editingFinished; QFrame 4 props; QAbstractSlider 8 props + 3 signals declared but untested until a slider element exists; dropped: `visible` (by brief), `checked` excluded on button (not checkable by default; verified with checkbox batch); blocked: bind:checked/bind:value, inherit blocks have no bindings, subclass elements add them in their batches)
 
 ### qt-buttons: buttons and toggles
 
@@ -239,7 +243,7 @@ otherwise the lower-case Qt class name without the Q (`checkbox`, `slider`, `spi
 - B: QCheckBox/QRadioButton `bind:checked` (inherited from QAbstractButton).
 - Blocked: QToolButton menus (G7), icons (G4).
 - Gallery: `02-buttons.svelte`.
-- Status: todo
+- Status: done (QPushButton 3 P, QCheckBox tristate/checkState/stateChanged/bind:checked, QRadioButton bind:checked, QToolButton 4 P + setMenu (resolution test only), QCommandLinkButton description/flat; dropped: checkStateChanged(Qt::CheckState) enum signal arg, icons (G4 not tried); note: pressed/released/toggled redeclared on checkbox/radiobutton, `checked` redeclared because gen_bindings ignores inherited props)
 
 ### qt-text: text entry and text display
 
@@ -258,7 +262,7 @@ otherwise the lower-case Qt class name without the Q (`checkbox`, `slider`, `spi
 - B: QPlainTextEdit/QTextEdit `bind:plainText` (textChanged(), value: prop, suppress_signals on the prop).
 - Blocked: QTextBrowser `source` (G4 QUrl), QKeySequenceEdit (G4 QKeySequence), `document()` (G3).
 - Gallery: `03-text.svelte`.
-- Status: todo
+- Status: done (see ledger; dropped: QTextEdit html (toHtml returns a full document); not tried: QTextBrowser QUrl signals, QKeySequenceEdit keySequenceChanged (boxed signal args), QTextBrowser readOnly/undoRedoEnabled (no accessors))
 
 ### qt-ranges: sliders, spin boxes, progress
 
@@ -274,7 +278,7 @@ otherwise the lower-case Qt class name without the Q (`checkbox`, `slider`, `spi
 - M: QProgressBar `reset`; QLCDNumber `display(int)`/`display(double)` (pick one).
 - B: QSpinBox/QDoubleSpinBox `bind:value` (valueChanged, arg0, suppress_signals); sliders inherit QAbstractSlider's.
 - Gallery: `04-ranges.svelte`.
-- Status: todo
+- Status: done (205 generated tests pass across slider, dial, scrollbar, spinbox, doublespinbox, progressbar, lcdnumber; bind:value on 5 elements; inherited QAbstractSlider/QAbstractSpinBox facts now exercised; dropped: none; note: gen_bindings does not resolve inherited props/signals, so slider/dial/scrollbar redeclare value + valueChanged on the element)
 
 ### qt-containers-a: frames, group boxes, splitters, stacks, tabs, tool boxes
 
@@ -296,8 +300,7 @@ otherwise the lower-case Qt class name without the Q (`checkbox`, `slider`, `spi
 - B: QTabWidget/QStackedWidget/QToolBox `bind:currentIndex` (currentChanged(int), arg0).
 - Blocked: tab/item titles and icons (G1), QSplitter stretch factors (G1).
 - Gallery: `05-containers.svelte`.
-- Status: todo
-
+- Status: done (QFrame 6 facts incl. children slot, QGroupBox 4 props + 2 signals + children, QSplitter 4 props + 1 signal + children, QStackedWidget currentIndex + changed + bind + pages, QTabWidget 6 props + 3 signals, QToolBox changed, QScrollArea 3 props; dropped: QGroupBox checked (ignored unless checkable), QTabWidget/QToolBox pages + currentIndex + bind (parent-is-host test assumption, new gap in docs/notes/a1-qt-containers-a.md); blocked: gap:G1 for tab/item titles, icons, stretch factors)
 ### qt-containers-b: layouts and MDI
 
 - Kinds: QHBoxLayout, QVBoxLayout, QGridLayout, QFormLayout, QStackedLayout, QBoxLayout, QMdiArea, QMdiSubWindow, QDockWidget.
@@ -309,7 +312,7 @@ otherwise the lower-case Qt class name without the Q (`checkbox`, `slider`, `spi
   layout-managed widget), QStackedLayout (use `stackedwidget`).
 - Blocked: QMainWindow docks/toolbars areas (G1).
 - Gallery: `06-layout.svelte`.
-- Status: todo
+- Status: done (mdiarea: 7 props, 3 methods; dockwidget: 4 props, 4 signals; dropped: dockwidget `widget` slot (setWidget leaves the old widget parented, ops cannot express it), mdiarea subWindowActivated (QMdiSubWindow* arg), dockLocation; blocked: gap:G13 for mdiarea subwindows slot, gap:G1 for grid/form/dock-area attributes; unexposed: QBoxLayout, QHBoxLayout, QVBoxLayout, QGridLayout, QFormLayout, QStackedLayout, QMdiSubWindow)
 
 ### qt-selection: combo boxes and list widgets
 
@@ -326,7 +329,7 @@ otherwise the lower-case Qt class name without the Q (`checkbox`, `slider`, `spi
 - B: QComboBox `bind:currentIndex` (currentIndexChanged(int), arg0, suppress_signals); QListWidget `bind:currentRow`.
 - Blocked: QFontComboBox (G4), QTreeWidget/QTableWidget items (G7), item models (G6).
 - Gallery: `07-selection.svelte`.
-- Status: todo
+- Status: done (combobox: 9 props, 5 methods, 3 signals, 1 binding; fontcombobox: 3 props; listwidget: 5 props, 3 methods, 2 signals, 1 binding; dropped: QComboBox addItem(QString) one-arg overload (covered by addItem(string, variant)), takeItem (G3), QFontComboBox currentFontChanged (no QFont signal arg test); unexposed: QTreeWidget/QTableWidget (G6/G7), QButtonGroup)
 
 ### qt-bars: main window, status bar, tab bar, button box
 
@@ -344,7 +347,7 @@ otherwise the lower-case Qt class name without the Q (`checkbox`, `slider`, `spi
 - B: QTabBar `bind:currentIndex`.
 - Blocked: QToolBar, QMenuBar items, QMenu (G7), QMainWindow toolbars/docks (G1).
 - Gallery: `08-bars.svelte`.
-- Status: todo
+- Status: done (props: window 5, statusbar 1, menubar 1, tabbar 11+binding, dialogbuttonbox 3, toolbar 5; signals: statusbar 1, tabbar 5, dialogbuttonbox 3, toolbar 2; methods: statusbar 2, tabbar 4, dialogbuttonbox 1, menubar 1, toolbar 1; dropped: QMenuBar.nativeMenuBar (cannot be enabled on xcb); blocked: QStatusBar widgets/permanent slots (new gap: no indexOf/count/itemAt), gap:G7 for QMenuBar menus, QToolBar actions, QMenu in menubar; gap:G1 for QMainWindow toolbars/docks and QToolBar mounting; QSizeGrip not annotated)
 
 ### qt-dialogs: non-blocking dialogs
 
@@ -366,7 +369,7 @@ otherwise the lower-case Qt class name without the Q (`checkbox`, `slider`, `spi
 - Lifetime: dialogs are toplevel (generator `gen_is_toplevel`); check close behaviour on one dialog.
 - Blocked: QColorDialog/QFontDialog values (G4).
 - Gallery: `09-dialogs.svelte` (buttons that open non-blocking dialogs; the screenshot shows the main window only).
-- Status: todo
+- Status: done (about 122 ledger facts incl. inherited QDialog facts on every dialog element; dropped: QInputDialog.doubleValue (ingest types it i32), QWizard.startId (reads -1 without pages), QWizard/QFileDialog/QFontDialog/QColorDialog/QErrorMessage accept/done methods (protected in subclass: generator gap, see docs/notes/a1-qt-dialogs.md); blocked: QWizard pages slot and gallery dialogs mounting/opening, new gap G9 (no toplevel non-window mount, no method calls from Svelte); QFileDialog fileSelected/currentChanged and QDialog.show not annotated)
 
 ### qt-display: calendar, date/time edits, misc display
 
@@ -380,4 +383,4 @@ otherwise the lower-case Qt class name without the Q (`checkbox`, `slider`, `spi
   work; expose if worthwhile), QGraphicsView (G7: scene), QSplashScreen (startup only), QRhiWidget (GPU API),
   QRubberBand/QFocusFrame/QSizeGrip/QSplitterHandle (internal), item views (G6).
 - Gallery: `10-display.svelte`.
-- Status: todo
+- Status: done (calendar 7 P + 5 M + 4 S; dateedit/timeedit/datetimeedit 4+4+4 P, 1 S each, verified by generated tests; 13 classes unexposed with reasons; dropped: min/max Date/Time/DateTime props (ingest resolves getter to clearMinimumX(), generated C++ does not compile; new gap), date/time bindings and calendar selectedDate binding (suppress_signals test is scalar-only; selectionChanged has no arg; new gap))

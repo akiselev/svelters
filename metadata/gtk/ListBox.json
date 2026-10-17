@@ -58,6 +58,158 @@
     "svelters-api:v1:type:gtk:Gtk:SelectionMode"
   ],
   "id": "svelters-api:v1:type:gtk:Gtk:ListBox",
+  "inherited": {
+    "methods": [
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:grab_focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "grab_focus",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:queue_draw",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "queue_draw",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:queue_resize",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "queue_resize",
+        "origin": "manual"
+      }
+    ],
+    "properties": [
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:can-focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "can-focus",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:css-classes",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "css-classes",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:focusable",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "focusable",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:halign",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "halign",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:height-request",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "height-request",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:hexpand",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "hexpand",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-bottom",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "margin-bottom",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-end",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "margin-end",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-start",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "margin-start",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-top",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "margin-top",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:name",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "name",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:opacity",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "opacity",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:sensitive",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "sensitive",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:tooltip-markup",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "tooltip-markup",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:tooltip-text",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "tooltip-text",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:valign",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "valign",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:vexpand",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "vexpand",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:visible",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "visible",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:width-request",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "width-request",
+        "origin": "manual"
+      }
+    ],
+    "signals": [
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:signal:hide",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "hide",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:signal:show",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "show",
+        "origin": "manual"
+      }
+    ]
+  },
   "interfaces": [
     "Gtk.Accessible",
     "Gtk.Buildable",
@@ -984,6 +1136,11 @@
         "get": "gtk_list_box_get_activate_on_single_click",
         "set": "gtk_list_box_set_activate_on_single_click"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkListBox:activate-on-single-click (Gtk 4 docs); P prop"
+      },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:ListBox:prop:activate-on-single-click",
       "invocation": "reflected",
@@ -1024,6 +1181,11 @@
         "get": "gtk_list_box_get_selection_mode",
         "set": "gtk_list_box_set_selection_mode"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkListBox:selection-mode (Gtk 4 docs); P prop"
+      },
       "default": "single",
       "id": "svelters-api:v1:type:gtk:Gtk:ListBox:prop:selection-mode",
       "invocation": "reflected",
@@ -1063,6 +1225,11 @@
       "accessors": {
         "get": "gtk_list_box_get_show_separators",
         "set": "gtk_list_box_set_show_separators"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkListBox:show-separators (Gtk 4 docs); P prop"
       },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:ListBox:prop:show-separators",
@@ -1211,6 +1378,16 @@
       "sync_required": false
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GtkListBox::row-activated, run-last, void; emitted by activating the row (Gtk 4 docs)"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -1238,9 +1415,29 @@
         "origin": "runtime",
         "return_gtype": "void"
       },
-      "sync_required": false
+      "sync_required": false,
+      "trigger": {
+        "origin": "manual",
+        "rust": "o.downcast_ref::<gtk::ListBox>().unwrap().row_at_index(0).unwrap().emit_by_name::<()>(\"activate\", &[]);",
+        "setup": "let lb = h.obj(o).downcast::<gtk::ListBox>().unwrap(); lb.append(&gtk::Label::new(None));",
+        "values": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GtkListBox::row-selected, run-first, void (Gtk 4 docs)"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -1268,7 +1465,17 @@
         "origin": "runtime",
         "return_gtype": "void"
       },
-      "sync_required": false
+      "sync_required": false,
+      "trigger": {
+        "origin": "manual",
+        "rust": "let lb = o.downcast_ref::<gtk::ListBox>().unwrap(); lb.select_row(lb.row_at_index((i % 2) as i32).as_ref());",
+        "setup": "let lb = h.obj(o).downcast::<gtk::ListBox>().unwrap(); lb.append(&gtk::Label::new(None)); lb.append(&gtk::Label::new(None));",
+        "values": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
     },
     {
       "connection": {
@@ -1379,7 +1586,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/ListBox.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"

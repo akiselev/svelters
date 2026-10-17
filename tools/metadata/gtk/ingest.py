@@ -191,6 +191,13 @@ class Ingest:
                     w = bool(ps.flags & F.WRITABLE)
                     if w != (g.get("writable") == "1"):
                         self.warnings.append(f"{tid}:{name}: writable differs between GIR and runtime")
+            # Enums from other namespaces (Pango, Gdk) have no kind file: keep their nicks on the
+            # property so tests and typings can use them (A1-GAPS G11).
+            if ref.startswith(("enum<", "flags<")) and ":Gtk:" not in ref:
+                ens, ename = ref[ref.index("<") + 1:-1].rsplit(":", 2)[-2:]
+                tag, el_e = self.repo.find(ens, ename)
+                if el_e is not None and tag in ("enumeration", "bitfield"):
+                    t["nicks"] = [m.get(G.GL + "nick") for m in el_e.findall("core:member", G.NS)]
             rec["type"] = t
             out.append(rec)
         return out

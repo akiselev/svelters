@@ -1,0 +1,2 @@
+unexposed:
+  reason: "deprecated GtkDialog family (response-id model, gtk_dialog_run style blocking flow); use Window, Popover or AlertDialog-style non-blocking APIs"

@@ -1,0 +1,69 @@
+# Element `groupbox`: a QGroupBox carrying a QBoxLayout. Children are layout-managed.
+elements:
+  - tag: groupbox
+    construct:
+      class: QGroupBox
+      composite:
+        layout: { class: QBoxLayout, args: ["QBoxLayout::TopToBottom"] }
+    props:
+      - js: orientation
+        target: layout
+        type: enum
+        getter: direction
+        setter: setDirection
+        values:
+          horizontal: QBoxLayout::LeftToRight
+          vertical: QBoxLayout::TopToBottom
+        provenance: "QBoxLayout::direction (qdoc); GTK orientation vocabulary"
+      - { js: title, native: title, provenance: "QGroupBox::title (qdoc)" }
+      - { js: checkable, native: checkable, provenance: "QGroupBox::checkable (qdoc)" }
+      - { js: flat, native: flat, provenance: "QGroupBox::flat (qdoc)" }
+      - { js: alignment, native: alignment, provenance: "QGroupBox::alignment (qdoc); typed by the S1 value model (ABI v3)" }
+    signals:
+      - js: toggled
+        native: toggled
+        connect: "toggled(bool)"
+        args: [{ name: "on", type: bool }]
+        trigger: 'if (!$w->isCheckable()) $w->setCheckable(true); $w->setChecked(!$w->isChecked())'
+        expect_args: ["false"]
+        provenance: "QGroupBox::toggled(bool) (qdoc)"
+      - js: clicked
+        native: clicked
+        connect: "clicked(bool)"
+        collapses: ["clicked()"]
+        args: [{ name: checked, type: bool }]
+        trigger: '$w->clicked(true)'
+        expect_args: ["true"]
+        provenance: "QGroupBox::clicked(bool) (qdoc); emitted directly (a real click needs a shown widget)"
+    children:
+      policy: layout_managed
+      default_slot: children
+      slots:
+        - name: children
+          content: widget
+          accepts: [QWidget]
+          cardinality: many
+          order: native_index
+          host: layout
+          default: { kind: none }
+          on_remove: empty
+          requires:
+            - { check: "QWidget::layout(self) != null", otherwise: error }   # satisfied by construction (composite layout)
+          ops:
+            insert:
+              native: "QBoxLayout::addWidget(QWidget*, int, Qt::Alignment)"
+              args: [child]
+              variants:
+                - when: "before != null"
+                  native: "QBoxLayout::insertWidget(int, QWidget*, int, Qt::Alignment)"
+                  args: [index, child]
+              effects: { child: parented }
+            remove:
+              native: "QLayout::removeWidget(QWidget*)"
+              args: [child]
+              then:
+                - { native: "QWidget::setParent(QWidget*)", receiver: child, args: [null] }
+              effects: { child: unparented }
+            index_of: { native: "QLayout::indexOf(const QWidget*) const", args: [child] }
+            list: { native: "QLayout::count() const", item: "QLayout::itemAt(int) const" }
+          provenance: [{ origin: uic, ref: "layout/item" }, { origin: typesystem, ref: addownership-1 }, { origin: probe, ref: qt_slot_ownership_probe.py }]

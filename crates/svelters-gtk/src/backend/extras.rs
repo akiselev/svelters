@@ -10,6 +10,7 @@
 //! | `path` (prop), `uri` (read-only prop) | strings | a mutable native object behind a handle |
 //! | `exists()` | sync, bool | |
 //! | `loadContents()` | sync, `GError` | `g_file_load_contents`: BYTES out; a failure is `ERROR` (domain `g-io-error-quark`, code `GIOErrorEnum` name) |
+//! | `loadContentsEtag()` | out params | the same call with its out parameter: JS gets `{ret: true, contents, etag}`; the backend answers `LIST [true, contents, etag]` |
 //! | `loadContentsAsync()` | async | `g_file_load_contents_async` + `GCancellable` (`cancel`): completes through a one-shot `CALLBACK` |
 //! | `listNames(fn)` | `call`-scope callback | `g_file_enumerate_children`, invoking the JS function per child, synchronously |
 //! | `monitor(fn)` / `unmonitor()` | `notified`-scope callback | `g_file_monitor`: invoked later from the main loop; released when the owner dies |
@@ -26,6 +27,7 @@ const M_LOAD_ASYNC: u32 = 0x4203;
 const M_LIST: u32 = 0x4204;
 const M_MONITOR: u32 = 0x4205;
 const M_UNMONITOR: u32 = 0x4206;
+const M_LOAD_ETAG: u32 = 0x4207;
 pub const T_CB_NAMES: u32 = SVL_T_FIRST_BACKEND + 0xF001;
 pub const T_CB_MONITOR: u32 = SVL_T_FIRST_BACKEND + 0xF002;
 pub const T_CB_DONE: u32 = SVL_T_FIRST_BACKEND + 0xF003;
@@ -51,6 +53,7 @@ pub fn find_member(what: u32, kind: u32, name: &str) -> u32 {
         (SVL_METHOD, "listNames") => M_LIST,
         (SVL_METHOD, "monitor") => M_MONITOR,
         (SVL_METHOD, "unmonitor") => M_UNMONITOR,
+        (SVL_METHOD, "loadContentsEtag") => M_LOAD_ETAG,
         _ => 0,
     }
 }
@@ -65,6 +68,12 @@ pub fn describe_member(what: u32, member: u32) -> Option<MemberDesc> {
         (SVL_PROP, P_URI) => MemberDesc { name: "uri".into(), params: vec![], ret: s("uri"), flags: 0 },
         (SVL_METHOD, M_EXISTS) => m("exists", vec![], SlotDesc::new(SVL_BOOL), 0),
         (SVL_METHOD, M_LOAD) => m("loadContents", vec![], SlotDesc::new(SVL_BYTES), SVL_M_THROWS),
+        (SVL_METHOD, M_LOAD_ETAG) => m(
+            "loadContentsEtag",
+            vec![SlotDesc::new(SVL_BYTES).named("contents").flags(SVL_D_OUT), s("etag").flags(SVL_D_OUT | SVL_D_NULLABLE)],
+            SlotDesc::new(SVL_BOOL),
+            SVL_M_THROWS,
+        ),
         (SVL_METHOD, M_LOAD_ASYNC) => m("loadContentsAsync", vec![cb(T_CB_DONE, "done")], void, SVL_M_ASYNC | SVL_M_THROWS),
         (SVL_METHOD, M_LIST) => m("listNames", vec![cb(T_CB_NAMES, "visit")], SlotDesc::new(SVL_I64), SVL_M_THROWS),
         (SVL_METHOD, M_MONITOR) => m("monitor", vec![cb(T_CB_MONITOR, "onChange")], void, SVL_M_THROWS),
@@ -163,7 +172,7 @@ impl Inner {
         let h = st.next;
         st.entries.insert(
             h,
-            Entry { obj: obj.downgrade(), hold: Some(obj.clone()), class: SVL_LIFE_OWNED, owner: 0, note: std::ptr::null_mut(), kind, signals: HashMap::new(), slot: None },
+            Entry { obj: obj.downgrade(), hold: Some(obj.clone()), class: SVL_LIFE_OWNED, owner: 0, note: std::ptr::null_mut(), kind, signals: HashMap::new(), slot: None, capture_prev: None },
         );
         drop(st);
         self.tag_object(&obj, h);
@@ -274,6 +283,19 @@ impl Inner {
                 let mut buf = self.out.borrow_mut();
                 *buf = StrBuf::default();
                 *out = buf.bytes_value(bytes.to_vec());
+            }
+            M_LOAD_ETAG => {
+                let f = self.file_of(h)?;
+                let (bytes, etag) = f.load_contents(None::<&gio::Cancellable>)?;
+                let mut buf = self.out.borrow_mut();
+                *buf = StrBuf::default();
+                let ok = svl_value::new(SVL_BOOL, svl_value_u { b: true });
+                let contents = buf.bytes_value(bytes.to_vec());
+                let etag = match etag {
+                    Some(t) => buf.str_value(t.as_str()),
+                    None => convert::null_value(),
+                };
+                *out = buf.list_value(SVL_LIST, 0, vec![ok, contents, etag]);
             }
             M_LOAD_ASYNC => {
                 let f = self.file_of(h)?;

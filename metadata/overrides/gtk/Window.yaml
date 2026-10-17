@@ -2,12 +2,83 @@ properties:
   - name: title
     js_name: title
     provenance: "GtkWindow:title (Gtk 4 docs); P prop"
+  - name: resizable
+    js_name: resizable
+    provenance: "GtkWindow:resizable (Gtk 4 docs)"
+  - name: modal
+    js_name: modal
+    provenance: "GtkWindow:modal (Gtk 4 docs)"
+  - name: decorated
+    js_name: decorated
+    provenance: "GtkWindow:decorated (Gtk 4 docs)"
+  - name: deletable
+    js_name: deletable
+    provenance: "GtkWindow:deletable (Gtk 4 docs)"
+  - name: default-width
+    js_name: defaultWidth
+    sample: 500
+    provenance: "GtkWindow:default-width (Gtk 4 docs)"
+  - name: default-height
+    js_name: defaultHeight
+    sample: 300
+    provenance: "GtkWindow:default-height (Gtk 4 docs)"
+  - name: maximized
+    js_name: maximized
+    provenance: "GtkWindow:maximized (Gtk 4 docs)"
+  - name: fullscreened
+    js_name: fullscreened
+    provenance: "GtkWindow:fullscreened (Gtk 4 docs)"
+  - name: hide-on-close
+    js_name: hideOnClose
+    provenance: "GtkWindow:hide-on-close (Gtk 4 docs)"
 methods:
   - name: present
     js_name: present
     dispatch: zero_arg
     expect: "w.is_visible()"
     provenance: "gtk_window_present docs; JS host op: call #h present []"
+  - name: set_default_size
+    js_name: set_default_size
+    dispatch: dynamic
+    args: [600, 400]
+    expect: 'h.get(o, "default-width") == V::I64(600) && h.get(o, "default-height") == V::I64(400)'
+    provenance: "gtk_window_set_default_size (Gtk 4 docs); called through GIRepository (X1)"
+  - name: close
+    js_name: close
+    dispatch: zero_arg
+    setup: 'h.set_bool(o, "hide-on-close", true).unwrap(); h.widget(o).downcast_ref::<gtk::Window>().unwrap().present();'
+    expect: '!w.is_visible()'
+    provenance: "gtk_window_close (Gtk 4 docs)"
+  - name: minimize
+    js_name: minimize
+    dispatch: zero_arg
+    expect: 'true'
+    provenance: "gtk_window_minimize (Gtk 4 docs)"
+  - name: unminimize
+    js_name: unminimize
+    dispatch: zero_arg
+    expect: 'true'
+    provenance: "gtk_window_unminimize (Gtk 4 docs)"
+  - name: maximize
+    js_name: maximize
+    dispatch: zero_arg
+    expect: 'true'
+    provenance: "gtk_window_maximize (Gtk 4 docs)"
+  - name: unmaximize
+    js_name: unmaximize
+    dispatch: zero_arg
+    expect: 'true'
+    provenance: "gtk_window_unmaximize (Gtk 4 docs)"
+  - name: fullscreen
+    js_name: fullscreen
+    dispatch: zero_arg
+    expect: 'true'
+    provenance: "gtk_window_fullscreen (Gtk 4 docs)"
+  - name: unfullscreen
+    js_name: unfullscreen
+    dispatch: zero_arg
+    expect: 'true'
+    provenance: "gtk_window_unfullscreen (Gtk 4 docs)"
 children:
   policy: named_slots
   default_slot: child

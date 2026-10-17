@@ -58,6 +58,8 @@ pub enum NameKind {
     Signal = 2,
     Method = 3,
     Slot = 4,
+    /// ABI v2.2: child attribute, scoped by the parent's kind.
+    Attr = 5,
 }
 
 impl NameKind {
@@ -68,6 +70,7 @@ impl NameKind {
             SVL_SIGNAL => NameKind::Signal,
             SVL_METHOD => NameKind::Method,
             SVL_SLOT => NameKind::Slot,
+            SVL_ATTR => NameKind::Attr,
             _ => return None,
         })
     }
@@ -124,6 +127,9 @@ pub enum Value {
     DateTime(f64),
     /// UTF-8 text. UTF-16 input is transcoded when copied into an owned value.
     Str(String),
+    /// UTF-16 text, kept as the backend sent it. Only [`Value::from_raw_wide`] makes these (the host reading
+    /// from a backend with `SVL_CAP_UTF16_OUT`); [`Value::from_raw`] always transcodes to `Str`.
+    Str16(Vec<u16>),
     Handle(svl_handle),
     List(Vec<Value>),
     Enum { ty: svl_id, value: i64 },
@@ -178,6 +184,11 @@ fn build_raw(v: &Value, lists: &mut Vec<Vec<svl_value>>) -> svl_value {
                 },
             },
         ),
+        Value::Str16(s) => {
+            let mut r = svl_value::new(SVL_STR, svl_value_u { s: svl_str { ptr: s.as_ptr().cast(), len: s.len() } });
+            r.flags = SVL_F_UTF16;
+            r
+        }
         Value::List(items) => {
             let inner: Vec<svl_value> = items.iter().map(|x| build_raw(x, lists)).collect();
             svl_value::new(SVL_LIST, svl_value_u { l: list_of(inner, lists) })
@@ -281,6 +292,18 @@ impl Value {
     /// # Safety
     /// `v` must be a valid `svl_value` whose pointers are valid for reads.
     pub unsafe fn from_raw(v: &svl_value) -> Value {
+        unsafe { Value::from_raw_with(v, false) }
+    }
+
+    /// Like [`Value::from_raw`], but UTF-16 strings stay UTF-16 (`Value::Str16`).
+    ///
+    /// # Safety
+    /// As [`Value::from_raw`].
+    pub unsafe fn from_raw_wide(v: &svl_value) -> Value {
+        unsafe { Value::from_raw_with(v, true) }
+    }
+
+    unsafe fn from_raw_with(v: &svl_value, wide: bool) -> Value {
         unsafe {
             match v.tag {
                 SVL_BOOL => Value::Bool(v.u.b),
@@ -292,8 +315,12 @@ impl Value {
                 SVL_F64 if v.type_ == SVL_T_DATETIME => Value::DateTime(v.u.f),
                 SVL_F64 => Value::F64(v.u.f),
                 SVL_HANDLE => Value::Handle(v.u.h),
+                SVL_STR if wide && v.flags & SVL_F_UTF16 != 0 => {
+                    let s = v.u.s;
+                    Value::Str16(if s.ptr.is_null() || s.len == 0 { Vec::new() } else { std::slice::from_raw_parts(s.ptr.cast::<u16>(), s.len).to_vec() })
+                }
                 SVL_STR => Value::Str(str_of_raw(v).into_owned()),
-                SVL_LIST => Value::List(Value::vec_from_raw(v.u.l.ptr, v.u.l.len)),
+                SVL_LIST => Value::List(Value::vec_from_raw_with(v.u.l.ptr, v.u.l.len, wide)),
                 SVL_ENUM => Value::Enum {
                     ty: v.type_,
                     value: v.u.i,
@@ -304,7 +331,7 @@ impl Value {
                 },
                 SVL_RECORD => Value::Record {
                     ty: v.type_,
-                    fields: Value::vec_from_raw(v.u.l.ptr, v.u.l.len),
+                    fields: Value::vec_from_raw_with(v.u.l.ptr, v.u.l.len, wide),
                 },
                 SVL_BYTES => {
                     let b = v.u.bytes;
@@ -323,12 +350,13 @@ impl Value {
                     ty: v.type_,
                 },
                 SVL_MAP => {
-                    let items = Value::vec_from_raw(v.u.l.ptr, v.u.l.len);
+                    let items = Value::vec_from_raw_with(v.u.l.ptr, v.u.l.len, wide);
                     let mut it = items.into_iter();
                     let mut out = Vec::new();
                     while let (Some(k), Some(x)) = (it.next(), it.next()) {
                         let k = match k {
                             Value::Str(s) => s,
+                            Value::Str16(u) => String::from_utf16_lossy(&u),
                             _ => String::new(),
                         };
                         out.push((k, x));
@@ -362,13 +390,25 @@ impl Value {
     /// # Safety
     /// `ptr` must be null (only if `n == 0`) or point to `n` valid values.
     pub unsafe fn vec_from_raw(ptr: *const svl_value, n: usize) -> Vec<Value> {
+        unsafe { Value::vec_from_raw_with(ptr, n, false) }
+    }
+
+    /// [`Value::vec_from_raw`] keeping UTF-16 strings (see [`Value::from_raw_wide`]).
+    ///
+    /// # Safety
+    /// As [`Value::vec_from_raw`].
+    pub unsafe fn vec_from_raw_wide(ptr: *const svl_value, n: usize) -> Vec<Value> {
+        unsafe { Value::vec_from_raw_with(ptr, n, true) }
+    }
+
+    unsafe fn vec_from_raw_with(ptr: *const svl_value, n: usize, wide: bool) -> Vec<Value> {
         if ptr.is_null() || n == 0 {
             return Vec::new();
         }
         unsafe {
             std::slice::from_raw_parts(ptr, n)
                 .iter()
-                .map(|v| Value::from_raw(v))
+                .map(|v| Value::from_raw_with(v, wide))
                 .collect()
         }
     }
@@ -978,6 +1018,45 @@ impl<'a> BackendRef<'a> {
         self.check(unsafe { (b.listen)(b.self_, h, signal, on) })
     }
 
+    /// ABI v2.2: `listen` with `SVL_LISTEN_*` flags.
+    pub fn listen_ex(&self, h: svl_handle, signal: svl_id, on: bool, flags: u32) -> AbiResult<()> {
+        if flags == 0 {
+            return self.listen(h, signal, on);
+        }
+        let b = self.b();
+        match b.listen_ex {
+            Some(f) => self.check(unsafe { f(b.self_, h, signal, on, flags) }),
+            None => Err(AbiError::plain(-1, "this backend does not support listener phases (after, capture)")),
+        }
+    }
+
+    /// ABI v2.2: sets a per-child attribute (`Value::Null` resets it).
+    pub fn set_child_attr(&self, parent: svl_handle, child: svl_handle, attr: svl_id, v: &Value) -> AbiResult<()> {
+        v.with_raw(|raw| self.set_child_attr_raw(parent, child, attr, raw))
+    }
+
+    pub fn set_child_attr_raw(&self, parent: svl_handle, child: svl_handle, attr: svl_id, v: &svl_value) -> AbiResult<()> {
+        let b = self.b();
+        match b.set_child_attr {
+            Some(f) => self.check(unsafe { f(b.self_, parent, child, attr, v) }),
+            None => Err(AbiError::plain(-1, "child attributes are not supported by this backend")),
+        }
+    }
+
+    /// ABI v2.2: reads a per-child attribute back.
+    pub fn get_child_attr(&self, parent: svl_handle, child: svl_handle, attr: svl_id) -> AbiResult<Value> {
+        let b = self.b();
+        let Some(f) = b.get_child_attr else {
+            return Err(AbiError::plain(-1, "child attributes are not supported by this backend"));
+        };
+        let mut out = null_value();
+        let rc = unsafe { f(b.self_, parent, child, attr, &mut out) };
+        if rc < 0 {
+            return Err(self.fail(rc, Some(&out)));
+        }
+        Ok(unsafe { Value::from_raw(&out) })
+    }
+
     /// Runs the backend's loop; returns when the app quits.
     pub fn run(&self, host: &HostVtable) -> AbiResult<()> {
         let b = self.b();
@@ -1162,6 +1241,21 @@ pub trait Backend: 'static {
     /// The default does nothing, so `requestAnimationFrame` never fires on a backend that does
     /// not implement it.
     fn request_frame(&self) {}
+
+    // ---- v2.2 ----
+
+    /// ABI v2.2: sets a per-child attribute; `Value::Null` resets it to its default.
+    fn set_child_attr(&self, _parent: svl_handle, _child: svl_handle, _attr: svl_id, _v: &Value) -> StrResult<()> {
+        Err("child attributes are not supported by this backend".into())
+    }
+    /// ABI v2.2: reads a per-child attribute back.
+    fn get_child_attr(&self, _parent: svl_handle, _child: svl_handle, _attr: svl_id) -> StrResult<Value> {
+        Err("child attributes are not supported by this backend".into())
+    }
+    /// ABI v2.2: `listen` with `SVL_LISTEN_*` flags (never called with `flags == 0`).
+    fn listen_ex(&self, _h: svl_handle, _signal: svl_id, _on: bool, _flags: u32) -> StrResult<()> {
+        Err("this backend does not support listener phases (after, capture)".into())
+    }
 
     // ---- v3 ----
 
@@ -1350,6 +1444,37 @@ unsafe extern "C" fn t_listen(s: *mut c_void, h: svl_handle, signal: svl_id, on:
     s.rc(|b| b.listen(h, signal, on))
 }
 
+unsafe extern "C" fn t_listen_ex(s: *mut c_void, h: svl_handle, signal: svl_id, on: bool, flags: u32) -> c_int {
+    let s = unsafe { shim(s) };
+    s.rc(|b| b.listen_ex(h, signal, on, flags))
+}
+
+unsafe extern "C" fn t_set_child_attr(
+    s: *mut c_void,
+    parent: svl_handle,
+    child: svl_handle,
+    attr: svl_id,
+    v: *const svl_value,
+) -> c_int {
+    let s = unsafe { shim(s) };
+    if v.is_null() {
+        return s.fail("set_child_attr: null value");
+    }
+    let v = unsafe { Value::from_raw(&*v) };
+    s.rc(|b| b.set_child_attr(parent, child, attr, &v))
+}
+
+unsafe extern "C" fn t_get_child_attr(
+    s: *mut c_void,
+    parent: svl_handle,
+    child: svl_handle,
+    attr: svl_id,
+    out: *mut svl_value,
+) -> c_int {
+    let s = unsafe { shim(s) };
+    s.rc_value(out, |b| b.get_child_attr(parent, child, attr))
+}
+
 unsafe extern "C" fn t_run(s: *mut c_void, host: *const svl_host) -> c_int {
     let s = unsafe { shim(s) };
     let host = unsafe { HostRef::from_raw(host) };
@@ -1471,6 +1596,9 @@ impl BackendVtable {
             describe_type: Some(t_describe_type),
             cancel: Some(t_cancel),
             request_frame: t_request_frame,
+            set_child_attr: Some(t_set_child_attr),
+            get_child_attr: Some(t_get_child_attr),
+            listen_ex: Some(t_listen_ex),
         });
         BackendVtable { raw, shim }
     }
@@ -1536,7 +1664,7 @@ unsafe extern "C" fn h_post_event(
     n: usize,
 ) {
     let s = unsafe { hshim(s) };
-    let args = unsafe { Value::vec_from_raw(args, n) };
+    let args = unsafe { Value::vec_from_raw_wide(args, n) };
     let _ = catch_unwind(AssertUnwindSafe(|| s.cb.post_event(h, sig, &args)));
 }
 
@@ -1554,7 +1682,7 @@ unsafe extern "C" fn h_call_sync(
     out: *mut svl_value,
 ) -> c_int {
     let s = unsafe { hshim(s) };
-    let args = unsafe { Value::vec_from_raw(args, n) };
+    let args = unsafe { Value::vec_from_raw_wide(args, n) };
     match catch_unwind(AssertUnwindSafe(|| s.cb.call_sync(h, sig, &args))) {
         Ok(Ok(v)) => {
             write_out(&s.out, out, v);
@@ -1578,7 +1706,7 @@ unsafe extern "C" fn h_invoke_callback(
     out: *mut svl_value,
 ) -> c_int {
     let s = unsafe { hshim(s) };
-    let args = unsafe { Value::vec_from_raw(args, n) };
+    let args = unsafe { Value::vec_from_raw_wide(args, n) };
     match catch_unwind(AssertUnwindSafe(|| s.cb.invoke_callback(id, &args))) {
         Ok(Ok(v)) => {
             write_out(&s.out, out, v);

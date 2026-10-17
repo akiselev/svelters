@@ -1,0 +1,41 @@
+children:
+  policy: named_slots
+  default_slot: child
+  slots:
+    - name: child
+      content: widget
+      accepts: [Gtk.Widget]
+      route_by_kind: false
+      cardinality: one
+      order: none
+      default: {kind: none}
+      on_remove: empty
+      attrs: []
+      requires: []
+      ops:
+        get:    {native: "GtkFrame::get_child() const"}
+        set:    {native: "GtkFrame::set_child(GtkWidget*)", args: [child], effects: {child: parented, old: unparented}}
+        remove: {native: "GtkFrame::set_child(GtkWidget*)", args: [null], effects: {child: unparented}}
+      verify: {}
+      provenance: [{origin: gir, ref: "gtk_frame_set_child"}]
+    - name: label
+      content: widget
+      accepts: [Gtk.Widget]
+      route_by_kind: false
+      cardinality: one
+      order: none
+      default: {kind: builtin, restore: null, conflicts_with_props: [label]}
+      on_remove: restore_default
+      attrs: []
+      requires: []
+      ops:
+        get:    {native: "GtkFrame::get_label_widget() const"}
+        set:    {native: "GtkFrame::set_label_widget(GtkWidget*)", args: [child], effects: {child: parented, old: unparented}}
+        remove: {native: "GtkFrame::set_label_widget(GtkWidget*)", args: [null], effects: {child: unparented}}
+      verify: {}
+      provenance: [{origin: gir, ref: "gtk_frame_set_label_widget"}]
+properties:
+  - name: label
+    provenance: "GtkFrame:label (Gtk 4 docs); P prop"
+  - name: label-xalign
+    provenance: "GtkFrame:label-xalign (Gtk 4 docs); P prop"

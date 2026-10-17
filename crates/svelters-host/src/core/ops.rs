@@ -286,6 +286,67 @@ impl Core {
         })
     }
 
+    /// Sets a per-child attribute (ABI v2.2). `child` must be inserted under `parent`. `Null`
+    /// resets the attribute.
+    pub(crate) fn op_set_child_attr<R: JsReader>(
+        &self,
+        r: &R,
+        parent: svl_handle,
+        child: svl_handle,
+        attr: Name<'_>,
+        v: &R::V,
+    ) -> Result<(), OpError> {
+        self.timed(|| {
+            let (Some(pk), Some(_)) = (self.live_kind(parent)?, self.live_kind(child)?) else {
+                return Ok(());
+            };
+            if self.st.borrow().tree.get(&child) != Some(&parent) {
+                return Err(format!("handle #{child} is not a child of #{parent}: child attributes need an inserted child").into());
+            }
+            let a = self.resolve_name(NameKind::Attr, pk, attr)?;
+            let any = SlotDesc::new(SVL_NULL);
+            let mut ar = Arena::new();
+            let registry = CallbackRegistry(self);
+            let cx = Cx {
+                types: self,
+                utf16: self.utf16(),
+                callbacks: Some(&registry),
+                owner: child,
+            };
+            let raw = match convert::encode(r, v, &any, &cx, &mut ar) {
+                Ok(raw) => raw,
+                Err(e) => {
+                    self.finish_callbacks(&mut ar, false);
+                    let name = match attr {
+                        Name::Str(s) => s.to_string(),
+                        Name::Id(i) => format!("#{i}"),
+                    };
+                    return Err(self.conv_err(&format!("<{}> child attribute {name}", self.kind_name(pk)), e));
+                }
+            };
+            let res = self.backend.set_child_attr_raw(parent, child, a, &raw).map_err(|e| self.backend_err(e));
+            self.finish_callbacks(&mut ar, res.is_ok());
+            drop(ar);
+            res
+        })
+    }
+
+    pub(crate) fn op_get_child_attr<W: JsWriter>(
+        &self,
+        w: &W,
+        parent: svl_handle,
+        child: svl_handle,
+        attr: Name<'_>,
+    ) -> Result<W::V, OpError> {
+        self.timed(|| {
+            let pk = self.kind_of(parent)?;
+            self.kind_of(child)?;
+            let a = self.resolve_name(NameKind::Attr, pk, attr)?;
+            let v = self.backend.get_child_attr(parent, child, a).map_err(|e| self.backend_err(e))?;
+            self.decode_result(w, &v)
+        })
+    }
+
     pub(crate) fn op_destroy(&self, h: svl_handle) -> Result<(), OpError> {
         self.timed(|| {
             self.tree_ops_allowed()?;
@@ -368,7 +429,7 @@ impl Core {
             let k = self.kind_of(h)?;
             let p = self.resolve_name(NameKind::Prop, k, prop)?;
             let raw = self.backend.get_prop_raw(h, p).map_err(|e| self.backend_err(e))?;
-            let v = unsafe { Value::from_raw(&raw) };
+            let v = unsafe { Value::from_raw_wide(&raw) };
             self.decode_result(w, &v)
         })
     }
@@ -407,23 +468,25 @@ impl Core {
             let mut raw: Vec<svl_value> = Vec::with_capacity(given);
             match &desc {
                 Some(d) => {
-                    let required = d.params.iter().filter(|p| !p.has(SVL_D_OPTIONAL)).count();
-                    if given < required || given > d.params.len() {
+                    // OUT-only parameters are not supplied by JS and not sent to the backend.
+                    let ins: Vec<&SlotDesc> = d.params.iter().filter(|p| !p.has(SVL_D_OUT)).collect();
+                    let required = ins.iter().filter(|p| !p.has(SVL_D_OPTIONAL)).count();
+                    if given < required || given > ins.len() {
                         return Err(OpError {
                             kind: OpKind::Type,
                             msg: format!(
                                 "<{}>.{mname}: expected {} argument(s), got {given}",
                                 self.kind_name(k),
-                                if required == d.params.len() {
+                                if required == ins.len() {
                                     required.to_string()
                                 } else {
-                                    format!("{required} to {}", d.params.len())
+                                    format!("{required} to {}", ins.len())
                                 }
                             ),
                             native: None,
                         });
                     }
-                    for (i, slot) in d.params.iter().enumerate() {
+                    for (i, slot) in ins.iter().copied().enumerate() {
                         let prefix = format!(
                             "<{}>.{mname}({})",
                             self.kind_name(k),
@@ -466,9 +529,41 @@ impl Core {
             let out = self.backend.call_raw(h, m, &raw).map_err(|e| self.backend_err(e));
             self.finish_callbacks(&mut ar, out.is_ok());
             drop(ar);
-            let v = unsafe { Value::from_raw(&out?) };
-            self.decode_result(e, &v)
+            let v = unsafe { Value::from_raw_wide(&out?) };
+            match desc.as_ref().filter(|d| d.params.iter().any(|p| p.has(SVL_D_OUT | SVL_D_INOUT))) {
+                Some(d) => self.decode_outs(e, &mname, k, d, &v),
+                None => self.decode_result(e, &v),
+            }
         })
+    }
+
+    /// A method with OUT / INOUT parameters answers `LIST [ret, out...]`, outs in parameter order.
+    /// JS sees one object: `ret` (unless the method is void) and one key per out parameter.
+    fn decode_outs<W: JsWriter>(&self, w: &W, mname: &str, k: svl_id, d: &MemberDesc, v: &Value) -> Result<W::V, OpError> {
+        let outs: Vec<(usize, &SlotDesc)> = d.params.iter().filter(|p| p.has(SVL_D_OUT | SVL_D_INOUT)).enumerate().collect();
+        let items = match v {
+            Value::List(items) if items.len() == outs.len() + 1 => items,
+            _ => {
+                return Err(OpError {
+                    kind: OpKind::Error,
+                    msg: format!(
+                        "<{}>.{mname}: backend answered {v:?}; expected a list of the return value and {} out value(s)",
+                        self.kind_name(k),
+                        outs.len()
+                    ),
+                    native: None,
+                })
+            }
+        };
+        let mut entries = Vec::with_capacity(items.len());
+        if !d.ret.is_void() {
+            entries.push(("ret".to_string(), self.decode_result(w, &items[0])?));
+        }
+        for (i, slot) in outs {
+            let key = slot.name.clone().unwrap_or_else(|| format!("out{i}"));
+            entries.push((key, self.decode_result(w, &items[i + 1])?));
+        }
+        w.object(entries).map_err(OpError::from)
     }
 
     /// After the backend call: `call`-scope callbacks end with it; all of them end when it failed
@@ -516,7 +611,7 @@ impl Core {
         })
     }
 
-    pub(crate) fn op_listen(&self, h: svl_handle, signal: Name<'_>, on: bool) -> Result<(), OpError> {
+    pub(crate) fn op_listen(&self, h: svl_handle, signal: Name<'_>, on: bool, flags: u32) -> Result<(), OpError> {
         self.timed(|| {
             let k = match self.live_kind(h)? {
                 Some(k) => k,
@@ -533,7 +628,7 @@ impl Core {
                     .ok_or_else(|| "listen by id requires the signal to have been resolved by name first".to_string())?;
                 self.st.borrow_mut().signal_names.insert((k, s), name);
             }
-            self.backend.listen(h, s, on).map_err(|e| self.backend_err(e))
+            self.backend.listen_ex(h, s, on, flags).map_err(|e| self.backend_err(e))
         })
     }
 

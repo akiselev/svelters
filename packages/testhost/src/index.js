@@ -31,7 +31,7 @@ export function createTestHost({ schema = defaultSchema } = {}) {
   };
   const json = (v) => {
     if (v === undefined) throw new TypeError('undefined is not a valid op value');
-    return JSON.stringify(v);
+    return JSON.stringify(v, (_k, x) => (x !== null && typeof x === 'object' && typeof x.svlHandle === 'number' ? x.svlHandle : x));
   };
 
   const nameOf = (names, kid, ref) => (typeof ref === 'number' ? names.get(`${kid}:${ref}`) : ref);
@@ -92,6 +92,7 @@ export function createTestHost({ schema = defaultSchema } = {}) {
       if (c.parent !== parent) throw new Error(`remove: #${child} is not a child of #${parent}`);
       p.children.splice(p.children.indexOf(child), 1);
       c.parent = null;
+      c.attrs?.clear();
       lines.push(`remove #${parent} #${child}`);
     },
     destroy(h) {
@@ -120,10 +121,22 @@ export function createTestHost({ schema = defaultSchema } = {}) {
       lines.push(`call #${h} ${method} ${json(args)}`);
       return null;
     },
-    listen(h, signal, on) {
+    listen(h, signal, on, flags = 0) {
       if (!on && dead.has(h)) return;
       w(h);
-      lines.push(`listen #${h} ${signal} ${on ? 'on' : 'off'}`);
+      lines.push(`listen #${h} ${signal} ${on ? 'on' : 'off'}${flagsSuffix(flags)}`);
+    },
+    setChildAttr(parent, child, nameRef, value) {
+      if (dead.has(parent) || dead.has(child)) return;
+      if (w(child).parent !== parent) throw new Error(`setChildAttr: #${child} is not a child of #${parent}`);
+      const name = typeof nameRef === 'string' ? nameRef : `attr#${nameRef}`;
+      const attrs = (w(child).attrs ??= new Map());
+      if (value === null || value === undefined) attrs.delete(name);
+      else attrs.set(name, value);
+      lines.push(`attr #${parent} #${child} ${name} ${json(value ?? null)}`);
+    },
+    getChildAttr(parent, child, nameRef) {
+      return w(child).attrs?.get(nameRef) ?? null;
     },
   };
 
@@ -155,6 +168,11 @@ export function createTestHost({ schema = defaultSchema } = {}) {
 
   return { host, lines, text: () => lines.map((l) => l + '\n').join(''), widgets, killNative };
 }
+
+const FLAG_WORDS = { after: 1, capture: 2 };
+/** Listener flags as the trailing op-log word (` after`, ` capture`, ` after+capture`); empty for 0. */
+const flagsSuffix = (flags) => (flags ? ` ${[flags & 1 ? 'after' : '', flags & 2 ? 'capture' : ''].filter(Boolean).join('+')}` : '');
+const flagsOfWord = (word) => (word ? word.split('+').reduce((f, x) => f | (FLAG_WORDS[x] ?? 0), 0) : 0);
 
 /** Virtual-time timers: deterministic, ordered by (due time, creation order). */
 export function createTimers() {
@@ -249,13 +267,15 @@ export async function runBundle({ bundlePath, script }) {
 
     for (const step of script) {
       if (step.event) {
-        const [h, signal, args] = step.event;
-        th.lines.push(`event #${h} ${signal} ${JSON.stringify(args)}`);
-        ctx.__svelters_dispatch(h, signal, args);
+        const [h, signal, args, fw] = step.event;
+        const flags = flagsOfWord(fw);
+        th.lines.push(`event #${h} ${signal} ${JSON.stringify(args)}${flagsSuffix(flags)}`);
+        ctx.__svelters_dispatch(h, signal, args, false, flags);
       } else if (step.sync) {
-        const [h, signal, args] = step.sync;
-        th.lines.push(`sync #${h} ${signal} ${JSON.stringify(args)}`);
-        const r = ctx.__svelters_dispatch_sync(h, signal, args);
+        const [h, signal, args, fw] = step.sync;
+        const flags = flagsOfWord(fw);
+        th.lines.push(`sync #${h} ${signal} ${JSON.stringify(args)}${flagsSuffix(flags)}`);
+        const r = ctx.__svelters_dispatch_sync(h, signal, args, flags);
         th.lines.push(`result #${h} ${JSON.stringify(r ?? null)}`);
       } else if (step.gone) {
         const [h, reason] = step.gone;

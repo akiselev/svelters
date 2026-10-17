@@ -1,0 +1,20 @@
+children:
+  policy: single_child
+  default_slot: child
+  slots:
+    - name: child
+      content: widget
+      accepts: [Gtk.Widget]
+      route_by_kind: false
+      cardinality: one
+      order: none
+      default: {kind: none}
+      on_remove: empty
+      attrs: []
+      requires: []
+      ops:
+        get:    {native: "GtkWindowHandle::get_child() const"}
+        set:    {native: "GtkWindowHandle::set_child(GtkWidget*)", args: [child], effects: {child: parented, old: unparented}}
+        remove: {native: "GtkWindowHandle::set_child(GtkWidget*)", args: [null], effects: {child: unparented}}
+      verify: {}
+      provenance: [{origin: gir, ref: "gtk_window_handle_set_child"}]

@@ -1,0 +1,55 @@
+properties:
+  - name: revealed
+    provenance: "GtkActionBar:revealed (Gtk 4 docs); P prop"
+children:
+  policy: named_slots
+  default_slot: start
+  slots:
+    - name: start
+      content: widget
+      accepts: [Gtk.Widget]
+      route_by_kind: false
+      cardinality: many
+      order: append_only
+      default: {kind: none}
+      on_remove: empty
+      attrs: []
+      requires: []
+      ops:
+        get:    {contains: ancestor}
+        insert: {native: "GtkActionBar::pack_start(GtkWidget*)", args: [child], effects: {child: parented}}
+        remove: {native: "GtkActionBar::remove(GtkWidget*)", args: [child], effects: {child: unparented}}
+      verify: {}
+      provenance: [{origin: gir, ref: "gtk_action_bar_pack_start"}, {origin: gir, ref: "gtk_action_bar_remove"}]
+    - name: end
+      content: widget
+      accepts: [Gtk.Widget]
+      route_by_kind: false
+      cardinality: many
+      order: append_only
+      default: {kind: none}
+      on_remove: empty
+      attrs: []
+      requires: []
+      ops:
+        get:    {contains: ancestor}
+        insert: {native: "GtkActionBar::pack_end(GtkWidget*)", args: [child], effects: {child: parented}}
+        remove: {native: "GtkActionBar::remove(GtkWidget*)", args: [child], effects: {child: unparented}}
+      verify: {}
+      provenance: [{origin: gir, ref: "gtk_action_bar_pack_end"}, {origin: gir, ref: "gtk_action_bar_remove"}]
+    - name: center
+      content: widget
+      accepts: [Gtk.Widget]
+      route_by_kind: false
+      cardinality: one
+      order: none
+      default: {kind: none}
+      on_remove: empty
+      attrs: []
+      requires: []
+      ops:
+        get:    {native: "GtkActionBar::get_center_widget() const"}
+        set:    {native: "GtkActionBar::set_center_widget(GtkWidget*)", args: [child], effects: {child: parented, old: unparented}}
+        remove: {native: "GtkActionBar::set_center_widget(GtkWidget*)", args: [null], effects: {child: unparented}}
+      verify: {}
+      provenance: [{origin: gir, ref: "gtk_action_bar_set_center_widget"}]

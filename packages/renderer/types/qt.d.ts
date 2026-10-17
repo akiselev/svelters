@@ -17,13 +17,28 @@ export interface QtElementDescriptors {
       focusPolicy?: "click-focus" | "no-focus" | "strong-focus" | "tab-focus" | "wheel-focus";
       toolTip?: string;
       enabled?: boolean;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
     };
     events: {
+      "key-press": () => void;
     };
     methods: {
       saveGeometry(): Uint8Array;
       restoreGeometry(geometry: Uint8Array): boolean;
       resizeTo(arg0: Size): void;
+      getContentsMargins(): { left: number; top: number; right: number; bottom: number };
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
     };
     slots: "children";
   };
@@ -34,14 +49,121 @@ export interface QtElementDescriptors {
       iconSize?: Size;
       shortcut?: Boxed<"QKeySequence"> | string;
       checkable?: boolean;
-      minimumHeight?: number;
+      flat?: boolean;
+      autoDefault?: boolean;
       default?: boolean;
+      autoRepeat?: boolean;
+      autoExclusive?: boolean;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
     };
     events: {
+      clicked: () => void;
+      pressed: () => void;
+      released: () => void;
+      toggled: (checked: boolean) => void;
+    };
+    methods: {
+      click(): void;
+      toggle(): void;
+      animateClick(): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  calendar: {
+    props: {
+      gridVisible?: boolean;
+      navigationBarVisible?: boolean;
+      firstDayOfWeek?: "friday" | "monday" | "saturday" | "sunday" | "thursday" | "tuesday" | "wednesday";
+      horizontalHeaderFormat?: "long-day-names" | "no-horizontal-header" | "short-day-names" | "single-letter-day-names";
+      verticalHeaderFormat?: "iso-week-numbers" | "no-vertical-header";
+      dateEditEnabled?: boolean;
+      dateEditAcceptDelay?: number;
+      selectionMode?: "no-selection" | "single-selection";
+      selectedDate?: DateParts;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      "selection-changed": () => void;
+      "page-changed": (year: number, month: number) => void;
+      clicked: (date: DateParts) => void;
+      activated: (date: DateParts) => void;
+    };
+    methods: {
+      showToday(): void;
+      showNextMonth(): void;
+      showPreviousMonth(): void;
+      showNextYear(): void;
+      showPreviousYear(): void;
+      monthShown(): number;
+      yearShown(): number;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  checkbox: {
+    props: {
+      checked?: boolean;
+      tristate?: boolean;
+      checkState?: "checked" | "partially-checked" | "unchecked";
+      label?: string;
+      checkable?: boolean;
+      autoRepeat?: boolean;
+      autoExclusive?: boolean;
+      shortcut?: Boxed<"QKeySequence"> | string;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      toggled: (checked: boolean) => void;
+      pressed: () => void;
+      released: () => void;
+      stateChanged: (state: number) => void;
       clicked: () => void;
     };
     methods: {
       click(): void;
+      toggle(): void;
+      animateClick(): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
     };
     slots: never;
   };
@@ -49,10 +171,35 @@ export interface QtElementDescriptors {
     props: {
       currentColor?: Color | string;
       options?: Array<"dont-use-native-dialog" | "no-buttons" | "no-eye-dropper-button" | "show-alpha-channel">;
+      modal?: boolean;
+      sizeGripEnabled?: boolean;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
     };
     events: {
+      currentColorChanged: (color: Color | string) => void;
+      accepted: () => void;
+      rejected: () => void;
+      finished: (result: number) => void;
     };
     methods: {
+      open(options?: { signal?: AbortSignal }): Promise<number>;
+      accept(): void;
+      reject(): void;
+      done(r: number): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
     };
     slots: never;
   };
@@ -60,22 +207,113 @@ export interface QtElementDescriptors {
     props: {
       readonly count?: number;
       currentData?: number;
+      editable?: boolean;
+      currentIndex?: number;
+      currentText?: string;
+      maxVisibleItems?: number;
+      placeholderText?: string;
+      insertPolicy?: "insert-after-current" | "insert-alphabetically" | "insert-at-bottom" | "insert-at-current" | "insert-at-top" | "insert-before-current" | "no-insert";
+      duplicatesEnabled?: boolean;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
     };
     events: {
+      changed: (index: number) => void;
+      "text-changed": (text: string) => void;
+      activated: (index: number) => void;
     };
     methods: {
       addItem(text: string, userData: Variant): void;
       itemData(index: number, role: number): Variant;
+      insertItem(index: number, text: string, userData: Variant): void;
+      removeItem(index: number): void;
+      clear(): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  commandlinkbutton: {
+    props: {
+      description?: string;
+      flat?: boolean;
+      label?: string;
+      checkable?: boolean;
+      autoRepeat?: boolean;
+      autoExclusive?: boolean;
+      shortcut?: Boxed<"QKeySequence"> | string;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      pressed: () => void;
+      released: () => void;
+      toggled: (checked: boolean) => void;
+      clicked: () => void;
+    };
+    methods: {
+      click(): void;
+      toggle(): void;
+      animateClick(): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
     };
     slots: never;
   };
   dateedit: {
     props: {
       date?: DateParts;
+      displayFormat?: string;
+      calendarPopup?: boolean;
+      readOnly?: boolean;
+      wrapping?: boolean;
+      frame?: boolean;
+      specialValueText?: string;
+      buttonSymbols?: "no-buttons" | "plus-minus" | "up-down-arrows";
+      accelerated?: boolean;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
     };
     events: {
+      "date-changed": (date: DateParts) => void;
+      editingFinished: () => void;
     };
     methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
     };
     slots: never;
   };
@@ -83,10 +321,169 @@ export interface QtElementDescriptors {
     props: {
       dateTime?: Date;
       displayFormat?: string;
+      calendarPopup?: boolean;
+      readOnly?: boolean;
+      wrapping?: boolean;
+      frame?: boolean;
+      specialValueText?: string;
+      buttonSymbols?: "no-buttons" | "plus-minus" | "up-down-arrows";
+      accelerated?: boolean;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
     };
     events: {
+      "date-time-changed": (datetime: Date) => void;
+      editingFinished: () => void;
     };
     methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  dial: {
+    props: {
+      value?: number;
+      notchesVisible?: boolean;
+      wrapping?: boolean;
+      notchTarget?: number;
+      minimum?: number;
+      maximum?: number;
+      singleStep?: number;
+      pageStep?: number;
+      tracking?: boolean;
+      invertedAppearance?: boolean;
+      orientation?: "horizontal" | "vertical";
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      valueChanged: (value: number) => void;
+      sliderMoved: (value: number) => void;
+      rangeChanged: (min: number, max: number) => void;
+    };
+    methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  dialog: {
+    props: {
+      title?: string;
+      modal?: boolean;
+      sizeGripEnabled?: boolean;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      accepted: () => void;
+      rejected: () => void;
+      finished: (result: number) => void;
+    };
+    methods: {
+      open(): void;
+      accept(): void;
+      reject(): void;
+      done(r: number): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: "children";
+  };
+  dialogbuttonbox: {
+    props: {
+      orientation?: "horizontal" | "vertical";
+      centerButtons?: boolean;
+      standardButtons?: Array<"abort" | "apply" | "cancel" | "close" | "discard" | "first-button" | "help" | "ignore" | "last-button" | "no" | "no-button" | "no-to-all" | "ok" | "open" | "reset" | "restore-defaults" | "retry" | "save" | "save-all" | "yes" | "yes-to-all">;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      accepted: () => void;
+      rejected: () => void;
+      "help-requested": () => void;
+    };
+    methods: {
+      clear(): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  dockwidget: {
+    props: {
+      features?: Array<"dock-widget-closable" | "dock-widget-feature-mask" | "dock-widget-floatable" | "dock-widget-movable" | "dock-widget-vertical-title-bar" | "no-dock-widget-features" | "reserved">;
+      allowedAreas?: Array<"all-dock-widget-areas" | "bottom-dock-widget-area" | "dock-widget-area-mask" | "left-dock-widget-area" | "no-dock-widget-area" | "right-dock-widget-area" | "top-dock-widget-area">;
+      floating?: boolean;
+      windowTitle?: string;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      "top-level-changed": (topLevel: boolean) => void;
+      "visibility-changed": (visible: boolean) => void;
+      "features-changed": (features: Array<"dock-widget-closable" | "dock-widget-feature-mask" | "dock-widget-floatable" | "dock-widget-movable" | "dock-widget-vertical-title-bar" | "no-dock-widget-features" | "reserved">) => void;
+      "allowed-areas-changed": (allowedAreas: Array<"all-dock-widget-areas" | "bottom-dock-widget-area" | "dock-widget-area-mask" | "left-dock-widget-area" | "no-dock-widget-area" | "right-dock-widget-area" | "top-dock-widget-area">) => void;
+    };
+    methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
     };
     slots: never;
   };
@@ -94,10 +491,36 @@ export interface QtElementDescriptors {
     props: {
       value?: number;
       decimals?: number;
+      minimum?: number;
+      maximum?: number;
+      singleStep?: number;
+      readOnly?: boolean;
+      wrapping?: boolean;
+      frame?: boolean;
+      specialValueText?: string;
+      buttonSymbols?: "no-buttons" | "plus-minus" | "up-down-arrows";
+      accelerated?: boolean;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
     };
     events: {
+      valueChanged: (d: number) => void;
+      editingFinished: () => void;
     };
     methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
     };
     slots: never;
   };
@@ -108,13 +531,332 @@ export interface QtElementDescriptors {
       echoMode?: "no-echo" | "normal" | "password" | "password-echo-on-edit";
       alignment?: Array<"absolute" | "baseline" | "bottom" | "center" | "hcenter" | "horizontal-mask" | "justify" | "leading" | "left" | "right" | "top" | "trailing" | "vcenter" | "vertical-mask">;
       maxLength?: number;
+      readOnly?: boolean;
+      clearButtonEnabled?: boolean;
+      frame?: boolean;
+      inputMask?: string;
+      dragEnabled?: boolean;
+      cursorPosition?: number;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
       minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
     };
     events: {
       "key-press": () => void;
       changed: (text: string) => void;
+      returnPressed: () => void;
+      editingFinished: () => void;
+      textEdited: (text: string) => void;
+      selectionChanged: () => void;
     };
     methods: {
+      clear(): void;
+      selectAll(): void;
+      undo(): void;
+      redo(): void;
+      copy(): void;
+      setSelection(start: number, length: number): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  errormessage: {
+    props: {
+      modal?: boolean;
+      sizeGripEnabled?: boolean;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      accepted: () => void;
+      rejected: () => void;
+      finished: (result: number) => void;
+    };
+    methods: {
+      showMessage(message: string): void;
+      open(): void;
+      accept(): void;
+      reject(): void;
+      done(r: number): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  filedialog: {
+    props: {
+      fileMode?: "any-file" | "directory" | "existing-file" | "existing-files";
+      acceptMode?: "open" | "save";
+      viewMode?: "detail" | "list";
+      defaultSuffix?: string;
+      modal?: boolean;
+      sizeGripEnabled?: boolean;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      accepted: () => void;
+      rejected: () => void;
+      finished: (result: number) => void;
+    };
+    methods: {
+      setDirectory(directory: string): void;
+      open(): void;
+      accept(): void;
+      reject(): void;
+      done(r: number): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  fontcombobox: {
+    props: {
+      currentFont?: Boxed<"QFont"> | string;
+      writingSystem?: "any" | "arabic" | "armenian" | "bengali" | "cyrillic" | "devanagari" | "georgian" | "greek" | "gujarati" | "gurmukhi" | "hebrew" | "japanese" | "kannada" | "khmer" | "korean" | "lao" | "latin" | "malayalam" | "myanmar" | "nko" | "ogham" | "oriya" | "other" | "runic" | "simplified-chinese" | "sinhala" | "symbol" | "syriac" | "tamil" | "telugu" | "thaana" | "thai" | "tibetan" | "traditional-chinese" | "vietnamese" | "writing-systems-count";
+      fontFilters?: Array<"all-fonts" | "monospaced-fonts" | "non-scalable-fonts" | "proportional-fonts" | "scalable-fonts">;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+    };
+    methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  fontdialog: {
+    props: {
+      currentFont?: Boxed<"QFont"> | string;
+      options?: Array<"dont-use-native-dialog" | "monospaced-fonts" | "no-buttons" | "non-scalable-fonts" | "proportional-fonts" | "scalable-fonts">;
+      modal?: boolean;
+      sizeGripEnabled?: boolean;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      accepted: () => void;
+      rejected: () => void;
+      finished: (result: number) => void;
+    };
+    methods: {
+      open(): void;
+      accept(): void;
+      reject(): void;
+      done(r: number): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  frame: {
+    props: {
+      orientation?: "horizontal" | "vertical";
+      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      frameShadow?: "plain" | "raised" | "sunken";
+      lineWidth?: number;
+      midLineWidth?: number;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+    };
+    methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: "children";
+  };
+  grid: {
+    props: {
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+    };
+    methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: "cells";
+  };
+  groupbox: {
+    props: {
+      orientation?: "horizontal" | "vertical";
+      title?: string;
+      checkable?: boolean;
+      flat?: boolean;
+      alignment?: Array<"absolute" | "baseline" | "bottom" | "center" | "hcenter" | "horizontal-mask" | "justify" | "leading" | "left" | "right" | "top" | "trailing" | "vcenter" | "vertical-mask">;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      toggled: (on: boolean) => void;
+      clicked: (checked: boolean) => void;
+    };
+    methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: "children";
+  };
+  inputdialog: {
+    props: {
+      labelText?: string;
+      textValue?: string;
+      intValue?: number;
+      intMinimum?: number;
+      intMaximum?: number;
+      inputMode?: "double-input" | "int-input" | "text-input";
+      okButtonText?: string;
+      cancelButtonText?: string;
+      modal?: boolean;
+      sizeGripEnabled?: boolean;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      textValueChanged: (text: string) => void;
+      intValueChanged: (value: number) => void;
+      accepted: () => void;
+      rejected: () => void;
+      finished: (result: number) => void;
+    };
+    methods: {
+      open(): void;
+      accept(): void;
+      reject(): void;
+      done(result: number): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  keysequenceedit: {
+    props: {
+      keySequence?: Boxed<"QKeySequence"> | string;
+      clearButtonEnabled?: boolean;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      editingFinished: () => void;
+    };
+    methods: {
+      clear(): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
     };
     slots: never;
   };
@@ -125,32 +867,514 @@ export interface QtElementDescriptors {
       textFormat?: "auto-text" | "markdown-text" | "plain-text" | "rich-text";
       pixmap?: Boxed<"QPixmap">;
       indent?: number;
+      wordWrap?: boolean;
+      openExternalLinks?: boolean;
+      margin?: number;
+      scaledContents?: boolean;
+      textInteractionFlags?: Array<"links-accessible-by-keyboard" | "links-accessible-by-mouse" | "no-text-interaction" | "text-browser-interaction" | "text-editable" | "text-editor-interaction" | "text-selectable-by-keyboard" | "text-selectable-by-mouse">;
+      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      frameShadow?: "plain" | "raised" | "sunken";
+      lineWidth?: number;
+      midLineWidth?: number;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
     };
     events: {
+      linkActivated: (link: string) => void;
+      linkHovered: (link: string) => void;
     };
     methods: {
       setBuddy(buddy: number): void;
       buddy(): number;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  lcdnumber: {
+    props: {
+      digitCount?: number;
+      intValue?: number;
+      value?: number;
+      mode?: "bin" | "dec" | "hex" | "oct";
+      segmentStyle?: "filled" | "flat" | "outline";
+      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      frameShadow?: "plain" | "raised" | "sunken";
+      lineWidth?: number;
+      midLineWidth?: number;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      overflow: () => void;
+    };
+    methods: {
+      display(num: number): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  listwidget: {
+    props: {
+      readonly count?: number;
+      currentRow?: number;
+      sortingEnabled?: boolean;
+      selectionMode?: "contiguous-selection" | "extended-selection" | "multi-selection" | "no-selection" | "single-selection";
+      alternatingRowColors?: boolean;
+      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      frameShadow?: "plain" | "raised" | "sunken";
+      lineWidth?: number;
+      midLineWidth?: number;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      "row-changed": (currentRow: number) => void;
+      "selection-changed": () => void;
+    };
+    methods: {
+      addItem(label: string): void;
+      insertItem(row: number, label: string): void;
+      clear(): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  mdiarea: {
+    props: {
+      activationOrder?: "activation-history-order" | "creation-order" | "stacking-order";
+      documentMode?: boolean;
+      tabPosition?: "east" | "north" | "south" | "west";
+      tabShape?: "rounded" | "triangular";
+      tabsClosable?: boolean;
+      tabsMovable?: boolean;
+      viewMode?: "sub-window-view" | "tabbed-view";
+      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      frameShadow?: "plain" | "raised" | "sunken";
+      lineWidth?: number;
+      midLineWidth?: number;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+    };
+    methods: {
+      cascadeSubWindows(): void;
+      tileSubWindows(): void;
+      closeAllSubWindows(): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  menu: {
+    props: {
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+    };
+    methods: {
+      addItem(text: string, functor: (checked: boolean) => void, shortcut: Boxed<"QKeySequence"> | string): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
     };
     slots: never;
   };
   menubar: {
     props: {
+      defaultUp?: boolean;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
     };
     events: {
     };
     methods: {
+      clear(): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  messagebox: {
+    props: {
+      text?: string;
+      informativeText?: string;
+      detailedText?: string;
+      icon?: "critical" | "information" | "no-icon" | "question" | "warning";
+      textFormat?: "auto-text" | "markdown-text" | "plain-text" | "rich-text";
+      standardButtons?: Array<"abort" | "apply" | "button-mask" | "cancel" | "close" | "default" | "discard" | "escape" | "first-button" | "flag-mask" | "help" | "ignore" | "last-button" | "no" | "no-all" | "no-button" | "no-to-all" | "ok" | "open" | "reset" | "restore-defaults" | "retry" | "save" | "save-all" | "yes" | "yes-all" | "yes-to-all">;
+      modal?: boolean;
+      sizeGripEnabled?: boolean;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      accepted: () => void;
+      rejected: () => void;
+      finished: (result: number) => void;
+    };
+    methods: {
+      open(): void;
+      accept(): void;
+      reject(): void;
+      done(r: number): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  plaintextedit: {
+    props: {
+      plainText?: string;
+      readOnly?: boolean;
+      placeholderText?: string;
+      lineWrapMode?: "no-wrap" | "widget-width";
+      tabChangesFocus?: boolean;
+      overwriteMode?: boolean;
+      wordWrapMode?: "manual-wrap" | "no-wrap" | "word-wrap" | "wrap-anywhere" | "wrap-at-word-boundary-or-anywhere";
+      undoRedoEnabled?: boolean;
+      maximumBlockCount?: number;
+      cursorWidth?: number;
+      tabStopDistance?: number;
+      textInteractionFlags?: Array<"links-accessible-by-keyboard" | "links-accessible-by-mouse" | "no-text-interaction" | "text-browser-interaction" | "text-editable" | "text-editor-interaction" | "text-selectable-by-keyboard" | "text-selectable-by-mouse">;
+      documentTitle?: string;
+      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      frameShadow?: "plain" | "raised" | "sunken";
+      lineWidth?: number;
+      midLineWidth?: number;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      "key-press": () => void;
+      changed: () => void;
+      selectionChanged: () => void;
+      cursorPositionChanged: () => void;
+      blockCountChanged: (newBlockCount: number) => void;
+    };
+    methods: {
+      appendPlainText(text: string): void;
+      insertPlainText(text: string): void;
+      appendHtml(html: string): void;
+      clear(): void;
+      selectAll(): void;
+      undo(): void;
+      redo(): void;
+      copy(): void;
+      cut(): void;
+      centerCursor(): void;
+      ensureCursorVisible(): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  progressbar: {
+    props: {
+      value?: number;
+      minimum?: number;
+      maximum?: number;
+      format?: string;
+      textVisible?: boolean;
+      orientation?: "horizontal" | "vertical";
+      invertedAppearance?: boolean;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      valueChanged: (value: number) => void;
+    };
+    methods: {
+      reset(): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  progressdialog: {
+    props: {
+      value?: number;
+      minimum?: number;
+      maximum?: number;
+      labelText?: string;
+      minimumDuration?: number;
+      autoClose?: boolean;
+      autoReset?: boolean;
+      modal?: boolean;
+      sizeGripEnabled?: boolean;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      canceled: () => void;
+      accepted: () => void;
+      rejected: () => void;
+      finished: (result: number) => void;
+    };
+    methods: {
+      reset(): void;
+      cancel(): void;
+      open(): void;
+      accept(): void;
+      reject(): void;
+      done(r: number): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  radiobutton: {
+    props: {
+      checked?: boolean;
+      label?: string;
+      checkable?: boolean;
+      autoRepeat?: boolean;
+      autoExclusive?: boolean;
+      shortcut?: Boxed<"QKeySequence"> | string;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      pressed: () => void;
+      released: () => void;
+      toggled: (checked: boolean) => void;
+      clicked: () => void;
+    };
+    methods: {
+      click(): void;
+      toggle(): void;
+      animateClick(): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  scrollbar: {
+    props: {
+      value?: number;
+      minimum?: number;
+      maximum?: number;
+      singleStep?: number;
+      pageStep?: number;
+      tracking?: boolean;
+      invertedAppearance?: boolean;
+      orientation?: "horizontal" | "vertical";
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      valueChanged: (value: number) => void;
+      sliderMoved: (value: number) => void;
+      rangeChanged: (min: number, max: number) => void;
+    };
+    methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
     };
     slots: never;
   };
   scrolledwindow: {
     props: {
+      widgetResizable?: boolean;
+      horizontalScrollBarPolicy?: "always-off" | "always-on" | "as-needed";
+      verticalScrollBarPolicy?: "always-off" | "always-on" | "as-needed";
+      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      frameShadow?: "plain" | "raised" | "sunken";
+      lineWidth?: number;
+      midLineWidth?: number;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
     };
     events: {
     };
     methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
     };
     slots: "child";
+  };
+  slider: {
+    props: {
+      value?: number;
+      tickPosition?: "no-ticks" | "ticks-above" | "ticks-below" | "ticks-both-sides" | "ticks-left" | "ticks-right";
+      tickInterval?: number;
+      minimum?: number;
+      maximum?: number;
+      singleStep?: number;
+      pageStep?: number;
+      tracking?: boolean;
+      invertedAppearance?: boolean;
+      orientation?: "horizontal" | "vertical";
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      valueChanged: (value: number) => void;
+      sliderMoved: (value: number) => void;
+      rangeChanged: (min: number, max: number) => void;
+    };
+    methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
   };
   spinbox: {
     props: {
@@ -158,36 +1382,462 @@ export interface QtElementDescriptors {
       minimum?: number;
       maximum?: number;
       singleStep?: number;
+      suffix?: string;
+      displayIntegerBase?: number;
       prefix?: string;
+      readOnly?: boolean;
+      wrapping?: boolean;
+      frame?: boolean;
+      specialValueText?: string;
+      buttonSymbols?: "no-buttons" | "plus-minus" | "up-down-arrows";
+      accelerated?: boolean;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
     };
     events: {
+      valueChanged: (i: number) => void;
+      textChanged: (text: string) => void;
+      editingFinished: () => void;
     };
     methods: {
+      validate(input: string, pos: number): { ret: "acceptable" | "intermediate" | "invalid"; input: string; pos: number };
+      fixup(input: string): { input: string };
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
     };
     slots: never;
   };
-  statusbar: {
+  splitter: {
     props: {
+      orientation?: "horizontal" | "vertical";
+      childrenCollapsible?: boolean;
+      handleWidth?: number;
+      opaqueResize?: boolean;
+      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      frameShadow?: "plain" | "raised" | "sunken";
+      lineWidth?: number;
+      midLineWidth?: number;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
     };
     events: {
+      "splitter-moved": (pos: number, index: number) => void;
     };
     methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: "children";
+  };
+  stackedwidget: {
+    props: {
+      currentIndex?: number;
+      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      frameShadow?: "plain" | "raised" | "sunken";
+      lineWidth?: number;
+      midLineWidth?: number;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      changed: (index: number) => void;
+    };
+    methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: "pages";
+  };
+  statusbar: {
+    props: {
+      sizeGripEnabled?: boolean;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      messageChanged: (message: string) => void;
+    };
+    methods: {
+      showMessage(message: string, timeout: number): void;
+      clearMessage(): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: "widgets" | "permanent";
+  };
+  tabbar: {
+    props: {
+      currentIndex?: number;
+      readonly count?: number;
+      tabsClosable?: boolean;
+      movable?: boolean;
+      shape?: "rounded-east" | "rounded-north" | "rounded-south" | "rounded-west" | "triangular-east" | "triangular-north" | "triangular-south" | "triangular-west";
+      expanding?: boolean;
+      drawBase?: boolean;
+      documentMode?: boolean;
+      usesScrollButtons?: boolean;
+      autoHide?: boolean;
+      elideMode?: "left" | "middle" | "none" | "right";
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      changed: (index: number) => void;
+      "tab-close-requested": (index: number) => void;
+      "tab-bar-clicked": (index: number) => void;
+      "tab-bar-double-clicked": (index: number) => void;
+      "tab-moved": (from: number, to: number) => void;
+    };
+    methods: {
+      addTab(text: string): number;
+      insertTab(index: number, text: string): number;
+      removeTab(index: number): void;
+      moveTab(from: number, to: number): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  tabwidget: {
+    props: {
+      tabPosition?: "east" | "north" | "south" | "west";
+      tabShape?: "rounded" | "triangular";
+      tabsClosable?: boolean;
+      movable?: boolean;
+      documentMode?: boolean;
+      usesScrollButtons?: boolean;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      changed: (index: number) => void;
+      "tab-close-requested": (index: number) => void;
+      "tab-bar-clicked": (index: number) => void;
+    };
+    methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: "pages";
+  };
+  textbrowser: {
+    props: {
+      openExternalLinks?: boolean;
+      openLinks?: boolean;
+      readonly source?: Boxed<"QUrl"> | string;
+      readonly sourceType?: "html-resource" | "image-resource" | "markdown-resource" | "style-sheet-resource" | "unknown-resource" | "user-resource";
+      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      frameShadow?: "plain" | "raised" | "sunken";
+      lineWidth?: number;
+      midLineWidth?: number;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      historyChanged: () => void;
+      backwardAvailable: (available: boolean) => void;
+    };
+    methods: {
+      home(): void;
+      reload(): void;
+      backward(): void;
+      forward(): void;
+      clearHistory(): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  textedit: {
+    props: {
+      plainText?: string;
+      markdown?: string;
+      acceptRichText?: boolean;
+      readOnly?: boolean;
+      placeholderText?: string;
+      lineWrapMode?: "fixed-column-width" | "fixed-pixel-width" | "no-wrap" | "widget-width";
+      tabChangesFocus?: boolean;
+      overwriteMode?: boolean;
+      wordWrapMode?: "manual-wrap" | "no-wrap" | "word-wrap" | "wrap-anywhere" | "wrap-at-word-boundary-or-anywhere";
+      undoRedoEnabled?: boolean;
+      cursorWidth?: number;
+      lineWrapColumnOrWidth?: number;
+      tabStopDistance?: number;
+      textInteractionFlags?: Array<"links-accessible-by-keyboard" | "links-accessible-by-mouse" | "no-text-interaction" | "text-browser-interaction" | "text-editable" | "text-editor-interaction" | "text-selectable-by-keyboard" | "text-selectable-by-mouse">;
+      documentTitle?: string;
+      autoFormatting?: Array<"all" | "bullet-list" | "none">;
+      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      frameShadow?: "plain" | "raised" | "sunken";
+      lineWidth?: number;
+      midLineWidth?: number;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      "key-press": () => void;
+      changed: () => void;
+      selectionChanged: () => void;
+      cursorPositionChanged: () => void;
+    };
+    methods: {
+      append(text: string): void;
+      insertPlainText(text: string): void;
+      insertHtml(text: string): void;
+      clear(): void;
+      selectAll(): void;
+      undo(): void;
+      redo(): void;
+      copy(): void;
+      cut(): void;
+      ensureCursorVisible(): void;
+      document(): number;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
     };
     slots: never;
   };
   timeedit: {
     props: {
       time?: TimeParts;
+      displayFormat?: string;
+      readOnly?: boolean;
+      wrapping?: boolean;
+      frame?: boolean;
+      specialValueText?: string;
+      buttonSymbols?: "no-buttons" | "plus-minus" | "up-down-arrows";
+      accelerated?: boolean;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
     };
     events: {
+      "time-changed": (time: TimeParts) => void;
+      editingFinished: () => void;
     };
     methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  toolbar: {
+    props: {
+      movable?: boolean;
+      floatable?: boolean;
+      orientation?: "horizontal" | "vertical";
+      toolButtonStyle?: "follow-style" | "icon-only" | "text-beside-icon" | "text-only" | "text-under-icon";
+      iconSize?: Size;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      "movable-changed": (movable: boolean) => void;
+      "orientation-changed": (orientation: "horizontal" | "vertical") => void;
+    };
+    methods: {
+      clear(): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  toolbox: {
+    props: {
+      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      frameShadow?: "plain" | "raised" | "sunken";
+      lineWidth?: number;
+      midLineWidth?: number;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      changed: (index: number) => void;
+    };
+    methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  toolbutton: {
+    props: {
+      autoRaise?: boolean;
+      toolButtonStyle?: "follow-style" | "icon-only" | "text-beside-icon" | "text-only" | "text-under-icon";
+      arrowType?: "down-arrow" | "left-arrow" | "no-arrow" | "right-arrow" | "up-arrow";
+      popupMode?: "delayed-popup" | "instant-popup" | "menu-button-popup";
+      label?: string;
+      checkable?: boolean;
+      autoRepeat?: boolean;
+      autoExclusive?: boolean;
+      shortcut?: Boxed<"QKeySequence"> | string;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      pressed: () => void;
+      released: () => void;
+      toggled: (checked: boolean) => void;
+      clicked: () => void;
+    };
+    methods: {
+      setMenu(menu: number): void;
+      click(): void;
+      toggle(): void;
+      animateClick(): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
     };
     slots: never;
   };
   window: {
     props: {
       title?: string;
+      documentMode?: boolean;
+      animated?: boolean;
+      dockNestingEnabled?: boolean;
+      tabShape?: "rounded" | "triangular";
+      toolButtonStyle?: "follow-style" | "icon-only" | "text-beside-icon" | "text-only" | "text-under-icon";
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
     };
     events: {
       "close-request": () => void;
@@ -197,9 +1847,88 @@ export interface QtElementDescriptors {
       present(): void;
       close(): boolean;
       resize(w: number, h: number): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
     };
     slots: "central" | "menubar" | "statusbar";
+  };
+  wizard: {
+    props: {
+      wizardStyle?: "aero-style" | "classic-style" | "mac-style" | "modern-style" | "nstyles";
+      options?: Array<"cancel-button-on-left" | "disabled-back-button-on-last-page" | "extended-watermark-pixmap" | "have-custom-button1" | "have-custom-button2" | "have-custom-button3" | "have-finish-button-on-early-pages" | "have-help-button" | "have-next-button-on-last-page" | "help-button-on-right" | "ignore-sub-titles" | "independent-pages" | "no-back-button-on-last-page" | "no-back-button-on-start-page" | "no-cancel-button" | "no-cancel-button-on-last-page" | "no-default-button" | "stretch-banner">;
+      modal?: boolean;
+      sizeGripEnabled?: boolean;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      currentIdChanged: (id: number) => void;
+      accepted: () => void;
+      rejected: () => void;
+      finished: (result: number) => void;
+    };
+    methods: {
+      open(): void;
+      accept(): void;
+      reject(): void;
+      done(r: number): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  wizardpage: {
+    props: {
+      title?: string;
+      subTitle?: string;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+    };
+    methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
   };
 }
 
 export type QtElementTag = keyof QtElementDescriptors;
+
+/** `parent:<name>` attributes any child element can carry; which apply depends on the parent and the slot. */
+export interface QtChildAttrs {
+  'parent:align'?: ("bottom" | "center" | "hcenter" | "left" | "none" | "right" | "top" | "vcenter");
+  'parent:column'?: number;
+  'parent:columnSpan'?: number;
+  'parent:row'?: number;
+  'parent:rowSpan'?: number;
+  'parent:stretch'?: number;
+  'parent:tabEnabled'?: boolean;
+  'parent:tabLabel'?: string;
+  'parent:tabToolTip'?: string;
+}

@@ -1,0 +1,47 @@
+elements:
+  - tag: calendar
+    construct: { class: QCalendarWidget }
+    props:
+      - { js: gridVisible, native: gridVisible, provenance: "QCalendarWidget::gridVisible (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: navigationBarVisible, native: navigationBarVisible, provenance: "QCalendarWidget::navigationBarVisible (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: firstDayOfWeek, native: firstDayOfWeek, provenance: "QCalendarWidget::firstDayOfWeek (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: horizontalHeaderFormat, native: horizontalHeaderFormat, provenance: "QCalendarWidget::horizontalHeaderFormat (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: verticalHeaderFormat, native: verticalHeaderFormat, provenance: "QCalendarWidget::verticalHeaderFormat (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: dateEditEnabled, native: dateEditEnabled, provenance: "QCalendarWidget::dateEditEnabled (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: dateEditAcceptDelay, native: dateEditAcceptDelay, provenance: "QCalendarWidget::dateEditAcceptDelay (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: selectionMode, native: selectionMode, provenance: "QCalendarWidget::selectionMode (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: selectedDate, native: selectedDate, provenance: "QCalendarWidget::selectedDate (qdoc); typed by the S1 value model (ABI v3)" }
+    methods:
+      - { js: showToday, native: showToday, provenance: "QCalendarWidget::showToday() slot (qdoc)" }
+      - { js: showNextMonth, native: showNextMonth, provenance: "QCalendarWidget::showNextMonth() slot (qdoc)" }
+      - { js: showPreviousMonth, native: showPreviousMonth, provenance: "QCalendarWidget::showPreviousMonth() slot (qdoc)" }
+      - { js: showNextYear, native: showNextYear, provenance: "QCalendarWidget::showNextYear() slot (qdoc)" }
+      - { js: showPreviousYear, native: showPreviousYear, provenance: "QCalendarWidget::showPreviousYear() slot (qdoc)" }
+      - { js: monthShown, native: monthShown, expect: "$w->monthShown() >= 1", provenance: "QCalendarWidget::monthShown() (qdoc)" }
+      - { js: yearShown, native: yearShown, expect: "$w->yearShown() >= 1", provenance: "QCalendarWidget::yearShown() (qdoc)" }
+    signals:
+      - js: selection-changed
+        native: selectionChanged
+        connect: "selectionChanged()"
+        args: []
+        trigger: '$w->setSelectedDate(QDate(2001, 1, 1).addDays($i + 1))'
+        provenance: "QCalendarWidget::selectionChanged() (qdoc)"
+      - js: page-changed
+        native: currentPageChanged
+        connect: "currentPageChanged(int,int)"
+        args: [{ name: year, type: i32 }, { name: month, type: i32 }]
+        trigger: '$w->setCurrentPage(2001 + $i, 3)'
+        expect_args: ["2001", "3"]
+        provenance: "QCalendarWidget::currentPageChanged(int, int) (qdoc)"
+      - js: clicked
+        native: clicked
+        connect: "clicked(QDate)"
+        args: [{ name: date, type: date }]
+        trigger: 'Q_EMIT $w->clicked(QDate(2001, 1, 1))'
+        provenance: "QCalendarWidget::clicked(QDate) (qdoc); emitted directly, a real click needs user input"
+      - js: activated
+        native: activated
+        connect: "activated(QDate)"
+        args: [{ name: date, type: date }]
+        trigger: 'Q_EMIT $w->activated(QDate(2001, 1, 1))'
+        provenance: "QCalendarWidget::activated(QDate) (qdoc); emitted directly, a real activation needs user input"

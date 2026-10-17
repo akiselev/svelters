@@ -384,11 +384,29 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name",
+          "setup"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_editable_select_region (Gtk 4 docs); called through GIRepository (X1)"
+      },
+      "args": [
+        1,
+        3
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"cursor-position\") == V::I64(1) && h.get(o, \"selection-bound\") == V::I64(3)",
       "id": "svelters-api:v1:type:gtk:Gtk:Editable:method:select_region",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "selectRegion",
       "name": "select_region",
       "native": "gtk_editable_select_region",
       "origin": "gir",
@@ -414,6 +432,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "setup": "h.set_str(o, \"text\", \"hello\").unwrap();",
       "unsupported_reason": null
     },
     {
@@ -659,6 +678,11 @@
         "get": "gtk_editable_get_editable",
         "set": "gtk_editable_set_editable"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkEditable:editable (Gtk 4 docs); P prop; interface-owned, tested through GtkEntry"
+      },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Editable:prop:editable",
       "invocation": "reflected",
@@ -699,6 +723,11 @@
         "get": "gtk_editable_get_enable_undo",
         "set": "gtk_editable_set_enable_undo"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkEditable:enable-undo (Gtk 4 docs); P prop; interface-owned, tested through GtkEntry"
+      },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Editable:prop:enable-undo",
       "invocation": "reflected",
@@ -738,6 +767,11 @@
       "accessors": {
         "get": "gtk_editable_get_max_width_chars",
         "set": "gtk_editable_set_max_width_chars"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkEditable:max-width-chars (Gtk 4 docs); P prop; interface-owned, tested through GtkEntry"
       },
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:Editable:prop:max-width-chars",
@@ -875,6 +909,11 @@
         "get": "gtk_editable_get_width_chars",
         "set": "gtk_editable_set_width_chars"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkEditable:width-chars (Gtk 4 docs); P prop; interface-owned, tested through GtkEntry"
+      },
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:Editable:prop:width-chars",
       "invocation": "reflected",
@@ -917,6 +956,11 @@
       "accessors": {
         "get": "gtk_editable_get_alignment",
         "set": "gtk_editable_set_alignment"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkEditable:xalign (Gtk 4 docs); P prop; interface-owned, tested through GtkEntry"
       },
       "default": 0.0,
       "id": "svelters-api:v1:type:gtk:Gtk:Editable:prop:xalign",
@@ -996,6 +1040,16 @@
       }
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GtkEditable::delete-text, run-last (Gtk 4 docs); delivery only"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -1028,9 +1082,27 @@
         "origin": "runtime",
         "return_gtype": "void"
       },
-      "sync_required": false
+      "sync_required": false,
+      "trigger": {
+        "native": "set_text",
+        "origin": "manual",
+        "values": [
+          "hello",
+          "hello2"
+        ]
+      }
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GtkEditable::insert-text, run-last (Gtk 4 docs); delivery only, position is an in/out pointer"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -1068,7 +1140,15 @@
         "origin": "runtime",
         "return_gtype": "void"
       },
-      "sync_required": false
+      "sync_required": false,
+      "trigger": {
+        "native": "set_text",
+        "origin": "manual",
+        "values": [
+          "hello",
+          "hello2"
+        ]
+      }
     },
     {
       "annotated": {

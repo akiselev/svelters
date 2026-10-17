@@ -1,0 +1,9 @@
+properties:
+  - name: digits
+    provenance: "GtkScale:digits, -1..64 (Gtk 4 docs)"
+  - name: draw-value
+    provenance: "GtkScale:draw-value (Gtk 4 docs)"
+  - name: has-origin
+    provenance: "GtkScale:has-origin (Gtk 4 docs)"
+  - name: value-pos
+    provenance: "GtkScale:value-pos, GtkPositionType (Gtk 4 docs)"

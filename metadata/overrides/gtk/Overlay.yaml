@@ -1,0 +1,50 @@
+children:
+  policy: named_slots
+  default_slot: child
+  slots:
+    - name: child
+      content: widget
+      accepts: [Gtk.Widget]
+      route_by_kind: false
+      cardinality: one
+      order: none
+      default: {kind: none}
+      on_remove: empty
+      attrs: []
+      requires: []
+      ops:
+        get:    {native: "GtkOverlay::get_child() const"}
+        set:    {native: "GtkOverlay::set_child(GtkWidget*)", args: [child], effects: {child: parented, old: unparented}}
+        remove: {native: "GtkOverlay::set_child(GtkWidget*)", args: [null], effects: {child: unparented}}
+      verify: {}
+      provenance: [{origin: gir, ref: "gtk_overlay_set_child"}]
+    - name: overlays
+      content: widget
+      accepts: [Gtk.Widget]
+      route_by_kind: false
+      cardinality: many
+      order: append_only
+      default: {kind: none}
+      on_remove: empty
+      attrs:
+        - name: measure
+          type: bool
+          default: false
+          samples: [true, false]
+          set: {native: "GtkOverlay::set_measure_overlay(GtkWidget*, gboolean)", args: [child, value]}
+          get: {native: "GtkOverlay::get_measure_overlay(GtkWidget*)", args: [child], rust: is_measure_overlay}
+          provenance: [{origin: gir, ref: "gtk_overlay_set_measure_overlay"}]
+        - name: clip
+          type: bool
+          default: false
+          samples: [true, false]
+          set: {native: "GtkOverlay::set_clip_overlay(GtkWidget*, gboolean)", args: [child, value]}
+          get: {native: "GtkOverlay::get_clip_overlay(GtkWidget*)", args: [child], rust: is_clip_overlay}
+          provenance: [{origin: gir, ref: "gtk_overlay_set_clip_overlay"}]
+      requires: []
+      ops:
+        get:    {contains: parent}
+        insert: {native: "GtkOverlay::add_overlay(GtkWidget*)", args: [child], effects: {child: parented}}
+        remove: {native: "GtkOverlay::remove_overlay(GtkWidget*)", args: [child], effects: {child: unparented}}
+      verify: {}
+      provenance: [{origin: gir, ref: "gtk_overlay_add_overlay"}, {origin: gir, ref: "gtk_overlay_remove_overlay"}]

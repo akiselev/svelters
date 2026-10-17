@@ -1,0 +1,19 @@
+# Element `mdiarea`. The `subwindows` many slot is blocked (gap:G13): QMdiArea has no count()/indexOf()/
+# itemAt(); subWindowList() returns a list of QMdiSubWindow wrappers. Probe (Qt 6): addSubWindow(w) wraps w in a
+# QMdiSubWindow (w->parent() is the wrapper); removeSubWindow(w) reparents w to null but leaves the empty wrapper in
+# the area's list; the wrapper is only dropped by removeSubWindow(wrapper).
+elements:
+  - tag: mdiarea
+    construct: { class: QMdiArea }
+    props:
+      - { js: activationOrder, native: activationOrder, provenance: "QMdiArea::activationOrder (qdoc); enum typed by the S1 value model (ABI v3)" }
+      - { js: documentMode, native: documentMode, provenance: "QMdiArea::documentMode (qdoc)" }
+      - { js: tabPosition, native: tabPosition, provenance: "QMdiArea::tabPosition (qdoc); enum typed by the S1 value model (ABI v3)" }
+      - { js: tabShape, native: tabShape, provenance: "QMdiArea::tabShape (qdoc); enum typed by the S1 value model (ABI v3)" }
+      - { js: tabsClosable, native: tabsClosable, provenance: "QMdiArea::tabsClosable (qdoc)" }
+      - { js: tabsMovable, native: tabsMovable, provenance: "QMdiArea::tabsMovable (qdoc)" }
+      - { js: viewMode, native: viewMode, provenance: "QMdiArea::viewMode (qdoc); enum typed by the S1 value model (ABI v3)" }
+    methods:
+      - { js: cascadeSubWindows, native: cascadeSubWindows, provenance: "QMdiArea::cascadeSubWindows() slot (qdoc)" }
+      - { js: tileSubWindows, native: tileSubWindows, provenance: "QMdiArea::tileSubWindows() slot (qdoc)" }
+      - { js: closeAllSubWindows, native: closeAllSubWindows, provenance: "QMdiArea::closeAllSubWindows() slot (qdoc)" }

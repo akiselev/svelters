@@ -1723,6 +1723,10 @@
       "type": {
         "gtype": "PangoOverline",
         "native": null,
+        "nicks": [
+          "none",
+          "single"
+        ],
         "nullable": false,
         "ref": "enum<svelters-api:v1:type:gtk:Pango:Overline>"
       }
@@ -2560,6 +2564,12 @@
       "type": {
         "gtype": "PangoShowFlags",
         "native": null,
+        "nicks": [
+          "none",
+          "spaces",
+          "line-breaks",
+          "ignorables"
+        ],
         "nullable": false,
         "ref": "flags<svelters-api:v1:type:gtk:Pango:ShowFlags>"
       }
@@ -2761,6 +2771,17 @@
       "type": {
         "gtype": "PangoStretch",
         "native": null,
+        "nicks": [
+          "ultra-condensed",
+          "extra-condensed",
+          "condensed",
+          "semi-condensed",
+          "normal",
+          "semi-expanded",
+          "expanded",
+          "extra-expanded",
+          "ultra-expanded"
+        ],
         "nullable": false,
         "ref": "enum<svelters-api:v1:type:gtk:Pango:Stretch>"
       }
@@ -2995,6 +3016,11 @@
       "type": {
         "gtype": "PangoStyle",
         "native": null,
+        "nicks": [
+          "normal",
+          "oblique",
+          "italic"
+        ],
         "nullable": false,
         "ref": "enum<svelters-api:v1:type:gtk:Pango:Style>"
       }
@@ -3152,6 +3178,12 @@
       "type": {
         "gtype": "PangoTextTransform",
         "native": null,
+        "nicks": [
+          "none",
+          "lowercase",
+          "uppercase",
+          "capitalize"
+        ],
         "nullable": false,
         "ref": "enum<svelters-api:v1:type:gtk:Pango:TextTransform>"
       }
@@ -3230,6 +3262,16 @@
       "type": {
         "gtype": "PangoUnderline",
         "native": null,
+        "nicks": [
+          "none",
+          "single",
+          "double",
+          "low",
+          "error",
+          "single-line",
+          "double-line",
+          "error-line"
+        ],
         "nullable": false,
         "ref": "enum<svelters-api:v1:type:gtk:Pango:Underline>"
       }
@@ -3386,6 +3428,15 @@
       "type": {
         "gtype": "PangoVariant",
         "native": null,
+        "nicks": [
+          "normal",
+          "small-caps",
+          "all-small-caps",
+          "petite-caps",
+          "all-petite-caps",
+          "unicase",
+          "title-caps"
+        ],
         "nullable": false,
         "ref": "enum<svelters-api:v1:type:gtk:Pango:Variant>"
       }

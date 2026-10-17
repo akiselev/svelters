@@ -1,0 +1,56 @@
+properties:
+  - name: autohide
+    js_name: autohide
+    provenance: "GtkPopover:autohide (Gtk 4 docs)"
+  - name: has-arrow
+    js_name: hasArrow
+    provenance: "GtkPopover:has-arrow (Gtk 4 docs)"
+  - name: position
+    js_name: position
+    provenance: "GtkPopover:position (Gtk 4 docs); PositionType nick"
+  - name: cascade-popdown
+    js_name: cascadePopdown
+    provenance: "GtkPopover:cascade-popdown (Gtk 4 docs)"
+signals:
+  - name: closed
+    handler_result: none
+    sync_required: false
+    trigger: {rust: 'o.emit_by_name::<()>("closed", &[]);', values: [1, 2, 3]}
+    provenance: "GtkPopover::closed, run-last, void (Gtk 4 docs)"
+  - name: activate-default
+    handler_result: none
+    sync_required: false
+    provenance: "GtkPopover::activate-default, action signal (Gtk 4 docs)"
+methods:
+  - name: popup
+    js_name: popup
+    dispatch: zero_arg
+    setup: 'let b = gtk::Button::new(); let win = gtk::Window::new(); win.set_child(Some(&b)); win.present(); h.widget(o).set_parent(&b); std::mem::forget(win);'
+    expect: 'w.is_visible()'
+    provenance: "gtk_popover_popup (Gtk 4 docs)"
+  - name: popdown
+    js_name: popdown
+    dispatch: zero_arg
+    setup: 'let b = gtk::Button::new(); let win = gtk::Window::new(); win.set_child(Some(&b)); win.present(); h.widget(o).set_parent(&b); std::mem::forget(win); h.widget(o).downcast_ref::<gtk::Popover>().unwrap().popup();'
+    expect: '!w.is_visible()'
+    provenance: "gtk_popover_popdown (Gtk 4 docs)"
+children:
+  policy: named_slots
+  default_slot: child
+  slots:
+    - name: child
+      content: widget
+      accepts: [Gtk.Widget]
+      route_by_kind: false
+      cardinality: one
+      order: none
+      default: {kind: none}
+      on_remove: empty
+      attrs: []
+      requires: []
+      ops:
+        get:    {native: "GtkPopover::get_child() const"}
+        set:    {native: "GtkPopover::set_child(GtkWidget*)", args: [child], effects: {child: parented, old: unparented}}
+        remove: {native: "GtkPopover::set_child(GtkWidget*)", args: [null], effects: {child: unparented}}
+      verify: {}
+      provenance: [{origin: gir, ref: "gtk_popover_set_child"}]

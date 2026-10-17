@@ -1,0 +1,3 @@
+properties:
+  - name: adjustment
+    provenance: "GtkScrollbar:adjustment (Gtk 4 docs); object property, handle round-trip"

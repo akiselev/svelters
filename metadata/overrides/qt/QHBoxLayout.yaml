@@ -1,0 +1,2 @@
+unexposed:
+  reason: "A standalone layout is not an element: the box and frame elements are the layout-managed widgets (orientation horizontal is their prop)."

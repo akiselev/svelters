@@ -1,6 +1,10 @@
 // @svelters/dom: the smallest DOM that stock Svelte 5 client output (fragments: 'tree') runs on,
 // translating tree/attribute/listener mutations into SveltersHost ops.
 // Mapping rules live in docs/notes/p1-js-lane.md. Plain ES2022, no Node built-ins.
+// String attributes are coerced from the host's property descriptors (the renderer's `coerceAttribute`),
+// not from a list kept here.
+
+import { coerceAttribute } from '@svelters/renderer/coerce';
 
 const NS_HTML = 'http://www.w3.org/1999/xhtml';
 
@@ -14,20 +18,8 @@ const SIGNAL_TO_EVENT = Object.fromEntries(Object.entries(EVENT_TO_SIGNAL).map((
 /** Attributes that stay JS-side and never become host props. */
 const JS_ONLY_ATTRS = new Set(['class', 'style', 'id']);
 
-/** Props whose string attribute value is coerced before reaching the host. */
-const INT_PROPS = new Set(['spacing']);
-
 const signalFor = (type) => EVENT_TO_SIGNAL[type] ?? type;
 const eventFor = (signal) => SIGNAL_TO_EVENT[signal] ?? signal;
-
-function coerce(name, value) {
-  if (INT_PROPS.has(name)) {
-    const n = Number(value);
-    if (!Number.isInteger(n)) throw new TypeError(`prop ${name} expects an integer, got ${JSON.stringify(value)}`);
-    return n;
-  }
-  return value;
-}
 
 /**
  * Build a DOM bound to `host`. Returns the classes, `document`, the JS-only `root` element
@@ -346,7 +338,7 @@ export function createDom(host) {
       v = String(v);
       this._a[k] = v;
       if (k === 'slot' || k === 'data-slot') this._slot = v;
-      else if (!JS_ONLY_ATTRS.has(k)) setNativeProp(this, k, coerce(k, v));
+      else if (!JS_ONLY_ATTRS.has(k)) setNativeProp(this, k, coerceAttribute(host, this.localName, k, v));
     }
     setAttributeNS(ns, k, v) { this.setAttribute(k, v); }
     getAttribute(k) { return this._a[k] ?? null; }

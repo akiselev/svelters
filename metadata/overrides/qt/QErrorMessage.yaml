@@ -1,0 +1,5 @@
+elements:
+  - tag: errormessage
+    construct: { class: QErrorMessage }
+    methods:
+      - { js: showMessage, native: showMessage, params: [string], provenance: "QErrorMessage::showMessage(const QString &) slot (qdoc); non-blocking" }

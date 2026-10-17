@@ -1,0 +1,6 @@
+elements:
+  - tag: wizardpage
+    construct: { class: QWizardPage }
+    props:
+      - { js: title, native: title, provenance: "QWizardPage::title (qdoc)" }
+      - { js: subTitle, native: subTitle, provenance: "QWizardPage::subTitle (qdoc)" }

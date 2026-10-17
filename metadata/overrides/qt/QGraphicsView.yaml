@@ -1,0 +1,2 @@
+unexposed:
+  reason: "Needs a QGraphicsScene of non-widget items (gap G7); no widget surface of its own worth exposing."

@@ -1,0 +1,6 @@
+elements:
+  - tag: fontdialog
+    construct: { class: QFontDialog }
+    props:
+      - { js: currentFont, native: currentFont, provenance: "QFontDialog::currentFont (qdoc); font string form (ABI v3)" }
+      - { js: options, native: options, provenance: "QFontDialog::options (qdoc); flags (ABI v3)" }

@@ -91,6 +91,158 @@
     "svelters-api:v1:type:gtk:Pango:WrapMode"
   ],
   "id": "svelters-api:v1:type:gtk:Gtk:Label",
+  "inherited": {
+    "methods": [
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:grab_focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "grab_focus",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:queue_draw",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "queue_draw",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:queue_resize",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "queue_resize",
+        "origin": "manual"
+      }
+    ],
+    "properties": [
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:can-focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "can-focus",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:css-classes",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "css-classes",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:focusable",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "focusable",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:halign",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "halign",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:height-request",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "height-request",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:hexpand",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "hexpand",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-bottom",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "margin-bottom",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-end",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "margin-end",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-start",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "margin-start",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-top",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "margin-top",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:name",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "name",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:opacity",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "opacity",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:sensitive",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "sensitive",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:tooltip-markup",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "tooltip-markup",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:tooltip-text",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "tooltip-text",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:valign",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "valign",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:vexpand",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "vexpand",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:visible",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "visible",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:width-request",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "width-request",
+        "origin": "manual"
+      }
+    ],
+    "signals": [
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:signal:hide",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "hide",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:signal:show",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "show",
+        "origin": "manual"
+      }
+    ]
+  },
   "interfaces": [
     "Gtk.Accessible",
     "Gtk.AccessibleHypertext",
@@ -447,11 +599,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name",
+          "setup"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_label_get_text (Gtk 4 docs); called through GIRepository (X1)"
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == V::Str(\"shown\".into())",
       "id": "svelters-api:v1:type:gtk:Gtk:Label:method:get_text",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "get_text",
       "name": "get_text",
       "native": "gtk_label_get_text",
       "origin": "gir",
@@ -462,6 +629,7 @@
         "ownership": "borrowed",
         "type": "string"
       },
+      "setup": "h.set_str(o, \"label\", \"shown\").unwrap();",
       "unsupported_reason": null
     },
     {
@@ -591,11 +759,29 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name",
+          "setup"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_label_select_region (Gtk 4 docs); called through GIRepository (X1)"
+      },
+      "args": [
+        1,
+        3
+      ],
+      "dispatch": "dynamic",
+      "expect": "r == V::Null",
       "id": "svelters-api:v1:type:gtk:Gtk:Label:method:select_region",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "select_region",
       "name": "select_region",
       "native": "gtk_label_select_region",
       "origin": "gir",
@@ -621,6 +807,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "setup": "h.set_str(o, \"label\", \"hello\").unwrap(); h.set_bool(o, \"selectable\", true).unwrap();",
       "unsupported_reason": null
     },
     {
@@ -988,11 +1175,27 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_label_set_text (Gtk 4 docs); called through GIRepository (X1)"
+      },
+      "args": [
+        "plain"
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"label\") == V::Str(\"plain\".into())",
       "id": "svelters-api:v1:type:gtk:Gtk:Label:method:set_text",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "set_text",
       "name": "set_text",
       "native": "gtk_label_set_text",
       "origin": "gir",
@@ -1280,6 +1483,11 @@
         "get": "gtk_label_get_ellipsize",
         "set": "gtk_label_set_ellipsize"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkLabel:ellipsize, PangoEllipsizeMode (Gtk 4 docs); Pango nicks kept on the property (A1-GAPS G11)"
+      },
       "default": "none",
       "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:ellipsize",
       "invocation": "reflected",
@@ -1305,6 +1513,12 @@
       "type": {
         "gtype": "PangoEllipsizeMode",
         "native": null,
+        "nicks": [
+          "none",
+          "start",
+          "middle",
+          "end"
+        ],
         "nullable": false,
         "ref": "enum<svelters-api:v1:type:gtk:Pango:EllipsizeMode>"
       }
@@ -1359,6 +1573,11 @@
       "accessors": {
         "get": "gtk_label_get_justify",
         "set": "gtk_label_set_justify"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkLabel:justify (Gtk 4 docs)"
       },
       "default": "left",
       "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:justify",
@@ -1446,6 +1665,11 @@
         "get": "gtk_label_get_lines",
         "set": "gtk_label_set_lines"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkLabel:lines (Gtk 4 docs)"
+      },
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:lines",
       "invocation": "reflected",
@@ -1488,6 +1712,11 @@
       "accessors": {
         "get": "gtk_label_get_max_width_chars",
         "set": "gtk_label_set_max_width_chars"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkLabel:max-width-chars (Gtk 4 docs)"
       },
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:max-width-chars",
@@ -1654,6 +1883,11 @@
         "get": "gtk_label_get_selectable",
         "set": "gtk_label_set_selectable"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkLabel:selectable (Gtk 4 docs)"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:selectable",
       "invocation": "reflected",
@@ -1775,6 +2009,11 @@
         "get": "gtk_label_get_use_markup",
         "set": "gtk_label_set_use_markup"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkLabel:use-markup (Gtk 4 docs)"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:use-markup",
       "invocation": "reflected",
@@ -1814,6 +2053,11 @@
       "accessors": {
         "get": "gtk_label_get_use_underline",
         "set": "gtk_label_set_use_underline"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkLabel:use-underline (Gtk 4 docs)"
       },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:use-underline",
@@ -1898,6 +2142,11 @@
         "get": "gtk_label_get_wrap",
         "set": "gtk_label_set_wrap"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkLabel:wrap (Gtk 4 docs)"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:wrap",
       "invocation": "reflected",
@@ -1938,6 +2187,11 @@
         "get": "gtk_label_get_wrap_mode",
         "set": "gtk_label_set_wrap_mode"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkLabel:wrap-mode, PangoWrapMode (Gtk 4 docs)"
+      },
       "default": "word",
       "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:wrap-mode",
       "invocation": "reflected",
@@ -1963,6 +2217,12 @@
       "type": {
         "gtype": "PangoWrapMode",
         "native": null,
+        "nicks": [
+          "word",
+          "char",
+          "word-char",
+          "none"
+        ],
         "nullable": false,
         "ref": "enum<svelters-api:v1:type:gtk:Pango:WrapMode>"
       }
@@ -1977,6 +2237,11 @@
       "accessors": {
         "get": "gtk_label_get_xalign",
         "set": "gtk_label_set_xalign"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkLabel:xalign (Gtk 4 docs)"
       },
       "default": 0.5,
       "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:xalign",
@@ -2020,6 +2285,11 @@
       "accessors": {
         "get": "gtk_label_get_yalign",
         "set": "gtk_label_set_yalign"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkLabel:yalign (Gtk 4 docs)"
       },
       "default": 0.5,
       "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:yalign",
@@ -2083,6 +2353,16 @@
       "sync_required": false
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GtkLabel::activate-link, run-last, returns gboolean (Gtk 4 docs); X2 sync handler"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -2110,7 +2390,16 @@
         "origin": "runtime",
         "return_gtype": "gboolean"
       },
-      "sync_required": false
+      "sync_required": true,
+      "trigger": {
+        "origin": "manual",
+        "rust": "let _ = o.emit_by_name::<bool>(\"activate-link\", &[&\"https://example.org\"]);",
+        "values": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
     },
     {
       "connection": {

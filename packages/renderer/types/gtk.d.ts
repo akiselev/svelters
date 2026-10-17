@@ -180,6 +180,7 @@ export interface GtkCalendarProps extends GtkWidgetProps {
   "onday-selected"?: SvlHandler;
   "onnext-month"?: SvlHandler;
   "onnext-year"?: SvlHandler;
+  "onnotify::day"?: SvlHandler;
   "onprev-month"?: SvlHandler;
   "onprev-year"?: SvlHandler;
 }
@@ -342,6 +343,7 @@ export interface GtkCheckButtonProps extends GtkWidgetProps, GtkActionableProps 
   label?: string;
   useUnderline?: boolean;
   onactivate?: SvlHandler;
+  "onnotify::active"?: SvlHandler;
   ontoggled?: SvlHandler;
 }
 export interface GtkClosureExpressionProps extends GtkExpressionProps {
@@ -536,6 +538,7 @@ export interface GtkEditableProps {
 }
 export interface GtkEditableLabelProps extends GtkWidgetProps, GtkEditableProps {
   editing?: boolean;
+  "onnotify::editing"?: SvlHandler;
 }
 export interface GtkEmojiChooserProps extends GtkPopoverProps {
   "onemoji-picked"?: SvlHandler;
@@ -643,6 +646,7 @@ export interface GtkExpanderProps extends GtkWidgetProps {
   useMarkup?: boolean;
   useUnderline?: boolean;
   onactivate?: SvlHandler;
+  "onnotify::expanded"?: SvlHandler;
 }
 export interface GtkExpressionProps {
 }
@@ -995,6 +999,7 @@ export interface GtkLevelBarProps extends GtkWidgetProps, GtkAccessibleRangeProp
   minValue?: number;
   mode?: "continuous" | "discrete";
   value?: number;
+  "onnotify::value"?: SvlHandler;
   "onoffset-changed"?: SvlHandler;
 }
 export interface GtkLinkButtonProps extends GtkButtonProps {
@@ -1140,6 +1145,7 @@ export interface GtkNotebookProps extends GtkWidgetProps {
   "oncreate-window"?: SvlHandler;
   "onfocus-tab"?: SvlHandler;
   "onmove-focus-out"?: SvlHandler;
+  "onnotify::page"?: SvlHandler;
   "onpage-added"?: SvlHandler;
   "onpage-removed"?: SvlHandler;
   "onpage-reordered"?: SvlHandler;
@@ -1205,7 +1211,7 @@ export interface GtkParamSpecExpressionProps {
 export interface GtkPasswordEntryProps extends GtkWidgetProps, GtkEditableProps {
   activatesDefault?: boolean;
   extraMenu?: number;
-  placeholderText?: string;
+  placeholder?: string;
   showPeekIcon?: boolean;
   onactivate?: SvlHandler;
 }
@@ -1394,7 +1400,7 @@ export interface GtkSearchEntryProps extends GtkWidgetProps, GtkEditableProps {
   inputHints?: Array<"spellcheck" | "no-spellcheck" | "word-completion" | "lowercase" | "uppercase-chars" | "uppercase-words" | "uppercase-sentences" | "inhibit-osk" | "vertical-writing" | "emoji" | "no-emoji" | "private">;
   inputPurpose?: "free-form" | "alpha" | "digits" | "number" | "phone" | "url" | "email" | "name" | "password" | "pin" | "terminal";
   keyCaptureWidget?: number;
-  placeholderText?: string;
+  placeholder?: string;
   searchDelay?: number;
   onactivate?: SvlHandler;
   "onnext-match"?: SvlHandler;
@@ -1568,12 +1574,14 @@ export interface GtkSpinButtonProps extends GtkWidgetProps, GtkAccessibleRangePr
   onactivate?: SvlHandler;
   "onchange-value"?: SvlHandler;
   oninput?: SvlHandler;
+  "onnotify::value"?: SvlHandler;
   onoutput?: SvlHandler;
   "onvalue-changed"?: SvlHandler;
   onwrapped?: SvlHandler;
 }
 export interface GtkSpinnerProps extends GtkWidgetProps {
   spinning?: boolean;
+  "onnotify::spinning"?: SvlHandler;
 }
 export interface GtkStackProps extends GtkWidgetProps {
   hhomogeneous?: boolean;
@@ -1635,6 +1643,7 @@ export interface GtkSwitchProps extends GtkWidgetProps, GtkActionableProps {
   active?: boolean;
   state?: boolean;
   onactivate?: SvlHandler;
+  "onnotify::active"?: SvlHandler;
   "onstate-set"?: SvlHandler;
 }
 export interface GtkSymbolicPaintableProps {
@@ -1652,7 +1661,7 @@ export interface GtkTextProps extends GtkWidgetProps, GtkAccessibleTextProps, Gt
   invisibleCharSet?: boolean;
   maxLength?: number;
   overwriteMode?: boolean;
-  placeholderText?: string;
+  placeholder?: string;
   propagateTextWidth?: boolean;
   tabs?: Boxed<"Pango.TabArray">;
   truncateMultiline?: boolean;
@@ -1828,6 +1837,7 @@ export interface GtkTextViewProps extends GtkWidgetProps, GtkAccessibleTextProps
 export interface GtkToggleButtonProps extends GtkButtonProps {
   active?: boolean;
   group?: number;
+  "onnotify::active"?: SvlHandler;
   ontoggled?: SvlHandler;
 }
 export interface GtkTooltipProps {
@@ -1974,6 +1984,25 @@ export interface GtkWidgetProps extends GtkAccessibleProps, GtkBuildableProps, G
   vexpandSet?: boolean;
   visible?: boolean;
   widthRequest?: number;
+  'parent:clip'?: boolean;
+  'parent:column'?: number;
+  'parent:columnSpan'?: number;
+  'parent:detachable'?: boolean;
+  'parent:iconName'?: string;
+  'parent:measure'?: boolean;
+  'parent:menuLabel'?: string;
+  'parent:name'?: string;
+  'parent:needsAttention'?: boolean;
+  'parent:reorderable'?: boolean;
+  'parent:row'?: number;
+  'parent:rowSpan'?: number;
+  'parent:tabExpand'?: boolean;
+  'parent:tabFill'?: boolean;
+  'parent:tabLabel'?: string;
+  'parent:title'?: string;
+  'parent:useUnderline'?: boolean;
+  'parent:x'?: number;
+  'parent:y'?: number;
   ondestroy?: SvlHandler;
   "ondirection-changed"?: SvlHandler;
   onhide?: SvlHandler;
@@ -2037,10 +2066,8 @@ export interface GtkElements {
   aboutdialog: GtkAboutDialogProps;
   actionbar: GtkActionBarProps;
   appchooserbutton: GtkAppChooserButtonProps;
-  appchooserdialog: GtkAppChooserDialogProps;
   appchooserwidget: GtkAppChooserWidgetProps;
   aspectframe: GtkAspectFrameProps;
-  assistant: GtkAssistantProps;
   box: GtkBoxProps;
   button: GtkButtonProps;
   calendar: GtkCalendarProps;
@@ -2048,13 +2075,11 @@ export interface GtkElements {
   centerbox: GtkCenterBoxProps;
   checkbutton: GtkCheckButtonProps;
   colorbutton: GtkColorButtonProps;
-  colorchooserdialog: GtkColorChooserDialogProps;
   colorchooserwidget: GtkColorChooserWidgetProps;
   colordialogbutton: GtkColorDialogButtonProps;
   columnview: GtkColumnViewProps;
   combobox: GtkComboBoxProps;
   comboboxtext: GtkComboBoxTextProps;
-  dialog: GtkDialogProps;
   dragicon: GtkDragIconProps;
   drawingarea: GtkDrawingAreaProps;
   dropdown: GtkDropDownProps;
@@ -2062,13 +2087,11 @@ export interface GtkElements {
   emojichooser: GtkEmojiChooserProps;
   entry: GtkEntryProps;
   expander: GtkExpanderProps;
-  filechooserdialog: GtkFileChooserDialogProps;
   filechooserwidget: GtkFileChooserWidgetProps;
   fixed: GtkFixedProps;
   flowbox: GtkFlowBoxProps;
   flowboxchild: GtkFlowBoxChildProps;
   fontbutton: GtkFontButtonProps;
-  fontchooserdialog: GtkFontChooserDialogProps;
   fontchooserwidget: GtkFontChooserWidgetProps;
   fontdialogbutton: GtkFontDialogButtonProps;
   frame: GtkFrameProps;
@@ -2079,7 +2102,6 @@ export interface GtkElements {
   headerbar: GtkHeaderBarProps;
   iconview: GtkIconViewProps;
   image: GtkImageProps;
-  infobar: GtkInfoBarProps;
   inscription: GtkInscriptionProps;
   label: GtkLabelProps;
   levelbar: GtkLevelBarProps;
@@ -2090,10 +2112,8 @@ export interface GtkElements {
   lockbutton: GtkLockButtonProps;
   mediacontrols: GtkMediaControlsProps;
   menubutton: GtkMenuButtonProps;
-  messagedialog: GtkMessageDialogProps;
   notebook: GtkNotebookProps;
   overlay: GtkOverlayProps;
-  pagesetupunixdialog: GtkPageSetupUnixDialogProps;
   paned: GtkPanedProps;
   passwordentry: GtkPasswordEntryProps;
   picture: GtkPictureProps;
@@ -2101,7 +2121,6 @@ export interface GtkElements {
   popoverbin: GtkPopoverBinProps;
   popovermenu: GtkPopoverMenuProps;
   popovermenubar: GtkPopoverMenuBarProps;
-  printunixdialog: GtkPrintUnixDialogProps;
   progressbar: GtkProgressBarProps;
   range: GtkRangeProps;
   revealer: GtkRevealerProps;
@@ -2116,13 +2135,11 @@ export interface GtkElements {
   shortcutsgroup: GtkShortcutsGroupProps;
   shortcutssection: GtkShortcutsSectionProps;
   shortcutsshortcut: GtkShortcutsShortcutProps;
-  shortcutswindow: GtkShortcutsWindowProps;
   spinbutton: GtkSpinButtonProps;
   spinner: GtkSpinnerProps;
   stack: GtkStackProps;
   stacksidebar: GtkStackSidebarProps;
   stackswitcher: GtkStackSwitcherProps;
-  statusbar: GtkStatusbarProps;
   switch: GtkSwitchProps;
   text: GtkTextProps;
   textview: GtkTextViewProps;

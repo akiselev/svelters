@@ -1,0 +1,488 @@
+// ---- virtuallist (M5): a JS-backed model behind QListView -----------------------------------------
+// Hand-written (not generated from metadata): the portable `virtuallist` kind of
+// plans/architecture/backend-abi.md, "Model-view protocol (M5)". Included by backend.cpp.in inside
+// the anonymous namespace, after the runtime helpers and the value converters.
+//
+// Strategy (see plans/milestones/M5-lists.md): the model is a QAbstractListModel of ids that JS
+// changes with `splice`; rowCount()/data() never call JS. Rows are Svelte components in a pool of
+// widgets placed over the viewport (the "viewport-pooled" approach): the view lays out empty
+// uniform-height items (a delegate that paints only the selection), and this class keeps one row
+// widget per visible item, binding and unbinding pool as the visible range changes. Row widgets
+// are children of the viewport, so QWidget::scroll moves them with the content and a relayout only
+// has to fix the pool that entered or left.
+
+constexpr svl_id kVListKind = 0x4002;
+constexpr svl_id VL_P_SELECTED = 0x4121, VL_P_SELECTION = 0x4122, VL_P_LAYOUT = 0x4123, VL_P_ROW_HEIGHT = 0x4124,
+                 VL_P_MIN_HEIGHT = 0x4125, VL_P_HEXPAND = 0x4126, VL_P_VEXPAND = 0x4127;
+constexpr svl_id VL_M_SPLICE = 0x4221, VL_M_COUNT = 0x4222, VL_M_SCROLL_TO = 0x4223, VL_M_SET_ROW = 0x4224,
+                 VL_M_ROW_AT = 0x4225;
+constexpr svl_id VL_S_SETUP = 0x4321, VL_S_BIND = 0x4322, VL_S_UNBIND = 0x4323, VL_S_TEARDOWN = 0x4324,
+                 VL_S_ACTIVATE = 0x4325, VL_S_SELECT = 0x4326;
+
+struct SvIdModel : QAbstractListModel {
+  std::vector<uint64_t> ids;
+
+  int rowCount(const QModelIndex &p = QModelIndex()) const override { return p.isValid() ? 0 : static_cast<int>(ids.size()); }
+  QVariant data(const QModelIndex &i, int role) const override {
+    if (role == Qt::UserRole && i.isValid() && static_cast<size_t>(i.row()) < ids.size())
+      return QVariant::fromValue<qulonglong>(ids[static_cast<size_t>(i.row())]);
+    return QVariant();
+  }
+
+  // One splice is the fewest notifications Qt offers: a same-size replace is one dataChanged, otherwise
+  // one rowsRemoved and/or one rowsInserted (there is no move: a move is remove + insert).
+  bool splice(qint64 pos, qint64 removed, const std::vector<uint64_t> &add, std::string &er) {
+    const qint64 n = static_cast<qint64>(ids.size());
+    if (pos < 0 || removed < 0 || pos > n || removed > n - pos) {
+      er = "splice(" + std::to_string(pos) + ", " + std::to_string(removed) + ") is out of range for " + std::to_string(n) + " items";
+      return false;
+    }
+    const qint64 added = static_cast<qint64>(add.size());
+    if (removed == added && added > 0) {
+      std::copy(add.begin(), add.end(), ids.begin() + pos);
+      emit dataChanged(index(static_cast<int>(pos)), index(static_cast<int>(pos + added - 1)));
+      return true;
+    }
+    if (removed > 0) {
+      beginRemoveRows(QModelIndex(), static_cast<int>(pos), static_cast<int>(pos + removed - 1));
+      ids.erase(ids.begin() + pos, ids.begin() + pos + removed);
+      endRemoveRows();
+    }
+    if (added > 0) {
+      beginInsertRows(QModelIndex(), static_cast<int>(pos), static_cast<int>(pos + added - 1));
+      ids.insert(ids.begin() + pos, add.begin(), add.end());
+      endInsertRows();
+    }
+    return true;
+  }
+};
+
+// Paints the selection and nothing else (the row widget on top is the content); fixed item size.
+struct SvRowDelegate : QStyledItemDelegate {
+  int w = 0;  // 0: as wide as the view
+  int h = 32;
+  QSize sizeHint(const QStyleOptionViewItem &opt, const QModelIndex &) const override {
+    return QSize(w > 0 ? w : std::max(opt.rect.width(), 1), h);
+  }
+};
+
+struct VlSlot {
+  uint64_t row = 0;
+  QPointer<QWidget> widget;
+  QPersistentModelIndex idx;  // the item this slot shows; follows the model's inserts and removes
+  uint64_t gen = 0;
+  bool bound = false;
+};
+
+struct SvVirtualList : QListView {
+  svl_handle h = 0;
+  SvIdModel *mdl = nullptr;
+  SvRowDelegate *dlg = nullptr;
+  std::vector<std::unique_ptr<VlSlot>> pool;
+  uint64_t next_row = 0;
+  unsigned listened = 0;  // bit (signal - VL_S_SETUP) while JS listens
+  bool quiet = false;     // a property write is changing the selection: do not report it
+  bool grid = false;
+  bool sel_none = false;
+  int row_height = 32;
+  bool busy = false;
+  QTimer *timer = nullptr;
+
+  SvVirtualList() {
+    mdl = new SvIdModel;
+    mdl->setParent(this);
+    dlg = new SvRowDelegate;
+    dlg->setParent(this);
+    setModel(mdl);
+    setItemDelegate(dlg);
+    setUniformItemSizes(true);
+    setEditTriggers(QAbstractItemView::NoEditTriggers);
+    setSelectionMode(QAbstractItemView::SingleSelection);
+    setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+    setAutoScroll(false);
+    timer = new QTimer(this);
+    timer->setSingleShot(true);
+    timer->setInterval(0);
+    QObject::connect(timer, &QTimer::timeout, this, [this] { relayout(); });
+    auto sched = [this] { schedule(); };
+    QObject::connect(mdl, &QAbstractItemModel::rowsInserted, this, sched);
+    QObject::connect(mdl, &QAbstractItemModel::rowsRemoved, this, sched);
+    QObject::connect(mdl, &QAbstractItemModel::dataChanged, this, sched);
+    QObject::connect(mdl, &QAbstractItemModel::modelReset, this, sched);
+    QObject::connect(mdl, &QAbstractItemModel::layoutChanged, this, sched);
+    QObject::connect(verticalScrollBar(), &QScrollBar::valueChanged, this, sched);
+    QObject::connect(horizontalScrollBar(), &QScrollBar::valueChanged, this, sched);
+    QObject::connect(selectionModel(), &QItemSelectionModel::currentChanged, this,
+                     [this](const QModelIndex &cur, const QModelIndex &) {
+                       if (!quiet) emit_sig(VL_S_SELECT, {cur.isValid() ? cur.row() : -1}, false);
+                     });
+    QObject::connect(this, &QAbstractItemView::activated, this,
+                     [this](const QModelIndex &i) { if (i.isValid()) emit_sig(VL_S_ACTIVATE, {i.row()}, false); });
+  }
+
+  ~SvVirtualList() override {
+    if (timer) timer->stop();
+  }
+
+  void flush_layout() { executeDelayedItemsLayout(); }
+
+  void schedule() {
+    if (timer && !timer->isActive()) timer->start();
+  }
+
+  void resizeEvent(QResizeEvent *e) override {
+    QListView::resizeEvent(e);
+    schedule();
+  }
+
+  void scrollContentsBy(int dx, int dy) override {
+    QListView::scrollContentsBy(dx, dy);
+    schedule();
+  }
+
+  // Raises a protocol signal if JS listens. Sync signals use call_sync so the content is in place
+  // before the next paint; a busy host queued the event itself.
+  void emit_sig(svl_id sig, std::initializer_list<qint64> args, bool sync) {
+    if (!(listened & (1u << (sig - VL_S_SETUP))) || !g.host) return;
+    svl_value vals[4] = {};
+    size_t n = 0;
+    for (qint64 a : args) {
+      vals[n].tag = SVL_I64;
+      vals[n].u.i = a;
+      ++n;
+    }
+    if (sync && g.host->call_sync) {
+      svl_value out{};
+      g.host->call_sync(g.host->self, h, sig, vals, n, &out);
+    } else if (g.host->post_event) {
+      g.host->post_event(g.host->self, h, sig, vals, n);
+    }
+  }
+
+  VlSlot *make_slot() {
+    pool.push_back(std::make_unique<VlSlot>());
+    VlSlot *s = pool.back().get();
+    s->row = ++next_row;
+    emit_sig(VL_S_SETUP, {static_cast<qint64>(s->row)}, true);
+    return s;
+  }
+
+  void unbind(VlSlot *s) {
+    if (!s->bound) return;
+    s->bound = false;
+    s->idx = QPersistentModelIndex();
+    if (s->widget) s->widget->hide();
+    emit_sig(VL_S_UNBIND, {static_cast<qint64>(s->row), static_cast<qint64>(s->gen)}, true);
+  }
+
+  void bind(VlSlot *s, int r) {
+    s->idx = QPersistentModelIndex(mdl->index(r));
+    s->bound = true;
+    ++s->gen;
+    emit_sig(VL_S_BIND,
+             {static_cast<qint64>(s->row), r, static_cast<qint64>(mdl->ids[static_cast<size_t>(r)]), static_cast<qint64>(s->gen)}, true);
+  }
+
+  void teardown_slot(size_t i) {
+    VlSlot *s = pool[i].get();
+    unbind(s);
+    const qint64 row = static_cast<qint64>(s->row);
+    pool.erase(pool.begin() + static_cast<std::ptrdiff_t>(i));
+    emit_sig(VL_S_TEARDOWN, {row}, true);
+  }
+
+  QModelIndex first_visible() const {
+    const int step = std::max(2, row_height / 4);
+    for (int y = 0; y < std::max(viewport()->height(), 1); y += step)
+      for (int x : {2, viewport()->width() / 2}) {
+        QModelIndex i = indexAt(QPoint(x, y));
+        if (i.isValid()) return i;
+        if (y > 4 * row_height) return QModelIndex();
+      }
+    return QModelIndex();
+  }
+
+  // Makes the pool match the visible range: new pool for a larger window, bindings for items that
+  // scrolled in, unbindings for items that scrolled out, geometry for everything bound.
+  void relayout() {
+    if (busy || !g.host) return;
+    busy = true;
+    QPointer<SvVirtualList> self(this);
+    executeDelayedItemsLayout();
+    const int n = mdl->rowCount();
+    int first = 0, last = -1;
+    if (n > 0) {
+      QModelIndex fi = first_visible();
+      if (fi.isValid()) {
+        first = fi.row();
+        last = first;
+        const int vh = viewport()->height();
+        for (int r = first + 1; r < n && r < first + 5000; ++r) {
+          if (visualRect(mdl->index(r)).top() > vh) break;
+          last = r;
+        }
+      }
+    }
+    const size_t need = last >= first ? static_cast<size_t>(last - first + 1) : 0;
+    const size_t want = need ? need + 2 : 0;
+    while (pool.size() < want) {
+      make_slot();
+      if (!self) return;
+    }
+    // Slots whose item left the window or was removed give up their binding.
+    std::unordered_map<int, VlSlot *> shown;
+    for (auto &s : pool) {
+      if (!s->bound) continue;
+      if (!s->idx.isValid() || s->idx.row() < first || s->idx.row() > last) {
+        unbind(s.get());
+        if (!self) return;
+      } else {
+        shown[s->idx.row()] = s.get();
+      }
+    }
+    for (int r = first; r <= last; ++r) {
+      if (shown.count(r)) continue;
+      VlSlot *free_slot = nullptr;
+      for (auto &s : pool)
+        if (!s->bound) {
+          free_slot = s.get();
+          break;
+        }
+      if (!free_slot) break;
+      bind(free_slot, r);
+      if (!self) return;
+      shown[r] = free_slot;
+    }
+    for (auto &s : pool) {
+      if (!s->widget) continue;
+      if (s->bound && s->idx.isValid()) {
+        const QRect rc = visualRect(s->idx);
+        if (s->widget->geometry() != rc) s->widget->setGeometry(rc);
+        if (!s->widget->isVisible()) s->widget->show();
+      } else if (s->widget->isVisible()) {
+        s->widget->hide();
+      }
+    }
+    // A pool that is much larger than the window (the list shrank, the window got smaller) gives
+    // back its unbound tail.
+    while (pool.size() > want + 8) {
+      size_t i = pool.size();
+      while (i > 0 && pool[i - 1]->bound) --i;
+      if (i == 0) break;
+      teardown_slot(i - 1);
+      if (!self) return;
+    }
+    busy = false;
+  }
+};
+
+SvVirtualList *vl_of(Entry &e) { return e.obj ? dynamic_cast<SvVirtualList *>(e.obj.data()) : nullptr; }
+
+bool vl_i64(const svl_value *v, qint64 &out) {
+  if (v->tag == SVL_I64) out = v->u.i;
+  else if (v->tag == SVL_F64) out = static_cast<qint64>(v->u.f);
+  else if (v->tag == SVL_STR) {  // a static attribute (`rowHeight="32"`) arrives as text
+    QString qs;
+    std::string er;
+    bool ok = Conv<QString>::in(v, qs, er);
+    if (ok) out = qs.toLongLong(&ok);
+    return ok;
+  } else return false;
+  return true;
+}
+
+svl_id vl_resolve(uint32_t what, std::string_view n) {
+  struct Row { uint32_t what; std::string_view name; svl_id id; };
+  static const Row rows[] = {
+      {SVL_PROP, "selected", VL_P_SELECTED}, {SVL_PROP, "selection", VL_P_SELECTION}, {SVL_PROP, "layout", VL_P_LAYOUT},
+      {SVL_PROP, "rowHeight", VL_P_ROW_HEIGHT}, {SVL_PROP, "minHeight", VL_P_MIN_HEIGHT},
+      {SVL_PROP, "hexpand", VL_P_HEXPAND}, {SVL_PROP, "vexpand", VL_P_VEXPAND},
+      {SVL_METHOD, "splice", VL_M_SPLICE}, {SVL_METHOD, "count", VL_M_COUNT}, {SVL_METHOD, "scrollTo", VL_M_SCROLL_TO},
+      {SVL_METHOD, "setRow", VL_M_SET_ROW}, {SVL_METHOD, "rowAt", VL_M_ROW_AT},
+      {SVL_SIGNAL, "setup", VL_S_SETUP}, {SVL_SIGNAL, "bind", VL_S_BIND}, {SVL_SIGNAL, "unbind", VL_S_UNBIND},
+      {SVL_SIGNAL, "teardown", VL_S_TEARDOWN}, {SVL_SIGNAL, "activate", VL_S_ACTIVATE}, {SVL_SIGNAL, "select", VL_S_SELECT},
+  };
+  for (const Row &r : rows)
+    if (r.what == what && r.name == n) return r.id;
+  return 0;
+}
+
+QObject *vl_create() { return new SvVirtualList; }
+
+void vl_after_create(QObject *o, svl_handle h) {
+  static_cast<SvVirtualList *>(o)->h = h;
+}
+
+void vl_apply_layout(SvVirtualList *v) {
+  v->dlg->h = v->row_height;
+  if (v->grid) {
+    v->dlg->w = v->row_height;
+    v->setViewMode(QListView::IconMode);
+    v->setResizeMode(QListView::Adjust);
+    v->setMovement(QListView::Static);
+    v->setWrapping(true);
+  } else {
+    v->dlg->w = 0;
+    v->setViewMode(QListView::ListMode);
+    v->setWrapping(false);
+  }
+  v->setUniformItemSizes(true);
+  v->doItemsLayout();
+  v->schedule();
+}
+
+int vl_set_prop(Entry &e, svl_id prop, const svl_value *val) {
+  SvVirtualList *v = vl_of(e);
+  if (!v) return fail("set_prop: the virtuallist is gone");
+  qint64 i = 0;
+  switch (prop) {
+    case VL_P_SELECTED: {
+      if (val->tag == SVL_NULL) i = -1;
+      else if (!vl_i64(val, i)) return fail("selected: expected a number");
+      v->quiet = true;
+      if (i < 0 || i >= v->mdl->rowCount()) {
+        v->clearSelection();
+        v->setCurrentIndex(QModelIndex());
+      } else {
+        v->setCurrentIndex(v->mdl->index(static_cast<int>(i)));
+      }
+      v->quiet = false;
+      return 0;
+    }
+    case VL_P_SELECTION: {
+      QString qs;
+      std::string er;
+      if (val->tag != SVL_STR || !Conv<QString>::in(val, qs, er)) return fail("selection: expected a string");
+      const std::string su = qs.toStdString();
+      const std::string_view s(su);
+      if (s == "none") v->sel_none = true;
+      else if (s == "single") v->sel_none = false;
+      else return fail("unknown selection mode `" + std::string(s) + "` (none | single)");
+      v->setSelectionMode(v->sel_none ? QAbstractItemView::NoSelection : QAbstractItemView::SingleSelection);
+      return 0;
+    }
+    case VL_P_LAYOUT: {
+      QString qs;
+      std::string er;
+      if (val->tag != SVL_STR || !Conv<QString>::in(val, qs, er)) return fail("layout: expected a string");
+      const std::string su = qs.toStdString();
+      const std::string_view s(su);
+      if (s != "list" && s != "grid") return fail("unknown layout `" + std::string(s) + "` (list | grid)");
+      v->grid = s == "grid";
+      vl_apply_layout(v);
+      return 0;
+    }
+    case VL_P_ROW_HEIGHT:
+      if (!vl_i64(val, i) || i < 1 || i > 10000) return fail("rowHeight: expected a number from 1 to 10000");
+      v->row_height = static_cast<int>(i);
+      vl_apply_layout(v);
+      return 0;
+    case VL_P_MIN_HEIGHT:
+      if (!vl_i64(val, i) || i < 0) return fail("minHeight: expected a non-negative number");
+      v->setMinimumHeight(static_cast<int>(i));
+      return 0;
+    case VL_P_HEXPAND:
+    case VL_P_VEXPAND: {
+      bool on = false;
+      if (val->tag == SVL_BOOL) on = val->u.b;
+      else if (val->tag == SVL_STR) {  // a static attribute arrives as text: "" and "true" mean true
+        QString qs;
+        std::string er;
+        if (!Conv<QString>::in(val, qs, er)) return fail(er);
+        on = qs.isEmpty() || qs == QLatin1String("true");
+      } else return fail("hexpand/vexpand: expected a boolean");
+      QSizePolicy p = v->sizePolicy();
+      const QSizePolicy::Policy pol = on ? QSizePolicy::Expanding : QSizePolicy::Preferred;
+      if (prop == VL_P_HEXPAND) p.setHorizontalPolicy(pol);
+      else p.setVerticalPolicy(pol);
+      v->setSizePolicy(p);
+      return 0;
+    }
+    default: break;
+  }
+  return fail("set_prop: unknown property id for virtuallist");
+}
+
+int vl_get_prop(Entry &e, svl_id prop, svl_value *out) {
+  SvVirtualList *v = vl_of(e);
+  if (!v) return fail("get_prop: the virtuallist is gone");
+  switch (prop) {
+    case VL_P_SELECTED: out_i64(out, v->currentIndex().isValid() ? v->currentIndex().row() : -1); return 0;
+    case VL_P_SELECTION: out_str(out, QString::fromUtf8(v->sel_none ? "none" : "single")); return 0;
+    case VL_P_LAYOUT: out_str(out, QString::fromUtf8(v->grid ? "grid" : "list")); return 0;
+    case VL_P_ROW_HEIGHT: out_i64(out, v->row_height); return 0;
+    case VL_P_MIN_HEIGHT: out_i64(out, v->minimumHeight()); return 0;
+    default: break;
+  }
+  return fail("get_prop: unknown property id for virtuallist");
+}
+
+int vl_call(Entry &e, svl_id method, const svl_value *args, size_t n, svl_value *out) {
+  SvVirtualList *v = vl_of(e);
+  if (!v) return fail("call: the virtuallist is gone");
+  qint64 a = 0, b = 0;
+  switch (method) {
+    case VL_M_SPLICE: {
+      if (n != 3 || !vl_i64(&args[0], a) || !vl_i64(&args[1], b) || args[2].tag != SVL_LIST)
+        return fail("splice(pos, removed, ids): expected two numbers and a list");
+      std::vector<uint64_t> add;
+      add.reserve(args[2].u.l.len);
+      for (size_t i = 0; i < args[2].u.l.len; ++i) {
+        qint64 id = 0;
+        if (!vl_i64(&args[2].u.l.ptr[i], id)) return fail("splice: ids must be numbers");
+        add.push_back(static_cast<uint64_t>(id));
+      }
+      std::string er;
+      if (!v->mdl->splice(a, b, add, er)) return fail(er);
+      return 0;
+    }
+    case VL_M_COUNT: out_i64(out, v->mdl->rowCount()); return 0;
+    case VL_M_SCROLL_TO:
+      if (n != 1 || !vl_i64(&args[0], a)) return fail("scrollTo(pos): expected a number");
+      if (a < 0 || a >= v->mdl->rowCount()) return fail("scrollTo: position " + std::to_string(a) + " is out of range");
+      v->flush_layout();
+      v->scrollTo(v->mdl->index(static_cast<int>(a)), QAbstractItemView::PositionAtTop);
+      v->schedule();
+      return 0;
+    case VL_M_SET_ROW: {
+      if (n != 2 || !vl_i64(&args[0], a)) return fail("setRow(row, widget): expected a row and a widget handle");
+      VlSlot *s = nullptr;
+      for (auto &x : v->pool)
+        if (static_cast<qint64>(x->row) == a) s = x.get();
+      if (!s) return 0;  // torn down before JS answered (a deferred event): not an error
+      if (args[1].tag == SVL_NULL) {
+        if (s->widget) s->widget->hide();
+        s->widget = nullptr;
+        return 0;
+      }
+      if (args[1].tag != SVL_HANDLE) return fail("setRow: expected a widget handle or null");
+      Entry *we = find(args[1].u.h);
+      QWidget *w = we ? qobject_cast<QWidget *>(we->obj.data()) : nullptr;
+      if (!w) return fail("setRow: the handle is not a live widget");
+      w->setParent(v->viewport());
+      w->hide();
+      s->widget = w;
+      v->schedule();
+      return 0;
+    }
+    case VL_M_ROW_AT: {
+      if (n != 1 || !vl_i64(&args[0], a)) return fail("rowAt(pos): expected a number");
+      qint64 found = -1;
+      for (auto &x : v->pool)
+        if (x->bound && x->idx.isValid() && x->idx.row() == a) found = static_cast<qint64>(x->row);
+      out_i64(out, found);
+      return 0;
+    }
+    default: break;
+  }
+  return fail("call: unknown method id for virtuallist");
+}
+
+int vl_listen(Entry &e, svl_id sig, bool on) {
+  SvVirtualList *v = vl_of(e);
+  if (!v) return fail("listen: the virtuallist is gone");
+  if (sig < VL_S_SETUP || sig > VL_S_SELECT) return fail("listen: unknown signal id for virtuallist");
+  const unsigned bit = 1u << (sig - VL_S_SETUP);
+  v->listened = on ? (v->listened | bit) : (v->listened & ~bit);
+  return 0;
+}

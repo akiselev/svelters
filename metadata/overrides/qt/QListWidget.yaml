@@ -1,0 +1,38 @@
+elements:
+  - tag: listwidget
+    construct: { class: QListWidget }
+    props:
+      - { js: count, native: count, provenance: "QListWidget::count (qdoc)" }   # read-only
+      - { js: currentRow, native: currentRow, sample: 1, setup: '$w->addItems({"a", "b", "c"})', suppress_signals: true, provenance: "QListWidget::currentRow (qdoc); the test adds three items first" }
+      - { js: sortingEnabled, native: sortingEnabled, provenance: "QListWidget::sortingEnabled (qdoc)" }
+      - { js: selectionMode, native: selectionMode, provenance: "QAbstractItemView::selectionMode (qdoc)" }
+      - { js: alternatingRowColors, native: alternatingRowColors, provenance: "QAbstractItemView::alternatingRowColors (qdoc)" }
+    methods:
+      - { js: addItem, native: addItem, params: [string], expect: "$w->count() >= 1", provenance: "QListWidget::addItem(const QString &) (qdoc)" }
+      - { js: insertItem, native: insertItem, params: [i32, string], provenance: "QListWidget::insertItem(int, const QString &) (qdoc)" }
+      - { js: clear, native: clear, expect: "$w->count() == 0", provenance: "QListWidget::clear() slot (qdoc)" }
+    bindings:
+      - name: currentRow
+        direction: two_way
+        property: currentRow
+        type: { ref: i32, nullable: false }
+        change: { signal: row-changed, role: any_change, value: arg0 }
+        write: { natively_normalizes: false }
+        echo: { strategy: host_suppressed, compare_before_set: true, read_back: false, sync_signals_on_set: ["currentRowChanged(int)"] }
+        lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
+        provenance: "QListWidget::setCurrentRow emits currentRowChanged only on change (qdoc)"
+    signals:
+      - js: row-changed
+        native: currentRowChanged
+        connect: "currentRowChanged(int)"
+        args: [{ name: currentRow, type: i32 }]
+        trigger: '$w->addItem("a"); $w->addItem("b"); $w->setCurrentRow(($w->currentRow() + 1) % $w->count())'
+        expect_args: ["0"]
+        provenance: "QListWidget::currentRowChanged(int) (qdoc)"
+      - js: selection-changed
+        native: itemSelectionChanged
+        connect: "itemSelectionChanged()"
+        args: []
+        trigger: '$w->addItem("a"); $w->setSelectionMode(QAbstractItemView::MultiSelection); $w->item($w->count() - 1)->setSelected(true)'
+        expect_args: []
+        provenance: "QListWidget::itemSelectionChanged() (qdoc)"

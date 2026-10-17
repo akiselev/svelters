@@ -1,0 +1,14 @@
+elements:
+  - tag: wizard
+    construct: { class: QWizard }
+    props:
+      - { js: wizardStyle, native: wizardStyle, provenance: "QWizard::wizardStyle (qdoc); enum by name (ABI v3)" }
+      - { js: options, native: options, provenance: "QWizard::options (qdoc); flags (ABI v3)" }
+    signals:
+      - js: currentIdChanged
+        native: currentIdChanged
+        connect: "currentIdChanged(int)"
+        args: [{ name: id, type: i32 }]
+        trigger: 'if ($w->pageIds().isEmpty()) { $w->setPage(1, new QWizardPage); $w->setPage(2, new QWizardPage); $w->setPage(3, new QWizardPage); } if ($i == 0) $w->restart(); else $w->next()'
+        expect_args: ["1"]
+        provenance: "QWizard::currentIdChanged(int) (qdoc)"

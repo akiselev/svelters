@@ -2,8 +2,39 @@ elements:
   - tag: spinbox
     construct: { class: QSpinBox }
     props:
-      - { js: value, native: value, provenance: "QSpinBox::value (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: value, native: value, suppress_signals: true, provenance: "QSpinBox::value (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: minimum, native: minimum, provenance: "QSpinBox::minimum (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: maximum, native: maximum, provenance: "QSpinBox::maximum (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: singleStep, native: singleStep, provenance: "QSpinBox::singleStep (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: suffix, native: suffix, provenance: "QSpinBox::suffix (qdoc)" }
+      - { js: displayIntegerBase, native: displayIntegerBase, provenance: "QSpinBox::displayIntegerBase (qdoc)" }
       - { js: prefix, native: prefix, provenance: "QSpinBox::prefix (qdoc); typed by the S1 value model (ABI v3)" }
+    bindings:
+      - name: value
+        direction: two_way
+        property: value
+        type: { ref: i32, nullable: false }
+        change: { signal: valueChanged, role: any_change, value: arg0 }
+        write: { natively_normalizes: true }
+        echo: { strategy: host_suppressed, compare_before_set: true, read_back: false, sync_signals_on_set: ["valueChanged(int)"] }
+        lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
+        provenance: "setValue emits valueChanged only on change (qdoc); out-of-range values are clamped"
+    signals:
+      - js: valueChanged
+        native: valueChanged
+        connect: "valueChanged(int)"
+        args: [{ name: i, type: i32 }]
+        trigger: "$w->setRange(0, 100); $w->setValue(($i + 1) * 3)"
+        expect_args: ["3"]
+        provenance: "QSpinBox::valueChanged(int) (qdoc)"
+      - js: textChanged
+        native: textChanged
+        connect: "textChanged(QString)"
+        args: [{ name: text, type: string }]
+        trigger: "$w->setRange(0, 100); $w->setValue(($i + 1) * 3)"
+        expect_args: ["3"]
+        provenance: "QSpinBox::textChanged(const QString &) (qdoc)"
+    methods:
+      # In-out parameters: JS passes (input, pos) and gets {ret, input, pos}.
+      - { js: validate, native: validate, inout: [input, pos], provenance: "QAbstractSpinBox::validate(QString &, int &) (qdoc); in-out parameters, S2 ABI v3" }
+      - { js: fixup, native: fixup, inout: [input], provenance: "QAbstractSpinBox::fixup(QString &) (qdoc); in-out parameter, S2 ABI v3" }

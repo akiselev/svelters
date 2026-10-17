@@ -1,0 +1,15 @@
+# Buttons themselves (addButton/removeButton take a QAbstractButton and a role) are not a slot:
+# QDialogButtonBox has no insertion index, count or indexOf; standardButtons covers the common case.
+elements:
+  - tag: dialogbuttonbox
+    construct: { class: QDialogButtonBox }
+    props:
+      - { js: orientation, native: orientation, provenance: "QDialogButtonBox::orientation (qdoc); enum typed by the S1 value model (ABI v3)" }
+      - { js: centerButtons, native: centerButtons, provenance: "QDialogButtonBox::centerButtons (qdoc)" }
+      - { js: standardButtons, native: standardButtons, provenance: "QDialogButtonBox::standardButtons (qdoc); flags typed by the S1 value model (ABI v3)" }
+    signals:
+      - { js: accepted, native: accepted, connect: "accepted()", args: [], trigger: "Q_EMIT $w->accepted()", expect_args: [], provenance: "QDialogButtonBox::accepted() (qdoc); emitted directly (a real click needs a shown widget)" }
+      - { js: rejected, native: rejected, connect: "rejected()", args: [], trigger: "Q_EMIT $w->rejected()", expect_args: [], provenance: "QDialogButtonBox::rejected() (qdoc); emitted directly" }
+      - { js: help-requested, native: helpRequested, connect: "helpRequested()", args: [], trigger: "Q_EMIT $w->helpRequested()", expect_args: [], provenance: "QDialogButtonBox::helpRequested() (qdoc); emitted directly" }
+    methods:
+      - { js: clear, native: clear, expect: "$w->buttons().isEmpty()", provenance: "QDialogButtonBox::clear() (qdoc)" }

@@ -239,7 +239,7 @@ impl Driver {
         if let Step::Sync { handle, signal, .. } = &step {
             self.fail(format!("step {index}: sync step ({signal} on #{handle}) has no native action"));
         }
-        if let Step::Event { handle, signal, args } = step {
+        if let Step::Event { handle, signal, args, .. } = step {
             let res = match (signal.as_str(), args.first()) {
                 ("clicked", _) => self.tk.click(handle),
                 ("changed", Some(Value::Str(text))) => self.tk.type_text(handle, text),

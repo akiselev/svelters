@@ -519,3 +519,90 @@ test('dispatchSync warns about handlers that return a Promise', () => {
   assert.equal(warned.length, 1);
   assert.match(warned[0], /returned a Promise/);
 });
+
+// ---- child attributes (ABI v2.2) ----
+
+const ids = (lines, tag) => lines.filter((l) => l.startsWith(`create ${tag} `)).map((l) => Number(l.split('#')[1]));
+
+test('child attrs: sent after insert, reactive, re-applied on a new parent, cleared on remove', () => {
+  const win = el('window');
+  const g1 = el('grid');
+  const g2 = el('grid');
+  const lbl = el('label', { 'parent:column': 1, 'parent:row': 2 });
+  r.insert(win, g1, null);
+  r.insert(win, g2, null);
+  r.insert(g1, lbl, null);
+  r.insert(root, win, null);
+  const lines = take().split('\n');
+  const [h1, h2] = ids(lines, 'grid');
+  const [hl] = ids(lines, 'label');
+  assert.deepEqual(
+    lines.filter((l) => l.startsWith('attr ') || (l.startsWith('insert ') && l.includes(`#${hl} `))),
+    [`insert #${h1} #${hl} before=end slot=default`, `attr #${h1} #${hl} column 1`, `attr #${h1} #${hl} row 2`],
+    'attrs follow the insert, in attribute order; they are not props of the child',
+  );
+  assert.ok(!lines.some((l) => l.startsWith(`set #${hl} parent`)));
+  r.setAttribute(lbl, 'parent:row', 3);
+  r.setAttribute(lbl, 'parent:row', 3);
+  assert.equal(take(), `attr #${h1} #${hl} row 3`, 'a change is one op; an unchanged value sends nothing');
+  r.insert(g2, lbl, null); // move: remove + insert + attrs again
+  assert.equal(
+    take(),
+    [`remove #${h1} #${hl}`, `insert #${h2} #${hl} before=end slot=default`, `attr #${h2} #${hl} column 1`, `attr #${h2} #${hl} row 3`].join('\n'),
+  );
+  r.removeAttribute(lbl, 'parent:column');
+  assert.equal(take(), `attr #${h2} #${hl} column null`, 'removing the attribute resets it');
+  r.remove(lbl);
+  assert.equal(take(), `remove #${h2} #${hl}`, 'nothing is sent for a removed child');
+  r.setAttribute(lbl, 'parent:row', 9);
+  assert.equal(take(), '', 'a detached child only remembers the value');
+  r.insert(g1, lbl, null);
+  assert.equal(take(), `insert #${h1} #${hl} before=end slot=default\nattr #${h1} #${hl} row 9`);
+  r.remove(win);
+});
+
+test('child attrs: attributes set before the parent is native are applied when the tree is realized', async () => {
+  await tick();
+  take();
+  const win = el('window');
+  const g = el('grid');
+  const a = el('label', { 'parent:row': 1 });
+  r.insert(g, a, null);
+  r.insert(win, g, null);
+  assert.equal(take(), '');
+  r.insert(root, win, null);
+  const lines = take().split('\n');
+  const [hg] = ids(lines, 'grid');
+  const [hl] = ids(lines, 'label');
+  const ins = lines.indexOf(`insert #${hg} #${hl} before=end slot=default`);
+  assert.ok(ins >= 0);
+  assert.equal(lines[ins + 1], `attr #${hg} #${hl} row 1`);
+  r.remove(win);
+});
+
+// ---- listener phases (ABI v2.2) ----
+
+test('listen phases: separate native listens per flags, dispatch by flags, capture option, attach helper', async () => {
+  const { listen } = await import('../src/index.js');
+  const win = el('window');
+  const e = el('entry');
+  r.insert(win, e, null);
+  r.insert(root, win, null);
+  take();
+  const calls = [];
+  r.addEventListener(e, 'key-pressed', () => calls.push('plain'));
+  r.addEventListener(e, 'key-pressed', () => calls.push('capture'), { capture: true });
+  const detach = listen('key-pressed', () => calls.push('after'), { after: true })(e);
+  const lines = take().split('\n');
+  assert.deepEqual(lines.map((l) => l.replace(/#\d+/, '#h')), ['listen #h key-pressed on', 'listen #h key-pressed on capture', 'listen #h key-pressed on after']);
+  const h = Number(lines[0].match(/#(\d+)/)[1]);
+  dispatch(h, 'key-pressed', [1], false, 0);
+  dispatch(h, 'key-pressed', [1], false, 2);
+  dispatch(h, 'key-pressed', [1], false, 1);
+  assert.deepEqual(calls, ['plain', 'capture', 'after']);
+  r.addEventListener(e, 'key-pressed', () => calls.push('plain2'));
+  assert.equal(take(), '', 'a second listener with the same flags does not listen again');
+  detach();
+  assert.equal(take(), `listen #${h} key-pressed off after`);
+  r.remove(win);
+});

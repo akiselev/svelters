@@ -1,0 +1,18 @@
+elements:
+  - tag: lcdnumber
+    construct: { class: QLCDNumber }
+    props:
+      - { js: digitCount, native: digitCount, provenance: "QLCDNumber::digitCount (qdoc)" }
+      - { js: intValue, native: intValue, provenance: "QLCDNumber::intValue (qdoc)" }
+      - { js: value, native: value, provenance: "QLCDNumber::value (qdoc)" }
+      - { js: mode, native: mode, provenance: "QLCDNumber::mode (qdoc)" }
+      - { js: segmentStyle, native: segmentStyle, provenance: "QLCDNumber::segmentStyle (qdoc)" }
+    signals:
+      - js: overflow
+        native: overflow
+        connect: "overflow()"
+        args: []
+        trigger: "$w->setDigitCount(2); $w->display(12345 + $i)"
+        provenance: "QLCDNumber::overflow() (qdoc)"
+    methods:
+      - { js: display, native: display, params: [i32], expect: "$w->intValue() == 10", provenance: "QLCDNumber::display(int) slot (qdoc)" }
