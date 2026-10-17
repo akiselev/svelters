@@ -1,0 +1,46 @@
+class: NSTextField
+element:
+  tag: text-field
+  lifetime: owned
+  construct: new
+  provenance: "NSTextField.h: -init gives an editable, bezeled field. A label is a text-field with editable/bezeled/draws-background/selectable false (what +labelWithString: does)."
+props:
+  - name: string-value
+    sample: "hello"
+    provenance: "NSControl.stringValue (NSString, copy), declared on NSControl"
+  - name: placeholder-string
+    sample: "type here"
+    provenance: "NSTextField.placeholderString (NSString, copy)"
+  - name: editable
+    sample: false
+    provenance: "NSTextField.editable (BOOL, getter isEditable)"
+  - name: selectable
+    sample: false
+    provenance: "NSTextField.selectable (BOOL, getter isSelectable)"
+  - name: bezeled
+    sample: false
+    provenance: "NSTextField.bezeled (BOOL, getter isBezeled)"
+  - name: draws-background
+    sample: false
+    provenance: "NSTextField.drawsBackground (BOOL)"
+  - name: alignment
+    sample: center
+    provenance: "NSControl.alignment (NSTextAlignment)"
+signals:
+  - name: control-text-did-change
+    via: notification
+    notification: NSControlTextDidChangeNotification
+    args: [string-value]
+    verify: post
+    provenance: "NSControl.h: NSControlTextDidChangeNotification, object = the control, posted for user edits (KVO does not fire for typing). Observed on the default center, so the delegate slot stays free. JS gets the new text as the first argument."
+  - name: control-text-did-end-editing
+    via: notification
+    notification: NSControlTextDidEndEditingNotification
+    args: [string-value]
+    verify: post
+    provenance: "NSControl.h: NSControlTextDidEndEditingNotification, object = the control"
+bindings:
+  - name: string-value
+    property: string-value
+    signal: control-text-did-change
+    provenance: "two-way bind:string-value; the notification is never posted for programmatic sets, so there is no echo"

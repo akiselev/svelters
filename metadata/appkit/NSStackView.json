@@ -1,0 +1,286 @@
+{
+  "abstract": false,
+  "bases": [
+    "NSView",
+    "NSResponder",
+    "NSObject"
+  ],
+  "id": "svelters-api:v1:type:appkit:AppKit:NSStackView",
+  "kind": "object",
+  "methods": [
+    {
+      "availability": {
+        "since": "10.11"
+      },
+      "name": "add-arranged-subview",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "view",
+          "type": {
+            "native": "NSView *",
+            "ref": "object<NSView>"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "addArrangedSubview:"
+    },
+    {
+      "availability": {
+        "since": "10.11"
+      },
+      "name": "insert-arranged-subview-at-index",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "view",
+          "type": {
+            "native": "NSView *",
+            "ref": "object<NSView>"
+          }
+        },
+        {
+          "name": "index",
+          "type": {
+            "native": "NSInteger",
+            "ref": "i64"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "insertArrangedSubview:atIndex:"
+    },
+    {
+      "availability": {
+        "since": "10.11"
+      },
+      "name": "remove-arranged-subview",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "view",
+          "type": {
+            "native": "NSView *",
+            "ref": "object<NSView>"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "removeArrangedSubview:"
+    }
+  ],
+  "native": {
+    "framework": "AppKit",
+    "header": "NSStackView.h",
+    "name": "NSStackView"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "alignment",
+        "set": "setAlignment:"
+      },
+      "js_name": "alignment",
+      "memory": "assign",
+      "name": "alignment",
+      "origin": "sdk",
+      "type": {
+        "native": "NSLayoutAttribute",
+        "ref": "enum<NSLayoutAttribute>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "arrangedSubviews"
+      },
+      "availability": {
+        "since": "10.11"
+      },
+      "js_name": "arranged-subviews",
+      "memory": "copy",
+      "name": "arrangedSubviews",
+      "origin": "sdk",
+      "type": {
+        "native": "NSArray< NSView *> *",
+        "ref": "list"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "delegate",
+        "set": "setDelegate:"
+      },
+      "js_name": "delegate",
+      "memory": "weak",
+      "name": "delegate",
+      "origin": "sdk",
+      "type": {
+        "native": "id<NSStackViewDelegate>",
+        "nullable": true,
+        "ref": "object"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "detachedViews"
+      },
+      "js_name": "detached-views",
+      "memory": "copy",
+      "name": "detachedViews",
+      "origin": "sdk",
+      "type": {
+        "native": "NSArray< NSView *> *",
+        "ref": "list"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "detachesHiddenViews",
+        "set": "setDetachesHiddenViews:"
+      },
+      "availability": {
+        "since": "10.11"
+      },
+      "js_name": "detaches-hidden-views",
+      "memory": "assign",
+      "name": "detachesHiddenViews",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "distribution",
+        "set": "setDistribution:"
+      },
+      "availability": {
+        "since": "10.11"
+      },
+      "js_name": "distribution",
+      "memory": "assign",
+      "name": "distribution",
+      "origin": "sdk",
+      "type": {
+        "native": "NSStackViewDistribution",
+        "ref": "enum<NSStackViewDistribution>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "edgeInsets",
+        "set": "setEdgeInsets:"
+      },
+      "js_name": "edge-insets",
+      "memory": "assign",
+      "name": "edgeInsets",
+      "origin": "sdk",
+      "type": {
+        "native": "NSEdgeInsets",
+        "ref": "insets"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "orientation",
+        "set": "setOrientation:"
+      },
+      "js_name": "orientation",
+      "memory": "assign",
+      "name": "orientation",
+      "origin": "sdk",
+      "type": {
+        "native": "NSUserInterfaceLayoutOrientation",
+        "ref": "enum<NSUserInterfaceLayoutOrientation>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "spacing",
+        "set": "setSpacing:"
+      },
+      "js_name": "spacing",
+      "memory": "assign",
+      "name": "spacing",
+      "origin": "sdk",
+      "type": {
+        "native": "CGFloat",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "views"
+      },
+      "js_name": "views",
+      "memory": "copy",
+      "name": "views",
+      "origin": "sdk",
+      "type": {
+        "native": "NSArray< NSView *> *",
+        "ref": "list"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "docs": "https://developer.apple.com/documentation/appkit/nsstackview?language=objc",
+    "sdk": "MacOSX26.1",
+    "target": "arm64-apple-macos14"
+  },
+  "toolkit": "appkit"
+}

@@ -1,0 +1,65 @@
+class: NSWindow
+element:
+  tag: window
+  lifetime: toplevel
+  construct: window
+  # initWithContentRect:{0,0,width,height} styleMask:mask backing:NSBackingStoreBuffered defer:NO,
+  # then releasedWhenClosed = NO (the handle table owns the window) and center.
+  window: {width: 480, height: 320, style_mask: [titled, closable, miniaturizable, resizable]}
+  provenance: "NSWindow.h: -initWithContentRect:styleMask:backing:defer:; releasedWhenClosed defaults to YES for programmatic windows, which would free the window under our handle"
+props:
+  - name: title
+    sample: "Counter"
+    provenance: "NSWindow.title (NSString, copy)"
+  - name: style-mask
+    sample: [titled, closable]
+    expect: 3
+    provenance: "NSWindow.styleMask (NSWindowStyleMask options)"
+  - name: opaque
+    sample: false
+    provenance: "NSWindow.opaque (BOOL, getter isOpaque)"
+  - name: movable-by-window-background
+    sample: true
+    provenance: "NSWindow.movableByWindowBackground (BOOL)"
+setters:
+  - name: content-size
+    selector: "setContentSize:"
+    type: size
+    sample: {width: 300, height: 200}
+    provenance: "NSWindow.h: -setContentSize: (no contentSize property)"
+signals:
+  - name: window-should-close
+    via: delegate
+    selector: "windowShouldClose:"
+    delivery: sync
+    result: veto_bool
+    provenance: "NSWindowDelegate.windowShouldClose: returns BOOL, YES = allow. JS stops the close with e.preventDefault() (result true), so the delegate answers NO; no decision = YES. A busy host (JS running) vetoes, like close-request on GTK/Qt (ABI v2.1)."
+  - name: window-will-close
+    via: delegate
+    selector: "windowWillClose:"
+    provenance: "NSWindowDelegate.windowWillClose: (also NSWindowWillCloseNotification). The backend reports the window SVL_GONE_CLOSED after this, listened or not."
+slots:
+  - name: content-view
+    default: true
+    cardinality: one
+    ops:
+      set: "setContentView:"
+      get: contentView
+      clear: empty_view
+    provenance: "NSWindow.contentView (strong, nullable). The window retains its content view; replacing it releases the old one but does not destroy it while we hold a handle. Clearing installs a fresh NSView so the window keeps a valid content view."
+methods:
+  - name: make-key-and-order-front
+    selector: "makeKeyAndOrderFront:"
+    expect: {get: visible, value: true}
+    provenance: "NSWindow.h; `sender` is nil. The renderer shows a window with it (TOPLEVELS open list)."
+  - name: center
+    selector: center
+    provenance: "NSWindow.h"
+  - name: order-out
+    selector: "orderOut:"
+    expect: {get: visible, value: false}
+    provenance: "NSWindow.h; hides without closing"
+  - name: perform-close
+    selector: "performClose:"
+    test: false
+    provenance: "NSWindow.h: simulates the close button; asks windowShouldClose: first"

@@ -1,0 +1,34 @@
+class: NSStackView
+element:
+  tag: stack-view
+  lifetime: owned
+  construct: new
+  provenance: "NSStackView.h (macOS 10.9+)"
+props:
+  - name: orientation
+    sample: vertical
+    provenance: "NSStackView.orientation (NSUserInterfaceLayoutOrientation)"
+  - name: spacing
+    sample: 12
+    expect: 12.0
+    provenance: "NSStackView.spacing (CGFloat)"
+  - name: alignment
+    sample: center-x
+    provenance: "NSStackView.alignment (NSLayoutAttribute)"
+  - name: distribution
+    sample: fill-equally
+    provenance: "NSStackView.distribution (NSStackViewDistribution, 10.11+)"
+  - name: edge-insets
+    sample: {top: 10, right: 20, bottom: 30, left: 40}
+    provenance: "NSStackView.edgeInsets (NSEdgeInsets: native field order top, left, bottom, right; JS order top, right, bottom, left)"
+slots:
+  - name: arranged-subviews
+    default: true
+    cardinality: many
+    ops:
+      append: "addArrangedSubview:"
+      insert_at: "insertArrangedSubview:atIndex:"
+      list: arrangedSubviews
+      remove: ["removeArrangedSubview:"]
+      detach: ["removeFromSuperview"]
+    provenance: "NSStackView.h: addArrangedSubview:, insertArrangedSubview:atIndex:, removeArrangedSubview:. Unlike UIStackView, NSStackView's removeArrangedSubview: also removes the view from subviews (verified by the generated test: superview is nil after remove); removeFromSuperview is sent anyway when the view is still attached."

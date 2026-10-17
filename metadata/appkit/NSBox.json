@@ -1,0 +1,311 @@
+{
+  "abstract": false,
+  "bases": [
+    "NSView",
+    "NSResponder",
+    "NSObject"
+  ],
+  "id": "svelters-api:v1:type:appkit:AppKit:NSBox",
+  "kind": "object",
+  "methods": [
+    {
+      "name": "set-content-view",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "contentView",
+          "type": {
+            "native": "NSView *",
+            "nullable": true,
+            "ref": "object<NSView>"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "setContentView:"
+    }
+  ],
+  "native": {
+    "framework": "AppKit",
+    "header": "NSBox.h",
+    "name": "NSBox"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "borderColor",
+        "set": "setBorderColor:"
+      },
+      "availability": {
+        "since": "10.5"
+      },
+      "js_name": "border-color",
+      "memory": "copy",
+      "name": "borderColor",
+      "origin": "sdk",
+      "type": {
+        "native": "NSColor *",
+        "ref": "object<NSColor>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "borderRect"
+      },
+      "js_name": "border-rect",
+      "memory": "assign",
+      "name": "borderRect",
+      "origin": "sdk",
+      "type": {
+        "native": "NSRect",
+        "ref": "rect"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "borderWidth",
+        "set": "setBorderWidth:"
+      },
+      "availability": {
+        "since": "10.5"
+      },
+      "js_name": "border-width",
+      "memory": "assign",
+      "name": "borderWidth",
+      "origin": "sdk",
+      "type": {
+        "native": "CGFloat",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "boxType",
+        "set": "setBoxType:"
+      },
+      "js_name": "box-type",
+      "memory": "assign",
+      "name": "boxType",
+      "origin": "sdk",
+      "type": {
+        "native": "NSBoxType",
+        "ref": "enum<NSBoxType>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "contentView",
+        "set": "setContentView:"
+      },
+      "js_name": "content-view",
+      "memory": "strong",
+      "name": "contentView",
+      "origin": "sdk",
+      "type": {
+        "native": "NSView *",
+        "nullable": true,
+        "ref": "object<NSView>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "contentViewMargins",
+        "set": "setContentViewMargins:"
+      },
+      "js_name": "content-view-margins",
+      "memory": "assign",
+      "name": "contentViewMargins",
+      "origin": "sdk",
+      "type": {
+        "native": "NSSize",
+        "ref": "size"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "cornerRadius",
+        "set": "setCornerRadius:"
+      },
+      "availability": {
+        "since": "10.5"
+      },
+      "js_name": "corner-radius",
+      "memory": "assign",
+      "name": "cornerRadius",
+      "origin": "sdk",
+      "type": {
+        "native": "CGFloat",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "fillColor",
+        "set": "setFillColor:"
+      },
+      "availability": {
+        "since": "10.5"
+      },
+      "js_name": "fill-color",
+      "memory": "copy",
+      "name": "fillColor",
+      "origin": "sdk",
+      "type": {
+        "native": "NSColor *",
+        "ref": "object<NSColor>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "title",
+        "set": "setTitle:"
+      },
+      "js_name": "title",
+      "memory": "copy",
+      "name": "title",
+      "origin": "sdk",
+      "type": {
+        "native": "NSString *",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "titleCell"
+      },
+      "js_name": "title-cell",
+      "memory": "strong",
+      "name": "titleCell",
+      "origin": "sdk",
+      "type": {
+        "native": "id",
+        "ref": "object"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "titleFont",
+        "set": "setTitleFont:"
+      },
+      "js_name": "title-font",
+      "memory": "strong",
+      "name": "titleFont",
+      "origin": "sdk",
+      "type": {
+        "native": "NSFont *",
+        "ref": "object<NSFont>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "titlePosition",
+        "set": "setTitlePosition:"
+      },
+      "js_name": "title-position",
+      "memory": "assign",
+      "name": "titlePosition",
+      "origin": "sdk",
+      "type": {
+        "native": "NSTitlePosition",
+        "ref": "enum<NSTitlePosition>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "titleRect"
+      },
+      "js_name": "title-rect",
+      "memory": "assign",
+      "name": "titleRect",
+      "origin": "sdk",
+      "type": {
+        "native": "NSRect",
+        "ref": "rect"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isTransparent",
+        "set": "setTransparent:"
+      },
+      "availability": {
+        "since": "10.5"
+      },
+      "js_name": "transparent",
+      "memory": "assign",
+      "name": "transparent",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "docs": "https://developer.apple.com/documentation/appkit/nsbox?language=objc",
+    "sdk": "MacOSX26.1",
+    "target": "arm64-apple-macos14"
+  },
+  "toolkit": "appkit"
+}

@@ -1,0 +1,32 @@
+class: NSSlider
+element:
+  tag: slider
+  lifetime: owned
+  construct: new
+  provenance: "NSSlider.h: -init gives a horizontal linear slider, range 0..1"
+props:
+  - name: min-value
+    sample: 0
+    expect: 0.0
+    provenance: "NSSlider.minValue (double)"
+  - name: max-value
+    sample: 100
+    expect: 100.0
+    provenance: "NSSlider.maxValue (double)"
+  - name: double-value
+    sample: 0.25
+    provenance: "NSControl.doubleValue (double); clamped to the range"
+  - name: number-of-tick-marks
+    sample: 5
+    provenance: "NSSlider.numberOfTickMarks (NSInteger)"
+  - name: allows-tick-mark-values-only
+    sample: true
+    provenance: "NSSlider.allowsTickMarkValuesOnly (BOOL)"
+  - name: vertical
+    sample: true
+    provenance: "NSSlider.vertical (BOOL, getter isVertical, 10.12+)"
+bindings:
+  - name: double-value
+    property: double-value
+    signal: action
+    provenance: "two-way bind:double-value; continuous sliders send the action while dragging; programmatic sets never send it"

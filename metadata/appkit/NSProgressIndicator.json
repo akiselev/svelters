@@ -1,0 +1,232 @@
+{
+  "abstract": false,
+  "bases": [
+    "NSView",
+    "NSResponder",
+    "NSObject"
+  ],
+  "id": "svelters-api:v1:type:appkit:AppKit:NSProgressIndicator",
+  "kind": "object",
+  "methods": [
+    {
+      "name": "start-animation",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "sender",
+          "type": {
+            "native": "id",
+            "nullable": true,
+            "ref": "object"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "startAnimation:"
+    },
+    {
+      "name": "stop-animation",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "sender",
+          "type": {
+            "native": "id",
+            "nullable": true,
+            "ref": "object"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "stopAnimation:"
+    }
+  ],
+  "native": {
+    "framework": "AppKit",
+    "header": "NSProgressIndicator.h",
+    "name": "NSProgressIndicator"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "controlSize",
+        "set": "setControlSize:"
+      },
+      "js_name": "control-size",
+      "memory": "assign",
+      "name": "controlSize",
+      "origin": "sdk",
+      "type": {
+        "native": "NSControlSize",
+        "ref": "enum<NSControlSize>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isDisplayedWhenStopped",
+        "set": "setDisplayedWhenStopped:"
+      },
+      "js_name": "displayed-when-stopped",
+      "memory": "assign",
+      "name": "displayedWhenStopped",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "doubleValue",
+        "set": "setDoubleValue:"
+      },
+      "js_name": "double-value",
+      "memory": "assign",
+      "name": "doubleValue",
+      "origin": "sdk",
+      "type": {
+        "native": "double",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isIndeterminate",
+        "set": "setIndeterminate:"
+      },
+      "js_name": "indeterminate",
+      "memory": "assign",
+      "name": "indeterminate",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "maxValue",
+        "set": "setMaxValue:"
+      },
+      "js_name": "max-value",
+      "memory": "assign",
+      "name": "maxValue",
+      "origin": "sdk",
+      "type": {
+        "native": "double",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "minValue",
+        "set": "setMinValue:"
+      },
+      "js_name": "min-value",
+      "memory": "assign",
+      "name": "minValue",
+      "origin": "sdk",
+      "type": {
+        "native": "double",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "observedProgress",
+        "set": "setObservedProgress:"
+      },
+      "availability": {
+        "since": "14.0"
+      },
+      "js_name": "observed-progress",
+      "memory": "strong",
+      "name": "observedProgress",
+      "origin": "sdk",
+      "type": {
+        "native": "NSProgress *",
+        "nullable": true,
+        "ref": "object<NSProgress>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "style",
+        "set": "setStyle:"
+      },
+      "js_name": "style",
+      "memory": "assign",
+      "name": "style",
+      "origin": "sdk",
+      "type": {
+        "native": "NSProgressIndicatorStyle",
+        "ref": "enum<NSProgressIndicatorStyle>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "usesThreadedAnimation",
+        "set": "setUsesThreadedAnimation:"
+      },
+      "js_name": "uses-threaded-animation",
+      "memory": "assign",
+      "name": "usesThreadedAnimation",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "docs": "https://developer.apple.com/documentation/appkit/nsprogressindicator?language=objc",
+    "sdk": "MacOSX26.1",
+    "target": "arm64-apple-macos14"
+  },
+  "toolkit": "appkit"
+}

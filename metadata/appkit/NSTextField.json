@@ -1,0 +1,519 @@
+{
+  "abstract": false,
+  "bases": [
+    "NSControl",
+    "NSView",
+    "NSResponder",
+    "NSObject"
+  ],
+  "id": "svelters-api:v1:type:appkit:AppKit:NSTextField",
+  "kind": "object",
+  "methods": [],
+  "native": {
+    "framework": "AppKit",
+    "header": "NSTextField.h",
+    "name": "NSTextField"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "acceptsFirstResponder"
+      },
+      "js_name": "accepts-first-responder",
+      "memory": "assign",
+      "name": "acceptsFirstResponder",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "allowsCharacterPickerTouchBarItem",
+        "set": "setAllowsCharacterPickerTouchBarItem:"
+      },
+      "availability": {
+        "since": "10.12.2"
+      },
+      "js_name": "allows-character-picker-touch-bar-item",
+      "memory": "assign",
+      "name": "allowsCharacterPickerTouchBarItem",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "allowsDefaultTighteningForTruncation",
+        "set": "setAllowsDefaultTighteningForTruncation:"
+      },
+      "availability": {
+        "since": "10.11"
+      },
+      "js_name": "allows-default-tightening-for-truncation",
+      "memory": "assign",
+      "name": "allowsDefaultTighteningForTruncation",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "allowsEditingTextAttributes",
+        "set": "setAllowsEditingTextAttributes:"
+      },
+      "js_name": "allows-editing-text-attributes",
+      "memory": "assign",
+      "name": "allowsEditingTextAttributes",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "allowsWritingTools",
+        "set": "setAllowsWritingTools:"
+      },
+      "availability": {
+        "since": "15.2"
+      },
+      "js_name": "allows-writing-tools",
+      "memory": "assign",
+      "name": "allowsWritingTools",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "allowsWritingToolsAffordance",
+        "set": "setAllowsWritingToolsAffordance:"
+      },
+      "availability": {
+        "since": "15.4"
+      },
+      "js_name": "allows-writing-tools-affordance",
+      "memory": "assign",
+      "name": "allowsWritingToolsAffordance",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isAutomaticTextCompletionEnabled",
+        "set": "setAutomaticTextCompletionEnabled:"
+      },
+      "availability": {
+        "since": "10.12.2"
+      },
+      "js_name": "automatic-text-completion-enabled",
+      "memory": "assign",
+      "name": "automaticTextCompletionEnabled",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "backgroundColor",
+        "set": "setBackgroundColor:"
+      },
+      "js_name": "background-color",
+      "memory": "copy",
+      "name": "backgroundColor",
+      "origin": "sdk",
+      "type": {
+        "native": "NSColor *",
+        "nullable": true,
+        "ref": "object<NSColor>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "bezelStyle",
+        "set": "setBezelStyle:"
+      },
+      "js_name": "bezel-style",
+      "memory": "assign",
+      "name": "bezelStyle",
+      "origin": "sdk",
+      "type": {
+        "native": "NSTextFieldBezelStyle",
+        "ref": "enum<NSTextFieldBezelStyle>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isBezeled",
+        "set": "setBezeled:"
+      },
+      "js_name": "bezeled",
+      "memory": "assign",
+      "name": "bezeled",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isBordered",
+        "set": "setBordered:"
+      },
+      "js_name": "bordered",
+      "memory": "assign",
+      "name": "bordered",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "delegate",
+        "set": "setDelegate:"
+      },
+      "js_name": "delegate",
+      "memory": "weak",
+      "name": "delegate",
+      "origin": "sdk",
+      "type": {
+        "native": "id<NSTextFieldDelegate>",
+        "nullable": true,
+        "ref": "object"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "drawsBackground",
+        "set": "setDrawsBackground:"
+      },
+      "js_name": "draws-background",
+      "memory": "assign",
+      "name": "drawsBackground",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isEditable",
+        "set": "setEditable:"
+      },
+      "js_name": "editable",
+      "memory": "assign",
+      "name": "editable",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "importsGraphics",
+        "set": "setImportsGraphics:"
+      },
+      "js_name": "imports-graphics",
+      "memory": "assign",
+      "name": "importsGraphics",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "lineBreakStrategy",
+        "set": "setLineBreakStrategy:"
+      },
+      "availability": {
+        "since": "10.15"
+      },
+      "js_name": "line-break-strategy",
+      "memory": "assign",
+      "name": "lineBreakStrategy",
+      "origin": "sdk",
+      "type": {
+        "native": "NSLineBreakStrategy",
+        "ref": "flags<NSLineBreakStrategy>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "maximumNumberOfLines",
+        "set": "setMaximumNumberOfLines:"
+      },
+      "availability": {
+        "since": "10.11"
+      },
+      "js_name": "maximum-number-of-lines",
+      "memory": "assign",
+      "name": "maximumNumberOfLines",
+      "origin": "sdk",
+      "type": {
+        "native": "NSInteger",
+        "ref": "i64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "placeholderAttributedString",
+        "set": "setPlaceholderAttributedString:"
+      },
+      "availability": {
+        "since": "10.10"
+      },
+      "js_name": "placeholder-attributed-string",
+      "memory": "copy",
+      "name": "placeholderAttributedString",
+      "origin": "sdk",
+      "type": {
+        "native": "NSAttributedString *",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "placeholderAttributedStrings",
+        "set": "setPlaceholderAttributedStrings:"
+      },
+      "availability": {
+        "since": "26.0"
+      },
+      "js_name": "placeholder-attributed-strings",
+      "memory": "copy",
+      "name": "placeholderAttributedStrings",
+      "origin": "sdk",
+      "type": {
+        "native": "NSArray<NSAttributedString *> *",
+        "ref": "list"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "placeholderString",
+        "set": "setPlaceholderString:"
+      },
+      "availability": {
+        "since": "10.10"
+      },
+      "js_name": "placeholder-string",
+      "memory": "copy",
+      "name": "placeholderString",
+      "origin": "sdk",
+      "type": {
+        "native": "NSString *",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "placeholderStrings",
+        "set": "setPlaceholderStrings:"
+      },
+      "availability": {
+        "since": "26.0"
+      },
+      "js_name": "placeholder-strings",
+      "memory": "copy",
+      "name": "placeholderStrings",
+      "origin": "sdk",
+      "type": {
+        "native": "NSArray<NSString *> *",
+        "ref": "list"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "preferredMaxLayoutWidth",
+        "set": "setPreferredMaxLayoutWidth:"
+      },
+      "availability": {
+        "since": "10.8"
+      },
+      "js_name": "preferred-max-layout-width",
+      "memory": "assign",
+      "name": "preferredMaxLayoutWidth",
+      "origin": "sdk",
+      "type": {
+        "native": "CGFloat",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "resolvesNaturalAlignmentWithBaseWritingDirection",
+        "set": "setResolvesNaturalAlignmentWithBaseWritingDirection:"
+      },
+      "availability": {
+        "since": "26.0"
+      },
+      "js_name": "resolves-natural-alignment-with-base-writing-direction",
+      "memory": "assign",
+      "name": "resolvesNaturalAlignmentWithBaseWritingDirection",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isSelectable",
+        "set": "setSelectable:"
+      },
+      "js_name": "selectable",
+      "memory": "assign",
+      "name": "selectable",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "textColor",
+        "set": "setTextColor:"
+      },
+      "js_name": "text-color",
+      "memory": "copy",
+      "name": "textColor",
+      "origin": "sdk",
+      "type": {
+        "native": "NSColor *",
+        "nullable": true,
+        "ref": "object<NSColor>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "docs": "https://developer.apple.com/documentation/appkit/nstextfield?language=objc",
+    "sdk": "MacOSX26.1",
+    "target": "arm64-apple-macos14"
+  },
+  "toolkit": "appkit"
+}

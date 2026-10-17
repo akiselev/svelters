@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Cross-check / cross-link the macOS crates from Linux with your own copy of a macOS SDK.
+#
+#   SVELTERS_MACOS_SDK=/path/to/MacOSX.sdk tools/dev/mac-cross cargo check -p counter-mac --all-targets
+#   SVELTERS_MACOS_SDK=/path/to/MacOSX.sdk tools/dev/mac-cross cargo build -p counter-mac --tests
+#
+# The pure-Rust Apple crates (svelters-apple, svelters-appkit) check without any SDK:
+#   cargo check -p svelters-apple -p svelters-appkit --target aarch64-apple-darwin
+# Anything that compiles C for the target (QuickJS in svelters-host, objc2's exception helper) needs
+# the SDK's headers, and linking needs its .tbd stubs. Needs clang and lld (ld64.lld).
+# The SDK is Apple's: keep it out of the repository (docs/notes/mac1-appkit.md, "Licence").
+# Run it through tools/dev/cargo-slot like any cargo command.
+set -euo pipefail
+
+sdk=${SVELTERS_MACOS_SDK:?set SVELTERS_MACOS_SDK to a MacOSX*.sdk directory}
+min=${SVELTERS_MACOS_MIN:-11.0}
+export SDKROOT="$sdk"
+export CC_aarch64_apple_darwin=clang
+export CXX_aarch64_apple_darwin=clang++
+export AR_aarch64_apple_darwin=llvm-ar
+export CFLAGS_aarch64_apple_darwin="--target=arm64-apple-macos$min -isysroot $sdk"
+export CXXFLAGS_aarch64_apple_darwin="$CFLAGS_aarch64_apple_darwin"
+export CARGO_TARGET_AARCH64_APPLE_DARWIN_LINKER=clang
+export CARGO_TARGET_AARCH64_APPLE_DARWIN_RUSTFLAGS="-C link-arg=--target=arm64-apple-macos$min -C link-arg=-isysroot -C link-arg=$sdk -C link-arg=-fuse-ld=lld"
+export CARGO_BUILD_TARGET=aarch64-apple-darwin
+exec "$@"
