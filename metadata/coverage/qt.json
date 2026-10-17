@@ -2059,7 +2059,7 @@
    16
   ],
   "native": "QStatusBar",
-  "ownership": false,
+  "ownership": true,
   "props": [
    1,
    1
@@ -2070,12 +2070,12 @@
    1,
    1
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 2,
+  "slots_own": 2,
   "unexposed": null,
   "verified": [
-   4,
-   4
+   6,
+   6
   ]
  },
  {

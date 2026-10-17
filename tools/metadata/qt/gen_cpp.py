@@ -575,11 +575,23 @@ class Model:
                     if o["fact"] == "replace_child" and o["method"].startswith(ops["set"]["method"] + "(")]
             s["typesystem_replace_child"] = hits[0]["get_old"] if hits else None
         else:
-            for need in ("insert", "remove", "index_of", "list"):
+            # `order: append_only` slots on containers without an index/list API (QStatusBar,
+            # QDialogButtonBox): insert + remove only, membership by QWidget::isAncestorOf (A1-GAPS G13).
+            s["append_only"] = s.get("order") == "append_only" and "index_of" not in raw and "list" not in raw
+            for need in (("insert", "remove") if s["append_only"] else ("insert", "remove", "index_of", "list")):
                 if need not in raw:
                     raise GenError(f"{where}: missing op {need}")
             ins = raw["insert"]
             ops["append"] = self._op(where + ".insert", host_cls, ins)
+            if s["append_only"]:
+                ops["remove"] = self._op(where + ".remove", host_cls, raw["remove"])
+                rc = raw["remove"].get("effects", {}).get("child")
+                s["remove_effect"] = {"unparented": "released"}.get(rc)
+                if s["remove_effect"] is None:
+                    raise GenError(f"{where}: remove.effects.child must be unparented")
+                s["replace"] = None
+                s["ops"] = ops
+                return
             var = [v for v in ins.get("variants", []) if v.get("when") == "before != null"]
             if not var:
                 raise GenError(f"{where}: insert needs a `before != null` variant")
@@ -1005,6 +1017,10 @@ def emit_insert(m: Model) -> str:
                 if s["replace"] == "releases_old" and "take" in ops:
                     out.append(f"          if (auto *old = {op_call('h', ops['get'])}; old && old != ch) {op_call('h', ops['take'])};")
                 out.append(f"          {op_call('h', ops['set'], 'ch')};")
+            elif s.get("append_only"):
+                out.append(f"          if (before) return fail(\"slot {s['name']} of <{e['tag']}> is append-only (no insert-before)\");")
+                out.append(f"          if (static_cast<QWidget *>(o)->isAncestorOf(ch)) return 0;")
+                out.append(f"          {op_call('h', ops['append'], 'ch')};")
             else:
                 out.append("          if (before == child) return 0;")
                 out.append(f"          if (int i = {op_call('h', ops['index_of'], 'ch')}; i >= 0) {{ {op_call('h', ops['remove'], 'ch', {'index': 'i'})}; }}")
@@ -1039,6 +1055,10 @@ def emit_remove(m: Model) -> str:
                     out.append(f"          {op_call('h', ops['take'])};")
                 else:
                     out.append(f"          {op_call('h', ops['clear'])};")
+                out.append("          return 0;\n        }")
+            elif s.get("append_only"):
+                out.append(f"        if (static_cast<QWidget *>(o)->isAncestorOf(ch)) {{")
+                out.append(f"          {op_call('h', ops['remove'], 'ch')};")
                 out.append("          return 0;\n        }")
             else:
                 out.append(f"        if (int i = {op_call('h', ops['index_of'], 'ch')}; i >= 0) {{")
@@ -1542,7 +1562,41 @@ class Tests:
                 f"  CHECK(B->insert(B->self, p, w, 0, {sid}) < 0);",
                 "  B->destroy(B->self, p); B->destroy(B->self, w);"]))
 
+    def slot_append_only(self, e, s):
+        m, t, sn = self.m, e["tag"], s["name"]
+        child = m.accepted_child_tag(e, s)
+        sid = f'S("{t}", "{sn}")'
+        anc = lambda c: f"static_cast<QWidget *>(O(p))->isAncestorOf(static_cast<QWidget *>(O({c})))"
+        mk = [f'  svl_handle p = mk("{t}"); svl_handle c0 = mk("{child}"); svl_handle c1 = mk("{child}");']
+        clean = "  B->destroy(B->self, p); B->destroy(B->self, c0); B->destroy(B->self, c1);"
+        self.add(f"slot/{t}.{sn}/append", "\n".join(mk + [
+            f"  CHECK(B->insert(B->self, p, c0, 0, {sid}) == 0);",
+            f"  CHECK(B->insert(B->self, p, c1, 0, {sid}) == 0);",
+            f"  CHECK({anc('c0')} && {anc('c1')});",
+            f"  CHECK(B->insert(B->self, p, c1, c0, {sid}) < 0);  // append-only: no insert-before",
+            clean]))
+        self.add(f"ownership/{t}.{sn}/remove_released", "\n".join(mk + [
+            f"  CHECK(B->insert(B->self, p, c0, 0, {sid}) == 0);",
+            "  QPointer<QObject> p0(O(c0));",
+            "  CHECK(B->remove(B->self, p, c0) == 0);",
+            "  flush();",
+            f"  CHECK(!p0.isNull() && !{anc('c0')});  // released, not deleted",
+            "  CHECK(!was_destroyed(c0));",
+            "  CHECK(B->remove(B->self, p, c0) < 0);",
+            f"  CHECK(B->insert(B->self, p, c0, 0, {sid}) == 0 && {anc('c0')});  // can be inserted again",
+            clean]))
+        self.add(f"ownership/{t}.{sn}/parent_destroy_deletes_children", "\n".join(mk + [
+            f"  CHECK(B->insert(B->self, p, c0, 0, {sid}) == 0);",
+            "  QPointer<QObject> pc(O(c0));",
+            "  B->destroy(B->self, p);",
+            "  flush();",
+            "  CHECK(pc.isNull());",
+            "  CHECK(was_destroyed(c0));",
+            clean]))
+
     def slot_many(self, e, s):
+        if s.get("append_only"):
+            return self.slot_append_only(e, s)
         m, t, sn = self.m, e["tag"], s["name"]
         child = m.accepted_child_tag(e, s)
         ops, sid = s["ops"], f'S("{t}", "{sn}")'

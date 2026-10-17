@@ -1,6 +1,7 @@
 # Element `statusbar`. The window `statusbar` slot is in QMainWindow.yaml.
-# The `widgets`/`permanent` many-slots are NOT annotated: QStatusBar has no indexOf/count/itemAt
-# (the generator's many-slot contract needs index_of and list ops), see docs/notes/a1-qt-bars.md.
+# The `widgets`/`permanent` slots are append-only: QStatusBar has no indexOf/count/itemAt, so the
+# generator tracks membership by isAncestorOf (A1-GAPS G13). removeWidget only hides the widget and
+# keeps it parented, so remove also unparents it.
 elements:
   - tag: statusbar
     construct: { class: QStatusBar }
@@ -17,3 +18,47 @@ elements:
     methods:
       - { js: showMessage, native: showMessage, params: [string, i32], args: ["x", 0], expect: '$w->currentMessage() == QStringLiteral("x")', provenance: "QStatusBar::showMessage(const QString &, int) slot (qdoc); timeout 0 keeps the message" }
       - { js: clearMessage, native: clearMessage, expect: '$w->currentMessage().isEmpty()', provenance: "QStatusBar::clearMessage() slot (qdoc)" }
+    children:
+      policy: named_slots
+      default_slot: widgets
+      slots:
+        - name: widgets
+          content: widget
+          accepts: [QWidget]
+          cardinality: many
+          order: append_only
+          host: self
+          default: { kind: none }
+          on_remove: empty
+          ops:
+            insert:
+              native: "QStatusBar::addWidget(QWidget*, int)"
+              args: [child]
+              effects: { child: parented }
+            remove:
+              native: "QStatusBar::removeWidget(QWidget*)"
+              args: [child]
+              then:
+                - { native: "QWidget::setParent(QWidget*)", receiver: child, args: [null] }
+              effects: { child: unparented }
+          provenance: [{ origin: qdoc, ref: "QStatusBar::addWidget, removeWidget: the widget is hidden, not deleted" }, { origin: typesystem, ref: addownership-1 }]
+        - name: permanent
+          content: widget
+          accepts: [QWidget]
+          cardinality: many
+          order: append_only
+          host: self
+          default: { kind: none }
+          on_remove: empty
+          ops:
+            insert:
+              native: "QStatusBar::addPermanentWidget(QWidget*, int)"
+              args: [child]
+              effects: { child: parented }
+            remove:
+              native: "QStatusBar::removeWidget(QWidget*)"
+              args: [child]
+              then:
+                - { native: "QWidget::setParent(QWidget*)", receiver: child, args: [null] }
+              effects: { child: unparented }
+          provenance: [{ origin: qdoc, ref: "QStatusBar::addPermanentWidget, removeWidget" }]

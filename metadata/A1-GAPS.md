@@ -23,7 +23,7 @@ some blocked facts are not worth exposing anyway.
 | G10 | GTK slots whose native ops take a widget subclass: **closed by the A1 lead** (generator downcasts to `accepts`, upcasts getters; MenuButton `popover` verified) | MenuButton `popover`, Popover-typed slots, Notebook menu labels | gtk-buttons, gtk-dialogs |
 | G11 | Enums outside the Gtk namespace: **enums closed by the A1 lead** (Pango/Gdk nicks kept on the property; Label `ellipsize`/`wrap-mode` verified); non-Gtk object kinds still open | Label `ellipsize`/`wrap-mode`, Inscription `wrap-mode`, GdkCursor/Paintable props | gtk-text |
 | G12 | Non-widget objects reached as borrowed handles have no generated kind (GtkTextBuffer, GtkAdjustment) | TextView text editing, Range/SpinButton value and range | gtk-text, gtk-ranges |
-| G13 | Qt many-slots on containers without an index/list API (generator requires `index_of` and `list`) | QStatusBar `widgets`/`permanent`, QDialogButtonBox buttons | qt-bars |
+| G13 | Qt many-slots without an index/list API: **closed by the A1 lead** (`order: append_only` slots, membership by isAncestorOf; QStatusBar `widgets`/`permanent` verified) | QStatusBar `widgets`/`permanent`, QDialogButtonBox buttons | qt-bars |
 
 ## G1: child attributes
 
