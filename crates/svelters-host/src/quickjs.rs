@@ -303,6 +303,26 @@ fn js_to_abi<'js>(ctx: &Ctx<'js>, v: &Value<'js>, depth: u32) -> Res<AV> {
             }
             AV::List(items)
         }
+        Type::Object => {
+            // A renderer node (anything with a numeric `svlHandle`) stands for its native handle.
+            let obj = v.as_object().expect("object type");
+            let h: Value = obj.get("svlHandle")?;
+            match h.as_number() {
+                Some(n) => AV::Handle(handle_of(ctx, n)?),
+                None if h.is_null() => {
+                    return Err(Exception::throw_message(
+                        ctx,
+                        "node has no live native object (not created yet, or already dead)",
+                    ));
+                }
+                None => {
+                    return Err(Exception::throw_type(
+                        ctx,
+                        "unsupported value type 'object' in host call",
+                    ));
+                }
+            }
+        }
         other => {
             return Err(Exception::throw_type(
                 ctx,
@@ -321,7 +341,15 @@ fn abi_to_js<'js>(ctx: &Ctx<'js>, v: &AV) -> Res<Value<'js>> {
             Err(_) => Value::new_float(ctx.clone(), *i as f64),
         },
         AV::F64(f) => Value::new_float(ctx.clone(), *f),
-        AV::Handle(h) => Value::new_float(ctx.clone(), *h as f64),
+        AV::Handle(h) => {
+            // Results hand out renderer nodes when the renderer is installed (it keeps one node
+            // per handle, so identity holds); a bare host sees the number.
+            let n = Value::new_float(ctx.clone(), *h as f64);
+            match ctx.globals().get::<_, Option<Function>>("__svelters_node")? {
+                Some(f) => f.call((n,))?,
+                None => n,
+            }
+        }
         AV::Str(s) => rquickjs::String::from_str(ctx.clone(), s)?.into_value(),
         AV::List(items) => {
             let arr = Array::new(ctx.clone())?;

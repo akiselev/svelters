@@ -570,7 +570,32 @@ impl Core {
     fn op_get_prop_raw(&self, h: svl_handle, prop: &str) -> Result<Value, String> {
         let k = self.kind_of(h)?;
         let p = self.resolve(NameKind::Prop, k, prop)?;
-        self.backend.get_prop(h, p).map_err(|e| e.message)
+        let v = self.backend.get_prop(h, p).map_err(|e| e.message)?;
+        self.adopt_handles(&v);
+        Ok(v)
+    }
+
+    /// Handles that come back inside a result and are new to the host (the backend minted them
+    /// for native objects it did not create) join the handle table with the kind and lifetime
+    /// class the backend reports. Known handles (an object we created) are left alone.
+    fn adopt_handles(&self, v: &Value) {
+        match v {
+            Value::Handle(h) => {
+                if self.st.borrow().handles.contains_key(h) || *h >= MAX_HANDLE {
+                    return;
+                }
+                if let Ok(info) = self.backend.handle_info(*h) {
+                    let mut st = self.st.borrow_mut();
+                    st.handles.insert(*h, info.kind);
+                    if info.lifetime == SVL_LIFE_TOPLEVEL {
+                        st.toplevels.insert(*h);
+                        st.top_seen = true;
+                    }
+                }
+            }
+            Value::List(items) => items.iter().for_each(|i| self.adopt_handles(i)),
+            _ => {}
+        }
     }
 
     fn op_call_raw(
@@ -581,7 +606,9 @@ impl Core {
     ) -> Result<Value, String> {
         let k = self.kind_of(h)?;
         let m = self.resolve(NameKind::Method, k, method)?;
-        self.backend.call(h, m, args).map_err(|e| e.message)
+        let v = self.backend.call(h, m, args).map_err(|e| e.message)?;
+        self.adopt_handles(&v);
+        Ok(v)
     }
 
     fn op_listen_raw(&self, h: svl_handle, signal: &str, on: bool) -> Result<(), String> {
