@@ -547,9 +547,9 @@ impl<'a> Parser<'a> {
         if let Err(message) = super::regexp::validate_flags(flags, ecma) {
             return self.raise(start, message);
         }
-        if let Err((message, _offset)) = super::regexp::validate_pattern(pattern, flags, ecma) {
-            // acorn's `RegExpValidationState.raise` reports at the pattern start.
-            return self.raise_recoverable(start, message);
+        if let Err((message, offset)) = super::regexp::validate_pattern(pattern, flags, ecma) {
+            // acorn's `RegExpValidationState.raise` reports at the pattern start (`offset` is relative to it).
+            return self.raise_recoverable(start + offset, message);
         }
         Ok(())
     }
