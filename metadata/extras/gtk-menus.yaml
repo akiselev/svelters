@@ -1,0 +1,18 @@
+# Hand-written GTK kinds (crates/svelters-gtk/src/backend/menus.rs): they have no GIR class, so they
+# have no ingested metadata. This file lists their members for the cross-checks of
+# tools/metadata/common/gen_bindings.py and the typings; the facts themselves are tested by
+# crates/svelters-gtk/tests/menus.rs.
+elements:
+  - tag: action
+    props: [label, icon, shortcut, tooltip, enabled, visible, checkable, checked, group]
+    signals: [activate, toggled]
+    bindings:
+      - name: checked
+        direction: two_way
+        property: checked
+        type: { ref: bool, nullable: false }
+        change: { signal: toggled, role: any_change, value: arg0 }
+        write: { natively_normalizes: false }
+        echo: { strategy: compare, compare_before_set: true, read_back: false }
+        lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
+        provenance: "menus.rs: a JS write sets the action state without emitting change-state; only a user activation posts `toggled`"

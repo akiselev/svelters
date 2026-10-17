@@ -184,6 +184,27 @@ impl Node {
     }
 }
 
+/// Value descriptors of the menu properties, so the renderer coerces bare attributes (`<action checkable>`).
+pub fn describe_member(what: u32, member: u32) -> Option<MemberDesc> {
+    if what != SVL_PROP {
+        return None;
+    }
+    let (name, tag) = match member {
+        P_LABEL => ("label", SVL_STR),
+        P_ICON => ("icon", SVL_STR),
+        P_SHORTCUT => ("shortcut", SVL_STR),
+        P_TOOLTIP => ("tooltip", SVL_STR),
+        P_GROUP => ("group", SVL_STR),
+        P_ENABLED => ("enabled", SVL_BOOL),
+        P_VISIBLE => ("visible", SVL_BOOL),
+        P_CHECKABLE => ("checkable", SVL_BOOL),
+        P_CHECKED => ("checked", SVL_BOOL),
+        _ => return None,
+    };
+    let slot = SlotDesc::new(tag).named(name);
+    Some(MemberDesc { name: name.into(), params: vec![slot.clone()], ret: slot, flags: 0 })
+}
+
 /// `Ctrl+Shift+O` to GTK's `<Control><Shift>o`.
 pub fn gtk_accel(s: &str) -> String {
     let parts: Vec<&str> = s.split('+').map(str::trim).filter(|p| !p.is_empty()).collect();
@@ -220,7 +241,15 @@ fn str_arg(v: &svl_value) -> Res<String> {
 }
 
 fn bool_arg(v: &svl_value) -> Res<bool> {
-    if v.tag == SVL_BOOL { Ok(unsafe { v.u.b }) } else { Err("expected a boolean".into()) }
+    if v.tag == SVL_BOOL {
+        return Ok(unsafe { v.u.b });
+    }
+    // A bare attribute (`<action checkable>`) reaches a host without descriptors as text.
+    match unsafe { convert::as_str(v) }.as_deref() {
+        Some("" | "true") => Ok(true),
+        Some("false") => Ok(false),
+        _ => Err("expected a boolean".into()),
+    }
 }
 
 fn radio_id(h: u64) -> String {
@@ -1076,6 +1105,15 @@ impl Inner {
         } else {
             nodes.get(&n.parent)?.radio.get(&n.group).map(|(nm, _)| format!("{PREFIX}.{nm}"))
         }
+    }
+
+    /// Test hook: the first node of kind `kind` (`action`, `menu`, `menubar`, ...) with this label.
+    pub fn menu_find(&self, kind: &str, label: &str) -> Option<u64> {
+        let k = kind_by_name(kind);
+        let nodes = self.menus.borrow();
+        let mut hs: Vec<u64> = nodes.iter().filter(|(_, n)| n.kind == k && (n.label == label || !matches!(k, KIND_ACTION | KIND_MENU))).map(|(h, _)| *h).collect();
+        hs.sort_unstable();
+        hs.first().copied()
     }
 
     /// Test hook: the root's action group.

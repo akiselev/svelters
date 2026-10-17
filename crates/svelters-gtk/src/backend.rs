@@ -957,7 +957,10 @@ impl Inner {
     fn describe_member(&self, what: u32, kind: u32, member: u32) -> Option<MemberDesc> {
         let kind = if kind == vlist::KIND_VLIST && !vlist::is_own_member(member) { self.table_kind(kind) } else { kind };
         if menus::is_menu_kind(kind) {
-            if menus::is_own_member(member) || menus::table_name(kind).is_none() {
+            if menus::is_own_member(member) {
+                return menus::describe_member(what, member);
+            }
+            if menus::table_name(kind).is_none() {
                 return None;
             }
             return self.describe_member(what, self.table_kind(kind), member);
@@ -1139,6 +1142,11 @@ impl GtkBackend {
     /// Test hook: the items of a menu container as text (`a,b,{c,d},Sub[e],`).
     pub fn menu_dump(&self, h: u64) -> String {
         self.ctl.local.menu_dump(h)
+    }
+
+    /// Test hook: the first menu node of a kind (`action`, `menu`, `menubar`, ...) with this label.
+    pub fn menu_find(&self, kind: &str, label: &str) -> Option<u64> {
+        self.ctl.local.menu_find(kind, label)
     }
 
     /// Test hook: the root action group of a menu node.
