@@ -4,7 +4,8 @@
 // before every `event` / `sync` / `deferred` / `gone` line and at the end. A state is: live handles
 // with kind, props, children per slot (in order), child attributes (ABI v2.2 `attr`, cleared when
 // the child is removed), listened signals with their phase word, the methods called on them, and
-// the values JS returned for `sync` lines so far (`result` lines).
+// the values JS returned for `sync` lines so far (`result` lines), and the widget name (`style #h
+// name`, kept as the prop `(name)`; other `style` lines are not compared).
 //
 // Usage: node tools/oplog-compare.mjs <a.oplog> <b.oplog> [--default prop=<json>]...
 //   --default label=""   a prop set to this value counts as never set (e.g. a label written "")
@@ -76,6 +77,13 @@ function parseLine(line) {
       const [, n, reason] = sp(line, 3);
       return { op, h: h(n), reason };
     }
+    case 'style': {
+      // X6 styling: the widget name (`id`) is state; classes (scope hashes, kind classes), inline
+      // CSS text, sheets and the scheme differ in spelling between pipelines and are not compared
+      const [, n, what, json] = sp(line, 4);
+      if (what === 'name' && n.startsWith('#')) return { op: 'name', h: h(n), value: JSON.parse(json) };
+      return { op: 'ignore' };
+    }
     default:
       throw new Error(`unknown op: ${line}`);
   }
@@ -113,7 +121,8 @@ export function replay(text, { defaults = {}, camelProps = false } = {}) {
       const n = nodes.get(h);
       const props = Object.fromEntries(
         [...n.props]
-          .filter(([k, v]) => !(k in defaults && Object.is(defaults[k], v)))
+          // a null write resets the prop to the native default: the same as never set
+          .filter(([k, v]) => v !== null && !(k in defaults && Object.is(defaults[k], v)))
           .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)),
       );
       const slots = Object.fromEntries([...n.slots].sort(([a], [b]) => (a < b ? -1 : 1)));
@@ -182,6 +191,14 @@ export function replay(text, { defaults = {}, camelProps = false } = {}) {
         // the value JS returned to the toolkit for the preceding `sync`: part of the next state
         results.push(`${o.h} ${JSON.stringify(o.value)}`);
         break;
+      case 'ignore':
+        break;
+      case 'name': {
+        const n = get(o.h, line);
+        if (o.value === null) n.props.delete('(name)');
+        else n.props.set('(name)', o.value);
+        break;
+      }
       case 'event':
       case 'sync':
       case 'deferred':

@@ -61,6 +61,8 @@ export function cases() {
     'listen-phases': { gtk: 'unknown_event', qt: 'unknown_event' },
     'bind-this': {},
     'borrowed-walk': {},
+    // FX1: setter-rule precedence (explicit > style:/style= > rules > native), the same on both pipelines
+    'style-precedence': {},
   };
   for (const [name, rejectOn] of Object.entries(jsOnly)) {
     out.push({

@@ -67,3 +67,31 @@ Branched from master at ff0fcb4. Written as the work goes.
   with help naming the attribute alternative. Other non-text children keep the "holds text only" wording.
 - Tests: `crates/svelters-compiler/tests/fx1_text.rs` (per-toolkit prop for static and `{expr}` text on all four
   toolkits, mixed error, element-only children). Renderer side: fx1-gen's section above.
+
+## Item 1: compiled-path style precedence (lead)
+
+Order everywhere: explicit attribute > `style:` / `style=` > rules (specificity, source order) > native default/restore.
+
+- **a. dynamic `style={expr}` vs explicit attributes.** The runtime applies those inline setters (style.js hooks) and
+  could not see explicit props. The compiler now emits `$n.explicit(node, props, attrs)` (explicit + bound props,
+  `parent:` attrs) for such elements, and the runtime's `hasProp`/`hasChildAttr` hooks read it. The same elements
+  write their rule values through `$n.rule_set` / `$n.rule_attr`: the rule value is remembered and only written while
+  no inline declaration holds the prop; when the inline declaration goes away the new `restoreProp` hook (style.js,
+  optional, the renderer keeps `writeProp`) goes back to the rule value, else to the native one. Before, rule and
+  inline effects both wrote and the last one won, and dropping the inline value restored the pre-rule value.
+- **b. `style:<setter>={nullish}`.** `StyleSetter` now carries a fallback: the static `style=` value of the same
+  property, else the matching rule candidates (conditional chain), else the spec default, else the captured value
+  (`$n.capture` + `RESTORE`); child attrs fall back to null. Output: `$n.setter_value(...) ?? (cond ? 8 : 0)`.
+- **c. dynamic `id={expr}`.** Like dynamic `class`: `const i<n> = $.derived(() => String(expr ?? ""))`, and `#id`
+  compounds of a rule become a `CondAtom::Id` (`$.get(i<n>) === "a"`).
+- Renderer path: already behaved this way (explicit props win through `el.props`, `style:` edits the style string so
+  a nullish one re-matches the rules, `id` is matched at runtime). Confirmed by the new `fixtures/style-precedence`
+  (stock renderer op log), which `experiments/native-compiler/compiled` also compiles for gtk/qt/testhost and
+  state-compares: all three pass. Without the fixes, #3 would get `spacing null`, #4 never 5, #5 would get 3.
+  The fixture only restores to rule values: the log backend (svelters-host fixture test) reads an unset int prop
+  back as null and refuses to write null to it, so a restore-to-native case fails there for log-backend reasons.
+- `tools/oplog-compare.mjs` now understands `style` lines (the widget name is state, classes/sheets/inline text are
+  not: scope hashes differ between pipelines) and treats a null write as unset; per-case/per-target `defaults` in
+  the compiled cases (the compiled path restores to the spec default, the JS pipeline to what TestHost getProp read).
+- Tests: `crates/svelters-compiler/tests/fx1_style.rs` (codegen of all three), the compiled `style-precedence` case,
+  `oplog-compare.test.mjs`.

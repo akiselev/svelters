@@ -82,8 +82,10 @@ enum Parent {
 #[derive(Clone)]
 struct StyleSubject<'a> {
     tag: String,
-    /// A static `id` (a dynamic one matches no `#id` setter rule).
+    /// A static `id`.
     id: Option<String>,
+    /// The element id when it has a dynamic `id` (`#id` rules are matched at runtime against it).
+    dynamic_id: Option<usize>,
     static_classes: Vec<String>,
     cond_classes: Vec<(String, &'a Expression)>,
     /// The element id when it has a dynamic `class` (its class set is matched at runtime).
@@ -402,7 +404,7 @@ impl<'a> Lower<'a, '_, '_> {
         } else {
             Op::SetDynamic { prop: prop.to_string(), value: Dynamic::Template(parts), span }
         };
-        Some(Element { id, span, kind: er.tag.clone(), present: None, slot, class_expr: None, ops: vec![op], children: Fragment::default() })
+        Some(Element { id, span, kind: er.tag.clone(), present: None, slot, class_expr: None, id_expr: None, ops: vec![op], children: Fragment::default() })
     }
 
     /// `{:then value}` / `{:catch error}`: only plain identifiers.
@@ -614,7 +616,8 @@ impl<'a> Lower<'a, '_, '_> {
         // pass 1: slot request and classes (they don't produce ops)
         let mut requested_slot: Option<String> = None;
         let mut class_expr = None;
-        let mut subject = StyleSubject { tag: el.name.clone(), id: None, static_classes: Vec::new(), cond_classes: Vec::new(), dynamic: None };
+        let mut id_expr = None;
+        let mut subject = StyleSubject { tag: el.name.clone(), id: None, dynamic_id: None, static_classes: Vec::new(), cond_classes: Vec::new(), dynamic: None };
         let mut has_class = false;
         for a in &el.attributes {
             match a {
@@ -624,7 +627,14 @@ impl<'a> Lower<'a, '_, '_> {
                         self.diags.error("slot_not_static", sp(at.span()), "`slot` must be a static name");
                     }
                 },
-                AttributeLike::Attribute(at) if native_style && at.name == "id" => subject.id = static_text(at),
+                AttributeLike::Attribute(at) if native_style && at.name == "id" => {
+                    subject.id = static_text(at);
+                    if subject.id.is_none() {
+                        // matched at runtime against the rules' `#id` conditions, like a dynamic class
+                        id_expr = dynamic_of(at);
+                        subject.dynamic_id = id_expr.is_some().then_some(id);
+                    }
+                }
                 AttributeLike::Attribute(at) if at.name == "class" => match static_text(at) {
                     Some(s) => {
                         has_class = true;
@@ -847,7 +857,15 @@ impl<'a> Lower<'a, '_, '_> {
             ops.iter().filter_map(|o| if let Op::StyleSetter { target, child_attr, .. } = o { Some(key(*child_attr, target)) } else { None }).collect();
         let mut chain = ancestors.to_vec();
         chain.push(subject);
-        let explicit = Explicit { props: &explicit_props, attrs: &explicit_attrs, bound: &bound_props };
+        // A dynamic `style={...}` is applied at runtime: it must know which props are explicit
+        // (they win over it) and write rule-set props through the rule guard (it wins over rules).
+        let guard = ops.iter().any(|o| matches!(o, Op::InlineStyle { dynamic: Some(_), .. }));
+        if guard {
+            let mut props = explicit_props.clone();
+            props.extend(bound_props.iter().cloned());
+            ops.push(Op::Explicit { props, attrs: explicit_attrs.clone() });
+        }
+        let explicit = Explicit { props: &explicit_props, attrs: &explicit_attrs, bound: &bound_props, guard };
         self.style_ops(&er, parent_er.as_ref(), &chain, &explicit, inline_setters, &dynamic_keys, &mut ops);
 
         // children: text content or native children (an element's children are not in its
@@ -864,7 +882,7 @@ impl<'a> Lower<'a, '_, '_> {
         };
         self.forced_slot = forced;
 
-        Some(Element { id, span: el.span(), kind: er.tag.clone(), present, slot, class_expr, ops, children })
+        Some(Element { id, span: el.span(), kind: er.tag.clone(), present, slot, class_expr, id_expr, ops, children })
     }
 
     fn push_static(&mut self, ops: &mut Vec<Op<'a>>, prop: &crate::semantics::PropertySpec, text: Option<&str>, at: &Attribute) {
@@ -1022,7 +1040,15 @@ impl<'a> Lower<'a, '_, '_> {
                         }
                     }
                 };
-                ops.push(Op::StyleSetter { name: d.name.clone(), target, child_attr, backend: self.sem.backend().to_string(), value: dv, span: Span::new(span.0, span.1) });
+                ops.push(Op::StyleSetter {
+                    name: d.name.clone(),
+                    target,
+                    child_attr,
+                    backend: self.sem.backend().to_string(),
+                    value: dv,
+                    fallback: (Vec::new(), Fallback::Default(Json::Null)),
+                    span: Span::new(span.0, span.1),
+                });
             }
         }
     }
@@ -1056,12 +1082,22 @@ impl<'a> Lower<'a, '_, '_> {
             }
             taken.push(k.clone());
         }
+        let dynamic: Vec<String> = taken.clone();
+        // a nullish `style:<setter>` falls back to: the static inline value, else the rules, else
+        // the native default (or the captured value)
+        let mut setter_fallbacks: Vec<(String, Vec<(Cond<'a>, Json)>)> = Vec::new();
         for (l, span) in inline.into_iter().rev() {
             let (is_attr, name) = match &l {
                 StyleLowering::SetProp { prop, .. } => (false, prop.clone()),
                 StyleLowering::ChildAttr { attr, .. } => (true, attr.clone()),
             };
             let k = key(is_attr, &name);
+            if dynamic.contains(&k) && !setter_fallbacks.iter().any(|(x, _)| *x == k) {
+                let v = match &l {
+                    StyleLowering::SetProp { value, .. } | StyleLowering::ChildAttr { value, .. } => value.to_json(),
+                };
+                setter_fallbacks.push((k.clone(), vec![(Vec::new(), v)]));
+            }
             if taken.contains(&k) {
                 continue;
             }
@@ -1079,7 +1115,10 @@ impl<'a> Lower<'a, '_, '_> {
                 StyleLowering::ChildAttr { attr, value } => ops.push(Op::ChildAttr { name: attr, value: AttrValue::Static(value.to_json()), span }),
             }
         }
-        let Some(sheet) = self.styles else { return };
+        let Some(sheet) = self.styles else {
+            self.setter_fallbacks(er, setter_fallbacks, &dynamic, ops);
+            return;
+        };
         struct Cand<'a> {
             spec: (u32, u32, u32),
             order: usize,
@@ -1107,7 +1146,11 @@ impl<'a> Lower<'a, '_, '_> {
                         // may never apply to it: a kind mismatch is not an error then.
                         Err(u)
                             if u.code == crate::semantics::codes::STYLE_NOT_APPLICABLE
-                                && cond.iter().any(|a| matches!(a, CondAtom::Class { element, .. } if Some(*element) == chain.last().and_then(|s| s.dynamic))) => {}
+                                && cond.iter().any(|a| match a {
+                                    CondAtom::Class { element, .. } => Some(*element) == chain.last().and_then(|s| s.dynamic),
+                                    CondAtom::Id { element, .. } => Some(*element) == chain.last().and_then(|s| s.dynamic_id),
+                                    CondAtom::Expr(_) => false,
+                                }) => {}
                         Err(u) => {
                             if self.reported.insert((dspan.0, dspan.1, u.code)) {
                                 let mut msg = u.message.clone();
@@ -1128,6 +1171,7 @@ impl<'a> Lower<'a, '_, '_> {
             }
         }
         if cands.is_empty() {
+            self.setter_fallbacks(er, setter_fallbacks, &dynamic, ops);
             return;
         }
         // highest precedence first
@@ -1147,6 +1191,19 @@ impl<'a> Lower<'a, '_, '_> {
             let mine: Vec<&Cand<'a>> = cands.iter().filter(|c| key_of(&c.lowering) == k).collect();
             let span = mine[0].span;
             let (is_attr, name) = (k.starts_with("a:"), k[2..].to_string());
+            if dynamic.contains(&k) && !setter_fallbacks.iter().any(|(x, _)| *x == k) {
+                let mut cs: Vec<(Cond<'a>, Json)> = Vec::new();
+                for c in &mine {
+                    let v = match &c.lowering {
+                        StyleLowering::SetProp { value, .. } | StyleLowering::ChildAttr { value, .. } => value.to_json(),
+                    };
+                    cs.push((c.cond.clone(), v));
+                    if c.cond.is_empty() {
+                        break;
+                    }
+                }
+                setter_fallbacks.push((k.clone(), cs));
+            }
             if taken.contains(&k) {
                 continue;
             }
@@ -1168,7 +1225,7 @@ impl<'a> Lower<'a, '_, '_> {
                     break;
                 }
             }
-            if candidates.len() == 1 && candidates[0].0.is_empty() {
+            if candidates.len() == 1 && candidates[0].0.is_empty() && !explicit.guard {
                 let (_, v) = candidates.pop().unwrap();
                 if is_attr {
                     ops.push(Op::ChildAttr { name, value: AttrValue::Static(v), span });
@@ -1187,7 +1244,34 @@ impl<'a> Lower<'a, '_, '_> {
                     None => Fallback::Restore,
                 }
             };
-            ops.push(Op::StyleProp { prop: name, child_attr: is_attr, candidates, fallback, span });
+            ops.push(Op::StyleProp { prop: name, child_attr: is_attr, candidates, fallback, guarded: explicit.guard, span });
+        }
+        self.setter_fallbacks(er, setter_fallbacks, &dynamic, ops);
+    }
+
+    /// Fills in the fallback of each `style:<setter>` op (`dynamic`: their keys): `found` holds the
+    /// static inline value or the rule candidates of a key; then the native default, or the value
+    /// captured before the first write when the spec has none (a child attribute: null).
+    fn setter_fallbacks(&self, er: &ElementRef, found: Vec<(String, Vec<(Cond<'a>, Json)>)>, dynamic: &[String], ops: &mut [Op<'a>]) {
+        for k in dynamic {
+            let (is_attr, name) = (k.starts_with("a:"), &k[2..]);
+            let candidates = found.iter().find(|(x, _)| x == k).map(|(_, c)| c.clone()).unwrap_or_default();
+            let fallback = if candidates.last().is_some_and(|c| c.0.is_empty()) || is_attr {
+                Fallback::Default(Json::Null)
+            } else {
+                match self.sem.property(er, name).ok().and_then(|p| p.default.clone()) {
+                    Some(d) => Fallback::Default(d),
+                    None => Fallback::Restore,
+                }
+            };
+            for o in ops.iter_mut() {
+                if let Op::StyleSetter { target, child_attr, fallback: f, .. } = o
+                    && *child_attr == is_attr
+                    && target == name
+                {
+                    *f = (candidates.clone(), fallback.clone());
+                }
+            }
         }
     }
 
@@ -1352,7 +1436,7 @@ fn match_compound<'a>(c: &Compound, s: &StyleSubject<'a>, cond: &mut Cond<'a>) -
     if let Some(id) = &c.id
         && s.id.as_ref() != Some(id)
     {
-        return None;
+        cond.push(CondAtom::Id { element: s.dynamic_id?, id: id.clone() });
     }
     if let Some(t) = &c.element
         && *t != s.tag
@@ -1377,6 +1461,8 @@ struct Explicit<'x> {
     props: &'x [String],
     attrs: &'x [String],
     bound: &'x [String],
+    /// The element has a dynamic `style={...}`: rule-set props go through `$n.rule_set`.
+    guard: bool,
 }
 
 /// Key of a style target: `p:<prop>` or `a:<child attribute>`.

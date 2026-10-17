@@ -256,17 +256,47 @@ export function assume(node, prop, value) {
 // Styling (X6 sheets and the inline style; setter rules are matched at compile time)
 
 bindElements(() => table().values());
-// inline setter properties of a dynamic `style={...}` (static ones are compiled): written with
-// `set`, child attributes straight to the parent
+// inline setter properties of a dynamic `style={...}` (static ones are compiled). Precedence:
+// explicit attributes (`$n.explicit`, from the compiler) > this inline style > the rules (matched at
+// compile time, written through `rule_set` / `rule_attr` on such elements) > the native value.
 bindSetterHooks({
-  hasProp: () => false,
-  hasChildAttr: (n, name) => n.cattrs.has(name),
+  hasProp: (n, prop, native) => !!n.explicit && (n.explicit.props.has(prop) || n.explicit.props.has(native)),
+  hasChildAttr: (n, name) => !!n.explicit && n.explicit.attrs.has(name),
   readProp: (n, prop) => n.host.getProp(n.h, prop),
-  writeProp: (n, prop, value) => set(n, prop, value),
+  writeProp: (n, prop, value) => {
+    (n.inlineProps ??= new Set()).add(prop);
+    set(n, prop, value);
+  },
+  // no inline declaration sets `prop` any more: back to the rules' value, else the native one
+  restoreProp: (n, prop, orig) => {
+    n.inlineProps?.delete(prop);
+    set(n, prop, n.ruled?.has(prop) ? n.ruled.get(prop) : orig);
+  },
   writeChildAttr: (n, name, value) => {
-    if (n.np && alive(n) && alive(n.np)) n.host.setChildAttr(n.np.h, n.h, name, value);
+    if (value === null) {
+      n.inlineAttrs?.delete(name);
+      value = n.ruledAttrs?.get(name) ?? null;
+    } else (n.inlineAttrs ??= new Set()).add(name);
+    child_attr(n, name, value);
   },
 });
+
+/** The explicit props and `parent:` attributes of an element with a dynamic `style={...}`. */
+export function explicit(node, props, attrs) {
+  node.explicit = { props: new Set(props), attrs: new Set(attrs) };
+}
+
+/** A rule's value for `prop` on an element with a dynamic `style={...}`: its inline setters win. */
+export function rule_set(node, prop, value) {
+  (node.ruled ??= new Map()).set(prop, value);
+  if (!node.inlineProps?.has(prop)) set(node, prop, value);
+}
+
+/** A rule's child attribute on an element with a dynamic `style={...}` (see rule_set). */
+export function rule_attr(node, name, value) {
+  (node.ruledAttrs ??= new Map()).set(name, value ?? null);
+  if (!node.inlineAttrs?.has(name)) child_attr(node, name, value);
+}
 
 /**
  * `class`, `id` or `style` of a native element for the X6 styling (as @svelters/renderer's
