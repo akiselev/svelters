@@ -36,6 +36,16 @@ Agents draft the annotations, and generated tests verify them.
 3. A failing test sends the annotation back to the agent with the failure output. Merged annotations always have passing tests.
 4. The GIR/PyGObject cross-check runs again on a toolkit upgrade. Changed facts re-run their tests.
 
+## Generator language
+
+The ingestion scripts and generators are Python during the prototype (P3/P4). They move to Rust in M3 so that a project's `build.rs` can run them in-process, with no Python at build time. Until then they must stay deterministic: inputs are only the metadata JSON, the overrides and the build config, and they write byte-identical output on rerun. The port can then be checked by diffing outputs.
+
+Layout: `tools/metadata/{common,gtk,qt}/` holds the scripts, `metadata/{gtk,qt}/*.json` holds the generated, checked-in element kinds, and `metadata/overrides/{gtk,qt}/*.yaml` holds the annotations.
+
+## Schema
+
+`svelters-element-kind/v0`. The P0 step promotes the sketch in `docs/notes/widget-metadata-ingestion.md` §4 to this section.
+
 ## Outputs
 
 - Element-kind tables (`metadata/<toolkit>/*.json`, checked in and versioned).
