@@ -33,6 +33,10 @@ elements:
       - { js: saveGeometry, native: saveGeometry, provenance: "QWidget::saveGeometry (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: restoreGeometry, native: restoreGeometry, params: [bytes], provenance: "QWidget::restoreGeometry (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: resizeTo, native: resize, params: ["record<Size>"], provenance: "QWidget::resize (qdoc); typed by the S1 value model (ABI v3)" }
+    signals:
+      # Synthetic (an event filter): the key presses this widget itself receives. Its main use is the capture
+      # phase (X3): `onkey-presscapture` sees the keys of descendants (an entry inside the box) before they do.
+      - { js: key-press, synthetic: key_press, provenance: "X2 sync key-press (docs/notes/x2-sync-frame.md); X3 capture phase (docs/notes/x3-childattr-listen.md)" }
     children:
       policy: layout_managed
       default_slot: children
@@ -47,6 +51,32 @@ elements:
           on_remove: empty
           requires:
             - { check: "QWidget::layout(self) != null", otherwise: error }   # satisfied by construction (composite layout)
+          attrs:
+            - name: stretch
+              type: i32
+              default: 0
+              samples: [1, 3]
+              set: { native: "QBoxLayout::setStretch(int, int)", args: [child_index, value] }
+              get: { native: "QBoxLayout::stretch(int) const", args: [child_index] }
+              expect: "qobject_cast<QBoxLayout *>($p->layout())->stretch(qobject_cast<QBoxLayout *>($p->layout())->indexOf($w)) == 1"
+              provenance: "QBoxLayout::setStretch(int, int) (qdoc); X3 child attribute"
+            - name: align
+              type: enum
+              values:
+                none: "Qt::Alignment()"
+                left: "Qt::AlignLeft"
+                right: "Qt::AlignRight"
+                hcenter: "Qt::AlignHCenter"
+                top: "Qt::AlignTop"
+                bottom: "Qt::AlignBottom"
+                vcenter: "Qt::AlignVCenter"
+                center: "Qt::AlignCenter"
+              default: none
+              samples: [right, center]
+              set: { native: "QLayout::setAlignment(QWidget*, Qt::Alignment)", args: [child, value] }
+              get: { native: "QLayout::itemAt(int) const", args: [child_index], member: alignment }
+              expect: "($p->layout()->itemAt($p->layout()->indexOf($w))->alignment() == Qt::AlignRight)"
+              provenance: "QLayout::setAlignment(QWidget*, Qt::Alignment), QLayoutItem::alignment() (qdoc); X3 child attribute"
           ops:
             insert:
               native: "QBoxLayout::addWidget(QWidget*, int, Qt::Alignment)"
@@ -65,3 +95,74 @@ elements:
             index_of: { native: "QLayout::indexOf(const QWidget*) const", args: [child] }
             list: { native: "QLayout::count() const", item: "QLayout::itemAt(int) const" }
           provenance: [{ origin: uic, ref: "layout/item" }, { origin: typesystem, ref: addownership-1 }, { origin: probe, ref: qt_slot_ownership_probe.py }]
+
+  # Element `grid`: a plain QWidget carrying a QGridLayout (X3). Position is not order: `cells` is unordered and
+  # each child is placed by its `parent:column` / `parent:row` / `parent:columnSpan` / `parent:rowSpan` attributes.
+  # QGridLayout fixes the cell when the widget is added, so changing an attribute removes and re-adds the widget
+  # with all four current values (`readd`). A child is inserted at row 0, column 0, spanning one cell.
+  - tag: grid
+    construct:
+      class: QWidget
+      composite:
+        layout: { class: QGridLayout }
+    children:
+      policy: layout_managed
+      default_slot: cells
+      slots:
+        - name: cells
+          content: widget
+          accepts: [QWidget]
+          cardinality: many
+          order: unordered
+          host: layout
+          default: { kind: none }
+          on_remove: empty
+          requires:
+            - { check: "QWidget::layout(self) != null", otherwise: error }   # satisfied by construction (composite layout)
+          attrs:
+            - name: column
+              type: i32
+              default: 0
+              samples: [2, 5]
+              set: { native: "QGridLayout::addWidget(QWidget*, int, int, int, int, Qt::Alignment)", args: [child, attr.row, value, attr.rowSpan, attr.columnSpan], readd: true }
+              get: { native: "QGridLayout::getItemPosition(int, int*, int*, int*, int*) const", args: [child_index], out: 2 }
+              expect: "[&] { auto *l = qobject_cast<QGridLayout *>($p->layout()); int r, c, rs, cs; l->getItemPosition(l->indexOf($w), &r, &c, &rs, &cs); return c == 2; }()"
+              provenance: "QGridLayout::addWidget, QGridLayout::getItemPosition (qdoc); X3 child attribute"
+            - name: row
+              type: i32
+              default: 0
+              samples: [3, 1]
+              set: { native: "QGridLayout::addWidget(QWidget*, int, int, int, int, Qt::Alignment)", args: [child, value, attr.column, attr.rowSpan, attr.columnSpan], readd: true }
+              get: { native: "QGridLayout::getItemPosition(int, int*, int*, int*, int*) const", args: [child_index], out: 1 }
+              expect: "[&] { auto *l = qobject_cast<QGridLayout *>($p->layout()); int r, c, rs, cs; l->getItemPosition(l->indexOf($w), &r, &c, &rs, &cs); return r == 3; }()"
+              provenance: "QGridLayout::addWidget, QGridLayout::getItemPosition (qdoc); X3 child attribute"
+            - name: columnSpan
+              type: i32
+              default: 1
+              samples: [2, 3]
+              set: { native: "QGridLayout::addWidget(QWidget*, int, int, int, int, Qt::Alignment)", args: [child, attr.row, attr.column, attr.rowSpan, value], readd: true }
+              get: { native: "QGridLayout::getItemPosition(int, int*, int*, int*, int*) const", args: [child_index], out: 4 }
+              expect: "[&] { auto *l = qobject_cast<QGridLayout *>($p->layout()); int r, c, rs, cs; l->getItemPosition(l->indexOf($w), &r, &c, &rs, &cs); return cs == 2; }()"
+              provenance: "QGridLayout::addWidget, QGridLayout::getItemPosition (qdoc); X3 child attribute"
+            - name: rowSpan
+              type: i32
+              default: 1
+              samples: [2, 4]
+              set: { native: "QGridLayout::addWidget(QWidget*, int, int, int, int, Qt::Alignment)", args: [child, attr.row, attr.column, value, attr.columnSpan], readd: true }
+              get: { native: "QGridLayout::getItemPosition(int, int*, int*, int*, int*) const", args: [child_index], out: 3 }
+              expect: "[&] { auto *l = qobject_cast<QGridLayout *>($p->layout()); int r, c, rs, cs; l->getItemPosition(l->indexOf($w), &r, &c, &rs, &cs); return rs == 2; }()"
+              provenance: "QGridLayout::addWidget, QGridLayout::getItemPosition (qdoc); X3 child attribute"
+          ops:
+            insert:
+              native: "QGridLayout::addWidget(QWidget*, int, int, Qt::Alignment)"
+              args: [child, "const:0", "const:0"]
+              effects: { child: parented }
+            remove:                                   # removeWidget leaves the widget parented and visible
+              native: "QLayout::removeWidget(QWidget*)"
+              args: [child]
+              then:
+                - { native: "QWidget::setParent(QWidget*)", receiver: child, args: [null] }   # also hides it
+              effects: { child: unparented }
+            index_of: { native: "QLayout::indexOf(const QWidget*) const", args: [child] }
+            list: { native: "QLayout::count() const", item: "QLayout::itemAt(int) const" }
+          provenance: [{ origin: uic, ref: "layout/item" }, { origin: docs, ref: "QGridLayout::addWidget" }, { origin: probe, ref: qt_slot_ownership_probe.py }]

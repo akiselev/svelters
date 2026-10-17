@@ -19,6 +19,7 @@ export interface QtElementDescriptors {
       enabled?: boolean;
     };
     events: {
+      "key-press": () => void;
     };
     methods: {
       saveGeometry(): Uint8Array;
@@ -115,6 +116,15 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
+  grid: {
+    props: {
+    };
+    events: {
+    };
+    methods: {
+    };
+    slots: "cells";
+  };
   label: {
     props: {
       label?: string;
@@ -163,6 +173,15 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
+  splitter: {
+    props: {
+    };
+    events: {
+    };
+    methods: {
+    };
+    slots: "children";
+  };
   statusbar: {
     props: {
     };
@@ -171,6 +190,15 @@ export interface QtElementDescriptors {
     methods: {
     };
     slots: never;
+  };
+  tabwidget: {
+    props: {
+    };
+    events: {
+    };
+    methods: {
+    };
+    slots: "pages";
   };
   timeedit: {
     props: {
@@ -200,3 +228,16 @@ export interface QtElementDescriptors {
 }
 
 export type QtElementTag = keyof QtElementDescriptors;
+
+/** `parent:<name>` attributes any child element can carry; which apply depends on the parent and the slot. */
+export interface QtChildAttrs {
+  'parent:align'?: ("bottom" | "center" | "hcenter" | "left" | "none" | "right" | "top" | "vcenter");
+  'parent:column'?: number;
+  'parent:columnSpan'?: number;
+  'parent:row'?: number;
+  'parent:rowSpan'?: number;
+  'parent:stretch'?: number;
+  'parent:tabEnabled'?: boolean;
+  'parent:tabLabel'?: string;
+  'parent:tabToolTip'?: string;
+}

@@ -1,0 +1,46 @@
+# Element `splitter` (X3): only the `children` slot and its attribute. Properties and signals of QSplitter
+# belong to A1's qt-containers-a batch.
+# The stretch factor is kept in the child's size policy, so it outlives the slot; `reset: true` has the backend
+# write the default back before a removal and after an insertion.
+elements:
+  - tag: splitter
+    construct: { class: QSplitter }
+    children:
+      policy: named_slots
+      default_slot: children
+      slots:
+        - name: children
+          content: widget
+          accepts: [QWidget]
+          cardinality: many
+          order: native_index
+          host: self
+          default: { kind: none }
+          on_remove: empty
+          attrs:
+            - name: stretch
+              type: i32
+              default: 0
+              samples: [1, 3]
+              reset: true
+              set: { native: "QSplitter::setStretchFactor(int, int)", args: [child_index, value] }
+              get: { expr: "ch->sizePolicy().horizontalStretch()" }     # QSplitter has no getter; setStretchFactor writes the size policy
+              expect: "$w->sizePolicy().horizontalStretch() == 1"
+              provenance: "QSplitter::setStretchFactor(int, int) (qdoc); X3 child attribute"
+          ops:
+            insert:
+              native: "QSplitter::addWidget(QWidget*)"
+              args: [child]
+              variants:
+                - when: "before != null"
+                  native: "QSplitter::insertWidget(int, QWidget*)"
+                  args: [index, child]
+              effects: { child: parented }
+            remove:                                   # a splitter child leaves by being unparented
+              native: "QWidget::setParent(QWidget*)"
+              receiver: child
+              args: [null]
+              effects: { child: unparented }
+            index_of: { native: "QSplitter::indexOf(QWidget*) const", args: [child] }
+            list: { native: "QSplitter::count() const", item: "QSplitter::widget(int) const" }
+          provenance: [{ origin: uic, ref: "QSplitter/widget" }, { origin: docs, ref: "QSplitter::insertWidget" }, { origin: probe, ref: qt_slot_ownership_probe.py }]

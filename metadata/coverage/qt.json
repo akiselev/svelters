@@ -1917,7 +1917,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 4,
-  "element": null,
+  "element": "splitter",
   "gallery": null,
   "inherited": 0,
   "kind": "QSplitter",
@@ -1927,7 +1927,7 @@
    34
   ],
   "native": "QSplitter",
-  "ownership": false,
+  "ownership": true,
   "props": [
    0,
    4
@@ -1938,12 +1938,12 @@
    0,
    1
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
    0,
-   0
+   2
   ]
  },
  {
@@ -2115,7 +2115,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 10,
-  "element": null,
+  "element": "tabwidget",
   "gallery": null,
   "inherited": 0,
   "kind": "QTabWidget",
@@ -2125,7 +2125,7 @@
    58
   ],
   "native": "QTabWidget",
-  "ownership": false,
+  "ownership": true,
   "props": [
    0,
    11
@@ -2136,12 +2136,12 @@
    0,
    4
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
    0,
-   0
+   4
   ]
  },
  {
@@ -2544,7 +2544,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 39,
-  "element": "box",
+  "element": "box, grid",
   "gallery": "00-overview",
   "inherited": 0,
   "kind": "QWidget",
@@ -2560,17 +2560,17 @@
    61
   ],
   "props_annotated": 9,
-  "signal_results": 0,
+  "signal_results": 1,
   "signals": [
    0,
    4
   ],
-  "slots": 1,
-  "slots_own": 1,
+  "slots": 2,
+  "slots_own": 2,
   "unexposed": null,
   "verified": [
    16,
-   16
+   24
   ]
  },
  {
