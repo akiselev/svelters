@@ -14,6 +14,7 @@
 //! Threading: a `Host` is pinned to the thread that created it (the toolkit's main thread).
 //! The only cross-thread call is the timer thread invoking the backend's thread-safe `wake`.
 
+mod convert;
 mod core;
 mod engine;
 mod quickjs;

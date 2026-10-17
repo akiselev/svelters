@@ -18,11 +18,16 @@
 use crate::engine::{ErrorKind, JsEngine, JsError};
 use std::cell::{Cell, RefCell};
 use std::cmp::Reverse;
-use std::collections::{BinaryHeap, HashMap, VecDeque};
+use std::collections::{BinaryHeap, HashMap, HashSet, VecDeque};
+use std::rc::Rc;
 use std::sync::atomic::AtomicBool;
 use std::sync::{Arc, Condvar, Mutex, MutexGuard};
 use std::time::{Duration, Instant};
-use svelters_abi::{BackendRef, NameKind, Value, WakeHandle, svl_handle, svl_id};
+use crate::convert::TypeInfo;
+use svelters_abi::{BackendRef, MemberDesc, Value, WakeHandle, svl_handle, svl_id};
+
+mod ops;
+pub(crate) use ops::{Name, OpError, OpKind};
 
 #[derive(Clone, Debug)]
 pub struct HostConfig {
@@ -238,7 +243,16 @@ struct CoreState {
     /// handle → kind id
     handles: HashMap<svl_handle, svl_id>,
     kinds: HashMap<String, svl_id>,
-    names: HashMap<(u32, svl_id, String), svl_id>,
+    /// kind id → name, for error messages
+    kind_names: HashMap<svl_id, String>,
+    /// (name kind, scope kind) → name → id
+    names: HashMap<(u32, svl_id), HashMap<Box<str>, svl_id>>,
+    /// Descriptor caches: `None` records that the backend has no descriptor.
+    members: HashMap<(u32, svl_id, svl_id), Option<Rc<MemberDesc>>>,
+    types: HashMap<svl_id, Option<Rc<TypeInfo>>>,
+    /// Live boxed-value handles, and ones the JS side dropped (released at the next checkpoint).
+    boxed: HashSet<svl_handle>,
+    release_queue: Vec<svl_handle>,
     /// (kind id, signal id) → name, filled by `listen`
     signal_names: HashMap<(svl_id, svl_id), String>,
     events: VecDeque<Event>,
@@ -381,161 +395,6 @@ impl Core {
         std::mem::take(&mut self.st.borrow_mut().console)
     }
 
-    // ---- name resolution ----
-
-    fn resolve(&self, what: NameKind, kind: svl_id, name: &str) -> Result<svl_id, String> {
-        let key = (what as u32, kind, name.to_string());
-        if let Some(id) = self.st.borrow().names.get(&key) {
-            return Ok(*id);
-        }
-        let id = self.backend.resolve(what, kind, name);
-        if id == 0 {
-            return Err(format!("unknown {what:?} '{name}'"));
-        }
-        self.st.borrow_mut().names.insert(key, id);
-        Ok(id)
-    }
-
-    fn kind_of(&self, h: svl_handle) -> Result<svl_id, String> {
-        self.st
-            .borrow()
-            .handles
-            .get(&h)
-            .copied()
-            .ok_or_else(|| format!("stale or foreign handle {h}"))
-    }
-
-    // ---- JS host ops (called by the engine's `__svelters_host`) ----
-
-    pub(crate) fn op_create(&self, kind: &str) -> Result<svl_handle, String> {
-        self.timed(|| self.op_create_raw(kind))
-    }
-
-    pub(crate) fn op_insert(
-        &self,
-        parent: svl_handle,
-        child: svl_handle,
-        before: Option<svl_handle>,
-        slot: Option<&str>,
-    ) -> Result<(), String> {
-        self.timed(|| self.op_insert_raw(parent, child, before, slot))
-    }
-
-    pub(crate) fn op_remove(&self, parent: svl_handle, child: svl_handle) -> Result<(), String> {
-        self.timed(|| self.op_remove_raw(parent, child))
-    }
-
-    pub(crate) fn op_destroy(&self, h: svl_handle) -> Result<(), String> {
-        self.timed(|| self.op_destroy_raw(h))
-    }
-
-    pub(crate) fn op_set_prop(&self, h: svl_handle, prop: &str, v: &Value) -> Result<(), String> {
-        self.timed(|| self.op_set_prop_raw(h, prop, v))
-    }
-
-    pub(crate) fn op_get_prop(&self, h: svl_handle, prop: &str) -> Result<Value, String> {
-        self.timed(|| self.op_get_prop_raw(h, prop))
-    }
-
-    pub(crate) fn op_call(
-        &self,
-        h: svl_handle,
-        method: &str,
-        args: &[Value],
-    ) -> Result<Value, String> {
-        self.timed(|| self.op_call_raw(h, method, args))
-    }
-
-    pub(crate) fn op_listen(&self, h: svl_handle, signal: &str, on: bool) -> Result<(), String> {
-        self.timed(|| self.op_listen_raw(h, signal, on))
-    }
-
-
-    fn op_create_raw(&self, kind: &str) -> Result<svl_handle, String> {
-        let cached = self.st.borrow().kinds.get(kind).copied();
-        let kid = match cached {
-            Some(k) => k,
-            None => {
-                let k = self.backend.resolve(NameKind::Kind, 0, kind);
-                if k == 0 {
-                    return Err(format!("unknown kind '{kind}'"));
-                }
-                self.st.borrow_mut().kinds.insert(kind.to_string(), k);
-                k
-            }
-        };
-        let h = self.backend.create(kid).map_err(|e| e.message)?;
-        self.st.borrow_mut().handles.insert(h, kid);
-        Ok(h)
-    }
-
-    fn op_insert_raw(
-        &self,
-        parent: svl_handle,
-        child: svl_handle,
-        before: Option<svl_handle>,
-        slot: Option<&str>,
-    ) -> Result<(), String> {
-        let pk = self.kind_of(parent)?;
-        self.kind_of(child)?;
-        if let Some(b) = before {
-            self.kind_of(b)?;
-        }
-        let slot = match slot {
-            Some(s) => self.resolve(NameKind::Slot, pk, s)?,
-            None => 0,
-        };
-        self.backend
-            .insert(parent, child, before, slot)
-            .map_err(|e| e.message)
-    }
-
-    fn op_remove_raw(&self, parent: svl_handle, child: svl_handle) -> Result<(), String> {
-        self.kind_of(parent)?;
-        self.kind_of(child)?;
-        self.backend.remove(parent, child).map_err(|e| e.message)
-    }
-
-    fn op_destroy_raw(&self, h: svl_handle) -> Result<(), String> {
-        self.kind_of(h)?;
-        self.st.borrow_mut().handles.remove(&h);
-        self.backend.destroy(h);
-        Ok(())
-    }
-
-    fn op_set_prop_raw(&self, h: svl_handle, prop: &str, v: &Value) -> Result<(), String> {
-        let k = self.kind_of(h)?;
-        let p = self.resolve(NameKind::Prop, k, prop)?;
-        self.backend.set_prop(h, p, v).map_err(|e| e.message)
-    }
-
-    fn op_get_prop_raw(&self, h: svl_handle, prop: &str) -> Result<Value, String> {
-        let k = self.kind_of(h)?;
-        let p = self.resolve(NameKind::Prop, k, prop)?;
-        self.backend.get_prop(h, p).map_err(|e| e.message)
-    }
-
-    fn op_call_raw(
-        &self,
-        h: svl_handle,
-        method: &str,
-        args: &[Value],
-    ) -> Result<Value, String> {
-        let k = self.kind_of(h)?;
-        let m = self.resolve(NameKind::Method, k, method)?;
-        self.backend.call(h, m, args).map_err(|e| e.message)
-    }
-
-    fn op_listen_raw(&self, h: svl_handle, signal: &str, on: bool) -> Result<(), String> {
-        let k = self.kind_of(h)?;
-        let s = self.resolve(NameKind::Signal, k, signal)?;
-        self.st
-            .borrow_mut()
-            .signal_names
-            .insert((k, s), signal.to_string());
-        self.backend.listen(h, s, on).map_err(|e| e.message)
-    }
-
     // ---- events ----
 
     pub(crate) fn push_event(&self, handle: svl_handle, signal: svl_id, args: Vec<Value>) {
@@ -663,6 +522,7 @@ pub(crate) fn checkpoint(core: &Core, engine: &RefCell<Box<dyn JsEngine>>) {
     let mut eng = engine.borrow_mut();
     if core.cfg.scripted {
         checkpoint_scripted(core, &mut eng);
+        core.process_releases();
         return;
     }
     let mut budget = core.cfg.max_jobs_per_checkpoint;
@@ -696,6 +556,9 @@ pub(crate) fn checkpoint(core: &Core, engine: &RefCell<Box<dyn JsEngine>>) {
     pending |= drain(&mut eng, &mut budget);
     drop(eng);
 
+    // GC'd boxed values were only queued by the finalization callbacks: release them here,
+    // outside any entry into JS.
+    core.process_releases();
     core.sync_sched();
     if pending || core.has_events() {
         core.backend.wake();

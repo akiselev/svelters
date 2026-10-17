@@ -62,5 +62,65 @@
     if (!t.repeat) timers.delete(id);
     t.cb(...t.args);
   };
-  Object.defineProperty(global, '__svelters_internal', { value: { fire }, enumerable: false });
+  // ---- native error and boxed-value wrappers (ABI v3 value model) ----
+
+  class NativeError extends Error {
+    constructor(domain, code, message) {
+      super(message);
+      this.name = 'NativeError';
+      this.domain = domain;
+      this.code = code;
+    }
+  }
+  Object.defineProperty(global, 'NativeError', { value: NativeError, writable: true, configurable: true });
+
+  // A wrapper owns one backend handle. `dispose()` releases it at once and is idempotent. If the
+  // wrapper is collected without being disposed, the registry callback (a job, not the GC
+  // finalizer itself) only queues the handle; the host releases the queue at its next checkpoint.
+  const registry =
+    typeof FinalizationRegistry === 'function' ? new FinalizationRegistry((h) => native.queueRelease(h)) : null;
+  class NativeBoxed {
+    #h;
+    #t;
+    #name;
+    constructor(h, t, name) {
+      this.#h = h;
+      this.#t = t;
+      this.#name = name;
+      if (registry) registry.register(this, h, this);
+    }
+    get disposed() {
+      return this.#h === 0;
+    }
+    get typeName() {
+      return this.#name;
+    }
+    get __svlBoxed() {
+      return this.#h === 0 ? null : [this.#h, this.#t];
+    }
+    dispose() {
+      if (this.#h === 0) return;
+      const h = this.#h;
+      this.#h = 0;
+      if (registry) registry.unregister(this);
+      native.releaseBoxed(h);
+    }
+  }
+  if (typeof Symbol.dispose === 'symbol') {
+    Object.defineProperty(NativeBoxed.prototype, Symbol.dispose, {
+      value() {
+        this.dispose();
+      },
+      configurable: true,
+      writable: true,
+    });
+  }
+  const makeBoxed = (h, t, name) => new NativeBoxed(h, t, name);
+  const makeNativeError = (domain, code, message) => new NativeError(domain, code, message);
+  const isView = (v) => ArrayBuffer.isView(v);
+
+  Object.defineProperty(global, '__svelters_internal', {
+    value: { fire, makeBoxed, makeNativeError, isView },
+    enumerable: false,
+  });
 })

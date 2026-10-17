@@ -572,13 +572,13 @@ pub struct TypeDesc {
 }
 
 /// Owned storage behind the C structs of one descriptor, kept alive for the backend's lifetime.
-struct CMember {
+pub struct CMember {
     _strings: Vec<CString>,
     _params: Vec<svl_slot_desc>,
     desc: svl_member_desc,
 }
 
-struct CType {
+pub struct CType {
     _strings: Vec<CString>,
     _members: Vec<svl_enum_member>,
     _fields: Vec<svl_slot_desc>,
@@ -707,6 +707,34 @@ impl MemberDesc {
                 flags: d.flags,
             }
         }
+    }
+}
+
+/// Owns the C structs behind descriptors a backend publishes, so the pointers stay valid for the
+/// backend's lifetime. Each descriptor is built once, on first request.
+#[derive(Default)]
+pub struct DescStore {
+    members: RefCell<HashMap<(u32, svl_id, svl_id), Option<Box<CMember>>>>,
+    types: RefCell<HashMap<svl_id, Option<Box<CType>>>>,
+}
+
+impl DescStore {
+    /// The C descriptor of `(what, kind, member)`; `build` runs only the first time. Null when
+    /// `build` returns `None`.
+    pub fn member(
+        &self,
+        key: (u32, svl_id, svl_id),
+        build: impl FnOnce() -> Option<MemberDesc>,
+    ) -> *const svl_member_desc {
+        let mut cache = self.members.borrow_mut();
+        let e = cache.entry(key).or_insert_with(|| build().map(|d| d.to_c()));
+        e.as_ref().map_or(ptr::null(), |c| &c.desc as *const _)
+    }
+
+    pub fn type_desc(&self, id: svl_id, build: impl FnOnce() -> Option<TypeDesc>) -> *const svl_type_desc {
+        let mut cache = self.types.borrow_mut();
+        let e = cache.entry(id).or_insert_with(|| build().map(|d| d.to_c()));
+        e.as_ref().map_or(ptr::null(), |c| &c.desc as *const _)
     }
 }
 
@@ -1086,8 +1114,7 @@ struct Shim {
     backend: Box<dyn Backend>,
     last_error: RefCell<CString>,
     out: OutSlot,
-    members: RefCell<HashMap<(u32, svl_id, svl_id), Option<Box<CMember>>>>,
-    types: RefCell<HashMap<svl_id, Option<Box<CType>>>>,
+    descs: DescStore,
 }
 
 fn write_out(slot: &OutSlot, out: *mut svl_value, v: Value) {
@@ -1271,26 +1298,20 @@ unsafe extern "C" fn t_describe(
     let Some(w) = NameKind::from_u32(what) else {
         return ptr::null();
     };
-    let mut cache = s.members.borrow_mut();
-    let entry = cache.entry((what, kind, member)).or_insert_with(|| {
+    s.descs.member((what, kind, member), || {
         catch_unwind(AssertUnwindSafe(|| s.backend.describe(w, kind, member)))
             .ok()
             .flatten()
-            .map(|d| d.to_c())
-    });
-    entry.as_ref().map_or(ptr::null(), |c| &c.desc as *const _)
+    })
 }
 
 unsafe extern "C" fn t_describe_type(s: *mut c_void, ty: svl_id) -> *const svl_type_desc {
     let s = unsafe { shim(s) };
-    let mut cache = s.types.borrow_mut();
-    let entry = cache.entry(ty).or_insert_with(|| {
+    s.descs.type_desc(ty, || {
         catch_unwind(AssertUnwindSafe(|| s.backend.describe_type(ty)))
             .ok()
             .flatten()
-            .map(|d| d.to_c())
-    });
-    entry.as_ref().map_or(ptr::null(), |c| &c.desc as *const _)
+    })
 }
 
 unsafe extern "C" fn t_cancel(s: *mut c_void, callback: u64) -> c_int {
@@ -1315,8 +1336,7 @@ impl BackendVtable {
             backend: Box::new(backend),
             last_error: RefCell::new(CString::default()),
             out: RefCell::new(None),
-            members: RefCell::default(),
-            types: RefCell::default(),
+            descs: DescStore::default(),
         }));
         let raw = Box::new(svl_backend {
             abi_version: SVL_ABI_VERSION,

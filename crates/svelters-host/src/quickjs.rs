@@ -2,15 +2,15 @@
 //! thread, a bundle-relative module loader, the `__svelters_host` object, and a JS prelude for
 //! `console`, timers and `queueMicrotask`.
 
-use crate::core::Core;
+use crate::convert;
+use crate::core::{Core, Name, OpError, OpKind};
 use crate::engine::{ErrorKind, JobStatus, JsEngine, JsError};
 use rquickjs::function::Opt;
 use rquickjs::loader::{ImportAttributes, Loader, Resolver};
 use rquickjs::module::Declared;
 use rquickjs::prelude::Coerced;
 use rquickjs::{
-    Array, CatchResultExt, Context, Ctx, Exception, FromJs, Function, Module, Object, Runtime,
-    Type, Value,
+    CatchResultExt, Context, Ctx, Exception, FromJs, Function, Module, Object, Runtime, Value,
 };
 use std::cell::RefCell;
 use std::path::{Path, PathBuf};
@@ -18,11 +18,12 @@ use std::rc::{Rc, Weak};
 use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::time::{Duration, Instant};
-use svelters_abi::Value as AV;
+use svelters_abi::{NameKind, Value as AV};
+
+mod conv;
+use conv::QjsConv;
 
 const PRELUDE: &str = include_str!("prelude.js");
-/// Arrays nest at most this deep when crossing the host boundary (guards cyclic arrays).
-const MAX_VALUE_DEPTH: u32 = 16;
 
 type Res<T> = rquickjs::Result<T>;
 
@@ -34,6 +35,7 @@ pub(crate) struct QjsEngine {
     deadline_ns: Arc<AtomicU64>,
     budget: Option<Duration>,
     async_errors: Rc<RefCell<Vec<JsError>>>,
+    core: Rc<Core>,
 }
 
 impl QjsEngine {
@@ -89,6 +91,7 @@ impl QjsEngine {
             deadline_ns,
             budget: core.cfg.turn_budget,
             async_errors,
+            core: core.clone(),
         })
     }
 
@@ -150,6 +153,7 @@ impl JsEngine for QjsEngine {
     }
 
     fn dispatch(&mut self, handle: u64, signal: &str, args: &[AV]) -> Result<(), JsError> {
+        let core = self.core.clone();
         self.call_guarded(|ctx| {
             let f: Value = ctx.globals().get("__svelters_dispatch")?;
             let Some(f) = f.as_function() else {
@@ -158,7 +162,9 @@ impl JsEngine for QjsEngine {
                     "globalThis.__svelters_dispatch is not registered",
                 ));
             };
-            let list = abi_to_js(ctx, &AV::List(args.to_vec()))?;
+            let conv = QjsConv::new(ctx.clone(), core);
+            let list = convert::decode(&conv, &AV::List(args.to_vec()), &*conv.core)
+                .map_err(|m| Exception::throw_message(ctx, &m))?;
             f.call::<_, Value>((handle as f64, signal, list))
                 .map(|_| ())
         })
@@ -239,78 +245,6 @@ fn js_err<'js>(ctx: &Ctx<'js>, e: rquickjs::Error) -> JsError {
     }
 }
 
-// ---- value conversion ----
-
-fn js_to_abi<'js>(ctx: &Ctx<'js>, v: &Value<'js>, depth: u32) -> Res<AV> {
-    if depth > MAX_VALUE_DEPTH {
-        return Err(Exception::throw_type(
-            ctx,
-            "value nested too deeply (or cyclic)",
-        ));
-    }
-    Ok(match v.type_of() {
-        Type::Null => AV::Null,
-        Type::Undefined | Type::Uninitialized => {
-            return Err(Exception::throw_type(
-                ctx,
-                "undefined is not a valid host value",
-            ));
-        }
-        Type::Bool => AV::Bool(v.as_bool().unwrap_or(false)),
-        Type::Int => AV::I64(v.as_int().unwrap_or(0) as i64),
-        Type::Float => {
-            let f = v.as_float().unwrap_or(0.0);
-            if f.is_finite() && f.fract() == 0.0 && f.abs() < 9_007_199_254_740_992.0 {
-                AV::I64(f as i64)
-            } else {
-                AV::F64(f)
-            }
-        }
-        Type::String => AV::Str(
-            v.as_string()
-                .map(|s| s.to_string())
-                .transpose()?
-                .unwrap_or_default(),
-        ),
-        Type::Array => {
-            let arr = v.as_array().expect("array type");
-            let mut items = Vec::with_capacity(arr.len());
-            for i in 0..arr.len() {
-                let x: Value = arr.get(i)?;
-                items.push(js_to_abi(ctx, &x, depth + 1)?);
-            }
-            AV::List(items)
-        }
-        other => {
-            return Err(Exception::throw_type(
-                ctx,
-                &format!("unsupported value type '{}' in host call", other.as_str()),
-            ));
-        }
-    })
-}
-
-fn abi_to_js<'js>(ctx: &Ctx<'js>, v: &AV) -> Res<Value<'js>> {
-    Ok(match v {
-        AV::Null => Value::new_null(ctx.clone()),
-        AV::Bool(b) => Value::new_bool(ctx.clone(), *b),
-        AV::I64(i) => match i32::try_from(*i) {
-            Ok(i) => Value::new_int(ctx.clone(), i),
-            Err(_) => Value::new_float(ctx.clone(), *i as f64),
-        },
-        AV::F64(f) => Value::new_float(ctx.clone(), *f),
-        AV::Handle(h) => Value::new_float(ctx.clone(), *h as f64),
-        AV::Str(s) => rquickjs::String::from_str(ctx.clone(), s)?.into_value(),
-        AV::List(items) => {
-            let arr = Array::new(ctx.clone())?;
-            for (i, x) in items.iter().enumerate() {
-                arr.set(i, abi_to_js(ctx, x)?)?;
-            }
-            arr.into_value()
-        }
-    })
-}
-
 // ---- host bindings ----
 
 fn core_of<'js>(ctx: &Ctx<'js>, w: &Weak<Core>) -> Res<Rc<Core>> {
@@ -326,7 +260,23 @@ fn handle_of<'js>(ctx: &Ctx<'js>, n: f64) -> Res<u64> {
     }
 }
 
-fn op<'js, T>(ctx: &Ctx<'js>, r: Result<T, String>) -> Res<T> {
+/// Throws an op failure as the JS error class that matches it.
+fn throw<'js, T>(ctx: &Ctx<'js>, e: OpError) -> Res<T> {
+    Err(match e.kind {
+        OpKind::Type => Exception::throw_type(ctx, &e.msg),
+        OpKind::Range => Exception::throw_range(ctx, &e.msg),
+        OpKind::Error => Exception::throw_message(ctx, &e.msg),
+    })
+}
+
+fn op<'js, T>(ctx: &Ctx<'js>, r: Result<T, OpError>) -> Res<T> {
+    match r {
+        Ok(v) => Ok(v),
+        Err(e) => throw(ctx, e),
+    }
+}
+
+fn msg<'js, T>(ctx: &Ctx<'js>, r: Result<T, String>) -> Res<T> {
     r.map_err(|m| Exception::throw_message(ctx, &m))
 }
 
@@ -367,9 +317,29 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, base: Instant) -> Res<()> {
             "now",
             Function::new(ctx.clone(), move || base.elapsed().as_secs_f64() * 1000.0)?,
         )?;
+        // Boxed values: explicit release is immediate; the GC path only queues the handle.
+        let w = core.clone();
+        native.set(
+            "releaseBoxed",
+            Function::new(ctx.clone(), move |h: f64| {
+                if let Some(c) = w.upgrade() {
+                    c.release_boxed(h as u64);
+                }
+            })?,
+        )?;
+        let w = core.clone();
+        native.set(
+            "queueRelease",
+            Function::new(ctx.clone(), move |h: f64| {
+                if let Some(c) = w.upgrade() {
+                    c.queue_release(h as u64);
+                }
+            })?,
+        )?;
     }
 
-    // __svelters_host: the JS host ops from backend-abi.md.
+    // __svelters_host: the JS host ops from backend-abi.md. Member arguments are names or the
+    // ids the `*Id` resolvers return; ids skip the name lookup and string handling entirely.
     let host = Object::new(ctx.clone())?;
     {
         let w = core.clone();
@@ -377,11 +347,69 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, base: Instant) -> Res<()> {
             "create",
             Function::new(
                 ctx.clone(),
-                move |ctx: Ctx<'js>, kind: String| -> Res<f64> {
+                move |ctx: Ctx<'js>, kind: Value<'js>| -> Res<f64> {
                     let c = core_of(&ctx, &w)?;
-                    Ok(op(&ctx, c.op_create(&kind))? as f64)
+                    let conv = QjsConv::new(ctx.clone(), c.clone());
+                    if let Some(id) = kind.as_int() {
+                        return Ok(op(&ctx, c.op_create_id(id as u32))? as f64);
+                    }
+                    let r = msg(&ctx, conv.with_name(&kind, |n| match n {
+                        Name::Str(s) => c.op_create(s),
+                        Name::Id(i) => c.op_create_id(i),
+                    }))?;
+                    Ok(op(&ctx, r)? as f64)
                 },
             )?,
+        )?;
+        for (js, what) in [
+            ("kindId", None),
+            ("propId", Some(NameKind::Prop)),
+            ("signalId", Some(NameKind::Signal)),
+            ("methodId", Some(NameKind::Method)),
+            ("slotId", Some(NameKind::Slot)),
+        ] {
+            let w = core.clone();
+            host.set(
+                js,
+                Function::new(
+                    ctx.clone(),
+                    move |ctx: Ctx<'js>, a: Value<'js>, b: Opt<Value<'js>>| -> Res<u32> {
+                        let c = core_of(&ctx, &w)?;
+                        let conv = QjsConv::new(ctx.clone(), c.clone());
+                        match what {
+                            None => {
+                                let r = msg(&ctx, conv.with_name(&a, |n| match n {
+                                    Name::Str(s) => c.op_kind_id(s),
+                                    Name::Id(i) => Ok(i),
+                                }))?;
+                                msg(&ctx, r)
+                            }
+                            Some(what) => {
+                                let kind = a
+                                    .as_int()
+                                    .ok_or_else(|| Exception::throw_type(&ctx, "expected a kind id"))?
+                                    as u32;
+                                let name = b
+                                    .0
+                                    .ok_or_else(|| Exception::throw_type(&ctx, "expected a member name"))?;
+                                let r = msg(&ctx, conv.with_name(&name, |n| match n {
+                                    Name::Str(s) => c.op_member_id(what, kind, s),
+                                    Name::Id(i) => Ok(i),
+                                }))?;
+                                msg(&ctx, r)
+                            }
+                        }
+                    },
+                )?,
+            )?;
+        }
+        let w = core.clone();
+        host.set(
+            "propType",
+            Function::new(ctx.clone(), move |ctx: Ctx<'js>, kind: u32, prop: u32| -> Res<Option<String>> {
+                let c = core_of(&ctx, &w)?;
+                Ok(c.op_prop_type(kind, prop).map(str::to_string))
+            })?,
         )?;
         let w = core.clone();
         host.set(
@@ -392,23 +420,22 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, base: Instant) -> Res<()> {
                       parent: f64,
                       child: f64,
                       before: Opt<Option<f64>>,
-                      slot: Opt<Option<String>>|
+                      slot: Opt<Option<Value<'js>>>|
                       -> Res<()> {
                     let c = core_of(&ctx, &w)?;
                     let before = match before.0.flatten() {
                         Some(b) => Some(handle_of(&ctx, b)?),
                         None => None,
                     };
-                    let slot = slot.0.flatten();
-                    op(
-                        &ctx,
-                        c.op_insert(
-                            handle_of(&ctx, parent)?,
-                            handle_of(&ctx, child)?,
-                            before,
-                            slot.as_deref(),
-                        ),
-                    )
+                    let (parent, child) = (handle_of(&ctx, parent)?, handle_of(&ctx, child)?);
+                    match slot.0.flatten() {
+                        None => op(&ctx, c.op_insert(parent, child, before, None)),
+                        Some(sv) => {
+                            let conv = QjsConv::new(ctx.clone(), c.clone());
+                            let r = msg(&ctx, conv.with_name(&sv, |n| c.op_insert(parent, child, before, Some(n))))?;
+                            op(&ctx, r)
+                        }
+                    }
                 },
             )?,
         )?;
@@ -439,10 +466,12 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, base: Instant) -> Res<()> {
             "setProp",
             Function::new(
                 ctx.clone(),
-                move |ctx: Ctx<'js>, h: f64, name: String, value: Value<'js>| -> Res<()> {
+                move |ctx: Ctx<'js>, h: f64, name: Value<'js>, value: Value<'js>| -> Res<()> {
                     let c = core_of(&ctx, &w)?;
-                    let v = js_to_abi(&ctx, &value, 0)?;
-                    op(&ctx, c.op_set_prop(handle_of(&ctx, h)?, &name, &v))
+                    let conv = QjsConv::new(ctx.clone(), c.clone());
+                    let h = handle_of(&ctx, h)?;
+                    let r = msg(&ctx, conv.with_name(&name, |n| c.op_set_prop(&conv, h, n, &value)))?;
+                    op(&ctx, r)
                 },
             )?,
         )?;
@@ -451,10 +480,12 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, base: Instant) -> Res<()> {
             "getProp",
             Function::new(
                 ctx.clone(),
-                move |ctx: Ctx<'js>, h: f64, name: String| -> Res<Value<'js>> {
+                move |ctx: Ctx<'js>, h: f64, name: Value<'js>| -> Res<Value<'js>> {
                     let c = core_of(&ctx, &w)?;
-                    let v = op(&ctx, c.op_get_prop(handle_of(&ctx, h)?, &name))?;
-                    abi_to_js(&ctx, &v)
+                    let conv = QjsConv::new(ctx.clone(), c.clone());
+                    let h = handle_of(&ctx, h)?;
+                    let r = msg(&ctx, conv.with_name(&name, |n| c.op_get_prop(&conv, h, n)))?;
+                    op(&ctx, r)
                 },
             )?,
         )?;
@@ -463,13 +494,15 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, base: Instant) -> Res<()> {
             "call",
             Function::new(
                 ctx.clone(),
-                move |ctx: Ctx<'js>, h: f64, method: String, args: Value<'js>| -> Res<Value<'js>> {
+                move |ctx: Ctx<'js>, h: f64, method: Value<'js>, args: Value<'js>| -> Res<Value<'js>> {
                     let c = core_of(&ctx, &w)?;
-                    let AV::List(args) = js_to_abi(&ctx, &args, 0)? else {
+                    if !args.is_array() {
                         return Err(Exception::throw_type(&ctx, "call: args must be an array"));
-                    };
-                    let v = op(&ctx, c.op_call(handle_of(&ctx, h)?, &method, &args))?;
-                    abi_to_js(&ctx, &v)
+                    }
+                    let conv = QjsConv::new(ctx.clone(), c.clone());
+                    let h = handle_of(&ctx, h)?;
+                    let r = msg(&ctx, conv.with_name(&method, |n| c.op_call(&conv, h, n, &args)))?;
+                    op(&ctx, r)
                 },
             )?,
         )?;
@@ -478,9 +511,12 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, base: Instant) -> Res<()> {
             "listen",
             Function::new(
                 ctx.clone(),
-                move |ctx: Ctx<'js>, h: f64, signal: String, on: bool| -> Res<()> {
+                move |ctx: Ctx<'js>, h: f64, signal: Value<'js>, on: bool| -> Res<()> {
                     let c = core_of(&ctx, &w)?;
-                    op(&ctx, c.op_listen(handle_of(&ctx, h)?, &signal, on))
+                    let conv = QjsConv::new(ctx.clone(), c.clone());
+                    let h = handle_of(&ctx, h)?;
+                    let r = msg(&ctx, conv.with_name(&signal, |n| c.op_listen(h, n, on)))?;
+                    op(&ctx, r)
                 },
             )?,
         )?;

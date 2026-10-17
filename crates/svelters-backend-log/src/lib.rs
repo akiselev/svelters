@@ -133,6 +133,41 @@ fn write_json(v: &Value, out: &mut String) {
             }
             out.push(']');
         }
+        // Typed values carry no names without descriptors; the log prints their raw payloads.
+        Value::U64(u) => {
+            let _ = write!(out, "{u}");
+        }
+        Value::Enum { value, .. } => {
+            let _ = write!(out, "{value}");
+        }
+        Value::Flags { mask, .. } => {
+            let _ = write!(out, "{mask}");
+        }
+        Value::Record { fields, .. } => write_json(&Value::List(fields.clone()), out),
+        Value::Bytes(b) => write_json(&Value::List(b.iter().map(|x| Value::I64(*x as i64)).collect()), out),
+        Value::Boxed { handle, .. } => {
+            let _ = write!(out, "{handle}");
+        }
+        Value::Callback { id, .. } => {
+            let _ = write!(out, "\"<callback {id}>\"");
+        }
+        Value::Map(entries) => {
+            out.push('{');
+            for (i, (k, x)) in entries.iter().enumerate() {
+                if i > 0 {
+                    out.push(',');
+                }
+                out.push_str(&serde_json::to_string(k).expect("string serializes"));
+                out.push(':');
+                write_json(x, out);
+            }
+            out.push('}');
+        }
+        Value::Error(e) => {
+            out.push_str("{\"error\":");
+            out.push_str(&serde_json::to_string(&e.message).expect("string serializes"));
+            out.push('}');
+        }
     }
 }
 
