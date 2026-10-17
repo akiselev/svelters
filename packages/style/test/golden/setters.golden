@@ -27,13 +27,17 @@
 {"sel":{"tag":null,"classes":["primary","svelte-setters"],"id":null},"spec":[0,2,0],"order":4,"decls":[["margin-top",4]]}
 
 === qt setter rules ===
-{"sel":{"tag":null,"classes":["toolbar","svelte-setters"],"id":null},"spec":[0,2,0],"order":0,"decls":[["spacing",8],["orientation","horizontal"]]}
-{"sel":{"tag":"box","classes":["svelte-setters"],"id":"main"},"spec":[1,1,1],"order":1,"decls":[["spacing",12]]}
-{"sel":{"tag":"button","classes":["svelte-setters"],"id":null},"spec":[0,1,1],"order":2,"decls":[["minimum-width",80]]}
+{"sel":{"tag":null,"classes":["toolbar","svelte-setters"],"id":null},"spec":[0,2,0],"order":0,"decls":[["spacing",8],["direction","left-to-right"]]}
+{"sel":{"tag":"box-layout","classes":["svelte-setters"],"id":"main"},"spec":[1,1,1],"order":1,"decls":[["spacing",12]]}
+{"sel":{"tag":"push-button","classes":["svelte-setters"],"id":null},"spec":[0,1,1],"order":2,"decls":[["minimum-width",80]]}
 {"sel":{"tag":null,"classes":["x","svelte-setters"],"id":null},"spec":[0,2,0],"order":3,"decls":[["stretch",1],["contents-margins",{"top":4,"right":8,"bottom":4,"left":8}]]}
 
 === diagnostics ===
+warning [gtk] property 'direction' is not a gtk style property (it is one on qt); did you mean 'animation-direction'?
+warning [gtk] <box-layout> is not an element on gtk; rule dropped
+error [gtk] 'spacing' does not apply to <box-layout> on gtk; declaration dropped
 warning [gtk] property 'minimum-width' is not a gtk style property (it is one on qt)
+warning [gtk] <push-button> is not an element on gtk; rule dropped
 error [gtk] 'hexpand': setter properties only take type, class, id selectors (combinators are not supported); dropped for this selector
 error [gtk] 'hexpand': setter properties only take type, class, id selectors (:hover is not supported); dropped for this selector
 error [gtk] 'spacing' does not apply to <label> on gtk; declaration dropped
@@ -42,11 +46,14 @@ warning [gtk] property 'contents-margins' is not a gtk style property (it is one
 error [gtk] 'spacing': setter properties cannot be inside @media (they are written with setProp, not CSS); rule dropped
 error [gtk] 'margin-start': setter properties cannot be inside a nested rule (they are written with setProp, not CSS); rule dropped
 error [gtk] halign: 'middle' is not one of fill, start, end, center, baseline-fill, baseline, baseline-center
-warning [qt] property 'width-request' is not a qt style property (it is one on gtk)
+warning [qt] property 'orientation' is not a qt style property (it is one on gtk)
+warning [qt] <box> is not an element on qt; rule dropped
+error [qt] 'spacing' does not apply to <box> on qt; declaration dropped
+warning [qt] <button> is not an element on qt; rule dropped
 warning [qt] property 'hexpand' is not a qt style property (it is one on gtk)
 warning [qt] property 'hexpand' is not a qt style property (it is one on gtk)
 error [qt] 'spacing' does not apply to <label> on qt; declaration dropped
-warning [qt] property 'halign' is not a qt style property (it is one on gtk); did you mean 'align'?
+warning [qt] property 'halign' is not a qt style property (it is one on gtk)
 error [qt] 'spacing': setter properties cannot be inside @media (they are written with setProp, not CSS); rule dropped
 warning [qt] property 'margin-start' is not a qt style property (it is one on gtk); did you mean 'margin'?
-warning [qt] property 'halign' is not a qt style property (it is one on gtk); did you mean 'align'?
+warning [qt] property 'halign' is not a qt style property (it is one on gtk)

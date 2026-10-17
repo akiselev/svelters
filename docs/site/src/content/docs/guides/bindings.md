@@ -36,14 +36,14 @@ Two-way binding is a component feature in Svelte 5 (`$bindable`), so each bindab
 
 ```svelte
 <!-- app -->
-<Entry bind:text={name} placeholder="Name" onactivate={() => (submitted = name)} />
+<Entry bind:text={name} placeholder-text="Name" onactivate={() => (submitted = name)} />
 <label>Hello {name}</label>
 ```
 
 Resulting operations:
 
 ```text
-create entry #3 ; set #3 placeholder "Name" ; set #3 text "Ann" ; listen #3 activate on ; listen #3 changed on
+create entry #3 ; set #3 placeholder-text "Name" ; set #3 text "Ann" ; listen #3 activate on ; listen #3 changed on
 event #3 changed ["Bob"]  -> set #4 label "Hello Bob"     (no echo `set #3 text`)
 JS name = "Cy"            -> set #3 text "Cy" ; set #4 label "Hello Cy"
 ```

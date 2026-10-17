@@ -254,6 +254,6 @@ The page's front matter carries the same URL as Starlight's `editUrl`.
 | Annotated and tested | The kind has a hand or agent annotation, and every annotated fact has a generated verification test that passes headless. |
 | Raw | Facts straight from GIR, qdoc and the QMetaObject. No annotation, no behavioural test. Properties and signals are listed, but child slots, ownership and signal semantics are unknown. |
 
-Only the prototype kinds are annotated: `window`, `box`, `label`, `button`, `entry`, `scrolledwindow` on both toolkits, plus `statusbar` and `menubar` on Qt. The other 185 ingested Qt classes are raw, and so are most GTK kinds. To promote a kind, add an override file following the examples above, run the generator, and make its tests pass.
+Only the prototype kinds are annotated: `window`, `box`, `label`, `button`, `entry`, `scrolled-window` on GTK and their Qt counterparts `main-window`, `box-layout`, `label`, `push-button`, `line-edit`, `scroll-area`, plus `status-bar` and `menu-bar` on Qt. The other 185 ingested Qt classes are raw, and so are most GTK kinds. To promote a kind, add an override file following the examples above, run the generator, and make its tests pass.
 
 Sources: `plans/architecture/widget-metadata.md`, `docs/notes/widget-metadata-ingestion.md`, `docs/notes/signals-and-slots-semantics.md` (section 2.5), `docs/notes/p3-gtk-lane.md`, `docs/notes/p4-qt-lane.md`, `metadata/overrides/gtk/`, `metadata/overrides/qt/`, `tools/metadata/`.

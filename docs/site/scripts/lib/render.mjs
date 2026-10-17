@@ -582,7 +582,7 @@ export function renderApiIndex(model) {
     o.push(`| [${ir.toolkit.name}](${model.url(`/api/${ir.toolkit.id}/`)}) | ${ir.toolkit.version} | ${c.elements} | ${c.tested_kinds} | ${c.kinds} | ${c.properties} | ${c.events} | ${c.methods} |`);
   }
   o.push('', `Also: the [element support matrix](${model.url('/api/matrix/')}) shows which elements exist in which toolkit, and the [coverage dashboard](${model.url('/coverage/')}) tracks annotation progress.`, '');
-  o.push(':::caution[What "annotated and tested" means]', 'Only the prototype kinds (`window`, `box`, `label`, `button`, `entry`, `scrolledwindow` and a few more) are hand-annotated with generated verification tests. All other kinds are **raw**: facts straight from GIR, qdoc and the QMetaObject. See [the annotation workflow](' + model.url('/guides/annotation-workflow/') + ').', ':::', '');
+  o.push(':::caution[What "annotated and tested" means]', 'Only the prototype kinds (`window`, `box`, `label`, `button`, `entry`, `scrolled-window` and a few more) are hand-annotated with generated verification tests. All other kinds are **raw**: facts straight from GIR, qdoc and the QMetaObject. See [the annotation workflow](' + model.url('/guides/annotation-workflow/') + ').', ':::', '');
   return o.join('\n');
 }
 

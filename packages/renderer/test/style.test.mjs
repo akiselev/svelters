@@ -59,7 +59,7 @@ test('registered sheets mark ambiguous kinds and push the right dialect', async 
   assert.match(log, /style sheet "App.svelte" "button.sv-k-button \{ color: red; \}\\n"/, 'the test host speaks CSS');
   const win = el('window');
   const b = el('button');
-  const tb = el('togglebutton', { class: 'x' });
+  const tb = el('toggle-button', { class: 'x' });
   r.insert(win, b, null);
   r.insert(win, tb, null);
   r.insert(root, win, null);
@@ -67,7 +67,7 @@ test('registered sheets mark ambiguous kinds and push the right dialect', async 
   const l2 = take();
   assert.match(l2, /classes "sv-k-window"/);
   assert.match(l2, /classes "sv-k-button"/);
-  assert.match(l2, /classes "sv-k-togglebutton x"/);
+  assert.match(l2, /classes "sv-k-toggle-button x"/);
 });
 
 test('tokens and scheme batch into one refresh; GTK rewrites only the token provider', async () => {

@@ -30,7 +30,7 @@ button.sv-k-button.primary.svelte-card:active {
 button.sv-k-button.primary.svelte-card:disabled {
   opacity: 0.5;
 }
-button.sv-k-togglebutton.tog.svelte-card:checked {
+button.sv-k-toggle-button.tog.svelte-card:checked {
   background-color: #26a269;
   background-image: none;
 }
@@ -97,11 +97,21 @@ entry.sv-k-entry.field.svelte-card:focus {
 === diagnostics ===
 info [gtk] background-color needs 'background-image: none' to show over the theme's gradients; added
 info [gtk] background-color needs 'background-image: none' to show over the theme's gradients; added
+warning [gtk] <push-button> is not an element on gtk; rule dropped
+warning [gtk] <push-button> is not an element on gtk; rule dropped
+warning [gtk] <push-button> is not an element on gtk; rule dropped
+warning [gtk] <push-button> is not an element on gtk; rule dropped
 info [gtk] background-color needs 'background-image: none' to show over the theme's gradients; added
+warning [gtk] <line-edit> is not an element on gtk; rule dropped
 info [qt] background needs a border in QSS to paint on buttons and inputs; added 'border: none'
+warning [qt] <button> is not an element on qt; rule dropped
 info [qt] background needs a border in QSS to paint on buttons and inputs; added 'border: none'
+warning [qt] <button> is not an element on qt; rule dropped
 info [qt] background needs a border in QSS to paint on buttons and inputs; added 'border: none'
+warning [qt] <button> is not an element on qt; rule dropped
 info [qt] background needs a border in QSS to paint on buttons and inputs; added 'border: none'
+warning [qt] <button> is not an element on qt; rule dropped
 warning [qt] property 'opacity' is not supported in stylesheet rules on qt: QSS has no opacity: style= and style: only (QGraphicsOpacityEffect)
-warning [qt] <togglebutton> is not an element on qt; rule dropped
+warning [qt] <toggle-button> is not an element on qt; rule dropped
+warning [qt] <entry> is not an element on qt; rule dropped
 error [qt] :not(...) of this form is not expressible on qt; rule dropped

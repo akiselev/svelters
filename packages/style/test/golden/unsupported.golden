@@ -71,11 +71,12 @@ warning [gtk] property 'width' is not a gtk style property; did you mean 'width-
 warning [gtk] property 'text-align' is not a gtk style property
 info [gtk] background-color needs 'background-image: none' to show over the theme's gradients; added
 error [gtk] pseudo-element ::before is not supported; rule dropped (parts need @native gtk { })
+warning [gtk] <main-window> is not an element on gtk; rule dropped
 warning [gtk] token --sv-unknown is not in the default token set; define it with setTokens() before use
 error [gtk] @media (min-width: 600px) is not supported on gtk (only prefers-color-scheme, prefers-contrast, prefers-reduced-motion)
 warning [qt] property 'display' is not a qt style property
 warning [qt] property 'width' is not a qt style property; did you mean 'border-width', 'maximum-width', 'min-width'?
-warning [qt] property 'text-align' is not a qt style property; did you mean 'align'?
+warning [qt] property 'text-align' is not a qt style property
 error [qt] combinator '+' never matches in QSS; rule dropped
 error [qt] combinator '~' never matches in QSS; rule dropped
 error [qt] value 'oklch(0.6 0.1 250)' for background-color uses 'oklch', which QSS cannot parse
@@ -89,7 +90,8 @@ warning [qt] :focus-visible is approximated by :focus
 error [qt] pseudo-element ::before is not supported; rule dropped (parts need @native qt { })
 warning [qt] property 'opacity' is not supported in stylesheet rules on qt: QSS has no opacity: style= and style: only (QGraphicsOpacityEffect)
 error [qt] value 'linear-gradient(red, blue)' for background uses 'gradient(', which QSS cannot parse
-warning [qt] <checkbutton> is not an element on qt; rule dropped
+warning [qt] <check-button> is not an element on qt; rule dropped
+warning [qt] <window> is not an element on qt; rule dropped
 warning [qt] token --sv-unknown is not in the default token set; define it with setTokens() before use
 warning [qt] @keyframes svelte-unsupported-pulse dropped: QSS has no animations
 error [qt] @media (min-width: 600px) is not supported on qt (only prefers-color-scheme: dark)

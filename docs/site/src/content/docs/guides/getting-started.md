@@ -53,17 +53,17 @@ The bundle is one self-contained ES module (Svelte runtime, renderer and app) wi
 <window title="Counter">
   <box orientation="vertical" spacing="8">
     <label>Count: {count}</label>
-    <button onclick={() => count++}>Increment</button>
+    <button onclicked={() => count++}>Increment</button>
   </box>
 </window>
 ```
 
 What each part does:
 
-- `<window>`, `<box>`, `<label>` and `<button>` are not HTML. They are native element tags. The renderer turns each into a `create <kind>` host operation; the backend maps the tag to `GtkWindow`, `GtkBox`, `GtkLabel`, `GtkButton` or to the Qt classes `QMainWindow`, `QWidget` (a `box` carries a `QBoxLayout`), `QLabel` and `QPushButton`. Per-element pages: [GTK button](/api/gtk/button/), [Qt button](/api/qt/button/).
+- `<window>`, `<box>`, `<label>` and `<button>` are not HTML. They are native element tags: the native class name without its toolkit prefix, in kebab case. The renderer turns each into a `create <kind>` host operation; the GTK backend maps the tag to `GtkWindow`, `GtkBox`, `GtkLabel` and `GtkButton`. Each toolkit has its own vocabulary, so the Qt twin (`fixtures/counter-qt`) writes `<main-window window-title="Counter">`, `<box-layout direction="top-to-bottom">`, `<label>` and `<push-button>` (`QMainWindow`, a `QWidget` carrying a `QBoxLayout`, `QLabel`, `QPushButton`). Per-element pages: [GTK button](/api/gtk/button/), [Qt push-button](/api/qt/push-button/).
 - `title`, `orientation` and `spacing` are properties set with `set_prop`. `spacing="8"` arrives as the string `"8"` and the renderer coerces it to an integer (`INT_PROPS` in `packages/renderer/src/index.js`).
-- Text inside `<label>` and `<button>` becomes their `label` property. Text anywhere else is dropped.
-- `onclick` is an alias for the `clicked` signal. The renderer calls `listen(button, clicked, on)`, and a real click comes back as a queued event that runs the handler. See [Events](/guides/events/).
+- Text inside `<label>` and `<button>` becomes their `label` property (`text` on Qt). Text anywhere else is dropped.
+- `onclicked` listens to the native `clicked` signal (handlers are `on` plus the native signal name; there are no DOM aliases such as `onclick`). The renderer calls `listen(button, clicked, on)`, and a real click comes back as a queued event that runs the handler. See [Events](/guides/events/).
 - `$state` drives updates. `count++` re-runs only the label's text effect, which produces one `set_prop` call.
 
 The fixture's `vite.config.js` is two lines of configuration on top of `@svelters/build`:
@@ -136,7 +136,7 @@ Build the bundles first (`pnpm install && pnpm -r build`). The P5 completion rec
 
 - Edit `fixtures/counter/src/App.svelte`, run `pnpm build` in that directory, and rerun `cargo run`. No Rust or C++ recompilation is triggered by a `.svelte` edit: the Qt backend is compiled by a leaf crate (`examples/counter-qt`) whose build script does not rerun when `examples/counter/src/*` changes.
 - Read [Architecture](/guides/architecture/) for how the layers fit together.
-- Look at [`<button>` on GTK](/api/gtk/button/) and [`<button>` on Qt](/api/qt/button/) to see which properties and signals each backend exposes.
+- Look at [`<button>` on GTK](/api/gtk/button/) and [`<push-button>` on Qt](/api/qt/push-button/) to see which properties and signals each backend exposes.
 - Check [Svelte support](/guides/svelte-support/) before using a Svelte feature that is not in the fixtures.
 
 Sources: `plans/milestones/P5-integration.md`, `docs/notes/p5-integration.md`, `fixtures/README.md`, `fixtures/counter/`, `examples/counter/Cargo.toml`, `package.json`, `rust-toolchain.toml`, `README.md`.

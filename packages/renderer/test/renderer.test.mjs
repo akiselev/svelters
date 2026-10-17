@@ -48,7 +48,7 @@ test('dispatch returns handler results and the host event object', () => {
   const win = el('window');
   const b = el('button');
   r.insert(win, b, null);
-  r.addEventListener(b, 'click', function (e) {
+  r.addEventListener(b, 'clicked', function (e) {
     if (e) e.defaultPrevented = true;
     return 'handled';
   });
@@ -69,7 +69,7 @@ test('dispatch returns handler results and the host event object', () => {
 test('sv-slot proxy routes native descendants to the parent slot', async () => {
   const win = el('window');
   const proxy = el('sv-slot', { name: 'titlebar' });
-  const bar = el('headerbar');
+  const bar = el('header-bar');
   const body = el('box');
   r.insert(proxy, bar, null);
   r.insert(win, body, null);
@@ -361,9 +361,9 @@ test('bind: unsupported names and kinds throw with the element kind', () => {
 });
 
 test('bind: valueFrom prop reads the property when the change signal has no value', async () => {
-  BINDINGS.checkbutton = { active: { prop: 'active', signal: 'toggled', type: 'bool', direction: 'two_way', compare: true, readBack: false, valueFrom: 'prop', toolkits: ['gtk'] } };
+  BINDINGS['check-button'] = { active: { prop: 'active', signal: 'toggled', type: 'bool', direction: 'two_way', compare: true, readBack: false, valueFrom: 'prop', toolkits: ['gtk'] } };
   const win = el('window');
-  const c = el('checkbutton');
+  const c = el('check-button');
   r.insert(win, c, null);
   r.insert(root, win, null);
   take();
@@ -374,7 +374,7 @@ test('bind: valueFrom prop reads the property when the change signal has no valu
     dispatch(c.handle, 'toggled', []);
     assert.deepEqual(seen, [true]);
   } finally {
-    delete BINDINGS.checkbutton;
+    delete BINDINGS['check-button'];
   }
   r.remove(win);
   await tick();
@@ -430,7 +430,7 @@ test('bind: read-back reports a value the native side changed', async () => {
 test('dispatchSync: result comes from the event object, not the return value', () => {
   const win = el('window');
   const seen = [];
-  r.addEventListener(win, 'close', (e, ...rest) => {
+  r.addEventListener(win, 'close-request', (e, ...rest) => {
     seen.push([e.type, e.signal, e.deferred, rest]);
     return 'ignored';
   });
@@ -438,8 +438,8 @@ test('dispatchSync: result comes from the event object, not the return value', (
   const h = Number(take().split('\n').find((l) => l.startsWith('create window')).split('#')[1]);
   // no flags: no decision
   assert.equal(dispatchSync(h, 'close-request', []), null);
-  assert.deepEqual(seen[0], ['close', 'close-request', false, []]);
-  // a second listener (signal name alias) vetoes
+  assert.deepEqual(seen[0], ['close-request', 'close-request', false, []]);
+  // a second listener vetoes
   r.addEventListener(win, 'close-request', (e) => e.preventDefault());
   assert.equal(dispatchSync(h, 'close-request', []), true);
   // stopPropagation counts as a stop too; extra args follow the event
@@ -463,12 +463,12 @@ test('dispatchSync: result comes from the event object, not the return value', (
 test('dispatchSync: stopImmediatePropagation, throwing listeners, unknown handles', () => {
   const win = el('window');
   const order = [];
-  r.addEventListener(win, 'close', (e) => {
+  r.addEventListener(win, 'close-request', (e) => {
     order.push(1);
     e.preventDefault();
     e.stopImmediatePropagation();
   });
-  r.addEventListener(win, 'close', () => order.push(2));
+  r.addEventListener(win, 'close-request', () => order.push(2));
   r.insert(root, win, null);
   const h = Number(take().split('\n').find((l) => l.startsWith('create window')).split('#')[1]);
   assert.equal(dispatchSync(h, 'close-request', []), true);
@@ -477,7 +477,7 @@ test('dispatchSync: stopImmediatePropagation, throwing listeners, unknown handle
     throw new Error('boom');
   });
   const w2 = el('window');
-  r.addEventListener(w2, 'close', () => {
+  r.addEventListener(w2, 'close-request', () => {
     throw new Error('boom');
   });
   r.insert(root, w2, null);
@@ -489,7 +489,7 @@ test('dispatchSync: stopImmediatePropagation, throwing listeners, unknown handle
 test('dispatch with deferred=true gives listeners the same event shape and ignores the flags', () => {
   const win = el('window');
   let got;
-  r.addEventListener(win, 'close', (e, ...rest) => {
+  r.addEventListener(win, 'close-request', (e, ...rest) => {
     got = [e.deferred, e.cancelable, rest];
     e.preventDefault();
   });
@@ -502,7 +502,7 @@ test('dispatch with deferred=true gives listeners the same event shape and ignor
 
 test('dispatchSync warns about handlers that return a Promise', () => {
   const win = el('window');
-  r.addEventListener(win, 'close', async (e) => {
+  r.addEventListener(win, 'close-request', async (e) => {
     await null;
     e.preventDefault();
   });
@@ -610,7 +610,7 @@ test('listen phases: separate native listens per flags, dispatch by flags, captu
 test('toplevel kinds: a dialog inside a window is transient, shown after the window, removed with its block', async () => {
   const win = el('window', { title: 'Main' });
   const box = el('box');
-  const dlg = el('messagebox', { text: 'Hi' });
+  const dlg = el('message-box', { text: 'Hi' });
   const lbl = el('label');
   r.insert(box, lbl, null);
   r.insert(box, dlg, null);
@@ -619,7 +619,7 @@ test('toplevel kinds: a dialog inside a window is transient, shown after the win
   r.insert(root, win, null);
   const out = take().split('\n');
   const id = (tag) => Number(out.find((l) => l.startsWith(`create ${tag} `)).split('#')[1]);
-  const [w, b, d] = [id('window'), id('box'), id('messagebox')];
+  const [w, b, d] = [id('window'), id('box'), id('message-box')];
   assert.ok(out.includes(`insert #${w} #${d} before=end slot=default`), out.join('\n'));
   assert.ok(out.indexOf(`call #${w} present []`) < out.indexOf(`call #${d} open []`), out.join('\n'));
   assert.ok(!out.some((l) => l.startsWith(`insert #${b} #${d}`)), 'the dialog is not a layout child');
@@ -636,15 +636,15 @@ test('toplevel kinds: a dialog inside a window is transient, shown after the win
 });
 
 test('toplevel kinds: show policy and a dialog mounted at the root', async () => {
-  const hidden = el('messagebox', { show: 'none' });
-  const modeless = el('messagebox', { show: 'modeless' });
+  const hidden = el('message-box', { show: 'none' });
+  const modeless = el('message-box', { show: 'modeless' });
   r.insert(root, hidden, null);
   r.insert(root, modeless, null);
   const out = take();
   assert.ok(!out.includes('call #') || out.split('\n').filter((l) => l.startsWith('call')).length === 1, out);
   assert.match(out, /call #\d+ present \[\]/);
   assert.throws(() => r.insert(root, el('label'), null), /only toplevel kinds/);
-  assert.throws(() => r.insert(root, el('messagebox', { show: 'sometimes' }), null), /expected modal, modeless or none/);
+  assert.throws(() => r.insert(root, el('message-box', { show: 'sometimes' }), null), /expected modal, modeless or none/);
   r.remove(hidden);
   r.remove(modeless);
   await tick();
@@ -653,7 +653,7 @@ test('toplevel kinds: show policy and a dialog mounted at the root', async () =>
 
 test('toplevel kinds: a dialog nested in a subtree that is not yet realized waits for the window', () => {
   const win = el('window');
-  const dlg = el('aboutdialog');
+  const dlg = el('about-dialog');
   const inner = el('box');
   r.insert(inner, dlg, null);
   r.insert(win, inner, null);
@@ -661,17 +661,17 @@ test('toplevel kinds: a dialog nested in a subtree that is not yet realized wait
   r.insert(root, win, null);
   const lines = take().split('\n');
   const w = lines.find((l) => l.startsWith('create window')).split('#')[1];
-  const d = lines.find((l) => l.startsWith('create aboutdialog')).split('#')[1];
+  const d = lines.find((l) => l.startsWith('create about-dialog')).split('#')[1];
   assert.ok(lines.indexOf(`call #${w} present []`) >= 0 && lines.indexOf(`call #${w} present []`) < lines.indexOf(`call #${d} present []`), lines.join('\n'));
   assert.ok(lines.includes(`insert #${w} #${d} before=end slot=default`), lines.join('\n'));
 });
 
 test('dispatchSync: a typed result object reaches the host unchanged (out-parameters)', () => {
-  const spin = el('spinbutton');
+  const spin = el('spin-button');
   const w0 = el('window');
   r.insert(w0, spin, null);
   r.insert(root, w0, null);
-  const h = Number(take().split('\n').find((l) => l.startsWith('create spinbutton')).split('#')[1]);
+  const h = Number(take().split('\n').find((l) => l.startsWith('create spin-button')).split('#')[1]);
   r.addEventListener(spin, 'input', (e) => {
     e.result = { ret: 1, newValue: 16 };
   });

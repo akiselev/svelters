@@ -1,5 +1,6 @@
-// Smoke test: the counter fixture's elements (window, box, label, button, entry) have pages for both
-// toolkits, listing properties and events. Runs on the generated pages, and on dist/ when it was built.
+// Smoke test: the counter fixture's elements (GTK window, box, label, button, entry; their Qt
+// counterparts main-window, box-layout, label, push-button, line-edit) have pages, listing properties
+// and events. Runs on the generated pages, and on dist/ when it was built.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -19,10 +20,13 @@ if (!fs.existsSync(path.join(irDir, 'gtk.json')) || !fs.existsSync(path.join(irD
 }
 const irs = ['gtk', 'qt'].map((tk) => JSON.parse(fs.readFileSync(path.join(irDir, `${tk}.json`), 'utf8')));
 const { pages } = renderSite(irs, { base: '/', order: ['gtk', 'qt'] });
-const COUNTER = ['window', 'box', 'label', 'button', 'entry'];
+const COUNTER = {
+  gtk: ['window', 'box', 'label', 'button', 'entry'],
+  qt: ['main-window', 'box-layout', 'label', 'push-button', 'line-edit'],
+};
 
 for (const tk of ['gtk', 'qt']) {
-  for (const tag of COUNTER) {
+  for (const tag of COUNTER[tk]) {
     test(`${tk}: <${tag}> page lists properties and events`, () => {
       const md = pages.get(`api/${tk}/${tag}.md`);
       assert.ok(md, `no page for ${tk}/${tag}`);
@@ -31,7 +35,7 @@ for (const tk of ['gtk', 'qt']) {
       assert.match(md, /Annotated &amp; tested/);
       assert.match(md, /### Property details/);
       // at least one real property row and one event row
-      assert.match(md, /\| \[`[A-Za-z]+`\]\(#property-/);
+      assert.match(md, /\| \[`[\w-]+`\]\(#property-/);
       assert.ok(/\| \[`[\w-]+`\]\(#event-/.test(md) || /### Inherited events/.test(md), 'no events listed');
       assert.match(md, /Toolkit support/);
     });
@@ -39,7 +43,9 @@ for (const tk of ['gtk', 'qt']) {
 }
 
 test('portable elements link between GTK and Qt', () => {
-  for (const tag of COUNTER) {
+  const shared = COUNTER.gtk.filter((t) => COUNTER.qt.includes(t));
+  assert.ok(shared.length > 0, 'the counter shares a tag between GTK and Qt');
+  for (const tag of shared) {
     const gtk = pages.get(`api/gtk/${tag}.md`);
     assert.ok(gtk.includes(`/api/qt/${tag}/`), `gtk/${tag} does not link to qt/${tag}`);
     const qt = pages.get(`api/qt/${tag}.md`);
@@ -50,7 +56,7 @@ test('portable elements link between GTK and Qt', () => {
 const dist = path.join(site, 'dist');
 test('built site has the counter pages (skipped when dist/ is absent)', { skip: !fs.existsSync(dist) }, () => {
   for (const tk of ['gtk', 'qt']) {
-    for (const tag of COUNTER) {
+    for (const tag of COUNTER[tk]) {
       const f = path.join(dist, 'api', tk, tag, 'index.html');
       assert.ok(fs.existsSync(f), `${f} missing`);
       const html = fs.readFileSync(f, 'utf8');

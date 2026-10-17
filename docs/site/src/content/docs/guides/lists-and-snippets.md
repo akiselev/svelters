@@ -42,7 +42,7 @@ The parent defines the row once:
   {#snippet row(todo, i)}
     <box>
       <label>{i + 1}. {todo.title}</label>
-      <button sensitive={!todo.done} onclick={() => (todo.done = true)}>Done</button>
+      <button sensitive={!todo.done} onclicked={() => (todo.done = true)}>Done</button>
     </box>
   {/snippet}
   {#snippet empty()}<label>Nothing to do</label>{/snippet}
@@ -184,7 +184,7 @@ A `GtkColumnView` column has its own factory, so each `Column` is a row pool ove
     {#snippet cell(p)}<label>{p.name}</label>{/snippet}
   </Column>
   <Column title="Age">
-    {#snippet cell(p)}<spinbutton value={p.age} onvalue-changed={(v) => (p.age = v)} />{/snippet}
+    {#snippet cell(p)}<spin-button value={p.age} onvalue-changed={(v) => (p.age = v)} />{/snippet}
   </Column>
 </ColumnView>
 ```

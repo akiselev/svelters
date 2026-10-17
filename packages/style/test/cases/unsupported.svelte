@@ -1,7 +1,8 @@
 <window class="w">
   <box class="a b"><label class="x">x</label><label class="y">y</label></box>
-  <checkbutton class="cb">c</checkbutton>
+  <check-button class="cb">c</check-button>
 </window>
+<main-window class="w" />
 
 <style>
   .a { display: flex; width: 100px; text-align: center; color: red; }
@@ -16,8 +17,8 @@
   .y::before { color: #333; }
   .a { opacity: 0.8; font-family: serif; background: linear-gradient(red, blue); }
   .a:is(.x, .y) { color: pink; }
-  checkbutton.cb { color: #444; }
-  window.w { color: var(--sv-unknown); }
+  check-button.cb { color: #444; }
+  window.w, main-window.w { color: var(--sv-unknown); }
   @keyframes pulse { from { color: red; } to { color: blue; } }
   @media (min-width: 600px) { .a { color: red; } }
   @media (prefers-reduced-motion: reduce) { .a { color: red; } }
