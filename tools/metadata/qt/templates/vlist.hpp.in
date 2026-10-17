@@ -281,7 +281,7 @@ SvVirtualList *vl_of(Entry &e) { return e.obj ? dynamic_cast<SvVirtualList *>(e.
 bool vl_i64(const svl_value *v, qint64 &out) {
   if (v->tag == SVL_I64) out = v->u.i;
   else if (v->tag == SVL_F64) out = static_cast<qint64>(v->u.f);
-  else if (v->tag == SVL_STR) {  // a static attribute (`rowHeight="32"`) arrives as text
+  else if (v->tag == SVL_STR) {  // a static attribute (`row-height="32"`) arrives as text
     QString qs;
     std::string er;
     bool ok = Conv<QString>::in(v, qs, er);
@@ -295,7 +295,7 @@ svl_id vl_resolve(uint32_t what, std::string_view n) {
   struct Row { uint32_t what; std::string_view name; svl_id id; };
   static const Row rows[] = {
       {SVL_PROP, "selected", VL_P_SELECTED}, {SVL_PROP, "selection", VL_P_SELECTION}, {SVL_PROP, "layout", VL_P_LAYOUT},
-      {SVL_PROP, "rowHeight", VL_P_ROW_HEIGHT}, {SVL_PROP, "minHeight", VL_P_MIN_HEIGHT},
+      {SVL_PROP, "row-height", VL_P_ROW_HEIGHT}, {SVL_PROP, "min-height", VL_P_MIN_HEIGHT},
       {SVL_PROP, "hexpand", VL_P_HEXPAND}, {SVL_PROP, "vexpand", VL_P_VEXPAND},
       {SVL_METHOD, "splice", VL_M_SPLICE}, {SVL_METHOD, "count", VL_M_COUNT}, {SVL_METHOD, "scrollTo", VL_M_SCROLL_TO},
       {SVL_METHOD, "setRow", VL_M_SET_ROW}, {SVL_METHOD, "rowAt", VL_M_ROW_AT},
@@ -373,12 +373,12 @@ int vl_set_prop(Entry &e, svl_id prop, const svl_value *val) {
       return 0;
     }
     case VL_P_ROW_HEIGHT:
-      if (!vl_i64(val, i) || i < 1 || i > 10000) return fail("rowHeight: expected a number from 1 to 10000");
+      if (!vl_i64(val, i) || i < 1 || i > 10000) return fail("row-height: expected a number from 1 to 10000");
       v->row_height = static_cast<int>(i);
       vl_apply_layout(v);
       return 0;
     case VL_P_MIN_HEIGHT:
-      if (!vl_i64(val, i) || i < 0) return fail("minHeight: expected a non-negative number");
+      if (!vl_i64(val, i) || i < 0) return fail("min-height: expected a non-negative number");
       v->setMinimumHeight(static_cast<int>(i));
       return 0;
     case VL_P_HEXPAND:

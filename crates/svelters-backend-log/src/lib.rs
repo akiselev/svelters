@@ -11,7 +11,7 @@
 
 use std::collections::HashMap;
 use std::fmt::Write as _;
-use std::sync::atomic::{AtomicU64, Ordering};
+use std::sync::atomic::{AtomicI32, AtomicU64, Ordering};
 use std::sync::{Arc, Condvar, Mutex, MutexGuard};
 use std::time::{Duration, Instant};
 use svelters_abi::{
@@ -331,6 +331,10 @@ struct Shared {
     cv: Condvar,
     wakes: AtomicU64,
     opts: LogOptions,
+    /// Overrides the process-wide default schema for this backend ([`LogBackend::with_schema`]).
+    schema: Mutex<Option<Arc<Schema>>>,
+    /// What `SVL_STYLE_TARGET` answers ([`LogBackend::with_style_target`]).
+    style_target: AtomicI32,
 }
 
 impl Shared {
@@ -349,6 +353,19 @@ pub struct LogBackend {
 impl LogBackend {
     pub fn new(script: Vec<Step>) -> LogBackend {
         LogBackend::with_options(script, LogOptions::default())
+    }
+
+    /// Publishes property descriptors from `schema` instead of the default one (a fixture written
+    /// in another toolkit's vocabulary, e.g. a `-qt` twin).
+    pub fn with_schema(self, schema: Arc<Schema>) -> LogBackend {
+        *self.shared.schema.lock().unwrap() = Some(schema);
+        self
+    }
+
+    /// Answers `SVL_STYLE_TARGET` with `target` (`SVL_STYLE_TARGET_QSS` for a Qt fixture) instead of CSS.
+    pub fn with_style_target(self, target: i32) -> LogBackend {
+        self.shared.style_target.store(target, Ordering::Relaxed);
+        self
     }
 
     pub fn with_options(script: Vec<Step>, opts: LogOptions) -> LogBackend {
@@ -377,6 +394,8 @@ impl LogBackend {
                 cv: Condvar::new(),
                 wakes: AtomicU64::new(0),
                 opts,
+                schema: Mutex::new(None),
+                style_target: AtomicI32::new(SVL_STYLE_TARGET_CSS),
             }),
         }
     }
@@ -499,7 +518,7 @@ impl Backend for LogBackend {
     }
 
     fn describe(&self, what: NameKind, kind: svl_id, member: svl_id) -> Option<MemberDesc> {
-        let schema = DEFAULT_SCHEMA.get()?;
+        let schema = self.shared.schema.lock().unwrap().clone().or_else(|| DEFAULT_SCHEMA.get().cloned())?;
         if what != NameKind::Prop {
             return None;
         }
@@ -664,7 +683,7 @@ impl Backend for LogBackend {
             None => "null".to_string(),
         };
         let line = match op {
-            SVL_STYLE_TARGET => return Ok(SVL_STYLE_TARGET_CSS),
+            SVL_STYLE_TARGET => return Ok(self.shared.style_target.load(Ordering::Relaxed)),
             SVL_STYLE_CLASSES | SVL_STYLE_NAME | SVL_STYLE_INLINE | SVL_STYLE_OPACITY => {
                 self.check_live(h)?;
                 let what = match op {

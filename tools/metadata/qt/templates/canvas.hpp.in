@@ -275,11 +275,11 @@ class SvCanvas : public QWidget {
 svl_id cv_resolve(uint32_t what, std::string_view n) {
   struct Row { uint32_t what; std::string_view name; svl_id id; };
   static const Row rows[] = {
-      {SVL_PROP, "ops", CV_P_OPS}, {SVL_PROP, "contentWidth", CV_P_CONTENT_W}, {SVL_PROP, "contentHeight", CV_P_CONTENT_H},
+      {SVL_PROP, "ops", CV_P_OPS}, {SVL_PROP, "content-width", CV_P_CONTENT_W}, {SVL_PROP, "content-height", CV_P_CONTENT_H},
       {SVL_PROP, "hexpand", CV_P_HEXPAND}, {SVL_PROP, "vexpand", CV_P_VEXPAND},
       {SVL_SIGNAL, "key-release", CV_S_BASE + EV_KEY_RELEASE}, {SVL_SIGNAL, "mouse-press", CV_S_BASE + EV_MOUSE_PRESS},
       {SVL_SIGNAL, "mouse-release", CV_S_BASE + EV_MOUSE_RELEASE}, {SVL_SIGNAL, "mouse-move", CV_S_BASE + EV_MOUSE_MOVE},
-      {SVL_SIGNAL, "double-click", CV_S_BASE + EV_DOUBLE_CLICK}, {SVL_SIGNAL, "wheel", CV_S_BASE + EV_WHEEL},
+      {SVL_SIGNAL, "mouse-double-click", CV_S_BASE + EV_DOUBLE_CLICK}, {SVL_SIGNAL, "wheel", CV_S_BASE + EV_WHEEL},
       {SVL_SIGNAL, "focus-in", CV_S_BASE + EV_FOCUS_IN}, {SVL_SIGNAL, "focus-out", CV_S_BASE + EV_FOCUS_OUT},
       {SVL_SIGNAL, "enter", CV_S_BASE + EV_ENTER}, {SVL_SIGNAL, "leave", CV_S_BASE + EV_LEAVE},
       {SVL_SIGNAL, "resize", CV_S_BASE + EV_RESIZE}, {SVL_SIGNAL, "context-menu", CV_S_BASE + EV_CONTEXT_MENU},
@@ -318,7 +318,7 @@ int cv_set_prop(Entry &e, svl_id prop, const svl_value *val) {
     case CV_P_CONTENT_W:
     case CV_P_CONTENT_H: {
       qint64 i = 0;
-      if (!vl_i64(val, i)) return fail("contentWidth/contentHeight: expected a number");
+      if (!vl_i64(val, i)) return fail("content-width/content-height: expected a number");
       (prop == CV_P_CONTENT_W ? c->cw : c->ch) = int(i);
       c->setMinimumSize(c->cw, c->ch);
       c->updateGeometry();

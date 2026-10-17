@@ -234,13 +234,13 @@ export class ListController {
   }
 }
 
-const OWN_PROPS = new Set(['$$slots', '$$events', '$$legacy', 'items', 'key', 'row', 'layout', 'selection', 'selected', 'rowHeight', 'onactivate', 'children']);
+const OWN_PROPS = new Set(['$$slots', '$$events', '$$legacy', 'items', 'key', 'row', 'layout', 'selection', 'selected', 'row-height', 'onactivate', 'children']);
 
 /**
- * `<ListView items key row layout selection bind:selected rowHeight onactivate ...rest>`, the
+ * `<ListView items key row layout selection bind:selected row-height onactivate ...rest>`, the
  * component API of @svelters/lists, in the shape the compiler generates for a component
  * (`ListView(container, $$props)`, returns its exports `{ scrollTo, controller }`). Other props go
- * to the native `virtual-list` unchanged (`vexpand`, `minHeight`, ...).
+ * to the native `virtual-list` unchanged (`vexpand`, `min-height`, ...).
  */
 export function ListView($$anchor, $$props) {
   $.push($$props, true);
@@ -249,7 +249,7 @@ export function ListView($$anchor, $$props) {
   const layout = $.prop($$props, 'layout', 3, 'list');
   const selection = $.prop($$props, 'selection', 3, 'single');
   const selected = $.prop($$props, 'selected', 31, () => -1);
-  const rowHeight = $.prop($$props, 'rowHeight', 3, 32);
+  const rowHeight = $.prop($$props, 'row-height', 3, 32);
   const rest = $.rest_props($$props, OWN_PROPS);
 
   const contexts = getAllContexts();
@@ -264,7 +264,7 @@ export function ListView($$anchor, $$props) {
   const view = element('virtual-list');
   $.template_effect(() => set(view, 'layout', layout()));
   $.template_effect(() => set(view, 'selection', selection()));
-  $.template_effect(() => set(view, 'rowHeight', rowHeight()));
+  $.template_effect(() => set(view, 'row-height', rowHeight()));
   let restKeys = [];
   $.template_effect(() => {
     const keys = Object.keys(rest).filter((k) => !(k.startsWith('on') && typeof rest[k] === 'function'));

@@ -2,6 +2,8 @@
 // Usage: node --experimental-vm-modules svelters-test.mjs <fixtureDir> [--update]
 // Runs <fixtureDir>/dist/app.js against <fixtureDir>/script.json and compares the op log with
 // <fixtureDir>/expected.oplog (byte for byte). --update (or UPDATE=1) rewrites expected.oplog.
+// A fixture written in the Qt vocabulary says so in its package.json: `"svelters": { "toolkit": "qt" }`
+// (Qt prop schema and QSS style dialect); the default is GTK.
 import fs from 'node:fs';
 import path from 'node:path';
 import { runBundle } from '../src/index.js';
@@ -30,7 +32,9 @@ for (const [re, what] of forbidden) {
 }
 
 const script = JSON.parse(fs.readFileSync(path.join(dir, 'script.json'), 'utf8'));
-const actual = await runBundle({ bundlePath, script });
+const pkgPath = path.join(dir, 'package.json');
+const toolkit = (fs.existsSync(pkgPath) && JSON.parse(fs.readFileSync(pkgPath, 'utf8')).svelters?.toolkit) || 'gtk';
+const actual = await runBundle({ bundlePath, script, toolkit });
 
 if (update) {
   fs.writeFileSync(expectedPath, actual);
