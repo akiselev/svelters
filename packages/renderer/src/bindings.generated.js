@@ -4,6 +4,9 @@ export const BINDINGS = {
   calendar: {
     day: { prop: "day", signal: "notify::day", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
   },
+  checkbox: {
+    checked: { prop: "checked", signal: "toggled", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
+  },
   checkbutton: {
     active: { prop: "active", signal: "toggled", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
   },
@@ -18,6 +21,9 @@ export const BINDINGS = {
   },
   passwordentry: {
     text: { prop: "text", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["gtk"] },
+  },
+  radiobutton: {
+    checked: { prop: "checked", signal: "toggled", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
   searchentry: {
     text: { prop: "text", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["gtk"] },

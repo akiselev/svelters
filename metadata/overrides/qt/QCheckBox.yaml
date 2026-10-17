@@ -2,6 +2,7 @@ elements:
   - tag: checkbox
     construct: { class: QCheckBox }
     props:
+      - { js: checked, native: checked, suppress_signals: true, provenance: "QAbstractButton::checked (qdoc); declared here because gen_bindings reads element props only" }
       - { js: tristate, native: tristate, provenance: "QCheckBox::tristate (qdoc)" }
       - js: checkState
         type: enum
@@ -9,7 +10,7 @@ elements:
         setter: setCheckState
         values:
           unchecked: Qt::Unchecked
-          partiallyChecked: Qt::PartiallyChecked
+          partially-checked: Qt::PartiallyChecked
           checked: Qt::Checked
         provenance: "QCheckBox::checkState (qdoc accessor, not a Q_PROPERTY)"
     bindings:

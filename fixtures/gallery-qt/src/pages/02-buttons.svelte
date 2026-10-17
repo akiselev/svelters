@@ -18,10 +18,10 @@
   <label label="clicks: {clicks}" />
   <checkbox label="Check box" bind:checked={checked} ontoggled={() => echoChecked++} />
   <label label="echo checked: {echoChecked}" />
-  <checkbox label="Tristate" tristate={true} checkState="partiallyChecked" onstateChanged={() => states++} />
+  <checkbox label="Tristate" tristate={true} checkState="partially-checked" onstateChanged={() => states++} />
   <label label="state changes: {states}" />
   <radiobutton label="Radio button" bind:checked={radio} ontoggled={() => echoRadio++} />
   <label label="echo radio: {echoRadio}" />
-  <toolbutton label="Tool button" autoRaise={true} toolButtonStyle="ToolButtonTextOnly" arrowType="NoArrow" popupMode="DelayedPopup" />
+  <toolbutton label="Tool button" autoRaise={true} toolButtonStyle="text-only" arrowType="no-arrow" popupMode="delayed-popup" />
   <commandlinkbutton label="Command link" description="Explains what happens next" flat={false} />
 </box>

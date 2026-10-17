@@ -84,14 +84,14 @@ export interface QtElementDescriptors {
   };
   checkbox: {
     props: {
+      checked?: boolean;
       tristate?: boolean;
-      checkState?: "checked" | "partiallyChecked" | "unchecked";
+      checkState?: "checked" | "partially-checked" | "unchecked";
       label?: string;
       checkable?: boolean;
       autoRepeat?: boolean;
       autoExclusive?: boolean;
       shortcut?: Boxed<"QKeySequence"> | string;
-      checked?: boolean;
       enabled?: boolean;
       toolTip?: string;
       statusTip?: string;
@@ -104,10 +104,10 @@ export interface QtElementDescriptors {
       accessibleName?: string;
     };
     events: {
+      toggled: (checked: boolean) => void;
       pressed: () => void;
       released: () => void;
       stateChanged: (state: number) => void;
-      toggled: (checked: boolean) => void;
       clicked: () => void;
     };
     methods: {
@@ -765,12 +765,12 @@ export interface QtElementDescriptors {
   };
   radiobutton: {
     props: {
+      checked?: boolean;
       label?: string;
       checkable?: boolean;
       autoRepeat?: boolean;
       autoExclusive?: boolean;
       shortcut?: Boxed<"QKeySequence"> | string;
-      checked?: boolean;
       enabled?: boolean;
       toolTip?: string;
       statusTip?: string;

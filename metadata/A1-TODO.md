@@ -243,7 +243,7 @@ otherwise the lower-case Qt class name without the Q (`checkbox`, `slider`, `spi
 - B: QCheckBox/QRadioButton `bind:checked` (inherited from QAbstractButton).
 - Blocked: QToolButton menus (G7), icons (G4).
 - Gallery: `02-buttons.svelte`.
-- Status: todo
+- Status: done (QPushButton 3 P, QCheckBox tristate/checkState/stateChanged/bind:checked, QRadioButton bind:checked, QToolButton 4 P + setMenu (resolution test only), QCommandLinkButton description/flat; dropped: checkStateChanged(Qt::CheckState) enum signal arg, icons (G4 not tried); note: pressed/released/toggled redeclared on checkbox/radiobutton, `checked` redeclared because gen_bindings ignores inherited props)
 
 ### qt-text: text entry and text display
 

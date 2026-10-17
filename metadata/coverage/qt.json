@@ -28,8 +28,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   7,
-   7
+   12,
+   12
   ]
  },
  {
@@ -232,10 +232,10 @@
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "defaults": 1,
-  "element": null,
-  "gallery": null,
+  "element": "checkbox",
+  "gallery": "02-buttons",
   "inherited": 0,
   "kind": "QCheckBox",
   "lifetime": "owned",
@@ -246,21 +246,21 @@
   "native": "QCheckBox",
   "ownership": false,
   "props": [
-   0,
+   1,
    1
   ],
-  "props_annotated": 0,
+  "props_annotated": 1,
   "signal_results": 0,
   "signals": [
-   0,
+   1,
    2
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   8,
+   8
   ]
  },
  {
@@ -366,8 +366,8 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 2,
-  "element": null,
-  "gallery": null,
+  "element": "commandlinkbutton",
+  "gallery": "02-buttons",
   "inherited": 0,
   "kind": "QCommandLinkButton",
   "lifetime": "owned",
@@ -378,10 +378,10 @@
   "native": "QCommandLinkButton",
   "ownership": false,
   "props": [
-   0,
+   2,
    2
   ],
-  "props_annotated": 0,
+  "props_annotated": 2,
   "signal_results": 0,
   "signals": [
    0,
@@ -391,8 +391,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   2,
+   2
   ]
  },
  {
@@ -1599,10 +1599,10 @@
   "native": "QPushButton",
   "ownership": false,
   "props": [
-   0,
+   3,
    3
   ],
-  "props_annotated": 0,
+  "props_annotated": 3,
   "signal_results": 0,
   "signals": [
    0,
@@ -1612,16 +1612,16 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   7,
-   7
+   10,
+   10
   ]
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "defaults": 0,
-  "element": null,
-  "gallery": null,
+  "element": "radiobutton",
+  "gallery": "02-buttons",
   "inherited": 0,
   "kind": "QRadioButton",
   "lifetime": "owned",
@@ -1645,8 +1645,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   5,
+   5
   ]
  },
  {
@@ -2379,22 +2379,22 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 4,
-  "element": null,
-  "gallery": null,
+  "element": "toolbutton",
+  "gallery": "02-buttons",
   "inherited": 0,
   "kind": "QToolButton",
   "lifetime": "owned",
   "methods": [
-   0,
+   1,
    28
   ],
   "native": "QToolButton",
   "ownership": false,
   "props": [
-   0,
+   4,
    4
   ],
-  "props_annotated": 0,
+  "props_annotated": 4,
   "signal_results": 0,
   "signals": [
    0,
@@ -2404,8 +2404,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   5,
+   5
   ]
  },
  {
