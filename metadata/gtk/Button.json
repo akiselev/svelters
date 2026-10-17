@@ -401,6 +401,7 @@
   ],
   "native": {
     "c_type": "GtkButton",
+    "get_type": "gtk_button_get_type",
     "gtype": "GtkButton",
     "name": "GtkButton"
   },

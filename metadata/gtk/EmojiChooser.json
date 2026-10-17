@@ -62,6 +62,7 @@
   "methods": [],
   "native": {
     "c_type": "GtkEmojiChooser",
+    "get_type": "gtk_emoji_chooser_get_type",
     "gtype": "GtkEmojiChooser",
     "name": "GtkEmojiChooser"
   },

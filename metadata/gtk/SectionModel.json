@@ -96,6 +96,7 @@
   ],
   "native": {
     "c_type": "GtkSectionModel",
+    "get_type": "gtk_section_model_get_type",
     "gtype": "GtkSectionModel",
     "name": "GtkSectionModel"
   },

@@ -843,6 +843,7 @@
   ],
   "native": {
     "c_type": "GtkText",
+    "get_type": "gtk_text_get_type",
     "gtype": "GtkText",
     "name": "GtkText"
   },

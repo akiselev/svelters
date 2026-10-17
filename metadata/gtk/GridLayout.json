@@ -330,6 +330,7 @@
   ],
   "native": {
     "c_type": "GtkGridLayout",
+    "get_type": "gtk_grid_layout_get_type",
     "gtype": "GtkGridLayout",
     "name": "GtkGridLayout"
   },

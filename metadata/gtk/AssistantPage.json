@@ -55,6 +55,7 @@
   ],
   "native": {
     "c_type": "GtkAssistantPage",
+    "get_type": "gtk_assistant_page_get_type",
     "gtype": "GtkAssistantPage",
     "name": "GtkAssistantPage"
   },

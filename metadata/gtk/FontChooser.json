@@ -464,6 +464,7 @@
   ],
   "native": {
     "c_type": "GtkFontChooser",
+    "get_type": "gtk_font_chooser_get_type",
     "gtype": "GtkFontChooser",
     "name": "GtkFontChooser"
   },

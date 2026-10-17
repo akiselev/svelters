@@ -212,6 +212,7 @@
   ],
   "native": {
     "c_type": "GtkTreeListRow",
+    "get_type": "gtk_tree_list_row_get_type",
     "gtype": "GtkTreeListRow",
     "name": "GtkTreeListRow"
   },

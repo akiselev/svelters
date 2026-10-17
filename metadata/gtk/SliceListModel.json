@@ -207,6 +207,7 @@
   ],
   "native": {
     "c_type": "GtkSliceListModel",
+    "get_type": "gtk_slice_list_model_get_type",
     "gtype": "GtkSliceListModel",
     "name": "GtkSliceListModel"
   },

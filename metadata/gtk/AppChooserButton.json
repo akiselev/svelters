@@ -341,6 +341,7 @@
   ],
   "native": {
     "c_type": "GtkAppChooserButton",
+    "get_type": "gtk_app_chooser_button_get_type",
     "gtype": "GtkAppChooserButton",
     "name": "GtkAppChooserButton"
   },

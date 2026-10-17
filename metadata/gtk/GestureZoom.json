@@ -70,6 +70,7 @@
   ],
   "native": {
     "c_type": "GtkGestureZoom",
+    "get_type": "gtk_gesture_zoom_get_type",
     "gtype": "GtkGestureZoom",
     "name": "GtkGestureZoom"
   },

@@ -67,6 +67,7 @@
   ],
   "native": {
     "c_type": "GtkSettings",
+    "get_type": "gtk_settings_get_type",
     "gtype": "GtkSettings",
     "name": "GtkSettings"
   },

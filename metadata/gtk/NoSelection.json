@@ -106,6 +106,7 @@
   ],
   "native": {
     "c_type": "GtkNoSelection",
+    "get_type": "gtk_no_selection_get_type",
     "gtype": "GtkNoSelection",
     "name": "GtkNoSelection"
   },

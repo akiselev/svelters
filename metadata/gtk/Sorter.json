@@ -111,6 +111,7 @@
   ],
   "native": {
     "c_type": "GtkSorter",
+    "get_type": "gtk_sorter_get_type",
     "gtype": "GtkSorter",
     "name": "GtkSorter"
   },

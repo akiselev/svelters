@@ -108,6 +108,7 @@
   ],
   "native": {
     "c_type": "GtkWindowHandle",
+    "get_type": "gtk_window_handle_get_type",
     "gtype": "GtkWindowHandle",
     "name": "GtkWindowHandle"
   },

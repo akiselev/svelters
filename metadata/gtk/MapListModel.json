@@ -184,6 +184,7 @@
   ],
   "native": {
     "c_type": "GtkMapListModel",
+    "get_type": "gtk_map_list_model_get_type",
     "gtype": "GtkMapListModel",
     "name": "GtkMapListModel"
   },

@@ -675,6 +675,7 @@
   ],
   "native": {
     "c_type": "GtkAssistant",
+    "get_type": "gtk_assistant_get_type",
     "gtype": "GtkAssistant",
     "name": "GtkAssistant"
   },

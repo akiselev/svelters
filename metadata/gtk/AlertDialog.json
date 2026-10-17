@@ -429,6 +429,7 @@
   ],
   "native": {
     "c_type": "GtkAlertDialog",
+    "get_type": "gtk_alert_dialog_get_type",
     "gtype": "GtkAlertDialog",
     "name": "GtkAlertDialog"
   },

@@ -572,6 +572,7 @@
   ],
   "native": {
     "c_type": "GtkPicture",
+    "get_type": "gtk_picture_get_type",
     "gtype": "GtkPicture",
     "name": "GtkPicture"
   },

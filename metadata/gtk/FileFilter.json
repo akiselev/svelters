@@ -280,6 +280,7 @@
   ],
   "native": {
     "c_type": "GtkFileFilter",
+    "get_type": "gtk_file_filter_get_type",
     "gtype": "GtkFileFilter",
     "name": "GtkFileFilter"
   },

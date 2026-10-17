@@ -87,6 +87,7 @@
   ],
   "native": {
     "c_type": "GtkEventControllerFocus",
+    "get_type": "gtk_event_controller_focus_get_type",
     "gtype": "GtkEventControllerFocus",
     "name": "GtkEventControllerFocus"
   },

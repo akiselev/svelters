@@ -123,6 +123,7 @@
   ],
   "native": {
     "c_type": "GtkEventControllerScroll",
+    "get_type": "gtk_event_controller_scroll_get_type",
     "gtype": "GtkEventControllerScroll",
     "name": "GtkEventControllerScroll"
   },

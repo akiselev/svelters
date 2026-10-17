@@ -124,6 +124,7 @@
   ],
   "native": {
     "c_type": "GtkColumnViewSorter",
+    "get_type": "gtk_column_view_sorter_get_type",
     "gtype": "GtkColumnViewSorter",
     "name": "GtkColumnViewSorter"
   },

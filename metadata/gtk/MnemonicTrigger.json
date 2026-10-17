@@ -77,6 +77,7 @@
   ],
   "native": {
     "c_type": "GtkMnemonicTrigger",
+    "get_type": "gtk_mnemonic_trigger_get_type",
     "gtype": "GtkMnemonicTrigger",
     "name": "GtkMnemonicTrigger"
   },

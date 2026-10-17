@@ -2019,6 +2019,7 @@
   ],
   "native": {
     "c_type": "GtkTextView",
+    "get_type": "gtk_text_view_get_type",
     "gtype": "GtkTextView",
     "name": "GtkTextView"
   },

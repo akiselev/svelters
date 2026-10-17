@@ -286,6 +286,7 @@
   ],
   "native": {
     "c_type": "GtkMessageDialog",
+    "get_type": "gtk_message_dialog_get_type",
     "gtype": "GtkMessageDialog",
     "name": "GtkMessageDialog"
   },

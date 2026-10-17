@@ -543,6 +543,7 @@
   ],
   "native": {
     "c_type": "GtkImage",
+    "get_type": "gtk_image_get_type",
     "gtype": "GtkImage",
     "name": "GtkImage"
   },

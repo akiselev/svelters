@@ -342,6 +342,7 @@
   ],
   "native": {
     "c_type": "GtkEntryBuffer",
+    "get_type": "gtk_entry_buffer_get_type",
     "gtype": "GtkEntryBuffer",
     "name": "GtkEntryBuffer"
   },

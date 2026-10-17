@@ -177,6 +177,7 @@
   ],
   "native": {
     "c_type": "GtkColumnViewCell",
+    "get_type": "gtk_column_view_cell_get_type",
     "gtype": "GtkColumnViewCell",
     "name": "GtkColumnViewCell"
   },

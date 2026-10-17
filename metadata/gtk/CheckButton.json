@@ -359,6 +359,7 @@
   ],
   "native": {
     "c_type": "GtkCheckButton",
+    "get_type": "gtk_check_button_get_type",
     "gtype": "GtkCheckButton",
     "name": "GtkCheckButton"
   },

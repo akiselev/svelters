@@ -193,6 +193,7 @@
   ],
   "native": {
     "c_type": "GtkStringSorter",
+    "get_type": "gtk_string_sorter_get_type",
     "gtype": "GtkStringSorter",
     "name": "GtkStringSorter"
   },

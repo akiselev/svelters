@@ -1918,6 +1918,7 @@
   ],
   "native": {
     "c_type": "GtkPrintSettings",
+    "get_type": "gtk_print_settings_get_type",
     "gtype": "GtkPrintSettings",
     "name": "GtkPrintSettings"
   },

@@ -139,6 +139,7 @@
   ],
   "native": {
     "c_type": "GtkTextTag",
+    "get_type": "gtk_text_tag_get_type",
     "gtype": "GtkTextTag",
     "name": "GtkTextTag"
   },

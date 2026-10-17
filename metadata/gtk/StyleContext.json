@@ -521,6 +521,7 @@
   ],
   "native": {
     "c_type": "GtkStyleContext",
+    "get_type": "gtk_style_context_get_type",
     "gtype": "GtkStyleContext",
     "name": "GtkStyleContext"
   },

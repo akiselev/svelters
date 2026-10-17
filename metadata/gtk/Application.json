@@ -422,6 +422,7 @@
   ],
   "native": {
     "c_type": "GtkApplication",
+    "get_type": "gtk_application_get_type",
     "gtype": "GtkApplication",
     "name": "GtkApplication"
   },

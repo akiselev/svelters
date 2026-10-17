@@ -134,6 +134,7 @@
   ],
   "native": {
     "c_type": "GtkShortcutAction",
+    "get_type": "gtk_shortcut_action_get_type",
     "gtype": "GtkShortcutAction",
     "name": "GtkShortcutAction"
   },

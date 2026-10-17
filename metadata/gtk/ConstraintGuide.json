@@ -340,6 +340,7 @@
   ],
   "native": {
     "c_type": "GtkConstraintGuide",
+    "get_type": "gtk_constraint_guide_get_type",
     "gtype": "GtkConstraintGuide",
     "name": "GtkConstraintGuide"
   },

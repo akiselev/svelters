@@ -149,6 +149,7 @@
   ],
   "native": {
     "c_type": "GtkNumericSorter",
+    "get_type": "gtk_numeric_sorter_get_type",
     "gtype": "GtkNumericSorter",
     "name": "GtkNumericSorter"
   },

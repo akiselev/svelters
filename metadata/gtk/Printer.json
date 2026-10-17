@@ -541,6 +541,7 @@
   ],
   "native": {
     "c_type": "GtkPrinter",
+    "get_type": "gtk_printer_get_type",
     "gtype": "GtkPrinter",
     "name": "GtkPrinter"
   },

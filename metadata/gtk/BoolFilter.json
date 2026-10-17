@@ -147,6 +147,7 @@
   ],
   "native": {
     "c_type": "GtkBoolFilter",
+    "get_type": "gtk_bool_filter_get_type",
     "gtype": "GtkBoolFilter",
     "name": "GtkBoolFilter"
   },

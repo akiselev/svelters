@@ -621,6 +621,7 @@
   ],
   "native": {
     "c_type": "GtkAccessible",
+    "get_type": "gtk_accessible_get_type",
     "gtype": "GtkAccessible",
     "name": "GtkAccessible"
   },

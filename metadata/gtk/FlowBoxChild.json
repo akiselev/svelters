@@ -162,6 +162,7 @@
   ],
   "native": {
     "c_type": "GtkFlowBoxChild",
+    "get_type": "gtk_flow_box_child_get_type",
     "gtype": "GtkFlowBoxChild",
     "name": "GtkFlowBoxChild"
   },

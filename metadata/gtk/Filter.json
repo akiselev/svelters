@@ -104,6 +104,7 @@
   ],
   "native": {
     "c_type": "GtkFilter",
+    "get_type": "gtk_filter_get_type",
     "gtype": "GtkFilter",
     "name": "GtkFilter"
   },

@@ -22,6 +22,7 @@
   "methods": [],
   "native": {
     "c_type": "GtkAccessibleHypertext",
+    "get_type": "gtk_accessible_hypertext_get_type",
     "gtype": "GtkAccessibleHypertext",
     "name": "GtkAccessibleHypertext"
   },

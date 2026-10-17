@@ -299,6 +299,7 @@
   ],
   "native": {
     "c_type": "GtkMediaFile",
+    "get_type": "gtk_media_file_get_type",
     "gtype": "GtkMediaFile",
     "name": "GtkMediaFile"
   },

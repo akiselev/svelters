@@ -72,6 +72,7 @@
   "methods": [],
   "native": {
     "c_type": "GtkCustomLayout",
+    "get_type": "gtk_custom_layout_get_type",
     "gtype": "GtkCustomLayout",
     "name": "GtkCustomLayout"
   },

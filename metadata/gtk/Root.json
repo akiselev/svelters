@@ -85,6 +85,7 @@
   ],
   "native": {
     "c_type": "GtkRoot",
+    "get_type": "gtk_root_get_type",
     "gtype": "GtkRoot",
     "name": "GtkRoot"
   },

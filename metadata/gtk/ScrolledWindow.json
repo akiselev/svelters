@@ -28,36 +28,74 @@
         "annotated": {
           "fields": [
             "accepts",
-            "attached_props",
+            "attrs",
             "cardinality",
+            "content",
+            "default",
+            "on_remove",
             "ops",
-            "ownership",
-            "readback"
+            "order",
+            "requires",
+            "route_by_kind",
+            "verify"
           ],
           "origin": "manual",
-          "provenance": "gtk_scrolled_window_set_child docs: non-scrollable children are wrapped in a GtkViewport automatically"
+          "provenance": [
+            {
+              "origin": "gir",
+              "ref": "gtk_scrolled_window_set_child"
+            },
+            {
+              "origin": "manual",
+              "ref": "docs: a non-scrollable child is wrapped in a GtkViewport automatically"
+            }
+          ]
         },
-        "attached_props": [],
+        "attrs": [],
         "cardinality": "one",
+        "content": "widget",
+        "default": {
+          "kind": "none",
+          "origin": "manual"
+        },
         "name": "child",
+        "on_remove": "empty",
         "ops": {
-          "clear": {
-            "origin": "manual",
-            "property": "child",
-            "value": null
+          "get": {
+            "native": "GtkScrolledWindow::get_child() const",
+            "origin": "manual"
           },
           "origin": "manual",
+          "remove": {
+            "args": [
+              null
+            ],
+            "effects": {
+              "child": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkScrolledWindow::set_child(GtkWidget*)",
+            "origin": "manual"
+          },
           "set": {
-            "origin": "manual",
-            "property": "child"
+            "args": [
+              "child"
+            ],
+            "effects": {
+              "child": "wrapped:Viewport",
+              "old": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkScrolledWindow::set_child(GtkWidget*)",
+            "origin": "manual"
           }
         },
+        "order": "none",
         "origin": "manual",
-        "ownership": "parent_owned",
-        "readback": {
-          "mode": "property",
-          "origin": "manual",
-          "property": "child"
+        "requires": [],
+        "route_by_kind": false,
+        "verify": {
+          "origin": "manual"
         }
       }
     ]
@@ -799,6 +837,7 @@
   ],
   "native": {
     "c_type": "GtkScrolledWindow",
+    "get_type": "gtk_scrolled_window_get_type",
     "gtype": "GtkScrolledWindow",
     "name": "GtkScrolledWindow"
   },

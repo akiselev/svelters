@@ -295,6 +295,7 @@
   ],
   "native": {
     "c_type": "GtkListBoxRow",
+    "get_type": "gtk_list_box_row_get_type",
     "gtype": "GtkListBoxRow",
     "name": "GtkListBoxRow"
   },

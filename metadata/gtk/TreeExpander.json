@@ -302,6 +302,7 @@
   ],
   "native": {
     "c_type": "GtkTreeExpander",
+    "get_type": "gtk_tree_expander_get_type",
     "gtype": "GtkTreeExpander",
     "name": "GtkTreeExpander"
   },

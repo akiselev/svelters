@@ -80,6 +80,7 @@
   ],
   "native": {
     "c_type": "GtkAppChooser",
+    "get_type": "gtk_app_chooser_get_type",
     "gtype": "GtkAppChooser",
     "name": "GtkAppChooser"
   },

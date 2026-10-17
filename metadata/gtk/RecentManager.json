@@ -260,6 +260,7 @@
   ],
   "native": {
     "c_type": "GtkRecentManager",
+    "get_type": "gtk_recent_manager_get_type",
     "gtype": "GtkRecentManager",
     "name": "GtkRecentManager"
   },

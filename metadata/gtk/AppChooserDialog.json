@@ -193,6 +193,7 @@
   ],
   "native": {
     "c_type": "GtkAppChooserDialog",
+    "get_type": "gtk_app_chooser_dialog_get_type",
     "gtype": "GtkAppChooserDialog",
     "name": "GtkAppChooserDialog"
   },

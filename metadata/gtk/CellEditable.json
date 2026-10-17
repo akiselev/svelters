@@ -87,6 +87,7 @@
   ],
   "native": {
     "c_type": "GtkCellEditable",
+    "get_type": "gtk_cell_editable_get_type",
     "gtype": "GtkCellEditable",
     "name": "GtkCellEditable"
   },

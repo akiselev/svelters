@@ -30,26 +30,61 @@
         "annotated": {
           "fields": [
             "accepts",
-            "attached_props",
+            "attrs",
             "cardinality",
+            "content",
+            "default",
+            "on_remove",
             "ops",
             "order",
-            "ownership",
-            "readback"
+            "requires",
+            "route_by_kind",
+            "verify"
           ],
           "origin": "manual",
-          "provenance": "gtk_box_insert_child_after / gtk_box_remove docs; insert-before is expressed as insert-after the anchor's previous sibling"
+          "provenance": [
+            {
+              "origin": "gir",
+              "ref": "gtk_box_insert_child_after"
+            },
+            {
+              "origin": "gir",
+              "ref": "gtk_box_remove"
+            }
+          ]
         },
-        "attached_props": [],
+        "attrs": [],
         "cardinality": "many",
+        "content": "widget",
+        "default": {
+          "kind": "none",
+          "origin": "manual"
+        },
         "name": "children",
+        "on_remove": "empty",
         "ops": {
+          "get": {
+            "contains": "parent",
+            "origin": "manual"
+          },
           "insert": {
             "args": [
               "child",
               "prev_sibling"
             ],
-            "method": "insert_child_after",
+            "effects": {
+              "child": "parented",
+              "origin": "manual"
+            },
+            "native": "GtkBox::insert_child_after(GtkWidget*, GtkWidget*)",
+            "origin": "manual"
+          },
+          "list": {
+            "iterate": {
+              "first": "GtkWidget::get_first_child() const",
+              "next": "GtkWidget::get_next_sibling() const",
+              "origin": "manual"
+            },
             "origin": "manual"
           },
           "origin": "manual",
@@ -57,15 +92,19 @@
             "args": [
               "child"
             ],
-            "method": "remove",
+            "effects": {
+              "child": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkBox::remove(GtkWidget*)",
             "origin": "manual"
           }
         },
-        "order": "ordered",
+        "order": "before_sibling",
         "origin": "manual",
-        "ownership": "parent_owned",
-        "readback": {
-          "mode": "parent",
+        "requires": [],
+        "route_by_kind": false,
+        "verify": {
           "origin": "manual"
         }
       }
@@ -451,6 +490,7 @@
   ],
   "native": {
     "c_type": "GtkBox",
+    "get_type": "gtk_box_get_type",
     "gtype": "GtkBox",
     "name": "GtkBox"
   },

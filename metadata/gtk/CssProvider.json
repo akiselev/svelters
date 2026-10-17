@@ -272,6 +272,7 @@
   ],
   "native": {
     "c_type": "GtkCssProvider",
+    "get_type": "gtk_css_provider_get_type",
     "gtype": "GtkCssProvider",
     "name": "GtkCssProvider"
   },

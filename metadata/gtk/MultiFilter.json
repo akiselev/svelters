@@ -81,6 +81,7 @@
   ],
   "native": {
     "c_type": "GtkMultiFilter",
+    "get_type": "gtk_multi_filter_get_type",
     "gtype": "GtkMultiFilter",
     "name": "GtkMultiFilter"
   },

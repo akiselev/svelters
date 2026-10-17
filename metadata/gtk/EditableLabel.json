@@ -131,6 +131,7 @@
   ],
   "native": {
     "c_type": "GtkEditableLabel",
+    "get_type": "gtk_editable_label_get_type",
     "gtype": "GtkEditableLabel",
     "name": "GtkEditableLabel"
   },

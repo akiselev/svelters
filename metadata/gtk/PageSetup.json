@@ -742,6 +742,7 @@
   ],
   "native": {
     "c_type": "GtkPageSetup",
+    "get_type": "gtk_page_setup_get_type",
     "gtype": "GtkPageSetup",
     "name": "GtkPageSetup"
   },

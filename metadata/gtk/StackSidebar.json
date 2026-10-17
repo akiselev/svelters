@@ -104,6 +104,7 @@
   ],
   "native": {
     "c_type": "GtkStackSidebar",
+    "get_type": "gtk_stack_sidebar_get_type",
     "gtype": "GtkStackSidebar",
     "name": "GtkStackSidebar"
   },

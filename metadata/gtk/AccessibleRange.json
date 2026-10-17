@@ -22,6 +22,7 @@
   "methods": [],
   "native": {
     "c_type": "GtkAccessibleRange",
+    "get_type": "gtk_accessible_range_get_type",
     "gtype": "GtkAccessibleRange",
     "name": "GtkAccessibleRange"
   },

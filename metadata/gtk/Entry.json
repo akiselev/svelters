@@ -1552,6 +1552,7 @@
   ],
   "native": {
     "c_type": "GtkEntry",
+    "get_type": "gtk_entry_get_type",
     "gtype": "GtkEntry",
     "name": "GtkEntry"
   },

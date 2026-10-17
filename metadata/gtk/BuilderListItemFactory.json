@@ -151,6 +151,7 @@
   ],
   "native": {
     "c_type": "GtkBuilderListItemFactory",
+    "get_type": "gtk_builder_list_item_factory_get_type",
     "gtype": "GtkBuilderListItemFactory",
     "name": "GtkBuilderListItemFactory"
   },

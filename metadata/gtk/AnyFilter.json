@@ -54,6 +54,7 @@
   "methods": [],
   "native": {
     "c_type": "GtkAnyFilter",
+    "get_type": "gtk_any_filter_get_type",
     "gtype": "GtkAnyFilter",
     "name": "GtkAnyFilter"
   },

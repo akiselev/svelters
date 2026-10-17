@@ -242,6 +242,7 @@
   ],
   "native": {
     "c_type": "GtkShortcut",
+    "get_type": "gtk_shortcut_get_type",
     "gtype": "GtkShortcut",
     "name": "GtkShortcut"
   },

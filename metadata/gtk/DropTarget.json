@@ -306,6 +306,7 @@
   ],
   "native": {
     "c_type": "GtkDropTarget",
+    "get_type": "gtk_drop_target_get_type",
     "gtype": "GtkDropTarget",
     "name": "GtkDropTarget"
   },

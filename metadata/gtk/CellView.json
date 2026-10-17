@@ -354,6 +354,7 @@
   ],
   "native": {
     "c_type": "GtkCellView",
+    "get_type": "gtk_cell_view_get_type",
     "gtype": "GtkCellView",
     "name": "GtkCellView"
   },

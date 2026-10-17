@@ -803,6 +803,7 @@
   ],
   "native": {
     "c_type": "GtkAboutDialog",
+    "get_type": "gtk_about_dialog_get_type",
     "gtype": "GtkAboutDialog",
     "name": "GtkAboutDialog"
   },

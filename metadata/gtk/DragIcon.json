@@ -118,6 +118,7 @@
   ],
   "native": {
     "c_type": "GtkDragIcon",
+    "get_type": "gtk_drag_icon_get_type",
     "gtype": "GtkDragIcon",
     "name": "GtkDragIcon"
   },

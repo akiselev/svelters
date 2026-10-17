@@ -507,6 +507,7 @@
   ],
   "native": {
     "c_type": "GtkInfoBar",
+    "get_type": "gtk_info_bar_get_type",
     "gtype": "GtkInfoBar",
     "name": "GtkInfoBar"
   },

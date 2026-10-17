@@ -182,6 +182,7 @@
   ],
   "native": {
     "c_type": "GtkFileChooserNative",
+    "get_type": "gtk_file_chooser_native_get_type",
     "gtype": "GtkFileChooserNative",
     "name": "GtkFileChooserNative"
   },

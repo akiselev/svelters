@@ -216,6 +216,7 @@
   ],
   "native": {
     "c_type": "GtkTooltip",
+    "get_type": "gtk_tooltip_get_type",
     "gtype": "GtkTooltip",
     "name": "GtkTooltip"
   },

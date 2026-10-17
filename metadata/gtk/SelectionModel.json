@@ -334,6 +334,7 @@
   ],
   "native": {
     "c_type": "GtkSelectionModel",
+    "get_type": "gtk_selection_model_get_type",
     "gtype": "GtkSelectionModel",
     "name": "GtkSelectionModel"
   },

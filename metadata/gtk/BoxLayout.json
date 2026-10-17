@@ -239,6 +239,7 @@
   ],
   "native": {
     "c_type": "GtkBoxLayout",
+    "get_type": "gtk_box_layout_get_type",
     "gtype": "GtkBoxLayout",
     "name": "GtkBoxLayout"
   },

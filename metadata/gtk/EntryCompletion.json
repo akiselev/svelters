@@ -591,6 +591,7 @@
   ],
   "native": {
     "c_type": "GtkEntryCompletion",
+    "get_type": "gtk_entry_completion_get_type",
     "gtype": "GtkEntryCompletion",
     "name": "GtkEntryCompletion"
   },

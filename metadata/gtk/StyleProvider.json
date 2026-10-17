@@ -22,6 +22,7 @@
   "methods": [],
   "native": {
     "c_type": "GtkStyleProvider",
+    "get_type": "gtk_style_provider_get_type",
     "gtype": "GtkStyleProvider",
     "name": "GtkStyleProvider"
   },

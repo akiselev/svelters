@@ -81,6 +81,7 @@
   "methods": [],
   "native": {
     "c_type": "GtkFontChooserDialog",
+    "get_type": "gtk_font_chooser_dialog_get_type",
     "gtype": "GtkFontChooserDialog",
     "name": "GtkFontChooserDialog"
   },

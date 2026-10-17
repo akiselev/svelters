@@ -256,6 +256,7 @@
   ],
   "native": {
     "c_type": "GtkSingleSelection",
+    "get_type": "gtk_single_selection_get_type",
     "gtype": "GtkSingleSelection",
     "name": "GtkSingleSelection"
   },

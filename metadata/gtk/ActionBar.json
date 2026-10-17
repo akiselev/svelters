@@ -231,6 +231,7 @@
   ],
   "native": {
     "c_type": "GtkActionBar",
+    "get_type": "gtk_action_bar_get_type",
     "gtype": "GtkActionBar",
     "name": "GtkActionBar"
   },

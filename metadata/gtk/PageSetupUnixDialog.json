@@ -168,6 +168,7 @@
   ],
   "native": {
     "c_type": "GtkPageSetupUnixDialog",
+    "get_type": "gtk_page_setup_unix_dialog_get_type",
     "gtype": "GtkPageSetupUnixDialog",
     "name": "GtkPageSetupUnixDialog"
   },

@@ -1214,6 +1214,7 @@
   ],
   "native": {
     "c_type": "GtkLabel",
+    "get_type": "gtk_label_get_type",
     "gtype": "GtkLabel",
     "name": "GtkLabel"
   },

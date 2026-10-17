@@ -407,6 +407,7 @@
   ],
   "native": {
     "c_type": "GtkLevelBar",
+    "get_type": "gtk_level_bar_get_type",
     "gtype": "GtkLevelBar",
     "name": "GtkLevelBar"
   },

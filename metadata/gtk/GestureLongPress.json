@@ -97,6 +97,7 @@
   ],
   "native": {
     "c_type": "GtkGestureLongPress",
+    "get_type": "gtk_gesture_long_press_get_type",
     "gtype": "GtkGestureLongPress",
     "name": "GtkGestureLongPress"
   },

@@ -140,6 +140,7 @@
   ],
   "native": {
     "c_type": "GtkSpinner",
+    "get_type": "gtk_spinner_get_type",
     "gtype": "GtkSpinner",
     "name": "GtkSpinner"
   },

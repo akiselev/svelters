@@ -77,6 +77,7 @@
   ],
   "native": {
     "c_type": "GtkNamedAction",
+    "get_type": "gtk_named_action_get_type",
     "gtype": "GtkNamedAction",
     "name": "GtkNamedAction"
   },

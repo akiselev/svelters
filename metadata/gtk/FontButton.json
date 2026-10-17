@@ -271,6 +271,7 @@
   ],
   "native": {
     "c_type": "GtkFontButton",
+    "get_type": "gtk_font_button_get_type",
     "gtype": "GtkFontButton",
     "name": "GtkFontButton"
   },

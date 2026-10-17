@@ -402,6 +402,7 @@
   ],
   "native": {
     "c_type": "GtkDialog",
+    "get_type": "gtk_dialog_get_type",
     "gtype": "GtkDialog",
     "name": "GtkDialog"
   },

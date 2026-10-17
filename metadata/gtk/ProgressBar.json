@@ -346,6 +346,7 @@
   ],
   "native": {
     "c_type": "GtkProgressBar",
+    "get_type": "gtk_progress_bar_get_type",
     "gtype": "GtkProgressBar",
     "name": "GtkProgressBar"
   },

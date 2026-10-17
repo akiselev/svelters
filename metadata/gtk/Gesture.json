@@ -441,6 +441,7 @@
   ],
   "native": {
     "c_type": "GtkGesture",
+    "get_type": "gtk_gesture_get_type",
     "gtype": "GtkGesture",
     "name": "GtkGesture"
   },

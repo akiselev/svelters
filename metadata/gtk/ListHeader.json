@@ -150,6 +150,7 @@
   ],
   "native": {
     "c_type": "GtkListHeader",
+    "get_type": "gtk_list_header_get_type",
     "gtype": "GtkListHeader",
     "name": "GtkListHeader"
   },

@@ -567,6 +567,7 @@
   ],
   "native": {
     "c_type": "GtkRange",
+    "get_type": "gtk_range_get_type",
     "gtype": "GtkRange",
     "name": "GtkRange"
   },

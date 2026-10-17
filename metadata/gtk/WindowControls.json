@@ -220,6 +220,7 @@
   ],
   "native": {
     "c_type": "GtkWindowControls",
+    "get_type": "gtk_window_controls_get_type",
     "gtype": "GtkWindowControls",
     "name": "GtkWindowControls"
   },

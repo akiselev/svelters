@@ -918,6 +918,7 @@
   ],
   "native": {
     "c_type": "GtkFlowBox",
+    "get_type": "gtk_flow_box_get_type",
     "gtype": "GtkFlowBox",
     "name": "GtkFlowBox"
   },

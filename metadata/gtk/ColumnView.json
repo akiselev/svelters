@@ -668,6 +668,7 @@
   ],
   "native": {
     "c_type": "GtkColumnView",
+    "get_type": "gtk_column_view_get_type",
     "gtype": "GtkColumnView",
     "name": "GtkColumnView"
   },

@@ -318,6 +318,7 @@
   ],
   "native": {
     "c_type": "GtkStackPage",
+    "get_type": "gtk_stack_page_get_type",
     "gtype": "GtkStackPage",
     "name": "GtkStackPage"
   },

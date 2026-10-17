@@ -102,6 +102,7 @@
   ],
   "native": {
     "c_type": "GtkATContext",
+    "get_type": "gtk_at_context_get_type",
     "gtype": "GtkATContext",
     "name": "GtkATContext"
   },

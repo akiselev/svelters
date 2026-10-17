@@ -64,6 +64,7 @@
   "methods": [],
   "native": {
     "c_type": "GtkTryExpression",
+    "get_type": "gtk_try_expression_get_type",
     "gtype": "GtkTryExpression",
     "name": "GtkTryExpression"
   },

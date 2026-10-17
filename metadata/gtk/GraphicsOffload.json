@@ -206,6 +206,7 @@
   ],
   "native": {
     "c_type": "GtkGraphicsOffload",
+    "get_type": "gtk_graphics_offload_get_type",
     "gtype": "GtkGraphicsOffload",
     "name": "GtkGraphicsOffload"
   },

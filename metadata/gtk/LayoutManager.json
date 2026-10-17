@@ -220,6 +220,7 @@
   ],
   "native": {
     "c_type": "GtkLayoutManager",
+    "get_type": "gtk_layout_manager_get_type",
     "gtype": "GtkLayoutManager",
     "name": "GtkLayoutManager"
   },

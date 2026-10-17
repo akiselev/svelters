@@ -50,6 +50,7 @@
   "methods": [],
   "native": {
     "c_type": "GtkEventControllerLegacy",
+    "get_type": "gtk_event_controller_legacy_get_type",
     "gtype": "GtkEventControllerLegacy",
     "name": "GtkEventControllerLegacy"
   },

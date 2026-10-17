@@ -99,6 +99,7 @@
   ],
   "native": {
     "c_type": "GtkAccessibleText",
+    "get_type": "gtk_accessible_text_get_type",
     "gtype": "GtkAccessibleText",
     "name": "GtkAccessibleText"
   },

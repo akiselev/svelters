@@ -615,6 +615,7 @@
   ],
   "native": {
     "c_type": "GtkFontDialog",
+    "get_type": "gtk_font_dialog_get_type",
     "gtype": "GtkFontDialog",
     "name": "GtkFontDialog"
   },

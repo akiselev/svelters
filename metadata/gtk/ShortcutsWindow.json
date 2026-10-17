@@ -75,6 +75,7 @@
   ],
   "native": {
     "c_type": "GtkShortcutsWindow",
+    "get_type": "gtk_shortcuts_window_get_type",
     "gtype": "GtkShortcutsWindow",
     "name": "GtkShortcutsWindow"
   },

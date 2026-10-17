@@ -262,6 +262,7 @@
   ],
   "native": {
     "c_type": "GtkSortListModel",
+    "get_type": "gtk_sort_list_model_get_type",
     "gtype": "GtkSortListModel",
     "name": "GtkSortListModel"
   },

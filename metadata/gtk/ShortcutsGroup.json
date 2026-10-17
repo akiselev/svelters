@@ -73,6 +73,7 @@
   ],
   "native": {
     "c_type": "GtkShortcutsGroup",
+    "get_type": "gtk_shortcuts_group_get_type",
     "gtype": "GtkShortcutsGroup",
     "name": "GtkShortcutsGroup"
   },

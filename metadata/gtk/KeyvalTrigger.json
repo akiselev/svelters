@@ -104,6 +104,7 @@
   ],
   "native": {
     "c_type": "GtkKeyvalTrigger",
+    "get_type": "gtk_keyval_trigger_get_type",
     "gtype": "GtkKeyvalTrigger",
     "name": "GtkKeyvalTrigger"
   },

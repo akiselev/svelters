@@ -283,6 +283,7 @@
   ],
   "native": {
     "c_type": "GtkPrintContext",
+    "get_type": "gtk_print_context_get_type",
     "gtype": "GtkPrintContext",
     "name": "GtkPrintContext"
   },

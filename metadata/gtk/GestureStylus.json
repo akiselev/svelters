@@ -214,6 +214,7 @@
   ],
   "native": {
     "c_type": "GtkGestureStylus",
+    "get_type": "gtk_gesture_stylus_get_type",
     "gtype": "GtkGestureStylus",
     "name": "GtkGestureStylus"
   },

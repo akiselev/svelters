@@ -54,6 +54,7 @@
   "methods": [],
   "native": {
     "c_type": "GtkCellRendererPixbuf",
+    "get_type": "gtk_cell_renderer_pixbuf_get_type",
     "gtype": "GtkCellRendererPixbuf",
     "name": "GtkCellRendererPixbuf"
   },

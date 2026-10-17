@@ -32,36 +32,74 @@
         "annotated": {
           "fields": [
             "accepts",
-            "attached_props",
+            "attrs",
             "cardinality",
+            "content",
+            "default",
+            "on_remove",
             "ops",
-            "ownership",
-            "readback"
+            "order",
+            "requires",
+            "route_by_kind",
+            "verify"
           ],
           "origin": "manual",
-          "provenance": "GtkWindow:child property; gtk_window_set_child docs"
+          "provenance": [
+            {
+              "origin": "gir",
+              "ref": "gtk_window_set_child"
+            },
+            {
+              "origin": "manual",
+              "ref": "GtkWindow docs: replacing a child unparents the old one, it is not destroyed"
+            }
+          ]
         },
-        "attached_props": [],
+        "attrs": [],
         "cardinality": "one",
+        "content": "widget",
+        "default": {
+          "kind": "none",
+          "origin": "manual"
+        },
         "name": "child",
+        "on_remove": "empty",
         "ops": {
-          "clear": {
-            "origin": "manual",
-            "property": "child",
-            "value": null
+          "get": {
+            "native": "GtkWindow::get_child() const",
+            "origin": "manual"
           },
           "origin": "manual",
+          "remove": {
+            "args": [
+              null
+            ],
+            "effects": {
+              "child": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkWindow::set_child(GtkWidget*)",
+            "origin": "manual"
+          },
           "set": {
-            "origin": "manual",
-            "property": "child"
+            "args": [
+              "child"
+            ],
+            "effects": {
+              "child": "parented",
+              "old": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkWindow::set_child(GtkWidget*)",
+            "origin": "manual"
           }
         },
+        "order": "none",
         "origin": "manual",
-        "ownership": "parent_owned",
-        "readback": {
-          "mode": "property",
-          "origin": "manual",
-          "property": "child"
+        "requires": [],
+        "route_by_kind": false,
+        "verify": {
+          "origin": "manual"
         }
       },
       {
@@ -71,36 +109,74 @@
         "annotated": {
           "fields": [
             "accepts",
-            "attached_props",
+            "attrs",
             "cardinality",
+            "content",
+            "default",
+            "on_remove",
             "ops",
-            "ownership",
-            "readback"
+            "order",
+            "requires",
+            "route_by_kind",
+            "verify"
           ],
           "origin": "manual",
-          "provenance": "GtkWindow:titlebar property; gtk_window_set_titlebar docs"
+          "provenance": [
+            {
+              "origin": "gir",
+              "ref": "gtk_window_set_titlebar"
+            },
+            {
+              "origin": "manual",
+              "ref": "P1 fixture if-toggle places a headerbar here"
+            }
+          ]
         },
-        "attached_props": [],
+        "attrs": [],
         "cardinality": "one",
+        "content": "widget",
+        "default": {
+          "kind": "none",
+          "origin": "manual"
+        },
         "name": "titlebar",
+        "on_remove": "empty",
         "ops": {
-          "clear": {
-            "origin": "manual",
-            "property": "titlebar",
-            "value": null
+          "get": {
+            "native": "GtkWindow::get_titlebar() const",
+            "origin": "manual"
           },
           "origin": "manual",
+          "remove": {
+            "args": [
+              null
+            ],
+            "effects": {
+              "child": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkWindow::set_titlebar(GtkWidget*)",
+            "origin": "manual"
+          },
           "set": {
-            "origin": "manual",
-            "property": "titlebar"
+            "args": [
+              "child"
+            ],
+            "effects": {
+              "child": "parented",
+              "old": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkWindow::set_titlebar(GtkWidget*)",
+            "origin": "manual"
           }
         },
+        "order": "none",
         "origin": "manual",
-        "ownership": "parent_owned",
-        "readback": {
-          "mode": "property",
-          "origin": "manual",
-          "property": "titlebar"
+        "requires": [],
+        "route_by_kind": false,
+        "verify": {
+          "origin": "manual"
         }
       }
     ]
@@ -727,11 +803,21 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "dispatch",
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_window_present docs; JS host op: call #h present []"
+      },
+      "dispatch": "zero_arg",
       "id": "svelters-api:v1:type:gtk:Gtk:Window:method:present",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "present",
       "name": "present",
       "native": "gtk_window_present",
       "origin": "gir",
@@ -1381,6 +1467,7 @@
   ],
   "native": {
     "c_type": "GtkWindow",
+    "get_type": "gtk_window_get_type",
     "gtype": "GtkWindow",
     "name": "GtkWindow"
   },

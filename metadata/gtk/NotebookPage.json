@@ -52,6 +52,7 @@
   ],
   "native": {
     "c_type": "GtkNotebookPage",
+    "get_type": "gtk_notebook_page_get_type",
     "gtype": "GtkNotebookPage",
     "name": "GtkNotebookPage"
   },

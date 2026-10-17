@@ -406,6 +406,7 @@
   ],
   "native": {
     "c_type": "GtkExpander",
+    "get_type": "gtk_expander_get_type",
     "gtype": "GtkExpander",
     "name": "GtkExpander"
   },

@@ -69,6 +69,7 @@
   "methods": [],
   "native": {
     "c_type": "GtkFileChooserWidget",
+    "get_type": "gtk_file_chooser_widget_get_type",
     "gtype": "GtkFileChooserWidget",
     "name": "GtkFileChooserWidget"
   },

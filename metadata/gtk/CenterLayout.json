@@ -315,6 +315,7 @@
   ],
   "native": {
     "c_type": "GtkCenterLayout",
+    "get_type": "gtk_center_layout_get_type",
     "gtype": "GtkCenterLayout",
     "name": "GtkCenterLayout"
   },

@@ -69,6 +69,7 @@
   ],
   "native": {
     "c_type": "GtkOrientable",
+    "get_type": "gtk_orientable_get_type",
     "gtype": "GtkOrientable",
     "name": "GtkOrientable"
   },

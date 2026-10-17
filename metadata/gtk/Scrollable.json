@@ -227,6 +227,7 @@
   ],
   "native": {
     "c_type": "GtkScrollable",
+    "get_type": "gtk_scrollable_get_type",
     "gtype": "GtkScrollable",
     "name": "GtkScrollable"
   },

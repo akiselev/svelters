@@ -2269,6 +2269,7 @@
   ],
   "native": {
     "c_type": "GtkTextBuffer",
+    "get_type": "gtk_text_buffer_get_type",
     "gtype": "GtkTextBuffer",
     "name": "GtkTextBuffer"
   },

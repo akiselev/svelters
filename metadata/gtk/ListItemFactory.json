@@ -33,6 +33,7 @@
   "methods": [],
   "native": {
     "c_type": "GtkListItemFactory",
+    "get_type": "gtk_list_item_factory_get_type",
     "gtype": "GtkListItemFactory",
     "name": "GtkListItemFactory"
   },

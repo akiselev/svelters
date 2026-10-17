@@ -112,6 +112,7 @@
   ],
   "native": {
     "c_type": "GtkMediaControls",
+    "get_type": "gtk_media_controls_get_type",
     "gtype": "GtkMediaControls",
     "name": "GtkMediaControls"
   },

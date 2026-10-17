@@ -3881,6 +3881,7 @@
   ],
   "native": {
     "c_type": "GtkWidget",
+    "get_type": "gtk_widget_get_type",
     "gtype": "GtkWidget",
     "name": "GtkWidget"
   },

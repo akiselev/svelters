@@ -703,6 +703,7 @@
   ],
   "native": {
     "c_type": "GtkGrid",
+    "get_type": "gtk_grid_get_type",
     "gtype": "GtkGrid",
     "name": "GtkGrid"
   },

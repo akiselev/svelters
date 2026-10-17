@@ -46,6 +46,7 @@
   "methods": [],
   "native": {
     "c_type": "GtkShortcutsShortcut",
+    "get_type": "gtk_shortcuts_shortcut_get_type",
     "gtype": "GtkShortcutsShortcut",
     "name": "GtkShortcutsShortcut"
   },

@@ -562,6 +562,7 @@
   ],
   "native": {
     "c_type": "GtkTreeSelection",
+    "get_type": "gtk_tree_selection_get_type",
     "gtype": "GtkTreeSelection",
     "name": "GtkTreeSelection"
   },

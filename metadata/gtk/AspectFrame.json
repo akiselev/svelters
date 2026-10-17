@@ -313,6 +313,7 @@
   ],
   "native": {
     "c_type": "GtkAspectFrame",
+    "get_type": "gtk_aspect_frame_get_type",
     "gtype": "GtkAspectFrame",
     "name": "GtkAspectFrame"
   },

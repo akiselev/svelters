@@ -70,6 +70,7 @@
   ],
   "native": {
     "c_type": "GtkGestureRotate",
+    "get_type": "gtk_gesture_rotate_get_type",
     "gtype": "GtkGestureRotate",
     "name": "GtkGestureRotate"
   },

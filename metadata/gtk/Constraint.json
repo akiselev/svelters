@@ -360,6 +360,7 @@
   ],
   "native": {
     "c_type": "GtkConstraint",
+    "get_type": "gtk_constraint_get_type",
     "gtype": "GtkConstraint",
     "name": "GtkConstraint"
   },

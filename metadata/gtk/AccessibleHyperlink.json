@@ -114,6 +114,7 @@
   ],
   "native": {
     "c_type": "GtkAccessibleHyperlink",
+    "get_type": "gtk_accessible_hyperlink_get_type",
     "gtype": "GtkAccessibleHyperlink",
     "name": "GtkAccessibleHyperlink"
   },

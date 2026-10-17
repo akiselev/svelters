@@ -339,6 +339,7 @@
   ],
   "native": {
     "c_type": "GtkTreeModelFilter",
+    "get_type": "gtk_tree_model_filter_get_type",
     "gtype": "GtkTreeModelFilter",
     "name": "GtkTreeModelFilter"
   },

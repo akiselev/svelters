@@ -763,6 +763,7 @@
   ],
   "native": {
     "c_type": "GtkPrintJob",
+    "get_type": "gtk_print_job_get_type",
     "gtype": "GtkPrintJob",
     "name": "GtkPrintJob"
   },

@@ -79,6 +79,7 @@
   ],
   "native": {
     "c_type": "GtkFixedLayoutChild",
+    "get_type": "gtk_fixed_layout_child_get_type",
     "gtype": "GtkFixedLayoutChild",
     "name": "GtkFixedLayoutChild"
   },

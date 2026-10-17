@@ -22,3 +22,4 @@ svelters-host = { path = "crates/svelters-host" }
 svelters-backend-log = { path = "crates/svelters-backend-log" }
 svelters-gtk = { path = "crates/svelters-gtk" }
 svelters-qt-build = { path = "crates/svelters-qt-build" }
+gtk = { package = "gtk4", version = "0.11" }

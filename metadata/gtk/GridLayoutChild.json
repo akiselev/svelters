@@ -211,6 +211,7 @@
   ],
   "native": {
     "c_type": "GtkGridLayoutChild",
+    "get_type": "gtk_grid_layout_child_get_type",
     "gtype": "GtkGridLayoutChild",
     "name": "GtkGridLayoutChild"
   },

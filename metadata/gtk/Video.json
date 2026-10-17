@@ -430,6 +430,7 @@
   ],
   "native": {
     "c_type": "GtkVideo",
+    "get_type": "gtk_video_get_type",
     "gtype": "GtkVideo",
     "name": "GtkVideo"
   },

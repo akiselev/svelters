@@ -102,6 +102,7 @@
   "methods": [],
   "native": {
     "c_type": "GtkFileChooserDialog",
+    "get_type": "gtk_file_chooser_dialog_get_type",
     "gtype": "GtkFileChooserDialog",
     "name": "GtkFileChooserDialog"
   },

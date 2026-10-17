@@ -123,6 +123,7 @@
   ],
   "native": {
     "c_type": "GtkOverlayLayoutChild",
+    "get_type": "gtk_overlay_layout_child_get_type",
     "gtype": "GtkOverlayLayoutChild",
     "name": "GtkOverlayLayoutChild"
   },

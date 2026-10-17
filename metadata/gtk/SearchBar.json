@@ -268,6 +268,7 @@
   ],
   "native": {
     "c_type": "GtkSearchBar",
+    "get_type": "gtk_search_bar_get_type",
     "gtype": "GtkSearchBar",
     "name": "GtkSearchBar"
   },

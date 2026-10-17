@@ -189,6 +189,7 @@
   ],
   "native": {
     "c_type": "GtkLinkButton",
+    "get_type": "gtk_link_button_get_type",
     "gtype": "GtkLinkButton",
     "name": "GtkLinkButton"
   },

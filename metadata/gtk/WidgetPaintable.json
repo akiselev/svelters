@@ -104,6 +104,7 @@
   ],
   "native": {
     "c_type": "GtkWidgetPaintable",
+    "get_type": "gtk_widget_paintable_get_type",
     "gtype": "GtkWidgetPaintable",
     "name": "GtkWidgetPaintable"
   },

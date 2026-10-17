@@ -139,6 +139,7 @@
   ],
   "native": {
     "c_type": "GtkPropertyExpression",
+    "get_type": "gtk_property_expression_get_type",
     "gtype": "GtkPropertyExpression",
     "name": "GtkPropertyExpression"
   },

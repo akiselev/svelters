@@ -425,6 +425,7 @@
   ],
   "native": {
     "c_type": "GtkPaned",
+    "get_type": "gtk_paned_get_type",
     "gtype": "GtkPaned",
     "name": "GtkPaned"
   },

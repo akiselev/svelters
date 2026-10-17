@@ -60,6 +60,7 @@
   "methods": [],
   "native": {
     "c_type": "GtkColorChooserWidget",
+    "get_type": "gtk_color_chooser_widget_get_type",
     "gtype": "GtkColorChooserWidget",
     "name": "GtkColorChooserWidget"
   },

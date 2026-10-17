@@ -262,6 +262,7 @@
   ],
   "native": {
     "c_type": "GtkFilterListModel",
+    "get_type": "gtk_filter_list_model_get_type",
     "gtype": "GtkFilterListModel",
     "name": "GtkFilterListModel"
   },

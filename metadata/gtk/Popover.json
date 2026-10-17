@@ -532,6 +532,7 @@
   ],
   "native": {
     "c_type": "GtkPopover",
+    "get_type": "gtk_popover_get_type",
     "gtype": "GtkPopover",
     "name": "GtkPopover"
   },

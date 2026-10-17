@@ -227,6 +227,7 @@
   ],
   "native": {
     "c_type": "GtkTreeListModel",
+    "get_type": "gtk_tree_list_model_get_type",
     "gtype": "GtkTreeListModel",
     "name": "GtkTreeListModel"
   },

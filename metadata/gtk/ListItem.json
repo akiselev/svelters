@@ -352,6 +352,7 @@
   ],
   "native": {
     "c_type": "GtkListItem",
+    "get_type": "gtk_list_item_get_type",
     "gtype": "GtkListItem",
     "name": "GtkListItem"
   },

@@ -34,6 +34,7 @@
   "methods": [],
   "native": {
     "c_type": "GtkActivateAction",
+    "get_type": "gtk_activate_action_get_type",
     "gtype": "GtkActivateAction",
     "name": "GtkActivateAction"
   },

@@ -288,6 +288,7 @@
   ],
   "native": {
     "c_type": "GtkSearchEntry",
+    "get_type": "gtk_search_entry_get_type",
     "gtype": "GtkSearchEntry",
     "name": "GtkSearchEntry"
   },

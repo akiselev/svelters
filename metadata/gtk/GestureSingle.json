@@ -204,6 +204,7 @@
   ],
   "native": {
     "c_type": "GtkGestureSingle",
+    "get_type": "gtk_gesture_single_get_type",
     "gtype": "GtkGestureSingle",
     "name": "GtkGestureSingle"
   },

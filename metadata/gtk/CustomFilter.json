@@ -113,6 +113,7 @@
   ],
   "native": {
     "c_type": "GtkCustomFilter",
+    "get_type": "gtk_custom_filter_get_type",
     "gtype": "GtkCustomFilter",
     "name": "GtkCustomFilter"
   },

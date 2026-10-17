@@ -153,6 +153,7 @@
   ],
   "native": {
     "c_type": "GtkPadController",
+    "get_type": "gtk_pad_controller_get_type",
     "gtype": "GtkPadController",
     "name": "GtkPadController"
   },

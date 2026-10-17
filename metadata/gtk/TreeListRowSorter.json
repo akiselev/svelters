@@ -103,6 +103,7 @@
   ],
   "native": {
     "c_type": "GtkTreeListRowSorter",
+    "get_type": "gtk_tree_list_row_sorter_get_type",
     "gtype": "GtkTreeListRowSorter",
     "name": "GtkTreeListRowSorter"
   },

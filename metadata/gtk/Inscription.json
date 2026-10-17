@@ -538,6 +538,7 @@
   ],
   "native": {
     "c_type": "GtkInscription",
+    "get_type": "gtk_inscription_get_type",
     "gtype": "GtkInscription",
     "name": "GtkInscription"
   },

@@ -173,6 +173,7 @@
   ],
   "native": {
     "c_type": "GtkPopoverMenuBar",
+    "get_type": "gtk_popover_menu_bar_get_type",
     "gtype": "GtkPopoverMenuBar",
     "name": "GtkPopoverMenuBar"
   },

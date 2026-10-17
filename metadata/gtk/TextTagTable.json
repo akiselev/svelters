@@ -181,6 +181,7 @@
   ],
   "native": {
     "c_type": "GtkTextTagTable",
+    "get_type": "gtk_text_tag_table_get_type",
     "gtype": "GtkTextTagTable",
     "name": "GtkTextTagTable"
   },

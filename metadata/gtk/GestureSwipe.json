@@ -86,6 +86,7 @@
   ],
   "native": {
     "c_type": "GtkGestureSwipe",
+    "get_type": "gtk_gesture_swipe_get_type",
     "gtype": "GtkGestureSwipe",
     "name": "GtkGestureSwipe"
   },

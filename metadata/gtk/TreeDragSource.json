@@ -104,6 +104,7 @@
   ],
   "native": {
     "c_type": "GtkTreeDragSource",
+    "get_type": "gtk_tree_drag_source_get_type",
     "gtype": "GtkTreeDragSource",
     "name": "GtkTreeDragSource"
   },

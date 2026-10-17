@@ -749,6 +749,7 @@
   ],
   "native": {
     "c_type": "GtkListStore",
+    "get_type": "gtk_list_store_get_type",
     "gtype": "GtkListStore",
     "name": "GtkListStore"
   },

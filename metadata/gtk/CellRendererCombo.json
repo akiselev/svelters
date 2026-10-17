@@ -53,6 +53,7 @@
   "methods": [],
   "native": {
     "c_type": "GtkCellRendererCombo",
+    "get_type": "gtk_cell_renderer_combo_get_type",
     "gtype": "GtkCellRendererCombo",
     "name": "GtkCellRendererCombo"
   },

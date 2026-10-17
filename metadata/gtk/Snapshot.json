@@ -2065,6 +2065,7 @@
   ],
   "native": {
     "c_type": null,
+    "get_type": "gtk_snapshot_get_type",
     "gtype": "GtkSnapshot",
     "name": null
   },

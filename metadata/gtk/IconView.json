@@ -1778,6 +1778,7 @@
   ],
   "native": {
     "c_type": "GtkIconView",
+    "get_type": "gtk_icon_view_get_type",
     "gtype": "GtkIconView",
     "name": "GtkIconView"
   },

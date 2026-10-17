@@ -108,6 +108,7 @@
   ],
   "native": {
     "c_type": "GtkGesturePan",
+    "get_type": "gtk_gesture_pan_get_type",
     "gtype": "GtkGesturePan",
     "name": "GtkGesturePan"
   },

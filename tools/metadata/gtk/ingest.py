@@ -288,7 +288,8 @@ class Ingest:
         avail = {"since": el.get("version"), "deprecated": el.get("deprecated-version") if el.get("deprecated") == "1" else None}
         doc = {
             "schema": svmeta.SCHEMA, "toolkit": "gtk", "id": tid,
-            "native": {"name": el.get(G.CN + "type"), "gtype": gtype_name, "c_type": el.get(G.CN + "type")},
+            "native": {"name": el.get(G.CN + "type"), "gtype": gtype_name, "c_type": el.get(G.CN + "type"),
+                       "get_type": el.get(G.GL + "get-type")},
             "kind": "interface" if tag == "interface" else "object",
             "abstract": bool(abstract), "bases": chain, "interfaces": sorted(ifaces),
             "availability": avail, "constructors": ctors, "properties": props, "signals": signals, "methods": methods,
@@ -360,7 +361,7 @@ def apply_override(doc: dict, ov: dict, errors: list[str]) -> dict:
     marks: list[tuple[list, str, dict]] = []  # (path, record name, annotation)
     clean: dict = {}
     for key, val in ov.items():
-        if key in ("properties", "signals"):
+        if key in ("properties", "signals", "methods"):
             recs = []
             for r in val:
                 r2, ann = split_provenance(r)

@@ -95,6 +95,7 @@
   ],
   "native": {
     "c_type": "GtkIMMulticontext",
+    "get_type": "gtk_im_multicontext_get_type",
     "gtype": "GtkIMMulticontext",
     "name": "GtkIMMulticontext"
   },

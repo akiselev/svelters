@@ -2820,6 +2820,7 @@
   ],
   "native": {
     "c_type": "GtkTreeView",
+    "get_type": "gtk_tree_view_get_type",
     "gtype": "GtkTreeView",
     "name": "GtkTreeView"
   },

@@ -763,6 +763,7 @@
   ],
   "native": {
     "c_type": "GtkSpinButton",
+    "get_type": "gtk_spin_button_get_type",
     "gtype": "GtkSpinButton",
     "name": "GtkSpinButton"
   },

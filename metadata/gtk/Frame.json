@@ -250,6 +250,7 @@
   ],
   "native": {
     "c_type": "GtkFrame",
+    "get_type": "gtk_frame_get_type",
     "gtype": "GtkFrame",
     "name": "GtkFrame"
   },

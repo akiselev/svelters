@@ -491,6 +491,7 @@
   ],
   "native": {
     "c_type": "GtkCalendar",
+    "get_type": "gtk_calendar_get_type",
     "gtype": "GtkCalendar",
     "name": "GtkCalendar"
   },

@@ -72,6 +72,7 @@
   "methods": [],
   "native": {
     "c_type": "GtkCallbackAction",
+    "get_type": "gtk_callback_action_get_type",
     "gtype": "GtkCallbackAction",
     "name": "GtkCallbackAction"
   },

@@ -830,6 +830,7 @@
   ],
   "native": {
     "c_type": "GtkMediaStream",
+    "get_type": "gtk_media_stream_get_type",
     "gtype": "GtkMediaStream",
     "name": "GtkMediaStream"
   },

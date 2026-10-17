@@ -33,6 +33,7 @@
   "methods": [],
   "native": {
     "c_type": "GtkParamSpecExpression",
+    "get_type": "gtk_param_expression_get_type",
     "gtype": "GtkParamSpecExpression",
     "name": "GtkParamSpecExpression"
   },

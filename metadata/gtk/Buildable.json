@@ -41,6 +41,7 @@
   ],
   "native": {
     "c_type": "GtkBuildable",
+    "get_type": "gtk_buildable_get_type",
     "gtype": "GtkBuildable",
     "name": "GtkBuildable"
   },

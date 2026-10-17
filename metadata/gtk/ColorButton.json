@@ -178,6 +178,7 @@
   ],
   "native": {
     "c_type": "GtkColorButton",
+    "get_type": "gtk_color_button_get_type",
     "gtype": "GtkColorButton",
     "name": "GtkColorButton"
   },

@@ -34,6 +34,7 @@
   "methods": [],
   "native": {
     "c_type": "GtkNothingAction",
+    "get_type": "gtk_nothing_action_get_type",
     "gtype": "GtkNothingAction",
     "name": "GtkNothingAction"
   },

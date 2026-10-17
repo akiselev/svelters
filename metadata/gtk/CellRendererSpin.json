@@ -53,6 +53,7 @@
   "methods": [],
   "native": {
     "c_type": "GtkCellRendererSpin",
+    "get_type": "gtk_cell_renderer_spin_get_type",
     "gtype": "GtkCellRendererSpin",
     "name": "GtkCellRendererSpin"
   },

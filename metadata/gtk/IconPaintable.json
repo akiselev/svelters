@@ -131,6 +131,7 @@
   ],
   "native": {
     "c_type": "GtkIconPaintable",
+    "get_type": "gtk_icon_paintable_get_type",
     "gtype": "GtkIconPaintable",
     "name": "GtkIconPaintable"
   },

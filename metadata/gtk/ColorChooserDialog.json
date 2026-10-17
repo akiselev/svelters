@@ -81,6 +81,7 @@
   "methods": [],
   "native": {
     "c_type": "GtkColorChooserDialog",
+    "get_type": "gtk_color_chooser_dialog_get_type",
     "gtype": "GtkColorChooserDialog",
     "name": "GtkColorChooserDialog"
   },

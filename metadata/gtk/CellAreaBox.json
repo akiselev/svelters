@@ -199,6 +199,7 @@
   ],
   "native": {
     "c_type": "GtkCellAreaBox",
+    "get_type": "gtk_cell_area_box_get_type",
     "gtype": "GtkCellAreaBox",
     "name": "GtkCellAreaBox"
   },

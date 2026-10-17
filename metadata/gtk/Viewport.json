@@ -201,6 +201,7 @@
   ],
   "native": {
     "c_type": "GtkViewport",
+    "get_type": "gtk_viewport_get_type",
     "gtype": "GtkViewport",
     "name": "GtkViewport"
   },

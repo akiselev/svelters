@@ -276,6 +276,7 @@
   ],
   "native": {
     "c_type": "GtkPopoverBin",
+    "get_type": "gtk_popover_bin_get_type",
     "gtype": "GtkPopoverBin",
     "name": "GtkPopoverBin"
   },

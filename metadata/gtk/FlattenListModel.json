@@ -131,6 +131,7 @@
   ],
   "native": {
     "c_type": "GtkFlattenListModel",
+    "get_type": "gtk_flatten_list_model_get_type",
     "gtype": "GtkFlattenListModel",
     "name": "GtkFlattenListModel"
   },

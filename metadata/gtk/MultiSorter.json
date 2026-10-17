@@ -106,6 +106,7 @@
   ],
   "native": {
     "c_type": "GtkMultiSorter",
+    "get_type": "gtk_multi_sorter_get_type",
     "gtype": "GtkMultiSorter",
     "name": "GtkMultiSorter"
   },

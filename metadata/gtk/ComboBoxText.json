@@ -343,6 +343,7 @@
   ],
   "native": {
     "c_type": "GtkComboBoxText",
+    "get_type": "gtk_combo_box_text_get_type",
     "gtype": "GtkComboBoxText",
     "name": "GtkComboBoxText"
   },

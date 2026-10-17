@@ -107,6 +107,7 @@
   ],
   "native": {
     "c_type": "GtkConstantExpression",
+    "get_type": "gtk_constant_expression_get_type",
     "gtype": "GtkConstantExpression",
     "name": "GtkConstantExpression"
   },

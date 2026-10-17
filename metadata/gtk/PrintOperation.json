@@ -714,6 +714,7 @@
   ],
   "native": {
     "c_type": "GtkPrintOperation",
+    "get_type": "gtk_print_operation_get_type",
     "gtype": "GtkPrintOperation",
     "name": "GtkPrintOperation"
   },

@@ -113,6 +113,7 @@
   ],
   "native": {
     "c_type": "GtkCustomSorter",
+    "get_type": "gtk_custom_sorter_get_type",
     "gtype": "GtkCustomSorter",
     "name": "GtkCustomSorter"
   },

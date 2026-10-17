@@ -54,6 +54,7 @@
   "methods": [],
   "native": {
     "c_type": "GtkCellRendererProgress",
+    "get_type": "gtk_cell_renderer_progress_get_type",
     "gtype": "GtkCellRendererProgress",
     "name": "GtkCellRendererProgress"
   },

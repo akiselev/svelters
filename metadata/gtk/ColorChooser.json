@@ -171,6 +171,7 @@
   ],
   "native": {
     "c_type": "GtkColorChooser",
+    "get_type": "gtk_color_chooser_get_type",
     "gtype": "GtkColorChooser",
     "name": "GtkColorChooser"
   },

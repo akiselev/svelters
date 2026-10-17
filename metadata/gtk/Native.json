@@ -128,6 +128,7 @@
   ],
   "native": {
     "c_type": "GtkNative",
+    "get_type": "gtk_native_get_type",
     "gtype": "GtkNative",
     "name": "GtkNative"
   },

@@ -52,6 +52,7 @@
   "methods": [],
   "native": {
     "c_type": "GtkGestureClick",
+    "get_type": "gtk_gesture_click_get_type",
     "gtype": "GtkGestureClick",
     "name": "GtkGestureClick"
   },

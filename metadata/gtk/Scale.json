@@ -450,6 +450,7 @@
   ],
   "native": {
     "c_type": "GtkScale",
+    "get_type": "gtk_scale_get_type",
     "gtype": "GtkScale",
     "name": "GtkScale"
   },

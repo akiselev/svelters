@@ -732,6 +732,7 @@
   ],
   "native": {
     "c_type": "GtkBuilder",
+    "get_type": "gtk_builder_get_type",
     "gtype": "GtkBuilder",
     "name": "GtkBuilder"
   },

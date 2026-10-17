@@ -420,6 +420,7 @@
   ],
   "native": {
     "c_type": "GtkSvg",
+    "get_type": "gtk_svg_get_type",
     "gtype": "GtkSvg",
     "name": "GtkSvg"
   },

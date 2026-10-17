@@ -291,6 +291,7 @@
   ],
   "native": {
     "c_type": "GtkCenterBox",
+    "get_type": "gtk_center_box_get_type",
     "gtype": "GtkCenterBox",
     "name": "GtkCenterBox"
   },

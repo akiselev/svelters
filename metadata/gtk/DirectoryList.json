@@ -279,6 +279,7 @@
   ],
   "native": {
     "c_type": "GtkDirectoryList",
+    "get_type": "gtk_directory_list_get_type",
     "gtype": "GtkDirectoryList",
     "name": "GtkDirectoryList"
   },

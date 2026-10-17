@@ -917,6 +917,7 @@
   ],
   "native": {
     "c_type": "GtkListBox",
+    "get_type": "gtk_list_box_get_type",
     "gtype": "GtkListBox",
     "name": "GtkListBox"
   },

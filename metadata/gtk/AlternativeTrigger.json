@@ -102,6 +102,7 @@
   ],
   "native": {
     "c_type": "GtkAlternativeTrigger",
+    "get_type": "gtk_alternative_trigger_get_type",
     "gtype": "GtkAlternativeTrigger",
     "name": "GtkAlternativeTrigger"
   },

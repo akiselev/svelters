@@ -120,6 +120,7 @@
   ],
   "native": {
     "c_type": "GtkWindowGroup",
+    "get_type": "gtk_window_group_get_type",
     "gtype": "GtkWindowGroup",
     "name": "GtkWindowGroup"
   },

@@ -91,6 +91,7 @@
   ],
   "native": {
     "c_type": "GtkTreeDragDest",
+    "get_type": "gtk_tree_drag_dest_get_type",
     "gtype": "GtkTreeDragDest",
     "name": "GtkTreeDragDest"
   },

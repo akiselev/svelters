@@ -332,6 +332,7 @@
   ],
   "native": {
     "c_type": "GtkCellLayout",
+    "get_type": "gtk_cell_layout_get_type",
     "gtype": "GtkCellLayout",
     "name": "GtkCellLayout"
   },

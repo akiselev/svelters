@@ -170,6 +170,7 @@
   ],
   "native": {
     "c_type": "GtkActionable",
+    "get_type": "gtk_actionable_get_type",
     "gtype": "GtkActionable",
     "name": "GtkActionable"
   },

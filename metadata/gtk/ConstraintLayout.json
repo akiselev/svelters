@@ -334,6 +334,7 @@
   ],
   "native": {
     "c_type": "GtkConstraintLayout",
+    "get_type": "gtk_constraint_layout_get_type",
     "gtype": "GtkConstraintLayout",
     "name": "GtkConstraintLayout"
   },

@@ -267,6 +267,7 @@
   ],
   "native": {
     "c_type": "GtkTreeModelSort",
+    "get_type": "gtk_tree_model_sort_get_type",
     "gtype": "GtkTreeModelSort",
     "name": "GtkTreeModelSort"
   },

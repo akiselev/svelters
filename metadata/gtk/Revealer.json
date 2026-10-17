@@ -260,6 +260,7 @@
   ],
   "native": {
     "c_type": "GtkRevealer",
+    "get_type": "gtk_revealer_get_type",
     "gtype": "GtkRevealer",
     "name": "GtkRevealer"
   },

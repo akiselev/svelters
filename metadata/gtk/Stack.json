@@ -623,6 +623,7 @@
   ],
   "native": {
     "c_type": "GtkStack",
+    "get_type": "gtk_stack_get_type",
     "gtype": "GtkStack",
     "name": "GtkStack"
   },

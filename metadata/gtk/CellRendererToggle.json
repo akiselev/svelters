@@ -191,6 +191,7 @@
   ],
   "native": {
     "c_type": "GtkCellRendererToggle",
+    "get_type": "gtk_cell_renderer_toggle_get_type",
     "gtype": "GtkCellRendererToggle",
     "name": "GtkCellRendererToggle"
   },

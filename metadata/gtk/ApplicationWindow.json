@@ -182,6 +182,7 @@
   ],
   "native": {
     "c_type": "GtkApplicationWindow",
+    "get_type": "gtk_application_window_get_type",
     "gtype": "GtkApplicationWindow",
     "name": "GtkApplicationWindow"
   },

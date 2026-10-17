@@ -484,6 +484,7 @@
   ],
   "native": {
     "c_type": "GtkGLArea",
+    "get_type": "gtk_gl_area_get_type",
     "gtype": "GtkGLArea",
     "name": "GtkGLArea"
   },

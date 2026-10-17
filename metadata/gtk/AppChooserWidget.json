@@ -346,6 +346,7 @@
   ],
   "native": {
     "c_type": "GtkAppChooserWidget",
+    "get_type": "gtk_app_chooser_widget_get_type",
     "gtype": "GtkAppChooserWidget",
     "name": "GtkAppChooserWidget"
   },

@@ -93,6 +93,7 @@
   ],
   "native": {
     "c_type": "GtkPrintOperationPreview",
+    "get_type": "gtk_print_operation_preview_get_type",
     "gtype": "GtkPrintOperationPreview",
     "name": "GtkPrintOperationPreview"
   },

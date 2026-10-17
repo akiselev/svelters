@@ -428,6 +428,7 @@
   ],
   "native": {
     "c_type": "GtkGridView",
+    "get_type": "gtk_grid_view_get_type",
     "gtype": "GtkGridView",
     "name": "GtkGridView"
   },

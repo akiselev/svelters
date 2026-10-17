@@ -99,6 +99,7 @@
   "methods": [],
   "native": {
     "c_type": "GtkCClosureExpression",
+    "get_type": "gtk_cclosure_expression_get_type",
     "gtype": "GtkCClosureExpression",
     "name": "GtkCClosureExpression"
   },

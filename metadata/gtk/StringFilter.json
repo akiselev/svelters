@@ -237,6 +237,7 @@
   ],
   "native": {
     "c_type": "GtkStringFilter",
+    "get_type": "gtk_string_filter_get_type",
     "gtype": "GtkStringFilter",
     "name": "GtkStringFilter"
   },

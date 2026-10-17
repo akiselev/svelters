@@ -138,6 +138,7 @@
   ],
   "native": {
     "c_type": "GtkSymbolicPaintable",
+    "get_type": "gtk_symbolic_paintable_get_type",
     "gtype": "GtkSymbolicPaintable",
     "name": "GtkSymbolicPaintable"
   },

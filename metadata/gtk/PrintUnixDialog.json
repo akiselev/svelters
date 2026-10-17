@@ -461,6 +461,7 @@
   ],
   "native": {
     "c_type": "GtkPrintUnixDialog",
+    "get_type": "gtk_print_unix_dialog_get_type",
     "gtype": "GtkPrintUnixDialog",
     "name": "GtkPrintUnixDialog"
   },

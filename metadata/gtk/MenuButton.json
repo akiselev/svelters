@@ -670,6 +670,7 @@
   ],
   "native": {
     "c_type": "GtkMenuButton",
+    "get_type": "gtk_menu_button_get_type",
     "gtype": "GtkMenuButton",
     "name": "GtkMenuButton"
   },

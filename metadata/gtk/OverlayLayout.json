@@ -50,6 +50,7 @@
   "methods": [],
   "native": {
     "c_type": "GtkOverlayLayout",
+    "get_type": "gtk_overlay_layout_get_type",
     "gtype": "GtkOverlayLayout",
     "name": "GtkOverlayLayout"
   },

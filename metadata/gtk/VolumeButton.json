@@ -63,6 +63,7 @@
   "methods": [],
   "native": {
     "c_type": "GtkVolumeButton",
+    "get_type": "gtk_volume_button_get_type",
     "gtype": "GtkVolumeButton",
     "name": "GtkVolumeButton"
   },

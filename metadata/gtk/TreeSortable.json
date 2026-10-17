@@ -218,6 +218,7 @@
   ],
   "native": {
     "c_type": "GtkTreeSortable",
+    "get_type": "gtk_tree_sortable_get_type",
     "gtype": "GtkTreeSortable",
     "name": "GtkTreeSortable"
   },

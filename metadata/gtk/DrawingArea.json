@@ -188,6 +188,7 @@
   ],
   "native": {
     "c_type": "GtkDrawingArea",
+    "get_type": "gtk_drawing_area_get_type",
     "gtype": "GtkDrawingArea",
     "name": "GtkDrawingArea"
   },

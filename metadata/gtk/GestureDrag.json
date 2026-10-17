@@ -119,6 +119,7 @@
   ],
   "native": {
     "c_type": "GtkGestureDrag",
+    "get_type": "gtk_gesture_drag_get_type",
     "gtype": "GtkGestureDrag",
     "name": "GtkGestureDrag"
   },

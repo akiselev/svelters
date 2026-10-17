@@ -513,6 +513,7 @@
   ],
   "native": {
     "c_type": "GtkPrintDialog",
+    "get_type": "gtk_print_dialog_get_type",
     "gtype": "GtkPrintDialog",
     "name": "GtkPrintDialog"
   },

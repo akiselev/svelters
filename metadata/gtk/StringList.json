@@ -231,6 +231,7 @@
   ],
   "native": {
     "c_type": "GtkStringList",
+    "get_type": "gtk_string_list_get_type",
     "gtype": "GtkStringList",
     "name": "GtkStringList"
   },

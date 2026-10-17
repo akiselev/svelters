@@ -61,6 +61,7 @@
   ],
   "native": {
     "c_type": "GtkLayoutChild",
+    "get_type": "gtk_layout_child_get_type",
     "gtype": "GtkLayoutChild",
     "name": "GtkLayoutChild"
   },

@@ -22,6 +22,7 @@
   "methods": [],
   "native": {
     "c_type": "GtkBuilderScope",
+    "get_type": "gtk_builder_scope_get_type",
     "gtype": "GtkBuilderScope",
     "name": "GtkBuilderScope"
   },

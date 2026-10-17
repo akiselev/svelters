@@ -1392,6 +1392,7 @@
   ],
   "native": {
     "c_type": "GtkTreeViewColumn",
+    "get_type": "gtk_tree_view_column_get_type",
     "gtype": "GtkTreeViewColumn",
     "name": "GtkTreeViewColumn"
   },

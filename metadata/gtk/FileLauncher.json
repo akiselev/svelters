@@ -338,6 +338,7 @@
   ],
   "native": {
     "c_type": "GtkFileLauncher",
+    "get_type": "gtk_file_launcher_get_type",
     "gtype": "GtkFileLauncher",
     "name": "GtkFileLauncher"
   },

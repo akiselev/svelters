@@ -263,6 +263,7 @@
   ],
   "native": {
     "c_type": "GtkColorDialog",
+    "get_type": "gtk_color_dialog_get_type",
     "gtype": "GtkColorDialog",
     "name": "GtkColorDialog"
   },

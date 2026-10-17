@@ -121,6 +121,7 @@
   ],
   "native": {
     "c_type": "GtkScrollbar",
+    "get_type": "gtk_scrollbar_get_type",
     "gtype": "GtkScrollbar",
     "name": "GtkScrollbar"
   },

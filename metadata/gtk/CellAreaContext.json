@@ -358,6 +358,7 @@
   ],
   "native": {
     "c_type": "GtkCellAreaContext",
+    "get_type": "gtk_cell_area_context_get_type",
     "gtype": "GtkCellAreaContext",
     "name": "GtkCellAreaContext"
   },

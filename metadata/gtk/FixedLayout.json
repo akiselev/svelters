@@ -50,6 +50,7 @@
   "methods": [],
   "native": {
     "c_type": "GtkFixedLayout",
+    "get_type": "gtk_fixed_layout_get_type",
     "gtype": "GtkFixedLayout",
     "name": "GtkFixedLayout"
   },

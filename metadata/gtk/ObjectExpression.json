@@ -76,6 +76,7 @@
   ],
   "native": {
     "c_type": "GtkObjectExpression",
+    "get_type": "gtk_object_expression_get_type",
     "gtype": "GtkObjectExpression",
     "name": "GtkObjectExpression"
   },

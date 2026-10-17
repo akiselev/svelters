@@ -601,6 +601,7 @@
   ],
   "native": {
     "c_type": "GtkEditable",
+    "get_type": "gtk_editable_get_type",
     "gtype": "GtkEditable",
     "name": "GtkEditable"
   },
@@ -824,12 +825,17 @@
       },
       "annotated": {
         "fields": [
+          "echo_suppress",
           "js_name"
         ],
         "origin": "manual",
         "provenance": "GtkEditable:text (Gtk 4 docs); P prop; interface-owned, tested through GtkEntry"
       },
       "default": "",
+      "echo_suppress": [
+        "changed",
+        "notify::text"
+      ],
       "id": "svelters-api:v1:type:gtk:Gtk:Editable:prop:text",
       "invocation": "reflected",
       "js_name": "text",
@@ -952,7 +958,8 @@
         "fields": [
           "handler_result",
           "js_event",
-          "sync_required"
+          "sync_required",
+          "trigger"
         ],
         "origin": "manual",
         "provenance": "GtkEditable::changed, void return, run-last (Gtk 4 docs)"
@@ -978,7 +985,15 @@
         "origin": "runtime",
         "return_gtype": "void"
       },
-      "sync_required": false
+      "sync_required": false,
+      "trigger": {
+        "native": "set_text",
+        "origin": "manual",
+        "values": [
+          "hello",
+          "hello2"
+        ]
+      }
     },
     {
       "connection": {
@@ -1066,7 +1081,8 @@
           "params",
           "phase",
           "returns",
-          "sync_required"
+          "sync_required",
+          "trigger"
         ],
         "origin": "manual",
         "provenance": "GObject::notify detail for GtkEditable:text; P entry event"
@@ -1095,7 +1111,15 @@
         "origin": "manual",
         "type": "void"
       },
-      "sync_required": false
+      "sync_required": false,
+      "trigger": {
+        "native": "set_text",
+        "origin": "manual",
+        "values": [
+          "hello",
+          "hello2"
+        ]
+      }
     }
   ],
   "source": {

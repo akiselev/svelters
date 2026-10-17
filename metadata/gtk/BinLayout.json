@@ -50,6 +50,7 @@
   "methods": [],
   "native": {
     "c_type": "GtkBinLayout",
+    "get_type": "gtk_bin_layout_get_type",
     "gtype": "GtkBinLayout",
     "name": "GtkBinLayout"
   },

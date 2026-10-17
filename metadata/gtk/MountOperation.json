@@ -165,6 +165,7 @@
   ],
   "native": {
     "c_type": "GtkMountOperation",
+    "get_type": "gtk_mount_operation_get_type",
     "gtype": "GtkMountOperation",
     "name": "GtkMountOperation"
   },

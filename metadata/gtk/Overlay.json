@@ -279,6 +279,7 @@
   ],
   "native": {
     "c_type": "GtkOverlay",
+    "get_type": "gtk_overlay_get_type",
     "gtype": "GtkOverlay",
     "name": "GtkOverlay"
   },

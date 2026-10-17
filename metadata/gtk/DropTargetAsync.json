@@ -182,6 +182,7 @@
   ],
   "native": {
     "c_type": "GtkDropTargetAsync",
+    "get_type": "gtk_drop_target_async_get_type",
     "gtype": "GtkDropTargetAsync",
     "name": "GtkDropTargetAsync"
   },

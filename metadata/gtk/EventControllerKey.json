@@ -139,6 +139,7 @@
   ],
   "native": {
     "c_type": "GtkEventControllerKey",
+    "get_type": "gtk_event_controller_key_get_type",
     "gtype": "GtkEventControllerKey",
     "name": "GtkEventControllerKey"
   },

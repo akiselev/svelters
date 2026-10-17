@@ -470,6 +470,7 @@
   ],
   "native": {
     "c_type": "GtkAdjustment",
+    "get_type": "gtk_adjustment_get_type",
     "gtype": "GtkAdjustment",
     "name": "GtkAdjustment"
   },

@@ -22,6 +22,7 @@
   "methods": [],
   "native": {
     "c_type": "GtkShortcutManager",
+    "get_type": "gtk_shortcut_manager_get_type",
     "gtype": "GtkShortcutManager",
     "name": "GtkShortcutManager"
   },

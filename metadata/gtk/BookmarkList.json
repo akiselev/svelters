@@ -191,6 +191,7 @@
   ],
   "native": {
     "c_type": "GtkBookmarkList",
+    "get_type": "gtk_bookmark_list_get_type",
     "gtype": "GtkBookmarkList",
     "name": "GtkBookmarkList"
   },

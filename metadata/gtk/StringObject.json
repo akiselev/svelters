@@ -76,6 +76,7 @@
   ],
   "native": {
     "c_type": "GtkStringObject",
+    "get_type": "gtk_string_object_get_type",
     "gtype": "GtkStringObject",
     "name": "GtkStringObject"
   },

@@ -199,6 +199,7 @@
   ],
   "native": {
     "c_type": "GtkToggleButton",
+    "get_type": "gtk_toggle_button_get_type",
     "gtype": "GtkToggleButton",
     "name": "GtkToggleButton"
   },

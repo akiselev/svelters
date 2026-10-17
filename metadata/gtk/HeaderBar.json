@@ -31,25 +31,52 @@
         "annotated": {
           "fields": [
             "accepts",
-            "attached_props",
+            "attrs",
             "cardinality",
+            "content",
+            "default",
+            "on_remove",
             "ops",
             "order",
-            "ownership",
-            "readback"
+            "requires",
+            "route_by_kind",
+            "verify"
           ],
           "origin": "manual",
-          "provenance": "gtk_header_bar_pack_start / gtk_header_bar_remove docs; children live in an internal box"
+          "provenance": [
+            {
+              "origin": "gir",
+              "ref": "gtk_header_bar_pack_start"
+            },
+            {
+              "origin": "gir",
+              "ref": "gtk_header_bar_remove"
+            }
+          ]
         },
-        "attached_props": [],
+        "attrs": [],
         "cardinality": "many",
+        "content": "widget",
+        "default": {
+          "kind": "none",
+          "origin": "manual"
+        },
         "name": "start",
+        "on_remove": "empty",
         "ops": {
+          "get": {
+            "contains": "ancestor",
+            "origin": "manual"
+          },
           "insert": {
             "args": [
               "child"
             ],
-            "method": "pack_start",
+            "effects": {
+              "child": "parented",
+              "origin": "manual"
+            },
+            "native": "GtkHeaderBar::pack_start(GtkWidget*)",
             "origin": "manual"
           },
           "origin": "manual",
@@ -57,15 +84,19 @@
             "args": [
               "child"
             ],
-            "method": "remove",
+            "effects": {
+              "child": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkHeaderBar::remove(GtkWidget*)",
             "origin": "manual"
           }
         },
         "order": "append_only",
         "origin": "manual",
-        "ownership": "parent_owned",
-        "readback": {
-          "mode": "ancestor",
+        "requires": [],
+        "route_by_kind": false,
+        "verify": {
           "origin": "manual"
         }
       },
@@ -76,25 +107,52 @@
         "annotated": {
           "fields": [
             "accepts",
-            "attached_props",
+            "attrs",
             "cardinality",
+            "content",
+            "default",
+            "on_remove",
             "ops",
             "order",
-            "ownership",
-            "readback"
+            "requires",
+            "route_by_kind",
+            "verify"
           ],
           "origin": "manual",
-          "provenance": "gtk_header_bar_pack_end / gtk_header_bar_remove docs"
+          "provenance": [
+            {
+              "origin": "gir",
+              "ref": "gtk_header_bar_pack_end"
+            },
+            {
+              "origin": "gir",
+              "ref": "gtk_header_bar_remove"
+            }
+          ]
         },
-        "attached_props": [],
+        "attrs": [],
         "cardinality": "many",
+        "content": "widget",
+        "default": {
+          "kind": "none",
+          "origin": "manual"
+        },
         "name": "end",
+        "on_remove": "empty",
         "ops": {
+          "get": {
+            "contains": "ancestor",
+            "origin": "manual"
+          },
           "insert": {
             "args": [
               "child"
             ],
-            "method": "pack_end",
+            "effects": {
+              "child": "parented",
+              "origin": "manual"
+            },
+            "native": "GtkHeaderBar::pack_end(GtkWidget*)",
             "origin": "manual"
           },
           "origin": "manual",
@@ -102,15 +160,19 @@
             "args": [
               "child"
             ],
-            "method": "remove",
+            "effects": {
+              "child": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkHeaderBar::remove(GtkWidget*)",
             "origin": "manual"
           }
         },
         "order": "append_only",
         "origin": "manual",
-        "ownership": "parent_owned",
-        "readback": {
-          "mode": "ancestor",
+        "requires": [],
+        "route_by_kind": false,
+        "verify": {
           "origin": "manual"
         }
       },
@@ -121,36 +183,74 @@
         "annotated": {
           "fields": [
             "accepts",
-            "attached_props",
+            "attrs",
             "cardinality",
+            "content",
+            "default",
+            "on_remove",
             "ops",
-            "ownership",
-            "readback"
+            "order",
+            "requires",
+            "route_by_kind",
+            "verify"
           ],
           "origin": "manual",
-          "provenance": "GtkHeaderBar:title-widget property (Gtk 4 docs)"
+          "provenance": [
+            {
+              "origin": "gir",
+              "ref": "gtk_header_bar_set_title_widget"
+            }
+          ]
         },
-        "attached_props": [],
+        "attrs": [],
         "cardinality": "one",
+        "content": "widget",
+        "default": {
+          "conflicts_with_props": [
+            "title"
+          ],
+          "kind": "builtin",
+          "origin": "manual",
+          "restore": null
+        },
         "name": "title",
+        "on_remove": "restore_default",
         "ops": {
-          "clear": {
-            "origin": "manual",
-            "property": "title-widget",
-            "value": null
+          "get": {
+            "native": "GtkHeaderBar::get_title_widget() const",
+            "origin": "manual"
           },
           "origin": "manual",
+          "remove": {
+            "args": [
+              null
+            ],
+            "effects": {
+              "child": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkHeaderBar::set_title_widget(GtkWidget*)",
+            "origin": "manual"
+          },
           "set": {
-            "origin": "manual",
-            "property": "title-widget"
+            "args": [
+              "child"
+            ],
+            "effects": {
+              "child": "parented",
+              "old": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkHeaderBar::set_title_widget(GtkWidget*)",
+            "origin": "manual"
           }
         },
+        "order": "none",
         "origin": "manual",
-        "ownership": "parent_owned",
-        "readback": {
-          "mode": "property",
-          "origin": "manual",
-          "property": "title-widget"
+        "requires": [],
+        "route_by_kind": false,
+        "verify": {
+          "origin": "manual"
         }
       }
     ]
@@ -451,6 +551,7 @@
   ],
   "native": {
     "c_type": "GtkHeaderBar",
+    "get_type": "gtk_header_bar_get_type",
     "gtype": "GtkHeaderBar",
     "name": "GtkHeaderBar"
   },
@@ -614,6 +715,62 @@
         "native": "gboolean",
         "nullable": false,
         "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "construct": false,
+        "construct_only": false,
+        "origin": "manual",
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": null,
+        "origin": "manual",
+        "set": null
+      },
+      "annotated": {
+        "fields": [
+          "access",
+          "accessors",
+          "default",
+          "id",
+          "invocation",
+          "js_name",
+          "notify",
+          "range",
+          "role",
+          "type",
+          "virtual"
+        ],
+        "origin": "manual",
+        "provenance": "GTK4 GtkHeaderBar has only title-widget; P1 fixtures emit 'set #h title'"
+      },
+      "default": null,
+      "id": "svelters-api:v1:type:gtk:Gtk:HeaderBar:prop:title",
+      "invocation": "virtual",
+      "js_name": "title",
+      "name": "title",
+      "notify": {
+        "explicit": false,
+        "origin": "manual",
+        "signal": null
+      },
+      "origin": "manual",
+      "range": null,
+      "role": "value",
+      "type": {
+        "gtype": "gchararray",
+        "native": "gchar*",
+        "nullable": true,
+        "origin": "manual",
+        "ref": "string"
+      },
+      "virtual": {
+        "op": "managed_title_label",
+        "origin": "manual",
+        "property": "title-widget"
       }
     }
   ],

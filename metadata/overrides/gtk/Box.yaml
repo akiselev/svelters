@@ -7,13 +7,22 @@ children:
   default_slot: children
   slots:
     - name: children
-      cardinality: many
+      content: widget
       accepts: [Gtk.Widget]
+      route_by_kind: false
+      cardinality: many
+      order: before_sibling
+      default: {kind: none}
+      on_remove: empty
+      attrs: []
+      requires: []
       ops:
-        insert: {method: insert_child_after, args: [child, prev_sibling]}
-        remove: {method: remove, args: [child]}
-      readback: {mode: parent}
-      order: ordered
-      ownership: parent_owned
-      attached_props: []
-      provenance: "gtk_box_insert_child_after / gtk_box_remove docs; insert-before is expressed as insert-after the anchor's previous sibling"
+        # GTK extension to 2.5.2: `contains` (get for many slots without a native getter) and
+        # `iterate` (list); `prev_sibling` argument expression = previous sibling of `before`,
+        # or the last child of self when `before` is null.
+        get:    {contains: parent}
+        list:   {iterate: {first: "GtkWidget::get_first_child() const", next: "GtkWidget::get_next_sibling() const"}}
+        insert: {native: "GtkBox::insert_child_after(GtkWidget*, GtkWidget*)", args: [child, prev_sibling], effects: {child: parented}}
+        remove: {native: "GtkBox::remove(GtkWidget*)", args: [child], effects: {child: unparented}}
+      verify: {}
+      provenance: [{origin: gir, ref: "gtk_box_insert_child_after"}, {origin: gir, ref: "gtk_box_remove"}]

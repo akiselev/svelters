@@ -961,6 +961,7 @@
   ],
   "native": {
     "c_type": "GtkCellRenderer",
+    "get_type": "gtk_cell_renderer_get_type",
     "gtype": "GtkCellRenderer",
     "name": "GtkCellRenderer"
   },

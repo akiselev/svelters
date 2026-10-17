@@ -156,6 +156,7 @@
   ],
   "native": {
     "c_type": "GtkColorDialogButton",
+    "get_type": "gtk_color_dialog_button_get_type",
     "gtype": "GtkColorDialogButton",
     "name": "GtkColorDialogButton"
   },

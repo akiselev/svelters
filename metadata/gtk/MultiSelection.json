@@ -106,6 +106,7 @@
   ],
   "native": {
     "c_type": "GtkMultiSelection",
+    "get_type": "gtk_multi_selection_get_type",
     "gtype": "GtkMultiSelection",
     "name": "GtkMultiSelection"
   },

@@ -161,6 +161,7 @@
   ],
   "native": {
     "c_type": "GtkShortcutLabel",
+    "get_type": "gtk_shortcut_label_get_type",
     "gtype": "GtkShortcutLabel",
     "name": "GtkShortcutLabel"
   },

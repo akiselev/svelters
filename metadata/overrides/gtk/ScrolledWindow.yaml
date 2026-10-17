@@ -3,12 +3,18 @@ children:
   default_slot: child
   slots:
     - name: child
-      cardinality: one
+      content: widget
       accepts: [Gtk.Widget]
+      route_by_kind: false
+      cardinality: one
+      order: none
+      default: {kind: none}
+      on_remove: empty
+      attrs: []
+      requires: []
       ops:
-        set: {property: child}
-        clear: {property: child, value: null}
-      readback: {mode: property, property: child}
-      ownership: parent_owned
-      attached_props: []
-      provenance: "gtk_scrolled_window_set_child docs: non-scrollable children are wrapped in a GtkViewport automatically"
+        get:    {native: "GtkScrolledWindow::get_child() const"}
+        set:    {native: "GtkScrolledWindow::set_child(GtkWidget*)", args: [child], effects: {child: wrapped:Viewport, old: unparented}}
+        remove: {native: "GtkScrolledWindow::set_child(GtkWidget*)", args: [null], effects: {child: unparented}}
+      verify: {}
+      provenance: [{origin: gir, ref: "gtk_scrolled_window_set_child"}, {origin: manual, ref: "docs: a non-scrollable child is wrapped in a GtkViewport automatically"}]
