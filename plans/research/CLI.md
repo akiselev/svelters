@@ -323,3 +323,14 @@ The model is the esbuild/biome one: `@svelters/cli` plus optional per-platform p
 6. **The native frontend in `create`.** Hidden behind `--experimental` until ST1 and the compiled conformance baseline are done, or offered from the start?
 7. **MCP timing.** Ship MCP in C0 alongside `docs --json`, or wait for C2 as proposed?
 8. **libadwaita (`ad-…`).** No Adw metadata is ingested today. Does the docs probe need to plan a `gtk` sub-namespace for it now, or is the flat tag table with the `ad-` prefix enough?
+
+## Decisions (user, 2026-10-17)
+
+1. Element props and events become native kebab-case in N1, as tags already are. CSS element (type) selectors use the same kebab-case tags.
+2. Drop the Svelte fork. The Rust compiler (`svelters-compiler` + `@svelters/native-runtime`) is the frontend, so the stock Svelte + `@svelters/renderer` path is retired, and nothing about the fork needs publishing.
+3. svelters ships with one bundled Qt version by default. The generators, once ported to Rust (M6), must be able to target Qt back to 6.0, and possibly 5.x later. Prebuilt runners are a release concern, not v0.
+4. The config file is `svelters.toml`.
+5. `create` gets no template with both toolkits.
+6. The native compiler is not behind `--experimental`; it is the only frontend.
+7. No MCP server for now. Agents with a shell get everything through `svelters docs … --json`. MCP would only matter for clients without a shell, so it waits until someone needs that.
+8. The `ad-` namespace needs no planning now.
