@@ -1,7 +1,5 @@
 create window #1
 set #1 title "Lists stress"
-set #1 defaultWidth 400
-set #1 defaultHeight 400
 create box #2
 set #2 orientation "vertical"
 set #2 spacing 4
@@ -89,6 +87,7 @@ set #23 layout "list"
 set #23 selection "single"
 set #23 rowHeight 32
 set #23 vexpand "true"
+set #23 minHeight "300"
 listen #23 setup on
 listen #23 bind on
 listen #23 unbind on

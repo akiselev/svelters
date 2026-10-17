@@ -19,6 +19,7 @@ const P_SELECTED: u32 = 0x4121;
 const P_SELECTION: u32 = 0x4122;
 const P_LAYOUT: u32 = 0x4123;
 const P_ROW_HEIGHT: u32 = 0x4124;
+const P_MIN_HEIGHT: u32 = 0x4125;
 const M_SPLICE: u32 = 0x4221;
 const M_COUNT: u32 = 0x4222;
 const M_SCROLL_TO: u32 = 0x4223;
@@ -43,6 +44,7 @@ pub fn find_member(what: u32, name: &str) -> u32 {
         (SVL_PROP, "selection") => P_SELECTION,
         (SVL_PROP, "layout") => P_LAYOUT,
         (SVL_PROP, "rowHeight" | "row-height") => P_ROW_HEIGHT,
+        (SVL_PROP, "minHeight") => P_MIN_HEIGHT,
         (SVL_METHOD, "splice") => M_SPLICE,
         (SVL_METHOD, "count") => M_COUNT,
         (SVL_METHOD, "scrollTo") => M_SCROLL_TO,
@@ -444,6 +446,10 @@ impl Inner {
                 vl.row_height.set(i64_arg(std::slice::from_ref(v), 0, "rowHeight")?);
                 Ok(())
             }
+            P_MIN_HEIGHT => {
+                vl.sw.set_min_content_height(i64_arg(std::slice::from_ref(v), 0, "minHeight")?.max(0) as i32);
+                Ok(())
+            }
             _ => Err("unknown property".into()),
         }
     }
@@ -460,6 +466,7 @@ impl Inner {
             P_SELECTION => buf.str_value(if vl.sel_none.get() { "none" } else { "single" }),
             P_LAYOUT => buf.str_value(if vl.grid.get() { "grid" } else { "list" }),
             P_ROW_HEIGHT => int_value(vl.row_height.get()),
+            P_MIN_HEIGHT => int_value(vl.sw.min_content_height() as i64),
             _ => return Err("unknown property".into()),
         };
         Ok(())

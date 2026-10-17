@@ -28,7 +28,7 @@
   const moveFirstToEnd = () => (items = [...items.slice(1), items[0]]);
 </script>
 
-<window title="Lists stress" defaultWidth="400" defaultHeight="400">
+<window title="Lists stress">
   <box orientation="vertical" spacing="4">
     <box orientation="horizontal" spacing="4">
       <button onclick={() => fill(1000)}>fill1k</button>
@@ -59,6 +59,7 @@
       key={(it) => it.id}
       bind:selected
       vexpand="true"
+      minHeight="300"
       onactivate={(item, pos) => (activated = `${pos}:${item.id}`)}
     >
       {#snippet row(item, index)}
