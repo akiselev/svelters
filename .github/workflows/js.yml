@@ -1,0 +1,53 @@
+name: js
+
+on:
+  push:
+    branches: [master, 'ci/**']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  js:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Python deps (system python; build scripts run python3 -I)
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends python3-yaml python3-jsonschema python3-pytest
+
+      - name: Rust toolchain (rust-toolchain.toml)
+        run: rustup toolchain install --profile minimal && rustc --version
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: js
+
+      - uses: ./.github/actions/setup-pnpm
+
+      # The compiled experiment (pnpm -r build) and its tests need the Rust compiler binary.
+      - name: Build svelters-compile
+        run: cargo build -p svelters-compiler --bin svelters-compile
+
+      - name: Build packages and fixtures (pnpm -r build, docs site excluded)
+        run: pnpm build
+
+      - name: JS package tests
+        run: pnpm -r --workspace-concurrency=4 --filter '!@svelters/docs' test
+
+      - name: pnpm test:meta
+        if: ${{ !cancelled() }}
+        run: pnpm test:meta
+
+      - name: pnpm docs:test
+        if: ${{ !cancelled() }}
+        run: pnpm docs:test

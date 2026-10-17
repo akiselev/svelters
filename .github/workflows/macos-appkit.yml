@@ -1,0 +1,73 @@
+name: macos-appkit
+
+on:
+  push:
+    branches: [master, 'ci/**']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: "1"
+
+jobs:
+  appkit:
+    runs-on: macos-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Environment
+        run: sw_vers; uname -m; xcrun --show-sdk-path; xcrun --show-sdk-version
+
+      - name: Rust toolchain (rust-toolchain.toml)
+        run: rustup toolchain install --profile minimal && rustc --version
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: macos-appkit
+
+      - uses: ./.github/actions/setup-pnpm
+      - name: Build bundles
+        run: pnpm --filter './fixtures/*' build
+
+      - name: Build tests
+        run: cargo test --no-run -p svelters-apple -p svelters-appkit -p counter-mac
+
+      # Each test binary is its own step so one crash doesn't hide the others.
+      - name: Unit tests (svelters-apple, svelters-appkit)
+        timeout-minutes: 10
+        run: cargo test -p svelters-apple -p svelters-appkit
+      - name: counter-mac backend
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: cargo test -p counter-mac --test backend
+      - name: counter-mac generated
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: cargo test -p counter-mac --test generated
+      - name: counter-mac counter
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: cargo test -p counter-mac --test counter
+      - name: counter-mac run with screenshot
+        if: ${{ !cancelled() }}
+        timeout-minutes: 5
+        run: cargo run -p counter-mac -- --screenshot target/counter-mac.png --exit --report target/counter-mac.json
+
+      - name: Upload screenshots and reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-appkit-artifacts
+          if-no-files-found: ignore
+          path: |
+            target/gallery/
+            target/*.png
+            target/*.json
