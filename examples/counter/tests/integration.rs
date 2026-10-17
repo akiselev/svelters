@@ -83,7 +83,23 @@ fn is_label(class: &str) -> bool {
     class == "GtkLabel" || class == "QLabel"
 }
 
+/// The fixture written for `backend`: the shared `fixtures/<name>` is GTK vocabulary, Qt runs its
+/// `fixtures/<name>-qt` twin.
+fn fixture_for(backend: &str, fixture: &str) -> String {
+    if backend == "qt" { format!("{fixture}-qt") } else { fixture.to_string() }
+}
+
+/// The text-edit signal scripts type with on `backend`.
+fn changed(backend: &str) -> &'static str {
+    if backend == "qt" { "text-changed" } else { "changed" }
+}
+
 fn run_script(backend: &str, fixture: &str, script: &Path, extra: &[&str]) -> Run {
+    run_dir(backend, &fixture_for(backend, fixture), script, extra)
+}
+
+/// `run_script` on the fixture directory `fixture` as named, whatever the backend.
+fn run_dir(backend: &str, fixture: &str, script: &Path, extra: &[&str]) -> Run {
     let dir = out_dir();
     let tag = script.file_stem().unwrap().to_string_lossy().into_owned();
     let default_script = tag == "script";
@@ -118,7 +134,7 @@ fn run_script(backend: &str, fixture: &str, script: &Path, extra: &[&str]) -> Ru
 }
 
 fn run_fixture(backend: &str, fixture: &str) -> Run {
-    run_script(backend, fixture, &root().join("fixtures").join(fixture).join("script.json"), &[])
+    run_script(backend, fixture, &root().join("fixtures").join(fixture_for(backend, fixture)).join("script.json"), &[])
 }
 
 fn write_script(name: &str, json: &str) -> PathBuf {
@@ -155,12 +171,13 @@ fn keyed_list(backend: &str) {
 
     // Add three rows and reverse: the native order must follow.
     let script = write_script(
-        "keyed-list-reverse.json",
-        r#"[{"checkpoint":true},
+        &format!("{backend}-keyed-list-reverse.json"),
+        &r#"[{"checkpoint":true},
             {"event":[4,"changed",["alpha"]]},{"event":[5,"clicked",[]]},{"checkpoint":true},
             {"event":[4,"changed",["beta"]]},{"event":[5,"clicked",[]]},{"checkpoint":true},
             {"event":[4,"changed",["gamma"]]},{"event":[5,"clicked",[]]},{"checkpoint":true},
-            {"event":[6,"clicked",[]]},{"checkpoint":true}]"#,
+            {"event":[6,"clicked",[]]},{"checkpoint":true}]"#
+            .replace(r#""changed""#, &format!(r#""{}""#, changed(backend))),
     );
     let r = run_script(backend, "keyed-list", &script, &[]);
     r.assert_clean();
@@ -171,12 +188,13 @@ fn keyed_list(backend: &str) {
 
     // Reverse twice: back to insertion order.
     let script = write_script(
-        "keyed-list-reverse2.json",
-        r#"[{"checkpoint":true},
+        &format!("{backend}-keyed-list-reverse2.json"),
+        &r#"[{"checkpoint":true},
             {"event":[4,"changed",["alpha"]]},{"event":[5,"clicked",[]]},{"checkpoint":true},
             {"event":[4,"changed",["beta"]]},{"event":[5,"clicked",[]]},{"checkpoint":true},
             {"event":[4,"changed",["gamma"]]},{"event":[5,"clicked",[]]},{"checkpoint":true},
-            {"event":[6,"clicked",[]]},{"checkpoint":true},{"event":[6,"clicked",[]]},{"checkpoint":true}]"#,
+            {"event":[6,"clicked",[]]},{"checkpoint":true},{"event":[6,"clicked",[]]},{"checkpoint":true}]"#
+            .replace(r#""changed""#, &format!(r#""{}""#, changed(backend))),
     );
     let r = run_script(backend, "keyed-list", &script, &[]);
     r.assert_clean();
@@ -247,17 +265,18 @@ fn if_toggle_gtk() {
 
 #[test]
 fn if_toggle_qt_reports_missing_headerbar() {
-    let r = run_fixture("qt", "if-toggle");
-    assert!(!r.out.status.success(), "Qt has no headerbar kind and must not pretend to run");
+    // The GTK fixture on Qt on purpose (no Qt twin): the run must fail cleanly.
+    let r = run_dir("qt", "if-toggle", &root().join("fixtures/if-toggle/script.json"), &[]);
+    assert!(!r.out.status.success(), "Qt has no header-bar kind and must not pretend to run");
     let err = r.stderr();
-    assert!(err.contains("headerbar"), "error should name the missing kind:\n{err}");
+    assert!(err.contains("header-bar"), "error should name the missing kind:\n{err}");
     assert!(!err.contains("SIGSEGV") && !err.contains("panicked"), "must be a clean error:\n{err}");
 }
 
 // ---- run() returns when the last window closes natively ----
 
 fn closes(backend: &str) {
-    let r = run_script(backend, "counter", &root().join("fixtures/counter/script.json"), &["--end", "close"]);
+    let r = run_script(backend, "counter", &root().join("fixtures").join(fixture_for(backend, "counter")).join("script.json"), &["--end", "close"]);
     r.assert_clean();
     assert_eq!(r.report()["end"], "close");
     assert_eq!(r.labels(), ["Count: 3"]);
@@ -364,7 +383,10 @@ fn bind_value(backend: &str) {
     //   full:    type "Zed", then the app writes "Bob" and "BOB" into the state
     // The app's own writes must reach the entry without a `changed` coming back, so both runs
     // count the same signals.
-    let script = write_script("bind-value-typed.json", r#"[{"checkpoint":true},{"event":[3,"changed",["Zed"]]},{"checkpoint":true}]"#);
+    let script = write_script(
+        &format!("{backend}-bind-value-typed.json"),
+        &format!(r#"[{{"checkpoint":true}},{{"event":[3,"{}",["Zed"]]}},{{"checkpoint":true}}]"#, changed(backend)),
+    );
     let typed = run_script(backend, "bind-value", &script, &[]);
     typed.assert_clean();
     assert_eq!(typed.labels()[0], "Hello Zed", "native to state");

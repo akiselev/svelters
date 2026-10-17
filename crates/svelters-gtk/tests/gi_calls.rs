@@ -34,7 +34,7 @@ fn integer_args_and_returns() {
         assert!(h.call_args(bx, "set_spacing", &[V::F64(1.5)]).unwrap_err().contains("not an integer"));
         assert!(h.call_args(bx, "set_spacing", &[s("3")]).unwrap_err().contains("expected an integer"));
         // guint
-        let spin = h.create("spinbutton");
+        let spin = h.create("spin-button");
         h.call_args(spin, "set_digits", &[V::I64(3)]).unwrap();
         assert_eq!(h.call_args(spin, "get_digits", &[]).unwrap(), V::I64(3));
         assert!(h.call_args(spin, "set_digits", &[V::I64(-1)]).unwrap_err().contains("out of range"));

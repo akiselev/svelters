@@ -217,16 +217,21 @@ fn replay_all_fixtures() {
             eprintln!("{}: skipped (AppKit fixture)", e.file_name().to_string_lossy());
             continue;
         }
+        if e.file_name().to_string_lossy().ends_with("-qt") {
+            // Qt twins use Qt tags (push-button, box-layout); examples/counter runs them on Qt.
+            eprintln!("{}: skipped (Qt fixture)", e.file_name().to_string_lossy());
+            continue;
+        }
         if log.lines().any(|l| l.starts_with("sync ")) {
             // Sync results (close vetoes, handled keys) change what the toolkit does next, which a
             // flat replay cannot follow; `tests/sync.rs` and `tests/host_sync.rs` cover them natively.
             eprintln!("{}: skipped (sync handlers)", e.file_name().to_string_lossy());
             continue;
         }
-        if log.lines().any(|l| l.starts_with("create virtuallist ")) {
+        if log.lines().any(|l| l.starts_with("create virtual-list ")) {
             // Model-view fixtures splice list arguments and bind rows from toolkit callbacks; the
             // flat replay has neither. `tests/vlist.rs` and `tests/lists_e2e.rs` run them natively.
-            eprintln!("{}: skipped (virtuallist)", e.file_name().to_string_lossy());
+            eprintln!("{}: skipped (virtual-list)", e.file_name().to_string_lossy());
             continue;
         }
         replay(&e.file_name().to_string_lossy(), log);

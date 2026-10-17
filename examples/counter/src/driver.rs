@@ -256,7 +256,8 @@ impl Driver {
         if let Step::Event { handle, signal, args, .. } = step {
             let res = match (signal.as_str(), args.first()) {
                 ("clicked", _) => self.tk.click(handle),
-                ("changed", Some(Value::Str(text))) => self.tk.type_text(handle, text),
+                // GtkEditable::changed; QLineEdit::textChanged in the Qt twins' scripts
+                ("changed" | "text-changed", Some(Value::Str(text))) => self.tk.type_text(handle, text),
                 (other, _) => Err(format!("script event '{other}' has no native action")),
             };
             if let Err(e) = res {
