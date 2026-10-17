@@ -7,6 +7,26 @@ elements:
       - { js: textFormat, native: textFormat, provenance: "QLabel::textFormat (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: pixmap, native: pixmap, provenance: "QLabel::pixmap (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: indent, native: indent, provenance: "QLabel::indent (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: wordWrap, native: wordWrap, provenance: "QLabel::wordWrap (qdoc)" }
+      - { js: openExternalLinks, native: openExternalLinks, provenance: "QLabel::openExternalLinks (qdoc)" }
+      - { js: margin, native: margin, provenance: "QLabel::margin (qdoc)" }
+      - { js: scaledContents, native: scaledContents, provenance: "QLabel::scaledContents (qdoc)" }
+      - { js: textInteractionFlags, native: textInteractionFlags, provenance: "QLabel::textInteractionFlags (qdoc); flags by the S1 value model" }
+    signals:
+      - js: linkActivated
+        native: linkActivated
+        connect: "linkActivated(QString)"
+        args: [{ name: link, type: string }]
+        trigger: 'Q_EMIT $w->linkActivated(QStringLiteral("a") + QString::number($i))'
+        expect_args: ["a0"]
+        provenance: "QLabel::linkActivated(const QString &) (qdoc)"
+      - js: linkHovered
+        native: linkHovered
+        connect: "linkHovered(QString)"
+        args: [{ name: link, type: string }]
+        trigger: 'Q_EMIT $w->linkHovered(QStringLiteral("h") + QString::number($i))'
+        expect_args: ["h0"]
+        provenance: "QLabel::linkHovered(const QString &) (qdoc)"
     methods:
       - { js: setBuddy, native: setBuddy, params: ["object<QWidget>"], provenance: "QLabel::setBuddy (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: buddy, native: buddy, provenance: "QLabel::buddy (qdoc); typed by the S1 value model (ABI v3)" }

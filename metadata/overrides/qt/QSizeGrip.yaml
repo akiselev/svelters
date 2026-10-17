@@ -1,0 +1,2 @@
+unexposed:
+  reason: "Internal resize handle created by QStatusBar/QMainWindow."

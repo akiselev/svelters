@@ -1,0 +1,66 @@
+elements:
+  - tag: textedit
+    construct: { class: QTextEdit }
+    props:
+      - { js: plainText, native: plainText, suppress_signals: true, provenance: "QTextEdit::plainText (qdoc)" }
+      - { js: markdown, native: markdown, sample: 'x\n\n', provenance: "QTextEdit::markdown (qdoc)" }
+      - { js: acceptRichText, native: acceptRichText, provenance: "QTextEdit::acceptRichText (qdoc)" }
+      - { js: readOnly, native: readOnly, provenance: "QTextEdit::readOnly (qdoc)" }
+      - { js: placeholderText, native: placeholderText, provenance: "QTextEdit::placeholderText (qdoc)" }
+      - { js: lineWrapMode, native: lineWrapMode, provenance: "QTextEdit::lineWrapMode (qdoc)" }
+      - { js: tabChangesFocus, native: tabChangesFocus, provenance: "QTextEdit::tabChangesFocus (qdoc)" }
+      - { js: overwriteMode, native: overwriteMode, provenance: "QTextEdit::overwriteMode (qdoc)" }
+      - { js: wordWrapMode, native: wordWrapMode, provenance: "QTextEdit::wordWrapMode (qdoc)" }
+      - { js: undoRedoEnabled, native: undoRedoEnabled, provenance: "QTextEdit::undoRedoEnabled (qdoc)" }
+      - { js: cursorWidth, native: cursorWidth, provenance: "QTextEdit::cursorWidth (qdoc)" }
+      - { js: lineWrapColumnOrWidth, native: lineWrapColumnOrWidth, provenance: "QTextEdit::lineWrapColumnOrWidth (qdoc)" }
+      - { js: tabStopDistance, native: tabStopDistance, provenance: "QTextEdit::tabStopDistance (qdoc)" }
+      - { js: textInteractionFlags, native: textInteractionFlags, provenance: "QTextEdit::textInteractionFlags (qdoc)" }
+      - { js: documentTitle, native: documentTitle, provenance: "QTextEdit::documentTitle (qdoc)" }
+      - { js: autoFormatting, native: autoFormatting, provenance: "QTextEdit::autoFormatting (qdoc)" }
+    methods:
+      - { js: append, native: append, params: [string], args: ["x"], provenance: "QTextEdit::append (qdoc)" }
+      - { js: insertPlainText, native: insertPlainText, params: [string], args: ["x"], provenance: "QTextEdit::insertPlainText (qdoc)" }
+      - { js: insertHtml, native: insertHtml, params: [string], args: ["x"], provenance: "QTextEdit::insertHtml (qdoc)" }
+      - { js: clear, native: clear, expect: "$w->toPlainText().isEmpty()", provenance: "QTextEdit::clear (qdoc)" }
+      - { js: selectAll, native: selectAll, provenance: "QTextEdit::selectAll (qdoc)" }
+      - { js: undo, native: undo, provenance: "QTextEdit::undo (qdoc)" }
+      - { js: redo, native: redo, provenance: "QTextEdit::redo (qdoc)" }
+      - { js: copy, native: copy, provenance: "QTextEdit::copy (qdoc)" }
+      - { js: cut, native: cut, provenance: "QTextEdit::cut (qdoc)" }
+      - { js: ensureCursorVisible, native: ensureCursorVisible, provenance: "QTextEdit::ensureCursorVisible (qdoc)" }
+      - { js: document, native: document, provenance: "QTextEdit::document (qdoc)" }
+    bindings:
+      - name: plainText
+        direction: two_way
+        property: plainText
+        type: { ref: string, nullable: false }
+        change: { signal: changed, role: any_change, value: prop }
+        write: { natively_normalizes: false }
+        echo:
+          strategy: host_suppressed
+          compare_before_set: true
+          read_back: false
+          sync_signals_on_set: ["textChanged()"]
+        lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
+        provenance: "QTextEdit::textChanged() has no args, so the value is read from the property (docs/notes/fork-bindings.md 6)"
+    signals:
+      - { js: key-press, synthetic: key_press, provenance: "X2 sync key-press (docs/notes/x2-sync-frame.md)" }
+      - js: changed
+        native: textChanged
+        connect: "textChanged()"
+        args: []
+        trigger: '$w->setPlainText(QStringLiteral("v") + QString::number($i))'
+        provenance: "QTextEdit::textChanged() (qdoc)"
+      - js: selectionChanged
+        native: selectionChanged
+        connect: "selectionChanged()"
+        args: []
+        trigger: 'Q_EMIT $w->selectionChanged()'
+        provenance: "QTextEdit::selectionChanged() (qdoc)"
+      - js: cursorPositionChanged
+        native: cursorPositionChanged
+        connect: "cursorPositionChanged()"
+        args: []
+        trigger: 'Q_EMIT $w->cursorPositionChanged()'
+        provenance: "QTextEdit::cursorPositionChanged() (qdoc)"

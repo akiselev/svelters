@@ -1,3 +1,53 @@
+properties:
+  - name: page
+    js_name: page
+    echo_suppress: ["notify::page", switch-page]
+    setup: 'let nb = h.obj(o).downcast::<gtk::Notebook>().unwrap(); for _ in 0..8 { nb.append_page(&gtk::Label::new(None), None::<&gtk::Widget>); }'
+    sample: 7
+    provenance: "GtkNotebook:page (Gtk 4 docs); needs pages, set up in the test"
+  - name: show-tabs
+    provenance: "GtkNotebook:show-tabs (Gtk 4 docs); P prop"
+  - name: show-border
+    provenance: "GtkNotebook:show-border (Gtk 4 docs); P prop"
+  - name: tab-pos
+    provenance: "GtkNotebook:tab-pos (Gtk 4 docs); P prop"
+  - name: scrollable
+    provenance: "GtkNotebook:scrollable (Gtk 4 docs); P prop"
+signals:
+  - name: switch-page
+    js_event: switch-page
+    handler_result: none
+    sync_required: false
+    trigger:
+      setup: 'let nb = h.obj(o).downcast::<gtk::Notebook>().unwrap(); for _ in 0..3 { nb.append_page(&gtk::Label::new(None), None::<&gtk::Widget>); } nb.set_current_page(Some(0));'
+      rust: 'let nb = o.downcast_ref::<gtk::Notebook>().unwrap(); while nb.n_pages() < 3 { nb.append_page(&gtk::Label::new(None), None::<&gtk::Widget>); } nb.set_current_page(Some(((i + 1) % 3) as u32));'
+      values: [a, b, c]
+    provenance: "GtkNotebook::switch-page, run-last, void (Gtk 4 docs)"
+  - name: "notify::page"
+    derived_from: {property: page}
+    js_event: "notify::page"
+    trigger:
+      setup: 'let nb = h.obj(o).downcast::<gtk::Notebook>().unwrap(); for _ in 0..3 { nb.append_page(&gtk::Label::new(None), None::<&gtk::Widget>); } nb.set_current_page(Some(0));'
+      rust: 'let nb = o.downcast_ref::<gtk::Notebook>().unwrap(); while nb.n_pages() < 3 { nb.append_page(&gtk::Label::new(None), None::<&gtk::Widget>); } nb.set_current_page(Some(((i + 1) % 3) as u32));'
+      values: [a, b, c]
+    params: []
+    returns: {type: void}
+    handler_result: none
+    sync_required: false
+    phase: first
+    flags: [detailed]
+    connection: {disconnect_on: [handle_drop, native_destroy]}
+    provenance: "GObject::notify for GtkNotebook:page"
+bindings:
+  - name: page
+    direction: two_way
+    property: page
+    type: {ref: i32, nullable: false}
+    change: {signal: "notify::page", role: any_change, value: prop}
+    write: {natively_normalizes: false}
+    echo: {strategy: host_suppressed, compare_before_set: true, read_back: false, sync_signals_on_set: ["notify::page", switch-page]}
+    lifetime: {on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect}
+    provenance: "set_current_page emits switch-page and notify::page only on change (Gtk 4 docs)"
 # GtkNotebook pages. Tab label text, menu label and the page flags are properties of the child's
 # GtkNotebookPage (X3 child attributes). Reordering tabs by hand is the user's `reorderable` choice.
 # Svelte: <notebook><label parent:tabLabel="One">x</label></notebook>

@@ -150,10 +150,6 @@
       "origin": "runtime"
     }
   ],
-  "element": {
-    "origin": "gir",
-    "tag": "messagedialog"
-  },
   "enums": [
     "svelters-api:v1:type:gtk:Gtk:ButtonsType",
     "svelters-api:v1:type:gtk:Gtk:MessageType"
@@ -162,9 +158,33 @@
   "inherited": {
     "methods": [
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Window:method:close",
+        "from": "svelters-api:v1:type:gtk:Gtk:Window",
+        "name": "close",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Window:method:fullscreen",
+        "from": "svelters-api:v1:type:gtk:Gtk:Window",
+        "name": "fullscreen",
+        "origin": "manual"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:grab_focus",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "grab_focus",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Window:method:maximize",
+        "from": "svelters-api:v1:type:gtk:Gtk:Window",
+        "name": "maximize",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Window:method:minimize",
+        "from": "svelters-api:v1:type:gtk:Gtk:Window",
+        "name": "minimize",
         "origin": "manual"
       },
       {
@@ -190,6 +210,24 @@
         "from": "svelters-api:v1:type:gtk:Gtk:Window",
         "name": "set_default_size",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Window:method:unfullscreen",
+        "from": "svelters-api:v1:type:gtk:Gtk:Window",
+        "name": "unfullscreen",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Window:method:unmaximize",
+        "from": "svelters-api:v1:type:gtk:Gtk:Window",
+        "name": "unmaximize",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Window:method:unminimize",
+        "from": "svelters-api:v1:type:gtk:Gtk:Window",
+        "name": "unminimize",
+        "origin": "manual"
       }
     ],
     "properties": [
@@ -206,9 +244,39 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Window:prop:decorated",
+        "from": "svelters-api:v1:type:gtk:Gtk:Window",
+        "name": "decorated",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Window:prop:default-height",
+        "from": "svelters-api:v1:type:gtk:Gtk:Window",
+        "name": "default-height",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Window:prop:default-width",
+        "from": "svelters-api:v1:type:gtk:Gtk:Window",
+        "name": "default-width",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Window:prop:deletable",
+        "from": "svelters-api:v1:type:gtk:Gtk:Window",
+        "name": "deletable",
+        "origin": "manual"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:focusable",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "focusable",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Window:prop:fullscreened",
+        "from": "svelters-api:v1:type:gtk:Gtk:Window",
+        "name": "fullscreened",
         "origin": "manual"
       },
       {
@@ -227,6 +295,12 @@
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:hexpand",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "hexpand",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Window:prop:hide-on-close",
+        "from": "svelters-api:v1:type:gtk:Gtk:Window",
+        "name": "hide-on-close",
         "origin": "manual"
       },
       {
@@ -254,6 +328,18 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Window:prop:maximized",
+        "from": "svelters-api:v1:type:gtk:Gtk:Window",
+        "name": "maximized",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Window:prop:modal",
+        "from": "svelters-api:v1:type:gtk:Gtk:Window",
+        "name": "modal",
+        "origin": "manual"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:name",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "name",
@@ -263,6 +349,12 @@
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:opacity",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "opacity",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Window:prop:resizable",
+        "from": "svelters-api:v1:type:gtk:Gtk:Window",
+        "name": "resizable",
         "origin": "manual"
       },
       {
@@ -776,11 +868,15 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/MessageDialog.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"
     }
   },
-  "toolkit": "gtk"
+  "toolkit": "gtk",
+  "unexposed": {
+    "origin": "manual",
+    "reason": "deprecated GtkDialog family (response-id model, gtk_dialog_run style blocking flow); use Window, Popover or AlertDialog-style non-blocking APIs"
+  }
 }

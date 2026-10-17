@@ -1,0 +1,11 @@
+properties:
+  - name: side
+    js_name: side
+    provenance: "GtkWindowControls:side (Gtk 4 docs); PackType nick"
+  - name: decoration-layout
+    js_name: decorationLayout
+    sample: "menu:close"
+    provenance: "GtkWindowControls:decoration-layout (Gtk 4 docs)"
+  - name: use-native-controls
+    js_name: useNativeControls
+    provenance: "GtkWindowControls:use-native-controls (Gtk 4.18 docs)"

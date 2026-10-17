@@ -88,7 +88,10 @@ class FrontendTests(unittest.TestCase):
         self.assertTrue(any(p["name"] == "label" and p["annotated"] for p in button["properties"]))
         ev = next(x for x in button["events"] if x["name"] == "clicked")
         self.assertEqual(ev["handler_aliases"], ["onclick"])
-        self.assertEqual(len([e for e in ir["entities"] if e["tags"]]), 101)
+        # one entity per element kind (kinds marked `unexposed` in the overrides have no tag)
+        tagged = sum(1 for p in (ROOT / "metadata/gtk").glob("*.json") if "element" in json.loads(p.read_text()))
+        self.assertEqual(len([e for e in ir["entities"] if e["tags"]]), tagged)
+        self.assertGreater(tagged, 80)
 
     def test_qt_frontend(self):
         self.check_frontend("qt")

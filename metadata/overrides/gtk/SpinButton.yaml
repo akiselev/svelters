@@ -1,0 +1,80 @@
+properties:
+  - name: value
+    sample: 42.0
+    setup: 'h.call_args(o, "set_range", &[V::F64(0.0), V::F64(100.0)]).unwrap();'
+    echo_suppress: [value-changed, "notify::value"]
+    provenance: "GtkSpinButton:value (Gtk 4 docs); needs a non-empty adjustment range"
+  - name: digits
+    provenance: "GtkSpinButton:digits, 0..20 (Gtk 4 docs)"
+  - name: numeric
+    provenance: "GtkSpinButton:numeric (Gtk 4 docs)"
+  - name: wrap
+    provenance: "GtkSpinButton:wrap (Gtk 4 docs)"
+  - name: snap-to-ticks
+    provenance: "GtkSpinButton:snap-to-ticks (Gtk 4 docs)"
+  - name: climb-rate
+    provenance: "GtkSpinButton:climb-rate (Gtk 4 docs)"
+  - name: update-policy
+    provenance: "GtkSpinButton:update-policy, GtkSpinButtonUpdatePolicy (Gtk 4 docs)"
+signals:
+  - name: value-changed
+    js_event: value-changed
+    handler_result: none
+    sync_required: false
+    trigger: {rust: 'let s = o.downcast_ref::<gtk::SpinButton>().unwrap(); s.set_range(0.0, 100.0); s.set_value(10.0 + i as f64);', values: [a, b, c]}
+    provenance: "GtkSpinButton::value-changed, run-last, void (Gtk 4 docs)"
+  - name: wrapped
+    js_event: wrapped
+    handler_result: none
+    sync_required: false
+    trigger: {rust: 'let s = o.downcast_ref::<gtk::SpinButton>().unwrap(); s.set_wrap(true); s.set_range(0.0, 10.0); s.set_value(10.0); s.spin(gtk::SpinType::StepForward, 1.0);', values: [a, b, c]}
+    provenance: "GtkSpinButton::wrapped, run-last, void (Gtk 4 docs); emitted when a wrapping spin goes past the end"
+  - name: "notify::value"
+    derived_from: {property: value}
+    js_event: "notify::value"
+    trigger: {rust: 'let s = o.downcast_ref::<gtk::SpinButton>().unwrap(); s.set_range(0.0, 100.0); s.set_value(10.0 + i as f64);', values: [a, b, c]}
+    params: []
+    returns: {type: void}
+    handler_result: none
+    sync_required: false
+    phase: first
+    flags: [detailed]
+    connection: {disconnect_on: [handle_drop, native_destroy]}
+    provenance: "GObject::notify for GtkSpinButton:value"
+bindings:
+  - name: value
+    direction: two_way
+    property: value
+    type: {ref: f64, nullable: false}
+    change: {signal: value-changed, role: any_change, value: prop}
+    write: {natively_normalizes: true}
+    echo: {strategy: host_suppressed, compare_before_set: true, read_back: false, sync_signals_on_set: [value-changed, "notify::value"]}
+    lifetime: {on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect}
+    provenance: "gtk_spin_button_set_value emits value-changed only on change; the spin button rounds to digits (Gtk 4 docs)"
+methods:
+  - name: set_range
+    js_name: set_range
+    dispatch: dynamic
+    args: [10.0, 100.0]
+    expect: 'h.get(o, "value") == V::F64(10.0)'
+    provenance: "gtk_spin_button_set_range clamps the value into the new range (Gtk 4 docs); called through GIRepository (X1)"
+  - name: set_value
+    js_name: set_value
+    dispatch: dynamic
+    setup: 'h.call_args(o, "set_range", &[V::F64(0.0), V::F64(100.0)]).unwrap();'
+    args: [42.0]
+    expect: 'h.get(o, "value") == V::F64(42.0)'
+    provenance: "gtk_spin_button_set_value (Gtk 4 docs); called through GIRepository (X1)"
+  - name: get_value
+    js_name: get_value
+    dispatch: dynamic
+    setup: 'h.call_args(o, "set_range", &[V::F64(0.0), V::F64(100.0)]).unwrap(); h.call_args(o, "set_value", &[V::F64(7.0)]).unwrap();'
+    args: []
+    expect: 'r == V::F64(7.0)'
+    provenance: "gtk_spin_button_get_value (Gtk 4 docs); f64 return through GIRepository (X1)"
+  - name: set_increments
+    js_name: set_increments
+    dispatch: dynamic
+    args: [2.0, 20.0]
+    expect: 'w.downcast_ref::<gtk::SpinButton>().unwrap().increments() == (2.0, 20.0)'
+    provenance: "gtk_spin_button_set_increments (Gtk 4 docs); called through GIRepository (X1)"

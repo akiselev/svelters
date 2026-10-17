@@ -23,6 +23,7 @@ some blocked facts are not worth exposing anyway.
 | G10 | GTK slots whose native ops take a widget subclass: **closed by the A1 lead** (generator downcasts to `accepts`, upcasts getters; MenuButton `popover` verified) | MenuButton `popover`, Popover-typed slots, Notebook menu labels | gtk-buttons, gtk-dialogs |
 | G11 | Enums outside the Gtk namespace: **enums closed by the A1 lead** (Pango/Gdk nicks kept on the property; Label `ellipsize`/`wrap-mode` verified); non-Gtk object kinds still open | Label `ellipsize`/`wrap-mode`, Inscription `wrap-mode`, GdkCursor/Paintable props | gtk-text |
 | G12 | Non-widget objects reached as borrowed handles have no generated kind (GtkTextBuffer, GtkAdjustment) | TextView text editing, Range/SpinButton value and range | gtk-text, gtk-ranges |
+| G13 | Qt many-slots without an index/list API: **closed by the A1 lead** (`order: append_only` slots, membership by isAncestorOf; QStatusBar `widgets`/`permanent` verified) | QStatusBar `widgets`/`permanent`, QDialogButtonBox buttons | qt-bars |
 
 ## G1: child attributes
 
@@ -207,3 +208,12 @@ on a borrowed object reached through another element. Repro: `textview.getProp('
 must change the text view's content; `scale.getProp('adjustment').setProp('upper', 100)` the scale's range.
 Needs: a `verify_subject` form "borrowed from <tag>.<getter>" in the GTK override format and tests that
 reach the object through the getter.
+
+## G13: Qt many-slots without index/list ops
+
+`gen_cpp.py` requires `insert` (with a `before != null` variant), `remove`, `index_of` and `list`
+for every many-slot. `QStatusBar::addWidget/insertWidget/removeWidget` and
+`QDialogButtonBox::addButton/removeButton` have no `indexOf`/`count`/`itemAt`. Fix in the generator:
+allow `order: append_only` many-slots with only `insert` + `remove`, membership through
+`isAncestorOf`, and generated tests for insert/remove/ownership without order checks (and an
+`index_of` computed from the layout/children list where one exists). Owner: A1 lead (generator).

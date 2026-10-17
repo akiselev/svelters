@@ -1,0 +1,15 @@
+elements:
+  - tag: keysequenceedit
+    construct: { class: QKeySequenceEdit }
+    props:
+      - { js: keySequence, native: keySequence, provenance: "QKeySequenceEdit::keySequence (qdoc)" }
+      - { js: clearButtonEnabled, native: clearButtonEnabled, provenance: "QKeySequenceEdit::clearButtonEnabled (qdoc)" }
+    methods:
+      - { js: clear, native: clear, provenance: "QKeySequenceEdit::clear (qdoc)" }
+    signals:
+      - js: editingFinished
+        native: editingFinished
+        connect: "editingFinished()"
+        args: []
+        trigger: 'Q_EMIT $w->editingFinished()'
+        provenance: "QKeySequenceEdit::editingFinished() (qdoc)"

@@ -991,6 +991,11 @@
         "get": "gtk_stack_get_hhomogeneous",
         "set": "gtk_stack_set_hhomogeneous"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkStack:hhomogeneous (Gtk 4 docs); P prop"
+      },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Stack:prop:hhomogeneous",
       "invocation": "reflected",
@@ -1030,6 +1035,11 @@
       "accessors": {
         "get": "gtk_stack_get_interpolate_size",
         "set": "gtk_stack_set_interpolate_size"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkStack:interpolate-size (Gtk 4 docs); P prop"
       },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Stack:prop:interpolate-size",
@@ -1108,6 +1118,11 @@
       "accessors": {
         "get": "gtk_stack_get_transition_duration",
         "set": "gtk_stack_set_transition_duration"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkStack:transition-duration (Gtk 4 docs); P prop"
       },
       "default": 200,
       "id": "svelters-api:v1:type:gtk:Gtk:Stack:prop:transition-duration",
@@ -1190,6 +1205,11 @@
         "get": "gtk_stack_get_transition_type",
         "set": "gtk_stack_set_transition_type"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkStack:transition-type (Gtk 4 docs); P prop"
+      },
       "default": "none",
       "id": "svelters-api:v1:type:gtk:Gtk:Stack:prop:transition-type",
       "invocation": "reflected",
@@ -1230,6 +1250,11 @@
         "get": "gtk_stack_get_vhomogeneous",
         "set": "gtk_stack_set_vhomogeneous"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkStack:vhomogeneous (Gtk 4 docs); P prop"
+      },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Stack:prop:vhomogeneous",
       "invocation": "reflected",
@@ -1269,6 +1294,11 @@
       "accessors": {
         "get": "gtk_stack_get_visible_child",
         "set": "gtk_stack_set_visible_child"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkStack:visible-child (Gtk 4 docs); object reference, round trip"
       },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Stack:prop:visible-child",

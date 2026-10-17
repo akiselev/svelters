@@ -4,6 +4,76 @@
 use crate::testing::{on_gtk, Harness, V};
 use gtk::prelude::*;
 
+/// slot ActionBar.center: gir: gtk_action_bar_set_center_widget
+#[test]
+fn slot_actionbar_center() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("actionbar");
+        let a = h.create("label");
+        let b = h.create("label");
+        h.insert(parent, a, None, Some("center")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::ActionBar>().unwrap().center_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in center");
+        h.insert(parent, b, None, Some("center")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::ActionBar>().unwrap().center_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in center");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::ActionBar>().unwrap().center_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in center");
+        assert!(h.widget(a).parent().is_none(), "replaced child is released");
+        h.remove(parent, b).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::ActionBar>().unwrap().center_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in center");
+        h.remove(parent, a).unwrap_err();
+        h.insert(parent, a, None, Some("center")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::ActionBar>().unwrap().center_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in center");
+        h.remove(parent, a).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::ActionBar>().unwrap().center_widget().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in center");
+    });
+}
+
+/// slot ActionBar.end: gir: gtk_action_bar_pack_end; gir: gtk_action_bar_remove
+#[test]
+fn slot_actionbar_end() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("actionbar");
+        let a = h.create("label");
+        let b = h.create("label");
+        h.insert(parent, a, None, Some("end")).unwrap();
+        assert!((h.widget(a).ancestor(h.widget(parent).type_()).as_ref() == Some(&h.widget(parent))), "a in end");
+        h.insert(parent, b, None, Some("end")).unwrap();
+        assert!((h.widget(b).ancestor(h.widget(parent).type_()).as_ref() == Some(&h.widget(parent))), "b in end");
+        h.remove(parent, a).unwrap();
+        assert!(!(h.widget(a).ancestor(h.widget(parent).type_()).as_ref() == Some(&h.widget(parent))), "a in end");
+        assert!((h.widget(b).ancestor(h.widget(parent).type_()).as_ref() == Some(&h.widget(parent))), "b in end");
+        h.insert(parent, a, None, Some("end")).unwrap();
+        assert!((h.widget(a).ancestor(h.widget(parent).type_()).as_ref() == Some(&h.widget(parent))), "a in end");
+        h.remove(parent, a).unwrap();
+        h.remove(parent, b).unwrap();
+        assert!(!(h.widget(b).ancestor(h.widget(parent).type_()).as_ref() == Some(&h.widget(parent))), "b in end");
+    });
+}
+
+/// slot ActionBar.start: gir: gtk_action_bar_pack_start; gir: gtk_action_bar_remove
+#[test]
+fn slot_actionbar_start() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("actionbar");
+        let a = h.create("label");
+        let b = h.create("label");
+        h.insert(parent, a, None, Some("start")).unwrap();
+        assert!((h.widget(a).ancestor(h.widget(parent).type_()).as_ref() == Some(&h.widget(parent))), "a in start");
+        h.insert(parent, b, None, Some("start")).unwrap();
+        assert!((h.widget(b).ancestor(h.widget(parent).type_()).as_ref() == Some(&h.widget(parent))), "b in start");
+        h.remove(parent, a).unwrap();
+        assert!(!(h.widget(a).ancestor(h.widget(parent).type_()).as_ref() == Some(&h.widget(parent))), "a in start");
+        assert!((h.widget(b).ancestor(h.widget(parent).type_()).as_ref() == Some(&h.widget(parent))), "b in start");
+        h.insert(parent, a, None, Some("start")).unwrap();
+        assert!((h.widget(a).ancestor(h.widget(parent).type_()).as_ref() == Some(&h.widget(parent))), "a in start");
+        h.remove(parent, a).unwrap();
+        h.remove(parent, b).unwrap();
+        assert!(!(h.widget(b).ancestor(h.widget(parent).type_()).as_ref() == Some(&h.widget(parent))), "b in start");
+    });
+}
+
 /// slot AspectFrame.child: gir: gtk_aspect_frame_set_child
 #[test]
 fn slot_aspectframe_child() {
@@ -195,6 +265,33 @@ fn slot_fixed_children() {
         h.remove(parent, a).unwrap();
         h.remove(parent, b).unwrap();
         assert!(!(h.widget(b).parent().as_ref() == Some(&h.widget(parent))), "b in children");
+    });
+}
+
+/// slot FlowBox.children: gir: gtk_flow_box_insert; gir: gtk_flow_box_remove; manual: docs: the child is wrapped in a GtkFlowBoxChild
+#[test]
+fn slot_flowbox_children() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("flowbox");
+        let a = h.create("label");
+        let b = h.create("label");
+        let c = h.create("label");
+        h.insert(parent, a, None, Some("children")).unwrap();
+        assert!((h.widget(a).ancestor(h.widget(parent).type_()).as_ref() == Some(&h.widget(parent))), "a in children");
+        let pw = h.widget(parent);
+        let idx = |c: u64| -> Option<u32> { let parent = &pw; let w = h.widget(c); crate::util::direct_child_index(parent, &w) };
+        h.insert(parent, b, Some(a), Some("children")).unwrap();
+        h.insert(parent, c, None, None).unwrap();
+        assert!(idx(b) < idx(a) && idx(a) < idx(c), "order b a c: {:?}", (idx(b), idx(a), idx(c)));
+        h.remove(parent, a).unwrap();
+        assert!(!(h.widget(a).ancestor(h.widget(parent).type_()).as_ref() == Some(&h.widget(parent))), "a in children");
+        assert!(h.widget(a).parent().is_none());
+        h.insert(parent, a, Some(c), Some("children")).unwrap();
+        assert!(idx(b) < idx(a) && idx(a) < idx(c), "order b a c after re-insert");
+        for x in [a, b, c] { h.remove(parent, x).unwrap(); }
+        assert!(!(h.widget(a).ancestor(h.widget(parent).type_()).as_ref() == Some(&h.widget(parent))), "a in children");
+        assert!(!(h.widget(b).ancestor(h.widget(parent).type_()).as_ref() == Some(&h.widget(parent))), "b in children");
     });
 }
 
@@ -482,6 +579,30 @@ fn slot_paned_start() {
         assert!((h.widget(parent).downcast_ref::<gtk::Paned>().unwrap().start_child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in start");
         h.remove(parent, a).unwrap();
         assert!(!(h.widget(parent).downcast_ref::<gtk::Paned>().unwrap().start_child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in start");
+    });
+}
+
+/// slot Popover.child: gir: gtk_popover_set_child
+#[test]
+fn slot_popover_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("popover");
+        let a = h.create("label");
+        let b = h.create("label");
+        h.insert(parent, a, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::Popover>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
+        h.insert(parent, b, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::Popover>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Popover>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
+        assert!(h.widget(a).parent().is_none(), "replaced child is released");
+        h.remove(parent, b).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Popover>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in child");
+        h.remove(parent, a).unwrap_err();
+        h.insert(parent, a, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::Popover>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
+        h.remove(parent, a).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Popover>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
     });
 }
 
@@ -1179,6 +1300,126 @@ fn attr_stack_pages_useunderline() {
         assert!(h.set_child_attr(parent, c, "useUnderline", &V::Bool(true)).is_err(), "a removed child has no attributes");
         h.insert(parent, c, None, Some("pages")).unwrap();
         assert_eq!(h.get_child_attr(parent, c, "useUnderline"), V::Bool(false), "useUnderline is back to its default after remove + insert");
+    });
+}
+
+/// property AboutDialog.comments (JS comments): GtkAboutDialog:comments (Gtk 4 docs)
+#[test]
+fn prop_aboutdialog_comments() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("aboutdialog");
+        
+        let id = h.resolve_prop("aboutdialog", "comments");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("aboutdialog", "comments"));
+        h.set_str(o, "comments", "p3-sample").unwrap();
+        assert_eq!(h.get(o, "comments"), V::Str("p3-sample".into()));
+    });
+}
+
+/// property AboutDialog.copyright (JS copyright): GtkAboutDialog:copyright (Gtk 4 docs)
+#[test]
+fn prop_aboutdialog_copyright() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("aboutdialog");
+        
+        let id = h.resolve_prop("aboutdialog", "copyright");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("aboutdialog", "copyright"));
+        h.set_str(o, "copyright", "p3-sample").unwrap();
+        assert_eq!(h.get(o, "copyright"), V::Str("p3-sample".into()));
+    });
+}
+
+/// property AboutDialog.license-type (JS licenseType): GtkAboutDialog:license-type (Gtk 4 docs)
+#[test]
+fn prop_aboutdialog_license_type() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("aboutdialog");
+        
+        let id = h.resolve_prop("aboutdialog", "licenseType");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("aboutdialog", "license-type"));
+        h.set_str(o, "licenseType", "custom").unwrap();
+        assert_eq!(h.get(o, "licenseType"), V::Str("custom".into()));
+    });
+}
+
+/// property AboutDialog.program-name (JS programName): GtkAboutDialog:program-name (Gtk 4 docs)
+#[test]
+fn prop_aboutdialog_program_name() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("aboutdialog");
+        
+        let id = h.resolve_prop("aboutdialog", "programName");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("aboutdialog", "program-name"));
+        h.set_str(o, "programName", "p3-sample").unwrap();
+        assert_eq!(h.get(o, "programName"), V::Str("p3-sample".into()));
+    });
+}
+
+/// property AboutDialog.version (JS version): GtkAboutDialog:version (Gtk 4 docs)
+#[test]
+fn prop_aboutdialog_version() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("aboutdialog");
+        
+        let id = h.resolve_prop("aboutdialog", "version");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("aboutdialog", "version"));
+        h.set_str(o, "version", "p3-sample").unwrap();
+        assert_eq!(h.get(o, "version"), V::Str("p3-sample".into()));
+    });
+}
+
+/// property AboutDialog.website (JS website): GtkAboutDialog:website (Gtk 4 docs)
+#[test]
+fn prop_aboutdialog_website() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("aboutdialog");
+        
+        let id = h.resolve_prop("aboutdialog", "website");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("aboutdialog", "website"));
+        h.set_str(o, "website", "p3-sample").unwrap();
+        assert_eq!(h.get(o, "website"), V::Str("p3-sample".into()));
+    });
+}
+
+/// property AboutDialog.wrap-license (JS wrapLicense): GtkAboutDialog:wrap-license (Gtk 4 docs)
+#[test]
+fn prop_aboutdialog_wrap_license() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("aboutdialog");
+        
+        let id = h.resolve_prop("aboutdialog", "wrapLicense");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("aboutdialog", "wrap-license"));
+        h.set_bool(o, "wrapLicense", true).unwrap();
+        assert_eq!(h.get(o, "wrapLicense"), V::Bool(true));
+    });
+}
+
+/// property ActionBar.revealed (JS revealed): GtkActionBar:revealed (Gtk 4 docs); P prop
+#[test]
+fn prop_actionbar_revealed() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("actionbar");
+        
+        let id = h.resolve_prop("actionbar", "revealed");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("actionbar", "revealed"));
+        h.set_bool(o, "revealed", false).unwrap();
+        assert_eq!(h.get(o, "revealed"), V::Bool(false));
     });
 }
 
@@ -2351,6 +2592,37 @@ fn binding_editablelabel_editing() {
     });
 }
 
+/// signal EmojiChooser.emoji-picked: GtkEmojiChooser::emoji-picked, run-last, string arg (Gtk 4 docs)
+#[test]
+fn signal_emojichooser_emoji_picked() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("emojichooser");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            o.emit_by_name::<()>("emoji-picked", &[&"x"]);
+        };
+        assert_ne!(h.resolve_signal("emojichooser", "emoji-picked"), 0);
+        assert_eq!(h.resolve_signal("emojichooser", "emoji-picked"), h.resolve_signal("emojichooser", "emoji-picked"));
+        h.listen(e, "emoji-picked", true).unwrap();
+        fire(&h.obj(e), "1", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "emoji-picked".to_string())), "delivered: {ev:?}");
+        h.listen(e, "emoji-picked", false).unwrap();
+        fire(&h.obj(e), "2", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "emoji-picked", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "3", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "emoji-picked", true).is_err(), "stale handle is an error");
+    });
+}
+
 /// signal Entry.activate: GtkEntry::activate, action signal, void (Gtk 4 docs)
 #[test]
 fn signal_entry_activate() {
@@ -2738,6 +3010,158 @@ fn binding_expander_expanded() {
     });
 }
 
+/// signal FlowBox.child-activated: GtkFlowBox::child-activated, run-last, void; emitted by activating the FlowBoxChild (Gtk 4 docs)
+#[test]
+fn signal_flowbox_child_activated() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("flowbox");
+        let o = e;
+        let fb = h.obj(o).downcast::<gtk::FlowBox>().unwrap(); fb.insert(&gtk::Label::new(None), -1);
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            o.downcast_ref::<gtk::FlowBox>().unwrap().child_at_index(0).unwrap().emit_by_name::<()>("activate", &[]);
+        };
+        assert_ne!(h.resolve_signal("flowbox", "child-activated"), 0);
+        assert_eq!(h.resolve_signal("flowbox", "child-activated"), h.resolve_signal("flowbox", "child-activated"));
+        h.listen(e, "child-activated", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "child-activated".to_string())), "delivered: {ev:?}");
+        h.listen(e, "child-activated", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "child-activated", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "child-activated", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal FlowBox.selected-children-changed: GtkFlowBox::selected-children-changed, run-first, void (Gtk 4 docs)
+#[test]
+fn signal_flowbox_selected_children_changed() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("flowbox");
+        let o = e;
+        let fb = h.obj(o).downcast::<gtk::FlowBox>().unwrap(); fb.insert(&gtk::Label::new(None), -1); fb.insert(&gtk::Label::new(None), -1);
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let fb = o.downcast_ref::<gtk::FlowBox>().unwrap(); fb.select_child(&fb.child_at_index((i % 2) as i32).unwrap());
+        };
+        assert_ne!(h.resolve_signal("flowbox", "selected-children-changed"), 0);
+        assert_eq!(h.resolve_signal("flowbox", "selected-children-changed"), h.resolve_signal("flowbox", "selected-children-changed"));
+        h.listen(e, "selected-children-changed", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "selected-children-changed".to_string())), "delivered: {ev:?}");
+        h.listen(e, "selected-children-changed", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "selected-children-changed", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "selected-children-changed", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// property FlowBox.column-spacing (JS columnSpacing): GtkFlowBox:column-spacing (Gtk 4 docs); P prop
+#[test]
+fn prop_flowbox_column_spacing() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("flowbox");
+        
+        let id = h.resolve_prop("flowbox", "columnSpacing");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("flowbox", "column-spacing"));
+        h.set_i64(o, "columnSpacing", 7).unwrap();
+        assert_eq!(h.get(o, "columnSpacing"), V::I64(7));
+    });
+}
+
+/// property FlowBox.homogeneous (JS homogeneous): GtkFlowBox:homogeneous (Gtk 4 docs); P prop
+#[test]
+fn prop_flowbox_homogeneous() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("flowbox");
+        
+        let id = h.resolve_prop("flowbox", "homogeneous");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("flowbox", "homogeneous"));
+        h.set_bool(o, "homogeneous", true).unwrap();
+        assert_eq!(h.get(o, "homogeneous"), V::Bool(true));
+    });
+}
+
+/// property FlowBox.max-children-per-line (JS maxChildrenPerLine): GtkFlowBox:max-children-per-line (Gtk 4 docs); P prop
+#[test]
+fn prop_flowbox_max_children_per_line() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("flowbox");
+        
+        let id = h.resolve_prop("flowbox", "maxChildrenPerLine");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("flowbox", "max-children-per-line"));
+        h.set_i64(o, "maxChildrenPerLine", 1).unwrap();
+        assert_eq!(h.get(o, "maxChildrenPerLine"), V::I64(1));
+    });
+}
+
+/// property FlowBox.min-children-per-line (JS minChildrenPerLine): GtkFlowBox:min-children-per-line (Gtk 4 docs); P prop
+#[test]
+fn prop_flowbox_min_children_per_line() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("flowbox");
+        
+        let id = h.resolve_prop("flowbox", "minChildrenPerLine");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("flowbox", "min-children-per-line"));
+        h.set_i64(o, "minChildrenPerLine", 7).unwrap();
+        assert_eq!(h.get(o, "minChildrenPerLine"), V::I64(7));
+    });
+}
+
+/// property FlowBox.row-spacing (JS rowSpacing): GtkFlowBox:row-spacing (Gtk 4 docs); P prop
+#[test]
+fn prop_flowbox_row_spacing() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("flowbox");
+        
+        let id = h.resolve_prop("flowbox", "rowSpacing");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("flowbox", "row-spacing"));
+        h.set_i64(o, "rowSpacing", 7).unwrap();
+        assert_eq!(h.get(o, "rowSpacing"), V::I64(7));
+    });
+}
+
+/// property FlowBox.selection-mode (JS selectionMode): GtkFlowBox:selection-mode (Gtk 4 docs); P prop
+#[test]
+fn prop_flowbox_selection_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("flowbox");
+        
+        let id = h.resolve_prop("flowbox", "selectionMode");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("flowbox", "selection-mode"));
+        h.set_str(o, "selectionMode", "none").unwrap();
+        assert_eq!(h.get(o, "selectionMode"), V::Str("none".into()));
+    });
+}
+
 /// property Frame.label (JS label): GtkFrame:label (Gtk 4 docs); P prop
 #[test]
 fn prop_frame_label() {
@@ -2798,6 +3222,96 @@ fn prop_graphicsoffload_enabled() {
     });
 }
 
+/// property Grid.column-homogeneous (JS columnHomogeneous): GtkGrid:column-homogeneous (Gtk 4 docs); P prop
+#[test]
+fn prop_grid_column_homogeneous() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("grid");
+        
+        let id = h.resolve_prop("grid", "columnHomogeneous");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("grid", "column-homogeneous"));
+        h.set_bool(o, "columnHomogeneous", true).unwrap();
+        assert_eq!(h.get(o, "columnHomogeneous"), V::Bool(true));
+    });
+}
+
+/// property Grid.column-spacing (JS columnSpacing): GtkGrid:column-spacing (Gtk 4 docs); P prop
+#[test]
+fn prop_grid_column_spacing() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("grid");
+        
+        let id = h.resolve_prop("grid", "columnSpacing");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("grid", "column-spacing"));
+        h.set_i64(o, "columnSpacing", 7).unwrap();
+        assert_eq!(h.get(o, "columnSpacing"), V::I64(7));
+    });
+}
+
+/// property Grid.row-homogeneous (JS rowHomogeneous): GtkGrid:row-homogeneous (Gtk 4 docs); P prop
+#[test]
+fn prop_grid_row_homogeneous() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("grid");
+        
+        let id = h.resolve_prop("grid", "rowHomogeneous");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("grid", "row-homogeneous"));
+        h.set_bool(o, "rowHomogeneous", true).unwrap();
+        assert_eq!(h.get(o, "rowHomogeneous"), V::Bool(true));
+    });
+}
+
+/// property Grid.row-spacing (JS rowSpacing): GtkGrid:row-spacing (Gtk 4 docs); P prop
+#[test]
+fn prop_grid_row_spacing() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("grid");
+        
+        let id = h.resolve_prop("grid", "rowSpacing");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("grid", "row-spacing"));
+        h.set_i64(o, "rowSpacing", 7).unwrap();
+        assert_eq!(h.get(o, "rowSpacing"), V::I64(7));
+    });
+}
+
+/// property HeaderBar.decoration-layout (JS decorationLayout): GtkHeaderBar:decoration-layout (Gtk 4 docs)
+#[test]
+fn prop_headerbar_decoration_layout() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("headerbar");
+        
+        let id = h.resolve_prop("headerbar", "decorationLayout");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("headerbar", "decoration-layout"));
+        h.set_str(o, "decorationLayout", "menu:close").unwrap();
+        assert_eq!(h.get(o, "decorationLayout"), V::Str("menu:close".into()));
+    });
+}
+
+/// property HeaderBar.show-title-buttons (JS showTitleButtons): GtkHeaderBar:show-title-buttons (Gtk 4 docs)
+#[test]
+fn prop_headerbar_show_title_buttons() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("headerbar");
+        
+        let id = h.resolve_prop("headerbar", "showTitleButtons");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("headerbar", "show-title-buttons"));
+        h.set_bool(o, "showTitleButtons", false).unwrap();
+        assert_eq!(h.get(o, "showTitleButtons"), V::Bool(false));
+    });
+}
+
 /// property HeaderBar.title (JS title): GTK4 GtkHeaderBar has only title-widget; P1 fixtures emit 'set #h title'
 #[test]
 fn prop_headerbar_title() {
@@ -2812,6 +3326,21 @@ fn prop_headerbar_title() {
         assert_eq!(h.get(o, "title"), V::Str("p3-sample".into()));
         let w = h.obj(o).property::<Option<gtk::Widget>>("title-widget").unwrap();
         assert_eq!(w.downcast::<gtk::Label>().unwrap().label(), "p3-sample");
+    });
+}
+
+/// property HeaderBar.use-native-controls (JS useNativeControls): GtkHeaderBar:use-native-controls (Gtk 4.18 docs)
+#[test]
+fn prop_headerbar_use_native_controls() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("headerbar");
+        
+        let id = h.resolve_prop("headerbar", "useNativeControls");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("headerbar", "use-native-controls"));
+        h.set_bool(o, "useNativeControls", true).unwrap();
+        assert_eq!(h.get(o, "useNativeControls"), V::Bool(true));
     });
 }
 
@@ -3215,6 +3744,208 @@ fn method_label_set_text() {
     });
 }
 
+/// signal LevelBar.offset-changed: GtkLevelBar::offset-changed, run-first, detailed by offset name (Gtk 4 docs)
+#[test]
+fn signal_levelbar_offset_changed() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("levelbar");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            o.downcast_ref::<gtk::LevelBar>().unwrap().add_offset_value("svl-offset", 0.25 + i as f64 * 0.1);
+        };
+        assert_ne!(h.resolve_signal("levelbar", "offset-changed"), 0);
+        assert_eq!(h.resolve_signal("levelbar", "offset-changed"), h.resolve_signal("levelbar", "offset-changed"));
+        h.listen(e, "offset-changed", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "offset-changed".to_string())), "delivered: {ev:?}");
+        h.listen(e, "offset-changed", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "offset-changed", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "offset-changed", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal LevelBar.notify::value: GObject::notify for GtkLevelBar:value
+#[test]
+fn signal_levelbar_notify_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("levelbar");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("value", 0.5f64),
+                1 => o.set_property("value", 0.25f64),
+                2 => o.set_property("value", 0.75f64),
+                _ => unreachable!(),
+            }
+        };
+        assert_ne!(h.resolve_signal("levelbar", "notify::value"), 0);
+        assert_eq!(h.resolve_signal("levelbar", "notify::value"), h.resolve_signal("levelbar", "notify::value"));
+        h.listen(e, "notify::value", true).unwrap();
+        fire(&h.obj(e), "0.5", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "notify::value".to_string())), "delivered: {ev:?}");
+        h.listen(e, "notify::value", false).unwrap();
+        fire(&h.obj(e), "0.25", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "notify::value", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "0.75", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "notify::value", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// property LevelBar.inverted (JS inverted): GtkLevelBar:inverted (Gtk 4 docs)
+#[test]
+fn prop_levelbar_inverted() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("levelbar");
+        
+        let id = h.resolve_prop("levelbar", "inverted");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("levelbar", "inverted"));
+        h.set_bool(o, "inverted", true).unwrap();
+        assert_eq!(h.get(o, "inverted"), V::Bool(true));
+    });
+}
+
+/// property LevelBar.max-value (JS maxValue): GtkLevelBar:max-value (Gtk 4 docs)
+#[test]
+fn prop_levelbar_max_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("levelbar");
+        
+        let id = h.resolve_prop("levelbar", "maxValue");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("levelbar", "max-value"));
+        h.set_f64(o, "maxValue", 0.5).unwrap();
+        assert_eq!(h.get(o, "maxValue"), V::F64(0.5));
+    });
+}
+
+/// property LevelBar.min-value (JS minValue): GtkLevelBar:min-value (Gtk 4 docs)
+#[test]
+fn prop_levelbar_min_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("levelbar");
+        
+        let id = h.resolve_prop("levelbar", "minValue");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("levelbar", "min-value"));
+        h.set_f64(o, "minValue", 0.5).unwrap();
+        assert_eq!(h.get(o, "minValue"), V::F64(0.5));
+    });
+}
+
+/// property LevelBar.mode (JS mode): GtkLevelBar:mode, GtkLevelBarMode (Gtk 4 docs)
+#[test]
+fn prop_levelbar_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("levelbar");
+        
+        let id = h.resolve_prop("levelbar", "mode");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("levelbar", "mode"));
+        h.set_str(o, "mode", "discrete").unwrap();
+        assert_eq!(h.get(o, "mode"), V::Str("discrete".into()));
+    });
+}
+
+/// property LevelBar.value (JS value): GtkLevelBar:value (Gtk 4 docs)
+#[test]
+fn prop_levelbar_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("levelbar");
+        
+        let id = h.resolve_prop("levelbar", "value");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("levelbar", "value"));
+        h.set_f64(o, "value", 0.5).unwrap();
+        assert_eq!(h.get(o, "value"), V::F64(0.5));
+    });
+}
+
+/// echo suppression for LevelBar.value: programmatic sets do not reach listeners, native edits do.
+#[test]
+fn echo_levelbar_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("levelbar");
+        
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("value", 0.5f64),
+                1 => o.set_property("value", 0.25f64),
+                2 => o.set_property("value", 0.75f64),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::value", true).unwrap();
+        h.set_f64(o, "value", 0.5).unwrap();
+        assert!(h.take_events().is_empty(), "programmatic set is suppressed");
+        fire(&h.obj(o), "0.25", 1);
+        let mut got: Vec<String> = h.take_events().into_iter().map(|(_, s)| s).collect();
+        got.sort();
+        got.dedup();
+        let mut want: Vec<String> = ["notify::value"].iter().map(|s| s.to_string()).collect();
+        want.sort();
+        assert_eq!(got, want, "native edit still delivers");
+        h.set_f64(o, "value", 0.5).unwrap();
+        assert!(h.take_events().is_empty(), "handlers are unblocked after a programmatic set, and the next set is suppressed again");
+    });
+}
+
+/// bind:value on LevelBar: gtk_level_bar_set_value notifies only on change (Gtk 4 docs)
+#[test]
+fn binding_levelbar_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("levelbar");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("value", 0.5f64),
+                1 => o.set_property("value", 0.25f64),
+                2 => o.set_property("value", 0.75f64),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::value", true).unwrap();
+        fire(&h.obj(o), "0.5", 0);
+        fire(&h.obj(o), "0.25", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_ne!(h.get(o, "value"), V::Null, "the property reads the new value");
+    });
+}
+
 /// signal LinkButton.activate-link: GtkLinkButton::activate-link, run-last, returns gboolean (Gtk 4 docs); X2 sync handler
 #[test]
 fn signal_linkbutton_activate_link() {
@@ -3287,6 +4018,113 @@ fn method_linkbutton_set_visited() {
         let w = h.widget(o);
         let _ = (&w, &r);
         assert!(h.get(o, "visited") == V::Bool(true), "postcondition: h.get(o, 'visited') == V::Bool(true)");
+    });
+}
+
+/// signal ListBox.row-activated: GtkListBox::row-activated, run-last, void; emitted by activating the row (Gtk 4 docs)
+#[test]
+fn signal_listbox_row_activated() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("listbox");
+        let o = e;
+        let lb = h.obj(o).downcast::<gtk::ListBox>().unwrap(); lb.append(&gtk::Label::new(None));
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            o.downcast_ref::<gtk::ListBox>().unwrap().row_at_index(0).unwrap().emit_by_name::<()>("activate", &[]);
+        };
+        assert_ne!(h.resolve_signal("listbox", "row-activated"), 0);
+        assert_eq!(h.resolve_signal("listbox", "row-activated"), h.resolve_signal("listbox", "row-activated"));
+        h.listen(e, "row-activated", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "row-activated".to_string())), "delivered: {ev:?}");
+        h.listen(e, "row-activated", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "row-activated", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "row-activated", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal ListBox.row-selected: GtkListBox::row-selected, run-first, void (Gtk 4 docs)
+#[test]
+fn signal_listbox_row_selected() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("listbox");
+        let o = e;
+        let lb = h.obj(o).downcast::<gtk::ListBox>().unwrap(); lb.append(&gtk::Label::new(None)); lb.append(&gtk::Label::new(None));
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let lb = o.downcast_ref::<gtk::ListBox>().unwrap(); lb.select_row(lb.row_at_index((i % 2) as i32).as_ref());
+        };
+        assert_ne!(h.resolve_signal("listbox", "row-selected"), 0);
+        assert_eq!(h.resolve_signal("listbox", "row-selected"), h.resolve_signal("listbox", "row-selected"));
+        h.listen(e, "row-selected", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "row-selected".to_string())), "delivered: {ev:?}");
+        h.listen(e, "row-selected", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "row-selected", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "row-selected", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// property ListBox.activate-on-single-click (JS activateOnSingleClick): GtkListBox:activate-on-single-click (Gtk 4 docs); P prop
+#[test]
+fn prop_listbox_activate_on_single_click() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("listbox");
+        
+        let id = h.resolve_prop("listbox", "activateOnSingleClick");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("listbox", "activate-on-single-click"));
+        h.set_bool(o, "activateOnSingleClick", false).unwrap();
+        assert_eq!(h.get(o, "activateOnSingleClick"), V::Bool(false));
+    });
+}
+
+/// property ListBox.selection-mode (JS selectionMode): GtkListBox:selection-mode (Gtk 4 docs); P prop
+#[test]
+fn prop_listbox_selection_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("listbox");
+        
+        let id = h.resolve_prop("listbox", "selectionMode");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("listbox", "selection-mode"));
+        h.set_str(o, "selectionMode", "none").unwrap();
+        assert_eq!(h.get(o, "selectionMode"), V::Str("none".into()));
+    });
+}
+
+/// property ListBox.show-separators (JS showSeparators): GtkListBox:show-separators (Gtk 4 docs); P prop
+#[test]
+fn prop_listbox_show_separators() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("listbox");
+        
+        let id = h.resolve_prop("listbox", "showSeparators");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("listbox", "show-separators"));
+        h.set_bool(o, "showSeparators", true).unwrap();
+        assert_eq!(h.get(o, "showSeparators"), V::Bool(true));
     });
 }
 
@@ -3555,6 +4393,191 @@ fn method_menubutton_set_direction() {
         let w = h.widget(o);
         let _ = (&w, &r);
         assert!(h.get(o, "direction") == V::Str("up".into()), "postcondition: h.get(o, 'direction') == V::Str('up'.into())");
+    });
+}
+
+/// signal Notebook.switch-page: GtkNotebook::switch-page, run-last, void (Gtk 4 docs)
+#[test]
+fn signal_notebook_switch_page() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("notebook");
+        let o = e;
+        let nb = h.obj(o).downcast::<gtk::Notebook>().unwrap(); for _ in 0..3 { nb.append_page(&gtk::Label::new(None), None::<&gtk::Widget>); } nb.set_current_page(Some(0));
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let nb = o.downcast_ref::<gtk::Notebook>().unwrap(); while nb.n_pages() < 3 { nb.append_page(&gtk::Label::new(None), None::<&gtk::Widget>); } nb.set_current_page(Some(((i + 1) % 3) as u32));
+        };
+        assert_ne!(h.resolve_signal("notebook", "switch-page"), 0);
+        assert_eq!(h.resolve_signal("notebook", "switch-page"), h.resolve_signal("notebook", "switch-page"));
+        h.listen(e, "switch-page", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "switch-page".to_string())), "delivered: {ev:?}");
+        h.listen(e, "switch-page", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "switch-page", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "switch-page", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal Notebook.notify::page: GObject::notify for GtkNotebook:page
+#[test]
+fn signal_notebook_notify_page() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("notebook");
+        let o = e;
+        let nb = h.obj(o).downcast::<gtk::Notebook>().unwrap(); for _ in 0..3 { nb.append_page(&gtk::Label::new(None), None::<&gtk::Widget>); } nb.set_current_page(Some(0));
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let nb = o.downcast_ref::<gtk::Notebook>().unwrap(); while nb.n_pages() < 3 { nb.append_page(&gtk::Label::new(None), None::<&gtk::Widget>); } nb.set_current_page(Some(((i + 1) % 3) as u32));
+        };
+        assert_ne!(h.resolve_signal("notebook", "notify::page"), 0);
+        assert_eq!(h.resolve_signal("notebook", "notify::page"), h.resolve_signal("notebook", "notify::page"));
+        h.listen(e, "notify::page", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "notify::page".to_string())), "delivered: {ev:?}");
+        h.listen(e, "notify::page", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "notify::page", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "notify::page", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// property Notebook.page (JS page): GtkNotebook:page (Gtk 4 docs); needs pages, set up in the test
+#[test]
+fn prop_notebook_page() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("notebook");
+        let nb = h.obj(o).downcast::<gtk::Notebook>().unwrap(); for _ in 0..8 { nb.append_page(&gtk::Label::new(None), None::<&gtk::Widget>); }
+        let id = h.resolve_prop("notebook", "page");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("notebook", "page"));
+        h.set_i64(o, "page", 7).unwrap();
+        assert_eq!(h.get(o, "page"), V::I64(7));
+    });
+}
+
+/// echo suppression for Notebook.page: programmatic sets do not reach listeners, native edits do.
+#[test]
+fn echo_notebook_page() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("notebook");
+        let nb = h.obj(o).downcast::<gtk::Notebook>().unwrap(); for _ in 0..8 { nb.append_page(&gtk::Label::new(None), None::<&gtk::Widget>); }
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let nb = o.downcast_ref::<gtk::Notebook>().unwrap(); while nb.n_pages() < 3 { nb.append_page(&gtk::Label::new(None), None::<&gtk::Widget>); } nb.set_current_page(Some(((i + 1) % 3) as u32));
+        };
+        h.listen(o, "notify::page", true).unwrap();
+        h.listen(o, "switch-page", true).unwrap();
+        h.set_i64(o, "page", 7).unwrap();
+        assert!(h.take_events().is_empty(), "programmatic set is suppressed");
+        fire(&h.obj(o), "b", 1);
+        let mut got: Vec<String> = h.take_events().into_iter().map(|(_, s)| s).collect();
+        got.sort();
+        got.dedup();
+        let mut want: Vec<String> = ["notify::page", "switch-page"].iter().map(|s| s.to_string()).collect();
+        want.sort();
+        assert_eq!(got, want, "native edit still delivers");
+        h.set_i64(o, "page", 7).unwrap();
+        assert!(h.take_events().is_empty(), "handlers are unblocked after a programmatic set, and the next set is suppressed again");
+    });
+}
+
+/// property Notebook.scrollable (JS scrollable): GtkNotebook:scrollable (Gtk 4 docs); P prop
+#[test]
+fn prop_notebook_scrollable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("notebook");
+        
+        let id = h.resolve_prop("notebook", "scrollable");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("notebook", "scrollable"));
+        h.set_bool(o, "scrollable", true).unwrap();
+        assert_eq!(h.get(o, "scrollable"), V::Bool(true));
+    });
+}
+
+/// property Notebook.show-border (JS showBorder): GtkNotebook:show-border (Gtk 4 docs); P prop
+#[test]
+fn prop_notebook_show_border() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("notebook");
+        
+        let id = h.resolve_prop("notebook", "showBorder");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("notebook", "show-border"));
+        h.set_bool(o, "showBorder", false).unwrap();
+        assert_eq!(h.get(o, "showBorder"), V::Bool(false));
+    });
+}
+
+/// property Notebook.show-tabs (JS showTabs): GtkNotebook:show-tabs (Gtk 4 docs); P prop
+#[test]
+fn prop_notebook_show_tabs() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("notebook");
+        
+        let id = h.resolve_prop("notebook", "showTabs");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("notebook", "show-tabs"));
+        h.set_bool(o, "showTabs", false).unwrap();
+        assert_eq!(h.get(o, "showTabs"), V::Bool(false));
+    });
+}
+
+/// property Notebook.tab-pos (JS tabPos): GtkNotebook:tab-pos (Gtk 4 docs); P prop
+#[test]
+fn prop_notebook_tab_pos() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("notebook");
+        
+        let id = h.resolve_prop("notebook", "tabPos");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("notebook", "tab-pos"));
+        h.set_str(o, "tabPos", "left").unwrap();
+        assert_eq!(h.get(o, "tabPos"), V::Str("left".into()));
+    });
+}
+
+/// bind:page on Notebook: set_current_page emits switch-page and notify::page only on change (Gtk 4 docs)
+#[test]
+fn binding_notebook_page() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("notebook");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let nb = o.downcast_ref::<gtk::Notebook>().unwrap(); while nb.n_pages() < 3 { nb.append_page(&gtk::Label::new(None), None::<&gtk::Widget>); } nb.set_current_page(Some(((i + 1) % 3) as u32));
+        };
+        h.listen(o, "notify::page", true).unwrap();
+        fire(&h.obj(o), "a", 0);
+        fire(&h.obj(o), "b", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_ne!(h.get(o, "page"), V::Null, "the property reads the new value");
     });
 }
 
@@ -3849,6 +4872,407 @@ fn prop_picture_keep_aspect_ratio() {
     });
 }
 
+/// signal Popover.activate-default: GtkPopover::activate-default, action signal (Gtk 4 docs)
+#[test]
+fn signal_popover_activate_default() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("popover");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v; o.emit_by_name::<()>("activate-default", &[]);
+        };
+        assert_ne!(h.resolve_signal("popover", "activate-default"), 0);
+        assert_eq!(h.resolve_signal("popover", "activate-default"), h.resolve_signal("popover", "activate-default"));
+        h.listen(e, "activate-default", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "activate-default".to_string())), "delivered: {ev:?}");
+        h.listen(e, "activate-default", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "activate-default", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "activate-default", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal Popover.closed: GtkPopover::closed, run-last, void (Gtk 4 docs)
+#[test]
+fn signal_popover_closed() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("popover");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            o.emit_by_name::<()>("closed", &[]);
+        };
+        assert_ne!(h.resolve_signal("popover", "closed"), 0);
+        assert_eq!(h.resolve_signal("popover", "closed"), h.resolve_signal("popover", "closed"));
+        h.listen(e, "closed", true).unwrap();
+        fire(&h.obj(e), "1", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "closed".to_string())), "delivered: {ev:?}");
+        h.listen(e, "closed", false).unwrap();
+        fire(&h.obj(e), "2", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "closed", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "3", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "closed", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// property Popover.autohide (JS autohide): GtkPopover:autohide (Gtk 4 docs)
+#[test]
+fn prop_popover_autohide() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("popover");
+        
+        let id = h.resolve_prop("popover", "autohide");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("popover", "autohide"));
+        h.set_bool(o, "autohide", false).unwrap();
+        assert_eq!(h.get(o, "autohide"), V::Bool(false));
+    });
+}
+
+/// property Popover.cascade-popdown (JS cascadePopdown): GtkPopover:cascade-popdown (Gtk 4 docs)
+#[test]
+fn prop_popover_cascade_popdown() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("popover");
+        
+        let id = h.resolve_prop("popover", "cascadePopdown");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("popover", "cascade-popdown"));
+        h.set_bool(o, "cascadePopdown", true).unwrap();
+        assert_eq!(h.get(o, "cascadePopdown"), V::Bool(true));
+    });
+}
+
+/// property Popover.has-arrow (JS hasArrow): GtkPopover:has-arrow (Gtk 4 docs)
+#[test]
+fn prop_popover_has_arrow() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("popover");
+        
+        let id = h.resolve_prop("popover", "hasArrow");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("popover", "has-arrow"));
+        h.set_bool(o, "hasArrow", false).unwrap();
+        assert_eq!(h.get(o, "hasArrow"), V::Bool(false));
+    });
+}
+
+/// property Popover.position (JS position): GtkPopover:position (Gtk 4 docs); PositionType nick
+#[test]
+fn prop_popover_position() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("popover");
+        
+        let id = h.resolve_prop("popover", "position");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("popover", "position"));
+        h.set_str(o, "position", "left").unwrap();
+        assert_eq!(h.get(o, "position"), V::Str("left".into()));
+    });
+}
+
+/// method Popover.popdown: gtk_popover_popdown (Gtk 4 docs)
+#[test]
+fn method_popover_popdown() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("popover");
+        let b = gtk::Button::new(); let win = gtk::Window::new(); win.set_child(Some(&b)); win.present(); h.widget(o).set_parent(&b); std::mem::forget(win); h.widget(o).downcast_ref::<gtk::Popover>().unwrap().popup();
+        h.call(o, "popdown").unwrap();
+        let w = h.widget(o);
+        let _ = &w;
+        assert!(!w.is_visible(), "postcondition: !w.is_visible()");
+    });
+}
+
+/// method Popover.popup: gtk_popover_popup (Gtk 4 docs)
+#[test]
+fn method_popover_popup() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("popover");
+        let b = gtk::Button::new(); let win = gtk::Window::new(); win.set_child(Some(&b)); win.present(); h.widget(o).set_parent(&b); std::mem::forget(win);
+        h.call(o, "popup").unwrap();
+        let w = h.widget(o);
+        let _ = &w;
+        assert!(w.is_visible(), "postcondition: w.is_visible()");
+    });
+}
+
+/// property ProgressBar.ellipsize (JS ellipsize): GtkProgressBar:ellipsize, PangoEllipsizeMode (Gtk 4 docs)
+#[test]
+fn prop_progressbar_ellipsize() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("progressbar");
+        
+        let id = h.resolve_prop("progressbar", "ellipsize");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("progressbar", "ellipsize"));
+        h.set_str(o, "ellipsize", "start").unwrap();
+        assert_eq!(h.get(o, "ellipsize"), V::Str("start".into()));
+    });
+}
+
+/// property ProgressBar.fraction (JS fraction): GtkProgressBar:fraction, 0..1 (Gtk 4 docs)
+#[test]
+fn prop_progressbar_fraction() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("progressbar");
+        
+        let id = h.resolve_prop("progressbar", "fraction");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("progressbar", "fraction"));
+        h.set_f64(o, "fraction", 0.5).unwrap();
+        assert_eq!(h.get(o, "fraction"), V::F64(0.5));
+    });
+}
+
+/// property ProgressBar.inverted (JS inverted): GtkProgressBar:inverted (Gtk 4 docs)
+#[test]
+fn prop_progressbar_inverted() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("progressbar");
+        
+        let id = h.resolve_prop("progressbar", "inverted");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("progressbar", "inverted"));
+        h.set_bool(o, "inverted", true).unwrap();
+        assert_eq!(h.get(o, "inverted"), V::Bool(true));
+    });
+}
+
+/// property ProgressBar.pulse-step (JS pulseStep): GtkProgressBar:pulse-step, 0..1 (Gtk 4 docs)
+#[test]
+fn prop_progressbar_pulse_step() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("progressbar");
+        
+        let id = h.resolve_prop("progressbar", "pulseStep");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("progressbar", "pulse-step"));
+        h.set_f64(o, "pulseStep", 0.5).unwrap();
+        assert_eq!(h.get(o, "pulseStep"), V::F64(0.5));
+    });
+}
+
+/// property ProgressBar.show-text (JS showText): GtkProgressBar:show-text (Gtk 4 docs)
+#[test]
+fn prop_progressbar_show_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("progressbar");
+        
+        let id = h.resolve_prop("progressbar", "showText");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("progressbar", "show-text"));
+        h.set_bool(o, "showText", true).unwrap();
+        assert_eq!(h.get(o, "showText"), V::Bool(true));
+    });
+}
+
+/// property ProgressBar.text (JS text): GtkProgressBar:text (Gtk 4 docs)
+#[test]
+fn prop_progressbar_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("progressbar");
+        
+        let id = h.resolve_prop("progressbar", "text");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("progressbar", "text"));
+        h.set_str(o, "text", "p3-sample").unwrap();
+        assert_eq!(h.get(o, "text"), V::Str("p3-sample".into()));
+    });
+}
+
+/// method ProgressBar.pulse: gtk_progress_bar_pulse (Gtk 4 docs); no readable state, postcondition only checks the call succeeds
+#[test]
+fn method_progressbar_pulse() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("progressbar");
+        
+        h.call(o, "pulse").unwrap();
+        let w = h.widget(o);
+        let _ = &w;
+        assert!(true, "postcondition: true");
+    });
+}
+
+/// signal Range.value-changed: GtkRange::value-changed, run-last, void (Gtk 4 docs)
+#[test]
+fn signal_range_value_changed() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("range");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let r = o.downcast_ref::<gtk::Range>().unwrap(); r.set_range(0.0, 100.0); r.set_value(10.0 + i as f64);
+        };
+        assert_ne!(h.resolve_signal("range", "value-changed"), 0);
+        assert_eq!(h.resolve_signal("range", "value-changed"), h.resolve_signal("range", "value-changed"));
+        h.listen(e, "value-changed", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "value-changed".to_string())), "delivered: {ev:?}");
+        h.listen(e, "value-changed", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "value-changed", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "value-changed", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// property Range.fill-level (JS fillLevel): GtkRange:fill-level (Gtk 4 docs); needs a non-empty adjustment range
+#[test]
+fn prop_range_fill_level() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        h.call_args(o, "set_range", &[V::F64(0.0), V::F64(100.0)]).unwrap();
+        let id = h.resolve_prop("range", "fillLevel");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("range", "fill-level"));
+        h.set_f64(o, "fillLevel", 50.0).unwrap();
+        assert_eq!(h.get(o, "fillLevel"), V::F64(50.0));
+    });
+}
+
+/// property Range.inverted (JS inverted): GtkRange:inverted (Gtk 4 docs)
+#[test]
+fn prop_range_inverted() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        
+        let id = h.resolve_prop("range", "inverted");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("range", "inverted"));
+        h.set_bool(o, "inverted", true).unwrap();
+        assert_eq!(h.get(o, "inverted"), V::Bool(true));
+    });
+}
+
+/// property Range.restrict-to-fill-level (JS restrictToFillLevel): GtkRange:restrict-to-fill-level (Gtk 4 docs)
+#[test]
+fn prop_range_restrict_to_fill_level() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        
+        let id = h.resolve_prop("range", "restrictToFillLevel");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("range", "restrict-to-fill-level"));
+        h.set_bool(o, "restrictToFillLevel", false).unwrap();
+        assert_eq!(h.get(o, "restrictToFillLevel"), V::Bool(false));
+    });
+}
+
+/// property Range.show-fill-level (JS showFillLevel): GtkRange:show-fill-level (Gtk 4 docs)
+#[test]
+fn prop_range_show_fill_level() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        
+        let id = h.resolve_prop("range", "showFillLevel");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("range", "show-fill-level"));
+        h.set_bool(o, "showFillLevel", true).unwrap();
+        assert_eq!(h.get(o, "showFillLevel"), V::Bool(true));
+    });
+}
+
+/// method Range.get_value (dynamic GI call): gtk_range_get_value (Gtk 4 docs); f64 return through GIRepository (X1)
+#[test]
+fn method_range_get_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        h.call_args(o, "set_range", &[V::F64(0.0), V::F64(100.0)]).unwrap(); h.call_args(o, "set_value", &[V::F64(7.0)]).unwrap();
+        let r = h.call_args(o, "get_value", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::F64(7.0), "postcondition: r == V::F64(7.0)");
+    });
+}
+
+/// method Range.set_increments (dynamic GI call): gtk_range_set_increments writes the adjustment's step and page increments (Gtk 4 docs)
+#[test]
+fn method_range_set_increments() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        
+        let r = h.call_args(o, "set_increments", &[V::F64(2.0), V::F64(20.0)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(w.downcast_ref::<gtk::Range>().unwrap().adjustment().step_increment() == 2.0 && w.downcast_ref::<gtk::Range>().unwrap().adjustment().page_increment() == 20.0, "postcondition: w.downcast_ref::<gtk::Range>().unwrap().adjustment().step_increment() == 2.0 && w.downcast_ref::<gtk::Range>().unwrap().adjustment().page_increment() == 20.0");
+    });
+}
+
+/// method Range.set_range (dynamic GI call): gtk_range_set_range clamps the value into the new range (Gtk 4 docs); called through GIRepository (X1)
+#[test]
+fn method_range_set_range() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        
+        let r = h.call_args(o, "set_range", &[V::F64(10.0), V::F64(100.0)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.call_args(o, "get_value", &[]).unwrap() == V::F64(10.0), "postcondition: h.call_args(o, 'get_value', &[]).unwrap() == V::F64(10.0)");
+    });
+}
+
+/// method Range.set_value (dynamic GI call): gtk_range_set_value (Gtk 4 docs); called through GIRepository (X1)
+#[test]
+fn method_range_set_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        h.call_args(o, "set_range", &[V::F64(0.0), V::F64(100.0)]).unwrap();
+        let r = h.call_args(o, "set_value", &[V::F64(42.0)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.call_args(o, "get_value", &[]).unwrap() == V::F64(42.0), "postcondition: h.call_args(o, 'get_value', &[]).unwrap() == V::F64(42.0)");
+    });
+}
+
 /// property Revealer.reveal-child (JS revealChild): GtkRevealer:reveal-child (Gtk 4 docs); P prop
 #[test]
 fn prop_revealer_reveal_child() {
@@ -3891,6 +5315,66 @@ fn prop_revealer_transition_type() {
         assert_eq!(id, h.resolve_prop("revealer", "transition-type"));
         h.set_str(o, "transitionType", "none").unwrap();
         assert_eq!(h.get(o, "transitionType"), V::Str("none".into()));
+    });
+}
+
+/// property Scale.digits (JS digits): GtkScale:digits, -1..64 (Gtk 4 docs)
+#[test]
+fn prop_scale_digits() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scale");
+        
+        let id = h.resolve_prop("scale", "digits");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("scale", "digits"));
+        h.set_i64(o, "digits", 7).unwrap();
+        assert_eq!(h.get(o, "digits"), V::I64(7));
+    });
+}
+
+/// property Scale.draw-value (JS drawValue): GtkScale:draw-value (Gtk 4 docs)
+#[test]
+fn prop_scale_draw_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scale");
+        
+        let id = h.resolve_prop("scale", "drawValue");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("scale", "draw-value"));
+        h.set_bool(o, "drawValue", true).unwrap();
+        assert_eq!(h.get(o, "drawValue"), V::Bool(true));
+    });
+}
+
+/// property Scale.has-origin (JS hasOrigin): GtkScale:has-origin (Gtk 4 docs)
+#[test]
+fn prop_scale_has_origin() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scale");
+        
+        let id = h.resolve_prop("scale", "hasOrigin");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("scale", "has-origin"));
+        h.set_bool(o, "hasOrigin", false).unwrap();
+        assert_eq!(h.get(o, "hasOrigin"), V::Bool(false));
+    });
+}
+
+/// property Scale.value-pos (JS valuePos): GtkScale:value-pos, GtkPositionType (Gtk 4 docs)
+#[test]
+fn prop_scale_value_pos() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scale");
+        
+        let id = h.resolve_prop("scale", "valuePos");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("scale", "value-pos"));
+        h.set_str(o, "valuePos", "left").unwrap();
+        assert_eq!(h.get(o, "valuePos"), V::Str("left".into()));
     });
 }
 
@@ -3952,6 +5436,19 @@ fn prop_scalebutton_value() {
         assert_eq!(id, h.resolve_prop("scalebutton", "value"));
         h.set_f64(o, "value", 42.5).unwrap();
         assert_eq!(h.get(o, "value"), V::F64(42.5));
+    });
+}
+
+/// property Scrollbar.adjustment (JS adjustment, round trip): GtkScrollbar:adjustment (Gtk 4 docs); object property, handle round-trip
+#[test]
+fn prop_scrollbar_adjustment() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrollbar");
+        
+        let before = h.get_value(o, "adjustment");
+        h.set_value(o, "adjustment", &before).unwrap();
+        assert_eq!(format!("{:?}", h.get_value(o, "adjustment")), format!("{:?}", before));
     });
 }
 
@@ -4355,6 +5852,308 @@ fn prop_shortcutlabel_accelerator() {
     });
 }
 
+/// signal SpinButton.value-changed: GtkSpinButton::value-changed, run-last, void (Gtk 4 docs)
+#[test]
+fn signal_spinbutton_value_changed() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("spinbutton");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let s = o.downcast_ref::<gtk::SpinButton>().unwrap(); s.set_range(0.0, 100.0); s.set_value(10.0 + i as f64);
+        };
+        assert_ne!(h.resolve_signal("spinbutton", "value-changed"), 0);
+        assert_eq!(h.resolve_signal("spinbutton", "value-changed"), h.resolve_signal("spinbutton", "value-changed"));
+        h.listen(e, "value-changed", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "value-changed".to_string())), "delivered: {ev:?}");
+        h.listen(e, "value-changed", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "value-changed", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "value-changed", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal SpinButton.wrapped: GtkSpinButton::wrapped, run-last, void (Gtk 4 docs); emitted when a wrapping spin goes past the end
+#[test]
+fn signal_spinbutton_wrapped() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("spinbutton");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let s = o.downcast_ref::<gtk::SpinButton>().unwrap(); s.set_wrap(true); s.set_range(0.0, 10.0); s.set_value(10.0); s.spin(gtk::SpinType::StepForward, 1.0);
+        };
+        assert_ne!(h.resolve_signal("spinbutton", "wrapped"), 0);
+        assert_eq!(h.resolve_signal("spinbutton", "wrapped"), h.resolve_signal("spinbutton", "wrapped"));
+        h.listen(e, "wrapped", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "wrapped".to_string())), "delivered: {ev:?}");
+        h.listen(e, "wrapped", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "wrapped", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "wrapped", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal SpinButton.notify::value: GObject::notify for GtkSpinButton:value
+#[test]
+fn signal_spinbutton_notify_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("spinbutton");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let s = o.downcast_ref::<gtk::SpinButton>().unwrap(); s.set_range(0.0, 100.0); s.set_value(10.0 + i as f64);
+        };
+        assert_ne!(h.resolve_signal("spinbutton", "notify::value"), 0);
+        assert_eq!(h.resolve_signal("spinbutton", "notify::value"), h.resolve_signal("spinbutton", "notify::value"));
+        h.listen(e, "notify::value", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "notify::value".to_string())), "delivered: {ev:?}");
+        h.listen(e, "notify::value", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "notify::value", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "notify::value", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// property SpinButton.climb-rate (JS climbRate): GtkSpinButton:climb-rate (Gtk 4 docs)
+#[test]
+fn prop_spinbutton_climb_rate() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spinbutton");
+        
+        let id = h.resolve_prop("spinbutton", "climbRate");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("spinbutton", "climb-rate"));
+        h.set_f64(o, "climbRate", 0.5).unwrap();
+        assert_eq!(h.get(o, "climbRate"), V::F64(0.5));
+    });
+}
+
+/// property SpinButton.digits (JS digits): GtkSpinButton:digits, 0..20 (Gtk 4 docs)
+#[test]
+fn prop_spinbutton_digits() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spinbutton");
+        
+        let id = h.resolve_prop("spinbutton", "digits");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("spinbutton", "digits"));
+        h.set_i64(o, "digits", 7).unwrap();
+        assert_eq!(h.get(o, "digits"), V::I64(7));
+    });
+}
+
+/// property SpinButton.numeric (JS numeric): GtkSpinButton:numeric (Gtk 4 docs)
+#[test]
+fn prop_spinbutton_numeric() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spinbutton");
+        
+        let id = h.resolve_prop("spinbutton", "numeric");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("spinbutton", "numeric"));
+        h.set_bool(o, "numeric", true).unwrap();
+        assert_eq!(h.get(o, "numeric"), V::Bool(true));
+    });
+}
+
+/// property SpinButton.snap-to-ticks (JS snapToTicks): GtkSpinButton:snap-to-ticks (Gtk 4 docs)
+#[test]
+fn prop_spinbutton_snap_to_ticks() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spinbutton");
+        
+        let id = h.resolve_prop("spinbutton", "snapToTicks");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("spinbutton", "snap-to-ticks"));
+        h.set_bool(o, "snapToTicks", true).unwrap();
+        assert_eq!(h.get(o, "snapToTicks"), V::Bool(true));
+    });
+}
+
+/// property SpinButton.update-policy (JS updatePolicy): GtkSpinButton:update-policy, GtkSpinButtonUpdatePolicy (Gtk 4 docs)
+#[test]
+fn prop_spinbutton_update_policy() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spinbutton");
+        
+        let id = h.resolve_prop("spinbutton", "updatePolicy");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("spinbutton", "update-policy"));
+        h.set_str(o, "updatePolicy", "if-valid").unwrap();
+        assert_eq!(h.get(o, "updatePolicy"), V::Str("if-valid".into()));
+    });
+}
+
+/// property SpinButton.value (JS value): GtkSpinButton:value (Gtk 4 docs); needs a non-empty adjustment range
+#[test]
+fn prop_spinbutton_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spinbutton");
+        h.call_args(o, "set_range", &[V::F64(0.0), V::F64(100.0)]).unwrap();
+        let id = h.resolve_prop("spinbutton", "value");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("spinbutton", "value"));
+        h.set_f64(o, "value", 42.0).unwrap();
+        assert_eq!(h.get(o, "value"), V::F64(42.0));
+    });
+}
+
+/// echo suppression for SpinButton.value: programmatic sets do not reach listeners, native edits do.
+#[test]
+fn echo_spinbutton_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spinbutton");
+        h.call_args(o, "set_range", &[V::F64(0.0), V::F64(100.0)]).unwrap();
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let s = o.downcast_ref::<gtk::SpinButton>().unwrap(); s.set_range(0.0, 100.0); s.set_value(10.0 + i as f64);
+        };
+        h.listen(o, "value-changed", true).unwrap();
+        h.listen(o, "notify::value", true).unwrap();
+        h.set_f64(o, "value", 42.0).unwrap();
+        assert!(h.take_events().is_empty(), "programmatic set is suppressed");
+        fire(&h.obj(o), "b", 1);
+        let mut got: Vec<String> = h.take_events().into_iter().map(|(_, s)| s).collect();
+        got.sort();
+        got.dedup();
+        let mut want: Vec<String> = ["value-changed", "notify::value"].iter().map(|s| s.to_string()).collect();
+        want.sort();
+        assert_eq!(got, want, "native edit still delivers");
+        h.set_f64(o, "value", 42.0).unwrap();
+        assert!(h.take_events().is_empty(), "handlers are unblocked after a programmatic set, and the next set is suppressed again");
+    });
+}
+
+/// property SpinButton.wrap (JS wrap): GtkSpinButton:wrap (Gtk 4 docs)
+#[test]
+fn prop_spinbutton_wrap() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spinbutton");
+        
+        let id = h.resolve_prop("spinbutton", "wrap");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("spinbutton", "wrap"));
+        h.set_bool(o, "wrap", true).unwrap();
+        assert_eq!(h.get(o, "wrap"), V::Bool(true));
+    });
+}
+
+/// method SpinButton.get_value (dynamic GI call): gtk_spin_button_get_value (Gtk 4 docs); f64 return through GIRepository (X1)
+#[test]
+fn method_spinbutton_get_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spinbutton");
+        h.call_args(o, "set_range", &[V::F64(0.0), V::F64(100.0)]).unwrap(); h.call_args(o, "set_value", &[V::F64(7.0)]).unwrap();
+        let r = h.call_args(o, "get_value", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::F64(7.0), "postcondition: r == V::F64(7.0)");
+    });
+}
+
+/// method SpinButton.set_increments (dynamic GI call): gtk_spin_button_set_increments (Gtk 4 docs); called through GIRepository (X1)
+#[test]
+fn method_spinbutton_set_increments() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spinbutton");
+        
+        let r = h.call_args(o, "set_increments", &[V::F64(2.0), V::F64(20.0)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(w.downcast_ref::<gtk::SpinButton>().unwrap().increments() == (2.0, 20.0), "postcondition: w.downcast_ref::<gtk::SpinButton>().unwrap().increments() == (2.0, 20.0)");
+    });
+}
+
+/// method SpinButton.set_range (dynamic GI call): gtk_spin_button_set_range clamps the value into the new range (Gtk 4 docs); called through GIRepository (X1)
+#[test]
+fn method_spinbutton_set_range() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spinbutton");
+        
+        let r = h.call_args(o, "set_range", &[V::F64(10.0), V::F64(100.0)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "value") == V::F64(10.0), "postcondition: h.get(o, 'value') == V::F64(10.0)");
+    });
+}
+
+/// method SpinButton.set_value (dynamic GI call): gtk_spin_button_set_value (Gtk 4 docs); called through GIRepository (X1)
+#[test]
+fn method_spinbutton_set_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spinbutton");
+        h.call_args(o, "set_range", &[V::F64(0.0), V::F64(100.0)]).unwrap();
+        let r = h.call_args(o, "set_value", &[V::F64(42.0)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "value") == V::F64(42.0), "postcondition: h.get(o, 'value') == V::F64(42.0)");
+    });
+}
+
+/// bind:value on SpinButton: gtk_spin_button_set_value emits value-changed only on change; the spin button rounds to digits (Gtk 4 docs)
+#[test]
+fn binding_spinbutton_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spinbutton");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let s = o.downcast_ref::<gtk::SpinButton>().unwrap(); s.set_range(0.0, 100.0); s.set_value(10.0 + i as f64);
+        };
+        h.listen(o, "value-changed", true).unwrap();
+        fire(&h.obj(o), "a", 0);
+        fire(&h.obj(o), "b", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_ne!(h.get(o, "value"), V::Null, "the property reads the new value");
+    });
+}
+
 /// signal Spinner.notify::spinning: GObject::notify for GtkSpinner:spinning
 #[test]
 fn signal_spinner_notify_spinning() {
@@ -4491,6 +6290,120 @@ fn binding_spinner_spinning() {
         let ev = h.take_events_with_args();
         assert!(!ev.is_empty(), "native change is delivered");
         assert_ne!(h.get(o, "spinning"), V::Null, "the property reads the new value");
+    });
+}
+
+/// property Stack.hhomogeneous (JS hhomogeneous): GtkStack:hhomogeneous (Gtk 4 docs); P prop
+#[test]
+fn prop_stack_hhomogeneous() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("stack");
+        
+        let id = h.resolve_prop("stack", "hhomogeneous");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("stack", "hhomogeneous"));
+        h.set_bool(o, "hhomogeneous", false).unwrap();
+        assert_eq!(h.get(o, "hhomogeneous"), V::Bool(false));
+    });
+}
+
+/// property Stack.interpolate-size (JS interpolateSize): GtkStack:interpolate-size (Gtk 4 docs); P prop
+#[test]
+fn prop_stack_interpolate_size() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("stack");
+        
+        let id = h.resolve_prop("stack", "interpolateSize");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("stack", "interpolate-size"));
+        h.set_bool(o, "interpolateSize", true).unwrap();
+        assert_eq!(h.get(o, "interpolateSize"), V::Bool(true));
+    });
+}
+
+/// property Stack.transition-duration (JS transitionDuration): GtkStack:transition-duration (Gtk 4 docs); P prop
+#[test]
+fn prop_stack_transition_duration() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("stack");
+        
+        let id = h.resolve_prop("stack", "transitionDuration");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("stack", "transition-duration"));
+        h.set_i64(o, "transitionDuration", 7).unwrap();
+        assert_eq!(h.get(o, "transitionDuration"), V::I64(7));
+    });
+}
+
+/// property Stack.transition-type (JS transitionType): GtkStack:transition-type (Gtk 4 docs); P prop
+#[test]
+fn prop_stack_transition_type() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("stack");
+        
+        let id = h.resolve_prop("stack", "transitionType");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("stack", "transition-type"));
+        h.set_str(o, "transitionType", "crossfade").unwrap();
+        assert_eq!(h.get(o, "transitionType"), V::Str("crossfade".into()));
+    });
+}
+
+/// property Stack.vhomogeneous (JS vhomogeneous): GtkStack:vhomogeneous (Gtk 4 docs); P prop
+#[test]
+fn prop_stack_vhomogeneous() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("stack");
+        
+        let id = h.resolve_prop("stack", "vhomogeneous");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("stack", "vhomogeneous"));
+        h.set_bool(o, "vhomogeneous", false).unwrap();
+        assert_eq!(h.get(o, "vhomogeneous"), V::Bool(false));
+    });
+}
+
+/// property Stack.visible-child (JS visibleChild, round trip): GtkStack:visible-child (Gtk 4 docs); object reference, round trip
+#[test]
+fn prop_stack_visible_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("stack");
+        
+        let before = h.get_value(o, "visibleChild");
+        h.set_value(o, "visibleChild", &before).unwrap();
+        assert_eq!(format!("{:?}", h.get_value(o, "visibleChild")), format!("{:?}", before));
+    });
+}
+
+/// property StackSidebar.stack (JS stack, round trip): GtkStackSidebar:stack (Gtk 4 docs); object reference, round trip
+#[test]
+fn prop_stacksidebar_stack() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("stacksidebar");
+        
+        let before = h.get_value(o, "stack");
+        h.set_value(o, "stack", &before).unwrap();
+        assert_eq!(format!("{:?}", h.get_value(o, "stack")), format!("{:?}", before));
+    });
+}
+
+/// property StackSwitcher.stack (JS stack, round trip): GtkStackSwitcher:stack (Gtk 4 docs); object reference, round trip
+#[test]
+fn prop_stackswitcher_stack() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("stackswitcher");
+        
+        let before = h.get_value(o, "stack");
+        h.set_value(o, "stack", &before).unwrap();
+        assert_eq!(format!("{:?}", h.get_value(o, "stack")), format!("{:?}", before));
     });
 }
 
@@ -5531,6 +7444,141 @@ fn method_widget_queue_resize() {
     });
 }
 
+/// property Window.decorated (JS decorated): GtkWindow:decorated (Gtk 4 docs)
+#[test]
+fn prop_window_decorated() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("GtkWindow");
+        
+        let id = h.resolve_prop("GtkWindow", "decorated");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("GtkWindow", "decorated"));
+        h.set_bool(o, "decorated", false).unwrap();
+        assert_eq!(h.get(o, "decorated"), V::Bool(false));
+    });
+}
+
+/// property Window.default-height (JS defaultHeight): GtkWindow:default-height (Gtk 4 docs)
+#[test]
+fn prop_window_default_height() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("GtkWindow");
+        
+        let id = h.resolve_prop("GtkWindow", "defaultHeight");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("GtkWindow", "default-height"));
+        h.set_i64(o, "defaultHeight", 300).unwrap();
+        assert_eq!(h.get(o, "defaultHeight"), V::I64(300));
+    });
+}
+
+/// property Window.default-width (JS defaultWidth): GtkWindow:default-width (Gtk 4 docs)
+#[test]
+fn prop_window_default_width() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("GtkWindow");
+        
+        let id = h.resolve_prop("GtkWindow", "defaultWidth");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("GtkWindow", "default-width"));
+        h.set_i64(o, "defaultWidth", 500).unwrap();
+        assert_eq!(h.get(o, "defaultWidth"), V::I64(500));
+    });
+}
+
+/// property Window.deletable (JS deletable): GtkWindow:deletable (Gtk 4 docs)
+#[test]
+fn prop_window_deletable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("GtkWindow");
+        
+        let id = h.resolve_prop("GtkWindow", "deletable");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("GtkWindow", "deletable"));
+        h.set_bool(o, "deletable", false).unwrap();
+        assert_eq!(h.get(o, "deletable"), V::Bool(false));
+    });
+}
+
+/// property Window.fullscreened (JS fullscreened): GtkWindow:fullscreened (Gtk 4 docs)
+#[test]
+fn prop_window_fullscreened() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("GtkWindow");
+        
+        let id = h.resolve_prop("GtkWindow", "fullscreened");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("GtkWindow", "fullscreened"));
+        h.set_bool(o, "fullscreened", true).unwrap();
+        assert_eq!(h.get(o, "fullscreened"), V::Bool(true));
+    });
+}
+
+/// property Window.hide-on-close (JS hideOnClose): GtkWindow:hide-on-close (Gtk 4 docs)
+#[test]
+fn prop_window_hide_on_close() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("GtkWindow");
+        
+        let id = h.resolve_prop("GtkWindow", "hideOnClose");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("GtkWindow", "hide-on-close"));
+        h.set_bool(o, "hideOnClose", true).unwrap();
+        assert_eq!(h.get(o, "hideOnClose"), V::Bool(true));
+    });
+}
+
+/// property Window.maximized (JS maximized): GtkWindow:maximized (Gtk 4 docs)
+#[test]
+fn prop_window_maximized() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("GtkWindow");
+        
+        let id = h.resolve_prop("GtkWindow", "maximized");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("GtkWindow", "maximized"));
+        h.set_bool(o, "maximized", true).unwrap();
+        assert_eq!(h.get(o, "maximized"), V::Bool(true));
+    });
+}
+
+/// property Window.modal (JS modal): GtkWindow:modal (Gtk 4 docs)
+#[test]
+fn prop_window_modal() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("GtkWindow");
+        
+        let id = h.resolve_prop("GtkWindow", "modal");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("GtkWindow", "modal"));
+        h.set_bool(o, "modal", true).unwrap();
+        assert_eq!(h.get(o, "modal"), V::Bool(true));
+    });
+}
+
+/// property Window.resizable (JS resizable): GtkWindow:resizable (Gtk 4 docs)
+#[test]
+fn prop_window_resizable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("GtkWindow");
+        
+        let id = h.resolve_prop("GtkWindow", "resizable");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("GtkWindow", "resizable"));
+        h.set_bool(o, "resizable", false).unwrap();
+        assert_eq!(h.get(o, "resizable"), V::Bool(false));
+    });
+}
+
 /// property Window.title (JS title): GtkWindow:title (Gtk 4 docs); P prop
 #[test]
 fn prop_window_title() {
@@ -5543,6 +7591,62 @@ fn prop_window_title() {
         assert_eq!(id, h.resolve_prop("GtkWindow", "title"));
         h.set_str(o, "title", "p3-sample").unwrap();
         assert_eq!(h.get(o, "title"), V::Str("p3-sample".into()));
+    });
+}
+
+/// method Window.close: gtk_window_close (Gtk 4 docs)
+#[test]
+fn method_window_close() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("GtkWindow");
+        h.set_bool(o, "hide-on-close", true).unwrap(); h.widget(o).downcast_ref::<gtk::Window>().unwrap().present();
+        h.call(o, "close").unwrap();
+        let w = h.widget(o);
+        let _ = &w;
+        assert!(!w.is_visible(), "postcondition: !w.is_visible()");
+    });
+}
+
+/// method Window.fullscreen: gtk_window_fullscreen (Gtk 4 docs)
+#[test]
+fn method_window_fullscreen() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("GtkWindow");
+        
+        h.call(o, "fullscreen").unwrap();
+        let w = h.widget(o);
+        let _ = &w;
+        assert!(true, "postcondition: true");
+    });
+}
+
+/// method Window.maximize: gtk_window_maximize (Gtk 4 docs)
+#[test]
+fn method_window_maximize() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("GtkWindow");
+        
+        h.call(o, "maximize").unwrap();
+        let w = h.widget(o);
+        let _ = &w;
+        assert!(true, "postcondition: true");
+    });
+}
+
+/// method Window.minimize: gtk_window_minimize (Gtk 4 docs)
+#[test]
+fn method_window_minimize() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("GtkWindow");
+        
+        h.call(o, "minimize").unwrap();
+        let w = h.widget(o);
+        let _ = &w;
+        assert!(true, "postcondition: true");
     });
 }
 
@@ -5571,5 +7675,92 @@ fn method_window_set_default_size() {
         let w = h.widget(o);
         let _ = (&w, &r);
         assert!(h.get(o, "default-width") == V::I64(600) && h.get(o, "default-height") == V::I64(400), "postcondition: h.get(o, 'default-width') == V::I64(600) && h.get(o, 'default-height') == V::I64(400)");
+    });
+}
+
+/// method Window.unfullscreen: gtk_window_unfullscreen (Gtk 4 docs)
+#[test]
+fn method_window_unfullscreen() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("GtkWindow");
+        
+        h.call(o, "unfullscreen").unwrap();
+        let w = h.widget(o);
+        let _ = &w;
+        assert!(true, "postcondition: true");
+    });
+}
+
+/// method Window.unmaximize: gtk_window_unmaximize (Gtk 4 docs)
+#[test]
+fn method_window_unmaximize() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("GtkWindow");
+        
+        h.call(o, "unmaximize").unwrap();
+        let w = h.widget(o);
+        let _ = &w;
+        assert!(true, "postcondition: true");
+    });
+}
+
+/// method Window.unminimize: gtk_window_unminimize (Gtk 4 docs)
+#[test]
+fn method_window_unminimize() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("GtkWindow");
+        
+        h.call(o, "unminimize").unwrap();
+        let w = h.widget(o);
+        let _ = &w;
+        assert!(true, "postcondition: true");
+    });
+}
+
+/// property WindowControls.decoration-layout (JS decorationLayout): GtkWindowControls:decoration-layout (Gtk 4 docs)
+#[test]
+fn prop_windowcontrols_decoration_layout() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("windowcontrols");
+        
+        let id = h.resolve_prop("windowcontrols", "decorationLayout");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("windowcontrols", "decoration-layout"));
+        h.set_str(o, "decorationLayout", "menu:close").unwrap();
+        assert_eq!(h.get(o, "decorationLayout"), V::Str("menu:close".into()));
+    });
+}
+
+/// property WindowControls.side (JS side): GtkWindowControls:side (Gtk 4 docs); PackType nick
+#[test]
+fn prop_windowcontrols_side() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("windowcontrols");
+        
+        let id = h.resolve_prop("windowcontrols", "side");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("windowcontrols", "side"));
+        h.set_str(o, "side", "end").unwrap();
+        assert_eq!(h.get(o, "side"), V::Str("end".into()));
+    });
+}
+
+/// property WindowControls.use-native-controls (JS useNativeControls): GtkWindowControls:use-native-controls (Gtk 4.18 docs)
+#[test]
+fn prop_windowcontrols_use_native_controls() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("windowcontrols");
+        
+        let id = h.resolve_prop("windowcontrols", "useNativeControls");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("windowcontrols", "use-native-controls"));
+        h.set_bool(o, "useNativeControls", true).unwrap();
+        assert_eq!(h.get(o, "useNativeControls"), V::Bool(true));
     });
 }

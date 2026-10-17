@@ -49,6 +49,9 @@ export interface QtElementDescriptors {
       iconSize?: Size;
       shortcut?: Boxed<"QKeySequence"> | string;
       checkable?: boolean;
+      flat?: boolean;
+      autoDefault?: boolean;
+      default?: boolean;
       autoRepeat?: boolean;
       autoExclusive?: boolean;
       enabled?: boolean;
@@ -67,6 +70,90 @@ export interface QtElementDescriptors {
       pressed: () => void;
       released: () => void;
       toggled: (checked: boolean) => void;
+    };
+    methods: {
+      click(): void;
+      toggle(): void;
+      animateClick(): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  calendar: {
+    props: {
+      gridVisible?: boolean;
+      navigationBarVisible?: boolean;
+      firstDayOfWeek?: "friday" | "monday" | "saturday" | "sunday" | "thursday" | "tuesday" | "wednesday";
+      horizontalHeaderFormat?: "long-day-names" | "no-horizontal-header" | "short-day-names" | "single-letter-day-names";
+      verticalHeaderFormat?: "iso-week-numbers" | "no-vertical-header";
+      dateEditEnabled?: boolean;
+      dateEditAcceptDelay?: number;
+      selectionMode?: "no-selection" | "single-selection";
+      selectedDate?: DateParts;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      "selection-changed": () => void;
+      "page-changed": (year: number, month: number) => void;
+      clicked: (date: DateParts) => void;
+      activated: (date: DateParts) => void;
+    };
+    methods: {
+      showToday(): void;
+      showNextMonth(): void;
+      showPreviousMonth(): void;
+      showNextYear(): void;
+      showPreviousYear(): void;
+      monthShown(): number;
+      yearShown(): number;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  checkbox: {
+    props: {
+      checked?: boolean;
+      tristate?: boolean;
+      checkState?: "checked" | "partially-checked" | "unchecked";
+      label?: string;
+      checkable?: boolean;
+      autoRepeat?: boolean;
+      autoExclusive?: boolean;
+      shortcut?: Boxed<"QKeySequence"> | string;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      toggled: (checked: boolean) => void;
+      pressed: () => void;
+      released: () => void;
+      stateChanged: (state: number) => void;
+      clicked: () => void;
     };
     methods: {
       click(): void;
@@ -107,6 +194,7 @@ export interface QtElementDescriptors {
       open(options?: { signal?: AbortSignal }): Promise<number>;
       accept(): void;
       reject(): void;
+      done(r: number): void;
       show(): void;
       hide(): void;
       setFocus(): void;
@@ -119,6 +207,13 @@ export interface QtElementDescriptors {
     props: {
       readonly count?: number;
       currentData?: number;
+      editable?: boolean;
+      currentIndex?: number;
+      currentText?: string;
+      maxVisibleItems?: number;
+      placeholderText?: string;
+      insertPolicy?: "insert-after-current" | "insert-alphabetically" | "insert-at-bottom" | "insert-at-current" | "insert-at-top" | "insert-before-current" | "no-insert";
+      duplicatesEnabled?: boolean;
       enabled?: boolean;
       toolTip?: string;
       statusTip?: string;
@@ -131,10 +226,54 @@ export interface QtElementDescriptors {
       accessibleName?: string;
     };
     events: {
+      changed: (index: number) => void;
+      "text-changed": (text: string) => void;
+      activated: (index: number) => void;
     };
     methods: {
       addItem(text: string, userData: Variant): void;
       itemData(index: number, role: number): Variant;
+      insertItem(index: number, text: string, userData: Variant): void;
+      removeItem(index: number): void;
+      clear(): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  commandlinkbutton: {
+    props: {
+      description?: string;
+      flat?: boolean;
+      label?: string;
+      checkable?: boolean;
+      autoRepeat?: boolean;
+      autoExclusive?: boolean;
+      shortcut?: Boxed<"QKeySequence"> | string;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      pressed: () => void;
+      released: () => void;
+      toggled: (checked: boolean) => void;
+      clicked: () => void;
+    };
+    methods: {
+      click(): void;
+      toggle(): void;
+      animateClick(): void;
       show(): void;
       hide(): void;
       setFocus(): void;
@@ -146,6 +285,8 @@ export interface QtElementDescriptors {
   dateedit: {
     props: {
       date?: DateParts;
+      displayFormat?: string;
+      calendarPopup?: boolean;
       readOnly?: boolean;
       wrapping?: boolean;
       frame?: boolean;
@@ -164,6 +305,7 @@ export interface QtElementDescriptors {
       accessibleName?: string;
     };
     events: {
+      "date-changed": (date: DateParts) => void;
       editingFinished: () => void;
     };
     methods: {
@@ -179,6 +321,7 @@ export interface QtElementDescriptors {
     props: {
       dateTime?: Date;
       displayFormat?: string;
+      calendarPopup?: boolean;
       readOnly?: boolean;
       wrapping?: boolean;
       frame?: boolean;
@@ -197,7 +340,46 @@ export interface QtElementDescriptors {
       accessibleName?: string;
     };
     events: {
+      "date-time-changed": (datetime: Date) => void;
       editingFinished: () => void;
+    };
+    methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  dial: {
+    props: {
+      value?: number;
+      notchesVisible?: boolean;
+      wrapping?: boolean;
+      notchTarget?: number;
+      minimum?: number;
+      maximum?: number;
+      singleStep?: number;
+      pageStep?: number;
+      tracking?: boolean;
+      invertedAppearance?: boolean;
+      orientation?: "horizontal" | "vertical";
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      valueChanged: (value: number) => void;
+      sliderMoved: (value: number) => void;
+      rangeChanged: (min: number, max: number) => void;
     };
     methods: {
       show(): void;
@@ -242,10 +424,76 @@ export interface QtElementDescriptors {
     };
     slots: "children";
   };
+  dialogbuttonbox: {
+    props: {
+      orientation?: "horizontal" | "vertical";
+      centerButtons?: boolean;
+      standardButtons?: Array<"abort" | "apply" | "cancel" | "close" | "discard" | "first-button" | "help" | "ignore" | "last-button" | "no" | "no-button" | "no-to-all" | "ok" | "open" | "reset" | "restore-defaults" | "retry" | "save" | "save-all" | "yes" | "yes-to-all">;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      accepted: () => void;
+      rejected: () => void;
+      "help-requested": () => void;
+    };
+    methods: {
+      clear(): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  dockwidget: {
+    props: {
+      features?: Array<"dock-widget-closable" | "dock-widget-feature-mask" | "dock-widget-floatable" | "dock-widget-movable" | "dock-widget-vertical-title-bar" | "no-dock-widget-features" | "reserved">;
+      allowedAreas?: Array<"all-dock-widget-areas" | "bottom-dock-widget-area" | "dock-widget-area-mask" | "left-dock-widget-area" | "no-dock-widget-area" | "right-dock-widget-area" | "top-dock-widget-area">;
+      floating?: boolean;
+      windowTitle?: string;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      "top-level-changed": (topLevel: boolean) => void;
+      "visibility-changed": (visible: boolean) => void;
+      "features-changed": (features: Array<"dock-widget-closable" | "dock-widget-feature-mask" | "dock-widget-floatable" | "dock-widget-movable" | "dock-widget-vertical-title-bar" | "no-dock-widget-features" | "reserved">) => void;
+      "allowed-areas-changed": (allowedAreas: Array<"all-dock-widget-areas" | "bottom-dock-widget-area" | "dock-widget-area-mask" | "left-dock-widget-area" | "no-dock-widget-area" | "right-dock-widget-area" | "top-dock-widget-area">) => void;
+    };
+    methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
   doublespinbox: {
     props: {
       value?: number;
       decimals?: number;
+      minimum?: number;
+      maximum?: number;
+      singleStep?: number;
       readOnly?: boolean;
       wrapping?: boolean;
       frame?: boolean;
@@ -264,6 +512,7 @@ export interface QtElementDescriptors {
       accessibleName?: string;
     };
     events: {
+      valueChanged: (d: number) => void;
       editingFinished: () => void;
     };
     methods: {
@@ -282,6 +531,12 @@ export interface QtElementDescriptors {
       echoMode?: "no-echo" | "normal" | "password" | "password-echo-on-edit";
       alignment?: Array<"absolute" | "baseline" | "bottom" | "center" | "hcenter" | "horizontal-mask" | "justify" | "leading" | "left" | "right" | "top" | "trailing" | "vcenter" | "vertical-mask">;
       maxLength?: number;
+      readOnly?: boolean;
+      clearButtonEnabled?: boolean;
+      frame?: boolean;
+      inputMask?: string;
+      dragEnabled?: boolean;
+      cursorPosition?: number;
       enabled?: boolean;
       toolTip?: string;
       statusTip?: string;
@@ -296,8 +551,18 @@ export interface QtElementDescriptors {
     events: {
       "key-press": () => void;
       changed: (text: string) => void;
+      returnPressed: () => void;
+      editingFinished: () => void;
+      textEdited: (text: string) => void;
+      selectionChanged: () => void;
     };
     methods: {
+      clear(): void;
+      selectAll(): void;
+      undo(): void;
+      redo(): void;
+      copy(): void;
+      setSelection(start: number, length: number): void;
       show(): void;
       hide(): void;
       setFocus(): void;
@@ -331,6 +596,7 @@ export interface QtElementDescriptors {
       open(): void;
       accept(): void;
       reject(): void;
+      done(r: number): void;
       show(): void;
       hide(): void;
       setFocus(): void;
@@ -366,7 +632,36 @@ export interface QtElementDescriptors {
     methods: {
       setDirectory(directory: string): void;
       open(): void;
+      accept(): void;
       reject(): void;
+      done(r: number): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  fontcombobox: {
+    props: {
+      currentFont?: Boxed<"QFont"> | string;
+      writingSystem?: "any" | "arabic" | "armenian" | "bengali" | "cyrillic" | "devanagari" | "georgian" | "greek" | "gujarati" | "gurmukhi" | "hebrew" | "japanese" | "kannada" | "khmer" | "korean" | "lao" | "latin" | "malayalam" | "myanmar" | "nko" | "ogham" | "oriya" | "other" | "runic" | "simplified-chinese" | "sinhala" | "symbol" | "syriac" | "tamil" | "telugu" | "thaana" | "thai" | "tibetan" | "traditional-chinese" | "vietnamese" | "writing-systems-count";
+      fontFilters?: Array<"all-fonts" | "monospaced-fonts" | "non-scalable-fonts" | "proportional-fonts" | "scalable-fonts">;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+    };
+    methods: {
       show(): void;
       hide(): void;
       setFocus(): void;
@@ -401,6 +696,7 @@ export interface QtElementDescriptors {
       open(): void;
       accept(): void;
       reject(): void;
+      done(r: number): void;
       show(): void;
       hide(): void;
       setFocus(): void;
@@ -536,6 +832,34 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
+  keysequenceedit: {
+    props: {
+      keySequence?: Boxed<"QKeySequence"> | string;
+      clearButtonEnabled?: boolean;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      editingFinished: () => void;
+    };
+    methods: {
+      clear(): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
   label: {
     props: {
       label?: string;
@@ -543,6 +867,123 @@ export interface QtElementDescriptors {
       textFormat?: "auto-text" | "markdown-text" | "plain-text" | "rich-text";
       pixmap?: Boxed<"QPixmap">;
       indent?: number;
+      wordWrap?: boolean;
+      openExternalLinks?: boolean;
+      margin?: number;
+      scaledContents?: boolean;
+      textInteractionFlags?: Array<"links-accessible-by-keyboard" | "links-accessible-by-mouse" | "no-text-interaction" | "text-browser-interaction" | "text-editable" | "text-editor-interaction" | "text-selectable-by-keyboard" | "text-selectable-by-mouse">;
+      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      frameShadow?: "plain" | "raised" | "sunken";
+      lineWidth?: number;
+      midLineWidth?: number;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      linkActivated: (link: string) => void;
+      linkHovered: (link: string) => void;
+    };
+    methods: {
+      setBuddy(buddy: number): void;
+      buddy(): number;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  lcdnumber: {
+    props: {
+      digitCount?: number;
+      intValue?: number;
+      value?: number;
+      mode?: "bin" | "dec" | "hex" | "oct";
+      segmentStyle?: "filled" | "flat" | "outline";
+      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      frameShadow?: "plain" | "raised" | "sunken";
+      lineWidth?: number;
+      midLineWidth?: number;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      overflow: () => void;
+    };
+    methods: {
+      display(num: number): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  listwidget: {
+    props: {
+      readonly count?: number;
+      currentRow?: number;
+      sortingEnabled?: boolean;
+      selectionMode?: "contiguous-selection" | "extended-selection" | "multi-selection" | "no-selection" | "single-selection";
+      alternatingRowColors?: boolean;
+      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      frameShadow?: "plain" | "raised" | "sunken";
+      lineWidth?: number;
+      midLineWidth?: number;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      "row-changed": (currentRow: number) => void;
+      "selection-changed": () => void;
+    };
+    methods: {
+      addItem(label: string): void;
+      insertItem(row: number, label: string): void;
+      clear(): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  mdiarea: {
+    props: {
+      activationOrder?: "activation-history-order" | "creation-order" | "stacking-order";
+      documentMode?: boolean;
+      tabPosition?: "east" | "north" | "south" | "west";
+      tabShape?: "rounded" | "triangular";
+      tabsClosable?: boolean;
+      tabsMovable?: boolean;
+      viewMode?: "sub-window-view" | "tabbed-view";
       frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
       frameShadow?: "plain" | "raised" | "sunken";
       lineWidth?: number;
@@ -561,8 +1002,9 @@ export interface QtElementDescriptors {
     events: {
     };
     methods: {
-      setBuddy(buddy: number): void;
-      buddy(): number;
+      cascadeSubWindows(): void;
+      tileSubWindows(): void;
+      closeAllSubWindows(): void;
       show(): void;
       hide(): void;
       setFocus(): void;
@@ -598,6 +1040,7 @@ export interface QtElementDescriptors {
   };
   menubar: {
     props: {
+      defaultUp?: boolean;
       enabled?: boolean;
       toolTip?: string;
       statusTip?: string;
@@ -612,6 +1055,7 @@ export interface QtElementDescriptors {
     events: {
     };
     methods: {
+      clear(): void;
       show(): void;
       hide(): void;
       setFocus(): void;
@@ -651,6 +1095,96 @@ export interface QtElementDescriptors {
       accept(): void;
       reject(): void;
       done(r: number): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  plaintextedit: {
+    props: {
+      plainText?: string;
+      readOnly?: boolean;
+      placeholderText?: string;
+      lineWrapMode?: "no-wrap" | "widget-width";
+      tabChangesFocus?: boolean;
+      overwriteMode?: boolean;
+      wordWrapMode?: "manual-wrap" | "no-wrap" | "word-wrap" | "wrap-anywhere" | "wrap-at-word-boundary-or-anywhere";
+      undoRedoEnabled?: boolean;
+      maximumBlockCount?: number;
+      cursorWidth?: number;
+      tabStopDistance?: number;
+      textInteractionFlags?: Array<"links-accessible-by-keyboard" | "links-accessible-by-mouse" | "no-text-interaction" | "text-browser-interaction" | "text-editable" | "text-editor-interaction" | "text-selectable-by-keyboard" | "text-selectable-by-mouse">;
+      documentTitle?: string;
+      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      frameShadow?: "plain" | "raised" | "sunken";
+      lineWidth?: number;
+      midLineWidth?: number;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      "key-press": () => void;
+      changed: () => void;
+      selectionChanged: () => void;
+      cursorPositionChanged: () => void;
+      blockCountChanged: (newBlockCount: number) => void;
+    };
+    methods: {
+      appendPlainText(text: string): void;
+      insertPlainText(text: string): void;
+      appendHtml(html: string): void;
+      clear(): void;
+      selectAll(): void;
+      undo(): void;
+      redo(): void;
+      copy(): void;
+      cut(): void;
+      centerCursor(): void;
+      ensureCursorVisible(): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  progressbar: {
+    props: {
+      value?: number;
+      minimum?: number;
+      maximum?: number;
+      format?: string;
+      textVisible?: boolean;
+      orientation?: "horizontal" | "vertical";
+      invertedAppearance?: boolean;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      valueChanged: (value: number) => void;
+    };
+    methods: {
+      reset(): void;
       show(): void;
       hide(): void;
       setFocus(): void;
@@ -702,6 +1236,78 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
+  radiobutton: {
+    props: {
+      checked?: boolean;
+      label?: string;
+      checkable?: boolean;
+      autoRepeat?: boolean;
+      autoExclusive?: boolean;
+      shortcut?: Boxed<"QKeySequence"> | string;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      pressed: () => void;
+      released: () => void;
+      toggled: (checked: boolean) => void;
+      clicked: () => void;
+    };
+    methods: {
+      click(): void;
+      toggle(): void;
+      animateClick(): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  scrollbar: {
+    props: {
+      value?: number;
+      minimum?: number;
+      maximum?: number;
+      singleStep?: number;
+      pageStep?: number;
+      tracking?: boolean;
+      invertedAppearance?: boolean;
+      orientation?: "horizontal" | "vertical";
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      valueChanged: (value: number) => void;
+      sliderMoved: (value: number) => void;
+      rangeChanged: (min: number, max: number) => void;
+    };
+    methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
   scrolledwindow: {
     props: {
       widgetResizable?: boolean;
@@ -733,12 +1339,51 @@ export interface QtElementDescriptors {
     };
     slots: "child";
   };
+  slider: {
+    props: {
+      value?: number;
+      tickPosition?: "no-ticks" | "ticks-above" | "ticks-below" | "ticks-both-sides" | "ticks-left" | "ticks-right";
+      tickInterval?: number;
+      minimum?: number;
+      maximum?: number;
+      singleStep?: number;
+      pageStep?: number;
+      tracking?: boolean;
+      invertedAppearance?: boolean;
+      orientation?: "horizontal" | "vertical";
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      valueChanged: (value: number) => void;
+      sliderMoved: (value: number) => void;
+      rangeChanged: (min: number, max: number) => void;
+    };
+    methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
   spinbox: {
     props: {
       value?: number;
       minimum?: number;
       maximum?: number;
       singleStep?: number;
+      suffix?: string;
+      displayIntegerBase?: number;
       prefix?: string;
       readOnly?: boolean;
       wrapping?: boolean;
@@ -758,6 +1403,8 @@ export interface QtElementDescriptors {
       accessibleName?: string;
     };
     events: {
+      valueChanged: (i: number) => void;
+      textChanged: (text: string) => void;
       editingFinished: () => void;
     };
     methods: {
@@ -836,6 +1483,7 @@ export interface QtElementDescriptors {
   };
   statusbar: {
     props: {
+      sizeGripEnabled?: boolean;
       enabled?: boolean;
       toolTip?: string;
       statusTip?: string;
@@ -848,8 +1496,55 @@ export interface QtElementDescriptors {
       accessibleName?: string;
     };
     events: {
+      messageChanged: (message: string) => void;
     };
     methods: {
+      showMessage(message: string, timeout: number): void;
+      clearMessage(): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: "widgets" | "permanent";
+  };
+  tabbar: {
+    props: {
+      currentIndex?: number;
+      readonly count?: number;
+      tabsClosable?: boolean;
+      movable?: boolean;
+      shape?: "rounded-east" | "rounded-north" | "rounded-south" | "rounded-west" | "triangular-east" | "triangular-north" | "triangular-south" | "triangular-west";
+      expanding?: boolean;
+      drawBase?: boolean;
+      documentMode?: boolean;
+      usesScrollButtons?: boolean;
+      autoHide?: boolean;
+      elideMode?: "left" | "middle" | "none" | "right";
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      changed: (index: number) => void;
+      "tab-close-requested": (index: number) => void;
+      "tab-bar-clicked": (index: number) => void;
+      "tab-bar-double-clicked": (index: number) => void;
+      "tab-moved": (from: number, to: number) => void;
+    };
+    methods: {
+      addTab(text: string): number;
+      insertTab(index: number, text: string): number;
+      removeTab(index: number): void;
+      moveTab(from: number, to: number): void;
       show(): void;
       hide(): void;
       setFocus(): void;
@@ -891,9 +1586,108 @@ export interface QtElementDescriptors {
     };
     slots: "pages";
   };
+  textbrowser: {
+    props: {
+      openExternalLinks?: boolean;
+      openLinks?: boolean;
+      readonly source?: Boxed<"QUrl"> | string;
+      readonly sourceType?: "html-resource" | "image-resource" | "markdown-resource" | "style-sheet-resource" | "unknown-resource" | "user-resource";
+      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      frameShadow?: "plain" | "raised" | "sunken";
+      lineWidth?: number;
+      midLineWidth?: number;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      historyChanged: () => void;
+      backwardAvailable: (available: boolean) => void;
+    };
+    methods: {
+      home(): void;
+      reload(): void;
+      backward(): void;
+      forward(): void;
+      clearHistory(): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  textedit: {
+    props: {
+      plainText?: string;
+      markdown?: string;
+      acceptRichText?: boolean;
+      readOnly?: boolean;
+      placeholderText?: string;
+      lineWrapMode?: "fixed-column-width" | "fixed-pixel-width" | "no-wrap" | "widget-width";
+      tabChangesFocus?: boolean;
+      overwriteMode?: boolean;
+      wordWrapMode?: "manual-wrap" | "no-wrap" | "word-wrap" | "wrap-anywhere" | "wrap-at-word-boundary-or-anywhere";
+      undoRedoEnabled?: boolean;
+      cursorWidth?: number;
+      lineWrapColumnOrWidth?: number;
+      tabStopDistance?: number;
+      textInteractionFlags?: Array<"links-accessible-by-keyboard" | "links-accessible-by-mouse" | "no-text-interaction" | "text-browser-interaction" | "text-editable" | "text-editor-interaction" | "text-selectable-by-keyboard" | "text-selectable-by-mouse">;
+      documentTitle?: string;
+      autoFormatting?: Array<"all" | "bullet-list" | "none">;
+      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      frameShadow?: "plain" | "raised" | "sunken";
+      lineWidth?: number;
+      midLineWidth?: number;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      "key-press": () => void;
+      changed: () => void;
+      selectionChanged: () => void;
+      cursorPositionChanged: () => void;
+    };
+    methods: {
+      append(text: string): void;
+      insertPlainText(text: string): void;
+      insertHtml(text: string): void;
+      clear(): void;
+      selectAll(): void;
+      undo(): void;
+      redo(): void;
+      copy(): void;
+      cut(): void;
+      ensureCursorVisible(): void;
+      document(): number;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
   timeedit: {
     props: {
       time?: TimeParts;
+      displayFormat?: string;
       readOnly?: boolean;
       wrapping?: boolean;
       frame?: boolean;
@@ -912,9 +1706,42 @@ export interface QtElementDescriptors {
       accessibleName?: string;
     };
     events: {
+      "time-changed": (time: TimeParts) => void;
       editingFinished: () => void;
     };
     methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  toolbar: {
+    props: {
+      movable?: boolean;
+      floatable?: boolean;
+      orientation?: "horizontal" | "vertical";
+      toolButtonStyle?: "follow-style" | "icon-only" | "text-beside-icon" | "text-only" | "text-under-icon";
+      iconSize?: Size;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      "movable-changed": (movable: boolean) => void;
+      "orientation-changed": (orientation: "horizontal" | "vertical") => void;
+    };
+    methods: {
+      clear(): void;
       show(): void;
       hide(): void;
       setFocus(): void;
@@ -952,9 +1779,55 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
+  toolbutton: {
+    props: {
+      autoRaise?: boolean;
+      toolButtonStyle?: "follow-style" | "icon-only" | "text-beside-icon" | "text-only" | "text-under-icon";
+      arrowType?: "down-arrow" | "left-arrow" | "no-arrow" | "right-arrow" | "up-arrow";
+      popupMode?: "delayed-popup" | "instant-popup" | "menu-button-popup";
+      label?: string;
+      checkable?: boolean;
+      autoRepeat?: boolean;
+      autoExclusive?: boolean;
+      shortcut?: Boxed<"QKeySequence"> | string;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      pressed: () => void;
+      released: () => void;
+      toggled: (checked: boolean) => void;
+      clicked: () => void;
+    };
+    methods: {
+      setMenu(menu: number): void;
+      click(): void;
+      toggle(): void;
+      animateClick(): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
   window: {
     props: {
       title?: string;
+      documentMode?: boolean;
+      animated?: boolean;
+      dockNestingEnabled?: boolean;
+      tabShape?: "rounded" | "triangular";
+      toolButtonStyle?: "follow-style" | "icon-only" | "text-beside-icon" | "text-only" | "text-under-icon";
       enabled?: boolean;
       toolTip?: string;
       statusTip?: string;
@@ -1008,6 +1881,7 @@ export interface QtElementDescriptors {
       open(): void;
       accept(): void;
       reject(): void;
+      done(r: number): void;
       show(): void;
       hide(): void;
       setFocus(): void;

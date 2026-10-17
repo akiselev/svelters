@@ -1,3 +1,16 @@
+properties:
+  - name: visible-child
+    provenance: "GtkStack:visible-child (Gtk 4 docs); object reference, round trip"
+  - name: transition-type
+    provenance: "GtkStack:transition-type (Gtk 4 docs); P prop"
+  - name: hhomogeneous
+    provenance: "GtkStack:hhomogeneous (Gtk 4 docs); P prop"
+  - name: vhomogeneous
+    provenance: "GtkStack:vhomogeneous (Gtk 4 docs); P prop"
+  - name: transition-duration
+    provenance: "GtkStack:transition-duration (Gtk 4 docs); P prop"
+  - name: interpolate-size
+    provenance: "GtkStack:interpolate-size (Gtk 4 docs); P prop"
 # GtkStack pages. Name, title and the page flags are properties of the child's GtkStackPage (X3).
 # Svelte: <stack><label parent:name="a" parent:title="First">x</label></stack>
 children:

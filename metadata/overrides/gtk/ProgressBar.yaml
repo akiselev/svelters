@@ -1,0 +1,19 @@
+properties:
+  - name: fraction
+    provenance: "GtkProgressBar:fraction, 0..1 (Gtk 4 docs)"
+  - name: text
+    provenance: "GtkProgressBar:text (Gtk 4 docs)"
+  - name: show-text
+    provenance: "GtkProgressBar:show-text (Gtk 4 docs)"
+  - name: pulse-step
+    provenance: "GtkProgressBar:pulse-step, 0..1 (Gtk 4 docs)"
+  - name: inverted
+    provenance: "GtkProgressBar:inverted (Gtk 4 docs)"
+  - name: ellipsize
+    provenance: "GtkProgressBar:ellipsize, PangoEllipsizeMode (Gtk 4 docs)"
+methods:
+  - name: pulse
+    js_name: pulse
+    dispatch: zero_arg
+    expect: 'true'
+    provenance: "gtk_progress_bar_pulse (Gtk 4 docs); no readable state, postcondition only checks the call succeeds"

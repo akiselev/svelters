@@ -4,8 +4,20 @@ export interface BindableProps {
   calendar: {
     day: number; // gtk
   };
+  checkbox: {
+    checked: boolean; // qt
+  };
   checkbutton: {
     active: boolean; // gtk
+  };
+  combobox: {
+    currentIndex: number; // qt
+  };
+  dial: {
+    value: number; // qt
+  };
+  doublespinbox: {
+    value: number; // qt
   };
   editablelabel: {
     editing: boolean; // gtk
@@ -16,11 +28,38 @@ export interface BindableProps {
   expander: {
     expanded: boolean; // gtk
   };
+  levelbar: {
+    value: number; // gtk
+  };
+  listwidget: {
+    currentRow: number; // qt
+  };
+  notebook: {
+    page: number; // gtk
+  };
   passwordentry: {
     text: string; // gtk
   };
+  plaintextedit: {
+    plainText: string; // qt
+  };
+  radiobutton: {
+    checked: boolean; // qt
+  };
+  scrollbar: {
+    value: number; // qt
+  };
   searchentry: {
     text: string; // gtk
+  };
+  slider: {
+    value: number; // qt
+  };
+  spinbox: {
+    value: number; // qt
+  };
+  spinbutton: {
+    value: number; // gtk
   };
   spinner: {
     spinning: boolean; // gtk
@@ -31,8 +70,14 @@ export interface BindableProps {
   switch: {
     active: boolean; // gtk
   };
+  tabbar: {
+    currentIndex: number; // qt
+  };
   text: {
     text: string; // gtk
+  };
+  textedit: {
+    plainText: string; // qt
   };
   togglebutton: {
     active: boolean; // gtk

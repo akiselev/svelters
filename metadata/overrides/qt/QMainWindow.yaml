@@ -7,6 +7,11 @@ elements:
     construct: { class: QMainWindow }
     props:
       - { js: title, native: windowTitle, provenance: "QWidget::windowTitle Q_PROPERTY (qdoc); P prop" }
+      - { js: documentMode, native: documentMode, provenance: "QMainWindow::documentMode (qdoc)" }
+      - { js: animated, native: animated, provenance: "QMainWindow::animated (qdoc)" }
+      - { js: dockNestingEnabled, native: dockNestingEnabled, provenance: "QMainWindow::dockNestingEnabled (qdoc)" }
+      - { js: tabShape, native: tabShape, provenance: "QMainWindow::tabShape (qdoc); enum typed by the S1 value model (ABI v3)" }
+      - { js: toolButtonStyle, native: toolButtonStyle, provenance: "QMainWindow::toolButtonStyle (qdoc); enum typed by the S1 value model (ABI v3)" }
     methods:
       - { js: show, native: show, provenance: "QWidget::show() slot (qdoc)" }
       - { js: present, native: show, provenance: "GTK name for show(); P host op call present" }

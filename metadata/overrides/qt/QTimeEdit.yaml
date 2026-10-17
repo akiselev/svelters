@@ -3,3 +3,11 @@ elements:
     construct: { class: QTimeEdit }
     props:
       - { js: time, native: time, provenance: "QTimeEdit::time (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: displayFormat, native: displayFormat, sample: "HH:mm", provenance: "QTimeEdit::displayFormat (qdoc); typed by the S1 value model (ABI v3)" }
+    signals:
+      - js: time-changed
+        native: timeChanged
+        connect: "timeChanged(QTime)"
+        args: [{ name: time, type: time }]
+        trigger: '$w->setTime(QTime(1, 0).addSecs(3600 * ($i + 1)))'
+        provenance: "QTimeEdit::timeChanged(QTime) (qdoc)"

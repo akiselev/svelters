@@ -1,0 +1,41 @@
+properties:
+  - name: value
+    echo_suppress: ["notify::value"]
+    provenance: "GtkLevelBar:value (Gtk 4 docs)"
+  - name: min-value
+    provenance: "GtkLevelBar:min-value (Gtk 4 docs)"
+  - name: max-value
+    provenance: "GtkLevelBar:max-value (Gtk 4 docs)"
+  - name: mode
+    provenance: "GtkLevelBar:mode, GtkLevelBarMode (Gtk 4 docs)"
+  - name: inverted
+    provenance: "GtkLevelBar:inverted (Gtk 4 docs)"
+signals:
+  - name: offset-changed
+    js_event: offset-changed
+    handler_result: none
+    sync_required: false
+    trigger: {rust: 'o.downcast_ref::<gtk::LevelBar>().unwrap().add_offset_value("svl-offset", 0.25 + i as f64 * 0.1);', values: [a, b, c]}
+    provenance: "GtkLevelBar::offset-changed, run-first, detailed by offset name (Gtk 4 docs)"
+  - name: "notify::value"
+    derived_from: {property: value}
+    js_event: "notify::value"
+    trigger: {property: value, values: [0.5, 0.25, 0.75]}
+    params: []
+    returns: {type: void}
+    handler_result: none
+    sync_required: false
+    phase: first
+    flags: [detailed]
+    connection: {disconnect_on: [handle_drop, native_destroy]}
+    provenance: "GObject::notify for GtkLevelBar:value"
+bindings:
+  - name: value
+    direction: two_way
+    property: value
+    type: {ref: f64, nullable: false}
+    change: {signal: "notify::value", role: any_change, value: prop}
+    write: {natively_normalizes: false}
+    echo: {strategy: host_suppressed, compare_before_set: true, read_back: false, sync_signals_on_set: ["notify::value"]}
+    lifetime: {on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect}
+    provenance: "gtk_level_bar_set_value notifies only on change (Gtk 4 docs)"

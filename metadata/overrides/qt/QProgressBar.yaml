@@ -1,0 +1,21 @@
+elements:
+  - tag: progressbar
+    construct: { class: QProgressBar }
+    props:
+      - { js: value, native: value, suppress_signals: true, provenance: "QProgressBar::value (qdoc)" }
+      - { js: minimum, native: minimum, provenance: "QProgressBar::minimum (qdoc)" }
+      - { js: maximum, native: maximum, provenance: "QProgressBar::maximum (qdoc)" }
+      - { js: format, native: format, provenance: "QProgressBar::format (qdoc)" }
+      - { js: textVisible, native: textVisible, provenance: "QProgressBar::textVisible (qdoc)" }
+      - { js: orientation, native: orientation, provenance: "QProgressBar::orientation (qdoc)" }
+      - { js: invertedAppearance, native: invertedAppearance, provenance: "QProgressBar::invertedAppearance (qdoc)" }
+    signals:
+      - js: valueChanged
+        native: valueChanged
+        connect: "valueChanged(int)"
+        args: [{ name: value, type: i32 }]
+        trigger: "$w->setRange(0, 100); $w->setValue(($i + 1) * 3)"
+        expect_args: ["3"]
+        provenance: "QProgressBar::valueChanged(int) (qdoc)"
+    methods:
+      - { js: reset, native: reset, expect: "$w->value() == -1", provenance: "QProgressBar::reset() slot (qdoc)" }

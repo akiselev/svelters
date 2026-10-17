@@ -1,4 +1,12 @@
-# Minimal element so that the window `menubar` slot can be exercised.
+# Element `menubar`. Menus and actions need QAction children (gap G7): QMenuBar::addMenu(QString)
+# returns a QMenu* the menubar owns, but a menu created that way has no element handle to add items
+# to, and addMenu(QMenu*)/insertMenu take or return QAction*, so the `menu` element cannot be a slot
+# child yet. Only the plain facts are annotated. nativeMenuBar was dropped: it cannot be enabled on the
+# xcb test platform (setNativeMenuBar(true) reads back false).
 elements:
   - tag: menubar
     construct: { class: QMenuBar }
+    props:
+      - { js: defaultUp, native: defaultUp, provenance: "QMenuBar::defaultUp (qdoc)" }
+    methods:
+      - { js: clear, native: clear, provenance: "QMenuBar::clear() (qdoc)" }

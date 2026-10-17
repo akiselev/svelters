@@ -1,0 +1,2 @@
+unexposed:
+  reason: "deprecated shortcuts window; builder-only structure (sections/groups/shortcuts) with no useful element surface"

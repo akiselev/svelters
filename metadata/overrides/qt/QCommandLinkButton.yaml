@@ -1,0 +1,7 @@
+elements:
+  - tag: commandlinkbutton
+    construct: { class: QCommandLinkButton }
+    exclude: [checked]
+    props:
+      - { js: description, native: description, provenance: "QCommandLinkButton::description (qdoc)" }
+      - { js: flat, native: flat, provenance: "QCommandLinkButton::flat (qdoc)" }

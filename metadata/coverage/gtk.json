@@ -3,8 +3,8 @@
   "abstract": false,
   "bindings": 0,
   "element": "aboutdialog",
-  "gallery": null,
-  "inherited": 29,
+  "gallery": "08-dialogs",
+  "inherited": 45,
   "kind": "AboutDialog",
   "lifetime": "toplevel",
   "methods": [
@@ -17,7 +17,7 @@
    13,
    16
   ],
-  "props_annotated": 0,
+  "props_annotated": 7,
   "signal_results": 0,
   "signals": [
    1,
@@ -27,15 +27,15 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   7,
+   7
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "element": "actionbar",
-  "gallery": null,
+  "gallery": "06-layout",
   "inherited": 24,
   "kind": "ActionBar",
   "lifetime": "owned",
@@ -44,23 +44,23 @@
    7
   ],
   "native": "GtkActionBar",
-  "ownership": false,
+  "ownership": true,
   "props": [
    1,
    1
   ],
-  "props_annotated": 0,
+  "props_annotated": 1,
   "signal_results": 0,
   "signals": [
    0,
    0
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 3,
+  "slots_own": 3,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   4,
+   4
   ]
  },
  {
@@ -162,9 +162,9 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "appchooserdialog",
+  "element": null,
   "gallery": null,
-  "inherited": 29,
+  "inherited": 45,
   "kind": "AppChooserDialog",
   "lifetime": "toplevel",
   "methods": [
@@ -185,7 +185,7 @@
   ],
   "slots": 2,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "deprecated GtkDialog family (response-id model, gtk_dialog_run style blocking flow); use Window, Popover or AlertDialog-style non-blocking APIs",
   "verified": [
    0,
    0
@@ -228,7 +228,7 @@
   "bindings": 0,
   "element": "window",
   "gallery": null,
-  "inherited": 29,
+  "inherited": 45,
   "kind": "ApplicationWindow",
   "lifetime": "toplevel",
   "methods": [
@@ -290,9 +290,9 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "assistant",
+  "element": null,
   "gallery": null,
-  "inherited": 29,
+  "inherited": 45,
   "kind": "Assistant",
   "lifetime": "toplevel",
   "methods": [
@@ -313,7 +313,7 @@
   ],
   "slots": 2,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "deprecated GtkDialog family (response-id model, gtk_dialog_run style blocking flow); use Window, Popover or AlertDialog-style non-blocking APIs",
   "verified": [
    0,
    0
@@ -610,9 +610,9 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "colorchooserdialog",
+  "element": null,
   "gallery": null,
-  "inherited": 29,
+  "inherited": 45,
   "kind": "ColorChooserDialog",
   "lifetime": "toplevel",
   "methods": [
@@ -633,7 +633,7 @@
   ],
   "slots": 2,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "deprecated GtkDialog family (response-id model, gtk_dialog_run style blocking flow); use Window, Popover or AlertDialog-style non-blocking APIs",
   "verified": [
    0,
    0
@@ -802,9 +802,9 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "dialog",
+  "element": null,
   "gallery": null,
-  "inherited": 29,
+  "inherited": 45,
   "kind": "Dialog",
   "lifetime": "toplevel",
   "methods": [
@@ -825,7 +825,7 @@
   ],
   "slots": 2,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "deprecated GtkDialog family (response-id model, gtk_dialog_run style blocking flow); use Window, Popover or AlertDialog-style non-blocking APIs",
   "verified": [
    0,
    0
@@ -995,8 +995,8 @@
   "abstract": false,
   "bindings": 0,
   "element": "emojichooser",
-  "gallery": null,
-  "inherited": 24,
+  "gallery": "08-dialogs",
+  "inherited": 33,
   "kind": "EmojiChooser",
   "lifetime": "owned",
   "methods": [
@@ -1010,17 +1010,17 @@
    0
   ],
   "props_annotated": 0,
-  "signal_results": 0,
+  "signal_results": 1,
   "signals": [
    1,
    1
   ],
-  "slots": 0,
+  "slots": 1,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   1,
+   1
   ]
  },
  {
@@ -1122,9 +1122,9 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "filechooserdialog",
+  "element": null,
   "gallery": null,
-  "inherited": 29,
+  "inherited": 45,
   "kind": "FileChooserDialog",
   "lifetime": "toplevel",
   "methods": [
@@ -1145,7 +1145,7 @@
   ],
   "slots": 2,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "deprecated GtkDialog family (response-id model, gtk_dialog_run style blocking flow); use Window, Popover or AlertDialog-style non-blocking APIs",
   "verified": [
    0,
    0
@@ -1187,7 +1187,7 @@
   "abstract": false,
   "bindings": 0,
   "element": "fixed",
-  "gallery": null,
+  "gallery": "06-layout",
   "inherited": 24,
   "kind": "Fixed",
   "lifetime": "owned",
@@ -1219,7 +1219,7 @@
   "abstract": false,
   "bindings": 0,
   "element": "flowbox",
-  "gallery": null,
+  "gallery": "06-layout",
   "inherited": 25,
   "kind": "FlowBox",
   "lifetime": "owned",
@@ -1228,30 +1228,30 @@
    34
   ],
   "native": "GtkFlowBox",
-  "ownership": false,
+  "ownership": true,
   "props": [
    8,
    8
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 6,
+  "signal_results": 2,
   "signals": [
    7,
    7
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   9,
+   9
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "element": "flowboxchild",
-  "gallery": null,
+  "gallery": "06-layout",
   "inherited": 24,
   "kind": "FlowBoxChild",
   "lifetime": "owned",
@@ -1346,9 +1346,9 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "fontchooserdialog",
+  "element": null,
   "gallery": null,
-  "inherited": 29,
+  "inherited": 45,
   "kind": "FontChooserDialog",
   "lifetime": "toplevel",
   "methods": [
@@ -1369,7 +1369,7 @@
   ],
   "slots": 2,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "deprecated GtkDialog family (response-id model, gtk_dialog_run style blocking flow); use Window, Popover or AlertDialog-style non-blocking APIs",
   "verified": [
    0,
    0
@@ -1539,7 +1539,7 @@
   "abstract": false,
   "bindings": 0,
   "element": "grid",
-  "gallery": null,
+  "gallery": "06-layout",
   "inherited": 25,
   "kind": "Grid",
   "lifetime": "owned",
@@ -1553,7 +1553,7 @@
    5,
    5
   ],
-  "props_annotated": 0,
+  "props_annotated": 4,
   "signal_results": 0,
   "signals": [
    0,
@@ -1563,8 +1563,8 @@
   "slots_own": 1,
   "unexposed": null,
   "verified": [
-   5,
-   5
+   9,
+   9
   ]
  },
  {
@@ -1603,7 +1603,7 @@
   "abstract": false,
   "bindings": 0,
   "element": "headerbar",
-  "gallery": null,
+  "gallery": "07-bars",
   "inherited": 24,
   "kind": "HeaderBar",
   "lifetime": "owned",
@@ -1617,7 +1617,7 @@
    5,
    5
   ],
-  "props_annotated": 1,
+  "props_annotated": 4,
   "signal_results": 0,
   "signals": [
    0,
@@ -1627,8 +1627,8 @@
   "slots_own": 3,
   "unexposed": null,
   "verified": [
-   4,
-   4
+   7,
+   7
   ]
  },
  {
@@ -1698,8 +1698,8 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "infobar",
-  "gallery": null,
+  "element": null,
+  "gallery": "07-bars",
   "inherited": 24,
   "kind": "InfoBar",
   "lifetime": "owned",
@@ -1721,7 +1721,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "deprecated since GTK 4.10; compose a revealer with a box and buttons",
   "verified": [
    0,
    0
@@ -1793,9 +1793,9 @@
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "element": "levelbar",
-  "gallery": null,
+  "gallery": "04-ranges",
   "inherited": 25,
   "kind": "LevelBar",
   "lifetime": "owned",
@@ -1809,18 +1809,18 @@
    5,
    5
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 5,
+  "signal_results": 2,
   "signals": [
-   1,
-   1
+   2,
+   2
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   8,
+   8
   ]
  },
  {
@@ -1891,7 +1891,7 @@
   "abstract": false,
   "bindings": 0,
   "element": "listbox",
-  "gallery": null,
+  "gallery": "06-layout",
   "inherited": 24,
   "kind": "ListBox",
   "lifetime": "owned",
@@ -1905,8 +1905,8 @@
    5,
    5
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 3,
+  "signal_results": 2,
   "signals": [
    8,
    8
@@ -1915,8 +1915,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   5,
+   5
   ]
  },
  {
@@ -2082,9 +2082,9 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "messagedialog",
+  "element": null,
   "gallery": null,
-  "inherited": 29,
+  "inherited": 45,
   "kind": "MessageDialog",
   "lifetime": "toplevel",
   "methods": [
@@ -2105,7 +2105,7 @@
   ],
   "slots": 2,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "deprecated GtkDialog family (response-id model, gtk_dialog_run style blocking flow); use Window, Popover or AlertDialog-style non-blocking APIs",
   "verified": [
    0,
    0
@@ -2113,9 +2113,9 @@
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "element": "notebook",
-  "gallery": null,
+  "gallery": "06-layout",
   "inherited": 24,
   "kind": "Notebook",
   "lifetime": "owned",
@@ -2129,18 +2129,18 @@
    8,
    8
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 5,
+  "signal_results": 2,
   "signals": [
-   10,
-   10
+   11,
+   11
   ],
   "slots": 1,
   "slots_own": 1,
   "unexposed": null,
   "verified": [
-   7,
-   7
+   15,
+   15
   ]
  },
  {
@@ -2210,9 +2210,9 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "pagesetupunixdialog",
+  "element": null,
   "gallery": null,
-  "inherited": 29,
+  "inherited": 45,
   "kind": "PageSetupUnixDialog",
   "lifetime": "toplevel",
   "methods": [
@@ -2233,7 +2233,7 @@
   ],
   "slots": 2,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "deprecated GtkDialog family (response-id model, gtk_dialog_run style blocking flow); use Window, Popover or AlertDialog-style non-blocking APIs",
   "verified": [
    0,
    0
@@ -2339,32 +2339,32 @@
   "abstract": false,
   "bindings": 0,
   "element": "popover",
-  "gallery": null,
+  "gallery": "08-dialogs",
   "inherited": 24,
   "kind": "Popover",
   "lifetime": "owned",
   "methods": [
-   0,
+   2,
    20
   ],
   "native": "GtkPopover",
-  "ownership": false,
+  "ownership": true,
   "props": [
    7,
    8
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 4,
+  "signal_results": 2,
   "signals": [
    2,
    2
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   9,
+   9
   ]
  },
  {
@@ -2404,7 +2404,7 @@
   "bindings": 0,
   "element": "popovermenu",
   "gallery": null,
-  "inherited": 24,
+  "inherited": 33,
   "kind": "PopoverMenu",
   "lifetime": "owned",
   "methods": [
@@ -2423,7 +2423,7 @@
    0,
    0
   ],
-  "slots": 0,
+  "slots": 1,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
@@ -2435,7 +2435,7 @@
   "abstract": false,
   "bindings": 0,
   "element": "popovermenubar",
-  "gallery": null,
+  "gallery": "07-bars",
   "inherited": 24,
   "kind": "PopoverMenuBar",
   "lifetime": "owned",
@@ -2466,9 +2466,9 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "printunixdialog",
+  "element": null,
   "gallery": null,
-  "inherited": 29,
+  "inherited": 45,
   "kind": "PrintUnixDialog",
   "lifetime": "toplevel",
   "methods": [
@@ -2489,7 +2489,7 @@
   ],
   "slots": 2,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "deprecated GtkDialog family (response-id model, gtk_dialog_run style blocking flow); use Window, Popover or AlertDialog-style non-blocking APIs",
   "verified": [
    0,
    0
@@ -2499,12 +2499,12 @@
   "abstract": false,
   "bindings": 0,
   "element": "progressbar",
-  "gallery": null,
+  "gallery": "04-ranges",
   "inherited": 25,
   "kind": "ProgressBar",
   "lifetime": "owned",
   "methods": [
-   0,
+   1,
    13
   ],
   "native": "GtkProgressBar",
@@ -2513,7 +2513,7 @@
    6,
    6
   ],
-  "props_annotated": 0,
+  "props_annotated": 6,
   "signal_results": 0,
   "signals": [
    0,
@@ -2523,20 +2523,20 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   7,
+   7
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "element": "range",
-  "gallery": null,
+  "gallery": "04-ranges",
   "inherited": 25,
   "kind": "Range",
   "lifetime": "owned",
   "methods": [
-   0,
+   4,
    22
   ],
   "native": "GtkRange",
@@ -2545,8 +2545,8 @@
    6,
    6
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 4,
+  "signal_results": 1,
   "signals": [
    4,
    4
@@ -2555,8 +2555,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   9,
+   9
   ]
  },
  {
@@ -2595,8 +2595,8 @@
   "abstract": false,
   "bindings": 0,
   "element": "scale",
-  "gallery": null,
-  "inherited": 25,
+  "gallery": "04-ranges",
+  "inherited": 34,
   "kind": "Scale",
   "lifetime": "owned",
   "methods": [
@@ -2609,7 +2609,7 @@
    4,
    4
   ],
-  "props_annotated": 0,
+  "props_annotated": 4,
   "signal_results": 0,
   "signals": [
    0,
@@ -2619,8 +2619,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   4,
+   4
   ]
  },
  {
@@ -2691,7 +2691,7 @@
   "abstract": false,
   "bindings": 0,
   "element": "scrollbar",
-  "gallery": null,
+  "gallery": "04-ranges",
   "inherited": 25,
   "kind": "Scrollbar",
   "lifetime": "owned",
@@ -2705,7 +2705,7 @@
    1,
    1
   ],
-  "props_annotated": 0,
+  "props_annotated": 1,
   "signal_results": 0,
   "signals": [
    0,
@@ -2715,8 +2715,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   1,
+   1
   ]
  },
  {
@@ -2978,9 +2978,9 @@
  {
   "abstract": false,
   "bindings": 0,
-  "element": "shortcutswindow",
+  "element": null,
   "gallery": null,
-  "inherited": 29,
+  "inherited": 45,
   "kind": "ShortcutsWindow",
   "lifetime": "toplevel",
   "methods": [
@@ -3001,7 +3001,7 @@
   ],
   "slots": 2,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "deprecated shortcuts window; builder-only structure (sections/groups/shortcuts) with no useful element surface",
   "verified": [
    0,
    0
@@ -3009,14 +3009,14 @@
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "element": "spinbutton",
-  "gallery": null,
+  "gallery": "04-ranges",
   "inherited": 36,
   "kind": "SpinButton",
   "lifetime": "owned",
   "methods": [
-   0,
+   4,
    26
   ],
   "native": "GtkSpinButton",
@@ -3025,18 +3025,18 @@
    9,
    9
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 7,
+  "signal_results": 3,
   "signals": [
-   6,
-   6
+   7,
+   7
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   15,
+   15
   ]
  },
  {
@@ -3075,7 +3075,7 @@
   "abstract": false,
   "bindings": 0,
   "element": "stack",
-  "gallery": null,
+  "gallery": "06-layout",
   "inherited": 24,
   "kind": "Stack",
   "lifetime": "owned",
@@ -3089,7 +3089,7 @@
    9,
    9
   ],
-  "props_annotated": 0,
+  "props_annotated": 6,
   "signal_results": 0,
   "signals": [
    0,
@@ -3099,15 +3099,15 @@
   "slots_own": 1,
   "unexposed": null,
   "verified": [
-   6,
-   6
+   12,
+   12
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "element": "stacksidebar",
-  "gallery": null,
+  "gallery": "06-layout",
   "inherited": 24,
   "kind": "StackSidebar",
   "lifetime": "owned",
@@ -3121,7 +3121,7 @@
    1,
    1
   ],
-  "props_annotated": 0,
+  "props_annotated": 1,
   "signal_results": 0,
   "signals": [
    0,
@@ -3131,15 +3131,15 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   1,
+   1
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "element": "stackswitcher",
-  "gallery": null,
+  "gallery": "06-layout",
   "inherited": 25,
   "kind": "StackSwitcher",
   "lifetime": "owned",
@@ -3153,7 +3153,7 @@
    1,
    1
   ],
-  "props_annotated": 0,
+  "props_annotated": 1,
   "signal_results": 0,
   "signals": [
    0,
@@ -3163,15 +3163,15 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   1,
+   1
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
-  "element": "statusbar",
-  "gallery": null,
+  "element": null,
+  "gallery": "07-bars",
   "inherited": 24,
   "kind": "Statusbar",
   "lifetime": "owned",
@@ -3193,7 +3193,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "deprecated since GTK 4.10 (push/pop need out-of-scope calls); build a status area from label/box",
   "verified": [
    0,
    0
@@ -3523,12 +3523,12 @@
   "abstract": false,
   "bindings": 0,
   "element": null,
-  "gallery": null,
+  "gallery": "08-dialogs",
   "inherited": 24,
   "kind": "Window",
   "lifetime": "toplevel",
   "methods": [
-   2,
+   9,
    57
   ],
   "native": "GtkWindow",
@@ -3537,7 +3537,7 @@
    26,
    26
   ],
-  "props_annotated": 1,
+  "props_annotated": 10,
   "signal_results": 0,
   "signals": [
    5,
@@ -3547,15 +3547,15 @@
   "slots_own": 2,
   "unexposed": null,
   "verified": [
-   5,
-   5
+   21,
+   21
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "element": "windowcontrols",
-  "gallery": null,
+  "gallery": "07-bars",
   "inherited": 24,
   "kind": "WindowControls",
   "lifetime": "owned",
@@ -3569,7 +3569,7 @@
    4,
    4
   ],
-  "props_annotated": 0,
+  "props_annotated": 3,
   "signal_results": 0,
   "signals": [
    0,
@@ -3579,8 +3579,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   3,
+   3
   ]
  },
  {

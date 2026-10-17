@@ -1,0 +1,2 @@
+unexposed:
+  reason: "Internal focus-rectangle helper attached to another widget by pointer."

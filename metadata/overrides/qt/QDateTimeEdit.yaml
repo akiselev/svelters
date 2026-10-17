@@ -3,4 +3,12 @@ elements:
     construct: { class: QDateTimeEdit }
     props:
       - { js: dateTime, native: dateTime, provenance: "QDateTimeEdit::dateTime (qdoc); typed by the S1 value model (ABI v3)" }
-      - { js: displayFormat, native: displayFormat, provenance: "QDateTimeEdit::displayFormat (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: displayFormat, native: displayFormat, sample: "yyyy-MM-dd HH:mm", provenance: "QDateTimeEdit::displayFormat (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: calendarPopup, native: calendarPopup, provenance: "QDateTimeEdit::calendarPopup (qdoc); typed by the S1 value model (ABI v3)" }
+    signals:
+      - js: date-time-changed
+        native: dateTimeChanged
+        connect: "dateTimeChanged(QDateTime)"
+        args: [{ name: datetime, type: datetime }]
+        trigger: '$w->setDateTime(QDateTime(QDate(2001, 1, 1), QTime(0, 0)).addDays($i + 1))'
+        provenance: "QDateTimeEdit::dateTimeChanged(QDateTime) (qdoc)"

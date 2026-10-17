@@ -1,0 +1,2 @@
+unexposed:
+  reason: "Cells (row, column, spans) are child attributes, blocked by gap:G1; not a standalone layout element either (layouts are reached through layout-managed widgets)."

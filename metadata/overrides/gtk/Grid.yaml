@@ -1,3 +1,12 @@
+properties:
+  - name: row-spacing
+    provenance: "GtkGrid:row-spacing (Gtk 4 docs); P prop"
+  - name: column-spacing
+    provenance: "GtkGrid:column-spacing (Gtk 4 docs); P prop"
+  - name: row-homogeneous
+    provenance: "GtkGrid:row-homogeneous (Gtk 4 docs); P prop"
+  - name: column-homogeneous
+    provenance: "GtkGrid:column-homogeneous (Gtk 4 docs); P prop"
 # GtkGrid: children are placed by per-child attributes (X3, ABI v2.2 `set_child_attr`). The attributes
 # live on the GtkGridLayoutChild of the child, so moving a child is a property write: no re-attach.
 # Svelte: <grid><label parent:column={1} parent:row={2} parent:columnSpan={2}>x</label></grid>
