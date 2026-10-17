@@ -12,6 +12,7 @@ import { queue_micro_task } from 'svelte/internal/client/dom/task';
 // The X6 styling of @svelters/renderer (classes, widget name, inline style, sheets, tokens) works
 // on any node with `h`, `tag`, `attrs` and `sc`: compiled components drive it through `attr`.
 import { bindElements, bindSetterHooks, forgetStyle, markStyleDirty } from '@svelters/renderer/style';
+import { ROW_OUTLETS } from '@svelters/renderer/bindings';
 import { parseSetterValue, propOf } from '@svelters/style/runtime';
 
 /** `set(node, prop, RESTORE)` writes the value `capture(node, prop)` read. */
@@ -224,6 +225,23 @@ function detach(node) {
 // ---------------------------------------------------------------------------------------------
 // Nodes and props
 
+let outletKind;
+/** The tag of a virtualized list's row outlet on this host: the first ROW_OUTLETS candidate it resolves. */
+export function rowOutlet() {
+  if (outletKind === undefined) {
+    const hs = host();
+    const ok = (t) => {
+      try {
+        return typeof hs.kindId === 'function' && typeof hs.kindId(t) === 'number';
+      } catch {
+        return false;
+      }
+    };
+    outletKind = ROW_OUTLETS.find(ok) ?? ROW_OUTLETS[0];
+  }
+  return outletKind;
+}
+
 export function element(kind, present) {
   if (!scope) throw new Error('element() outside a mounted component');
   const hs = host();
@@ -385,9 +403,7 @@ function off(node, signal, fn, flags = 0) {
   }
 }
 
-// DOM-style names the renderer accepts in `listen()` (its EVENT_TO_SIGNAL); compiled templates
-// resolve aliases at compile time from the backend spec.
-const EVENT_TO_SIGNAL = { click: 'clicked', change: 'changed', close: 'close-request' };
+// Event names are native signal names: `listen(type)` listens to the signal `type` (no aliases).
 
 const flagsOf = (options) => {
   if (options === true) return LISTEN_CAPTURE;
@@ -401,7 +417,7 @@ const flagsOf = (options) => {
  * The compiler lowers a statically known call to `$n.listen(signal, handler, flags)` instead.
  */
 export function listen(type, handler, options = {}) {
-  const signal = typeof options === 'number' ? type : (EVENT_TO_SIGNAL[type] ?? type);
+  const signal = type;
   const flags = typeof options === 'number' ? options : flagsOf(options);
   return (node) => {
     // registered outside the attachment's scope bookkeeping: the cleanup removes it
@@ -477,8 +493,6 @@ export class NativeEvent {
   }
 }
 
-const SIGNAL_TO_EVENT = Object.fromEntries(Object.entries(EVENT_TO_SIGNAL).map(([e, s]) => [s, e]));
-const eventFor = (signal) => SIGNAL_TO_EVENT[signal] ?? signal;
 
 /**
  * `__svelters_dispatch(h, signal, args, deferred, flags)`: runs the handlers registered for
@@ -490,7 +504,7 @@ export function dispatch(h, signal, args = [], deferred = false, flags = 0) {
   const node = table().get(h);
   if (!node || !alive(node)) return;
   if (deferred) {
-    const ev = new NativeEvent(eventFor(signal), signal, node, args, true);
+    const ev = new NativeEvent(signal, signal, node, args, true);
     for (const fn of handlersOf(node, signal, flags)) {
       fn.call(node, ev, ...args);
       if (ev.immediateStopped) break;
@@ -510,7 +524,7 @@ export function dispatch(h, signal, args = [], deferred = false, flags = 0) {
 export function dispatch_sync(h, signal, args = [], flags = 0) {
   const node = table().get(h);
   if (!node || !alive(node)) throw new Error(`dispatchSync: unknown handle ${h}`);
-  const ev = new NativeEvent(eventFor(signal), signal, node, args, false);
+  const ev = new NativeEvent(signal, signal, node, args, false);
   for (const fn of handlersOf(node, signal, flags)) {
     const r = fn.call(node, ev, ...args);
     if (r !== null && typeof r === 'object' && typeof r.then === 'function') {

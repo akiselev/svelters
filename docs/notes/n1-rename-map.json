@@ -1,0 +1,2179 @@
+{
+ "events_removed_aliases": {
+  "change": "changed",
+  "click": "clicked",
+  "close": "close-request (GTK) / close (Qt)"
+ },
+ "gtk": {
+  "attrs": {
+   "Grid": {
+    "columnSpan": "column-span",
+    "rowSpan": "row-span"
+   },
+   "Notebook": {
+    "menuLabel": "menu-label",
+    "tabExpand": "tab-expand",
+    "tabFill": "tab-fill",
+    "tabLabel": "tab-label"
+   },
+   "Stack": {
+    "iconName": "icon-name",
+    "needsAttention": "needs-attention",
+    "useUnderline": "use-underline"
+   }
+  },
+  "props": {
+   "ATContext": {
+    "accessibleRole": "accessible-role"
+   },
+   "AboutDialog": {
+    "licenseType": "license-type",
+    "logoIconName": "logo-icon-name",
+    "programName": "program-name",
+    "systemInformation": "system-information",
+    "translatorCredits": "translator-credits",
+    "websiteLabel": "website-label",
+    "wrapLicense": "wrap-license"
+   },
+   "Accessible": {
+    "accessibleRole": "accessible-role"
+   },
+   "Actionable": {
+    "actionName": "action-name",
+    "actionTarget": "action-target"
+   },
+   "Adjustment": {
+    "pageIncrement": "page-increment",
+    "pageSize": "page-size",
+    "stepIncrement": "step-increment"
+   },
+   "AlertDialog": {
+    "cancelButton": "cancel-button",
+    "defaultButton": "default-button"
+   },
+   "AppChooser": {
+    "contentType": "content-type"
+   },
+   "AppChooserButton": {
+    "showDefaultItem": "show-default-item",
+    "showDialogItem": "show-dialog-item"
+   },
+   "AppChooserWidget": {
+    "defaultText": "default-text",
+    "showAll": "show-all",
+    "showDefault": "show-default",
+    "showFallback": "show-fallback",
+    "showOther": "show-other",
+    "showRecommended": "show-recommended"
+   },
+   "Application": {
+    "activeWindow": "active-window",
+    "registerSession": "register-session",
+    "screensaverActive": "screensaver-active"
+   },
+   "ApplicationWindow": {
+    "showMenubar": "show-menubar"
+   },
+   "AspectFrame": {
+    "obeyChild": "obey-child"
+   },
+   "Assistant": {
+    "useHeaderBar": "use-header-bar"
+   },
+   "AssistantPage": {
+    "pageType": "page-type"
+   },
+   "BookmarkList": {
+    "ioPriority": "io-priority",
+    "itemType": "item-type",
+    "nItems": "n-items"
+   },
+   "Box": {
+    "baselineChild": "baseline-child",
+    "baselinePosition": "baseline-position"
+   },
+   "BoxLayout": {
+    "baselineChild": "baseline-child",
+    "baselinePosition": "baseline-position"
+   },
+   "Builder": {
+    "currentObject": "current-object",
+    "translationDomain": "translation-domain"
+   },
+   "Button": {
+    "canShrink": "can-shrink",
+    "hasFrame": "has-frame",
+    "iconName": "icon-name",
+    "useUnderline": "use-underline"
+   },
+   "Calendar": {
+    "showDayNames": "show-day-names",
+    "showHeading": "show-heading",
+    "showWeekNumbers": "show-week-numbers"
+   },
+   "CellArea": {
+    "editWidget": "edit-widget",
+    "editedCell": "edited-cell",
+    "focusCell": "focus-cell"
+   },
+   "CellAreaContext": {
+    "minimumHeight": "minimum-height",
+    "minimumWidth": "minimum-width",
+    "naturalHeight": "natural-height",
+    "naturalWidth": "natural-width"
+   },
+   "CellEditable": {
+    "editingCanceled": "editing-canceled"
+   },
+   "CellRenderer": {
+    "cellBackground": "cell-background",
+    "cellBackgroundRgba": "cell-background-rgba",
+    "cellBackgroundSet": "cell-background-set",
+    "isExpanded": "is-expanded",
+    "isExpander": "is-expander"
+   },
+   "CellRendererAccel": {
+    "accelKey": "accel-key",
+    "accelMode": "accel-mode",
+    "accelMods": "accel-mods"
+   },
+   "CellRendererCombo": {
+    "hasEntry": "has-entry",
+    "textColumn": "text-column"
+   },
+   "CellRendererPixbuf": {
+    "iconName": "icon-name",
+    "iconSize": "icon-size",
+    "pixbufExpanderClosed": "pixbuf-expander-closed",
+    "pixbufExpanderOpen": "pixbuf-expander-open"
+   },
+   "CellRendererProgress": {
+    "textXalign": "text-xalign",
+    "textYalign": "text-yalign"
+   },
+   "CellRendererSpin": {
+    "climbRate": "climb-rate"
+   },
+   "CellRendererText": {
+    "alignSet": "align-set",
+    "backgroundRgba": "background-rgba",
+    "backgroundSet": "background-set",
+    "editableSet": "editable-set",
+    "ellipsizeSet": "ellipsize-set",
+    "familySet": "family-set",
+    "fontDesc": "font-desc",
+    "foregroundRgba": "foreground-rgba",
+    "foregroundSet": "foreground-set",
+    "languageSet": "language-set",
+    "maxWidthChars": "max-width-chars",
+    "placeholderText": "placeholder-text",
+    "riseSet": "rise-set",
+    "scaleSet": "scale-set",
+    "singleParagraphMode": "single-paragraph-mode",
+    "sizePoints": "size-points",
+    "sizeSet": "size-set",
+    "stretchSet": "stretch-set",
+    "strikethroughSet": "strikethrough-set",
+    "styleSet": "style-set",
+    "underlineSet": "underline-set",
+    "variantSet": "variant-set",
+    "weightSet": "weight-set",
+    "widthChars": "width-chars",
+    "wrapMode": "wrap-mode",
+    "wrapWidth": "wrap-width"
+   },
+   "CellView": {
+    "cellArea": "cell-area",
+    "cellAreaContext": "cell-area-context",
+    "drawSensitive": "draw-sensitive",
+    "fitModel": "fit-model"
+   },
+   "CenterBox": {
+    "baselinePosition": "baseline-position",
+    "centerWidget": "center-widget",
+    "endWidget": "end-widget",
+    "shrinkCenterLast": "shrink-center-last",
+    "startWidget": "start-widget"
+   },
+   "CenterLayout": {
+    "shrinkCenterLast": "shrink-center-last"
+   },
+   "CheckButton": {
+    "useUnderline": "use-underline"
+   },
+   "ColorButton": {
+    "showEditor": "show-editor"
+   },
+   "ColorChooser": {
+    "useAlpha": "use-alpha"
+   },
+   "ColorChooserDialog": {
+    "showEditor": "show-editor"
+   },
+   "ColorChooserWidget": {
+    "showEditor": "show-editor"
+   },
+   "ColorDialog": {
+    "withAlpha": "with-alpha"
+   },
+   "ColumnView": {
+    "enableRubberband": "enable-rubberband",
+    "headerFactory": "header-factory",
+    "rowFactory": "row-factory",
+    "showColumnSeparators": "show-column-separators",
+    "showRowSeparators": "show-row-separators",
+    "singleClickActivate": "single-click-activate",
+    "tabBehavior": "tab-behavior"
+   },
+   "ColumnViewColumn": {
+    "columnView": "column-view",
+    "fixedWidth": "fixed-width",
+    "headerMenu": "header-menu"
+   },
+   "ColumnViewRow": {
+    "accessibleDescription": "accessible-description",
+    "accessibleLabel": "accessible-label"
+   },
+   "ColumnViewSorter": {
+    "primarySortColumn": "primary-sort-column",
+    "primarySortOrder": "primary-sort-order"
+   },
+   "ComboBox": {
+    "activeId": "active-id",
+    "buttonSensitivity": "button-sensitivity",
+    "entryTextColumn": "entry-text-column",
+    "hasEntry": "has-entry",
+    "hasFrame": "has-frame",
+    "idColumn": "id-column",
+    "popupFixedWidth": "popup-fixed-width",
+    "popupShown": "popup-shown"
+   },
+   "Constraint": {
+    "sourceAttribute": "source-attribute",
+    "targetAttribute": "target-attribute"
+   },
+   "ConstraintGuide": {
+    "maxHeight": "max-height",
+    "maxWidth": "max-width",
+    "minHeight": "min-height",
+    "minWidth": "min-width",
+    "natHeight": "nat-height",
+    "natWidth": "nat-width"
+   },
+   "CssProvider": {
+    "prefersColorScheme": "prefers-color-scheme",
+    "prefersContrast": "prefers-contrast",
+    "prefersReducedMotion": "prefers-reduced-motion"
+   },
+   "Dialog": {
+    "useHeaderBar": "use-header-bar"
+   },
+   "DirectoryList": {
+    "ioPriority": "io-priority",
+    "itemType": "item-type",
+    "nItems": "n-items"
+   },
+   "DrawingArea": {
+    "contentHeight": "content-height",
+    "contentWidth": "content-width"
+   },
+   "DropControllerMotion": {
+    "containsPointer": "contains-pointer",
+    "isPointer": "is-pointer"
+   },
+   "DropDown": {
+    "enableSearch": "enable-search",
+    "headerFactory": "header-factory",
+    "listFactory": "list-factory",
+    "searchMatchMode": "search-match-mode",
+    "selectedItem": "selected-item",
+    "showArrow": "show-arrow"
+   },
+   "DropTarget": {
+    "currentDrop": "current-drop"
+   },
+   "Editable": {
+    "cursorPosition": "cursor-position",
+    "enableUndo": "enable-undo",
+    "maxWidthChars": "max-width-chars",
+    "selectionBound": "selection-bound",
+    "widthChars": "width-chars"
+   },
+   "Entry": {
+    "activatesDefault": "activates-default",
+    "enableEmojiCompletion": "enable-emoji-completion",
+    "extraMenu": "extra-menu",
+    "hasFrame": "has-frame",
+    "imModule": "im-module",
+    "inputHints": "input-hints",
+    "inputPurpose": "input-purpose",
+    "invisibleChar": "invisible-char",
+    "invisibleCharSet": "invisible-char-set",
+    "maxLength": "max-length",
+    "menuEntryIconPrimaryText": "menu-entry-icon-primary-text",
+    "menuEntryIconSecondaryText": "menu-entry-icon-secondary-text",
+    "overwriteMode": "overwrite-mode",
+    "placeholder": "placeholder-text",
+    "primaryIconActivatable": "primary-icon-activatable",
+    "primaryIconGicon": "primary-icon-gicon",
+    "primaryIconName": "primary-icon-name",
+    "primaryIconPaintable": "primary-icon-paintable",
+    "primaryIconSensitive": "primary-icon-sensitive",
+    "primaryIconStorageType": "primary-icon-storage-type",
+    "primaryIconTooltipMarkup": "primary-icon-tooltip-markup",
+    "primaryIconTooltipText": "primary-icon-tooltip-text",
+    "progressFraction": "progress-fraction",
+    "progressPulseStep": "progress-pulse-step",
+    "scrollOffset": "scroll-offset",
+    "secondaryIconActivatable": "secondary-icon-activatable",
+    "secondaryIconGicon": "secondary-icon-gicon",
+    "secondaryIconName": "secondary-icon-name",
+    "secondaryIconPaintable": "secondary-icon-paintable",
+    "secondaryIconSensitive": "secondary-icon-sensitive",
+    "secondaryIconStorageType": "secondary-icon-storage-type",
+    "secondaryIconTooltipMarkup": "secondary-icon-tooltip-markup",
+    "secondaryIconTooltipText": "secondary-icon-tooltip-text",
+    "showEmojiIcon": "show-emoji-icon",
+    "textLength": "text-length",
+    "truncateMultiline": "truncate-multiline"
+   },
+   "EntryBuffer": {
+    "maxLength": "max-length"
+   },
+   "EntryCompletion": {
+    "cellArea": "cell-area",
+    "inlineCompletion": "inline-completion",
+    "inlineSelection": "inline-selection",
+    "minimumKeyLength": "minimum-key-length",
+    "popupCompletion": "popup-completion",
+    "popupSetWidth": "popup-set-width",
+    "popupSingleMatch": "popup-single-match",
+    "textColumn": "text-column"
+   },
+   "EventController": {
+    "propagationLimit": "propagation-limit",
+    "propagationPhase": "propagation-phase"
+   },
+   "EventControllerFocus": {
+    "containsFocus": "contains-focus",
+    "isFocus": "is-focus"
+   },
+   "EventControllerMotion": {
+    "containsPointer": "contains-pointer",
+    "isPointer": "is-pointer"
+   },
+   "Expander": {
+    "labelWidget": "label-widget",
+    "resizeToplevel": "resize-toplevel",
+    "useMarkup": "use-markup",
+    "useUnderline": "use-underline"
+   },
+   "FileChooser": {
+    "createFolders": "create-folders",
+    "selectMultiple": "select-multiple",
+    "shortcutFolders": "shortcut-folders"
+   },
+   "FileChooserNative": {
+    "acceptLabel": "accept-label",
+    "cancelLabel": "cancel-label"
+   },
+   "FileChooserWidget": {
+    "searchMode": "search-mode",
+    "showTime": "show-time"
+   },
+   "FileDialog": {
+    "acceptLabel": "accept-label",
+    "defaultFilter": "default-filter",
+    "initialFile": "initial-file",
+    "initialFolder": "initial-folder",
+    "initialName": "initial-name"
+   },
+   "FileFilter": {
+    "mimeTypes": "mime-types"
+   },
+   "FileLauncher": {
+    "alwaysAsk": "always-ask"
+   },
+   "FilterListModel": {
+    "itemType": "item-type",
+    "nItems": "n-items",
+    "watchItems": "watch-items"
+   },
+   "FlattenListModel": {
+    "itemType": "item-type",
+    "nItems": "n-items"
+   },
+   "FlowBox": {
+    "acceptUnpairedRelease": "accept-unpaired-release",
+    "activateOnSingleClick": "activate-on-single-click",
+    "columnSpacing": "column-spacing",
+    "maxChildrenPerLine": "max-children-per-line",
+    "minChildrenPerLine": "min-children-per-line",
+    "rowSpacing": "row-spacing",
+    "selectionMode": "selection-mode"
+   },
+   "FontButton": {
+    "useFont": "use-font",
+    "useSize": "use-size"
+   },
+   "FontChooser": {
+    "fontDesc": "font-desc",
+    "fontFeatures": "font-features",
+    "previewText": "preview-text",
+    "showPreviewEntry": "show-preview-entry"
+   },
+   "FontChooserWidget": {
+    "tweakAction": "tweak-action"
+   },
+   "FontDialog": {
+    "fontMap": "font-map"
+   },
+   "FontDialogButton": {
+    "fontDesc": "font-desc",
+    "fontFeatures": "font-features",
+    "useFont": "use-font",
+    "useSize": "use-size"
+   },
+   "Frame": {
+    "labelWidget": "label-widget",
+    "labelXalign": "label-xalign"
+   },
+   "GLArea": {
+    "allowedApis": "allowed-apis",
+    "autoRender": "auto-render",
+    "hasDepthBuffer": "has-depth-buffer",
+    "hasStencilBuffer": "has-stencil-buffer",
+    "useEs": "use-es"
+   },
+   "Gesture": {
+    "nPoints": "n-points"
+   },
+   "GestureLongPress": {
+    "delayFactor": "delay-factor"
+   },
+   "GestureSingle": {
+    "touchOnly": "touch-only"
+   },
+   "GestureStylus": {
+    "stylusOnly": "stylus-only"
+   },
+   "GraphicsOffload": {
+    "blackBackground": "black-background"
+   },
+   "Grid": {
+    "baselineRow": "baseline-row",
+    "columnHomogeneous": "column-homogeneous",
+    "columnSpacing": "column-spacing",
+    "rowHomogeneous": "row-homogeneous",
+    "rowSpacing": "row-spacing"
+   },
+   "GridLayout": {
+    "baselineRow": "baseline-row",
+    "columnHomogeneous": "column-homogeneous",
+    "columnSpacing": "column-spacing",
+    "rowHomogeneous": "row-homogeneous",
+    "rowSpacing": "row-spacing"
+   },
+   "GridLayoutChild": {
+    "columnSpan": "column-span",
+    "rowSpan": "row-span"
+   },
+   "GridView": {
+    "enableRubberband": "enable-rubberband",
+    "maxColumns": "max-columns",
+    "minColumns": "min-columns",
+    "singleClickActivate": "single-click-activate",
+    "tabBehavior": "tab-behavior"
+   },
+   "HeaderBar": {
+    "decorationLayout": "decoration-layout",
+    "showTitleButtons": "show-title-buttons",
+    "titleWidget": "title-widget",
+    "useNativeControls": "use-native-controls"
+   },
+   "IMContext": {
+    "inputHints": "input-hints",
+    "inputPurpose": "input-purpose"
+   },
+   "IconPaintable": {
+    "iconName": "icon-name",
+    "isSymbolic": "is-symbolic"
+   },
+   "IconTheme": {
+    "iconNames": "icon-names",
+    "resourcePath": "resource-path",
+    "searchPath": "search-path",
+    "themeName": "theme-name"
+   },
+   "IconView": {
+    "activateOnSingleClick": "activate-on-single-click",
+    "cellArea": "cell-area",
+    "columnSpacing": "column-spacing",
+    "itemOrientation": "item-orientation",
+    "itemPadding": "item-padding",
+    "itemWidth": "item-width",
+    "markupColumn": "markup-column",
+    "pixbufColumn": "pixbuf-column",
+    "rowSpacing": "row-spacing",
+    "selectionMode": "selection-mode",
+    "textColumn": "text-column",
+    "tooltipColumn": "tooltip-column"
+   },
+   "Image": {
+    "iconName": "icon-name",
+    "iconSize": "icon-size",
+    "pixelSize": "pixel-size",
+    "storageType": "storage-type",
+    "useFallback": "use-fallback"
+   },
+   "InfoBar": {
+    "messageType": "message-type",
+    "showCloseButton": "show-close-button"
+   },
+   "Inscription": {
+    "minChars": "min-chars",
+    "minLines": "min-lines",
+    "natChars": "nat-chars",
+    "natLines": "nat-lines",
+    "textOverflow": "text-overflow",
+    "wrapMode": "wrap-mode"
+   },
+   "Label": {
+    "extraMenu": "extra-menu",
+    "maxWidthChars": "max-width-chars",
+    "mnemonicKeyval": "mnemonic-keyval",
+    "mnemonicWidget": "mnemonic-widget",
+    "naturalWrapMode": "natural-wrap-mode",
+    "singleLineMode": "single-line-mode",
+    "useMarkup": "use-markup",
+    "useUnderline": "use-underline",
+    "widthChars": "width-chars",
+    "wrapMode": "wrap-mode"
+   },
+   "LayoutChild": {
+    "childWidget": "child-widget",
+    "layoutManager": "layout-manager"
+   },
+   "LevelBar": {
+    "maxValue": "max-value",
+    "minValue": "min-value"
+   },
+   "ListBox": {
+    "acceptUnpairedRelease": "accept-unpaired-release",
+    "activateOnSingleClick": "activate-on-single-click",
+    "selectionMode": "selection-mode",
+    "showSeparators": "show-separators",
+    "tabBehavior": "tab-behavior"
+   },
+   "ListHeader": {
+    "nItems": "n-items"
+   },
+   "ListItem": {
+    "accessibleDescription": "accessible-description",
+    "accessibleLabel": "accessible-label"
+   },
+   "ListView": {
+    "enableRubberband": "enable-rubberband",
+    "headerFactory": "header-factory",
+    "showSeparators": "show-separators",
+    "singleClickActivate": "single-click-activate",
+    "tabBehavior": "tab-behavior"
+   },
+   "LockButton": {
+    "textLock": "text-lock",
+    "textUnlock": "text-unlock",
+    "tooltipLock": "tooltip-lock",
+    "tooltipNotAuthorized": "tooltip-not-authorized",
+    "tooltipUnlock": "tooltip-unlock"
+   },
+   "MapListModel": {
+    "hasMap": "has-map",
+    "itemType": "item-type",
+    "nItems": "n-items"
+   },
+   "MediaControls": {
+    "mediaStream": "media-stream"
+   },
+   "MediaFile": {
+    "inputStream": "input-stream"
+   },
+   "MediaStream": {
+    "hasAudio": "has-audio",
+    "hasVideo": "has-video"
+   },
+   "MenuButton": {
+    "alwaysShowArrow": "always-show-arrow",
+    "canShrink": "can-shrink",
+    "hasFrame": "has-frame",
+    "iconName": "icon-name",
+    "menuModel": "menu-model",
+    "useUnderline": "use-underline"
+   },
+   "MessageDialog": {
+    "messageArea": "message-area",
+    "messageType": "message-type",
+    "secondaryText": "secondary-text",
+    "secondaryUseMarkup": "secondary-use-markup",
+    "useMarkup": "use-markup"
+   },
+   "MountOperation": {
+    "isShowing": "is-showing"
+   },
+   "MultiFilter": {
+    "itemType": "item-type",
+    "nItems": "n-items"
+   },
+   "MultiSelection": {
+    "itemType": "item-type",
+    "nItems": "n-items"
+   },
+   "MultiSorter": {
+    "itemType": "item-type",
+    "nItems": "n-items"
+   },
+   "NamedAction": {
+    "actionName": "action-name"
+   },
+   "NativeDialog": {
+    "transientFor": "transient-for"
+   },
+   "NoSelection": {
+    "itemType": "item-type",
+    "nItems": "n-items"
+   },
+   "Notebook": {
+    "enablePopup": "enable-popup",
+    "groupName": "group-name",
+    "showBorder": "show-border",
+    "showTabs": "show-tabs",
+    "tabPos": "tab-pos"
+   },
+   "NotebookPage": {
+    "menuLabel": "menu-label",
+    "tabExpand": "tab-expand",
+    "tabFill": "tab-fill",
+    "tabLabel": "tab-label"
+   },
+   "NumericSorter": {
+    "sortOrder": "sort-order"
+   },
+   "OverlayLayoutChild": {
+    "clipOverlay": "clip-overlay"
+   },
+   "PadController": {
+    "actionGroup": "action-group"
+   },
+   "Paned": {
+    "endChild": "end-child",
+    "maxPosition": "max-position",
+    "minPosition": "min-position",
+    "positionSet": "position-set",
+    "resizeEndChild": "resize-end-child",
+    "resizeStartChild": "resize-start-child",
+    "shrinkEndChild": "shrink-end-child",
+    "shrinkStartChild": "shrink-start-child",
+    "startChild": "start-child",
+    "wideHandle": "wide-handle"
+   },
+   "PasswordEntry": {
+    "activatesDefault": "activates-default",
+    "extraMenu": "extra-menu",
+    "placeholder": "placeholder-text",
+    "showPeekIcon": "show-peek-icon"
+   },
+   "Picture": {
+    "alternativeText": "alternative-text",
+    "canShrink": "can-shrink",
+    "contentFit": "content-fit",
+    "isolateContents": "isolate-contents",
+    "keepAspectRatio": "keep-aspect-ratio"
+   },
+   "Popover": {
+    "cascadePopdown": "cascade-popdown",
+    "defaultWidget": "default-widget",
+    "hasArrow": "has-arrow",
+    "mnemonicsVisible": "mnemonics-visible",
+    "pointingTo": "pointing-to"
+   },
+   "PopoverBin": {
+    "handleInput": "handle-input",
+    "menuModel": "menu-model"
+   },
+   "PopoverMenu": {
+    "menuModel": "menu-model",
+    "visibleSubmenu": "visible-submenu"
+   },
+   "PopoverMenuBar": {
+    "menuModel": "menu-model"
+   },
+   "PrintDialog": {
+    "acceptLabel": "accept-label",
+    "pageSetup": "page-setup",
+    "printSettings": "print-settings"
+   },
+   "PrintJob": {
+    "pageSetup": "page-setup",
+    "trackPrintStatus": "track-print-status"
+   },
+   "PrintOperation": {
+    "allowAsync": "allow-async",
+    "currentPage": "current-page",
+    "customTabLabel": "custom-tab-label",
+    "defaultPageSetup": "default-page-setup",
+    "embedPageSetup": "embed-page-setup",
+    "exportFilename": "export-filename",
+    "hasSelection": "has-selection",
+    "jobName": "job-name",
+    "nPages": "n-pages",
+    "nPagesToPrint": "n-pages-to-print",
+    "printSettings": "print-settings",
+    "showProgress": "show-progress",
+    "statusString": "status-string",
+    "supportSelection": "support-selection",
+    "trackPrintStatus": "track-print-status",
+    "useFullPage": "use-full-page"
+   },
+   "PrintUnixDialog": {
+    "currentPage": "current-page",
+    "embedPageSetup": "embed-page-setup",
+    "hasSelection": "has-selection",
+    "manualCapabilities": "manual-capabilities",
+    "pageSetup": "page-setup",
+    "printSettings": "print-settings",
+    "selectedPrinter": "selected-printer",
+    "supportSelection": "support-selection"
+   },
+   "Printer": {
+    "acceptingJobs": "accepting-jobs",
+    "acceptsPdf": "accepts-pdf",
+    "acceptsPs": "accepts-ps",
+    "iconName": "icon-name",
+    "isVirtual": "is-virtual",
+    "jobCount": "job-count",
+    "stateMessage": "state-message"
+   },
+   "ProgressBar": {
+    "pulseStep": "pulse-step",
+    "showText": "show-text"
+   },
+   "Range": {
+    "fillLevel": "fill-level",
+    "restrictToFillLevel": "restrict-to-fill-level",
+    "roundDigits": "round-digits",
+    "showFillLevel": "show-fill-level"
+   },
+   "Revealer": {
+    "childRevealed": "child-revealed",
+    "revealChild": "reveal-child",
+    "transitionDuration": "transition-duration",
+    "transitionType": "transition-type"
+   },
+   "Scale": {
+    "drawValue": "draw-value",
+    "hasOrigin": "has-origin",
+    "valuePos": "value-pos"
+   },
+   "ScaleButton": {
+    "hasFrame": "has-frame"
+   },
+   "Scrollable": {
+    "hscrollPolicy": "hscroll-policy",
+    "vscrollPolicy": "vscroll-policy"
+   },
+   "ScrolledWindow": {
+    "hasFrame": "has-frame",
+    "hscrollbarPolicy": "hscrollbar-policy",
+    "kineticScrolling": "kinetic-scrolling",
+    "maxContentHeight": "max-content-height",
+    "maxContentWidth": "max-content-width",
+    "minContentHeight": "min-content-height",
+    "minContentWidth": "min-content-width",
+    "overlayScrolling": "overlay-scrolling",
+    "propagateNaturalHeight": "propagate-natural-height",
+    "propagateNaturalWidth": "propagate-natural-width",
+    "vscrollbarPolicy": "vscrollbar-policy",
+    "windowPlacement": "window-placement"
+   },
+   "SearchBar": {
+    "keyCaptureWidget": "key-capture-widget",
+    "searchModeEnabled": "search-mode-enabled",
+    "showCloseButton": "show-close-button"
+   },
+   "SearchEntry": {
+    "activatesDefault": "activates-default",
+    "inputHints": "input-hints",
+    "inputPurpose": "input-purpose",
+    "keyCaptureWidget": "key-capture-widget",
+    "placeholder": "placeholder-text",
+    "searchDelay": "search-delay"
+   },
+   "SelectionFilterModel": {
+    "itemType": "item-type",
+    "nItems": "n-items"
+   },
+   "Settings": {
+    "gtkAlternativeButtonOrder": "gtk-alternative-button-order",
+    "gtkAlternativeSortArrows": "gtk-alternative-sort-arrows",
+    "gtkApplicationPreferDarkTheme": "gtk-application-prefer-dark-theme",
+    "gtkCursorAspectRatio": "gtk-cursor-aspect-ratio",
+    "gtkCursorBlink": "gtk-cursor-blink",
+    "gtkCursorBlinkTime": "gtk-cursor-blink-time",
+    "gtkCursorBlinkTimeout": "gtk-cursor-blink-timeout",
+    "gtkCursorThemeName": "gtk-cursor-theme-name",
+    "gtkCursorThemeSize": "gtk-cursor-theme-size",
+    "gtkDecorationLayout": "gtk-decoration-layout",
+    "gtkDialogsUseHeader": "gtk-dialogs-use-header",
+    "gtkDndDragThreshold": "gtk-dnd-drag-threshold",
+    "gtkDoubleClickDistance": "gtk-double-click-distance",
+    "gtkDoubleClickTime": "gtk-double-click-time",
+    "gtkEnableAccels": "gtk-enable-accels",
+    "gtkEnableAnimations": "gtk-enable-animations",
+    "gtkEnableEventSounds": "gtk-enable-event-sounds",
+    "gtkEnableInputFeedbackSounds": "gtk-enable-input-feedback-sounds",
+    "gtkEnablePrimaryPaste": "gtk-enable-primary-paste",
+    "gtkEntryPasswordHintTimeout": "gtk-entry-password-hint-timeout",
+    "gtkEntrySelectOnFocus": "gtk-entry-select-on-focus",
+    "gtkErrorBell": "gtk-error-bell",
+    "gtkFontName": "gtk-font-name",
+    "gtkFontRendering": "gtk-font-rendering",
+    "gtkFontconfigTimestamp": "gtk-fontconfig-timestamp",
+    "gtkHintFontMetrics": "gtk-hint-font-metrics",
+    "gtkIconThemeName": "gtk-icon-theme-name",
+    "gtkImModule": "gtk-im-module",
+    "gtkInterfaceColorScheme": "gtk-interface-color-scheme",
+    "gtkInterfaceContrast": "gtk-interface-contrast",
+    "gtkInterfaceReducedMotion": "gtk-interface-reduced-motion",
+    "gtkKeynavUseCaret": "gtk-keynav-use-caret",
+    "gtkLabelSelectOnFocus": "gtk-label-select-on-focus",
+    "gtkLongPressTime": "gtk-long-press-time",
+    "gtkOverlayScrolling": "gtk-overlay-scrolling",
+    "gtkPrimaryButtonWarpsSlider": "gtk-primary-button-warps-slider",
+    "gtkPrintBackends": "gtk-print-backends",
+    "gtkPrintPreviewCommand": "gtk-print-preview-command",
+    "gtkRecentFilesEnabled": "gtk-recent-files-enabled",
+    "gtkRecentFilesMaxAge": "gtk-recent-files-max-age",
+    "gtkShellShowsAppMenu": "gtk-shell-shows-app-menu",
+    "gtkShellShowsDesktop": "gtk-shell-shows-desktop",
+    "gtkShellShowsMenubar": "gtk-shell-shows-menubar",
+    "gtkShowStatusShapes": "gtk-show-status-shapes",
+    "gtkSoundThemeName": "gtk-sound-theme-name",
+    "gtkSplitCursor": "gtk-split-cursor",
+    "gtkThemeName": "gtk-theme-name",
+    "gtkTitlebarDoubleClick": "gtk-titlebar-double-click",
+    "gtkTitlebarMiddleClick": "gtk-titlebar-middle-click",
+    "gtkTitlebarRightClick": "gtk-titlebar-right-click",
+    "gtkXftAntialias": "gtk-xft-antialias",
+    "gtkXftDpi": "gtk-xft-dpi",
+    "gtkXftHinting": "gtk-xft-hinting",
+    "gtkXftHintstyle": "gtk-xft-hintstyle",
+    "gtkXftRgba": "gtk-xft-rgba"
+   },
+   "ShortcutController": {
+    "itemType": "item-type",
+    "mnemonicModifiers": "mnemonic-modifiers",
+    "nItems": "n-items"
+   },
+   "ShortcutLabel": {
+    "disabledText": "disabled-text"
+   },
+   "ShortcutsGroup": {
+    "accelSizeGroup": "accel-size-group",
+    "titleSizeGroup": "title-size-group"
+   },
+   "ShortcutsSection": {
+    "maxHeight": "max-height",
+    "sectionName": "section-name",
+    "viewName": "view-name"
+   },
+   "ShortcutsShortcut": {
+    "accelSizeGroup": "accel-size-group",
+    "actionName": "action-name",
+    "iconSet": "icon-set",
+    "shortcutType": "shortcut-type",
+    "subtitleSet": "subtitle-set",
+    "titleSizeGroup": "title-size-group"
+   },
+   "ShortcutsWindow": {
+    "sectionName": "section-name",
+    "viewName": "view-name"
+   },
+   "SignalAction": {
+    "signalName": "signal-name"
+   },
+   "SingleSelection": {
+    "canUnselect": "can-unselect",
+    "itemType": "item-type",
+    "nItems": "n-items",
+    "selectedItem": "selected-item"
+   },
+   "SliceListModel": {
+    "itemType": "item-type",
+    "nItems": "n-items"
+   },
+   "SortListModel": {
+    "itemType": "item-type",
+    "nItems": "n-items",
+    "sectionSorter": "section-sorter"
+   },
+   "SpinButton": {
+    "activatesDefault": "activates-default",
+    "climbRate": "climb-rate",
+    "snapToTicks": "snap-to-ticks",
+    "updatePolicy": "update-policy"
+   },
+   "Stack": {
+    "interpolateSize": "interpolate-size",
+    "transitionDuration": "transition-duration",
+    "transitionRunning": "transition-running",
+    "transitionType": "transition-type",
+    "visibleChild": "visible-child",
+    "visibleChildName": "visible-child-name"
+   },
+   "StackPage": {
+    "iconName": "icon-name",
+    "needsAttention": "needs-attention",
+    "useUnderline": "use-underline"
+   },
+   "StringFilter": {
+    "ignoreCase": "ignore-case",
+    "matchMode": "match-mode"
+   },
+   "StringList": {
+    "itemType": "item-type",
+    "nItems": "n-items"
+   },
+   "StringSorter": {
+    "ignoreCase": "ignore-case"
+   },
+   "Text": {
+    "activatesDefault": "activates-default",
+    "enableEmojiCompletion": "enable-emoji-completion",
+    "extraMenu": "extra-menu",
+    "imModule": "im-module",
+    "inputHints": "input-hints",
+    "inputPurpose": "input-purpose",
+    "invisibleChar": "invisible-char",
+    "invisibleCharSet": "invisible-char-set",
+    "maxLength": "max-length",
+    "overwriteMode": "overwrite-mode",
+    "placeholder": "placeholder-text",
+    "propagateTextWidth": "propagate-text-width",
+    "scrollOffset": "scroll-offset",
+    "truncateMultiline": "truncate-multiline"
+   },
+   "TextBuffer": {
+    "canRedo": "can-redo",
+    "canUndo": "can-undo",
+    "cursorPosition": "cursor-position",
+    "enableUndo": "enable-undo",
+    "hasSelection": "has-selection",
+    "tagTable": "tag-table"
+   },
+   "TextMark": {
+    "leftGravity": "left-gravity"
+   },
+   "TextTag": {
+    "accumulativeMargin": "accumulative-margin",
+    "allowBreaks": "allow-breaks",
+    "allowBreaksSet": "allow-breaks-set",
+    "backgroundFullHeight": "background-full-height",
+    "backgroundFullHeightSet": "background-full-height-set",
+    "backgroundRgba": "background-rgba",
+    "backgroundSet": "background-set",
+    "editableSet": "editable-set",
+    "fallbackSet": "fallback-set",
+    "familySet": "family-set",
+    "fontDesc": "font-desc",
+    "fontFeatures": "font-features",
+    "fontFeaturesSet": "font-features-set",
+    "foregroundRgba": "foreground-rgba",
+    "foregroundSet": "foreground-set",
+    "indentSet": "indent-set",
+    "insertHyphens": "insert-hyphens",
+    "insertHyphensSet": "insert-hyphens-set",
+    "invisibleSet": "invisible-set",
+    "justificationSet": "justification-set",
+    "languageSet": "language-set",
+    "leftMargin": "left-margin",
+    "leftMarginSet": "left-margin-set",
+    "letterSpacing": "letter-spacing",
+    "letterSpacingSet": "letter-spacing-set",
+    "lineHeight": "line-height",
+    "lineHeightSet": "line-height-set",
+    "overlineRgba": "overline-rgba",
+    "overlineRgbaSet": "overline-rgba-set",
+    "overlineSet": "overline-set",
+    "paragraphBackground": "paragraph-background",
+    "paragraphBackgroundRgba": "paragraph-background-rgba",
+    "paragraphBackgroundSet": "paragraph-background-set",
+    "pixelsAboveLines": "pixels-above-lines",
+    "pixelsAboveLinesSet": "pixels-above-lines-set",
+    "pixelsBelowLines": "pixels-below-lines",
+    "pixelsBelowLinesSet": "pixels-below-lines-set",
+    "pixelsInsideWrap": "pixels-inside-wrap",
+    "pixelsInsideWrapSet": "pixels-inside-wrap-set",
+    "rightMargin": "right-margin",
+    "rightMarginSet": "right-margin-set",
+    "riseSet": "rise-set",
+    "scaleSet": "scale-set",
+    "sentenceSet": "sentence-set",
+    "showSpaces": "show-spaces",
+    "showSpacesSet": "show-spaces-set",
+    "sizePoints": "size-points",
+    "sizeSet": "size-set",
+    "stretchSet": "stretch-set",
+    "strikethroughRgba": "strikethrough-rgba",
+    "strikethroughRgbaSet": "strikethrough-rgba-set",
+    "strikethroughSet": "strikethrough-set",
+    "styleSet": "style-set",
+    "tabsSet": "tabs-set",
+    "textTransform": "text-transform",
+    "textTransformSet": "text-transform-set",
+    "underlineRgba": "underline-rgba",
+    "underlineRgbaSet": "underline-rgba-set",
+    "underlineSet": "underline-set",
+    "variantSet": "variant-set",
+    "weightSet": "weight-set",
+    "wordSet": "word-set",
+    "wrapMode": "wrap-mode",
+    "wrapModeSet": "wrap-mode-set"
+   },
+   "TextView": {
+    "acceptsTab": "accepts-tab",
+    "bottomMargin": "bottom-margin",
+    "cursorVisible": "cursor-visible",
+    "extraMenu": "extra-menu",
+    "imModule": "im-module",
+    "inputHints": "input-hints",
+    "inputPurpose": "input-purpose",
+    "leftMargin": "left-margin",
+    "pixelsAboveLines": "pixels-above-lines",
+    "pixelsBelowLines": "pixels-below-lines",
+    "pixelsInsideWrap": "pixels-inside-wrap",
+    "rightMargin": "right-margin",
+    "topMargin": "top-margin",
+    "wrapMode": "wrap-mode"
+   },
+   "TreeExpander": {
+    "hideExpander": "hide-expander",
+    "indentForDepth": "indent-for-depth",
+    "indentForIcon": "indent-for-icon",
+    "listRow": "list-row"
+   },
+   "TreeListModel": {
+    "itemType": "item-type",
+    "nItems": "n-items"
+   },
+   "TreeModelFilter": {
+    "childModel": "child-model",
+    "virtualRoot": "virtual-root"
+   },
+   "TreeView": {
+    "activateOnSingleClick": "activate-on-single-click",
+    "enableGridLines": "enable-grid-lines",
+    "enableSearch": "enable-search",
+    "enableTreeLines": "enable-tree-lines",
+    "expanderColumn": "expander-column",
+    "fixedHeightMode": "fixed-height-mode",
+    "headersClickable": "headers-clickable",
+    "headersVisible": "headers-visible",
+    "hoverExpand": "hover-expand",
+    "hoverSelection": "hover-selection",
+    "levelIndentation": "level-indentation",
+    "rubberBanding": "rubber-banding",
+    "searchColumn": "search-column",
+    "showExpanders": "show-expanders",
+    "tooltipColumn": "tooltip-column"
+   },
+   "TreeViewColumn": {
+    "cellArea": "cell-area",
+    "fixedWidth": "fixed-width",
+    "maxWidth": "max-width",
+    "minWidth": "min-width",
+    "sortColumnId": "sort-column-id",
+    "sortIndicator": "sort-indicator",
+    "sortOrder": "sort-order",
+    "xOffset": "x-offset"
+   },
+   "Video": {
+    "graphicsOffload": "graphics-offload",
+    "mediaStream": "media-stream"
+   },
+   "Viewport": {
+    "scrollToFocus": "scroll-to-focus"
+   },
+   "VolumeButton": {
+    "useSymbolic": "use-symbolic"
+   },
+   "Widget": {
+    "canFocus": "can-focus",
+    "canTarget": "can-target",
+    "cssClasses": "css-classes",
+    "cssName": "css-name",
+    "focusOnClick": "focus-on-click",
+    "hasDefault": "has-default",
+    "hasFocus": "has-focus",
+    "hasTooltip": "has-tooltip",
+    "heightRequest": "height-request",
+    "hexpandSet": "hexpand-set",
+    "layoutManager": "layout-manager",
+    "limitEvents": "limit-events",
+    "marginBottom": "margin-bottom",
+    "marginEnd": "margin-end",
+    "marginStart": "margin-start",
+    "marginTop": "margin-top",
+    "receivesDefault": "receives-default",
+    "scaleFactor": "scale-factor",
+    "tooltipMarkup": "tooltip-markup",
+    "tooltipText": "tooltip-text",
+    "vexpandSet": "vexpand-set",
+    "widthRequest": "width-request"
+   },
+   "Window": {
+    "defaultHeight": "default-height",
+    "defaultWidget": "default-widget",
+    "defaultWidth": "default-width",
+    "destroyWithParent": "destroy-with-parent",
+    "focusVisible": "focus-visible",
+    "focusWidget": "focus-widget",
+    "handleMenubarAccel": "handle-menubar-accel",
+    "hideOnClose": "hide-on-close",
+    "iconName": "icon-name",
+    "isActive": "is-active",
+    "mnemonicsVisible": "mnemonics-visible",
+    "startupId": "startup-id",
+    "transientFor": "transient-for"
+   },
+   "WindowControls": {
+    "decorationLayout": "decoration-layout",
+    "useNativeControls": "use-native-controls"
+   }
+  },
+  "synthetic": {
+   "action": "action",
+   "canvas": "canvas",
+   "contextmenu": "context-menu",
+   "menu": "menu",
+   "menubar": "menu-bar",
+   "menuseparator": "menu-separator",
+   "toolbar": "tool-bar",
+   "virtuallist": "virtual-list"
+  },
+  "tags": {
+   "(none: Window)": "window",
+   "aboutdialog": "about-dialog",
+   "actionbar": "action-bar",
+   "aspectframe": "aspect-frame",
+   "centerbox": "center-box",
+   "checkbutton": "check-button",
+   "clickgesture": "gesture-click",
+   "colordialogbutton": "color-dialog-button",
+   "drawingarea": "drawing-area",
+   "editablelabel": "editable-label",
+   "emojichooser": "emoji-chooser",
+   "flowbox": "flow-box",
+   "flowboxchild": "flow-box-child",
+   "focuscontroller": "event-controller-focus",
+   "fontdialogbutton": "font-dialog-button",
+   "graphicsoffload": "graphics-offload",
+   "headerbar": "header-bar",
+   "keycontroller": "event-controller-key",
+   "levelbar": "level-bar",
+   "linkbutton": "link-button",
+   "listbox": "list-box",
+   "listboxrow": "list-box-row",
+   "lockbutton": "lock-button",
+   "mediacontrols": "media-controls",
+   "menubutton": "menu-button",
+   "motioncontroller": "event-controller-motion",
+   "passwordentry": "password-entry",
+   "popovermenu": "popover-menu",
+   "popovermenubar": "popover-menu-bar",
+   "progressbar": "progress-bar",
+   "scalebutton": "scale-button",
+   "scrollcontroller": "event-controller-scroll",
+   "scrolledwindow": "scrolled-window",
+   "searchbar": "search-bar",
+   "searchentry": "search-entry",
+   "shortcutlabel": "shortcut-label",
+   "spinbutton": "spin-button",
+   "stacksidebar": "stack-sidebar",
+   "stackswitcher": "stack-switcher",
+   "textview": "text-view",
+   "togglebutton": "toggle-button",
+   "volumebutton": "volume-button",
+   "window": "application-window",
+   "windowcontrols": "window-controls",
+   "windowhandle": "window-handle"
+  }
+ },
+ "qt": {
+  "attrs": {
+   "box": {
+    "align": "alignment",
+    "stretch": "stretch"
+   },
+   "grid": {
+    "column": "column",
+    "columnSpan": "column-span",
+    "row": "row",
+    "rowSpan": "row-span"
+   },
+   "splitter": {
+    "stretch": "stretch"
+   },
+   "tabwidget": {
+    "tabEnabled": "tab-enabled",
+    "tabLabel": "tab-text",
+    "tabToolTip": "tab-tool-tip"
+   },
+   "window": {
+    "area": "area",
+    "breakBefore": "tool-bar-break"
+   }
+  },
+  "bindings": {
+   "action": {
+    "checked": "checked"
+   },
+   "checkbox": {
+    "checked": "checked"
+   },
+   "combobox": {
+    "currentIndex": "current-index"
+   },
+   "dateedit": {
+    "date": "date"
+   },
+   "datetimeedit": {
+    "dateTime": "date-time"
+   },
+   "dial": {
+    "value": "value"
+   },
+   "doublespinbox": {
+    "value": "value"
+   },
+   "entry": {
+    "text": "text"
+   },
+   "groupbox": {
+    "checked": "checked"
+   },
+   "listwidget": {
+    "currentRow": "current-row"
+   },
+   "plaintextedit": {
+    "plainText": "plain-text"
+   },
+   "radiobutton": {
+    "checked": "checked"
+   },
+   "scrollbar": {
+    "value": "value"
+   },
+   "slider": {
+    "value": "value"
+   },
+   "spinbox": {
+    "value": "value"
+   },
+   "stackedwidget": {
+    "currentIndex": "current-index"
+   },
+   "tabbar": {
+    "currentIndex": "current-index"
+   },
+   "tabwidget": {
+    "currentIndex": "current-index"
+   },
+   "textedit": {
+    "plainText": "plain-text"
+   },
+   "timeedit": {
+    "time": "time"
+   },
+   "toolbox": {
+    "currentIndex": "current-index"
+   }
+  },
+  "props": {
+   "action": {
+    "checkable": "checkable",
+    "checked": "checked",
+    "enabled": "enabled",
+    "group": "group",
+    "icon": "icon",
+    "label": "text",
+    "shortcut": "shortcut",
+    "statusTip": "status-tip",
+    "tooltip": "tool-tip",
+    "visible": "visible"
+   },
+   "box": {
+    "contentsMargins": "contents-margins",
+    "enabled": "enabled",
+    "focusPolicy": "focus-policy",
+    "geometry": "geometry",
+    "maximumSize": "maximum-size",
+    "minimumSize": "minimum-size",
+    "orientation": "direction",
+    "pos": "pos",
+    "size": "size",
+    "sizeIncrement": "size-increment",
+    "spacing": "spacing",
+    "toolTip": "tool-tip"
+   },
+   "button": {
+    "autoDefault": "auto-default",
+    "checkable": "checkable",
+    "default": "default",
+    "flat": "flat",
+    "icon": "icon",
+    "iconSize": "icon-size",
+    "label": "text",
+    "shortcut": "shortcut"
+   },
+   "calendar": {
+    "dateEditAcceptDelay": "date-edit-accept-delay",
+    "dateEditEnabled": "date-edit-enabled",
+    "firstDayOfWeek": "first-day-of-week",
+    "gridVisible": "grid-visible",
+    "horizontalHeaderFormat": "horizontal-header-format",
+    "maximumDate": "maximum-date",
+    "minimumDate": "minimum-date",
+    "navigationBarVisible": "navigation-bar-visible",
+    "selectedDate": "selected-date",
+    "selectionMode": "selection-mode",
+    "verticalHeaderFormat": "vertical-header-format"
+   },
+   "checkbox": {
+    "checkState": "check-state",
+    "checked": "checked",
+    "tristate": "tristate"
+   },
+   "colordialog": {
+    "currentColor": "current-color",
+    "options": "options"
+   },
+   "combobox": {
+    "count": "count",
+    "currentData": "current-data",
+    "currentIndex": "current-index",
+    "currentText": "current-text",
+    "duplicatesEnabled": "duplicates-enabled",
+    "editable": "editable",
+    "insertPolicy": "insert-policy",
+    "maxVisibleItems": "max-visible-items",
+    "placeholderText": "placeholder-text"
+   },
+   "commandlinkbutton": {
+    "description": "description",
+    "flat": "flat"
+   },
+   "contextmenu": {
+    "label": "title"
+   },
+   "dateedit": {
+    "calendarPopup": "calendar-popup",
+    "date": "date",
+    "displayFormat": "display-format",
+    "maximumDate": "maximum-date",
+    "minimumDate": "minimum-date"
+   },
+   "datetimeedit": {
+    "calendarPopup": "calendar-popup",
+    "dateTime": "date-time",
+    "displayFormat": "display-format",
+    "maximumDate": "maximum-date",
+    "maximumDateTime": "maximum-date-time",
+    "maximumTime": "maximum-time",
+    "minimumDate": "minimum-date",
+    "minimumDateTime": "minimum-date-time",
+    "minimumTime": "minimum-time"
+   },
+   "dial": {
+    "notchTarget": "notch-target",
+    "notchesVisible": "notches-visible",
+    "value": "value",
+    "wrapping": "wrapping"
+   },
+   "dialog": {
+    "title": "window-title"
+   },
+   "dialogbuttonbox": {
+    "centerButtons": "center-buttons",
+    "orientation": "orientation",
+    "standardButtons": "standard-buttons"
+   },
+   "dockwidget": {
+    "allowedAreas": "allowed-areas",
+    "features": "features",
+    "floating": "floating",
+    "windowTitle": "window-title"
+   },
+   "doublespinbox": {
+    "decimals": "decimals",
+    "maximum": "maximum",
+    "minimum": "minimum",
+    "singleStep": "single-step",
+    "value": "value"
+   },
+   "entry": {
+    "alignment": "alignment",
+    "clearButtonEnabled": "clear-button-enabled",
+    "cursorPosition": "cursor-position",
+    "dragEnabled": "drag-enabled",
+    "echoMode": "echo-mode",
+    "frame": "frame",
+    "inputMask": "input-mask",
+    "maxLength": "max-length",
+    "placeholder": "placeholder-text",
+    "readOnly": "read-only",
+    "text": "text"
+   },
+   "filedialog": {
+    "acceptMode": "accept-mode",
+    "defaultSuffix": "default-suffix",
+    "fileMode": "file-mode",
+    "viewMode": "view-mode"
+   },
+   "fontcombobox": {
+    "currentFont": "current-font",
+    "fontFilters": "font-filters",
+    "writingSystem": "writing-system"
+   },
+   "fontdialog": {
+    "currentFont": "current-font",
+    "options": "options"
+   },
+   "frame": {
+    "orientation": "direction"
+   },
+   "groupbox": {
+    "alignment": "alignment",
+    "checkable": "checkable",
+    "checked": "checked",
+    "flat": "flat",
+    "orientation": "direction",
+    "title": "title"
+   },
+   "inherit:QAbstractButton": {
+    "autoExclusive": "auto-exclusive",
+    "autoRepeat": "auto-repeat",
+    "checkable": "checkable",
+    "checked": "checked",
+    "label": "text",
+    "shortcut": "shortcut"
+   },
+   "inherit:QAbstractSlider": {
+    "invertedAppearance": "inverted-appearance",
+    "maximum": "maximum",
+    "minimum": "minimum",
+    "orientation": "orientation",
+    "pageStep": "page-step",
+    "singleStep": "single-step",
+    "tracking": "tracking",
+    "value": "value"
+   },
+   "inherit:QAbstractSpinBox": {
+    "accelerated": "accelerated",
+    "buttonSymbols": "button-symbols",
+    "frame": "frame",
+    "readOnly": "read-only",
+    "specialValueText": "special-value-text",
+    "wrapping": "wrapping"
+   },
+   "inherit:QDialog": {
+    "modal": "modal",
+    "sizeGripEnabled": "size-grip-enabled"
+   },
+   "inherit:QFrame": {
+    "frameShadow": "frame-shadow",
+    "frameShape": "frame-shape",
+    "lineWidth": "line-width",
+    "midLineWidth": "mid-line-width"
+   },
+   "inherit:QWidget": {
+    "accessibleName": "accessible-name",
+    "enabled": "enabled",
+    "maximumHeight": "maximum-height",
+    "maximumWidth": "maximum-width",
+    "minimumHeight": "minimum-height",
+    "minimumWidth": "minimum-width",
+    "statusTip": "status-tip",
+    "styleSheet": "style-sheet",
+    "toolTip": "tool-tip",
+    "whatsThis": "whats-this"
+   },
+   "inputdialog": {
+    "cancelButtonText": "cancel-button-text",
+    "doubleValue": "double-value",
+    "inputMode": "input-mode",
+    "intMaximum": "int-maximum",
+    "intMinimum": "int-minimum",
+    "intValue": "int-value",
+    "labelText": "label-text",
+    "okButtonText": "ok-button-text",
+    "textValue": "text-value"
+   },
+   "keysequenceedit": {
+    "clearButtonEnabled": "clear-button-enabled",
+    "keySequence": "key-sequence"
+   },
+   "label": {
+    "alignment": "alignment",
+    "indent": "indent",
+    "label": "text",
+    "margin": "margin",
+    "openExternalLinks": "open-external-links",
+    "pixmap": "pixmap",
+    "scaledContents": "scaled-contents",
+    "textFormat": "text-format",
+    "textInteractionFlags": "text-interaction-flags",
+    "wordWrap": "word-wrap"
+   },
+   "lcdnumber": {
+    "digitCount": "digit-count",
+    "intValue": "int-value",
+    "mode": "mode",
+    "segmentStyle": "segment-style",
+    "value": "value"
+   },
+   "listwidget": {
+    "alternatingRowColors": "alternating-row-colors",
+    "count": "count",
+    "currentRow": "current-row",
+    "selectionMode": "selection-mode",
+    "sortingEnabled": "sorting-enabled"
+   },
+   "mdiarea": {
+    "activationOrder": "activation-order",
+    "documentMode": "document-mode",
+    "tabPosition": "tab-position",
+    "tabShape": "tab-shape",
+    "tabsClosable": "tabs-closable",
+    "tabsMovable": "tabs-movable",
+    "viewMode": "view-mode"
+   },
+   "menu": {
+    "icon": "icon",
+    "label": "title",
+    "separatorsCollapsible": "separators-collapsible",
+    "tearOffEnabled": "tear-off-enabled",
+    "toolTipsVisible": "tool-tips-visible"
+   },
+   "menubar": {
+    "defaultUp": "default-up"
+   },
+   "menuseparator": {
+    "visible": "visible"
+   },
+   "messagebox": {
+    "detailedText": "detailed-text",
+    "icon": "icon",
+    "informativeText": "informative-text",
+    "standardButtons": "standard-buttons",
+    "text": "text",
+    "textFormat": "text-format"
+   },
+   "plaintextedit": {
+    "cursorWidth": "cursor-width",
+    "documentTitle": "document-title",
+    "lineWrapMode": "line-wrap-mode",
+    "maximumBlockCount": "maximum-block-count",
+    "overwriteMode": "overwrite-mode",
+    "placeholderText": "placeholder-text",
+    "plainText": "plain-text",
+    "readOnly": "read-only",
+    "tabChangesFocus": "tab-changes-focus",
+    "tabStopDistance": "tab-stop-distance",
+    "textInteractionFlags": "text-interaction-flags",
+    "undoRedoEnabled": "undo-redo-enabled",
+    "wordWrapMode": "word-wrap-mode"
+   },
+   "progressbar": {
+    "format": "format",
+    "invertedAppearance": "inverted-appearance",
+    "maximum": "maximum",
+    "minimum": "minimum",
+    "orientation": "orientation",
+    "textVisible": "text-visible",
+    "value": "value"
+   },
+   "progressdialog": {
+    "autoClose": "auto-close",
+    "autoReset": "auto-reset",
+    "labelText": "label-text",
+    "maximum": "maximum",
+    "minimum": "minimum",
+    "minimumDuration": "minimum-duration",
+    "value": "value"
+   },
+   "radiobutton": {
+    "checked": "checked"
+   },
+   "scrollbar": {
+    "value": "value"
+   },
+   "scrolledwindow": {
+    "horizontalScrollBarPolicy": "horizontal-scroll-bar-policy",
+    "verticalScrollBarPolicy": "vertical-scroll-bar-policy",
+    "widgetResizable": "widget-resizable"
+   },
+   "slider": {
+    "tickInterval": "tick-interval",
+    "tickPosition": "tick-position",
+    "value": "value"
+   },
+   "spinbox": {
+    "displayIntegerBase": "display-integer-base",
+    "maximum": "maximum",
+    "minimum": "minimum",
+    "prefix": "prefix",
+    "singleStep": "single-step",
+    "suffix": "suffix",
+    "value": "value"
+   },
+   "splitter": {
+    "childrenCollapsible": "children-collapsible",
+    "handleWidth": "handle-width",
+    "opaqueResize": "opaque-resize",
+    "orientation": "orientation"
+   },
+   "stackedwidget": {
+    "currentIndex": "current-index"
+   },
+   "statusbar": {
+    "sizeGripEnabled": "size-grip-enabled"
+   },
+   "tabbar": {
+    "autoHide": "auto-hide",
+    "count": "count",
+    "currentIndex": "current-index",
+    "documentMode": "document-mode",
+    "drawBase": "draw-base",
+    "elideMode": "elide-mode",
+    "expanding": "expanding",
+    "movable": "movable",
+    "shape": "shape",
+    "tabsClosable": "tabs-closable",
+    "usesScrollButtons": "uses-scroll-buttons"
+   },
+   "tabwidget": {
+    "currentIndex": "current-index",
+    "documentMode": "document-mode",
+    "movable": "movable",
+    "tabPosition": "tab-position",
+    "tabShape": "tab-shape",
+    "tabsClosable": "tabs-closable",
+    "usesScrollButtons": "uses-scroll-buttons"
+   },
+   "textbrowser": {
+    "openExternalLinks": "open-external-links",
+    "openLinks": "open-links",
+    "source": "source",
+    "sourceType": "source-type"
+   },
+   "textdocument": {
+    "blockCount": "block-count",
+    "defaultStyleSheet": "default-style-sheet",
+    "documentMargin": "document-margin",
+    "indentWidth": "indent-width",
+    "maximumBlockCount": "maximum-block-count",
+    "modified": "modified",
+    "textWidth": "text-width",
+    "undoRedoEnabled": "undo-redo-enabled",
+    "useDesignMetrics": "use-design-metrics"
+   },
+   "textedit": {
+    "acceptRichText": "accept-rich-text",
+    "autoFormatting": "auto-formatting",
+    "cursorWidth": "cursor-width",
+    "documentTitle": "document-title",
+    "lineWrapColumnOrWidth": "line-wrap-column-or-width",
+    "lineWrapMode": "line-wrap-mode",
+    "markdown": "markdown",
+    "overwriteMode": "overwrite-mode",
+    "placeholderText": "placeholder-text",
+    "plainText": "plain-text",
+    "readOnly": "read-only",
+    "tabChangesFocus": "tab-changes-focus",
+    "tabStopDistance": "tab-stop-distance",
+    "textInteractionFlags": "text-interaction-flags",
+    "undoRedoEnabled": "undo-redo-enabled",
+    "wordWrapMode": "word-wrap-mode"
+   },
+   "timeedit": {
+    "displayFormat": "display-format",
+    "maximumTime": "maximum-time",
+    "minimumTime": "minimum-time",
+    "time": "time"
+   },
+   "toolbar": {
+    "floatable": "floatable",
+    "iconSize": "icon-size",
+    "movable": "movable",
+    "orientation": "orientation",
+    "toolButtonStyle": "tool-button-style"
+   },
+   "toolbox": {
+    "currentIndex": "current-index"
+   },
+   "toolbutton": {
+    "arrowType": "arrow-type",
+    "autoRaise": "auto-raise",
+    "popupMode": "popup-mode",
+    "toolButtonStyle": "tool-button-style"
+   },
+   "window": {
+    "animated": "animated",
+    "dockNestingEnabled": "dock-nesting-enabled",
+    "documentMode": "document-mode",
+    "tabShape": "tab-shape",
+    "title": "window-title",
+    "toolButtonStyle": "tool-button-style"
+   },
+   "wizard": {
+    "options": "options",
+    "wizardStyle": "wizard-style"
+   },
+   "wizardpage": {
+    "subTitle": "sub-title",
+    "title": "title"
+   }
+  },
+  "signals": {
+   "action": {
+    "activate": "triggered",
+    "hover": "hovered",
+    "toggled": "toggled"
+   },
+   "box": {
+    "key-press": "key-press"
+   },
+   "button": {
+    "clicked": "clicked"
+   },
+   "calendar": {
+    "activated": "activated",
+    "clicked": "clicked",
+    "page-changed": "current-page-changed",
+    "selection-changed": "selection-changed"
+   },
+   "checkbox": {
+    "pressed": "pressed",
+    "released": "released",
+    "stateChanged": "state-changed",
+    "toggled": "toggled"
+   },
+   "colordialog": {
+    "currentColorChanged": "current-color-changed"
+   },
+   "combobox": {
+    "activated": "activated",
+    "changed": "current-index-changed",
+    "text-changed": "current-text-changed"
+   },
+   "dateedit": {
+    "date-changed": "date-changed"
+   },
+   "datetimeedit": {
+    "date-time-changed": "date-time-changed"
+   },
+   "dial": {
+    "valueChanged": "value-changed"
+   },
+   "dialogbuttonbox": {
+    "accepted": "accepted",
+    "help-requested": "help-requested",
+    "rejected": "rejected"
+   },
+   "dockwidget": {
+    "allowed-areas-changed": "allowed-areas-changed",
+    "features-changed": "features-changed",
+    "top-level-changed": "top-level-changed",
+    "visibility-changed": "visibility-changed"
+   },
+   "doublespinbox": {
+    "valueChanged": "value-changed"
+   },
+   "entry": {
+    "changed": "text-changed",
+    "editingFinished": "editing-finished",
+    "key-press": "key-press",
+    "returnPressed": "return-pressed",
+    "selectionChanged": "selection-changed",
+    "textEdited": "text-edited"
+   },
+   "filedialog": {
+    "accepted": "accepted"
+   },
+   "groupbox": {
+    "clicked": "clicked",
+    "toggled": "toggled"
+   },
+   "inherit:QAbstractButton": {
+    "clicked": "clicked",
+    "pressed": "pressed",
+    "released": "released",
+    "toggled": "toggled"
+   },
+   "inherit:QAbstractSlider": {
+    "rangeChanged": "range-changed",
+    "sliderMoved": "slider-moved",
+    "valueChanged": "value-changed"
+   },
+   "inherit:QAbstractSpinBox": {
+    "editingFinished": "editing-finished"
+   },
+   "inherit:QDialog": {
+    "accepted": "accepted",
+    "finished": "finished",
+    "rejected": "rejected"
+   },
+   "inherit:QWidget": {
+    "context-menu": "context-menu",
+    "double-click": "mouse-double-click",
+    "enter": "enter",
+    "focus-in": "focus-in",
+    "focus-out": "focus-out",
+    "key-release": "key-release",
+    "leave": "leave",
+    "mouse-move": "mouse-move",
+    "mouse-press": "mouse-press",
+    "mouse-release": "mouse-release",
+    "resize": "resize",
+    "wheel": "wheel"
+   },
+   "inputdialog": {
+    "intValueChanged": "int-value-changed",
+    "textValueChanged": "text-value-changed"
+   },
+   "keysequenceedit": {
+    "editingFinished": "editing-finished"
+   },
+   "label": {
+    "linkActivated": "link-activated",
+    "linkHovered": "link-hovered"
+   },
+   "lcdnumber": {
+    "overflow": "overflow"
+   },
+   "listwidget": {
+    "row-changed": "current-row-changed",
+    "selection-changed": "item-selection-changed"
+   },
+   "plaintextedit": {
+    "blockCountChanged": "block-count-changed",
+    "changed": "text-changed",
+    "cursorPositionChanged": "cursor-position-changed",
+    "key-press": "key-press",
+    "selectionChanged": "selection-changed"
+   },
+   "progressbar": {
+    "valueChanged": "value-changed"
+   },
+   "progressdialog": {
+    "canceled": "canceled"
+   },
+   "radiobutton": {
+    "pressed": "pressed",
+    "released": "released",
+    "toggled": "toggled"
+   },
+   "scrollbar": {
+    "valueChanged": "value-changed"
+   },
+   "slider": {
+    "valueChanged": "value-changed"
+   },
+   "spinbox": {
+    "textChanged": "text-changed",
+    "valueChanged": "value-changed"
+   },
+   "splitter": {
+    "splitter-moved": "splitter-moved"
+   },
+   "stackedwidget": {
+    "changed": "current-changed"
+   },
+   "statusbar": {
+    "messageChanged": "message-changed"
+   },
+   "tabbar": {
+    "changed": "current-changed",
+    "tab-bar-clicked": "tab-bar-clicked",
+    "tab-bar-double-clicked": "tab-bar-double-clicked",
+    "tab-close-requested": "tab-close-requested",
+    "tab-moved": "tab-moved"
+   },
+   "tabwidget": {
+    "changed": "current-changed",
+    "tab-bar-clicked": "tab-bar-clicked",
+    "tab-close-requested": "tab-close-requested"
+   },
+   "textbrowser": {
+    "backwardAvailable": "backward-available",
+    "historyChanged": "history-changed"
+   },
+   "textdocument": {
+    "blockCountChanged": "block-count-changed",
+    "contentsChanged": "contents-changed",
+    "modificationChanged": "modification-changed"
+   },
+   "textedit": {
+    "changed": "text-changed",
+    "cursorPositionChanged": "cursor-position-changed",
+    "key-press": "key-press",
+    "selectionChanged": "selection-changed"
+   },
+   "timeedit": {
+    "time-changed": "time-changed"
+   },
+   "toolbar": {
+    "movable-changed": "movable-changed",
+    "orientation-changed": "orientation-changed"
+   },
+   "toolbox": {
+    "changed": "current-changed"
+   },
+   "window": {
+    "close-request": "close"
+   },
+   "wizard": {
+    "currentIdChanged": "current-id-changed"
+   }
+  },
+  "tags": {
+   "action": {
+    "class": "QAction",
+    "new": "action"
+   },
+   "box": {
+    "class": "QWidget",
+    "new": "box-layout"
+   },
+   "button": {
+    "class": "QPushButton",
+    "new": "push-button"
+   },
+   "calendar": {
+    "class": "QCalendarWidget",
+    "new": "calendar-widget"
+   },
+   "checkbox": {
+    "class": "QCheckBox",
+    "new": "check-box"
+   },
+   "colordialog": {
+    "class": "QColorDialog",
+    "new": "color-dialog"
+   },
+   "combobox": {
+    "class": "QComboBox",
+    "new": "combo-box"
+   },
+   "commandlinkbutton": {
+    "class": "QCommandLinkButton",
+    "new": "command-link-button"
+   },
+   "contextmenu": {
+    "class": "QMenu",
+    "new": "menu"
+   },
+   "dateedit": {
+    "class": "QDateEdit",
+    "new": "date-edit"
+   },
+   "datetimeedit": {
+    "class": "QDateTimeEdit",
+    "new": "date-time-edit"
+   },
+   "dial": {
+    "class": "QDial",
+    "new": "dial"
+   },
+   "dialog": {
+    "class": "QDialog",
+    "new": "dialog"
+   },
+   "dialogbuttonbox": {
+    "class": "QDialogButtonBox",
+    "new": "dialog-button-box"
+   },
+   "dockwidget": {
+    "class": "QDockWidget",
+    "new": "dock-widget"
+   },
+   "doublespinbox": {
+    "class": "QDoubleSpinBox",
+    "new": "double-spin-box"
+   },
+   "entry": {
+    "class": "QLineEdit",
+    "new": "line-edit"
+   },
+   "errormessage": {
+    "class": "QErrorMessage",
+    "new": "error-message"
+   },
+   "filedialog": {
+    "class": "QFileDialog",
+    "new": "file-dialog"
+   },
+   "fontcombobox": {
+    "class": "QFontComboBox",
+    "new": "font-combo-box"
+   },
+   "fontdialog": {
+    "class": "QFontDialog",
+    "new": "font-dialog"
+   },
+   "frame": {
+    "class": "QFrame",
+    "new": "frame"
+   },
+   "grid": {
+    "class": "QWidget",
+    "new": "grid-layout"
+   },
+   "groupbox": {
+    "class": "QGroupBox",
+    "new": "group-box"
+   },
+   "inputdialog": {
+    "class": "QInputDialog",
+    "new": "input-dialog"
+   },
+   "keysequenceedit": {
+    "class": "QKeySequenceEdit",
+    "new": "key-sequence-edit"
+   },
+   "label": {
+    "class": "QLabel",
+    "new": "label"
+   },
+   "lcdnumber": {
+    "class": "QLCDNumber",
+    "new": "lcd-number"
+   },
+   "listwidget": {
+    "class": "QListWidget",
+    "new": "list-widget"
+   },
+   "mdiarea": {
+    "class": "QMdiArea",
+    "new": "mdi-area"
+   },
+   "menu": {
+    "class": "QMenu",
+    "new": "menu"
+   },
+   "menubar": {
+    "class": "QMenuBar",
+    "new": "menu-bar"
+   },
+   "menuseparator": {
+    "class": "QAction",
+    "new": "action"
+   },
+   "messagebox": {
+    "class": "QMessageBox",
+    "new": "message-box"
+   },
+   "plaintextedit": {
+    "class": "QPlainTextEdit",
+    "new": "plain-text-edit"
+   },
+   "progressbar": {
+    "class": "QProgressBar",
+    "new": "progress-bar"
+   },
+   "progressdialog": {
+    "class": "QProgressDialog",
+    "new": "progress-dialog"
+   },
+   "radiobutton": {
+    "class": "QRadioButton",
+    "new": "radio-button"
+   },
+   "scrollbar": {
+    "class": "QScrollBar",
+    "new": "scroll-bar"
+   },
+   "scrolledwindow": {
+    "class": "QScrollArea",
+    "new": "scroll-area"
+   },
+   "slider": {
+    "class": "QSlider",
+    "new": "slider"
+   },
+   "spinbox": {
+    "class": "QSpinBox",
+    "new": "spin-box"
+   },
+   "splitter": {
+    "class": "QSplitter",
+    "new": "splitter"
+   },
+   "stackedwidget": {
+    "class": "QStackedWidget",
+    "new": "stacked-widget"
+   },
+   "statusbar": {
+    "class": "QStatusBar",
+    "new": "status-bar"
+   },
+   "tabbar": {
+    "class": "QTabBar",
+    "new": "tab-bar"
+   },
+   "tabwidget": {
+    "class": "QTabWidget",
+    "new": "tab-widget"
+   },
+   "textbrowser": {
+    "class": "QTextBrowser",
+    "new": "text-browser"
+   },
+   "textdocument": {
+    "class": "QTextDocument",
+    "new": "text-document"
+   },
+   "textedit": {
+    "class": "QTextEdit",
+    "new": "text-edit"
+   },
+   "timeedit": {
+    "class": "QTimeEdit",
+    "new": "time-edit"
+   },
+   "toolbar": {
+    "class": "QToolBar",
+    "new": "tool-bar"
+   },
+   "toolbox": {
+    "class": "QToolBox",
+    "new": "tool-box"
+   },
+   "toolbutton": {
+    "class": "QToolButton",
+    "new": "tool-button"
+   },
+   "window": {
+    "class": "QMainWindow",
+    "new": "main-window"
+   },
+   "wizard": {
+    "class": "QWizard",
+    "new": "wizard"
+   },
+   "wizardpage": {
+    "class": "QWizardPage",
+    "new": "wizard-page"
+   }
+  }
+ }
+}

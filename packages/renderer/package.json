@@ -11,6 +11,7 @@
       "types": "./types/index.d.ts"
     },
     "./coerce": "./src/coerce.js",
+    "./bindings": "./src/bindings.generated.js",
     "./style": "./src/style.js"
   },
   "dependencies": {

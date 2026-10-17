@@ -1460,7 +1460,7 @@ extern "C" int svl_qt_close(svl_handle h) {
 // Number of top-level widgets that still exist (pending deleteLater included until the loop runs).
 extern "C" int svl_qt_toplevel_count(void) { return QApplication::topLevelWidgets().size(); }
 
-// ---- virtuallist test hooks (M5; not part of the backend ABI) --------------------------------------
+// ---- virtual-list test hooks (M5; not part of the backend ABI) --------------------------------------
 // The tests find widgets by what they show, not by handle: the Svelte app decides creation order.
 namespace {
 SvVirtualList *vl_find() {

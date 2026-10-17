@@ -55,7 +55,7 @@
   }
 </script>
 
-<virtuallist
+<virtual-list
   bind:this={view}
   {layout}
   {selection}

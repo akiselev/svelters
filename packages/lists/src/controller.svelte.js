@@ -1,7 +1,7 @@
 // The JS half of a virtualized list: owns the id list that mirrors the native model, the keyed
 // diff that keeps it in sync with the app's array, and the pool of mounted row components.
 //
-// Protocol (backend-abi.md, "Model-view protocol (M5)"): the native `virtuallist` holds only
+// Protocol (backend-abi.md, "Model-view protocol (M5)"): the native `virtual-list` holds only
 // integer ids, one per item. `splice(pos, removed, ids)` changes them; the toolkit then asks for
 // row content with `setup(row)`, `bind(row, pos, id, gen)`, `unbind(row, gen)`, `teardown(row)`.
 import { flushSync, mount, unmount, untrack } from 'svelte';
@@ -35,7 +35,7 @@ export class ListController {
    */
   constructor(opts) {
     this.opts = opts;
-    this.view = null; // the <virtuallist> element
+    this.view = null; // the <virtual-list> element
     this.keys = []; // key per position
     this.ids = []; // native id per position
     this.entries = new Map(); // key -> id
@@ -46,7 +46,7 @@ export class ListController {
     this.splices = 0; // native splice calls issued (tests, benchmarks)
   }
 
-  /** Called with the `<virtuallist>` node once it exists. */
+  /** Called with the `<virtual-list>` node once it exists. */
   attach(view) {
     this.view = view;
   }
@@ -118,7 +118,7 @@ export class ListController {
 
   setup(row) {
     if (this.destroyed || this.slots.has(row)) return;
-    const o = outlet('box');
+    const o = outlet();
     this.slots.set(row, { outlet: o, cell: createCell(), comp: null, id: -1, pos: -1, gen: 0 });
     this.view.call('setRow', row, o);
   }

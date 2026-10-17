@@ -4,42 +4,23 @@
 // only elements become native widgets, created lazily when first inserted under a native parent.
 // Mapping rules and the dispatch return shape: docs/notes/p1-js-lane.md. Plain ES2022, no globals.
 import { createRenderer } from 'svelte/renderer';
-import { BINDINGS, TOPLEVELS } from './bindings.generated.js';
+import { BINDINGS, ROW_OUTLETS, TEXT_PROPS, TOPLEVELS } from './bindings.generated.js';
 import { coerceAttribute } from './coerce.js';
 import { kindRef, methodRef, propRef } from './hostops.js';
 import { applyStyle, bindElements, bindSetterHooks, explicitPropSet, forgetStyle, markStyleDirty, styleChildAttrs } from './style.js';
 
-export { BINDINGS, TOPLEVELS };
+export { BINDINGS, ROW_OUTLETS, TEXT_PROPS, TOPLEVELS };
 export { getColorScheme, getTokens, registerStyles, setColorScheme, setTokens } from './style.js';
 
 /**
- * Tags whose Text children are folded into a prop, with candidate prop names: the first one the
- * host resolves wins (`button` is GTK/Qt `label` and WinUI `content`; names stay native per toolkit).
+ * Kinds whose Text children are folded into a prop. TEXT_PROPS (generated from the `text_content`
+ * facts) lists candidate prop names per tag; the first one the host resolves wins (`label` is GTK
+ * `label` and Qt `text`; names stay native per toolkit).
  */
-export const TEXT_PROPS = {
-  label: ['label'],
-  button: ['label', 'content'],
-  'text-block': ['text'],
-  'check-box': ['content'],
-  'toggle-button': ['content'],
-};
-/** Kinds whose Text children are folded into a prop (see TEXT_PROPS). */
 export const LABEL_KINDS = new Set(Object.keys(TEXT_PROPS));
 
-/** DOM-ish event name -> native signal. Anything not listed passes through unchanged. */
-export const EVENT_TO_SIGNAL = { click: 'clicked', change: 'changed', close: 'close-request' };
-const SIGNAL_TO_EVENT = Object.fromEntries(Object.entries(EVENT_TO_SIGNAL).map(([e, s]) => [s, e]));
-/**
- * The native signal for a DOM-ish event type on `tag`. A mapped name (`click` -> `clicked`) is used
- * unless the host resolves only the unmapped one (WinUI's events keep their native names: `click`).
- */
-const signalFor = (type, tag) => {
-  const mapped = EVENT_TO_SIGNAL[type];
-  if (mapped === undefined) return type;
-  if (tag !== undefined && !resolves(tag, 'signalId', mapped) && resolves(tag, 'signalId', type)) return type;
-  return mapped;
-};
-const eventFor = (signal) => SIGNAL_TO_EVENT[signal] ?? signal;
+// Event names are the native signal names (`onclicked`, `ontext-changed`): there are no DOM-style
+// aliases, so `on<type>` listens to the signal `type` as written.
 
 /** Attributes that stay JS-side and never become host props. */
 const JS_ONLY_ATTRS = new Set(['class', 'style', 'id', 'show']);
@@ -237,7 +218,7 @@ function isAttached(el) {
  * it is never swept. The owner passes it to a native call (`view.call('setRow', row, outlet)`) and
  * ends it with `releaseOutlet`.
  */
-export function outlet(tag = 'box') {
+export function outlet(tag = rowOutlet()) {
   const el = new WNode('element', tag);
   el.outlet = true;
   realize(el);
@@ -304,6 +285,16 @@ function resolves(tag, fn, name) {
   } catch {
     return false;
   }
+}
+
+let outletTag;
+/** The row outlet kind of this host: the first ROW_OUTLETS candidate it resolves (`box` on GTK, `box-layout` on Qt). */
+function rowOutlet() {
+  if (outletTag === undefined) {
+    const hs = host();
+    outletTag = ROW_OUTLETS.find((t) => typeof kindRef(hs, t) === 'number') ?? ROW_OUTLETS[0];
+  }
+  return outletTag;
 }
 
 const textPropCache = new Map();
@@ -537,7 +528,7 @@ function nativeListen(el, sig, on, flags) {
 // listener bookkeeping per (native signal, flags): listen on 0 -> 1, off on 1 -> 0
 function bumpListener(el, type, delta, flags) {
   if (el === root || isProxy(el)) return;
-  const sig = signalFor(type, el.tag);
+  const sig = type;
   const key = `${sig}\0${flags}`;
   const n = (el.counts[key] ?? 0) + delta;
   el.counts[key] = n;
@@ -784,9 +775,9 @@ function syncResult(ev) {
 export function dispatchSync(h, signal, args = [], flags = 0) {
   const el = byHandle.get(h);
   if (!el) throw new Error(`dispatchSync: unknown handle ${h}`);
-  const ev = new NativeEvent(eventFor(signal), signal, el, args, false);
-  run: for (const type of new Set([eventFor(signal), signal])) {
-    for (const f of listenersFor(el, type, flags)) {
+  const ev = new NativeEvent(signal, signal, el, args, false);
+  run: {
+    for (const f of listenersFor(el, signal, flags)) {
       const r = f.call(el, ev, ...args);
       if (r !== null && typeof r === 'object' && typeof r.then === 'function') {
         console.warn(`sync handler for '${signal}' returned a Promise: flags set after its first await come too late and are ignored`);
@@ -798,8 +789,8 @@ export function dispatchSync(h, signal, args = [], flags = 0) {
 }
 
 /**
- * Deliver a native signal to JS (asynchronously, from the event queue). Handlers registered for the signal (`onclicked`) and for its
- * DOM-style alias (`onclick`) run with the raw args, in registration order, `this` = the node.
+ * Deliver a native signal to JS (asynchronously, from the event queue). Handlers registered for the signal (`onclicked`)
+ * run with the raw args, in registration order, `this` = the node.
  *
  * Returns `{ results, event }`:
  *   results  array with each handler's return value (Promises are passed through unresolved)
@@ -812,19 +803,19 @@ export function dispatch(h, signal, args = [], deferred = false, flags = 0) {
   if (!el) throw new Error(`dispatch: unknown handle ${h}`);
   if (deferred) {
     // A sync signal that was delivered late: same listener signature as dispatchSync, result ignored.
-    const ev = new NativeEvent(eventFor(signal), signal, el, args, true);
+    const ev = new NativeEvent(signal, signal, el, args, true);
     const results = [];
-    for (const type of new Set([eventFor(signal), signal])) {
-      for (const f of listenersFor(el, type, flags)) results.push(f.call(el, ev, ...args));
-    }
+    for (const f of listenersFor(el, signal, flags)) results.push(f.call(el, ev, ...args));
     return { results, event: ev };
   }
   // Mirror host-owned state so Svelte writing the same value back is a no-op.
-  if (signal === 'changed' && el.tag === 'entry' && typeof args[0] === 'string') el.props.set('text', args[0]);
-  const results = [];
-  for (const type of new Set([eventFor(signal), signal])) {
-    for (const f of listenersFor(el, type, flags)) results.push(f.apply(el, args));
+  if (typeof args[0] === 'string') {
+    for (const b of Object.values(BINDINGS[el.tag] ?? {})) {
+      if (b.prop === 'text' && b.signal === signal && b.valueFrom === 'arg0') el.props.set('text', args[0]);
+    }
   }
+  const results = [];
+  for (const f of listenersFor(el, signal, flags)) results.push(f.apply(el, args));
   const first = args[0];
   return { results, event: first !== null && typeof first === 'object' ? first : null };
 }

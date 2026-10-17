@@ -1,5 +1,5 @@
-// ---- virtuallist (M5): a JS-backed model behind QListView -----------------------------------------
-// Hand-written (not generated from metadata): the portable `virtuallist` kind of
+// ---- virtual-list (M5): a JS-backed model behind QListView -----------------------------------------
+// Hand-written (not generated from metadata): the portable `virtual-list` kind of
 // plans/architecture/backend-abi.md, "Model-view protocol (M5)". Included by backend.cpp.in inside
 // the anonymous namespace, after the runtime helpers and the value converters.
 //
@@ -333,7 +333,7 @@ void vl_apply_layout(SvVirtualList *v) {
 
 int vl_set_prop(Entry &e, svl_id prop, const svl_value *val) {
   SvVirtualList *v = vl_of(e);
-  if (!v) return fail("set_prop: the virtuallist is gone");
+  if (!v) return fail("set_prop: the virtual-list is gone");
   qint64 i = 0;
   switch (prop) {
     case VL_P_SELECTED: {
@@ -400,12 +400,12 @@ int vl_set_prop(Entry &e, svl_id prop, const svl_value *val) {
     }
     default: break;
   }
-  return fail("set_prop: unknown property id for virtuallist");
+  return fail("set_prop: unknown property id for virtual-list");
 }
 
 int vl_get_prop(Entry &e, svl_id prop, svl_value *out) {
   SvVirtualList *v = vl_of(e);
-  if (!v) return fail("get_prop: the virtuallist is gone");
+  if (!v) return fail("get_prop: the virtual-list is gone");
   switch (prop) {
     case VL_P_SELECTED: out_i64(out, v->currentIndex().isValid() ? v->currentIndex().row() : -1); return 0;
     case VL_P_SELECTION: out_str(out, QString::fromUtf8(v->sel_none ? "none" : "single")); return 0;
@@ -414,12 +414,12 @@ int vl_get_prop(Entry &e, svl_id prop, svl_value *out) {
     case VL_P_MIN_HEIGHT: out_i64(out, v->minimumHeight()); return 0;
     default: break;
   }
-  return fail("get_prop: unknown property id for virtuallist");
+  return fail("get_prop: unknown property id for virtual-list");
 }
 
 int vl_call(Entry &e, svl_id method, const svl_value *args, size_t n, svl_value *out) {
   SvVirtualList *v = vl_of(e);
-  if (!v) return fail("call: the virtuallist is gone");
+  if (!v) return fail("call: the virtual-list is gone");
   qint64 a = 0, b = 0;
   switch (method) {
     case VL_M_SPLICE: {
@@ -475,13 +475,13 @@ int vl_call(Entry &e, svl_id method, const svl_value *args, size_t n, svl_value 
     }
     default: break;
   }
-  return fail("call: unknown method id for virtuallist");
+  return fail("call: unknown method id for virtual-list");
 }
 
 int vl_listen(Entry &e, svl_id sig, bool on) {
   SvVirtualList *v = vl_of(e);
-  if (!v) return fail("listen: the virtuallist is gone");
-  if (sig < VL_S_SETUP || sig > VL_S_SELECT) return fail("listen: unknown signal id for virtuallist");
+  if (!v) return fail("listen: the virtual-list is gone");
+  if (sig < VL_S_SETUP || sig > VL_S_SELECT) return fail("listen: unknown signal id for virtual-list");
   const unsigned bit = 1u << (sig - VL_S_SETUP);
   v->listened = on ? (v->listened | bit) : (v->listened & ~bit);
   return 0;

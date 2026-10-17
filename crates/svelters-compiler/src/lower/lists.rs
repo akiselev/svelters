@@ -2,7 +2,7 @@
 //!
 //! A virtualized list is an explicit choice in the source: `{#each}` builds every item as children
 //! of a container; `<ListView items key row>` (the JS pipeline's component, resolved by the native
-//! build to `@svelters/native-runtime/lists`) drives a native `virtuallist` whose toolkit asks for
+//! build to `@svelters/native-runtime/lists`) drives a native `virtual-list` whose toolkit asks for
 //! row content only for the rows it shows (docs/notes/native-compiler/runtime-contract.md
 //! "Virtualized lists"). The component is ordinary JS at runtime; this module checks what the
 //! compiler can know statically about a use of it:
@@ -23,8 +23,6 @@ use std::collections::HashSet;
 
 /// The module whose `ListView` export is the virtualized list.
 pub const LISTS_MODULE: &str = "@svelters/lists";
-/// The native kind that hosts one row's content (the outlet created per row slot).
-pub const ROW_OUTLET_KIND: &str = "box";
 
 /// Local names bound to `ListView` from [`LISTS_MODULE`] in the instance or module script.
 pub fn list_view_names(root: &Root) -> HashSet<String> {
@@ -90,7 +88,9 @@ impl<'a> Lower<'a, '_, '_> {
                 _ => {}
             }
         }
-        let outlet = self.sem.resolve_element(ROW_OUTLET_KIND).ok();
+        // The native kind that hosts one row's content (the outlet created per row slot): the spec's `row_outlet`.
+        let outlet_tag = self.sem.row_outlet().unwrap_or_default().to_string();
+        let outlet = self.sem.row_outlet().and_then(|t| self.sem.resolve_element(t).ok());
         let mut children = false;
         for n in &el.fragment.nodes {
             match n {
@@ -111,13 +111,13 @@ impl<'a> Lower<'a, '_, '_> {
                             self.diags.native_error(
                                 "list_row_toplevel",
                                 sp(r.name_span),
-                                format!("<{}> is a toplevel on {}; a row of a virtualized list is content inside the list (a <{ROW_OUTLET_KIND}> per row)", r.name, self.sem.backend()),
+                                format!("<{}> is a toplevel on {}; a row of a virtualized list is content inside the list (a <{outlet_tag}> per row)", r.name, self.sem.backend()),
                             );
                             continue;
                         }
                         if let Err(u) = self.sem.place_child(outlet, &er, None) {
                             let u = crate::semantics::Unresolved {
-                                message: format!("<{}> is a root element of the `row` snippet, which a virtualized list renders into a <{ROW_OUTLET_KIND}> per row: {}", r.name, u.message),
+                                message: format!("<{}> is a root element of the `row` snippet, which a virtualized list renders into a <{outlet_tag}> per row: {}", r.name, u.message),
                                 ..u
                             };
                             u.report(self.diags, sp(r.name_span));

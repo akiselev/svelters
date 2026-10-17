@@ -242,6 +242,10 @@ pub trait BackendSemantics {
     /// `gtk`, `qt`, ...
     fn backend(&self) -> &str;
     fn framework(&self) -> &str;
+    /// Tag of the per-row outlet of virtualized lists (the spec's `row_outlet`), if the backend has one.
+    fn row_outlet(&self) -> Option<&str> {
+        None
+    }
 
     fn resolve_element(&self, tag: &str) -> Result<ElementRef, Unresolved>;
     fn lifetime(&self, el: &ElementRef) -> LifetimePlan;

@@ -8,18 +8,16 @@ import { coerceAttribute } from '@svelters/renderer/coerce';
 
 const NS_HTML = 'http://www.w3.org/1999/xhtml';
 
-/** Kinds whose Text children are folded into the `label` prop. */
+/** Kinds whose Text children are folded into the `label` prop (GTK names). */
 export const LABEL_KINDS = new Set(['label', 'button']);
 
-/** DOM-ish event name -> native signal. Anything not listed passes through unchanged. */
-export const EVENT_TO_SIGNAL = { click: 'clicked', change: 'changed' };
-const SIGNAL_TO_EVENT = Object.fromEntries(Object.entries(EVENT_TO_SIGNAL).map(([e, s]) => [s, e]));
+// Event names are native signal names (`onclicked`): there are no DOM-style aliases.
 
 /** Attributes that stay JS-side and never become host props. */
 const JS_ONLY_ATTRS = new Set(['class', 'style', 'id']);
 
-const signalFor = (type) => EVENT_TO_SIGNAL[type] ?? type;
-const eventFor = (signal) => SIGNAL_TO_EVENT[signal] ?? signal;
+const signalFor = (type) => type;
+const eventFor = (signal) => signal;
 
 /**
  * Build a DOM bound to `host`. Returns the classes, `document`, the JS-only `root` element
