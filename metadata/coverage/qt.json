@@ -331,35 +331,35 @@
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "defaults": 14,
   "element": "combobox",
-  "gallery": null,
+  "gallery": "07-selection",
   "inherited": 0,
   "kind": "QComboBox",
   "lifetime": "owned",
   "methods": [
-   2,
+   5,
    82
   ],
   "native": "QComboBox",
   "ownership": false,
   "props": [
-   2,
+   9,
    16
   ],
-  "props_annotated": 2,
+  "props_annotated": 9,
   "signal_results": 0,
   "signals": [
-   0,
+   3,
    7
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   4,
-   4
+   18,
+   18
   ]
  },
  {
@@ -729,8 +729,8 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 1,
-  "element": null,
-  "gallery": null,
+  "element": "fontcombobox",
+  "gallery": "07-selection",
   "inherited": 0,
   "kind": "QFontComboBox",
   "lifetime": "owned",
@@ -741,10 +741,10 @@
   "native": "QFontComboBox",
   "ownership": false,
   "props": [
-   0,
+   3,
    3
   ],
-  "props_annotated": 0,
+  "props_annotated": 3,
   "signal_results": 0,
   "signals": [
    0,
@@ -754,8 +754,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   3,
+   3
   ]
  },
  {
@@ -1255,35 +1255,35 @@
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "defaults": 4,
-  "element": null,
-  "gallery": null,
+  "element": "listwidget",
+  "gallery": "07-selection",
   "inherited": 0,
   "kind": "QListWidget",
   "lifetime": "owned",
   "methods": [
-   0,
+   3,
    40
   ],
   "native": "QListWidget",
   "ownership": false,
   "props": [
-   0,
+   3,
    4
   ],
-  "props_annotated": 0,
+  "props_annotated": 3,
   "signal_results": 0,
   "signals": [
-   0,
+   2,
    10
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   11,
+   11
   ]
  },
  {
@@ -2182,7 +2182,7 @@
   "bindings": 0,
   "defaults": 3,
   "element": null,
-  "gallery": null,
+  "gallery": "07-selection",
   "inherited": 0,
   "kind": "QTableWidget",
   "lifetime": "owned",
@@ -2204,7 +2204,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "Items are non-widget objects (gap G7) and the item-view surface needs models (gap G6); revisit with the item-model work.",
   "verified": [
    0,
    0
@@ -2446,7 +2446,7 @@
   "bindings": 0,
   "defaults": 3,
   "element": null,
-  "gallery": null,
+  "gallery": "07-selection",
   "inherited": 0,
   "kind": "QTreeWidget",
   "lifetime": "owned",
@@ -2468,7 +2468,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "Items are non-widget objects (gap G7) and the item-view surface needs models (gap G6); revisit with the item-model work.",
   "verified": [
    0,
    0
