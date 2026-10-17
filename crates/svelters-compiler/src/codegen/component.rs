@@ -232,6 +232,16 @@ impl Codegen<'_, '_> {
         }
     }
 
+    fn needs_memo(&self, d: &Dynamic) -> bool {
+        let simple = |e: &Expression| matches!(e, Expression::Identifier(_) | Expression::MemberExpression(_));
+        match d {
+            Dynamic::Expr(e) => !simple(e) && self.rw.is_reactive(e),
+            Dynamic::Template(parts) => {
+                parts.iter().any(|p| matches!(p, TemplatePart::Expr(e) if !simple(e))) && self.dynamic_reactive(d)
+            }
+        }
+    }
+
     fn dynamic_reactive(&self, d: &Dynamic) -> bool {
         match d {
             Dynamic::Expr(e) => self.rw.is_reactive(e),
@@ -335,6 +345,25 @@ impl Codegen<'_, '_> {
     }
 
     fn component(&mut self, c: &ComponentCall, container: &str) {
+        // Svelte's build_component memoizes non-trivial reactive prop values (anything but an
+        // identifier or member expression) in a derived, so a child reading the prop several
+        // times evaluates it once per change (`random={Math.random()}`, `active={i === index}`).
+        let mut memo: Vec<Option<String>> = Vec::new();
+        for p in &c.props {
+            let m = match p {
+                ComponentProp::Dynamic { value, .. } if self.needs_memo(value) => {
+                    self.tmp += 1;
+                    let id = format!("$$prop{}", self.tmp);
+                    self.line();
+                    self.w.write(&format!("const {id} = $.derived(() => "));
+                    self.dynamic(value);
+                    self.w.write(");");
+                    Some(id)
+                }
+                _ => None,
+            };
+            memo.push(m);
+        }
         self.line();
         self.w.map(c.span.start);
         self.w.write(&format!("{}($n.region({container}), {{", c.name));
@@ -350,7 +379,10 @@ impl Codegen<'_, '_> {
                 }
                 ComponentProp::Dynamic { name, value } => {
                     self.w.write(&format!("get {}() {{ return ", js_key(name)));
-                    self.dynamic(value);
+                    match &memo[i] {
+                        Some(id) => self.w.write(&format!("$.get({id})")),
+                        None => self.dynamic(value),
+                    }
                     self.w.write("; }");
                 }
                 ComponentProp::Bind { name, target } => {

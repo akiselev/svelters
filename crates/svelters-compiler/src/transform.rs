@@ -109,6 +109,19 @@ impl Rewriter for ScopeRewriter<'_> {
             fn visit(&mut self, node: NodeRef<'n>, state: &(), w: &mut Walker<'n>) {
                 match node {
                     NodeRef::Identifier(id) if classify(self.arena, id) != Class::Other => self.found = true,
+                    // Svelte's `has_state` (2-analyze/visitors/Identifier.js): any binding that is
+                    // not static, not an unchanged function and not a known constant, since e.g. an
+                    // object's `toString()` may read state (`{object}`)
+                    NodeRef::Identifier(id) => {
+                        if let Some(b) = self.arena.resolve(id) {
+                            let b = self.arena.binding(b);
+                            let prop = matches!(b.kind, BindingKind::Prop | BindingKind::BindableProp | BindingKind::RestProp);
+                            let known = !b.updated() && !prop && matches!(b.initial, Some(Initial::Expression(e)) if self.arena.evaluate(b.scope, e).is_known);
+                            if b.kind != BindingKind::Static && (prop || !b.is_function()) && !known {
+                                self.found = true;
+                            }
+                        }
+                    }
                     NodeRef::CallExpression(_) | NodeRef::NewExpression(_) | NodeRef::TaggedTemplateExpression(_) => self.found = true,
                     _ => {}
                 }
@@ -172,11 +185,13 @@ struct Rw<'r, 'a> {
     diags: &'r RefCell<Diagnostics>,
     scope: Option<ScopeId>,
     handled: HashSet<usize>,
+    /// Function nesting depth: `await` outside any function needs Svelte's async mode.
+    fn_depth: usize,
 }
 
 impl<'r, 'a> Rw<'r, 'a> {
     fn new(an: &'r ComponentScopeAnalysis<'a>, src: &'r str, edits: &'r mut Edits, mode: Mode, diags: &'r RefCell<Diagnostics>, scope: Option<ScopeId>) -> Self {
-        Rw { an, src, edits, mode, diags, scope, handled: HashSet::new() }
+        Rw { an, src, edits, mode, diags, scope, handled: HashSet::new(), fn_depth: 0 }
     }
 
     fn arena(&self) -> &ScopeArena<'a> {
@@ -216,6 +231,10 @@ impl<'r, 'a> Rw<'r, 'a> {
                         self.diags.borrow_mut().error("unsupported_feature", (s.start, s.end), "destructuring a $state declaration is not supported by the native compiler yet");
                     }
                 }
+                Some("$derived" | "$derived.by") if !matches!(decl.id, Pattern::Identifier(_)) => {
+                    let s = decl.id.span();
+                    self.diags.borrow_mut().error("unsupported_feature", (s.start, s.end), "destructuring a $derived declaration is not supported by the native compiler yet");
+                }
                 Some("$derived") => {
                     self.edits.overwrite(call.callee.span().start, call.callee.span().end, "$.derived");
                     if let Some(ArrayElement::Expression(a)) = call.arguments.first() {
@@ -233,6 +252,11 @@ impl<'r, 'a> Rw<'r, 'a> {
                     }
                 }
                 Some("$props") => self.props(decl),
+                // runes that are ordinary calls (Svelte's VariableDeclaration visitor visits these
+                // declarators normally); call() rewrites or rejects them
+                Some("$effect.tracking" | "$effect.root" | "$inspect" | "$inspect.trace" | "$state.snapshot" | "$state.eager" | "$host") => {
+                    self.walk_declarator(decl)
+                }
                 Some(r) => {
                     let s = call.span();
                     self.diags.borrow_mut().error("unsupported_feature", (s.start, s.end), format!("{r} is not supported by the native compiler yet"));
@@ -252,10 +276,10 @@ impl<'r, 'a> Rw<'r, 'a> {
     fn props(&mut self, decl: &VariableDeclarator) {
         let full = Span::new(decl.start, decl.end);
         let out = match &decl.id {
-            Pattern::Identifier(id) => format!("{} = $$props", id.name),
+            Pattern::Identifier(id) => format!("{} = $.rest_props($$props, new Set([\"$$slots\", \"$$events\", \"$$legacy\"]))", id.name),
             Pattern::ObjectPattern(op) => {
                 let mut parts = Vec::new();
-                let mut seen = Vec::new();
+                let mut seen: Vec<String> = ["$$slots", "$$events", "$$legacy"].map(String::from).to_vec();
                 for m in &op.properties {
                     match m {
                         ObjectPatternMember::Property(p) => {
@@ -304,8 +328,16 @@ impl<'r, 'a> Rw<'r, 'a> {
                                     other => Some(other),
                                 };
                                 if let Some(d) = d {
-                                    let t = self.text(d.span()).to_string();
-                                    let simple = matches!(d, Expression::Literal(_) | Expression::Identifier(_));
+                                    // the fallback reads state/props like any expression (`b = a` -> `a()`)
+                                    let raw = self.text(d.span()).to_string();
+                                    let mut e = Edits::new();
+                                    Walker::walk(expr_ref(d), &(), &mut Rw::new(self.an, self.src, &mut e, self.mode, self.diags, self.scope));
+                                    let mut t = e.apply(self.src, d.span().start, d.span().end);
+                                    // Svelte proxies a bindable prop's fallback on demand
+                                    if bindable && should_proxy(self.arena(), d, self.scope) {
+                                        t = format!("$.proxy({t})");
+                                    }
+                                    let simple = matches!(d, Expression::Literal(_)) || (matches!(d, Expression::Identifier(_)) && t == raw);
                                     if simple {
                                         fallback = Some(t);
                                     } else {
@@ -326,7 +358,7 @@ impl<'r, 'a> Rw<'r, 'a> {
                         ObjectPatternMember::RestElement(r) => match r.argument.as_ref() {
                             Pattern::Identifier(i) => {
                                 let keys: Vec<String> = seen.iter().map(|k| crate::codegen::component::js_str(k)).collect();
-                                parts.push(format!("{} = $.rest_props($$props, [{}])", i.name, keys.join(", ")));
+                                parts.push(format!("{} = $.rest_props($$props, new Set([{}]))", i.name, keys.join(", ")));
                             }
                             other => {
                                 let s = other.span();
@@ -364,7 +396,10 @@ impl<'r, 'a> Rw<'r, 'a> {
         match class {
             Class::Source { writable: true, proxied } => {
                 let n = &id.name;
-                let proxy = proxied && op == AssignmentOperator::Assign && should_proxy(self.arena(), &a.right, self.scope);
+                // Svelte: `is_non_coercive_operator` (=, ||=, &&=, ??=) values may need a proxy
+                // (`(items ??= []).push(1)` pushes onto the proxy `$.set` returns)
+                let non_coercive = matches!(op, AssignmentOperator::Assign | AssignmentOperator::OrAssign | AssignmentOperator::AndAssign | AssignmentOperator::NullishAssign);
+                let proxy = proxied && non_coercive && should_proxy(self.arena(), &a.right, self.scope);
                 let prefix = match bin {
                     None => format!("$.set({n}, "),
                     Some(b) => format!("$.set({n}, $.get({n}) {b} ("),
@@ -412,7 +447,19 @@ impl<'r, 'a> Rw<'r, 'a> {
         if self.handled.contains(&(id as *const Identifier as usize)) {
             return;
         }
+        if let Some(b) = self.arena().resolve(id)
+            && self.arena().binding(b).kind == BindingKind::StoreSub
+        {
+            self.diags.borrow_mut().error("unsupported_feature", (id.start, id.end), format!("store subscriptions (`{}`) are not supported by the native compiler yet", id.name));
+            return;
+        }
         let (open, close) = match classify(self.arena(), id) {
+            // a `var` may be read before its declaration ran (Svelte's add_state_transformers)
+            Class::Source { .. }
+                if self.arena().resolve(id).is_some_and(|b| self.arena().binding(b).declaration_kind == crate::svelte::scope::DeclarationKind::Var) =>
+            {
+                ("$.safe_get(", ")")
+            }
             Class::Source { .. } => ("$.get(", ")"),
             Class::EachSource if self.mode == Mode::Read => ("$.get(", ")"),
             Class::Prop => ("", "()"),
@@ -475,6 +522,24 @@ impl<'n> Visitor<'n> for Rw<'_, '_> {
                 }
             }
             NodeRef::CallExpression(c) => self.call(c),
+            // runes in nested declarations (`function f() { let n = $state(0) }`), as at the top level
+            NodeRef::VariableDeclaration(d) => {
+                self.declaration(d);
+                return;
+            }
+            NodeRef::FunctionDeclaration(_) | NodeRef::FunctionExpression(_) | NodeRef::ArrowFunctionExpression(_) => {
+                self.fn_depth += 1;
+                w.next(self, node, state);
+                self.fn_depth -= 1;
+                return;
+            }
+            NodeRef::AwaitExpression(a) if self.fn_depth == 0 => {
+                self.diags.borrow_mut().error(
+                    "unsupported_feature",
+                    (a.start, a.end),
+                    "`await` in the component script or markup (Svelte's experimental async mode) is not supported by the native compiler yet",
+                );
+            }
             NodeRef::Identifier(id) => {
                 let parent = w.parent();
                 self.read(id, parent);

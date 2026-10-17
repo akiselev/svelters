@@ -250,6 +250,15 @@ pub trait BackendSemantics {
     fn style_declaration(&self, el: &ElementRef, name: &str, value: &[ValueToken]) -> Result<StyleLowering, Unresolved>;
     /// A static attribute value (`None` = bare attribute) as a typed constant.
     fn coerce_static(&self, prop: &PropertySpec, value: Option<&str>) -> Result<StaticValue, String>;
+    /// Text nodes, when the backend has them (spec `text_node`): the text kind and its text
+    /// property. None (GTK, Qt): text outside text-content elements is an error.
+    fn text_node(&self) -> Option<(ElementRef, String)> {
+        None
+    }
+    /// Parse with HTML rules (spec `html_syntax`; the DOM conformance backend only).
+    fn html_syntax(&self) -> bool {
+        false
+    }
 }
 
 /// Closest names to `name` by edit distance (at most 3).

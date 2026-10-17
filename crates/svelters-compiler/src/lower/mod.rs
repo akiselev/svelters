@@ -89,7 +89,29 @@ impl<'a> Lower<'a, '_, '_> {
 
     fn fragment(&mut self, f: &'a AstFragment, parent: &Parent, ancestors: &[StyleSubject<'a>]) -> Fragment<'a> {
         let mut out = Fragment::default();
-        for node in &f.nodes {
+        // A backend with text nodes (spec `text_node`): text runs become text elements.
+        let text_node = self.sem.text_node();
+        let entries = match &text_node {
+            Some(_) => {
+                let parent_tag = match parent {
+                    Parent::Root => None,
+                    Parent::Element(p, _) => Some(p.tag.as_str()),
+                };
+                text_runs(&f.nodes, parent_tag)
+            }
+            None => f.nodes.iter().map(Entry::Node).collect(),
+        };
+        for entry in entries {
+            let node = match entry {
+                Entry::Node(n) => n,
+                Entry::Text(parts, span) => {
+                    let (er, prop) = text_node.clone().expect("text runs only with a text_node spec");
+                    if let Some(e) = self.text_element(&er, &prop, parts, span, parent) {
+                        out.items.push(Item::Element(e));
+                    }
+                    continue;
+                }
+            };
             match node {
                 FragmentNode::Text(t) => {
                     if !t.data.trim().is_empty() {
@@ -164,6 +186,29 @@ impl<'a> Lower<'a, '_, '_> {
         out
     }
 
+    /// A text run as an element of the backend's text kind (spec `text_node`).
+    fn text_element(&mut self, er: &ElementRef, prop: &str, parts: Vec<TemplatePart<'a>>, span: Span, parent: &Parent) -> Option<Element<'a>> {
+        let slot = match parent {
+            Parent::Root => None,
+            Parent::Element(p, _) => match self.sem.place_child(p, er, None) {
+                Ok(plan) => (!plan.is_default).then_some(plan.slot),
+                Err(u) => {
+                    u.report(self.diags, sp(span));
+                    return None;
+                }
+            },
+        };
+        let id = self.next_id;
+        self.next_id += 1;
+        let op = if parts.iter().all(|p| matches!(p, TemplatePart::Text(_))) {
+            let text: String = parts.iter().map(|p| if let TemplatePart::Text(t) = p { t.as_str() } else { "" }).collect();
+            Op::Set { prop: prop.to_string(), value: Json::String(text), span }
+        } else {
+            Op::SetDynamic { prop: prop.to_string(), value: Dynamic::Template(parts), span }
+        };
+        Some(Element { id, span, kind: er.tag.clone(), present: None, slot, ops: vec![op], children: Fragment::default() })
+    }
+
     /// A block region lives in one (parent, slot): every item inside must target the same slot.
     fn block_slot<const N: usize>(&mut self, span: (u32, u32), frags: [Option<&Fragment<'a>>; N]) -> Slot {
         let mut slots: Vec<&Slot> = Vec::new();
@@ -200,6 +245,9 @@ impl<'a> Lower<'a, '_, '_> {
         };
         let id = self.next_id;
         self.next_id += 1;
+        // A backend whose kinds have a `class` prop (the DOM conformance backend) also gets
+        // `class` / `class:` as that prop; GTK and Qt have none, so classes only drive styles.
+        let class_prop = self.sem.writable_property(&er, "class").ok().map(|p| p.js.clone());
 
         // pass 1: slot request and classes (they don't produce ops)
         let mut requested_slot: Option<String> = None;
@@ -214,6 +262,7 @@ impl<'a> Lower<'a, '_, '_> {
                 },
                 AttributeLike::Attribute(at) if at.name == "class" => match static_text(at) {
                     Some(s) => subject.static_classes.extend(s.split_ascii_whitespace().map(str::to_string)),
+                    None if class_prop.is_some() => {}
                     None => {
                         self.diags
                             .error("dynamic_class_unsupported", sp(at.span()), "a dynamic `class` value cannot be resolved against native styles")
@@ -270,7 +319,7 @@ impl<'a> Lower<'a, '_, '_> {
         let mut bound_props: Vec<String> = Vec::new();
         for a in &el.attributes {
             match a {
-                AttributeLike::Attribute(at) if matches!(at.name.as_str(), "slot" | "data-slot" | "class") => {}
+                AttributeLike::Attribute(at) if matches!(at.name.as_str(), "slot" | "data-slot") || (at.name == "class" && class_prop.is_none()) => {}
                 AttributeLike::Attribute(at) if at.name.starts_with("on") && matches!(at.value, AttributeValue::Expression(_)) => {
                     let AttributeValue::Expression(crate::svelte::ast::ExpressionTagNode::ExpressionTag(t)) = &at.value else { unreachable!() };
                     match self.sem.event(&er, &at.name) {
@@ -326,7 +375,11 @@ impl<'a> Lower<'a, '_, '_> {
                         Err(u) => u.report(self.diags, sp(d.span())),
                     }
                 }
-                AttributeLike::ClassDirective(_) => {}
+                AttributeLike::ClassDirective(d) => {
+                    if let (Some(cp), Some(e)) = (&class_prop, &d.expression) {
+                        ops.push(Op::Token { prop: cp.clone(), token: d.name.clone(), cond: vec![e], span: d.span() });
+                    }
+                }
                 other => {
                     let what = match other {
                         AttributeLike::SpreadAttribute(_) => "spread attributes ({...props})",
@@ -689,4 +742,87 @@ fn unsupported_node_name(n: &FragmentNode) -> &'static str {
         SvelteOptionsRaw(_) => "<svelte:options> here",
         _ => "this node",
     }
+}
+
+/// A fragment entry when the backend has text nodes: a node, or a run of text/expression tags.
+enum Entry<'a> {
+    Node(&'a FragmentNode),
+    Text(Vec<TemplatePart<'a>>, Span),
+}
+
+fn is_ws(c: char) -> bool {
+    matches!(c, ' ' | '\t' | '\r' | '\n')
+}
+
+/// Svelte's `clean_nodes` whitespace rules (phases/3-transform/utils.js, `preserveWhitespace`
+/// off), then consecutive text/expression tags grouped into runs (one text node each).
+fn text_runs<'a>(nodes: &'a [FragmentNode], parent_tag: Option<&str>) -> Vec<Entry<'a>> {
+    enum Tx<'a> {
+        Text(String, Span),
+        Expr(&'a Expression, Span),
+        Node(&'a FragmentNode),
+    }
+    let mut regular: Vec<Tx<'a>> = nodes
+        .iter()
+        .filter(|n| !matches!(n, FragmentNode::Comment(_)))
+        .map(|n| match n {
+            FragmentNode::Text(t) => Tx::Text(t.data.clone(), Span::new(t.start, t.end)),
+            FragmentNode::ExpressionTag(e) => Tx::Expr(&e.expression, Span::new(e.start, e.end)),
+            other => Tx::Node(other),
+        })
+        .collect();
+    while matches!(regular.first(), Some(Tx::Text(t, _)) if t.chars().all(is_ws)) {
+        regular.remove(0);
+    }
+    if let Some(Tx::Text(t, _)) = regular.first_mut() {
+        *t = t.trim_start_matches(is_ws).to_string();
+    }
+    while matches!(regular.last(), Some(Tx::Text(t, _)) if t.chars().all(is_ws)) {
+        regular.pop();
+    }
+    if let Some(Tx::Text(t, _)) = regular.last_mut() {
+        *t = t.trim_end_matches(is_ws).to_string();
+    }
+    let can_remove_entirely = matches!(parent_tag, Some("select" | "tr" | "table" | "tbody" | "thead" | "tfoot" | "colgroup" | "datalist"));
+    let mut cleaned: Vec<Tx<'a>> = Vec::new();
+    for i in 0..regular.len() {
+        let prev_is_expr = i > 0 && matches!(regular[i - 1], Tx::Expr(..));
+        let prev_text_ends_ws = i > 0 && matches!(&regular[i - 1], Tx::Text(t, _) if t.ends_with(is_ws));
+        let next_is_expr = matches!(regular.get(i + 1), Some(Tx::Expr(..)));
+        if let Tx::Text(t, _) = &mut regular[i] {
+            if !prev_is_expr && t.starts_with(is_ws) {
+                *t = format!("{}{}", if prev_text_ends_ws { "" } else { " " }, t.trim_start_matches(is_ws));
+            }
+            if !next_is_expr && t.ends_with(is_ws) {
+                *t = format!("{} ", t.trim_end_matches(is_ws));
+            }
+        }
+        match &regular[i] {
+            Tx::Text(t, s) => {
+                if !t.is_empty() && (t != " " || !can_remove_entirely) {
+                    cleaned.push(Tx::Text(t.clone(), *s));
+                }
+            }
+            Tx::Expr(e, s) => cleaned.push(Tx::Expr(e, *s)),
+            Tx::Node(n) => cleaned.push(Tx::Node(n)),
+        }
+    }
+    let mut out: Vec<Entry<'a>> = Vec::new();
+    for tx in cleaned {
+        let (part, s) = match tx {
+            Tx::Node(n) => {
+                out.push(Entry::Node(n));
+                continue;
+            }
+            Tx::Text(t, s) => (TemplatePart::Text(t), s),
+            Tx::Expr(e, s) => (TemplatePart::Expr(e), s),
+        };
+        if let Some(Entry::Text(parts, span)) = out.last_mut() {
+            parts.push(part);
+            span.end = s.end;
+        } else {
+            out.push(Entry::Text(vec![part], s));
+        }
+    }
+    out
 }

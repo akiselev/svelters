@@ -437,6 +437,17 @@ impl BackendSemantics for SpecBackend {
         }
     }
 
+    fn text_node(&self) -> Option<(ElementRef, String)> {
+        let t = self.spec.text_node.as_ref()?;
+        let el = self.resolve_element(&t.kind).ok()?;
+        let prop = self.find_prop(&el, &t.prop)?.js.clone();
+        Some((el, prop))
+    }
+
+    fn html_syntax(&self) -> bool {
+        self.spec.html_syntax
+    }
+
     fn coerce_static(&self, prop: &PropertySpec, value: Option<&str>) -> Result<StaticValue, String> {
         let name = &prop.js;
         let Some(s) = value else {

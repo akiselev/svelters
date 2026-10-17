@@ -479,17 +479,27 @@ export function lis(a) {
 // ---------------------------------------------------------------------------------------------
 // Mount
 
-export function mount(Component, { props = {} } = {}) {
+/**
+ * `target` (optional): an existing host handle to mount into (its default slot) instead of the
+ * root container, like Svelte's `mount(App, { target })`. The target is not owned: unmount
+ * removes the component's natives from it but never destroys it. Used by the DOM conformance
+ * host (experiments/native-compiler/conformance).
+ */
+export function mount(Component, { props = {}, target } = {}) {
   if (!host()) throw new Error('globalThis.__svelters_host is not defined');
   globalThis.__svelters_dispatch = dispatch;
   globalThis.__svelters_gone = gone;
-  const root = new Root();
+  const root = target == null ? new Root() : slot(new Native('#target', target, null), null);
   const s = new Scope(null);
   const prev = scope;
   scope = s;
   let destroy;
   try {
-    destroy = component_root(() => Component(root, props));
+    // In a branch, as Svelte's mount does (through its boundary): user effects created during the
+    // root component's init are then deferred to its $.pop(), i.e. run after its children's.
+    destroy = component_root(() => {
+      branch(() => Component(root, props));
+    });
   } finally {
     scope = prev;
   }
