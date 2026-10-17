@@ -2,7 +2,7 @@ create window #1
 set #1 title "Counter"
 create stack-view #2
 set #2 orientation "vertical"
-set #2 spacing "8"
+set #2 spacing 8
 create text-field #3
 set #3 editable false
 set #3 selectable false
@@ -15,7 +15,7 @@ set #4 title "Increment"
 listen #4 action on
 insert #2 #4 before=end slot=default
 insert #1 #2 before=end slot=default
-call #1 present []
+call #1 make-key-and-order-front []
 event #4 action []
 set #3 string-value "Count: 1"
 event #4 action []

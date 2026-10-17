@@ -74,6 +74,11 @@ pub enum FixtureOutcome {
 
 /// Runs one fixture directory and compares the op log byte for byte with `expected.oplog`.
 pub fn run_fixture(dir: &Path) -> FixtureOutcome {
+    if let Some(tk) = fixture_toolkit(dir) {
+        return FixtureOutcome::Skipped(format!(
+            "a {tk} fixture (package.json svelters.toolkit): its op log names {tk} members, the log backend is GTK-shaped"
+        ));
+    }
     let bundle = dir.join("dist/app.js");
     let script = dir.join("script.json");
     let expected = dir.join("expected.oplog");
@@ -124,6 +129,14 @@ pub fn run_fixture(dir: &Path) -> FixtureOutcome {
 }
 
 /// Fixture directories under `root` (each child directory), sorted by name.
+/// The toolkit a fixture models (`"svelters": { "toolkit": "appkit" }` in its package.json; the
+/// TestHost then resolves names like that toolkit), or None for the GTK-shaped default.
+pub fn fixture_toolkit(dir: &Path) -> Option<String> {
+    let text = std::fs::read_to_string(dir.join("package.json")).ok()?;
+    let v: serde_json::Value = serde_json::from_str(&text).ok()?;
+    v.get("svelters")?.get("toolkit")?.as_str().map(str::to_string)
+}
+
 pub fn find_fixtures(root: &Path) -> Vec<PathBuf> {
     let mut dirs: Vec<PathBuf> = std::fs::read_dir(root)
         .map(|rd| {

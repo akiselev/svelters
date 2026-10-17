@@ -34,3 +34,25 @@ Branched from master at ff0fcb4. Written as the work goes.
 - Not done: per-binding Rust tests in the AppKit/WinUI generators (`tests()`/`gen_tests()`); they would touch generated Rust that cannot
   run on Linux, so left out as disproportionate.
 - Unverified on Mac/Windows: that a real host resolves `click`/`value-changed` through `signalId` (tests stub `signalId`).
+
+## Item 5: AppKit / WinUI semantic specs (lead)
+
+- `gen_semantics.py` emits `metadata/semantics/{appkit,winui}.json` through each generator's own `Model`
+  (`tools/metadata/{appkit,winui}/gen_backend.py`), so the spec and the backend tables cannot drift.
+  - AppKit kinds are the ingested classes (NSView, NSControl, NSButton, ...); props are every property the backend
+    tables carry plus override `setters`; signals/slots/methods are the override annotations. Toplevel `window`
+    presents with `make-key-and-order-front`.
+  - WinUI kinds are the short class names of every class in an element chain (Button, ButtonBase, ...); members are
+    the override annotations (all the backend exposes). Grid gets its own copy of Panel's `children` slot carrying
+    the attached props `row`/`column`/`row-span`/`column-span` as child attrs. `window` presents with `activate`.
+  - Both: `style` from `metadata/style/<tk>.yaml` (dialect none), bindings, text_content, `method_lookup: annotated`.
+- `SpecBackend::builtin` knows `appkit` and `winui`; `svelters-compile --backend appkit|winui` works.
+- **TestHost `toolkit` option** (`createTestHost({toolkit})`, `runBundle({toolkit})`, fixture
+  `package.json` `"svelters": {"toolkit": "..."}`): resolves props/signals/methods from the semantics JSON (unknown
+  names -> null, `signalId` added), so the renderer picks each toolkit's own candidates (`click` vs `clicked`, `content`
+  vs `label`, `make-key-and-order-front`). counter-mac's log changed accordingly (spacing typed, the AppKit show
+  method); counter-win got a script and an op log. The Rust log-backend fixture test and the GTK op-log replay skip
+  fixtures that declare a non-GTK toolkit (the log backend is GTK-shaped).
+- `experiments/native-compiler/compiled`: targets `appkit`/`winui`; cases `counter-mac`/`counter-win` compile with
+  the Rust compiler and are state-compared with the JS pipeline on the toolkit TestHost (both pass; counter-win is
+  identical).

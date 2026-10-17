@@ -1,4 +1,4 @@
-//! `svelters-compile --backend gtk|qt [--spec path.json] [--filename name] [--dev] [--module] [--css-scope class] [--json] <file | ->`
+//! `svelters-compile --backend gtk|qt|appkit|winui [--spec path.json] [--filename name] [--dev] [--module] [--css-scope class] [--json] <file | ->`
 //!
 //! Compiles a component (or, with `--module` or a `.svelte.js` input, a module with runes).
 //! Prints the generated JS (or, with `--json`, `{js, map, diagnostics, backend, timings}`).
@@ -8,7 +8,7 @@ use std::io::Read;
 use svelters_compiler::compile::{CompileOptions, ModuleOptions, compile, compile_module};
 use svelters_compiler::semantics::SpecBackend;
 
-const USAGE: &str = "usage: svelters-compile --backend gtk|qt [--spec spec.json] [--filename name] [--dev] [--module] [--css-scope class] [--json] <file.svelte | file.svelte.js | ->";
+const USAGE: &str = "usage: svelters-compile --backend gtk|qt|appkit|winui [--spec spec.json] [--filename name] [--dev] [--module] [--css-scope class] [--json] <file.svelte | file.svelte.js | ->";
 
 fn main() {
     let mut backend = "gtk".to_string();
