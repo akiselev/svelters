@@ -25,5 +25,6 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | 2021 GTK version archaeology | gtk-v1-archaeology.md | done |
 | GIR / Qt metadata ingestion | widget-metadata-ingestion.md | done |
 | Signals, return values, child slots | signals-and-slots-semantics.md | done |
-| Custom renderer PR hands-on trial | custom-renderer-trial.md | in progress |
+| Custom renderer PR hands-on trial | custom-renderer-trial.md | done |
 | Node / Deno runtime integration | node-deno-integration.md | done |
+| QuickJS JIT (quickjs-jit, Cranelift) | quickjs-jit-cranelift.md | in progress |
