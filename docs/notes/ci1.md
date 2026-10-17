@@ -12,7 +12,9 @@ Branch `ci/platforms`. One workflow per target in `.github/workflows/`, each wit
 
 Shared: `.github/actions/setup-pnpm` (pnpm from `packageManager`, Node 22, store cache, frozen install).
 Every workflow: push to master and `ci/**`, pull_request, workflow_dispatch; concurrency per
-workflow+ref with cancel-in-progress; Swatinem/rust-cache. macOS and Windows have path filters.
+workflow+ref with cancel-in-progress; Swatinem/rust-cache; `permissions: contents: read`. The repo is
+public, so there are no path filters: every push and PR runs all five. No workflow uses
+`pull_request_target` or secrets (fork PRs are safe).
 
 Decisions:
 - `counter` defaults to both gtk and qt features, so each Linux job builds it with one feature and
@@ -67,3 +69,9 @@ types at run time (`g_type_from_name` after `ensure`, or dlsym) or gate them by 
 `linux-gtk` now runs the suite in an `archlinux:latest` container (GTK **4.24.1**): 820 passed,
 36 skipped, plus 31 portable-crate tests. The Ubuntu 24.04 / GTK 4.14 build stays as an
 informational `continue-on-error` job. All three Linux workflows are green.
+
+### Run 4 (d9b6a1a, master with N1 merged)
+
+Same results as before N1: js, linux-gtk (Arch: 820 passed) and linux-qt (78 passed) are green.
+macOS has the same 3 `backend` failures, and Windows has the same XamlControlsResources init failure.
+Then the macOS/Windows path filters were removed and `permissions: contents: read` was added.
