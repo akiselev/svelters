@@ -246,6 +246,15 @@ impl<'js> JsReader for QjsConv<'js> {
         }
     }
 
+    fn node_handle(&self, v: &Value<'js>) -> R<Option<Option<f64>>> {
+        let Some(o) = v.as_object() else { return Ok(None) };
+        let h: Value = o.get("svlHandle").map_err(|e| self.err(e))?;
+        if h.is_undefined() {
+            return Ok(None);
+        }
+        Ok(Some(h.as_number()))
+    }
+
     fn boxed(&self, v: &Value<'js>) -> R<Option<(svl_handle, svl_id)>> {
         let Some(o) = v.as_object() else { return Ok(None) };
         let marker: Value = o.get("__svlBoxed").map_err(|e| self.err(e))?;
@@ -323,6 +332,16 @@ impl<'js> JsWriter for QjsConv<'js> {
     fn date(&self, ms: f64) -> R<Value<'js>> {
         let f: Function = self.internal()?.get("makeDate").map_err(|e| self.err(e))?;
         f.call::<_, Value>((ms,)).map_err(|e| self.err(e))
+    }
+
+    fn handle(&self, h: svl_handle) -> R<Value<'js>> {
+        let n = JsWriter::number(self, h as f64)?;
+        // Results hand out renderer nodes when the renderer is installed (it keeps one node per
+        // handle, so identity holds); a bare host sees the number.
+        match self.ctx.globals().get::<_, Option<Function>>("__svelters_node").map_err(|e| self.err(e))? {
+            Some(f) => f.call((n,)).map_err(|e| self.err(e)),
+            None => Ok(n),
+        }
     }
 
     fn boxed(&self, handle: svl_handle, ty: svl_id, type_name: &str) -> R<Value<'js>> {

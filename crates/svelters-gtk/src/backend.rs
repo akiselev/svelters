@@ -5,10 +5,16 @@
 //! re-inserted. Signal handlers capture a `Weak<Inner>` and are disconnected before the table
 //! drops its reference, so a handler can never run against a freed entry. Natively destroyed
 //! toplevels are reported through `host.on_destroyed`.
+//!
+//! Borrowed handles (plans/milestones/X1-borrowed-gi.md): an object a getter or call returns that
+//! we did not create gets a BORROWED handle on first sight and keeps it for as long as the object
+//! lives. The identity is stored on the object (GObject qdata), the entry holds only a weak
+//! reference plus a `g_object_weak_ref` notify that reports the object's death as `SVL_GONE_OWNER`.
 
 use crate::convert::{self, Env, StrBuf};
 use crate::types::{self, TypeTable};
 use crate::generated::{slots, tables::*};
+use crate::gi::{Gi, GiErr, Ret};
 use crate::lookup;
 use gtk::glib;
 use gtk::prelude::*;
@@ -29,7 +35,12 @@ struct Entry {
     obj: glib::WeakRef<glib::Object>,
     /// Strong reference for everything but toplevels; released only by `destroy`.
     hold: Option<glib::Object>,
-    ptr: usize,
+    /// `SVL_LIFE_*`.
+    class: u32,
+    /// For borrowed handles: the handle whose getter or call first returned the object.
+    owner: u64,
+    /// The `g_object_weak_ref` data of a borrowed handle, null once consumed or released.
+    note: *mut WeakNote,
     kind: u32,
     signals: HashMap<u32, glib::SignalHandlerId>,
     /// (parent handle, slot id) while inserted through a slot.
@@ -40,12 +51,37 @@ struct Entry {
 struct State {
     next: u64,
     entries: HashMap<u64, Entry>,
-    by_obj: HashMap<usize, u64>,
-    /// Opaque boxed values (and objects without a kind) handed to JS as `BOXED` handles.
+    /// Opaque boxed values handed to JS as `BOXED` handles.
     boxed: HashMap<u64, glib::Value>,
 }
 
+/// Data of the weak-ref notify that reports the native death of a borrowed object.
+struct WeakNote {
+    inner: std::rc::Weak<Inner>,
+    h: u64,
+}
+
+unsafe extern "C" fn weak_notify(data: glib::ffi::gpointer, _obj: *mut glib::gobject_ffi::GObject) {
+    let note = unsafe { Box::from_raw(data as *mut WeakNote) };
+    if let Some(inner) = note.inner.upgrade() {
+        inner.borrowed_died(note.h);
+    }
+}
+
+static BACKEND_IDS: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(1);
+
+fn handle_quark() -> glib::Quark {
+    glib::Quark::from_str("svelters-handle")
+}
+
 pub(crate) struct Inner {
+    /// Distinguishes this backend's qdata from another backend's in the same process.
+    id: u64,
+    gi: RefCell<Option<Rc<Gi>>>,
+    /// Weak self reference, for the native-death notifies minted by `intern`.
+    me: std::rc::Weak<Inner>,
+    /// The handle whose getter or call is converting results (owner of borrowed handles it mints).
+    cur_owner: std::cell::Cell<u64>,
     app: gtk::Application,
     host: Arc<AtomicPtr<svl_host>>,
     state: RefCell<State>,
@@ -86,7 +122,7 @@ impl Env for Inner {
     }
 
     fn handle_of(&self, o: &glib::Object) -> u64 {
-        self.state.borrow().by_obj.get(&(o.as_ptr() as usize)).copied().unwrap_or(0)
+        self.tag_of(o)
     }
 
     fn mint_boxed(&self, v: glib::Value) -> u64 {
@@ -99,6 +135,13 @@ impl Env for Inner {
 
     fn type_id(&self, t: glib::Type) -> svl_id {
         self.types.borrow_mut().id(t)
+    }
+
+    fn borrow_object(&self, o: &glib::Object) -> u64 {
+        if !lookup::is_handle_type(o.type_()) {
+            return 0;
+        }
+        self.intern(o.clone(), self.cur_owner.get(), false)
     }
 }
 
@@ -113,6 +156,117 @@ impl Inner {
         let (o, k) = self.obj_of(h)?;
         let w = o.downcast::<gtk::Widget>().map_err(|_| format!("handle {h} is not a widget"))?;
         Ok((w, k))
+    }
+
+    /// The live handle of `o`, or 0. Read from the object itself, so a recycled address can never
+    /// alias another handle.
+    fn tag_of(&self, o: &glib::Object) -> u64 {
+        let Some(p) = (unsafe { o.qdata::<(u64, u64)>(handle_quark()) }) else { return 0 };
+        let (b, h) = unsafe { *p.as_ref() };
+        if b == self.id && self.state.borrow().entries.contains_key(&h) { h } else { 0 }
+    }
+
+    fn tag_object(&self, o: &glib::Object, h: u64) {
+        unsafe { o.set_qdata(handle_quark(), (self.id, h)) };
+    }
+
+    fn untag_object(&self, o: &glib::Object, h: u64) {
+        if let Some(p) = unsafe { o.qdata::<(u64, u64)>(handle_quark()) } {
+            if unsafe { *p.as_ref() } == (self.id, h) {
+                unsafe {
+                    let _ = o.steal_qdata::<(u64, u64)>(handle_quark());
+                }
+            }
+        }
+    }
+
+    /// The handle for an object a getter or call returned: its existing one (an object we created
+    /// keeps its OWNED/TOPLEVEL handle) or a new BORROWED one. `adopt` is true when the caller
+    /// passes a reference it owns (`transfer full`); such an object nobody else holds becomes an
+    /// OWNED handle that keeps it alive. Otherwise the handle holds the object weakly.
+    fn intern(&self, o: glib::Object, owner: u64, adopt: bool) -> u64 {
+        let h = self.tag_of(&o);
+        if h != 0 {
+            return h;
+        }
+        let kind = lookup::nearest_kind(o.type_());
+        let owned = adopt && !o.is::<gtk::Window>();
+        let (class, hold, note) = if owned {
+            (SVL_LIFE_OWNED, Some(o.clone()), std::ptr::null_mut())
+        } else {
+            let note = Box::into_raw(Box::new(WeakNote { inner: self.me.clone(), h: 0 }));
+            (SVL_LIFE_BORROWED, None, note)
+        };
+        let h = {
+            let mut st = self.state.borrow_mut();
+            st.next += 1;
+            let h = st.next;
+            if !note.is_null() {
+                unsafe { (*note).h = h };
+            }
+            st.entries.insert(h, Entry { obj: o.downgrade(), hold, class, owner, note, kind, signals: HashMap::new(), slot: None });
+            h
+        };
+        self.tag_object(&o, h);
+        if !note.is_null() {
+            unsafe { glib::gobject_ffi::g_object_weak_ref(o.as_ptr() as *mut _, Some(weak_notify), note as glib::ffi::gpointer) };
+        }
+        h
+    }
+
+    /// A borrowed object was disposed natively (its owner released it).
+    fn borrowed_died(&self, h: u64) {
+        let removed = self.state.borrow_mut().entries.remove(&h);
+        if removed.is_none() {
+            return;
+        }
+        let host = self.host.load(Ordering::Acquire);
+        if !host.is_null() {
+            unsafe { ((*host).on_destroyed)((*host).self_, h, SVL_GONE_OWNER) };
+        }
+    }
+
+    /// Detach everything an entry attached to its object: signal handlers, identity, weak notify.
+    fn release_entry(&self, h: u64, e: &mut Entry, obj: Option<&glib::Object>) {
+        if let Some(obj) = obj {
+            for (_, id) in e.signals.drain() {
+                obj.disconnect(id);
+            }
+            self.untag_object(obj, h);
+            if !e.note.is_null() {
+                unsafe {
+                    glib::gobject_ffi::g_object_weak_unref(obj.as_ptr() as *mut _, Some(weak_notify), e.note as glib::ffi::gpointer);
+                    drop(Box::from_raw(e.note));
+                }
+                e.note = std::ptr::null_mut();
+            }
+        }
+    }
+
+    /// The dynamic-method table, loaded on first use.
+    fn gi(&self) -> Res<Rc<Gi>> {
+        if let Some(g) = self.gi.borrow().as_ref() {
+            return Ok(g.clone());
+        }
+        let g = Rc::new(Gi::new()?);
+        *self.gi.borrow_mut() = Some(g.clone());
+        Ok(g)
+    }
+
+    /// `resolve(SVL_METHOD)` fallback: ids past the generated `METHODS` are typelib methods.
+    fn resolve_dynamic(&self, kind: u32, name: &str) -> u32 {
+        let Some(k) = KINDS.get((kind as usize).wrapping_sub(1)) else { return 0 };
+        let gi = match self.gi() {
+            Ok(g) => g,
+            Err(e) => {
+                self.set_error(e);
+                return 0;
+            }
+        };
+        match gi.resolve(kind, k.gtype, name) {
+            Some(i) => METHODS.len() as u32 + 1 + i,
+            None => 0,
+        }
     }
 
     fn set_error(&self, msg: String) {
@@ -142,11 +296,13 @@ impl Inner {
             let mut st = self.state.borrow_mut();
             st.next += 1;
             let h = st.next;
-            st.by_obj.insert(obj.as_ptr() as usize, h);
-            let hold = if obj.is::<gtk::Window>() { None } else { Some(obj.clone()) };
-            st.entries.insert(h, Entry { obj: obj.downgrade(), hold, ptr: obj.as_ptr() as usize, kind, signals: HashMap::new(), slot: None });
+            let top = obj.is::<gtk::Window>();
+            let hold = if top { None } else { Some(obj.clone()) };
+            let class = if top { SVL_LIFE_TOPLEVEL } else { SVL_LIFE_OWNED };
+            st.entries.insert(h, Entry { obj: obj.downgrade(), hold, class, owner: 0, note: std::ptr::null_mut(), kind, signals: HashMap::new(), slot: None });
             h
         };
+        self.tag_object(&obj, h);
         if let Some(win) = obj.downcast_ref::<gtk::Window>() {
             let weak = Rc::downgrade(self);
             win.connect_destroy(move |win| {
@@ -171,7 +327,12 @@ impl Inner {
             while i < order.len() {
                 let parent = order[i];
                 i += 1;
-                let mut kids: Vec<u64> = st.entries.iter().filter(|(k, e)| e.slot.is_some_and(|(p, _)| p == parent) && !order.contains(k)).map(|(k, _)| *k).collect();
+                let mut kids: Vec<u64> = st
+                    .entries
+                    .iter()
+                    .filter(|(k, e)| (e.slot.is_some_and(|(p, _)| p == parent) || (e.class == SVL_LIFE_BORROWED && e.owner == parent)) && !order.contains(k))
+                    .map(|(k, _)| *k)
+                    .collect();
                 kids.sort_unstable();
                 // pre-order: a child's own descendants follow it directly
                 for (n, k) in kids.into_iter().enumerate() {
@@ -189,22 +350,18 @@ impl Inner {
             orphans.sort_unstable();
             order.extend(orphans);
             let v: Vec<(u64, Entry)> = order.into_iter().filter_map(|k| st.entries.remove(&k).map(|e| (k, e))).collect();
-            for (_, e) in &v {
-                st.by_obj.remove(&e.ptr);
-            }
             v
         };
         let host = self.host.load(Ordering::Acquire);
-        for (k, e) in gone {
+        for (k, mut e) in gone {
             // The window itself is being disposed: its handlers go with it.
             if k != h {
-                if let Some(obj) = e.obj.upgrade() {
-                    for (_, id) in e.signals {
-                        obj.disconnect(id);
-                    }
-                }
+                let obj = e.obj.upgrade();
+                self.release_entry(k, &mut e, obj.as_ref());
+            } else {
+                self.untag_object(win.upcast_ref(), k);
             }
-            drop(e.hold);
+            drop(e.hold.take());
             if !host.is_null() {
                 let reason = if k == h { SVL_GONE_CLOSED } else { SVL_GONE_PARENT };
                 unsafe { ((*host).on_destroyed)((*host).self_, k, reason) };
@@ -224,15 +381,17 @@ impl Inner {
         if self.extra_kind(h).is_some() {
             self.destroy_extra(h);
         }
-        let entry = {
+        let mut entry = {
             let mut st = self.state.borrow_mut();
             let Some(e) = st.entries.remove(&h) else { return Ok(()) };
-            st.by_obj.remove(&e.ptr);
             e
         };
-        if let Some(obj) = entry.obj.upgrade() {
-            for (_, id) in entry.signals {
-                obj.disconnect(id);
+        let obj = entry.obj.upgrade();
+        self.release_entry(h, &mut entry, obj.as_ref());
+        if let Some(obj) = obj {
+            // A borrowed handle is only forgotten: the object belongs to its native owner.
+            if entry.class == SVL_LIFE_BORROWED {
+                return Ok(());
             }
             if let Some(win) = obj.downcast_ref::<gtk::Window>() {
                 win.set_visible(false);
@@ -259,6 +418,13 @@ impl Inner {
         Ok(())
     }
 
+    fn not_borrowed(&self, h: u64, what: &str) -> Res<()> {
+        match self.state.borrow().entries.get(&h) {
+            Some(e) if e.class == SVL_LIFE_BORROWED => Err(format!("handle {h} is a borrowed native object and cannot be {what} through the tree")),
+            _ => Ok(()),
+        }
+    }
+
     fn insert(&self, parent: u64, child: u64, before: u64, slot: u32) -> Res<()> {
         if let Ok((co, _)) = self.obj_of(child) {
             if let Some(ctrl) = co.downcast_ref::<gtk::EventController>() {
@@ -267,6 +433,8 @@ impl Inner {
         }
         let (pw, pk) = self.widget_of(parent)?;
         let (cw, _) = self.widget_of(child)?;
+        self.not_borrowed(child, "inserted")?;
+        self.not_borrowed(parent, "inserted into")?;
         let slot = if slot == 0 { lookup::default_slot(pk) } else { slot };
         if slot == 0 {
             return Err("parent has no default slot".into());
@@ -290,7 +458,7 @@ impl Inner {
         if !si.many {
             // A replaced child is released by GTK (unparented, not destroyed): forget its slot.
             if let Some(old) = slots::slot_get(slot, &pw)? {
-                let oh = self.handle_of(old.upcast_ref());
+                let oh = self.tag_of(old.upcast_ref());
                 if let Some(e) = self.state.borrow_mut().entries.get_mut(&oh) {
                     e.slot = None;
                 }
@@ -319,6 +487,8 @@ impl Inner {
             }
         }
         let (cw, _) = self.widget_of(child)?;
+        self.not_borrowed(child, "removed")?;
+        self.not_borrowed(parent, "removed from")?;
         let slot = {
             let st = self.state.borrow();
             match st.entries.get(&child).and_then(|e| e.slot) {
@@ -402,21 +572,58 @@ impl Inner {
             return Err(format!("{} has no property {}", obj.type_().name(), p.name));
         }
         let value = obj.property_value(p.name);
+        // Objects we did not create get a borrowed handle, minted by `Env::borrow_object`.
+        self.cur_owner.set(h);
         *out = convert::from_value(&value, self, &mut buf);
         Ok(())
     }
 
-    fn call(&self, h: u64, method: u32, n: usize, out: &mut svl_value) -> Res<()> {
+    fn call(&self, h: u64, method: u32, args: &[svl_value], out: &mut svl_value) -> Result<(), CallErr> {
         let (obj, kind) = self.obj_of(h)?;
-        let m = METHODS.get((method as usize).wrapping_sub(1)).ok_or("unknown method")?;
+        let Some(m) = METHODS.get((method as usize).wrapping_sub(1)) else {
+            return self.call_dynamic(h, &obj, method, args, out);
+        };
         if !lookup::in_chain(kind, m.kind) {
-            return Err(format!("method {} does not belong to {}", m.name, KINDS[kind as usize - 1].gtype));
+            return Err(format!("method {} does not belong to {}", m.name, KINDS[kind as usize - 1].gtype).into());
         }
-        if n != 0 {
-            return Err(format!("method {} takes no arguments", m.name));
+        if !args.is_empty() {
+            return Err(format!("method {} takes no arguments", m.name).into());
         }
         slots::call_method(method, &obj)?;
         *out = convert::null_value();
+        Ok(())
+    }
+
+    /// A typelib method (ids past the generated `METHODS`), invoked through GIRepository.
+    fn call_dynamic(&self, h: u64, obj: &glib::Object, method: u32, args: &[svl_value], out: &mut svl_value) -> Result<(), CallErr> {
+        let idx = method - METHODS.len() as u32 - 1;
+        let gi = self.gi()?;
+        let dm = gi.method(idx).ok_or("unknown method")?;
+        self.cur_owner.set(h);
+        let ret = dm.call(obj, args, self).map_err(|e| match e {
+            GiErr::Plain(s) => CallErr::Plain(s),
+            GiErr::Gerror(e) => CallErr::Gerror(e),
+        })?;
+        let mut buf = self.out.borrow_mut();
+        *buf = StrBuf::default();
+        *out = match ret {
+            Ret::Null => convert::null_value(),
+            Ret::Bool(b) => svl_value::new(SVL_BOOL, svl_value_u { b }),
+            Ret::Int(i) => svl_value::new(SVL_I64, svl_value_u { i }),
+            Ret::Float(f) => svl_value::new(SVL_F64, svl_value_u { f }),
+            Ret::Str(s) => buf.str_value(&s),
+            Ret::Strv(v) => {
+                let items = v.iter().map(|s| buf.str_value(s)).collect();
+                buf.list_value(SVL_LIST, 0, items)
+            }
+            Ret::Value(v) => convert::from_value(&v, self, &mut buf),
+            Ret::Object(o, owned) if lookup::is_handle_type(o.type_()) => match self.intern(o, h, owned) {
+                0 => convert::null_value(),
+                x => svl_value::new(SVL_HANDLE, svl_value_u { h: x }),
+            },
+            // Other objects (a layout, an icon) are opaque values: BOXED handles.
+            Ret::Object(o, _) => convert::from_value(&o.to_value(), self, &mut buf),
+        };
         Ok(())
     }
 
@@ -570,6 +777,10 @@ impl Inner {
         if extras::is_extra(kind) {
             return extras::describe_member(what, member);
         }
+        if what == SVL_METHOD && member as usize > METHODS.len() {
+            let gi = self.gi.borrow().clone()?;
+            return gi.method(member - METHODS.len() as u32 - 1)?.describe(&mut self.types.borrow_mut());
+        }
         if what != SVL_PROP {
             return None;
         }
@@ -657,7 +868,11 @@ impl GtkBackend {
         gtk::init().map_err(|e| e.to_string())?;
         let app = shared_app()?;
         let host = Arc::new(AtomicPtr::new(std::ptr::null_mut()));
-        let inner = Rc::new(Inner {
+        let inner = Rc::new_cyclic(|me| Inner {
+            id: BACKEND_IDS.fetch_add(1, Ordering::Relaxed),
+            gi: RefCell::new(None),
+            me: me.clone(),
+            cur_owner: std::cell::Cell::new(0),
             app,
             host: host.clone(),
             state: RefCell::new(State::default()),
@@ -746,7 +961,6 @@ fn run_int(c: &Ctl, f: impl FnOnce(&Rc<Inner>) -> Res<()>) -> c_int {
 unsafe extern "C" fn b_resolve(p: *mut c_void, what: u32, kind: svl_id, name: *const c_char, len: usize) -> svl_id {
     let bytes = unsafe { std::slice::from_raw_parts(name as *const u8, len) };
     let Ok(name) = std::str::from_utf8(bytes) else { return 0 };
-    let _ = p;
     match what {
         SVL_KIND => match extras::kind_by_name(name) {
             0 => lookup::kind_by_name(name),
@@ -755,7 +969,10 @@ unsafe extern "C" fn b_resolve(p: *mut c_void, what: u32, kind: svl_id, name: *c
         _ if extras::is_extra(kind) => extras::find_member(what, kind, name),
         SVL_PROP => lookup::find_prop(kind, name),
         SVL_SIGNAL => lookup::find_signal(kind, name),
-        SVL_METHOD => lookup::find_method(kind, name),
+        SVL_METHOD => match lookup::find_method(kind, name) {
+            0 => unsafe { ctl(p) }.local.resolve_dynamic(kind, name),
+            id => id,
+        },
         SVL_SLOT => lookup::find_slot(kind, name),
         _ => 0,
     }
@@ -799,7 +1016,7 @@ unsafe extern "C" fn b_call(p: *mut c_void, h: svl_handle, method: svl_id, args:
         if c.local.extra_kind(h).is_some() {
             c.local.extra_call(h, method, args, n, out)
         } else {
-            c.local.call(h, method, n, out).map_err(CallErr::Plain)
+            c.local.call(h, method, extras::args_of(args, n), out)
         }
     }));
     match r {
@@ -833,8 +1050,7 @@ unsafe extern "C" fn b_handle_info(p: *mut c_void, h: svl_handle, out: *mut svl_
     run_int(unsafe { ctl(p) }, |i| {
         let st = i.state.borrow();
         let e = st.entries.get(&h).ok_or_else(|| format!("stale or foreign handle {h}"))?;
-        let lifetime = if e.hold.is_none() { SVL_LIFE_TOPLEVEL } else { SVL_LIFE_OWNED };
-        unsafe { *out = svl_handle_info { kind: e.kind, lifetime, flags: 0 } };
+        unsafe { *out = svl_handle_info { kind: e.kind, lifetime: e.class, flags: 0 } };
         Ok(())
     })
 }

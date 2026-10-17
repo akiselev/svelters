@@ -563,11 +563,12 @@ struct Conv<T *, std::enable_if_t<std::is_base_of_v<QObject, T>>> {
     if (!o) { e = "handle is not a " + std::string(T::staticMetaObject.className()); return false; }
     return true;
   }
+  // An object we created keeps its handle; one a getter returned gets a BORROWED handle (`intern`).
   static void out(T *p, svl_value *o) {
-    auto it = g.by_obj.find(p);
-    if (!p || it == g.by_obj.end()) { *o = mkv(SVL_NULL); return; }
+    svl_handle h = intern(const_cast<QObject *>(static_cast<const QObject *>(p)), g_owner);
+    if (!h) { *o = mkv(SVL_NULL); return; }
     *o = mkv(SVL_HANDLE);
-    o->u.h = it->second;
+    o->u.h = h;
   }
   static svl_slot_desc slot(const char *n) { return slot_desc(n, SVL_HANDLE, SVL_D_NULLABLE); }
 };

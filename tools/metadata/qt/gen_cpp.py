@@ -42,6 +42,7 @@ class GenError(Exception):
     pass
 
 
+OBJ_REF = re.compile(r"object<(\w+)>")
 
 # --------------------------------------------------------------------------------------------
 # value model: classification of metadata type refs, enum member naming, C++ spellings
@@ -851,6 +852,82 @@ def emit_listen(m: Model) -> str:
     return "\n".join(out)
 
 
+GETTER_BASE = 1 << 20
+_GETTER_SKIP = re.compile(r"^(take|create|new|clone|grab|make|release|detach)")
+
+
+def getter_table(m: Model) -> dict[str, list[tuple[str, str]]]:
+    """Object getters from the qdoc metadata of every QObject-derived class: name -> [(receiver
+    class, returned class)]. Public, non-static methods without required parameters that return a
+    pointer to a QObject-derived class we have metadata (and so a header) for. `take*`/`create*`
+    and friends are left out: the caller owns what they return."""
+    table: dict[str, list[tuple[str, str]]] = {}
+    for p in sorted(m.meta_dir.glob("*.json")):
+        k = m.kind(p.stem)
+        if not k or k.get("kind") != "object" or not k.get("qobject"):
+            continue
+        for me in k["methods"]:
+            if me["static"] or me["access"] != "public" or me["deprecated"] or _GETTER_SKIP.match(me["name"]):
+                continue
+            mo = OBJ_REF.fullmatch(me["returns"]["ref"])
+            if not mo or any(not q["default"] for q in me["params"]):
+                continue
+            rk = m.kind(mo.group(1))
+            if not rk or not rk.get("qobject") or rk.get("kind") != "object":
+                continue
+            row = (p.stem, mo.group(1))
+            if row not in table.setdefault(me["name"], []):
+                table[me["name"]].append(row)
+    return table
+
+
+def emit_getters(m: Model) -> str:
+    """`gen_kind_of` (kind of a borrowed object: the nearest annotated class) and the getter
+    dispatch behind the ids from GETTER_BASE."""
+    out = ["svl_id gen_kind_of(QObject *o) {",
+           "  for (const QMetaObject *mo = o->metaObject(); mo; mo = mo->superClass()) {",
+           "    const char *n = mo->className();"]
+    seen = set()
+    for e in m.elements:
+        # Composite elements (a QWidget with a layout) cannot be told from a plain QWidget.
+        if e["layout_cls"] or e["cls"] in seen:
+            continue
+        seen.add(e["cls"])
+        out.append(f'    if (!std::strcmp(n, "{e["cls"]}")) return K_{cident(e["tag"])};')
+    out += ["  }", "  return 0;", "}", ""]
+    tab = getter_table(m)
+    names = ["parent"] + sorted(n for n in tab if n != "parent")
+    out.append(f"constexpr svl_id kGetterBase = {GETTER_BASE};")
+    out.append(f"constexpr size_t kGetterCount = {len(names)};")
+    out.append("const std::string_view kGetterNames[] = {" + ", ".join(f'"{n}"' for n in names) + "};")
+    out.append("int gen_getter(Entry &e, svl_id id, QObject **out) {")
+    out.append("  QObject *o = e.obj.data();")
+    out.append("  switch (id - kGetterBase) {")
+    for i, n in enumerate(names):
+        out.append(f"    case {i}: {{  // {n}")
+        if n == "parent":
+            out.append("      *out = o->parent();")
+            out.append("      return 0;")
+        else:
+            for recv, ret in sorted(tab[n]):
+                out.append(f"      if (auto *t = qobject_cast<{recv} *>(o)) {{ *out = const_cast<QObject *>(static_cast<const QObject *>(t->{n}())); return 0; }}")
+            out.append(f'      return fail("{n}: does not apply to a " + std::string(o->metaObject()->className()));')
+        out.append("    }")
+    out.append("    default: break;")
+    out.append("  }")
+    out.append('  return fail("call: unknown method id");')
+    out.append("}")
+    return "\n".join(out)
+
+
+def getter_classes(m: Model) -> set[str]:
+    out = set()
+    for recv_ret in getter_table(m).values():
+        for recv, ret in recv_ret:
+            out.update((recv, ret))
+    return out
+
+
 def emit_toplevel(m: Model) -> str:
     """Kinds of the toplevel lifetime class: windows and dialogs. A parentless QWidget is a Qt
     window too (until it is inserted somewhere), so the class cannot be read off the object."""
@@ -872,11 +949,12 @@ def gen_backend(m: Model, digest: str, tmpl: str) -> str:
                 classes.add(s["decl_cls"])
         for s in (e.get("children") or {}).get("slots", []):
             classes.update(s["accepts"])
+    classes |= getter_classes(m)
     parts = {
         "DIGEST": digest, "INCLUDES": inc(m, classes), "IDS": emit_ids(m), "TABLES": emit_tables(m),
         "CREATE": emit_create(m), "SET_PROP": prop_cases(m, True), "GET_PROP": prop_cases(m, False),
         "CALL": emit_call(m), "DESCRIBE": emit_describe(m), "ENUMS": emit_enums(m), "INSERT": emit_insert(m), "REMOVE": emit_remove(m), "LISTEN": emit_listen(m),
-        "TOPLEVEL": emit_toplevel(m),
+        "TOPLEVEL": emit_toplevel(m), "GETTERS": emit_getters(m),
     }
     parts["SERDES"] = (HERE / "templates" / "serdes.hpp.in").read_text()
     for k, v in parts.items():

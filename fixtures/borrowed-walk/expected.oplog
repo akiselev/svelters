@@ -1,0 +1,64 @@
+create window #1
+set #1 title "borrowed-walk"
+create box #2
+set #2 orientation "vertical"
+set #2 spacing 6
+create entry #3
+set #3 text "seed"
+insert #2 #3 before=end slot=default
+create button #4
+listen #4 clicked on
+set #4 label "Walk"
+insert #2 #4 before=end slot=default
+create button #5
+listen #5 clicked on
+set #5 label "Drop"
+insert #2 #5 before=end slot=default
+create button #6
+listen #6 clicked on
+set #6 label "Probe"
+insert #2 #6 before=end slot=default
+create label #7
+set #7 label "(none)"
+insert #2 #7 before=end slot=default
+create label #8
+set #8 label "(none)"
+insert #2 #8 before=end slot=default
+create label #9
+set #9 label "(none)"
+insert #2 #9 before=end slot=default
+create label #10
+set #10 label "(none)"
+insert #2 #10 before=end slot=default
+create label #11
+set #11 label "(none)"
+insert #2 #11 before=end slot=default
+create scrolledwindow #12
+create box #13
+set #13 orientation "vertical"
+set #13 spacing 2
+create label #14
+set #14 label "row"
+insert #13 #14 before=end slot=default
+insert #12 #13 before=end slot=default
+insert #2 #12 before=end slot=default
+insert #1 #2 before=end slot=default
+call #1 present []
+event #4 clicked []
+call #3 getParent []
+call #3 getParent []
+call #3 getRoot []
+call #3 getParent []
+call #12 getChild []
+call #12 getChild []
+set #7 label "same: false"
+set #8 label "root: false"
+set #9 label "depth: 0"
+set #10 label "inner: false"
+event #5 clicked []
+remove #2 #12
+destroy #14
+destroy #13
+destroy #12
+event #6 clicked []
+set #11 label "stale: alive"
