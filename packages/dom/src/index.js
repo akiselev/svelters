@@ -106,7 +106,7 @@ export function createDom(host) {
     for (const c of el._c) {
       if (c.nodeType !== 1) continue;
       realize(c);
-      if (fresh) nativeInsert(el, c);
+      if (fresh) host.insert(el._h, c._h, null, c._slot ?? undefined);
     }
   }
 
@@ -382,15 +382,26 @@ export function createDom(host) {
     for (let n = el; n; n = n.parentNode) path.push(n);
     path.push(document);
     const ev = {
-      type, target: el, args, detail: args[0], cancelBubble: false,
+      type, target: el, args, detail: args[0], cancelBubble: false, defaultPrevented: false,
       composedPath: () => path,
       stopPropagation() { this.cancelBubble = true; },
-      preventDefault() {},
+      preventDefault() { this.defaultPrevented = true; },
     };
-    for (const n of path) {
-      for (const f of [...(n._l?.[type] ?? [])]) f.call(n, ev);
-      if (ev.cancelBubble) break;
+    const results = [];
+    // DOM semantics: one event object, bubbling to root/document so delegated handlers run.
+    // Handlers registered under the raw signal name (`onchanged`) also get the event object.
+    for (const t of new Set([type, signal])) {
+      ev.type = t;
+      for (const n of path) {
+        for (const f of [...(n._l?.[t] ?? [])]) {
+          const r = f.call(n, ev);
+          if (n === el) results.push(r);
+        }
+        if (ev.cancelBubble) break;
+      }
     }
+    const first = args[0];
+    return { results, event: first !== null && typeof first === 'object' ? first : ev };
   }
 
   return { document, root, dispatch, Node, Element, Text, Comment, CharacterData, DocumentFragment, EventTarget };

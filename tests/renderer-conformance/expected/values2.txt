@@ -1,0 +1,32 @@
+===== Values2 (no spread)
+--- mount  [ops 12; tree el=1 text=1 comment=0]
+    op: create #2t text ""
+    op: insert #2t into #1<window> before null
+    op: create #3f fragment
+    op: create #4<widget>
+    op: set #4<widget>.label = "static" [string]
+    op: insert #4<widget> into #3f before null
+    op: set #4<widget>.fn = fn cb [function]
+    op: set #4<widget>.num = 1 [number]
+    op: set #4<widget>.obj = object {"a":1} [object]
+    op: set #4<widget>.model = object {"rows":1} [object]
+    op: set #4<widget>.class = "big" [string]
+    op: move #4<widget> into #1<window> before #2t
+    | <window>
+    |   <widget label="static" fn=fn cb num=1 obj=object {"a":1} model=object {"rows":1} class="big">
+    |   ""
+    |
+--- inc  [ops 3; tree el=1 text=1 comment=0]
+    op: set #4<widget>.num = 2 [number]
+    op: set #4<widget>.model = object {"rows":2} [object]
+    op: set #4<widget>.class = "active big" [string]
+    | <window>
+    |   <widget label="static" fn=fn cb num=2 obj=object {"a":1} model=object {"rows":2} class="active big">
+    |   ""
+    |
+--- unmount  [ops 2; tree el=0 text=0 comment=0]
+    op: remove #4<widget>
+    op: remove #2t
+    | <window>
+    |
+leftover after unmount: {"element":0,"text":0,"comment":0}
