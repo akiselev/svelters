@@ -35,4 +35,4 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | JS ↔ native serdes | js-native-serdes.md | done: extend svl_value in place (ABI v3, M3) |
 | Ownership and lifetimes | ownership-and-lifetimes.md | done: explicit tree-driven lifetime, 4 lifetime classes, ABI v2 proposal |
 | Svelte feature survey (lists, snippets, bindings, modifiers) | svelte-feature-survey.md | done |
-| Styling: GTK CSS and Qt QSS | styling-gtk-css-qss.md | in progress |
+| Styling: GTK CSS and Qt QSS | styling-gtk-css-qss.md | done: 4-layer model, portable vocabulary + native escape hatch |
