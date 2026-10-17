@@ -207,6 +207,9 @@ dependencies = [
 [[package]]
 name = "svelters-qt-build"
 version = "0.0.0"
+dependencies = [
+ "cc",
+]
 
 [[package]]
 name = "syn"

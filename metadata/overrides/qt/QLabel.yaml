@@ -1,0 +1,5 @@
+elements:
+  - tag: label
+    construct: { class: QLabel }
+    props:
+      - { js: label, native: text }

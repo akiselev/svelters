@@ -1,0 +1,15 @@
+elements:
+  - tag: button
+    construct: { class: QPushButton }
+    props:
+      - { js: label, native: text }
+    methods:
+      - { js: click, native: click }
+    signals:
+      - js: clicked
+        native: clicked
+        # clicked() and clicked(bool) are separate metamethods; connecting both would deliver twice.
+        collapses: ["clicked()", "clicked(bool)"]
+        connect: "clicked(bool)"
+        args: []
+        trigger: "$w->click()"
