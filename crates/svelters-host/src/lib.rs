@@ -12,7 +12,8 @@
 //! `engine` is the boundary trait, `quickjs` is the rquickjs implementation.
 //!
 //! Threading: a `Host` is pinned to the thread that created it (the toolkit's main thread).
-//! The only cross-thread call is the timer thread invoking the backend's thread-safe `wake`.
+//! The host starts no threads. Timers run on the toolkit: after each checkpoint the host arms the
+//! backend's one-shot `schedule_wake` for the earliest deadline.
 
 mod core;
 mod engine;
@@ -22,14 +23,13 @@ pub mod testing;
 pub use crate::core::{ConsoleLine, HostConfig, Timing};
 pub use crate::engine::{ErrorKind, JobStatus, JsEngine, JsError};
 
-use crate::core::{Core, Sched};
+use crate::core::Core;
 use std::cell::RefCell;
 use std::marker::PhantomData;
 use std::path::Path;
 use std::rc::Rc;
 use std::sync::Arc;
 use std::sync::atomic::AtomicBool;
-use std::thread::JoinHandle;
 use svelters_abi::{AbiError, BackendRef, HostCallbacks, HostVtable, Value, svl_handle, svl_id};
 
 type SharedEngine = Rc<RefCell<Box<dyn JsEngine>>>;
@@ -67,7 +67,6 @@ pub struct Host<'a> {
     core: Rc<Core>,
     engine: SharedEngine,
     vt: HostVtable,
-    timer_thread: Option<JoinHandle<()>>,
     _backend: PhantomData<BackendRef<'a>>,
 }
 
@@ -84,28 +83,19 @@ impl<'a> Host<'a> {
         cfg: HostConfig,
         make: impl FnOnce(&Rc<Core>) -> Result<Box<dyn JsEngine>, JsError>,
     ) -> Result<Host<'a>, JsError> {
-        // SAFETY: `'a` ties the host to the backend borrow, and `Drop` joins the only other user
-        // of the erased reference (the timer thread) before `'a` can end.
+        // SAFETY: `'a` ties the host to the backend borrow, so the erased reference cannot outlive it.
         let backend_static = unsafe { backend.erase_lifetime() };
-        let sched = Sched::new();
-        let core = Rc::new(Core::new(backend_static, cfg, sched.clone()));
+        let core = Rc::new(Core::new(backend_static, cfg));
         let engine: SharedEngine = Rc::new(RefCell::new(make(&core)?));
         let vt = HostVtable::new(Callbacks {
             core: core.clone(),
             engine: engine.clone(),
         });
 
-        let wake = backend.wake_handle();
-        let timer_thread = std::thread::Builder::new()
-            .name("svelters-timers".into())
-            .spawn(move || sched.run(wake))
-            .map_err(|e| JsError::new(ErrorKind::Host, format!("spawn timer thread: {e}")))?;
-
         Ok(Host {
             core,
             engine,
             vt,
-            timer_thread: Some(timer_thread),
             _backend: PhantomData,
         })
     }
@@ -164,9 +154,7 @@ impl<'a> Host<'a> {
 
 impl Drop for Host<'_> {
     fn drop(&mut self) {
-        self.core.sched.shutdown();
-        if let Some(t) = self.timer_thread.take() {
-            let _ = t.join();
-        }
+        // A pending backend wakeup would call back into a vtable that is about to be freed.
+        self.core.disarm();
     }
 }

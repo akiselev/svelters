@@ -20,9 +20,9 @@ use std::cell::{Cell, RefCell};
 use std::cmp::Reverse;
 use std::collections::{BinaryHeap, HashMap, VecDeque};
 use std::sync::atomic::AtomicBool;
-use std::sync::{Arc, Condvar, Mutex, MutexGuard};
+use std::sync::Arc;
 use std::time::{Duration, Instant};
-use svelters_abi::{BackendRef, NameKind, Value, WakeHandle, svl_handle, svl_id};
+use svelters_abi::{BackendRef, NameKind, Value, svl_handle, svl_id};
 
 #[derive(Clone, Debug)]
 pub struct HostConfig {
@@ -160,79 +160,6 @@ impl Timers {
     }
 }
 
-struct SchedState {
-    deadline: Option<Instant>,
-    gen_: u64,
-    fired_gen: u64,
-    shutdown: bool,
-}
-
-/// Timer thread state. The thread sleeps until the earliest timer deadline and calls the
-/// backend's thread-safe `wake` once per deadline update, so the host never polls.
-pub(crate) struct Sched {
-    m: Mutex<SchedState>,
-    cv: Condvar,
-}
-
-impl Sched {
-    pub(crate) fn new() -> Arc<Sched> {
-        Arc::new(Sched {
-            m: Mutex::new(SchedState {
-                deadline: None,
-                gen_: 0,
-                fired_gen: 0,
-                shutdown: false,
-            }),
-            cv: Condvar::new(),
-        })
-    }
-
-    fn lock(&self) -> MutexGuard<'_, SchedState> {
-        self.m.lock().unwrap_or_else(|e| e.into_inner())
-    }
-
-    fn set(&self, deadline: Option<Instant>, force: bool) {
-        let mut g = self.lock();
-        if force || g.deadline != deadline {
-            g.deadline = deadline;
-            g.gen_ += 1;
-            self.cv.notify_all();
-        }
-    }
-
-    pub(crate) fn shutdown(&self) {
-        self.lock().shutdown = true;
-        self.cv.notify_all();
-    }
-
-    pub(crate) fn run(&self, wake: WakeHandle) {
-        let mut g = self.lock();
-        loop {
-            if g.shutdown {
-                return;
-            }
-            match g.deadline {
-                Some(d) if g.fired_gen != g.gen_ => {
-                    let now = Instant::now();
-                    if now >= d {
-                        g.fired_gen = g.gen_;
-                        drop(g);
-                        wake.wake();
-                        g = self.lock();
-                    } else {
-                        g = self
-                            .cv
-                            .wait_timeout(g, d - now)
-                            .unwrap_or_else(|e| e.into_inner())
-                            .0;
-                    }
-                }
-                _ => g = self.cv.wait(g).unwrap_or_else(|e| e.into_inner()),
-            }
-        }
-    }
-}
-
 #[derive(Default)]
 struct CoreState {
     /// handle → kind id
@@ -253,7 +180,8 @@ pub(crate) struct Core {
     st: RefCell<CoreState>,
     busy: Cell<u32>,
     deferred: Cell<bool>,
-    pub(crate) sched: Arc<Sched>,
+    /// The deadline last passed to `backend.schedule_wake` (None: cancelled or never armed).
+    armed: Cell<Option<Instant>>,
     pub(crate) interrupt: Arc<AtomicBool>,
     epoch: Instant,
     vnow: Cell<Duration>,
@@ -280,14 +208,14 @@ impl Drop for JsGuard<'_> {
 }
 
 impl Core {
-    pub(crate) fn new(backend: BackendRef<'static>, cfg: HostConfig, sched: Arc<Sched>) -> Core {
+    pub(crate) fn new(backend: BackendRef<'static>, cfg: HostConfig) -> Core {
         Core {
             backend,
             cfg,
             st: RefCell::new(CoreState::default()),
             busy: Cell::new(0),
             deferred: Cell::new(false),
-            sched,
+            armed: Cell::new(None),
             interrupt: Arc::new(AtomicBool::new(false)),
             epoch: Instant::now(),
             vnow: Cell::new(Duration::ZERO),
@@ -604,9 +532,32 @@ impl Core {
         self.arm_sched(deadline, false);
     }
 
+    /// Arms the backend's one-shot wakeup for the earliest timer deadline. Scripted mode keeps
+    /// timers on its virtual clock and never touches the backend. `force` re-arms even when the
+    /// deadline is unchanged (the previous wakeup has fired).
     fn arm_sched(&self, deadline: Option<Instant>, force: bool) {
-        if !self.cfg.scripted {
-            self.sched.set(deadline, force);
+        if self.cfg.scripted {
+            return;
+        }
+        if !force && self.armed.get() == deadline {
+            return;
+        }
+        self.armed.set(deadline);
+        let ms = match deadline {
+            Some(d) => {
+                let left = d.saturating_duration_since(Instant::now());
+                let ms = left.as_nanos().div_ceil(1_000_000);
+                i64::try_from(ms).unwrap_or(i64::MAX)
+            }
+            None => -1,
+        };
+        self.backend.schedule_wake(ms);
+    }
+
+    /// Cancels any pending backend wakeup. Called when the host goes away.
+    pub(crate) fn disarm(&self) {
+        if self.armed.replace(None).is_some() {
+            self.backend.schedule_wake(-1);
         }
     }
 
@@ -648,7 +599,8 @@ impl Core {
 /// 1. deliver queued events to JS, draining jobs after each;
 /// 2. fire due timers, draining jobs after each;
 /// 3. drain remaining jobs, up to `max_jobs_per_checkpoint` in total;
-/// 4. `wake` if jobs or events remain, and re-arm the timer thread.
+/// 4. `wake` if jobs or events remain, and arm the backend's one-shot wakeup for the earliest
+///    timer deadline (`schedule_wake`).
 ///
 /// Ops reach the backend directly while JS runs (no batching in P). Scripted mode has its own
 /// stepping, see [`HostConfig::scripted`].

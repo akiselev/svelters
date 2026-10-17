@@ -13,7 +13,7 @@ use std::collections::HashMap;
 use std::fmt::Write as _;
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::{Arc, Condvar, Mutex, MutexGuard};
-use std::time::Duration;
+use std::time::{Duration, Instant};
 use svelters_abi::{
     Backend, BackendVtable, HostRef, NameKind, SVL_LIFE_OWNED, Value, Waker, svl_handle, svl_handle_info, svl_id,
 };
@@ -193,6 +193,10 @@ struct State {
     wake_pending: bool,
     quit: bool,
     checkpoints: u64,
+    /// Deadline of the pending `schedule_wake`, if any.
+    wake_deadline: Option<Instant>,
+    timer_fires: u64,
+    schedule_calls: u64,
 }
 
 struct Shared {
@@ -235,6 +239,9 @@ impl LogBackend {
                     wake_pending: false,
                     quit: false,
                     checkpoints: 0,
+                    wake_deadline: None,
+                    timer_fires: 0,
+                    schedule_calls: 0,
                 }),
                 cv: Condvar::new(),
                 wakes: AtomicU64::new(0),
@@ -256,6 +263,16 @@ impl LogBackend {
     /// Number of `wake` calls received (from any thread).
     pub fn wake_count(&self) -> u64 {
         self.shared.wakes.load(Ordering::SeqCst)
+    }
+
+    /// Number of times a `schedule_wake` deadline expired and ran a checkpoint.
+    pub fn timer_fire_count(&self) -> u64 {
+        self.shared.lock().timer_fires
+    }
+
+    /// Number of `schedule_wake` calls received.
+    pub fn schedule_call_count(&self) -> u64 {
+        self.shared.lock().schedule_calls
     }
 
     /// Number of checkpoints the fake loop has requested.
@@ -429,7 +446,13 @@ impl Backend for LogBackend {
         })
     }
 
-    fn schedule_wake(&self, _ms: i64) {}
+    fn schedule_wake(&self, ms: i64) {
+        let mut st = self.shared.lock();
+        st.schedule_calls += 1;
+        st.wake_deadline = (ms >= 0).then(|| Instant::now() + Duration::from_millis(ms as u64));
+        drop(st);
+        self.shared.cv.notify_all();
+    }
 
     fn run(&self, host: &HostRef<'_>) -> Result<(), String> {
         let steps = std::mem::take(&mut self.shared.lock().script);
@@ -464,14 +487,30 @@ impl Backend for LogBackend {
         }
         loop {
             let mut st = self.shared.lock();
-            while !st.wake_pending && !st.quit {
+            let mut timer_fired = false;
+            while !st.wake_pending && !st.quit && !timer_fired {
+                // A pending `schedule_wake` keeps the loop alive until its deadline; otherwise
+                // the loop returns once nothing has woken it for `settle`.
+                let wait = match st.wake_deadline {
+                    Some(d) => {
+                        let now = Instant::now();
+                        if now >= d {
+                            st.wake_deadline = None;
+                            st.timer_fires += 1;
+                            timer_fired = true;
+                            continue;
+                        }
+                        d - now
+                    }
+                    None => self.shared.opts.settle,
+                };
                 let (g, res) = self
                     .shared
                     .cv
-                    .wait_timeout(st, self.shared.opts.settle)
+                    .wait_timeout(st, wait)
                     .unwrap_or_else(|e| e.into_inner());
                 st = g;
-                if res.timed_out() && !st.wake_pending {
+                if res.timed_out() && !st.wake_pending && st.wake_deadline.is_none() {
                     return Ok(());
                 }
             }

@@ -129,10 +129,10 @@ fn real_timers_and_promises_complete_without_busy_polling() {
             "\"t50+10\""
         ]
     );
-    // One wake per distinct timer deadline (20, 40, 50, 60 ms) plus at most a couple for
-    // scheduling updates. A polling host would show hundreds.
-    assert!(r.wake_count >= 4, "wake_count = {}", r.wake_count);
-    assert!(r.wake_count <= 10, "wake_count = {}", r.wake_count);
+    // One backend timer expiry per distinct deadline (20, 40, 50, 60 ms), delivered through
+    // `schedule_wake`. A polling host would show hundreds.
+    assert!(r.timer_fires >= 4, "timer_fires = {}", r.timer_fires);
+    assert!(r.timer_fires <= 10, "timer_fires = {}", r.timer_fires);
     assert!(
         r.checkpoint_count <= 10,
         "checkpoint_count = {}",
@@ -388,4 +388,29 @@ fn checkpoint_reentered_from_a_nested_loop_does_not_panic() {
     assert!(out.ends_with("set #3 label \"clicked 1 [1]\"\n"), "{out}");
     // The nested request was recorded and turned into a wake instead of re-running JS.
     assert!(log.wake_count() >= 1);
+}
+
+fn thread_names() -> Vec<String> {
+    std::fs::read_dir("/proc/self/task")
+        .unwrap()
+        .filter_map(|e| std::fs::read_to_string(e.unwrap().path().join("comm")).ok())
+        .map(|s| s.trim().to_string())
+        .collect()
+}
+
+#[test]
+fn host_starts_no_timer_thread() {
+    let log = LogBackend::new(vec![]);
+    let vt = log.vtable();
+    let host = Host::new(vt.backend_ref(), quiet()).unwrap();
+    host.load_bundle(js("timers_promises.js")).unwrap();
+    // The bundle's timers are pending now; the toolkit (here the log backend) owns the timing.
+    assert!(log.schedule_call_count() >= 1);
+    assert!(
+        !thread_names().iter().any(|n| n.starts_with("svelters-timers")),
+        "{:?}",
+        thread_names()
+    );
+    host.run().unwrap();
+    drop(host);
 }

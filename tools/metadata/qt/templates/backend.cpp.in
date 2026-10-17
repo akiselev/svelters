@@ -57,6 +57,7 @@ struct Core {
   std::string err;
   std::string strbuf;
   std::atomic<QObject *> waker{nullptr};
+  QTimer *wake_timer = nullptr;  // schedule_wake's single-shot timer; main thread only
   std::atomic<bool> wake_pending{false};
   std::atomic<bool> queued{false};  // a checkpoint is already queued on the loop
 };
@@ -337,8 +338,20 @@ int b_handle_info(void *, svl_handle h, svl_handle_info *out) {
   return 0;
 }
 
-// Placeholder until native timers land: the host still drives its own timer thread.
-void b_schedule_wake(void *, int64_t) {}
+// One single-shot timer, re-armed by every call. Short timeouts use a precise timer, longer ones
+// a coarse timer so the toolkit can coalesce wakeups.
+void b_schedule_wake(void *, int64_t ms) {
+  ensure_app();
+  if (!g.wake_timer) {
+    g.wake_timer = new QTimer(g.waker.load());
+    g.wake_timer->setSingleShot(true);
+    QObject::connect(g.wake_timer, &QTimer::timeout, g.wake_timer, [] { run_checkpoint(); });
+  }
+  g.wake_timer->stop();
+  if (ms < 0) return;
+  g.wake_timer->setTimerType(ms < 20 ? Qt::PreciseTimer : Qt::CoarseTimer);
+  g.wake_timer->start(static_cast<int>(ms > INT32_MAX ? INT32_MAX : ms));
+}
 
 int b_run(void *, const svl_host *host) {
   g.host = host;

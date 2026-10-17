@@ -45,6 +45,8 @@ pub(crate) struct Inner {
     state: RefCell<State>,
     error: RefCell<CString>,
     out: RefCell<StrBuf>,
+    /// The pending `schedule_wake` source, if any. Cleared by the source's own callback.
+    wake_timer: RefCell<Option<glib::SourceId>>,
 }
 
 type Res<T> = Result<T, String>;
@@ -386,6 +388,7 @@ impl GtkBackend {
             state: RefCell::new(State::default()),
             error: RefCell::new(CString::default()),
             out: RefCell::new(StrBuf::default()),
+            wake_timer: RefCell::new(None),
         });
         let mut ctl = Box::new(Ctl { host, local: inner });
         let vtable = Box::new(svl_backend {
@@ -510,8 +513,29 @@ unsafe extern "C" fn b_handle_info(p: *mut c_void, h: svl_handle, out: *mut svl_
     })
 }
 
-/// Placeholder until native timers land: the host still drives its own timer thread.
-unsafe extern "C" fn b_schedule_wake(_p: *mut c_void, _ms: i64) {}
+/// Arms one glib timeout that runs a host checkpoint, replacing any pending one; `ms < 0` cancels.
+unsafe extern "C" fn b_schedule_wake(p: *mut c_void, ms: i64) {
+    let c = unsafe { ctl(p) };
+    let inner = &c.local;
+    if let Some(id) = inner.wake_timer.borrow_mut().take() {
+        id.remove();
+    }
+    if ms < 0 {
+        return;
+    }
+    let weak = Rc::downgrade(inner);
+    let id = glib::timeout_add_local_once(std::time::Duration::from_millis(ms as u64), move || {
+        let Some(inner) = weak.upgrade() else { return };
+        // The source is finished once this callback runs: forget its id before anything can try
+        // to remove it.
+        inner.wake_timer.borrow_mut().take();
+        let h = inner.host.load(Ordering::Acquire);
+        if !h.is_null() {
+            unsafe { ((*h).checkpoint)((*h).self_) };
+        }
+    });
+    *inner.wake_timer.borrow_mut() = Some(id);
+}
 
 unsafe extern "C" fn b_run(p: *mut c_void, host: *const svl_host) -> c_int {
     let c = unsafe { ctl(p) };
