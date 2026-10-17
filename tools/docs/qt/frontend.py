@@ -239,7 +239,8 @@ class Frontend:
             out[s["name"]] = rec_from(s)
         for el in elements:
             for a in el.get("signals", []) or []:
-                name = a["native"]
+                # Synthetic events (e.g. close-request) have no Qt signal behind them.
+                name = a.get("native") or a["synthetic"]
                 rec = out.get(name)
                 if rec is None:
                     base = None
@@ -271,6 +272,8 @@ class Frontend:
                     ext["connect"] = a["connect"]
                 if a.get("collapses"):
                     ext["collapses"] = a["collapses"]
+                if a.get("synthetic"):
+                    ext["synthetic"] = a["synthetic"]
         return sorted(out.values(), key=lambda r: r["name"])
 
     def methods(self, stem: str, d: dict, ctor: bool, elements: list[dict]) -> list[dict]:

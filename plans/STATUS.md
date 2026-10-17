@@ -11,7 +11,7 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | P3 GTK lane | DONE | 8f5dfe1 | 443 Gtk kinds ingested; 298 kinds/1304 props/349 signals in tables; 22 tests + P1 oplog replay pass |
 | P4 Qt lane | DONE | dd6c28c | 192 classes ingested; 8 elements annotated; 41 generated tests pass; leaf-crate rebuild verified |
 | F1 fork bindings | DONE | 32fe00a | element bind:this (call/getProp/StaleHandleError) + renderer bind hook in fork 27b7dfb70 (pushed to akiselev/svelte master + svelters/renderer); entry.text two-way on GTK+Qt with native echo check |
-| D1 docs generator | IN PROGRESS | | generated API reference + guides site; separate docs ingestion pass |
+| D1 docs generator | DONE | 77addd6 | per-toolkit docs IR frontends → Starlight site (881 pages, link-checked); docs ingestion pass; GFDL-safe Qt `brief` policy; `pnpm docs:build` / `docs:test` |
 | S1 serdes main types | IN PROGRESS | | ABI v3 value model + converters; merges after P5 |
 | M2a ABI v2 | DONE | 417093a | schedule_wake native timers (no host thread), lifetime classes/handle_info/dead-handle ring, cascading on_destroyed reasons, onRequestClose + host-decided quit; 74/74 nextest |
 | M2b dev loop | DONE | 79a423f | in-process hot reload on GTK+Qt (edit → new UI ~1.7–2 s, mostly Vite); errors mapped to .svelte:L:C; svelte-check in pnpm test; 66/66 nextest |
