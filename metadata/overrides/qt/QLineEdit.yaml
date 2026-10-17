@@ -4,6 +4,7 @@ elements:
     props:
       - { js: text, native: text, suppress_signals: true }
       - { js: placeholder, native: placeholderText }
+      - { js: minimumHeight, native: minimumHeight }   # X1 native styling: min-height
     signals:
       - js: changed
         native: textChanged

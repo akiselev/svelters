@@ -710,6 +710,14 @@ class Tests:
                          f'  CHECK(B->set_prop(B->self, h, P("{t}", "{pn}"), &v) == 0);',
                          f'  CHECK({tgt}->{p["getter"]}().toUtf8().toStdString() == s);',
                          f'  CHECK(getstr(h, P("{t}", "{pn}")) == s);', "  B->destroy(B->self, h);"]
+            elif p["decl_ref"] == "bool":
+                lines = [f'  svl_handle h = mk("{t}");', "  svl_value out{};"]
+                for b in ("true", "false"):
+                    lines += [f'  {{ svl_value v = vbool({b});',
+                              f'    CHECK(B->set_prop(B->self, h, P("{t}", "{pn}"), &v) == 0);',
+                              f'    CHECK({tgt}->{p["getter"]}() == {b});',
+                              f'    CHECK(B->get_prop(B->self, h, P("{t}", "{pn}"), &out) == 0 && out.tag == SVL_BOOL && out.u.b == {b}); }}']
+                lines.append("  B->destroy(B->self, h);")
             else:
                 lines = [f'  svl_handle h = mk("{t}");', "  svl_value v = vi64(7);",
                          f'  CHECK(B->set_prop(B->self, h, P("{t}", "{pn}"), &v) == 0);',

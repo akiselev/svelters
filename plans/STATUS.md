@@ -17,6 +17,7 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | M2b dev loop | DONE | 79a423f | in-process hot reload on GTK+Qt (edit → new UI ~1.7–2 s, mostly Vite); errors mapped to .svelte:L:C; svelte-check in pnpm test; 66/66 nextest |
 | A1 API surface + galleries | QUEUED | | starts when F1 merges; plans/milestones/A1-api-surface.md (1 lead spawning Sonnet workers, ≤8 concurrent) |
 | P5 integration | DONE | 1b22e76 | counter on GTK+Qt; 57/57 nextest incl. 12 integration; first frame GTK ~1.2 s / Qt ~0.2 s; binaries 3.4 / 2.6 MB; JS dominates the 1000-row split (host/ABI < 20 ms) |
+| X1 native compiler (experiment) | IN PROGRESS | | Rust Svelte compiler + per-framework semantic specs, side by side with the JS pipeline; plans/milestones/X1-native-compiler.md |
 | M2 dev loop | QUEUED | | |
 | M3 metadata + codegen | QUEUED | | |
 | M4 native semantics | QUEUED | | |

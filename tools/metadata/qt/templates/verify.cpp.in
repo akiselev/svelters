@@ -90,6 +90,12 @@ svl_value vi64(int64_t i) {
   v.u.i = i;
   return v;
 }
+svl_value vbool(bool b) {
+  svl_value v{};
+  v.tag = SVL_BOOL;
+  v.u.b = b;
+  return v;
+}
 bool was_destroyed(svl_handle h) { return std::find(rec.destroyed.begin(), rec.destroyed.end(), h) != rec.destroyed.end(); }
 std::string getstr(svl_handle h, svl_id p) {
   svl_value out{};

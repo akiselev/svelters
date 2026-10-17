@@ -15,6 +15,8 @@ export interface QtElementDescriptors {
   button: {
     props: {
       label?: string;
+      minimumHeight?: number;
+      default?: boolean;
     };
     events: {
       clicked: () => void;
@@ -28,6 +30,7 @@ export interface QtElementDescriptors {
     props: {
       text?: string;
       placeholder?: string;
+      minimumHeight?: number;
     };
     events: {
       changed: (text: string) => void;

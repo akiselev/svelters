@@ -67,8 +67,8 @@ elements:
           on_remove: destroys_child
           ops:
             get:                                                 # statusBar() would create one
-              native: "QMainWindow::findChild<QStatusBar*>(Qt::FindChildOptions) const"
-              args: ["const:Qt::FindDirectChildrenOnly"]
+              native: "QMainWindow::findChild<QStatusBar*>(const QString&, Qt::FindChildOptions) const"   # 2-arg form: the options-only overload is Qt >= 6.7
+              args: ["const:QString()", "const:Qt::FindDirectChildrenOnly"]
             set:
               native: "QMainWindow::setStatusBar(QStatusBar*)"
               args: [child]

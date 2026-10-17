@@ -1046,6 +1046,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "svelters-compiler"
+version = "0.0.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "sourcemap",
+ "svelters-backend-log",
+ "svelters-host",
+]
+
+[[package]]
 name = "svelters-gtk"
 version = "0.0.0"
 dependencies = [

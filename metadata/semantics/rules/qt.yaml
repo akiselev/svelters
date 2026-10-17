@@ -1,0 +1,59 @@
+# Hand-written native semantics for the QtWidgets backend. Merged over the annotated elements of
+# metadata/overrides/qt/*.yaml (as resolved by tools/metadata/qt/gen_cpp.py) into
+# metadata/semantics/qt.json. Only annotated elements/props/signals exist at runtime on Qt.
+framework: "Qt 6 Widgets (generated C++ backend)"
+
+event_aliases:
+  click: clicked
+  change: changed
+  close: close-request
+
+kinds:
+  label:
+    text_content: label
+    provenance: "@svelters/renderer LABEL_KINDS"
+  button:
+    text_content: label
+    provenance: "@svelters/renderer LABEL_KINDS"
+  entry:
+    bindings:
+      text:
+        event: changed
+        value: { arg: 0 }
+        echo: backend_blocks
+        provenance: "QLineEdit.yaml: text suppress_signals: true; changed = textChanged(QString) carries the text"
+
+# Qt metaobject dumps carry no defaults for these properties; values from the Qt 6 docs.
+defaults:
+  button.minimumHeight: { value: 0, provenance: "QWidget::minimumHeight default 0 (Qt docs)" }
+  button.default: { value: false, provenance: "QPushButton::default is false unless set (Qt docs)" }
+  box.spacing: { value: -1, provenance: "QLayout::spacing -1 = style default (Qt docs)" }
+  box.orientation: { value: vertical, provenance: "box constructs QBoxLayout::TopToBottom (QWidget.yaml)" }
+  entry.minimumHeight: { value: 0, provenance: "QWidget::minimumHeight default 0 (Qt docs)" }
+
+style:
+  units:
+    dp: { scale: 1, provenance: "Qt 6 widget geometry is in device-independent pixels (high-DPI scaling is always on)" }
+  declarations:
+    orientation:
+      prop: orientation
+      value: enum
+      applies_to: box
+      contract: common
+    spacing:
+      prop: spacing
+      value: length
+      applies_to: box
+      contract: common
+    min-height:
+      prop: minimumHeight
+      value: length
+      applies_to: QWidget
+      contract: common
+    emphasis:
+      applies_to: QPushButton
+      contract: native_intent
+      intents:
+        normal: {}
+        accent: { set: { prop: default, value: true } }
+      provenance: "Qt's convention for the emphasized button of a form is the default button (QPushButton::default); Qt has no destructive-action convention"

@@ -3,6 +3,8 @@ elements:
     construct: { class: QPushButton }
     props:
       - { js: label, native: text }
+      - { js: minimumHeight, native: minimumHeight }   # X1 native styling: min-height
+      - { js: default, native: default }               # X1 native styling: emphasis: accent
     methods:
       - { js: click, native: click }
     signals:
