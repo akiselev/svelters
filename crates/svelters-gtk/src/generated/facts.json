@@ -1465,6 +1465,126 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:EventControllerFocus:signal:enter",
+   "fingerprint": "68ad2fcbdd365129",
+   "kind": "EventControllerFocus",
+   "name": "enter",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_eventcontrollerfocus_enter"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:EventControllerFocus:signal:leave",
+   "fingerprint": "961bddc9ff800f3b",
+   "kind": "EventControllerFocus",
+   "name": "leave",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_eventcontrollerfocus_leave"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:EventControllerKey:signal:key-pressed",
+   "fingerprint": "8f7c49ae714fead4",
+   "kind": "EventControllerKey",
+   "name": "key-pressed",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_eventcontrollerkey_key_pressed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:EventControllerKey:signal:key-released",
+   "fingerprint": "3f575528a86a9fbd",
+   "kind": "EventControllerKey",
+   "name": "key-released",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_eventcontrollerkey_key_released"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:EventControllerKey:signal:modifiers",
+   "fingerprint": "180a34cc0a0902ab",
+   "kind": "EventControllerKey",
+   "name": "modifiers",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_eventcontrollerkey_modifiers"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:EventControllerMotion:signal:enter",
+   "fingerprint": "30d638766ad0e406",
+   "kind": "EventControllerMotion",
+   "name": "enter",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_eventcontrollermotion_enter"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:EventControllerMotion:signal:leave",
+   "fingerprint": "9a8deb617ac4db65",
+   "kind": "EventControllerMotion",
+   "name": "leave",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_eventcontrollermotion_leave"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:EventControllerMotion:signal:motion",
+   "fingerprint": "c7b735e2b0d71e3a",
+   "kind": "EventControllerMotion",
+   "name": "motion",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_eventcontrollermotion_motion"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:EventControllerScroll:signal:scroll",
+   "fingerprint": "a757fd10d96b0cfc",
+   "kind": "EventControllerScroll",
+   "name": "scroll",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_eventcontrollerscroll_scroll"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:EventControllerScroll:signal:scroll-begin",
+   "fingerprint": "7bdc4db06da25687",
+   "kind": "EventControllerScroll",
+   "name": "scroll-begin",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_eventcontrollerscroll_scroll_begin"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:EventControllerScroll:signal:scroll-end",
+   "fingerprint": "361a91f82a3d801f",
+   "kind": "EventControllerScroll",
+   "name": "scroll-end",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_eventcontrollerscroll_scroll_end"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:EventControllerScroll:prop:flags",
+   "fingerprint": "7007e496fe49d253",
+   "kind": "EventControllerScroll",
+   "name": "flags",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_eventcontrollerscroll_flags"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Expander:signal:activate",
    "fingerprint": "ba7009796f8cd676",
    "kind": "Expander",
@@ -1683,6 +1803,36 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_frame_label_xalign"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:GestureClick:signal:pressed",
+   "fingerprint": "aa667bb4f7e34cb8",
+   "kind": "GestureClick",
+   "name": "pressed",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_gestureclick_pressed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:GestureClick:signal:released",
+   "fingerprint": "56f48010722c0ff7",
+   "kind": "GestureClick",
+   "name": "released",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_gestureclick_released"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:GestureClick:signal:stopped",
+   "fingerprint": "9f2e5492742f5eee",
+   "kind": "GestureClick",
+   "name": "stopped",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_gestureclick_stopped"
    ]
   },
   {

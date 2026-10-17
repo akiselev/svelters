@@ -1,0 +1,23 @@
+element: {tag: scrollcontroller}
+properties:
+  - name: flags
+    provenance: "GtkEventControllerScroll:flags, GtkEventControllerScrollFlags (Gtk 4 docs); NONE (default) delivers no scroll events"
+signals:
+  - name: scroll
+    js_event: scroll
+    handler_result: bool_stop
+    sync_required: true
+    trigger: {rust: 'o.emit_by_name::<bool>("scroll", &[&0.0f64, &(1.0f64 + i as f64)]);', values: [a, b, c]}
+    provenance: "GtkEventControllerScroll::scroll(dx, dy), run-last, returns gboolean: TRUE consumes the scroll (Gtk 4 docs)"
+  - name: scroll-begin
+    js_event: scroll-begin
+    handler_result: none
+    sync_required: false
+    trigger: {rust: 'let _ = (v, i); o.emit_by_name::<()>("scroll-begin", &[]);', values: [a, b, c]}
+    provenance: "GtkEventControllerScroll::scroll-begin, run-first, void (Gtk 4 docs)"
+  - name: scroll-end
+    js_event: scroll-end
+    handler_result: none
+    sync_required: false
+    trigger: {rust: 'let _ = (v, i); o.emit_by_name::<()>("scroll-end", &[]);', values: [a, b, c]}
+    provenance: "GtkEventControllerScroll::scroll-end, run-first, void (Gtk 4 docs)"

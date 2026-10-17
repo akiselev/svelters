@@ -83,6 +83,7 @@ export const KINDS = {
    "css": "checkbutton"
   }
  },
+ "clickgesture": {},
  "colordialog": {
   "qt": "QColorDialog"
  },
@@ -197,6 +198,7 @@ export const KINDS = {
    "css": "flowboxchild"
   }
  },
+ "focuscontroller": {},
  "fontcombobox": {
   "qt": "QFontComboBox"
  },
@@ -261,6 +263,7 @@ export const KINDS = {
    "css": "label"
   }
  },
+ "keycontroller": {},
  "keysequenceedit": {
   "qt": "QKeySequenceEdit"
  },
@@ -361,6 +364,7 @@ export const KINDS = {
  "messagebox": {
   "qt": "QMessageBox"
  },
+ "motioncontroller": {},
  "notebook": {
   "gtk": {
    "classes": [
@@ -489,6 +493,7 @@ export const KINDS = {
   },
   "qt": "QScrollBar"
  },
+ "scrollcontroller": {},
  "scrolledwindow": {
   "gtk": {
    "classes": [],

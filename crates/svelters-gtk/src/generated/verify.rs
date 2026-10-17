@@ -3209,6 +3209,360 @@ fn binding_entry_text() {
     });
 }
 
+/// signal EventControllerFocus.enter: GtkEventControllerFocus::enter, run-last, void (Gtk 4 docs)
+#[test]
+fn signal_eventcontrollerfocus_enter() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("focuscontroller");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = (v, i); o.emit_by_name::<()>("enter", &[]);
+        };
+        assert_ne!(h.resolve_signal("focuscontroller", "enter"), 0);
+        assert_eq!(h.resolve_signal("focuscontroller", "enter"), h.resolve_signal("focuscontroller", "enter"));
+        h.listen(e, "enter", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "enter".to_string())), "delivered: {ev:?}");
+        h.listen(e, "enter", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "enter", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "enter", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal EventControllerFocus.leave: GtkEventControllerFocus::leave, run-last, void (Gtk 4 docs)
+#[test]
+fn signal_eventcontrollerfocus_leave() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("focuscontroller");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = (v, i); o.emit_by_name::<()>("leave", &[]);
+        };
+        assert_ne!(h.resolve_signal("focuscontroller", "leave"), 0);
+        assert_eq!(h.resolve_signal("focuscontroller", "leave"), h.resolve_signal("focuscontroller", "leave"));
+        h.listen(e, "leave", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "leave".to_string())), "delivered: {ev:?}");
+        h.listen(e, "leave", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "leave", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "leave", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal EventControllerKey.key-pressed: GtkEventControllerKey::key-pressed, run-last, returns gboolean: TRUE stops propagation (Gtk 4 docs); X2 sync handler
+#[test]
+fn signal_eventcontrollerkey_key_pressed() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("keycontroller");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            o.emit_by_name::<bool>("key-pressed", &[&(65u32 + i as u32), &38u32, &gtk::gdk::ModifierType::empty()]);
+        };
+        assert_ne!(h.resolve_signal("keycontroller", "key-pressed"), 0);
+        assert_eq!(h.resolve_signal("keycontroller", "key-pressed"), h.resolve_signal("keycontroller", "key-pressed"));
+        h.listen(e, "key-pressed", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "key-pressed".to_string())), "delivered: {ev:?}");
+        h.listen(e, "key-pressed", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "key-pressed", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "key-pressed", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal EventControllerKey.key-released: GtkEventControllerKey::key-released, run-last, void (Gtk 4 docs)
+#[test]
+fn signal_eventcontrollerkey_key_released() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("keycontroller");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            o.emit_by_name::<()>("key-released", &[&(65u32 + i as u32), &38u32, &gtk::gdk::ModifierType::empty()]);
+        };
+        assert_ne!(h.resolve_signal("keycontroller", "key-released"), 0);
+        assert_eq!(h.resolve_signal("keycontroller", "key-released"), h.resolve_signal("keycontroller", "key-released"));
+        h.listen(e, "key-released", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "key-released".to_string())), "delivered: {ev:?}");
+        h.listen(e, "key-released", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "key-released", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "key-released", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal EventControllerKey.modifiers: GtkEventControllerKey::modifiers, run-last, returns gboolean (Gtk 4 docs)
+#[test]
+fn signal_eventcontrollerkey_modifiers() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("keycontroller");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            o.emit_by_name::<bool>("modifiers", &[&gtk::gdk::ModifierType::empty()]);
+        };
+        assert_ne!(h.resolve_signal("keycontroller", "modifiers"), 0);
+        assert_eq!(h.resolve_signal("keycontroller", "modifiers"), h.resolve_signal("keycontroller", "modifiers"));
+        h.listen(e, "modifiers", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "modifiers".to_string())), "delivered: {ev:?}");
+        h.listen(e, "modifiers", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "modifiers", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "modifiers", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal EventControllerMotion.enter: GtkEventControllerMotion::enter(x, y), run-last, void (Gtk 4 docs)
+#[test]
+fn signal_eventcontrollermotion_enter() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("motioncontroller");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            o.emit_by_name::<()>("enter", &[&(1.0f64 + i as f64), &2.5f64]);
+        };
+        assert_ne!(h.resolve_signal("motioncontroller", "enter"), 0);
+        assert_eq!(h.resolve_signal("motioncontroller", "enter"), h.resolve_signal("motioncontroller", "enter"));
+        h.listen(e, "enter", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "enter".to_string())), "delivered: {ev:?}");
+        h.listen(e, "enter", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "enter", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "enter", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal EventControllerMotion.leave: GtkEventControllerMotion::leave, run-last, void (Gtk 4 docs)
+#[test]
+fn signal_eventcontrollermotion_leave() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("motioncontroller");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = (v, i); o.emit_by_name::<()>("leave", &[]);
+        };
+        assert_ne!(h.resolve_signal("motioncontroller", "leave"), 0);
+        assert_eq!(h.resolve_signal("motioncontroller", "leave"), h.resolve_signal("motioncontroller", "leave"));
+        h.listen(e, "leave", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "leave".to_string())), "delivered: {ev:?}");
+        h.listen(e, "leave", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "leave", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "leave", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal EventControllerMotion.motion: GtkEventControllerMotion::motion(x, y), run-first, void (Gtk 4 docs)
+#[test]
+fn signal_eventcontrollermotion_motion() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("motioncontroller");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            o.emit_by_name::<()>("motion", &[&(1.0f64 + i as f64), &2.5f64]);
+        };
+        assert_ne!(h.resolve_signal("motioncontroller", "motion"), 0);
+        assert_eq!(h.resolve_signal("motioncontroller", "motion"), h.resolve_signal("motioncontroller", "motion"));
+        h.listen(e, "motion", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "motion".to_string())), "delivered: {ev:?}");
+        h.listen(e, "motion", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "motion", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "motion", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal EventControllerScroll.scroll: GtkEventControllerScroll::scroll(dx, dy), run-last, returns gboolean: TRUE consumes the scroll (Gtk 4 docs)
+#[test]
+fn signal_eventcontrollerscroll_scroll() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("scrollcontroller");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            o.emit_by_name::<bool>("scroll", &[&0.0f64, &(1.0f64 + i as f64)]);
+        };
+        assert_ne!(h.resolve_signal("scrollcontroller", "scroll"), 0);
+        assert_eq!(h.resolve_signal("scrollcontroller", "scroll"), h.resolve_signal("scrollcontroller", "scroll"));
+        h.listen(e, "scroll", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "scroll".to_string())), "delivered: {ev:?}");
+        h.listen(e, "scroll", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "scroll", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "scroll", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal EventControllerScroll.scroll-begin: GtkEventControllerScroll::scroll-begin, run-first, void (Gtk 4 docs)
+#[test]
+fn signal_eventcontrollerscroll_scroll_begin() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("scrollcontroller");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = (v, i); o.emit_by_name::<()>("scroll-begin", &[]);
+        };
+        assert_ne!(h.resolve_signal("scrollcontroller", "scroll-begin"), 0);
+        assert_eq!(h.resolve_signal("scrollcontroller", "scroll-begin"), h.resolve_signal("scrollcontroller", "scroll-begin"));
+        h.listen(e, "scroll-begin", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "scroll-begin".to_string())), "delivered: {ev:?}");
+        h.listen(e, "scroll-begin", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "scroll-begin", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "scroll-begin", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal EventControllerScroll.scroll-end: GtkEventControllerScroll::scroll-end, run-first, void (Gtk 4 docs)
+#[test]
+fn signal_eventcontrollerscroll_scroll_end() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("scrollcontroller");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = (v, i); o.emit_by_name::<()>("scroll-end", &[]);
+        };
+        assert_ne!(h.resolve_signal("scrollcontroller", "scroll-end"), 0);
+        assert_eq!(h.resolve_signal("scrollcontroller", "scroll-end"), h.resolve_signal("scrollcontroller", "scroll-end"));
+        h.listen(e, "scroll-end", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "scroll-end".to_string())), "delivered: {ev:?}");
+        h.listen(e, "scroll-end", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "scroll-end", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "scroll-end", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// property EventControllerScroll.flags (JS flags, round trip): GtkEventControllerScroll:flags, GtkEventControllerScrollFlags (Gtk 4 docs); NONE (default) delivers no scroll events
+#[test]
+fn prop_eventcontrollerscroll_flags() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrollcontroller");
+        
+        let before = h.get_value(o, "flags");
+        h.set_value(o, "flags", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "flags")), crate::testing::shape(&before));
+    });
+}
+
 /// signal Expander.activate: GtkExpander::activate is an action signal with void return (Gtk 4 docs)
 #[test]
 fn signal_expander_activate() {
@@ -3648,6 +4002,99 @@ fn prop_frame_label_xalign() {
         assert_eq!(id, h.resolve_prop("frame", "label-xalign"));
         h.set_f64(o, "labelXalign", 0.5).unwrap();
         assert_eq!(h.get(o, "labelXalign"), V::F64(0.5));
+    });
+}
+
+/// signal GestureClick.pressed: GtkGestureClick::pressed(n_press, x, y), run-last, void (Gtk 4 docs)
+#[test]
+fn signal_gestureclick_pressed() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("clickgesture");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            o.emit_by_name::<()>("pressed", &[&(1i32 + i as i32), &1.5f64, &2.5f64]);
+        };
+        assert_ne!(h.resolve_signal("clickgesture", "pressed"), 0);
+        assert_eq!(h.resolve_signal("clickgesture", "pressed"), h.resolve_signal("clickgesture", "pressed"));
+        h.listen(e, "pressed", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "pressed".to_string())), "delivered: {ev:?}");
+        h.listen(e, "pressed", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "pressed", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "pressed", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal GestureClick.released: GtkGestureClick::released(n_press, x, y), run-last, void (Gtk 4 docs)
+#[test]
+fn signal_gestureclick_released() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("clickgesture");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            o.emit_by_name::<()>("released", &[&(1i32 + i as i32), &1.5f64, &2.5f64]);
+        };
+        assert_ne!(h.resolve_signal("clickgesture", "released"), 0);
+        assert_eq!(h.resolve_signal("clickgesture", "released"), h.resolve_signal("clickgesture", "released"));
+        h.listen(e, "released", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "released".to_string())), "delivered: {ev:?}");
+        h.listen(e, "released", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "released", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "released", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal GestureClick.stopped: GtkGestureClick::stopped, run-last, void (Gtk 4 docs)
+#[test]
+fn signal_gestureclick_stopped() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("clickgesture");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = (v, i); o.emit_by_name::<()>("stopped", &[]);
+        };
+        assert_ne!(h.resolve_signal("clickgesture", "stopped"), 0);
+        assert_eq!(h.resolve_signal("clickgesture", "stopped"), h.resolve_signal("clickgesture", "stopped"));
+        h.listen(e, "stopped", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "stopped".to_string())), "delivered: {ev:?}");
+        h.listen(e, "stopped", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "stopped", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "stopped", true).is_err(), "stale handle is an error");
     });
 }
 

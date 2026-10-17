@@ -1,0 +1,14 @@
+element: {tag: focuscontroller}
+signals:
+  - name: enter
+    js_event: enter
+    handler_result: none
+    sync_required: false
+    trigger: {rust: 'let _ = (v, i); o.emit_by_name::<()>("enter", &[]);', values: [a, b, c]}
+    provenance: "GtkEventControllerFocus::enter, run-last, void (Gtk 4 docs)"
+  - name: leave
+    js_event: leave
+    handler_result: none
+    sync_required: false
+    trigger: {rust: 'let _ = (v, i); o.emit_by_name::<()>("leave", &[]);', values: [a, b, c]}
+    provenance: "GtkEventControllerFocus::leave, run-last, void (Gtk 4 docs)"

@@ -55,6 +55,8 @@ def probe_gtk(tags):
             w = GObject.new(cls.__gtype__)
         except Exception:
             continue
+        if not isinstance(w, Gtk.Widget):
+            continue  # event controllers and other non-widget kinds are not styled
         out[tag] = {"css": w.get_css_name(), "classes": sorted(w.get_css_classes())}
     return out
 

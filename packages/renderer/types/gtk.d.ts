@@ -2083,6 +2083,7 @@ export interface GtkElements {
   calendar: GtkCalendarProps;
   centerbox: GtkCenterBoxProps;
   checkbutton: GtkCheckButtonProps;
+  clickgesture: GtkGestureClickProps;
   colordialogbutton: GtkColorDialogButtonProps;
   drawingarea: GtkDrawingAreaProps;
   editablelabel: GtkEditableLabelProps;
@@ -2092,6 +2093,7 @@ export interface GtkElements {
   fixed: GtkFixedProps;
   flowbox: GtkFlowBoxProps;
   flowboxchild: GtkFlowBoxChildProps;
+  focuscontroller: GtkEventControllerFocusProps;
   fontdialogbutton: GtkFontDialogButtonProps;
   frame: GtkFrameProps;
   graphicsoffload: GtkGraphicsOffloadProps;
@@ -2099,6 +2101,7 @@ export interface GtkElements {
   headerbar: GtkHeaderBarProps;
   image: GtkImageProps;
   inscription: GtkInscriptionProps;
+  keycontroller: GtkEventControllerKeyProps;
   label: GtkLabelProps;
   levelbar: GtkLevelBarProps;
   linkbutton: GtkLinkButtonProps;
@@ -2107,6 +2110,7 @@ export interface GtkElements {
   lockbutton: GtkLockButtonProps;
   mediacontrols: GtkMediaControlsProps;
   menubutton: GtkMenuButtonProps;
+  motioncontroller: GtkEventControllerMotionProps;
   notebook: GtkNotebookProps;
   overlay: GtkOverlayProps;
   paned: GtkPanedProps;
@@ -2121,6 +2125,7 @@ export interface GtkElements {
   scale: GtkScaleProps;
   scalebutton: GtkScaleButtonProps;
   scrollbar: GtkScrollbarProps;
+  scrollcontroller: GtkEventControllerScrollProps;
   scrolledwindow: GtkScrolledWindowProps;
   searchbar: GtkSearchBarProps;
   searchentry: GtkSearchEntryProps;
