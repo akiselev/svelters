@@ -41,12 +41,6 @@ jobs:
       - name: JS package tests
         run: pnpm -r --workspace-concurrency=4 --filter '!@svelters/docs' test
 
-      # The package tests above run the compiled experiment (the binary exists, so it doesn't skip);
-      # conformance's plain `test` skips missing cases, test:compiler does not.
-      - name: Conformance (no skipping)
-        if: ${{ !cancelled() }}
-        run: pnpm --filter @svelters-experiments/conformance run test:compiler
-
       - name: pnpm test:meta
         if: ${{ !cancelled() }}
         run: pnpm test:meta

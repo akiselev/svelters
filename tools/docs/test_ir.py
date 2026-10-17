@@ -122,7 +122,13 @@ class FrontendTests(unittest.TestCase):
             self.assertEqual(json.dumps(ir_of(tk), sort_keys=True), again, tk)
 
 
+QT_DOCDIR = Path("/usr/share/doc/qt6")
+
+
 class DocsPassTests(unittest.TestCase):
+    # ingest_docs.py reads the Qt docs installed on the machine; without them every brief is null and
+    # the comparison with the committed output is meaningless (e.g. on CI runners).
+    @unittest.skipUnless((QT_DOCDIR / "qtwidgets/qtwidgets.index").exists(), f"no Qt qdoc indexes under {QT_DOCDIR}")
     def test_qt_docs_pass_is_deterministic(self):
         script = ROOT / "tools/metadata/qt/ingest_docs.py"
         with tempfile.TemporaryDirectory() as d:

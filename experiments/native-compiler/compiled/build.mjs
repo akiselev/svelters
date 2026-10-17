@@ -48,6 +48,7 @@ for (const c of cases()) {
     } catch (e) {
       // keep only the diagnostics (no stack, repo-relative paths) so expectations are stable
       const lines = String(e.message)
+        .replace(/\x1b\[[0-9;]*m/g, '') // vite colours its messages when CI is set
         .split('\n')
         .filter((l) => l.trim() && !/^\s+at /.test(l) && !l.startsWith('Build failed'))
         .map((l) => l.split(repo + '/').join('').replace(/^RolldownError: /, ''));
