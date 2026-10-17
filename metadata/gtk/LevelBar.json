@@ -9,6 +9,46 @@
     "GObject.InitiallyUnowned",
     "GObject.Object"
   ],
+  "bindings": [
+    {
+      "change": {
+        "origin": "manual",
+        "role": "any_change",
+        "signal": "notify::value",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "manual",
+        "read_back": false,
+        "strategy": "host_suppressed",
+        "sync_signals_on_set": [
+          "notify::value"
+        ]
+      },
+      "id": "svelters-api:v1:type:gtk:Gtk:LevelBar:binding:value",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "manual"
+      },
+      "name": "value",
+      "origin": "manual",
+      "property": "value",
+      "provenance": "gtk_level_bar_set_value notifies only on change (Gtk 4 docs)",
+      "type": {
+        "nullable": false,
+        "origin": "manual",
+        "ref": "f64"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "manual"
+      }
+    }
+  ],
   "children": {
     "candidates": {
       "child_ops": [],
@@ -592,6 +632,11 @@
         "get": "gtk_level_bar_get_inverted",
         "set": "gtk_level_bar_set_inverted"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkLevelBar:inverted (Gtk 4 docs)"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:LevelBar:prop:inverted",
       "invocation": "reflected",
@@ -631,6 +676,11 @@
       "accessors": {
         "get": "gtk_level_bar_get_max_value",
         "set": "gtk_level_bar_set_max_value"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkLevelBar:max-value (Gtk 4 docs)"
       },
       "default": 1.0,
       "id": "svelters-api:v1:type:gtk:Gtk:LevelBar:prop:max-value",
@@ -675,6 +725,11 @@
         "get": "gtk_level_bar_get_min_value",
         "set": "gtk_level_bar_set_min_value"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkLevelBar:min-value (Gtk 4 docs)"
+      },
       "default": 0.0,
       "id": "svelters-api:v1:type:gtk:Gtk:LevelBar:prop:min-value",
       "invocation": "reflected",
@@ -718,6 +773,11 @@
         "get": "gtk_level_bar_get_mode",
         "set": "gtk_level_bar_set_mode"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkLevelBar:mode, GtkLevelBarMode (Gtk 4 docs)"
+      },
       "default": "continuous",
       "id": "svelters-api:v1:type:gtk:Gtk:LevelBar:prop:mode",
       "invocation": "reflected",
@@ -758,7 +818,17 @@
         "get": "gtk_level_bar_get_value",
         "set": "gtk_level_bar_set_value"
       },
+      "annotated": {
+        "fields": [
+          "echo_suppress"
+        ],
+        "origin": "manual",
+        "provenance": "GtkLevelBar:value (Gtk 4 docs)"
+      },
       "default": 0.0,
+      "echo_suppress": [
+        "notify::value"
+      ],
       "id": "svelters-api:v1:type:gtk:Gtk:LevelBar:prop:value",
       "invocation": "reflected",
       "js_name": "value",
@@ -794,6 +864,16 @@
   "schema": "svelters-element-kind/v0",
   "signals": [
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GtkLevelBar::offset-changed, run-first, detailed by offset name (Gtk 4 docs)"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -823,7 +903,68 @@
         "origin": "runtime",
         "return_gtype": "void"
       },
-      "sync_required": false
+      "sync_required": false,
+      "trigger": {
+        "origin": "manual",
+        "rust": "o.downcast_ref::<gtk::LevelBar>().unwrap().add_offset_value(\"svl-offset\", 0.25 + i as f64 * 0.1);",
+        "values": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GObject::notify for GtkLevelBar:value"
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "manual"
+      },
+      "derived_from": {
+        "origin": "manual",
+        "property": "value"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::value",
+      "name": "notify::value",
+      "origin": "manual",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "manual",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "manual",
+        "property": "value",
+        "values": [
+          0.5,
+          0.25,
+          0.75
+        ]
+      }
     }
   ],
   "source": {
@@ -832,7 +973,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/LevelBar.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"

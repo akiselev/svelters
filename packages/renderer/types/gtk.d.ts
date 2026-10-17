@@ -999,6 +999,7 @@ export interface GtkLevelBarProps extends GtkWidgetProps, GtkAccessibleRangeProp
   minValue?: number;
   mode?: "continuous" | "discrete";
   value?: number;
+  "onnotify::value"?: SvlHandler;
   "onoffset-changed"?: SvlHandler;
 }
 export interface GtkLinkButtonProps extends GtkButtonProps {
@@ -1572,6 +1573,7 @@ export interface GtkSpinButtonProps extends GtkWidgetProps, GtkAccessibleRangePr
   onactivate?: SvlHandler;
   "onchange-value"?: SvlHandler;
   oninput?: SvlHandler;
+  "onnotify::value"?: SvlHandler;
   onoutput?: SvlHandler;
   "onvalue-changed"?: SvlHandler;
   onwrapped?: SvlHandler;

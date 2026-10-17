@@ -116,6 +116,12 @@
   "inherited": {
     "methods": [
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:method:get_value",
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "get_value",
+        "origin": "manual"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:grab_focus",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "grab_focus",
@@ -132,6 +138,24 @@
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "queue_resize",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:method:set_increments",
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "set_increments",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:method:set_range",
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "set_range",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:method:set_value",
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "set_value",
+        "origin": "manual"
       }
     ],
     "properties": [
@@ -145,6 +169,12 @@
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:css-classes",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "css-classes",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:prop:fill-level",
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "fill-level",
         "origin": "manual"
       },
       {
@@ -169,6 +199,12 @@
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:hexpand",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "hexpand",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:prop:inverted",
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "inverted",
         "origin": "manual"
       },
       {
@@ -214,9 +250,21 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:prop:restrict-to-fill-level",
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "restrict-to-fill-level",
+        "origin": "manual"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:sensitive",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "sensitive",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:prop:show-fill-level",
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "show-fill-level",
         "origin": "manual"
       },
       {
@@ -267,6 +315,12 @@
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:signal:show",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "show",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:signal:value-changed",
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "value-changed",
         "origin": "manual"
       }
     ]
@@ -635,6 +689,11 @@
         "get": "gtk_scale_get_digits",
         "set": "gtk_scale_set_digits"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkScale:digits, -1..64 (Gtk 4 docs)"
+      },
       "default": 1,
       "id": "svelters-api:v1:type:gtk:Gtk:Scale:prop:digits",
       "invocation": "reflected",
@@ -678,6 +737,11 @@
         "get": "gtk_scale_get_draw_value",
         "set": "gtk_scale_set_draw_value"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkScale:draw-value (Gtk 4 docs)"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Scale:prop:draw-value",
       "invocation": "reflected",
@@ -717,6 +781,11 @@
       "accessors": {
         "get": "gtk_scale_get_has_origin",
         "set": "gtk_scale_set_has_origin"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkScale:has-origin (Gtk 4 docs)"
       },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Scale:prop:has-origin",
@@ -758,6 +827,11 @@
         "get": "gtk_scale_get_value_pos",
         "set": "gtk_scale_set_value_pos"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkScale:value-pos, GtkPositionType (Gtk 4 docs)"
+      },
       "default": "top",
       "id": "svelters-api:v1:type:gtk:Gtk:Scale:prop:value-pos",
       "invocation": "reflected",
@@ -796,7 +870,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/Scale.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"

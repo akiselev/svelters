@@ -9,6 +9,47 @@
     "GObject.InitiallyUnowned",
     "GObject.Object"
   ],
+  "bindings": [
+    {
+      "change": {
+        "origin": "manual",
+        "role": "any_change",
+        "signal": "value-changed",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "manual",
+        "read_back": false,
+        "strategy": "host_suppressed",
+        "sync_signals_on_set": [
+          "value-changed",
+          "notify::value"
+        ]
+      },
+      "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:binding:value",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "manual"
+      },
+      "name": "value",
+      "origin": "manual",
+      "property": "value",
+      "provenance": "gtk_spin_button_set_value emits value-changed only on change; the spin button rounds to digits (Gtk 4 docs)",
+      "type": {
+        "nullable": false,
+        "origin": "manual",
+        "ref": "f64"
+      },
+      "write": {
+        "natively_normalizes": true,
+        "origin": "manual"
+      }
+    }
+  ],
   "children": {
     "candidates": {
       "child_ops": [],
@@ -590,11 +631,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name",
+          "setup"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_spin_button_get_value (Gtk 4 docs); f64 return through GIRepository (X1)"
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == V::F64(7.0)",
       "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:method:get_value",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "get_value",
       "name": "get_value",
       "native": "gtk_spin_button_get_value",
       "origin": "gir",
@@ -605,6 +661,7 @@
         "ownership": "borrowed",
         "type": "f64"
       },
+      "setup": "h.call_args(o, \"set_range\", &[V::F64(0.0), V::F64(100.0)]).unwrap(); h.call_args(o, \"set_value\", &[V::F64(7.0)]).unwrap();",
       "unsupported_reason": null
     },
     {
@@ -748,11 +805,28 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_spin_button_set_increments (Gtk 4 docs); called through GIRepository (X1)"
+      },
+      "args": [
+        2.0,
+        20.0
+      ],
+      "dispatch": "dynamic",
+      "expect": "w.downcast_ref::<gtk::SpinButton>().unwrap().increments() == (2.0, 20.0)",
       "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:method:set_increments",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "set_increments",
       "name": "set_increments",
       "native": "gtk_spin_button_set_increments",
       "origin": "gir",
@@ -807,11 +881,28 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_spin_button_set_range clamps the value into the new range (Gtk 4 docs); called through GIRepository (X1)"
+      },
+      "args": [
+        10.0,
+        100.0
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"value\") == V::F64(10.0)",
       "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:method:set_range",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "set_range",
       "name": "set_range",
       "native": "gtk_spin_button_set_range",
       "origin": "gir",
@@ -892,11 +983,28 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name",
+          "setup"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_spin_button_set_value (Gtk 4 docs); called through GIRepository (X1)"
+      },
+      "args": [
+        42.0
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"value\") == V::F64(42.0)",
       "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:method:set_value",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "set_value",
       "name": "set_value",
       "native": "gtk_spin_button_set_value",
       "origin": "gir",
@@ -915,6 +1023,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "setup": "h.call_args(o, \"set_range\", &[V::F64(0.0), V::F64(100.0)]).unwrap();",
       "unsupported_reason": null
     },
     {
@@ -1095,6 +1204,11 @@
         "get": "gtk_spin_button_get_climb_rate",
         "set": "gtk_spin_button_set_climb_rate"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkSpinButton:climb-rate (Gtk 4 docs)"
+      },
       "default": 0.0,
       "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:climb-rate",
       "invocation": "reflected",
@@ -1137,6 +1251,11 @@
       "accessors": {
         "get": "gtk_spin_button_get_digits",
         "set": "gtk_spin_button_set_digits"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkSpinButton:digits, 0..20 (Gtk 4 docs)"
       },
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:digits",
@@ -1181,6 +1300,11 @@
         "get": "gtk_spin_button_get_numeric",
         "set": "gtk_spin_button_set_numeric"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkSpinButton:numeric (Gtk 4 docs)"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:numeric",
       "invocation": "reflected",
@@ -1220,6 +1344,11 @@
       "accessors": {
         "get": "gtk_spin_button_get_snap_to_ticks",
         "set": "gtk_spin_button_set_snap_to_ticks"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkSpinButton:snap-to-ticks (Gtk 4 docs)"
       },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:snap-to-ticks",
@@ -1261,6 +1390,11 @@
         "get": "gtk_spin_button_get_update_policy",
         "set": "gtk_spin_button_set_update_policy"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkSpinButton:update-policy, GtkSpinButtonUpdatePolicy (Gtk 4 docs)"
+      },
       "default": "always",
       "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:update-policy",
       "invocation": "reflected",
@@ -1301,7 +1435,20 @@
         "get": "gtk_spin_button_get_value",
         "set": "gtk_spin_button_set_value"
       },
+      "annotated": {
+        "fields": [
+          "echo_suppress",
+          "sample",
+          "setup"
+        ],
+        "origin": "manual",
+        "provenance": "GtkSpinButton:value (Gtk 4 docs); needs a non-empty adjustment range"
+      },
       "default": 0.0,
+      "echo_suppress": [
+        "value-changed",
+        "notify::value"
+      ],
       "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:value",
       "invocation": "reflected",
       "js_name": "value",
@@ -1326,6 +1473,8 @@
         "origin": "runtime",
         "owner": "GtkSpinButton"
       },
+      "sample": 42.0,
+      "setup": "h.call_args(o, \"set_range\", &[V::F64(0.0), V::F64(100.0)]).unwrap();",
       "type": {
         "gtype": "gdouble",
         "native": "gdouble",
@@ -1343,6 +1492,11 @@
       "accessors": {
         "get": "gtk_spin_button_get_wrap",
         "set": "gtk_spin_button_set_wrap"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkSpinButton:wrap (Gtk 4 docs)"
       },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:wrap",
@@ -1489,6 +1643,16 @@
       "sync_required": false
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GtkSpinButton::value-changed, run-last, void (Gtk 4 docs)"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -1510,9 +1674,28 @@
         "origin": "runtime",
         "return_gtype": "void"
       },
-      "sync_required": false
+      "sync_required": false,
+      "trigger": {
+        "origin": "manual",
+        "rust": "let s = o.downcast_ref::<gtk::SpinButton>().unwrap(); s.set_range(0.0, 100.0); s.set_value(10.0 + i as f64);",
+        "values": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GtkSpinButton::wrapped, run-last, void (Gtk 4 docs); emitted when a wrapping spin goes past the end"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -1534,7 +1717,68 @@
         "origin": "runtime",
         "return_gtype": "void"
       },
-      "sync_required": false
+      "sync_required": false,
+      "trigger": {
+        "origin": "manual",
+        "rust": "let s = o.downcast_ref::<gtk::SpinButton>().unwrap(); s.set_wrap(true); s.set_range(0.0, 10.0); s.set_value(10.0); s.spin(gtk::SpinType::StepForward, 1.0);",
+        "values": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GObject::notify for GtkSpinButton:value"
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "manual"
+      },
+      "derived_from": {
+        "origin": "manual",
+        "property": "value"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::value",
+      "name": "notify::value",
+      "origin": "manual",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "manual",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "manual",
+        "rust": "let s = o.downcast_ref::<gtk::SpinButton>().unwrap(); s.set_range(0.0, 100.0); s.set_value(10.0 + i as f64);",
+        "values": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
     }
   ],
   "source": {
@@ -1543,7 +1787,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/SpinButton.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"

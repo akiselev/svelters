@@ -1793,9 +1793,9 @@
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "element": "levelbar",
-  "gallery": null,
+  "gallery": "04-ranges",
   "inherited": 25,
   "kind": "LevelBar",
   "lifetime": "owned",
@@ -1809,18 +1809,18 @@
    5,
    5
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 5,
+  "signal_results": 2,
   "signals": [
-   1,
-   1
+   2,
+   2
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   8,
+   8
   ]
  },
  {
@@ -2499,12 +2499,12 @@
   "abstract": false,
   "bindings": 0,
   "element": "progressbar",
-  "gallery": null,
+  "gallery": "04-ranges",
   "inherited": 25,
   "kind": "ProgressBar",
   "lifetime": "owned",
   "methods": [
-   0,
+   1,
    13
   ],
   "native": "GtkProgressBar",
@@ -2513,7 +2513,7 @@
    6,
    6
   ],
-  "props_annotated": 0,
+  "props_annotated": 6,
   "signal_results": 0,
   "signals": [
    0,
@@ -2523,20 +2523,20 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   7,
+   7
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "element": "range",
-  "gallery": null,
+  "gallery": "04-ranges",
   "inherited": 25,
   "kind": "Range",
   "lifetime": "owned",
   "methods": [
-   0,
+   4,
    22
   ],
   "native": "GtkRange",
@@ -2545,8 +2545,8 @@
    6,
    6
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 4,
+  "signal_results": 1,
   "signals": [
    4,
    4
@@ -2555,8 +2555,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   9,
+   9
   ]
  },
  {
@@ -2595,8 +2595,8 @@
   "abstract": false,
   "bindings": 0,
   "element": "scale",
-  "gallery": null,
-  "inherited": 25,
+  "gallery": "04-ranges",
+  "inherited": 34,
   "kind": "Scale",
   "lifetime": "owned",
   "methods": [
@@ -2609,7 +2609,7 @@
    4,
    4
   ],
-  "props_annotated": 0,
+  "props_annotated": 4,
   "signal_results": 0,
   "signals": [
    0,
@@ -2619,8 +2619,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   4,
+   4
   ]
  },
  {
@@ -2691,7 +2691,7 @@
   "abstract": false,
   "bindings": 0,
   "element": "scrollbar",
-  "gallery": null,
+  "gallery": "04-ranges",
   "inherited": 25,
   "kind": "Scrollbar",
   "lifetime": "owned",
@@ -2705,7 +2705,7 @@
    1,
    1
   ],
-  "props_annotated": 0,
+  "props_annotated": 1,
   "signal_results": 0,
   "signals": [
    0,
@@ -2715,8 +2715,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   1,
+   1
   ]
  },
  {
@@ -3009,14 +3009,14 @@
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "element": "spinbutton",
-  "gallery": null,
+  "gallery": "04-ranges",
   "inherited": 36,
   "kind": "SpinButton",
   "lifetime": "owned",
   "methods": [
-   0,
+   4,
    26
   ],
   "native": "GtkSpinButton",
@@ -3025,18 +3025,18 @@
    9,
    9
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 7,
+  "signal_results": 3,
   "signals": [
-   6,
-   6
+   7,
+   7
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   15,
+   15
   ]
  },
  {
