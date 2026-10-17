@@ -16,6 +16,7 @@
 //! double-borrow.
 
 use crate::engine::{ErrorKind, JsEngine, JsError};
+use crate::sourcemap::SourceMaps;
 use std::cell::{Cell, RefCell};
 use std::cmp::Reverse;
 use std::collections::{BinaryHeap, HashMap, VecDeque};
@@ -100,7 +101,7 @@ pub(crate) struct DispatchEvent {
 }
 
 #[derive(Default)]
-struct Timers {
+pub(crate) struct Timers {
     heap: BinaryHeap<Reverse<(Instant, u64, u32)>>,
     live: HashMap<u32, (u64, Option<Duration>)>,
     seq: u64,
@@ -237,6 +238,9 @@ impl Sched {
 struct CoreState {
     /// handle → kind id
     handles: HashMap<svl_handle, svl_id>,
+    /// child -> parent for handles currently inserted somewhere; a live handle that is not a key
+    /// is a root (a toplevel, or not attached yet). Used by reload teardown.
+    tree: HashMap<svl_handle, svl_handle>,
     kinds: HashMap<String, svl_id>,
     names: HashMap<(u32, svl_id, String), svl_id>,
     /// (kind id, signal id) → name, filled by `listen`
@@ -259,6 +263,7 @@ pub(crate) struct Core {
     vnow: Cell<Duration>,
     timing: Cell<Timing>,
     checkpoints: Cell<u64>,
+    maps: RefCell<SourceMaps>,
 }
 
 /// Held while JS runs. See the module docs on re-entrancy.
@@ -293,6 +298,7 @@ impl Core {
             vnow: Cell::new(Duration::ZERO),
             timing: Cell::new(Timing::default()),
             checkpoints: Cell::new(0),
+            maps: RefCell::default(),
         }
     }
 
@@ -351,6 +357,7 @@ impl Core {
     // ---- sinks ----
 
     pub(crate) fn report(&self, err: JsError) {
+        let err = self.map_error(err);
         if self.cfg.echo_errors {
             eprintln!("[svelters] {err}");
         }
@@ -364,6 +371,11 @@ impl Core {
     }
 
     pub(crate) fn console(&self, level: &str, text: String) {
+        let text = if matches!(level, "error" | "warn" | "trace") {
+            self.maps.borrow_mut().map_text(&text)
+        } else {
+            text
+        };
         if self.cfg.echo_console {
             eprintln!("[{level}] {text}");
         }
@@ -487,18 +499,26 @@ impl Core {
         };
         self.backend
             .insert(parent, child, before, slot)
-            .map_err(|e| e.message)
+            .map_err(|e| e.message)?;
+        self.st.borrow_mut().tree.insert(child, parent);
+        Ok(())
     }
 
     fn op_remove_raw(&self, parent: svl_handle, child: svl_handle) -> Result<(), String> {
         self.kind_of(parent)?;
         self.kind_of(child)?;
-        self.backend.remove(parent, child).map_err(|e| e.message)
+        self.backend.remove(parent, child).map_err(|e| e.message)?;
+        self.st.borrow_mut().tree.remove(&child);
+        Ok(())
     }
 
     fn op_destroy_raw(&self, h: svl_handle) -> Result<(), String> {
         self.kind_of(h)?;
-        self.st.borrow_mut().handles.remove(&h);
+        {
+            let mut st = self.st.borrow_mut();
+            st.handles.remove(&h);
+            st.tree.remove(&h);
+        }
         self.backend.destroy(h);
         Ok(())
     }
@@ -583,7 +603,9 @@ impl Core {
 
     /// The backend reports that a native object went away.
     pub(crate) fn forget_handle(&self, h: svl_handle) {
-        self.st.borrow_mut().handles.remove(&h);
+        let mut st = self.st.borrow_mut();
+        st.handles.remove(&h);
+        st.tree.remove(&h);
     }
 
     // ---- timers ----
@@ -764,6 +786,7 @@ pub(crate) fn load_bundle(
             "load_bundle called while JS is running",
         ));
     };
+    core.maps.borrow_mut().set_entry(entry);
     let mut eng = engine.borrow_mut();
     let res = eng.load_module(entry);
     let mut pending = false;
@@ -793,4 +816,66 @@ pub(crate) fn drain_jobs(core: &Core, engine: &RefCell<Box<dyn JsEngine>>) {
         }
     }
     core.report(JsError::new(ErrorKind::Host, "job queue did not drain"));
+}
+
+// ---- reload support (see reload.rs) ----
+
+impl Core {
+    /// True while JS is running (an entry guard is held).
+    pub(crate) fn js_running(&self) -> bool {
+        self.busy.get() > 0
+    }
+
+    /// Live handles that are not inserted under another handle, in creation order.
+    pub(crate) fn roots(&self) -> Vec<svl_handle> {
+        let st = self.st.borrow();
+        let mut v: Vec<svl_handle> = st.handles.keys().filter(|h| !st.tree.contains_key(h)).copied().collect();
+        v.sort_unstable();
+        v
+    }
+
+    /// Destroys `root` and everything inserted below it through the ordinary destroy op,
+    /// descendants first (the order the renderer itself uses). Handles the backend already
+    /// reported dead are skipped.
+    pub(crate) fn destroy_subtree(&self, root: svl_handle) {
+        fn collect(children: &HashMap<svl_handle, Vec<svl_handle>>, h: svl_handle, out: &mut Vec<svl_handle>) {
+            for c in children.get(&h).into_iter().flatten() {
+                collect(children, *c, out);
+            }
+            out.push(h);
+        }
+        let mut children: HashMap<svl_handle, Vec<svl_handle>> = HashMap::new();
+        {
+            let st = self.st.borrow();
+            for (c, p) in &st.tree {
+                children.entry(*p).or_default().push(*c);
+            }
+        }
+        for v in children.values_mut() {
+            v.sort_unstable();
+        }
+        let mut order = Vec::new();
+        collect(&children, root, &mut order);
+        for h in order {
+            if self.st.borrow().handles.contains_key(&h) {
+                let _ = self.op_destroy_raw(h);
+            }
+        }
+    }
+
+    pub(crate) fn clear_events(&self) {
+        self.st.borrow_mut().events.clear();
+    }
+
+    /// Replaces the timer heap (reload keeps the old runtime's timers aside while the new bundle
+    /// loads, and puts them back if that fails). Returns the previous one.
+    pub(crate) fn swap_timers(&self, t: Timers) -> Timers {
+        let old = std::mem::replace(&mut self.st.borrow_mut().timers, t);
+        self.sync_sched();
+        old
+    }
+
+    pub(crate) fn map_error(&self, e: JsError) -> JsError {
+        self.maps.borrow_mut().map_error(e)
+    }
 }
