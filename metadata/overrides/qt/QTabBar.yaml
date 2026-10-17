@@ -1,0 +1,66 @@
+elements:
+  - tag: tabbar
+    construct: { class: QTabBar }
+    props:
+      - { js: currentIndex, native: currentIndex, sample: 1, setup: "$w->addTab(QString()); $w->addTab(QString())", suppress_signals: true, provenance: "QTabBar::currentIndex (qdoc); the test adds two tabs first" }
+      - { js: count, native: count, provenance: "QTabBar::count (qdoc)" }       # read-only
+      - { js: tabsClosable, native: tabsClosable, provenance: "QTabBar::tabsClosable (qdoc)" }
+      - { js: movable, native: movable, provenance: "QTabBar::movable (qdoc)" }
+      - { js: shape, native: shape, provenance: "QTabBar::shape (qdoc); enum typed by the S1 value model (ABI v3)" }
+      - { js: expanding, native: expanding, provenance: "QTabBar::expanding (qdoc)" }
+      - { js: drawBase, native: drawBase, provenance: "QTabBar::drawBase (qdoc)" }
+      - { js: documentMode, native: documentMode, provenance: "QTabBar::documentMode (qdoc)" }
+      - { js: usesScrollButtons, native: usesScrollButtons, provenance: "QTabBar::usesScrollButtons (qdoc)" }
+      - { js: autoHide, native: autoHide, provenance: "QTabBar::autoHide (qdoc)" }
+      - { js: elideMode, native: elideMode, provenance: "QTabBar::elideMode (qdoc); enum typed by the S1 value model (ABI v3)" }
+    bindings:
+      - name: currentIndex
+        direction: two_way
+        property: currentIndex
+        type: { ref: i32, nullable: false }
+        change: { signal: changed, role: any_change, value: arg0 }
+        write: { natively_normalizes: false }
+        echo: { strategy: host_suppressed, compare_before_set: true, read_back: false, sync_signals_on_set: ["currentChanged(int)"] }
+        lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
+        provenance: "QTabBar::setCurrentIndex emits currentChanged only on change (qdoc)"
+    signals:
+      - js: changed
+        native: currentChanged
+        connect: "currentChanged(int)"
+        args: [{ name: index, type: i32 }]
+        trigger: '$w->addTab(QString()); $w->setCurrentIndex($w->count() - 1)'
+        expect_args: ["0"]
+        provenance: "QTabBar::currentChanged(int) (qdoc); the first inserted tab becomes current"
+      - js: tab-close-requested
+        native: tabCloseRequested
+        connect: "tabCloseRequested(int)"
+        args: [{ name: index, type: i32 }]
+        trigger: '$w->tabCloseRequested(2 + $i)'
+        expect_args: ["2"]
+        provenance: "QTabBar::tabCloseRequested(int) (qdoc); emitted directly (a close click needs a shown widget)"
+      - js: tab-bar-clicked
+        native: tabBarClicked
+        connect: "tabBarClicked(int)"
+        args: [{ name: index, type: i32 }]
+        trigger: '$w->tabBarClicked(1 + $i)'
+        expect_args: ["1"]
+        provenance: "QTabBar::tabBarClicked(int) (qdoc); emitted directly (a click needs a shown widget)"
+      - js: tab-bar-double-clicked
+        native: tabBarDoubleClicked
+        connect: "tabBarDoubleClicked(int)"
+        args: [{ name: index, type: i32 }]
+        trigger: '$w->tabBarDoubleClicked(1 + $i)'
+        expect_args: ["1"]
+        provenance: "QTabBar::tabBarDoubleClicked(int) (qdoc); emitted directly"
+      - js: tab-moved
+        native: tabMoved
+        connect: "tabMoved(int,int)"
+        args: [{ name: from, type: i32 }, { name: to, type: i32 }]
+        trigger: 'while ($w->count() < 2) $w->addTab(QString()); $w->moveTab(0, 1)'
+        expect_args: ["0", "1"]
+        provenance: "QTabBar::tabMoved(int, int) (qdoc)"
+    methods:
+      - { js: addTab, native: addTab, params: [string], expect: "$w->count() >= 1", provenance: "QTabBar::addTab(const QString &) (qdoc)" }
+      - { js: insertTab, native: insertTab, params: [i32, string], args: [0, "x"], expect: "$w->count() >= 1", provenance: "QTabBar::insertTab(int, const QString &) (qdoc)" }
+      - { js: removeTab, native: removeTab, params: [i32], args: [10], provenance: "QTabBar::removeTab(int) (qdoc); an invalid index is ignored" }
+      - { js: moveTab, native: moveTab, params: [i32, i32], args: [0, 1], provenance: "QTabBar::moveTab(int, int) (qdoc); invalid indexes are ignored" }

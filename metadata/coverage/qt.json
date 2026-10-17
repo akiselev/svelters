@@ -531,33 +531,33 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 3,
-  "element": null,
-  "gallery": null,
+  "element": "dialogbuttonbox",
+  "gallery": "08-bars",
   "inherited": 0,
   "kind": "QDialogButtonBox",
   "lifetime": "owned",
   "methods": [
-   0,
+   1,
    15
   ],
   "native": "QDialogButtonBox",
   "ownership": false,
   "props": [
-   0,
+   3,
    3
   ],
-  "props_annotated": 0,
+  "props_annotated": 3,
   "signal_results": 0,
   "signals": [
-   0,
+   3,
    4
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   7,
+   7
   ]
  },
  {
@@ -1302,10 +1302,10 @@
   "native": "QMainWindow",
   "ownership": true,
   "props": [
-   0,
+   5,
    8
   ],
-  "props_annotated": 0,
+  "props_annotated": 5,
   "signal_results": 1,
   "signals": [
    0,
@@ -1315,8 +1315,8 @@
   "slots_own": 3,
   "unexposed": null,
   "verified": [
-   9,
-   9
+   14,
+   14
   ]
  },
  {
@@ -1423,21 +1423,21 @@
   "bindings": 0,
   "defaults": 2,
   "element": "menubar",
-  "gallery": null,
+  "gallery": "08-bars",
   "inherited": 0,
   "kind": "QMenuBar",
   "lifetime": "owned",
   "methods": [
-   0,
+   1,
    35
   ],
   "native": "QMenuBar",
   "ownership": false,
   "props": [
-   0,
+   1,
    2
   ],
-  "props_annotated": 0,
+  "props_annotated": 1,
   "signal_results": 0,
   "signals": [
    0,
@@ -1447,8 +1447,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   2,
+   2
   ]
  },
  {
@@ -2050,65 +2050,65 @@
   "bindings": 0,
   "defaults": 1,
   "element": "statusbar",
-  "gallery": null,
+  "gallery": "08-bars",
   "inherited": 0,
   "kind": "QStatusBar",
   "lifetime": "owned",
   "methods": [
-   0,
+   2,
    16
   ],
   "native": "QStatusBar",
   "ownership": false,
   "props": [
-   0,
+   1,
    1
   ],
-  "props_annotated": 0,
+  "props_annotated": 1,
   "signal_results": 0,
   "signals": [
-   0,
+   1,
    1
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   4,
+   4
   ]
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "defaults": 12,
-  "element": null,
-  "gallery": null,
+  "element": "tabbar",
+  "gallery": "08-bars",
   "inherited": 0,
   "kind": "QTabBar",
   "lifetime": "owned",
   "methods": [
-   0,
+   4,
    74
   ],
   "native": "QTabBar",
   "ownership": false,
   "props": [
-   0,
+   11,
    14
   ],
-  "props_annotated": 0,
+  "props_annotated": 11,
   "signal_results": 0,
   "signals": [
-   0,
+   5,
    5
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   21,
+   21
   ]
  },
  {
@@ -2313,33 +2313,33 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 6,
-  "element": null,
-  "gallery": null,
+  "element": "toolbar",
+  "gallery": "08-bars",
   "inherited": 0,
   "kind": "QToolBar",
   "lifetime": "owned",
   "methods": [
-   0,
+   1,
    26
   ],
   "native": "QToolBar",
   "ownership": false,
   "props": [
-   0,
+   5,
    7
   ],
-  "props_annotated": 0,
+  "props_annotated": 5,
   "signal_results": 0,
   "signals": [
-   0,
+   2,
    8
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   8,
+   8
   ]
  },
  {
