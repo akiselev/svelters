@@ -468,7 +468,7 @@
       "default": 1,
       "id": "svelters-api:v1:type:gtk:Gtk:Gesture:prop:n-points",
       "invocation": "reflected",
-      "js_name": "nPoints",
+      "js_name": "n-points",
       "name": "n-points",
       "notify": {
         "explicit": false,

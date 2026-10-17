@@ -54,7 +54,7 @@
   ],
   "element": {
     "origin": "gir",
-    "tag": "windowcontrols"
+    "tag": "window-controls"
   },
   "enums": [
     "svelters-api:v1:type:gtk:Gtk:PackType"
@@ -407,7 +407,6 @@
       },
       "annotated": {
         "fields": [
-          "js_name",
           "sample"
         ],
         "origin": "manual",
@@ -416,7 +415,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:WindowControls:prop:decoration-layout",
       "invocation": "reflected",
-      "js_name": "decorationLayout",
+      "js_name": "decoration-layout",
       "name": "decoration-layout",
       "notify": {
         "explicit": true,
@@ -494,9 +493,7 @@
         "set": "gtk_window_controls_set_side"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkWindowControls:side (Gtk 4 docs); PackType nick"
       },
@@ -541,16 +538,14 @@
         "set": "gtk_window_controls_set_use_native_controls"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkWindowControls:use-native-controls (Gtk 4.18 docs)"
       },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:WindowControls:prop:use-native-controls",
       "invocation": "reflected",
-      "js_name": "useNativeControls",
+      "js_name": "use-native-controls",
       "name": "use-native-controls",
       "notify": {
         "explicit": true,

@@ -317,7 +317,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:GestureSingle:prop:touch-only",
       "invocation": "reflected",
-      "js_name": "touchOnly",
+      "js_name": "touch-only",
       "name": "touch-only",
       "notify": {
         "explicit": true,

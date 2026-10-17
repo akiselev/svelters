@@ -154,7 +154,7 @@
   ],
   "element": {
     "origin": "gir",
-    "tag": "aspectframe"
+    "tag": "aspect-frame"
   },
   "enums": [],
   "id": "svelters-api:v1:type:gtk:Gtk:AspectFrame",
@@ -621,7 +621,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:AspectFrame:prop:obey-child",
       "invocation": "reflected",
-      "js_name": "obeyChild",
+      "js_name": "obey-child",
       "name": "obey-child",
       "notify": {
         "explicit": true,

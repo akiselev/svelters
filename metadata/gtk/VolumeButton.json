@@ -48,7 +48,7 @@
   ],
   "element": {
     "origin": "gir",
-    "tag": "volumebutton"
+    "tag": "volume-button"
   },
   "enums": [],
   "id": "svelters-api:v1:type:gtk:Gtk:VolumeButton",
@@ -287,7 +287,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:VolumeButton:prop:use-symbolic",
       "invocation": "reflected",
-      "js_name": "useSymbolic",
+      "js_name": "use-symbolic",
       "name": "use-symbolic",
       "notify": {
         "explicit": true,

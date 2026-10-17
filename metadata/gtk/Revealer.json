@@ -563,7 +563,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Revealer:prop:child-revealed",
       "invocation": "reflected",
-      "js_name": "childRevealed",
+      "js_name": "child-revealed",
       "name": "child-revealed",
       "notify": {
         "explicit": false,
@@ -606,7 +606,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Revealer:prop:reveal-child",
       "invocation": "reflected",
-      "js_name": "revealChild",
+      "js_name": "reveal-child",
       "name": "reveal-child",
       "notify": {
         "explicit": true,
@@ -652,7 +652,7 @@
       "default": 250,
       "id": "svelters-api:v1:type:gtk:Gtk:Revealer:prop:transition-duration",
       "invocation": "reflected",
-      "js_name": "transitionDuration",
+      "js_name": "transition-duration",
       "name": "transition-duration",
       "notify": {
         "explicit": true,
@@ -701,7 +701,7 @@
       "default": "slide-down",
       "id": "svelters-api:v1:type:gtk:Gtk:Revealer:prop:transition-type",
       "invocation": "reflected",
-      "js_name": "transitionType",
+      "js_name": "transition-type",
       "name": "transition-type",
       "notify": {
         "explicit": true,

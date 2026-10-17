@@ -58,7 +58,7 @@
   ],
   "element": {
     "origin": "gir",
-    "tag": "graphicsoffload"
+    "tag": "graphics-offload"
   },
   "enums": [
     "svelters-api:v1:type:gtk:Gtk:GraphicsOffloadEnabled"
@@ -392,16 +392,14 @@
         "set": "gtk_graphics_offload_set_black_background"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkGraphicsOffload:black-background (Gtk 4 docs)"
       },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:GraphicsOffload:prop:black-background",
       "invocation": "reflected",
-      "js_name": "blackBackground",
+      "js_name": "black-background",
       "name": "black-background",
       "notify": {
         "explicit": true,
@@ -481,9 +479,7 @@
         "set": "gtk_graphics_offload_set_enabled"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkGraphicsOffload:enabled (Gtk 4 docs)"
       },

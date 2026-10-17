@@ -2383,7 +2383,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:prop:can-redo",
       "invocation": "reflected",
-      "js_name": "canRedo",
+      "js_name": "can-redo",
       "name": "can-redo",
       "notify": {
         "explicit": false,
@@ -2421,7 +2421,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:prop:can-undo",
       "invocation": "reflected",
-      "js_name": "canUndo",
+      "js_name": "can-undo",
       "name": "can-undo",
       "notify": {
         "explicit": false,
@@ -2459,7 +2459,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:prop:cursor-position",
       "invocation": "reflected",
-      "js_name": "cursorPosition",
+      "js_name": "cursor-position",
       "name": "cursor-position",
       "notify": {
         "explicit": false,
@@ -2498,16 +2498,14 @@
         "set": "gtk_text_buffer_set_enable_undo"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkTextBuffer:enable-undo (Gtk 4 docs)"
       },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:prop:enable-undo",
       "invocation": "reflected",
-      "js_name": "enableUndo",
+      "js_name": "enable-undo",
       "name": "enable-undo",
       "notify": {
         "explicit": true,
@@ -2547,7 +2545,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:prop:has-selection",
       "invocation": "reflected",
-      "js_name": "hasSelection",
+      "js_name": "has-selection",
       "name": "has-selection",
       "notify": {
         "explicit": false,
@@ -2585,7 +2583,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:TextBuffer:prop:tag-table",
       "invocation": "reflected",
-      "js_name": "tagTable",
+      "js_name": "tag-table",
       "name": "tag-table",
       "notify": {
         "explicit": false,
@@ -2624,7 +2622,6 @@
       },
       "annotated": {
         "fields": [
-          "js_name",
           "sample"
         ],
         "origin": "manual",
@@ -3219,7 +3216,7 @@
   "verify_subject": {
     "borrowed": {
       "getter": "get_buffer",
-      "tag": "textview"
+      "tag": "text-view"
     }
   }
 }

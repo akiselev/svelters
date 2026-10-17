@@ -795,7 +795,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Scale:prop:draw-value",
       "invocation": "reflected",
-      "js_name": "drawValue",
+      "js_name": "draw-value",
       "name": "draw-value",
       "notify": {
         "explicit": true,
@@ -840,7 +840,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Scale:prop:has-origin",
       "invocation": "reflected",
-      "js_name": "hasOrigin",
+      "js_name": "has-origin",
       "name": "has-origin",
       "notify": {
         "explicit": true,
@@ -885,7 +885,7 @@
       "default": "top",
       "id": "svelters-api:v1:type:gtk:Gtk:Scale:prop:value-pos",
       "invocation": "reflected",
-      "js_name": "valuePos",
+      "js_name": "value-pos",
       "name": "value-pos",
       "notify": {
         "explicit": true,

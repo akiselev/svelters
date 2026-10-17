@@ -129,7 +129,7 @@
   ],
   "element": {
     "origin": "gir",
-    "tag": "menubutton"
+    "tag": "menu-button"
   },
   "enums": [
     "svelters-api:v1:type:gtk:Gtk:ArrowType"
@@ -1027,7 +1027,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:always-show-arrow",
       "invocation": "reflected",
-      "js_name": "alwaysShowArrow",
+      "js_name": "always-show-arrow",
       "name": "always-show-arrow",
       "notify": {
         "explicit": true,
@@ -1073,7 +1073,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:can-shrink",
       "invocation": "reflected",
-      "js_name": "canShrink",
+      "js_name": "can-shrink",
       "name": "can-shrink",
       "notify": {
         "explicit": true,
@@ -1205,7 +1205,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:has-frame",
       "invocation": "reflected",
-      "js_name": "hasFrame",
+      "js_name": "has-frame",
       "name": "has-frame",
       "notify": {
         "explicit": true,
@@ -1250,7 +1250,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:icon-name",
       "invocation": "reflected",
-      "js_name": "iconName",
+      "js_name": "icon-name",
       "name": "icon-name",
       "notify": {
         "explicit": true,
@@ -1335,7 +1335,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:menu-model",
       "invocation": "reflected",
-      "js_name": "menuModel",
+      "js_name": "menu-model",
       "name": "menu-model",
       "notify": {
         "explicit": false,
@@ -1464,7 +1464,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:use-underline",
       "invocation": "reflected",
-      "js_name": "useUnderline",
+      "js_name": "use-underline",
       "name": "use-underline",
       "notify": {
         "explicit": true,

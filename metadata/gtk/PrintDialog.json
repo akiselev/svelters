@@ -543,7 +543,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:PrintDialog:prop:accept-label",
       "invocation": "reflected",
-      "js_name": "acceptLabel",
+      "js_name": "accept-label",
       "name": "accept-label",
       "notify": {
         "explicit": true,
@@ -625,7 +625,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:PrintDialog:prop:page-setup",
       "invocation": "reflected",
-      "js_name": "pageSetup",
+      "js_name": "page-setup",
       "name": "page-setup",
       "notify": {
         "explicit": true,
@@ -666,7 +666,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:PrintDialog:prop:print-settings",
       "invocation": "reflected",
-      "js_name": "printSettings",
+      "js_name": "print-settings",
       "name": "print-settings",
       "notify": {
         "explicit": true,

@@ -280,7 +280,7 @@
   ],
   "element": {
     "origin": "gir",
-    "tag": "actionbar"
+    "tag": "action-bar"
   },
   "enums": [],
   "id": "svelters-api:v1:type:gtk:Gtk:ActionBar",

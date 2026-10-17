@@ -209,6 +209,10 @@
       "origin": "runtime"
     }
   ],
+  "element": {
+    "origin": "gir",
+    "tag": "window"
+  },
   "enums": [
     "svelters-api:v1:type:gtk:Gtk:WindowGravity"
   ],
@@ -1845,9 +1849,7 @@
         "set": "gtk_window_set_decorated"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkWindow:decorated (Gtk 4 docs)"
       },
@@ -1893,7 +1895,6 @@
       },
       "annotated": {
         "fields": [
-          "js_name",
           "sample"
         ],
         "origin": "manual",
@@ -1902,7 +1903,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Window:prop:default-height",
       "invocation": "reflected",
-      "js_name": "defaultHeight",
+      "js_name": "default-height",
       "name": "default-height",
       "notify": {
         "explicit": true,
@@ -1946,7 +1947,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Window:prop:default-widget",
       "invocation": "reflected",
-      "js_name": "defaultWidget",
+      "js_name": "default-widget",
       "name": "default-widget",
       "notify": {
         "explicit": true,
@@ -1985,7 +1986,6 @@
       },
       "annotated": {
         "fields": [
-          "js_name",
           "sample"
         ],
         "origin": "manual",
@@ -1994,7 +1994,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Window:prop:default-width",
       "invocation": "reflected",
-      "js_name": "defaultWidth",
+      "js_name": "default-width",
       "name": "default-width",
       "notify": {
         "explicit": true,
@@ -2036,9 +2036,7 @@
         "set": "gtk_window_set_deletable"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkWindow:deletable (Gtk 4 docs)"
       },
@@ -2085,7 +2083,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Window:prop:destroy-with-parent",
       "invocation": "reflected",
-      "js_name": "destroyWithParent",
+      "js_name": "destroy-with-parent",
       "name": "destroy-with-parent",
       "notify": {
         "explicit": true,
@@ -2165,7 +2163,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Window:prop:focus-visible",
       "invocation": "reflected",
-      "js_name": "focusVisible",
+      "js_name": "focus-visible",
       "name": "focus-visible",
       "notify": {
         "explicit": true,
@@ -2205,7 +2203,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Window:prop:focus-widget",
       "invocation": "reflected",
-      "js_name": "focusWidget",
+      "js_name": "focus-widget",
       "name": "focus-widget",
       "notify": {
         "explicit": true,
@@ -2243,9 +2241,7 @@
         "set": null
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkWindow:fullscreened (Gtk 4 docs)"
       },
@@ -2333,7 +2329,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Window:prop:handle-menubar-accel",
       "invocation": "reflected",
-      "js_name": "handleMenubarAccel",
+      "js_name": "handle-menubar-accel",
       "name": "handle-menubar-accel",
       "notify": {
         "explicit": true,
@@ -2372,16 +2368,14 @@
         "set": "gtk_window_set_hide_on_close"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkWindow:hide-on-close (Gtk 4 docs)"
       },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Window:prop:hide-on-close",
       "invocation": "reflected",
-      "js_name": "hideOnClose",
+      "js_name": "hide-on-close",
       "name": "hide-on-close",
       "notify": {
         "explicit": true,
@@ -2421,7 +2415,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Window:prop:icon-name",
       "invocation": "reflected",
-      "js_name": "iconName",
+      "js_name": "icon-name",
       "name": "icon-name",
       "notify": {
         "explicit": true,
@@ -2461,7 +2455,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Window:prop:is-active",
       "invocation": "reflected",
-      "js_name": "isActive",
+      "js_name": "is-active",
       "name": "is-active",
       "notify": {
         "explicit": false,
@@ -2497,9 +2491,7 @@
         "set": null
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkWindow:maximized (Gtk 4 docs)"
       },
@@ -2546,7 +2538,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Window:prop:mnemonics-visible",
       "invocation": "reflected",
-      "js_name": "mnemonicsVisible",
+      "js_name": "mnemonics-visible",
       "name": "mnemonics-visible",
       "notify": {
         "explicit": true,
@@ -2584,9 +2576,7 @@
         "set": "gtk_window_set_modal"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkWindow:modal (Gtk 4 docs)"
       },
@@ -2631,9 +2621,7 @@
         "set": "gtk_window_set_resizable"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkWindow:resizable (Gtk 4 docs)"
       },
@@ -2680,7 +2668,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Window:prop:startup-id",
       "invocation": "reflected",
-      "js_name": "startupId",
+      "js_name": "startup-id",
       "name": "startup-id",
       "notify": {
         "explicit": false,
@@ -2756,9 +2744,7 @@
         "set": "gtk_window_set_title"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkWindow:title (Gtk 4 docs); P prop"
       },
@@ -2845,7 +2831,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Window:prop:transient-for",
       "invocation": "reflected",
-      "js_name": "transientFor",
+      "js_name": "transient-for",
       "name": "transient-for",
       "notify": {
         "explicit": true,

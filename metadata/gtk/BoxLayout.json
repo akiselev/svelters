@@ -279,7 +279,7 @@
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:BoxLayout:prop:baseline-child",
       "invocation": "reflected",
-      "js_name": "baselineChild",
+      "js_name": "baseline-child",
       "name": "baseline-child",
       "notify": {
         "explicit": true,
@@ -323,7 +323,7 @@
       "default": "center",
       "id": "svelters-api:v1:type:gtk:Gtk:BoxLayout:prop:baseline-position",
       "invocation": "reflected",
-      "js_name": "baselinePosition",
+      "js_name": "baseline-position",
       "name": "baseline-position",
       "notify": {
         "explicit": true,

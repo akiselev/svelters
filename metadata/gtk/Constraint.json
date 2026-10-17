@@ -556,7 +556,7 @@
       "default": "none",
       "id": "svelters-api:v1:type:gtk:Gtk:Constraint:prop:source-attribute",
       "invocation": "reflected",
-      "js_name": "sourceAttribute",
+      "js_name": "source-attribute",
       "name": "source-attribute",
       "notify": {
         "explicit": false,
@@ -679,7 +679,7 @@
       "default": "none",
       "id": "svelters-api:v1:type:gtk:Gtk:Constraint:prop:target-attribute",
       "invocation": "reflected",
-      "js_name": "targetAttribute",
+      "js_name": "target-attribute",
       "name": "target-attribute",
       "notify": {
         "explicit": false,

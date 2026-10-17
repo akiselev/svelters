@@ -56,7 +56,7 @@
   ],
   "element": {
     "origin": "gir",
-    "tag": "lockbutton"
+    "tag": "lock-button"
   },
   "enums": [],
   "id": "svelters-api:v1:type:gtk:Gtk:LockButton",
@@ -416,7 +416,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:LockButton:prop:text-lock",
       "invocation": "reflected",
-      "js_name": "textLock",
+      "js_name": "text-lock",
       "name": "text-lock",
       "notify": {
         "explicit": false,
@@ -462,7 +462,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:LockButton:prop:text-unlock",
       "invocation": "reflected",
-      "js_name": "textUnlock",
+      "js_name": "text-unlock",
       "name": "text-unlock",
       "notify": {
         "explicit": false,
@@ -508,7 +508,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:LockButton:prop:tooltip-lock",
       "invocation": "reflected",
-      "js_name": "tooltipLock",
+      "js_name": "tooltip-lock",
       "name": "tooltip-lock",
       "notify": {
         "explicit": false,
@@ -554,7 +554,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:LockButton:prop:tooltip-not-authorized",
       "invocation": "reflected",
-      "js_name": "tooltipNotAuthorized",
+      "js_name": "tooltip-not-authorized",
       "name": "tooltip-not-authorized",
       "notify": {
         "explicit": false,
@@ -600,7 +600,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:LockButton:prop:tooltip-unlock",
       "invocation": "reflected",
-      "js_name": "tooltipUnlock",
+      "js_name": "tooltip-unlock",
       "name": "tooltip-unlock",
       "notify": {
         "explicit": false,

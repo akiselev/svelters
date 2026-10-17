@@ -104,7 +104,7 @@
               "native": "GtkNotebook::get_tab_label_text(GtkWidget*)",
               "origin": "manual"
             },
-            "name": "tabLabel",
+            "name": "tab-label",
             "origin": "manual",
             "provenance": [
               {
@@ -139,7 +139,7 @@
               "native": "GtkNotebook::get_menu_label_text(GtkWidget*)",
               "origin": "manual"
             },
-            "name": "menuLabel",
+            "name": "menu-label",
             "origin": "manual",
             "provenance": [
               {
@@ -215,7 +215,7 @@
           },
           {
             "default": false,
-            "name": "tabExpand",
+            "name": "tab-expand",
             "origin": "manual",
             "property": "tab-expand",
             "provenance": [
@@ -236,7 +236,7 @@
           },
           {
             "default": true,
-            "name": "tabFill",
+            "name": "tab-fill",
             "origin": "manual",
             "property": "tab-fill",
             "provenance": [
@@ -1723,7 +1723,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Notebook:prop:enable-popup",
       "invocation": "reflected",
-      "js_name": "enablePopup",
+      "js_name": "enable-popup",
       "name": "enable-popup",
       "notify": {
         "explicit": true,
@@ -1763,7 +1763,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Notebook:prop:group-name",
       "invocation": "reflected",
-      "js_name": "groupName",
+      "js_name": "group-name",
       "name": "group-name",
       "notify": {
         "explicit": true,
@@ -1803,7 +1803,6 @@
       "annotated": {
         "fields": [
           "echo_suppress",
-          "js_name",
           "sample",
           "setup"
         ],
@@ -1950,7 +1949,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Notebook:prop:show-border",
       "invocation": "reflected",
-      "js_name": "showBorder",
+      "js_name": "show-border",
       "name": "show-border",
       "notify": {
         "explicit": true,
@@ -1995,7 +1994,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Notebook:prop:show-tabs",
       "invocation": "reflected",
-      "js_name": "showTabs",
+      "js_name": "show-tabs",
       "name": "show-tabs",
       "notify": {
         "explicit": true,
@@ -2040,7 +2039,7 @@
       "default": "top",
       "id": "svelters-api:v1:type:gtk:Gtk:Notebook:prop:tab-pos",
       "invocation": "reflected",
-      "js_name": "tabPos",
+      "js_name": "tab-pos",
       "name": "tab-pos",
       "notify": {
         "explicit": true,

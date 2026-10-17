@@ -500,7 +500,7 @@
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:AlertDialog:prop:cancel-button",
       "invocation": "reflected",
-      "js_name": "cancelButton",
+      "js_name": "cancel-button",
       "name": "cancel-button",
       "notify": {
         "explicit": true,
@@ -544,7 +544,7 @@
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:AlertDialog:prop:default-button",
       "invocation": "reflected",
-      "js_name": "defaultButton",
+      "js_name": "default-button",
       "name": "default-button",
       "notify": {
         "explicit": true,

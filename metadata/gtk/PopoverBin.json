@@ -501,7 +501,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:PopoverBin:prop:handle-input",
       "invocation": "reflected",
-      "js_name": "handleInput",
+      "js_name": "handle-input",
       "name": "handle-input",
       "notify": {
         "explicit": true,
@@ -542,7 +542,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:PopoverBin:prop:menu-model",
       "invocation": "reflected",
-      "js_name": "menuModel",
+      "js_name": "menu-model",
       "name": "menu-model",
       "notify": {
         "explicit": true,

@@ -811,7 +811,6 @@
       "annotated": {
         "fields": [
           "echo_suppress",
-          "js_name",
           "sample"
         ],
         "origin": "manual",
@@ -868,7 +867,6 @@
       },
       "annotated": {
         "fields": [
-          "js_name",
           "sample"
         ],
         "origin": "manual",
@@ -920,16 +918,14 @@
         "set": "gtk_calendar_set_show_day_names"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkCalendar:show-day-names (Gtk 4 docs)"
       },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Calendar:prop:show-day-names",
       "invocation": "reflected",
-      "js_name": "showDayNames",
+      "js_name": "show-day-names",
       "name": "show-day-names",
       "notify": {
         "explicit": true,
@@ -967,16 +963,14 @@
         "set": "gtk_calendar_set_show_heading"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkCalendar:show-heading (Gtk 4 docs)"
       },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Calendar:prop:show-heading",
       "invocation": "reflected",
-      "js_name": "showHeading",
+      "js_name": "show-heading",
       "name": "show-heading",
       "notify": {
         "explicit": true,
@@ -1014,16 +1008,14 @@
         "set": "gtk_calendar_set_show_week_numbers"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkCalendar:show-week-numbers (Gtk 4 docs)"
       },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Calendar:prop:show-week-numbers",
       "invocation": "reflected",
-      "js_name": "showWeekNumbers",
+      "js_name": "show-week-numbers",
       "name": "show-week-numbers",
       "notify": {
         "explicit": true,
@@ -1062,7 +1054,6 @@
       },
       "annotated": {
         "fields": [
-          "js_name",
           "sample"
         ],
         "origin": "manual",

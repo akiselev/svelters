@@ -1731,7 +1731,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:CellArea:prop:edit-widget",
       "invocation": "reflected",
-      "js_name": "editWidget",
+      "js_name": "edit-widget",
       "name": "edit-widget",
       "notify": {
         "explicit": false,
@@ -1769,7 +1769,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:CellArea:prop:edited-cell",
       "invocation": "reflected",
-      "js_name": "editedCell",
+      "js_name": "edited-cell",
       "name": "edited-cell",
       "notify": {
         "explicit": false,
@@ -1807,7 +1807,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:CellArea:prop:focus-cell",
       "invocation": "reflected",
-      "js_name": "focusCell",
+      "js_name": "focus-cell",
       "name": "focus-cell",
       "notify": {
         "explicit": false,

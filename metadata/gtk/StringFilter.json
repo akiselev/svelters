@@ -307,7 +307,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:StringFilter:prop:ignore-case",
       "invocation": "reflected",
-      "js_name": "ignoreCase",
+      "js_name": "ignore-case",
       "name": "ignore-case",
       "notify": {
         "explicit": true,
@@ -347,7 +347,7 @@
       "default": "substring",
       "id": "svelters-api:v1:type:gtk:Gtk:StringFilter:prop:match-mode",
       "invocation": "reflected",
-      "js_name": "matchMode",
+      "js_name": "match-mode",
       "name": "match-mode",
       "notify": {
         "explicit": true,

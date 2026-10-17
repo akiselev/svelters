@@ -383,7 +383,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:DropTarget:prop:current-drop",
       "invocation": "reflected",
-      "js_name": "currentDrop",
+      "js_name": "current-drop",
       "name": "current-drop",
       "notify": {
         "explicit": false,

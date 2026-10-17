@@ -398,7 +398,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:ColorChooserDialog:prop:show-editor",
       "invocation": "reflected",
-      "js_name": "showEditor",
+      "js_name": "show-editor",
       "name": "show-editor",
       "notify": {
         "explicit": false,

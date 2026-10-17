@@ -676,7 +676,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Frame:prop:label-widget",
       "invocation": "reflected",
-      "js_name": "labelWidget",
+      "js_name": "label-widget",
       "name": "label-widget",
       "notify": {
         "explicit": true,
@@ -721,7 +721,7 @@
       "default": 0.0,
       "id": "svelters-api:v1:type:gtk:Gtk:Frame:prop:label-xalign",
       "invocation": "reflected",
-      "js_name": "labelXalign",
+      "js_name": "label-xalign",
       "name": "label-xalign",
       "notify": {
         "explicit": true,

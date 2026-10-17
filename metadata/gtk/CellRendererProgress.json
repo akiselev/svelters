@@ -216,7 +216,7 @@
       "default": 0.5,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRendererProgress:prop:text-xalign",
       "invocation": "reflected",
-      "js_name": "textXalign",
+      "js_name": "text-xalign",
       "name": "text-xalign",
       "notify": {
         "explicit": false,
@@ -258,7 +258,7 @@
       "default": 0.5,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRendererProgress:prop:text-yalign",
       "invocation": "reflected",
-      "js_name": "textYalign",
+      "js_name": "text-yalign",
       "name": "text-yalign",
       "notify": {
         "explicit": false,

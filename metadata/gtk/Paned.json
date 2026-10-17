@@ -782,7 +782,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Paned:prop:end-child",
       "invocation": "reflected",
-      "js_name": "endChild",
+      "js_name": "end-child",
       "name": "end-child",
       "notify": {
         "explicit": true,
@@ -822,7 +822,7 @@
       "default": 2147483647,
       "id": "svelters-api:v1:type:gtk:Gtk:Paned:prop:max-position",
       "invocation": "reflected",
-      "js_name": "maxPosition",
+      "js_name": "max-position",
       "name": "max-position",
       "notify": {
         "explicit": true,
@@ -864,7 +864,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Paned:prop:min-position",
       "invocation": "reflected",
-      "js_name": "minPosition",
+      "js_name": "min-position",
       "name": "min-position",
       "notify": {
         "explicit": true,
@@ -959,7 +959,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Paned:prop:position-set",
       "invocation": "reflected",
-      "js_name": "positionSet",
+      "js_name": "position-set",
       "name": "position-set",
       "notify": {
         "explicit": true,
@@ -1004,7 +1004,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Paned:prop:resize-end-child",
       "invocation": "reflected",
-      "js_name": "resizeEndChild",
+      "js_name": "resize-end-child",
       "name": "resize-end-child",
       "notify": {
         "explicit": true,
@@ -1049,7 +1049,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Paned:prop:resize-start-child",
       "invocation": "reflected",
-      "js_name": "resizeStartChild",
+      "js_name": "resize-start-child",
       "name": "resize-start-child",
       "notify": {
         "explicit": true,
@@ -1094,7 +1094,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Paned:prop:shrink-end-child",
       "invocation": "reflected",
-      "js_name": "shrinkEndChild",
+      "js_name": "shrink-end-child",
       "name": "shrink-end-child",
       "notify": {
         "explicit": true,
@@ -1139,7 +1139,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Paned:prop:shrink-start-child",
       "invocation": "reflected",
-      "js_name": "shrinkStartChild",
+      "js_name": "shrink-start-child",
       "name": "shrink-start-child",
       "notify": {
         "explicit": true,
@@ -1179,7 +1179,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Paned:prop:start-child",
       "invocation": "reflected",
-      "js_name": "startChild",
+      "js_name": "start-child",
       "name": "start-child",
       "notify": {
         "explicit": true,
@@ -1224,7 +1224,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Paned:prop:wide-handle",
       "invocation": "reflected",
-      "js_name": "wideHandle",
+      "js_name": "wide-handle",
       "name": "wide-handle",
       "notify": {
         "explicit": true,

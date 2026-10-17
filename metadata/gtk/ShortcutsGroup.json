@@ -278,7 +278,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:ShortcutsGroup:prop:accel-size-group",
       "invocation": "reflected",
-      "js_name": "accelSizeGroup",
+      "js_name": "accel-size-group",
       "name": "accel-size-group",
       "notify": {
         "explicit": false,
@@ -399,7 +399,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:ShortcutsGroup:prop:title-size-group",
       "invocation": "reflected",
-      "js_name": "titleSizeGroup",
+      "js_name": "title-size-group",
       "name": "title-size-group",
       "notify": {
         "explicit": false,

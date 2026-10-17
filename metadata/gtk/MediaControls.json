@@ -54,7 +54,7 @@
   ],
   "element": {
     "origin": "gir",
-    "tag": "mediacontrols"
+    "tag": "media-controls"
   },
   "enums": [],
   "id": "svelters-api:v1:type:gtk:Gtk:MediaControls",
@@ -300,7 +300,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:MediaControls:prop:media-stream",
       "invocation": "reflected",
-      "js_name": "mediaStream",
+      "js_name": "media-stream",
       "name": "media-stream",
       "notify": {
         "explicit": true,

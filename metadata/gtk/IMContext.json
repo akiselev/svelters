@@ -542,7 +542,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:IMContext:prop:input-hints",
       "invocation": "reflected",
-      "js_name": "inputHints",
+      "js_name": "input-hints",
       "name": "input-hints",
       "notify": {
         "explicit": true,
@@ -582,7 +582,7 @@
       "default": "free-form",
       "id": "svelters-api:v1:type:gtk:Gtk:IMContext:prop:input-purpose",
       "invocation": "reflected",
-      "js_name": "inputPurpose",
+      "js_name": "input-purpose",
       "name": "input-purpose",
       "notify": {
         "explicit": true,

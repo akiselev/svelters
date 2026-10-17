@@ -50,7 +50,7 @@
   ],
   "element": {
     "origin": "gir",
-    "tag": "flowboxchild"
+    "tag": "flow-box-child"
   },
   "enums": [],
   "id": "svelters-api:v1:type:gtk:Gtk:FlowBoxChild",

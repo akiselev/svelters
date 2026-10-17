@@ -47,7 +47,7 @@
   ],
   "element": {
     "origin": "gir",
-    "tag": "aboutdialog"
+    "tag": "about-dialog"
   },
   "enums": [
     "svelters-api:v1:type:gtk:Gtk:License"
@@ -1202,9 +1202,7 @@
         "set": "gtk_about_dialog_set_comments"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkAboutDialog:comments (Gtk 4 docs)"
       },
@@ -1249,9 +1247,7 @@
         "set": "gtk_about_dialog_set_copyright"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkAboutDialog:copyright (Gtk 4 docs)"
       },
@@ -1376,16 +1372,14 @@
         "set": "gtk_about_dialog_set_license_type"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkAboutDialog:license-type (Gtk 4 docs)"
       },
       "default": "unknown",
       "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:license-type",
       "invocation": "reflected",
-      "js_name": "licenseType",
+      "js_name": "license-type",
       "name": "license-type",
       "notify": {
         "explicit": true,
@@ -1465,7 +1459,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:logo-icon-name",
       "invocation": "reflected",
-      "js_name": "logoIconName",
+      "js_name": "logo-icon-name",
       "name": "logo-icon-name",
       "notify": {
         "explicit": true,
@@ -1503,16 +1497,14 @@
         "set": "gtk_about_dialog_set_program_name"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkAboutDialog:program-name (Gtk 4 docs)"
       },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:program-name",
       "invocation": "reflected",
-      "js_name": "programName",
+      "js_name": "program-name",
       "name": "program-name",
       "notify": {
         "explicit": true,
@@ -1552,7 +1544,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:system-information",
       "invocation": "reflected",
-      "js_name": "systemInformation",
+      "js_name": "system-information",
       "name": "system-information",
       "notify": {
         "explicit": true,
@@ -1592,7 +1584,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:translator-credits",
       "invocation": "reflected",
-      "js_name": "translatorCredits",
+      "js_name": "translator-credits",
       "name": "translator-credits",
       "notify": {
         "explicit": true,
@@ -1630,9 +1622,7 @@
         "set": "gtk_about_dialog_set_version"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkAboutDialog:version (Gtk 4 docs)"
       },
@@ -1677,9 +1667,7 @@
         "set": "gtk_about_dialog_set_website"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkAboutDialog:website (Gtk 4 docs)"
       },
@@ -1726,7 +1714,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:website-label",
       "invocation": "reflected",
-      "js_name": "websiteLabel",
+      "js_name": "website-label",
       "name": "website-label",
       "notify": {
         "explicit": true,
@@ -1764,16 +1752,14 @@
         "set": "gtk_about_dialog_set_wrap_license"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkAboutDialog:wrap-license (Gtk 4 docs)"
       },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:wrap-license",
       "invocation": "reflected",
-      "js_name": "wrapLicense",
+      "js_name": "wrap-license",
       "name": "wrap-license",
       "notify": {
         "explicit": true,

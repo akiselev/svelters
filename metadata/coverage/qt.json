@@ -28,7 +28,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   12,
+   9,
    12
   ]
  },
@@ -127,7 +127,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   9,
+   4,
    9
   ]
  },
@@ -160,7 +160,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   7,
+   3,
    7
   ]
  },
@@ -201,7 +201,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 8,
-  "element": "calendar",
+  "element": "calendar-widget",
   "gallery": "10-display",
   "inherited": 0,
   "kind": "QCalendarWidget",
@@ -226,7 +226,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   22,
+   0,
    22
   ]
  },
@@ -234,7 +234,7 @@
   "abstract": false,
   "bindings": 1,
   "defaults": 1,
-  "element": "checkbox",
+  "element": "check-box",
   "gallery": "02-buttons",
   "inherited": 0,
   "kind": "QCheckBox",
@@ -259,7 +259,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   8,
+   0,
    8
   ]
  },
@@ -267,7 +267,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 0,
-  "element": "colordialog",
+  "element": "color-dialog",
   "gallery": "09-dialogs",
   "inherited": 0,
   "kind": "QColorDialog",
@@ -292,7 +292,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   6,
+   0,
    6
   ]
  },
@@ -333,7 +333,7 @@
   "abstract": false,
   "bindings": 1,
   "defaults": 14,
-  "element": "combobox",
+  "element": "combo-box",
   "gallery": "07-selection",
   "inherited": 0,
   "kind": "QComboBox",
@@ -358,7 +358,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   18,
+   0,
    18
   ]
  },
@@ -366,7 +366,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 2,
-  "element": "commandlinkbutton",
+  "element": "command-link-button",
   "gallery": "02-buttons",
   "inherited": 0,
   "kind": "QCommandLinkButton",
@@ -391,7 +391,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   2,
+   0,
    2
   ]
  },
@@ -399,7 +399,7 @@
   "abstract": false,
   "bindings": 1,
   "defaults": 0,
-  "element": "dateedit",
+  "element": "date-edit",
   "gallery": "10-display",
   "inherited": 0,
   "kind": "QDateEdit",
@@ -424,7 +424,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   7,
+   0,
    7
   ]
  },
@@ -432,7 +432,7 @@
   "abstract": false,
   "bindings": 1,
   "defaults": 7,
-  "element": "datetimeedit",
+  "element": "date-time-edit",
   "gallery": "10-display",
   "inherited": 0,
   "kind": "QDateTimeEdit",
@@ -457,7 +457,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   11,
+   0,
    11
   ]
  },
@@ -490,7 +490,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   6,
+   3,
    6
   ]
  },
@@ -523,7 +523,7 @@
   "slots_own": 1,
   "unexposed": null,
   "verified": [
-   12,
+   10,
    12
   ]
  },
@@ -531,7 +531,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 3,
-  "element": "dialogbuttonbox",
+  "element": "dialog-button-box",
   "gallery": "08-bars",
   "inherited": 0,
   "kind": "QDialogButtonBox",
@@ -556,7 +556,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   7,
+   0,
    7
   ]
  },
@@ -564,7 +564,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 5,
-  "element": "dockwidget",
+  "element": "dock-widget",
   "gallery": "06-layout",
   "inherited": 0,
   "kind": "QDockWidget",
@@ -589,7 +589,7 @@
   "slots_own": 1,
   "unexposed": null,
   "verified": [
-   9,
+   0,
    9
   ]
  },
@@ -597,7 +597,7 @@
   "abstract": false,
   "bindings": 1,
   "defaults": 9,
-  "element": "doublespinbox",
+  "element": "double-spin-box",
   "gallery": "04-ranges",
   "inherited": 0,
   "kind": "QDoubleSpinBox",
@@ -622,7 +622,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   7,
+   0,
    7
   ]
  },
@@ -630,7 +630,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 0,
-  "element": "errormessage",
+  "element": "error-message",
   "gallery": "09-dialogs",
   "inherited": 0,
   "kind": "QErrorMessage",
@@ -655,7 +655,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   1,
+   0,
    1
   ]
  },
@@ -663,7 +663,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 5,
-  "element": "filedialog",
+  "element": "file-dialog",
   "gallery": "09-dialogs",
   "inherited": 0,
   "kind": "QFileDialog",
@@ -688,7 +688,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   6,
+   0,
    6
   ]
  },
@@ -729,7 +729,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 1,
-  "element": "fontcombobox",
+  "element": "font-combo-box",
   "gallery": "07-selection",
   "inherited": 0,
   "kind": "QFontComboBox",
@@ -754,7 +754,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   3,
+   0,
    3
   ]
  },
@@ -762,7 +762,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 0,
-  "element": "fontdialog",
+  "element": "font-dialog",
   "gallery": "09-dialogs",
   "inherited": 0,
   "kind": "QFontDialog",
@@ -787,7 +787,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   2,
+   0,
    2
   ]
  },
@@ -853,7 +853,7 @@
   "slots_own": 1,
   "unexposed": null,
   "verified": [
-   6,
+   1,
    6
   ]
  },
@@ -927,7 +927,7 @@
   "abstract": false,
   "bindings": 1,
   "defaults": 5,
-  "element": "groupbox",
+  "element": "group-box",
   "gallery": "05-containers",
   "inherited": 0,
   "kind": "QGroupBox",
@@ -952,7 +952,7 @@
   "slots_own": 1,
   "unexposed": null,
   "verified": [
-   10,
+   0,
    10
   ]
  },
@@ -1026,7 +1026,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 0,
-  "element": "inputdialog",
+  "element": "input-dialog",
   "gallery": "09-dialogs",
   "inherited": 0,
   "kind": "QInputDialog",
@@ -1051,7 +1051,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   11,
+   0,
    11
   ]
  },
@@ -1059,7 +1059,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 2,
-  "element": "keysequenceedit",
+  "element": "key-sequence-edit",
   "gallery": "03-text",
   "inherited": 0,
   "kind": "QKeySequenceEdit",
@@ -1084,7 +1084,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   4,
+   0,
    4
   ]
  },
@@ -1092,7 +1092,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 6,
-  "element": "lcdnumber",
+  "element": "lcd-number",
   "gallery": "04-ranges",
   "inherited": 0,
   "kind": "QLCDNumber",
@@ -1117,7 +1117,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   7,
+   0,
    7
   ]
  },
@@ -1150,7 +1150,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   14,
+   6,
    14
   ]
  },
@@ -1191,7 +1191,7 @@
   "abstract": false,
   "bindings": 1,
   "defaults": 19,
-  "element": "entry",
+  "element": "line-edit",
   "gallery": "00-overview",
   "inherited": 0,
   "kind": "QLineEdit",
@@ -1216,7 +1216,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   24,
+   0,
    24
   ]
  },
@@ -1257,7 +1257,7 @@
   "abstract": false,
   "bindings": 1,
   "defaults": 4,
-  "element": "listwidget",
+  "element": "list-widget",
   "gallery": "07-selection",
   "inherited": 0,
   "kind": "QListWidget",
@@ -1282,7 +1282,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   11,
+   0,
    11
   ]
  },
@@ -1290,7 +1290,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 6,
-  "element": "window",
+  "element": "main-window",
   "gallery": "06-layout",
   "inherited": 0,
   "kind": "QMainWindow",
@@ -1315,7 +1315,7 @@
   "slots_own": 5,
   "unexposed": null,
   "verified": [
-   19,
+   0,
    19
   ]
  },
@@ -1323,7 +1323,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 5,
-  "element": "mdiarea",
+  "element": "mdi-area",
   "gallery": "06-layout",
   "inherited": 0,
   "kind": "QMdiArea",
@@ -1348,7 +1348,7 @@
   "slots_own": 1,
   "unexposed": null,
   "verified": [
-   11,
+   0,
    11
   ]
  },
@@ -1389,7 +1389,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 4,
-  "element": "menu, contextmenu",
+  "element": "menu",
   "gallery": null,
   "inherited": 0,
   "kind": "QMenu",
@@ -1410,19 +1410,19 @@
    0,
    4
   ],
-  "slots": 2,
-  "slots_own": 2,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   12,
-   12
+   3,
+   10
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "defaults": 2,
-  "element": "menubar",
+  "element": "menu-bar",
   "gallery": "08-bars",
   "inherited": 0,
   "kind": "QMenuBar",
@@ -1447,7 +1447,7 @@
   "slots_own": 1,
   "unexposed": null,
   "verified": [
-   3,
+   0,
    3
   ]
  },
@@ -1455,7 +1455,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 7,
-  "element": "messagebox",
+  "element": "message-box",
   "gallery": "09-dialogs",
   "inherited": 0,
   "kind": "QMessageBox",
@@ -1480,7 +1480,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   6,
+   0,
    6
   ]
  },
@@ -1488,7 +1488,7 @@
   "abstract": false,
   "bindings": 1,
   "defaults": 15,
-  "element": "plaintextedit",
+  "element": "plain-text-edit",
   "gallery": "03-text",
   "inherited": 0,
   "kind": "QPlainTextEdit",
@@ -1513,7 +1513,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   30,
+   0,
    30
   ]
  },
@@ -1521,7 +1521,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 10,
-  "element": "progressbar",
+  "element": "progress-bar",
   "gallery": "04-ranges",
   "inherited": 0,
   "kind": "QProgressBar",
@@ -1546,7 +1546,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   9,
+   0,
    9
   ]
  },
@@ -1554,7 +1554,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 8,
-  "element": "progressdialog",
+  "element": "progress-dialog",
   "gallery": "09-dialogs",
   "inherited": 0,
   "kind": "QProgressDialog",
@@ -1579,7 +1579,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   10,
+   0,
    10
   ]
  },
@@ -1587,7 +1587,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 3,
-  "element": "button",
+  "element": "push-button",
   "gallery": "00-overview",
   "inherited": 0,
   "kind": "QPushButton",
@@ -1612,7 +1612,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   10,
+   0,
    10
   ]
  },
@@ -1620,7 +1620,7 @@
   "abstract": false,
   "bindings": 1,
   "defaults": 0,
-  "element": "radiobutton",
+  "element": "radio-button",
   "gallery": "02-buttons",
   "inherited": 0,
   "kind": "QRadioButton",
@@ -1645,7 +1645,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   5,
+   0,
    5
   ]
  },
@@ -1719,7 +1719,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 2,
-  "element": "scrolledwindow",
+  "element": "scroll-area",
   "gallery": "00-overview",
   "inherited": 0,
   "kind": "QScrollArea",
@@ -1744,7 +1744,7 @@
   "slots_own": 1,
   "unexposed": null,
   "verified": [
-   4,
+   0,
    4
   ]
  },
@@ -1752,7 +1752,7 @@
   "abstract": false,
   "bindings": 1,
   "defaults": 0,
-  "element": "scrollbar",
+  "element": "scroll-bar",
   "gallery": "04-ranges",
   "inherited": 0,
   "kind": "QScrollBar",
@@ -1777,7 +1777,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   3,
+   0,
    3
   ]
  },
@@ -1843,7 +1843,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   5,
+   2,
    5
   ]
  },
@@ -1851,7 +1851,7 @@
   "abstract": false,
   "bindings": 1,
   "defaults": 9,
-  "element": "spinbox",
+  "element": "spin-box",
   "gallery": "04-ranges",
   "inherited": 0,
   "kind": "QSpinBox",
@@ -1876,7 +1876,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   12,
+   0,
    12
   ]
  },
@@ -1942,7 +1942,7 @@
   "slots_own": 1,
   "unexposed": null,
   "verified": [
-   7,
+   4,
    7
   ]
  },
@@ -2016,7 +2016,7 @@
   "abstract": false,
   "bindings": 1,
   "defaults": 2,
-  "element": "stackedwidget",
+  "element": "stacked-widget",
   "gallery": "05-containers",
   "inherited": 0,
   "kind": "QStackedWidget",
@@ -2041,7 +2041,7 @@
   "slots_own": 1,
   "unexposed": null,
   "verified": [
-   4,
+   0,
    4
   ]
  },
@@ -2049,7 +2049,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 1,
-  "element": "statusbar",
+  "element": "status-bar",
   "gallery": "08-bars",
   "inherited": 0,
   "kind": "QStatusBar",
@@ -2074,7 +2074,7 @@
   "slots_own": 2,
   "unexposed": null,
   "verified": [
-   6,
+   0,
    6
   ]
  },
@@ -2082,7 +2082,7 @@
   "abstract": false,
   "bindings": 1,
   "defaults": 12,
-  "element": "tabbar",
+  "element": "tab-bar",
   "gallery": "08-bars",
   "inherited": 0,
   "kind": "QTabBar",
@@ -2107,7 +2107,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   21,
+   0,
    21
   ]
  },
@@ -2115,7 +2115,7 @@
   "abstract": false,
   "bindings": 1,
   "defaults": 10,
-  "element": "tabwidget",
+  "element": "tab-widget",
   "gallery": "05-containers",
   "inherited": 0,
   "kind": "QTabWidget",
@@ -2140,7 +2140,7 @@
   "slots_own": 1,
   "unexposed": null,
   "verified": [
-   15,
+   0,
    15
   ]
  },
@@ -2214,7 +2214,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 2,
-  "element": "textbrowser",
+  "element": "text-browser",
   "gallery": "03-text",
   "inherited": 0,
   "kind": "QTextBrowser",
@@ -2239,7 +2239,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   11,
+   0,
    11
   ]
  },
@@ -2247,7 +2247,7 @@
   "abstract": false,
   "bindings": 1,
   "defaults": 16,
-  "element": "textedit",
+  "element": "text-edit",
   "gallery": "03-text",
   "inherited": 0,
   "kind": "QTextEdit",
@@ -2272,7 +2272,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   32,
+   0,
    32
   ]
  },
@@ -2280,7 +2280,7 @@
   "abstract": false,
   "bindings": 1,
   "defaults": 0,
-  "element": "timeedit",
+  "element": "time-edit",
   "gallery": "10-display",
   "inherited": 0,
   "kind": "QTimeEdit",
@@ -2305,7 +2305,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   6,
+   0,
    6
   ]
  },
@@ -2313,7 +2313,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 6,
-  "element": "toolbar",
+  "element": "tool-bar",
   "gallery": "06-layout",
   "inherited": 0,
   "kind": "QToolBar",
@@ -2338,7 +2338,7 @@
   "slots_own": 1,
   "unexposed": null,
   "verified": [
-   9,
+   0,
    9
   ]
  },
@@ -2346,7 +2346,7 @@
   "abstract": false,
   "bindings": 1,
   "defaults": 2,
-  "element": "toolbox",
+  "element": "tool-box",
   "gallery": "05-containers",
   "inherited": 0,
   "kind": "QToolBox",
@@ -2371,7 +2371,7 @@
   "slots_own": 1,
   "unexposed": null,
   "verified": [
-   4,
+   0,
    4
   ]
  },
@@ -2379,7 +2379,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 4,
-  "element": "toolbutton",
+  "element": "tool-button",
   "gallery": "02-buttons",
   "inherited": 0,
   "kind": "QToolButton",
@@ -2404,7 +2404,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   5,
+   0,
    5
   ]
  },
@@ -2544,7 +2544,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 39,
-  "element": "box, grid",
+  "element": "box-layout, grid-layout",
   "gallery": "00-overview",
   "inherited": 27,
   "kind": "QWidget",
@@ -2569,7 +2569,7 @@
   "slots_own": 2,
   "unexposed": null,
   "verified": [
-   52,
+   17,
    52
   ]
  },
@@ -2602,7 +2602,7 @@
   "slots_own": 1,
   "unexposed": null,
   "verified": [
-   4,
+   2,
    4
   ]
  },
@@ -2610,7 +2610,7 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 2,
-  "element": "wizardpage",
+  "element": "wizard-page",
   "gallery": null,
   "inherited": 0,
   "kind": "QWizardPage",
@@ -2635,7 +2635,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   2,
+   0,
    2
   ]
  }

@@ -571,7 +571,6 @@
       },
       "annotated": {
         "fields": [
-          "js_name",
           "sample"
         ],
         "origin": "manual",
@@ -622,7 +621,6 @@
       },
       "annotated": {
         "fields": [
-          "js_name",
           "sample"
         ],
         "origin": "manual",
@@ -631,7 +629,7 @@
       "default": 0.0,
       "id": "svelters-api:v1:type:gtk:Gtk:Adjustment:prop:page-increment",
       "invocation": "reflected",
-      "js_name": "pageIncrement",
+      "js_name": "page-increment",
       "name": "page-increment",
       "notify": {
         "explicit": false,
@@ -673,7 +671,6 @@
       },
       "annotated": {
         "fields": [
-          "js_name",
           "sample",
           "setup"
         ],
@@ -683,7 +680,7 @@
       "default": 0.0,
       "id": "svelters-api:v1:type:gtk:Gtk:Adjustment:prop:page-size",
       "invocation": "reflected",
-      "js_name": "pageSize",
+      "js_name": "page-size",
       "name": "page-size",
       "notify": {
         "explicit": false,
@@ -726,7 +723,6 @@
       },
       "annotated": {
         "fields": [
-          "js_name",
           "sample"
         ],
         "origin": "manual",
@@ -735,7 +731,7 @@
       "default": 0.0,
       "id": "svelters-api:v1:type:gtk:Gtk:Adjustment:prop:step-increment",
       "invocation": "reflected",
-      "js_name": "stepIncrement",
+      "js_name": "step-increment",
       "name": "step-increment",
       "notify": {
         "explicit": false,
@@ -777,7 +773,6 @@
       },
       "annotated": {
         "fields": [
-          "js_name",
           "sample"
         ],
         "origin": "manual",
@@ -828,7 +823,6 @@
       },
       "annotated": {
         "fields": [
-          "js_name",
           "sample",
           "setup"
         ],

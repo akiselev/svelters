@@ -923,7 +923,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Expander:prop:label-widget",
       "invocation": "reflected",
-      "js_name": "labelWidget",
+      "js_name": "label-widget",
       "name": "label-widget",
       "notify": {
         "explicit": true,
@@ -968,7 +968,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Expander:prop:resize-toplevel",
       "invocation": "reflected",
-      "js_name": "resizeToplevel",
+      "js_name": "resize-toplevel",
       "name": "resize-toplevel",
       "notify": {
         "explicit": true,
@@ -1013,7 +1013,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Expander:prop:use-markup",
       "invocation": "reflected",
-      "js_name": "useMarkup",
+      "js_name": "use-markup",
       "name": "use-markup",
       "notify": {
         "explicit": true,
@@ -1059,7 +1059,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Expander:prop:use-underline",
       "invocation": "reflected",
-      "js_name": "useUnderline",
+      "js_name": "use-underline",
       "name": "use-underline",
       "notify": {
         "explicit": true,

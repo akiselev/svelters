@@ -75,7 +75,7 @@
   ],
   "element": {
     "origin": "gir",
-    "tag": "scalebutton"
+    "tag": "scale-button"
   },
   "enums": [],
   "id": "svelters-api:v1:type:gtk:Gtk:ScaleButton",
@@ -599,7 +599,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:ScaleButton:prop:has-frame",
       "invocation": "reflected",
-      "js_name": "hasFrame",
+      "js_name": "has-frame",
       "name": "has-frame",
       "notify": {
         "explicit": true,

@@ -118,7 +118,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRendererText:prop:align-set",
       "invocation": "reflected",
-      "js_name": "alignSet",
+      "js_name": "align-set",
       "name": "align-set",
       "notify": {
         "explicit": false,
@@ -279,7 +279,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRendererText:prop:background-rgba",
       "invocation": "reflected",
-      "js_name": "backgroundRgba",
+      "js_name": "background-rgba",
       "name": "background-rgba",
       "notify": {
         "explicit": false,
@@ -318,7 +318,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRendererText:prop:background-set",
       "invocation": "reflected",
-      "js_name": "backgroundSet",
+      "js_name": "background-set",
       "name": "background-set",
       "notify": {
         "explicit": false,
@@ -396,7 +396,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRendererText:prop:editable-set",
       "invocation": "reflected",
-      "js_name": "editableSet",
+      "js_name": "editable-set",
       "name": "editable-set",
       "notify": {
         "explicit": false,
@@ -481,7 +481,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRendererText:prop:ellipsize-set",
       "invocation": "reflected",
-      "js_name": "ellipsizeSet",
+      "js_name": "ellipsize-set",
       "name": "ellipsize-set",
       "notify": {
         "explicit": false,
@@ -559,7 +559,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRendererText:prop:family-set",
       "invocation": "reflected",
-      "js_name": "familySet",
+      "js_name": "family-set",
       "name": "family-set",
       "notify": {
         "explicit": false,
@@ -637,7 +637,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRendererText:prop:font-desc",
       "invocation": "reflected",
-      "js_name": "fontDesc",
+      "js_name": "font-desc",
       "name": "font-desc",
       "notify": {
         "explicit": false,
@@ -714,7 +714,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRendererText:prop:foreground-rgba",
       "invocation": "reflected",
-      "js_name": "foregroundRgba",
+      "js_name": "foreground-rgba",
       "name": "foreground-rgba",
       "notify": {
         "explicit": false,
@@ -753,7 +753,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRendererText:prop:foreground-set",
       "invocation": "reflected",
-      "js_name": "foregroundSet",
+      "js_name": "foreground-set",
       "name": "foreground-set",
       "notify": {
         "explicit": false,
@@ -831,7 +831,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRendererText:prop:language-set",
       "invocation": "reflected",
-      "js_name": "languageSet",
+      "js_name": "language-set",
       "name": "language-set",
       "notify": {
         "explicit": false,
@@ -908,7 +908,7 @@
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRendererText:prop:max-width-chars",
       "invocation": "reflected",
-      "js_name": "maxWidthChars",
+      "js_name": "max-width-chars",
       "name": "max-width-chars",
       "notify": {
         "explicit": true,
@@ -951,7 +951,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRendererText:prop:placeholder-text",
       "invocation": "reflected",
-      "js_name": "placeholderText",
+      "js_name": "placeholder-text",
       "name": "placeholder-text",
       "notify": {
         "explicit": false,
@@ -1032,7 +1032,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRendererText:prop:rise-set",
       "invocation": "reflected",
-      "js_name": "riseSet",
+      "js_name": "rise-set",
       "name": "rise-set",
       "notify": {
         "explicit": false,
@@ -1113,7 +1113,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRendererText:prop:scale-set",
       "invocation": "reflected",
-      "js_name": "scaleSet",
+      "js_name": "scale-set",
       "name": "scale-set",
       "notify": {
         "explicit": false,
@@ -1152,7 +1152,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRendererText:prop:single-paragraph-mode",
       "invocation": "reflected",
-      "js_name": "singleParagraphMode",
+      "js_name": "single-paragraph-mode",
       "name": "single-paragraph-mode",
       "notify": {
         "explicit": true,
@@ -1234,7 +1234,7 @@
       "default": 0.0,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRendererText:prop:size-points",
       "invocation": "reflected",
-      "js_name": "sizePoints",
+      "js_name": "size-points",
       "name": "size-points",
       "notify": {
         "explicit": false,
@@ -1276,7 +1276,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRendererText:prop:size-set",
       "invocation": "reflected",
-      "js_name": "sizeSet",
+      "js_name": "size-set",
       "name": "size-set",
       "notify": {
         "explicit": false,
@@ -1365,7 +1365,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRendererText:prop:stretch-set",
       "invocation": "reflected",
-      "js_name": "stretchSet",
+      "js_name": "stretch-set",
       "name": "stretch-set",
       "notify": {
         "explicit": false,
@@ -1443,7 +1443,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRendererText:prop:strikethrough-set",
       "invocation": "reflected",
-      "js_name": "strikethroughSet",
+      "js_name": "strikethrough-set",
       "name": "strikethrough-set",
       "notify": {
         "explicit": false,
@@ -1526,7 +1526,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRendererText:prop:style-set",
       "invocation": "reflected",
-      "js_name": "styleSet",
+      "js_name": "style-set",
       "name": "style-set",
       "notify": {
         "explicit": false,
@@ -1653,7 +1653,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRendererText:prop:underline-set",
       "invocation": "reflected",
-      "js_name": "underlineSet",
+      "js_name": "underline-set",
       "name": "underline-set",
       "notify": {
         "explicit": false,
@@ -1740,7 +1740,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRendererText:prop:variant-set",
       "invocation": "reflected",
-      "js_name": "variantSet",
+      "js_name": "variant-set",
       "name": "variant-set",
       "notify": {
         "explicit": false,
@@ -1821,7 +1821,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRendererText:prop:weight-set",
       "invocation": "reflected",
-      "js_name": "weightSet",
+      "js_name": "weight-set",
       "name": "weight-set",
       "notify": {
         "explicit": false,
@@ -1860,7 +1860,7 @@
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRendererText:prop:width-chars",
       "invocation": "reflected",
-      "js_name": "widthChars",
+      "js_name": "width-chars",
       "name": "width-chars",
       "notify": {
         "explicit": true,
@@ -1903,7 +1903,7 @@
       "default": "char",
       "id": "svelters-api:v1:type:gtk:Gtk:CellRendererText:prop:wrap-mode",
       "invocation": "reflected",
-      "js_name": "wrapMode",
+      "js_name": "wrap-mode",
       "name": "wrap-mode",
       "notify": {
         "explicit": true,
@@ -1949,7 +1949,7 @@
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:CellRendererText:prop:wrap-width",
       "invocation": "reflected",
-      "js_name": "wrapWidth",
+      "js_name": "wrap-width",
       "name": "wrap-width",
       "notify": {
         "explicit": true,

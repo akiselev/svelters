@@ -571,7 +571,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Printer:prop:accepting-jobs",
       "invocation": "reflected",
-      "js_name": "acceptingJobs",
+      "js_name": "accepting-jobs",
       "name": "accepting-jobs",
       "notify": {
         "explicit": false,
@@ -609,7 +609,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Printer:prop:accepts-pdf",
       "invocation": "reflected",
-      "js_name": "acceptsPdf",
+      "js_name": "accepts-pdf",
       "name": "accepts-pdf",
       "notify": {
         "explicit": false,
@@ -649,7 +649,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Printer:prop:accepts-ps",
       "invocation": "reflected",
-      "js_name": "acceptsPs",
+      "js_name": "accepts-ps",
       "name": "accepts-ps",
       "notify": {
         "explicit": false,
@@ -729,7 +729,7 @@
       "default": "printer",
       "id": "svelters-api:v1:type:gtk:Gtk:Printer:prop:icon-name",
       "invocation": "reflected",
-      "js_name": "iconName",
+      "js_name": "icon-name",
       "name": "icon-name",
       "notify": {
         "explicit": false,
@@ -767,7 +767,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Printer:prop:is-virtual",
       "invocation": "reflected",
-      "js_name": "isVirtual",
+      "js_name": "is-virtual",
       "name": "is-virtual",
       "notify": {
         "explicit": false,
@@ -807,7 +807,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Printer:prop:job-count",
       "invocation": "reflected",
-      "js_name": "jobCount",
+      "js_name": "job-count",
       "name": "job-count",
       "notify": {
         "explicit": false,
@@ -964,7 +964,7 @@
       "default": "",
       "id": "svelters-api:v1:type:gtk:Gtk:Printer:prop:state-message",
       "invocation": "reflected",
-      "js_name": "stateMessage",
+      "js_name": "state-message",
       "name": "state-message",
       "notify": {
         "explicit": false,

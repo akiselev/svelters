@@ -55,7 +55,7 @@
   ],
   "element": {
     "origin": "gir",
-    "tag": "shortcutlabel"
+    "tag": "shortcut-label"
   },
   "enums": [],
   "id": "svelters-api:v1:type:gtk:Gtk:ShortcutLabel",
@@ -395,7 +395,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:ShortcutLabel:prop:disabled-text",
       "invocation": "reflected",
-      "js_name": "disabledText",
+      "js_name": "disabled-text",
       "name": "disabled-text",
       "notify": {
         "explicit": false,

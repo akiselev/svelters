@@ -338,7 +338,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewRow:prop:accessible-description",
       "invocation": "reflected",
-      "js_name": "accessibleDescription",
+      "js_name": "accessible-description",
       "name": "accessible-description",
       "notify": {
         "explicit": true,
@@ -379,7 +379,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewRow:prop:accessible-label",
       "invocation": "reflected",
-      "js_name": "accessibleLabel",
+      "js_name": "accessible-label",
       "name": "accessible-label",
       "notify": {
         "explicit": true,

@@ -231,7 +231,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:ShortcutsShortcut:prop:accel-size-group",
       "invocation": "reflected",
-      "js_name": "accelSizeGroup",
+      "js_name": "accel-size-group",
       "name": "accel-size-group",
       "notify": {
         "explicit": false,
@@ -310,7 +310,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:ShortcutsShortcut:prop:action-name",
       "invocation": "reflected",
-      "js_name": "actionName",
+      "js_name": "action-name",
       "name": "action-name",
       "notify": {
         "explicit": true,
@@ -432,7 +432,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:ShortcutsShortcut:prop:icon-set",
       "invocation": "reflected",
-      "js_name": "iconSet",
+      "js_name": "icon-set",
       "name": "icon-set",
       "notify": {
         "explicit": false,
@@ -472,7 +472,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:ShortcutsShortcut:prop:shortcut-type",
       "invocation": "reflected",
-      "js_name": "shortcutType",
+      "js_name": "shortcut-type",
       "name": "shortcut-type",
       "notify": {
         "explicit": true,
@@ -553,7 +553,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:ShortcutsShortcut:prop:subtitle-set",
       "invocation": "reflected",
-      "js_name": "subtitleSet",
+      "js_name": "subtitle-set",
       "name": "subtitle-set",
       "notify": {
         "explicit": false,
@@ -633,7 +633,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:ShortcutsShortcut:prop:title-size-group",
       "invocation": "reflected",
-      "js_name": "titleSizeGroup",
+      "js_name": "title-size-group",
       "name": "title-size-group",
       "notify": {
         "explicit": false,

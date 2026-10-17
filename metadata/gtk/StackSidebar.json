@@ -46,7 +46,7 @@
   ],
   "element": {
     "origin": "gir",
-    "tag": "stacksidebar"
+    "tag": "stack-sidebar"
   },
   "enums": [],
   "id": "svelters-api:v1:type:gtk:Gtk:StackSidebar",

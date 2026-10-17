@@ -107,7 +107,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:CellEditable:prop:editing-canceled",
       "invocation": "reflected",
-      "js_name": "editingCanceled",
+      "js_name": "editing-canceled",
       "name": "editing-canceled",
       "notify": {
         "explicit": true,

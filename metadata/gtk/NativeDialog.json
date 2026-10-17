@@ -335,7 +335,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:NativeDialog:prop:transient-for",
       "invocation": "reflected",
-      "js_name": "transientFor",
+      "js_name": "transient-for",
       "name": "transient-for",
       "notify": {
         "explicit": true,

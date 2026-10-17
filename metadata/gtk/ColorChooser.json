@@ -232,7 +232,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:ColorChooser:prop:use-alpha",
       "invocation": "reflected",
-      "js_name": "useAlpha",
+      "js_name": "use-alpha",
       "name": "use-alpha",
       "notify": {
         "explicit": true,

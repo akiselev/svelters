@@ -211,7 +211,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextMark:prop:left-gravity",
       "invocation": "reflected",
-      "js_name": "leftGravity",
+      "js_name": "left-gravity",
       "name": "left-gravity",
       "notify": {
         "explicit": false,

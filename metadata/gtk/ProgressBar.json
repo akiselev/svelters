@@ -46,7 +46,7 @@
   ],
   "element": {
     "origin": "gir",
-    "tag": "progressbar"
+    "tag": "progress-bar"
   },
   "enums": [
     "svelters-api:v1:type:gtk:Pango:EllipsizeMode"
@@ -701,7 +701,7 @@
       "default": 0.1,
       "id": "svelters-api:v1:type:gtk:Gtk:ProgressBar:prop:pulse-step",
       "invocation": "reflected",
-      "js_name": "pulseStep",
+      "js_name": "pulse-step",
       "name": "pulse-step",
       "notify": {
         "explicit": true,
@@ -749,7 +749,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:ProgressBar:prop:show-text",
       "invocation": "reflected",
-      "js_name": "showText",
+      "js_name": "show-text",
       "name": "show-text",
       "notify": {
         "explicit": true,

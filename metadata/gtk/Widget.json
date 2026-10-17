@@ -3951,7 +3951,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:can-focus",
       "invocation": "reflected",
-      "js_name": "canFocus",
+      "js_name": "can-focus",
       "name": "can-focus",
       "notify": {
         "explicit": true,
@@ -3991,7 +3991,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:can-target",
       "invocation": "reflected",
-      "js_name": "canTarget",
+      "js_name": "can-target",
       "name": "can-target",
       "notify": {
         "explicit": true,
@@ -4036,7 +4036,7 @@
       "default": "[]",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:css-classes",
       "invocation": "reflected",
-      "js_name": "cssClasses",
+      "js_name": "css-classes",
       "name": "css-classes",
       "notify": {
         "explicit": false,
@@ -4075,7 +4075,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:css-name",
       "invocation": "reflected",
-      "js_name": "cssName",
+      "js_name": "css-name",
       "name": "css-name",
       "notify": {
         "explicit": false,
@@ -4160,7 +4160,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:focus-on-click",
       "invocation": "reflected",
-      "js_name": "focusOnClick",
+      "js_name": "focus-on-click",
       "name": "focus-on-click",
       "notify": {
         "explicit": true,
@@ -4290,7 +4290,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:has-default",
       "invocation": "reflected",
-      "js_name": "hasDefault",
+      "js_name": "has-default",
       "name": "has-default",
       "notify": {
         "explicit": true,
@@ -4329,7 +4329,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:has-focus",
       "invocation": "reflected",
-      "js_name": "hasFocus",
+      "js_name": "has-focus",
       "name": "has-focus",
       "notify": {
         "explicit": true,
@@ -4368,7 +4368,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:has-tooltip",
       "invocation": "reflected",
-      "js_name": "hasTooltip",
+      "js_name": "has-tooltip",
       "name": "has-tooltip",
       "notify": {
         "explicit": true,
@@ -4413,7 +4413,7 @@
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:height-request",
       "invocation": "reflected",
-      "js_name": "heightRequest",
+      "js_name": "height-request",
       "name": "height-request",
       "notify": {
         "explicit": true,
@@ -4501,7 +4501,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:hexpand-set",
       "invocation": "reflected",
-      "js_name": "hexpandSet",
+      "js_name": "hexpand-set",
       "name": "hexpand-set",
       "notify": {
         "explicit": true,
@@ -4541,7 +4541,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:layout-manager",
       "invocation": "reflected",
-      "js_name": "layoutManager",
+      "js_name": "layout-manager",
       "name": "layout-manager",
       "notify": {
         "explicit": true,
@@ -4581,7 +4581,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:limit-events",
       "invocation": "reflected",
-      "js_name": "limitEvents",
+      "js_name": "limit-events",
       "name": "limit-events",
       "notify": {
         "explicit": true,
@@ -4627,7 +4627,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-bottom",
       "invocation": "reflected",
-      "js_name": "marginBottom",
+      "js_name": "margin-bottom",
       "name": "margin-bottom",
       "notify": {
         "explicit": true,
@@ -4675,7 +4675,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-end",
       "invocation": "reflected",
-      "js_name": "marginEnd",
+      "js_name": "margin-end",
       "name": "margin-end",
       "notify": {
         "explicit": true,
@@ -4723,7 +4723,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-start",
       "invocation": "reflected",
-      "js_name": "marginStart",
+      "js_name": "margin-start",
       "name": "margin-start",
       "notify": {
         "explicit": true,
@@ -4771,7 +4771,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-top",
       "invocation": "reflected",
-      "js_name": "marginTop",
+      "js_name": "margin-top",
       "name": "margin-top",
       "notify": {
         "explicit": true,
@@ -4988,7 +4988,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:receives-default",
       "invocation": "reflected",
-      "js_name": "receivesDefault",
+      "js_name": "receives-default",
       "name": "receives-default",
       "notify": {
         "explicit": true,
@@ -5067,7 +5067,7 @@
       "default": 1,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:scale-factor",
       "invocation": "reflected",
-      "js_name": "scaleFactor",
+      "js_name": "scale-factor",
       "name": "scale-factor",
       "notify": {
         "explicit": false,
@@ -5158,7 +5158,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:tooltip-markup",
       "invocation": "reflected",
-      "js_name": "tooltipMarkup",
+      "js_name": "tooltip-markup",
       "name": "tooltip-markup",
       "notify": {
         "explicit": true,
@@ -5203,7 +5203,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:tooltip-text",
       "invocation": "reflected",
-      "js_name": "tooltipText",
+      "js_name": "tooltip-text",
       "name": "tooltip-text",
       "notify": {
         "explicit": true,
@@ -5333,7 +5333,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:vexpand-set",
       "invocation": "reflected",
-      "js_name": "vexpandSet",
+      "js_name": "vexpand-set",
       "name": "vexpand-set",
       "notify": {
         "explicit": true,
@@ -5423,7 +5423,7 @@
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:width-request",
       "invocation": "reflected",
-      "js_name": "widthRequest",
+      "js_name": "width-request",
       "name": "width-request",
       "notify": {
         "explicit": true,

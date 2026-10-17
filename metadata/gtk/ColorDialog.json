@@ -375,7 +375,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:ColorDialog:prop:with-alpha",
       "invocation": "reflected",
-      "js_name": "withAlpha",
+      "js_name": "with-alpha",
       "name": "with-alpha",
       "notify": {
         "explicit": true,

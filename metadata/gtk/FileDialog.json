@@ -1052,7 +1052,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:FileDialog:prop:accept-label",
       "invocation": "reflected",
-      "js_name": "acceptLabel",
+      "js_name": "accept-label",
       "name": "accept-label",
       "notify": {
         "explicit": true,
@@ -1093,7 +1093,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:FileDialog:prop:default-filter",
       "invocation": "reflected",
-      "js_name": "defaultFilter",
+      "js_name": "default-filter",
       "name": "default-filter",
       "notify": {
         "explicit": true,
@@ -1175,7 +1175,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:FileDialog:prop:initial-file",
       "invocation": "reflected",
-      "js_name": "initialFile",
+      "js_name": "initial-file",
       "name": "initial-file",
       "notify": {
         "explicit": true,
@@ -1216,7 +1216,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:FileDialog:prop:initial-folder",
       "invocation": "reflected",
-      "js_name": "initialFolder",
+      "js_name": "initial-folder",
       "name": "initial-folder",
       "notify": {
         "explicit": true,
@@ -1257,7 +1257,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:FileDialog:prop:initial-name",
       "invocation": "reflected",
-      "js_name": "initialName",
+      "js_name": "initial-name",
       "name": "initial-name",
       "notify": {
         "explicit": true,

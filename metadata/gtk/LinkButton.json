@@ -86,7 +86,7 @@
   ],
   "element": {
     "origin": "gir",
-    "tag": "linkbutton"
+    "tag": "link-button"
   },
   "enums": [],
   "id": "svelters-api:v1:type:gtk:Gtk:LinkButton",

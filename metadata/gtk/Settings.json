@@ -97,7 +97,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-alternative-button-order",
       "invocation": "reflected",
-      "js_name": "gtkAlternativeButtonOrder",
+      "js_name": "gtk-alternative-button-order",
       "name": "gtk-alternative-button-order",
       "notify": {
         "explicit": false,
@@ -136,7 +136,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-alternative-sort-arrows",
       "invocation": "reflected",
-      "js_name": "gtkAlternativeSortArrows",
+      "js_name": "gtk-alternative-sort-arrows",
       "name": "gtk-alternative-sort-arrows",
       "notify": {
         "explicit": false,
@@ -176,7 +176,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-application-prefer-dark-theme",
       "invocation": "reflected",
-      "js_name": "gtkApplicationPreferDarkTheme",
+      "js_name": "gtk-application-prefer-dark-theme",
       "name": "gtk-application-prefer-dark-theme",
       "notify": {
         "explicit": false,
@@ -215,7 +215,7 @@
       "default": 0.04,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-cursor-aspect-ratio",
       "invocation": "reflected",
-      "js_name": "gtkCursorAspectRatio",
+      "js_name": "gtk-cursor-aspect-ratio",
       "name": "gtk-cursor-aspect-ratio",
       "notify": {
         "explicit": false,
@@ -257,7 +257,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-cursor-blink",
       "invocation": "reflected",
-      "js_name": "gtkCursorBlink",
+      "js_name": "gtk-cursor-blink",
       "name": "gtk-cursor-blink",
       "notify": {
         "explicit": false,
@@ -296,7 +296,7 @@
       "default": 1200,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-cursor-blink-time",
       "invocation": "reflected",
-      "js_name": "gtkCursorBlinkTime",
+      "js_name": "gtk-cursor-blink-time",
       "name": "gtk-cursor-blink-time",
       "notify": {
         "explicit": false,
@@ -338,7 +338,7 @@
       "default": 10,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-cursor-blink-timeout",
       "invocation": "reflected",
-      "js_name": "gtkCursorBlinkTimeout",
+      "js_name": "gtk-cursor-blink-timeout",
       "name": "gtk-cursor-blink-timeout",
       "notify": {
         "explicit": false,
@@ -380,7 +380,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-cursor-theme-name",
       "invocation": "reflected",
-      "js_name": "gtkCursorThemeName",
+      "js_name": "gtk-cursor-theme-name",
       "name": "gtk-cursor-theme-name",
       "notify": {
         "explicit": false,
@@ -419,7 +419,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-cursor-theme-size",
       "invocation": "reflected",
-      "js_name": "gtkCursorThemeSize",
+      "js_name": "gtk-cursor-theme-size",
       "name": "gtk-cursor-theme-size",
       "notify": {
         "explicit": false,
@@ -461,7 +461,7 @@
       "default": "menu:minimize,maximize,close",
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-decoration-layout",
       "invocation": "reflected",
-      "js_name": "gtkDecorationLayout",
+      "js_name": "gtk-decoration-layout",
       "name": "gtk-decoration-layout",
       "notify": {
         "explicit": false,
@@ -500,7 +500,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-dialogs-use-header",
       "invocation": "reflected",
-      "js_name": "gtkDialogsUseHeader",
+      "js_name": "gtk-dialogs-use-header",
       "name": "gtk-dialogs-use-header",
       "notify": {
         "explicit": false,
@@ -539,7 +539,7 @@
       "default": 8,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-dnd-drag-threshold",
       "invocation": "reflected",
-      "js_name": "gtkDndDragThreshold",
+      "js_name": "gtk-dnd-drag-threshold",
       "name": "gtk-dnd-drag-threshold",
       "notify": {
         "explicit": false,
@@ -581,7 +581,7 @@
       "default": 5,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-double-click-distance",
       "invocation": "reflected",
-      "js_name": "gtkDoubleClickDistance",
+      "js_name": "gtk-double-click-distance",
       "name": "gtk-double-click-distance",
       "notify": {
         "explicit": false,
@@ -623,7 +623,7 @@
       "default": 400,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-double-click-time",
       "invocation": "reflected",
-      "js_name": "gtkDoubleClickTime",
+      "js_name": "gtk-double-click-time",
       "name": "gtk-double-click-time",
       "notify": {
         "explicit": false,
@@ -665,7 +665,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-enable-accels",
       "invocation": "reflected",
-      "js_name": "gtkEnableAccels",
+      "js_name": "gtk-enable-accels",
       "name": "gtk-enable-accels",
       "notify": {
         "explicit": false,
@@ -704,7 +704,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-enable-animations",
       "invocation": "reflected",
-      "js_name": "gtkEnableAnimations",
+      "js_name": "gtk-enable-animations",
       "name": "gtk-enable-animations",
       "notify": {
         "explicit": false,
@@ -743,7 +743,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-enable-event-sounds",
       "invocation": "reflected",
-      "js_name": "gtkEnableEventSounds",
+      "js_name": "gtk-enable-event-sounds",
       "name": "gtk-enable-event-sounds",
       "notify": {
         "explicit": false,
@@ -782,7 +782,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-enable-input-feedback-sounds",
       "invocation": "reflected",
-      "js_name": "gtkEnableInputFeedbackSounds",
+      "js_name": "gtk-enable-input-feedback-sounds",
       "name": "gtk-enable-input-feedback-sounds",
       "notify": {
         "explicit": false,
@@ -821,7 +821,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-enable-primary-paste",
       "invocation": "reflected",
-      "js_name": "gtkEnablePrimaryPaste",
+      "js_name": "gtk-enable-primary-paste",
       "name": "gtk-enable-primary-paste",
       "notify": {
         "explicit": false,
@@ -860,7 +860,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-entry-password-hint-timeout",
       "invocation": "reflected",
-      "js_name": "gtkEntryPasswordHintTimeout",
+      "js_name": "gtk-entry-password-hint-timeout",
       "name": "gtk-entry-password-hint-timeout",
       "notify": {
         "explicit": false,
@@ -902,7 +902,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-entry-select-on-focus",
       "invocation": "reflected",
-      "js_name": "gtkEntrySelectOnFocus",
+      "js_name": "gtk-entry-select-on-focus",
       "name": "gtk-entry-select-on-focus",
       "notify": {
         "explicit": false,
@@ -941,7 +941,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-error-bell",
       "invocation": "reflected",
-      "js_name": "gtkErrorBell",
+      "js_name": "gtk-error-bell",
       "name": "gtk-error-bell",
       "notify": {
         "explicit": false,
@@ -980,7 +980,7 @@
       "default": "Sans 10",
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-font-name",
       "invocation": "reflected",
-      "js_name": "gtkFontName",
+      "js_name": "gtk-font-name",
       "name": "gtk-font-name",
       "notify": {
         "explicit": false,
@@ -1019,7 +1019,7 @@
       "default": "automatic",
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-font-rendering",
       "invocation": "reflected",
-      "js_name": "gtkFontRendering",
+      "js_name": "gtk-font-rendering",
       "name": "gtk-font-rendering",
       "notify": {
         "explicit": false,
@@ -1059,7 +1059,7 @@
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-fontconfig-timestamp",
       "invocation": "reflected",
-      "js_name": "gtkFontconfigTimestamp",
+      "js_name": "gtk-fontconfig-timestamp",
       "name": "gtk-fontconfig-timestamp",
       "notify": {
         "explicit": false,
@@ -1101,7 +1101,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-hint-font-metrics",
       "invocation": "reflected",
-      "js_name": "gtkHintFontMetrics",
+      "js_name": "gtk-hint-font-metrics",
       "name": "gtk-hint-font-metrics",
       "notify": {
         "explicit": false,
@@ -1141,7 +1141,7 @@
       "default": "Adwaita",
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-icon-theme-name",
       "invocation": "reflected",
-      "js_name": "gtkIconThemeName",
+      "js_name": "gtk-icon-theme-name",
       "name": "gtk-icon-theme-name",
       "notify": {
         "explicit": false,
@@ -1180,7 +1180,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-im-module",
       "invocation": "reflected",
-      "js_name": "gtkImModule",
+      "js_name": "gtk-im-module",
       "name": "gtk-im-module",
       "notify": {
         "explicit": false,
@@ -1219,7 +1219,7 @@
       "default": "unsupported",
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-interface-color-scheme",
       "invocation": "reflected",
-      "js_name": "gtkInterfaceColorScheme",
+      "js_name": "gtk-interface-color-scheme",
       "name": "gtk-interface-color-scheme",
       "notify": {
         "explicit": false,
@@ -1259,7 +1259,7 @@
       "default": "unsupported",
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-interface-contrast",
       "invocation": "reflected",
-      "js_name": "gtkInterfaceContrast",
+      "js_name": "gtk-interface-contrast",
       "name": "gtk-interface-contrast",
       "notify": {
         "explicit": false,
@@ -1299,7 +1299,7 @@
       "default": "no-preference",
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-interface-reduced-motion",
       "invocation": "reflected",
-      "js_name": "gtkInterfaceReducedMotion",
+      "js_name": "gtk-interface-reduced-motion",
       "name": "gtk-interface-reduced-motion",
       "notify": {
         "explicit": false,
@@ -1339,7 +1339,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-keynav-use-caret",
       "invocation": "reflected",
-      "js_name": "gtkKeynavUseCaret",
+      "js_name": "gtk-keynav-use-caret",
       "name": "gtk-keynav-use-caret",
       "notify": {
         "explicit": false,
@@ -1378,7 +1378,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-label-select-on-focus",
       "invocation": "reflected",
-      "js_name": "gtkLabelSelectOnFocus",
+      "js_name": "gtk-label-select-on-focus",
       "name": "gtk-label-select-on-focus",
       "notify": {
         "explicit": false,
@@ -1417,7 +1417,7 @@
       "default": 500,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-long-press-time",
       "invocation": "reflected",
-      "js_name": "gtkLongPressTime",
+      "js_name": "gtk-long-press-time",
       "name": "gtk-long-press-time",
       "notify": {
         "explicit": false,
@@ -1459,7 +1459,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-overlay-scrolling",
       "invocation": "reflected",
-      "js_name": "gtkOverlayScrolling",
+      "js_name": "gtk-overlay-scrolling",
       "name": "gtk-overlay-scrolling",
       "notify": {
         "explicit": false,
@@ -1498,7 +1498,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-primary-button-warps-slider",
       "invocation": "reflected",
-      "js_name": "gtkPrimaryButtonWarpsSlider",
+      "js_name": "gtk-primary-button-warps-slider",
       "name": "gtk-primary-button-warps-slider",
       "notify": {
         "explicit": false,
@@ -1537,7 +1537,7 @@
       "default": "cups,file",
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-print-backends",
       "invocation": "reflected",
-      "js_name": "gtkPrintBackends",
+      "js_name": "gtk-print-backends",
       "name": "gtk-print-backends",
       "notify": {
         "explicit": false,
@@ -1576,7 +1576,7 @@
       "default": "evince --unlink-tempfile --preview --print-settings %s %f",
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-print-preview-command",
       "invocation": "reflected",
-      "js_name": "gtkPrintPreviewCommand",
+      "js_name": "gtk-print-preview-command",
       "name": "gtk-print-preview-command",
       "notify": {
         "explicit": false,
@@ -1615,7 +1615,7 @@
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-recent-files-enabled",
       "invocation": "reflected",
-      "js_name": "gtkRecentFilesEnabled",
+      "js_name": "gtk-recent-files-enabled",
       "name": "gtk-recent-files-enabled",
       "notify": {
         "explicit": false,
@@ -1654,7 +1654,7 @@
       "default": 30,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-recent-files-max-age",
       "invocation": "reflected",
-      "js_name": "gtkRecentFilesMaxAge",
+      "js_name": "gtk-recent-files-max-age",
       "name": "gtk-recent-files-max-age",
       "notify": {
         "explicit": false,
@@ -1697,7 +1697,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-shell-shows-app-menu",
       "invocation": "reflected",
-      "js_name": "gtkShellShowsAppMenu",
+      "js_name": "gtk-shell-shows-app-menu",
       "name": "gtk-shell-shows-app-menu",
       "notify": {
         "explicit": false,
@@ -1737,7 +1737,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-shell-shows-desktop",
       "invocation": "reflected",
-      "js_name": "gtkShellShowsDesktop",
+      "js_name": "gtk-shell-shows-desktop",
       "name": "gtk-shell-shows-desktop",
       "notify": {
         "explicit": false,
@@ -1777,7 +1777,7 @@
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-shell-shows-menubar",
       "invocation": "reflected",
-      "js_name": "gtkShellShowsMenubar",
+      "js_name": "gtk-shell-shows-menubar",
       "name": "gtk-shell-shows-menubar",
       "notify": {
         "explicit": false,
@@ -1816,7 +1816,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-show-status-shapes",
       "invocation": "reflected",
-      "js_name": "gtkShowStatusShapes",
+      "js_name": "gtk-show-status-shapes",
       "name": "gtk-show-status-shapes",
       "notify": {
         "explicit": false,
@@ -1856,7 +1856,7 @@
       "default": "freedesktop",
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-sound-theme-name",
       "invocation": "reflected",
-      "js_name": "gtkSoundThemeName",
+      "js_name": "gtk-sound-theme-name",
       "name": "gtk-sound-theme-name",
       "notify": {
         "explicit": false,
@@ -1895,7 +1895,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-split-cursor",
       "invocation": "reflected",
-      "js_name": "gtkSplitCursor",
+      "js_name": "gtk-split-cursor",
       "name": "gtk-split-cursor",
       "notify": {
         "explicit": false,
@@ -1934,7 +1934,7 @@
       "default": "Default",
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-theme-name",
       "invocation": "reflected",
-      "js_name": "gtkThemeName",
+      "js_name": "gtk-theme-name",
       "name": "gtk-theme-name",
       "notify": {
         "explicit": false,
@@ -1973,7 +1973,7 @@
       "default": "toggle-maximize",
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-titlebar-double-click",
       "invocation": "reflected",
-      "js_name": "gtkTitlebarDoubleClick",
+      "js_name": "gtk-titlebar-double-click",
       "name": "gtk-titlebar-double-click",
       "notify": {
         "explicit": false,
@@ -2012,7 +2012,7 @@
       "default": "none",
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-titlebar-middle-click",
       "invocation": "reflected",
-      "js_name": "gtkTitlebarMiddleClick",
+      "js_name": "gtk-titlebar-middle-click",
       "name": "gtk-titlebar-middle-click",
       "notify": {
         "explicit": false,
@@ -2051,7 +2051,7 @@
       "default": "menu",
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-titlebar-right-click",
       "invocation": "reflected",
-      "js_name": "gtkTitlebarRightClick",
+      "js_name": "gtk-titlebar-right-click",
       "name": "gtk-titlebar-right-click",
       "notify": {
         "explicit": false,
@@ -2090,7 +2090,7 @@
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-xft-antialias",
       "invocation": "reflected",
-      "js_name": "gtkXftAntialias",
+      "js_name": "gtk-xft-antialias",
       "name": "gtk-xft-antialias",
       "notify": {
         "explicit": false,
@@ -2132,7 +2132,7 @@
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-xft-dpi",
       "invocation": "reflected",
-      "js_name": "gtkXftDpi",
+      "js_name": "gtk-xft-dpi",
       "name": "gtk-xft-dpi",
       "notify": {
         "explicit": false,
@@ -2174,7 +2174,7 @@
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-xft-hinting",
       "invocation": "reflected",
-      "js_name": "gtkXftHinting",
+      "js_name": "gtk-xft-hinting",
       "name": "gtk-xft-hinting",
       "notify": {
         "explicit": false,
@@ -2216,7 +2216,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-xft-hintstyle",
       "invocation": "reflected",
-      "js_name": "gtkXftHintstyle",
+      "js_name": "gtk-xft-hintstyle",
       "name": "gtk-xft-hintstyle",
       "notify": {
         "explicit": false,
@@ -2255,7 +2255,7 @@
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-xft-rgba",
       "invocation": "reflected",
-      "js_name": "gtkXftRgba",
+      "js_name": "gtk-xft-rgba",
       "name": "gtk-xft-rgba",
       "notify": {
         "explicit": false,

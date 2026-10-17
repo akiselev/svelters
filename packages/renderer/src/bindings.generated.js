@@ -7,55 +7,58 @@ export const BINDINGS = {
   calendar: {
     day: { prop: "day", signal: "notify::day", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
   },
-  checkbox: {
+  "check-box": {
     checked: { prop: "checked", signal: "toggled", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
-  checkbutton: {
+  "check-button": {
     active: { prop: "active", signal: "toggled", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
   },
-  combobox: {
-    currentIndex: { prop: "currentIndex", signal: "changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
+  "combo-box": {
+    "current-index": { prop: "current-index", signal: "current-index-changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
-  dateedit: {
+  "date-edit": {
     date: { prop: "date", signal: "date-changed", type: "value", direction: "two_way", compare: false, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
-  datetimeedit: {
-    dateTime: { prop: "dateTime", signal: "date-time-changed", type: "value", direction: "two_way", compare: false, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
+  "date-time-edit": {
+    "date-time": { prop: "date-time", signal: "date-time-changed", type: "value", direction: "two_way", compare: false, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
   dial: {
-    value: { prop: "value", signal: "valueChanged", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
+    value: { prop: "value", signal: "value-changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
-  doublespinbox: {
-    value: { prop: "value", signal: "valueChanged", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
+  "double-spin-box": {
+    value: { prop: "value", signal: "value-changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
-  editablelabel: {
+  "editable-label": {
     editing: { prop: "editing", signal: "notify::editing", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
   },
   entry: {
-    text: { prop: "text", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["gtk", "qt"] },
+    text: { prop: "text", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["gtk"] },
   },
   expander: {
     expanded: { prop: "expanded", signal: "notify::expanded", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
   },
-  groupbox: {
+  "group-box": {
     checked: { prop: "checked", signal: "toggled", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
-  levelbar: {
+  "level-bar": {
     value: { prop: "value", signal: "notify::value", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
   },
-  listwidget: {
-    currentRow: { prop: "currentRow", signal: "row-changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
+  "line-edit": {
+    text: { prop: "text", signal: "text-changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
+  },
+  "list-widget": {
+    "current-row": { prop: "current-row", signal: "current-row-changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
   notebook: {
     page: { prop: "page", signal: "notify::page", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
   },
-  passwordentry: {
+  "password-entry": {
     text: { prop: "text", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["gtk"] },
   },
-  plaintextedit: {
-    plainText: { prop: "plainText", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["qt"] },
+  "plain-text-edit": {
+    "plain-text": { prop: "plain-text", signal: "text-changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["qt"] },
   },
-  radiobutton: {
+  "radio-button": {
     checked: { prop: "checked", signal: "toggled", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
   range: {
@@ -64,53 +67,53 @@ export const BINDINGS = {
   scale: {
     value: { prop: "value", signal: "value-changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
   },
-  scrollbar: {
-    value: { prop: "value", signal: "valueChanged", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
+  "scroll-bar": {
+    value: { prop: "value", signal: "value-changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
-  searchentry: {
+  "search-entry": {
     text: { prop: "text", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["gtk"] },
   },
   slider: {
-    value: { prop: "value", signal: "valueChanged", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
+    value: { prop: "value", signal: "value-changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
-  spinbox: {
-    value: { prop: "value", signal: "valueChanged", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
+  "spin-box": {
+    value: { prop: "value", signal: "value-changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
-  spinbutton: {
+  "spin-button": {
     value: { prop: "value", signal: "value-changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
   },
   spinner: {
     spinning: { prop: "spinning", signal: "notify::spinning", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
   },
-  stackedwidget: {
-    currentIndex: { prop: "currentIndex", signal: "changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
+  "stacked-widget": {
+    "current-index": { prop: "current-index", signal: "current-changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
   switch: {
     active: { prop: "active", signal: "notify::active", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
   },
-  tabbar: {
-    currentIndex: { prop: "currentIndex", signal: "changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
+  "tab-bar": {
+    "current-index": { prop: "current-index", signal: "current-changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
-  tabwidget: {
-    currentIndex: { prop: "currentIndex", signal: "changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
+  "tab-widget": {
+    "current-index": { prop: "current-index", signal: "current-changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
   text: {
     text: { prop: "text", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["gtk"] },
   },
-  textedit: {
-    plainText: { prop: "plainText", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["qt"] },
+  "text-edit": {
+    "plain-text": { prop: "plain-text", signal: "text-changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["qt"] },
   },
-  textview: {
+  "text-view": {
     text: { prop: "text", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["gtk"] },
   },
-  timeedit: {
+  "time-edit": {
     time: { prop: "time", signal: "time-changed", type: "value", direction: "two_way", compare: false, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
-  togglebutton: {
+  "toggle-button": {
     active: { prop: "active", signal: "toggled", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
   },
-  toolbox: {
-    currentIndex: { prop: "currentIndex", signal: "changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
+  "tool-box": {
+    "current-index": { prop: "current-index", signal: "current-changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
 };
 
@@ -118,15 +121,32 @@ export const BINDINGS = {
 // transient for the enclosing toplevel and shows them. `open`/`modeless` list candidate method names, the first one
 // the host resolves wins; `modalProp`: a `modal` property exists; `dialog`: modal by default.
 export const TOPLEVELS = {
-  aboutdialog: { open: ["present"], modeless: ["present"], modalProp: true, dialog: true, toolkits: ["gtk"] },
-  colordialog: { open: ["open", "present"], modeless: ["present"], modalProp: true, dialog: true, toolkits: ["qt"] },
+  "about-dialog": { open: ["present"], modeless: ["present"], modalProp: true, dialog: true, toolkits: ["gtk"] },
+  "application-window": { open: ["present"], modeless: ["present"], modalProp: true, dialog: false, toolkits: ["gtk"] },
+  "color-dialog": { open: ["open", "present"], modeless: ["present"], modalProp: true, dialog: true, toolkits: ["qt"] },
   dialog: { open: ["open", "present"], modeless: ["present"], modalProp: true, dialog: true, toolkits: ["qt"] },
-  errormessage: { open: ["open", "present"], modeless: ["present"], modalProp: true, dialog: true, toolkits: ["qt"] },
-  filedialog: { open: ["open", "present"], modeless: ["present"], modalProp: true, dialog: true, toolkits: ["qt"] },
-  fontdialog: { open: ["open", "present"], modeless: ["present"], modalProp: true, dialog: true, toolkits: ["qt"] },
-  inputdialog: { open: ["open", "present"], modeless: ["present"], modalProp: true, dialog: true, toolkits: ["qt"] },
-  messagebox: { open: ["open", "present"], modeless: ["present"], modalProp: true, dialog: true, toolkits: ["qt"] },
-  progressdialog: { open: ["open", "present"], modeless: ["present"], modalProp: true, dialog: true, toolkits: ["qt"] },
-  window: { open: ["present", "make-key-and-order-front", "activate"], modeless: ["present", "make-key-and-order-front", "activate"], modalProp: false, dialog: false, toolkits: ["gtk", "qt", "appkit", "winui"] },
+  "error-message": { open: ["open", "present"], modeless: ["present"], modalProp: true, dialog: true, toolkits: ["qt"] },
+  "file-dialog": { open: ["open", "present"], modeless: ["present"], modalProp: true, dialog: true, toolkits: ["qt"] },
+  "font-dialog": { open: ["open", "present"], modeless: ["present"], modalProp: true, dialog: true, toolkits: ["qt"] },
+  "input-dialog": { open: ["open", "present"], modeless: ["present"], modalProp: true, dialog: true, toolkits: ["qt"] },
+  "main-window": { open: ["present"], modeless: ["present"], modalProp: false, dialog: false, toolkits: ["qt"] },
+  "message-box": { open: ["open", "present"], modeless: ["present"], modalProp: true, dialog: true, toolkits: ["qt"] },
+  "progress-dialog": { open: ["open", "present"], modeless: ["present"], modalProp: true, dialog: true, toolkits: ["qt"] },
+  window: { open: ["present", "make-key-and-order-front", "activate"], modeless: ["present", "make-key-and-order-front", "activate"], modalProp: false, dialog: false, toolkits: ["gtk", "appkit", "winui"] },
   wizard: { open: ["open", "present"], modeless: ["present"], modalProp: true, dialog: true, toolkits: ["qt"] },
 };
+
+// Tags whose Text children fold into a prop: candidate prop names, the first one the host resolves wins.
+export const TEXT_PROPS = {
+  button: ["label", "content"],
+  "check-box": ["content"],
+  label: ["label", "text"],
+  "link-button": ["label"],
+  "lock-button": ["label"],
+  "push-button": ["text"],
+  "text-block": ["text"],
+  "toggle-button": ["label"],
+};
+
+// Candidate tags of the container a virtualized list renders each row into (the first the host resolves).
+export const ROW_OUTLETS = ["box", "box-layout"];

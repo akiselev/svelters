@@ -147,7 +147,7 @@
   ],
   "element": {
     "origin": "gir",
-    "tag": "spinbutton"
+    "tag": "spin-button"
   },
   "enums": [
     "svelters-api:v1:type:gtk:Gtk:SpinButtonUpdatePolicy"
@@ -1132,7 +1132,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:activates-default",
       "invocation": "reflected",
-      "js_name": "activatesDefault",
+      "js_name": "activates-default",
       "name": "activates-default",
       "notify": {
         "explicit": true,
@@ -1218,7 +1218,7 @@
       "default": 0.0,
       "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:climb-rate",
       "invocation": "reflected",
-      "js_name": "climbRate",
+      "js_name": "climb-rate",
       "name": "climb-rate",
       "notify": {
         "explicit": true,
@@ -1359,7 +1359,7 @@
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:snap-to-ticks",
       "invocation": "reflected",
-      "js_name": "snapToTicks",
+      "js_name": "snap-to-ticks",
       "name": "snap-to-ticks",
       "notify": {
         "explicit": true,
@@ -1404,7 +1404,7 @@
       "default": "always",
       "id": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:update-policy",
       "invocation": "reflected",
-      "js_name": "updatePolicy",
+      "js_name": "update-policy",
       "name": "update-policy",
       "notify": {
         "explicit": true,
@@ -1553,7 +1553,6 @@
           "default",
           "id",
           "invocation",
-          "js_name",
           "new",
           "notify",
           "range",
@@ -1614,7 +1613,6 @@
           "default",
           "id",
           "invocation",
-          "js_name",
           "new",
           "notify",
           "range",
@@ -1675,7 +1673,6 @@
           "default",
           "id",
           "invocation",
-          "js_name",
           "new",
           "notify",
           "range",
@@ -1736,7 +1733,6 @@
           "default",
           "id",
           "invocation",
-          "js_name",
           "new",
           "notify",
           "range",

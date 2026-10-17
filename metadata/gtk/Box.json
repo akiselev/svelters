@@ -685,7 +685,7 @@
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:Box:prop:baseline-child",
       "invocation": "reflected",
-      "js_name": "baselineChild",
+      "js_name": "baseline-child",
       "name": "baseline-child",
       "notify": {
         "explicit": true,
@@ -729,7 +729,7 @@
       "default": "center",
       "id": "svelters-api:v1:type:gtk:Gtk:Box:prop:baseline-position",
       "invocation": "reflected",
-      "js_name": "baselinePosition",
+      "js_name": "baseline-position",
       "name": "baseline-position",
       "notify": {
         "explicit": true,
@@ -807,9 +807,7 @@
         "set": "gtk_box_set_spacing"
       },
       "annotated": {
-        "fields": [
-          "js_name"
-        ],
+        "fields": [],
         "origin": "manual",
         "provenance": "GtkBox:spacing (Gtk 4 docs); P prop"
       },

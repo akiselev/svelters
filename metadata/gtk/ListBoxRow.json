@@ -50,7 +50,7 @@
   ],
   "element": {
     "origin": "gir",
-    "tag": "listboxrow"
+    "tag": "list-box-row"
   },
   "enums": [],
   "id": "svelters-api:v1:type:gtk:Gtk:ListBoxRow",
