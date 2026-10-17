@@ -142,6 +142,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QSystemTrayIcon",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QSystemTrayIcon:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -726,6 +736,7 @@
         "set": "setIcon"
       },
       "brief": "The system tray icon",
+      "default": null,
       "js_name": "icon",
       "metaobject": {
         "constant": false,
@@ -746,6 +757,7 @@
       "name": "icon",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QIcon",
@@ -766,6 +778,8 @@
         "set": "setToolTip"
       },
       "brief": "The tooltip for the system tray entry",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "toolTip",
       "metaobject": {
         "constant": false,
@@ -786,6 +800,7 @@
       "name": "toolTip",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -806,6 +821,8 @@
         "set": "setVisible"
       },
       "brief": "Whether the system tray entry is visible",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "visible",
       "metaobject": {
         "constant": false,
@@ -826,6 +843,7 @@
       "name": "visible",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",

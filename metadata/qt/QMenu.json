@@ -78,6 +78,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QMenu",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QMenu:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -2625,6 +2635,7 @@
         "set": "setIcon"
       },
       "brief": "Of the menu",
+      "default": null,
       "js_name": "icon",
       "metaobject": {
         "constant": false,
@@ -2645,6 +2656,7 @@
       "name": "icon",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QIcon",
@@ -2665,6 +2677,8 @@
         "set": "setSeparatorsCollapsible"
       },
       "brief": "Whether consecutive separators should be collapsed",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "separatorsCollapsible",
       "metaobject": {
         "constant": false,
@@ -2685,6 +2699,7 @@
       "name": "separatorsCollapsible",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2705,6 +2720,8 @@
         "set": "setTearOffEnabled"
       },
       "brief": "Whether the menu supports being torn off",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "tearOffEnabled",
       "metaobject": {
         "constant": false,
@@ -2725,6 +2742,7 @@
       "name": "tearOffEnabled",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2745,6 +2763,8 @@
         "set": "setTitle"
       },
       "brief": "Of the menu",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "title",
       "metaobject": {
         "constant": false,
@@ -2765,6 +2785,7 @@
       "name": "title",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -2785,6 +2806,8 @@
         "set": "setToolTipsVisible"
       },
       "brief": "Whether tooltips of menu actions should be visible",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "toolTipsVisible",
       "metaobject": {
         "constant": false,
@@ -2805,6 +2828,7 @@
       "name": "toolTipsVisible",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",

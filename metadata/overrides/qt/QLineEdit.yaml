@@ -2,11 +2,11 @@ elements:
   - tag: entry
     construct: { class: QLineEdit }
     props:
-      - { js: text, native: text, suppress_signals: true }
-      - { js: placeholder, native: placeholderText }
-      - { js: echoMode, native: echoMode }
-      - { js: alignment, native: alignment }
-      - { js: maxLength, native: maxLength }
+      - { js: text, native: text, suppress_signals: true, provenance: "QLineEdit::text Q_PROPERTY (qdoc); P prop; setText emits textChanged (qt_sync_probe.py)" }
+      - { js: placeholder, native: placeholderText, provenance: "QLineEdit::placeholderText Q_PROPERTY (qdoc); P prop" }
+      - { js: echoMode, native: echoMode, provenance: "QLineEdit::echoMode (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: alignment, native: alignment, provenance: "QLineEdit::alignment (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: maxLength, native: maxLength, provenance: "QLineEdit::maxLength (qdoc); typed by the S1 value model (ABI v3)" }
     bindings:
       # Binding metadata (schema extension `bindings`, docs/notes/fork-bindings.md section 6).
       - name: text
@@ -25,10 +25,11 @@ elements:
     signals:
       # Synthetic (an event filter, not a Qt signal): a sync signal. The handler's result decides
       # whether the key press is consumed (`e.preventDefault()`), before the line edit sees it.
-      - { js: key-press, synthetic: key_press }
+      - { js: key-press, synthetic: key_press, provenance: "X2 sync key-press (docs/notes/x2-sync-frame.md); QKeyEvent via event filter" }
       - js: changed
         native: textChanged
         connect: "textChanged(QString)"
         args: [{ name: text, type: string }]
         trigger: '$w->setText(QStringLiteral("v") + QString::number($i))'
         expect_args: ["v0"]
+        provenance: "QLineEdit::textChanged(const QString &) (qdoc); emitted for programmatic and user edits"

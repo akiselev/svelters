@@ -55,6 +55,16 @@
   "id": "svelters-api:v1:type:gtk:Gtk:SignalAction",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "unref"
+    },
+    "id": "svelters-api:v1:type:gtk:Gtk:SignalAction:lifetime",
+    "native_refcount": "gobject",
+    "origin": "derived",
+    "provenance": "derived: GObject"
+  },
   "methods": [
     {
       "id": "svelters-api:v1:type:gtk:Gtk:SignalAction:method:get_signal_name",

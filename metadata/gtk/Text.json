@@ -77,6 +77,30 @@
     "svelters-api:v1:type:gtk:Gtk:InputHints"
   ],
   "id": "svelters-api:v1:type:gtk:Gtk:Text",
+  "inherited": {
+    "properties": [
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Editable:prop:text",
+        "from": "svelters-api:v1:type:gtk:Gtk:Editable",
+        "name": "text",
+        "origin": "manual"
+      }
+    ],
+    "signals": [
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Editable:signal:changed",
+        "from": "svelters-api:v1:type:gtk:Gtk:Editable",
+        "name": "changed",
+        "origin": "manual"
+      },
+      {
+        "fact": null,
+        "from": "svelters-api:v1:type:gtk:Gtk:Editable",
+        "name": "notify::text",
+        "origin": "manual"
+      }
+    ]
+  },
   "interfaces": [
     "Gtk.Accessible",
     "Gtk.AccessibleText",
@@ -85,6 +109,16 @@
     "Gtk.Editable"
   ],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "unref"
+    },
+    "id": "svelters-api:v1:type:gtk:Gtk:Text:lifetime",
+    "native_refcount": "gobject_floating",
+    "origin": "derived",
+    "provenance": "derived: GtkWidget (floating ref sunk by the handle table; the parent holds a ref while inserted)"
+  },
   "methods": [
     {
       "id": "svelters-api:v1:type:gtk:Gtk:Text:method:compute_cursor_extents",

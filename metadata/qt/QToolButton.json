@@ -79,6 +79,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QToolButton",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QToolButton:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "protected",
@@ -1025,6 +1035,8 @@
         "set": "setArrowType"
       },
       "brief": "Whether the button displays an arrow instead of a normal icon",
+      "default": "NoArrow",
+      "default_origin": "runtime",
       "js_name": "arrowType",
       "metaobject": {
         "constant": false,
@@ -1045,6 +1057,7 @@
       "name": "arrowType",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::ArrowType",
@@ -1065,6 +1078,8 @@
         "set": "setAutoRaise"
       },
       "brief": "Whether auto-raising is enabled or not",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "autoRaise",
       "metaobject": {
         "constant": false,
@@ -1085,6 +1100,7 @@
       "name": "autoRaise",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1105,6 +1121,8 @@
         "set": "setPopupMode"
       },
       "brief": "Describes the way that popup menus are used with tool buttons",
+      "default": "DelayedPopup",
+      "default_origin": "runtime",
       "js_name": "popupMode",
       "metaobject": {
         "constant": false,
@@ -1125,6 +1143,7 @@
       "name": "popupMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "ToolButtonPopupMode",
@@ -1145,6 +1164,8 @@
         "set": "setToolButtonStyle"
       },
       "brief": "Whether the tool button displays an icon only, text only, or text beside/below the icon",
+      "default": "ToolButtonIconOnly",
+      "default_origin": "runtime",
       "js_name": "toolButtonStyle",
       "metaobject": {
         "constant": false,
@@ -1165,6 +1186,7 @@
       "name": "toolButtonStyle",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::ToolButtonStyle",

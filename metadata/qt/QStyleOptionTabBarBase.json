@@ -62,6 +62,13 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOptionTabBarBase",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "borrowed_only",
+    "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOptionTabBarBase:lifetime",
+    "native_refcount": "none",
+    "origin": "derived",
+    "provenance": "derived: abstract or not a QObject; JS cannot create it"
+  },
   "methods": [],
   "native": {
     "brief": "Used to describe the base of a tab bar, i.e. the part that the tab bar usually overlaps with",

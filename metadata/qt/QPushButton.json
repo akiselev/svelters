@@ -123,6 +123,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QPushButton",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QPushButton:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -771,6 +781,8 @@
         "set": "setAutoDefault"
       },
       "brief": "Whether the push button is an auto default button",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "autoDefault",
       "metaobject": {
         "constant": false,
@@ -791,6 +803,7 @@
       "name": "autoDefault",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -811,6 +824,8 @@
         "set": "setDefault"
       },
       "brief": "Whether the push button is the default button",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "default",
       "metaobject": {
         "constant": false,
@@ -831,6 +846,7 @@
       "name": "default",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -851,6 +867,8 @@
         "set": "setFlat"
       },
       "brief": "Whether the button border is raised",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "flat",
       "metaobject": {
         "constant": false,
@@ -871,6 +889,7 @@
       "name": "flat",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",

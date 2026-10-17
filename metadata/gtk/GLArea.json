@@ -58,6 +58,16 @@
     "Gtk.ConstraintTarget"
   ],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "unref"
+    },
+    "id": "svelters-api:v1:type:gtk:Gtk:GLArea:lifetime",
+    "native_refcount": "gobject_floating",
+    "origin": "derived",
+    "provenance": "derived: GtkWidget (floating ref sunk by the handle table; the parent holds a ref while inserted)"
+  },
   "methods": [
     {
       "id": "svelters-api:v1:type:gtk:Gtk:GLArea:method:attach_buffers",

@@ -74,6 +74,11 @@ class Frontend:
             dp = root / "metadata/docs/qt" / f.name
             self.docs[f.stem] = svmeta.load_json(dp) if dp.exists() else {}
         self.names = {m["native"]["name"]: stem for stem, m in self.meta.items()}
+        sys.path.insert(0, str(root / "tools/metadata"))
+        import ledger  # noqa: E402
+
+        self.verified = ledger.verified_facts("qt")
+        self.facts = [e["fact"] for e in ledger.load("qt")["entries"]]
         self.overrides: dict[str, dict] = {}
         for p in sorted((root / "metadata/overrides/qt").glob("*.yaml")):
             self.overrides[p.stem] = {"path": p, "data": svmeta.load_yaml(p)}
@@ -155,8 +160,8 @@ class Frontend:
                 "origin": p["origin"],
                 "origins": sorted({p["origin"], "metaobject"} if mo else {p["origin"]}),
                 "type": self.typeref(p["type"], stem),
-                "default": None,
-                "range": None,
+                "default": irlib.display_value(p.get("default")),
+                "range": {k: v for k, v in (p.get("range") or {}).items() if k in ("min", "max")} or None,
                 "access": {"read": p["access"]["read"], "write": p["access"]["write"]},
                 "notify": nsig(p.get("notify") or mo.get("notify")),
                 "bindable": bool(p.get("notify") or mo.get("notify")),
@@ -203,6 +208,8 @@ class Frontend:
                     out[rec["name"]] = rec
                 rec["js_name"] = ap["js"]
                 rec["annotated"] = True
+                if any(f.endswith(f":prop:{ap['js']}") and f in self.verified and (f":{stem}:" in f) for f in self.facts):
+                    rec["verified"] = True
                 rec["origins"] = sorted(set(rec["origins"]) | {"manual"})
                 if ap.get("type") == "enum" and ap.get("values"):
                     rec["type"] = {"display": " | ".join(json.dumps(v) for v in ap["values"]), "neutral": "enum"}
@@ -383,7 +390,11 @@ class Frontend:
         e: dict = {
             "id": f"{TK}:{stem}", "kind": "class", "name": cname, "qualified": cname, "native_name": cname,
             "abstract": bool(m.get("abstract")), "tags": tags,
-            "status": {"tier": "annotated" if annotated else "ingested", "tested": annotated, "metadata_file": f"metadata/qt/{stem}.json",
+            "status": {"tier": "annotated" if annotated else "ingested",
+                       "tested": any(f.startswith(f"svelters-api:v1:type:qt:QtWidgets:{stem}:") and f in self.verified for f in self.facts),
+                       "verified_facts": [sum(1 for f in set(self.facts) if f.startswith(f"svelters-api:v1:type:qt:QtWidgets:{stem}:") and f in self.verified),
+                                          sum(1 for f in set(self.facts) if f.startswith(f"svelters-api:v1:type:qt:QtWidgets:{stem}:"))],
+                       "metadata_file": f"metadata/qt/{stem}.json",
                        "note": "" if annotated else "Raw: ingested from qdoc and the QMetaObject only. This class has no element tag and no generated backend code yet, so it cannot be used from Svelte until it is annotated."},
             "upstream": {"url": url, "label": f"Qt 6 reference: {cname}"},
             "bases": [f"{TK}:{b}" for b in m.get("bases", [])],
@@ -393,7 +404,7 @@ class Frontend:
         if annotated:
             files = sorted({f"metadata/overrides/qt/{k}.yaml" for k, ov in self.overrides.items() for el in ov["data"].get("elements", []) or [] if (el.get("construct") or {}).get("class") == cname})
             e["status"]["annotation_files"] = files
-            e["status"]["test_note"] = "Annotated facts have generated C++ verification tests (svl_qt_verify.cpp from gen_cpp.py, run under Xvfb/offscreen by P4)."
+            e["status"]["test_note"] = "Annotated facts have generated C++ verification tests (svl_qt_verify.cpp from gen_cpp.py); results are in metadata/verified/qt.json."
         s = self.text(doc)
         if s:
             e["summary"] = s
@@ -402,7 +413,11 @@ class Frontend:
         if m.get("availability", {}).get("deprecated"):
             e["availability"] = {"deprecated": True}
         tl = bool(set(m.get("bases", [])) & TOPLEVEL_BASES) or cname in TOPLEVEL_BASES
-        if m.get("qobject"):
+        if m.get("lifetime"):
+            lt = m["lifetime"]
+            e["lifetime"] = {"class": {"owned": "owned", "toplevel": "toplevel", "value": "value"}.get(lt["class"], "unknown"),
+                             "origin": "manual" if lt.get("origin") == "manual" else "derived", "note": str(lt.get("provenance", ""))}
+        elif m.get("qobject"):
             if tl:
                 e["lifetime"] = {"class": "toplevel", "origin": "derived", "note": "Top-level window; deleted with deleteLater() by destroy."}
             else:

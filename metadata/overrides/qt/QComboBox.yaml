@@ -2,8 +2,8 @@ elements:
   - tag: combobox
     construct: { class: QComboBox }
     props:
-      - { js: count, native: count }              # read-only
-      - { js: currentData, native: currentData }  # a QVariant, read-only
+      - { js: count, native: count, provenance: "QComboBox::count (qdoc); typed by the S1 value model (ABI v3)" }              # read-only
+      - { js: currentData, native: currentData, provenance: "QComboBox::currentData (qdoc); typed by the S1 value model (ABI v3)" }  # a QVariant, read-only
     methods:
-      - { js: addItem, native: addItem, params: [string, variant] }
-      - { js: itemData, native: itemData, params: [i32, i32] }   # (index, role); Qt::UserRole is 256
+      - { js: addItem, native: addItem, params: [string, variant], provenance: "QComboBox::addItem (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: itemData, native: itemData, params: [i32, i32], provenance: "QComboBox::itemData (qdoc); typed by the S1 value model (ABI v3)" }   # (index, role); Qt::UserRole is 256

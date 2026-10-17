@@ -43,6 +43,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsDropShadowEffect",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsDropShadowEffect:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -538,6 +548,8 @@
         "set": "setBlurRadius"
       },
       "brief": "The blur radius in pixels of the drop shadow",
+      "default": 1.0,
+      "default_origin": "runtime",
       "js_name": "blurRadius",
       "metaobject": {
         "constant": false,
@@ -561,6 +573,7 @@
         "signal": "blurRadiusChanged(double)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "qreal",
@@ -581,6 +594,7 @@
         "set": "setColor"
       },
       "brief": "The color of the drop shadow",
+      "default": null,
       "js_name": "color",
       "metaobject": {
         "constant": false,
@@ -604,6 +618,7 @@
         "signal": "colorChanged(QColor)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QColor",
@@ -624,6 +639,7 @@
         "set": "setOffset"
       },
       "brief": "The shadow offset in pixels",
+      "default": null,
       "js_name": "offset",
       "metaobject": {
         "constant": false,
@@ -647,6 +663,7 @@
         "signal": "offsetChanged(QPointF)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QPointF",
@@ -667,6 +684,8 @@
         "set": "setXOffset"
       },
       "brief": "The horizontal shadow offset in pixels",
+      "default": 8.0,
+      "default_origin": "runtime",
       "js_name": "xOffset",
       "metaobject": {
         "constant": false,
@@ -690,6 +709,7 @@
         "signal": "offsetChanged(QPointF)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "qreal",
@@ -710,6 +730,8 @@
         "set": "setYOffset"
       },
       "brief": "The vertical shadow offset in pixels",
+      "default": 8.0,
+      "default_origin": "runtime",
       "js_name": "yOffset",
       "metaobject": {
         "constant": false,
@@ -733,6 +755,7 @@
         "signal": "offsetChanged(QPointF)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "qreal",

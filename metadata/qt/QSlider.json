@@ -131,6 +131,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QSlider",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QSlider:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -553,6 +563,8 @@
         "set": "setTickInterval"
       },
       "brief": "The interval between tickmarks",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "tickInterval",
       "metaobject": {
         "constant": false,
@@ -573,6 +585,7 @@
       "name": "tickInterval",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -593,6 +606,8 @@
         "set": "setTickPosition"
       },
       "brief": "The tickmark position for this slider",
+      "default": "NoTicks",
+      "default_origin": "runtime",
       "js_name": "tickPosition",
       "metaobject": {
         "constant": false,
@@ -613,6 +628,7 @@
       "name": "tickPosition",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "TickPosition",

@@ -54,6 +54,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QApplication",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QApplication:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -1724,6 +1734,7 @@
         "set": "setAutoSipEnabled"
       },
       "brief": "Toggles automatic SIP (software input panel) visibility",
+      "default": null,
       "js_name": "autoSipEnabled",
       "metaobject": {
         "constant": false,
@@ -1744,6 +1755,7 @@
       "name": "autoSipEnabled",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1764,6 +1776,7 @@
         "set": "setCursorFlashTime"
       },
       "brief": "The text cursor's flash (blink) time in milliseconds",
+      "default": null,
       "js_name": "cursorFlashTime",
       "metaobject": {
         "constant": false,
@@ -1784,6 +1797,7 @@
       "name": "cursorFlashTime",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -1804,6 +1818,7 @@
         "set": "setDoubleClickInterval"
       },
       "brief": "The time limit in milliseconds that distinguishes a double click from two consecutive mouse clicks",
+      "default": null,
       "js_name": "doubleClickInterval",
       "metaobject": {
         "constant": false,
@@ -1824,6 +1839,7 @@
       "name": "doubleClickInterval",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -1844,6 +1860,7 @@
         "set": "setKeyboardInputInterval"
       },
       "brief": "The time limit in milliseconds that distinguishes a key press from two consecutive key presses",
+      "default": null,
       "js_name": "keyboardInputInterval",
       "metaobject": {
         "constant": false,
@@ -1864,6 +1881,7 @@
       "name": "keyboardInputInterval",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -1884,6 +1902,7 @@
         "set": "setStartDragDistance"
       },
       "brief": "The minimum distance required for a drag and drop operation to start",
+      "default": null,
       "js_name": "startDragDistance",
       "metaobject": {
         "constant": false,
@@ -1904,6 +1923,7 @@
       "name": "startDragDistance",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -1924,6 +1944,7 @@
         "set": "setStartDragTime"
       },
       "brief": "The time in milliseconds that a mouse button must be held down before a drag and drop operation will begin",
+      "default": null,
       "js_name": "startDragTime",
       "metaobject": {
         "constant": false,
@@ -1944,6 +1965,7 @@
       "name": "startDragTime",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -1964,6 +1986,7 @@
         "set": "setStyleSheet"
       },
       "brief": "The application style sheet",
+      "default": null,
       "js_name": "styleSheet",
       "metaobject": {
         "constant": false,
@@ -1984,6 +2007,7 @@
       "name": "styleSheet",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -2004,6 +2028,7 @@
         "set": "setWheelScrollLines"
       },
       "brief": "The number of lines to scroll a widget, when the mouse wheel is rotated",
+      "default": null,
       "js_name": "wheelScrollLines",
       "metaobject": {
         "constant": false,
@@ -2024,6 +2049,7 @@
       "name": "wheelScrollLines",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",

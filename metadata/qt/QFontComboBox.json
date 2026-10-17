@@ -81,6 +81,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QFontComboBox",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QFontComboBox:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -607,6 +617,7 @@
         "set": "setCurrentFont"
       },
       "brief": "The currently selected font",
+      "default": null,
       "js_name": "currentFont",
       "metaobject": {
         "constant": false,
@@ -630,6 +641,7 @@
         "signal": "currentFontChanged(QFont)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QFont",
@@ -650,6 +662,8 @@
         "set": "setFontFilters"
       },
       "brief": "The filter for the combobox",
+      "default": "AllFonts",
+      "default_origin": "runtime",
       "js_name": "fontFilters",
       "metaobject": {
         "constant": false,
@@ -670,6 +684,7 @@
       "name": "fontFilters",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "FontFilters",
@@ -690,6 +705,7 @@
         "set": "setWritingSystem"
       },
       "brief": "The writing system that serves as a filter for the combobox",
+      "default": null,
       "js_name": "writingSystem",
       "metaobject": {
         "constant": false,
@@ -710,6 +726,7 @@
       "name": "writingSystem",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QFontDatabase::WritingSystem",

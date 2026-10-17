@@ -69,6 +69,16 @@
   "id": "svelters-api:v1:type:gtk:Gtk:CustomLayout",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "unref"
+    },
+    "id": "svelters-api:v1:type:gtk:Gtk:CustomLayout:lifetime",
+    "native_refcount": "gobject",
+    "origin": "derived",
+    "provenance": "derived: GObject"
+  },
   "methods": [],
   "native": {
     "c_type": "GtkCustomLayout",

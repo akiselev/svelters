@@ -16,6 +16,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "common"))
+import svmeta  # noqa: E402
 from tsvalues import write_values_dts  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -206,11 +207,16 @@ def native_parse(m: Model, native: str) -> tuple[str, str, dict]:
     return cls, (meth[4:] if meth.startswith("get_") else meth), rec
 
 
-ARG_EXPR = {"child": "child", "prev_sibling": "prev.as_ref()", "before": "before", "null": "None::<&gtk::Widget>"}
+ARG_EXPR = {"child": "child", "prev_sibling": "prev.as_ref()", "before": "before", "null": "None::<&gtk::Widget>",
+            "index": "crate::util::idx_i32(bidx)", "index_opt": "bidx",
+            "child_index": "crate::util::idx_i32(cidx)", "child_index_opt": "cidx"}
 
 
 def native_call(m: Model, op: dict) -> tuple[str, str]:
-    """Return (class, "method(args)") as a gtk4-rs call; argument exprs follow signals-and-slots-semantics 2.5.2."""
+    """Return (class, "method(args)") as a gtk4-rs call; argument exprs follow signals-and-slots-semantics 2.5.2.
+
+    A1 additions: `index`/`index_opt` (position of `before`, -1/None = append) and
+    `child_index`/`child_index_opt` (position of the child), see `index_expr`."""
     cls, meth, rec = native_parse(m, op["native"])
     if len(rec["params"]) != len(op["args"]):
         raise ValueError(f"{op['native']}: {len(op['args'])} args for {len(rec['params'])} params")
@@ -223,6 +229,21 @@ def native_call(m: Model, op: dict) -> tuple[str, str]:
             raise ValueError(f"{op['native']}: {a} for non-nullable {p['name']}")
         out.append(e)
     return cls, f"{meth}({', '.join(out)})"
+
+
+def index_expr(m: Model, s: dict, ty: str, who: str) -> str:
+    """Rust expression of type Option<u32>: the position of widget `who` in slot `s`, through the
+    slot's `index_of` op when it has one (e.g. GtkNotebook::page_num), else the index of the
+    direct child of `parent` that contains `who`."""
+    io = s["ops"].get("index_of")
+    if io:
+        _, meth, _ = native_parse(m, io["native"])
+        return f"crate::util::Idx::idx(parent.downcast_ref::<{ty}>().unwrap().{meth}({who}))"
+    return f"crate::util::direct_child_index(parent, {who})"
+
+
+def uses(op: dict, *names: str) -> bool:
+    return any(a in names for a in op.get("args", []))
 
 
 def prov_str(prov) -> str:
@@ -241,6 +262,8 @@ def gen_slots(m: Model) -> str:
         cls, expr = native_call(m, call)
         ty = f"gtk::{cls}"
         prev = "            let prev = crate::util::prev_sibling(parent, before);\n" if "prev_sibling" in call["args"] else ""
+        if uses(call, "index", "index_opt"):
+            prev += f"            let bidx: Option<u32> = before.and_then(|b| {index_expr(m, s, ty, 'b')});\n"
         ins.append(f"""        {sid} => {{
             let p = parent.downcast_ref::<{ty}>().ok_or("parent is not a {ty}")?;
 {prev}            p.{expr};
@@ -259,6 +282,9 @@ def gen_slots(m: Model) -> str:
             Ok(p.{gmeth}())
         }}
 """)
+        if uses(ops["remove"], "child_index", "child_index_opt"):
+            guard += (f"            let cidx: Option<u32> = {index_expr(m, s, 'gtk::' + rcls, 'child')};\n"
+                      f"            if cidx.is_none() {{ return Err(\"child is not in slot {s['name']}\".into()); }}\n")
         rem.append(f"""        {sid} => {{
             let p = parent.downcast_ref::<gtk::{rcls}>().ok_or("parent is not a gtk::{rcls}")?;
 {guard}            p.{rexpr};
@@ -355,6 +381,15 @@ pub fn call_method(method: u32, obj: &glib::Object) -> Result<(), String> {
 
 
 # ---- verify.rs -------------------------------------------------------------------------------
+#
+# One test per annotated fact. A manual fact the generator cannot test is an error (A1: the
+# generators refuse unverifiable manual facts); `facts.json` maps every fact to its tests and a
+# fingerprint over the fact record plus the test source, which the ledger (metadata/verified/)
+# keys its results by.
+
+class Untestable(ValueError):
+    pass
+
 
 def contained(m: Model, s: dict, d: dict, parent: str, child: str) -> str:
     ops = s["ops"]
@@ -385,174 +420,324 @@ TRIGGERS = {
 }
 
 
-def gen_verify(m: Model) -> str:
-    t = [HEADER, "\n#![allow(unused_mut)]\nuse crate::testing::{on_gtk, Harness, V};\nuse gtk::prelude::*;\n"]
-    # slots
-    for k, s, d in m.slots:
-        subj = m.subject(d)
-        name = fn_ident("slot", gir_name(d), s["name"])
-        body = ["        let mut h = Harness::new();\n", f"        let parent = h.create({rs(subj)});\n"]
-        for c in ("abc" if s.get("order") == "before_sibling" else "ab"):
-            body.append(f"        let {c} = h.create(\"label\");\n")
-        ins = lambda c, before="None", slot=None: (
-            f"        h.insert(parent, {c}, {before}, {('Some(' + rs(slot) + ')') if slot else 'None'}).unwrap();\n")
-        A = lambda c, neg=False: f"        assert!({'!' if neg else ''}({contained(m, s, d, 'parent', c)}), \"{c} in {s['name']}\");\n"
-        body.append(ins("a", slot=s["name"]) + A("a"))
-        if s["cardinality"] == "one":
-            body.append(ins("b", slot=s["name"]) + A("b") + A("a", True))
-            body.append("        assert!(h.widget(a).parent().is_none(), \"replaced child is released\");\n")
-            body.append("        h.remove(parent, b).unwrap();\n" + A("b", True))
-            body.append("        h.remove(parent, a).unwrap_err();\n")
-            body.append(ins("a", slot=s["name"]) + A("a") + "        h.remove(parent, a).unwrap();\n" + A("a", True))
-        elif s.get("order") == "before_sibling":
-            body.append(ins("b", "Some(a)", s["name"]) + ins("c"))
-            body.append("        assert_eq!(h.children(parent), vec![h.widget(b), h.widget(a), h.widget(c)]);\n")
-            body.append("        h.remove(parent, a).unwrap();\n" + A("a", True))
-            body.append("        assert!(h.widget(a).parent().is_none());\n")
-            body.append(ins("a", "Some(c)", s["name"]))
-            body.append("        assert_eq!(h.children(parent), vec![h.widget(b), h.widget(a), h.widget(c)]);\n")
-            body.append("        for x in [a, b, c] { h.remove(parent, x).unwrap(); }\n" + A("a", True) + A("b", True))
-        else:
-            body.append(ins("b", slot=s["name"]) + A("b"))
-            body.append("        h.remove(parent, a).unwrap();\n" + A("a", True) + A("b"))
-            body.append(ins("a", slot=s["name"]) + A("a"))
-            body.append("        h.remove(parent, a).unwrap();\n        h.remove(parent, b).unwrap();\n" + A("b", True))
-        t.append(f"\n/// slot {gir_name(d)}.{s['name']}: {prov_str(s['annotated']['provenance'])}\n#[test]\nfn {name}() {{\n    on_gtk(|| {{\n" + "".join(body) + "    });\n}\n")
+def rust_lit(ref: str, v) -> str:
+    """A Rust literal of the GObject property's value type."""
+    head = ref.split("<")[0]
+    if head == "bool":
+        return "true" if v else "false"
+    if head in ("i32", "u32", "i64", "u64"):
+        return f"{int(v)}{head}"
+    if head in ("f32", "f64"):
+        return f"{float(v)!r}{head}"
+    if head == "string":
+        return rs(str(v))
+    raise Untestable(f"no literal for {ref}")
 
-    # signals
-    for k, d in ((m.kind_id[d["id"]], d) for d in m.kinds):
-        for s in d["signals"]:
-            if "annotated" not in s:
-                continue
-            subj = m.subject(d)
-            trig = s.get("trigger")
-            if "action" in s["flags"]:
-                fire = f"o.emit_by_name::<()>({rs(s['name'].split('::')[0])}, &[]);"
-                vals = ["a", "b", "c"]
-            elif trig:
-                fire = TRIGGERS[trig["native"]]
-                vals = trig["values"] + [trig["values"][-1] + "x"]
-            else:
-                print(f"warning: no trigger for {d['id']} {s['name']}; test skipped", file=sys.stderr)
-                continue
-            name = fn_ident("signal", gir_name(d), s["name"])
-            sig = rs(s["name"])
-            t.append(f"""
-/// signal {gir_name(d)}.{s['name']}: {s['annotated']['provenance']}
-#[test]
-fn {name}() {{
-    on_gtk(|| {{
-        let mut h = Harness::new();
-        let e = h.create({rs(subj)});
-        let fire = |o: &gtk::glib::Object, v: &str| {{
-            let _ = v;
+
+def find_prop(m: Model, d: dict, name: str) -> dict | None:
+    """Property `name` on kind d, its bases or interfaces."""
+    for doc in [d] + [m.by_id.get(TYPE_PREFIX + x.replace(".", ":")) for x in d.get("bases", []) + d.get("interfaces", [])]:
+        if doc:
+            for p in doc.get("properties", []):
+                if p["name"] == name or p["js_name"] == name:
+                    return p
+    return None
+
+
+def trigger_parts(m: Model, d: dict, s: dict) -> tuple[str, list[str]]:
+    """(Rust statements firing signal `s` on `o` with value `v`/index `i`, three value strings)."""
+    trig = s.get("trigger")
+    if trig:
+        vals = [v for v in trig.get("values", [])] or ["a", "b", "c"]
+        if len(vals) == 2:
+            vals = vals + [vals[0]]
+        if "native" in trig:
+            return TRIGGERS[trig["native"]], [str(v) for v in vals]
+        if "property" in trig:
+            p = find_prop(m, d, trig["property"])
+            if p is None:
+                raise Untestable(f"trigger property {trig['property']} not found")
+            arms = "".join(f"                {i} => o.set_property({rs(p['name'])}, {rust_lit(p['type']['ref'], v)}),\n"
+                           for i, v in enumerate(vals[:3]))
+            return ("let _ = v;\n            match i {\n" + arms + "                _ => unreachable!(),\n            }"), [str(v) for v in vals]
+        if "rust" in trig:
+            return trig["rust"], [str(v) for v in vals]
+    if "action" in s.get("flags", []) and not s.get("params"):
+        return f"let _ = v; o.emit_by_name::<()>({rs(s['name'].split('::')[0])}, &[]);", ["a", "b", "c"]
+    raise Untestable(f"signal {s['name']} has no trigger (add `trigger:`) and is not a parameterless action signal")
+
+
+def prop_sample(m: Model, d: dict, p: dict) -> tuple[str, str]:
+    """(statement setting the sample through the backend on handle `o`, expected V)."""
+    ref = p["type"]["ref"]
+    head = ref.split("<")[0]
+    js = rs(p["js_name"])
+    sample = p.get("sample")
+    if head == "string":
+        v = "p3-sample" if sample is None else str(sample)
+        return f"h.set_str(o, {js}, {rs(v)}).unwrap();", f"V::Str({rs(v)}.into())"
+    if head == "bool":
+        v = (not bool(p.get("default"))) if sample is None else bool(sample)
+        return f"h.set_bool(o, {js}, {str(v).lower()}).unwrap();", f"V::Bool({str(v).lower()})"
+    rng = p.get("range") or {}
+    lo, hi = rng.get("min"), rng.get("max")
+    if head in ("i32", "u32", "i64", "u64"):
+        if sample is None:
+            cands = [7, 1, 2, 3, lo, hi]
+            v = next((c for c in cands if c is not None and (lo is None or c >= lo) and (hi is None or c <= hi) and c != p.get("default")), None)
+            if v is None:
+                raise Untestable(f"no integer sample for {p['name']} (range {rng}); set `sample:`")
+        else:
+            v = int(sample)
+        return f"h.set_i64(o, {js}, {v}).unwrap();", f"V::I64({v})"
+    if head in ("f32", "f64"):
+        if sample is None:
+            cands = [0.5, 0.25, 1.5, 2.0, lo, hi]
+            v = next((c for c in cands if c is not None and (lo is None or c >= lo) and (hi is None or c <= hi) and c != p.get("default")), None)
+            if v is None:
+                raise Untestable(f"no float sample for {p['name']} (range {rng}); set `sample:`")
+        else:
+            v = float(sample)
+        return f"h.set_f64(o, {js}, {float(v)!r}).unwrap();", f"V::F64({float(v)!r})"
+    if head == "enum":
+        en = m.by_id.get(ref[ref.index("<") + 1:-1])
+        if en is None:
+            raise Untestable(f"enum {ref} not in metadata")
+        nick = str(sample) if sample is not None else next(x["nick"] for x in en["members"] if x["nick"] != p["default"])
+        return f'h.set_str(o, {js}, {rs(nick)}).unwrap();', f'V::Str({rs(nick)}.into())'
+    raise Untestable(f"property {p['name']}: type {ref} has no generated test (supported: string, bool, integers, floats, enums)")
+
+
+def ann_prov(r: dict) -> str:
+    return prov_str((r.get("annotated") or {}).get("provenance") or r.get("provenance") or "")
+
+
+class Facts:
+    def __init__(self):
+        self.tests: list[str] = []
+        self.facts: list[dict] = []
+        self.errors: list[str] = []
+
+    def add(self, fact_id: str, section: str, kind: str, name: str, record: dict, fns: list[tuple[str, str]]) -> None:
+        """fns: [(test fn name, full source)]."""
+        for _, src in fns:
+            self.tests.append(src)
+        self.facts.append({"fact": fact_id, "section": section, "kind": kind, "name": name,
+                           "tests": [f"generated::verify::{n}" for n, _ in fns],
+                           "fingerprint": svmeta.fingerprint({"record": record, "tests": [src for _, src in fns]})})
+
+
+def wrap(name: str, doc: str, body: str) -> tuple[str, str]:
+    return name, f"\n/// {doc}\n#[test]\nfn {name}() {{\n    on_gtk(|| {{\n        let mut h = Harness::new();\n{body}    }});\n}}\n"
+
+
+def slot_test(m: Model, k: int, s: dict, d: dict) -> tuple[str, str]:
+    subj = m.subject(d)
+    name = fn_ident("slot", gir_name(d), s["name"])
+    body = [f"        let parent = h.create({rs(subj)});\n"]
+    ordered = s.get("order") in ("before_sibling", "native_index")
+    for c in ("abc" if ordered else "ab"):
+        body.append(f"        let {c} = h.create(\"label\");\n")
+    ins = lambda c, before="None", slot=None: (
+        f"        h.insert(parent, {c}, {before}, {('Some(' + rs(slot) + ')') if slot else 'None'}).unwrap();\n")
+    A = lambda c, neg=False: f"        assert!({'!' if neg else ''}({contained(m, s, d, 'parent', c)}), \"{c} in {s['name']}\");\n"
+    body.append(ins("a", slot=s["name"]) + A("a"))
+    if s["cardinality"] == "one":
+        body.append(ins("b", slot=s["name"]) + A("b") + A("a", True))
+        body.append("        assert!(h.widget(a).parent().is_none(), \"replaced child is released\");\n")
+        body.append("        h.remove(parent, b).unwrap();\n" + A("b", True))
+        body.append("        h.remove(parent, a).unwrap_err();\n")
+        body.append(ins("a", slot=s["name"]) + A("a") + "        h.remove(parent, a).unwrap();\n" + A("a", True))
+    elif ordered:
+        cls = native_parse(m, s["ops"]["insert"]["native"])[0]
+        body.append(f"        let pw = h.widget(parent);\n        let idx = |c: u64| -> Option<u32> {{ let parent = &pw; let w = h.widget(c); "
+                    f"{index_expr(m, s, 'gtk::' + cls, '&w')} }};\n")
+        body.append(ins("b", "Some(a)", s["name"]) + ins("c"))
+        body.append("        assert!(idx(b) < idx(a) && idx(a) < idx(c), \"order b a c: {:?}\", (idx(b), idx(a), idx(c)));\n")
+        body.append("        h.remove(parent, a).unwrap();\n" + A("a", True))
+        body.append("        assert!(h.widget(a).parent().is_none());\n")
+        body.append(ins("a", "Some(c)", s["name"]))
+        body.append("        assert!(idx(b) < idx(a) && idx(a) < idx(c), \"order b a c after re-insert\");\n")
+        body.append("        for x in [a, b, c] { h.remove(parent, x).unwrap(); }\n" + A("a", True) + A("b", True))
+    else:
+        body.append(ins("b", slot=s["name"]) + A("b"))
+        body.append("        h.remove(parent, a).unwrap();\n" + A("a", True) + A("b"))
+        body.append(ins("a", slot=s["name"]) + A("a"))
+        body.append("        h.remove(parent, a).unwrap();\n        h.remove(parent, b).unwrap();\n" + A("b", True))
+    return wrap(name, f"slot {gir_name(d)}.{s['name']}: {ann_prov(s)}", "".join(body))
+
+
+def signal_test(m: Model, d: dict, s: dict) -> tuple[str, str]:
+    subj = m.subject(d)
+    fire, vals = trigger_parts(m, d, s)
+    setup = (s.get("trigger") or {}).get("setup", "")
+    name = fn_ident("signal", gir_name(d), s["name"])
+    sig = rs(s["name"])
+    body = f"""        let e = h.create({rs(subj)});
+        let o = e;
+        {setup}
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {{
+            let _ = (v, i);
             {fire}
         }};
         assert_ne!(h.resolve_signal({rs(subj)}, {sig}), 0);
         assert_eq!(h.resolve_signal({rs(subj)}, {rs(s['js_event'])}), h.resolve_signal({rs(subj)}, {sig}));
         h.listen(e, {sig}, true).unwrap();
-        fire(&h.obj(e), {rs(vals[0])});
+        fire(&h.obj(e), {rs(vals[0])}, 0);
         // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
         let ev = h.take_events();
         assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, {sig}.to_string())), "delivered: {{ev:?}}");
         h.listen(e, {sig}, false).unwrap();
-        fire(&h.obj(e), {rs(vals[1])});
+        fire(&h.obj(e), {rs(vals[1])}, 1);
         assert!(h.take_events().is_empty(), "no delivery after listen(off)");
         h.listen(e, {sig}, true).unwrap();
         let obj = h.obj(e);
         h.destroy(e);
-        fire(&obj, {rs(vals[2])});
+        fire(&obj, {rs(vals[2])}, 2);
         assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
         assert!(h.listen(e, {sig}, true).is_err(), "stale handle is an error");
-    }});
-}}
-""")
+"""
+    return wrap(name, f"signal {gir_name(d)}.{s['name']}: {ann_prov(s)}", body)
 
-    # properties
-    for k, p in m.props:
-        if "annotated" not in p:
-            continue
-        d = m.kinds[k - 1]
-        subj = m.subject(d)
-        ref = p["type"]["ref"]
-        head = ref.split("<")[0]
-        if head == "string":
-            setc, expect = 'h.set_str(o, {js}, "p3-sample").unwrap();', 'V::Str("p3-sample".into())'
-        elif head in ("i32", "u32", "i64", "u64"):
-            setc, expect = "h.set_i64(o, {js}, 7).unwrap();", "V::I64(7)"
-        elif head == "enum":
-            en = m.by_id[ref[ref.index("<") + 1:-1]]
-            nick = next(x["nick"] for x in en["members"] if x["nick"] != p["default"])
-            setc, expect = f'h.set_str(o, {{js}}, {rs(nick)}).unwrap();', f'V::Str({rs(nick)}.into())'
-        else:
-            print(f"warning: no sample for {p['id']}", file=sys.stderr)
-            continue
-        js = rs(p["js_name"])
-        extra = ""
-        if p.get("virtual"):
-            extra = (f"        let w = h.obj(o).property::<Option<gtk::Widget>>({rs(p['virtual']['property'])}).unwrap();\n"
-                     f"        assert_eq!(w.downcast::<gtk::Label>().unwrap().label(), \"p3-sample\");\n")
-        t.append(f"""
-/// property {gir_name(d)}.{p['name']} (JS {p['js_name']}): {p['annotated']['provenance']}
-#[test]
-fn {fn_ident('prop', gir_name(d), p['name'])}() {{
-    on_gtk(|| {{
-        let mut h = Harness::new();
-        let o = h.create({rs(subj)});
+
+def prop_tests(m: Model, d: dict, p: dict) -> list[tuple[str, str]]:
+    subj = m.subject(d)
+    setc, expect = prop_sample(m, d, p)
+    js = rs(p["js_name"])
+    setup = p.get("setup", "")
+    extra = ""
+    if p.get("virtual"):
+        extra = (f"        let w = h.obj(o).property::<Option<gtk::Widget>>({rs(p['virtual']['property'])}).unwrap();\n"
+                 f"        assert_eq!(w.downcast::<gtk::Label>().unwrap().label(), \"p3-sample\");\n")
+    out = [wrap(fn_ident('prop', gir_name(d), p['name']), f"property {gir_name(d)}.{p['name']} (JS {p['js_name']}): {ann_prov(p)}", f"""        let o = h.create({rs(subj)});
+        {setup}
         let id = h.resolve_prop({rs(subj)}, {js});
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop({rs(subj)}, {rs(p['name'])}));
-        {setc.format(js=js)}
+        {setc}
         assert_eq!(h.get(o, {js}), {expect});
-{extra}    }});
-}}
-""")
-        if p.get("echo_suppress"):
-            sigs = p["echo_suppress"]
-            trig = next(s["trigger"] for s in d["signals"] if s["name"] == sigs[0])
-            listens = "".join(f"        h.listen(e, {rs(x)}, true).unwrap();\n" for x in sigs)
-            names = ", ".join(rs(x) for x in sigs)
-            t.append(f"""
-/// echo suppression for {gir_name(d)}.{p['name']}: programmatic sets do not reach listeners, native edits do.
-#[test]
-fn {fn_ident('echo', gir_name(d), p['name'])}() {{
-    on_gtk(|| {{
-        let mut h = Harness::new();
-        let e = h.create({rs(subj)});
-{listens}        h.set_str(e, {js}, "from-js").unwrap();
+{extra}""")]
+    if p.get("echo_suppress"):
+        sigs = p["echo_suppress"]
+        srec = next((s for s in d["signals"] if s["name"] == sigs[0]), None)
+        if srec is None:
+            raise Untestable(f"echo_suppress names {sigs[0]}, which is not a signal of {gir_name(d)}")
+        fire, vals = trigger_parts(m, d, srec)
+        listens = "".join(f"        h.listen(o, {rs(x)}, true).unwrap();\n" for x in sigs)
+        names = ", ".join(rs(x) for x in sigs)
+        out.append(wrap(fn_ident('echo', gir_name(d), p['name']),
+                        f"echo suppression for {gir_name(d)}.{p['name']}: programmatic sets do not reach listeners, native edits do.", f"""        let o = h.create({rs(subj)});
+        {setup}
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {{
+            let o = ob;
+            let _ = (v, i);
+            {fire}
+        }};
+{listens}        {setc}
         assert!(h.take_events().is_empty(), "programmatic set is suppressed");
-        let o = h.obj(e);
-        let v = "from-native";
-        {TRIGGERS[trig['native']]}
+        fire(&h.obj(o), {rs(vals[1])}, 1);
         let mut got: Vec<String> = h.take_events().into_iter().map(|(_, s)| s).collect();
         got.sort();
         got.dedup();
         let mut want: Vec<String> = [{names}].iter().map(|s| s.to_string()).collect();
         want.sort();
         assert_eq!(got, want, "native edit still delivers");
-        h.set_str(e, {js}, "from-js").unwrap();
-        assert!(h.take_events().is_empty(), "handlers are unblocked after a programmatic set");
-    }});
-}}
-""")
+        {setc}
+        assert!(h.take_events().is_empty(), "handlers are unblocked after a programmatic set, and the next set is suppressed again");
+"""))
+    return out
 
-    # methods
-    for k, me in m.methods:
-        d = m.kinds[k - 1]
-        jn = me.get("js_name", me["name"])
-        t.append(f"""
-/// method {gir_name(d)}.{me['name']}: {me['annotated']['provenance']}
-#[test]
-fn {fn_ident('method', gir_name(d), me['name'])}() {{
-    on_gtk(|| {{
-        let mut h = Harness::new();
-        let o = h.create({rs(m.subject(d))});
+
+def binding_test(m: Model, d: dict, b: dict) -> tuple[str, str]:
+    """The change signal carries the new native value (or the property reads it back)."""
+    subj = m.subject(d)
+    sig = b["change"]["signal"]
+    srec = None
+    for doc in [d] + [m.by_id.get(TYPE_PREFIX + x.replace(".", ":")) for x in d.get("bases", []) + d.get("interfaces", [])]:
+        for s in (doc or {}).get("signals", []):
+            if s["js_event"] == sig or s["name"] == sig:
+                srec, sdoc = s, doc
+                break
+        if srec:
+            break
+    if srec is None:
+        raise Untestable(f"binding {b['name']}: change signal {sig} not found")
+    fire, vals = trigger_parts(m, sdoc, srec)
+    p = find_prop(m, d, b["property"])
+    if p is None:
+        raise Untestable(f"binding {b['name']}: property {b['property']} not found")
+    value_from = b["change"].get("value", "arg0")
+    check = ("        let arg = ev.last().unwrap().2.first().cloned().unwrap_or(V::Null);\n"
+             f"        assert_eq!(arg, h.get(o, {rs(p['js_name'])}), \"the change signal's first argument is the new value\");\n"
+             if value_from == "arg0" else
+             f"        assert_ne!(h.get(o, {rs(p['js_name'])}), V::Null, \"the property reads the new value\");\n")
+    return wrap(fn_ident("binding", gir_name(d), b["name"]), f"bind:{b['name']} on {gir_name(d)}: {prov_str(b['provenance'])}", f"""        let o = h.create({rs(subj)});
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {{
+            let o = ob;
+            let _ = (v, i);
+            {fire}
+        }};
+        h.listen(o, {rs(srec['name'])}, true).unwrap();
+        fire(&h.obj(o), {rs(vals[0])}, 0);
+        fire(&h.obj(o), {rs(vals[1])}, 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+{check}""")
+
+
+LIFE = {"owned": "SVL_LIFE_OWNED", "toplevel": "SVL_LIFE_TOPLEVEL"}
+
+
+def gen_verify(m: Model) -> tuple[str, list[dict], list[str]]:
+    f = Facts()
+
+    def attempt(fact_id, section, d, name, record, make):
+        try:
+            fns = make()
+        except (Untestable, ValueError, KeyError) as e:
+            f.errors.append(f"{fact_id}: {e}")
+            return
+        f.add(fact_id, section, gir_name(d), name, record, fns)
+
+    for k, s, d in m.slots:
+        attempt(s.get("id") or f"{d['id']}:slot:{s['name']}", "slots", d, s["name"], s, lambda s=s, d=d, k=k: [slot_test(m, k, s, d)])
+    for d in m.kinds:
+        for s in d["signals"]:
+            if "annotated" in s:
+                attempt(s["id"] if "id" in s else f"{d['id']}:signal:{s['name']}", "signals", d, s["name"], s,
+                        lambda s=s, d=d: [signal_test(m, d, s)])
+        for p in sorted(d["properties"], key=lambda p: p["name"]):
+            if "annotated" in p:
+                attempt(p.get("id") or f"{d['id']}:prop:{p['name']}", "properties", d, p["name"], p, lambda p=p, d=d: prop_tests(m, d, p))
+        for me in sorted(d["methods"], key=lambda x: x["name"]):
+            if "annotated" not in me:
+                continue
+            jn = me.get("js_name", me["name"])
+
+            def mk(me=me, d=d, jn=jn):
+                if not me.get("expect"):
+                    raise Untestable("method annotation needs `expect`")
+                return [wrap(fn_ident('method', gir_name(d), me['name']), f"method {gir_name(d)}.{me['name']}: {ann_prov(me)}", f"""        let o = h.create({rs(m.subject(d))});
+        {me.get('setup', '')}
         h.call(o, {rs(jn)}).unwrap();
-        assert!(h.widget(o).is_visible());
-    }});
-}}
-""")
-    return "".join(t)
+        let w = h.widget(o);
+        let _ = &w;
+        assert!({me['expect']}, "postcondition: {me['expect'].replace('"', "'")}");
+""")]
+            attempt(me["id"], "methods", d, me["name"], me, mk)
+        for b in d.get("bindings", []):
+            attempt(b.get("id") or f"{d['id']}:binding:{b['name']}", "bindings", d, b["name"], b, lambda b=b, d=d: [binding_test(m, d, b)])
+        life = d.get("lifetime")
+        if life and life.get("origin") == "manual":
+            def mkl(d=d, life=life):
+                if life["class"] not in LIFE:
+                    raise Untestable(f"lifetime class {life['class']} is not minted by the backend yet")
+                return [wrap(fn_ident("lifetime", gir_name(d)), f"lifetime {gir_name(d)}: {prov_str(life['provenance'])}", f"""        let o = h.create({rs(m.subject(d))});
+        assert_eq!(h.handle_info(o).unwrap().lifetime, svelters_abi::{LIFE[life['class']]});
+""")]
+            attempt(life["id"], "lifetime", d, "lifetime", life, mkl)
+    src = HEADER + "\n#![allow(unused_mut, unused_variables, clippy::all)]\nuse crate::testing::{on_gtk, Harness, V};\nuse gtk::prelude::*;\n" + "".join(f.tests)
+    return src, f.facts, f.errors
 
 
 # ---- .d.ts -----------------------------------------------------------------------------------
@@ -669,6 +854,10 @@ def gen_types(m: Model) -> str:
     return "".join(o)
 
 
+def toolkit_version(m: Model) -> str:
+    return next(iter(m.docs.values()))["source"]["gir"]["version"]
+
+
 def write(path: Path, text: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     if not path.exists() or path.read_text() != text:
@@ -681,7 +870,14 @@ def main() -> int:
     write(OUT / "tables.rs", gen_tables(m))
     write(OUT / "slots.rs", gen_slots(m))
     write(OUT / "types.rs", gen_types(m))
-    write(OUT / "verify.rs", gen_verify(m))
+    verify, facts, errors = gen_verify(m)
+    if errors:
+        print("gen_backend: manual facts without a working generated test (fix or drop them):", file=sys.stderr)
+        for e in errors:
+            print("  " + e, file=sys.stderr)
+        return 1
+    write(OUT / "verify.rs", verify)
+    write(OUT / "facts.json", json.dumps({"toolkit": "gtk", "version": toolkit_version(m), "facts": facts}, indent=1, sort_keys=True) + "\n")
     write(DTS, gen_dts(m))
     write(SCHEMA, gen_schema(m))
     write_values_dts(ROOT / "packages/renderer/types/values.d.ts")

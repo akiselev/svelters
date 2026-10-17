@@ -31,6 +31,16 @@
   "id": "svelters-api:v1:type:gtk:Gtk:ConstraintLayoutChild",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "unref"
+    },
+    "id": "svelters-api:v1:type:gtk:Gtk:ConstraintLayoutChild:lifetime",
+    "native_refcount": "gobject",
+    "origin": "derived",
+    "provenance": "derived: GObject"
+  },
   "methods": [],
   "native": {
     "c_type": "GtkConstraintLayoutChild",

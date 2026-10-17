@@ -61,6 +61,16 @@
   "id": "svelters-api:v1:type:gtk:Gtk:TryExpression",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "unref"
+    },
+    "id": "svelters-api:v1:type:gtk:Gtk:TryExpression:lifetime",
+    "native_refcount": "gobject",
+    "origin": "derived",
+    "provenance": "derived: GObject"
+  },
   "methods": [],
   "native": {
     "c_type": "GtkTryExpression",

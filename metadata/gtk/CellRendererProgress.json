@@ -47,10 +47,30 @@
   ],
   "enums": [],
   "id": "svelters-api:v1:type:gtk:Gtk:CellRendererProgress",
+  "inherited": {
+    "properties": [
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Orientable:prop:orientation",
+        "from": "svelters-api:v1:type:gtk:Gtk:Orientable",
+        "name": "orientation",
+        "origin": "manual"
+      }
+    ]
+  },
   "interfaces": [
     "Gtk.Orientable"
   ],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "unref"
+    },
+    "id": "svelters-api:v1:type:gtk:Gtk:CellRendererProgress:lifetime",
+    "native_refcount": "gobject_floating",
+    "origin": "derived",
+    "provenance": "derived: GObject"
+  },
   "methods": [],
   "native": {
     "c_type": "GtkCellRendererProgress",

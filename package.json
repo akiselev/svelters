@@ -7,7 +7,8 @@
     "node": ">=22"
   },
   "scripts": {
-    "test": "pnpm -r --workspace-concurrency=4 --filter '!@svelters/docs' test",
+    "test": "pnpm -r --workspace-concurrency=4 --filter '!@svelters/docs' test && pnpm test:meta",
+    "test:meta": "python3 -m pytest -q tools/metadata && python3 tools/metadata/common/gen_bindings.py --check && python3 tools/metadata/ledger.py check && python3 tools/metadata/coverage.py --check",
     "build": "pnpm -r --filter '!@svelters/docs' build",
     "watch": "node packages/build/bin/svelters-build.mjs --watch",
     "docs:ir": "python3 tools/docs/build_ir.py",

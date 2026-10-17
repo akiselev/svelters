@@ -79,6 +79,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractScrollArea",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractScrollArea:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -1556,6 +1566,7 @@
         "set": "setHorizontalScrollBarPolicy"
       },
       "brief": "The policy for the horizontal scroll bar",
+      "default": null,
       "js_name": "horizontalScrollBarPolicy",
       "metaobject": {
         "constant": false,
@@ -1576,6 +1587,7 @@
       "name": "horizontalScrollBarPolicy",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::ScrollBarPolicy",
@@ -1596,6 +1608,8 @@
         "set": "setSizeAdjustPolicy"
       },
       "brief": "The policy describing how the size of the scroll area changes when the size of the viewport changes",
+      "default": "AdjustIgnored",
+      "default_origin": "runtime",
       "js_name": "sizeAdjustPolicy",
       "metaobject": {
         "constant": false,
@@ -1616,6 +1630,7 @@
       "name": "sizeAdjustPolicy",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "SizeAdjustPolicy",
@@ -1636,6 +1651,7 @@
         "set": "setVerticalScrollBarPolicy"
       },
       "brief": "The policy for the vertical scroll bar",
+      "default": null,
       "js_name": "verticalScrollBarPolicy",
       "metaobject": {
         "constant": false,
@@ -1656,6 +1672,7 @@
       "name": "verticalScrollBarPolicy",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::ScrollBarPolicy",

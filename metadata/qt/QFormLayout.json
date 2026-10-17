@@ -144,6 +144,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QFormLayout",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QFormLayout:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -2666,6 +2676,8 @@
         "set": "setFieldGrowthPolicy"
       },
       "brief": "The way in which the form's fields grow",
+      "default": "AllNonFixedFieldsGrow",
+      "default_origin": "runtime",
       "js_name": "fieldGrowthPolicy",
       "metaobject": {
         "constant": false,
@@ -2686,6 +2698,7 @@
       "name": "fieldGrowthPolicy",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "FieldGrowthPolicy",
@@ -2706,6 +2719,8 @@
         "set": "setFormAlignment"
       },
       "brief": "The alignment of the form layout's contents within the layout's geometry",
+      "default": "AlignLeading|AlignTop",
+      "default_origin": "runtime",
       "js_name": "formAlignment",
       "metaobject": {
         "constant": false,
@@ -2726,6 +2741,7 @@
       "name": "formAlignment",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::Alignment",
@@ -2746,6 +2762,8 @@
         "set": "setHorizontalSpacing"
       },
       "brief": "The spacing between widgets that are laid out side by side",
+      "default": -1,
+      "default_origin": "runtime",
       "js_name": "horizontalSpacing",
       "metaobject": {
         "constant": false,
@@ -2766,6 +2784,7 @@
       "name": "horizontalSpacing",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -2786,6 +2805,8 @@
         "set": "setLabelAlignment"
       },
       "brief": "The horizontal alignment of the labels",
+      "default": "AlignLeft|AlignLeading",
+      "default_origin": "runtime",
       "js_name": "labelAlignment",
       "metaobject": {
         "constant": false,
@@ -2806,6 +2827,7 @@
       "name": "labelAlignment",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::Alignment",
@@ -2826,6 +2848,8 @@
         "set": "setRowWrapPolicy"
       },
       "brief": "The way in which the form's rows wrap",
+      "default": "DontWrapRows",
+      "default_origin": "runtime",
       "js_name": "rowWrapPolicy",
       "metaobject": {
         "constant": false,
@@ -2846,6 +2870,7 @@
       "name": "rowWrapPolicy",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "RowWrapPolicy",
@@ -2866,6 +2891,8 @@
         "set": "setVerticalSpacing"
       },
       "brief": "The spacing between widgets that are laid out vertically",
+      "default": -1,
+      "default_origin": "runtime",
       "js_name": "verticalSpacing",
       "metaobject": {
         "constant": false,
@@ -2886,6 +2913,7 @@
       "name": "verticalSpacing",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",

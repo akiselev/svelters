@@ -1,0 +1,656 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "svelters:override:gtk/v1",
+  "title": "GTK override file (metadata/overrides/gtk/<Kind>.yaml)",
+  "description": "Patches the ingested kind metadata/gtk/<Kind>.json. Records in properties/signals/methods must match an ingested record by name unless marked `new: true`, `virtual: {...}` or `derived_from: {...}`. Child slots and bindings are annotation-only records. Every record carries `provenance`. Unknown keys are errors. See metadata/A1-WORKER-gtk.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "element": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tag"
+      ],
+      "properties": {
+        "tag": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "provenance": {
+          "$ref": "#/$defs/provenance"
+        }
+      }
+    },
+    "unexposed": {
+      "description": "This kind is deliberately not exposed as an element; the reason is shown in the coverage report.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reason"
+      ],
+      "properties": {
+        "reason": {
+          "type": "string",
+          "minLength": 3
+        },
+        "provenance": {
+          "$ref": "#/$defs/provenance"
+        }
+      }
+    },
+    "verify_subject": {
+      "description": "Element tag used to test facts annotated on an abstract kind or interface.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tag"
+      ],
+      "properties": {
+        "tag": {
+          "type": "string"
+        }
+      }
+    },
+    "lifetime": {
+      "$ref": "#/$defs/lifetime"
+    },
+    "properties": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/property"
+      }
+    },
+    "signals": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/signal"
+      }
+    },
+    "methods": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/method"
+      }
+    },
+    "children": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "policy",
+        "default_slot",
+        "slots"
+      ],
+      "properties": {
+        "policy": {
+          "enum": [
+            "none",
+            "single_child",
+            "ordered",
+            "named_slots",
+            "layout_managed",
+            "pages",
+            "model_driven",
+            "custom"
+          ]
+        },
+        "default_slot": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "slots": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/slot"
+          }
+        }
+      }
+    },
+    "bindings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/binding"
+      }
+    }
+  },
+  "$defs": {
+    "provenance": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 3
+        },
+        {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "origin",
+              "ref"
+            ],
+            "properties": {
+              "origin": {
+                "enum": [
+                  "gir",
+                  "runtime",
+                  "manual",
+                  "probe",
+                  "docs",
+                  "source"
+                ]
+              },
+              "ref": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "type": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ref": {
+          "type": "string"
+        },
+        "nullable": {
+          "type": "boolean"
+        },
+        "native": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "gtype": {
+          "type": "string"
+        }
+      }
+    },
+    "property": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "provenance"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "js_name": {
+          "type": "string"
+        },
+        "new": {
+          "const": true
+        },
+        "echo_suppress": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sample": {
+          "description": "Value the generated property test writes and reads back (default: derived from the type).",
+          "type": [
+            "string",
+            "number",
+            "boolean"
+          ]
+        },
+        "type": {
+          "$ref": "#/$defs/type"
+        },
+        "access": {
+          "type": "object"
+        },
+        "default": {},
+        "range": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "notify": {
+          "type": "object"
+        },
+        "accessors": {
+          "type": "object"
+        },
+        "invocation": {
+          "type": "string"
+        },
+        "role": {
+          "enum": [
+            "value",
+            "child_slot",
+            "reference"
+          ]
+        },
+        "virtual": {
+          "type": "object",
+          "required": [
+            "op"
+          ],
+          "properties": {
+            "op": {
+              "type": "string"
+            },
+            "property": {
+              "type": "string"
+            }
+          }
+        },
+        "provenance": {
+          "$ref": "#/$defs/provenance"
+        },
+        "setup": {
+          "type": "string",
+          "description": "Rust statement(s) run before the property test; `h` (Harness) and `o` (handle) are in scope."
+        }
+      }
+    },
+    "trigger": {
+      "description": "How the generated signal test makes the toolkit emit the signal natively.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "native": {
+          "enum": [
+            "set_text"
+          ],
+          "description": "Built-in trigger (GtkEditable::set_text)."
+        },
+        "property": {
+          "type": "string",
+          "description": "Set this GObject property natively to each of `values` in turn."
+        },
+        "rust": {
+          "type": "string",
+          "description": "Rust statement(s); `o: &glib::Object` is the subject, `v` the current value from `values` (as &str), `i` its index."
+        },
+        "values": {
+          "type": "array",
+          "minItems": 2
+        },
+        "setup": {
+          "type": "string",
+          "description": "Rust statement(s) run after the subject is created; `h` (Harness) and `o` (handle) are in scope."
+        }
+      }
+    },
+    "signal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "provenance"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "js_event": {
+          "type": "string"
+        },
+        "new": {
+          "const": true
+        },
+        "derived_from": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "property"
+          ],
+          "properties": {
+            "property": {
+              "type": "string"
+            }
+          }
+        },
+        "handler_result": {
+          "enum": [
+            "none",
+            "bool_stop",
+            "value"
+          ]
+        },
+        "sync_required": {
+          "type": "boolean"
+        },
+        "trigger": {
+          "$ref": "#/$defs/trigger"
+        },
+        "params": {
+          "type": "array"
+        },
+        "returns": {
+          "type": "object"
+        },
+        "phase": {
+          "type": "string"
+        },
+        "flags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "connection": {
+          "type": "object"
+        },
+        "provenance": {
+          "$ref": "#/$defs/provenance"
+        }
+      }
+    },
+    "method": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "dispatch",
+        "expect",
+        "provenance"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "js_name": {
+          "type": "string"
+        },
+        "dispatch": {
+          "enum": [
+            "zero_arg"
+          ]
+        },
+        "setup": {
+          "type": "string",
+          "description": "Rust statement(s) run before the call; `h`, `o` (handle) available."
+        },
+        "expect": {
+          "type": "string",
+          "description": "Rust bool expression checked after the call; `h` (Harness), `o` (handle), `w` (gtk::Widget) available."
+        },
+        "provenance": {
+          "$ref": "#/$defs/provenance"
+        }
+      }
+    },
+    "op": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "native": {
+          "type": "string"
+        },
+        "args": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "child",
+              "null",
+              "prev_sibling",
+              "before",
+              "index",
+              "index_opt",
+              "child_index",
+              "child_index_opt",
+              null
+            ]
+          }
+        },
+        "effects": {
+          "type": "object"
+        },
+        "contains": {
+          "enum": [
+            "parent",
+            "ancestor"
+          ]
+        },
+        "iterate": {
+          "type": "object"
+        }
+      }
+    },
+    "slot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "cardinality",
+        "accepts",
+        "ops",
+        "provenance"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "content": {
+          "enum": [
+            "widget"
+          ]
+        },
+        "accepts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "route_by_kind": {
+          "type": "boolean"
+        },
+        "cardinality": {
+          "enum": [
+            "one",
+            "many"
+          ]
+        },
+        "order": {
+          "enum": [
+            "none",
+            "append_only",
+            "before_sibling",
+            "native_index"
+          ]
+        },
+        "default": {
+          "type": "object"
+        },
+        "on_remove": {
+          "enum": [
+            "empty",
+            "restore_default",
+            "destroys_child"
+          ]
+        },
+        "attrs": {
+          "type": "array"
+        },
+        "requires": {
+          "type": "array"
+        },
+        "ops": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "get": {
+              "$ref": "#/$defs/op"
+            },
+            "list": {
+              "$ref": "#/$defs/op"
+            },
+            "set": {
+              "$ref": "#/$defs/op"
+            },
+            "insert": {
+              "$ref": "#/$defs/op"
+            },
+            "remove": {
+              "$ref": "#/$defs/op"
+            },
+            "index_of": {
+              "$ref": "#/$defs/op"
+            }
+          }
+        },
+        "verify": {
+          "type": "object"
+        },
+        "provenance": {
+          "$ref": "#/$defs/provenance"
+        }
+      }
+    },
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "direction",
+        "property",
+        "type",
+        "change",
+        "echo",
+        "lifetime",
+        "provenance"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "direction": {
+          "enum": [
+            "two_way",
+            "read_only"
+          ]
+        },
+        "property": {
+          "type": "string"
+        },
+        "target": {},
+        "type": {
+          "$ref": "#/$defs/type"
+        },
+        "change": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "signal"
+          ],
+          "properties": {
+            "signal": {
+              "type": "string"
+            },
+            "role": {
+              "enum": [
+                "any_change",
+                "user_edit"
+              ]
+            },
+            "value": {
+              "enum": [
+                "arg0",
+                "prop"
+              ]
+            }
+          }
+        },
+        "write": {
+          "type": "object"
+        },
+        "echo": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "strategy"
+          ],
+          "properties": {
+            "strategy": {
+              "enum": [
+                "host_suppressed",
+                "compare",
+                "none"
+              ]
+            },
+            "compare_before_set": {
+              "type": "boolean"
+            },
+            "read_back": {
+              "type": "boolean"
+            },
+            "sync_signals_on_set": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "lifetime": {
+          "type": "object"
+        },
+        "unsupported_for": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "provenance": {
+          "$ref": "#/$defs/provenance"
+        }
+      }
+    },
+    "lifetime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "class",
+        "provenance"
+      ],
+      "properties": {
+        "class": {
+          "enum": [
+            "owned",
+            "toplevel",
+            "value",
+            "borrowed_only"
+          ]
+        },
+        "native_refcount": {
+          "enum": [
+            "gobject_floating",
+            "gobject",
+            "none"
+          ]
+        },
+        "destroy": {
+          "type": "object"
+        },
+        "close": {
+          "type": "object"
+        },
+        "internal_children": {
+          "type": "array"
+        },
+        "note": {
+          "type": "string"
+        },
+        "provenance": {
+          "$ref": "#/$defs/provenance"
+        }
+      }
+    }
+  }
+}

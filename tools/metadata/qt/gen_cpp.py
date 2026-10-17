@@ -26,7 +26,9 @@ the verification file holds one test per slot/ownership/signal/property/method f
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
+import json
 import re
 import sys
 import tomllib
@@ -165,10 +167,20 @@ class Model:
         self.read_files: list[Path] = []
         self._kinds: dict[str, dict] = {}
         self.elements: list[dict] = []
+        self.inherit: dict[str, dict] = {}
+        errs: list[str] = []
+        for p in sorted(ov_dir.glob("*.yaml")):
+            errs += svmeta.check_override(p, HERE / "override.schema.json")
+        if errs:
+            raise GenError("override schema errors:\n  " + "\n  ".join(errs))
         for p in sorted(ov_dir.glob("*.yaml")):
             cls = p.stem
             self.read_files.append(p)
             ov = svmeta.load_yaml(p)
+            if self.kind(cls) is None:
+                raise GenError(f"{p.name}: no metadata/qt/{cls}.json (file names are class names)")
+            if ov.get("inherit"):
+                self.inherit[cls] = ov["inherit"]
             for el in ov.get("elements", []):
                 if only and el["tag"] not in only:
                     continue
@@ -193,8 +205,33 @@ class Model:
         self.boxed_used: set[str] = set()
         self.owners_used: set[str] = set()
         for e in self.elements:
+            self._apply_inherit(e)
+            for key in ("props", "signals", "methods"):
+                for r in e.get(key, []):
+                    r["_raw"] = copy.deepcopy({k: v for k, v in r.items() if k != "_raw"})
+            for sl in (e.get("children") or {}).get("slots", []):
+                sl["_raw"] = copy.deepcopy(sl)
+            for b in e.get("bindings", []):
+                b["_raw"] = copy.deepcopy(b)
+        for e in self.elements:
             self._resolve(e)
         self._assign_ids()
+
+    def _apply_inherit(self, el: dict) -> None:
+        """Copy `inherit:` facts of the element's class and its bases (nearest first) into the
+        element, unless it declares the same JS name or lists it under `exclude`."""
+        el["exclude"] = list(el.get("exclude", []))
+        for c in self.chain(el["cls"]):
+            block = self.inherit.get(c)
+            if not block:
+                continue
+            for key in ("props", "signals", "methods"):
+                have = {r["js"] for r in el.get(key, [])}
+                for r in block.get(key, []):
+                    if r["js"] in have or r["js"] in el["exclude"]:
+                        continue
+                    el.setdefault(key, []).append({**copy.deepcopy(r), "inherited_from": c})
+                    have.add(r["js"])
 
     # metadata access ---------------------------------------------------------------------
     def kind(self, cls: str) -> dict | None:
@@ -457,8 +494,10 @@ class Model:
             ops["index_of"] = self._op(where + ".index_of", host_cls, raw["index_of"])
             lst = raw["list"]
             ops["count"] = self._op(where + ".list", host_cls, lst)
-            _, item, _ = self.parse_native(where + ".list.item", lst["item"])
+            icls, item, _ = self.parse_native(where + ".list.item", lst["item"])
             ops["at"] = {"method": item, "args": ["index"], "receiver": None, "then": []}
+            _, irec = self.find(icls, "methods", lambda r: r["name"] == item)
+            ops["at_layout_item"] = bool(irec) and "QLayoutItem" in (irec["returns"].get("native") or "")
             rc = raw["remove"].get("effects", {}).get("child")
             s["remove_effect"] = {"unparented": "released"}.get(rc)
             if s["remove_effect"] is None:
@@ -616,7 +655,7 @@ def prop_cases(m: Model, setter: bool) -> str:
                     out.append("          std::string er;")
                     out.append(f'          if (!conv_in(v, x, "{p["js"]}", er)) return fail(er);')
                     if p.get("suppress_signals"):
-                        out.append("          QSignalBlocker blk(t);  // programmatic set must not echo back as an event")
+                        out.append("          Suppress quiet(e);  // programmatic set must not echo back as an event (per-handle flag, never QSignalBlocker)")
                     out.append(f"          t->{p['setter']}(x);")
                     out.append("          return 0;")
                 else:
@@ -624,6 +663,8 @@ def prop_cases(m: Model, setter: bool) -> str:
                     out.append("          return 0;")
             else:  # QMetaProperty fallback
                 if setter:
+                    if p.get("suppress_signals"):
+                        out.append("          Suppress quiet(e);")
                     out.append(f"          return {tgt}->setProperty(\"{p['native']}\", to_variant(v)) ? 0 : fail(\"{p['js']}: setProperty failed\");")
                 else:
                     out.append(f"          out_variant(out, {tgt}->property(\"{p['native']}\")); return 0;")
@@ -763,7 +804,7 @@ def emit_insert(m: Model) -> str:
                 out.append(f"          {op_call('h', ops['set'], 'ch')};")
             else:
                 out.append("          if (before == child) return 0;")
-                out.append(f"          if ({op_call('h', ops['index_of'], 'ch')} >= 0) {{ {op_call('h', ops['remove'], 'ch')}; }}")
+                out.append(f"          if (int i = {op_call('h', ops['index_of'], 'ch')}; i >= 0) {{ {op_call('h', ops['remove'], 'ch', {'index': 'i'})}; }}")
                 out.append("          if (before) {")
                 out.append(f"            auto *bw = qobject_cast<QWidget *>(before);")
                 out.append(f"            int i = bw ? {op_call('h', ops['index_of'], 'bw')} : -1;")
@@ -797,8 +838,8 @@ def emit_remove(m: Model) -> str:
                     out.append(f"          {op_call('h', ops['clear'])};")
                 out.append("          return 0;\n        }")
             else:
-                out.append(f"        if ({op_call('h', ops['index_of'], 'ch')} >= 0) {{")
-                out.append(f"          {op_call('h', ops['remove'], 'ch')};")
+                out.append(f"        if (int i = {op_call('h', ops['index_of'], 'ch')}; i >= 0) {{")
+                out.append(f"          {op_call('h', ops['remove'], 'ch', {'index': 'i'})};")
                 out.append("          return 0;\n        }")
             out.append("      }")
         out.append("      break;\n    }")
@@ -965,122 +1006,273 @@ def gen_backend(m: Model, digest: str, tmpl: str) -> str:
 # --------------------------------------------------------------------------------------------
 # verification tests
 
+PREFIX = "svelters-api:v1:type:qt:QtWidgets"
+SCALAR = ("string", "bool", "int", "float")
+
+
+def fact_id(e: dict, section: str, name: str, rec: dict | None = None) -> str:
+    """Stable fact id. Inherited facts are keyed by the class that declares them, so one fact is
+    verified on every element that inherits it."""
+    if rec is not None and rec.get("inherited_from"):
+        return f"{PREFIX}:{rec['inherited_from']}:inherit:{section}:{name}"
+    return f"{PREFIX}:{e['cls']}:element:{e['tag']}:{section}:{name}"
+
+
+def strip(rec):
+    if isinstance(rec, dict):
+        return {k: strip(v) for k, v in rec.items() if k not in ("_raw", "rec", "prop", "decl_cls", "inherited_from")}
+    if isinstance(rec, list):
+        return [strip(x) for x in rec]
+    return rec
+
+
 class Tests:
+    """One test (or a few) per annotated fact; a fact the generator cannot test is an error.
+    Every test is attributed to its fact for the verified ledger (`--facts`)."""
+
     def __init__(self, m: Model):
         self.m = m
         self.fns: list[tuple[str, str]] = []
         self.src: list[str] = []
+        self.facts: dict[str, dict] = {}
+        self.errors: list[str] = []
+        self._fact: tuple[str, dict] | None = None
 
     def add(self, name: str, body: str) -> None:
         ident = "t_" + cident(name)
+        src = f"bool {ident}(std::string &why) {{\n{body}\n  return true;\n}}\n"
         self.fns.append((name, ident))
-        self.src.append(f"bool {ident}(std::string &why) {{\n{body}\n  return true;\n}}\n")
+        self.src.append(src)
+        if self._fact:
+            fid, raw = self._fact
+            f = self.facts.setdefault(fid, {"fact": fid, "record": raw, "tests": [], "srcs": []})
+            f["tests"].append(name)
+            f["srcs"].append(src)
+
+    def fact(self, fid: str, raw, section: str, e: dict, name: str, fn) -> None:
+        self._fact = (fid, {"raw": raw, "section": section, "name": name})
+        n0 = len(self.fns)
+        try:
+            fn()
+        except GenError as ex:
+            self.errors.append(f"{fid} (<{e['tag']}>): {ex}")
+            del self.fns[n0:]
+            del self.src[n0:]
+        self._fact = None
+        f = self.facts.get(fid)
+        if f is not None:
+            f.setdefault("elements", []).append(e["tag"])
+            f["section"], f["name"] = section, name
 
     def build(self) -> tuple[str, str]:
         m = self.m
         for e in m.elements:
-            self.props(e)
-            self.methods(e)
-            self.signals(e)
+            for p in e.get("props", []):
+                self.fact(fact_id(e, "prop", p["js"], p), [p["_raw"], strip(p.get("prop"))], "props", e, p["js"], lambda e=e, p=p: self.prop(e, p))
+            for me in e.get("methods", []):
+                self.fact(fact_id(e, "method", me["js"], me), [me["_raw"], strip(me.get("rec"))], "methods", e, me["js"], lambda e=e, me=me: self.method(e, me))
+            for sg in e.get("signals", []):
+                self.fact(fact_id(e, "signal", sg["js"], sg), [sg["_raw"], strip(sg.get("rec"))], "signals", e, sg["js"], lambda e=e, sg=sg: self.signal(e, sg))
             ch = e.get("children")
             if ch:
-                for s in ch["slots"]:
-                    if s["cardinality"] == "one":
-                        self.slot_one(e, s)
-                    else:
-                        self.slot_many(e, s)
+                for sl in ch["slots"]:
+                    fn = (lambda e=e, sl=sl: self.slot_one(e, sl)) if sl["cardinality"] == "one" else (lambda e=e, sl=sl: self.slot_many(e, sl))
+                    self.fact(fact_id(e, "slot", sl["name"]), sl["_raw"], "slots", e, sl["name"], fn)
+            for b in e.get("bindings", []):
+                self.fact(fact_id(e, "binding", b["name"]), b["_raw"], "bindings", e, b["name"], lambda e=e, b=b: self.binding(e, b))
         return "\n".join(self.src), "\n".join(f'    {{"{n}", {i}}},' for n, i in self.fns)
+
+    def manifest(self, version: str) -> dict:
+        facts = []
+        for fid in sorted(self.facts):
+            f = self.facts[fid]
+            facts.append({"fact": fid, "section": f["section"], "name": f["name"], "elements": sorted(set(f["elements"])),
+                          "tests": f["tests"], "fingerprint": svmeta.fingerprint({"record": f["record"], "tests": f["srcs"]})})
+        return {"toolkit": "qt", "version": version, "facts": facts}
 
     # helpers
     def mkparent(self, e): return f'  svl_handle p = mk("{e["tag"]}");'
 
-    def props(self, e):
+    def native_get(self, e, p, obj="O(h)") -> str:
+        """C++ expression reading the property natively."""
+        tgt = target_expr(e, p, obj)
+        if p.get("getter"):
+            return f"{tgt}->{p['getter']}()"
+        if p.get("native"):
+            conv = {"string": ".toString()", "bool": ".toBool()", "float": ".toDouble()"}.get(p["cat"], ".toLongLong()")
+            return f'{tgt}->property("{p["native"]}"){conv}'
+        raise GenError(f"{p['js']}: no native getter to verify against")
+
+    def sample(self, p) -> tuple[str, str | None, str]:
+        """(svl_value declaration of `v`, C++ native comparison rhs, expected backend output check on `out`)."""
+        cat, smp = p["cat"], p.get("sample")
+        if cat == "string":
+            val = "h\\xc3\\xa9llo" if smp is None else str(smp).replace('"', '\\"')
+            return (f'std::string s = "{val}"; svl_value v = vstr(s);', None, "out.tag == SVL_STR && valstr(out) == s")
+        if cat == "bool":
+            b = True if smp is None else bool(smp)
+            lit = "true" if b else "false"
+            return (f"svl_value v = vbool({lit});", lit, f"out.tag == SVL_BOOL && out.u.b == {lit}")
+        if cat == "float":
+            x = 0.5 if smp is None else float(smp)
+            return (f"svl_value v = vf64({x!r});", repr(x), f"out.tag == SVL_F64 && out.u.f == {x!r}")
+        if cat == "int":
+            x = 7 if smp is None else int(smp)
+            return (f"svl_value v = vi64({x});", str(x), f"out.u.i == {x}")
+        raise GenError(f"{p['js']}: no scalar sample for category {cat}")
+
+    def prop(self, e, p):
         t = e["tag"]
-        for p in e.get("props", []):
-            pn = p["js"]
-            tgt = target_expr(e, p, "O(h)")
-            if not p["direct"] or p["readonly"]:
-                continue
-            cat = p["cat"]
-            if cat in ("enum", "flags") and p["readonly"]:
-                continue
-            if cat == "enum":
-                members = sorted(self.m.enums_used[classify(p["ref"])[1]].items())
-                lines = [f'  svl_handle h = mk("{t}");',
-                         f'  const svl_member_desc *d = B->describe(B->self, SVL_PROP, K("{t}"), P("{t}", "{pn}"));',
-                         '  CHECK(d && d->n_params == 1 && d->params[0].tag == SVL_ENUM);',
-                         '  svl_id tid = d->params[0].type;',
-                         '  const svl_type_desc *td = B->describe_type(B->self, tid);',
-                         f'  CHECK(td && td->kind == SVL_ENUM && td->n_members == {len(members)});']
-                for name, cexpr in members:
-                    lines += [f'  {{ svl_value v = venum(tid, static_cast<int64_t>({cexpr}));',
-                              f'    CHECK(B->set_prop(B->self, h, P("{t}", "{pn}"), &v) == 0);',
-                              f'    CHECK({tgt}->{p["getter"]}() == {cexpr});',
-                              '    svl_value out{};',
-                              f'    CHECK(B->get_prop(B->self, h, P("{t}", "{pn}"), &out) == 0 && out.tag == SVL_ENUM && out.type == tid && out.u.i == static_cast<int64_t>({cexpr}));',
-                              f'    CHECK(enum_member_value(td, "{name}") == static_cast<int64_t>({cexpr})); }}']
-                lines += [f'  {{ svl_value v = venum(tid, 987654); CHECK(B->set_prop(B->self, h, P("{t}", "{pn}"), &v) < 0); }}',
-                          '  B->destroy(B->self, h);']
-            elif cat == "string":
-                lines = [f'  svl_handle h = mk("{t}");', '  std::string s = "h\\xc3\\xa9llo";', "  svl_value v = vstr(s);",
-                         f'  CHECK(B->set_prop(B->self, h, P("{t}", "{pn}"), &v) == 0);',
-                         f'  CHECK({tgt}->{p["getter"]}().toUtf8().toStdString() == s);',
-                         f'  CHECK(getstr(h, P("{t}", "{pn}")) == s);', "  B->destroy(B->self, h);"]
-            elif cat == "int":
-                lines = [f'  svl_handle h = mk("{t}");', "  svl_value v = vi64(7);",
-                         f'  CHECK(B->set_prop(B->self, h, P("{t}", "{pn}"), &v) == 0);',
-                         f'  CHECK({tgt}->{p["getter"]}() == 7);',
-                         '  svl_value out{};',
-                         f'  CHECK(B->get_prop(B->self, h, P("{t}", "{pn}"), &out) == 0 && out.u.i == 7);', "  B->destroy(B->self, h);"]
-            else:
-                continue  # records, flags, boxed, ...: round-trip tests live in examples/counter-qt/tests/serdes.rs
+        pn = p["js"]
+        cat = p["cat"]
+        tgt = target_expr(e, p, "O(h)")
+        P_ = f'P("{t}", "{pn}")'
+        if p["readonly"] or not ((p.get("prop") or {}).get("access") or {}).get("write", True):
+            lines = [f'  svl_handle h = mk("{t}");', "  svl_value out{};",
+                     f"  CHECK(B->get_prop(B->self, h, {P_}, &out) == 0);",
+                     f"  CHECK(B->set_prop(B->self, h, {P_}, &out) < 0);  // read-only",
+                     "  B->destroy(B->self, h);"]
+            self.add(f"prop/{t}.{pn}/read_only", "\n".join(lines))
+        elif cat == "enum" and p["direct"]:
+            members = sorted(self.m.enums_used[classify(p["ref"])[1]].items())
+            lines = [f'  svl_handle h = mk("{t}");',
+                     f'  const svl_member_desc *d = B->describe(B->self, SVL_PROP, K("{t}"), {P_});',
+                     '  CHECK(d && d->n_params == 1 && d->params[0].tag == SVL_ENUM);',
+                     '  svl_id tid = d->params[0].type;',
+                     '  const svl_type_desc *td = B->describe_type(B->self, tid);',
+                     f'  CHECK(td && td->kind == SVL_ENUM && td->n_members == {len(members)});']
+            for name, cexpr in members:
+                lines += [f'  {{ svl_value v = venum(tid, static_cast<int64_t>({cexpr}));',
+                          f'    CHECK(B->set_prop(B->self, h, {P_}, &v) == 0);',
+                          f'    CHECK({tgt}->{p["getter"]}() == {cexpr});',
+                          '    svl_value out{};',
+                          f'    CHECK(B->get_prop(B->self, h, {P_}, &out) == 0 && out.tag == SVL_ENUM && out.type == tid && out.u.i == static_cast<int64_t>({cexpr}));',
+                          f'    CHECK(enum_member_value(td, "{name}") == static_cast<int64_t>({cexpr})); }}']
+            lines += [f'  {{ svl_value v = venum(tid, 987654); CHECK(B->set_prop(B->self, h, {P_}, &v) < 0); }}',
+                      '  B->destroy(B->self, h);']
             self.add(f"prop/{t}.{pn}", "\n".join(lines))
-            if p.get("suppress_signals") and e.get("signals"):
-                lines = [f'  svl_handle h = mk("{t}");', '  std::string s = "echo"; svl_value v = vstr(s);']
-                for sg in e["signals"]:
-                    lines.append(f'  CHECK(B->listen(B->self, h, G("{t}", "{sg["js"]}"), true) == 0);')
-                lines += [f'  CHECK(B->set_prop(B->self, h, P("{t}", "{pn}"), &v) == 0);',
-                          f'  CHECK({tgt}->{p["getter"]}().toStdString() == s);',
-                          "  CHECK(rec.events.empty());  // no echo for programmatic sets", "  B->destroy(B->self, h);"]
-                self.add(f"signal/{t}.{pn}/no_echo_on_set_prop", "\n".join(lines))
-
-    def methods(self, e):
-        t = e["tag"]
-        for me in e.get("methods", []):
-            if any(classify(r)[0] not in ("int", "float") for r in me["argrefs"]):
-                continue  # non-numeric arguments are exercised by examples/counter-qt/tests/serdes.rs
-            args = ", ".join(f"vi64({i + 10})" for i, _ in enumerate(me["argrefs"]))
-            lines = [f'  svl_handle h = mk("{t}");']
-            if me["argrefs"]:
-                lines.append(f"  svl_value a[] = {{{args}}};")
-            lines += [f'  CHECK(B->call(B->self, h, M("{t}", "{me["js"]}"), {"a" if me["argrefs"] else "nullptr"}, {len(me["argrefs"])}, nullptr) == 0);',
-                      f'  CHECK(B->call(B->self, h, M("{t}", "{me["js"]}"), nullptr, {len(me["argrefs"]) + 1}, nullptr) < 0);',
+        elif cat in SCALAR:
+            decl, rhs, outcheck = self.sample(p)
+            native = self.native_get(e, p)
+            ncheck = (f"  CHECK(QString({native}).toUtf8().toStdString() == s);" if cat == "string" else f"  CHECK({native} == {rhs});")
+            lines = [f'  svl_handle h = mk("{t}");', f"  {decl}",
+                     f"  CHECK(B->set_prop(B->self, h, {P_}, &v) == 0);", ncheck,
+                     "  svl_value out{};",
+                     f"  CHECK(B->get_prop(B->self, h, {P_}, &out) == 0 && {outcheck});", "  B->destroy(B->self, h);"]
+            self.add(f"prop/{t}.{pn}", "\n".join(lines))
+        else:
+            # records, flags, boxed, dates, lists: write back the value just read (the converters'
+            # value round trips are in examples/counter-qt/tests/serdes.rs).
+            lines = [f'  svl_handle h = mk("{t}");', "  svl_value out{};",
+                     f"  CHECK(B->get_prop(B->self, h, {P_}, &out) == 0);",
+                     "  uint32_t tag = out.tag;",
+                     f"  CHECK(B->set_prop(B->self, h, {P_}, &out) == 0);",
+                     "  svl_value again{};",
+                     f"  CHECK(B->get_prop(B->self, h, {P_}, &again) == 0 && again.tag == tag);",
+                     "  B->destroy(B->self, h);"]
+            self.add(f"prop/{t}.{pn}/round_trip", "\n".join(lines))
+        if p.get("suppress_signals"):
+            sigs = [sg for sg in e.get("signals", []) if not sg.get("synthetic")]
+            if not sigs or not sigs[0].get("trigger"):
+                raise GenError(f"{pn}: suppress_signals needs a signal with a trigger on the element")
+            decl, _, _ = self.sample(p)
+            lines = [f'  svl_handle h = mk("{t}");', f"  {decl}"]
+            for sg in sigs:
+                lines.append(f'  CHECK(B->listen(B->self, h, G("{t}", "{sg["js"]}"), true) == 0);')
+            trig = sigs[0]["trigger"].replace("$w", f"static_cast<{e['cls']} *>(O(h))").replace("$i", "1")
+            lines += [f"  CHECK(B->set_prop(B->self, h, {P_}, &v) == 0);",
+                      "  CHECK(rec.events.empty());  // no echo for programmatic sets",
+                      f"  {trig};",
+                      "  CHECK(!rec.events.empty());  // native changes are still delivered",
+                      "  rec.events.clear();",
+                      f"  CHECK(B->set_prop(B->self, h, {P_}, &v) == 0);",
+                      "  CHECK(rec.events.empty());  // suppressed again on the next programmatic set",
                       "  B->destroy(B->self, h);"]
-            self.add(f"method/{t}.{me['js']}", "\n".join(lines))
+            self.add(f"signal/{t}.{pn}/no_echo_on_set_prop", "\n".join(lines))
 
-    def signals(self, e):
+    def method(self, e, me):
         t = e["tag"]
-        for s in e.get("signals", []):
-            if s.get("synthetic"):
-                continue  # covered by the hand-written close tests in verify.cpp.in
-            trig = lambda i: s["trigger"].replace("$w", f"static_cast<{e['cls']} *>(O(h))").replace("$i", str(i))
-            expect = s.get("expect_args", [])
-            lines = [f'  svl_handle h = mk("{t}");', f'  svl_id sig = G("{t}", "{s["js"]}");',
-                     "  CHECK(sig != 0);",
-                     "  CHECK(B->listen(B->self, h, sig, true) == 0);",
-                     "  CHECK(B->listen(B->self, h, sig, true) == 0);  // idempotent: must not double-connect",
-                     f"  {trig(0)};",
-                     "  CHECK(rec.events.size() == 1);  // delivered exactly once",
-                     "  CHECK(rec.events[0].h == h && rec.events[0].sig == sig);",
-                     f"  CHECK(rec.events[0].n == {len(s['args'])});"]
-            for i, v in enumerate(expect):
-                lines.append(f'  CHECK(rec.events[0].strs[{i}] == "{v}");')
-            lines += ["  CHECK(B->listen(B->self, h, sig, false) == 0);", f"  {trig(1)};",
-                      "  CHECK(rec.events.size() == 1);  // no delivery after listen(off)",
-                      "  CHECK(B->listen(B->self, h, sig, true) == 0);", f"  {trig(2)};",
-                      "  CHECK(rec.events.size() == 2);",
-                      "  B->destroy(B->self, h);"]
-            self.add(f"signal/{t}.{s['js']}/delivered_once", "\n".join(lines))
+        vals, synth = [], True
+        given = me.get("args") or [None] * len(me["argrefs"])
+        for i, ref in enumerate(me["argrefs"]):
+            cat = classify(ref)[0]
+            a = given[i] if i < len(given) else None
+            if cat == "int":
+                vals.append(f"vi64({10 + i if a is None else int(a)})")
+            elif cat == "bool":
+                vals.append(f"vbool({'true' if a is None or a else 'false'})")
+            elif cat == "float":
+                vals.append(f"vf64({0.5 if a is None else float(a)!r})")
+            elif cat == "string":
+                vals.append(f'vstr(std::string("{"x" if a is None else a}"))')
+            else:
+                synth = False
+        lines = [f'  svl_handle h = mk("{t}");', f'  CHECK(M("{t}", "{me["js"]}") != 0);']
+        if synth:
+            if vals:
+                lines.append(f"  svl_value a[] = {{{', '.join(vals)}}};")
+            lines.append(f'  CHECK(B->call(B->self, h, M("{t}", "{me["js"]}"), {"a" if vals else "nullptr"}, {len(vals)}, nullptr) == 0);')
+            if me.get("expect"):
+                w = f"static_cast<{e['cls']} *>(O(h))"
+                lines.append(f"  CHECK({me['expect'].replace('$w', w)});")
+        elif me.get("expect"):
+            raise GenError(f"{me['js']}: `expect` needs test arguments the generator can build (int, bool, float, string)")
+        # non-scalar arguments: the call itself is exercised by examples/counter-qt/tests/serdes.rs
+        lines += [f'  CHECK(B->call(B->self, h, M("{t}", "{me["js"]}"), nullptr, {len(me["argrefs"]) + 1}, nullptr) < 0);',
+                  "  B->destroy(B->self, h);"]
+        self.add(f"method/{t}.{me['js']}", "\n".join(lines))
+
+    def signal(self, e, s):
+        t = e["tag"]
+        if s.get("synthetic"):
+            self.add(f"signal/{t}.{s['js']}/synthetic_listen", "\n".join([
+                f'  svl_handle h = mk("{t}");', f'  svl_id sig = G("{t}", "{s["js"]}");', "  CHECK(sig != 0);",
+                "  CHECK(B->listen(B->self, h, sig, true) == 0);", "  CHECK(B->listen(B->self, h, sig, false) == 0);",
+                "  B->destroy(B->self, h);  // close behaviour: hand-written close tests in verify.cpp.in"]))
+            return
+        if not s.get("trigger"):
+            raise GenError(f"signal {s['js']} has no `trigger` (C++ statement that makes Qt emit it)")
+        trig = lambda i: s["trigger"].replace("$w", f"static_cast<{e['cls']} *>(O(h))").replace("$i", str(i))
+        expect = s.get("expect_args", [])
+        lines = [f'  svl_handle h = mk("{t}");', f'  svl_id sig = G("{t}", "{s["js"]}");',
+                 "  CHECK(sig != 0);",
+                 "  CHECK(B->listen(B->self, h, sig, true) == 0);",
+                 "  CHECK(B->listen(B->self, h, sig, true) == 0);  // idempotent: must not double-connect",
+                 f"  {trig(0)};",
+                 "  CHECK(rec.events.size() == 1);  // delivered exactly once",
+                 "  CHECK(rec.events[0].h == h && rec.events[0].sig == sig);",
+                 f"  CHECK(rec.events[0].n == {len(s['args'])});"]
+        for i, v in enumerate(expect):
+            lines.append(f'  CHECK(rec.events[0].strs[{i}] == "{v}");')
+        lines += ["  CHECK(B->listen(B->self, h, sig, false) == 0);", f"  {trig(1)};",
+                  "  CHECK(rec.events.size() == 1);  // no delivery after listen(off)",
+                  "  CHECK(B->listen(B->self, h, sig, true) == 0);", f"  {trig(2)};",
+                  "  CHECK(rec.events.size() == 2);",
+                  "  B->destroy(B->self, h);"]
+        self.add(f"signal/{t}.{s['js']}/delivered_once", "\n".join(lines))
+
+    def binding(self, e, b):
+        """The change signal's first argument is the new property value (what the renderer stores)."""
+        t = e["tag"]
+        sg = next((x for x in e.get("signals", []) if x["js"] == b["change"]["signal"]), None)
+        p = e["props_by_name"].get(b["property"])
+        if sg is None or p is None or not sg.get("trigger"):
+            raise GenError(f"bind:{b['name']}: needs prop {b['property']} and a triggerable signal {b['change']['signal']}")
+        trig = sg["trigger"].replace("$w", f"static_cast<{e['cls']} *>(O(h))").replace("$i", "1")
+        value = b["change"].get("value", "arg0")
+        lines = [f'  svl_handle h = mk("{t}");', f'  CHECK(B->listen(B->self, h, G("{t}", "{sg["js"]}"), true) == 0);',
+                 f"  {trig};", "  CHECK(!rec.events.empty());", "  svl_value out{};",
+                 f'  CHECK(B->get_prop(B->self, h, P("{t}", "{p["js"]}"), &out) == 0);']
+        if value == "arg0":
+            if not sg["args"]:
+                raise GenError(f"bind:{b['name']}: change.value arg0 needs a signal with args")
+            lines.append("  CHECK(rec.events.back().strs[0] == valstr(out));  // first arg == property value")
+        lines.append("  B->destroy(B->self, h);")
+        self.add(f"binding/{t}.{b['name']}", "\n".join(lines))
+
+    def item_widget(self, ops, expr: str) -> str:
+        """`list.item` may return a QLayoutItem* (layouts) or the QWidget* itself (QTabWidget::widget)."""
+        return f"{expr}->widget()" if ops.get("at_layout_item", True) else expr
 
     def slot_one(self, e, s):
         m, t, sn = self.m, e["tag"], s["name"]
@@ -1135,7 +1327,7 @@ class Tests:
         child = m.accepted_child_tag(e, s)
         ops, sid = s["ops"], f'S("{t}", "{sn}")'
         host = lambda p: host_expr(e, s["host"], f"O({p})")
-        at = lambda p, i: f"{host(p)}->{ops['at']['method']}({i})->widget()"
+        at = lambda p, i: self.item_widget(ops, f"{host(p)}->{ops['at']['method']}({i})")
         cnt = lambda p: op_call(host(p), ops['count'])
         mk3 = [f'  svl_handle p = mk("{t}"); svl_handle c0 = mk("{child}"); svl_handle c1 = mk("{child}"); svl_handle c2 = mk("{child}");']
         clean = "  B->destroy(B->self, p); B->destroy(B->self, c0); B->destroy(B->self, c1); B->destroy(B->self, c2);"
@@ -1179,8 +1371,12 @@ class Tests:
             clean]))
 
 
-def gen_verify(m: Model, digest: str, tmpl: str) -> str:
-    tests, table = Tests(m).build()
+def gen_verify(m: Model, digest: str, tmpl: str) -> tuple[str, dict]:
+    T = Tests(m)
+    tests, table = T.build()
+    if T.errors:
+        raise GenError("manual facts without a working generated test (fix or drop them):\n  " + "\n  ".join(T.errors))
+    version = (m.kind("QWidget") or {}).get("source", {}).get("qdoc", {}).get("version", "?")
     classes = {e["cls"] for e in m.elements} | {e["layout_cls"] for e in m.elements if e["layout_cls"]}
     simple = [e for e in m.elements if not e.get("construct", {}).get("composite")]
     parent = next((e for e in m.elements if e.get("children") and e["children"]["default_slot"]
@@ -1199,7 +1395,7 @@ def gen_verify(m: Model, digest: str, tmpl: str) -> str:
     out = tmpl.replace("//@@INCLUDES@@", inc(m, classes)).replace("//@@TESTS@@", tests).replace("//@@TEST_TABLE@@", table)
     for k, v in subs.items():
         out = out.replace(k, v)
-    return out
+    return out, T.manifest(version)
 
 
 # --------------------------------------------------------------------------------------------
@@ -1260,6 +1456,7 @@ def main() -> int:
     ap.add_argument("--config", required=True)
     ap.add_argument("--out", required=True)
     ap.add_argument("--dts", help="also write the .d.ts to this stable path (only rewritten when it changes)")
+    ap.add_argument("--facts", help="write the fact manifest (fact id -> test names + fingerprint) to this path")
     a = ap.parse_args()
     cfgp = Path(a.config).resolve()
     cfg = tomllib.loads(cfgp.read_text())
@@ -1272,7 +1469,10 @@ def main() -> int:
         digest = m.digest([HERE / "gen_cpp.py", templ / "backend.cpp.in", templ / "verify.cpp.in", templ / "serdes.hpp.in"])
         o = cfg["output"]
         write_text(out / o["backend"], gen_backend(m, digest, (templ / "backend.cpp.in").read_text()))
-        write_text(out / o["verify"], gen_verify(m, digest, (templ / "verify.cpp.in").read_text()))
+        verify, facts = gen_verify(m, digest, (templ / "verify.cpp.in").read_text())
+        write_text(out / o["verify"], verify)
+        if a.facts:
+            write_text(Path(a.facts), json.dumps(facts, indent=1, sort_keys=True) + "\n")
         write_text(out / o["dts"], gen_dts(m))
         if a.dts:
             write_text(Path(a.dts), gen_dts(m))

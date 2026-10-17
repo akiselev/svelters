@@ -295,6 +295,21 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QFileDialog",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "toplevel",
+    "close": {
+      "default": "destroy",
+      "request_signal": "close-request",
+      "veto": "event_ignore"
+    },
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QFileDialog:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QMainWindow/QDialog subclass; ABI v2 toplevel class (plans/architecture/backend-abi.md)"
+  },
   "methods": [
     {
       "access": "protected",
@@ -2929,6 +2944,8 @@
         "set": "setAcceptMode"
       },
       "brief": "Accept mode of the dialog",
+      "default": "AcceptOpen",
+      "default_origin": "runtime",
       "js_name": "acceptMode",
       "metaobject": {
         "constant": false,
@@ -2949,6 +2966,7 @@
       "name": "acceptMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "AcceptMode",
@@ -2969,6 +2987,8 @@
         "set": "setDefaultSuffix"
       },
       "brief": "Suffix added to the filename if no other suffix was specified",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "defaultSuffix",
       "metaobject": {
         "constant": false,
@@ -2989,6 +3009,7 @@
       "name": "defaultSuffix",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -3009,6 +3030,8 @@
         "set": "setFileMode"
       },
       "brief": "File mode of the dialog",
+      "default": "AnyFile",
+      "default_origin": "runtime",
       "js_name": "fileMode",
       "metaobject": {
         "constant": false,
@@ -3029,6 +3052,7 @@
       "name": "fileMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "FileMode",
@@ -3049,6 +3073,8 @@
         "set": "setOptions"
       },
       "brief": "Various options that affect the look and feel of the dialog",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "options",
       "metaobject": {
         "constant": false,
@@ -3069,6 +3095,7 @@
       "name": "options",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Options",
@@ -3089,6 +3116,7 @@
         "set": "setSupportedSchemes"
       },
       "brief": "URL schemes that the file dialog should allow navigating to",
+      "default": null,
       "js_name": "supportedSchemes",
       "metaobject": {
         "constant": false,
@@ -3109,6 +3137,7 @@
       "name": "supportedSchemes",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QStringList",
@@ -3129,6 +3158,8 @@
         "set": "setViewMode"
       },
       "brief": "Way files and directories are displayed in the dialog",
+      "default": "Detail",
+      "default_origin": "runtime",
       "js_name": "viewMode",
       "metaobject": {
         "constant": false,
@@ -3149,6 +3180,7 @@
       "name": "viewMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "ViewMode",

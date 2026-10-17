@@ -47,6 +47,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QTableView",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QTableView:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -2808,6 +2818,8 @@
         "set": "setCornerButtonEnabled"
       },
       "brief": "Whether the button in the top-left corner is enabled",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "cornerButtonEnabled",
       "metaobject": {
         "constant": false,
@@ -2828,6 +2840,7 @@
       "name": "cornerButtonEnabled",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2848,6 +2861,8 @@
         "set": "setGridStyle"
       },
       "brief": "The pen style used to draw the grid",
+      "default": "SolidLine",
+      "default_origin": "runtime",
       "js_name": "gridStyle",
       "metaobject": {
         "constant": false,
@@ -2868,6 +2883,7 @@
       "name": "gridStyle",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::PenStyle",
@@ -2888,6 +2904,8 @@
         "set": "setShowGrid"
       },
       "brief": "Whether the grid is shown",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "showGrid",
       "metaobject": {
         "constant": false,
@@ -2908,6 +2926,7 @@
       "name": "showGrid",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2928,6 +2947,8 @@
         "set": "setSortingEnabled"
       },
       "brief": "Whether sorting is enabled",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "sortingEnabled",
       "metaobject": {
         "constant": false,
@@ -2948,6 +2969,7 @@
       "name": "sortingEnabled",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2968,6 +2990,8 @@
         "set": "setWordWrap"
       },
       "brief": "The item text word-wrapping policy",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "wordWrap",
       "metaobject": {
         "constant": false,
@@ -2988,6 +3012,7 @@
       "name": "wordWrap",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",

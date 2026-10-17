@@ -54,6 +54,16 @@
   "id": "svelters-api:v1:type:gtk:Gtk:ObjectExpression",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "unref"
+    },
+    "id": "svelters-api:v1:type:gtk:Gtk:ObjectExpression:lifetime",
+    "native_refcount": "gobject",
+    "origin": "derived",
+    "provenance": "derived: GObject"
+  },
   "methods": [
     {
       "id": "svelters-api:v1:type:gtk:Gtk:ObjectExpression:method:get_object",

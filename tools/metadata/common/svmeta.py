@@ -14,7 +14,7 @@ from typing import Any
 import yaml
 
 SCHEMA = "svelters-element-kind/v0"
-ORIGINS = {"gir", "runtime", "qdoc", "metaobject", "typesystem", "apiextractor", "uic", "manual"}
+ORIGINS = {"gir", "runtime", "qdoc", "metaobject", "typesystem", "apiextractor", "uic", "manual", "derived"}
 REQUIRED = ("schema", "toolkit", "id", "native", "kind")
 # Lists of records merged by this key instead of replaced wholesale.
 LIST_KEYS = {"properties": "name", "signals": "name", "methods": "name", "constructors": "id", "slots": "name"}
@@ -105,3 +105,27 @@ def validate(kind: dict[str, Any]) -> list[str]:
         if dupes:
             errs.append(f"duplicate {key}: {dupes}")
     return errs
+
+
+# ---- A1: override schemas, provenance, fact fingerprints ----------------------------------------
+
+def check_override(path: Path, schema_path: Path) -> list[str]:
+    """Validate one override file against its toolkit's JSON Schema. Returns error strings."""
+    import jsonschema
+
+    schema = json.loads(Path(schema_path).read_text())
+    data = load_yaml(path)
+    v = jsonschema.Draft202012Validator(schema)
+    errs = []
+    for e in sorted(v.iter_errors(data), key=lambda e: [str(p) for p in e.absolute_path]):
+        where = "/".join(str(p) for p in e.absolute_path) or "<root>"
+        errs.append(f"{Path(path).name}: {where}: {e.message}")
+    return errs
+
+
+def fingerprint(fact: Any) -> str:
+    """Stable short hash of a fact record (sorted JSON). A changed fact needs a new verification."""
+    import hashlib
+
+    text = json.dumps(fact, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
+    return hashlib.sha256(text.encode()).hexdigest()[:16]

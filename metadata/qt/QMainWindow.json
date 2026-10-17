@@ -106,6 +106,21 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QMainWindow",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "toplevel",
+    "close": {
+      "default": "destroy",
+      "request_signal": "close-request",
+      "veto": "event_ignore"
+    },
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QMainWindow:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QMainWindow/QDialog subclass; ABI v2 toplevel class (plans/architecture/backend-abi.md)"
+  },
   "methods": [
     {
       "access": "public",
@@ -2158,6 +2173,8 @@
         "set": "setAnimated"
       },
       "brief": "Whether manipulating dock widgets and tool bars is animated",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "animated",
       "metaobject": {
         "constant": false,
@@ -2178,6 +2195,7 @@
       "name": "animated",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2198,6 +2216,8 @@
         "set": "setDockNestingEnabled"
       },
       "brief": "Whether docks can be nested",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "dockNestingEnabled",
       "metaobject": {
         "constant": false,
@@ -2218,6 +2238,7 @@
       "name": "dockNestingEnabled",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2238,6 +2259,8 @@
         "set": "setDockOptions"
       },
       "brief": "The docking behavior of QMainWindow",
+      "default": "AnimatedDocks|AllowTabbedDocks",
+      "default_origin": "runtime",
       "js_name": "dockOptions",
       "metaobject": {
         "constant": false,
@@ -2258,6 +2281,7 @@
       "name": "dockOptions",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "DockOptions",
@@ -2278,6 +2302,8 @@
         "set": "setDocumentMode"
       },
       "brief": "Whether the tab bar for tabbed dockwidgets is set to document mode",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "documentMode",
       "metaobject": {
         "constant": false,
@@ -2298,6 +2324,7 @@
       "name": "documentMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2318,6 +2345,7 @@
         "set": "setIconSize"
       },
       "brief": "Size of toolbar icons in this mainwindow",
+      "default": null,
       "js_name": "iconSize",
       "metaobject": {
         "constant": false,
@@ -2338,6 +2366,7 @@
       "name": "iconSize",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QSize",
@@ -2358,6 +2387,7 @@
         "set": "setTabShape"
       },
       "brief": "The tab shape used for tabbed dock widgets",
+      "default": null,
       "js_name": "tabShape",
       "metaobject": {
         "constant": false,
@@ -2378,6 +2408,7 @@
       "name": "tabShape",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QTabWidget::TabShape",
@@ -2398,6 +2429,8 @@
         "set": "setToolButtonStyle"
       },
       "brief": "Style of toolbar buttons in this mainwindow",
+      "default": "ToolButtonIconOnly",
+      "default_origin": "runtime",
       "js_name": "toolButtonStyle",
       "metaobject": {
         "constant": false,
@@ -2418,6 +2451,7 @@
       "name": "toolButtonStyle",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::ToolButtonStyle",
@@ -2438,6 +2472,8 @@
         "set": "setUnifiedTitleAndToolBarOnMac"
       },
       "brief": "Whether the window uses the unified title and toolbar look on macOS",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "unifiedTitleAndToolBarOnMac",
       "metaobject": {
         "constant": false,
@@ -2458,6 +2494,7 @@
       "name": "unifiedTitleAndToolBarOnMac",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",

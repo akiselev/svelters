@@ -1,0 +1,3618 @@
+[
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "aboutdialog",
+  "gallery": null,
+  "inherited": 4,
+  "kind": "AboutDialog",
+  "lifetime": "toplevel",
+  "methods": [
+   0,
+   33
+  ],
+  "native": "GtkAboutDialog",
+  "ownership": false,
+  "props": [
+   13,
+   16
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
+  ],
+  "slots": 2,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "actionbar",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "ActionBar",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   7
+  ],
+  "native": "GtkActionBar",
+  "ownership": false,
+  "props": [
+   1,
+   1
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": true,
+  "bindings": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "Actionable",
+  "lifetime": null,
+  "methods": [
+   0,
+   6
+  ],
+  "native": "GtkActionable",
+  "ownership": false,
+  "props": [
+   1,
+   2
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": true,
+  "bindings": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "AppChooser",
+  "lifetime": null,
+  "methods": [
+   0,
+   3
+  ],
+  "native": "GtkAppChooser",
+  "ownership": false,
+  "props": [
+   1,
+   1
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "appchooserbutton",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "AppChooserButton",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   11
+  ],
+  "native": "GtkAppChooserButton",
+  "ownership": false,
+  "props": [
+   4,
+   4
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   3,
+   3
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "appchooserdialog",
+  "gallery": null,
+  "inherited": 4,
+  "kind": "AppChooserDialog",
+  "lifetime": "toplevel",
+  "methods": [
+   0,
+   3
+  ],
+  "native": "GtkAppChooserDialog",
+  "ownership": false,
+  "props": [
+   2,
+   2
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 2,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "appchooserwidget",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "AppChooserWidget",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   12
+  ],
+  "native": "GtkAppChooserWidget",
+  "ownership": false,
+  "props": [
+   6,
+   6
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   2,
+   2
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "window",
+  "gallery": null,
+  "inherited": 4,
+  "kind": "ApplicationWindow",
+  "lifetime": "toplevel",
+  "methods": [
+   0,
+   5
+  ],
+  "native": "GtkApplicationWindow",
+  "ownership": false,
+  "props": [
+   1,
+   1
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 2,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "aspectframe",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "AspectFrame",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   10
+  ],
+  "native": "GtkAspectFrame",
+  "ownership": false,
+  "props": [
+   5,
+   5
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "assistant",
+  "gallery": null,
+  "inherited": 4,
+  "kind": "Assistant",
+  "lifetime": "toplevel",
+  "methods": [
+   0,
+   23
+  ],
+  "native": "GtkAssistant",
+  "ownership": false,
+  "props": [
+   1,
+   2
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   5,
+   5
+  ],
+  "slots": 2,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "box",
+  "gallery": "00-overview",
+  "inherited": 1,
+  "kind": "Box",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   13
+  ],
+  "native": "GtkBox",
+  "ownership": true,
+  "props": [
+   4,
+   4
+  ],
+  "props_annotated": 1,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 1,
+  "slots_own": 1,
+  "unexposed": null,
+  "verified": [
+   2,
+   2
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "button",
+  "gallery": "00-overview",
+  "inherited": 0,
+  "kind": "Button",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   12
+  ],
+  "native": "GtkButton",
+  "ownership": false,
+  "props": [
+   6,
+   6
+  ],
+  "props_annotated": 1,
+  "signal_results": 1,
+  "signals": [
+   2,
+   2
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   2,
+   2
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "calendar",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "Calendar",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   19
+  ],
+  "native": "GtkCalendar",
+  "ownership": false,
+  "props": [
+   3,
+   7
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   5,
+   5
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": true,
+  "bindings": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "CellEditable",
+  "lifetime": null,
+  "methods": [
+   0,
+   3
+  ],
+  "native": "GtkCellEditable",
+  "ownership": false,
+  "props": [
+   1,
+   1
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   2,
+   2
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "cellview",
+  "gallery": null,
+  "inherited": 1,
+  "kind": "CellView",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   8
+  ],
+  "native": "GtkCellView",
+  "ownership": false,
+  "props": [
+   5,
+   5
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "centerbox",
+  "gallery": null,
+  "inherited": 1,
+  "kind": "CenterBox",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   10
+  ],
+  "native": "GtkCenterBox",
+  "ownership": false,
+  "props": [
+   5,
+   5
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "checkbutton",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "CheckButton",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   11
+  ],
+  "native": "GtkCheckButton",
+  "ownership": false,
+  "props": [
+   6,
+   6
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   2,
+   2
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "colorbutton",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "ColorButton",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   4
+  ],
+  "native": "GtkColorButton",
+  "ownership": false,
+  "props": [
+   3,
+   3
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   2,
+   2
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": true,
+  "bindings": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "ColorChooser",
+  "lifetime": null,
+  "methods": [
+   0,
+   5
+  ],
+  "native": "GtkColorChooser",
+  "ownership": false,
+  "props": [
+   0,
+   2
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "colorchooserdialog",
+  "gallery": null,
+  "inherited": 4,
+  "kind": "ColorChooserDialog",
+  "lifetime": "toplevel",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "GtkColorChooserDialog",
+  "ownership": false,
+  "props": [
+   1,
+   1
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 2,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "colorchooserwidget",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "ColorChooserWidget",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "GtkColorChooserWidget",
+  "ownership": false,
+  "props": [
+   1,
+   1
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "colordialogbutton",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "ColorDialogButton",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   4
+  ],
+  "native": "GtkColorDialogButton",
+  "ownership": false,
+  "props": [
+   1,
+   2
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "columnview",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "ColumnView",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   25
+  ],
+  "native": "GtkColumnView",
+  "ownership": false,
+  "props": [
+   11,
+   11
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "combobox",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "ComboBox",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   24
+  ],
+  "native": "GtkComboBox",
+  "ownership": false,
+  "props": [
+   11,
+   11
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   6,
+   6
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "comboboxtext",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "ComboBoxText",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   9
+  ],
+  "native": "GtkComboBoxText",
+  "ownership": false,
+  "props": [
+   0,
+   0
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "dialog",
+  "gallery": null,
+  "inherited": 4,
+  "kind": "Dialog",
+  "lifetime": "toplevel",
+  "methods": [
+   0,
+   10
+  ],
+  "native": "GtkDialog",
+  "ownership": false,
+  "props": [
+   0,
+   1
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   2,
+   2
+  ],
+  "slots": 2,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "dragicon",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "DragIcon",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   2
+  ],
+  "native": "GtkDragIcon",
+  "ownership": false,
+  "props": [
+   1,
+   1
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "drawingarea",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "DrawingArea",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   5
+  ],
+  "native": "GtkDrawingArea",
+  "ownership": false,
+  "props": [
+   2,
+   2
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "dropdown",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "DropDown",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   19
+  ],
+  "native": "GtkDropDown",
+  "ownership": false,
+  "props": [
+   10,
+   10
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": true,
+  "bindings": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "Editable",
+  "lifetime": null,
+  "methods": [
+   0,
+   24
+  ],
+  "native": "GtkEditable",
+  "ownership": false,
+  "props": [
+   8,
+   8
+  ],
+  "props_annotated": 1,
+  "signal_results": 2,
+  "signals": [
+   4,
+   4
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   3,
+   3
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "editablelabel",
+  "gallery": null,
+  "inherited": 3,
+  "kind": "EditableLabel",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   3
+  ],
+  "native": "GtkEditableLabel",
+  "ownership": false,
+  "props": [
+   1,
+   1
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "emojichooser",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "EmojiChooser",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "GtkEmojiChooser",
+  "ownership": false,
+  "props": [
+   0,
+   0
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 1,
+  "element": "entry",
+  "gallery": "00-overview",
+  "inherited": 3,
+  "kind": "Entry",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   60
+  ],
+  "native": "GtkEntry",
+  "ownership": false,
+  "props": [
+   38,
+   41
+  ],
+  "props_annotated": 1,
+  "signal_results": 0,
+  "signals": [
+   3,
+   3
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   2,
+   2
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "expander",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "Expander",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   14
+  ],
+  "native": "GtkExpander",
+  "ownership": false,
+  "props": [
+   7,
+   7
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": true,
+  "bindings": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "FileChooser",
+  "lifetime": null,
+  "methods": [
+   0,
+   25
+  ],
+  "native": "GtkFileChooser",
+  "ownership": false,
+  "props": [
+   0,
+   6
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "filechooserdialog",
+  "gallery": null,
+  "inherited": 4,
+  "kind": "FileChooserDialog",
+  "lifetime": "toplevel",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "GtkFileChooserDialog",
+  "ownership": false,
+  "props": [
+   0,
+   0
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 2,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "filechooserwidget",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "FileChooserWidget",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "GtkFileChooserWidget",
+  "ownership": false,
+  "props": [
+   3,
+   3
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   12,
+   12
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "fixed",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "Fixed",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   6
+  ],
+  "native": "GtkFixed",
+  "ownership": false,
+  "props": [
+   0,
+   0
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "flowbox",
+  "gallery": null,
+  "inherited": 1,
+  "kind": "FlowBox",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   34
+  ],
+  "native": "GtkFlowBox",
+  "ownership": false,
+  "props": [
+   8,
+   8
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   7,
+   7
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "flowboxchild",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "FlowBoxChild",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   5
+  ],
+  "native": "GtkFlowBoxChild",
+  "ownership": false,
+  "props": [
+   1,
+   1
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "fontbutton",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "FontButton",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   8
+  ],
+  "native": "GtkFontButton",
+  "ownership": false,
+  "props": [
+   4,
+   4
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   2,
+   2
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": true,
+  "bindings": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "FontChooser",
+  "lifetime": null,
+  "methods": [
+   0,
+   19
+  ],
+  "native": "GtkFontChooser",
+  "ownership": false,
+  "props": [
+   0,
+   7
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "fontchooserdialog",
+  "gallery": null,
+  "inherited": 4,
+  "kind": "FontChooserDialog",
+  "lifetime": "toplevel",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "GtkFontChooserDialog",
+  "ownership": false,
+  "props": [
+   0,
+   0
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 2,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "fontchooserwidget",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "FontChooserWidget",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "GtkFontChooserWidget",
+  "ownership": false,
+  "props": [
+   1,
+   1
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "fontdialogbutton",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "FontDialogButton",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   14
+  ],
+  "native": "GtkFontDialogButton",
+  "ownership": false,
+  "props": [
+   5,
+   7
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "frame",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "Frame",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   8
+  ],
+  "native": "GtkFrame",
+  "ownership": false,
+  "props": [
+   4,
+   4
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "glarea",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "GLArea",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   19
+  ],
+  "native": "GtkGLArea",
+  "ownership": false,
+  "props": [
+   6,
+   7
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   3,
+   3
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "graphicsoffload",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "GraphicsOffload",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   6
+  ],
+  "native": "GtkGraphicsOffload",
+  "ownership": false,
+  "props": [
+   3,
+   3
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "grid",
+  "gallery": null,
+  "inherited": 1,
+  "kind": "Grid",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   22
+  ],
+  "native": "GtkGrid",
+  "ownership": false,
+  "props": [
+   5,
+   5
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "gridview",
+  "gallery": null,
+  "inherited": 1,
+  "kind": "GridView",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   15
+  ],
+  "native": "GtkGridView",
+  "ownership": false,
+  "props": [
+   7,
+   7
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "headerbar",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "HeaderBar",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   11
+  ],
+  "native": "GtkHeaderBar",
+  "ownership": true,
+  "props": [
+   5,
+   5
+  ],
+  "props_annotated": 1,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 3,
+  "slots_own": 3,
+  "unexposed": null,
+  "verified": [
+   4,
+   4
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "iconview",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "IconView",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   60
+  ],
+  "native": "GtkIconView",
+  "ownership": false,
+  "props": [
+   17,
+   17
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   8,
+   8
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "image",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "Image",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   15
+  ],
+  "native": "GtkImage",
+  "ownership": false,
+  "props": [
+   9,
+   9
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "infobar",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "InfoBar",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   15
+  ],
+  "native": "GtkInfoBar",
+  "ownership": false,
+  "props": [
+   3,
+   3
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   2,
+   2
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "inscription",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "Inscription",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   21
+  ],
+  "native": "GtkInscription",
+  "ownership": false,
+  "props": [
+   10,
+   11
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "label",
+  "gallery": "00-overview",
+  "inherited": 0,
+  "kind": "Label",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   49
+  ],
+  "native": "GtkLabel",
+  "ownership": false,
+  "props": [
+   18,
+   20
+  ],
+  "props_annotated": 1,
+  "signal_results": 0,
+  "signals": [
+   4,
+   4
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   1,
+   1
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "levelbar",
+  "gallery": null,
+  "inherited": 1,
+  "kind": "LevelBar",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   13
+  ],
+  "native": "GtkLevelBar",
+  "ownership": false,
+  "props": [
+   5,
+   5
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "linkbutton",
+  "gallery": null,
+  "inherited": 2,
+  "kind": "LinkButton",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   4
+  ],
+  "native": "GtkLinkButton",
+  "ownership": false,
+  "props": [
+   2,
+   2
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": true,
+  "bindings": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 1,
+  "kind": "ListBase",
+  "lifetime": "borrowed_only",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "GtkListBase",
+  "ownership": false,
+  "props": [
+   1,
+   1
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "listbox",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "ListBox",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   34
+  ],
+  "native": "GtkListBox",
+  "ownership": false,
+  "props": [
+   5,
+   5
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   8,
+   8
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "listboxrow",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "ListBoxRow",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   11
+  ],
+  "native": "GtkListBoxRow",
+  "ownership": false,
+  "props": [
+   3,
+   3
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "listview",
+  "gallery": null,
+  "inherited": 1,
+  "kind": "ListView",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   15
+  ],
+  "native": "GtkListView",
+  "ownership": false,
+  "props": [
+   7,
+   7
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "lockbutton",
+  "gallery": null,
+  "inherited": 2,
+  "kind": "LockButton",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   2
+  ],
+  "native": "GtkLockButton",
+  "ownership": false,
+  "props": [
+   0,
+   6
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "mediacontrols",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "MediaControls",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   2
+  ],
+  "native": "GtkMediaControls",
+  "ownership": false,
+  "props": [
+   1,
+   1
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "menubutton",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "MenuButton",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   27
+  ],
+  "native": "GtkMenuButton",
+  "ownership": false,
+  "props": [
+   12,
+   12
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "messagedialog",
+  "gallery": null,
+  "inherited": 4,
+  "kind": "MessageDialog",
+  "lifetime": "toplevel",
+  "methods": [
+   0,
+   4
+  ],
+  "native": "GtkMessageDialog",
+  "ownership": false,
+  "props": [
+   7,
+   7
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 2,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "notebook",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "Notebook",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   44
+  ],
+  "native": "GtkNotebook",
+  "ownership": false,
+  "props": [
+   8,
+   8
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   10,
+   10
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": true,
+  "bindings": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "Orientable",
+  "lifetime": null,
+  "methods": [
+   0,
+   2
+  ],
+  "native": "GtkOrientable",
+  "ownership": false,
+  "props": [
+   1,
+   1
+  ],
+  "props_annotated": 1,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   1,
+   1
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "overlay",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "Overlay",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   8
+  ],
+  "native": "GtkOverlay",
+  "ownership": false,
+  "props": [
+   1,
+   1
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "pagesetupunixdialog",
+  "gallery": null,
+  "inherited": 4,
+  "kind": "PageSetupUnixDialog",
+  "lifetime": "toplevel",
+  "methods": [
+   0,
+   4
+  ],
+  "native": "GtkPageSetupUnixDialog",
+  "ownership": false,
+  "props": [
+   0,
+   0
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 2,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "paned",
+  "gallery": null,
+  "inherited": 1,
+  "kind": "Paned",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   16
+  ],
+  "native": "GtkPaned",
+  "ownership": false,
+  "props": [
+   11,
+   11
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   6,
+   6
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "passwordentry",
+  "gallery": null,
+  "inherited": 3,
+  "kind": "PasswordEntry",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   4
+  ],
+  "native": "GtkPasswordEntry",
+  "ownership": false,
+  "props": [
+   4,
+   4
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "picture",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "Picture",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   17
+  ],
+  "native": "GtkPicture",
+  "ownership": false,
+  "props": [
+   6,
+   7
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "popover",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "Popover",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   20
+  ],
+  "native": "GtkPopover",
+  "ownership": false,
+  "props": [
+   7,
+   8
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   2,
+   2
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "popoverbin",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "PopoverBin",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   10
+  ],
+  "native": "GtkPopoverBin",
+  "ownership": false,
+  "props": [
+   4,
+   4
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "popovermenu",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "PopoverMenu",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   6
+  ],
+  "native": "GtkPopoverMenu",
+  "ownership": false,
+  "props": [
+   3,
+   3
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "popovermenubar",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "PopoverMenuBar",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   4
+  ],
+  "native": "GtkPopoverMenuBar",
+  "ownership": false,
+  "props": [
+   1,
+   1
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "printunixdialog",
+  "gallery": null,
+  "inherited": 4,
+  "kind": "PrintUnixDialog",
+  "lifetime": "toplevel",
+  "methods": [
+   0,
+   17
+  ],
+  "native": "GtkPrintUnixDialog",
+  "ownership": false,
+  "props": [
+   8,
+   8
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 2,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "progressbar",
+  "gallery": null,
+  "inherited": 1,
+  "kind": "ProgressBar",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   13
+  ],
+  "native": "GtkProgressBar",
+  "ownership": false,
+  "props": [
+   6,
+   6
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "range",
+  "gallery": null,
+  "inherited": 1,
+  "kind": "Range",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   22
+  ],
+  "native": "GtkRange",
+  "ownership": false,
+  "props": [
+   6,
+   6
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   4,
+   4
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "revealer",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "Revealer",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   9
+  ],
+  "native": "GtkRevealer",
+  "ownership": false,
+  "props": [
+   5,
+   5
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "scale",
+  "gallery": null,
+  "inherited": 1,
+  "kind": "Scale",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   13
+  ],
+  "native": "GtkScale",
+  "ownership": false,
+  "props": [
+   4,
+   4
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "scalebutton",
+  "gallery": null,
+  "inherited": 1,
+  "kind": "ScaleButton",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   11
+  ],
+  "native": "GtkScaleButton",
+  "ownership": false,
+  "props": [
+   4,
+   5
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   3,
+   3
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": true,
+  "bindings": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "Scrollable",
+  "lifetime": null,
+  "methods": [
+   0,
+   9
+  ],
+  "native": "GtkScrollable",
+  "ownership": false,
+  "props": [
+   4,
+   4
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "scrollbar",
+  "gallery": null,
+  "inherited": 1,
+  "kind": "Scrollbar",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   2
+  ],
+  "native": "GtkScrollbar",
+  "ownership": false,
+  "props": [
+   1,
+   1
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "scrolledwindow",
+  "gallery": "00-overview",
+  "inherited": 0,
+  "kind": "ScrolledWindow",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   31
+  ],
+  "native": "GtkScrolledWindow",
+  "ownership": true,
+  "props": [
+   15,
+   15
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   4,
+   4
+  ],
+  "slots": 1,
+  "slots_own": 1,
+  "unexposed": null,
+  "verified": [
+   1,
+   1
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "searchbar",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "SearchBar",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   9
+  ],
+  "native": "GtkSearchBar",
+  "ownership": false,
+  "props": [
+   4,
+   4
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "searchentry",
+  "gallery": null,
+  "inherited": 3,
+  "kind": "SearchEntry",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   10
+  ],
+  "native": "GtkSearchEntry",
+  "ownership": false,
+  "props": [
+   6,
+   6
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   6,
+   6
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "separator",
+  "gallery": null,
+  "inherited": 1,
+  "kind": "Separator",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "GtkSeparator",
+  "ownership": false,
+  "props": [
+   0,
+   0
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "shortcutlabel",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "ShortcutLabel",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   4
+  ],
+  "native": "GtkShortcutLabel",
+  "ownership": false,
+  "props": [
+   0,
+   2
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "shortcutsgroup",
+  "gallery": null,
+  "inherited": 3,
+  "kind": "ShortcutsGroup",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   1
+  ],
+  "native": "GtkShortcutsGroup",
+  "ownership": false,
+  "props": [
+   0,
+   5
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 1,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "shortcutssection",
+  "gallery": null,
+  "inherited": 3,
+  "kind": "ShortcutsSection",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   1
+  ],
+  "native": "GtkShortcutsSection",
+  "ownership": false,
+  "props": [
+   0,
+   4
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
+  ],
+  "slots": 1,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "shortcutsshortcut",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "ShortcutsShortcut",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "GtkShortcutsShortcut",
+  "ownership": false,
+  "props": [
+   0,
+   11
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "shortcutswindow",
+  "gallery": null,
+  "inherited": 4,
+  "kind": "ShortcutsWindow",
+  "lifetime": "toplevel",
+  "methods": [
+   0,
+   1
+  ],
+  "native": "GtkShortcutsWindow",
+  "ownership": false,
+  "props": [
+   0,
+   2
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   2,
+   2
+  ],
+  "slots": 2,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "spinbutton",
+  "gallery": null,
+  "inherited": 4,
+  "kind": "SpinButton",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   26
+  ],
+  "native": "GtkSpinButton",
+  "ownership": false,
+  "props": [
+   9,
+   9
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   6,
+   6
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "spinner",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "Spinner",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   4
+  ],
+  "native": "GtkSpinner",
+  "ownership": false,
+  "props": [
+   1,
+   1
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "stack",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "Stack",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   23
+  ],
+  "native": "GtkStack",
+  "ownership": false,
+  "props": [
+   9,
+   9
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "stacksidebar",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "StackSidebar",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   2
+  ],
+  "native": "GtkStackSidebar",
+  "ownership": false,
+  "props": [
+   1,
+   1
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "stackswitcher",
+  "gallery": null,
+  "inherited": 1,
+  "kind": "StackSwitcher",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   2
+  ],
+  "native": "GtkStackSwitcher",
+  "ownership": false,
+  "props": [
+   1,
+   1
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "statusbar",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "Statusbar",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   5
+  ],
+  "native": "GtkStatusbar",
+  "ownership": false,
+  "props": [
+   0,
+   0
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   2,
+   2
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "switch",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "Switch",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   4
+  ],
+  "native": "GtkSwitch",
+  "ownership": false,
+  "props": [
+   2,
+   2
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   2,
+   2
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "text",
+  "gallery": null,
+  "inherited": 3,
+  "kind": "Text",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   34
+  ],
+  "native": "GtkText",
+  "ownership": false,
+  "props": [
+   16,
+   18
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   11,
+   11
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "textview",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "TextView",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   72
+  ],
+  "native": "GtkTextView",
+  "ownership": false,
+  "props": [
+   20,
+   21
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   15,
+   15
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "togglebutton",
+  "gallery": null,
+  "inherited": 2,
+  "kind": "ToggleButton",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   4
+  ],
+  "native": "GtkToggleButton",
+  "ownership": false,
+  "props": [
+   2,
+   2
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "treeexpander",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "TreeExpander",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   11
+  ],
+  "native": "GtkTreeExpander",
+  "ownership": false,
+  "props": [
+   6,
+   6
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "treeview",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "TreeView",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   89
+  ],
+  "native": "GtkTreeView",
+  "ownership": false,
+  "props": [
+   17,
+   17
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   15,
+   15
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "video",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "Video",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   12
+  ],
+  "native": "GtkVideo",
+  "ownership": false,
+  "props": [
+   5,
+   5
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "viewport",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "Viewport",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   5
+  ],
+  "native": "GtkViewport",
+  "ownership": false,
+  "props": [
+   2,
+   2
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "volumebutton",
+  "gallery": null,
+  "inherited": 1,
+  "kind": "VolumeButton",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "GtkVolumeButton",
+  "ownership": false,
+  "props": [
+   0,
+   1
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": true,
+  "bindings": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "Widget",
+  "lifetime": "borrowed_only",
+  "methods": [
+   0,
+   164
+  ],
+  "native": "GtkWidget",
+  "ownership": false,
+  "props": [
+   34,
+   35
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   13,
+   13
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "Window",
+  "lifetime": "toplevel",
+  "methods": [
+   1,
+   57
+  ],
+  "native": "GtkWindow",
+  "ownership": true,
+  "props": [
+   26,
+   26
+  ],
+  "props_annotated": 1,
+  "signal_results": 0,
+  "signals": [
+   5,
+   5
+  ],
+  "slots": 2,
+  "slots_own": 2,
+  "unexposed": null,
+  "verified": [
+   4,
+   4
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "windowcontrols",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "WindowControls",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   7
+  ],
+  "native": "GtkWindowControls",
+  "ownership": false,
+  "props": [
+   4,
+   4
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "windowhandle",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "WindowHandle",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   2
+  ],
+  "native": "GtkWindowHandle",
+  "ownership": false,
+  "props": [
+   1,
+   1
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ }
+]
