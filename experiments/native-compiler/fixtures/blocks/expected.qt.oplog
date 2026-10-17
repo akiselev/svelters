@@ -4,7 +4,6 @@ create box #2
 set #2 orientation "vertical"
 create entry #3
 set #3 text "fresh 1"
-listen #3 changed on
 insert #2 #3 before=end slot=default
 create label #4
 set #4 label "on / 1"
@@ -47,7 +46,6 @@ destroy #12
 event #8 clicked []
 create entry #14
 set #14 text "fresh 2"
-listen #14 changed on
 insert #2 #14 before=#4 slot=default
 remove #2 #3
 destroy #3
@@ -76,7 +74,6 @@ event #8 clicked []
 event #9 clicked []
 create entry #18
 set #18 text "fresh 4"
-listen #18 changed on
 insert #2 #18 before=#4 slot=default
 remove #2 #14
 destroy #14

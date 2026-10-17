@@ -194,6 +194,7 @@ impl Codegen<'_, '_> {
     fn is_deferred(&self, op: &Op) -> bool {
         match op {
             Op::SetDynamic { value, .. } => self.dynamic_reactive(value),
+            Op::ChildAttr { value: AttrValue::Dynamic(value), .. } => self.dynamic_reactive(value),
             Op::Token { cond, .. } => !cond.is_empty(),
             Op::StyleProp { .. } => true,
             _ => false,
@@ -264,11 +265,57 @@ impl Codegen<'_, '_> {
                 }
                 self.w.write(";");
             }
-            Op::Listen { signal, handler, span } => {
+            Op::Listen { signal, handler, flags, span, .. } => {
                 self.w.map(span.start);
                 self.w.write(&format!("$n.on({n}, {}, ", js_str(signal)));
-                self.handler(handler);
+                match handler {
+                    Handler::Expr(h) => self.handler(h),
+                    Handler::Member { object, key } => {
+                        // a property of a spread object, read when the event fires
+                        self.w.write("function (...$$args) { ");
+                        self.paren_expr(object, Mode::Read);
+                        self.w.write(&format!("[{}]?.apply(this, $$args); }}", js_str(key)));
+                    }
+                }
+                if *flags != 0 {
+                    self.w.write(&format!(", {flags}"));
+                }
                 self.w.write(");");
+            }
+            Op::ListenAttach { signal, handler, flags, span } => {
+                self.w.map(span.start);
+                self.w.write(&format!("$.attach({n}, () => $n.listen({}, ", js_str(signal)));
+                self.paren_expr(handler, Mode::Read);
+                self.w.write(&format!(", {flags}));"));
+            }
+            Op::Attach { expr, span } => {
+                self.w.map(span.start);
+                self.w.write(&format!("$.attach({n}, () => "));
+                self.paren_expr(expr, Mode::Read);
+                self.w.write(");");
+            }
+            Op::ChildAttr { name, value, span } => {
+                self.w.map(span.start);
+                match value {
+                    AttrValue::Static(v) => {
+                        self.w.write(&format!("$n.child_attr({n}, {}, ", js_str(name)));
+                        self.json(v);
+                        self.w.write(");");
+                    }
+                    AttrValue::Dynamic(d) => {
+                        let reactive = self.dynamic_reactive(d);
+                        if reactive {
+                            self.w.write("$.template_effect(() => ");
+                        }
+                        self.w.write(&format!("$n.child_attr({n}, {}, ", js_str(name)));
+                        self.dynamic(d);
+                        self.w.write(")");
+                        if reactive {
+                            self.w.write(")");
+                        }
+                        self.w.write(";");
+                    }
+                }
             }
             Op::Bind { prop, signal, arg, target, span } => {
                 self.w.map(span.start);
@@ -369,6 +416,7 @@ impl Codegen<'_, '_> {
             Dynamic::Template(parts) => {
                 parts.iter().any(|p| matches!(p, TemplatePart::Expr(e) if !simple(e))) && self.dynamic_reactive(d)
             }
+            Dynamic::Member { .. } => false,
         }
     }
 
@@ -384,6 +432,7 @@ impl Codegen<'_, '_> {
         match d {
             Dynamic::Expr(e) => self.rw.is_reactive(e),
             Dynamic::Template(parts) => self.parts_reactive(parts),
+            Dynamic::Member { object, .. } => self.rw.is_reactive(object),
         }
     }
 
@@ -391,6 +440,10 @@ impl Codegen<'_, '_> {
         match d {
             Dynamic::Expr(e) => self.expr_text(e, Mode::Read),
             Dynamic::Template(parts) => self.template(parts),
+            Dynamic::Member { object, key } => {
+                self.paren_expr(object, Mode::Read);
+                self.w.write(&format!("[{}]", js_str(key)));
+            }
         }
     }
 

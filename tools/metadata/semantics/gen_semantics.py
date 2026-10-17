@@ -241,6 +241,48 @@ def binding_from_metadata(where: str, b: dict, find_prop, find_sig) -> dict:
             "provenance": prov}
 
 
+# Non-scalar values the backends also take as a string (ABI v3 `SVL_D_STRING_FORM`): GTK
+# crates/svelters-gtk/src/types.rs `has_string_form`; Qt the `| string` cases of gen_cpp ts_leaf.
+GTK_STRING_FORMS = {"Pango:FontDescription", "Gio:Icon", "Gdk:RGBA", "Gtk:ShortcutTrigger", "Gio:File"}
+QT_STRING_FORMS = {"QIcon", "QKeySequence", "QUrl", "QFont", "Color"}
+
+
+def type_rec(ref: str | None, nullable=False) -> dict:
+    """A method parameter / return type: `{type, nullable}` (+ `ref` for non-scalars); `void`."""
+    ref = ref or "void"
+    if ref == "void":
+        return {"type": "void", "nullable": False}
+    t = ptype(ref)
+    r = {"type": t, "nullable": bool(nullable)}
+    if t not in SCALARS:
+        r["ref"] = ref
+    return r
+
+
+ATTR_TYPES = {"bool", "i32", "u32", "i64", "f64", "string", "enum"}
+
+
+def attr_rec(where: str, a: dict) -> dict:
+    """An X3 child attribute of a slot (`parent:<name>`): type, reset default, enum names."""
+    t = a.get("type")
+    if t not in ATTR_TYPES:
+        fail(f"{where}: attr {a.get('name')!r} has type {t!r} (expected one of {sorted(ATTR_TYPES)})")
+    r = {"type": t, "default": a.get("default")}
+    if t == "enum":
+        r["values"] = sorted(a.get("values") or {})
+        if r["default"] not in r["values"]:
+            fail(f"{where}: attr {a['name']} default {r['default']!r} not among {r['values']}")
+    return r
+
+
+def phases_rec(sig: dict, phases: list[str]) -> dict:
+    """Adds the X2/X3 dispatch facts to a signal record: `sync` (the backend calls JS through
+    `call_sync` and uses the result) and `phases` (listen flags the backend accepts besides 0)."""
+    sig["sync"] = sig["handler_result"] != "none" or sig["sync_required"]
+    sig["phases"] = phases
+    return sig
+
+
 def coerce_ok(p: dict, v) -> bool:
     t = p["type"]
     if t == "bool":
@@ -271,6 +313,7 @@ def parse_gtk_tables() -> dict:
     sigs = re.findall(r'SignalInfo \{ kind: (\d+), name: "([^"]*)", js_event: "([^"]*)"', src)
     meths = re.findall(r'MethodInfo \{ kind: (\d+), name: "([^"]*)"', src)
     slots = re.findall(r'SlotInfo \{ kind: (\d+), name: "([^"]*)"', src)
+    attrs = re.findall(r'AttrInfo \{ kind: (\d+), slot: (\d+), name: "([^"]*)"', src)
     gt = [g for _, _, g in kinds]
     return {
         "tags": {t: g for _, t, g in kinds if t},
@@ -278,6 +321,7 @@ def parse_gtk_tables() -> dict:
         "signals": {(gt[int(k) - 1], n, j) for k, n, j in sigs},
         "methods": {(gt[int(k) - 1], n) for k, n in meths},
         "slots": {(gt[int(k) - 1], n) for k, n in slots},
+        "attrs": {(gt[int(k) - 1], slots[int(si) - 1][1], n) for k, si, n in attrs},
     }
 
 
@@ -340,6 +384,8 @@ def gtk_spec() -> dict:
             r["of"] = ptype(inner(ref)) if "<" in ref else "other"
             if r["default"] == "[]":
                 r["default"] = []
+        if t in ("record", "boxed", "object") and any(inner(ref).endswith(":" + f) for f in GTK_STRING_FORMS):
+            r["string_form"] = True
         if p.get("range"):
             r["range"] = p["range"]
         if p.get("virtual"):
@@ -348,11 +394,20 @@ def gtk_spec() -> dict:
             r["notify"] = p["notify"]["signal"]
         return r
 
-    def sig_rec(s: dict) -> dict:
-        return {"name": s["name"], "js_event": s["js_event"],
-                "args": [{"name": q["name"], "type": ptype(q["type"])} for q in s["params"]],
-                "handler_result": s["handler_result"], "sync_required": bool(s["sync_required"]),
-                "disconnect_on_drop": "handle_drop" in s.get("connection", {}).get("disconnect_on", [])}
+    def sig_rec(k: str, s: dict) -> dict:
+        # X3 (docs/notes/x3-childattr-listen.md): `after` on any signal (connect_after); `capture`
+        # only on event controllers (their propagation phase).
+        phases = ["after", "capture"] if "Gtk.EventController" in chains[k] else ["after"]
+        return phases_rec({"name": s["name"], "js_event": s["js_event"],
+                           "args": [{"name": q["name"], "type": ptype(q["type"])} for q in s["params"]],
+                           "handler_result": s["handler_result"], "sync_required": bool(s["sync_required"]),
+                           "disconnect_on_drop": "handle_drop" in s.get("connection", {}).get("disconnect_on", [])}, phases)
+
+    def meth_rec(me: dict) -> dict:
+        ret = me.get("returns") or {}
+        return {"dispatch": me.get("dispatch", "zero_arg"), "native": me.get("native") or me["name"],
+                "params": [{"name": q["name"], **type_rec(q.get("type"), q.get("nullable"))} for q in me.get("params") or []],
+                "returns": type_rec(ret.get("type"), ret.get("nullable"))}
 
     kinds: dict[str, dict] = {}
     for d in m.kinds:
@@ -362,13 +417,14 @@ def gtk_spec() -> dict:
             if p["js_name"] in props:
                 fail(f"{k}: duplicate js name {p['js_name']}")
             props[p["js_name"]] = prop_rec(k, p)
-        sigs = {s["name"]: sig_rec(s) for s in sorted(d["signals"], key=lambda s: s["name"])}
+        sigs = {s["name"]: sig_rec(k, s) for s in sorted(d["signals"], key=lambda s: s["name"])}
         ch = d.get("children") or {}
         children = None
         if ch.get("slots"):
             children = {"policy": ch["policy"], "default_slot": ch.get("default_slot"), "slots": {
                 s["name"]: {"many": s["cardinality"] == "many", "accepts": list(s["accepts"]),
-                            "route_by_kind": bool(s.get("route_by_kind")), "order": s.get("order") or "none"}
+                            "route_by_kind": bool(s.get("route_by_kind")), "order": s.get("order") or "none",
+                            "attrs": {a["name"]: attr_rec(f"{k} slot {s['name']}", a) for a in s.get("attrs") or []}}
                 for s in sorted(ch["slots"], key=lambda s: s["name"])}}
             for s in children["slots"].values():
                 for a in s["accepts"]:
@@ -377,7 +433,8 @@ def gtk_spec() -> dict:
         kinds[k] = {"native": d["native"]["gtype"], "abstract": bool(d["abstract"]),
                     "interface": d["kind"] == "interface", "chain": chains[k], "lifetime": "owned", "present": None,
                     "text_content": None, "props": props, "signals": sigs, "bindings": {}, "children": children,
-                    "methods": sorted(me.get("js_name", me["name"]) for me in d["methods"] if "annotated" in me),
+                    "methods": {me.get("js_name", me["name"]): meth_rec(me)
+                                for me in sorted(d["methods"], key=lambda me: me.get("js_name", me["name"])) if "annotated" in me},
                     "provenance": {}}
 
     def find_prop(k: str, name: str) -> dict | None:
@@ -474,9 +531,15 @@ def gtk_spec() -> dict:
     emitted_slots = {(kinds[k]["native"], s) for k in kinds for s in (kinds[k]["children"] or {}).get("slots", {})}
     if emitted_slots != tables["slots"]:
         fail(f"slots differ from svelters-gtk tables: {sorted(emitted_slots ^ tables['slots'])}")
-    emitted_methods = {(kinds[k]["native"], n) for k in kinds for n in kinds[k]["methods"]}
+    # METHODS holds the zero-arg generated calls; `dynamic` ones go through GIRepository (X1)
+    emitted_methods = {(kinds[k]["native"], n) for k in kinds for n, me in kinds[k]["methods"].items()
+                       if me["dispatch"] == "zero_arg"}
     if emitted_methods != tables["methods"]:
         fail(f"methods differ from svelters-gtk tables: {sorted(emitted_methods ^ tables['methods'])}")
+    emitted_attrs = {(kinds[k]["native"], sn, an) for k in kinds
+                     for sn, sl in ((kinds[k]["children"] or {}).get("slots") or {}).items() for an in sl["attrs"]}
+    if emitted_attrs != tables["attrs"]:
+        fail(f"child attributes differ from svelters-gtk tables: {sorted(emitted_attrs ^ tables['attrs'])}")
 
     def kind_exists(name: str) -> bool:
         return name in kinds
@@ -488,11 +551,28 @@ def gtk_spec() -> dict:
     al = aliases(rules, "gtk rules", lambda s: any(s in kinds[k]["signals"] for k in kinds))
     return {"schema": SCHEMA, "backend": "gtk", "framework": rules["framework"], "event_aliases": al,
             "tags": tags, "kinds": kinds, "style": style,
+            # `methods` lists the annotated (verified) calls; any other GIR method of the kind is
+            # still callable through GIRepository at runtime (X1), unchecked.
+            "method_lookup": "typelib",
             "source": {"metadata": "metadata/gtk/*.json", "rules": "metadata/semantics/rules/gtk.yaml",
                        "gir": m.docs["Widget"]["source"]["gir"]["version"]}}
 
 
 # ---- Qt --------------------------------------------------------------------------------------
+
+def qt_meth(me: dict) -> dict:
+    rec = me.get("rec") or {}
+    ret = rec.get("returns") or {}
+    params = []
+    for q in rec.get("params") or []:
+        t = q.get("type") or {}
+        r = {"name": q["name"], **type_rec(t.get("ref"), t.get("nullable"))}
+        if q.get("default") is not None:
+            r["optional"] = True
+        params.append(r)
+    return {"dispatch": "generated", "native": me.get("native") or me["js"], "params": params,
+            "returns": type_rec(ret.get("ref"), ret.get("nullable"))}
+
 
 def qt_spec() -> dict:
     m = gen_cpp.Model(ROOT / "metadata/qt", ROOT / "metadata/overrides/qt", [])
@@ -525,6 +605,8 @@ def qt_spec() -> dict:
                 r["values"] = sorted(m.enums_used[pay])
             elif cat in ("record", "boxed", "object"):
                 r["of"] = pay
+                if pay in QT_STRING_FORMS:
+                    r["string_form"] = True
             elif cat == "list":
                 r["of"] = ptype(pay)
             if rec.get("notify"):
@@ -535,13 +617,20 @@ def qt_spec() -> dict:
         sigs = {}
         for s in el.get("signals", []):
             rec = s.get("rec") or {}
-            sigs[s["js"]] = {"name": s["js"], "js_event": s["js"],
-                             "args": [{"name": a["name"], "type": ptype(a["type"])} for a in s.get("args", [])],
-                             # Synthetic signals are event filters whose JS result decides (close veto,
-                             # key consumed): gen_cpp _resolve_signal, docs/notes/x2-sync-frame.md.
-                             "handler_result": "bool_stop" if s.get("synthetic") else rec.get("handler_result", "none"),
-                             "sync_required": bool(s.get("synthetic")) or bool(rec.get("sync_required", False)),
-                             "disconnect_on_drop": bool(sd["disconnect_on_drop"])}
+            # X3 Qt phase mapping (docs/notes/x3-childattr-listen.md): `after` on QObject signals,
+            # `capture` only on the synthetic key-press (an application event filter), neither on
+            # close-request.
+            phases = {None: ["after"], "key_press": ["capture"], "close_request": []}.get(s.get("synthetic"))
+            if phases is None:
+                fail(f"{tag}: synthetic signal {s['synthetic']!r} has no phase mapping")
+            sigs[s["js"]] = phases_rec({
+                "name": s["js"], "js_event": s["js"],
+                "args": [{"name": a["name"], "type": ptype(a["type"])} for a in s.get("args", [])],
+                # Synthetic signals are event filters whose JS result decides (close veto,
+                # key consumed): gen_cpp _resolve_signal, docs/notes/x2-sync-frame.md.
+                "handler_result": "bool_stop" if s.get("synthetic") else rec.get("handler_result", "none"),
+                "sync_required": bool(s.get("synthetic")) or bool(rec.get("sync_required", False)),
+                "disconnect_on_drop": bool(sd["disconnect_on_drop"])}, phases)
             if s.get("synthetic"):
                 sigs[s["js"]]["synthetic"] = s["synthetic"]
         ch = el.get("children")
@@ -550,11 +639,13 @@ def qt_spec() -> dict:
             children = {"policy": ch["policy"], "default_slot": ch["default_slot"], "slots": {
                 s["name"]: {"many": s["cardinality"] == "many", "accepts": list(s["accepts"]),
                             "route_by_kind": bool(s.get("route_by_kind")),
-                            "order": s.get("order") or "none"} for s in sorted(ch["slots"], key=lambda s: s["name"])}}
+                            "order": s.get("order") or "none",
+                            "attrs": {a["name"]: attr_rec(f"{tag} slot {s['name']}", a) for a in s.get("attrs") or []}}
+                for s in sorted(ch["slots"], key=lambda s: s["name"])}}
         kinds[tag] = {"native": cls, "abstract": False, "interface": False, "chain": m.chain(cls) and [tag] + m.chain(cls),
                       "lifetime": "toplevel" if gen_cpp.cident(tag) in tops else "owned", "present": None,
                       "text_content": None, "props": props, "signals": sigs, "bindings": {}, "children": children,
-                      "methods": sorted(me["js"] for me in el.get("methods", [])),
+                      "methods": {me["js"]: qt_meth(me) for me in sorted(el.get("methods", []), key=lambda me: me["js"])},
                       "provenance": {"lifetime": "gen_cpp emit_toplevel (QMainWindow/QDialog kinds)"}}
         if sigs:
             kinds[tag]["provenance"]["signals.disconnect_on_drop"] = sd["provenance"]
@@ -631,6 +722,8 @@ def qt_spec() -> dict:
     al = aliases(rules, "qt rules", lambda s: any(s in kd["signals"] for kd in kinds.values()))
     return {"schema": SCHEMA, "backend": "qt", "framework": rules["framework"], "event_aliases": al,
             "tags": {t: t for t in sorted(kinds)}, "kinds": kinds, "style": style, "element_hints": hints,
+            # only annotated methods exist at runtime
+            "method_lookup": "annotated",
             "source": {"metadata": "metadata/qt/*.json + metadata/overrides/qt/*.yaml",
                        "rules": "metadata/semantics/rules/qt.yaml"}}
 

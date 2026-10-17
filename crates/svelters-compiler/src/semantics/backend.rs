@@ -276,6 +276,8 @@ impl BackendSemantics for SpecBackend {
             handler_result: s.handler_result,
             sync_required: s.sync_required,
             disconnect_on_drop: s.disconnect_on_drop,
+            sync: s.sync,
+            phases: s.phases.clone(),
             via_alias: alias.map(str::to_string),
         };
         for name in [stripped, attr] {
@@ -448,6 +450,90 @@ impl BackendSemantics for SpecBackend {
         self.spec.html_syntax
     }
 
+    fn child_attr(&self, parent: &ElementRef, slot: &str, name: &str) -> Result<ChildAttrPlan, Unresolved> {
+        let slots = self.slots(parent);
+        let Some((_, _, s)) = slots.iter().find(|(_, n, _)| *n == slot) else {
+            return Err(Unresolved::new(codes::UNKNOWN_SLOT, format!("<{}> has no slot `{slot}` on {}", parent.tag, self.spec.backend)));
+        };
+        if let Some(a) = s.attrs.get(name) {
+            return Ok(ChildAttrPlan { name: name.to_string(), slot: slot.to_string(), spec: a.clone() });
+        }
+        let here: Vec<&str> = s.attrs.keys().map(|k| k.as_str()).collect();
+        let elsewhere: Vec<String> =
+            slots.iter().filter(|(_, n, sl)| *n != slot && sl.attrs.contains_key(name)).map(|(_, n, _)| n.to_string()).collect();
+        let msg = if here.is_empty() {
+            format!("slot `{slot}` of <{}> has no child attributes on {}", parent.tag, self.spec.backend)
+        } else {
+            format!("slot `{slot}` of <{}> has no child attribute `{name}` on {} (attributes: {})", parent.tag, self.spec.backend, here.join(", "))
+        };
+        let mut u = Unresolved::new(codes::UNKNOWN_CHILD_ATTR, msg).suggest(closest(name, here).into_iter().map(|n| format!("parent:{n}")).collect());
+        if !elsewhere.is_empty() {
+            u = u.help(format!("`{name}` belongs to slot {} of <{}>", elsewhere.join(", "), parent.tag));
+        }
+        Err(u)
+    }
+
+    fn coerce_child_attr(&self, plan: &ChildAttrPlan, value: Option<&str>) -> Result<StaticValue, String> {
+        let name = &plan.name;
+        let Some(s) = value else {
+            return match plan.spec.ty {
+                AttrType::Bool => Ok(StaticValue::Bool(true)),
+                _ => Err(format!("`parent:{name}` needs a value (a bare attribute only sets bool attributes)")),
+            };
+        };
+        match plan.spec.ty {
+            AttrType::Bool => match s {
+                "true" | "" => Ok(StaticValue::Bool(true)),
+                "false" => Ok(StaticValue::Bool(false)),
+                _ => Err(format!("`parent:{name}` is a bool: expected true or false, got {s:?}")),
+            },
+            AttrType::I32 | AttrType::U32 | AttrType::I64 => {
+                let i = parse_int(s).ok_or_else(|| format!("`parent:{name}` is an integer, got {s:?}"))?;
+                let (lo, hi) = match plan.spec.ty {
+                    AttrType::I32 => (i32::MIN as i64, i32::MAX as i64),
+                    AttrType::U32 => (0, u32::MAX as i64),
+                    _ => (-9_007_199_254_740_991, 9_007_199_254_740_991),
+                };
+                if i < lo || i > hi {
+                    return Err(format!("`parent:{name}`: {i} is outside {lo}..{hi}"));
+                }
+                Ok(StaticValue::Int(i))
+            }
+            AttrType::F64 => {
+                let f: f64 = s.trim().parse().map_err(|_| format!("`parent:{name}` is a number, got {s:?}"))?;
+                if !f.is_finite() {
+                    return Err(format!("`parent:{name}`: {s:?} is not finite"));
+                }
+                Ok(StaticValue::Float(f))
+            }
+            AttrType::String => Ok(StaticValue::Str(s.to_string())),
+            AttrType::Enum => {
+                let vals = plan.spec.values.clone().unwrap_or_default();
+                if vals.iter().any(|v| v == s) {
+                    Ok(StaticValue::Enum(s.to_string()))
+                } else {
+                    let sug = closest(s, vals.iter().map(|v| v.as_str()));
+                    let mean = sug.first().map(|x| format!("; did you mean {x:?}?")).unwrap_or_default();
+                    Err(format!("`parent:{name}`: {s:?} is not one of {}{mean}", vals.join(", ")))
+                }
+            }
+        }
+    }
+
+    fn method(&self, el: &ElementRef, name: &str) -> Result<&MethodSpec, Unresolved> {
+        let chain = self.chain(el);
+        if let Some(m) = chain.iter().find_map(|(_, k)| k.methods.get(name)) {
+            return Ok(m);
+        }
+        let names: Vec<&str> = chain.iter().flat_map(|(_, k)| k.methods.keys().map(|s| s.as_str())).collect();
+        let mut u = Unresolved::new(codes::UNKNOWN_METHOD, format!("<{}> has no annotated method `{name}` on {}", el.tag, self.spec.backend))
+            .suggest(closest(name, names));
+        if self.spec.method_lookup == "typelib" {
+            u = u.help("other GIR methods are still callable through GIRepository, unchecked");
+        }
+        Err(u)
+    }
+
     fn coerce_static(&self, prop: &PropertySpec, value: Option<&str>) -> Result<StaticValue, String> {
         let name = &prop.js;
         let Some(s) = value else {
@@ -517,6 +603,7 @@ impl BackendSemantics for SpecBackend {
                 }
                 Ok(StaticValue::Flags { nicks, bits: total })
             }
+            PropType::Object | PropType::Record | PropType::Boxed if prop.string_form => Ok(StaticValue::Str(s.to_string())),
             PropType::Object | PropType::List | PropType::Record | PropType::Boxed | PropType::Other => Err(format!(
                 "`{name}` takes {} and cannot be set from a string attribute; pass an expression",
                 prop.type_ref.as_deref().or(prop.of.as_deref()).unwrap_or("a native value")

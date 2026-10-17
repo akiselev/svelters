@@ -111,7 +111,7 @@ fn properties_by_js_or_native_name() {
     let w = el(&qt, "window");
     assert_eq!(qt.property(&w, "windowTitle").unwrap().js, "title");
     assert_eq!(qt.property(&el(&qt, "box"), "orientation").unwrap().default, Some(serde_json::json!("vertical")));
-    let e = qt.property(&el(&qt, "label"), "wordWrap").unwrap_err();
+    let e = qt.property(&el(&qt, "label"), "buddy").unwrap_err();
     assert!(e.message.contains("only annotated"), "{}", e.message);
 }
 
@@ -188,8 +188,8 @@ fn bind_text_on_entry() {
 #[test]
 fn no_binding_for_label() {
     let gtk = load("gtk");
-    // Gtk.Text is a Gtk.Editable too, but only Gtk.Entry annotates bind:text.
-    assert_eq!(gtk.plan_binding(&el(&gtk, "text"), "text").unwrap_err().code, codes::BIND_NO_PLAN);
+    // Gtk.Inscription has a `text` property but no binding annotation.
+    assert_eq!(gtk.plan_binding(&el(&gtk, "inscription"), "text").unwrap_err().code, codes::BIND_NO_PLAN);
     let e = gtk.plan_binding(&el(&gtk, "label"), "label").unwrap_err();
     assert_eq!(e.code, codes::BIND_NO_PLAN);
     assert!(e.message.contains("notify::label"), "{}", e.message);
@@ -276,11 +276,9 @@ fn style_common_declarations() {
         let prop = if b.backend() == "gtk" { "heightRequest" } else { "minimumHeight" };
         assert_eq!(mh, set(prop, StaticValue::Int(32)));
     }
-    // Qt: min-height applies to every QWidget, but only button and entry annotate minimumHeight.
+    // Qt: min-height applies to every QWidget; A1 wave 2 annotated minimumHeight on all of them.
     let qt = load("qt");
-    let e = qt.style_declaration(&el(&qt, "label"), "min-height", &len(4.0, Some("dp"))).unwrap_err();
-    assert_eq!(e.code, codes::STYLE_NOT_APPLICABLE);
-    assert!(e.message.contains("minimumHeight"), "{}", e.message);
+    assert_eq!(qt.style_declaration(&el(&qt, "label"), "min-height", &len(4.0, Some("dp"))).unwrap(), StyleLowering::SetProp { prop: "minimumHeight".into(), value: StaticValue::Int(4) });
     // GTK-only common declarations.
     let gtk = load("gtk");
     assert_eq!(
@@ -398,4 +396,67 @@ fn abi_v3_value_types() {
     assert!(qt.coerce_static(align, Some("middle")).is_err());
     let echo = qt.property(&el(&qt, "entry"), "echoMode").unwrap();
     assert_eq!(qt.coerce_static(echo, Some("password")), Ok(StaticValue::Enum("password".into())));
+}
+
+#[test]
+fn child_attrs_per_slot() {
+    for b in both() {
+        let grid = el(&b, "grid");
+        let col = b.child_attr(&grid, "cells", "column").unwrap();
+        assert_eq!((col.spec.ty, col.spec.default.clone()), (AttrType::I32, Some(serde_json::json!(0))), "{}", b.backend());
+        assert_eq!(b.child_attr(&grid, "cells", "rowSpan").unwrap().spec.default, Some(serde_json::json!(1)));
+        let e = b.child_attr(&grid, "cells", "colum").unwrap_err();
+        assert_eq!(e.code, codes::UNKNOWN_CHILD_ATTR);
+        assert_eq!(e.suggestions[0], "parent:column");
+        assert!(b.coerce_child_attr(&col, Some("x")).is_err());
+        assert_eq!(b.coerce_child_attr(&col, Some("3")).unwrap(), StaticValue::Int(3));
+    }
+    let gtk = load("gtk");
+    assert_eq!(gtk.child_attr(&el(&gtk, "box"), "children", "row").unwrap_err().code, codes::UNKNOWN_CHILD_ATTR);
+    let tab = gtk.child_attr(&el(&gtk, "notebook"), "pages", "tabLabel").unwrap();
+    assert_eq!(tab.spec.ty, AttrType::String);
+    let qt = load("qt");
+    let align = qt.child_attr(&el(&qt, "box"), "children", "align").unwrap();
+    assert_eq!(align.spec.ty, AttrType::Enum);
+    assert!(align.spec.values.as_ref().unwrap().contains(&"center".to_string()));
+    assert_eq!(qt.coerce_child_attr(&align, Some("center")).unwrap(), StaticValue::Enum("center".into()));
+}
+
+#[test]
+fn sync_and_phases() {
+    let gtk = load("gtk");
+    let close = gtk.event(&el(&gtk, "window"), "onclose").unwrap();
+    assert!(close.sync);
+    assert_eq!(close.phases, vec!["after"]);
+    let clicked = gtk.event(&el(&gtk, "button"), "onclick").unwrap();
+    assert!(!clicked.sync);
+    assert_eq!(clicked.phases, vec!["after"]);
+    let k = &gtk.spec().kinds["Gtk.EventControllerKey"].signals["key-pressed"];
+    assert_eq!(k.phases, vec!["after", "capture"]);
+    let qt = load("qt");
+    let key = qt.event(&el(&qt, "entry"), "onkey-press").unwrap();
+    assert!(key.sync);
+    assert_eq!(key.phases, vec!["capture"]);
+    let close = qt.event(&el(&qt, "window"), "onclose").unwrap();
+    assert!(close.sync && close.phases.is_empty());
+    assert_eq!(qt.event(&el(&qt, "button"), "onclick").unwrap().phases, vec!["after"]);
+}
+
+#[test]
+fn typed_methods() {
+    let gtk = load("gtk");
+    assert_eq!(gtk.spec().method_lookup, "typelib");
+    let m = gtk.method(&el(&gtk, "scale"), "set_range").unwrap();
+    assert_eq!(m.dispatch, "dynamic");
+    let params = m.params.as_ref().unwrap();
+    assert_eq!(params.iter().map(|p| (p.name.as_str(), p.ty.ty.as_str())).collect::<Vec<_>>(), vec![("min", "f64"), ("max", "f64")]);
+    assert_eq!(gtk.method(&el(&gtk, "window"), "present").unwrap().dispatch, "zero_arg");
+    let e = gtk.method(&el(&gtk, "window"), "presnt").unwrap_err();
+    assert_eq!(e.code, codes::UNKNOWN_METHOD);
+    assert!(e.suggestions.contains(&"present".to_string()));
+    assert!(e.help.unwrap().contains("GIRepository"));
+    let qt = load("qt");
+    assert_eq!(qt.spec().method_lookup, "annotated");
+    let p = qt.method(&el(&qt, "window"), "present").unwrap();
+    assert_eq!(p.returns.as_ref().unwrap().ty, "void");
 }

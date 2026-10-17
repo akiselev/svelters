@@ -1,7 +1,8 @@
 // Runs every compiled bundle on the Node TestHost with the case's script and checks:
 //   existing fixtures: op log == the hand-written equivalent's (../handwritten/<name>/expected.oplog,
 //     i.e. the compiler emits the intended code shape) and native state == the JS pipeline's
-//     (tools/oplog-compare.mjs, at every event/gone boundary and at the end);
+//     (tools/oplog-compare.mjs, at every event/sync/gone boundary and at the end);
+//   JS-pipeline comparisons (handwritten: null): native state == the JS pipeline's only;
 //   own fixtures: op log == <dir>/expected.<backend>.oplog, or, when <dir>/expected.<backend>.diagnostics
 //     exists, that compilation was rejected with exactly those diagnostic codes.
 // UPDATE=1 rewrites the own fixtures' expectations (review the diff!).
@@ -9,7 +10,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { runBundle } from '@svelters/testhost';
 import { compare } from '../../../tools/oplog-compare.mjs';
-import { BACKENDS, cases } from './cases.mjs';
+import { cases, targetsOf } from './cases.mjs';
 
 const here = import.meta.dirname;
 const update = process.env.UPDATE === '1';
@@ -17,9 +18,9 @@ const only = process.argv.slice(2);
 let failed = false;
 const DEFAULTS = { label: '' };
 
-for (const backend of BACKENDS) {
-  for (const c of cases()) {
-    if (only.length && !only.includes(c.name)) continue;
+for (const c of cases()) {
+  if (only.length && !only.includes(c.name)) continue;
+  for (const { name: backend } of targetsOf(c)) {
     const dir = path.join(here, 'out', backend, c.name);
     const diagFile = path.join(dir, 'diagnostics.txt');
     const tag = `${backend}/${c.name}`;
@@ -65,12 +66,19 @@ for (const backend of BACKENDS) {
       console.log(`${ok ? 'PASS' : 'FAIL'} ${tag}: ${ok ? 'op log matches' : 'op log differs from ' + path.basename(exp)}`);
       continue;
     }
-    const hand = fs.readFileSync(c.handwritten, 'utf8');
     const theirs = fs.readFileSync(c.jsExpected, 'utf8');
     const r = compare(theirs, actual, { defaults: DEFAULTS });
+    const vs = `${actual === theirs ? 'op log identical to' : r.equal ? 'state-equal with' : 'STATE DIFFERS from'} JS pipeline (${r.boundaries} boundaries, ops ${r.opsB} / ${r.opsA})`;
+    if (c.handwritten === null) {
+      if (!r.equal) failed = true;
+      console.log(`${r.equal ? 'PASS' : 'FAIL'} ${tag}: ${vs}`);
+      for (const p of r.problems) console.log(`  ${p}`);
+      continue;
+    }
+    const hand = fs.readFileSync(c.handwritten, 'utf8');
     const sameShape = c.handwrittenStale || actual === hand;
     if (!sameShape || !r.equal) failed = true;
-    console.log(`${sameShape && r.equal ? 'PASS' : 'FAIL'} ${tag}: ${c.handwrittenStale ? 'hand-written outdated' : sameShape ? 'op log == hand-written' : 'op log != hand-written'}; ${actual === theirs ? 'identical to' : r.equal ? 'state-equal with' : 'STATE DIFFERS from'} JS pipeline (${r.boundaries} boundaries, ops ${r.opsB} / ${r.opsA})`);
+    console.log(`${sameShape && r.equal ? 'PASS' : 'FAIL'} ${tag}: ${c.handwrittenStale ? 'hand-written outdated' : sameShape ? 'op log == hand-written' : 'op log != hand-written'}; ${vs}`);
     for (const p of r.problems) console.log(`  ${p}`);
   }
 }

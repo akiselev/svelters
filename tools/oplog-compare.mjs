@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 // Compares two op logs (plans/architecture/backend-abi.md "Op-log format") by the native state
 // they produce, not by their text: each log is replayed into a tree, and the states are compared
-// before every `event` / `gone` line and at the end. A state is: live handles with kind, props,
-// children per slot (in order), listened signals and the methods called on them.
+// before every `event` / `sync` / `gone` line and at the end. A state is: live handles with kind,
+// props, children per slot (in order), child attributes (ABI v2.2 `attr`, cleared when the child
+// is removed), listened signals with their phase word, the methods called on them, and the
+// results of sync calls (`result` lines) so far.
 //
 // Usage: node tools/oplog-compare.mjs <a.oplog> <b.oplog> [--default prop=<json>]...
 //   --default label=""   a prop set to this value counts as never set (e.g. a label written "")
@@ -50,12 +52,24 @@ function parseLine(line) {
       return { op, h: h(n), method, args: JSON.parse(json) };
     }
     case 'listen': {
-      const [, n, signal, on] = sp(line, 4);
-      return { op, h: h(n), signal, on: on === 'on' };
+      const [, n, signal, rest] = sp(line, 4);
+      const [on, flags] = rest.split(' ');
+      return { op, h: h(n), signal: flags ? `${signal} ${flags}` : signal, on: on === 'on' };
     }
-    case 'event': {
-      const [, n, signal, json] = sp(line, 4);
-      return { op, h: h(n), signal, args: JSON.parse(json) };
+    case 'event':
+    case 'sync': {
+      // `event #h sig [args] [flags word]`
+      const [, n, signal, rest] = sp(line, 4);
+      const m = /^(.*\])(?: (\S+))?$/.exec(rest);
+      return { op, h: h(n), signal, args: JSON.parse(m ? m[1] : rest), flags: m?.[2] ?? '' };
+    }
+    case 'result': {
+      const [, n, json] = sp(line, 3);
+      return { op, h: h(n), value: JSON.parse(json) };
+    }
+    case 'attr': {
+      const [, p, c, name, json] = sp(line, 5);
+      return { op, p: h(p), c: h(c), name, value: JSON.parse(json) };
     }
     case 'gone': {
       const [, n, reason] = sp(line, 3);
@@ -66,9 +80,13 @@ function parseLine(line) {
   }
 }
 
-/** Replays `text`; returns { boundaries: [{ line, state }], final, ops } (state = canonical JSON). */
-export function replay(text, { defaults = {} } = {}) {
-  const nodes = new Map(); // h -> { kind, props, parent, slots: Map, listening: Set, calls: [] }
+/** `default-width` -> `defaultWidth` (hosts resolve both spellings of a GTK property). */
+const camel = (name) => name.replace(/-([a-z0-9])/g, (_, c) => c.toUpperCase());
+
+/** Replays `text` (`camelProps`: compare prop names in camelCase); returns { boundaries: [{ line, state }], final, ops } (state = canonical JSON). */
+export function replay(text, { defaults = {}, camelProps = false } = {}) {
+  const nodes = new Map(); // h -> { kind, props, parent, slots: Map, listening: Set, calls: [], attrs: Map }
+  const results = []; // `#h value` of each sync result so far
   const get = (h, line) => {
     const n = nodes.get(h);
     if (!n) throw new Error(`op on unknown or dead handle #${h}: ${line}`);
@@ -84,6 +102,7 @@ export function replay(text, { defaults = {} } = {}) {
       if (!list.length) p.slots.delete(n.parent.slot);
     }
     n.parent = null;
+    n.attrs.clear();
   };
   const kill = (h) => {
     unlink(h);
@@ -98,9 +117,11 @@ export function replay(text, { defaults = {} } = {}) {
           .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)),
       );
       const slots = Object.fromEntries([...n.slots].sort(([a], [b]) => (a < b ? -1 : 1)));
-      return { h, kind: n.kind, props, slots, listening: [...n.listening].sort(), calls: n.calls };
+      const node = { h, kind: n.kind, props, slots, listening: [...n.listening].sort(), calls: n.calls };
+      if (n.attrs.size) node.attrs = Object.fromEntries([...n.attrs].sort(([a], [b]) => (a < b ? -1 : 1)));
+      return node;
     });
-    return JSON.stringify(out);
+    return JSON.stringify(results.length ? [...out, { results }] : out);
   };
 
   const boundaries = [];
@@ -110,7 +131,7 @@ export function replay(text, { defaults = {} } = {}) {
     switch (o.op) {
       case 'create':
         if (nodes.has(o.h)) throw new Error(`handle reused: ${line}`);
-        nodes.set(o.h, { kind: o.kind, props: new Map(), parent: null, slots: new Map(), listening: new Set(), calls: [] });
+        nodes.set(o.h, { kind: o.kind, props: new Map(), parent: null, slots: new Map(), listening: new Set(), calls: [], attrs: new Map() });
         break;
       case 'insert': {
         const p = get(o.p, line);
@@ -139,7 +160,7 @@ export function replay(text, { defaults = {} } = {}) {
         kill(o.h);
         break;
       case 'set':
-        get(o.h, line).props.set(o.prop, o.value);
+        get(o.h, line).props.set(camelProps ? camel(o.prop) : o.prop, o.value);
         break;
       case 'call':
         get(o.h, line).calls.push(`${o.method} ${JSON.stringify(o.args)}`);
@@ -148,21 +169,32 @@ export function replay(text, { defaults = {} } = {}) {
         if (o.on) get(o.h, line).listening.add(o.signal);
         else get(o.h, line).listening.delete(o.signal);
         break;
+      case 'attr': {
+        const c = get(o.c, line);
+        if (!c.parent || c.parent.h !== o.p) throw new Error(`attr on a non-child: ${line}`);
+        if (o.value === null) c.attrs.delete(o.name);
+        else c.attrs.set(o.name, o.value);
+        break;
+      }
+      case 'result':
+        results.push(`#${o.h} ${JSON.stringify(o.value)}`);
+        break;
       case 'event':
+      case 'sync':
       case 'gone':
         boundaries.push({ line, state: snapshot() });
         if (o.op === 'gone') kill(o.h);
         break;
     }
   }
-  return { boundaries, final: snapshot(), ops: lines.filter((l) => !/^(event|gone) /.test(l)).length };
+  return { boundaries, final: snapshot(), ops: lines.filter((l) => !/^(event|sync|result|gone) /.test(l)).length };
 }
 
 function firstDiff(a, b) {
   const x = JSON.parse(a);
   const y = JSON.parse(b);
-  const bx = new Map(x.map((n) => [n.h, n]));
-  const by = new Map(y.map((n) => [n.h, n]));
+  const bx = new Map(x.map((n) => [n.h ?? 'results', n]));
+  const by = new Map(y.map((n) => [n.h ?? 'results', n]));
   for (const h of new Set([...bx.keys(), ...by.keys()])) {
     const p = JSON.stringify(bx.get(h) ?? null);
     const q = JSON.stringify(by.get(h) ?? null);

@@ -22,6 +22,10 @@ pub struct Spec {
     pub element_hints: BTreeMap<String, String>,
     #[serde(default)]
     pub source: Value,
+    /// `typelib` (GTK: methods outside `methods` are still callable through GIRepository) or
+    /// `annotated` (Qt: only listed methods exist); empty in older specs.
+    #[serde(default)]
+    pub method_lookup: String,
     /// Optional: the backend has text nodes (the DOM conformance backend, `metadata/semantics/dom.json`).
     /// Text and `{expression}` runs outside text-content elements then lower to elements of
     /// `kind` (a tag) whose `prop` holds the text, with Svelte's whitespace rules. Absent on GTK/Qt:
@@ -68,10 +72,62 @@ pub struct KindSpec {
     pub signals: BTreeMap<String, SignalSpec>,
     pub bindings: BTreeMap<String, BindingSpec>,
     pub children: Option<ChildrenSpec>,
-    #[serde(default)]
-    pub methods: Vec<String>,
+    /// Annotated methods callable through `host.call` / `node.call`, by JS name. Older specs
+    /// (and the DOM conformance spec) list names only; they load with untyped records.
+    #[serde(default, deserialize_with = "methods_map")]
+    pub methods: BTreeMap<String, MethodSpec>,
     #[serde(default)]
     pub provenance: BTreeMap<String, String>,
+}
+
+/// A parameter or return type of a method: a spec type name (`bool|i32|...|other`, or `void` for
+/// returns), `nullable`, and the neutral `ref` for non-scalars.
+#[derive(Debug, Clone, Default, PartialEq, Deserialize)]
+pub struct TypeSpec {
+    #[serde(rename = "type")]
+    pub ty: String,
+    #[serde(default)]
+    pub nullable: bool,
+    #[serde(default, rename = "ref")]
+    pub type_ref: Option<String>,
+}
+
+#[derive(Debug, Clone, Default, PartialEq, Deserialize)]
+pub struct ParamSpec {
+    pub name: String,
+    #[serde(flatten)]
+    pub ty: TypeSpec,
+    /// Qt: the C++ parameter has a default, so the argument may be left out.
+    #[serde(default)]
+    pub optional: bool,
+}
+
+#[derive(Debug, Clone, Default, PartialEq, Deserialize)]
+pub struct MethodSpec {
+    /// GTK `zero_arg` (generated call) or `dynamic` (GIRepository); Qt `generated`; empty when
+    /// the spec gave only the name.
+    #[serde(default)]
+    pub dispatch: String,
+    #[serde(default)]
+    pub native: String,
+    /// None when the spec gave only the name (arity unknown).
+    #[serde(default)]
+    pub params: Option<Vec<ParamSpec>>,
+    #[serde(default)]
+    pub returns: Option<TypeSpec>,
+}
+
+fn methods_map<'de, D: serde::Deserializer<'de>>(d: D) -> Result<BTreeMap<String, MethodSpec>, D::Error> {
+    #[derive(Deserialize)]
+    #[serde(untagged)]
+    enum Raw {
+        Names(Vec<String>),
+        Map(BTreeMap<String, MethodSpec>),
+    }
+    Ok(match Raw::deserialize(d)? {
+        Raw::Names(v) => v.into_iter().map(|n| (n, MethodSpec::default())).collect(),
+        Raw::Map(m) => m,
+    })
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
@@ -146,6 +202,10 @@ pub struct PropertySpec {
     /// presence does not mean the backend exposes it as a signal.
     #[serde(default)]
     pub notify: Option<String>,
+    /// A record/boxed/object value the backend also takes as a string (`"Ctrl+K"` for a
+    /// QKeySequence, an icon name, `"#ff0000"`): static attributes pass the text through.
+    #[serde(default)]
+    pub string_form: bool,
     /// Kind id that declares the property (filled in at load).
     #[serde(skip)]
     pub owner: String,
@@ -177,6 +237,13 @@ pub struct SignalSpec {
     pub disconnect_on_drop: bool,
     #[serde(default)]
     pub synthetic: Option<String>,
+    /// The backend delivers it through `call_sync` (`__svelters_dispatch_sync`) and uses the
+    /// listeners' result: GTK `handler_result != none || sync_required`, Qt synthetic signals.
+    #[serde(default)]
+    pub sync: bool,
+    /// Listen phases the backend accepts besides the plain one (`after`, `capture`).
+    #[serde(default)]
+    pub phases: Vec<String>,
     #[serde(skip)]
     pub owner: String,
 }
@@ -253,6 +320,8 @@ pub enum SlotOrder {
     AppendOnly,
     BeforeSibling,
     NativeIndex,
+    /// Position is not the order (a grid): `insert` ignores `before` (X3).
+    Unordered,
     None,
 }
 
@@ -262,6 +331,33 @@ pub struct SlotSpec {
     pub accepts: Vec<String>,
     pub route_by_kind: bool,
     pub order: SlotOrder,
+    /// Per-child attributes of this slot (ABI v2.2 `set_child_attr`, `parent:<name>` in
+    /// templates), by JS name.
+    #[serde(default)]
+    pub attrs: BTreeMap<String, AttrSpec>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum AttrType {
+    Bool,
+    I32,
+    U32,
+    I64,
+    F64,
+    String,
+    Enum,
+}
+
+/// A child attribute: its type, the value `null` (and remove + insert) resets it to, enum names.
+#[derive(Debug, Clone, PartialEq, Deserialize)]
+pub struct AttrSpec {
+    #[serde(rename = "type")]
+    pub ty: AttrType,
+    #[serde(default)]
+    pub default: Option<Value>,
+    #[serde(default)]
+    pub values: Option<Vec<String>>,
 }
 
 #[derive(Debug, Clone, Deserialize)]

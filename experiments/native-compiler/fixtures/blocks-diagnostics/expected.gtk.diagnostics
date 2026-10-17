@@ -1,5 +1,6 @@
-[plugin svelters-native-compiler] experiments/native-compiler/fixtures/blocks-diagnostics/App.svelte:17:23
-unsupported_feature: destructured or defaulted snippet parameters are not supported by the native compiler yet; use plain identifiers
+[plugin svelters-native-compiler] experiments/native-compiler/fixtures/blocks-diagnostics/App.svelte:14:3
+unknown_element (gtk): <statusbar> is not an element of the gtk backend (help: did you mean one of `searchbar`, `headerbar`, `scrollbar`?)
+  App.svelte:17:24: unsupported_feature: destructured or defaulted snippet parameters are not supported by the native compiler yet; use plain identifiers
   App.svelte:21:2: slot_proxy_placement: <sv-slot> must be a direct child of a native element (it names one of that element's slots)
   App.svelte:25:5: const_tag_invalid_placement: `{@const}` must be the immediate child of `{#snippet}`, `{#if}`, `{:else if}`, `{:else}`, `{#each}`, `{:then}`, `{:catch}`, `<svelte:fragment>`, `<svelte:boundary>` or `<Component>`
   App.svelte:26:13: native_spread_unsupported: spread attributes on native elements cannot be checked against the gtk spec of <button> at compile time, so the native compiler rejects them

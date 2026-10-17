@@ -1,2 +1,2 @@
 [plugin svelters-native-compiler] experiments/native-compiler/fixtures/slots-gtk/App.svelte:8:3
-unknown_element (qt): <headerbar> is not an element of the qt backend (help: QtWidgets has no header bar: the title comes from the window `title`, buttons go in the window's menubar slot (or a QToolBar once annotated); did you mean one of `menubar`, `statusbar`?)
+unknown_element (qt): <headerbar> is not an element of the qt backend (help: QtWidgets has no header bar: the title comes from the window `title`, buttons go in the window's menubar slot (or a QToolBar once annotated); did you mean one of `calendar`, `menubar`, `statusbar`?)

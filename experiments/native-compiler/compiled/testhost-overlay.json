@@ -1,0 +1,20 @@
+{
+  "//": "The `testhost` compile target: metadata/semantics/gtk.json plus the vocabulary the JS-pipeline fixtures assume on the Node TestHost (which accepts any signal). GTK has no `key-pressed` on <entry> (it is on an EventControllerKey) and Qt names it `key-press`, so fixtures/sync-handlers and fixtures/listen-phases are rejected on the real specs; this overlay declares it as a sync bool_stop signal with both listen phases, so the compiled output can be compared with the JS pipeline op for op. Deep-merged by build.mjs into out/testhost.spec.json.",
+  "backend": "testhost",
+  "kinds": {
+    "Gtk.Entry": {
+      "signals": {
+        "key-pressed": {
+          "name": "key-pressed",
+          "js_event": "key-pressed",
+          "args": [{ "name": "keyval", "type": "u32" }, { "name": "keycode", "type": "u32" }, { "name": "state", "type": "flags" }],
+          "handler_result": "bool_stop",
+          "sync_required": true,
+          "sync": true,
+          "phases": ["after", "capture"],
+          "disconnect_on_drop": true
+        }
+      }
+    }
+  }
+}

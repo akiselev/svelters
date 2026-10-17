@@ -1,2 +1,2 @@
 [plugin svelters-native-compiler] experiments/native-compiler/fixtures/slots-qt/App.svelte:13:3
-slot_cardinality (gtk): <window>'s `child` slot takes one child on gtk, and it already has <box> (help: wrap the children in a container such as <box>)
+unknown_element (gtk): <statusbar> is not an element of the gtk backend (help: did you mean one of `searchbar`, `headerbar`, `scrollbar`?)

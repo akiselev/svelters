@@ -28,6 +28,18 @@ behavioural fixtures `experiments/native-compiler/fixtures/runes-*`.
 | `.svelte.ts`, `<script lang="ts">` | no | TypeScript parser not ported yet |
 | Legacy mode (`export let`, `$:`, stores as state) | no | `legacy_export_invalid`; runes mode is forced |
 
+## Native template attributes (X2/X3 renderer contract)
+
+| Feature | Status | Output |
+| --- | --- | --- |
+| `parent:<name>={v}` / `parent:<name>="v"` | yes, typed against the parent's slot | `$n.child_attr(node, name, v)` (render effect when reactive) |
+| `on<event>capture={fn}` | yes, where the spec allows `capture` | `$n.on(node, signal, fn, 2)` |
+| `{@attach listen(sig, fn, { after, capture })}` (`listen` from `@svelters/renderer`) | yes; static type/options resolved and phase-checked | `$.attach(node, () => $n.listen(signal, fn, flags))`; the import is rewritten to `@svelters/native-runtime` |
+| `{@attach f}` | yes | `$.attach(node, () => f)` |
+| Handlers of sync signals | yes | listeners get `(event, ...args)` with a `NativeEvent` (`e.preventDefault()`, `e.result = v`); `(...args)` for every other signal |
+| `{...{ k: v }}` / `{...constObject}` on native elements | yes (static keys) | one op per key; other spreads: `native_spread_unsupported` |
+| Static text for string-form values (`keySequence="Ctrl+K"`, icons, fonts, colors) | yes (spec `string_form`) | passed as a string |
+
 Validation (Svelte codes and messages): `state_invalid_placement`, `props_invalid_placement`,
 `props_id_invalid_placement`, `props_duplicate`, `bindable_invalid_location`,
 `effect_invalid_placement`, `inspect_trace_invalid_placement`, `host_invalid_placement`,

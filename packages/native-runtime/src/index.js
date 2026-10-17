@@ -3,7 +3,8 @@
 // batching); this module only turns component code into host ops
 // (plans/architecture/backend-abi.md "JS-side host ops"). There is no JS tree of DOM-like nodes
 // and no anchors: containers and regions keep just the ordering native insertion needs.
-// Plain ES2022, no globals besides __svelters_host / __svelters_dispatch / __svelters_gone.
+// Plain ES2022, no globals besides __svelters_host / __svelters_dispatch / __svelters_dispatch_sync /
+// __svelters_gone.
 import * as $ from 'svelte/internal/client';
 // Hidden by svelte's exports map; resolved by the alias in ../vite.js (and test/register.mjs).
 import { block, branch, component_root, destroy_effect } from 'svelte/internal/client/reactivity/effects';
@@ -30,7 +31,7 @@ class Scope {
     this.parent = parent;
     this.natives = []; // creation order
     this.children = new Set();
-    this.handlers = []; // [node, signal, fn]
+    this.handlers = []; // [node, signal, fn, flags]
     parent?.children.add(this);
   }
 }
@@ -50,8 +51,10 @@ class Native {
     this.last = new Map(); // prop -> last value written (or reported by the native side)
     this.captured = new Map();
     this.tokens = new Map(); // prop -> Set of tokens
-    this.handlers = new Map(); // signal -> [fn]
-    this.listening = new Set();
+    this.handlers = new Map(); // `${signal}\0${flags}` -> [fn]
+    this.listening = new Set(); // same keys, while the host listens
+    this.cattrs = new Map(); // `parent:` child attributes, by name (sent after every insert)
+    this.passive = new Map(); // signal -> [fn]: `track` mirrors, run before the handlers, never listened
     this.slots = new Map(); // slot name (null = default) -> Slot
   }
 
@@ -178,6 +181,28 @@ function attach(node) {
   node.host.insert(parent.h, node.h, before ? before.h : null, t.name ?? undefined);
   node.np = parent;
   node.slotName = t.name;
+  applyChildAttrs(node);
+}
+
+// Sends every `parent:` attribute of `node` to its native parent; called right after an insert
+// (first placement and every re-insert of a keyed move), as @svelters/renderer does.
+function applyChildAttrs(node) {
+  if (node.cattrs.size === 0 || !node.np || !alive(node) || !alive(node.np)) return;
+  for (const [name, value] of node.cattrs) node.host.setChildAttr(node.np.h, node.h, name, value);
+}
+
+/**
+ * `parent:<name>={value}`: a per-child attribute owned by the native parent (a grid cell, a tab
+ * label). Stored on the node and sent with `host.setChildAttr(parent, child, name, value)` once
+ * the node is inserted, on every change, and after every re-insert. `null`/`undefined` resets it
+ * (sent as `null`) and drops it from the set. Same semantics as @svelters/renderer's `setChildAttr`.
+ */
+export function child_attr(node, name, value) {
+  if (value === undefined) value = null;
+  if (node.cattrs.has(name) && node.cattrs.get(name) === value) return;
+  if (value === null) node.cattrs.delete(name);
+  else node.cattrs.set(name, value);
+  if (node.np && alive(node) && alive(node.np)) node.host.setChildAttr(node.np.h, node.h, name, value);
 }
 
 function detach(node) {
@@ -242,26 +267,75 @@ export function token(node, prop, tok, on) {
 // ---------------------------------------------------------------------------------------------
 // Signals
 
-export function on(node, signal, fn) {
-  let list = node.handlers.get(signal);
-  if (!list) node.handlers.set(signal, (list = []));
+/** `listen_ex` flags (ABI v2.2), the same values as @svelters/renderer's. */
+export const LISTEN_AFTER = 1;
+export const LISTEN_CAPTURE = 2;
+
+const hkey = (signal, flags) => `${signal}\0${flags}`;
+
+// `listen` for flags 0, `listen_ex` (a 4th argument) otherwise, as the renderer.
+function hostListen(node, signal, on, flags) {
+  if (flags) node.host.listen(node.h, signal, on, flags);
+  else node.host.listen(node.h, signal, on);
+}
+
+/**
+ * Registers `fn` for native `signal` with listen `flags` (LISTEN_AFTER | LISTEN_CAPTURE; 0 =
+ * plain). Each (signal, flags) is its own native connection: `host.listen` on its first handler.
+ */
+export function on(node, signal, fn, flags = 0) {
+  const k = hkey(signal, flags);
+  let list = node.handlers.get(k);
+  if (!list) node.handlers.set(k, (list = []));
   list.push(fn);
-  scope?.handlers.push([node, signal, fn]);
-  if (!node.listening.has(signal) && alive(node)) {
-    node.listening.add(signal);
-    node.host.listen(node.h, signal, true);
+  scope?.handlers.push([node, signal, fn, flags]);
+  if (!node.listening.has(k) && alive(node)) {
+    node.listening.add(k);
+    hostListen(node, signal, true, flags);
   }
 }
 
-function off(node, signal, fn) {
-  const list = node.handlers.get(signal);
+function off(node, signal, fn, flags = 0) {
+  const k = hkey(signal, flags);
+  const list = node.handlers.get(k);
   const i = list ? list.indexOf(fn) : -1;
   if (i < 0) return;
   list.splice(i, 1);
-  if (list.length === 0 && node.listening.has(signal)) {
-    node.listening.delete(signal);
-    if (alive(node)) node.host.listen(node.h, signal, false);
+  if (list.length === 0 && node.listening.has(k)) {
+    node.listening.delete(k);
+    if (alive(node)) hostListen(node, signal, false, flags);
   }
+}
+
+// DOM-style names the renderer accepts in `listen()` (its EVENT_TO_SIGNAL); compiled templates
+// resolve aliases at compile time from the backend spec.
+const EVENT_TO_SIGNAL = { click: 'clicked', change: 'changed', close: 'close-request' };
+
+const flagsOf = (options) => {
+  if (options === true) return LISTEN_CAPTURE;
+  if (!options || typeof options !== 'object') return 0;
+  return (options.capture ? LISTEN_CAPTURE : 0) | (options.after ? LISTEN_AFTER : 0);
+};
+
+/**
+ * @svelters/renderer's `listen(type, handler, { after, capture })` attachment, for compiled
+ * components (`{@attach listen(...)}`; the compiler rewrites the renderer import to this module).
+ * The compiler lowers a statically known call to `$n.listen(signal, handler, flags)` instead.
+ */
+export function listen(type, handler, options = {}) {
+  const signal = typeof options === 'number' ? type : (EVENT_TO_SIGNAL[type] ?? type);
+  const flags = typeof options === 'number' ? options : flagsOf(options);
+  return (node) => {
+    // registered outside the attachment's scope bookkeeping: the cleanup removes it
+    const prev = scope;
+    scope = null;
+    try {
+      on(node, signal, handler, flags);
+    } finally {
+      scope = prev;
+    }
+    return () => off(node, signal, handler, flags);
+  };
 }
 
 const reported = (node, prop, arg, args) => (arg >= 0 ? args[arg] : node.host.getProp(node.h, prop));
@@ -278,16 +352,93 @@ export function bind(node, prop, signal, arg, get, setv) {
 
 /**
  * One-way prop the native side also changes (`text={x}` on an entry): records the value `signal`
- * reports so that writing it back is a no-op. Emitted before the element's own handlers.
+ * reports so that writing it back is a no-op. Passive, like the renderer's mirror of entry
+ * `changed`: it runs when the signal is delivered because another handler listens, and does not
+ * make the host listen by itself.
  */
 export function track(node, prop, signal, arg) {
-  on(node, signal, (...args) => void node.last.set(prop, reported(node, prop, arg, args)));
+  let list = node.passive.get(signal);
+  if (!list) node.passive.set(signal, (list = []));
+  list.push((...args) => void node.last.set(prop, reported(node, prop, arg, args)));
 }
 
-export function dispatch(h, signal, args = []) {
+const handlersOf = (node, signal, flags) => [...(node.handlers.get(hkey(signal, flags)) ?? [])];
+
+/**
+ * The event object of a sync signal (`__svelters_dispatch_sync`) and of its deferred delivery:
+ * @svelters/renderer's NativeEvent. Svelte ignores handler return values, so the native result
+ * comes from this object: `e.result = v` wins, else `e.preventDefault()` / `e.stopPropagation()`
+ * give `true`, else `null` (toolkit default). Listeners get `(event, ...args)`. When `deferred`
+ * the toolkit did not wait (JS was busy): the flags stay settable but are ignored.
+ */
+export class NativeEvent {
+  constructor(type, signal, target, args, deferred) {
+    this.type = type;
+    this.signal = signal;
+    this.target = target;
+    this.args = args;
+    this.deferred = deferred;
+    this.cancelable = !deferred;
+    this.defaultPrevented = false;
+    this.cancelBubble = false;
+    this.result = undefined;
+    this.immediateStopped = false;
+  }
+
+  preventDefault() {
+    if (this.cancelable) this.defaultPrevented = true;
+  }
+
+  stopPropagation() {
+    if (this.cancelable) this.cancelBubble = true;
+  }
+
+  stopImmediatePropagation() {
+    this.stopPropagation();
+    this.immediateStopped = true;
+  }
+}
+
+const SIGNAL_TO_EVENT = Object.fromEntries(Object.entries(EVENT_TO_SIGNAL).map(([e, s]) => [s, e]));
+const eventFor = (signal) => SIGNAL_TO_EVENT[signal] ?? signal;
+
+/**
+ * `__svelters_dispatch(h, signal, args, deferred, flags)`: runs the handlers registered for
+ * (signal, flags) in registration order. Plain signals: handlers get the args. `deferred`: a
+ * sync signal delivered late; handlers get `(NativeEvent, ...args)` as from `dispatch_sync`, and
+ * the result is ignored. Unknown (destroyed or dead) handles are ignored.
+ */
+export function dispatch(h, signal, args = [], deferred = false, flags = 0) {
   const node = table().get(h);
   if (!node || !alive(node)) return;
-  for (const fn of [...(node.handlers.get(signal) ?? [])]) fn.apply(node, args);
+  if (deferred) {
+    const ev = new NativeEvent(eventFor(signal), signal, node, args, true);
+    for (const fn of handlersOf(node, signal, flags)) fn.call(node, ev, ...args);
+    return;
+  }
+  if (flags === 0) for (const fn of node.passive.get(signal) ?? []) fn.apply(node, args);
+  for (const fn of handlersOf(node, signal, flags)) fn.apply(node, args);
+}
+
+/**
+ * `__svelters_dispatch_sync(h, signal, args, flags)`: a sync native signal (`call_sync`) runs its
+ * handlers now with a NativeEvent and returns the toolkit result (see NativeEvent). An exception
+ * propagates (the host reports it and the toolkit uses its default); a handler returning a
+ * Promise draws the renderer's warning.
+ */
+export function dispatch_sync(h, signal, args = [], flags = 0) {
+  const node = table().get(h);
+  if (!node || !alive(node)) throw new Error(`dispatchSync: unknown handle ${h}`);
+  const ev = new NativeEvent(eventFor(signal), signal, node, args, false);
+  for (const fn of handlersOf(node, signal, flags)) {
+    const r = fn.call(node, ev, ...args);
+    if (r !== null && typeof r === 'object' && typeof r.then === 'function') {
+      console.warn(`sync handler for '${signal}' returned a Promise: flags set after its first await come too late and are ignored`);
+    }
+    if (ev.immediateStopped) break;
+  }
+  if (ev.result !== undefined) return ev.result;
+  return ev.defaultPrevented || ev.cancelBubble ? true : null;
 }
 
 export function gone(h, reason) {
@@ -357,7 +508,7 @@ function dispose(s, region) {
     }
   };
   for (const n of s.natives) if (!n.destroyed) walk(n);
-  for (const [node, signal, fn] of s.handlers) off(node, signal, fn);
+  for (const [node, signal, fn, flags] of s.handlers) off(node, signal, fn, flags);
   s.parent?.children.delete(s);
 }
 
@@ -721,6 +872,7 @@ function move(b) {
   for (const n of natives(b)) {
     n.host.remove(n.np.h, n.h);
     n.host.insert(n.np.h, n.h, before ? before.h : null, n.slotName ?? undefined);
+    applyChildAttrs(n);
   }
 }
 
@@ -757,6 +909,7 @@ export function lis(a) {
 export function mount(Component, { props = {}, target, transformError } = {}) {
   if (!host()) throw new Error('globalThis.__svelters_host is not defined');
   globalThis.__svelters_dispatch = dispatch;
+  globalThis.__svelters_dispatch_sync = dispatch_sync;
   globalThis.__svelters_gone = gone;
   const root = target == null ? new Root() : slot(new Native('#target', target, null), null);
   const s = new Scope(null);

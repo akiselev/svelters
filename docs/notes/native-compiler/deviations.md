@@ -170,6 +170,20 @@ Semantics are specified in `runtime-contract.md` "Template blocks"; departures f
 - `transform.rs` hook: `BindingKind::Template` reads as `$.get(x)` (read-only), `BindingKind::Snippet`
   as a thunk `x()` (`constant_assignment` on writes).
 
+## Child attributes, phases, sync handlers (`lower/native_attrs.rs`, agent I1)
+
+- **Spreads with static keys** are expanded at compile time (`{...{ 'onnotify::x': f }}`, a
+  top-level `const` object literal); keys added to such an object at runtime are not seen (Svelte
+  would apply them). Shadowing of the const's name by a template binding is not detected.
+- **`listen()` import**: `@svelters/renderer` imports are rewritten to `@svelters/native-runtime`,
+  which provides `listen`, `NativeEvent`, `StaleHandleError`, `LISTEN_*` only.
+- **Explicit default slot names** (`slot="center"` naming the default slot) are passed by name to
+  `insert`, as the renderer does (they used to be normalised to the default slot).
+- **`track` is passive** (renderer parity): a one-way `text={x}` with no listener no longer makes the
+  host listen to `changed`.
+- **Child attribute op order** within one update can differ from the JS pipeline (render effects
+  in source order, see "Template effect order"); the resulting state is the same.
+
 ## Rune transform (`transform/*`, `compile_module`; agent R2)
 
 Follows Svelte 5.57.2's client transform (`phases/3-transform/client`) and emits the same

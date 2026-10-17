@@ -49,15 +49,30 @@ One JSON object; `kinds` and `tags` have one entry per line.
     backend may not expose). Static attributes coerce only scalars, enums, flags and
     `list<string>` (split on whitespace); the rest must be expressions.
   - `signals.<name>`: `name` (what the host resolves), `js_event`, `args [{name,type}]`,
-    `handler_result` (`none|bool_stop|value`), `sync_required`, `disconnect_on_drop`, Qt `synthetic`.
+    `handler_result` (`none|bool_stop|value`), `sync_required`, `disconnect_on_drop`, Qt `synthetic`;
+    `sync` (delivered through `call_sync`: GTK `handler_result != none || sync_required`, Qt the
+    synthetic signals; listeners get `(event, ...args)`), `phases` (listen flags accepted besides
+    the plain one, X3: GTK `after` everywhere and `capture` on `Gtk.EventController` kinds; Qt
+    `after` on QObject signals, `capture` on `key-press`, none on `close-request`).
   - `bindings.<name>` (from the `bindings:` annotations): `property` (JS name), `direction`
     (`two_way|read_only`), `event`, `value` (`{"arg": n}` from `change.value: argN`, or
     `"readback"` from `prop`), `echo` (`host_suppressed` -> `backend_blocks`, `compare` ->
     `runtime_compare`, `none`), `compare_before_set`, `read_back`, `natively_normalizes`,
     `sync_signals_on_set`, `lifetime`, `provenance`.
   - `children`: `policy`, `default_slot`, `slots.<name>` `{many, accepts [kind ids or Qt classes],
-    route_by_kind, order (append_only|before_sibling|native_index|none)}`. Absent: no children.
-  - `methods`: annotated methods callable through `host.call`.
+    route_by_kind, order (append_only|before_sibling|native_index|unordered|none), attrs}`. Absent:
+    no children. `attrs.<name>` (X3 child attributes, `parent:<name>` in templates; GTK
+    cross-checked against the backend's `ATTRS` table): `{type (bool|i32|u32|i64|f64|string|enum),
+    default (the value after a `null` reset), values (enum names)}`.
+  - `methods.<js name>`: annotated methods callable through `host.call` / `node.call`:
+    `{dispatch (GTK zero_arg|dynamic, Qt generated), native, params [{name, type, nullable, ref?,
+    optional?}], returns {type (void for none), nullable, ref?}}`. GTK's `METHODS` table holds the
+    `zero_arg` ones (cross-checked); `dynamic` ones go through GIRepository. Top-level
+    `method_lookup`: `typelib` (GTK: any other GIR method is still callable, unchecked) or
+    `annotated` (Qt: only these exist). Older specs listing names only still load.
+  - Props: `string_form: true` on record/boxed/object values the backend also takes as a string
+    (GTK `has_string_form`: Pango font descriptions, GIcon, GdkRGBA, shortcut triggers, GFile;
+    Qt QIcon/QKeySequence/QUrl/QFont/Color): static attributes pass the text.
   - `provenance`: where each rule-derived fact on the kind came from.
 - `style.units.<unit>` `{scale}`; `style.declarations.<name>`: `applies_to` (kind or class, `is_a`),
   `contract`: `common` (`prop` + `value` kind `enum|length|bool`) or `native_intent`
@@ -107,6 +122,7 @@ and of the property's type, a known echo strategy, a lifetime block). Generated 
 `unknown_element`, `unknown_property`, `read_only_property`, `unknown_event`, `bind_no_plan`,
 `children_not_allowed`, `unknown_slot`, `slot_rejects_child`, `no_default_slot`,
 `style_unknown_declaration`, `style_not_applicable`, `style_bad_value`,
-`style_intent_unsupported`. Each `Unresolved` has a message, suggestions (closest names by edit
+`style_intent_unsupported`, `unknown_child_attr`, `child_attr_bad_value`,
+`listen_phase_unsupported`, `unknown_method`. Each `Unresolved` has a message, suggestions (closest names by edit
 distance, available slots or intents) and optional help; `Unresolved::report` records it as a
 backend diagnostic.

@@ -12,6 +12,8 @@
 //! native slot of the parent element without creating a native.
 
 pub mod ir;
+mod native_attrs;
+pub use native_attrs::RENDERER_MODULE;
 
 use crate::diag::Diagnostics;
 use crate::estree::{ArrayElement, Expression, Pattern, Span, Spanned};
@@ -22,6 +24,7 @@ use crate::svelte::ast::{
     Root, SnippetBlock, TextOrExpressionTag,
 };
 use ir::*;
+use native_attrs::{ScriptFacts, CHILD_ATTR_PREFIX};
 use serde_json::Value as Json;
 use std::collections::{HashMap, HashSet};
 
@@ -43,6 +46,7 @@ pub fn lower<'a>(root: &'a Root, sem: &dyn BackendSemantics, styles: Option<&'a 
         forced_slot: None,
         const_ok: false,
         snippet_roots,
+        script: ScriptFacts::collect([root.instance.as_ref(), root.module.as_ref()]),
     };
     l.check_style_sheet();
     let root_fragment = l.fragment(&root.fragment, &Parent::Root, &[]);
@@ -97,6 +101,8 @@ struct Lower<'a, 's, 'd> {
     /// Snippets declared in this component by name: their root elements (None: the name is
     /// declared more than once, so render sites are not checked statically).
     snippet_roots: HashMap<String, Option<Vec<&'a AstElement>>>,
+    /// Imports and `const` objects of the scripts (renderer `listen`, static spreads).
+    script: ScriptFacts<'a>,
 }
 
 fn sp(s: Span) -> (u32, u32) {
@@ -522,7 +528,10 @@ impl<'a> Lower<'a, '_, '_> {
                     }
                     let req = own.or(forced.clone());
                     match self.sem.place_child(p, &er, req.as_deref()) {
-                        Ok(plan) => slots.push((!plan.is_default).then_some(plan.slot)),
+                        Ok(plan) => {
+                            self.check_snippet_child_attrs(p, &plan.slot, el, &name, span);
+                            slots.push((!plan.is_default).then_some(plan.slot))
+                        }
                         // an unknown <sv-slot> name was reported at the <sv-slot>
                         Err(u) if u.code == crate::semantics::codes::UNKNOWN_SLOT && forced.is_some() => {}
                         Err(u) => {
@@ -605,7 +614,8 @@ impl<'a> Lower<'a, '_, '_> {
             }
         }
 
-        // placement
+        // placement (`attr_target`: where `parent:` attributes go, when known here)
+        let mut attr_target: Option<(ElementRef, String)> = None;
         let (slot, present) = match parent {
             Parent::Root | Parent::Detached => {
                 // A toplevel kind is presented when mounted at the root. Other kinds are allowed at a
@@ -634,7 +644,10 @@ impl<'a> Lower<'a, '_, '_> {
                             self.single_slots.insert(key, el.name.clone());
                         }
                     }
-                    ((!plan.is_default).then_some(plan.slot), None)
+                    attr_target = Some((p.clone(), plan.slot.clone()));
+                    // an explicitly named slot is passed by name even when it is the default one, as the
+                    // renderer does (`data-slot="center"` -> `insert(.., "center")`)
+                    ((!plan.is_default || plan.routing == crate::semantics::Routing::Explicit).then_some(plan.slot), None)
                 }
                 Err(u) => {
                     u.report(self.diags, tag_span);
@@ -652,19 +665,19 @@ impl<'a> Lower<'a, '_, '_> {
                 AttributeLike::Attribute(at) if matches!(at.name.as_str(), "slot" | "data-slot") || (at.name == "class" && class_prop.is_none()) => {}
                 AttributeLike::Attribute(at) if at.name.starts_with("on") && matches!(at.value, AttributeValue::Expression(_)) => {
                     let AttributeValue::Expression(ExpressionTagNode::ExpressionTag(t)) = &at.value else { unreachable!() };
-                    match self.sem.event(&er, &at.name) {
-                        Ok(ev) => ops.push(Op::Listen { signal: ev.signal, handler: &t.expression, span: at.span() }),
-                        Err(u) => u.report(self.diags, name_span(at)),
-                    }
+                    ops.extend(self.listen_op(&er, &at.name, Handler::Expr(&t.expression), at.span(), name_span(at)));
+                }
+                AttributeLike::Attribute(at) if at.name.starts_with(CHILD_ATTR_PREFIX) => {
+                    let name = &at.name[CHILD_ATTR_PREFIX.len()..];
+                    ops.extend(self.child_attr_op(attr_target.as_ref(), name, at));
                 }
                 // Legacy `on:name={handler}` (deprecated in Svelte 5, still compiled in runes mode): a
                 // listener like `onname={handler}`; modifiers and bare forwarding are rejected below
                 AttributeLike::OnDirective(d) if d.modifiers.is_empty() && d.expression.is_some() => {
-                    match self.sem.event(&er, &format!("on{}", d.name)) {
-                        Ok(ev) => ops.push(Op::Listen { signal: ev.signal, handler: d.expression.as_ref().unwrap(), span: d.span() }),
-                        Err(u) => u.report(self.diags, d.name_span.map_or(sp(d.span()), sp)),
-                    }
+                    let ns = d.name_span.map_or(sp(d.span()), sp);
+                    ops.extend(self.listen_op(&er, &format!("on{}", d.name), Handler::Expr(d.expression.as_ref().unwrap()), d.span(), ns));
                 }
+                AttributeLike::AttachTag(t) => ops.extend(self.attach_op(&er, t)),
                 AttributeLike::Attribute(at) => {
                     let prop = match self.sem.writable_property(&er, &at.name) {
                         Ok(p) => p.clone(),
@@ -709,8 +722,10 @@ impl<'a> Lower<'a, '_, '_> {
                         ops.push(Op::Token { prop: cp.clone(), token: d.name.clone(), cond: vec![CondAtom::Expr(e)], span: d.span() });
                     }
                 }
+                AttributeLike::SpreadAttribute(s) if self.static_spread(&er, &s.expression, s.span(), attr_target.as_ref(), &mut ops, &mut explicit_props) => {}
                 AttributeLike::SpreadAttribute(s) => {
-                    // Decision (runtime-contract.md "Spread attributes"): rejected on native elements.
+                    // Decision (runtime-contract.md "Spread attributes"): rejected on native
+                    // elements unless the keys are static (an object literal or a const one).
                     self.diags
                         .error(
                             "native_spread_unsupported",

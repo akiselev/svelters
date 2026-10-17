@@ -79,8 +79,18 @@ pub enum Op<'a> {
     Set { prop: String, value: Json, span: Span },
     /// A JS value written by a render effect.
     SetDynamic { prop: String, value: Dynamic<'a>, span: Span },
-    /// `$n.on(node, signal, handler)`.
-    Listen { signal: String, handler: &'a Expression, span: Span },
+    /// `$n.on(node, signal, handler, flags)`. `flags`: LISTEN_AFTER | LISTEN_CAPTURE (0 = plain).
+    /// `sync`: the backend delivers the signal through `call_sync`, so the handler gets
+    /// `(event, ...args)` (informational; the runtime decides by how the host calls it).
+    Listen { signal: String, handler: Handler<'a>, flags: u32, sync: bool, span: Span },
+    /// `{@attach listen(signal, handler, {after, capture})}` with a static signal and phase:
+    /// `$.attach(node, () => $n.listen(signal, handler, flags))` (registered when the attachment runs,
+    /// as the renderer's `listen` helper).
+    ListenAttach { signal: String, handler: &'a Expression, flags: u32, span: Span },
+    /// `{@attach expr}`: Svelte's `$.attach(node, () => expr)` with the runtime node.
+    Attach { expr: &'a Expression, span: Span },
+    /// `parent:<name>=...`: `$n.child_attr(node, name, value)`, sent to the native parent after insertion.
+    ChildAttr { name: String, value: AttrValue<'a>, span: Span },
     /// `$n.bind(node, prop, signal, arg, get, set)`; `target` is the bound lvalue.
     Bind { prop: String, signal: String, arg: i64, target: &'a Expression, span: Span },
     /// `bind:this={target}`: Svelte's `$.bind_this(node, set, get)` with the runtime node.
@@ -92,6 +102,20 @@ pub enum Op<'a> {
     /// Style-driven prop with conditional candidates, highest precedence first; the first whose
     /// condition holds wins, else `fallback`.
     StyleProp { prop: String, candidates: Vec<(Cond<'a>, Json)>, fallback: Fallback, span: Span },
+}
+
+/// An event handler: an expression, or a property of a spread object (`{...events}`), read when
+/// the event fires.
+#[derive(Debug)]
+pub enum Handler<'a> {
+    Expr(&'a Expression),
+    Member { object: &'a Expression, key: String },
+}
+
+#[derive(Debug)]
+pub enum AttrValue<'a> {
+    Static(Json),
+    Dynamic(Dynamic<'a>),
 }
 
 /// A conjunction of class conditions; empty = always true.
@@ -118,6 +142,8 @@ pub enum Dynamic<'a> {
     Expr(&'a Expression),
     /// Text content / interpolated attribute: concatenated parts (`` `a ${b ?? ''}` ``).
     Template(Vec<TemplatePart<'a>>),
+    /// `object[key]`: a property of a spread object (`{...props}` on a native element).
+    Member { object: &'a Expression, key: String },
 }
 
 #[derive(Debug)]

@@ -62,9 +62,11 @@ the alias `svelte/internal/client/reactivity/effects` -> Svelte's effects file).
 | `assume(node, prop, value)` | Records the spec's native default as the last value without writing it (a fresh widget is at its default), so a style fallback to the default is not written redundantly. |
 | `capture(node, prop)` / `RESTORE` | `capture` reads `host.getProp` once (before the first write) and remembers it; the read value also counts as the last value, so restoring an untouched prop is a no-op. `set(node, prop, RESTORE)` writes the captured value. Used when the spec has no default to restore. |
 | `token(node, prop, token, on)` | Maintains a token list prop (GTK `cssClasses`, a list of strings under ABI v3): reads the initial native value once via `getProp` (or uses the last written value), adds/removes `token`, writes the joined list when it changes. |
-| `on(node, signal, handler)` | Registers `handler` (called with the event args, `this` = the runtime node) and `host.listen(h, signal, true)` on the first handler for that signal. Removed when the scope that registered it is disposed; `listen off` only if the node outlives that scope and has no handler left for the signal, never when the node itself is destroyed (backends disconnect on destroy: `disconnect_on: handle_drop`). |
+| `on(node, signal, handler, flags = 0)` | Registers `handler` (called with the event args, `this` = the runtime node) for (signal, `flags`) and `host.listen(h, signal, true)` on the first handler for that pair (`host.listen(h, signal, true, flags)` when `flags` is not 0: `LISTEN_AFTER = 1`, `LISTEN_CAPTURE = 2`, ABI v2.2 `listen_ex`). Each (signal, flags) is its own native connection. Removed when the scope that registered it is disposed; `listen off` only if the node outlives that scope and has no handler left for the pair, never when the node itself is destroyed (backends disconnect on destroy: `disconnect_on: handle_drop`). |
+| `listen(type, handler, options)` | @svelters/renderer's attachment helper (`{@attach listen('key-pressed', fn, { after: true })}`): on attach `on(node, signal, handler, flags)`, the cleanup removes it. `type` goes through the renderer's alias table (`click` -> `clicked`); `options` is `{ after, capture }` or a flags number. The compiler emits `$.attach(node, () => $n.listen(signal, handler, flags))` with the spec-resolved signal when type and options are static; a `@svelters/renderer` import is rewritten to this module (which also exports `NativeEvent`, `StaleHandleError`, `LISTEN_AFTER`, `LISTEN_CAPTURE`). |
+| `child_attr(node, name, value)` | `parent:<name>={value}`: stored on the node; sent with `host.setChildAttr(parent, node, name, value)` right after every insert (first placement, keyed move, any re-insert) and on every change while inserted. `undefined`/`null` resets (sent as `null`) and drops it. Same rules as the renderer's `setChildAttr`. |
 | `bind(node, prop, signal, arg, get, set)` | Two-way binding plan from the backend spec: a render effect writes `get()` through `set(node, prop, …)`; on `signal` the new value is `args[arg]` (or `host.getProp` when `arg < 0`); it is recorded as the node's last value for `prop` (so echoes and redundant writes are no-ops) and passed to `set(v)` when it differs from `get()`. |
-| `track(node, prop, signal, arg)` | For a one-way prop that has a spec binding (`text={draft}` on an entry, without `bind:`): on `signal` records `args[arg]` (or `getProp` when `arg < 0`) as the node's last value for `prop`, so writing the same value back is not echoed. Emitted after the prop's effect and before the element's own handlers (so its `listen` comes first). The JS renderer hard-codes this for `entry`/`changed`. |
+| `track(node, prop, signal, arg)` | For a one-way prop that has a spec binding (`text={draft}` on an entry, without `bind:`): on `signal` records `args[arg]` (or `getProp` when `arg < 0`) as the node's last value for `prop`, so writing the same value back is not echoed. Passive: it runs (before the handlers) when the signal is delivered because a handler listens, but never makes the host listen itself, exactly as the JS renderer's hard-coded `entry`/`changed` mirror. |
 | `slot(node, name)` | The container for `node`'s slot `name` (`null` = default slot; the host gets `slot` undefined). Same object for the same (node, name). |
 | `append(container, node)` | Appends at the end of the container (slot, region or root): `host.insert(parent, h, before, slot)` where `before` is the next inserted live native after it in the same parent+slot, looking through regions (null = end). For the root container: `present`. Insertion is immediate: branches are always built in place (see `each_block`), so no deferred attach is needed. Skipped when the node or its native parent is dead. |
 | `if_block(container, test, consequent, alternate)` | A region in `container`. A Svelte `block` effect evaluates `!!test()`; on change it builds the other branch (a `branch` effect + scope, `fn(anchor)` with `anchor` the branch's region) after the current one, then disposes the current one (effect, then natives). Op order: create/insert new, remove/destroy old, as Svelte's own if block. `alternate` may be null. |
@@ -92,10 +94,51 @@ or destroyed again.
 
 ## Events
 
-`__svelters_dispatch(h, signal, args)` calls the node's handlers for `signal` in registration
-order. Unknown handles (destroyed or dead) are ignored. Return values are not used (handlers
-returning values for sync signals need `call_sync`, M4). State writes in handlers are flushed by
-Svelte's microtask batch, i.e. at the host's next job drain, as in the JS pipeline.
+`__svelters_dispatch(h, signal, args, deferred, flags)` calls the node's handlers registered for
+(`signal`, `flags`) in registration order, with the args. Unknown handles (destroyed or dead) are
+ignored. State writes in handlers are flushed by Svelte's microtask batch, i.e. at the host's next
+job drain, as in the JS pipeline.
+
+**Sync signals** (X2, `docs/notes/x2-sync-frame.md`). A signal whose spec record has `sync: true`
+(GTK: `handler_result != none` or `sync_required`, e.g. `close-request`, `mnemonic-activate`; Qt:
+the synthetic `close-request` and `key-press`) is delivered through `call_sync` as
+`__svelters_dispatch_sync(h, signal, args, flags)`. Its handlers get **`(event, ...args)`**, not
+`(...args)`: `event` is a `NativeEvent` (the renderer's class, exported here). The result for the
+toolkit: `event.result = v` wins; else `event.preventDefault()` / `stopPropagation()` give `true`
+(veto the close, key handled); else `null` (toolkit default). Handler return values are ignored,
+as Svelte ignores them; a Promise return draws the renderer's warning; `stopImmediatePropagation()`
+skips the remaining handlers. When JS was busy the host delivers the event later as
+`__svelters_dispatch(h, signal, args, true, flags)`: same `(event, ...args)` shape with
+`event.deferred = true`, flags ignored. The compiler knows which signals are sync and warns
+(`sync_handler_return`) about a handler that returns a boolean literal, and
+(`sync_handler_arguments`) about one whose first parameter is named like the signal's first
+argument.
+
+**Phases** (X3). `on<event>capture={fn}` (Svelte's capture suffix) listens with `LISTEN_CAPTURE`;
+`{@attach listen(sig, fn, { after: true })}` with `LISTEN_AFTER`. The spec lists the phases each
+signal accepts (`phases`); anything else is `listen_phase_unsupported` at compile time (GTK:
+`after` on any signal, `capture` on event controllers only; Qt: `after` on QObject signals,
+`capture` on `key-press` only).
+
+## Child attributes
+
+`parent:<name>={value}` on a native element (X3, `docs/notes/x3-childattr-listen.md`) is
+resolved against the **actual parent element's slot** the child is placed in (spec
+`children.slots.<slot>.attrs`): an unknown name is `unknown_child_attr` (with the closest names and
+the slot that has it), a static value is coerced to the attribute's type
+(`bool|i32|u32|i64|f64|string|enum`, `child_attr_bad_value`), a dynamic one becomes a render
+effect `$n.child_attr(node, name, value)`. Elements whose parent is not known at compile time (a
+component's root elements, snippet bodies) pass the value through unchecked, as the renderer;
+snippet roots are checked at each local `{@render}` site. Runtime semantics: `child_attr` above.
+
+## Spreads with static keys and `{@attach}`
+
+`{...{ key: value }}` and `{...obj}` where `obj` is a top-level `const` object literal are lowered
+as the attributes they name (`on...` events with phase suffixes, `parent:` child attributes,
+props; `slot`/`class`/`style` are rejected): the keys are checked against the spec, the values are
+the property expressions (`obj[key]`, read when the event fires or the effect runs). Any other
+spread on a native element stays `native_spread_unsupported`. `{@attach f}` is Svelte's
+`$.attach(node, () => f)` with the runtime node (the attachment runs in an effect after mount).
 
 ## Template blocks (native semantics)
 

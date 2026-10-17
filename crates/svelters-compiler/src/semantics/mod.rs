@@ -11,7 +11,7 @@ pub mod spec;
 
 pub use backend::SpecBackend;
 pub use spec::{
-    BindingDirection, BindingValue, Contract, Echo, HandlerResult, Lifetime, PropType, PropertySpec, SignalSpec, SlotOrder, Spec,
+    AttrSpec, AttrType, MethodSpec, ParamSpec, TypeSpec, BindingDirection, BindingValue, Contract, Echo, HandlerResult, Lifetime, PropType, PropertySpec, SignalSpec, SlotOrder, Spec,
     ValueKind,
 };
 
@@ -33,6 +33,10 @@ pub mod codes {
     pub const STYLE_NOT_APPLICABLE: &str = "style_not_applicable";
     pub const STYLE_BAD_VALUE: &str = "style_bad_value";
     pub const STYLE_INTENT_UNSUPPORTED: &str = "style_intent_unsupported";
+    pub const UNKNOWN_CHILD_ATTR: &str = "unknown_child_attr";
+    pub const CHILD_ATTR_BAD_VALUE: &str = "child_attr_bad_value";
+    pub const LISTEN_PHASE_UNSUPPORTED: &str = "listen_phase_unsupported";
+    pub const UNKNOWN_METHOD: &str = "unknown_method";
 }
 
 /// Why a question has no answer on this backend.
@@ -118,8 +122,27 @@ pub struct EventSpec {
     pub handler_result: HandlerResult,
     pub sync_required: bool,
     pub disconnect_on_drop: bool,
+    /// Delivered through `call_sync`: listeners get `(event, ...args)` (a NativeEvent) and its
+    /// result goes back to the toolkit.
+    pub sync: bool,
+    /// Listen phases accepted besides the plain one (`after`, `capture`).
+    pub phases: Vec<String>,
     /// The DOM-style alias that was applied (`click` -> `clicked`).
     pub via_alias: Option<String>,
+}
+
+/// Listener phase flags (ABI v2.2 `listen_ex`, the renderer's LISTEN_AFTER / LISTEN_CAPTURE).
+pub const LISTEN_AFTER: u32 = 1;
+pub const LISTEN_CAPTURE: u32 = 2;
+
+/// A resolved `parent:<name>` child attribute.
+#[derive(Debug, Clone, PartialEq)]
+pub struct ChildAttrPlan {
+    /// What generated code passes to `host.setChildAttr` (the host resolves it by name).
+    pub name: String,
+    /// The parent's slot the attribute belongs to.
+    pub slot: String,
+    pub spec: AttrSpec,
 }
 
 /// Two-way binding plan (`$n.bind(node, prop, signal, arg, get, set)`).
@@ -254,6 +277,19 @@ pub trait BackendSemantics {
     /// property. None (GTK, Qt): text outside text-content elements is an error.
     fn text_node(&self) -> Option<(ElementRef, String)> {
         None
+    }
+    /// A `parent:<name>` attribute of a child placed in `parent`'s slot `slot`.
+    fn child_attr(&self, _parent: &ElementRef, slot: &str, name: &str) -> Result<ChildAttrPlan, Unresolved> {
+        Err(Unresolved::new(codes::UNKNOWN_CHILD_ATTR, format!("slot `{slot}` has no child attribute `{name}`")))
+    }
+    /// A static `parent:<name>="..."` value as a typed constant (`None` = bare attribute).
+    fn coerce_child_attr(&self, plan: &ChildAttrPlan, value: Option<&str>) -> Result<StaticValue, String> {
+        let _ = (plan, value);
+        Err("child attributes are not supported".into())
+    }
+    /// An annotated method of the element's chain (for `bind:this` calls).
+    fn method(&self, _el: &ElementRef, name: &str) -> Result<&MethodSpec, Unresolved> {
+        Err(Unresolved::new(codes::UNKNOWN_METHOD, format!("no method `{name}`")))
     }
     /// Parse with HTML rules (spec `html_syntax`; the DOM conformance backend only).
     fn html_syntax(&self) -> bool {
