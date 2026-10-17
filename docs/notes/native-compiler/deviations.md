@@ -65,3 +65,19 @@ Port of `packages/svelte/src/compiler/phases/1-parse` of Svelte 5.57.2 @ f3de3f2
     `svelte-ignore` filtering (upstream's ignore stack is empty while parsing anyway).
 12. `CompileError.message` omits upstream's trailing `\nhttps://svelte.dev/e/<code>` line
     (`CompileError::docs_url` rebuilds it).
+
+## acorn regexp validator (`acorn/regexp.rs`, agent B)
+
+None change behaviour (90,940 / 90,940 verdicts agree with acorn 8.19.0, messages included):
+- `wordsRegexp` is a word set instead of a generated RegExp.
+- BranchIDs live in a list and are compared by index.
+- Two dead initial values were dropped (clippy).
+- Error offset: acorn raises every regexp error at the pattern start, so `validate_pattern` returns 0; the caller adds the pattern's absolute position.
+
+## Scope analysis (`svelte/scope*`, agent E)
+
+- Node metadata is returned in side tables (`CreatedScopes`), not stored on the AST; `Fragment.metadata.transparent` is recomputed (element fragments are transparent unless they directly contain a `DeclarationTag`).
+- Not ported: `Binding.blocker`, `Scope.tracing`, the `importKind === 'type'` exception (no TS nodes).
+- `extract_paths` returns only `node`, `is_rest`, `has_default_value`.
+- `Evaluation` of a cyclic expression returns the initial in-progress state; cases where upstream throws inside JS (BigInt arithmetic, `in`/`instanceof` on primitives, out-of-range `fromCodePoint`) evaluate to UNKNOWN; lone surrogates become U+FFFD; `Math.*` may differ from V8 in the last ulp.
+- `analyze.rs` omits warnings and the legacy-mode binding kinds set by other analysis visitors (`export let` props).
