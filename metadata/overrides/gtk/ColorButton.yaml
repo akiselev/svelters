@@ -1,0 +1,2 @@
+unexposed:
+  reason: "deprecated since GTK 4.10; use ColorDialogButton"

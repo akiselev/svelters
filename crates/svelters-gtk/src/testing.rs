@@ -96,6 +96,24 @@ pub enum V {
     Boxed(u64),
 }
 
+/// Debug form of a value with boxed handle numbers blanked: every read of a boxed property mints a
+/// new handle, so round-trip tests compare the shape and the plain fields, not the handle ids.
+pub fn shape(v: &impl std::fmt::Debug) -> String {
+    let s = format!("{v:?}");
+    let mut out = String::with_capacity(s.len());
+    let mut it = s.chars().peekable();
+    while let Some(c) = it.next() {
+        out.push(c);
+        if out.ends_with("handle: ") || out.ends_with("Boxed(") {
+            while it.peek().is_some_and(|d| d.is_ascii_digit()) {
+                it.next();
+            }
+            out.push('#');
+        }
+    }
+    out
+}
+
 /// What the harness host answers to `call_sync`.
 #[derive(Debug, Clone, PartialEq, Default)]
 pub enum SyncReply {

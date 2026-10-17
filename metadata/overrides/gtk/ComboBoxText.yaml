@@ -1,0 +1,2 @@
+unexposed:
+  reason: "deprecated since GTK 4.10; DropDown model support is open under gap G6"

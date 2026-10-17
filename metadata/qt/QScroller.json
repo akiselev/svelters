@@ -1152,7 +1152,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "State",
+        "native": "QScroller::State",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QScroller::State>"

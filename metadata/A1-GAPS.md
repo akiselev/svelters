@@ -26,8 +26,9 @@ some blocked facts are not worth exposing anyway.
 | G13 | Qt many-slots without an index/list API: **closed by the A1 lead** (`order: append_only` slots, membership by isAncestorOf; QStatusBar `widgets`/`permanent` verified) | QStatusBar `widgets`/`permanent`, QDialogButtonBox buttons | qt-bars |
 | G14 | GTK remove ops that want the wrapper (GtkListBox::remove takes the row): **closed by the A1 lead** (op arg `wrapper`; ListBox `children` verified) | - | - |
 | G15 | Qt one-slots whose setter keeps the old child parented (QDockWidget::setWidget): **closed by the A1 lead** (a clearing `remove` with `then:` steps also runs on replace; `receiver: child` works in take/clear) | QDockWidget `widget` | qt-followups |
-| G16 | Qt no-echo test for non-scalar props (dates, records): the generated test needs a scalar sample | `bind:date`/`bind:time`/`bind:dateTime` | qt-display |
+| G16 | Qt no-echo test for non-scalar props: **closed by the A1 lead** (read, change natively unobserved, write back while listening; renderer `value` binding type; QDateEdit `bind:date` verified) | `bind:date`/`bind:time`/`bind:dateTime` | qt-display |
 | G17 | Qt ingest took `clearMinimumDate()` as the getter: **closed by the A1 lead** (getters must return a value; name match preferred) | min/max date and time props | qt-followups |
+| G18 | Qt slot removal by an id the child does not carry: **closed by the A1 lead** (slot `id_of`, op arg `id`; QWizard `pages` verified) | QWizard `pages` | qt-followups |
 
 ## G1: child attributes
 
@@ -221,3 +222,10 @@ for every many-slot. `QStatusBar::addWidget/insertWidget/removeWidget` and
 allow `order: append_only` many-slots with only `insert` + `remove`, membership through
 `isAncestorOf`, and generated tests for insert/remove/ownership without order checks (and an
 `index_of` computed from the layout/children list where one exists). Owner: A1 lead (generator).
+
+## G18: removal by id
+
+`QWizard::addPage` returns an id and `removePage(int id)` needs it; the child widget does not know its
+id. Fix in the generator: an op arg `id_of` computed by scanning `pageIds()` for `page(id) == child`
+(declared on the slot as `id_of: {list: "QWizard::pageIds() const", item: "QWizard::page(int) const"}`).
+Owner: A1 lead (generator).

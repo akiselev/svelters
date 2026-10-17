@@ -842,7 +842,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "Shadow",
+        "native": "QFrame::Shadow",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QFrame::Shadow>"
@@ -885,7 +885,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "Shape",
+        "native": "QFrame::Shape",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QFrame::Shape>"

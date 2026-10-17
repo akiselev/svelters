@@ -1285,7 +1285,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "Direction",
+        "native": "QProgressBar::Direction",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QProgressBar::Direction>"

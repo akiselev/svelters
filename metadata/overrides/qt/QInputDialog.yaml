@@ -5,6 +5,7 @@ elements:
       - { js: labelText, native: labelText, provenance: "QInputDialog::labelText (qdoc)" }
       - { js: textValue, native: textValue, provenance: "QInputDialog::textValue (qdoc)" }
       - { js: intValue, native: intValue, provenance: "QInputDialog::intValue (qdoc)" }
+      - { js: doubleValue, native: doubleValue, setup: "$w->setInputMode(QInputDialog::DoubleInput); $w->setDoubleDecimals(2)", provenance: "QInputDialog::doubleValue (qdoc); type from the getter (qdoc's dataType says int)" }
       - { js: intMinimum, native: intMinimum, provenance: "QInputDialog::intMinimum (qdoc)" }
       - { js: intMaximum, native: intMaximum, provenance: "QInputDialog::intMaximum (qdoc)" }
       - { js: inputMode, native: inputMode, provenance: "QInputDialog::inputMode (qdoc); enum by name (ABI v3)" }

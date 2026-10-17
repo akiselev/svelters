@@ -602,6 +602,23 @@
           "items": {
             "$ref": "#/$defs/attr"
           }
+        },
+        "id_of": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "list",
+            "item"
+          ],
+          "properties": {
+            "list": {
+              "type": "string"
+            },
+            "item": {
+              "type": "string"
+            }
+          },
+          "description": "Append-only slots removed by an id (op arg `id`): ids from `list` (e.g. QWizard::pageIds() const), the child is `item(id)` (QWizard::page(int) const)."
         }
       }
     },

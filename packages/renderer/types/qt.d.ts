@@ -94,6 +94,8 @@ export interface QtElementDescriptors {
       dateEditAcceptDelay?: number;
       selectionMode?: "no-selection" | "single-selection";
       selectedDate?: DateParts;
+      minimumDate?: DateParts;
+      maximumDate?: DateParts;
       enabled?: boolean;
       toolTip?: string;
       statusTip?: string;
@@ -287,6 +289,8 @@ export interface QtElementDescriptors {
       date?: DateParts;
       displayFormat?: string;
       calendarPopup?: boolean;
+      minimumDate?: DateParts;
+      maximumDate?: DateParts;
       readOnly?: boolean;
       wrapping?: boolean;
       frame?: boolean;
@@ -322,6 +326,12 @@ export interface QtElementDescriptors {
       dateTime?: Date;
       displayFormat?: string;
       calendarPopup?: boolean;
+      minimumDate?: DateParts;
+      maximumDate?: DateParts;
+      minimumTime?: TimeParts;
+      maximumTime?: TimeParts;
+      minimumDateTime?: Date;
+      maximumDateTime?: Date;
       readOnly?: boolean;
       wrapping?: boolean;
       frame?: boolean;
@@ -485,7 +495,7 @@ export interface QtElementDescriptors {
       update(): void;
       adjustSize(): void;
     };
-    slots: never;
+    slots: "widget";
   };
   doublespinbox: {
     props: {
@@ -763,6 +773,7 @@ export interface QtElementDescriptors {
       orientation?: "horizontal" | "vertical";
       title?: string;
       checkable?: boolean;
+      checked?: boolean;
       flat?: boolean;
       alignment?: Array<"absolute" | "baseline" | "bottom" | "center" | "hcenter" | "horizontal-mask" | "justify" | "leading" | "left" | "right" | "top" | "trailing" | "vcenter" | "vertical-mask">;
       enabled?: boolean;
@@ -794,6 +805,7 @@ export interface QtElementDescriptors {
       labelText?: string;
       textValue?: string;
       intValue?: number;
+      doubleValue?: number;
       intMinimum?: number;
       intMaximum?: number;
       inputMode?: "double-input" | "int-input" | "text-input";
@@ -1011,7 +1023,7 @@ export interface QtElementDescriptors {
       update(): void;
       adjustSize(): void;
     };
-    slots: never;
+    slots: "subwindows";
   };
   menu: {
     props: {
@@ -1561,6 +1573,7 @@ export interface QtElementDescriptors {
       movable?: boolean;
       documentMode?: boolean;
       usesScrollButtons?: boolean;
+      currentIndex?: number;
       enabled?: boolean;
       toolTip?: string;
       statusTip?: string;
@@ -1688,6 +1701,8 @@ export interface QtElementDescriptors {
     props: {
       time?: TimeParts;
       displayFormat?: string;
+      minimumTime?: TimeParts;
+      maximumTime?: TimeParts;
       readOnly?: boolean;
       wrapping?: boolean;
       frame?: boolean;
@@ -1752,6 +1767,7 @@ export interface QtElementDescriptors {
   };
   toolbox: {
     props: {
+      currentIndex?: number;
       frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
       frameShadow?: "plain" | "raised" | "sunken";
       lineWidth?: number;
@@ -1777,7 +1793,7 @@ export interface QtElementDescriptors {
       update(): void;
       adjustSize(): void;
     };
-    slots: never;
+    slots: "pages";
   };
   toolbutton: {
     props: {
@@ -1888,7 +1904,7 @@ export interface QtElementDescriptors {
       update(): void;
       adjustSize(): void;
     };
-    slots: never;
+    slots: "pages";
   };
   wizardpage: {
     props: {

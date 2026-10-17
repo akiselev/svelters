@@ -60,10 +60,6 @@
       "origin": "runtime"
     }
   ],
-  "element": {
-    "origin": "gir",
-    "tag": "listview"
-  },
   "enums": [
     "svelters-api:v1:type:gtk:Gtk:ListTabBehavior"
   ],
@@ -924,11 +920,15 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/ListView.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"
     }
   },
-  "toolkit": "gtk"
+  "toolkit": "gtk",
+  "unexposed": {
+    "origin": "manual",
+    "reason": "GtkListView is a GListModel view; model view: served by the portable virtuallist kind (X5, gap G6 closed that way; packages/lists ListView)"
+  }
 }

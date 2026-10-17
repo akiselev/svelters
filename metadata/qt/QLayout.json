@@ -1964,7 +1964,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "SizeConstraint",
+        "native": "QLayout::SizeConstraint",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QLayout::SizeConstraint>"
@@ -2006,7 +2006,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "SizeConstraint",
+        "native": "QLayout::SizeConstraint",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QLayout::SizeConstraint>"
@@ -2090,7 +2090,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "SizeConstraint",
+        "native": "QLayout::SizeConstraint",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QLayout::SizeConstraint>"

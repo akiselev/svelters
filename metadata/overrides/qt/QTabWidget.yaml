@@ -8,12 +8,23 @@ elements:
       - { js: movable, native: movable, provenance: "QTabWidget::movable (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: documentMode, native: documentMode, provenance: "QTabWidget::documentMode (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: usesScrollButtons, native: usesScrollButtons, provenance: "QTabWidget::usesScrollButtons (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: currentIndex, native: currentIndex, sample: 1, setup: "$w->addTab(new QWidget(), QString()); $w->addTab(new QWidget(), QString())", suppress_signals: true, provenance: "QTabWidget::currentIndex (qdoc); the test adds two pages first" }
+    bindings:
+      - name: currentIndex
+        direction: two_way
+        property: currentIndex
+        type: { ref: i32, nullable: false }
+        change: { signal: changed, role: any_change, value: arg0 }
+        write: { natively_normalizes: false }
+        echo: { strategy: host_suppressed, compare_before_set: true, read_back: false, sync_signals_on_set: ["currentChanged(int)"] }
+        lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
+        provenance: "QTabWidget::setCurrentIndex emits currentChanged only on change (qdoc)"
     signals:
       - js: changed
         native: currentChanged
         connect: "currentChanged(int)"
         args: [{ name: index, type: i32 }]
-        trigger: 'if ($i == 2) $w->setCurrentIndex(1); else $w->addTab(new QWidget(), QString())'
+        trigger: '$w->addTab(new QWidget(), QString()); $w->setCurrentIndex($w->count() - 1)'
         expect_args: ["0"]
         provenance: "QTabWidget::currentChanged(int) (qdoc)"
       - js: tab-close-requested

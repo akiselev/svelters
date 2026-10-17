@@ -198,7 +198,7 @@ GTK batches are about verified facts, slots, bindings, signal semantics and the 
 - Work: add `unexposed: {reason}` overrides (or a short note pointing at the gap) so the coverage report says why.
   `ComboBoxText` (deprecated 4.10) stays unexposed; `DropDown` waits for G6/G4.
 - Gallery: none.
-- Status: todo
+- Status: done (4 facts verified: ColorDialogButton.rgba, FontDialogButton use-font/use-size/level; 23 kinds marked unexposed with reasons; dropped: FontDialogButton.font-desc (generated boxed round-trip compares handles, each read mints a new one); no gallery page)
 
 ## Qt
 
@@ -405,4 +405,4 @@ otherwise the lower-case Qt class name without the Q (`checkbox`, `slider`, `spi
 - Min/max date/time props on calendar and date/time edits (G17 fixed in ingest).
 - QGroupBox `checked` with `setup: "$w->setCheckable(true)"`; QInputDialog `doubleValue` (re-check its type); QWizard `pages`.
 - Gallery: Qt `grid`/`box` attributes from X3 on `06-layout`.
-- Status: todo
+- Status: done (dockwidget `widget` slot, mdiarea `subwindows` slot, toolbox `pages` + currentIndex + bind, tabwidget currentIndex + bind, groupbox `checked` + bind, min/max Date/Time/DateTime props on calendar/dateedit/timeedit/datetimeedit, gallery grid/box/tab attributes; dropped: QInputDialog.doubleValue (ingest still types it i32, no prop type override), QWizard `pages` (QWizard::removePage takes a page id, not the page: no remove op expressible))

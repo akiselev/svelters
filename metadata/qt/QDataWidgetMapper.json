@@ -1106,7 +1106,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "SubmitPolicy",
+        "native": "QDataWidgetMapper::SubmitPolicy",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QDataWidgetMapper::SubmitPolicy>"

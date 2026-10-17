@@ -1132,7 +1132,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "StepType",
+        "native": "QAbstractSpinBox::StepType",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QAbstractSpinBox::StepType>"

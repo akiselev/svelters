@@ -1592,7 +1592,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "WindowOrder",
+        "native": "QMdiArea::WindowOrder",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QMdiArea::WindowOrder>"
@@ -1890,7 +1890,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "ViewMode",
+        "native": "QMdiArea::ViewMode",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QMdiArea::ViewMode>"

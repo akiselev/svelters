@@ -17,8 +17,19 @@ elements:
         provenance: "QBoxLayout::direction (qdoc); GTK orientation vocabulary"
       - { js: title, native: title, provenance: "QGroupBox::title (qdoc)" }
       - { js: checkable, native: checkable, provenance: "QGroupBox::checkable (qdoc)" }
+      - { js: checked, native: checked, setup: "$w->setCheckable(true)", suppress_signals: true, provenance: "QGroupBox::checked (qdoc); ignored unless checkable, so the test makes the box checkable first" }
       - { js: flat, native: flat, provenance: "QGroupBox::flat (qdoc)" }
       - { js: alignment, native: alignment, provenance: "QGroupBox::alignment (qdoc); typed by the S1 value model (ABI v3)" }
+    bindings:
+      - name: checked
+        direction: two_way
+        property: checked
+        type: { ref: bool, nullable: false }
+        change: { signal: toggled, role: any_change, value: arg0 }
+        write: { natively_normalizes: false }
+        echo: { strategy: host_suppressed, compare_before_set: true, read_back: false, sync_signals_on_set: ["toggled(bool)"] }
+        lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
+        provenance: "QGroupBox::setChecked emits toggled only on change (qdoc)"
     signals:
       - js: toggled
         native: toggled

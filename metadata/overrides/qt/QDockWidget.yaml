@@ -1,6 +1,6 @@
-# Element `dockwidget`. The `widget` one slot is left out: QDockWidget::setWidget() replaces the old widget by hiding
-# it and removing it from the layout, but it stays parented to the dock widget (probe, Qt 6), so neither
-# `old: unparented` nor `old: deleted` is true and the one-slot ops cannot unparent it (new generator gap, see notes).
+# Element `dockwidget`. The `widget` one slot: QDockWidget::setWidget() replaces the old widget by hiding it and
+# removing it from the layout, but it stays parented to the dock widget (probe, Qt 6). The clearing remove
+# (setWidget(nullptr) + setParent(nullptr) on the child) therefore also runs on the old child before a replace (G15).
 # Main-window dock areas need child attributes (gap:G1).
 elements:
   - tag: dockwidget
@@ -37,3 +37,27 @@ elements:
         args: [{ name: allowedAreas, type: "flags<Qt::DockWidgetArea>" }]
         trigger: '$w->setAllowedAreas(($i % 2) == 0 ? Qt::LeftDockWidgetArea : Qt::RightDockWidgetArea)'
         provenance: "QDockWidget::allowedAreasChanged(DockWidgetAreas) (qdoc)"
+    children:
+      policy: named_slots
+      default_slot: widget
+      slots:
+        - name: widget
+          content: widget
+          accepts: [QWidget]
+          cardinality: one
+          host: self
+          default: { kind: none }
+          on_remove: empty
+          ops:
+            get: { native: "QDockWidget::widget() const" }
+            set:
+              native: "QDockWidget::setWidget(QWidget*)"
+              args: [child]
+              effects: { child: parented, old: unparented }
+            remove:
+              native: "QDockWidget::setWidget(QWidget*)"
+              args: [null]
+              then:
+                - { native: "QWidget::setParent(QWidget*)", receiver: child, args: [null] }
+              effects: { child: unparented }
+          provenance: [{ origin: qdoc, ref: "QDockWidget::setWidget" }, { origin: probe, ref: "old widget stays parented, hidden" }]

@@ -1,5 +1,5 @@
-# Element `mdiarea`. The `subwindows` many slot is blocked (gap:G13): QMdiArea has no count()/indexOf()/
-# itemAt(); subWindowList() returns a list of QMdiSubWindow wrappers. Probe (Qt 6): addSubWindow(w) wraps w in a
+# Element `mdiarea`. The `subwindows` slot is append-only and nested (G13): QMdiArea has no count()/indexOf()/
+# itemAt(); membership is isAncestorOf. Probe (Qt 6): addSubWindow(w) wraps w in a
 # QMdiSubWindow (w->parent() is the wrapper); removeSubWindow(w) reparents w to null but leaves the empty wrapper in
 # the area's list; the wrapper is only dropped by removeSubWindow(wrapper).
 elements:
@@ -17,3 +17,28 @@ elements:
       - { js: cascadeSubWindows, native: cascadeSubWindows, provenance: "QMdiArea::cascadeSubWindows() slot (qdoc)" }
       - { js: tileSubWindows, native: tileSubWindows, provenance: "QMdiArea::tileSubWindows() slot (qdoc)" }
       - { js: closeAllSubWindows, native: closeAllSubWindows, provenance: "QMdiArea::closeAllSubWindows() slot (qdoc)" }
+    children:
+      policy: named_slots
+      default_slot: subwindows
+      slots:
+        - name: subwindows
+          content: widget
+          accepts: [QWidget]
+          cardinality: many
+          order: append_only
+          nested: true
+          host: self
+          default: { kind: none }
+          on_remove: empty
+          ops:
+            insert:
+              native: "QMdiArea::addSubWindow(QWidget*, Qt::WindowFlags)"
+              args: [child]
+              effects: { child: parented }
+            remove:
+              native: "QMdiArea::removeSubWindow(QWidget*)"
+              args: [child]
+              then:
+                - { native: "QWidget::setParent(QWidget*)", receiver: child, args: [null] }
+              effects: { child: unparented }
+          provenance: [{ origin: qdoc, ref: "QMdiArea::addSubWindow, removeSubWindow" }, { origin: probe, ref: "addSubWindow wraps the widget in a QMdiSubWindow" }]

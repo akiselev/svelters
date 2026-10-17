@@ -822,7 +822,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Calendar:prop:date",
-   "fingerprint": "20bfe5e4a5ea57ef",
+   "fingerprint": "883990797455a64e",
    "kind": "Calendar",
    "name": "date",
    "section": "properties",
@@ -1040,6 +1040,16 @@
    "section": "bindings",
    "tests": [
     "generated::verify::binding_checkbutton_active"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:ColorDialogButton:prop:rgba",
+   "fingerprint": "ccd943e67ff80468",
+   "kind": "ColorDialogButton",
+   "name": "rgba",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_colordialogbutton_rgba"
    ]
   },
   {
@@ -1493,6 +1503,46 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_flowbox_selection_mode"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:prop:font-desc",
+   "fingerprint": "a276cf72af24b235",
+   "kind": "FontDialogButton",
+   "name": "font-desc",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_fontdialogbutton_font_desc"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:prop:level",
+   "fingerprint": "78b05ba676d8f6d9",
+   "kind": "FontDialogButton",
+   "name": "level",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_fontdialogbutton_level"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:prop:use-font",
+   "fingerprint": "9116168082df5f2c",
+   "kind": "FontDialogButton",
+   "name": "use-font",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_fontdialogbutton_use_font"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:prop:use-size",
+   "fingerprint": "31a5d8f1962a0329",
+   "kind": "FontDialogButton",
+   "name": "use-size",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_fontdialogbutton_use_size"
    ]
   },
   {
@@ -2889,7 +2939,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Scrollbar:prop:adjustment",
-   "fingerprint": "b933d0806100a67a",
+   "fingerprint": "4a6bbe470e8af050",
    "kind": "Scrollbar",
    "name": "adjustment",
    "section": "properties",
@@ -3371,7 +3421,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Stack:prop:visible-child",
-   "fingerprint": "816d0e79a8f3739c",
+   "fingerprint": "e08199c4c2300562",
    "kind": "Stack",
    "name": "visible-child",
    "section": "properties",
@@ -3381,7 +3431,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:StackSidebar:prop:stack",
-   "fingerprint": "1c55615d74d5e4ab",
+   "fingerprint": "65ca1e484bbe401c",
    "kind": "StackSidebar",
    "name": "stack",
    "section": "properties",
@@ -3391,7 +3441,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:StackSwitcher:prop:stack",
-   "fingerprint": "3b04b3c685d503ba",
+   "fingerprint": "8b5802b10bcef427",
    "kind": "StackSwitcher",
    "name": "stack",
    "section": "properties",
@@ -3733,7 +3783,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:css-classes",
-   "fingerprint": "bcf9b68342f629d6",
+   "fingerprint": "c925c25133f1f4b5",
    "kind": "Widget",
    "name": "css-classes",
    "section": "properties",

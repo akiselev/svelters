@@ -1,0 +1,2 @@
+unexposed:
+  reason: "deprecated since GTK 4.10 (GtkTreeView, GtkTreeModel, cell renderers); hierarchies are open under gap G6 (tree models), use virtuallist"

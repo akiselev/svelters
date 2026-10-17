@@ -2701,7 +2701,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "FieldGrowthPolicy",
+        "native": "QFormLayout::FieldGrowthPolicy",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QFormLayout::FieldGrowthPolicy>"
@@ -2873,7 +2873,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "RowWrapPolicy",
+        "native": "QFormLayout::RowWrapPolicy",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QFormLayout::RowWrapPolicy>"

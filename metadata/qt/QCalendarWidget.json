@@ -2101,7 +2101,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "HorizontalHeaderFormat",
+        "native": "QCalendarWidget::HorizontalHeaderFormat",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QCalendarWidget::HorizontalHeaderFormat>"
@@ -2313,7 +2313,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "SelectionMode",
+        "native": "QCalendarWidget::SelectionMode",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QCalendarWidget::SelectionMode>"
@@ -2356,7 +2356,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "VerticalHeaderFormat",
+        "native": "QCalendarWidget::VerticalHeaderFormat",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QCalendarWidget::VerticalHeaderFormat>"
