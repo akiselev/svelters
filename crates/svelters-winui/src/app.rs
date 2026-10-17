@@ -88,7 +88,9 @@ fn proc(module: crate::bindings::Windows::Win32::HMODULE, name: &[u8]) -> Option
 }
 
 fn runtime_dll(name: &str) -> String {
-    let dirs = [std::env::var("SVELTERS_WINAPPSDK_DIR").ok().map(PathBuf::from), exe_dir()];
+    // Dev fallback: where tools/metadata/winui/fetch.py unpacks the Foundation package in this checkout.
+    let fetched = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../target/winsdk/microsoft.windowsappsdk.foundation/2.3.12/runtimes/win-x64/native");
+    let dirs = [std::env::var("SVELTERS_WINAPPSDK_DIR").ok().map(PathBuf::from), exe_dir(), Some(fetched)];
     for d in dirs.into_iter().flatten() {
         let p = d.join(name);
         if p.is_file() {

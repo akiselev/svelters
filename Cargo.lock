@@ -120,6 +120,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "counter-win"
+version = "0.0.0"
+dependencies = [
+ "serde_json",
+ "svelters-abi",
+ "svelters-host",
+ "svelters-winui",
+]
+
+[[package]]
 name = "data-encoding"
 version = "2.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"

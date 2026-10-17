@@ -589,8 +589,10 @@ pub static TESTS: &[(&str, fn())] = &[
 }
 
 fn main() {
+    // Lists and runs nothing off Windows, so cargo test and nextest see an empty target.
     #[cfg(windows)]
-    std::process::exit(svelters_winui::testing::run_tests(tests::TESTS));
+    let tests = tests::TESTS;
     #[cfg(not(windows))]
-    println!("svelters-winui generated tests: skipped (Windows only)");
+    let tests: &[(&str, fn())] = &[];
+    std::process::exit(svelters_winui::harness::main(tests));
 }

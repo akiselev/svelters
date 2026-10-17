@@ -30,6 +30,9 @@ use windows_collections::IVector;
 use windows_core::{EventRevoker, IInspectable, IUnknown, Interface};
 
 thread_local! {
+    /// `WinUiBackend::after` callbacks, by id, with the timer that fires them.
+    static AFTER: RefCell<HashMap<u64, (DispatcherQueueTimer, Option<EventRevoker>, Option<Box<dyn FnOnce()>>)>> = RefCell::default();
+    static AFTER_NEXT: Cell<u64> = const { Cell::new(1) };
     static CURRENT: RefCell<Weak<Inner>> = RefCell::new(Weak::new());
     /// Event registrations to drop outside the handler that ended them.
     static GRAVEYARD: RefCell<Vec<EventRevoker>> = const { RefCell::new(Vec::new()) };
@@ -75,7 +78,9 @@ pub(crate) struct Inner {
     quit_early: Cell<bool>,
 }
 
-/// The WinUI backend. One per thread; create it on the thread that will call `run`.
+/// The WinUI backend. One per thread; create it on the thread that will call `run`. Clones share
+/// the same state (keep one for driving while another lives in the `BackendVtable`).
+#[derive(Clone)]
 pub struct WinUiBackend {
     inner: Rc<Inner>,
 }
@@ -318,6 +323,41 @@ impl WinUiBackend {
         }
     }
 
+    /// Run `f` on the UI thread once, `ms` milliseconds from now (drivers and tests).
+    pub fn after(&self, ms: u64, f: impl FnOnce() + 'static) -> Result<(), String> {
+        let timer = self.inner.xaml.queue.CreateTimer().map_err(conv::err)?;
+        timer.SetIsRepeating(false).map_err(conv::err)?;
+        timer.SetInterval(windows_time::TimeSpan::from_millis(ms as i64)).map_err(conv::err)?;
+        let id = AFTER_NEXT.with(|n| n.replace(n.get() + 1));
+        let rev = timer
+            .Tick(move |_, _| {
+                let entry = AFTER.with(|a| a.borrow_mut().remove(&id));
+                if let Some((t, rev, f)) = entry {
+                    let _ = t.Stop();
+                    if let Some(r) = rev {
+                        GRAVEYARD.with(|g| g.borrow_mut().push(r));
+                    }
+                    if let Some(f) = f {
+                        f();
+                    }
+                }
+            })
+            .map_err(conv::err)?;
+        timer.Start().map_err(conv::err)?;
+        AFTER.with(|a| a.borrow_mut().insert(id, (timer, Some(rev), Some(Box::new(f)))));
+        Ok(())
+    }
+
+    /// Click a button the way UI Automation does (`ButtonAutomationPeer.Invoke`).
+    pub fn invoke(&self, h: u64) -> Result<(), String> {
+        use crate::bindings::Microsoft::UI::Xaml::Automation::Peers::ButtonAutomationPeer;
+        use crate::bindings::Microsoft::UI::Xaml::Controls::Button;
+        let (o, _) = self.inner.get(h)?;
+        let b = o.cast::<Button>().map_err(|_| format!("handle {h} is not a button"))?;
+        let peer = ButtonAutomationPeer::CreateInstanceWithOwner(&b).map_err(conv::err)?;
+        peer.Invoke().map_err(conv::err)
+    }
+
     /// The native object behind a handle (tests and the example's driver).
     pub fn object(&self, h: u64) -> Option<IInspectable> {
         self.inner.handles.borrow().get(&h).map(|e| e.obj.clone())
@@ -412,6 +452,9 @@ impl WinUiBackend {
 
 impl Drop for WinUiBackend {
     fn drop(&mut self) {
+        if Rc::strong_count(&self.inner) > 1 {
+            return;
+        }
         // Close windows we still own, then let Xaml (in Inner) shut the dispatcher queue down.
         let wins: Vec<IInspectable> = self
             .inner

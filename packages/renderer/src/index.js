@@ -12,13 +12,33 @@ import { applyStyle, bindElements, bindSetterHooks, explicitPropSet, forgetStyle
 export { BINDINGS, TOPLEVELS };
 export { getColorScheme, getTokens, registerStyles, setColorScheme, setTokens } from './style.js';
 
-/** Kinds whose Text children are folded into the `label` prop. */
-export const LABEL_KINDS = new Set(['label', 'button']);
+/**
+ * Tags whose Text children are folded into a prop, with candidate prop names: the first one the
+ * host resolves wins (`button` is GTK/Qt `label` and WinUI `content`; names stay native per toolkit).
+ */
+export const TEXT_PROPS = {
+  label: ['label'],
+  button: ['label', 'content'],
+  'text-block': ['text'],
+  'check-box': ['content'],
+  'toggle-button': ['content'],
+};
+/** Kinds whose Text children are folded into a prop (see TEXT_PROPS). */
+export const LABEL_KINDS = new Set(Object.keys(TEXT_PROPS));
 
 /** DOM-ish event name -> native signal. Anything not listed passes through unchanged. */
 export const EVENT_TO_SIGNAL = { click: 'clicked', change: 'changed', close: 'close-request' };
 const SIGNAL_TO_EVENT = Object.fromEntries(Object.entries(EVENT_TO_SIGNAL).map(([e, s]) => [s, e]));
-const signalFor = (type) => EVENT_TO_SIGNAL[type] ?? type;
+/**
+ * The native signal for a DOM-ish event type on `tag`. A mapped name (`click` -> `clicked`) is used
+ * unless the host resolves only the unmapped one (WinUI's events keep their native names: `click`).
+ */
+const signalFor = (type, tag) => {
+  const mapped = EVENT_TO_SIGNAL[type];
+  if (mapped === undefined) return type;
+  if (tag !== undefined && !resolves(tag, 'signalId', mapped) && resolves(tag, 'signalId', type)) return type;
+  return mapped;
+};
 const eventFor = (signal) => SIGNAL_TO_EVENT[signal] ?? signal;
 
 /** Attributes that stay JS-side and never become host props. */
@@ -273,12 +293,37 @@ function labelText(el) {
   return s;
 }
 
+/** Whether the host resolves `name` as a member of `tag` (`fn` is propId/signalId/methodId). Unknown without ids. */
+function resolves(tag, fn, name) {
+  const hs = host();
+  if (typeof hs.kindId !== 'function' || typeof hs[fn] !== 'function') return false;
+  const kid = kindRef(hs, tag);
+  if (typeof kid !== 'number') return false;
+  try {
+    return hs[fn](kid, name) != null;
+  } catch {
+    return false;
+  }
+}
+
+const textPropCache = new Map();
+/** The prop Text children of `tag` set: the first candidate the host resolves (the first without ids). */
+function textProp(tag) {
+  let p = textPropCache.get(tag);
+  if (p === undefined) {
+    const names = TEXT_PROPS[tag];
+    p = names.find((n) => resolves(tag, 'propId', n)) ?? names[0];
+    if (names.length === 1 || typeof host().propId === 'function') textPropCache.set(tag, p);
+  }
+  return p;
+}
+
 function updateLabel(el) {
   if (el.kind !== 'element' || el.h == null || !LABEL_KINDS.has(el.tag)) return;
   const s = labelText(el);
   if (s !== el.lastLabel) {
     el.lastLabel = s;
-    host().setProp(el.h, propRef(host(), el.tag, 'label'), s);
+    host().setProp(el.h, propRef(host(), el.tag, textProp(el.tag)), s);
   }
 }
 
@@ -492,7 +537,7 @@ function nativeListen(el, sig, on, flags) {
 // listener bookkeeping per (native signal, flags): listen on 0 -> 1, off on 1 -> 0
 function bumpListener(el, type, delta, flags) {
   if (el === root || isProxy(el)) return;
-  const sig = signalFor(type);
+  const sig = signalFor(type, el.tag);
   const key = `${sig}\0${flags}`;
   const n = (el.counts[key] ?? 0) + delta;
   el.counts[key] = n;

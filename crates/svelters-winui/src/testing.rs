@@ -2,12 +2,9 @@
 //! tests. Windows only. All tests share one backend on the main thread (WinUI is initialized once
 //! per thread), driven through the safe [`Backend`] trait and a recording host.
 use crate::WinUiBackend;
-use crate::bindings::Microsoft::UI::Xaml::Automation::Peers::ButtonAutomationPeer;
-use crate::bindings::Microsoft::UI::Xaml::Controls::Button;
 use std::cell::RefCell;
 use std::rc::Rc;
 use svelters_abi::*;
-use windows_core::Interface;
 
 /// What the recording host answers to `call_sync`.
 #[derive(Clone, Debug)]
@@ -168,10 +165,7 @@ impl Harness {
 
     /// Click a button the way UI Automation does (`ButtonAutomationPeer.Invoke`).
     pub fn invoke(&self, h: u64) -> Result<(), String> {
-        let o = self.s.backend.object(h).ok_or("stale handle")?;
-        let b = o.cast::<Button>().map_err(crate::conv::err)?;
-        let peer = ButtonAutomationPeer::CreateInstanceWithOwner(&b).map_err(crate::conv::err)?;
-        peer.Invoke().map_err(crate::conv::err)
+        self.s.backend.invoke(h)
     }
 
     /// How many times `event` reached the host for `h` (posted or sync).
@@ -201,30 +195,7 @@ impl Drop for Harness {
     }
 }
 
-/// A minimal test runner for `harness = false` targets: runs every test on this thread, prints
-/// libtest-like lines and returns the process exit code. The first non-flag argument filters by
-/// substring.
+/// Runs `tests` on this thread; see [`crate::harness::main`].
 pub fn run_tests(tests: &[(&str, fn())]) -> i32 {
-    let filter = std::env::args().skip(1).find(|a| !a.starts_with('-'));
-    let mut failed = Vec::new();
-    let mut ran = 0;
-    for (name, f) in tests {
-        if filter.as_ref().is_some_and(|flt| !name.contains(flt.as_str())) {
-            continue;
-        }
-        ran += 1;
-        match std::panic::catch_unwind(f) {
-            Ok(()) => println!("test {name} ... ok"),
-            Err(e) => {
-                let msg = e.downcast_ref::<String>().cloned().or_else(|| e.downcast_ref::<&str>().map(|s| s.to_string())).unwrap_or_default();
-                println!("test {name} ... FAILED\n    {msg}");
-                failed.push(*name);
-            }
-        }
-    }
-    println!("\ntest result: {}. {} passed; {} failed", if failed.is_empty() { "ok" } else { "FAILED" }, ran - failed.len(), failed.len());
-    for f in &failed {
-        println!("    {f}");
-    }
-    if failed.is_empty() { 0 } else { 1 }
+    crate::harness::main(tests)
 }

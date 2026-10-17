@@ -753,8 +753,9 @@ def gen_tests(m: Model) -> str:
     for name, body in tests:
         o.append(f"pub fn {name}() {{\n{body}}}\n\n")
     o.append("pub static TESTS: &[(&str, fn())] = &[\n" + "".join(f"    ({rs_str(n)}, {n}),\n" for n, _ in tests) + "];\n}\n\n")
-    o.append("fn main() {\n    #[cfg(windows)]\n    std::process::exit(svelters_winui::testing::run_tests(tests::TESTS));\n"
-             "    #[cfg(not(windows))]\n    println!(\"svelters-winui generated tests: skipped (Windows only)\");\n}\n")
+    o.append("fn main() {\n    // Lists and runs nothing off Windows, so cargo test and nextest see an empty target.\n"
+             "    #[cfg(windows)]\n    let tests = tests::TESTS;\n    #[cfg(not(windows))]\n    let tests: &[(&str, fn())] = &[];\n"
+             "    std::process::exit(svelters_winui::harness::main(tests));\n}\n")
     return "".join(o)
 
 

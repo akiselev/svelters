@@ -12,6 +12,7 @@
 //!
 //! Only the platform-neutral parts ([`table`], [`names`], [`parse`]) exist on other targets.
 
+pub mod harness;
 pub mod parse;
 pub mod table;
 
