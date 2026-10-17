@@ -5,5 +5,5 @@ bad_attribute_value (gtk): `orientation`: "diagonal" is not one of horizontal, v
   App.svelte:11:13: unknown_event: <button> has no event `klick` on gtk
   App.svelte:12:12: unknown_property: <entry> has no property `colour` on gtk
   App.svelte:13:6: unknown_element: <frobnicator> is not an element of the gtk backend
-  App.svelte:19:9: style_bad_value: `spacing`: unit `px` is not supported on gtk (did you mean dp?) [matched <box> at byte 179]
+  App.svelte:19:9: style_bad_value: `spacing`: unit `px` is not supported on gtk (did you mean dp?) (in a rule matching <box>)
   App.svelte:20:3: style_state_unsupported: state selectors (:hover) need native state tracking, which this compiler does not implement yet

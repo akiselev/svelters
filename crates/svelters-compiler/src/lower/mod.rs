@@ -57,8 +57,8 @@ struct Lower<'a, 's, 'd> {
     styles: Option<&'a StyleSheet>,
     /// (span, code) pairs already reported, so a declaration matching many elements reports once.
     reported: HashSet<(u32, u32, &'static str)>,
-    /// Single-child slots already filled by a static element: (parent id, slot) -> byte offset.
-    single_slots: std::collections::HashMap<(usize, String), u32>,
+    /// Single-child slots already filled by a static element: (parent id, slot) -> its tag.
+    single_slots: std::collections::HashMap<(usize, String), String>,
     /// Inside an {#if}/{#each} branch: alternatives may share a single-child slot.
     in_block: bool,
     /// Selector spans that matched at least one element (for `style_unused_selector`).
@@ -248,11 +248,11 @@ impl<'a> Lower<'a, '_, '_> {
                                 .native_error(
                                     "slot_cardinality",
                                     tag_span,
-                                    format!("<{}>'s `{}` slot takes one child on {}, and it already has one (at byte {})", p.tag, plan.slot, self.sem.backend(), first),
+                                    format!("<{}>'s `{}` slot takes one child on {}, and it already has <{}>", p.tag, plan.slot, self.sem.backend(), first),
                                 )
                                 .help("wrap the children in a container such as <box>");
                         } else if !self.in_block {
-                            self.single_slots.insert(key, tag_span.0);
+                            self.single_slots.insert(key, el.name.clone());
                         }
                     }
                     ((!plan.is_default).then_some(plan.slot), None)
@@ -404,7 +404,7 @@ impl<'a> Lower<'a, '_, '_> {
 
     /// Resolves the component's style rules for one element (see docs/notes/native-compiler/styling.md):
     /// explicit attributes > rules by (specificity, source order) > native default.
-    fn style_ops(&mut self, er: &ElementRef, chain: &[StyleSubject<'a>], explicit: &[String], bound: &[String], ops: &mut Vec<Op<'a>>, tag_span: (u32, u32)) {
+    fn style_ops(&mut self, er: &ElementRef, chain: &[StyleSubject<'a>], explicit: &[String], bound: &[String], ops: &mut Vec<Op<'a>>, _tag_span: (u32, u32)) {
         let Some(sheet) = self.styles else { return };
         struct Cand<'a> {
             spec: (u32, u32),
@@ -436,7 +436,7 @@ impl<'a> Lower<'a, '_, '_> {
                                 if !u.suggestions.is_empty() {
                                     msg.push_str(&format!(" (did you mean {}?)", u.suggestions.join(", ")));
                                 }
-                                let d = self.diags.native_error(u.code, dspan, format!("{msg} [matched <{}> at byte {}]", er.tag, tag_span.0));
+                                let d = self.diags.native_error(u.code, dspan, format!("{msg} (in a rule matching <{}>)", er.tag));
                                 if let Some(h) = u.help_text() {
                                     d.help(h);
                                 }
