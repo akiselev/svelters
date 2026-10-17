@@ -537,11 +537,27 @@ impl Codegen<'_, '_> {
 
     /// `const name = ($$anchor, a = $.noop) => { body };` (Svelte's snippet shape).
     fn snippet(&mut self, s: &Snippet) {
+        self.snippet_with(s, &[]);
+    }
+
+    fn consts(&mut self, consts: &[ConstDecl]) {
+        for k in consts {
+            self.line();
+            self.w.map(k.span.start);
+            self.w.write(&format!("const {} = $.derived(() => ", k.name));
+            self.paren_expr(k.init, Mode::Read);
+            self.w.write(");");
+        }
+    }
+
+    /// A snippet declaration; `consts` are declared at the start of its body.
+    fn snippet_with(&mut self, s: &Snippet, consts: &[ConstDecl]) {
         self.line();
         self.w.map(s.span.start);
         let params: String = s.params.iter().map(|p| format!(", {p} = $.noop")).collect();
         self.w.write(&format!("const {} = ($$anchor{params}) => {{", s.name));
         self.w.indent();
+        self.consts(consts);
         self.fragment(&s.body, "$$anchor");
         self.w.dedent();
         self.line();
@@ -574,19 +590,22 @@ impl Codegen<'_, '_> {
 
     fn component(&mut self, c: &ComponentCall, container: &str) {
         let scoped = !c.snippets.is_empty() || !c.consts.is_empty();
+        // `<svelte:boundary>`: its `{@const}`s live inside it (so their errors are caught), copied
+        // into each of its snippets (Svelte's SvelteBoundary visitor)
+        let boundary = c.name == "$n.boundary";
         if scoped {
             self.line();
             self.w.write("{");
             self.w.indent();
-            for k in &c.consts {
-                self.line();
-                self.w.map(k.span.start);
-                self.w.write(&format!("const {} = $.derived(() => ", k.name));
-                self.paren_expr(k.init, Mode::Read);
-                self.w.write(");");
-            }
-            for s in &c.snippets {
-                self.snippet(s);
+            if boundary {
+                for s in &c.snippets {
+                    self.snippet_with(s, &c.consts);
+                }
+            } else {
+                self.consts(&c.consts);
+                for s in &c.snippets {
+                    self.snippet(s);
+                }
             }
         }
         // Svelte's build_component memoizes non-trivial reactive prop values (anything but an
@@ -691,6 +710,9 @@ impl Codegen<'_, '_> {
             self.prop_entry(&mut st);
             self.w.write("children: ($$anchor, $$slotProps) => {");
             self.w.indent();
+            if boundary {
+                self.consts(&c.consts);
+            }
             self.fragment(ch, "$$anchor");
             self.w.dedent();
             self.line();

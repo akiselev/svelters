@@ -127,7 +127,7 @@ try {
   config.before_test?.();
 
   const props = $.proxy({ ...(config.props || {}) });
-  const unmount = $n.mount(mod.default, { props, target: host.adopt(target) });
+  const unmount = $n.mount(mod.default, { props, target: host.adopt(target), transformError: config.transformError });
 
   if (config.error) {
     unintended_error = true;
@@ -193,6 +193,7 @@ try {
   } catch (e) {
     failure = e;
     outcome = e?.name === 'AssertionError' ? 'mismatch' : 'runtime_error';
+    if (process.env.STACK) console.error(e?.stack);
   }
 } finally {
   config.after_test?.();

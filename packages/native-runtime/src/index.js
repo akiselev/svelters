@@ -7,6 +7,7 @@
 import * as $ from 'svelte/internal/client';
 // Hidden by svelte's exports map; resolved by the alias in ../vite.js (and test/register.mjs).
 import { block, branch, component_root, destroy_effect } from 'svelte/internal/client/reactivity/effects';
+import { queue_micro_task } from 'svelte/internal/client/dom/task';
 
 /** `set(node, prop, RESTORE)` writes the value `capture(node, prop)` read. */
 export const RESTORE = Symbol('svelters.RESTORE');
@@ -447,6 +448,149 @@ export function snippet(container, getSnippet, ...args) {
   });
 }
 
+// Svelte's BOUNDARY_EFFECT flag (svelte/src/internal/client/constants.js): `handle_error` /
+// `invoke_error_boundary` walk up the effect tree to the first effect with it and call its `.b.error`.
+const BOUNDARY_EFFECT = 1 << 7;
+const DESTROYED = 1 << 14;
+const DESTROYING = 1 << 25;
+
+/**
+ * `<svelte:boundary>` (Svelte's dom/blocks/boundary.js, synchronous part): renders
+ * `props.children`; an error while creating it, or later in its effects, removes the content,
+ * then in a microtask calls `props.onerror(error, reset)` and renders
+ * `props.failed(anchor, () => error, () => reset)`. `reset()` renders the children again (once
+ * per error). Without `onerror` and `failed` the error goes to the enclosing boundary. Called
+ * like a component: `$n.boundary($n.region(container), props)`. `pending` is ignored (no async
+ * mode).
+ */
+export function boundary(container, props) {
+  const r = newRegion(container);
+  const owner = scope;
+  const parent = $.active_effect?.b ?? null;
+  const view = $.state(0); // bumped to re-render (children again after reset, or `failed`)
+  let failure = null; // { error, reset } while `failed` is shown
+  let current = null;
+  let effect = null;
+  const destroyed = () => effect !== null && (effect.f & (DESTROYED | DESTROYING)) !== 0;
+
+  const b = {
+    parent,
+    is_pending: false,
+    transform_error: parent?.transform_error ?? ((e) => e),
+    is_rendered() {
+      return !this.is_pending && (!this.parent || this.parent.is_rendered());
+    },
+    has_pending_snippet: () => false,
+    update_pending_count(d, batch) {
+      this.parent?.update_pending_count(d, batch);
+    },
+    defer_effect() {},
+    error(error) {
+      if (!props.onerror && !props.failed) throw error;
+      if (current) {
+        close(current);
+        current = null;
+      }
+      // Svelte's task queue: flushSync() drains it, as for Svelte's own boundary
+      queue_micro_task(() => {
+        if (destroyed()) return;
+        handle(b.transform_error(error));
+      });
+    },
+  };
+
+  // Svelte's invoke_error_boundary from this boundary's parent: the first enclosing boundary
+  // that handles it (one without `onerror`/`failed` rethrows)
+  const rethrow = (e) => {
+    for (let p = parent; p; p = p.parent) {
+      try {
+        p.error(e);
+        return;
+      } catch (x) {
+        e = x;
+      }
+    }
+    throw e;
+  };
+
+  function handle(error) {
+    let did_reset = false;
+    let calling_onerror = false;
+    const reset = () => {
+      if (destroyed()) return;
+      if (did_reset) {
+        // Svelte's w.svelte_boundary_reset_noop (development format)
+        console.warn(
+          '%c[svelte] svelte_boundary_reset_noop\n%cA `<svelte:boundary>` `reset` function only resets the boundary the first time it is called\nhttps://svelte.dev/e/svelte_boundary_reset_noop',
+          'font-weight: bold',
+          'font-weight: normal',
+        );
+        return;
+      }
+      did_reset = true;
+      if (calling_onerror) throw new Error('svelte_boundary_reset_onerror\nA `<svelte:boundary>` `reset` function cannot be called while an error is still being handled');
+      failure = null;
+      $.set(view, view.v + 1);
+    };
+    try {
+      calling_onerror = true;
+      props.onerror?.(error, reset);
+      calling_onerror = false;
+    } catch (e) {
+      rethrow(e);
+    }
+    if (props.failed && !destroyed() && !did_reset) {
+      failure = { error, reset };
+      $.set(view, view.v + 1);
+    }
+  }
+
+  // a branch that handles errors of its effects through `b` (errors during its creation throw)
+  function render(fn) {
+    const region = newRegion(r);
+    try {
+      return open(r, owner, (anchor) => {
+        const e = $.active_effect;
+        e.b = b;
+        e.f |= BOUNDARY_EFFECT;
+        fn(anchor);
+      }, region);
+    } catch (e) {
+      dispose(region.scope, region);
+      const i = r.items.indexOf(region);
+      if (i >= 0) r.items.splice(i, 1);
+      throw e;
+    }
+  }
+
+  block(() => {
+    effect = $.active_effect;
+    $.get(view);
+    $.untrack(() => {
+      if (current) {
+        close(current);
+        current = null;
+      }
+      const f = failure;
+      if (f) {
+        // an error while creating `failed` goes to the enclosing boundary (later errors in its
+        // effects come back to this one, as in Svelte)
+        try {
+          current = render((anchor) => props.failed(anchor, () => f.error, () => f.reset));
+        } catch (e) {
+          rethrow(e);
+        }
+      } else {
+        try {
+          current = render((anchor) => props.children?.(anchor));
+        } catch (e) {
+          b.error(e);
+        }
+      }
+    });
+  });
+}
+
 const PENDING = 0;
 const THEN = 1;
 const CATCH = 2;
@@ -610,7 +754,7 @@ export function lis(a) {
  * removes the component's natives from it but never destroys it. Used by the DOM conformance
  * host (experiments/native-compiler/conformance).
  */
-export function mount(Component, { props = {}, target } = {}) {
+export function mount(Component, { props = {}, target, transformError } = {}) {
   if (!host()) throw new Error('globalThis.__svelters_host is not defined');
   globalThis.__svelters_dispatch = dispatch;
   globalThis.__svelters_gone = gone;
@@ -625,6 +769,20 @@ export function mount(Component, { props = {}, target } = {}) {
     // root component's init are then deferred to its $.pop(), i.e. run after its children's.
     destroy = component_root(() => {
       branch(() => {
+        // the root of the boundary chain (Svelte's mount renders the app in a boundary): carries
+        // `transformError` for every <svelte:boundary>, handles nothing itself
+        $.active_effect.b = {
+          parent: null,
+          is_pending: false,
+          transform_error: transformError ?? ((e) => e),
+          is_rendered: () => true,
+          has_pending_snippet: () => false,
+          update_pending_count() {},
+          defer_effect() {},
+          error(e) {
+            throw e;
+          },
+        };
         exports = Component(root, props);
       });
     });

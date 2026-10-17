@@ -251,6 +251,14 @@ impl<'a> Lower<'a, '_, '_> {
                         out.items.push(Item::Component(c));
                     }
                 }
+                // `<svelte:boundary onerror failed>`: called like a component whose props are its
+                // attributes and snippets (`failed`, `pending`, `children`), see runtime `boundary`
+                FragmentNode::SvelteBoundary(el) => {
+                    if let Some(mut c) = self.component(el, ancestors) {
+                        c.name = "$n.boundary".to_string();
+                        out.items.push(Item::Component(c));
+                    }
+                }
                 FragmentNode::IfBlock(b) => {
                     let consequent = self.branch(&b.consequent, parent, ancestors, true);
                     let alternate = b.alternate.as_ref().map(|a| self.branch(a, parent, ancestors, true));
@@ -644,6 +652,14 @@ impl<'a> Lower<'a, '_, '_> {
                         Err(u) => u.report(self.diags, name_span(at)),
                     }
                 }
+                // Legacy `on:name={handler}` (deprecated in Svelte 5, still compiled in runes mode): a
+                // listener like `onname={handler}`; modifiers and bare forwarding are rejected below
+                AttributeLike::OnDirective(d) if d.modifiers.is_empty() && d.expression.is_some() => {
+                    match self.sem.event(&er, &format!("on{}", d.name)) {
+                        Ok(ev) => ops.push(Op::Listen { signal: ev.signal, handler: d.expression.as_ref().unwrap(), span: d.span() }),
+                        Err(u) => u.report(self.diags, d.name_span.map_or(sp(d.span()), sp)),
+                    }
+                }
                 AttributeLike::Attribute(at) => {
                     let prop = match self.sem.writable_property(&er, &at.name) {
                         Ok(p) => p.clone(),
@@ -705,7 +721,7 @@ impl<'a> Lower<'a, '_, '_> {
                 other => {
                     let what = match other {
                         AttributeLike::AttachTag(_) => "{@attach}",
-                        AttributeLike::OnDirective(_) => "on: directives (use on<event>={handler})",
+                        AttributeLike::OnDirective(_) => "on: directives with modifiers or without a handler (use on<event>={handler})",
                         AttributeLike::UseDirective(_) => "use: actions",
                         AttributeLike::TransitionDirective(_) => "transitions",
                         AttributeLike::AnimateDirective(_) => "animate: directives",

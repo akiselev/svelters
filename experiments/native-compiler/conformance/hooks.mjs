@@ -8,14 +8,14 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { EFFECTS_SPECIFIER, effectsPath } from '@svelters/native-runtime/vite';
+import { HIDDEN_MODULES } from '@svelters/native-runtime/vite';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const svelteClient = path.join(path.dirname(createRequire(import.meta.url).resolve('svelte/internal/client')), '../../index-client.js');
 const shim = (f) => ({ url: pathToFileURL(path.join(here, 'shims', f)).href, shortCircuit: true });
 
 export async function resolve(specifier, context, next) {
-  if (specifier === EFFECTS_SPECIFIER) return { url: pathToFileURL(effectsPath).href, shortCircuit: true };
+  if (Object.hasOwn(HIDDEN_MODULES, specifier)) return { url: pathToFileURL(HIDDEN_MODULES[specifier]).href, shortCircuit: true };
   if (/^(\.\.\/)+test(\.js|\.ts)?$/.test(specifier)) return shim('test.mjs');
   if (/^(\.\.\/)+helpers(\.js)?$/.test(specifier)) return shim('helpers.mjs');
   if (/^(\.\.\/)+suite(\.js|\.ts)?$/.test(specifier)) return shim('suite.mjs');
