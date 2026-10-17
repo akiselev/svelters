@@ -1,0 +1,111 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Represents items in a cell in [`ColumnView`](xref:gtk:Gtk.ColumnView).",
+    "file": "gtk/gtkcolumnviewcell.c",
+    "line": 26,
+    "md": "Represents items in a cell in [`ColumnView`](xref:gtk:Gtk.ColumnView).\n\nThe `GtkColumnViewCell`s are managed by the [`ColumnView`](xref:gtk:Gtk.ColumnView)\nwidget (with its factory) and cannot be created by applications, but\nthey need to be populated by application code. This is done by calling\n[`ColumnViewCell.set_child()`](xref:gtk:Gtk.ColumnViewCell#method:set_child).\n\n`GtkColumnViewCell`s exist in 2 stages:\n\n1. The unbound stage where the listitem is not currently connected to\n   an item in the list. In that case, the [`ColumnViewCell:item`](xref:gtk:Gtk.ColumnViewCell#property:item)\n   property is set to `NULL`.\n\n2. The bound stage where the listitem references an item from the list.\n   The [`ColumnViewCell:item`](xref:gtk:Gtk.ColumnViewCell#property:item) property is not `NULL`.",
+    "since": "4.12"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewCell",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_child": {
+      "brief": "Gets the child previously set via gtk_column_view_cell_set_child() or `NULL` if none was set.",
+      "file": "gtk/gtkcolumnviewcell.c",
+      "line": 270,
+      "md": "Gets the child previously set via gtk_column_view_cell_set_child() or\n`NULL` if none was set.",
+      "since": "4.12"
+    },
+    "get_focusable": {
+      "brief": "Checks if a list item has been set to be focusable via gtk_column_view_cell_set_focusable().",
+      "file": "gtk/gtkcolumnviewcell.c",
+      "line": 373,
+      "md": "Checks if a list item has been set to be focusable via\ngtk_column_view_cell_set_focusable().",
+      "since": "4.12"
+    },
+    "get_item": {
+      "brief": "Gets the model item that associated with `self`.",
+      "file": "gtk/gtkcolumnviewcell.c",
+      "line": 247,
+      "md": "Gets the model item that associated with `self`.\n\nIf `self` is unbound, this function returns `NULL`.",
+      "since": "4.12"
+    },
+    "get_position": {
+      "brief": "Gets the position in the model that `self` currently displays.",
+      "file": "gtk/gtkcolumnviewcell.c",
+      "line": 326,
+      "md": "Gets the position in the model that `self` currently displays.\n\nIf `self` is unbound, %GTK_INVALID_LIST_POSITION is returned.",
+      "since": "4.12"
+    },
+    "get_selected": {
+      "brief": "Checks if the item is displayed as selected.",
+      "file": "gtk/gtkcolumnviewcell.c",
+      "line": 349,
+      "md": "Checks if the item is displayed as selected.\n\nThe selected state is maintained by the list widget and its model\nand cannot be set otherwise.",
+      "since": "4.12"
+    },
+    "set_child": {
+      "brief": "Sets the child to be used for this listitem.",
+      "file": "gtk/gtkcolumnviewcell.c",
+      "line": 289,
+      "md": "Sets the child to be used for this listitem.\n\nThis function is typically called by applications when\nsetting up a listitem so that the widget can be reused when\nbinding it multiple times.",
+      "since": "4.12"
+    },
+    "set_focusable": {
+      "brief": "Sets `self` to be focusable.",
+      "file": "gtk/gtkcolumnviewcell.c",
+      "line": 392,
+      "md": "Sets `self` to be focusable.\n\nIf an item is focusable, it can be focused using the keyboard.\nThis works similar to [`Widget.set_focusable()`](xref:gtk:Gtk.Widget#method:set_focusable).\n\nNote that if items are not focusable, the keyboard cannot be used to activate\nthem and selecting only works if one of the listitem's children is focusable.\n\nBy default, list items are focusable.",
+      "since": "4.12"
+    }
+  },
+  "properties": {
+    "child": {
+      "brief": "Widget used for display.",
+      "file": "gtk/gtkcolumnviewcell.c",
+      "line": 156,
+      "md": "Widget used for display.",
+      "since": "4.12"
+    },
+    "focusable": {
+      "brief": "If the item can be focused with the keyboard.",
+      "file": "gtk/gtkcolumnviewcell.c",
+      "line": 168,
+      "md": "If the item can be focused with the keyboard.",
+      "since": "4.12"
+    },
+    "item": {
+      "brief": "Displayed item.",
+      "file": "gtk/gtkcolumnviewcell.c",
+      "line": 180,
+      "md": "Displayed item.",
+      "since": "4.12"
+    },
+    "position": {
+      "brief": "Position of the item.",
+      "file": "gtk/gtkcolumnviewcell.c",
+      "line": 192,
+      "md": "Position of the item.",
+      "since": "4.12"
+    },
+    "selected": {
+      "brief": "If the item is currently selected.",
+      "file": "gtk/gtkcolumnviewcell.c",
+      "line": 204,
+      "md": "If the item is currently selected.",
+      "since": "4.12"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

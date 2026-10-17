@@ -1,0 +1,45 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "The sizing method the column uses to determine its width.",
+    "deprecated": "4.20",
+    "deprecated_md": "There is no replacement.",
+    "file": "gtk/deprecated/gtktreeviewcolumn.h",
+    "line": 39,
+    "md": "The sizing method the column uses to determine its width.  Please note\nthat %GTK_TREE_VIEW_COLUMN_AUTOSIZE are inefficient for large views, and\ncan make columns appear choppy."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:TreeViewColumnSizing",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "autosize": {
+      "brief": "Columns resize to be the optimal size every time the model changes.",
+      "file": "gtk/deprecated/gtktreeviewcolumn.h",
+      "line": 42,
+      "md": "Columns resize to be the optimal size every time the model changes."
+    },
+    "fixed": {
+      "brief": "Columns are a fixed numbers of pixels wide.",
+      "file": "gtk/deprecated/gtktreeviewcolumn.h",
+      "line": 43,
+      "md": "Columns are a fixed numbers of pixels wide."
+    },
+    "grow_only": {
+      "brief": "Columns only get bigger in reaction to changes in the model",
+      "file": "gtk/deprecated/gtktreeviewcolumn.h",
+      "line": 41,
+      "md": "Columns only get bigger in reaction to changes in the model"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

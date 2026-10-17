@@ -1,0 +1,133 @@
+{
+  "doc": {
+    "brief": "The QFrame class is the base class of widgets that can have a frame.",
+    "index_brief": "The base class of widgets that can have a frame",
+    "url": "https://doc.qt.io/qt-6/qframe.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QFrame",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QFrame(QWidget *parent, Qt::WindowFlags f)": {
+      "brief": "Constructs a frame widget with frame style [NoFrame](xref:qt:QFrame) and a 1-pixel frame width.",
+      "url": "https://doc.qt.io/qt-6/qframe.html#QFrame"
+    },
+    "QFrame::Shadow frameShadow() const": {
+      "brief": "This property holds the frame shadow value from the frame style",
+      "url": "https://doc.qt.io/qt-6/qframe.html#frameShadow-prop"
+    },
+    "QFrame::Shape frameShape() const": {
+      "brief": "This property holds the frame shape value from the frame style",
+      "url": "https://doc.qt.io/qt-6/qframe.html#frameShape-prop"
+    },
+    "QRect frameRect() const": {
+      "brief": "This property holds the frame's rectangle",
+      "url": "https://doc.qt.io/qt-6/qframe.html#frameRect-prop"
+    },
+    "QSize sizeHint() const override": {
+      "brief": "Reimplements an access function for property: [QWidget::sizeHint](xref:qt:QWidget).",
+      "url": "https://doc.qt.io/qt-6/qframe.html#sizeHint"
+    },
+    "bool event(QEvent *e) override": {
+      "brief": "Reimplements: [QWidget::event](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qframe.html#event"
+    },
+    "int frameStyle() const": {
+      "brief": "Returns the frame style.",
+      "url": "https://doc.qt.io/qt-6/qframe.html#frameStyle"
+    },
+    "int frameWidth() const": {
+      "brief": "This property holds the width of the frame that is drawn.",
+      "url": "https://doc.qt.io/qt-6/qframe.html#frameWidth-prop"
+    },
+    "int lineWidth() const": {
+      "brief": "This property holds the line width",
+      "url": "https://doc.qt.io/qt-6/qframe.html#lineWidth-prop"
+    },
+    "int midLineWidth() const": {
+      "brief": "This property holds the width of the mid-line",
+      "url": "https://doc.qt.io/qt-6/qframe.html#midLineWidth-prop"
+    },
+    "void changeEvent(QEvent *ev) override": {
+      "brief": "Reimplements: [QWidget::changeEvent](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qframe.html#changeEvent"
+    },
+    "void initStyleOption(QStyleOptionFrame *option) const": {
+      "brief": "Initializes *option* with the values from this [QFrame](xref:qt:QFrame).",
+      "url": "https://doc.qt.io/qt-6/qframe.html#initStyleOption"
+    },
+    "void paintEvent(QPaintEvent *) override": {
+      "brief": "Reimplements: [QWidget::paintEvent](xref:qt:QWidget)(QPaintEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qframe.html#paintEvent"
+    },
+    "void setFrameRect(const QRect &)": {
+      "brief": "This property holds the frame's rectangle",
+      "url": "https://doc.qt.io/qt-6/qframe.html#frameRect-prop"
+    },
+    "void setFrameShadow(QFrame::Shadow)": {
+      "brief": "This property holds the frame shadow value from the frame style",
+      "url": "https://doc.qt.io/qt-6/qframe.html#frameShadow-prop"
+    },
+    "void setFrameShape(QFrame::Shape)": {
+      "brief": "This property holds the frame shape value from the frame style",
+      "url": "https://doc.qt.io/qt-6/qframe.html#frameShape-prop"
+    },
+    "void setFrameStyle(int style)": {
+      "brief": "Sets the frame style to *style*.",
+      "url": "https://doc.qt.io/qt-6/qframe.html#setFrameStyle"
+    },
+    "void setLineWidth(int)": {
+      "brief": "This property holds the line width",
+      "url": "https://doc.qt.io/qt-6/qframe.html#lineWidth-prop"
+    },
+    "void setMidLineWidth(int)": {
+      "brief": "This property holds the width of the mid-line",
+      "url": "https://doc.qt.io/qt-6/qframe.html#midLineWidth-prop"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "frameRect": {
+      "brief": "The frame's rectangle",
+      "url": "https://doc.qt.io/qt-6/qframe.html#frameRect-prop"
+    },
+    "frameShadow": {
+      "brief": "The frame shadow value from the frame style",
+      "url": "https://doc.qt.io/qt-6/qframe.html#frameShadow-prop"
+    },
+    "frameShape": {
+      "brief": "The frame shape value from the frame style",
+      "url": "https://doc.qt.io/qt-6/qframe.html#frameShape-prop"
+    },
+    "frameWidth": {
+      "brief": "The width of the frame that is drawn",
+      "url": "https://doc.qt.io/qt-6/qframe.html#frameWidth-prop"
+    },
+    "lineWidth": {
+      "brief": "The line width",
+      "url": "https://doc.qt.io/qt-6/qframe.html#lineWidth-prop"
+    },
+    "midLineWidth": {
+      "brief": "The width of the mid-line",
+      "url": "https://doc.qt.io/qt-6/qframe.html#midLineWidth-prop"
+    }
+  },
+  "qss": {
+    "box_model": true,
+    "pseudo_states": [],
+    "sub_controls": [],
+    "url": "https://doc.qt.io/qt-6/stylesheet-reference.html#qframe-widget"
+  },
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

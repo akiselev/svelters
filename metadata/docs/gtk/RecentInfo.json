@@ -1,0 +1,169 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Contains the metadata associated with an item in the recently used files list.",
+    "file": "gtk/gtkrecentmanager.c",
+    "line": 124,
+    "md": "Contains the metadata associated with an item in the\nrecently used files list."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:RecentInfo",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "create_app_info": {
+      "brief": "Creates a `GAppInfo` for the specified `GtkRecentInfo`",
+      "file": "gtk/gtkrecentmanager.c",
+      "line": 2282,
+      "md": "Creates a `GAppInfo` for the specified `GtkRecentInfo`\n\nIn case of error, `error` will be set either with a\n%GTK_RECENT_MANAGER_ERROR or a %G_IO_ERROR"
+    },
+    "exists": {
+      "brief": "Checks whether the resource pointed by `info` still exists.",
+      "file": "gtk/gtkrecentmanager.c",
+      "line": 1931,
+      "md": "Checks whether the resource pointed by `info` still exists.\nAt the moment this check is done only on resources pointing\nto local files."
+    },
+    "get_added": {
+      "brief": "Gets the time when the resource was added to the recently used resources list.",
+      "file": "gtk/gtkrecentmanager.c",
+      "line": 1652,
+      "md": "Gets the time when the resource\nwas added to the recently used resources list."
+    },
+    "get_age": {
+      "brief": "Gets the number of days elapsed since the last update of the resource pointed by `info`.",
+      "file": "gtk/gtkrecentmanager.c",
+      "line": 2178,
+      "md": "Gets the number of days elapsed since the last update\nof the resource pointed by `info`."
+    },
+    "get_application_info": {
+      "brief": "Gets the data regarding the application that has registered the resource pointed by `info`.",
+      "file": "gtk/gtkrecentmanager.c",
+      "line": 1726,
+      "md": "Gets the data regarding the application that has registered the resource\npointed by `info`.\n\nIf the command line contains any escape characters defined inside the\nstorage specification, they will be expanded."
+    },
+    "get_applications": {
+      "brief": "Retrieves the list of applications that have registered this resource.",
+      "file": "gtk/gtkrecentmanager.c",
+      "line": 1782,
+      "md": "Retrieves the list of applications that have registered this resource."
+    },
+    "get_description": {
+      "brief": "Gets the (short) description of the resource.",
+      "file": "gtk/gtkrecentmanager.c",
+      "line": 1615,
+      "md": "Gets the (short) description of the resource."
+    },
+    "get_display_name": {
+      "brief": "Gets the name of the resource.",
+      "file": "gtk/gtkrecentmanager.c",
+      "line": 1592,
+      "md": "Gets the name of the resource.\n\nIf none has been defined, the basename\nof the resource is obtained."
+    },
+    "get_gicon": {
+      "brief": "Retrieves the icon associated to the resource MIME type.",
+      "file": "gtk/gtkrecentmanager.c",
+      "line": 1880,
+      "md": "Retrieves the icon associated to the resource MIME type."
+    },
+    "get_groups": {
+      "brief": "Returns all groups registered for the recently used item `info`.",
+      "file": "gtk/gtkrecentmanager.c",
+      "line": 2203,
+      "md": "Returns all groups registered for the recently used item `info`.\n\nThe array of returned group names will be `NULL` terminated, so\nlength might optionally be `NULL`."
+    },
+    "get_mime_type": {
+      "brief": "Gets the MIME type of the resource.",
+      "file": "gtk/gtkrecentmanager.c",
+      "line": 1632,
+      "md": "Gets the MIME type of the resource."
+    },
+    "get_modified": {
+      "brief": "Gets the time when the meta-data for the resource was last modified.",
+      "file": "gtk/gtkrecentmanager.c",
+      "line": 1670,
+      "md": "Gets the time when the meta-data\nfor the resource was last modified."
+    },
+    "get_private_hint": {
+      "brief": "Gets the value of the “private” flag.",
+      "file": "gtk/gtkrecentmanager.c",
+      "line": 1706,
+      "md": "Gets the value of the “private” flag.\n\nResources in the recently used list that have this flag\nset to `TRUE` should only be displayed by the applications\nthat have registered them."
+    },
+    "get_short_name": {
+      "brief": "Computes a valid UTF-8 string that can be used as the name of the item in a menu or list.",
+      "file": "gtk/gtkrecentmanager.c",
+      "line": 2110,
+      "md": "Computes a valid UTF-8 string that can be used as the\nname of the item in a menu or list.\n\nFor example, calling this function on an item that refers\nto “file:///foo/bar.txt” will yield “bar.txt”."
+    },
+    "get_uri": {
+      "brief": "Gets the URI of the resource.",
+      "file": "gtk/gtkrecentmanager.c",
+      "line": 1575,
+      "md": "Gets the URI of the resource."
+    },
+    "get_uri_display": {
+      "brief": "Gets a displayable version of the resource’s URI.",
+      "file": "gtk/gtkrecentmanager.c",
+      "line": 2138,
+      "md": "Gets a displayable version of the resource’s URI.\n\nIf the resource is local, it returns a local path; if the\nresource is not local, it returns the UTF-8 encoded content\nof [`RecentInfo.get_uri()`](xref:gtk:Gtk.RecentInfo#method:get_uri)."
+    },
+    "get_visited": {
+      "brief": "Gets the time when the meta-data for the resource was last visited.",
+      "file": "gtk/gtkrecentmanager.c",
+      "line": 1688,
+      "md": "Gets the time when the meta-data\nfor the resource was last visited."
+    },
+    "has_application": {
+      "brief": "Checks whether an application registered this resource using `app_name`.",
+      "file": "gtk/gtkrecentmanager.c",
+      "line": 1827,
+      "md": "Checks whether an application registered this resource using `app_name`."
+    },
+    "has_group": {
+      "brief": "Checks whether `group_name` appears inside the groups registered for the recently used item `info`.",
+      "file": "gtk/gtkrecentmanager.c",
+      "line": 2249,
+      "md": "Checks whether `group_name` appears inside the groups\nregistered for the recently used item `info`."
+    },
+    "is_local": {
+      "brief": "Checks whether the resource is local or not by looking at the scheme of its URI.",
+      "file": "gtk/gtkrecentmanager.c",
+      "line": 1914,
+      "md": "Checks whether the resource is local or not by looking at the\nscheme of its URI."
+    },
+    "last_application": {
+      "brief": "Gets the name of the last application that have registered the recently used resource represented by `info`.",
+      "file": "gtk/gtkrecentmanager.c",
+      "line": 1847,
+      "md": "Gets the name of the last application that have registered the\nrecently used resource represented by `info`."
+    },
+    "match": {
+      "brief": "Checks whether two `GtkRecentInfo` point to the same resource.",
+      "file": "gtk/gtkrecentmanager.c",
+      "line": 1966,
+      "md": "Checks whether two `GtkRecentInfo` point to the same resource."
+    },
+    "ref": {
+      "brief": "Increases the reference count of `recent_info` by one.",
+      "file": "gtk/gtkrecentmanager.c",
+      "line": 1534,
+      "md": "Increases the reference count of `recent_info` by one."
+    },
+    "unref": {
+      "brief": "Decreases the reference count of `info` by one.",
+      "file": "gtk/gtkrecentmanager.c",
+      "line": 1554,
+      "md": "Decreases the reference count of `info` by one.\n\nIf the reference count reaches zero, `info` is\ndeallocated, and the memory freed."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

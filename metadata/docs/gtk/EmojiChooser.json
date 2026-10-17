@@ -1,0 +1,38 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkEmojiChooser`.",
+      "file": "gtk/gtkemojichooser.c",
+      "line": 1398,
+      "md": "Creates a new `GtkEmojiChooser`."
+    }
+  },
+  "doc": {
+    "brief": "Used by text widgets to let users insert Emoji characters.",
+    "file": "gtk/gtkemojichooser.c",
+    "line": 40,
+    "md": "Used by text widgets to let users insert Emoji characters.\n\n`GtkEmojiChooser` emits the [`EmojiChooser::emoji-picked`](xref:gtk:Gtk.EmojiChooser#event:emoji-picked)\nsignal when an Emoji is selected.\n\n# Shortcuts and Gestures\n\n`GtkEmojiChooser` supports the following keyboard shortcuts:\n\n- <kbd>Ctrl</kbd>+<kbd>N</kbd> scrolls th the next section.\n- <kbd>Ctrl</kbd>+<kbd>P</kbd> scrolls th the previous section.\n\n# Actions\n\n`GtkEmojiChooser` defines a set of built-in actions:\n\n- `scroll.section` scrolls to the next or previous section.\n\n# CSS nodes\n\n```\npopover\n├── box.emoji-searchbar\n│   ╰── entry.search\n╰── box.emoji-toolbar\n    ├── button.image-button.emoji-section\n    ├── ...\n    ╰── button.image-button.emoji-section\n```\n\nEvery `GtkEmojiChooser` consists of a main node called popover.\nThe contents of the popover are largely implementation defined\nand supposed to inherit general styles.\nThe top searchbar used to search emoji and gets the .emoji-searchbar\nstyle class itself.\nThe bottom toolbar used to switch between different emoji categories\nconsists of buttons with the .emoji-section style class and gets the\n.emoji-toolbar style class itself."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:EmojiChooser",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "emoji-picked": {
+      "brief": "Emitted when the user selects an Emoji.",
+      "file": "gtk/gtkemojichooser.c",
+      "line": 1316,
+      "md": "Emitted when the user selects an Emoji."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -1,0 +1,223 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new empty `GtkPicture` widget.",
+      "file": "gtk/gtkpicture.c",
+      "line": 563,
+      "md": "Creates a new empty `GtkPicture` widget."
+    },
+    "new_for_file": {
+      "brief": "Creates a new `GtkPicture` displaying the given `file`.",
+      "file": "gtk/gtkpicture.c",
+      "line": 636,
+      "md": "Creates a new `GtkPicture` displaying the given `file`.\n\nIf the file isn’t found or can’t be loaded, the resulting\n`GtkPicture` is empty.\n\nIf you need to detect failures to load the file, use an\nimage loading framework such as libglycin to load the file\nyourself, then create the `GtkPicture` from the texture."
+    },
+    "new_for_filename": {
+      "brief": "Creates a new `GtkPicture` displaying the file `filename`.",
+      "file": "gtk/gtkpicture.c",
+      "line": 661,
+      "md": "Creates a new `GtkPicture` displaying the file `filename`.\n\nThis is a utility function that calls [`Picture.new_for_file()`](xref:gtk:Gtk.Picture#constructor:new_for_file).\nSee that function for details."
+    },
+    "new_for_paintable": {
+      "brief": "Creates a new `GtkPicture` displaying `paintable`.",
+      "file": "gtk/gtkpicture.c",
+      "line": 576,
+      "md": "Creates a new `GtkPicture` displaying `paintable`.\n\nThe `GtkPicture` will track changes to the `paintable` and update\nits size and contents in response to it."
+    },
+    "new_for_pixbuf": {
+      "brief": "Creates a new `GtkPicture` displaying `pixbuf`.",
+      "deprecated": "4.12",
+      "deprecated_md": "Use [`Picture.new_for_paintable()`](xref:gtk:Gtk.Picture#constructor:new_for_paintable) and\n  [`Texture.new_for_pixbuf()`](xref:gtk:Gdk.Texture#constructor:new_for_pixbuf) instead",
+      "file": "gtk/gtkpicture.c",
+      "line": 597,
+      "md": "Creates a new `GtkPicture` displaying `pixbuf`.\n\nThis is a utility function that calls [`Picture.new_for_paintable()`](xref:gtk:Gtk.Picture#constructor:new_for_paintable),\nSee that function for details.\n\nThe pixbuf must not be modified after passing it to this function."
+    },
+    "new_for_resource": {
+      "brief": "Creates a new `GtkPicture` displaying the resource at `resource_path`.",
+      "file": "gtk/gtkpicture.c",
+      "line": 691,
+      "md": "Creates a new `GtkPicture` displaying the resource at `resource_path`.\n\nThis is a utility function that calls [`Picture.new_for_file()`](xref:gtk:Gtk.Picture#constructor:new_for_file).\nSee that function for details."
+    }
+  },
+  "doc": {
+    "brief": "Displays a `GdkPaintable`.",
+    "file": "gtk/gtkpicture.c",
+    "line": 35,
+    "md": "Displays a `GdkPaintable`.\n\nMany convenience functions are provided to make pictures simple to use.\nFor example, if you want to load an image from a file, and then display\nit, there’s a convenience function to do this:\n\n```c\nGtkWidget *widget = gtk_picture_new_for_filename (\"myfile.png\");\n```\n\nIf the file isn’t loaded successfully, the picture will contain a\n“broken image” icon similar to that used in many web browsers.\nIf you want to handle errors in loading the file yourself,\nfor example by displaying an error message, then load the image with\nand image loading framework such as libglycin, then create the `GtkPicture`\nwith [`Picture.new_for_paintable()`](xref:gtk:Gtk.Picture#constructor:new_for_paintable).\n\nSometimes an application will want to avoid depending on external data\nfiles, such as image files. See the documentation of `GResource` for details.\nIn this case, [`Picture.new_for_resource()`](xref:gtk:Gtk.Picture#constructor:new_for_resource) and\n[`Picture.set_resource()`](xref:gtk:Gtk.Picture#method:set_resource) should be used.\n\n`GtkPicture` displays an image at its natural size. See [`Image`](xref:gtk:Gtk.Image)\nif you want to display a fixed-size image, such as an icon.\n\n## Sizing the paintable\n\nYou can influence how the paintable is displayed inside the `GtkPicture`\nby changing [`Picture:content-fit`](xref:gtk:Gtk.Picture#property:content-fit). See [`ContentFit`](xref:gtk:Gtk.ContentFit)\nfor details. [`Picture:can-shrink`](xref:gtk:Gtk.Picture#property:can-shrink) can be unset to make sure\nthat paintables are never made smaller than their ideal size - but\nbe careful if you do not know the size of the paintable in use (like\nwhen displaying user-loaded images). This can easily cause the picture to\ngrow larger than the screen. And [`Widget:halign`](xref:gtk:Gtk.Widget#property:halign) and\n[`Widget:valign`](xref:gtk:Gtk.Widget#property:valign) can be used to make sure the paintable doesn't\nfill all available space but is instead displayed at its original size.\n\n## CSS nodes\n\n`GtkPicture` has a single CSS node with the name `picture`.\n\n## Accessibility\n\n`GtkPicture` uses the [`AccessibleRole.img`](xref:gtk:Gtk.AccessibleRole#value:img) role."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Picture",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_alternative_text": {
+      "brief": "Gets the alternative textual description of the picture.",
+      "file": "gtk/gtkpicture.c",
+      "line": 1238,
+      "md": "Gets the alternative textual description of the picture.\n\nThe returned string will be `NULL` if the picture cannot be described textually."
+    },
+    "get_can_shrink": {
+      "brief": "Returns whether the `GtkPicture` respects its contents size.",
+      "file": "gtk/gtkpicture.c",
+      "line": 1077,
+      "md": "Returns whether the `GtkPicture` respects its contents size."
+    },
+    "get_content_fit": {
+      "brief": "Returns the fit mode for the content of the `GtkPicture`.",
+      "file": "gtk/gtkpicture.c",
+      "line": 1134,
+      "md": "Returns the fit mode for the content of the `GtkPicture`.\n\nSee [`ContentFit`](xref:gtk:Gtk.ContentFit) for details.",
+      "since": "4.8"
+    },
+    "get_file": {
+      "brief": "Gets the `GFile` currently displayed if `self` is displaying a file.",
+      "file": "gtk/gtkpicture.c",
+      "line": 776,
+      "md": "Gets the `GFile` currently displayed if `self` is displaying a file.\n\nIf `self` is not displaying a file, for example when\n[`Picture.set_paintable()`](xref:gtk:Gtk.Picture#method:set_paintable) was used, then `NULL` is returned."
+    },
+    "get_isolate_contents": {
+      "brief": "Returns whether the contents are isolated.",
+      "file": "gtk/gtkpicture.c",
+      "line": 1188,
+      "md": "Returns whether the contents are isolated.",
+      "since": "4.22"
+    },
+    "get_keep_aspect_ratio": {
+      "brief": "Returns whether the `GtkPicture` preserves its contents aspect ratio.",
+      "deprecated": "4.8",
+      "deprecated_md": "Use [`Picture.get_content_fit()`](xref:gtk:Gtk.Picture#method:get_content_fit) instead. This will\n  now return `FALSE` only if [`Picture:content-fit`](xref:gtk:Gtk.Picture#property:content-fit) is\n  `GTK_CONTENT_FIT_FILL`. Returns `TRUE` otherwise.",
+      "file": "gtk/gtkpicture.c",
+      "line": 1025,
+      "md": "Returns whether the `GtkPicture` preserves its contents aspect ratio."
+    },
+    "get_paintable": {
+      "brief": "Gets the `GdkPaintable` being displayed by the `GtkPicture`.",
+      "file": "gtk/gtkpicture.c",
+      "line": 980,
+      "md": "Gets the `GdkPaintable` being displayed by the `GtkPicture`."
+    },
+    "set_alternative_text": {
+      "brief": "Sets an alternative textual description for the picture contents.",
+      "file": "gtk/gtkpicture.c",
+      "line": 1206,
+      "md": "Sets an alternative textual description for the picture contents.\n\nIt is equivalent to the \"alt\" attribute for images on websites.\n\nThis text will be made available to accessibility tools.\n\nIf the picture cannot be described textually, set this property to `NULL`."
+    },
+    "set_can_shrink": {
+      "brief": "If set to `TRUE`, then `self` can be made smaller than its contents.",
+      "file": "gtk/gtkpicture.c",
+      "line": 1045,
+      "md": "If set to `TRUE`, then `self` can be made smaller than its contents.\n\nThe contents will then be scaled down when rendering.\n\nIf you want to still force a minimum size manually, consider using\n[`Widget.set_size_request()`](xref:gtk:Gtk.Widget#method:set_size_request).\n\nAlso of note is that a similar function for growing does not exist\nbecause the grow behavior can be controlled via\n[`Widget.set_halign()`](xref:gtk:Gtk.Widget#method:set_halign) and [`Widget.set_valign()`](xref:gtk:Gtk.Widget#method:set_valign)."
+    },
+    "set_content_fit": {
+      "brief": "Sets how the content should be resized to fit the `GtkPicture`.",
+      "file": "gtk/gtkpicture.c",
+      "line": 1093,
+      "md": "Sets how the content should be resized to fit the `GtkPicture`.\n\nSee [`ContentFit`](xref:gtk:Gtk.ContentFit) for details.",
+      "since": "4.8"
+    },
+    "set_file": {
+      "brief": "Makes `self` load and display `file`.",
+      "file": "gtk/gtkpicture.c",
+      "line": 733,
+      "md": "Makes `self` load and display `file`.\n\nSee [`Picture.new_for_file()`](xref:gtk:Gtk.Picture#constructor:new_for_file) for details.\n\n::: warning\n    Note that this function should not be used with untrusted data.\n    Use a proper image loading framework such as libglycin, which can\n    load many image formats into a `GdkTexture`, and then use\n    [`Image.set_from_paintable()`](xref:gtk:Gtk.Image#method:set_from_paintable)."
+    },
+    "set_filename": {
+      "brief": "Makes `self` load and display the given `filename`.",
+      "file": "gtk/gtkpicture.c",
+      "line": 795,
+      "md": "Makes `self` load and display the given `filename`.\n\nThis is a utility function that calls [`Picture.set_file()`](xref:gtk:Gtk.Picture#method:set_file).\n\n::: warning\n    Note that this function should not be used with untrusted data.\n    Use a proper image loading framework such as libglycin, which can\n    load many image formats into a `GdkTexture`, and then use\n    [`Image.set_from_paintable()`](xref:gtk:Gtk.Image#method:set_from_paintable)."
+    },
+    "set_isolate_contents": {
+      "brief": "If set to true, then the contents will be rendered individually.",
+      "file": "gtk/gtkpicture.c",
+      "line": 1154,
+      "md": "If set to true, then the contents will be rendered individually.\n\nIf set to false they will be able to erase or otherwise mix with\nthe background.\n\nGTK supports finer grained isolation, in rare cases where you need\nthis, you can use [`Snapshot.push_isolation()`](xref:gtk:Gtk.Snapshot#method:push_isolation) yourself to\nachieve this.\n\nBy default contents are isolated.",
+      "since": "4.22"
+    },
+    "set_keep_aspect_ratio": {
+      "brief": "If set to `TRUE`, the `self` will render its contents according to their aspect ratio.",
+      "deprecated": "4.8",
+      "deprecated_md": "Use [`Picture.set_content_fit()`](xref:gtk:Gtk.Picture#method:set_content_fit) instead. If still\n  used, this method will always set the [`Picture:content-fit`](xref:gtk:Gtk.Picture#property:content-fit)\n  property to `GTK_CONTENT_FIT_CONTAIN` if `keep_aspect_ratio` is true,\n  otherwise it will set it to `GTK_CONTENT_FIT_FILL`.",
+      "file": "gtk/gtkpicture.c",
+      "line": 996,
+      "md": "If set to `TRUE`, the `self` will render its contents according to\ntheir aspect ratio.\n\nThat means that empty space may show up at the top/bottom or\nleft/right of `self`.\n\nIf set to `FALSE` or if the contents provide no aspect ratio,\nthe contents will be stretched over the picture's whole area."
+    },
+    "set_paintable": {
+      "brief": "Makes `self` display the given `paintable`.",
+      "file": "gtk/gtkpicture.c",
+      "line": 919,
+      "md": "Makes `self` display the given `paintable`.\n\nIf `paintable` is `NULL`, nothing will be displayed.\n\nSee [`Picture.new_for_paintable()`](xref:gtk:Gtk.Picture#constructor:new_for_paintable) for details."
+    },
+    "set_pixbuf": {
+      "brief": "Sets a `GtkPicture` to show a `GdkPixbuf`.",
+      "deprecated": "4.12",
+      "deprecated_md": "Use [`Picture.set_paintable()`](xref:gtk:Gtk.Picture#method:set_paintable) instead",
+      "file": "gtk/gtkpicture.c",
+      "line": 870,
+      "md": "Sets a `GtkPicture` to show a `GdkPixbuf`.\n\nSee [`Picture.new_for_pixbuf()`](xref:gtk:Gtk.Picture#constructor:new_for_pixbuf) for details.\n\nThis is a utility function that calls [`Picture.set_paintable()`](xref:gtk:Gtk.Picture#method:set_paintable)."
+    },
+    "set_resource": {
+      "brief": "Makes `self` load and display the resource at the given `resource_path`.",
+      "file": "gtk/gtkpicture.c",
+      "line": 829,
+      "md": "Makes `self` load and display the resource at the given\n`resource_path`.\n\nThis is a utility function that calls [`Picture.set_file()`](xref:gtk:Gtk.Picture#method:set_file)."
+    }
+  },
+  "properties": {
+    "alternative-text": {
+      "brief": "The alternative textual description for the picture.",
+      "file": "gtk/gtkpicture.c",
+      "line": 487,
+      "md": "The alternative textual description for the picture."
+    },
+    "can-shrink": {
+      "brief": "If the `GtkPicture` can be made smaller than the natural size of its contents.",
+      "file": "gtk/gtkpicture.c",
+      "line": 512,
+      "md": "If the `GtkPicture` can be made smaller than the natural size of its contents."
+    },
+    "content-fit": {
+      "brief": "How the content should be resized to fit inside the `GtkPicture`.",
+      "file": "gtk/gtkpicture.c",
+      "line": 522,
+      "md": "How the content should be resized to fit inside the `GtkPicture`.",
+      "since": "4.8"
+    },
+    "file": {
+      "brief": "The `GFile` that is displayed or `NULL` if none.",
+      "file": "gtk/gtkpicture.c",
+      "line": 477,
+      "md": "The `GFile` that is displayed or `NULL` if none."
+    },
+    "isolate-contents": {
+      "brief": "If the rendering of the contents is isolated from the rest of the widget tree.",
+      "file": "gtk/gtkpicture.c",
+      "line": 535,
+      "md": "If the rendering of the contents is isolated from the rest of the widget tree.",
+      "since": "4.22"
+    },
+    "keep-aspect-ratio": {
+      "brief": "Whether the GtkPicture will render its contents trying to preserve the aspect ratio.",
+      "deprecated": "4.8",
+      "deprecated_md": "Use [`Picture:content-fit`](xref:gtk:Gtk.Picture#property:content-fit) instead.",
+      "file": "gtk/gtkpicture.c",
+      "line": 497,
+      "md": "Whether the GtkPicture will render its contents trying to preserve the aspect\nratio."
+    },
+    "paintable": {
+      "brief": "The `GdkPaintable` to be displayed by this `GtkPicture`.",
+      "file": "gtk/gtkpicture.c",
+      "line": 467,
+      "md": "The `GdkPaintable` to be displayed by this `GtkPicture`."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

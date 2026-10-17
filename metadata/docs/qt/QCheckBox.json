@@ -1,0 +1,106 @@
+{
+  "doc": {
+    "brief": "The QCheckBox widget provides a checkbox with a text label.",
+    "index_brief": "Checkbox with a text label",
+    "url": "https://doc.qt.io/qt-6/qcheckbox.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QCheckBox",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QCheckBox(QWidget *parent)": {
+      "brief": "Constructs a checkbox with the given *parent*, but with no text.",
+      "url": "https://doc.qt.io/qt-6/qcheckbox.html#QCheckBox"
+    },
+    "QCheckBox(const QString &text, QWidget *parent)": {
+      "brief": "Constructs a checkbox with the given *parent* and *text*.",
+      "url": "https://doc.qt.io/qt-6/qcheckbox.html#QCheckBox-1"
+    },
+    "QSize minimumSizeHint() const override": {
+      "brief": "Reimplements an access function for property: [QWidget::minimumSizeHint](xref:qt:QWidget).",
+      "url": "https://doc.qt.io/qt-6/qcheckbox.html#minimumSizeHint"
+    },
+    "QSize sizeHint() const override": {
+      "brief": "Reimplements an access function for property: [QWidget::sizeHint](xref:qt:QWidget).",
+      "url": "https://doc.qt.io/qt-6/qcheckbox.html#sizeHint"
+    },
+    "Qt::CheckState checkState() const": {
+      "brief": "Returns the checkbox's check state.",
+      "url": "https://doc.qt.io/qt-6/qcheckbox.html#checkState"
+    },
+    "bool event(QEvent *e) override": {
+      "brief": "Reimplements: [QAbstractButton::event](xref:qt:QAbstractButton)(QEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qcheckbox.html#event"
+    },
+    "bool hitButton(const QPoint &pos) const override": {
+      "brief": "Reimplements: [QAbstractButton::hitButton](xref:qt:QAbstractButton)(const QPoint &pos) const.",
+      "url": "https://doc.qt.io/qt-6/qcheckbox.html#hitButton"
+    },
+    "bool isTristate() const": {
+      "brief": "This property holds whether the checkbox is a tri-state checkbox",
+      "url": "https://doc.qt.io/qt-6/qcheckbox.html#tristate-prop"
+    },
+    "void checkStateChanged(Qt::CheckState state)": {
+      "brief": "This signal is emitted whenever the checkbox's state changes, i.e., whenever the user checks or unchecks it.",
+      "url": "https://doc.qt.io/qt-6/qcheckbox.html#checkStateChanged"
+    },
+    "void checkStateSet() override": {
+      "brief": "Reimplements: [QAbstractButton::checkStateSet](xref:qt:QAbstractButton)().",
+      "url": "https://doc.qt.io/qt-6/qcheckbox.html#checkStateSet"
+    },
+    "void initStyleOption(QStyleOptionButton *option) const": {
+      "brief": "Initializes *option* with the values from this [QCheckBox](xref:qt:QCheckBox).",
+      "url": "https://doc.qt.io/qt-6/qcheckbox.html#initStyleOption"
+    },
+    "void mouseMoveEvent(QMouseEvent *e) override": {
+      "brief": "Reimplements: [QAbstractButton::mouseMoveEvent](xref:qt:QAbstractButton)(QMouseEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qcheckbox.html#mouseMoveEvent"
+    },
+    "void nextCheckState() override": {
+      "brief": "Reimplements: [QAbstractButton::nextCheckState](xref:qt:QAbstractButton)().",
+      "url": "https://doc.qt.io/qt-6/qcheckbox.html#nextCheckState"
+    },
+    "void paintEvent(QPaintEvent *) override": {
+      "brief": "Reimplements: [QAbstractButton::paintEvent](xref:qt:QAbstractButton)(QPaintEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qcheckbox.html#paintEvent"
+    },
+    "void setCheckState(Qt::CheckState state)": {
+      "brief": "Sets the checkbox's check state to *state*.",
+      "url": "https://doc.qt.io/qt-6/qcheckbox.html#setCheckState"
+    },
+    "void setTristate(bool y)": {
+      "brief": "This property holds whether the checkbox is a tri-state checkbox",
+      "url": "https://doc.qt.io/qt-6/qcheckbox.html#tristate-prop"
+    },
+    "void stateChanged(int state)": {
+      "url": "https://doc.qt.io/qt-6/qcheckbox-obsolete.html#stateChanged"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "tristate": {
+      "brief": "Whether the checkbox is a tri-state checkbox",
+      "url": "https://doc.qt.io/qt-6/qcheckbox.html#tristate-prop"
+    }
+  },
+  "qss": {
+    "box_model": true,
+    "pseudo_states": [],
+    "sub_controls": [
+      "::indicator"
+    ],
+    "url": "https://doc.qt.io/qt-6/stylesheet-reference.html#qcheckbox-widget"
+  },
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

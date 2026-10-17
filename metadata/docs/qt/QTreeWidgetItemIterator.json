@@ -1,0 +1,63 @@
+{
+  "doc": {
+    "brief": "The QTreeWidgetItemIterator class provides a way to iterate over the items in a [QTreeWidget](xref:qt:QTreeWidget) instance.",
+    "index_brief": "Way to iterate over the items in a QTreeWidget instance",
+    "url": "https://doc.qt.io/qt-6/qtreewidgetitemiterator.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QTreeWidgetItemIterator",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QTreeWidgetItem * operator*() const": {
+      "brief": "Dereference operator.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitemiterator.html#operator-2a"
+    },
+    "QTreeWidgetItemIterator & operator++()": {
+      "brief": "The prefix `++` operator (`++it`) advances the iterator to the next matching item and returns a reference to the resulting iterator.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitemiterator.html#operator-2b-2b"
+    },
+    "QTreeWidgetItemIterator & operator+=(int n)": {
+      "brief": "Makes the iterator go forward by *n* matching items. (If n is negative, the iterator goes backward.)",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitemiterator.html#operator-2b-eq"
+    },
+    "QTreeWidgetItemIterator & operator--()": {
+      "brief": "The prefix `--` operator (`--it`) advances the iterator to the previous matching item and returns a reference to the resulting iterator.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitemiterator.html#operator--"
+    },
+    "QTreeWidgetItemIterator & operator-=(int n)": {
+      "brief": "Makes the iterator go backward by *n* matching items. (If n is negative, the iterator goes forward.)",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitemiterator.html#operator--eq"
+    },
+    "QTreeWidgetItemIterator(QTreeWidget *widget, QTreeWidgetItemIterator::IteratorFlags flags)": {
+      "brief": "Constructs an iterator for the given *widget* that uses the specified *flags* to determine which items are found during iteration.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitemiterator.html#QTreeWidgetItemIterator-1"
+    },
+    "QTreeWidgetItemIterator(QTreeWidgetItem *item, QTreeWidgetItemIterator::IteratorFlags flags)": {
+      "brief": "Constructs an iterator for the given *item* that uses the specified *flags* to determine which items are found during iteration.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitemiterator.html#QTreeWidgetItemIterator-2"
+    },
+    "const QTreeWidgetItemIterator operator++(int)": {
+      "brief": "The postfix ++ operator (it++) advances the iterator to the next matching item and returns an iterator to the previously current item.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitemiterator.html#operator-2b-2b-1"
+    },
+    "const QTreeWidgetItemIterator operator--(int)": {
+      "brief": "The postfix – operator (it–) makes the preceding matching item current and returns an iterator to the previously current item.",
+      "url": "https://doc.qt.io/qt-6/qtreewidgetitemiterator.html#operator---1"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

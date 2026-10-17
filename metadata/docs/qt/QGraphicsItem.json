@@ -1,0 +1,841 @@
+{
+  "doc": {
+    "brief": "The QGraphicsItem class is the base class for all graphical items in a [QGraphicsScene](xref:qt:QGraphicsScene).",
+    "index_brief": "The base class for all graphical items in a QGraphicsScene",
+    "url": "https://doc.qt.io/qt-6/qgraphicsitem.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsItem",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QCursor cursor() const": {
+      "brief": "Returns the current cursor shape for the item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#cursor"
+    },
+    "QGraphicsEffect * graphicsEffect() const": {
+      "brief": "Returns a pointer to this item's effect if it has one; otherwise `nullptr`.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#graphicsEffect"
+    },
+    "QGraphicsItem * commonAncestorItem(const QGraphicsItem *other) const": {
+      "brief": "Returns the closest common ancestor item of this item and *other*, or `nullptr` if either *other* is `nullptr`, or there is no common ancestor.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#commonAncestorItem"
+    },
+    "QGraphicsItem * focusItem() const": {
+      "brief": "If this item, a child or descendant of this item currently has input focus, this function will return a pointer to that item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#focusItem"
+    },
+    "QGraphicsItem * focusProxy() const": {
+      "brief": "Returns this item's focus proxy, or `nullptr` if this item has no focus proxy.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#focusProxy"
+    },
+    "QGraphicsItem * panel() const": {
+      "brief": "Returns the item's panel, or `nullptr` if this item does not have a panel.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#panel"
+    },
+    "QGraphicsItem * parentItem() const": {
+      "brief": "Returns a pointer to this item's parent item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#parentItem"
+    },
+    "QGraphicsItem * topLevelItem() const": {
+      "brief": "Returns this item's top-level item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#topLevelItem"
+    },
+    "QGraphicsItem(QGraphicsItem *parent)": {
+      "brief": "Constructs a QGraphicsItem with the given *parent* item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#QGraphicsItem"
+    },
+    "QGraphicsItem::CacheMode cacheMode() const": {
+      "brief": "Returns the cache mode for this item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#cacheMode"
+    },
+    "QGraphicsItem::GraphicsItemFlags flags() const": {
+      "brief": "Returns this item's flags.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#flags"
+    },
+    "QGraphicsItem::PanelModality panelModality() const": {
+      "brief": "Returns the modality for this item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#panelModality"
+    },
+    "QGraphicsItemGroup * group() const": {
+      "brief": "Returns a pointer to this item's item group, or `nullptr` if this item is not member of a group.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#group"
+    },
+    "QGraphicsObject * parentObject() const": {
+      "brief": "Returns a pointer to the item's parent, cast to a [QGraphicsObject](xref:qt:QGraphicsObject).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#parentObject"
+    },
+    "QGraphicsObject * toGraphicsObject()": {
+      "brief": "Return the graphics item cast to a [QGraphicsObject](xref:qt:QGraphicsObject), if the class is actually a graphics object, 0 otherwise.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#toGraphicsObject"
+    },
+    "QGraphicsScene * scene() const": {
+      "brief": "Returns the current scene for the item, or `nullptr` if the item is not stored in a scene.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#scene"
+    },
+    "QGraphicsWidget * parentWidget() const": {
+      "brief": "Returns a pointer to the item's parent widget.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#parentWidget"
+    },
+    "QGraphicsWidget * topLevelWidget() const": {
+      "brief": "Returns a pointer to the item's top level widget (i.e., the item's ancestor whose parent is `nullptr`, or whose parent is not a widget), or `nullptr` if this item does not have a top level widget.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#topLevelWidget"
+    },
+    "QGraphicsWidget * window() const": {
+      "brief": "Returns the item's window, or `nullptr` if this item does not have a window.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#window"
+    },
+    "QList<QGraphicsItem *> childItems() const": {
+      "brief": "Returns a list of this item's children.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#childItems"
+    },
+    "QList<QGraphicsItem *> collidingItems(Qt::ItemSelectionMode mode) const": {
+      "brief": "Returns a list of all items that collide with this item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#collidingItems"
+    },
+    "QList<QGraphicsTransform *> transformations() const": {
+      "brief": "Returns a list of graphics transforms that currently apply to this item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#transformations"
+    },
+    "QPainterPath clipPath() const": {
+      "brief": "Returns this item's clip path, or an empty [QPainterPath](xref:qt:QPainterPath) if this item is not clipped.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#clipPath"
+    },
+    "QPainterPath mapFromItem(const QGraphicsItem *item, const QPainterPath &path) const": {
+      "brief": "Maps the path *path*, which is in *item*'s coordinate system, to this item's coordinate system, and returns the mapped path.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapFromItem"
+    },
+    "QPainterPath mapFromParent(const QPainterPath &path) const": {
+      "brief": "Maps the path *path*, which is in this item's parent's coordinate system, to this item's coordinate system, and returns the mapped path.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapFromParent"
+    },
+    "QPainterPath mapFromScene(const QPainterPath &path) const": {
+      "brief": "Maps the path *path*, which is in this item's scene's coordinate system, to this item's coordinate system, and returns the mapped path.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapFromScene"
+    },
+    "QPainterPath mapToItem(const QGraphicsItem *item, const QPainterPath &path) const": {
+      "brief": "Maps the path *path*, which is in this item's coordinate system, to *item*'s coordinate system, and returns the mapped path.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapToItem"
+    },
+    "QPainterPath mapToParent(const QPainterPath &path) const": {
+      "brief": "Maps the path *path*, which is in this item's coordinate system, to its parent's coordinate system, and returns the mapped path.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapToParent"
+    },
+    "QPainterPath mapToScene(const QPainterPath &path) const": {
+      "brief": "Maps the path *path*, which is in this item's coordinate system, to the scene's coordinate system, and returns the mapped path.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapToScene"
+    },
+    "QPainterPath opaqueArea() const": {
+      "brief": "This virtual function returns a shape representing the area where this item is opaque.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#opaqueArea"
+    },
+    "QPainterPath shape() const": {
+      "brief": "Returns the shape of this item as a [QPainterPath](xref:qt:QPainterPath) in local coordinates.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#shape"
+    },
+    "QPointF mapFromItem(const QGraphicsItem *item, const QPointF &point) const": {
+      "brief": "Maps the point *point*, which is in *item*'s coordinate system, to this item's coordinate system, and returns the mapped coordinate.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapFromItem-1"
+    },
+    "QPointF mapFromItem(const QGraphicsItem *item, qreal x, qreal y) const": {
+      "brief": "This convenience function is equivalent to calling mapFromItem(*item*, [QPointF](xref:qt:QPointF)(*x*, *y*)).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapFromItem-5"
+    },
+    "QPointF mapFromParent(const QPointF &point) const": {
+      "brief": "Maps the point *point*, which is in this item's parent's coordinate system, to this item's coordinate system, and returns the mapped coordinate.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapFromParent-1"
+    },
+    "QPointF mapFromParent(qreal x, qreal y) const": {
+      "brief": "This convenience function is equivalent to calling mapFromParent([QPointF](xref:qt:QPointF)(*x*, *y*)).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapFromParent-5"
+    },
+    "QPointF mapFromScene(const QPointF &point) const": {
+      "brief": "Maps the point *point*, which is in this item's scene's coordinate system, to this item's coordinate system, and returns the mapped coordinate.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapFromScene-1"
+    },
+    "QPointF mapFromScene(qreal x, qreal y) const": {
+      "brief": "This convenience function is equivalent to calling mapFromScene([QPointF](xref:qt:QPointF)(*x*, *y*)).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapFromScene-5"
+    },
+    "QPointF mapToItem(const QGraphicsItem *item, const QPointF &point) const": {
+      "brief": "Maps the point *point*, which is in this item's coordinate system, to *item*'s coordinate system, and returns the mapped coordinate.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapToItem-1"
+    },
+    "QPointF mapToItem(const QGraphicsItem *item, qreal x, qreal y) const": {
+      "brief": "This convenience function is equivalent to calling mapToItem(*item*, [QPointF](xref:qt:QPointF)(*x*, *y*)).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapToItem-5"
+    },
+    "QPointF mapToParent(const QPointF &point) const": {
+      "brief": "Maps the point *point*, which is in this item's coordinate system, to its parent's coordinate system, and returns the mapped coordinate.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapToParent-1"
+    },
+    "QPointF mapToParent(qreal x, qreal y) const": {
+      "brief": "This convenience function is equivalent to calling mapToParent([QPointF](xref:qt:QPointF)(*x*, *y*)).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapToParent-5"
+    },
+    "QPointF mapToScene(const QPointF &point) const": {
+      "brief": "Maps the point *point*, which is in this item's coordinate system, to the scene's coordinate system, and returns the mapped coordinate.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapToScene-1"
+    },
+    "QPointF mapToScene(qreal x, qreal y) const": {
+      "brief": "This convenience function is equivalent to calling mapToScene([QPointF](xref:qt:QPointF)(*x*, *y*)).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapToScene-5"
+    },
+    "QPointF pos() const": {
+      "brief": "Returns the position of the item in parent coordinates.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#pos"
+    },
+    "QPointF scenePos() const": {
+      "brief": "Returns the item's position in scene coordinates.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#scenePos"
+    },
+    "QPointF transformOriginPoint() const": {
+      "brief": "Returns the origin point for the transformation in item coordinates.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#transformOriginPoint"
+    },
+    "QPolygonF mapFromItem(const QGraphicsItem *item, const QPolygonF &polygon) const": {
+      "brief": "Maps the polygon *polygon*, which is in *item*'s coordinate system, to this item's coordinate system, and returns the mapped polygon.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapFromItem-2"
+    },
+    "QPolygonF mapFromItem(const QGraphicsItem *item, const QRectF &rect) const": {
+      "brief": "Maps the rectangle *rect*, which is in *item*'s coordinate system, to this item's coordinate system, and returns the mapped rectangle as a polygon.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapFromItem-3"
+    },
+    "QPolygonF mapFromItem(const QGraphicsItem *item, qreal x, qreal y, qreal w, qreal h) const": {
+      "brief": "This convenience function is equivalent to calling mapFromItem(item, [QRectF](xref:qt:QRectF)(*x*, *y*, *w*, *h*)).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapFromItem-4"
+    },
+    "QPolygonF mapFromParent(const QPolygonF &polygon) const": {
+      "brief": "Maps the polygon *polygon*, which is in this item's parent's coordinate system, to this item's coordinate system, and returns the mapped polygon.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapFromParent-2"
+    },
+    "QPolygonF mapFromParent(const QRectF &rect) const": {
+      "brief": "Maps the rectangle *rect*, which is in this item's parent's coordinate system, to this item's coordinate system, and returns the mapped rectangle as a polygon.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapFromParent-3"
+    },
+    "QPolygonF mapFromParent(qreal x, qreal y, qreal w, qreal h) const": {
+      "brief": "This convenience function is equivalent to calling [mapFromItem](xref:qt:QGraphicsItem)([QRectF](xref:qt:QRectF)(*x*, *y*, *w*, *h*)).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapFromParent-4"
+    },
+    "QPolygonF mapFromScene(const QPolygonF &polygon) const": {
+      "brief": "Maps the polygon *polygon*, which is in this item's scene's coordinate system, to this item's coordinate system, and returns the mapped polygon.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapFromScene-2"
+    },
+    "QPolygonF mapFromScene(const QRectF &rect) const": {
+      "brief": "Maps the rectangle *rect*, which is in this item's scene's coordinate system, to this item's coordinate system, and returns the mapped rectangle as a polygon.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapFromScene-3"
+    },
+    "QPolygonF mapFromScene(qreal x, qreal y, qreal w, qreal h) const": {
+      "brief": "This convenience function is equivalent to calling mapFromScene([QRectF](xref:qt:QRectF)(*x*, *y*, *w*, *h*)).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapFromScene-4"
+    },
+    "QPolygonF mapToItem(const QGraphicsItem *item, const QPolygonF &polygon) const": {
+      "brief": "Maps the polygon *polygon*, which is in this item's coordinate system, to *item*'s coordinate system, and returns the mapped polygon.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapToItem-2"
+    },
+    "QPolygonF mapToItem(const QGraphicsItem *item, const QRectF &rect) const": {
+      "brief": "Maps the rectangle *rect*, which is in this item's coordinate system, to *item*'s coordinate system, and returns the mapped rectangle as a polygon.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapToItem-3"
+    },
+    "QPolygonF mapToItem(const QGraphicsItem *item, qreal x, qreal y, qreal w, qreal h) const": {
+      "brief": "This convenience function is equivalent to calling mapToItem(item, [QRectF](xref:qt:QRectF)(*x*, *y*, *w*, *h*)).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapToItem-4"
+    },
+    "QPolygonF mapToParent(const QPolygonF &polygon) const": {
+      "brief": "Maps the polygon *polygon*, which is in this item's coordinate system, to its parent's coordinate system, and returns the mapped polygon.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapToParent-2"
+    },
+    "QPolygonF mapToParent(const QRectF &rect) const": {
+      "brief": "Maps the rectangle *rect*, which is in this item's coordinate system, to its parent's coordinate system, and returns the mapped rectangle as a polygon.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapToParent-3"
+    },
+    "QPolygonF mapToParent(qreal x, qreal y, qreal w, qreal h) const": {
+      "brief": "This convenience function is equivalent to calling mapToParent([QRectF](xref:qt:QRectF)(*x*, *y*, *w*, *h*)).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapToParent-4"
+    },
+    "QPolygonF mapToScene(const QPolygonF &polygon) const": {
+      "brief": "Maps the polygon *polygon*, which is in this item's coordinate system, to the scene's coordinate system, and returns the mapped polygon.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapToScene-2"
+    },
+    "QPolygonF mapToScene(const QRectF &rect) const": {
+      "brief": "Maps the rectangle *rect*, which is in this item's coordinate system, to the scene's coordinate system, and returns the mapped rectangle as a polygon.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapToScene-3"
+    },
+    "QPolygonF mapToScene(qreal x, qreal y, qreal w, qreal h) const": {
+      "brief": "This convenience function is equivalent to calling mapToScene([QRectF](xref:qt:QRectF)(*x*, *y*, *w*, *h*)).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapToScene-4"
+    },
+    "QRectF boundingRect() const = 0": {
+      "brief": "This pure virtual function defines the outer bounds of the item as a rectangle; all painting must be restricted to inside an item's bounding rect.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#boundingRect"
+    },
+    "QRectF childrenBoundingRect() const": {
+      "brief": "Returns the bounding rect of this item's descendants (i.e., its children, their children, etc.) in local coordinates.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#childrenBoundingRect"
+    },
+    "QRectF mapRectFromItem(const QGraphicsItem *item, const QRectF &rect) const": {
+      "brief": "Maps the rectangle *rect*, which is in *item*'s coordinate system, to this item's coordinate system, and returns the mapped rectangle as a new rectangle (i.e., the bounding rectangle of the resulting...",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapRectFromItem"
+    },
+    "QRectF mapRectFromItem(const QGraphicsItem *item, qreal x, qreal y, qreal w, qreal h) const": {
+      "brief": "This convenience function is equivalent to calling mapRectFromItem(item, [QRectF](xref:qt:QRectF)(*x*, *y*, *w*, *h*)).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapRectFromItem-1"
+    },
+    "QRectF mapRectFromParent(const QRectF &rect) const": {
+      "brief": "Maps the rectangle *rect*, which is in this item's parent's coordinate system, to this item's coordinate system, and returns the mapped rectangle as a new rectangle (i.e., the bounding rectangle of...",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapRectFromParent"
+    },
+    "QRectF mapRectFromParent(qreal x, qreal y, qreal w, qreal h) const": {
+      "brief": "This convenience function is equivalent to calling mapRectFromParent([QRectF](xref:qt:QRectF)(*x*, *y*, *w*, *h*)).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapRectFromParent-1"
+    },
+    "QRectF mapRectFromScene(const QRectF &rect) const": {
+      "brief": "Maps the rectangle *rect*, which is in scene coordinates, to this item's coordinate system, and returns the mapped rectangle as a new rectangle (i.e., the bounding rectangle of the resulting polygon).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapRectFromScene"
+    },
+    "QRectF mapRectFromScene(qreal x, qreal y, qreal w, qreal h) const": {
+      "brief": "This convenience function is equivalent to calling mapRectFromScene([QRectF](xref:qt:QRectF)(*x*, *y*, *w*, *h*)).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapRectFromScene-1"
+    },
+    "QRectF mapRectToItem(const QGraphicsItem *item, const QRectF &rect) const": {
+      "brief": "Maps the rectangle *rect*, which is in this item's coordinate system, to *item*'s coordinate system, and returns the mapped rectangle as a new rectangle (i.e., the bounding rectangle of the resulting...",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapRectToItem"
+    },
+    "QRectF mapRectToItem(const QGraphicsItem *item, qreal x, qreal y, qreal w, qreal h) const": {
+      "brief": "This convenience function is equivalent to calling mapRectToItem(item, [QRectF](xref:qt:QRectF)(*x*, *y*, *w*, *h*)).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapRectToItem-1"
+    },
+    "QRectF mapRectToParent(const QRectF &rect) const": {
+      "brief": "Maps the rectangle *rect*, which is in this item's coordinate system, to its parent's coordinate system, and returns the mapped rectangle as a new rectangle (i.e., the bounding rectangle of the...",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapRectToParent"
+    },
+    "QRectF mapRectToParent(qreal x, qreal y, qreal w, qreal h) const": {
+      "brief": "This convenience function is equivalent to calling mapRectToParent([QRectF](xref:qt:QRectF)(*x*, *y*, *w*, *h*)).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapRectToParent-1"
+    },
+    "QRectF mapRectToScene(const QRectF &rect) const": {
+      "brief": "Maps the rectangle *rect*, which is in this item's coordinate system, to the scene coordinate system, and returns the mapped rectangle as a new rectangle (i.e., the bounding rectangle of the...",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapRectToScene"
+    },
+    "QRectF mapRectToScene(qreal x, qreal y, qreal w, qreal h) const": {
+      "brief": "This convenience function is equivalent to calling mapRectToScene([QRectF](xref:qt:QRectF)(*x*, *y*, *w*, *h*)).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mapRectToScene-1"
+    },
+    "QRectF sceneBoundingRect() const": {
+      "brief": "Returns the bounding rect of this item in scene coordinates, by combining [sceneTransform](xref:qt:QGraphicsItem)() with [boundingRect](xref:qt:QGraphicsItem)().",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#sceneBoundingRect"
+    },
+    "QRegion boundingRegion(const QTransform &itemToDeviceTransform) const": {
+      "brief": "Returns the bounding region for this item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#boundingRegion"
+    },
+    "QString toolTip() const": {
+      "brief": "Returns the item's tool tip, or an empty [QString](xref:qt:QString) if no tool tip has been set.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#toolTip"
+    },
+    "QTransform deviceTransform(const QTransform &viewportTransform) const": {
+      "brief": "Returns this item's device transformation matrix, using *viewportTransform* to map from scene to device coordinates.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#deviceTransform"
+    },
+    "QTransform itemTransform(const QGraphicsItem *other, bool *ok) const": {
+      "brief": "Returns a [QTransform](xref:qt:QTransform) that maps coordinates from this item to *other*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#itemTransform"
+    },
+    "QTransform sceneTransform() const": {
+      "brief": "Returns this item's scene transformation matrix.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#sceneTransform"
+    },
+    "QTransform transform() const": {
+      "brief": "Returns this item's transformation matrix.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#transform"
+    },
+    "QVariant data(int key) const": {
+      "brief": "Returns this item's custom data for the key *key* as a [QVariant](xref:qt:QVariant).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#data"
+    },
+    "QVariant inputMethodQuery(Qt::InputMethodQuery query) const": {
+      "brief": "This method is only relevant for input items.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#inputMethodQuery"
+    },
+    "QVariant itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)": {
+      "brief": "This virtual function is called by [QGraphicsItem](xref:qt:QGraphicsItem) to notify custom items that some part of the item's state changes.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#itemChange"
+    },
+    "Qt::InputMethodHints inputMethodHints() const": {
+      "brief": "Returns the current input method hints of this item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#inputMethodHints"
+    },
+    "Qt::MouseButtons acceptedMouseButtons() const": {
+      "brief": "Returns the mouse buttons that this item accepts mouse events for.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#acceptedMouseButtons"
+    },
+    "T qgraphicsitem_cast(QGraphicsItem *item)": {
+      "brief": "Returns the given *item* cast to type T if *item* is of type T; otherwise, `nullptr` is returned.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#qgraphicsitem_cast"
+    },
+    "bool acceptDrops() const": {
+      "brief": "Returns `true` if this item can accept drag and drop events; otherwise, returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#acceptDrops"
+    },
+    "bool acceptHoverEvents() const": {
+      "brief": "Returns `true` if an item accepts hover events ([QGraphicsSceneHoverEvent](xref:qt:QGraphicsSceneHoverEvent)); otherwise, returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#acceptHoverEvents"
+    },
+    "bool acceptTouchEvents() const": {
+      "brief": "Returns `true` if an item accepts [touch events](xref:qt:QTouchEvent); otherwise, returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#acceptTouchEvents"
+    },
+    "bool collidesWithItem(const QGraphicsItem *other, Qt::ItemSelectionMode mode) const": {
+      "brief": "Returns `true` if this item collides with *other*; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#collidesWithItem"
+    },
+    "bool collidesWithPath(const QPainterPath &path, Qt::ItemSelectionMode mode) const": {
+      "brief": "Returns `true` if this item collides with *path*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#collidesWithPath"
+    },
+    "bool contains(const QPointF &point) const": {
+      "brief": "Returns `true` if this item contains *point*, which is in local coordinates; otherwise, false is returned.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#contains"
+    },
+    "bool filtersChildEvents() const": {
+      "brief": "Returns `true` if this item filters child events (i.e., all events intended for any of its children are instead sent to this item); otherwise, false is returned.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#filtersChildEvents"
+    },
+    "bool handlesChildEvents() const": {
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem-obsolete.html#handlesChildEvents"
+    },
+    "bool hasCursor() const": {
+      "brief": "Returns `true` if this item has a cursor set; otherwise, false is returned.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#hasCursor"
+    },
+    "bool hasFocus() const": {
+      "brief": "Returns `true` if this item is active, and it or its [focus proxy](xref:qt:QGraphicsItem) has keyboard input focus; otherwise, returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#hasFocus"
+    },
+    "bool isActive() const": {
+      "brief": "Returns `true` if this item is active; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#isActive"
+    },
+    "bool isAncestorOf(const QGraphicsItem *child) const": {
+      "brief": "Returns `true` if this item is an ancestor of *child* (i.e., if this item is *child*'s parent, or one of *child*'s parent's ancestors).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#isAncestorOf"
+    },
+    "bool isBlockedByModalPanel(QGraphicsItem **blockingPanel) const": {
+      "brief": "Returns `true` if this item is blocked by a modal panel, false otherwise.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#isBlockedByModalPanel"
+    },
+    "bool isClipped() const": {
+      "brief": "Returns `true` if this item is clipped.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#isClipped"
+    },
+    "bool isEnabled() const": {
+      "brief": "Returns `true` if the item is enabled; otherwise, false is returned.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#isEnabled"
+    },
+    "bool isObscured(const QRectF &rect) const": {
+      "brief": "Returns `true` if *rect* is completely obscured by the opaque shape of any of colliding items above it (i.e., with a higher Z value than this item).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#isObscured"
+    },
+    "bool isObscured(qreal x, qreal y, qreal w, qreal h) const": {
+      "brief": "This convenience function is equivalent to calling isObscured([QRectF](xref:qt:QRectF)(*x*, *y*, *w*, *h*)).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#isObscured-1"
+    },
+    "bool isObscuredBy(const QGraphicsItem *item) const": {
+      "brief": "Returns `true` if this item's bounding rect is completely obscured by the opaque shape of *item*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#isObscuredBy"
+    },
+    "bool isPanel() const": {
+      "brief": "Returns `true` if the item is a panel; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#isPanel"
+    },
+    "bool isSelected() const": {
+      "brief": "Returns `true` if this item is selected; otherwise, false is returned.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#isSelected"
+    },
+    "bool isUnderMouse() const": {
+      "brief": "Returns `true` if this item is currently under the mouse cursor in one of the views; otherwise, false is returned.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#isUnderMouse"
+    },
+    "bool isVisible() const": {
+      "brief": "Returns `true` if the item is visible; otherwise, false is returned.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#isVisible"
+    },
+    "bool isVisibleTo(const QGraphicsItem *parent) const": {
+      "brief": "Returns `true` if the item is visible to *parent*; otherwise, false is returned. *parent* can be `nullptr`, in which case this function will return whether the item is visible to the scene or not.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#isVisibleTo"
+    },
+    "bool isWidget() const": {
+      "brief": "Returns `true` if this item is a widget (i.e., [QGraphicsWidget](xref:qt:QGraphicsWidget)); otherwise, returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#isWidget"
+    },
+    "bool isWindow() const": {
+      "brief": "Returns `true` if the item is a [QGraphicsWidget](xref:qt:QGraphicsWidget) window, otherwise returns false.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#isWindow"
+    },
+    "bool sceneEvent(QEvent *event)": {
+      "brief": "This virtual function receives events to this item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#sceneEvent"
+    },
+    "bool sceneEventFilter(QGraphicsItem *watched, QEvent *event)": {
+      "brief": "Filters events for the item *watched*. *event* is the filtered event.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#sceneEventFilter"
+    },
+    "const QGraphicsObject * toGraphicsObject() const": {
+      "brief": "Return the graphics item cast to a [QGraphicsObject](xref:qt:QGraphicsObject), if the class is actually a graphics object, 0 otherwise.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#toGraphicsObject-1"
+    },
+    "int type() const": {
+      "brief": "Returns the type of an item as an int.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#type"
+    },
+    "qreal boundingRegionGranularity() const": {
+      "brief": "Returns the item's bounding region granularity; a value between and including 0 and 1.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#boundingRegionGranularity"
+    },
+    "qreal effectiveOpacity() const": {
+      "brief": "Returns this item's *effective* opacity, which is between 0.0 (transparent) and 1.0 (opaque).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#effectiveOpacity"
+    },
+    "qreal opacity() const": {
+      "brief": "Returns this item's local opacity, which is between 0.0 (transparent) and 1.0 (opaque).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#opacity"
+    },
+    "qreal rotation() const": {
+      "brief": "Returns the clockwise rotation, in degrees, around the Z axis.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#rotation"
+    },
+    "qreal scale() const": {
+      "brief": "Returns the scale factor of the item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#scale"
+    },
+    "qreal x() const": {
+      "brief": "This convenience function is equivalent to calling [pos](xref:qt:QGraphicsItem)().x().",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#x"
+    },
+    "qreal y() const": {
+      "brief": "This convenience function is equivalent to calling [pos](xref:qt:QGraphicsItem)().y().",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#y"
+    },
+    "qreal zValue() const": {
+      "brief": "Returns the Z-value of the item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#zValue"
+    },
+    "void advance(int phase)": {
+      "brief": "This virtual function is called twice for all items by the [QGraphicsScene::advance](xref:qt:QGraphicsScene)() slot.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#advance"
+    },
+    "void clearFocus()": {
+      "brief": "Takes keyboard input focus from the item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#clearFocus"
+    },
+    "void contextMenuEvent(QGraphicsSceneContextMenuEvent *event)": {
+      "brief": "This event handler can be reimplemented in a subclass to process context menu events.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#contextMenuEvent"
+    },
+    "void dragEnterEvent(QGraphicsSceneDragDropEvent *event)": {
+      "brief": "This event handler, for event *event*, can be reimplemented to receive drag enter events for this item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#dragEnterEvent"
+    },
+    "void dragLeaveEvent(QGraphicsSceneDragDropEvent *event)": {
+      "brief": "This event handler, for event *event*, can be reimplemented to receive drag leave events for this item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#dragLeaveEvent"
+    },
+    "void dragMoveEvent(QGraphicsSceneDragDropEvent *event)": {
+      "brief": "This event handler, for event *event*, can be reimplemented to receive drag move events for this item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#dragMoveEvent"
+    },
+    "void dropEvent(QGraphicsSceneDragDropEvent *event)": {
+      "brief": "This event handler, for event *event*, can be reimplemented to receive drop events for this item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#dropEvent"
+    },
+    "void ensureVisible(const QRectF &rect, int xmargin, int ymargin)": {
+      "brief": "If this item is part of a scene that is viewed by a [QGraphicsView](xref:qt:QGraphicsView), this convenience function will attempt to scroll the view to ensure that *rect* is visible inside the...",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#ensureVisible"
+    },
+    "void ensureVisible(qreal x, qreal y, qreal w, qreal h, int xmargin, int ymargin)": {
+      "brief": "This convenience function is equivalent to calling ensureVisible([QRectF](xref:qt:QRectF)(*x*, *y*, *w*, *h*), *xmargin*, *ymargin*).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#ensureVisible-1"
+    },
+    "void focusInEvent(QFocusEvent *event)": {
+      "brief": "This event handler, for event *event*, can be reimplemented to receive focus in events for this item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#focusInEvent"
+    },
+    "void focusOutEvent(QFocusEvent *event)": {
+      "brief": "This event handler, for event *event*, can be reimplemented to receive focus out events for this item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#focusOutEvent"
+    },
+    "void grabKeyboard()": {
+      "brief": "Grabs the keyboard input.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#grabKeyboard"
+    },
+    "void grabMouse()": {
+      "brief": "Grabs the mouse input.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#grabMouse"
+    },
+    "void hide()": {
+      "brief": "Hides the item (items are visible by default).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#hide"
+    },
+    "void hoverEnterEvent(QGraphicsSceneHoverEvent *event)": {
+      "brief": "This event handler, for event *event*, can be reimplemented to receive hover enter events for this item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#hoverEnterEvent"
+    },
+    "void hoverLeaveEvent(QGraphicsSceneHoverEvent *event)": {
+      "brief": "This event handler, for event *event*, can be reimplemented to receive hover leave events for this item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#hoverLeaveEvent"
+    },
+    "void hoverMoveEvent(QGraphicsSceneHoverEvent *event)": {
+      "brief": "This event handler, for event *event*, can be reimplemented to receive hover move events for this item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#hoverMoveEvent"
+    },
+    "void inputMethodEvent(QInputMethodEvent *event)": {
+      "brief": "This event handler, for event *event*, can be reimplemented to receive input method events for this item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#inputMethodEvent"
+    },
+    "void installSceneEventFilter(QGraphicsItem *filterItem)": {
+      "brief": "Installs an event filter for this item on *filterItem*, causing all events for this item to first pass through *filterItem*'s [sceneEventFilter](xref:qt:QGraphicsItem)() function.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#installSceneEventFilter"
+    },
+    "void keyPressEvent(QKeyEvent *event)": {
+      "brief": "This event handler, for event *event*, can be reimplemented to receive key press events for this item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#keyPressEvent"
+    },
+    "void keyReleaseEvent(QKeyEvent *event)": {
+      "brief": "This event handler, for event *event*, can be reimplemented to receive key release events for this item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#keyReleaseEvent"
+    },
+    "void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)": {
+      "brief": "This event handler, for event *event*, can be reimplemented to receive mouse double-click events for this item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mouseDoubleClickEvent"
+    },
+    "void mouseMoveEvent(QGraphicsSceneMouseEvent *event)": {
+      "brief": "This event handler, for event *event*, can be reimplemented to receive mouse move events for this item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mouseMoveEvent"
+    },
+    "void mousePressEvent(QGraphicsSceneMouseEvent *event)": {
+      "brief": "This event handler, for event *event*, can be reimplemented to receive mouse press events for this item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mousePressEvent"
+    },
+    "void mouseReleaseEvent(QGraphicsSceneMouseEvent *event)": {
+      "brief": "This event handler, for event *event*, can be reimplemented to receive mouse release events for this item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#mouseReleaseEvent"
+    },
+    "void moveBy(qreal dx, qreal dy)": {
+      "brief": "Moves the item by *dx* points horizontally, and *dy* point vertically.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#moveBy"
+    },
+    "void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) = 0": {
+      "brief": "This function, which is usually called by [QGraphicsView](xref:qt:QGraphicsView), paints the contents of an item in local coordinates.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#paint"
+    },
+    "void prepareGeometryChange()": {
+      "brief": "Prepares the item for a geometry change.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#prepareGeometryChange"
+    },
+    "void removeSceneEventFilter(QGraphicsItem *filterItem)": {
+      "brief": "Removes an event filter on this item from *filterItem*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#removeSceneEventFilter"
+    },
+    "void resetTransform()": {
+      "brief": "Resets this item's transformation matrix to the identity matrix or all the transformation properties to their default values.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#resetTransform"
+    },
+    "void scroll(qreal dx, qreal dy, const QRectF &rect)": {
+      "brief": "Scrolls the contents of *rect* by *dx*, *dy*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#scroll"
+    },
+    "void setAcceptDrops(bool on)": {
+      "brief": "If *on* is true, this item will accept drag and drop events; otherwise, it is transparent for drag and drop events.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#setAcceptDrops"
+    },
+    "void setAcceptHoverEvents(bool enabled)": {
+      "brief": "If *enabled* is true, this item will accept hover events; otherwise, it will ignore them.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#setAcceptHoverEvents"
+    },
+    "void setAcceptTouchEvents(bool enabled)": {
+      "brief": "If *enabled* is true, this item will accept [touch events](xref:qt:QTouchEvent); otherwise, it will ignore them.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#setAcceptTouchEvents"
+    },
+    "void setAcceptedMouseButtons(Qt::MouseButtons buttons)": {
+      "brief": "Sets the mouse *buttons* that this item accepts mouse events for.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#setAcceptedMouseButtons"
+    },
+    "void setActive(bool active)": {
+      "brief": "If *active* is true, and the scene is active, this item's panel will be activated.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#setActive"
+    },
+    "void setBoundingRegionGranularity(qreal granularity)": {
+      "brief": "Sets the bounding region granularity to *granularity*; a value between and including 0 and 1.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#setBoundingRegionGranularity"
+    },
+    "void setCacheMode(QGraphicsItem::CacheMode mode, const QSize &logicalCacheSize)": {
+      "brief": "Sets the item's cache mode to *mode*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#setCacheMode"
+    },
+    "void setCursor(const QCursor &cursor)": {
+      "brief": "Sets the current cursor shape for the item to *cursor*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#setCursor"
+    },
+    "void setData(int key, const QVariant &value)": {
+      "brief": "Sets this item's custom data for the key *key* to *value*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#setData"
+    },
+    "void setEnabled(bool enabled)": {
+      "brief": "If *enabled* is true, the item is enabled; otherwise, it is disabled.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#setEnabled"
+    },
+    "void setFiltersChildEvents(bool enabled)": {
+      "brief": "If *enabled* is true, this item is set to filter all events for all its children (i.e., all events intended for any of its children are instead sent to this item); otherwise, if *enabled* is false...",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#setFiltersChildEvents"
+    },
+    "void setFlag(QGraphicsItem::GraphicsItemFlag flag, bool enabled)": {
+      "brief": "If *enabled* is true, the item flag *flag* is enabled; otherwise, it is disabled.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#setFlag"
+    },
+    "void setFlags(QGraphicsItem::GraphicsItemFlags flags)": {
+      "brief": "Sets the item flags to *flags*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#setFlags"
+    },
+    "void setFocus(Qt::FocusReason focusReason)": {
+      "brief": "Gives keyboard input focus to this item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#setFocus"
+    },
+    "void setFocusProxy(QGraphicsItem *item)": {
+      "brief": "Sets the item's focus proxy to *item*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#setFocusProxy"
+    },
+    "void setGraphicsEffect(QGraphicsEffect *effect)": {
+      "brief": "Sets *effect* as the item's effect.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#setGraphicsEffect"
+    },
+    "void setGroup(QGraphicsItemGroup *group)": {
+      "brief": "Adds this item to the item group *group*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#setGroup"
+    },
+    "void setHandlesChildEvents(bool enabled)": {
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem-obsolete.html#setHandlesChildEvents"
+    },
+    "void setInputMethodHints(Qt::InputMethodHints hints)": {
+      "brief": "Sets the current input method hints of this item to *hints*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#setInputMethodHints"
+    },
+    "void setOpacity(qreal opacity)": {
+      "brief": "Sets this item's local *opacity*, between 0.0 (transparent) and 1.0 (opaque).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#setOpacity"
+    },
+    "void setPanelModality(QGraphicsItem::PanelModality panelModality)": {
+      "brief": "Sets the modality for this item to *panelModality*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#setPanelModality"
+    },
+    "void setParentItem(QGraphicsItem *newParent)": {
+      "brief": "Sets this item's parent item to *newParent*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#setParentItem"
+    },
+    "void setPos(const QPointF &pos)": {
+      "brief": "Sets the position of the item to *pos*, which is in parent coordinates.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#setPos"
+    },
+    "void setPos(qreal x, qreal y)": {
+      "brief": "This convenience function is equivalent to calling setPos([QPointF](xref:qt:QPointF)(*x*, *y*)).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#setPos-1"
+    },
+    "void setRotation(qreal angle)": {
+      "brief": "Sets the clockwise rotation *angle*, in degrees, around the Z axis.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#setRotation"
+    },
+    "void setScale(qreal factor)": {
+      "brief": "Sets the scale *factor* of the item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#setScale"
+    },
+    "void setSelected(bool selected)": {
+      "brief": "If *selected* is true and this item is selectable, this item is selected; otherwise, it is unselected.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#setSelected"
+    },
+    "void setToolTip(const QString &toolTip)": {
+      "brief": "Sets the item's tool tip to *toolTip*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#setToolTip"
+    },
+    "void setTransform(const QTransform &matrix, bool combine)": {
+      "brief": "Sets the item's current transformation matrix to *matrix*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#setTransform"
+    },
+    "void setTransformOriginPoint(const QPointF &origin)": {
+      "brief": "Sets the *origin* point for the transformation in item coordinates.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#setTransformOriginPoint"
+    },
+    "void setTransformOriginPoint(qreal x, qreal y)": {
+      "brief": "Sets the origin point for the transformation in item coordinates.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#setTransformOriginPoint-1"
+    },
+    "void setTransformations(const QList<QGraphicsTransform *> &transformations)": {
+      "brief": "Sets a list of graphics *transformations* ([QGraphicsTransform](xref:qt:QGraphicsTransform)) that currently apply to this item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#setTransformations"
+    },
+    "void setVisible(bool visible)": {
+      "brief": "If *visible* is true, the item is made visible.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#setVisible"
+    },
+    "void setX(qreal x)": {
+      "brief": "Set's the *x* coordinate of the item's position.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#setX"
+    },
+    "void setY(qreal y)": {
+      "brief": "Set's the *y* coordinate of the item's position.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#setY"
+    },
+    "void setZValue(qreal z)": {
+      "brief": "Sets the Z-value of the item to *z*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#setZValue"
+    },
+    "void show()": {
+      "brief": "Shows the item (items are visible by default).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#show"
+    },
+    "void stackBefore(const QGraphicsItem *sibling)": {
+      "brief": "Stacks this item before *sibling*, which means this item will be drawn behind the sibling item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#stackBefore"
+    },
+    "void ungrabKeyboard()": {
+      "brief": "Releases the keyboard grab.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#ungrabKeyboard"
+    },
+    "void ungrabMouse()": {
+      "brief": "Releases the mouse grab.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#ungrabMouse"
+    },
+    "void unsetCursor()": {
+      "brief": "Clears the cursor from this item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#unsetCursor"
+    },
+    "void update(const QRectF &rect)": {
+      "brief": "Schedules a redraw of the area covered by *rect* in this item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#update"
+    },
+    "void update(qreal x, qreal y, qreal width, qreal height)": {
+      "brief": "This convenience function is equivalent to calling update([QRectF](xref:qt:QRectF)(*x*, *y*, *width*, *height*)).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#update-1"
+    },
+    "void updateMicroFocus()": {
+      "brief": "Updates the item's micro focus.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#updateMicroFocus"
+    },
+    "void wheelEvent(QGraphicsSceneWheelEvent *event)": {
+      "brief": "This event handler, for event *event*, can be reimplemented to receive wheel events for this item.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitem.html#wheelEvent"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

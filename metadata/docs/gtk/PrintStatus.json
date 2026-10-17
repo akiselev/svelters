@@ -1,0 +1,79 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "The status gives a rough indication of the completion of a running print operation.",
+    "file": "gtk/print/gtkprintoperation.h",
+    "line": 48,
+    "md": "The status gives a rough indication of the completion of a running\nprint operation."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:PrintStatus",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "finished": {
+      "brief": "The printing has been completed successfully.",
+      "file": "gtk/print/gtkprintoperation.h",
+      "line": 63,
+      "md": "The printing has been completed successfully."
+    },
+    "finished_aborted": {
+      "brief": "The printing has been aborted.",
+      "file": "gtk/print/gtkprintoperation.h",
+      "line": 64,
+      "md": "The printing has been aborted."
+    },
+    "generating_data": {
+      "brief": "This status is set while the pages are being rendered.",
+      "file": "gtk/print/gtkprintoperation.h",
+      "line": 54,
+      "md": "This status is set while the\n  pages are being rendered."
+    },
+    "initial": {
+      "brief": "The printing has not started yet; this status is set initially, and while the print dialog is shown.",
+      "file": "gtk/print/gtkprintoperation.h",
+      "line": 50,
+      "md": "The printing has not started yet; this\n  status is set initially, and while the print dialog is shown."
+    },
+    "pending": {
+      "brief": "The print job has been sent to the printer, but is not printed for some reason, e.g. the printer may be stopped.",
+      "file": "gtk/print/gtkprintoperation.h",
+      "line": 58,
+      "md": "The print job has been sent to the printer,\n  but is not printed for some reason, e.g. the printer may be stopped."
+    },
+    "pending_issue": {
+      "brief": "Some problem has occurred during printing, e.g. a paper jam.",
+      "file": "gtk/print/gtkprintoperation.h",
+      "line": 60,
+      "md": "Some problem has occurred during\n  printing, e.g. a paper jam."
+    },
+    "preparing": {
+      "brief": "This status is set while the begin-print signal is emitted and during pagination.",
+      "file": "gtk/print/gtkprintoperation.h",
+      "line": 52,
+      "md": "This status is set while the begin-print\n  signal is emitted and during pagination."
+    },
+    "printing": {
+      "brief": "The printer is processing the print job.",
+      "file": "gtk/print/gtkprintoperation.h",
+      "line": 62,
+      "md": "The printer is processing the print job."
+    },
+    "sending_data": {
+      "brief": "The print job is being sent off to the printer.",
+      "file": "gtk/print/gtkprintoperation.h",
+      "line": 56,
+      "md": "The print job is being sent off to the\n  printer."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

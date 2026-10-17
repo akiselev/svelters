@@ -1,0 +1,135 @@
+{
+  "doc": {
+    "brief": "The QSizePolicy class is a layout attribute describing horizontal and vertical resizing policy.",
+    "index_brief": "Layout attribute describing horizontal and vertical resizing policy",
+    "url": "https://doc.qt.io/qt-6/qsizepolicy.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QSizePolicy",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QDataStream & operator<<(QDataStream &stream, const QSizePolicy &policy)": {
+      "brief": "Writes the size *policy* to the data stream *stream*.",
+      "url": "https://doc.qt.io/qt-6/qsizepolicy.html#operator-lt-lt"
+    },
+    "QDataStream & operator>>(QDataStream &stream, QSizePolicy &policy)": {
+      "brief": "Reads the size *policy* from the data stream *stream*.",
+      "url": "https://doc.qt.io/qt-6/qsizepolicy.html#operator-gt-gt"
+    },
+    "QSizePolicy transposed() const": {
+      "brief": "Returns a size policy object with the horizontal and vertical policies and stretches swapped.",
+      "url": "https://doc.qt.io/qt-6/qsizepolicy.html#transposed"
+    },
+    "QSizePolicy()": {
+      "brief": "Constructs a QSizePolicy object with [Fixed](xref:qt:QSizePolicy) as its horizontal and vertical policies.",
+      "url": "https://doc.qt.io/qt-6/qsizepolicy.html#QSizePolicy"
+    },
+    "QSizePolicy(QSizePolicy::Policy horizontal, QSizePolicy::Policy vertical, QSizePolicy::ControlType type)": {
+      "brief": "Constructs a QSizePolicy object with the given *horizontal* and *vertical* policies, and the specified control *type*.",
+      "url": "https://doc.qt.io/qt-6/qsizepolicy.html#QSizePolicy-1"
+    },
+    "QSizePolicy::ControlType controlType() const": {
+      "brief": "Returns the control type associated with the widget for which this size policy applies.",
+      "url": "https://doc.qt.io/qt-6/qsizepolicy.html#controlType"
+    },
+    "QSizePolicy::Policy horizontalPolicy() const": {
+      "brief": "Returns the horizontal component of the size policy.",
+      "url": "https://doc.qt.io/qt-6/qsizepolicy.html#horizontalPolicy"
+    },
+    "QSizePolicy::Policy verticalPolicy() const": {
+      "brief": "Returns the vertical component of the size policy.",
+      "url": "https://doc.qt.io/qt-6/qsizepolicy.html#verticalPolicy"
+    },
+    "Qt::Orientations expandingDirections() const": {
+      "brief": "Returns whether a widget can make use of more space than the [QWidget::sizeHint](xref:qt:QWidget)() function indicates.",
+      "url": "https://doc.qt.io/qt-6/qsizepolicy.html#expandingDirections"
+    },
+    "bool hasHeightForWidth() const": {
+      "brief": "Returns `true` if the widget's preferred height depends on its width; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qsizepolicy.html#hasHeightForWidth"
+    },
+    "bool hasWidthForHeight() const": {
+      "brief": "Returns `true` if the widget's width depends on its height; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qsizepolicy.html#hasWidthForHeight"
+    },
+    "bool operator!=(const QSizePolicy &other) const": {
+      "brief": "Returns `true` if this policy is different from *other*; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qsizepolicy.html#operator-not-eq"
+    },
+    "bool operator==(const QSizePolicy &other) const": {
+      "brief": "Returns `true` if this policy is equal to *other*; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qsizepolicy.html#operator-eq-eq"
+    },
+    "bool retainSizeWhenHidden() const": {
+      "brief": "Returns whether the layout should retain the widget's size when it is hidden.",
+      "url": "https://doc.qt.io/qt-6/qsizepolicy.html#retainSizeWhenHidden"
+    },
+    "int horizontalStretch() const": {
+      "brief": "Returns the horizontal stretch factor of the size policy.",
+      "url": "https://doc.qt.io/qt-6/qsizepolicy.html#horizontalStretch"
+    },
+    "int verticalStretch() const": {
+      "brief": "Returns the vertical stretch factor of the size policy.",
+      "url": "https://doc.qt.io/qt-6/qsizepolicy.html#verticalStretch"
+    },
+    "operator QVariant() const": {
+      "brief": "Returns a [QVariant](xref:qt:QVariant) storing this [QSizePolicy](xref:qt:QSizePolicy).",
+      "url": "https://doc.qt.io/qt-6/qsizepolicy.html#operator-QVariant"
+    },
+    "size_t qHash(QSizePolicy key, size_t seed)": {
+      "brief": "Returns the hash value for *key*, using *seed* to seed the calculation.",
+      "url": "https://doc.qt.io/qt-6/qsizepolicy.html#qHash"
+    },
+    "void setControlType(QSizePolicy::ControlType type)": {
+      "brief": "Sets the control type associated with the widget for which this size policy applies to *type*.",
+      "url": "https://doc.qt.io/qt-6/qsizepolicy.html#setControlType"
+    },
+    "void setHeightForWidth(bool dependent)": {
+      "brief": "Sets the flag determining whether the widget's preferred height depends on its width, to *dependent*.",
+      "url": "https://doc.qt.io/qt-6/qsizepolicy.html#setHeightForWidth"
+    },
+    "void setHorizontalPolicy(QSizePolicy::Policy policy)": {
+      "brief": "Sets the horizontal component to the given *policy*.",
+      "url": "https://doc.qt.io/qt-6/qsizepolicy.html#setHorizontalPolicy"
+    },
+    "void setHorizontalStretch(int stretchFactor)": {
+      "brief": "Sets the horizontal stretch factor of the size policy to the given *stretchFactor*. *stretchFactor* must be in the range [0,255].",
+      "url": "https://doc.qt.io/qt-6/qsizepolicy.html#setHorizontalStretch"
+    },
+    "void setRetainSizeWhenHidden(bool retainSize)": {
+      "brief": "Sets whether a layout should retain the widget's size when it is hidden.",
+      "url": "https://doc.qt.io/qt-6/qsizepolicy.html#setRetainSizeWhenHidden"
+    },
+    "void setVerticalPolicy(QSizePolicy::Policy policy)": {
+      "brief": "Sets the vertical component to the given *policy*.",
+      "url": "https://doc.qt.io/qt-6/qsizepolicy.html#setVerticalPolicy"
+    },
+    "void setVerticalStretch(int stretchFactor)": {
+      "brief": "Sets the vertical stretch factor of the size policy to the given *stretchFactor*. *stretchFactor* must be in the range [0,255].",
+      "url": "https://doc.qt.io/qt-6/qsizepolicy.html#setVerticalStretch"
+    },
+    "void setWidthForHeight(bool dependent)": {
+      "brief": "Sets the flag determining whether the widget's width depends on its height, to *dependent*.",
+      "url": "https://doc.qt.io/qt-6/qsizepolicy.html#setWidthForHeight"
+    },
+    "void transpose()": {
+      "brief": "Swaps the horizontal and vertical policies and stretches.",
+      "url": "https://doc.qt.io/qt-6/qsizepolicy.html#transpose"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

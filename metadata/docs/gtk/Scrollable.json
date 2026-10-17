@@ -1,0 +1,111 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "An interface for widgets with native scrolling ability.",
+    "file": "gtk/gtkscrollable.c",
+    "line": 18,
+    "md": "An interface for widgets with native scrolling ability.\n\nTo implement this interface you should override the\n[`Scrollable:hadjustment`](xref:gtk:Gtk.Scrollable#property:hadjustment) and\n[`Scrollable:vadjustment`](xref:gtk:Gtk.Scrollable#property:vadjustment) properties.\n\n## Creating a scrollable widget\n\nAll scrollable widgets should do the following.\n\n- When a parent widget sets the scrollable child widget’s adjustments,\n  the widget should connect to the [`Adjustment::value-changed`](xref:gtk:Gtk.Adjustment#event:value-changed)\n  signal. The child widget should then populate the adjustments’ properties\n  as soon as possible, which usually means queueing an allocation right away\n  and populating the properties in the [`Widget.size_allocate()`](xref:gtk:Gtk.Widget#vfunc:size_allocate)\n  implementation.\n\n- Because its preferred size is the size for a fully expanded widget,\n  the scrollable widget must be able to cope with underallocations.\n  This means that it must accept any value passed to its\n  [`Widget.size_allocate()`](xref:gtk:Gtk.Widget#vfunc:size_allocate) implementation.\n\n- When the parent allocates space to the scrollable child widget,\n  the widget must ensure the adjustments’ property values are correct and up\n  to date, for example using [`Adjustment.configure()`](xref:gtk:Gtk.Adjustment#method:configure).\n\n- When any of the adjustments emits the [`Adjustment::value-changed`](xref:gtk:Gtk.Adjustment#event:value-changed)\n  signal, the scrollable widget should scroll its contents."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Scrollable",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_border": {
+      "brief": "Returns the size of a non-scrolling border around the outside of the scrollable.",
+      "file": "gtk/gtkscrollable.c",
+      "line": 280,
+      "md": "Returns the size of a non-scrolling border around the\noutside of the scrollable.\n\nAn example for this would be treeview headers. GTK can use\nthis information to display overlaid graphics, like the\novershoot indication, at the right position."
+    },
+    "get_hadjustment": {
+      "brief": "Retrieves the `GtkAdjustment` used for horizontal scrolling.",
+      "file": "gtk/gtkscrollable.c",
+      "line": 113,
+      "md": "Retrieves the `GtkAdjustment` used for horizontal scrolling."
+    },
+    "get_hscroll_policy": {
+      "brief": "Gets the horizontal `GtkScrollablePolicy`.",
+      "file": "gtk/gtkscrollable.c",
+      "line": 202,
+      "md": "Gets the horizontal `GtkScrollablePolicy`."
+    },
+    "get_vadjustment": {
+      "brief": "Retrieves the `GtkAdjustment` used for vertical scrolling.",
+      "file": "gtk/gtkscrollable.c",
+      "line": 157,
+      "md": "Retrieves the `GtkAdjustment` used for vertical scrolling."
+    },
+    "get_vscroll_policy": {
+      "brief": "Gets the vertical `GtkScrollablePolicy`.",
+      "file": "gtk/gtkscrollable.c",
+      "line": 241,
+      "md": "Gets the vertical `GtkScrollablePolicy`."
+    },
+    "set_hadjustment": {
+      "brief": "Sets the horizontal adjustment of the `GtkScrollable`.",
+      "file": "gtk/gtkscrollable.c",
+      "line": 140,
+      "md": "Sets the horizontal adjustment of the `GtkScrollable`."
+    },
+    "set_hscroll_policy": {
+      "brief": "Sets the `GtkScrollablePolicy`.",
+      "file": "gtk/gtkscrollable.c",
+      "line": 222,
+      "md": "Sets the `GtkScrollablePolicy`.\n\nThe policy determines whether horizontal scrolling should start\nbelow the minimum width or below the natural width."
+    },
+    "set_vadjustment": {
+      "brief": "Sets the vertical adjustment of the `GtkScrollable`.",
+      "file": "gtk/gtkscrollable.c",
+      "line": 184,
+      "md": "Sets the vertical adjustment of the `GtkScrollable`."
+    },
+    "set_vscroll_policy": {
+      "brief": "Sets the `GtkScrollablePolicy`.",
+      "file": "gtk/gtkscrollable.c",
+      "line": 261,
+      "md": "Sets the `GtkScrollablePolicy`.\n\nThe policy determines whether vertical scrolling should start\nbelow the minimum height or below the natural height."
+    }
+  },
+  "properties": {
+    "hadjustment": {
+      "brief": "Horizontal `GtkAdjustment` of the scrollable widget.",
+      "file": "gtk/gtkscrollable.c",
+      "line": 66,
+      "md": "Horizontal `GtkAdjustment` of the scrollable widget.\n\nThis adjustment is shared between the scrollable widget and its parent."
+    },
+    "hscroll-policy": {
+      "brief": "Determines when horizontal scrolling should start.",
+      "file": "gtk/gtkscrollable.c",
+      "line": 90,
+      "md": "Determines when horizontal scrolling should start."
+    },
+    "vadjustment": {
+      "brief": "Vertical `GtkAdjustment` of the scrollable widget.",
+      "file": "gtk/gtkscrollable.c",
+      "line": 78,
+      "md": "Vertical `GtkAdjustment` of the scrollable widget.\n\nThis adjustment is shared between the scrollable widget and its parent."
+    },
+    "vscroll-policy": {
+      "brief": "Determines when vertical scrolling should start.",
+      "file": "gtk/gtkscrollable.c",
+      "line": 101,
+      "md": "Determines when vertical scrolling should start."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "get_border": {
+      "brief": "Returns the size of a non-scrolling border around the outside of the scrollable.",
+      "file": "gtk/gtkscrollable.c",
+      "line": 280,
+      "md": "Returns the size of a non-scrolling border around the\noutside of the scrollable.\n\nAn example for this would be treeview headers. GTK can use\nthis information to display overlaid graphics, like the\novershoot indication, at the right position."
+    }
+  }
+}

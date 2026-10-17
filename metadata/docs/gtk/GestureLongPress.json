@@ -1,0 +1,64 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Returns a newly created `GtkGesture` that recognizes long presses.",
+      "file": "gtk/gtkgesturelongpress.c",
+      "line": 332,
+      "md": "Returns a newly created `GtkGesture` that recognizes long presses."
+    }
+  },
+  "doc": {
+    "brief": "Recognizes long press gestures.",
+    "file": "gtk/gtkgesturelongpress.c",
+    "line": 21,
+    "md": "Recognizes long press gestures.\n\nThis gesture is also known as “Press and Hold”.\n\nWhen the timeout is exceeded, the gesture is triggering the\n[`GestureLongPress::pressed`](xref:gtk:Gtk.GestureLongPress#event:pressed) signal.\n\nIf the touchpoint is lifted before the timeout passes, or if\nit drifts too far of the initial press point, the\n[`GestureLongPress::cancelled`](xref:gtk:Gtk.GestureLongPress#event:cancelled) signal will be emitted.\n\nHow long the timeout is before the ::pressed signal gets emitted is\ndetermined by the [`Settings:gtk-long-press-time`](xref:gtk:Gtk.Settings#property:gtk-long-press-time) setting.\nIt can be modified by the [`GestureLongPress:delay-factor`](xref:gtk:Gtk.GestureLongPress#property:delay-factor)\nproperty."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:GestureLongPress",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_delay_factor": {
+      "brief": "Returns the delay factor.",
+      "file": "gtk/gtkgesturelongpress.c",
+      "line": 374,
+      "md": "Returns the delay factor."
+    },
+    "set_delay_factor": {
+      "brief": "Applies the given delay factor.",
+      "file": "gtk/gtkgesturelongpress.c",
+      "line": 346,
+      "md": "Applies the given delay factor.\n\nThe default long press time will be multiplied by this value.\nValid values are in the range [0.5..2.0]."
+    }
+  },
+  "properties": {
+    "delay-factor": {
+      "brief": "Factor by which to modify the default timeout.",
+      "file": "gtk/gtkgesturelongpress.c",
+      "line": 283,
+      "md": "Factor by which to modify the default timeout."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "cancelled": {
+      "brief": "Emitted whenever a press moved too far, or was released before [`GestureLongPress::pressed`](xref:gtk:Gtk.GestureLongPress#event:pressed) happened.",
+      "file": "gtk/gtkgesturelongpress.c",
+      "line": 316,
+      "md": "Emitted whenever a press moved too far, or was released\nbefore [`GestureLongPress::pressed`](xref:gtk:Gtk.GestureLongPress#event:pressed) happened."
+    },
+    "pressed": {
+      "brief": "Emitted whenever a press goes unmoved/unreleased longer than what the GTK defaults tell.",
+      "file": "gtk/gtkgesturelongpress.c",
+      "line": 295,
+      "md": "Emitted whenever a press goes unmoved/unreleased longer than\nwhat the GTK defaults tell."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

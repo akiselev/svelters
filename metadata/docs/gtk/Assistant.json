@@ -1,0 +1,276 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkAssistant`.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkassistant.c",
+      "line": 1459,
+      "md": "Creates a new `GtkAssistant`."
+    }
+  },
+  "doc": {
+    "brief": "`GtkAssistant` is used to represent a complex as a series of steps.",
+    "deprecated": "4.10",
+    "deprecated_md": "This widget will be removed in GTK 5",
+    "file": "gtk/deprecated/gtkassistant.c",
+    "line": 24,
+    "md": "`GtkAssistant` is used to represent a complex as a series of steps.\n\nEach step consists of one or more pages. `GtkAssistant` guides the user\nthrough the pages, and controls the page flow to collect the data needed\nfor the operation.\n\n`GtkAssistant` handles which buttons to show and to make sensitive based\non page sequence knowledge and the [`AssistantPageType`](xref:gtk:Gtk.AssistantPageType) of each\npage in addition to state information like the *completed* and *committed*\npage statuses.\n\nIf you have a case that doesn’t quite fit in `GtkAssistant`s way of\nhandling buttons, you can use the %GTK_ASSISTANT_PAGE_CUSTOM page\ntype and handle buttons yourself.\n\n`GtkAssistant` maintains a `GtkAssistantPage` object for each added\nchild, which holds additional per-child properties. You\nobtain the `GtkAssistantPage` for a child with [`Assistant.get_page()`](xref:gtk:Gtk.Assistant#method:get_page).\n\n# GtkAssistant as GtkBuildable\n\nThe `GtkAssistant` implementation of the `GtkBuildable` interface\nexposes the `action_area` as internal children with the name\n“action_area”.\n\nTo add pages to an assistant in `GtkBuilder`, simply add it as a\nchild to the `GtkAssistant` object. If you need to set per-object\nproperties, create a `GtkAssistantPage` object explicitly, and\nset the child widget as a property on it.\n\n# CSS nodes\n\n`GtkAssistant` has a single CSS node with the name window and style\nclass .assistant."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Assistant",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "add_action_widget": {
+      "brief": "Adds a widget to the action area of a `GtkAssistant`.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkassistant.c",
+      "line": 1901,
+      "md": "Adds a widget to the action area of a `GtkAssistant`."
+    },
+    "append_page": {
+      "brief": "Appends a page to the `assistant`.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkassistant.c",
+      "line": 1689,
+      "md": "Appends a page to the `assistant`."
+    },
+    "commit": {
+      "brief": "Erases the visited page history.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkassistant.c",
+      "line": 2170,
+      "md": "Erases the visited page history.\n\nGTK will then hide the back button on the current page,\nand removes the cancel button from subsequent pages.\n\nUse this when the information provided up to the current\npage is hereafter deemed permanent and cannot be modified\nor undone. For example, showing a progress page to track\na long-running, unreversible operation after the user has\nclicked apply on a confirmation page."
+    },
+    "get_current_page": {
+      "brief": "Returns the page number of the current page.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkassistant.c",
+      "line": 1478,
+      "md": "Returns the page number of the current page."
+    },
+    "get_n_pages": {
+      "brief": "Returns the number of pages in the `assistant`",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkassistant.c",
+      "line": 1614,
+      "md": "Returns the number of pages in the `assistant`"
+    },
+    "get_nth_page": {
+      "brief": "Returns the child widget contained in page number `page_num`.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkassistant.c",
+      "line": 1632,
+      "md": "Returns the child widget contained in page number `page_num`."
+    },
+    "get_page": {
+      "brief": "Returns the `GtkAssistantPage` object for `child`.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkassistant.c",
+      "line": 2255,
+      "md": "Returns the `GtkAssistantPage` object for `child`."
+    },
+    "get_page_complete": {
+      "brief": "Gets whether `page` is complete.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkassistant.c",
+      "line": 2116,
+      "md": "Gets whether `page` is complete."
+    },
+    "get_page_title": {
+      "brief": "Gets the title for `page`.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkassistant.c",
+      "line": 1991,
+      "md": "Gets the title for `page`."
+    },
+    "get_page_type": {
+      "brief": "Gets the page type of `page`.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkassistant.c",
+      "line": 2053,
+      "md": "Gets the page type of `page`."
+    },
+    "get_pages": {
+      "brief": "Gets a list model of the assistant pages.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkassistant.c",
+      "line": 2387,
+      "md": "Gets a list model of the assistant pages."
+    },
+    "insert_page": {
+      "brief": "Inserts a page in the `assistant` at a given position.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkassistant.c",
+      "line": 1710,
+      "md": "Inserts a page in the `assistant` at a given position."
+    },
+    "next_page": {
+      "brief": "Navigate to the next page.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkassistant.c",
+      "line": 1550,
+      "md": "Navigate to the next page.\n\nIt is a programming error to call this function when\nthere is no next page.\n\nThis function is for use when creating pages of the\n%GTK_ASSISTANT_PAGE_CUSTOM type."
+    },
+    "prepend_page": {
+      "brief": "Prepends a page to the `assistant`.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkassistant.c",
+      "line": 1668,
+      "md": "Prepends a page to the `assistant`."
+    },
+    "previous_page": {
+      "brief": "Navigate to the previous visited page.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkassistant.c",
+      "line": 1575,
+      "md": "Navigate to the previous visited page.\n\nIt is a programming error to call this function when\nno previous page is available.\n\nThis function is for use when creating pages of the\n%GTK_ASSISTANT_PAGE_CUSTOM type."
+    },
+    "remove_action_widget": {
+      "brief": "Removes a widget from the action area of a `GtkAssistant`.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkassistant.c",
+      "line": 1931,
+      "md": "Removes a widget from the action area of a `GtkAssistant`."
+    },
+    "remove_page": {
+      "brief": "Removes the `page_num`’s page from `assistant`.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkassistant.c",
+      "line": 1813,
+      "md": "Removes the `page_num`’s page from `assistant`."
+    },
+    "set_current_page": {
+      "brief": "Switches the page to `page_num`.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkassistant.c",
+      "line": 1501,
+      "md": "Switches the page to `page_num`.\n\nNote that this will only be necessary in custom buttons,\nas the `assistant` flow can be set with\ngtk_assistant_set_forward_page_func()."
+    },
+    "set_forward_page_func": {
+      "brief": "Sets the page forwarding function to be `page_func`.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkassistant.c",
+      "line": 1842,
+      "md": "Sets the page forwarding function to be `page_func`.\n\nThis function will be used to determine what will be\nthe next page when the user presses the forward button.\nSetting `page_func` to `NULL` will make the assistant to\nuse the default forward function, which just goes to the\nnext visible page."
+    },
+    "set_page_complete": {
+      "brief": "Sets whether `page` contents are complete.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkassistant.c",
+      "line": 2083,
+      "md": "Sets whether `page` contents are complete.\n\nThis will make `assistant` update the buttons state\nto be able to continue the task."
+    },
+    "set_page_title": {
+      "brief": "Sets a title for `page`.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkassistant.c",
+      "line": 1958,
+      "md": "Sets a title for `page`.\n\nThe title is displayed in the header area of the assistant\nwhen `page` is the current page."
+    },
+    "set_page_type": {
+      "brief": "Sets the page type for `page`.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkassistant.c",
+      "line": 2021,
+      "md": "Sets the page type for `page`.\n\nThe page type determines the page behavior in the `assistant`."
+    },
+    "update_buttons_state": {
+      "brief": "Forces `assistant` to recompute the buttons state.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkassistant.c",
+      "line": 2146,
+      "md": "Forces `assistant` to recompute the buttons state.\n\nGTK automatically takes care of this in most situations,\ne.g. when the user goes to a different page, or when the\nvisibility or completeness of a page changes.\n\nOne situation where it can be necessary to call this\nfunction is when changing a value on the current page\naffects the future page flow of the assistant."
+    }
+  },
+  "properties": {
+    "pages": {
+      "brief": "`GListModel` containing the pages.",
+      "file": "gtk/deprecated/gtkassistant.c",
+      "line": 655,
+      "md": "`GListModel` containing the pages."
+    },
+    "use-header-bar": {
+      "brief": "`TRUE` if the assistant uses a `GtkHeaderBar` for action buttons instead of the action-area.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkassistant.c",
+      "line": 638,
+      "md": "`TRUE` if the assistant uses a `GtkHeaderBar` for action buttons\ninstead of the action-area.\n\nFor technical reasons, this property is declared as an integer\nproperty, but you should only set it to `TRUE` or `FALSE`."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "apply": {
+      "brief": "Emitted when the apply button is clicked.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkassistant.c",
+      "line": 570,
+      "md": "Emitted when the apply button is clicked.\n\nThe default behavior of the `GtkAssistant` is to switch to the page\nafter the current page, unless the current page is the last one.\n\nA handler for the ::apply signal should carry out the actions for\nwhich the wizard has collected data. If the action takes a long time\nto complete, you might consider putting a page of type\n%GTK_ASSISTANT_PAGE_PROGRESS after the confirmation page and handle\nthis operation within the [`Assistant::prepare`](xref:gtk:Gtk.Assistant#event:prepare) signal of\nthe progress page."
+    },
+    "cancel": {
+      "brief": "Emitted when then the cancel button is clicked.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkassistant.c",
+      "line": 531,
+      "md": "Emitted when then the cancel button is clicked."
+    },
+    "close": {
+      "brief": "Emitted either when the close button of a summary page is clicked, or when the apply button in the last page in the flow (of type %GTK_ASSISTANT_PAGE_CONFIRM) is clicked.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkassistant.c",
+      "line": 597,
+      "md": "Emitted either when the close button of a summary page is clicked,\nor when the apply button in the last page in the flow (of type\n%GTK_ASSISTANT_PAGE_CONFIRM) is clicked."
+    },
+    "escape": {
+      "brief": "The action signal for the Escape binding.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkassistant.c",
+      "line": 616,
+      "md": "The action signal for the Escape binding."
+    },
+    "prepare": {
+      "brief": "Emitted when a new page is set as the assistant's current page, before making the new page visible.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkassistant.c",
+      "line": 548,
+      "md": "Emitted when a new page is set as the assistant's current page,\nbefore making the new page visible.\n\nA handler for this signal can do any preparations which are\nnecessary before showing `page`."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

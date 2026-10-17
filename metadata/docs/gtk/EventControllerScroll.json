@@ -1,0 +1,83 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new event controller that will handle scroll events.",
+      "file": "gtk/gtkeventcontrollerscroll.c",
+      "line": 627,
+      "md": "Creates a new event controller that will handle scroll events."
+    }
+  },
+  "doc": {
+    "brief": "Handles scroll events.",
+    "file": "gtk/gtkeventcontrollerscroll.c",
+    "line": 20,
+    "md": "Handles scroll events.\n\nIt is capable of handling both discrete and continuous scroll\nevents from mice or touchpads, abstracting them both with the\n[`EventControllerScroll::scroll`](xref:gtk:Gtk.EventControllerScroll#event:scroll) signal. Deltas in\nthe discrete case are multiples of 1.\n\nIn the case of continuous scroll events, `GtkEventControllerScroll`\nencloses all [`EventControllerScroll::scroll`](xref:gtk:Gtk.EventControllerScroll#event:scroll) emissions\nbetween two [`EventControllerScroll::scroll-begin`](xref:gtk:Gtk.EventControllerScroll#event:scroll-begin) and\n[`EventControllerScroll::scroll-end`](xref:gtk:Gtk.EventControllerScroll#event:scroll-end) signals.\n\nThe behavior of the event controller can be modified by the flags\ngiven at creation time, or modified at a later point through\n[`EventControllerScroll.set_flags()`](xref:gtk:Gtk.EventControllerScroll#method:set_flags) (e.g. because the scrolling\nconditions of the widget changed).\n\nThe controller can be set up to emit motion for either/both vertical\nand horizontal scroll events through %GTK_EVENT_CONTROLLER_SCROLL_VERTICAL,\n%GTK_EVENT_CONTROLLER_SCROLL_HORIZONTAL and %GTK_EVENT_CONTROLLER_SCROLL_BOTH_AXES.\nIf any axis is disabled, the respective [`EventControllerScroll::scroll`](xref:gtk:Gtk.EventControllerScroll#event:scroll)\ndelta will be 0. Vertical scroll events will be translated to horizontal\nmotion for the devices incapable of horizontal scrolling.\n\nThe event controller can also be forced to emit discrete events on all\ndevices through %GTK_EVENT_CONTROLLER_SCROLL_DISCRETE. This can be used\nto implement discrete actions triggered through scroll events (e.g.\nswitching across combobox options).\n\nThe %GTK_EVENT_CONTROLLER_SCROLL_KINETIC flag toggles the emission of the\n[`EventControllerScroll::decelerate`](xref:gtk:Gtk.EventControllerScroll#event:decelerate) signal, emitted at the end\nof scrolling with two X/Y velocity arguments that are consistent with the\nmotion that was received."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:EventControllerScroll",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_flags": {
+      "brief": "Gets the flags conditioning the scroll controller behavior.",
+      "file": "gtk/gtkeventcontrollerscroll.c",
+      "line": 663,
+      "md": "Gets the flags conditioning the scroll controller behavior."
+    },
+    "get_unit": {
+      "brief": "Gets the scroll unit of the last [`EventControllerScroll::scroll`](xref:gtk:Gtk.EventControllerScroll#event:scroll) signal received.",
+      "file": "gtk/gtkeventcontrollerscroll.c",
+      "line": 680,
+      "md": "Gets the scroll unit of the last\n[`EventControllerScroll::scroll`](xref:gtk:Gtk.EventControllerScroll#event:scroll) signal received.\n\nAlways returns %GDK_SCROLL_UNIT_WHEEL if the\n%GTK_EVENT_CONTROLLER_SCROLL_DISCRETE flag is set.",
+      "since": "4.8"
+    },
+    "set_flags": {
+      "brief": "Sets the flags conditioning scroll controller behavior.",
+      "file": "gtk/gtkeventcontrollerscroll.c",
+      "line": 643,
+      "md": "Sets the flags conditioning scroll controller behavior."
+    }
+  },
+  "properties": {
+    "flags": {
+      "brief": "The flags affecting event controller behavior.",
+      "file": "gtk/gtkeventcontrollerscroll.c",
+      "line": 523,
+      "md": "The flags affecting event controller behavior."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "decelerate": {
+      "brief": "Emitted after scroll is finished if the %GTK_EVENT_CONTROLLER_SCROLL_KINETIC flag is set.",
+      "file": "gtk/gtkeventcontrollerscroll.c",
+      "line": 592,
+      "md": "Emitted after scroll is finished if the\n%GTK_EVENT_CONTROLLER_SCROLL_KINETIC flag is set.\n\n`vel_x` and `vel_y` express the initial velocity that was\nimprinted by the scroll events. `vel_x` and `vel_y` are expressed in\npixels/ms."
+    },
+    "scroll": {
+      "brief": "Signals that the widget should scroll by the amount specified by `dx` and `dy`.",
+      "file": "gtk/gtkeventcontrollerscroll.c",
+      "line": 550,
+      "md": "Signals that the widget should scroll by the\namount specified by `dx` and `dy`.\n\nFor the representation unit of the deltas, see\n[`EventControllerScroll.get_unit()`](xref:gtk:Gtk.EventControllerScroll#method:get_unit)."
+    },
+    "scroll-begin": {
+      "brief": "Signals that a new scrolling operation has begun.",
+      "file": "gtk/gtkeventcontrollerscroll.c",
+      "line": 534,
+      "md": "Signals that a new scrolling operation has begun.\n\nIt will only be emitted on devices capable of it."
+    },
+    "scroll-end": {
+      "brief": "Signals that a scrolling operation has finished.",
+      "file": "gtk/gtkeventcontrollerscroll.c",
+      "line": 576,
+      "md": "Signals that a scrolling operation has finished.\n\nIt will only be emitted on devices capable of it."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

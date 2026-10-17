@@ -1,0 +1,139 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "The type of license for an application.",
+    "file": "gtk/gtkaboutdialog.h",
+    "line": 39,
+    "md": "The type of license for an application.\n\nThis enumeration can be expanded at later date."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:License",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "0bsd": {
+      "brief": "Zero-Clause BSD license",
+      "file": "gtk/gtkaboutdialog.h",
+      "line": 60,
+      "md": "Zero-Clause BSD license"
+    },
+    "agpl_3_0": {
+      "brief": "The GNU Affero General Public License, version 3.0 or later",
+      "file": "gtk/gtkaboutdialog.h",
+      "line": 55,
+      "md": "The GNU Affero General Public License, version 3.0 or later"
+    },
+    "agpl_3_0_only": {
+      "brief": "The GNU Affero General Public License, version 3.0 only",
+      "file": "gtk/gtkaboutdialog.h",
+      "line": 56,
+      "md": "The GNU Affero General Public License, version 3.0 only"
+    },
+    "apache_2_0": {
+      "brief": "The Apache License, version 2.0",
+      "file": "gtk/gtkaboutdialog.h",
+      "line": 58,
+      "md": "The Apache License, version 2.0"
+    },
+    "artistic": {
+      "brief": "The Artistic License, version 2.0",
+      "file": "gtk/gtkaboutdialog.h",
+      "line": 50,
+      "md": "The Artistic License, version 2.0"
+    },
+    "bsd": {
+      "brief": "The BSD standard license",
+      "file": "gtk/gtkaboutdialog.h",
+      "line": 48,
+      "md": "The BSD standard license"
+    },
+    "bsd_3": {
+      "brief": "The 3-clause BSD licence",
+      "file": "gtk/gtkaboutdialog.h",
+      "line": 57,
+      "md": "The 3-clause BSD licence"
+    },
+    "custom": {
+      "brief": "A license text is going to be specified by the developer",
+      "file": "gtk/gtkaboutdialog.h",
+      "line": 42,
+      "md": "A license text is going to be specified by the\n  developer"
+    },
+    "gpl_2_0": {
+      "brief": "The GNU General Public License, version 2.0 or later",
+      "file": "gtk/gtkaboutdialog.h",
+      "line": 44,
+      "md": "The GNU General Public License, version 2.0 or later"
+    },
+    "gpl_2_0_only": {
+      "brief": "The GNU General Public License, version 2.0 only",
+      "file": "gtk/gtkaboutdialog.h",
+      "line": 51,
+      "md": "The GNU General Public License, version 2.0 only"
+    },
+    "gpl_3_0": {
+      "brief": "The GNU General Public License, version 3.0 or later",
+      "file": "gtk/gtkaboutdialog.h",
+      "line": 45,
+      "md": "The GNU General Public License, version 3.0 or later"
+    },
+    "gpl_3_0_only": {
+      "brief": "The GNU General Public License, version 3.0 only",
+      "file": "gtk/gtkaboutdialog.h",
+      "line": 52,
+      "md": "The GNU General Public License, version 3.0 only"
+    },
+    "lgpl_2_1": {
+      "brief": "The GNU Lesser General Public License, version 2.1 or later",
+      "file": "gtk/gtkaboutdialog.h",
+      "line": 46,
+      "md": "The GNU Lesser General Public License, version 2.1 or later"
+    },
+    "lgpl_2_1_only": {
+      "brief": "The GNU Lesser General Public License, version 2.1 only",
+      "file": "gtk/gtkaboutdialog.h",
+      "line": 53,
+      "md": "The GNU Lesser General Public License, version 2.1 only"
+    },
+    "lgpl_3_0": {
+      "brief": "The GNU Lesser General Public License, version 3.0 or later",
+      "file": "gtk/gtkaboutdialog.h",
+      "line": 47,
+      "md": "The GNU Lesser General Public License, version 3.0 or later"
+    },
+    "lgpl_3_0_only": {
+      "brief": "The GNU Lesser General Public License, version 3.0 only",
+      "file": "gtk/gtkaboutdialog.h",
+      "line": 54,
+      "md": "The GNU Lesser General Public License, version 3.0 only"
+    },
+    "mit_x11": {
+      "brief": "The MIT/X11 standard license",
+      "file": "gtk/gtkaboutdialog.h",
+      "line": 49,
+      "md": "The MIT/X11 standard license"
+    },
+    "mpl_2_0": {
+      "brief": "The Mozilla Public License, version 2.0",
+      "file": "gtk/gtkaboutdialog.h",
+      "line": 59,
+      "md": "The Mozilla Public License, version 2.0"
+    },
+    "unknown": {
+      "brief": "No license specified",
+      "file": "gtk/gtkaboutdialog.h",
+      "line": 41,
+      "md": "No license specified"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

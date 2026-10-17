@@ -1,0 +1,72 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkCellRendererAccel`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellrendereraccel.c",
+      "line": 267,
+      "md": "Creates a new `GtkCellRendererAccel`."
+    }
+  },
+  "doc": {
+    "brief": "Renders a keyboard accelerator in a cell",
+    "deprecated": "4.10",
+    "deprecated_md": "Applications editing keyboard accelerators should\n  provide their own implementation according to platform design\n  guidelines",
+    "file": "gtk/deprecated/gtkcellrendereraccel.c",
+    "line": 36,
+    "md": "Renders a keyboard accelerator in a cell\n\n`GtkCellRendererAccel` displays a keyboard accelerator (i.e. a key\ncombination like `Control + a`). If the cell renderer is editable,\nthe accelerator can be changed by simply typing the new combination."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:CellRendererAccel",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {},
+  "properties": {
+    "accel-key": {
+      "brief": "The keyval of the accelerator.",
+      "file": "gtk/deprecated/gtkcellrendereraccel.c",
+      "line": 172,
+      "md": "The keyval of the accelerator."
+    },
+    "accel-mode": {
+      "brief": "Determines if the edited accelerators are GTK accelerators.",
+      "file": "gtk/deprecated/gtkcellrendereraccel.c",
+      "line": 212,
+      "md": "Determines if the edited accelerators are GTK accelerators. If\nthey are, consumed modifiers are suppressed, only accelerators\naccepted by GTK are allowed, and the accelerators are rendered\nin the same way as they are in menus."
+    },
+    "accel-mods": {
+      "brief": "The modifier mask of the accelerator.",
+      "file": "gtk/deprecated/gtkcellrendereraccel.c",
+      "line": 185,
+      "md": "The modifier mask of the accelerator."
+    },
+    "keycode": {
+      "brief": "The hardware keycode of the accelerator.",
+      "file": "gtk/deprecated/gtkcellrendereraccel.c",
+      "line": 197,
+      "md": "The hardware keycode of the accelerator. Note that the hardware keycode is\nonly relevant if the key does not have a keyval. Normally, the keyboard\nconfiguration should assign keyvals to all keys."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "accel-cleared": {
+      "brief": "Gets emitted when the user has removed the accelerator.",
+      "file": "gtk/deprecated/gtkcellrendereraccel.c",
+      "line": 249,
+      "md": "Gets emitted when the user has removed the accelerator."
+    },
+    "accel-edited": {
+      "brief": "Gets emitted when the user has selected a new accelerator.",
+      "file": "gtk/deprecated/gtkcellrendereraccel.c",
+      "line": 227,
+      "md": "Gets emitted when the user has selected a new accelerator."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

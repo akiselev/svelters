@@ -1,0 +1,98 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new GtkGraphicsOffload widget.",
+      "file": "gtk/gtkgraphicsoffload.c",
+      "line": 289,
+      "md": "Creates a new GtkGraphicsOffload widget.",
+      "since": "4.14"
+    }
+  },
+  "doc": {
+    "brief": "Bypasses gsk rendering by passing the content of its child directly to the compositor.",
+    "file": "gtk/gtkgraphicsoffload.c",
+    "line": 34,
+    "md": "Bypasses gsk rendering by passing the content of its child directly to the compositor.\n\nGraphics offload is an optimization to reduce overhead and battery use that is\nmost useful for video content. It only works on some platforms and in certain\nsituations. GTK will automatically fall back to normal rendering if it doesn't.\n\nGraphics offload is most efficient if there are no controls drawn on top of the\nvideo content.\n\nYou should consider using graphics offload for your main widget if it shows\nfrequently changing content (such as a video, or a VM display) and you provide\nthe content in the form of dmabuf textures (see [`DmabufTextureBuilder`](xref:gtk:Gdk.DmabufTextureBuilder)),\nin particular if it may be fullscreen.\n\nNumerous factors can prohibit graphics offload:\n\n- Unsupported platforms. Currently, graphics offload only works on Linux with Wayland.\n\n- Clipping, such as rounded corners that cause the video content to not be rectangular\n\n- Unsupported dmabuf formats (see [`Display.get_dmabuf_formats()`](xref:gtk:Gdk.Display#method:get_dmabuf_formats))\n\n- Translucent video content (content with an alpha channel, even if it isn't used)\n\n- Transforms that are more complex than translations and scales\n\n- Filters such as opacity, grayscale or similar\n\nTo investigate problems related graphics offload, GTK offers debug flags to print\nout information about graphics offload and dmabuf use:\n\n    GDK_DEBUG=offload\n    GDK_DEBUG=dmabuf\n\nThe GTK inspector provides a visual debugging tool for graphics offload.",
+    "since": "4.14"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:GraphicsOffload",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_black_background": {
+      "brief": "Returns whether the widget draws a black background.",
+      "file": "gtk/gtkgraphicsoffload.c",
+      "line": 438,
+      "md": "Returns whether the widget draws a black background.\n\nSee [`GraphicsOffload.set_black_background()`](xref:gtk:Gtk.GraphicsOffload#method:set_black_background).",
+      "since": "4.16"
+    },
+    "get_child": {
+      "brief": "Gets the child of `self`.",
+      "file": "gtk/gtkgraphicsoffload.c",
+      "line": 337,
+      "md": "Gets the child of `self`.",
+      "since": "4.14"
+    },
+    "get_enabled": {
+      "brief": "Returns whether offload is enabled for `self`.",
+      "file": "gtk/gtkgraphicsoffload.c",
+      "line": 382,
+      "md": "Returns whether offload is enabled for `self`.",
+      "since": "4.14"
+    },
+    "set_black_background": {
+      "brief": "Sets whether this GtkGraphicsOffload widget will draw a black background.",
+      "file": "gtk/gtkgraphicsoffload.c",
+      "line": 400,
+      "md": "Sets whether this GtkGraphicsOffload widget will draw a black\nbackground.\n\nA main use case for this is **_letterboxing_** where black bars are\nvisible next to the content if the aspect ratio of the content does\nnot match the dimensions of the monitor.\n\nUsing this property for letterboxing instead of CSS allows compositors\nto show content with maximum efficiency, using direct scanout to avoid\nextra copies in the compositor.\n\nOn Wayland, this is implemented using the\n[single-pixel buffer](https://wayland.app/protocols/single-pixel-buffer-v1)\nprotocol.",
+      "since": "4.16"
+    },
+    "set_child": {
+      "brief": "Sets the child of `self`.",
+      "file": "gtk/gtkgraphicsoffload.c",
+      "line": 307,
+      "md": "Sets the child of `self`.",
+      "since": "4.14"
+    },
+    "set_enabled": {
+      "brief": "Sets whether this GtkGraphicsOffload widget will attempt to offload the content of its child widget.",
+      "file": "gtk/gtkgraphicsoffload.c",
+      "line": 355,
+      "md": "Sets whether this GtkGraphicsOffload widget will attempt\nto offload the content of its child widget.",
+      "since": "4.14"
+    }
+  },
+  "properties": {
+    "black-background": {
+      "brief": "Whether to draw a black background.",
+      "file": "gtk/gtkgraphicsoffload.c",
+      "line": 272,
+      "md": "Whether to draw a black background.",
+      "since": "4.16"
+    },
+    "child": {
+      "brief": "The child widget.",
+      "file": "gtk/gtkgraphicsoffload.c",
+      "line": 249,
+      "md": "The child widget.",
+      "since": "4.14"
+    },
+    "enabled": {
+      "brief": "Whether graphics offload is enabled.",
+      "file": "gtk/gtkgraphicsoffload.c",
+      "line": 260,
+      "md": "Whether graphics offload is enabled.",
+      "since": "4.14"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

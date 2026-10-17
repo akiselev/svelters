@@ -1,0 +1,104 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkCellRendererText`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellrenderertext.c",
+      "line": 1294,
+      "md": "Creates a new `GtkCellRendererText`. Adjust how text is drawn using\nobject properties. Object properties can be\nset globally (with g_object_set()). Also, with `GtkTreeViewColumn`,\nyou can bind a property to a value in a `GtkTreeModel`. For example,\nyou can bind the “text” property on the cell renderer to a string\nvalue in the model, thus rendering a different string in each row\nof the `GtkTreeView`."
+    }
+  },
+  "doc": {
+    "brief": "Renders text in a cell",
+    "deprecated": "4.10",
+    "deprecated_md": "List views use widgets to display their contents.\n  You should use [`Inscription`](xref:gtk:Gtk.Inscription) or [`Label`](xref:gtk:Gtk.Label) instead",
+    "file": "gtk/deprecated/gtkcellrenderertext.c",
+    "line": 37,
+    "md": "Renders text in a cell\n\nA `GtkCellRendererText` renders a given text in its cell, using the font, color and\nstyle information provided by its properties. The text will be ellipsized if it is\ntoo long and the `GtkCellRendererText:ellipsize` property allows it.\n\nIf the `GtkCellRenderer:mode` is %GTK_CELL_RENDERER_MODE_EDITABLE,\nthe `GtkCellRendererText` allows to edit its text using an entry."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:CellRendererText",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "set_fixed_height_from_font": {
+      "brief": "Sets the height of a renderer to explicitly be determined by the “font” and “y_pad” property set on it.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellrenderertext.c",
+      "line": 1756,
+      "md": "Sets the height of a renderer to explicitly be determined by the “font” and\n“y_pad” property set on it.  Further changes in these properties do not\naffect the height, so they must be accompanied by a subsequent call to this\nfunction.  Using this function is inflexible, and should really only be used\nif calculating the size of a cell is too slow (ie, a massive number of cells\ndisplayed).  If `number_of_rows` is -1, then the fixed height is unset, and\nthe height is determined by the properties again."
+    }
+  },
+  "properties": {
+    "alignment": {
+      "brief": "Specifies how to align the lines of text with respect to each other.",
+      "file": "gtk/deprecated/gtkcellrenderertext.c",
+      "line": 461,
+      "md": "Specifies how to align the lines of text with respect to each other.\n\nNote that this property describes how to align the lines of text in\ncase there are several of them. The \"xalign\" property of `GtkCellRenderer`,\non the other hand, sets the horizontal alignment of the whole text."
+    },
+    "background-rgba": {
+      "brief": "Background color as a `GdkRGBA`",
+      "file": "gtk/deprecated/gtkcellrenderertext.c",
+      "line": 280,
+      "md": "Background color as a `GdkRGBA`"
+    },
+    "ellipsize": {
+      "brief": "Specifies the preferred place to ellipsize the string, if the cell renderer does not have enough room to display the entire string.",
+      "file": "gtk/deprecated/gtkcellrenderertext.c",
+      "line": 390,
+      "md": "Specifies the preferred place to ellipsize the string, if the cell renderer\ndoes not have enough room to display the entire string. Setting it to\n%PANGO_ELLIPSIZE_NONE turns off ellipsizing. See the wrap-width property\nfor another way of making the text fit into a given width."
+    },
+    "foreground-rgba": {
+      "brief": "Foreground color as a `GdkRGBA`",
+      "file": "gtk/deprecated/gtkcellrenderertext.c",
+      "line": 294,
+      "md": "Foreground color as a `GdkRGBA`"
+    },
+    "max-width-chars": {
+      "brief": "The desired maximum width of the cell, in characters.",
+      "file": "gtk/deprecated/gtkcellrenderertext.c",
+      "line": 417,
+      "md": "The desired maximum width of the cell, in characters. If this property\nis set to -1, the width will be calculated automatically.\n\nFor cell renderers that ellipsize or wrap text; this property\ncontrols the maximum reported width of the cell. The\ncell should not receive any greater allocation unless it is\nset to expand in its `GtkCellLayout` and all of the cell's siblings\nhave received their natural width."
+    },
+    "placeholder-text": {
+      "brief": "The text that will be displayed in the `GtkCellRenderer` if `GtkCellRendererText:editable` is `TRUE` and the cell is empty.",
+      "file": "gtk/deprecated/gtkcellrenderertext.c",
+      "line": 476,
+      "md": "The text that will be displayed in the `GtkCellRenderer` if\n`GtkCellRendererText:editable` is `TRUE` and the cell is empty."
+    },
+    "width-chars": {
+      "brief": "The desired width of the cell, in characters.",
+      "file": "gtk/deprecated/gtkcellrenderertext.c",
+      "line": 404,
+      "md": "The desired width of the cell, in characters. If this property is set to\n-1, the width will be calculated automatically, otherwise the cell will\nrequest either 3 characters or the property value, whichever is greater."
+    },
+    "wrap-mode": {
+      "brief": "Specifies how to break the string into multiple lines, if the cell renderer does not have enough room to display the entire string.",
+      "file": "gtk/deprecated/gtkcellrenderertext.c",
+      "line": 435,
+      "md": "Specifies how to break the string into multiple lines, if the cell\nrenderer does not have enough room to display the entire string.\nThis property has no effect unless the wrap-width property is set."
+    },
+    "wrap-width": {
+      "brief": "Specifies the minimum width at which the text is wrapped.",
+      "file": "gtk/deprecated/gtkcellrenderertext.c",
+      "line": 448,
+      "md": "Specifies the minimum width at which the text is wrapped. The wrap-mode property can\nbe used to influence at what character positions the line breaks can be placed.\nSetting wrap-width to -1 turns wrapping off."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "edited": {
+      "brief": "This signal is emitted after `renderer` has been edited.",
+      "file": "gtk/deprecated/gtkcellrenderertext.c",
+      "line": 525,
+      "md": "This signal is emitted after `renderer` has been edited.\n\nIt is the responsibility of the application to update the model\nand store `new_text` at the position indicated by `path`."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -1,0 +1,58 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Returns a newly created `GtkGesture` that recognizes pan gestures.",
+      "file": "gtk/gtkgesturepan.c",
+      "line": 268,
+      "md": "Returns a newly created `GtkGesture` that recognizes pan gestures."
+    }
+  },
+  "doc": {
+    "brief": "Recognizes pan gestures.",
+    "file": "gtk/gtkgesturepan.c",
+    "line": 20,
+    "md": "Recognizes pan gestures.\n\nThese are drags that are locked to happen along one axis. The axis\nthat a `GtkGesturePan` handles is defined at construct time, and\ncan be changed through [`GesturePan.set_orientation()`](xref:gtk:Gtk.GesturePan#method:set_orientation).\n\nWhen the gesture starts to be recognized, `GtkGesturePan` will\nattempt to determine as early as possible whether the sequence\nis moving in the expected direction, and denying the sequence if\nthis does not happen.\n\nOnce a panning gesture along the expected axis is recognized,\nthe [`GesturePan::pan`](xref:gtk:Gtk.GesturePan#event:pan) signal will be emitted as input\nevents are received, containing the offset in the given axis."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:GesturePan",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_orientation": {
+      "brief": "Returns the orientation of the pan gestures that this `gesture` expects.",
+      "file": "gtk/gtkgesturepan.c",
+      "line": 284,
+      "md": "Returns the orientation of the pan gestures that this `gesture` expects."
+    },
+    "set_orientation": {
+      "brief": "Sets the orientation to be expected on pan gestures.",
+      "file": "gtk/gtkgesturepan.c",
+      "line": 304,
+      "md": "Sets the orientation to be expected on pan gestures."
+    }
+  },
+  "properties": {
+    "orientation": {
+      "brief": "The expected orientation of pan gestures.",
+      "file": "gtk/gtkgesturepan.c",
+      "line": 225,
+      "md": "The expected orientation of pan gestures."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "pan": {
+      "brief": "Emitted once a panning gesture along the expected axis is detected.",
+      "file": "gtk/gtkgesturepan.c",
+      "line": 237,
+      "md": "Emitted once a panning gesture along the expected axis is detected."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

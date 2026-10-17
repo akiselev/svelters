@@ -1,0 +1,63 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Returns a new spinner widget.",
+      "file": "gtk/gtkspinner.c",
+      "line": 279,
+      "md": "Returns a new spinner widget. Not yet started."
+    }
+  },
+  "doc": {
+    "brief": "Displays an icon-size spinning animation.",
+    "file": "gtk/gtkspinner.c",
+    "line": 42,
+    "md": "Displays an icon-size spinning animation.\n\nIt is often used as an alternative to a [`ProgressBar`](xref:gtk:Gtk.ProgressBar)\nfor displaying indefinite activity, instead of actual progress.\n\nTo start the animation, use [`Spinner.start()`](xref:gtk:Gtk.Spinner#method:start), to stop it\nuse [`Spinner.stop()`](xref:gtk:Gtk.Spinner#method:stop).\n\n# CSS nodes\n\n`GtkSpinner` has a single CSS node with the name spinner.\nWhen the animation is active, the :checked pseudoclass is\nadded to this node.\n\n# Accessibility\n\n`GtkSpinner` uses the [`AccessibleRole.progress_bar`](xref:gtk:Gtk.AccessibleRole#value:progress_bar) role."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Spinner",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_spinning": {
+      "brief": "Returns whether the spinner is spinning.",
+      "file": "gtk/gtkspinner.c",
+      "line": 169,
+      "md": "Returns whether the spinner is spinning."
+    },
+    "set_spinning": {
+      "brief": "Sets the activity of the spinner.",
+      "file": "gtk/gtkspinner.c",
+      "line": 185,
+      "md": "Sets the activity of the spinner."
+    },
+    "start": {
+      "brief": "Starts the animation of the spinner.",
+      "file": "gtk/gtkspinner.c",
+      "line": 292,
+      "md": "Starts the animation of the spinner."
+    },
+    "stop": {
+      "brief": "Stops the animation of the spinner.",
+      "file": "gtk/gtkspinner.c",
+      "line": 310,
+      "md": "Stops the animation of the spinner."
+    }
+  },
+  "properties": {
+    "spinning": {
+      "brief": "Whether the spinner is spinning",
+      "file": "gtk/gtkspinner.c",
+      "line": 259,
+      "md": "Whether the spinner is spinning"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

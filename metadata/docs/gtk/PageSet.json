@@ -1,0 +1,43 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "See also gtk_print_job_set_page_set().",
+    "file": "gtk/gtkenums.h",
+    "line": 615,
+    "md": "See also gtk_print_job_set_page_set()."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:PageSet",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "all": {
+      "brief": "All pages.",
+      "file": "gtk/gtkenums.h",
+      "line": 617,
+      "md": "All pages."
+    },
+    "even": {
+      "brief": "Even pages.",
+      "file": "gtk/gtkenums.h",
+      "line": 618,
+      "md": "Even pages."
+    },
+    "odd": {
+      "brief": "Odd pages.",
+      "file": "gtk/gtkenums.h",
+      "line": 619,
+      "md": "Odd pages."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

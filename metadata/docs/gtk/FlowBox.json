@@ -1,0 +1,331 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a `GtkFlowBox`.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 4121,
+      "md": "Creates a `GtkFlowBox`."
+    }
+  },
+  "doc": {
+    "brief": "Puts child widgets in a reflowing grid.",
+    "file": "gtk/gtkflowbox.c",
+    "line": 26,
+    "md": "Puts child widgets in a reflowing grid.\n\nFor instance, with the horizontal orientation, the widgets will be\narranged from left to right, starting a new row under the previous\nrow when necessary. Reducing the width in this case will require more\nrows, so a larger height will be requested.\n\nLikewise, with the vertical orientation, the widgets will be arranged\nfrom top to bottom, starting a new column to the right when necessary.\nReducing the height will require more columns, so a larger width will\nbe requested.\n\nThe size request of a `GtkFlowBox` alone may not be what you expect;\nif you need to be able to shrink it along both axes and dynamically\nreflow its children, you may have to wrap it in a `GtkScrolledWindow`\nto enable that.\n\nThe children of a `GtkFlowBox` can be dynamically sorted and filtered.\n\nAlthough a `GtkFlowBox` must have only `GtkFlowBoxChild` children, you\ncan add any kind of widget to it via [`FlowBox.insert()`](xref:gtk:Gtk.FlowBox#method:insert), and a\n`GtkFlowBoxChild` widget will automatically be inserted between the box\nand the widget.\n\nAlso see [`ListBox`](xref:gtk:Gtk.ListBox).\n\n# Shortcuts and Gestures\n\nThe following signals have default keybindings:\n\n- [`FlowBox::move-cursor`](xref:gtk:Gtk.FlowBox#event:move-cursor)\n- [`FlowBox::select-all`](xref:gtk:Gtk.FlowBox#event:select-all)\n- [`FlowBox::toggle-cursor-child`](xref:gtk:Gtk.FlowBox#event:toggle-cursor-child)\n- [`FlowBox::unselect-all`](xref:gtk:Gtk.FlowBox#event:unselect-all)\n\n# CSS nodes\n\n```\nflowbox\n├── flowboxchild\n│   ╰── <child>\n├── flowboxchild\n│   ╰── <child>\n┊\n╰── [rubberband]\n```\n\n`GtkFlowBox` uses a single CSS node with name flowbox. `GtkFlowBoxChild`\nuses a single CSS node with name flowboxchild. For rubberband selection,\na subnode with name rubberband is used.\n\n# Accessibility\n\n`GtkFlowBox` uses the [`AccessibleRole.grid`](xref:gtk:Gtk.AccessibleRole#value:grid) role, and `GtkFlowBoxChild`\nuses the [`AccessibleRole.grid_cell`](xref:gtk:Gtk.AccessibleRole#value:grid_cell) role."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:FlowBox",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "append": {
+      "brief": "Adds `child` to the end of `self`.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 4176,
+      "md": "Adds `child` to the end of `self`.\n\nIf a sort function is set, the widget will\nactually be inserted at the calculated position.\n\nSee also: [`FlowBox.insert()`](xref:gtk:Gtk.FlowBox#method:insert).",
+      "since": "4.6"
+    },
+    "bind_model": {
+      "brief": "Binds `model` to `box`.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 4388,
+      "md": "Binds `model` to `box`.\n\nIf `box` was already bound to a model, that previous binding is\ndestroyed.\n\nThe contents of `box` are cleared and then filled with widgets that\nrepresent items from `model`. `box` is updated whenever `model` changes.\nIf `model` is `NULL`, `box` is left empty.\n\nIt is undefined to add or remove widgets directly (for example, with\n[`FlowBox.insert()`](xref:gtk:Gtk.FlowBox#method:insert)) while `box` is bound to a model.\n\nNote that using a model is incompatible with the filtering and sorting\nfunctionality in `GtkFlowBox`. When using a model, filtering and sorting\nshould be implemented by the model."
+    },
+    "get_activate_on_single_click": {
+      "brief": "Returns whether children activate on single clicks.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 4679,
+      "md": "Returns whether children activate on single clicks."
+    },
+    "get_child_at_index": {
+      "brief": "Gets the nth child in the `box`.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 4255,
+      "md": "Gets the nth child in the `box`."
+    },
+    "get_child_at_pos": {
+      "brief": "Gets the child in the (`x`, `y`) position.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 4281,
+      "md": "Gets the child in the (`x`, `y`) position.\n\nBoth `x` and `y` are assumed to be relative to the origin of `box`."
+    },
+    "get_column_spacing": {
+      "brief": "Gets the horizontal spacing.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 4557,
+      "md": "Gets the horizontal spacing."
+    },
+    "get_homogeneous": {
+      "brief": "Returns whether the box is homogeneous.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 4455,
+      "md": "Returns whether the box is homogeneous."
+    },
+    "get_max_children_per_line": {
+      "brief": "Gets the maximum number of children per line.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 4640,
+      "md": "Gets the maximum number of children per line."
+    },
+    "get_min_children_per_line": {
+      "brief": "Gets the minimum number of children per line.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 4596,
+      "md": "Gets the minimum number of children per line."
+    },
+    "get_row_spacing": {
+      "brief": "Gets the vertical spacing.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 4519,
+      "md": "Gets the vertical spacing."
+    },
+    "get_selected_children": {
+      "brief": "Creates a list of all selected children.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 4709,
+      "md": "Creates a list of all selected children."
+    },
+    "get_selection_mode": {
+      "brief": "Gets the selection mode of `box`.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 4900,
+      "md": "Gets the selection mode of `box`."
+    },
+    "insert": {
+      "brief": "Inserts the `widget` into `box` at `position`.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 4200,
+      "md": "Inserts the `widget` into `box` at `position`.\n\nIf a sort function is set, the widget will actually be inserted\nat the calculated position.\n\nIf `position` is -1, or larger than the total number of children\nin the `box`, then the `widget` will be appended to the end."
+    },
+    "invalidate_filter": {
+      "brief": "Updates the filtering for all children.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 4977,
+      "md": "Updates the filtering for all children.\n\nCall this function when the result of the filter\nfunction on the `box` is changed due to an external\nfactor. For instance, this would be used if the\nfilter function just looked for a specific search\nterm, and the entry with the string has changed."
+    },
+    "invalidate_sort": {
+      "brief": "Updates the sorting for all children.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 5079,
+      "md": "Updates the sorting for all children.\n\nCall this when the result of the sort function on\n`box` is changed due to an external factor."
+    },
+    "prepend": {
+      "brief": "Adds `child` to the start of `self`.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 4152,
+      "md": "Adds `child` to the start of `self`.\n\nIf a sort function is set, the widget will\nactually be inserted at the calculated position.\n\nSee also: [`FlowBox.insert()`](xref:gtk:Gtk.FlowBox#method:insert).",
+      "since": "4.6"
+    },
+    "remove": {
+      "brief": "Removes a child from `box`.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 3098,
+      "md": "Removes a child from `box`."
+    },
+    "remove_all": {
+      "brief": "Removes all children from `box`.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 3149,
+      "md": "Removes all children from `box`.\n\nThis function does nothing if `box` is backed by a model.",
+      "since": "4.12"
+    },
+    "select_all": {
+      "brief": "Select all children of `box`, if the selection mode allows it.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 4776,
+      "md": "Select all children of `box`, if the selection\nmode allows it."
+    },
+    "select_child": {
+      "brief": "Selects a single child of `box`, if the selection mode allows it.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 4740,
+      "md": "Selects a single child of `box`, if the selection\nmode allows it."
+    },
+    "selected_foreach": {
+      "brief": "Calls a function for each selected child.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 4832,
+      "md": "Calls a function for each selected child.\n\nNote that the selection cannot be modified from within\nthis function."
+    },
+    "set_activate_on_single_click": {
+      "brief": "If `single` is `TRUE`, children will be activated when you click on them, otherwise you need to double-click.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 4656,
+      "md": "If `single` is `TRUE`, children will be activated when you click\non them, otherwise you need to double-click."
+    },
+    "set_column_spacing": {
+      "brief": "Sets the horizontal space to add between children.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 4535,
+      "md": "Sets the horizontal space to add between children."
+    },
+    "set_filter_func": {
+      "brief": "By setting a filter function on the `box` one can decide dynamically which of the children to show.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 4931,
+      "md": "By setting a filter function on the `box` one can decide dynamically\nwhich of the children to show.\n\nFor instance, to implement a search function that only shows the\nchildren matching the search terms.\n\nThe `filter_func` will be called for each child after the call, and\nit will continue to be called each time a child changes (via\n[`FlowBoxChild.changed()`](xref:gtk:Gtk.FlowBoxChild#method:changed)) or when\n[`FlowBox.invalidate_filter()`](xref:gtk:Gtk.FlowBox#method:invalidate_filter) is called.\n\nNote that using a filter function is incompatible with using a model\n(see [`FlowBox.bind_model()`](xref:gtk:Gtk.FlowBox#method:bind_model))."
+    },
+    "set_hadjustment": {
+      "brief": "Hooks up an adjustment to focus handling in `box`.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 4308,
+      "md": "Hooks up an adjustment to focus handling in `box`.\n\nThe adjustment is also used for autoscrolling during\nrubberband selection. See [`ScrolledWindow.get_hadjustment()`](xref:gtk:Gtk.ScrolledWindow#method:get_hadjustment)\nfor a typical way of obtaining the adjustment, and\n[`FlowBox.set_vadjustment()`](xref:gtk:Gtk.FlowBox#method:set_vadjustment) for setting the vertical\nadjustment.\n\nThe adjustments have to be in pixel units and in the same\ncoordinate system as the allocation for immediate children\nof the box."
+    },
+    "set_homogeneous": {
+      "brief": "Sets whether or not all children of `box` are given equal space in the box.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 4471,
+      "md": "Sets whether or not all children of `box` are given\nequal space in the box."
+    },
+    "set_max_children_per_line": {
+      "brief": "Sets the maximum number of children to request and allocate space for in `box`’s orientation.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 4612,
+      "md": "Sets the maximum number of children to request and\nallocate space for in `box`’s orientation.\n\nSetting the maximum number of children per line\nlimits the overall natural size request to be no more\nthan `n_children` children long in the given orientation."
+    },
+    "set_min_children_per_line": {
+      "brief": "Sets the minimum number of children to line up in `box`’s orientation before flowing.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 4573,
+      "md": "Sets the minimum number of children to line up\nin `box`’s orientation before flowing."
+    },
+    "set_row_spacing": {
+      "brief": "Sets the vertical space to add between children.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 4497,
+      "md": "Sets the vertical space to add between children."
+    },
+    "set_selection_mode": {
+      "brief": "Sets how selection works in `box`.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 4863,
+      "md": "Sets how selection works in `box`."
+    },
+    "set_sort_func": {
+      "brief": "By setting a sort function on the `box`, one can dynamically reorder the children of the box, based on the contents of the children.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 5013,
+      "md": "By setting a sort function on the `box`, one can dynamically\nreorder the children of the box, based on the contents of\nthe children.\n\nThe `sort_func` will be called for each child after the call,\nand will continue to be called each time a child changes (via\n[`FlowBoxChild.changed()`](xref:gtk:Gtk.FlowBoxChild#method:changed)) and when\n[`FlowBox.invalidate_sort()`](xref:gtk:Gtk.FlowBox#method:invalidate_sort) is called.\n\nNote that using a sort function is incompatible with using a model\n(see [`FlowBox.bind_model()`](xref:gtk:Gtk.FlowBox#method:bind_model))."
+    },
+    "set_vadjustment": {
+      "brief": "Hooks up an adjustment to focus handling in `box`.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 4343,
+      "md": "Hooks up an adjustment to focus handling in `box`.\n\nThe adjustment is also used for autoscrolling during\nrubberband selection. See [`ScrolledWindow.get_vadjustment()`](xref:gtk:Gtk.ScrolledWindow#method:get_vadjustment)\nfor a typical way of obtaining the adjustment, and\n[`FlowBox.set_hadjustment()`](xref:gtk:Gtk.FlowBox#method:set_hadjustment) for setting the horizontal\nadjustment.\n\nThe adjustments have to be in pixel units and in the same\ncoordinate system as the allocation for immediate children\nof the box."
+    },
+    "unselect_all": {
+      "brief": "Unselect all children of `box`, if the selection mode allows it.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 4798,
+      "md": "Unselect all children of `box`, if the selection\nmode allows it."
+    },
+    "unselect_child": {
+      "brief": "Unselects a single child of `box`, if the selection mode allows it.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 4758,
+      "md": "Unselects a single child of `box`, if the selection\nmode allows it."
+    }
+  },
+  "properties": {
+    "accept-unpaired-release": {
+      "brief": "Whether to accept unpaired release events.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 3722,
+      "md": "Whether to accept unpaired release events."
+    },
+    "activate-on-single-click": {
+      "brief": "Determines whether children can be activated with a single click, or require a double-click.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 3711,
+      "md": "Determines whether children can be activated with a single\nclick, or require a double-click."
+    },
+    "column-spacing": {
+      "brief": "The amount of horizontal space between two children.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 3779,
+      "md": "The amount of horizontal space between two children."
+    },
+    "homogeneous": {
+      "brief": "Determines whether all children should be allocated the same size.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 3732,
+      "md": "Determines whether all children should be allocated the\nsame size."
+    },
+    "max-children-per-line": {
+      "brief": "The maximum amount of children to request space for consecutively in the given orientation.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 3758,
+      "md": "The maximum amount of children to request space for consecutively\nin the given orientation."
+    },
+    "min-children-per-line": {
+      "brief": "The minimum number of children to allocate consecutively in the given orientation.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 3743,
+      "md": "The minimum number of children to allocate consecutively\nin the given orientation.\n\nSetting the minimum children per line ensures\nthat a reasonably small height will be requested\nfor the overall minimum width of the box."
+    },
+    "row-spacing": {
+      "brief": "The amount of vertical space between two children.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 3769,
+      "md": "The amount of vertical space between two children."
+    },
+    "selection-mode": {
+      "brief": "The selection mode used by the flow box.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 3700,
+      "md": "The selection mode used by the flow box."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "activate-cursor-child": {
+      "brief": "Emitted when the user activates the `box`.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 3825,
+      "md": "Emitted when the user activates the `box`.\n\nThis is a [keybinding signal](class.SignalAction.html)."
+    },
+    "child-activated": {
+      "brief": "Emitted when a child has been activated by the user.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 3791,
+      "md": "Emitted when a child has been activated by the user."
+    },
+    "move-cursor": {
+      "brief": "Emitted when the user initiates a cursor movement.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 3859,
+      "md": "Emitted when the user initiates a cursor movement.\n\nThis is a [keybinding signal](class.SignalAction.html).\nApplications should not connect to it, but may emit it with\ng_signal_emit_by_name() if they need to control the cursor\nprogrammatically.\n\nThe default bindings for this signal come in two variants,\nthe variant with the Shift modifier extends the selection,\nthe variant without the Shift modifier does not.\nThere are too many key combinations to list them all here.\n\n- <kbd>←</kbd>, <kbd>→</kbd>, <kbd>↑</kbd>, <kbd>↓</kbd>\n  move by individual children\n- <kbd>Home</kbd>, <kbd>End</kbd> move to the ends of the box\n- <kbd>PgUp</kbd>, <kbd>PgDn</kbd> move vertically by pages"
+    },
+    "select-all": {
+      "brief": "Emitted to select all children of the box, if the selection mode permits it.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 3898,
+      "md": "Emitted to select all children of the box,\nif the selection mode permits it.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThe default bindings for this signal is <kbd>Ctrl</kbd>-<kbd>a</kbd>."
+    },
+    "selected-children-changed": {
+      "brief": "Emitted when the set of selected children changes.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 3807,
+      "md": "Emitted when the set of selected children changes.\n\nUse [`FlowBox.selected_foreach()`](xref:gtk:Gtk.FlowBox#method:selected_foreach) or\n[`FlowBox.get_selected_children()`](xref:gtk:Gtk.FlowBox#method:get_selected_children) to obtain the\nselected children."
+    },
+    "toggle-cursor-child": {
+      "brief": "Emitted to toggle the selection of the child that has the focus.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 3841,
+      "md": "Emitted to toggle the selection of the child that has the focus.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThe default binding for this signal is <kbd>Ctrl</kbd>-<kbd>Space</kbd>."
+    },
+    "unselect-all": {
+      "brief": "Emitted to unselect all children of the box, if the selection mode permits it.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 3917,
+      "md": "Emitted to unselect all children of the box,\nif the selection mode permits it.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThe default bindings for this signal is <kbd>Ctrl</kbd>-<kbd>Shift</kbd>-<kbd>a</kbd>."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

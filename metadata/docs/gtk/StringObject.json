@@ -1,0 +1,45 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Wraps a string in an object for use with `GListModel`.",
+      "file": "gtk/gtkstringlist.c",
+      "line": 160,
+      "md": "Wraps a string in an object for use with `GListModel`."
+    }
+  },
+  "doc": {
+    "brief": "The type of items in a `GtkStringList`.",
+    "file": "gtk/gtkstringlist.c",
+    "line": 62,
+    "md": "The type of items in a `GtkStringList`.\n\nA `GtkStringObject` is a wrapper around a `const char*`; it has\na [`StringObject:string`](xref:gtk:Gtk.StringObject#property:string) property that can be used\nfor property bindings and expressions."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:StringObject",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_string": {
+      "brief": "Returns the string contained in a `GtkStringObject`.",
+      "file": "gtk/gtkstringlist.c",
+      "line": 174,
+      "md": "Returns the string contained in a `GtkStringObject`."
+    }
+  },
+  "properties": {
+    "string": {
+      "brief": "The string.",
+      "file": "gtk/gtkstringlist.c",
+      "line": 135,
+      "md": "The string."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -1,0 +1,43 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Describes the type of order that a `GtkSorter` may produce.",
+    "file": "gtk/gtksorter.h",
+    "line": 31,
+    "md": "Describes the type of order that a `GtkSorter` may produce."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:SorterOrder",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "none": {
+      "brief": "No order, all elements are considered equal. gtk_sorter_compare() will only return %GTK_ORDERING_EQUAL.",
+      "file": "gtk/gtksorter.h",
+      "line": 34,
+      "md": "No order, all elements are considered equal.\n  gtk_sorter_compare() will only return %GTK_ORDERING_EQUAL."
+    },
+    "partial": {
+      "brief": "A partial order. Any `GtkOrdering` is possible.",
+      "file": "gtk/gtksorter.h",
+      "line": 33,
+      "md": "A partial order. Any `GtkOrdering` is possible."
+    },
+    "total": {
+      "brief": "A total order. gtk_sorter_compare() will only return %GTK_ORDERING_EQUAL if an item is compared with itself.",
+      "file": "gtk/gtksorter.h",
+      "line": 36,
+      "md": "A total order. gtk_sorter_compare() will only\n  return %GTK_ORDERING_EQUAL if an item is compared with itself. Two\n  different items will never cause this value to be returned."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

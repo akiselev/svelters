@@ -1,0 +1,45 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Returns a newly created `GtkGesture` that recognizes pinch/zoom gestures.",
+      "file": "gtk/gtkgesturezoom.c",
+      "line": 218,
+      "md": "Returns a newly created `GtkGesture` that recognizes\npinch/zoom gestures."
+    }
+  },
+  "doc": {
+    "brief": "Recognizes 2-finger pinch/zoom gestures.",
+    "file": "gtk/gtkgesturezoom.c",
+    "line": 21,
+    "md": "Recognizes 2-finger pinch/zoom gestures.\n\nWhenever the distance between both tracked sequences changes, the\n[`GestureZoom::scale-changed`](xref:gtk:Gtk.GestureZoom#event:scale-changed) signal is emitted to report\nthe scale factor."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:GestureZoom",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_scale_delta": {
+      "brief": "Gets the scale delta.",
+      "file": "gtk/gtkgesturezoom.c",
+      "line": 233,
+      "md": "Gets the scale delta.\n\nIf `gesture` is active, this function returns the zooming\ndifference since the gesture was recognized (hence the\nstarting point is considered 1:1). If `gesture` is not\nactive, 1 is returned."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "scale-changed": {
+      "brief": "Emitted whenever the distance between both tracked sequences changes.",
+      "file": "gtk/gtkgesturezoom.c",
+      "line": 202,
+      "md": "Emitted whenever the distance between both tracked sequences changes."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

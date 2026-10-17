@@ -1,0 +1,91 @@
+{
+  "doc": {
+    "brief": "The QGraphicsAnchorLayout class provides a layout where one can anchor widgets together in Graphics View.",
+    "index_brief": "Layout where one can anchor widgets together in Graphics View",
+    "url": "https://doc.qt.io/qt-6/qgraphicsanchorlayout.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsAnchorLayout",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QGraphicsAnchor * addAnchor(QGraphicsLayoutItem *firstItem, Qt::AnchorPoint firstEdge, QGraphicsLayoutItem *secondItem, Qt::AnchorPoint secondEdge)": {
+      "brief": "Creates an anchor between the edge *firstEdge* of item *firstItem* and the edge *secondEdge* of item *secondItem*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsanchorlayout.html#addAnchor"
+    },
+    "QGraphicsAnchor * anchor(QGraphicsLayoutItem *firstItem, Qt::AnchorPoint firstEdge, QGraphicsLayoutItem *secondItem, Qt::AnchorPoint secondEdge)": {
+      "brief": "Returns the anchor between the anchor points defined by *firstItem* and *firstEdge* and *secondItem* and *secondEdge*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsanchorlayout.html#anchor"
+    },
+    "QGraphicsAnchorLayout(QGraphicsLayoutItem *parent)": {
+      "brief": "Constructs a QGraphicsAnchorLayout instance. *parent* is passed to [QGraphicsLayout](xref:qt:QGraphicsLayout)'s constructor.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsanchorlayout.html#QGraphicsAnchorLayout"
+    },
+    "QGraphicsLayoutItem * itemAt(int index) const override": {
+      "brief": "Reimplements: [QGraphicsLayout::itemAt](xref:qt:QGraphicsLayout)(int i) const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsanchorlayout.html#itemAt"
+    },
+    "QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint) const override": {
+      "brief": "Reimplements: [QGraphicsLayoutItem::sizeHint](xref:qt:QGraphicsLayoutItem)(Qt::SizeHint which, const QSizeF &constraint) const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsanchorlayout.html#sizeHint"
+    },
+    "int count() const override": {
+      "brief": "Reimplements: [QGraphicsLayout::count](xref:qt:QGraphicsLayout)() const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsanchorlayout.html#count"
+    },
+    "qreal horizontalSpacing() const": {
+      "brief": "Returns the default horizontal spacing for the anchor layout.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsanchorlayout.html#horizontalSpacing"
+    },
+    "qreal verticalSpacing() const": {
+      "brief": "Returns the default vertical spacing for the anchor layout.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsanchorlayout.html#verticalSpacing"
+    },
+    "void addAnchors(QGraphicsLayoutItem *firstItem, QGraphicsLayoutItem *secondItem, Qt::Orientations orientations)": {
+      "brief": "Anchors two or four edges of *firstItem* with the corresponding edges of *secondItem*, so that *firstItem* has the same size as *secondItem* in the dimensions specified by *orientations*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsanchorlayout.html#addAnchors"
+    },
+    "void addCornerAnchors(QGraphicsLayoutItem *firstItem, Qt::Corner firstCorner, QGraphicsLayoutItem *secondItem, Qt::Corner secondCorner)": {
+      "brief": "Creates two anchors between *firstItem* and *secondItem* specified by the corners, *firstCorner* and *secondCorner*, where one is for the horizontal edge and another one for the vertical edge.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsanchorlayout.html#addCornerAnchors"
+    },
+    "void invalidate() override": {
+      "brief": "Reimplements: [QGraphicsLayout::invalidate](xref:qt:QGraphicsLayout)().",
+      "url": "https://doc.qt.io/qt-6/qgraphicsanchorlayout.html#invalidate"
+    },
+    "void removeAt(int index) override": {
+      "brief": "Reimplements: [QGraphicsLayout::removeAt](xref:qt:QGraphicsLayout)(int index).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsanchorlayout.html#removeAt"
+    },
+    "void setGeometry(const QRectF &geom) override": {
+      "brief": "Reimplements: [QGraphicsLayoutItem::setGeometry](xref:qt:QGraphicsLayoutItem)(const QRectF &rect).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsanchorlayout.html#setGeometry"
+    },
+    "void setHorizontalSpacing(qreal spacing)": {
+      "brief": "Sets the default horizontal spacing for the anchor layout to *spacing*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsanchorlayout.html#setHorizontalSpacing"
+    },
+    "void setSpacing(qreal spacing)": {
+      "brief": "Sets the default horizontal and the default vertical spacing for the anchor layout to *spacing*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsanchorlayout.html#setSpacing"
+    },
+    "void setVerticalSpacing(qreal spacing)": {
+      "brief": "Sets the default vertical spacing for the anchor layout to *spacing*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsanchorlayout.html#setVerticalSpacing"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

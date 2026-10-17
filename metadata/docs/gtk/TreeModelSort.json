@@ -1,0 +1,96 @@
+{
+  "constructors": {
+    "new_with_model": {
+      "brief": "Creates a new `GtkTreeModelSort`, with `child_model` as the child model.",
+      "file": "gtk/deprecated/gtktreemodelsort.c",
+      "line": 533,
+      "md": "Creates a new `GtkTreeModelSort`, with `child_model` as the child model."
+    }
+  },
+  "doc": {
+    "brief": "A GtkTreeModel which makes an underlying tree model sortable",
+    "deprecated": "4.10",
+    "deprecated_md": "Use [`SortListModel`](xref:gtk:Gtk.SortListModel) instead",
+    "file": "gtk/deprecated/gtktreemodelsort.c",
+    "line": 31,
+    "md": "A GtkTreeModel which makes an underlying tree model sortable\n\nThe `GtkTreeModelSort` is a model which implements the `GtkTreeSortable`\ninterface.  It does not hold any data itself, but rather is created with\na child model and proxies its data.  It has identical column types to\nthis child model, and the changes in the child are propagated.  The\nprimary purpose of this model is to provide a way to sort a different\nmodel without modifying it. Note that the sort function used by\n`GtkTreeModelSort` is not guaranteed to be stable.\n\nThe use of this is best demonstrated through an example.  In the\nfollowing sample code we create two `GtkTreeView` widgets each with a\nview of the same data.  As the model is wrapped here by a\n`GtkTreeModelSort`, the two `GtkTreeView`s can each sort their\nview of the data without affecting the other.  By contrast, if we\nsimply put the same model in each widget, then sorting the first would\nsort the second.\n\n## Using a `GtkTreeModelSort`\n\n```c\n{\n  GtkTreeView *tree_view1;\n  GtkTreeView *tree_view2;\n  GtkTreeModel *sort_model1;\n  GtkTreeModel *sort_model2;\n  GtkTreeModel *child_model;\n\n  // get the child model\n  child_model = get_my_model ();\n\n  // Create the first tree\n  sort_model1 = gtk_tree_model_sort_new_with_model (child_model);\n  tree_view1 = gtk_tree_view_new_with_model (sort_model1);\n\n  // Create the second tree\n  sort_model2 = gtk_tree_model_sort_new_with_model (child_model);\n  tree_view2 = gtk_tree_view_new_with_model (sort_model2);\n\n  // Now we can sort the two models independently\n  gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (sort_model1),\n                                        COLUMN_1, GTK_SORT_ASCENDING);\n  gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (sort_model2),\n                                        COLUMN_1, GTK_SORT_DESCENDING);\n}\n```\n\nTo demonstrate how to access the underlying child model from the sort\nmodel, the next example will be a callback for the `GtkTreeSelection`\n`GtkTreeSelection::changed` signal.  In this callback, we get a string\nfrom COLUMN_1 of the model.  We then modify the string, find the same\nselected row on the child model, and change the row there.\n\n## Accessing the child model of in a selection changed callback\n\n```c\nvoid\nselection_changed (GtkTreeSelection *selection, gpointer data)\n{\n  GtkTreeModel *sort_model = NULL;\n  GtkTreeModel *child_model;\n  GtkTreeIter sort_iter;\n  GtkTreeIter child_iter;\n  char *some_data = NULL;\n  char *modified_data;\n\n  // Get the current selected row and the model.\n  if (! gtk_tree_selection_get_selected (selection,\n                                         &sort_model,\n                                         &sort_iter))\n    return;\n\n  // Look up the current value on the selected row and get\n  // a new value to change it to.\n  gtk_tree_model_get (GTK_TREE_MODEL (sort_model), &sort_iter,\n                      COLUMN_1, &some_data,\n                      -1);\n\n  modified_data = change_the_data (some_data);\n  g_free (some_data);\n\n  // Get an iterator on the child model, instead of the sort model.\n  gtk_tree_model_sort_convert_iter_to_child_iter (GTK_TREE_MODEL_SORT (sort_model),\n                                                  &child_iter,\n                                                  &sort_iter);\n\n  // Get the child model and change the value of the row. In this\n  // example, the child model is a GtkListStore. It could be any other\n  // type of model, though.\n  child_model = gtk_tree_model_sort_get_model (GTK_TREE_MODEL_SORT (sort_model));\n  gtk_list_store_set (GTK_LIST_STORE (child_model), &child_iter,\n                      COLUMN_1, &modified_data,\n                      -1);\n  g_free (modified_data);\n}\n```"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:TreeModelSort",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "clear_cache": {
+      "brief": "This function should almost never be called.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodelsort.c",
+      "line": 2732,
+      "md": "This function should almost never be called.  It clears the `tree_model_sort`\nof any cached iterators that haven’t been reffed with\ngtk_tree_model_ref_node().  This might be useful if the child model being\nsorted is static (and doesn’t change often) and there has been a lot of\nunreffed access to nodes.  As a side effect of this function, all unreffed\niters will be invalid."
+    },
+    "convert_child_iter_to_iter": {
+      "brief": "Sets `sort_iter` to point to the row in `tree_model_sort` that corresponds to the row pointed at by `child_iter`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodelsort.c",
+      "line": 2306,
+      "md": "Sets `sort_iter` to point to the row in `tree_model_sort` that corresponds to\nthe row pointed at by `child_iter`.  If `sort_iter` was not set, `FALSE`\nis returned.  Note: a boolean is only returned since 2.14."
+    },
+    "convert_child_path_to_path": {
+      "brief": "Converts `child_path` to a path relative to `tree_model_sort`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodelsort.c",
+      "line": 2281,
+      "md": "Converts `child_path` to a path relative to `tree_model_sort`.  That is,\n`child_path` points to a path in the child model.  The returned path will\npoint to the same row in the sorted model.  If `child_path` isn’t a valid\npath on the child model, then `NULL` is returned."
+    },
+    "convert_iter_to_child_iter": {
+      "brief": "Sets `child_iter` to point to the row pointed to by `sorted_iter`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodelsort.c",
+      "line": 2429,
+      "md": "Sets `child_iter` to point to the row pointed to by `sorted_iter`."
+    },
+    "convert_path_to_child_path": {
+      "brief": "Converts `sorted_path` to a path on the child model of `tree_model_sort`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodelsort.c",
+      "line": 2357,
+      "md": "Converts `sorted_path` to a path on the child model of `tree_model_sort`.\nThat is, `sorted_path` points to a location in `tree_model_sort`.  The\nreturned path will point to the same location in the model not being\nsorted.  If `sorted_path` does not point to a location in the child model,\n`NULL` is returned."
+    },
+    "get_model": {
+      "brief": "Returns the model the `GtkTreeModelSort` is sorting.",
+      "file": "gtk/deprecated/gtktreemodelsort.c",
+      "line": 2203,
+      "md": "Returns the model the `GtkTreeModelSort` is sorting."
+    },
+    "iter_is_valid": {
+      "brief": "> This function is slow.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodelsort.c",
+      "line": 2778,
+      "md": "> This function is slow. Only use it for debugging and/or testing\n> purposes.\n\nChecks if the given iter is a valid iter for this `GtkTreeModelSort`."
+    },
+    "reset_default_sort_func": {
+      "brief": "This resets the default sort function to be in the “unsorted” state.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodelsort.c",
+      "line": 2697,
+      "md": "This resets the default sort function to be in the “unsorted” state.  That\nis, it is in the same order as the child model. It will re-sort the model\nto be in the same order as the child model only if the `GtkTreeModelSort`\nis in “unsorted” state."
+    }
+  },
+  "properties": {
+    "model": {
+      "brief": "The model of the tree model sort.",
+      "file": "gtk/deprecated/gtktreemodelsort.c",
+      "line": 483,
+      "md": "The model of the tree model sort."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -1,0 +1,57 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "The indexes of colors passed to symbolic color rendering, such as [`SymbolicPaintable.snapshot_symbolic()`](xref:gtk:Gtk.SymbolicPaintable#vfunc:snapshot_symbolic).",
+    "file": "gtk/gtkenums.h",
+    "line": 1254,
+    "md": "The indexes of colors passed to symbolic color rendering, such as\n[`SymbolicPaintable.snapshot_symbolic()`](xref:gtk:Gtk.SymbolicPaintable#vfunc:snapshot_symbolic).\n\nMore values may be added over time.",
+    "since": "4.6"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:SymbolicColor",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "accent": {
+      "brief": "The system accent color.",
+      "file": "gtk/gtkenums.h",
+      "line": 1268,
+      "md": "The system accent color.",
+      "since": "4.22"
+    },
+    "error": {
+      "brief": "Indication color for errors",
+      "file": "gtk/gtkenums.h",
+      "line": 1257,
+      "md": "Indication color for errors"
+    },
+    "foreground": {
+      "brief": "The default foreground color",
+      "file": "gtk/gtkenums.h",
+      "line": 1256,
+      "md": "The default foreground color"
+    },
+    "success": {
+      "brief": "Indication color for success",
+      "file": "gtk/gtkenums.h",
+      "line": 1259,
+      "md": "Indication color for success"
+    },
+    "warning": {
+      "brief": "Indication color for warnings",
+      "file": "gtk/gtkenums.h",
+      "line": 1258,
+      "md": "Indication color for warnings"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

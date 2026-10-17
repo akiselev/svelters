@@ -1,0 +1,51 @@
+{
+  "doc": {
+    "brief": "The QWhatsThis class provides a simple description of any widget, i.e. answering the question \"What's This?\".",
+    "index_brief": "Simple description of any widget, i.e. answering the question \"What's This?\"",
+    "url": "https://doc.qt.io/qt-6/qwhatsthis.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QWhatsThis",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QAction * createAction(QObject *parent)": {
+      "brief": "Returns a ready-made [QAction](xref:qt:QAction), used to invoke \"What's This?\" context help, with the given *parent*.",
+      "url": "https://doc.qt.io/qt-6/qwhatsthis.html#createAction"
+    },
+    "bool inWhatsThisMode()": {
+      "brief": "Returns `true` if the user interface is in \"What's This?\" mode; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qwhatsthis.html#inWhatsThisMode"
+    },
+    "void enterWhatsThisMode()": {
+      "brief": "This function switches the user interface into \"What's This?\" mode.",
+      "url": "https://doc.qt.io/qt-6/qwhatsthis.html#enterWhatsThisMode"
+    },
+    "void hideText()": {
+      "brief": "If a \"What's This?\" window is showing, this destroys it.",
+      "url": "https://doc.qt.io/qt-6/qwhatsthis.html#hideText"
+    },
+    "void leaveWhatsThisMode()": {
+      "brief": "If the user interface is in \"What's This?\" mode, this function switches back to normal mode; otherwise it does nothing.",
+      "url": "https://doc.qt.io/qt-6/qwhatsthis.html#leaveWhatsThisMode"
+    },
+    "void showText(const QPoint &pos, const QString &text, QWidget *w)": {
+      "brief": "Shows *text* as a \"What's This?\" window, at global position *pos*.",
+      "url": "https://doc.qt.io/qt-6/qwhatsthis.html#showText"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

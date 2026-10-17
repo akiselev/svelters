@@ -1,0 +1,166 @@
+{
+  "doc": {
+    "brief": "The QDockWidget class provides a widget that can be docked inside a [QMainWindow](xref:qt:QMainWindow) or floated as a top-level window on the desktop.",
+    "index_brief": "Widget that can be docked inside a QMainWindow or floated as a top-level window on the desktop",
+    "url": "https://doc.qt.io/qt-6/qdockwidget.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QDockWidget",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QAction * toggleViewAction() const": {
+      "brief": "Returns a checkable action that can be added to menus and toolbars so that the user can show or close this dock widget.",
+      "url": "https://doc.qt.io/qt-6/qdockwidget.html#toggleViewAction"
+    },
+    "QDockWidget(QWidget *parent, Qt::WindowFlags flags)": {
+      "brief": "Constructs a QDockWidget with parent *parent* and window flags *flags*.",
+      "url": "https://doc.qt.io/qt-6/qdockwidget.html#QDockWidget"
+    },
+    "QDockWidget(const QString &title, QWidget *parent, Qt::WindowFlags flags)": {
+      "brief": "Constructs a QDockWidget with parent *parent* and window flags *flags*.",
+      "url": "https://doc.qt.io/qt-6/qdockwidget.html#QDockWidget-1"
+    },
+    "QDockWidget::DockWidgetFeatures features() const": {
+      "brief": "This property holds whether the dock widget is movable, closable, and floatable",
+      "url": "https://doc.qt.io/qt-6/qdockwidget.html#features-prop"
+    },
+    "QWidget * titleBarWidget() const": {
+      "brief": "Returns the custom title bar widget set on the [QDockWidget](xref:qt:QDockWidget), or `nullptr` if no custom title bar has been set.",
+      "url": "https://doc.qt.io/qt-6/qdockwidget.html#titleBarWidget"
+    },
+    "QWidget * widget() const": {
+      "brief": "Returns the widget for the dock widget.",
+      "url": "https://doc.qt.io/qt-6/qdockwidget.html#widget"
+    },
+    "Qt::DockWidgetArea dockLocation() const": {
+      "brief": "This property holds the current dock location, or Qt::NoDockLocation if this dock widget is floating or has no mainwindow parent.",
+      "url": "https://doc.qt.io/qt-6/qdockwidget.html#dockLocation-prop"
+    },
+    "Qt::DockWidgetAreas allowedAreas() const": {
+      "brief": "areas where the dock widget may be placed",
+      "url": "https://doc.qt.io/qt-6/qdockwidget.html#allowedAreas-prop"
+    },
+    "bool event(QEvent *event) override": {
+      "brief": "Reimplements: [QWidget::event](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qdockwidget.html#event"
+    },
+    "bool isAreaAllowed(Qt::DockWidgetArea area) const": {
+      "brief": "Returns `true` if this dock widget can be placed in the given *area*; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qdockwidget.html#isAreaAllowed"
+    },
+    "bool isFloating() const": {
+      "brief": "This property holds whether the dock widget is floating",
+      "url": "https://doc.qt.io/qt-6/qdockwidget.html#floating-prop"
+    },
+    "void allowedAreasChanged(Qt::DockWidgetAreas allowedAreas)": {
+      "brief": "This signal is emitted when the [allowedAreas](xref:qt:QDockWidget) property changes.",
+      "url": "https://doc.qt.io/qt-6/qdockwidget.html#allowedAreasChanged"
+    },
+    "void changeEvent(QEvent *event) override": {
+      "brief": "Reimplements: [QWidget::changeEvent](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qdockwidget.html#changeEvent"
+    },
+    "void closeEvent(QCloseEvent *event) override": {
+      "brief": "Reimplements: [QWidget::closeEvent](xref:qt:QWidget)(QCloseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qdockwidget.html#closeEvent"
+    },
+    "void dockLocationChanged(Qt::DockWidgetArea area)": {
+      "brief": "This signal is emitted when the dock widget is moved to another dock *area*, or is moved to a different location in its current dock area.",
+      "url": "https://doc.qt.io/qt-6/qdockwidget.html#dockLocationChanged"
+    },
+    "void featuresChanged(QDockWidget::DockWidgetFeatures features)": {
+      "brief": "This signal is emitted when the [features](xref:qt:QDockWidget) property changes.",
+      "url": "https://doc.qt.io/qt-6/qdockwidget.html#featuresChanged"
+    },
+    "void initStyleOption(QStyleOptionDockWidget *option) const": {
+      "brief": "Initialize *option* with the values from this [QDockWidget](xref:qt:QDockWidget).",
+      "url": "https://doc.qt.io/qt-6/qdockwidget.html#initStyleOption"
+    },
+    "void paintEvent(QPaintEvent *event) override": {
+      "brief": "Reimplements: [QWidget::paintEvent](xref:qt:QWidget)(QPaintEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qdockwidget.html#paintEvent"
+    },
+    "void setAllowedAreas(Qt::DockWidgetAreas areas)": {
+      "brief": "areas where the dock widget may be placed",
+      "url": "https://doc.qt.io/qt-6/qdockwidget.html#allowedAreas-prop"
+    },
+    "void setDockLocation(Qt::DockWidgetArea area)": {
+      "brief": "Assigns this dock widget to *area*.",
+      "url": "https://doc.qt.io/qt-6/qdockwidget.html#setDockLocation"
+    },
+    "void setFeatures(QDockWidget::DockWidgetFeatures features)": {
+      "brief": "This property holds whether the dock widget is movable, closable, and floatable",
+      "url": "https://doc.qt.io/qt-6/qdockwidget.html#features-prop"
+    },
+    "void setFloating(bool floating)": {
+      "brief": "This property holds whether the dock widget is floating",
+      "url": "https://doc.qt.io/qt-6/qdockwidget.html#floating-prop"
+    },
+    "void setTitleBarWidget(QWidget *widget)": {
+      "brief": "Sets an arbitrary *widget* as the dock widget's title bar.",
+      "url": "https://doc.qt.io/qt-6/qdockwidget.html#setTitleBarWidget"
+    },
+    "void setWidget(QWidget *widget)": {
+      "brief": "Sets the widget for the dock widget to *widget*.",
+      "url": "https://doc.qt.io/qt-6/qdockwidget.html#setWidget"
+    },
+    "void topLevelChanged(bool topLevel)": {
+      "brief": "This signal is emitted when the [floating](xref:qt:QDockWidget) property changes.",
+      "url": "https://doc.qt.io/qt-6/qdockwidget.html#topLevelChanged"
+    },
+    "void visibilityChanged(bool visible)": {
+      "brief": "This signal is emitted when the dock widget becomes *visible* (or invisible).",
+      "url": "https://doc.qt.io/qt-6/qdockwidget.html#visibilityChanged"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "allowedAreas": {
+      "brief": "Areas where the dock widget may be placed",
+      "url": "https://doc.qt.io/qt-6/qdockwidget.html#allowedAreas-prop"
+    },
+    "dockLocation": {
+      "brief": "The current dock location, or Qt::NoDockLocation if this dock widget is floating or has no mainwindow parent",
+      "url": "https://doc.qt.io/qt-6/qdockwidget.html#dockLocation-prop"
+    },
+    "features": {
+      "brief": "Whether the dock widget is movable, closable, and floatable",
+      "url": "https://doc.qt.io/qt-6/qdockwidget.html#features-prop"
+    },
+    "floating": {
+      "brief": "Whether the dock widget is floating",
+      "url": "https://doc.qt.io/qt-6/qdockwidget.html#floating-prop"
+    },
+    "windowTitle": {
+      "brief": "The dock widget title (caption)",
+      "url": "https://doc.qt.io/qt-6/qdockwidget.html#windowTitle-prop"
+    }
+  },
+  "qss": {
+    "box_model": false,
+    "pseudo_states": [
+      ":closable",
+      ":floatable",
+      ":movable",
+      ":vertical"
+    ],
+    "sub_controls": [
+      "::close-button",
+      "::float-button",
+      "::title"
+    ],
+    "url": "https://doc.qt.io/qt-6/stylesheet-reference.html#qdockwidget-widget"
+  },
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

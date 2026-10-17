@@ -1,0 +1,92 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Allows objects to extend and customize deserialization from ui files.",
+    "file": "gtk/gtkbuildable.c",
+    "line": 19,
+    "md": "Allows objects to extend and customize deserialization from ui files.\n\nThe `GtkBuildable` interface includes methods for setting names and\nproperties of objects, parsing custom tags and constructing child objects.\n\nIt is implemented by all widgets and many of the non-widget objects that are\nprovided by GTK. The main user of this interface is [`Builder`](xref:gtk:Gtk.Builder).\nThere should be very little need for applications to call any of these\nfunctions directly.\n\nAn object only needs to implement this interface if it needs to extend the\n`GtkBuilder` XML format or run any extra routines at deserialization time."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Buildable",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_buildable_id": {
+      "brief": "Gets the ID of the `buildable` object.",
+      "file": "gtk/gtkbuildable.c",
+      "line": 75,
+      "md": "Gets the ID of the `buildable` object.\n\n`GtkBuilder` sets the name based on the ID attribute\nof the `<object>` tag used to construct the `buildable`."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "add_child": {
+      "brief": "Adds a child to `buildable`.",
+      "file": "gtk/gtkbuildable.h",
+      "line": 148,
+      "md": "Adds a child to `buildable`. `type` is an optional string\ndescribing how the child should be added."
+    },
+    "construct_child": {
+      "brief": "Constructs a child of a buildable that has been specified as “constructor” in the UI definition.",
+      "file": "gtk/gtkbuildable.h",
+      "line": 111,
+      "md": "Constructs a child of a buildable that has been\n specified as “constructor” in the UI definition. This can be used to\n reference a widget created in a `<ui>` tag which is outside\n of the normal GtkBuilder UI definition hierarchy.  A reference to the\n constructed object is returned and becomes owned by the caller."
+    },
+    "custom_finished": {
+      "brief": "Similar to gtk_buildable_parser_finished() but is called once for each custom tag handled by the `buildable`.",
+      "file": "gtk/gtkbuildable.h",
+      "line": 207,
+      "md": "Similar to gtk_buildable_parser_finished() but is\ncalled once for each custom tag handled by the `buildable`."
+    },
+    "custom_tag_end": {
+      "brief": "Called at the end of each custom element handled by the buildable.",
+      "file": "gtk/gtkbuildable.h",
+      "line": 191,
+      "md": "Called at the end of each custom element handled by\nthe buildable."
+    },
+    "custom_tag_start": {
+      "brief": "Called for each unknown element under `<child>`.",
+      "file": "gtk/gtkbuildable.h",
+      "line": 170,
+      "md": "Called for each unknown element under `<child>`."
+    },
+    "get_id": {
+      "brief": "The getter corresponding to `set_id`.",
+      "file": "gtk/gtkbuildable.h",
+      "line": 99,
+      "md": "The getter corresponding to `set_id`. Implement this\n  if you implement `set_id`."
+    },
+    "get_internal_child": {
+      "brief": "Retrieves the internal child called `childname` of the `buildable` object.",
+      "file": "gtk/gtkbuildable.h",
+      "line": 226,
+      "md": "Retrieves the internal child called `childname` of the `buildable` object."
+    },
+    "parser_finished": {
+      "brief": "Called when a builder finishes the parsing of a UI definition.",
+      "file": "gtk/gtkbuildable.h",
+      "line": 126,
+      "md": "Called when a builder finishes the parsing\n of a UI definition. It is normally not necessary to implement this,\n unless you need to perform special cleanup actions. `GtkWindow` sets\n the `GtkWidget:visible` property here."
+    },
+    "set_buildable_property": {
+      "brief": "Sets a property of a buildable object.",
+      "file": "gtk/gtkbuildable.h",
+      "line": 106,
+      "md": "Sets a property of a buildable object.\n It is normally not necessary to implement this, g_object_set_property()\n is used by default. `GtkWindow` implements this to delay showing itself\n (i.e. setting the [`Widget:visible`](xref:gtk:Gtk.Widget#property:visible) property) until the whole\n interface is created."
+    },
+    "set_id": {
+      "brief": "Stores the id attribute given in the `GtkBuilder` UI definition.",
+      "file": "gtk/gtkbuildable.h",
+      "line": 95,
+      "md": "Stores the id attribute given in the `GtkBuilder` UI definition.\n  `GtkWidget` stores the name as object data. Implement this method if your\n  object has some notion of “ID” and it makes sense to map the XML id\n  attribute to it."
+    }
+  }
+}

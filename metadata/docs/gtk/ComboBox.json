@@ -1,0 +1,370 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new empty `GtkComboBox`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 1844,
+      "md": "Creates a new empty `GtkComboBox`."
+    },
+    "new_with_entry": {
+      "brief": "Creates a new empty `GtkComboBox` with an entry.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 1859,
+      "md": "Creates a new empty `GtkComboBox` with an entry.\n\nIn order to use a combo box with entry, you need to tell it\nwhich column of the model contains the text for the entry\nby calling [`ComboBox.set_entry_text_column()`](xref:gtk:Gtk.ComboBox#method:set_entry_text_column)."
+    },
+    "new_with_model": {
+      "brief": "Creates a new `GtkComboBox` with a model.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 1878,
+      "md": "Creates a new `GtkComboBox` with a model."
+    },
+    "new_with_model_and_entry": {
+      "brief": "Creates a new empty `GtkComboBox` with an entry and a model.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 1900,
+      "md": "Creates a new empty `GtkComboBox` with an entry and a model.\n\nSee also [`ComboBox.new_with_entry()`](xref:gtk:Gtk.ComboBox#constructor:new_with_entry)."
+    }
+  },
+  "doc": {
+    "brief": "A `GtkComboBox` is a widget that allows the user to choose from a list of valid choices.",
+    "deprecated": "4.10",
+    "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown) instead",
+    "file": "gtk/deprecated/gtkcombobox.c",
+    "line": 47,
+    "md": "A `GtkComboBox` is a widget that allows the user to choose from a list of\nvalid choices.\n\nThe `GtkComboBox` displays the selected choice; when activated, the\n`GtkComboBox` displays a popup which allows the user to make a new choice.\n\nThe `GtkComboBox` uses the model-view pattern; the list of valid choices\nis specified in the form of a tree model, and the display of the choices\ncan be adapted to the data in the model by using cell renderers, as you\nwould in a tree view. This is possible since `GtkComboBox` implements the\n[`CellLayout`](xref:gtk:Gtk.CellLayout) interface. The tree model holding the valid\nchoices is not restricted to a flat list, it can be a real tree, and the\npopup will reflect the tree structure.\n\nTo allow the user to enter values not in the model, the\n[`ComboBox:has-entry`](xref:gtk:Gtk.ComboBox#property:has-entry) property allows the `GtkComboBox` to\ncontain a [`Entry`](xref:gtk:Gtk.Entry). This entry can be accessed by calling\n[`ComboBox.get_child()`](xref:gtk:Gtk.ComboBox#method:get_child) on the combo box.\n\nFor a simple list of textual choices, the model-view API of `GtkComboBox`\ncan be a bit overwhelming. In this case, [`ComboBoxText`](xref:gtk:Gtk.ComboBoxText) offers\na simple alternative. Both `GtkComboBox` and `GtkComboBoxText` can contain\nan entry.\n\n## CSS nodes\n\n```\ncombobox\n├── box.linked\n│   ╰── button.combo\n│       ╰── box\n│           ├── cellview\n│           ╰── arrow\n╰── window.popup\n```\n\nA normal combobox contains a box with the .linked class, a button\nwith the .combo class and inside those buttons, there are a cellview and\nan arrow.\n\n```\ncombobox\n├── box.linked\n│   ├── entry.combo\n│   ╰── button.combo\n│       ╰── box\n│           ╰── arrow\n╰── window.popup\n```\n\nA `GtkComboBox` with an entry has a single CSS node with name combobox.\nIt contains a box with the .linked class. That box contains an entry and\na button, both with the .combo class added. The button also contains another\nnode with name arrow.\n\n## Accessibility\n\n`GtkComboBox` uses the [`AccessibleRole.combo_box`](xref:gtk:Gtk.AccessibleRole#value:combo_box) role."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ComboBox",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_active": {
+      "brief": "Returns the index of the currently active item.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 1921,
+      "md": "Returns the index of the currently active item.\n\nIf the model is a non-flat treemodel, and the active item is not\nan immediate child of the root of the tree, this function returns\n`gtk_tree_path_get_indices (path)[0]`, where `path` is the\n[`TreePath`](xref:gtk:Gtk.TreePath) of the active item."
+    },
+    "get_active_id": {
+      "brief": "Returns the ID of the active row of `combo_box`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 2892,
+      "md": "Returns the ID of the active row of `combo_box`.\n\nThis value is taken from the active row and the column specified\nby the [`ComboBox:id-column`](xref:gtk:Gtk.ComboBox#property:id-column) property of `combo_box`\n(see [`ComboBox.set_id_column()`](xref:gtk:Gtk.ComboBox#method:set_id_column)).\n\nThe returned value is an interned string which means that you can\ncompare the pointer by value to other interned strings and that you\nmust not free it.\n\nIf the [`ComboBox:id-column`](xref:gtk:Gtk.ComboBox#property:id-column) property of `combo_box` is\nnot set, or if no row is active, or if the active row has a `NULL`\nID value, then `NULL` is returned."
+    },
+    "get_active_iter": {
+      "brief": "Sets `iter` to point to the currently active item.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 2055,
+      "md": "Sets `iter` to point to the currently active item.\n\nIf no item is active, `iter` is left unchanged."
+    },
+    "get_button_sensitivity": {
+      "brief": "Returns whether the combo box sets the dropdown button sensitive or not when there are no items in the model.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 2674,
+      "md": "Returns whether the combo box sets the dropdown button\nsensitive or not when there are no items in the model."
+    },
+    "get_child": {
+      "brief": "Gets the child widget of `combo_box`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 3052,
+      "md": "Gets the child widget of `combo_box`."
+    },
+    "get_entry_text_column": {
+      "brief": "Returns the column which `combo_box` is using to get the strings from to display in the internal entry.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 2762,
+      "md": "Returns the column which `combo_box` is using to get the strings\nfrom to display in the internal entry."
+    },
+    "get_has_entry": {
+      "brief": "Returns whether the combo box has an entry.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 2699,
+      "md": "Returns whether the combo box has an entry."
+    },
+    "get_id_column": {
+      "brief": "Returns the column which `combo_box` is using to get string IDs for values from.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 2871,
+      "md": "Returns the column which `combo_box` is using to get string IDs\nfor values from."
+    },
+    "get_model": {
+      "brief": "Returns the `GtkTreeModel` of `combo_box`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 2182,
+      "md": "Returns the `GtkTreeModel` of `combo_box`."
+    },
+    "get_popup_fixed_width": {
+      "brief": "Gets whether the popup uses a fixed width.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 2568,
+      "md": "Gets whether the popup uses a fixed width."
+    },
+    "get_row_separator_func": {
+      "brief": "Returns the current row separator function.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 2588,
+      "md": "Returns the current row separator function."
+    },
+    "popdown": {
+      "brief": "Hides the menu or dropdown list of `combo_box`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 1438,
+      "md": "Hides the menu or dropdown list of `combo_box`.\n\nThis function is mostly intended for use by accessibility technologies;\napplications should have little use for it."
+    },
+    "popup": {
+      "brief": "Pops up the menu or dropdown list of `combo_box`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 1362,
+      "md": "Pops up the menu or dropdown list of `combo_box`.\n\nThis function is mostly intended for use by accessibility technologies;\napplications should have little use for it.\n\nBefore calling this, `combo_box` must be mapped, or nothing will happen."
+    },
+    "popup_for_device": {
+      "brief": "Pops up the menu of `combo_box`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 1384,
+      "md": "Pops up the menu of `combo_box`.\n\nNote that currently this does not do anything with the device, as it was\npreviously only used for list-mode combo boxes, and those were removed\nin GTK 4. However, it is retained in case similar functionality is added\nback later."
+    },
+    "set_active": {
+      "brief": "Sets the active item of `combo_box` to be the item at `index`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 1959,
+      "md": "Sets the active item of `combo_box` to be the item at `index`."
+    },
+    "set_active_id": {
+      "brief": "Changes the active row of `combo_box` to the one that has an ID equal to `active_id`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 2948,
+      "md": "Changes the active row of `combo_box` to the one that has an ID equal to\n`active_id`.\n\nIf `active_id` is `NULL`, the active row is unset. Rows having\na `NULL` ID string cannot be made active by this function.\n\nIf the [`ComboBox:id-column`](xref:gtk:Gtk.ComboBox#property:id-column) property of `combo_box` is\nunset or if no row has the given ID then the function does nothing\nand returns `FALSE`."
+    },
+    "set_active_iter": {
+      "brief": "Sets the current active item to be the one referenced by `iter`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 2088,
+      "md": "Sets the current active item to be the one referenced by `iter`.\n\nIf `iter` is `NULL`, the active item is unset."
+    },
+    "set_button_sensitivity": {
+      "brief": "Sets whether the dropdown button of the combo box should update its sensitivity depending on the model contents.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 2647,
+      "md": "Sets whether the dropdown button of the combo box should update\nits sensitivity depending on the model contents."
+    },
+    "set_child": {
+      "brief": "Sets the child widget of `combo_box`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 3025,
+      "md": "Sets the child widget of `combo_box`."
+    },
+    "set_entry_text_column": {
+      "brief": "Sets the model column which `combo_box` should use to get strings from to be `text_column`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 2718,
+      "md": "Sets the model column which `combo_box` should use to get strings\nfrom to be `text_column`.\n\nFor this column no separate\n[`CellRenderer`](xref:gtk:Gtk.CellRenderer) is needed.\n\nThe column `text_column` in the model of `combo_box` must be of\ntype %G_TYPE_STRING.\n\nThis is only relevant if `combo_box` has been created with\n[`ComboBox:has-entry`](xref:gtk:Gtk.ComboBox#property:has-entry) as `TRUE`."
+    },
+    "set_id_column": {
+      "brief": "Sets the model column which `combo_box` should use to get string IDs for values from.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 2838,
+      "md": "Sets the model column which `combo_box` should use to get string IDs\nfor values from.\n\nThe column `id_column` in the model of `combo_box` must be of type\n%G_TYPE_STRING."
+    },
+    "set_model": {
+      "brief": "Sets the model used by `combo_box` to be `model`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 2114,
+      "md": "Sets the model used by `combo_box` to be `model`.\n\nWill unset a previously set model (if applicable). If model is `NULL`,\nthen it will unset the model.\n\nNote that this function does not clear the cell renderers, you have to\ncall [`CellLayout.clear()`](xref:gtk:Gtk.CellLayout#method:clear) yourself if you need to set up different\ncell renderers for the new model."
+    },
+    "set_popup_fixed_width": {
+      "brief": "Specifies whether the popup’s width should be a fixed width.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 2540,
+      "md": "Specifies whether the popup’s width should be a fixed width.\n\nIf `fixed` is `TRUE`, the popup's width is set to match the\nallocated width of the combo box."
+    },
+    "set_row_separator_func": {
+      "brief": "Sets the row separator function, which is used to determine whether a row should be drawn as a separator.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`DropDown`](xref:gtk:Gtk.DropDown)",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 2608,
+      "md": "Sets the row separator function, which is used to determine\nwhether a row should be drawn as a separator.\n\nIf the row separator function is `NULL`, no separators are drawn.\nThis is the default value."
+    }
+  },
+  "properties": {
+    "active": {
+      "brief": "The item which is currently active.",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 670,
+      "md": "The item which is currently active.\n\nIf the model is a non-flat treemodel, and the active item is not an\nimmediate child of the root of the tree, this property has the value\n`gtk_tree_path_get_indices (path)[0]`, where `path` is the\n[`TreePath`](xref:gtk:Gtk.TreePath) of the active item."
+    },
+    "active-id": {
+      "brief": "The value of the ID column of the active row.",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 764,
+      "md": "The value of the ID column of the active row."
+    },
+    "button-sensitivity": {
+      "brief": "Whether the dropdown button is sensitive when the model is empty.",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 714,
+      "md": "Whether the dropdown button is sensitive when\nthe model is empty."
+    },
+    "child": {
+      "brief": "The child widget.",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 787,
+      "md": "The child widget."
+    },
+    "entry-text-column": {
+      "brief": "The model column to associate with strings from the entry.",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 738,
+      "md": "The model column to associate with strings from the entry.\n\nThis is property only relevant if the combo was created with\n[`ComboBox:has-entry`](xref:gtk:Gtk.ComboBox#property:has-entry) is `TRUE`."
+    },
+    "has-entry": {
+      "brief": "Whether the combo box has an entry.",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 727,
+      "md": "Whether the combo box has an entry."
+    },
+    "has-frame": {
+      "brief": "The `has-frame` property controls whether a frame is drawn around the entry.",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 688,
+      "md": "The `has-frame` property controls whether a frame is drawn around the entry."
+    },
+    "id-column": {
+      "brief": "The model column that provides string IDs for the values in the model, if != -1.",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 752,
+      "md": "The model column that provides string IDs for the values\nin the model, if != -1."
+    },
+    "model": {
+      "brief": "The model from which the combo box takes its values.",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 658,
+      "md": "The model from which the combo box takes its values."
+    },
+    "popup-fixed-width": {
+      "brief": "Whether the popup's width should be a fixed width matching the allocated width of the combo box.",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 775,
+      "md": "Whether the popup's width should be a fixed width matching the\nallocated width of the combo box."
+    },
+    "popup-shown": {
+      "brief": "Whether the combo boxes dropdown is popped up.",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 699,
+      "md": "Whether the combo boxes dropdown is popped up.\n\nNote that this property is mainly useful, because\nit allows you to connect to notify::popup-shown."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "activate": {
+      "brief": "Emitted to when the combo box is activated.",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 431,
+      "md": "Emitted to when the combo box is activated.\n\nThe `::activate` signal on `GtkComboBox` is an action signal and\nemitting it causes the combo box to pop up its dropdown.",
+      "since": "4.6"
+    },
+    "changed": {
+      "brief": "Emitted when the active item is changed.",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 453,
+      "md": "Emitted when the active item is changed.\n\nThe can be due to the user selecting a different item from the list,\nor due to a call to [`ComboBox.set_active_iter()`](xref:gtk:Gtk.ComboBox#method:set_active_iter). It will\nalso be emitted while typing into the entry of a combo box with an entry."
+    },
+    "format-entry-text": {
+      "brief": "Emitted to allow changing how the text in a combo box's entry is displayed.",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 530,
+      "md": "Emitted to allow changing how the text in a combo box's entry is displayed.\n\nSee [`ComboBox:has-entry`](xref:gtk:Gtk.ComboBox#property:has-entry).\n\nConnect a signal handler which returns an allocated string representing\n`path`. That string will then be used to set the text in the combo box's\nentry. The default signal handler uses the text from the\n[`ComboBox:entry-text-column`](xref:gtk:Gtk.ComboBox#property:entry-text-column) model column.\n\nHere's an example signal handler which fetches data from the model and\ndisplays it in the entry.\n```c\nstatic char *\nformat_entry_text_callback (GtkComboBox *combo,\n                            const char *path,\n                            gpointer     user_data)\n{\n  GtkTreeIter iter;\n  GtkTreeModel model;\n  double       value;\n\n  model = gtk_combo_box_get_model (combo);\n\n  gtk_tree_model_get_iter_from_string (model, &iter, path);\n  gtk_tree_model_get (model, &iter,\n                      THE_DOUBLE_VALUE_COLUMN, &value,\n                      -1);\n\n  return g_strdup_printf (\"%g\", value);\n}\n```"
+    },
+    "move-active": {
+      "brief": "Emitted to move the active selection.",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 472,
+      "md": "Emitted to move the active selection.\n\nThis is an [keybinding signal](class.SignalAction.html)."
+    },
+    "popdown": {
+      "brief": "Emitted to popdown the combo box list.",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 509,
+      "md": "Emitted to popdown the combo box list.\n\nThis is an [keybinding signal](class.SignalAction.html).\n\nThe default bindings for this signal are Alt+Up and Escape."
+    },
+    "popup": {
+      "brief": "Emitted to popup the combo box list.",
+      "file": "gtk/deprecated/gtkcombobox.c",
+      "line": 491,
+      "md": "Emitted to popup the combo box list.\n\nThis is an [keybinding signal](class.SignalAction.html).\n\nThe default binding for this signal is Alt+Down."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "changed": {
+      "brief": "Signal is emitted when the active item is changed.",
+      "file": "gtk/deprecated/gtkcombobox.h",
+      "line": 48,
+      "md": "Signal is emitted when the active item is changed."
+    },
+    "format_entry_text": {
+      "brief": "Signal which allows you to change how the text displayed in a combo box’s entry is displayed.",
+      "file": "gtk/deprecated/gtkcombobox.h",
+      "line": 49,
+      "md": "Signal which allows you to change how the text\n   displayed in a combo box’s entry is displayed."
+    }
+  }
+}

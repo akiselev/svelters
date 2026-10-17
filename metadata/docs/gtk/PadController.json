@@ -1,0 +1,57 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkPadController` that will associate events from `pad` to actions.",
+      "file": "gtk/gtkpadcontroller.c",
+      "line": 410,
+      "md": "Creates a new `GtkPadController` that will associate events from `pad` to\nactions.\n\nA `NULL` pad may be provided so the controller manages all pad devices\ngenerically, it is discouraged to mix `GtkPadController` objects with\n`NULL` and non-`NULL` `pad` argument on the same toplevel window, as execution\norder is not guaranteed.\n\nThe `GtkPadController` is created with no mapped actions. In order to\nmap pad events to actions, use [`PadController.set_action_entries()`](xref:gtk:Gtk.PadController#method:set_action_entries)\nor [`PadController.set_action()`](xref:gtk:Gtk.PadController#method:set_action).\n\nBe aware that pad events will only be delivered to `GtkWindow`s, so adding\na pad controller to any other type of widget will not have an effect."
+    }
+  },
+  "doc": {
+    "brief": "Handles input from the pads found in drawing tablets.",
+    "file": "gtk/gtkpadcontroller.c",
+    "line": 20,
+    "md": "Handles input from the pads found in drawing tablets.\n\nPads are the collection of buttons and tactile sensors often found around\nthe stylus-sensitive area.\n\nThese buttons and sensors have no implicit meaning, and by default they\nperform no action. `GtkPadController` is provided to map those to\n[`Action`](xref:gtk:Gio.Action) objects, thus letting the application give them a more\nsemantic meaning.\n\nButtons and sensors are not constrained to triggering a single action,\nsome %GDK_SOURCE_TABLET_PAD devices feature multiple \"modes\". All these\ninput elements have one current mode, which may determine the final action\nbeing triggered.\n\nPad devices often divide buttons and sensors into groups. All elements\nin a group share the same current mode, but different groups may have\ndifferent modes. See [`DevicePad.get_n_groups()`](xref:gtk:Gdk.DevicePad#method:get_n_groups) and\n[`DevicePad.get_group_n_modes()`](xref:gtk:Gdk.DevicePad#method:get_group_n_modes).\n\nEach of the actions that a given button/strip/ring performs for a given mode\nis defined by a [`PadActionEntry`](xref:gtk:Gtk.PadActionEntry). It contains an action name that\nwill be looked up in the given [`ActionGroup`](xref:gtk:Gio.ActionGroup) and activated whenever\nthe specified input element and mode are triggered.\n\nA simple example of `GtkPadController` usage: Assigning button 1 in all\nmodes and pad devices to an \"invert-selection\" action:\n\n```c\nGtkPadActionEntry *pad_actions[] = {\n  { GTK_PAD_ACTION_BUTTON, 1, -1, \"Invert selection\", \"pad-actions.invert-selection\" },\n  …\n};\n\n…\naction_group = g_simple_action_group_new ();\naction = g_simple_action_new (\"pad-actions.invert-selection\", NULL);\ng_signal_connect (action, \"activate\", on_invert_selection_activated, NULL);\ng_action_map_add_action (G_ACTION_MAP (action_group), action);\n…\npad_controller = gtk_pad_controller_new (action_group, NULL);\n```\n\nThe actions belonging to rings/strips/dials will be activated with a parameter\nof type %G_VARIANT_TYPE_DOUBLE bearing the value of the given axis, it\nis required that those are made stateful and accepting this `GVariantType`.\nFor rings the value is the angle of the ring position in degrees with 0\nfacing up. For strips the value is the absolute position on the strip, normalized\nto the [0.0, 1.0] range.\nFor dials the value is the relative movement of the dial, normalized so that the\nvalue 120 represents one logical scroll wheel detent in the positive direction.\nDevices that support high-resolution scrolling may send events with fractions of\n120 to signify a smaller motion."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:PadController",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "set_action": {
+      "brief": "Adds an individual action to `controller`.",
+      "file": "gtk/gtkpadcontroller.c",
+      "line": 513,
+      "md": "Adds an individual action to `controller`.\n\nThis action will only be activated if the given button/ring/strip number\nin `index` is interacted while the current mode is `mode`. -1 may be used\nfor simple cases, so the action is triggered on all modes.\n\nThe given `label` should be considered user-visible, so internationalization\nrules apply. Some windowing systems may be able to use those for user\nfeedback."
+    },
+    "set_action_entries": {
+      "brief": "A convenience function to add a group of action entries on `controller`.",
+      "file": "gtk/gtkpadcontroller.c",
+      "line": 488,
+      "md": "A convenience function to add a group of action entries on\n`controller`.\n\nSee [`PadActionEntry`](xref:gtk:Gtk.PadActionEntry) and [`PadController.set_action()`](xref:gtk:Gtk.PadController#method:set_action)."
+    }
+  },
+  "properties": {
+    "action-group": {
+      "brief": "The action group of the controller.",
+      "file": "gtk/gtkpadcontroller.c",
+      "line": 382,
+      "md": "The action group of the controller."
+    },
+    "pad": {
+      "brief": "The pad of the controller.",
+      "file": "gtk/gtkpadcontroller.c",
+      "line": 391,
+      "md": "The pad of the controller."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -1,0 +1,211 @@
+{
+  "doc": {
+    "brief": "The QGraphicsGridLayout class provides a grid layout for managing widgets in Graphics View.",
+    "index_brief": "Grid layout for managing widgets in Graphics View",
+    "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsGridLayout",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QGraphicsGridLayout(QGraphicsLayoutItem *parent)": {
+      "brief": "Constructs a QGraphicsGridLayout instance. *parent* is passed to [QGraphicsLayout](xref:qt:QGraphicsLayout)'s constructor.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#QGraphicsGridLayout"
+    },
+    "QGraphicsLayoutItem * itemAt(int index) const override": {
+      "brief": "Reimplements: [QGraphicsLayout::itemAt](xref:qt:QGraphicsLayout)(int i) const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#itemAt"
+    },
+    "QGraphicsLayoutItem * itemAt(int row, int column) const": {
+      "brief": "Returns a pointer to the layout item at (*row*, *column*).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#itemAt-1"
+    },
+    "QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint) const override": {
+      "brief": "Reimplements: [QGraphicsLayoutItem::sizeHint](xref:qt:QGraphicsLayoutItem)(Qt::SizeHint which, const QSizeF &constraint) const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#sizeHint"
+    },
+    "Qt::Alignment alignment(QGraphicsLayoutItem *item) const": {
+      "brief": "Returns the alignment for *item*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#alignment"
+    },
+    "Qt::Alignment columnAlignment(int column) const": {
+      "brief": "Returns the alignment for *column*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#columnAlignment"
+    },
+    "Qt::Alignment rowAlignment(int row) const": {
+      "brief": "Returns the alignment of *row*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#rowAlignment"
+    },
+    "int columnCount() const": {
+      "brief": "Returns the number of columns in the grid layout.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#columnCount"
+    },
+    "int columnStretchFactor(int column) const": {
+      "brief": "Returns the stretch factor for *column*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#columnStretchFactor"
+    },
+    "int count() const override": {
+      "brief": "Reimplements: [QGraphicsLayout::count](xref:qt:QGraphicsLayout)() const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#count"
+    },
+    "int rowCount() const": {
+      "brief": "Returns the number of rows in the grid layout.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#rowCount"
+    },
+    "int rowStretchFactor(int row) const": {
+      "brief": "Returns the stretch factor for *row*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#rowStretchFactor"
+    },
+    "qreal columnMaximumWidth(int column) const": {
+      "brief": "Returns the maximum width for *column*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#columnMaximumWidth"
+    },
+    "qreal columnMinimumWidth(int column) const": {
+      "brief": "Returns the minimum width for *column*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#columnMinimumWidth"
+    },
+    "qreal columnPreferredWidth(int column) const": {
+      "brief": "Returns the preferred width for *column*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#columnPreferredWidth"
+    },
+    "qreal columnSpacing(int column) const": {
+      "brief": "Returns the column spacing for *column*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#columnSpacing"
+    },
+    "qreal horizontalSpacing() const": {
+      "brief": "Returns the default horizontal spacing for the grid layout.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#horizontalSpacing"
+    },
+    "qreal rowMaximumHeight(int row) const": {
+      "brief": "Returns the maximum height for row, *row*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#rowMaximumHeight"
+    },
+    "qreal rowMinimumHeight(int row) const": {
+      "brief": "Returns the minimum height for row, *row*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#rowMinimumHeight"
+    },
+    "qreal rowPreferredHeight(int row) const": {
+      "brief": "Returns the preferred height for row, *row*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#rowPreferredHeight"
+    },
+    "qreal rowSpacing(int row) const": {
+      "brief": "Returns the row spacing for *row*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#rowSpacing"
+    },
+    "qreal verticalSpacing() const": {
+      "brief": "Returns the default vertical spacing for the grid layout.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#verticalSpacing"
+    },
+    "void addItem(QGraphicsLayoutItem *item, int row, int column, Qt::Alignment alignment)": {
+      "brief": "Adds *item* to the grid on *row* and *column*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#addItem"
+    },
+    "void addItem(QGraphicsLayoutItem *item, int row, int column, int rowSpan, int columnSpan, Qt::Alignment alignment)": {
+      "brief": "Adds *item* to the grid on *row* and *column*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#addItem-1"
+    },
+    "void invalidate() override": {
+      "brief": "Reimplements: [QGraphicsLayout::invalidate](xref:qt:QGraphicsLayout)().",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#invalidate"
+    },
+    "void removeAt(int index) override": {
+      "brief": "Reimplements: [QGraphicsLayout::removeAt](xref:qt:QGraphicsLayout)(int index).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#removeAt"
+    },
+    "void removeItem(QGraphicsLayoutItem *item)": {
+      "brief": "Removes the layout item *item* without destroying it.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#removeItem"
+    },
+    "void setAlignment(QGraphicsLayoutItem *item, Qt::Alignment alignment)": {
+      "brief": "Sets the alignment for *item* to *alignment*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#setAlignment"
+    },
+    "void setColumnAlignment(int column, Qt::Alignment alignment)": {
+      "brief": "Sets the alignment for *column* to *alignment*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#setColumnAlignment"
+    },
+    "void setColumnFixedWidth(int column, qreal width)": {
+      "brief": "Sets the fixed width of *column* to *width*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#setColumnFixedWidth"
+    },
+    "void setColumnMaximumWidth(int column, qreal width)": {
+      "brief": "Sets the maximum width of *column* to *width*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#setColumnMaximumWidth"
+    },
+    "void setColumnMinimumWidth(int column, qreal width)": {
+      "brief": "Sets the minimum width for *column* to *width*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#setColumnMinimumWidth"
+    },
+    "void setColumnPreferredWidth(int column, qreal width)": {
+      "brief": "Sets the preferred width for *column* to *width*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#setColumnPreferredWidth"
+    },
+    "void setColumnSpacing(int column, qreal spacing)": {
+      "brief": "Sets the spacing for *column* to *spacing*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#setColumnSpacing"
+    },
+    "void setColumnStretchFactor(int column, int stretch)": {
+      "brief": "Sets the stretch factor for *column* to *stretch*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#setColumnStretchFactor"
+    },
+    "void setGeometry(const QRectF &rect) override": {
+      "brief": "Reimplements: [QGraphicsLayoutItem::setGeometry](xref:qt:QGraphicsLayoutItem)(const QRectF &rect).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#setGeometry"
+    },
+    "void setHorizontalSpacing(qreal spacing)": {
+      "brief": "Sets the default horizontal spacing for the grid layout to *spacing*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#setHorizontalSpacing"
+    },
+    "void setRowAlignment(int row, Qt::Alignment alignment)": {
+      "brief": "Sets the alignment of *row* to *alignment*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#setRowAlignment"
+    },
+    "void setRowFixedHeight(int row, qreal height)": {
+      "brief": "Sets the fixed height for row, *row*, to *height*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#setRowFixedHeight"
+    },
+    "void setRowMaximumHeight(int row, qreal height)": {
+      "brief": "Sets the maximum height for row, *row*, to *height*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#setRowMaximumHeight"
+    },
+    "void setRowMinimumHeight(int row, qreal height)": {
+      "brief": "Sets the minimum height for row, *row*, to *height*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#setRowMinimumHeight"
+    },
+    "void setRowPreferredHeight(int row, qreal height)": {
+      "brief": "Sets the preferred height for row, *row*, to *height*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#setRowPreferredHeight"
+    },
+    "void setRowSpacing(int row, qreal spacing)": {
+      "brief": "Sets the spacing for *row* to *spacing*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#setRowSpacing"
+    },
+    "void setRowStretchFactor(int row, int stretch)": {
+      "brief": "Sets the stretch factor for *row* to *stretch*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#setRowStretchFactor"
+    },
+    "void setSpacing(qreal spacing)": {
+      "brief": "Sets the grid layout's default spacing, both vertical and horizontal, to *spacing*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#setSpacing"
+    },
+    "void setVerticalSpacing(qreal spacing)": {
+      "brief": "Sets the default vertical spacing for the grid layout to *spacing*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsgridlayout.html#setVerticalSpacing"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

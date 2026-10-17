@@ -1,0 +1,45 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Returns a newly created `GtkGesture` that recognizes 2-touch rotation gestures.",
+      "file": "gtk/gtkgesturerotate.c",
+      "line": 256,
+      "md": "Returns a newly created `GtkGesture` that recognizes 2-touch\nrotation gestures."
+    }
+  },
+  "doc": {
+    "brief": "Recognizes 2-finger rotation gestures.",
+    "file": "gtk/gtkgesturerotate.c",
+    "line": 21,
+    "md": "Recognizes 2-finger rotation gestures.\n\nWhenever the angle between both handled sequences changes, the\n[`GestureRotate::angle-changed`](xref:gtk:Gtk.GestureRotate#event:angle-changed) signal is emitted."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:GestureRotate",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_angle_delta": {
+      "brief": "Gets the angle delta in radians.",
+      "file": "gtk/gtkgesturerotate.c",
+      "line": 271,
+      "md": "Gets the angle delta in radians.\n\nIf `gesture` is active, this function returns the angle difference\nin radians since the gesture was first recognized. If `gesture` is\nnot active, 0 is returned."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "angle-changed": {
+      "brief": "Emitted when the angle between both tracked points changes.",
+      "file": "gtk/gtkgesturerotate.c",
+      "line": 235,
+      "md": "Emitted when the angle between both tracked points changes."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

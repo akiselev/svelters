@@ -1,0 +1,116 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Determines which point or edge of a window is meant to remain fixed when a window changes size.",
+    "file": "gtk/gtkwindow.h",
+    "line": 268,
+    "md": "Determines which point or edge of a window is meant to remain fixed\nwhen a window changes size.",
+    "since": "4.20"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:WindowGravity",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "bottom": {
+      "brief": "the bottom edge",
+      "file": "gtk/gtkwindow.h",
+      "line": 277,
+      "md": "the bottom edge"
+    },
+    "bottom_end": {
+      "brief": "The bottom right or top left corner, depending on the text direction",
+      "file": "gtk/gtkwindow.h",
+      "line": 289,
+      "md": "The bottom right or top left corner,\n  depending on the text direction"
+    },
+    "bottom_left": {
+      "brief": "The bottom left corner",
+      "file": "gtk/gtkwindow.h",
+      "line": 276,
+      "md": "The bottom left corner"
+    },
+    "bottom_right": {
+      "brief": "The bottom right corner",
+      "file": "gtk/gtkwindow.h",
+      "line": 278,
+      "md": "The bottom right corner"
+    },
+    "bottom_start": {
+      "brief": "The bottom left or top right corner, depending on the text direction",
+      "file": "gtk/gtkwindow.h",
+      "line": 287,
+      "md": "The bottom left or top right corner,\n  depending on the text direction"
+    },
+    "center": {
+      "brief": "The center pointer",
+      "file": "gtk/gtkwindow.h",
+      "line": 274,
+      "md": "The center pointer"
+    },
+    "end": {
+      "brief": "The right or left edge, depending on the text direction",
+      "file": "gtk/gtkwindow.h",
+      "line": 285,
+      "md": "The right or left edge,\n  depending on the text direction"
+    },
+    "left": {
+      "brief": "The left edge",
+      "file": "gtk/gtkwindow.h",
+      "line": 273,
+      "md": "The left edge"
+    },
+    "right": {
+      "brief": "The right edge",
+      "file": "gtk/gtkwindow.h",
+      "line": 275,
+      "md": "The right edge"
+    },
+    "start": {
+      "brief": "The left or right edge, depending on the text direction",
+      "file": "gtk/gtkwindow.h",
+      "line": 283,
+      "md": "The left or right edge,\n  depending on the text direction"
+    },
+    "top": {
+      "brief": "The top edge",
+      "file": "gtk/gtkwindow.h",
+      "line": 271,
+      "md": "The top edge"
+    },
+    "top_end": {
+      "brief": "The top right or top left corner, depending on the text direction",
+      "file": "gtk/gtkwindow.h",
+      "line": 281,
+      "md": "The top right or top left corner,\n  depending on the text direction"
+    },
+    "top_left": {
+      "brief": "The top left corner",
+      "file": "gtk/gtkwindow.h",
+      "line": 270,
+      "md": "The top left corner"
+    },
+    "top_right": {
+      "brief": "The top right corner",
+      "file": "gtk/gtkwindow.h",
+      "line": 272,
+      "md": "The top right corner"
+    },
+    "top_start": {
+      "brief": "The top left or top right corner, depending on the text direction",
+      "file": "gtk/gtkwindow.h",
+      "line": 279,
+      "md": "The top left or top right corner,\n  depending on the text direction"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

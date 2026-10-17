@@ -1,0 +1,81 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkAppChooserDialog` for the provided `GFile`.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkappchooserdialog.c",
+      "line": 677,
+      "md": "Creates a new `GtkAppChooserDialog` for the provided `GFile`.\n\nThe dialog will show applications that can open the file."
+    },
+    "new_for_content_type": {
+      "brief": "Creates a new `GtkAppChooserDialog` for the provided content type.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkappchooserdialog.c",
+      "line": 709,
+      "md": "Creates a new `GtkAppChooserDialog` for the provided content type.\n\nThe dialog will show applications that can open the content type."
+    }
+  },
+  "doc": {
+    "brief": "`GtkAppChooserDialog` shows a `GtkAppChooserWidget` inside a `GtkDialog`.",
+    "deprecated": "4.10",
+    "deprecated_md": "The application selection widgets should be\n  implemented according to the design of each platform and/or\n  application requiring them.",
+    "file": "gtk/deprecated/gtkappchooserdialog.c",
+    "line": 25,
+    "md": "`GtkAppChooserDialog` shows a `GtkAppChooserWidget` inside a `GtkDialog`.\n\nNote that `GtkAppChooserDialog` does not have any interesting methods\nof its own. Instead, you should get the embedded `GtkAppChooserWidget`\nusing [`AppChooserDialog.get_widget()`](xref:gtk:Gtk.AppChooserDialog#method:get_widget) and call its methods if\nthe generic [`AppChooser`](xref:gtk:Gtk.AppChooser) interface is not sufficient for\nyour needs.\n\nTo set the heading that is shown above the `GtkAppChooserWidget`,\nuse [`AppChooserDialog.set_heading()`](xref:gtk:Gtk.AppChooserDialog#method:set_heading).\n\n## CSS nodes\n\n`GtkAppChooserDialog` has a single CSS node with the name `window` and style\nclass `.appchooser`."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:AppChooserDialog",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_heading": {
+      "brief": "Returns the text to display at the top of the dialog.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkappchooserdialog.c",
+      "line": 795,
+      "md": "Returns the text to display at the top of the dialog."
+    },
+    "get_widget": {
+      "brief": "Returns the `GtkAppChooserWidget` of this dialog.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkappchooserdialog.c",
+      "line": 741,
+      "md": "Returns the `GtkAppChooserWidget` of this dialog."
+    },
+    "set_heading": {
+      "brief": "Sets the text to display at the top of the dialog.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkappchooserdialog.c",
+      "line": 759,
+      "md": "Sets the text to display at the top of the dialog.\n\nIf the heading is not set, the dialog displays a default text."
+    }
+  },
+  "properties": {
+    "gfile": {
+      "brief": "The GFile used by the `GtkAppChooserDialog`.",
+      "file": "gtk/deprecated/gtkappchooserdialog.c",
+      "line": 607,
+      "md": "The GFile used by the `GtkAppChooserDialog`.\n\nThe dialog's `GtkAppChooserWidget` content type will\nbe guessed from the file, if present."
+    },
+    "heading": {
+      "brief": "The text to show at the top of the dialog.",
+      "file": "gtk/deprecated/gtkappchooserdialog.c",
+      "line": 621,
+      "md": "The text to show at the top of the dialog.\n\nThe string may contain Pango markup."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

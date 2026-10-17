@@ -1,0 +1,112 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkColorDialog` object.",
+      "file": "gtk/gtkcolordialog.c",
+      "line": 199,
+      "md": "Creates a new `GtkColorDialog` object.",
+      "since": "4.10"
+    }
+  },
+  "doc": {
+    "brief": "Asynchronous API to present a color chooser dialog.",
+    "file": "gtk/gtkcolordialog.c",
+    "line": 30,
+    "md": "Asynchronous API to present a color chooser dialog.\n\n`GtkColorDialog` collects the arguments that are needed to present\nthe dialog to the user, such as a title for the dialog and whether\nit should be modal.\n\nThe dialog is shown with the [`ColorDialog.choose_rgba()`](xref:gtk:Gtk.ColorDialog#method:choose_rgba)\nfunction.\n\nSee [`ColorDialogButton`](xref:gtk:Gtk.ColorDialogButton) for a convenient control\nthat uses `GtkColorDialog` and presents the results.",
+    "since": "4.10"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ColorDialog",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "choose_rgba": {
+      "brief": "Presents a color chooser dialog to the user.",
+      "file": "gtk/gtkcolordialog.c",
+      "line": 425,
+      "md": "Presents a color chooser dialog to the user.",
+      "since": "4.10"
+    },
+    "choose_rgba_finish": {
+      "brief": "Finishes the [`ColorDialog.choose_rgba()`](xref:gtk:Gtk.ColorDialog#method:choose_rgba) call",
+      "file": "gtk/gtkcolordialog.c",
+      "line": 466,
+      "md": "Finishes the [`ColorDialog.choose_rgba()`](xref:gtk:Gtk.ColorDialog#method:choose_rgba) call\n\nNote that this function returns a [`DISMISSED`](xref:gtk:Gtk.DialogError.DISMISSED)\nerror if the user cancels the dialog.",
+      "since": "4.10"
+    },
+    "get_modal": {
+      "brief": "Returns whether the color chooser dialog blocks interaction with the parent window while it is presented.",
+      "file": "gtk/gtkcolordialog.c",
+      "line": 265,
+      "md": "Returns whether the color chooser dialog\nblocks interaction with the parent window\nwhile it is presented.",
+      "since": "4.10"
+    },
+    "get_title": {
+      "brief": "Returns the title that will be shown on the color chooser dialog.",
+      "file": "gtk/gtkcolordialog.c",
+      "line": 217,
+      "md": "Returns the title that will be shown on the\ncolor chooser dialog.",
+      "since": "4.10"
+    },
+    "get_with_alpha": {
+      "brief": "Returns whether colors may have alpha.",
+      "file": "gtk/gtkcolordialog.c",
+      "line": 310,
+      "md": "Returns whether colors may have alpha.",
+      "since": "4.10"
+    },
+    "set_modal": {
+      "brief": "Sets whether the color chooser dialog blocks interaction with the parent window while it is presented.",
+      "file": "gtk/gtkcolordialog.c",
+      "line": 285,
+      "md": "Sets whether the color chooser dialog\nblocks interaction with the parent window\nwhile it is presented.",
+      "since": "4.10"
+    },
+    "set_title": {
+      "brief": "Sets the title that will be shown on the color chooser dialog.",
+      "file": "gtk/gtkcolordialog.c",
+      "line": 236,
+      "md": "Sets the title that will be shown on the\ncolor chooser dialog.",
+      "since": "4.10"
+    },
+    "set_with_alpha": {
+      "brief": "Sets whether colors may have alpha.",
+      "file": "gtk/gtkcolordialog.c",
+      "line": 328,
+      "md": "Sets whether colors may have alpha.",
+      "since": "4.10"
+    }
+  },
+  "properties": {
+    "modal": {
+      "brief": "Whether the color chooser dialog is modal.",
+      "file": "gtk/gtkcolordialog.c",
+      "line": 166,
+      "md": "Whether the color chooser dialog is modal.",
+      "since": "4.10"
+    },
+    "title": {
+      "brief": "A title that may be shown on the color chooser dialog.",
+      "file": "gtk/gtkcolordialog.c",
+      "line": 154,
+      "md": "A title that may be shown on the color chooser dialog.",
+      "since": "4.10"
+    },
+    "with-alpha": {
+      "brief": "Whether colors may have alpha (translucency).",
+      "file": "gtk/gtkcolordialog.c",
+      "line": 178,
+      "md": "Whether colors may have alpha (translucency).\n\nWhen with-alpha is false, the color that is selected\nwill be forced to have alpha == 1.",
+      "since": "4.10"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

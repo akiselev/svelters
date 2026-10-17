@@ -1,0 +1,88 @@
+{
+  "doc": {
+    "brief": "The QGraphicsRotation class provides a rotation transformation around a given axis.",
+    "index_brief": "Rotation transformation around a given axis",
+    "url": "https://doc.qt.io/qt-6/qgraphicsrotation.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsRotation",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QGraphicsRotation(QObject *parent)": {
+      "brief": "Constructs a new QGraphicsRotation with the given *parent*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsrotation.html#QGraphicsRotation"
+    },
+    "QVector3D axis() const": {
+      "brief": "This property holds a rotation axis, specified by a vector in 3D space.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsrotation.html#axis-prop"
+    },
+    "QVector3D origin() const": {
+      "brief": "This property holds the origin of the rotation in 3D space.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsrotation.html#origin-prop"
+    },
+    "qreal angle() const": {
+      "brief": "This property holds the angle for clockwise rotation, in degrees.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsrotation.html#angle-prop"
+    },
+    "void angleChanged()": {
+      "brief": "This signal is emitted whenever the angle has changed.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsrotation.html#angleChanged"
+    },
+    "void applyTo(QMatrix4x4 *matrix) const override": {
+      "brief": "Reimplements: [QGraphicsTransform::applyTo](xref:qt:QGraphicsTransform)(QMatrix4x4 *matrix) const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsrotation.html#applyTo"
+    },
+    "void axisChanged()": {
+      "brief": "This signal is emitted whenever the axis of the object changes.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsrotation.html#axisChanged"
+    },
+    "void originChanged()": {
+      "brief": "This signal is emitted whenever the origin has changed.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsrotation.html#originChanged"
+    },
+    "void setAngle(qreal)": {
+      "brief": "This property holds the angle for clockwise rotation, in degrees.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsrotation.html#angle-prop"
+    },
+    "void setAxis(Qt::Axis axis)": {
+      "brief": "Convenience function to set the axis to *axis*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsrotation.html#setAxis"
+    },
+    "void setAxis(const QVector3D &axis)": {
+      "brief": "This property holds a rotation axis, specified by a vector in 3D space.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsrotation.html#axis-prop"
+    },
+    "void setOrigin(const QVector3D &point)": {
+      "brief": "This property holds the origin of the rotation in 3D space.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsrotation.html#origin-prop"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "angle": {
+      "brief": "The angle for clockwise rotation, in degrees",
+      "url": "https://doc.qt.io/qt-6/qgraphicsrotation.html#angle-prop"
+    },
+    "axis": {
+      "brief": "Rotation axis, specified by a vector in 3D space",
+      "url": "https://doc.qt.io/qt-6/qgraphicsrotation.html#axis-prop"
+    },
+    "origin": {
+      "brief": "The origin of the rotation in 3D space",
+      "url": "https://doc.qt.io/qt-6/qgraphicsrotation.html#origin-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

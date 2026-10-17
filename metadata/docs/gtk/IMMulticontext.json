@@ -1,0 +1,44 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkIMMulticontext`.",
+      "file": "gtk/gtkimmulticontext.c",
+      "line": 151,
+      "md": "Creates a new `GtkIMMulticontext`."
+    }
+  },
+  "doc": {
+    "brief": "Supports switching between multiple input methods.",
+    "file": "gtk/gtkimmulticontext.c",
+    "line": 31,
+    "md": "Supports switching between multiple input methods.\n\nText widgets such as `GtkText` or `GtkTextView` use a `GtkIMMultiContext`\nto implement their `im-module` property for switching between different\ninput methods."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:IMMulticontext",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_context_id": {
+      "brief": "Gets the id of the currently active delegate of the `context`.",
+      "file": "gtk/gtkimmulticontext.c",
+      "line": 585,
+      "md": "Gets the id of the currently active delegate of the `context`."
+    },
+    "set_context_id": {
+      "brief": "Sets the context id for `context`.",
+      "file": "gtk/gtkimmulticontext.c",
+      "line": 606,
+      "md": "Sets the context id for `context`.\n\nThis causes the currently active delegate of `context` to be\nreplaced by the delegate corresponding to the new context id.\n\nSetting this to a non-`NULL` value overrides the system-wide\nIM module setting. See the [`Settings:gtk-im-module`](xref:gtk:Gtk.Settings#property:gtk-im-module)\nproperty."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

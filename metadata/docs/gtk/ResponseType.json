@@ -1,0 +1,93 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Predefined values for use as response ids in gtk_dialog_add_button().",
+    "deprecated": "4.20",
+    "deprecated_md": "There is no replacement.",
+    "file": "gtk/deprecated/gtkdialog.h",
+    "line": 53,
+    "md": "Predefined values for use as response ids in gtk_dialog_add_button().\n\nAll predefined values are negative; GTK leaves values of 0 or greater for\napplication-defined response ids."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ResponseType",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "accept": {
+      "brief": "Generic response id, not used by GTK dialogs",
+      "file": "gtk/deprecated/gtkdialog.h",
+      "line": 58,
+      "md": "Generic response id, not used by GTK dialogs"
+    },
+    "apply": {
+      "brief": "Returned by Apply buttons in GTK dialogs",
+      "file": "gtk/deprecated/gtkdialog.h",
+      "line": 65,
+      "md": "Returned by Apply buttons in GTK dialogs"
+    },
+    "cancel": {
+      "brief": "Returned by Cancel buttons in GTK dialogs",
+      "file": "gtk/deprecated/gtkdialog.h",
+      "line": 61,
+      "md": "Returned by Cancel buttons in GTK dialogs"
+    },
+    "close": {
+      "brief": "Returned by Close buttons in GTK dialogs",
+      "file": "gtk/deprecated/gtkdialog.h",
+      "line": 62,
+      "md": "Returned by Close buttons in GTK dialogs"
+    },
+    "delete_event": {
+      "brief": "Returned if the dialog is deleted",
+      "file": "gtk/deprecated/gtkdialog.h",
+      "line": 59,
+      "md": "Returned if the dialog is deleted"
+    },
+    "help": {
+      "brief": "Returned by Help buttons in GTK dialogs",
+      "file": "gtk/deprecated/gtkdialog.h",
+      "line": 66,
+      "md": "Returned by Help buttons in GTK dialogs"
+    },
+    "no": {
+      "brief": "Returned by No buttons in GTK dialogs",
+      "file": "gtk/deprecated/gtkdialog.h",
+      "line": 64,
+      "md": "Returned by No buttons in GTK dialogs"
+    },
+    "none": {
+      "brief": "Returned if an action widget has no response id, or if the dialog gets programmatically hidden or destroyed",
+      "file": "gtk/deprecated/gtkdialog.h",
+      "line": 55,
+      "md": "Returned if an action widget has no response id,\n  or if the dialog gets programmatically hidden or destroyed"
+    },
+    "ok": {
+      "brief": "Returned by OK buttons in GTK dialogs",
+      "file": "gtk/deprecated/gtkdialog.h",
+      "line": 60,
+      "md": "Returned by OK buttons in GTK dialogs"
+    },
+    "reject": {
+      "brief": "Generic response id, not used by GTK dialogs",
+      "file": "gtk/deprecated/gtkdialog.h",
+      "line": 57,
+      "md": "Generic response id, not used by GTK dialogs"
+    },
+    "yes": {
+      "brief": "Returned by Yes buttons in GTK dialogs",
+      "file": "gtk/deprecated/gtkdialog.h",
+      "line": 63,
+      "md": "Returned by Yes buttons in GTK dialogs"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

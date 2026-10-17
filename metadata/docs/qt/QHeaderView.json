@@ -1,0 +1,490 @@
+{
+  "doc": {
+    "brief": "The QHeaderView class provides a header row or header column for item views.",
+    "index_brief": "Header row or header column for item views",
+    "url": "https://doc.qt.io/qt-6/qheaderview.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QHeaderView",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QByteArray saveState() const": {
+      "brief": "Saves the current state of this header view.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#saveState"
+    },
+    "QHeaderView(Qt::Orientation orientation, QWidget *parent)": {
+      "brief": "Creates a new generic header with the given *orientation* and *parent*.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#QHeaderView"
+    },
+    "QHeaderView::ResizeMode sectionResizeMode(int logicalIndex) const": {
+      "brief": "Returns the resize mode that applies to the section specified by the given *logicalIndex*.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#sectionResizeMode"
+    },
+    "QSize sectionSizeFromContents(int logicalIndex) const": {
+      "brief": "Returns the size of the contents of the section specified by the given *logicalIndex*.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#sectionSizeFromContents"
+    },
+    "QSize sizeHint() const override": {
+      "brief": "Reimplements: [QAbstractScrollArea::sizeHint](xref:qt:QAbstractScrollArea)() const.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#sizeHint"
+    },
+    "Qt::Alignment defaultAlignment() const": {
+      "brief": "This property holds the default alignment of the text in each header section",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#defaultAlignment-prop"
+    },
+    "Qt::Orientation orientation() const": {
+      "brief": "Returns the orientation of the header.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#orientation"
+    },
+    "Qt::SortOrder sortIndicatorOrder() const": {
+      "brief": "Returns the order for the sort indicator.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#sortIndicatorOrder"
+    },
+    "bool cascadingSectionResizes() const": {
+      "brief": "This property holds whether interactive resizing will be cascaded to the following sections once the section being resized by the user has reached its minimum size",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#cascadingSectionResizes-prop"
+    },
+    "bool event(QEvent *e) override": {
+      "brief": "Reimplements: [QAbstractItemView::event](xref:qt:QAbstractItemView)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#event"
+    },
+    "bool highlightSections() const": {
+      "brief": "This property holds whether the sections containing selected items are highlighted",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#highlightSections-prop"
+    },
+    "bool isFirstSectionMovable() const": {
+      "brief": "This property holds whether the first column can be moved by the user",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#firstSectionMovable-prop"
+    },
+    "bool isSectionHidden(int logicalIndex) const": {
+      "brief": "Returns `true` if the section specified by *logicalIndex* is explicitly hidden from the user; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#isSectionHidden"
+    },
+    "bool isSortIndicatorClearable() const": {
+      "brief": "This property holds whether the sort indicator can be cleared by clicking on a section multiple times",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#sortIndicatorClearable-prop"
+    },
+    "bool isSortIndicatorShown() const": {
+      "brief": "This property holds whether the sort indicator is shown",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#showSortIndicator-prop"
+    },
+    "bool restoreState(const QByteArray &state)": {
+      "brief": "Restores the *state* of this header view.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#restoreState"
+    },
+    "bool sectionsClickable() const": {
+      "brief": "Returns sectionsClickable.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#sectionsClickable"
+    },
+    "bool sectionsHidden() const": {
+      "brief": "Returns `true` if sections in the header has been hidden; otherwise returns false;",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#sectionsHidden"
+    },
+    "bool sectionsMovable() const": {
+      "brief": "Returns sectionsMovable.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#sectionsMovable"
+    },
+    "bool sectionsMoved() const": {
+      "brief": "Returns `true` if sections in the header has been moved; otherwise returns false;",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#sectionsMoved"
+    },
+    "bool stretchLastSection() const": {
+      "brief": "This property holds whether the last visible section in the header takes up all the available space",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#stretchLastSection-prop"
+    },
+    "bool viewportEvent(QEvent *e) override": {
+      "brief": "Reimplements: [QAbstractItemView::viewportEvent](xref:qt:QAbstractItemView)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#viewportEvent"
+    },
+    "int count() const": {
+      "brief": "Returns the number of sections in the header.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#count"
+    },
+    "int defaultSectionSize() const": {
+      "brief": "This property holds the default size of the header sections before resizing.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#defaultSectionSize-prop"
+    },
+    "int hiddenSectionCount() const": {
+      "brief": "Returns the number of sections in the header that has been hidden.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#hiddenSectionCount"
+    },
+    "int horizontalOffset() const override": {
+      "brief": "Reimplements: [QAbstractItemView::horizontalOffset](xref:qt:QAbstractItemView)() const.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#horizontalOffset"
+    },
+    "int length() const": {
+      "brief": "Returns the length along the orientation of the header.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#length"
+    },
+    "int logicalIndex(int visualIndex) const": {
+      "brief": "Returns the logicalIndex for the section at the given *visualIndex* position, or -1 if [visualIndex](xref:qt:QHeaderView) < 0 or [visualIndex](xref:qt:QHeaderView) >=...",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#logicalIndex"
+    },
+    "int logicalIndexAt(const QPoint &pos) const": {
+      "brief": "Returns the logical index of the section at the position given in *pos*.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#logicalIndexAt"
+    },
+    "int logicalIndexAt(int position) const": {
+      "brief": "Returns the section that covers the given *position* in the viewport.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#logicalIndexAt-1"
+    },
+    "int logicalIndexAt(int x, int y) const": {
+      "brief": "Returns the logical index of the section at the given coordinate.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#logicalIndexAt-2"
+    },
+    "int maximumSectionSize() const": {
+      "brief": "This property holds the maximum size of the header sections.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#maximumSectionSize-prop"
+    },
+    "int minimumSectionSize() const": {
+      "brief": "This property holds the minimum size of the header sections.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#minimumSectionSize-prop"
+    },
+    "int offset() const": {
+      "brief": "Returns the offset of the header: this is the header's left-most (or top-most for vertical headers) visible pixel.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#offset"
+    },
+    "int resizeContentsPrecision() const": {
+      "brief": "Returns how precise [QHeaderView](xref:qt:QHeaderView) will calculate on [ResizeToContents](xref:qt:QHeaderView).",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#resizeContentsPrecision"
+    },
+    "int sectionPosition(int logicalIndex) const": {
+      "brief": "Returns the section position of the given *logicalIndex*, or -1 if the section is hidden.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#sectionPosition"
+    },
+    "int sectionSize(int logicalIndex) const": {
+      "brief": "Returns the width (or height for vertical headers) of the given *logicalIndex*.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#sectionSize"
+    },
+    "int sectionSizeHint(int logicalIndex) const": {
+      "brief": "Returns a suitable size hint for the section specified by *logicalIndex*.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#sectionSizeHint"
+    },
+    "int sectionViewportPosition(int logicalIndex) const": {
+      "brief": "Returns the section viewport position of the given *logicalIndex*.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#sectionViewportPosition"
+    },
+    "int sortIndicatorSection() const": {
+      "brief": "Returns the logical index of the section that has a sort indicator.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#sortIndicatorSection"
+    },
+    "int stretchSectionCount() const": {
+      "brief": "Returns the number of sections that are set to resize mode stretch.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#stretchSectionCount"
+    },
+    "int verticalOffset() const override": {
+      "brief": "Reimplements: [QAbstractItemView::verticalOffset](xref:qt:QAbstractItemView)() const.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#verticalOffset"
+    },
+    "int visualIndex(int logicalIndex) const": {
+      "brief": "Returns the visual index position of the section specified by the given *logicalIndex*, or -1 otherwise.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#visualIndex"
+    },
+    "int visualIndexAt(int position) const": {
+      "brief": "Returns the visual index of the section that covers the given *position* in the viewport.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#visualIndexAt"
+    },
+    "void currentChanged(const QModelIndex &current, const QModelIndex &old) override": {
+      "brief": "Reimplements: [QAbstractItemView::currentChanged](xref:qt:QAbstractItemView)(const QModelIndex &current, const QModelIndex &previous).",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#currentChanged"
+    },
+    "void geometriesChanged()": {
+      "brief": "This signal is emitted when the header's geometries have changed.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#geometriesChanged"
+    },
+    "void headerDataChanged(Qt::Orientation orientation, int logicalFirst, int logicalLast)": {
+      "brief": "Updates the changed header sections with the given *orientation*, from *logicalFirst* to *logicalLast* inclusive.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#headerDataChanged"
+    },
+    "void hideSection(int logicalIndex)": {
+      "brief": "Hides the section specified by *logicalIndex*.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#hideSection"
+    },
+    "void initStyleOption(QStyleOptionHeader *option) const": {
+      "brief": "Initialize *option* with the values from this [QHeaderView](xref:qt:QHeaderView).",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#initStyleOption"
+    },
+    "void initStyleOptionForIndex(QStyleOptionHeader *option, int logicalIndex) const": {
+      "brief": "Initializes the style *option* from the specified *logicalIndex*.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#initStyleOptionForIndex"
+    },
+    "void mouseDoubleClickEvent(QMouseEvent *e) override": {
+      "brief": "Reimplements: [QAbstractItemView::mouseDoubleClickEvent](xref:qt:QAbstractItemView)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#mouseDoubleClickEvent"
+    },
+    "void mouseMoveEvent(QMouseEvent *e) override": {
+      "brief": "Reimplements: [QAbstractItemView::mouseMoveEvent](xref:qt:QAbstractItemView)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#mouseMoveEvent"
+    },
+    "void mousePressEvent(QMouseEvent *e) override": {
+      "brief": "Reimplements: [QAbstractItemView::mousePressEvent](xref:qt:QAbstractItemView)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#mousePressEvent"
+    },
+    "void mouseReleaseEvent(QMouseEvent *e) override": {
+      "brief": "Reimplements: [QAbstractItemView::mouseReleaseEvent](xref:qt:QAbstractItemView)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#mouseReleaseEvent"
+    },
+    "void moveSection(int from, int to)": {
+      "brief": "Moves the section at visual index *from* to occupy visual index *to*.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#moveSection"
+    },
+    "void paintEvent(QPaintEvent *e) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::paintEvent](xref:qt:QAbstractScrollArea)(QPaintEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#paintEvent"
+    },
+    "void paintSection(QPainter *painter, const QRect &rect, int logicalIndex) const": {
+      "brief": "Paints the section specified by the given *logicalIndex*, using the given *painter* and *rect*.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#paintSection"
+    },
+    "void reset() override": {
+      "brief": "Reimplements: [QAbstractItemView::reset](xref:qt:QAbstractItemView)().",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#reset"
+    },
+    "void resetDefaultSectionSize()": {
+      "brief": "This property holds the default size of the header sections before resizing.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#defaultSectionSize-prop"
+    },
+    "void resizeSection(int logicalIndex, int size)": {
+      "brief": "Resizes the section specified by *logicalIndex* to *size* measured in pixels.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#resizeSection"
+    },
+    "void resizeSections()": {
+      "brief": "Resizes the sections according to their size hints.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#resizeSections"
+    },
+    "void resizeSections(QHeaderView::ResizeMode mode)": {
+      "brief": "Resizes the sections according to the given *mode*, ignoring the current resize mode.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#resizeSections-1"
+    },
+    "void sectionClicked(int logicalIndex)": {
+      "brief": "This signal is emitted when a section is clicked.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#sectionClicked"
+    },
+    "void sectionCountChanged(int oldCount, int newCount)": {
+      "brief": "This signal is emitted when the number of sections changes, i.e., when sections are added or deleted.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#sectionCountChanged"
+    },
+    "void sectionDoubleClicked(int logicalIndex)": {
+      "brief": "This signal is emitted when a section is double-clicked.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#sectionDoubleClicked"
+    },
+    "void sectionEntered(int logicalIndex)": {
+      "brief": "This signal is emitted when the cursor moves over the section and the left mouse button is pressed.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#sectionEntered"
+    },
+    "void sectionHandleDoubleClicked(int logicalIndex)": {
+      "brief": "This signal is emitted when a section is double-clicked.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#sectionHandleDoubleClicked"
+    },
+    "void sectionMoved(int logicalIndex, int oldVisualIndex, int newVisualIndex)": {
+      "brief": "This signal is emitted when a section is moved.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#sectionMoved"
+    },
+    "void sectionPressed(int logicalIndex)": {
+      "brief": "This signal is emitted when a section is pressed.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#sectionPressed"
+    },
+    "void sectionResized(int logicalIndex, int oldSize, int newSize)": {
+      "brief": "This signal is emitted when a section is resized.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#sectionResized"
+    },
+    "void sectionsAboutToBeRemoved(const QModelIndex &parent, int logicalFirst, int logicalLast)": {
+      "brief": "This slot is called when sections are removed from the *parent*. *logicalFirst* and *logicalLast* signify where the sections were removed.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#sectionsAboutToBeRemoved"
+    },
+    "void sectionsInserted(const QModelIndex &parent, int logicalFirst, int logicalLast)": {
+      "brief": "This slot is called when sections are inserted into the *parent*. *logicalFirst* and *logicalLast* indices signify where the new sections were inserted.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#sectionsInserted"
+    },
+    "void setCascadingSectionResizes(bool enable)": {
+      "brief": "This property holds whether interactive resizing will be cascaded to the following sections once the section being resized by the user has reached its minimum size",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#cascadingSectionResizes-prop"
+    },
+    "void setDefaultAlignment(Qt::Alignment alignment)": {
+      "brief": "This property holds the default alignment of the text in each header section",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#defaultAlignment-prop"
+    },
+    "void setDefaultSectionSize(int size)": {
+      "brief": "This property holds the default size of the header sections before resizing.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#defaultSectionSize-prop"
+    },
+    "void setFirstSectionMovable(bool movable)": {
+      "brief": "This property holds whether the first column can be moved by the user",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#firstSectionMovable-prop"
+    },
+    "void setHighlightSections(bool highlight)": {
+      "brief": "This property holds whether the sections containing selected items are highlighted",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#highlightSections-prop"
+    },
+    "void setMaximumSectionSize(int size)": {
+      "brief": "This property holds the maximum size of the header sections.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#maximumSectionSize-prop"
+    },
+    "void setMinimumSectionSize(int size)": {
+      "brief": "This property holds the minimum size of the header sections.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#minimumSectionSize-prop"
+    },
+    "void setModel(QAbstractItemModel *model) override": {
+      "brief": "Reimplements: [QAbstractItemView::setModel](xref:qt:QAbstractItemView)(QAbstractItemModel *model).",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#setModel"
+    },
+    "void setOffset(int offset)": {
+      "brief": "Sets the header's offset to *offset*.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#setOffset"
+    },
+    "void setOffsetToLastSection()": {
+      "brief": "Sets the offset to make the last section visible.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#setOffsetToLastSection"
+    },
+    "void setOffsetToSectionPosition(int visualSectionNumber)": {
+      "brief": "Sets the offset to the start of the section at the given *visualSectionNumber*. *visualSectionNumber* is the actual visible section when hiddenSections are not considered.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#setOffsetToSectionPosition"
+    },
+    "void setResizeContentsPrecision(int precision)": {
+      "brief": "Sets how precise [QHeaderView](xref:qt:QHeaderView) should calculate the size when [ResizeToContents](xref:qt:QHeaderView) is used.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#setResizeContentsPrecision"
+    },
+    "void setSectionHidden(int logicalIndex, bool hide)": {
+      "brief": "If *hide* is true the section specified by *logicalIndex* is hidden; otherwise the section is shown.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#setSectionHidden"
+    },
+    "void setSectionResizeMode(QHeaderView::ResizeMode mode)": {
+      "brief": "Sets the constraints on how the header can be resized to those described by the given *mode*.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#setSectionResizeMode"
+    },
+    "void setSectionResizeMode(int logicalIndex, QHeaderView::ResizeMode mode)": {
+      "brief": "Sets the constraints on how the section specified by *logicalIndex* in the header can be resized to those described by the given *mode*.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#setSectionResizeMode-1"
+    },
+    "void setSectionsClickable(bool clickable)": {
+      "brief": "Set [sectionsClickable](xref:qt:QHeaderView) to *clickable*.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#setSectionsClickable"
+    },
+    "void setSectionsMovable(bool movable)": {
+      "brief": "Sets [sectionsMovable](xref:qt:QHeaderView) to *movable*.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#setSectionsMovable"
+    },
+    "void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags flags) override": {
+      "brief": "Reimplements: [QAbstractItemView::setSelection](xref:qt:QAbstractItemView)(const QRect &rect, QItemSelectionModel::SelectionFlags flags).",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#setSelection"
+    },
+    "void setSortIndicator(int logicalIndex, Qt::SortOrder order)": {
+      "brief": "Sets the sort indicator for the section specified by the given *logicalIndex* in the direction specified by *order*, and removes the sort indicator from any other section that was showing it.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#setSortIndicator"
+    },
+    "void setSortIndicatorClearable(bool clearable)": {
+      "brief": "This property holds whether the sort indicator can be cleared by clicking on a section multiple times",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#sortIndicatorClearable-prop"
+    },
+    "void setSortIndicatorShown(bool show)": {
+      "brief": "This property holds whether the sort indicator is shown",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#showSortIndicator-prop"
+    },
+    "void setStretchLastSection(bool stretch)": {
+      "brief": "This property holds whether the last visible section in the header takes up all the available space",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#stretchLastSection-prop"
+    },
+    "void setVisible(bool v) override": {
+      "brief": "Reimplements an access function for property: [QWidget::visible](xref:qt:QWidget).",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#setVisible"
+    },
+    "void showSection(int logicalIndex)": {
+      "brief": "Shows the section specified by *logicalIndex*.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#showSection"
+    },
+    "void sortIndicatorChanged(int logicalIndex, Qt::SortOrder order)": {
+      "brief": "This signal is emitted when the section containing the sort indicator or the order indicated is changed.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#sortIndicatorChanged"
+    },
+    "void sortIndicatorClearableChanged(bool clearable)": {
+      "brief": "This property holds whether the sort indicator can be cleared by clicking on a section multiple times",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#sortIndicatorClearable-prop"
+    },
+    "void swapSections(int first, int second)": {
+      "brief": "Swaps the section at visual index *first* with the section at visual index *second*.",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#swapSections"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "cascadingSectionResizes": {
+      "brief": "Whether interactive resizing will be cascaded to the following sections once the section being resized by the user has reached its minimum size",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#cascadingSectionResizes-prop"
+    },
+    "defaultAlignment": {
+      "brief": "The default alignment of the text in each header section",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#defaultAlignment-prop"
+    },
+    "defaultSectionSize": {
+      "brief": "The default size of the header sections before resizing",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#defaultSectionSize-prop"
+    },
+    "firstSectionMovable": {
+      "brief": "Whether the first column can be moved by the user",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#firstSectionMovable-prop"
+    },
+    "highlightSections": {
+      "brief": "Whether the sections containing selected items are highlighted",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#highlightSections-prop"
+    },
+    "maximumSectionSize": {
+      "brief": "The maximum size of the header sections",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#maximumSectionSize-prop"
+    },
+    "minimumSectionSize": {
+      "brief": "The minimum size of the header sections",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#minimumSectionSize-prop"
+    },
+    "sectionsClickable": {
+      "brief": "",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#sectionsClickable-prop"
+    },
+    "sectionsMovable": {
+      "brief": "",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#sectionsMovable-prop"
+    },
+    "showSortIndicator": {
+      "brief": "Whether the sort indicator is shown",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#showSortIndicator-prop"
+    },
+    "sortIndicatorClearable": {
+      "brief": "Whether the sort indicator can be cleared by clicking on a section multiple times",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#sortIndicatorClearable-prop"
+    },
+    "stretchLastSection": {
+      "brief": "Whether the last visible section in the header takes up all the available space",
+      "url": "https://doc.qt.io/qt-6/qheaderview.html#stretchLastSection-prop"
+    }
+  },
+  "qss": {
+    "box_model": true,
+    "pseudo_states": [
+      ":checked",
+      ":first",
+      ":last",
+      ":middle",
+      ":next-selected",
+      ":only-one",
+      ":previous-selected",
+      ":selected"
+    ],
+    "sub_controls": [
+      "::down-arrow",
+      "::section",
+      "::up-arrow"
+    ],
+    "url": "https://doc.qt.io/qt-6/stylesheet-reference.html#qheaderview-widget"
+  },
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

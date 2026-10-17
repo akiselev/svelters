@@ -1,0 +1,165 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new dialog box.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`Window`](xref:gtk:Gtk.Window) instead",
+      "file": "gtk/deprecated/gtkdialog.c",
+      "line": 695,
+      "md": "Creates a new dialog box.\n\nWidgets should not be packed into the `GtkWindow`\ndirectly, but into the `content_area` and `action_area`,\nas described above."
+    },
+    "new_with_buttons": {
+      "brief": "Creates a new `GtkDialog` with the given title and transient parent.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`Window`](xref:gtk:Gtk.Window) instead",
+      "file": "gtk/deprecated/gtkdialog.c",
+      "line": 740,
+      "md": "Creates a new `GtkDialog` with the given title and transient parent.\n\nThe `flags` argument can be used to make the dialog modal, have it\ndestroyed along with its transient parent, or make it use a headerbar.\n\nButton text/response ID pairs should be listed in pairs, with a `NULL`\npointer ending the list. Button text can be arbitrary text. A response\nID can be any positive number, or one of the values in the\n[`ResponseType`](xref:gtk:Gtk.ResponseType) enumeration. If the user clicks one of these\nbuttons, `GtkDialog` will emit the [`Dialog::response`](xref:gtk:Gtk.Dialog#event:response) signal\nwith the corresponding response ID.\n\nIf a `GtkDialog` receives a delete event, it will emit ::response with a\nresponse ID of %GTK_RESPONSE_DELETE_EVENT.\n\nHowever, destroying a dialog does not emit the ::response signal;\nso be careful relying on ::response when using the\n%GTK_DIALOG_DESTROY_WITH_PARENT flag.\n\nHere’s a simple example:\n```c\nGtkWindow *main_app_window; // Window the dialog should show up on\nGtkWidget *dialog;\nGtkDialogFlags flags = GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT;\ndialog = gtk_dialog_new_with_buttons (\"My dialog\",\n                                      main_app_window,\n                                      flags,\n                                      _(\"_OK\"),\n                                      GTK_RESPONSE_ACCEPT,\n                                      _(\"_Cancel\"),\n                                      GTK_RESPONSE_REJECT,\n                                      NULL);\n```"
+    }
+  },
+  "doc": {
+    "brief": "Dialogs are a convenient way to prompt the user for a small amount of input.",
+    "deprecated": "4.10",
+    "deprecated_md": "Use [`Window`](xref:gtk:Gtk.Window) instead",
+    "file": "gtk/deprecated/gtkdialog.c",
+    "line": 48,
+    "md": "Dialogs are a convenient way to prompt the user for a small amount\nof input.\n\nTypical uses are to display a message, ask a question, or anything else\nthat does not require extensive effort on the user’s part.\n\nThe main area of a `GtkDialog` is called the \"content area\", and is yours\nto populate with widgets such a `GtkLabel` or `GtkEntry`, to present\nyour information, questions, or tasks to the user.\n\nIn addition, dialogs allow you to add \"action widgets\". Most commonly,\naction widgets are buttons. Depending on the platform, action widgets may\nbe presented in the header bar at the top of the window, or at the bottom\nof the window. To add action widgets, create your `GtkDialog` using\n[`Dialog.new_with_buttons()`](xref:gtk:Gtk.Dialog#constructor:new_with_buttons), or use\n[`Dialog.add_button()`](xref:gtk:Gtk.Dialog#method:add_button), [`Dialog.add_buttons()`](xref:gtk:Gtk.Dialog#method:add_buttons),\nor [`Dialog.add_action_widget()`](xref:gtk:Gtk.Dialog#method:add_action_widget).\n\n`GtkDialogs` uses some heuristics to decide whether to add a close\nbutton to the window decorations. If any of the action buttons use\nthe response ID %GTK_RESPONSE_CLOSE or %GTK_RESPONSE_CANCEL, the\nclose button is omitted.\n\nClicking a button that was added as an action widget will emit the\n[`Dialog::response`](xref:gtk:Gtk.Dialog#event:response) signal with a response ID that you specified.\nGTK will never assign a meaning to positive response IDs; these are\nentirely user-defined. But for convenience, you can use the response\nIDs in the [`ResponseType`](xref:gtk:Gtk.ResponseType) enumeration (these all have values\nless than zero). If a dialog receives a delete event, the\n[`Dialog::response`](xref:gtk:Gtk.Dialog#event:response) signal will be emitted with the\n%GTK_RESPONSE_DELETE_EVENT response ID.\n\nDialogs are created with a call to [`Dialog.new()`](xref:gtk:Gtk.Dialog#constructor:new) or\n[`Dialog.new_with_buttons()`](xref:gtk:Gtk.Dialog#constructor:new_with_buttons). The latter is recommended; it allows\nyou to set the dialog title, some convenient flags, and add buttons.\n\nA “modal” dialog (that is, one which freezes the rest of the application\nfrom user input), can be created by calling [`Window.set_modal()`](xref:gtk:Gtk.Window#method:set_modal)\non the dialog. When using [`Dialog.new_with_buttons()`](xref:gtk:Gtk.Dialog#constructor:new_with_buttons), you can also\npass the %GTK_DIALOG_MODAL flag to make a dialog modal.\n\nFor the simple dialog in the following example, a [`MessageDialog`](xref:gtk:Gtk.MessageDialog)\nwould save some effort. But you’d need to create the dialog contents manually\nif you had more than a simple message in the dialog.\n\nAn example for simple `GtkDialog` usage:\n\n```c\n// Function to open a dialog box with a message\nvoid\nquick_message (GtkWindow *parent, char *message)\n{\n GtkWidget *dialog, *label, *content_area;\n GtkDialogFlags flags;\n\n // Create the widgets\n flags = GTK_DIALOG_DESTROY_WITH_PARENT;\n dialog = gtk_dialog_new_with_buttons (\"Message\",\n                                       parent,\n                                       flags,\n                                       _(\"_OK\"),\n                                       GTK_RESPONSE_NONE,\n                                       NULL);\n content_area = gtk_dialog_get_content_area (GTK_DIALOG (dialog));\n label = gtk_label_new (message);\n\n // Ensure that the dialog box is destroyed when the user responds\n\n g_signal_connect_swapped (dialog,\n                           \"response\",\n                           G_CALLBACK (gtk_window_destroy),\n                           dialog);\n\n // Add the label, and show everything we’ve added\n\n gtk_box_append (GTK_BOX (content_area), label);\n gtk_widget_show (dialog);\n}\n```\n\n# GtkDialog as GtkBuildable\n\nThe `GtkDialog` implementation of the `GtkBuildable` interface exposes the\n`content_area` as an internal child with the name “content_area”.\n\n`GtkDialog` supports a custom `<action-widgets>` element, which can contain\nmultiple `<action-widget>` elements. The “response” attribute specifies a\nnumeric response, and the content of the element is the id of widget\n(which should be a child of the dialogs `action_area`). To mark a response\nas default, set the “default” attribute of the `<action-widget>` element\nto true.\n\n`GtkDialog` supports adding action widgets by specifying “action” as\nthe “type” attribute of a `<child>` element. The widget will be added\neither to the action area or the headerbar of the dialog, depending\non the “use-header-bar” property. The response id has to be associated\nwith the action widget using the `<action-widgets>` element.\n\nAn example of a `GtkDialog` UI definition fragment:\n\n```xml\n<object class=\"GtkDialog\" id=\"dialog1\">\n  <child type=\"action\">\n    <object class=\"GtkButton\" id=\"button_cancel\"/>\n  </child>\n  <child type=\"action\">\n    <object class=\"GtkButton\" id=\"button_ok\">\n    </object>\n  </child>\n  <action-widgets>\n    <action-widget response=\"cancel\">button_cancel</action-widget>\n    <action-widget response=\"ok\" default=\"true\">button_ok</action-widget>\n  </action-widgets>\n</object>\n```\n\n# Accessibility\n\n`GtkDialog` uses the %GTK_ACCESSIBLE_ROLE_DIALOG role."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Dialog",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "add_action_widget": {
+      "brief": "Adds an activatable widget to the action area of a `GtkDialog`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`Window`](xref:gtk:Gtk.Window) instead",
+      "file": "gtk/deprecated/gtkdialog.c",
+      "line": 861,
+      "md": "Adds an activatable widget to the action area of a `GtkDialog`.\n\nGTK connects a signal handler that will emit the\n[`Dialog::response`](xref:gtk:Gtk.Dialog#event:response) signal on the dialog when the widget\nis activated. The widget is appended to the end of the dialog’s action\narea.\n\nIf you want to add a non-activatable widget, simply pack it into\nthe `action_area` field of the `GtkDialog` struct."
+    },
+    "add_button": {
+      "brief": "Adds a button with the given text.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`Window`](xref:gtk:Gtk.Window) instead",
+      "file": "gtk/deprecated/gtkdialog.c",
+      "line": 905,
+      "md": "Adds a button with the given text.\n\nGTK arranges things so that clicking the button will emit the\n[`Dialog::response`](xref:gtk:Gtk.Dialog#event:response) signal with the given `response_id`.\nThe button is appended to the end of the dialog’s action area.\nThe button widget is returned, but usually you don’t need it."
+    },
+    "add_buttons": {
+      "brief": "Adds multiple buttons.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`Window`](xref:gtk:Gtk.Window) instead",
+      "file": "gtk/deprecated/gtkdialog.c",
+      "line": 967,
+      "md": "Adds multiple buttons.\n\nThis is the same as calling [`Dialog.add_button()`](xref:gtk:Gtk.Dialog#method:add_button)\nrepeatedly. The variable argument list should be `NULL`-terminated\nas with [`Dialog.new_with_buttons()`](xref:gtk:Gtk.Dialog#constructor:new_with_buttons). Each button must have both\ntext and response ID."
+    },
+    "get_content_area": {
+      "brief": "Returns the content area of `dialog`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`Window`](xref:gtk:Gtk.Window) instead",
+      "file": "gtk/deprecated/gtkdialog.c",
+      "line": 1447,
+      "md": "Returns the content area of `dialog`."
+    },
+    "get_header_bar": {
+      "brief": "Returns the header bar of `dialog`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`Window`](xref:gtk:Gtk.Window) instead",
+      "file": "gtk/deprecated/gtkdialog.c",
+      "line": 1424,
+      "md": "Returns the header bar of `dialog`.\n\nNote that the headerbar is only used by the dialog if the\n[`Dialog:use-header-bar`](xref:gtk:Gtk.Dialog#property:use-header-bar) property is `TRUE`."
+    },
+    "get_response_for_widget": {
+      "brief": "Gets the response id of a widget in the action area of a dialog.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`Window`](xref:gtk:Gtk.Window) instead",
+      "file": "gtk/deprecated/gtkdialog.c",
+      "line": 1112,
+      "md": "Gets the response id of a widget in the action area\nof a dialog."
+    },
+    "get_widget_for_response": {
+      "brief": "Gets the widget button that uses the given response ID in the action area of a dialog.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`Window`](xref:gtk:Gtk.Window) instead",
+      "file": "gtk/deprecated/gtkdialog.c",
+      "line": 1081,
+      "md": "Gets the widget button that uses the given response ID in the action area\nof a dialog."
+    },
+    "response": {
+      "brief": "Emits the ::response signal with the given response ID.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`Window`](xref:gtk:Gtk.Window) instead",
+      "file": "gtk/deprecated/gtkdialog.c",
+      "line": 1058,
+      "md": "Emits the ::response signal with the given response ID.\n\nUsed to indicate that the user has responded to the dialog in some way."
+    },
+    "set_default_response": {
+      "brief": "Sets the default widget for the dialog based on the response ID.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`Window`](xref:gtk:Gtk.Window) instead",
+      "file": "gtk/deprecated/gtkdialog.c",
+      "line": 1028,
+      "md": "Sets the default widget for the dialog based on the response ID.\n\nPressing “Enter” normally activates the default widget."
+    },
+    "set_response_sensitive": {
+      "brief": "A convenient way to sensitize/desensitize dialog buttons.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`Window`](xref:gtk:Gtk.Window) instead",
+      "file": "gtk/deprecated/gtkdialog.c",
+      "line": 998,
+      "md": "A convenient way to sensitize/desensitize dialog buttons.\n\nCalls `gtk_widget_set_sensitive (widget, `setting`)`\nfor each widget in the dialog’s action area with the given `response_id`."
+    }
+  },
+  "properties": {
+    "use-header-bar": {
+      "brief": "`TRUE` if the dialog uses a headerbar for action buttons instead of the action-area.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`Window`](xref:gtk:Gtk.Window) instead",
+      "file": "gtk/deprecated/gtkdialog.c",
+      "line": 553,
+      "md": "`TRUE` if the dialog uses a headerbar for action buttons\ninstead of the action-area.\n\nFor technical reasons, this property is declared as an integer\nproperty, but you should only set it to `TRUE` or `FALSE`.\n\n## Creating a dialog with headerbar\n\nBuiltin `GtkDialog` subclasses such as [`ColorChooserDialog`](xref:gtk:Gtk.ColorChooserDialog)\nset this property according to platform conventions (using the\n[`Settings:gtk-dialogs-use-header`](xref:gtk:Gtk.Settings#property:gtk-dialogs-use-header) setting).\n\nHere is how you can achieve the same:\n\n```c\ng_object_get (settings, \"gtk-dialogs-use-header\", &header, NULL);\ndialog = g_object_new (GTK_TYPE_DIALOG, header, TRUE, NULL);\n```"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "close": {
+      "brief": "Emitted when the user uses a keybinding to close the dialog.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`Window`](xref:gtk:Gtk.Window) instead",
+      "file": "gtk/deprecated/gtkdialog.c",
+      "line": 533,
+      "md": "Emitted when the user uses a keybinding to close the dialog.\n\nThis is a [keybinding signal](class.SignalAction.html).\n\nThe default binding for this signal is the Escape key."
+    },
+    "response": {
+      "brief": "Emitted when an action widget is clicked.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`Window`](xref:gtk:Gtk.Window) instead",
+      "file": "gtk/deprecated/gtkdialog.c",
+      "line": 509,
+      "md": "Emitted when an action widget is clicked.\n\nThe signal is also emitted when the dialog receives a\ndelete event, and when [`Dialog.response()`](xref:gtk:Gtk.Dialog#method:response) is called.\nOn a delete event, the response ID is %GTK_RESPONSE_DELETE_EVENT.\nOtherwise, it depends on which action widget was clicked."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "close": {
+      "brief": "Signal emitted when the user uses a keybinding to close the dialog.",
+      "file": "gtk/deprecated/gtkdialog.h",
+      "line": 111,
+      "md": "Signal emitted when the user uses a keybinding to close the dialog."
+    },
+    "response": {
+      "brief": "Emits the ::response signal with the given response ID.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`Window`](xref:gtk:Gtk.Window) instead",
+      "file": "gtk/deprecated/gtkdialog.c",
+      "line": 1058,
+      "md": "Emits the ::response signal with the given response ID.\n\nUsed to indicate that the user has responded to the dialog in some way."
+    }
+  }
+}

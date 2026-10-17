@@ -1,0 +1,182 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "The possible accessible relations of a [`Accessible`](xref:gtk:Accessible).",
+    "file": "gtk/gtkenums.h",
+    "line": 1689,
+    "md": "The possible accessible relations of a [`Accessible`](xref:gtk:Accessible).\n\nAccessible relations can be references to other widgets,\nintegers or strings."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:AccessibleRelation",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "active_descendant": {
+      "brief": "Identifies the currently active element when focus is on a composite widget, combobox, textbox, group, or application.",
+      "file": "gtk/gtkenums.h",
+      "line": 1691,
+      "md": "Identifies the currently active\n   element when focus is on a composite widget, combobox, textbox, group,\n   or application. Value type: reference"
+    },
+    "col_count": {
+      "brief": "Defines the total number of columns in a table, grid, or treegrid.",
+      "file": "gtk/gtkenums.h",
+      "line": 1694,
+      "md": "Defines the total number of columns\n   in a table, grid, or treegrid. Value type: integer"
+    },
+    "col_index": {
+      "brief": "Defines an element's column index or position with respect to the total number of columns within a table, grid, or treegrid.",
+      "file": "gtk/gtkenums.h",
+      "line": 1696,
+      "md": "Defines an element's column index or\n   position with respect to the total number of columns within a table,\n   grid, or treegrid. Value type: integer"
+    },
+    "col_index_text": {
+      "brief": "Defines a human readable text alternative of %GTK_ACCESSIBLE_RELATION_COL_INDEX.",
+      "file": "gtk/gtkenums.h",
+      "line": 1699,
+      "md": "Defines a human readable text\n  alternative of %GTK_ACCESSIBLE_RELATION_COL_INDEX. Value type: string"
+    },
+    "col_span": {
+      "brief": "Defines the number of columns spanned by a cell or gridcell within a table, grid, or treegrid.",
+      "file": "gtk/gtkenums.h",
+      "line": 1701,
+      "md": "Defines the number of columns spanned\n  by a cell or gridcell within a table, grid, or treegrid. Value type: integer"
+    },
+    "controlled_by": {
+      "brief": "Identifies the element (or elements) that the current element is controlled by.",
+      "file": "gtk/gtkenums.h",
+      "line": 1761,
+      "md": "Identifies the element (or elements) that the current\nelement is controlled by. Value type: reference\n\nThis relation is managed by GTK and should not be set from application code.",
+      "since": "4.18"
+    },
+    "controls": {
+      "brief": "Identifies the element (or elements) whose contents or presence are controlled by the current element.",
+      "file": "gtk/gtkenums.h",
+      "line": 1703,
+      "md": "Identifies the element (or elements) whose\n   contents or presence are controlled by the current element. Value type: reference"
+    },
+    "described_by": {
+      "brief": "Identifies the element (or elements) that describes the object.",
+      "file": "gtk/gtkenums.h",
+      "line": 1705,
+      "md": "Identifies the element (or elements)\n   that describes the object. Value type: reference"
+    },
+    "description_for": {
+      "brief": "Identifies the element (or elements) that are described by the current element.",
+      "file": "gtk/gtkenums.h",
+      "line": 1751,
+      "md": "Identifies the element (or elements) that are described by\nthe current element. Value type: reference\n\nThis relation is managed by GTK and should not be set from application code.",
+      "since": "4.18"
+    },
+    "details": {
+      "brief": "Identifies the element (or elements) that provide additional information related to the object.",
+      "file": "gtk/gtkenums.h",
+      "line": 1707,
+      "md": "Identifies the element (or elements) that\n   provide additional information related to the object. Value type: reference"
+    },
+    "details_for": {
+      "brief": "Identifies the element (or elements) for which the current element provides additional information.",
+      "file": "gtk/gtkenums.h",
+      "line": 1771,
+      "md": "Identifies the element (or elements) for which the current\nelement provides additional information. Value type: reference\n\nThis relation is managed by GTK and should not be set from application code.",
+      "since": "4.18"
+    },
+    "error_message": {
+      "brief": "Identifies the element (or elements) that provide an error message for an object.",
+      "file": "gtk/gtkenums.h",
+      "line": 1709,
+      "md": "Identifies the element (or elements) that\n   provide an error message for an object. Value type: reference"
+    },
+    "error_message_for": {
+      "brief": "Identifies the element (or elements) for which the current element provides an error message.",
+      "file": "gtk/gtkenums.h",
+      "line": 1781,
+      "md": "Identifies the element (or elements) for which the current\nelement provides an error message. Value type: reference\n\nThis relation is managed by GTK and should not be set from application code.",
+      "since": "4.18"
+    },
+    "flow_from": {
+      "brief": "Identifies the previous element (or elements) in an alternate reading order of content which, at the user's discretion, allows assistive technology to override the general default of reading in document source order.",
+      "file": "gtk/gtkenums.h",
+      "line": 1791,
+      "md": "Identifies the previous element (or elements) in an alternate\nreading order of content which, at the user's discretion, allows\nassistive technology to override the general default of reading in\ndocument source order. Value type: reference\n\nThis relation is managed by GTK and should not be set from application code.",
+      "since": "4.18"
+    },
+    "flow_to": {
+      "brief": "Identifies the next element (or elements) in an alternate reading order of content which, at the user's discretion, allows assistive technology to override the general default of reading in document source order.",
+      "file": "gtk/gtkenums.h",
+      "line": 1711,
+      "md": "Identifies the next element (or elements)\n   in an alternate reading order of content which, at the user's discretion,\n   allows assistive technology to override the general default of reading in\n   document source order. Value type: reference"
+    },
+    "label_for": {
+      "brief": "Identifies the element (or elements) that are labeled by the current element.",
+      "file": "gtk/gtkenums.h",
+      "line": 1741,
+      "md": "Identifies the element (or elements) that are labeled by the\ncurrent element. Value type: reference\n\nThis relation is managed by GTK and should not be set from application code.",
+      "since": "4.18"
+    },
+    "labelled_by": {
+      "brief": "Identifies the element (or elements) that labels the current element.",
+      "file": "gtk/gtkenums.h",
+      "line": 1715,
+      "md": "Identifies the element (or elements)\n   that labels the current element. Value type: reference"
+    },
+    "owns": {
+      "brief": "Identifies an element (or elements) in order to define a visual, functional, or contextual parent/child relationship between elements where the widget hierarchy cannot be used to represent the relationship.",
+      "file": "gtk/gtkenums.h",
+      "line": 1717,
+      "md": "Identifies an element (or elements) in order\n   to define a visual, functional, or contextual parent/child relationship\n   between elements where the widget hierarchy cannot be used to represent\n   the relationship. Value type: reference"
+    },
+    "pos_in_set": {
+      "brief": "Defines an element's number or position in the current set of listitems or treeitems.",
+      "file": "gtk/gtkenums.h",
+      "line": 1721,
+      "md": "Defines an element's number or position\n   in the current set of listitems or treeitems. Value type: integer"
+    },
+    "row_count": {
+      "brief": "Defines the total number of rows in a table, grid, or treegrid.",
+      "file": "gtk/gtkenums.h",
+      "line": 1723,
+      "md": "Defines the total number of rows in a table,\n   grid, or treegrid. Value type: integer"
+    },
+    "row_index": {
+      "brief": "Defines an element's row index or position with respect to the total number of rows within a table, grid, or treegrid.",
+      "file": "gtk/gtkenums.h",
+      "line": 1725,
+      "md": "Defines an element's row index or position\n   with respect to the total number of rows within a table, grid, or treegrid.\n   Value type: integer"
+    },
+    "row_index_text": {
+      "brief": "Defines a human readable text alternative of [`AccessibleRelation.ROW_INDEX`](xref:gtk:Gtk.AccessibleRelation#value:ROW_INDEX).",
+      "file": "gtk/gtkenums.h",
+      "line": 1728,
+      "md": "Defines a human readable text\n   alternative of [`AccessibleRelation.ROW_INDEX`](xref:gtk:Gtk.AccessibleRelation#value:ROW_INDEX). Value type: string"
+    },
+    "row_span": {
+      "brief": "Defines the number of rows spanned by a cell or gridcell within a table, grid, or treegrid.",
+      "file": "gtk/gtkenums.h",
+      "line": 1730,
+      "md": "Defines the number of rows spanned by a\n   cell or gridcell within a table, grid, or treegrid. Value type: integer"
+    },
+    "set_size": {
+      "brief": "Defines the number of items in the current set of listitems or treeitems.",
+      "file": "gtk/gtkenums.h",
+      "line": 1732,
+      "md": "Defines the number of items in the current\n   set of listitems or treeitems. Value type: integer"
+    }
+  },
+  "methods": {
+    "init_value": {
+      "brief": "Initializes `value` with the appropriate type for the `relation`.",
+      "file": "gtk/gtkaccessiblevalue.c",
+      "line": 2006,
+      "md": "Initializes `value` with the appropriate type for the `relation`.\n\nThis function is mostly meant for language bindings, in conjunction\nwith gtk_accessible_update_relation_value()."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

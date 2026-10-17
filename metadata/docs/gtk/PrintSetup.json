@@ -1,0 +1,54 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "An auxiliary object for printing that allows decoupling the setup from the printing.",
+    "file": "gtk/gtkprintdialog.c",
+    "line": 50,
+    "md": "An auxiliary object for printing that allows decoupling the setup from the printing.\n\nA print setup is obtained by calling [`PrintDialog.setup()`](xref:gtk:Gtk.PrintDialog#method:setup),\nand can later be passed to print functions such as [`PrintDialog.print()`](xref:gtk:Gtk.PrintDialog#method:print).\n\nPrint setups can be reused for multiple print calls.\n\nApplications may wish to store the page_setup and print_settings from the print setup\nand copy them to the PrintDialog if they want to keep using them.",
+    "since": "4.14"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:PrintSetup",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_page_setup": {
+      "brief": "Returns the page setup of `setup`.",
+      "file": "gtk/gtkprintdialog.c",
+      "line": 165,
+      "md": "Returns the page setup of `setup`.\n\nIt may be different from the `GtkPrintDialog`'s page setup\nif the user changed it during the setup process.",
+      "since": "4.14"
+    },
+    "get_print_settings": {
+      "brief": "Returns the print settings of `setup`.",
+      "file": "gtk/gtkprintdialog.c",
+      "line": 137,
+      "md": "Returns the print settings of `setup`.\n\nThey may be different from the `GtkPrintDialog`'s settings\nif the user changed them during the setup process.",
+      "since": "4.14"
+    },
+    "ref": {
+      "brief": "Increase the reference count of `setup`.",
+      "file": "gtk/gtkprintdialog.c",
+      "line": 94,
+      "md": "Increase the reference count of `setup`.",
+      "since": "4.14"
+    },
+    "unref": {
+      "brief": "Decrease the reference count of `setup`.",
+      "file": "gtk/gtkprintdialog.c",
+      "line": 112,
+      "md": "Decrease the reference count of `setup`.\n\nIf the reference count reaches zero,\nthe object is freed.",
+      "since": "4.14"
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

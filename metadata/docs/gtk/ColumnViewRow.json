@@ -1,0 +1,174 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Configures how rows are displayed in a [`ColumnView`](xref:gtk:Gtk.ColumnView).",
+    "file": "gtk/gtkcolumnviewrow.c",
+    "line": 26,
+    "md": "Configures how rows are displayed in a [`ColumnView`](xref:gtk:Gtk.ColumnView).\n\nIt is not used to set the widgets displayed in the individual cells. For that\nsee [`GtkColumnViewColumn.set_factory()`](xref:gtk:GtkColumnViewColumn#method:set_factory) and [`GtkColumnViewCell`](xref:gtk:GtkColumnViewCell).",
+    "since": "4.12"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ColumnViewRow",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_accessible_description": {
+      "brief": "Gets the accessible description of `self`.",
+      "file": "gtk/gtkcolumnviewrow.c",
+      "line": 533,
+      "md": "Gets the accessible description of `self`.",
+      "since": "4.12"
+    },
+    "get_accessible_label": {
+      "brief": "Gets the accessible label of `self`.",
+      "file": "gtk/gtkcolumnviewrow.c",
+      "line": 578,
+      "md": "Gets the accessible label of `self`.",
+      "since": "4.12"
+    },
+    "get_activatable": {
+      "brief": "Checks if the row has been set to be activatable via gtk_column_view_row_set_activatable().",
+      "file": "gtk/gtkcolumnviewrow.c",
+      "line": 428,
+      "md": "Checks if the row has been set to be activatable via\ngtk_column_view_row_set_activatable().",
+      "since": "4.12"
+    },
+    "get_focusable": {
+      "brief": "Checks if a row item has been set to be focusable via gtk_column_view_row_set_focusable().",
+      "file": "gtk/gtkcolumnviewrow.c",
+      "line": 480,
+      "md": "Checks if a row item has been set to be focusable via\ngtk_column_view_row_set_focusable().",
+      "since": "4.12"
+    },
+    "get_item": {
+      "brief": "Gets the model item that associated with `self`.",
+      "file": "gtk/gtkcolumnviewrow.c",
+      "line": 301,
+      "md": "Gets the model item that associated with `self`.\n\nIf `self` is unbound, this function returns `NULL`.",
+      "since": "4.12"
+    },
+    "get_position": {
+      "brief": "Gets the position in the model that `self` currently displays.",
+      "file": "gtk/gtkcolumnviewrow.c",
+      "line": 324,
+      "md": "Gets the position in the model that `self` currently displays.\n\nIf `self` is unbound, %GTK_INVALID_LIST_POSITION is returned.",
+      "since": "4.12"
+    },
+    "get_selectable": {
+      "brief": "Checks if the row has been set to be selectable via gtk_column_view_row_set_selectable().",
+      "file": "gtk/gtkcolumnviewrow.c",
+      "line": 371,
+      "md": "Checks if the row has been set to be selectable via\ngtk_column_view_row_set_selectable().\n\nDo not confuse this function with [`ColumnViewRow.get_selected()`](xref:gtk:Gtk.ColumnViewRow#method:get_selected).",
+      "since": "4.12"
+    },
+    "get_selected": {
+      "brief": "Checks if the item is selected that this row corresponds to.",
+      "file": "gtk/gtkcolumnviewrow.c",
+      "line": 347,
+      "md": "Checks if the item is selected that this row corresponds to.\n\nThe selected state is maintained by the list widget and its model\nand cannot be set otherwise.",
+      "since": "4.12"
+    },
+    "set_accessible_description": {
+      "brief": "Sets the accessible description for the row, which may be used by e.g. screen readers.",
+      "file": "gtk/gtkcolumnviewrow.c",
+      "line": 551,
+      "md": "Sets the accessible description for the row,\nwhich may be used by e.g. screen readers.",
+      "since": "4.12"
+    },
+    "set_accessible_label": {
+      "brief": "Sets the accessible label for the row, which may be used by e.g. screen readers.",
+      "file": "gtk/gtkcolumnviewrow.c",
+      "line": 596,
+      "md": "Sets the accessible label for the row,\nwhich may be used by e.g. screen readers.",
+      "since": "4.12"
+    },
+    "set_activatable": {
+      "brief": "Sets `self` to be activatable.",
+      "file": "gtk/gtkcolumnviewrow.c",
+      "line": 447,
+      "md": "Sets `self` to be activatable.\n\nIf a row is activatable, double-clicking on the row, using\nthe Return key or calling gtk_widget_activate() will activate\nthe row. Activating instructs the containing columnview to\nemit the [`ColumnView::activate`](xref:gtk:Gtk.ColumnView#event:activate) signal.\n\nBy default, row are activatable.",
+      "since": "4.12"
+    },
+    "set_focusable": {
+      "brief": "Sets `self` to be focusable.",
+      "file": "gtk/gtkcolumnviewrow.c",
+      "line": 499,
+      "md": "Sets `self` to be focusable.\n\nIf a row is focusable, it can be focused using the keyboard.\nThis works similar to [`Widget.set_focusable()`](xref:gtk:Gtk.Widget#method:set_focusable).\n\nNote that if row are not focusable, the contents of cells can still be focused if\nthey are focusable.\n\nBy default, rows are focusable.",
+      "since": "4.12"
+    },
+    "set_selectable": {
+      "brief": "Sets `self` to be selectable.",
+      "file": "gtk/gtkcolumnviewrow.c",
+      "line": 392,
+      "md": "Sets `self` to be selectable.\n\nIf a row is selectable, clicking on the row or using the keyboard\nwill try to select or unselect the row. Whether this succeeds is up to\nthe model to determine, as it is managing the selected state.\n\nNote that this means that making a row non-selectable has no\ninfluence on the selected state at all. A non-selectable row\nmay still be selected.\n\nBy default, rows are selectable.",
+      "since": "4.12"
+    }
+  },
+  "properties": {
+    "accessible-description": {
+      "brief": "The accessible description to set on the row.",
+      "file": "gtk/gtkcolumnviewrow.c",
+      "line": 172,
+      "md": "The accessible description to set on the row.",
+      "since": "4.12"
+    },
+    "accessible-label": {
+      "brief": "The accessible label to set on the row.",
+      "file": "gtk/gtkcolumnviewrow.c",
+      "line": 184,
+      "md": "The accessible label to set on the row.",
+      "since": "4.12"
+    },
+    "activatable": {
+      "brief": "If the row can be activated by the user.",
+      "file": "gtk/gtkcolumnviewrow.c",
+      "line": 196,
+      "md": "If the row can be activated by the user.",
+      "since": "4.12"
+    },
+    "focusable": {
+      "brief": "If the row can be focused with the keyboard.",
+      "file": "gtk/gtkcolumnviewrow.c",
+      "line": 208,
+      "md": "If the row can be focused with the keyboard.",
+      "since": "4.12"
+    },
+    "item": {
+      "brief": "The item for this row.",
+      "file": "gtk/gtkcolumnviewrow.c",
+      "line": 220,
+      "md": "The item for this row.",
+      "since": "4.12"
+    },
+    "position": {
+      "brief": "Position of the row.",
+      "file": "gtk/gtkcolumnviewrow.c",
+      "line": 232,
+      "md": "Position of the row.",
+      "since": "4.12"
+    },
+    "selectable": {
+      "brief": "If the row can be selected by the user.",
+      "file": "gtk/gtkcolumnviewrow.c",
+      "line": 244,
+      "md": "If the row can be selected by the user.",
+      "since": "4.12"
+    },
+    "selected": {
+      "brief": "If the item in the row is currently selected.",
+      "file": "gtk/gtkcolumnviewrow.c",
+      "line": 256,
+      "md": "If the item in the row is currently selected.",
+      "since": "4.12"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

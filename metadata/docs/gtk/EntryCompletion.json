@@ -1,0 +1,299 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkEntryCompletion` object.",
+      "deprecated": "4.10",
+      "deprecated_md": "GtkEntryCompletion will be removed in GTK 5.",
+      "file": "gtk/deprecated/gtkentrycompletion.c",
+      "line": 818,
+      "md": "Creates a new `GtkEntryCompletion` object."
+    },
+    "new_with_area": {
+      "brief": "Creates a new `GtkEntryCompletion` object using the specified `area`.",
+      "deprecated": "4.10",
+      "deprecated_md": "GtkEntryCompletion will be removed in GTK 5.",
+      "file": "gtk/deprecated/gtkentrycompletion.c",
+      "line": 837,
+      "md": "Creates a new `GtkEntryCompletion` object using the\nspecified `area`.\n\nThe `GtkCellArea` is used to layout cells in the underlying\n`GtkTreeViewColumn` for the drop-down menu."
+    }
+  },
+  "doc": {
+    "brief": "`GtkEntryCompletion` is an auxiliary object to provide completion functionality for `GtkEntry`.",
+    "deprecated": "4.10",
+    "file": "gtk/deprecated/gtkentrycompletion.c",
+    "line": 18,
+    "md": "`GtkEntryCompletion` is an auxiliary object to provide completion functionality\nfor `GtkEntry`.\n\nIt implements the [`CellLayout`](xref:gtk:Gtk.CellLayout) interface, to allow the user\nto add extra cells to the `GtkTreeView` with completion matches.\n\n“Completion functionality” means that when the user modifies the text\nin the entry, `GtkEntryCompletion` checks which rows in the model match\nthe current content of the entry, and displays a list of matches.\nBy default, the matching is done by comparing the entry text\ncase-insensitively against the text column of the model (see\n[`EntryCompletion.set_text_column()`](xref:gtk:Gtk.EntryCompletion#method:set_text_column)), but this can be overridden\nwith a custom match function (see [`EntryCompletion.set_match_func()`](xref:gtk:Gtk.EntryCompletion#method:set_match_func)).\n\nWhen the user selects a completion, the content of the entry is\nupdated. By default, the content of the entry is replaced by the\ntext column of the model, but this can be overridden by connecting\nto the [`EntryCompletion::match-selected`](xref:gtk:Gtk.EntryCompletion#event:match-selected) signal and updating the\nentry in the signal handler. Note that you should return `TRUE` from\nthe signal handler to suppress the default behaviour.\n\nTo add completion functionality to an entry, use\n[`Entry.set_completion()`](xref:gtk:Gtk.Entry#method:set_completion).\n\n`GtkEntryCompletion` uses a [`TreeModelFilter`](xref:gtk:Gtk.TreeModelFilter) model to\nrepresent the subset of the entire model that is currently matching.\nWhile the `GtkEntryCompletion` signals\n[`EntryCompletion::match-selected`](xref:gtk:Gtk.EntryCompletion#event:match-selected) and\n[`EntryCompletion::cursor-on-match`](xref:gtk:Gtk.EntryCompletion#event:cursor-on-match) take the original model\nand an iter pointing to that model as arguments, other callbacks and\nsignals (such as `GtkCellLayoutDataFunc` or\n[signal@Gtk.CellArea::apply-attributes)]\nwill generally take the filter model as argument. As long as you are\nonly calling [`TreeModel.get()`](xref:gtk:Gtk.TreeModel#method:get), this will make no difference to\nyou. If for some reason, you need the original model, use\n[`TreeModelFilter.get_model()`](xref:gtk:Gtk.TreeModelFilter#method:get_model). Don’t forget to use\n[`TreeModelFilter.convert_iter_to_child_iter()`](xref:gtk:Gtk.TreeModelFilter#method:convert_iter_to_child_iter) to obtain a\nmatching iter."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:EntryCompletion",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "complete": {
+      "brief": "Requests a completion operation, or in other words a refiltering of the current list with completions, using the current key.",
+      "deprecated": "4.10",
+      "deprecated_md": "GtkEntryCompletion will be removed in GTK 5.",
+      "file": "gtk/deprecated/gtkentrycompletion.c",
+      "line": 1027,
+      "md": "Requests a completion operation, or in other words a refiltering of the\ncurrent list with completions, using the current key.\n\nThe completion list view will be updated accordingly."
+    },
+    "compute_prefix": {
+      "brief": "Computes the common prefix that is shared by all rows in `completion` that start with `key`.",
+      "deprecated": "4.10",
+      "deprecated_md": "GtkEntryCompletion will be removed in GTK 5.",
+      "file": "gtk/deprecated/gtkentrycompletion.c",
+      "line": 1260,
+      "md": "Computes the common prefix that is shared by all rows in `completion`\nthat start with `key`.\n\nIf no row matches `key`, `NULL` will be returned.\nNote that a text column must have been set for this function to work,\nsee [`EntryCompletion.set_text_column()`](xref:gtk:Gtk.EntryCompletion#method:set_text_column) for details."
+    },
+    "get_completion_prefix": {
+      "brief": "Get the original text entered by the user that triggered the completion or `NULL` if there’s no completion ongoing.",
+      "deprecated": "4.10",
+      "deprecated_md": "GtkEntryCompletion will be removed in GTK 5.",
+      "file": "gtk/deprecated/gtkentrycompletion.c",
+      "line": 1374,
+      "md": "Get the original text entered by the user that triggered\nthe completion or `NULL` if there’s no completion ongoing."
+    },
+    "get_entry": {
+      "brief": "Gets the entry `completion` has been attached to.",
+      "deprecated": "4.10",
+      "deprecated_md": "GtkEntryCompletion will be removed in GTK 5.",
+      "file": "gtk/deprecated/gtkentrycompletion.c",
+      "line": 861,
+      "md": "Gets the entry `completion` has been attached to."
+    },
+    "get_inline_completion": {
+      "brief": "Returns whether the common prefix of the possible completions should be automatically inserted in the entry.",
+      "deprecated": "4.10",
+      "deprecated_md": "GtkEntryCompletion will be removed in GTK 5.",
+      "file": "gtk/deprecated/gtkentrycompletion.c",
+      "line": 1498,
+      "md": "Returns whether the common prefix of the possible completions should\nbe automatically inserted in the entry."
+    },
+    "get_inline_selection": {
+      "brief": "Returns `TRUE` if inline-selection mode is turned on.",
+      "deprecated": "4.10",
+      "deprecated_md": "GtkEntryCompletion will be removed in GTK 5.",
+      "file": "gtk/deprecated/gtkentrycompletion.c",
+      "line": 1683,
+      "md": "Returns `TRUE` if inline-selection mode is turned on."
+    },
+    "get_minimum_key_length": {
+      "brief": "Returns the minimum key length as set for `completion`.",
+      "deprecated": "4.10",
+      "deprecated_md": "GtkEntryCompletion will be removed in GTK 5.",
+      "file": "gtk/deprecated/gtkentrycompletion.c",
+      "line": 1009,
+      "md": "Returns the minimum key length as set for `completion`."
+    },
+    "get_model": {
+      "brief": "Returns the model the `GtkEntryCompletion` is using as data source.",
+      "deprecated": "4.10",
+      "deprecated_md": "GtkEntryCompletion will be removed in GTK 5.",
+      "file": "gtk/deprecated/gtkentrycompletion.c",
+      "line": 926,
+      "md": "Returns the model the `GtkEntryCompletion` is using as data source.\n\nReturns `NULL` if the model is unset."
+    },
+    "get_popup_completion": {
+      "brief": "Returns whether the completions should be presented in a popup window.",
+      "deprecated": "4.10",
+      "deprecated_md": "GtkEntryCompletion will be removed in GTK 5.",
+      "file": "gtk/deprecated/gtkentrycompletion.c",
+      "line": 1543,
+      "md": "Returns whether the completions should be presented in a popup window."
+    },
+    "get_popup_set_width": {
+      "brief": "Returns whether the completion popup window will be resized to the width of the entry.",
+      "deprecated": "4.10",
+      "deprecated_md": "GtkEntryCompletion will be removed in GTK 5.",
+      "file": "gtk/deprecated/gtkentrycompletion.c",
+      "line": 1587,
+      "md": "Returns whether the completion popup window will be resized to the\nwidth of the entry."
+    },
+    "get_popup_single_match": {
+      "brief": "Returns whether the completion popup window will appear even if there is only a single match.",
+      "deprecated": "4.10",
+      "deprecated_md": "GtkEntryCompletion will be removed in GTK 5.",
+      "file": "gtk/deprecated/gtkentrycompletion.c",
+      "line": 1637,
+      "md": "Returns whether the completion popup window will appear even if there is\nonly a single match."
+    },
+    "get_text_column": {
+      "brief": "Returns the column in the model of `completion` to get strings from.",
+      "deprecated": "4.10",
+      "deprecated_md": "GtkEntryCompletion will be removed in GTK 5.",
+      "file": "gtk/deprecated/gtkentrycompletion.c",
+      "line": 1109,
+      "md": "Returns the column in the model of `completion` to get strings from."
+    },
+    "insert_prefix": {
+      "brief": "Requests a prefix insertion.",
+      "deprecated": "4.10",
+      "deprecated_md": "GtkEntryCompletion will be removed in GTK 5.",
+      "file": "gtk/deprecated/gtkentrycompletion.c",
+      "line": 1439,
+      "md": "Requests a prefix insertion."
+    },
+    "set_inline_completion": {
+      "brief": "Sets whether the common prefix of the possible completions should be automatically inserted in the entry.",
+      "deprecated": "4.10",
+      "deprecated_md": "GtkEntryCompletion will be removed in GTK 5.",
+      "file": "gtk/deprecated/gtkentrycompletion.c",
+      "line": 1472,
+      "md": "Sets whether the common prefix of the possible completions should\nbe automatically inserted in the entry."
+    },
+    "set_inline_selection": {
+      "brief": "Sets whether it is possible to cycle through the possible completions inside the entry.",
+      "deprecated": "4.10",
+      "deprecated_md": "GtkEntryCompletion will be removed in GTK 5.",
+      "file": "gtk/deprecated/gtkentrycompletion.c",
+      "line": 1657,
+      "md": "Sets whether it is possible to cycle through the possible completions\ninside the entry."
+    },
+    "set_match_func": {
+      "brief": "Sets the match function for `completion` to be `func`.",
+      "deprecated": "4.10",
+      "deprecated_md": "GtkEntryCompletion will be removed in GTK 5.",
+      "file": "gtk/deprecated/gtkentrycompletion.c",
+      "line": 949,
+      "md": "Sets the match function for `completion` to be `func`.\n\nThe match function is used to determine if a row should or\nshould not be in the completion list."
+    },
+    "set_minimum_key_length": {
+      "brief": "Requires the length of the search key for `completion` to be at least `length`.",
+      "deprecated": "4.10",
+      "deprecated_md": "GtkEntryCompletion will be removed in GTK 5.",
+      "file": "gtk/deprecated/gtkentrycompletion.c",
+      "line": 979,
+      "md": "Requires the length of the search key for `completion` to be at least\n`length`.\n\nThis is useful for long lists, where completing using a small\nkey takes a lot of time and will come up with meaningless results anyway\n(ie, a too large dataset)."
+    },
+    "set_model": {
+      "brief": "Sets the model for a `GtkEntryCompletion`.",
+      "deprecated": "4.10",
+      "deprecated_md": "GtkEntryCompletion will be removed in GTK 5.",
+      "file": "gtk/deprecated/gtkentrycompletion.c",
+      "line": 879,
+      "md": "Sets the model for a `GtkEntryCompletion`.\n\nIf `completion` already has a model set, it will remove it\nbefore setting the new model. If model is `NULL`, then it\nwill unset the model."
+    },
+    "set_popup_completion": {
+      "brief": "Sets whether the completions should be presented in a popup window.",
+      "deprecated": "4.10",
+      "deprecated_md": "GtkEntryCompletion will be removed in GTK 5.",
+      "file": "gtk/deprecated/gtkentrycompletion.c",
+      "line": 1517,
+      "md": "Sets whether the completions should be presented in a popup window."
+    },
+    "set_popup_set_width": {
+      "brief": "Sets whether the completion popup window will be resized to be the same width as the entry.",
+      "deprecated": "4.10",
+      "deprecated_md": "GtkEntryCompletion will be removed in GTK 5.",
+      "file": "gtk/deprecated/gtkentrycompletion.c",
+      "line": 1561,
+      "md": "Sets whether the completion popup window will be resized to be the same\nwidth as the entry."
+    },
+    "set_popup_single_match": {
+      "brief": "Sets whether the completion popup window will appear even if there is only a single match.",
+      "deprecated": "4.10",
+      "deprecated_md": "GtkEntryCompletion will be removed in GTK 5.",
+      "file": "gtk/deprecated/gtkentrycompletion.c",
+      "line": 1608,
+      "md": "Sets whether the completion popup window will appear even if there is\nonly a single match.\n\nYou may want to set this to `FALSE` if you\nare using [`EntryCompletion:inline-completion`](xref:gtk:Gtk.EntryCompletion#property:inline-completion)."
+    },
+    "set_text_column": {
+      "brief": "Convenience function for setting up the most used case of this code: a completion list with just strings.",
+      "deprecated": "4.10",
+      "deprecated_md": "GtkEntryCompletion will be removed in GTK 5.",
+      "file": "gtk/deprecated/gtkentrycompletion.c",
+      "line": 1066,
+      "md": "Convenience function for setting up the most used case of this code: a\ncompletion list with just strings.\n\nThis function will set up `completion`\nto have a list displaying all (and just) strings in the completion list,\nand to get those strings from `column` in the model of `completion`.\n\nThis functions creates and adds a `GtkCellRendererText` for the selected\ncolumn. If you need to set the text column, but don't want the cell\nrenderer, use g_object_set() to set the\n[`EntryCompletion:text-column`](xref:gtk:Gtk.EntryCompletion#property:text-column) property directly."
+    }
+  },
+  "properties": {
+    "cell-area": {
+      "brief": "The `GtkCellArea` used to layout cell renderers in the treeview column.",
+      "file": "gtk/deprecated/gtkentrycompletion.c",
+      "line": 393,
+      "md": "The `GtkCellArea` used to layout cell renderers in the treeview column.\n\nIf no area is specified when creating the entry completion with\n[`EntryCompletion.new_with_area()`](xref:gtk:Gtk.EntryCompletion#constructor:new_with_area), a horizontally oriented\n[`CellAreaBox`](xref:gtk:Gtk.CellAreaBox) will be used."
+    },
+    "inline-completion": {
+      "brief": "Determines whether the common prefix of the possible completions should be inserted automatically in the entry.",
+      "file": "gtk/deprecated/gtkentrycompletion.c",
+      "line": 332,
+      "md": "Determines whether the common prefix of the possible completions\nshould be inserted automatically in the entry.\n\nNote that this requires text-column to be set, even if you are\nusing a custom match function."
+    },
+    "inline-selection": {
+      "brief": "Determines whether the possible completions on the popup will appear in the entry as you navigate through them.",
+      "file": "gtk/deprecated/gtkentrycompletion.c",
+      "line": 382,
+      "md": "Determines whether the possible completions on the popup\nwill appear in the entry as you navigate through them."
+    },
+    "minimum-key-length": {
+      "brief": "The minimum key length as set for completion.",
+      "file": "gtk/deprecated/gtkentrycompletion.c",
+      "line": 310,
+      "md": "The minimum key length as set for completion."
+    },
+    "model": {
+      "brief": "The model used as data source.",
+      "file": "gtk/deprecated/gtkentrycompletion.c",
+      "line": 300,
+      "md": "The model used as data source."
+    },
+    "popup-completion": {
+      "brief": "Determines whether the possible completions should be shown in a popup window.",
+      "file": "gtk/deprecated/gtkentrycompletion.c",
+      "line": 346,
+      "md": "Determines whether the possible completions should be\nshown in a popup window."
+    },
+    "popup-set-width": {
+      "brief": "Determines whether the completions popup window will be resized to the width of the entry.",
+      "file": "gtk/deprecated/gtkentrycompletion.c",
+      "line": 357,
+      "md": "Determines whether the completions popup window will be\nresized to the width of the entry."
+    },
+    "popup-single-match": {
+      "brief": "Determines whether the completions popup window will shown for a single possible completion.",
+      "file": "gtk/deprecated/gtkentrycompletion.c",
+      "line": 368,
+      "md": "Determines whether the completions popup window will shown\nfor a single possible completion.\n\nYou probably want to set this to `FALSE` if you are using\n[`EntryCompletion:inline-completion`](xref:gtk:Gtk.EntryCompletion#property:inline-completion)."
+    },
+    "text-column": {
+      "brief": "The column of the model containing the strings.",
+      "file": "gtk/deprecated/gtkentrycompletion.c",
+      "line": 320,
+      "md": "The column of the model containing the strings.\n\nNote that the strings must be UTF-8."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "cursor-on-match": {
+      "brief": "Emitted when a match from the cursor is on a match of the list.",
+      "file": "gtk/deprecated/gtkentrycompletion.c",
+      "line": 254,
+      "md": "Emitted when a match from the cursor is on a match of the list.\n\nThe default behaviour is to replace the contents\nof the entry with the contents of the text column in the row\npointed to by `iter`.\n\nNote that `model` is the model that was passed to\n[`EntryCompletion.set_model()`](xref:gtk:Gtk.EntryCompletion#method:set_model)."
+    },
+    "insert-prefix": {
+      "brief": "Emitted when the inline autocompletion is triggered.",
+      "file": "gtk/deprecated/gtkentrycompletion.c",
+      "line": 199,
+      "md": "Emitted when the inline autocompletion is triggered.\n\nThe default behaviour is to make the entry display the\nwhole prefix and select the newly inserted part.\n\nApplications may connect to this signal in order to insert only a\nsmaller part of the `prefix` into the entry - e.g. the entry used in\nthe `GtkFileChooser` inserts only the part of the prefix up to the\nnext '/'."
+    },
+    "match-selected": {
+      "brief": "Emitted when a match from the list is selected.",
+      "file": "gtk/deprecated/gtkentrycompletion.c",
+      "line": 226,
+      "md": "Emitted when a match from the list is selected.\n\nThe default behaviour is to replace the contents of the\nentry with the contents of the text column in the row\npointed to by `iter`.\n\nNote that `model` is the model that was passed to\n[`EntryCompletion.set_model()`](xref:gtk:Gtk.EntryCompletion#method:set_model)."
+    },
+    "no-matches": {
+      "brief": "Emitted when the filter model has zero number of rows in completion_complete method.",
+      "file": "gtk/deprecated/gtkentrycompletion.c",
+      "line": 282,
+      "md": "Emitted when the filter model has zero\nnumber of rows in completion_complete method.\n\nIn other words when `GtkEntryCompletion` is out of suggestions."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

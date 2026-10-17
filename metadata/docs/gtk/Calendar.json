@@ -1,0 +1,235 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new calendar, with the current date being selected.",
+      "file": "gtk/gtkcalendar.c",
+      "line": 1565,
+      "md": "Creates a new calendar, with the current date being selected."
+    }
+  },
+  "doc": {
+    "brief": "Displays a Gregorian calendar, one month at a time.",
+    "file": "gtk/gtkcalendar.c",
+    "line": 28,
+    "md": "Displays a Gregorian calendar, one month at a time.\n\nA `GtkCalendar` can be created with [`Calendar.new()`](xref:gtk:Gtk.Calendar#constructor:new).\n\nThe selected date can be retrieved from a `GtkCalendar` using\n[`Calendar.get_date()`](xref:gtk:Gtk.Calendar#method:get_date).\nIt can be altered with [`Calendar.set_date()`](xref:gtk:Gtk.Calendar#method:set_date).\n\nTo place a visual marker on a particular day, use\n[`Calendar.mark_day()`](xref:gtk:Gtk.Calendar#method:mark_day) and to remove the marker,\n[`Calendar.unmark_day()`](xref:gtk:Gtk.Calendar#method:unmark_day). Alternative, all\nmarks can be cleared with [`Calendar.clear_marks()`](xref:gtk:Gtk.Calendar#method:clear_marks).\n\nUsers should be aware that, although the Gregorian calendar is the\nlegal calendar in most countries, it was adopted progressively\nbetween 1582 and 1929. Display before these dates is likely to be\nhistorically incorrect.\n\n# Shortcuts and Gestures\n\n`GtkCalendar` supports the following gestures:\n\n- Scrolling up or down will switch to the previous or next month.\n- Date strings can be dropped for setting the current day.\n\n# CSS nodes\n\n```\ncalendar.view\n├── header\n│   ├── button\n│   ├── stack.month\n│   ├── button\n│   ├── button\n│   ├── label.year\n│   ╰── button\n╰── grid\n    ╰── label[.day-name][.week-number][.day-number][.other-month][.today]\n```\n\n`GtkCalendar` has a main node with name calendar. It contains a subnode\ncalled header containing the widgets for switching between years and months.\n\nThe grid subnode contains all day labels, including week numbers on the left\n(marked with the .week-number css class) and day names on top (marked with the\n.day-name css class).\n\nDay labels that belong to the previous or next month get the .other-month\nstyle class. The label of the current day get the .today style class.\n\nMarked day labels get the :selected state assigned."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Calendar",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "clear_marks": {
+      "brief": "Remove all visual markers.",
+      "file": "gtk/gtkcalendar.c",
+      "line": 1597,
+      "md": "Remove all visual markers."
+    },
+    "get_date": {
+      "brief": "Returns a `GDateTime` representing the shown year, month and the selected day.",
+      "file": "gtk/gtkcalendar.c",
+      "line": 1732,
+      "md": "Returns a `GDateTime` representing the shown\nyear, month and the selected day.\n\nThe returned date is in the local time zone."
+    },
+    "get_day": {
+      "brief": "Gets the day of the selected date.",
+      "file": "gtk/gtkcalendar.c",
+      "line": 1924,
+      "md": "Gets the day of the selected date.",
+      "since": "4.14"
+    },
+    "get_day_is_marked": {
+      "brief": "Returns if the `day` of the `calendar` is already marked.",
+      "file": "gtk/gtkcalendar.c",
+      "line": 1670,
+      "md": "Returns if the `day` of the `calendar` is already marked."
+    },
+    "get_month": {
+      "brief": "Gets the month of the selected date.",
+      "file": "gtk/gtkcalendar.c",
+      "line": 1978,
+      "md": "Gets the month of the selected date.",
+      "since": "4.14"
+    },
+    "get_show_day_names": {
+      "brief": "Returns whether `self` is currently showing the names of the week days.",
+      "file": "gtk/gtkcalendar.c",
+      "line": 1868,
+      "md": "Returns whether `self` is currently showing the names\nof the week days.\n\nThis is the value of the [`Calendar:show-day-names`](xref:gtk:Gtk.Calendar#property:show-day-names)\nproperty."
+    },
+    "get_show_heading": {
+      "brief": "Returns whether `self` is currently showing the heading.",
+      "file": "gtk/gtkcalendar.c",
+      "line": 1823,
+      "md": "Returns whether `self` is currently showing the heading.\n\nThis is the value of the [`Calendar:show-heading`](xref:gtk:Gtk.Calendar#property:show-heading)\nproperty."
+    },
+    "get_show_week_numbers": {
+      "brief": "Returns whether `self` is showing week numbers right now.",
+      "file": "gtk/gtkcalendar.c",
+      "line": 1777,
+      "md": "Returns whether `self` is showing week numbers right\nnow.\n\nThis is the value of the [`Calendar:show-week-numbers`](xref:gtk:Gtk.Calendar#property:show-week-numbers)\nproperty."
+    },
+    "get_year": {
+      "brief": "Gets the year of the selected date.",
+      "file": "gtk/gtkcalendar.c",
+      "line": 2033,
+      "md": "Gets the year of the selected date.",
+      "since": "4.14"
+    },
+    "mark_day": {
+      "brief": "Places a visual marker on a particular day of the current month.",
+      "file": "gtk/gtkcalendar.c",
+      "line": 1648,
+      "md": "Places a visual marker on a particular day of the current month."
+    },
+    "select_day": {
+      "brief": "Switches to `date`'s year and month and select its day.",
+      "deprecated": "4.20",
+      "deprecated_md": "Use [`Calendar.set_date()`](xref:gtk:Calendar#method:set_date) instead.",
+      "file": "gtk/gtkcalendar.c",
+      "line": 1578,
+      "md": "Switches to `date`'s year and month and select its day."
+    },
+    "set_date": {
+      "brief": "Switches to `date`'s year and month and selects its day.",
+      "file": "gtk/gtkcalendar.c",
+      "line": 1713,
+      "md": "Switches to `date`'s year and month and selects its day.",
+      "since": "4.20"
+    },
+    "set_day": {
+      "brief": "Sets the day for the selected date.",
+      "file": "gtk/gtkcalendar.c",
+      "line": 1888,
+      "md": "Sets the day for the selected date.\n\nThe new date must be valid. For example, setting the day to 31 when the\nmonth is February will fail.",
+      "since": "4.14"
+    },
+    "set_month": {
+      "brief": "Sets the month for the selected date.",
+      "file": "gtk/gtkcalendar.c",
+      "line": 1942,
+      "md": "Sets the month for the selected date.\n\nThe new date must be valid. For example, setting the month to 1 (February)\nwhen the day is 31 will fail.",
+      "since": "4.14"
+    },
+    "set_show_day_names": {
+      "brief": "Sets whether the calendar shows day names.",
+      "file": "gtk/gtkcalendar.c",
+      "line": 1842,
+      "md": "Sets whether the calendar shows day names."
+    },
+    "set_show_heading": {
+      "brief": "Sets whether the calendar should show a heading.",
+      "file": "gtk/gtkcalendar.c",
+      "line": 1797,
+      "md": "Sets whether the calendar should show a heading.\n\nThe heading contains the current year and month as well as\nbuttons for changing both."
+    },
+    "set_show_week_numbers": {
+      "brief": "Sets whether week numbers are shown in the calendar.",
+      "file": "gtk/gtkcalendar.c",
+      "line": 1751,
+      "md": "Sets whether week numbers are shown in the calendar."
+    },
+    "set_year": {
+      "brief": "Sets the year for the selected date.",
+      "file": "gtk/gtkcalendar.c",
+      "line": 1996,
+      "md": "Sets the year for the selected date.\n\nThe new date must be valid. For example, setting the year to 2023 when the\ndate is February 29 will fail.",
+      "since": "4.14"
+    },
+    "unmark_day": {
+      "brief": "Removes the visual marker from a particular day.",
+      "file": "gtk/gtkcalendar.c",
+      "line": 1691,
+      "md": "Removes the visual marker from a particular day."
+    }
+  },
+  "properties": {
+    "date": {
+      "brief": "The selected date.",
+      "file": "gtk/gtkcalendar.c",
+      "line": 381,
+      "md": "The selected date.\n\nThis property gets initially set to the current date."
+    },
+    "day": {
+      "brief": "The selected day (as a number between 1 and 31).",
+      "deprecated": "4.20",
+      "deprecated_md": "This property will be removed in GTK 5.\n  Use [`Calendar:date`](xref:gtk:Calendar#property:date) instead.",
+      "file": "gtk/gtkcalendar.c",
+      "line": 426,
+      "md": "The selected day (as a number between 1 and 31)."
+    },
+    "month": {
+      "brief": "The selected month (as a number between 0 and 11).",
+      "deprecated": "4.20",
+      "deprecated_md": "This property will be removed in GTK 5.\n  Use [`Calendar:date`](xref:gtk:Calendar#property:date) instead.",
+      "file": "gtk/gtkcalendar.c",
+      "line": 410,
+      "md": "The selected month (as a number between 0 and 11).\n\nThis property gets initially set to the current month."
+    },
+    "show-day-names": {
+      "brief": "Determines whether day names are displayed.",
+      "file": "gtk/gtkcalendar.c",
+      "line": 451,
+      "md": "Determines whether day names are displayed."
+    },
+    "show-heading": {
+      "brief": "Determines whether a heading is displayed.",
+      "file": "gtk/gtkcalendar.c",
+      "line": 440,
+      "md": "Determines whether a heading is displayed."
+    },
+    "show-week-numbers": {
+      "brief": "Determines whether week numbers are displayed.",
+      "file": "gtk/gtkcalendar.c",
+      "line": 461,
+      "md": "Determines whether week numbers are displayed."
+    },
+    "year": {
+      "brief": "The selected year.",
+      "deprecated": "4.20",
+      "deprecated_md": "This property will be removed in GTK 5.\n  Use [`Calendar:date`](xref:gtk:Calendar#property:date) instead.",
+      "file": "gtk/gtkcalendar.c",
+      "line": 394,
+      "md": "The selected year.\n\nThis property gets initially set to the current year."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "day-selected": {
+      "brief": "Emitted when the user selects a day.",
+      "file": "gtk/gtkcalendar.c",
+      "line": 472,
+      "md": "Emitted when the user selects a day."
+    },
+    "next-month": {
+      "brief": "Emitted when the user switches to the next month.",
+      "file": "gtk/gtkcalendar.c",
+      "line": 502,
+      "md": "Emitted when the user switches to the next month."
+    },
+    "next-year": {
+      "brief": "Emitted when user switches to the next year.",
+      "file": "gtk/gtkcalendar.c",
+      "line": 532,
+      "md": "Emitted when user switches to the next year."
+    },
+    "prev-month": {
+      "brief": "Emitted when the user switches to the previous month.",
+      "file": "gtk/gtkcalendar.c",
+      "line": 487,
+      "md": "Emitted when the user switches to the previous month."
+    },
+    "prev-year": {
+      "brief": "Emitted when user switches to the previous year.",
+      "file": "gtk/gtkcalendar.c",
+      "line": 517,
+      "md": "Emitted when user switches to the previous year."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

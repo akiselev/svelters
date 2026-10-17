@@ -1,0 +1,68 @@
+{
+  "doc": {
+    "brief": "The QGraphicsColorizeEffect class provides a colorize effect.",
+    "index_brief": "Colorize effect",
+    "url": "https://doc.qt.io/qt-6/qgraphicscolorizeeffect.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsColorizeEffect",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QColor color() const": {
+      "brief": "This property holds the color of the effect.",
+      "url": "https://doc.qt.io/qt-6/qgraphicscolorizeeffect.html#color-prop"
+    },
+    "QGraphicsColorizeEffect(QObject *parent)": {
+      "brief": "Constructs a new QGraphicsColorizeEffect instance.",
+      "url": "https://doc.qt.io/qt-6/qgraphicscolorizeeffect.html#QGraphicsColorizeEffect"
+    },
+    "qreal strength() const": {
+      "brief": "This property holds the strength of the effect.",
+      "url": "https://doc.qt.io/qt-6/qgraphicscolorizeeffect.html#strength-prop"
+    },
+    "void colorChanged(const QColor &color)": {
+      "brief": "This signal is emitted whenever the effect's color changes.",
+      "url": "https://doc.qt.io/qt-6/qgraphicscolorizeeffect.html#colorChanged"
+    },
+    "void draw(QPainter *painter) override": {
+      "brief": "Reimplements: [QGraphicsEffect::draw](xref:qt:QGraphicsEffect)(QPainter *painter).",
+      "url": "https://doc.qt.io/qt-6/qgraphicscolorizeeffect.html#draw"
+    },
+    "void setColor(const QColor &c)": {
+      "brief": "This property holds the color of the effect.",
+      "url": "https://doc.qt.io/qt-6/qgraphicscolorizeeffect.html#color-prop"
+    },
+    "void setStrength(qreal strength)": {
+      "brief": "This property holds the strength of the effect.",
+      "url": "https://doc.qt.io/qt-6/qgraphicscolorizeeffect.html#strength-prop"
+    },
+    "void strengthChanged(qreal strength)": {
+      "brief": "This signal is emitted whenever [setStrength](xref:qt:QGraphicsColorizeEffect)() changes the colorize strength property. *strength* contains the new strength value of the colorize effect.",
+      "url": "https://doc.qt.io/qt-6/qgraphicscolorizeeffect.html#strengthChanged"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "color": {
+      "brief": "The color of the effect",
+      "url": "https://doc.qt.io/qt-6/qgraphicscolorizeeffect.html#color-prop"
+    },
+    "strength": {
+      "brief": "The strength of the effect",
+      "url": "https://doc.qt.io/qt-6/qgraphicscolorizeeffect.html#strength-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

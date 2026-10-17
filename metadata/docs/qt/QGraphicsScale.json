@@ -1,0 +1,104 @@
+{
+  "doc": {
+    "brief": "The QGraphicsScale class provides a scale transformation.",
+    "index_brief": "Scale transformation",
+    "url": "https://doc.qt.io/qt-6/qgraphicsscale.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsScale",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QGraphicsScale(QObject *parent)": {
+      "brief": "Constructs an empty QGraphicsScale object with the given *parent*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscale.html#QGraphicsScale"
+    },
+    "QVector3D origin() const": {
+      "brief": "This property holds the origin of the scale in 3D space.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscale.html#origin-prop"
+    },
+    "qreal xScale() const": {
+      "brief": "This property holds the horizontal scale factor.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscale.html#xScale-prop"
+    },
+    "qreal yScale() const": {
+      "brief": "This property holds the vertical scale factor.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscale.html#yScale-prop"
+    },
+    "qreal zScale() const": {
+      "brief": "This property holds the depth scale factor.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscale.html#zScale-prop"
+    },
+    "void applyTo(QMatrix4x4 *matrix) const override": {
+      "brief": "Reimplements: [QGraphicsTransform::applyTo](xref:qt:QGraphicsTransform)(QMatrix4x4 *matrix) const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscale.html#applyTo"
+    },
+    "void originChanged()": {
+      "brief": "[QGraphicsScale](xref:qt:QGraphicsScale) emits this signal when its origin changes.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscale.html#originChanged"
+    },
+    "void scaleChanged()": {
+      "brief": "This signal is emitted whenever the [xScale](xref:qt:QGraphicsScale), [yScale](xref:qt:QGraphicsScale), or [zScale](xref:qt:QGraphicsScale) of the object changes.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscale.html#scaleChanged"
+    },
+    "void setOrigin(const QVector3D &point)": {
+      "brief": "This property holds the origin of the scale in 3D space.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscale.html#origin-prop"
+    },
+    "void setXScale(qreal)": {
+      "brief": "This property holds the horizontal scale factor.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscale.html#xScale-prop"
+    },
+    "void setYScale(qreal)": {
+      "brief": "This property holds the vertical scale factor.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscale.html#yScale-prop"
+    },
+    "void setZScale(qreal)": {
+      "brief": "This property holds the depth scale factor.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscale.html#zScale-prop"
+    },
+    "void xScaleChanged()": {
+      "brief": "This signal is emitted whenever the [xScale](xref:qt:QGraphicsScale) property changes.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscale.html#xScaleChanged"
+    },
+    "void yScaleChanged()": {
+      "brief": "This signal is emitted whenever the [yScale](xref:qt:QGraphicsScale) property changes.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscale.html#yScaleChanged"
+    },
+    "void zScaleChanged()": {
+      "brief": "This signal is emitted whenever the [zScale](xref:qt:QGraphicsScale) property changes.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscale.html#zScaleChanged"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "origin": {
+      "brief": "The origin of the scale in 3D space",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscale.html#origin-prop"
+    },
+    "xScale": {
+      "brief": "The horizontal scale factor",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscale.html#xScale-prop"
+    },
+    "yScale": {
+      "brief": "The vertical scale factor",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscale.html#yScale-prop"
+    },
+    "zScale": {
+      "brief": "The depth scale factor",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscale.html#zScale-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

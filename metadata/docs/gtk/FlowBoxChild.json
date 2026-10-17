@@ -1,0 +1,76 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkFlowBoxChild`.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 582,
+      "md": "Creates a new `GtkFlowBoxChild`.\n\nThis should only be used as a child of a `GtkFlowBox`."
+    }
+  },
+  "doc": {
+    "brief": "The kind of widget that can be added to a `GtkFlowBox`.",
+    "file": "gtk/gtkflowbox.c",
+    "line": 91,
+    "md": "The kind of widget that can be added to a `GtkFlowBox`.\n\n[`FlowBox`](xref:gtk:Gtk.FlowBox) will automatically wrap its children in a `GtkFlowBoxChild`\nwhen necessary."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:FlowBoxChild",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "changed": {
+      "brief": "Marks `child` as changed, causing any state that depends on this to be updated.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 681,
+      "md": "Marks `child` as changed, causing any state that depends on this\nto be updated.\n\nThis affects sorting and filtering.\n\nNote that calls to this method must be in sync with the data\nused for the sorting and filtering functions. For instance, if\nthe list is mirroring some external data set, and *two* children\nchanged in the external data set when you call\ngtk_flow_box_child_changed() on the first child, the sort function\nmust only read the new data for the first of the two changed\nchildren, otherwise the resorting of the children will be wrong.\n\nThis generally means that if you don’t fully control the data\nmodel, you have to duplicate the data that affects the sorting\nand filtering functions into the widgets themselves.\n\nAnother alternative is to call [`FlowBox.invalidate_sort()`](xref:gtk:Gtk.FlowBox#method:invalidate_sort)\non any model change, but that is more expensive."
+    },
+    "get_child": {
+      "brief": "Gets the child widget of `self`.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 624,
+      "md": "Gets the child widget of `self`."
+    },
+    "get_index": {
+      "brief": "Gets the current index of the `child` in its `GtkFlowBox` container.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 640,
+      "md": "Gets the current index of the `child` in its `GtkFlowBox` container."
+    },
+    "is_selected": {
+      "brief": "Returns whether the `child` is currently selected in its `GtkFlowBox` container.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 664,
+      "md": "Returns whether the `child` is currently selected in its\n`GtkFlowBox` container."
+    },
+    "set_child": {
+      "brief": "Sets the child widget of `self`.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 597,
+      "md": "Sets the child widget of `self`."
+    }
+  },
+  "properties": {
+    "child": {
+      "brief": "The child widget.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 534,
+      "md": "The child widget."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "activate": {
+      "brief": "Emitted when the user activates a child widget in a `GtkFlowBox`.",
+      "file": "gtk/gtkflowbox.c",
+      "line": 545,
+      "md": "Emitted when the user activates a child widget in a `GtkFlowBox`.\n\nThis can happen either by clicking or double-clicking,\nor via a keybinding.\n\nThis is a [keybinding signal](class.SignalAction.html),\nbut it can be used by applications for their own purposes.\n\nThe default bindings are <kbd>Space</kbd> and <kbd>Enter</kbd>."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

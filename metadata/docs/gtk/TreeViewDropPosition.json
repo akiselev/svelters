@@ -1,0 +1,51 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "An enum for determining where a dropped row goes.",
+    "deprecated": "4.20",
+    "deprecated_md": "There is no replacement.",
+    "file": "gtk/deprecated/gtktreeview.h",
+    "line": 31,
+    "md": "An enum for determining where a dropped row goes."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:TreeViewDropPosition",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "after": {
+      "brief": "dropped row is inserted after",
+      "file": "gtk/deprecated/gtktreeview.h",
+      "line": 34,
+      "md": "dropped row is inserted after"
+    },
+    "before": {
+      "brief": "dropped row is inserted before",
+      "file": "gtk/deprecated/gtktreeview.h",
+      "line": 33,
+      "md": "dropped row is inserted before"
+    },
+    "into_or_after": {
+      "brief": "dropped row becomes a child or is inserted after",
+      "file": "gtk/deprecated/gtktreeview.h",
+      "line": 36,
+      "md": "dropped row becomes a child or is inserted after"
+    },
+    "into_or_before": {
+      "brief": "dropped row becomes a child or is inserted before",
+      "file": "gtk/deprecated/gtktreeview.h",
+      "line": 35,
+      "md": "dropped row becomes a child or is inserted before"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

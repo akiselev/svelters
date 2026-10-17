@@ -1,0 +1,76 @@
+{
+  "doc": {
+    "brief": "The QCommandLinkButton widget provides a Vista style command link button.",
+    "index_brief": "Vista style command link button",
+    "url": "https://doc.qt.io/qt-6/qcommandlinkbutton.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QCommandLinkButton",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QCommandLinkButton(QWidget *parent)": {
+      "brief": "Constructs a command link with no text and a *parent*.",
+      "url": "https://doc.qt.io/qt-6/qcommandlinkbutton.html#QCommandLinkButton"
+    },
+    "QCommandLinkButton(const QString &text, QWidget *parent)": {
+      "brief": "Constructs a command link with the parent *parent* and the text *text*.",
+      "url": "https://doc.qt.io/qt-6/qcommandlinkbutton.html#QCommandLinkButton-1"
+    },
+    "QCommandLinkButton(const QString &text, const QString &description, QWidget *parent)": {
+      "brief": "Constructs a command link with a *text*, a *description*, and a *parent*.",
+      "url": "https://doc.qt.io/qt-6/qcommandlinkbutton.html#QCommandLinkButton-2"
+    },
+    "QSize minimumSizeHint() const override": {
+      "brief": "Reimplements: [QPushButton::minimumSizeHint](xref:qt:QPushButton)() const.",
+      "url": "https://doc.qt.io/qt-6/qcommandlinkbutton.html#minimumSizeHint"
+    },
+    "QSize sizeHint() const override": {
+      "brief": "Reimplements: [QPushButton::sizeHint](xref:qt:QPushButton)() const.",
+      "url": "https://doc.qt.io/qt-6/qcommandlinkbutton.html#sizeHint"
+    },
+    "QString description() const": {
+      "brief": "This property holds a descriptive label to complement the button text",
+      "url": "https://doc.qt.io/qt-6/qcommandlinkbutton.html#description-prop"
+    },
+    "bool event(QEvent *e) override": {
+      "brief": "Reimplements: [QPushButton::event](xref:qt:QPushButton)(QEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qcommandlinkbutton.html#event"
+    },
+    "int heightForWidth(int width) const override": {
+      "brief": "Reimplements: [QWidget::heightForWidth](xref:qt:QWidget)(int w) const.",
+      "url": "https://doc.qt.io/qt-6/qcommandlinkbutton.html#heightForWidth"
+    },
+    "void paintEvent(QPaintEvent *) override": {
+      "brief": "Reimplements: [QPushButton::paintEvent](xref:qt:QPushButton)(QPaintEvent *).",
+      "url": "https://doc.qt.io/qt-6/qcommandlinkbutton.html#paintEvent"
+    },
+    "void setDescription(const QString &description)": {
+      "brief": "This property holds a descriptive label to complement the button text",
+      "url": "https://doc.qt.io/qt-6/qcommandlinkbutton.html#description-prop"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "description": {
+      "brief": "A descriptive label to complement the button text",
+      "url": "https://doc.qt.io/qt-6/qcommandlinkbutton.html#description-prop"
+    },
+    "flat": {
+      "brief": "This property determines whether the button is displayed as a flat panel or with a border",
+      "url": "https://doc.qt.io/qt-6/qcommandlinkbutton.html#flat-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

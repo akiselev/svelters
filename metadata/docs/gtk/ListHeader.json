@@ -1,0 +1,104 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Used by list widgets to represent the headers they display.",
+    "file": "gtk/gtklistheader.c",
+    "line": 24,
+    "md": "Used by list widgets to represent the headers they display.\n\n`GtkListHeader` objects are managed just like [`ListItem`](xref:gtk:Gtk.ListItem)\nobjects via their factory, but provide a different set of properties suitable\nfor managing the header instead of individual items.",
+    "since": "4.12"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ListHeader",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_child": {
+      "brief": "Gets the child previously set via gtk_list_header_set_child() or `NULL` if none was set.",
+      "file": "gtk/gtklistheader.c",
+      "line": 253,
+      "md": "Gets the child previously set via gtk_list_header_set_child() or\n`NULL` if none was set.",
+      "since": "4.12"
+    },
+    "get_end": {
+      "brief": "Gets the end position in the model of the section that `self` is currently the header for.",
+      "file": "gtk/gtklistheader.c",
+      "line": 333,
+      "md": "Gets the end position in the model of the section that `self` is\ncurrently the header for.\n\nIf `self` is unbound, %GTK_INVALID_LIST_POSITION is returned.",
+      "since": "4.12"
+    },
+    "get_item": {
+      "brief": "Gets the model item at the start of the section.",
+      "file": "gtk/gtklistheader.c",
+      "line": 228,
+      "md": "Gets the model item at the start of the section.\nThis is the item that occupies the list model at position\n[`ListHeader:start`](xref:gtk:Gtk.ListHeader#property:start).\n\nIf `self` is unbound, this function returns `NULL`.",
+      "since": "4.12"
+    },
+    "get_n_items": {
+      "brief": "Gets the the number of items in the section.",
+      "file": "gtk/gtklistheader.c",
+      "line": 357,
+      "md": "Gets the the number of items in the section.\n\nIf `self` is unbound, 0 is returned.",
+      "since": "4.12"
+    },
+    "get_start": {
+      "brief": "Gets the start position in the model of the section that `self` is currently the header for.",
+      "file": "gtk/gtklistheader.c",
+      "line": 309,
+      "md": "Gets the start position in the model of the section that `self` is\ncurrently the header for.\n\nIf `self` is unbound, %GTK_INVALID_LIST_POSITION is returned.",
+      "since": "4.12"
+    },
+    "set_child": {
+      "brief": "Sets the child to be used for this listitem.",
+      "file": "gtk/gtklistheader.c",
+      "line": 272,
+      "md": "Sets the child to be used for this listitem.\n\nThis function is typically called by applications when\nsetting up a header so that the widget can be reused when\nbinding it multiple times.",
+      "since": "4.12"
+    }
+  },
+  "properties": {
+    "child": {
+      "brief": "Widget used for display.",
+      "file": "gtk/gtklistheader.c",
+      "line": 135,
+      "md": "Widget used for display.",
+      "since": "4.12"
+    },
+    "end": {
+      "brief": "The first position no longer part of this section.",
+      "file": "gtk/gtklistheader.c",
+      "line": 147,
+      "md": "The first position no longer part of this section.",
+      "since": "4.12"
+    },
+    "item": {
+      "brief": "The item at the start of the section.",
+      "file": "gtk/gtklistheader.c",
+      "line": 159,
+      "md": "The item at the start of the section.",
+      "since": "4.12"
+    },
+    "n-items": {
+      "brief": "Number of items in this section.",
+      "file": "gtk/gtklistheader.c",
+      "line": 171,
+      "md": "Number of items in this section.",
+      "since": "4.12"
+    },
+    "start": {
+      "brief": "First position of items in this section.",
+      "file": "gtk/gtklistheader.c",
+      "line": 183,
+      "md": "First position of items in this section.",
+      "since": "4.12"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

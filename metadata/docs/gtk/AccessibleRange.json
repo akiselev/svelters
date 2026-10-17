@@ -1,0 +1,33 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "An interface for accessible objects containing a numeric value.",
+    "file": "gtk/gtkaccessiblerange.c",
+    "line": 7,
+    "md": "An interface for accessible objects containing a numeric value.\n\n`GtkAccessibleRange` describes ranged controls for Assistive Technologies.\n\nRanged controls have a single value within an allowed range that can\noptionally be changed by the user.\n\nThis interface is expected to be implemented by controls using the\nfollowing roles:\n\n- `GTK_ACCESSIBLE_ROLE_METER`\n- `GTK_ACCESSIBLE_ROLE_PROGRESS_BAR`\n- `GTK_ACCESSIBLE_ROLE_SCROLLBAR`\n- `GTK_ACCESSIBLE_ROLE_SLIDER`\n- `GTK_ACCESSIBLE_ROLE_SPIN_BUTTON`\n\nIf that is not the case, a warning will be issued at run time.\n\nIn addition to this interface, its implementers are expected to provide the\ncorrect values for the following properties:\n\n- `GTK_ACCESSIBLE_PROPERTY_VALUE_MAX`\n- `GTK_ACCESSIBLE_PROPERTY_VALUE_MIN`\n- `GTK_ACCESSIBLE_PROPERTY_VALUE_NOW`\n- `GTK_ACCESSIBLE_PROPERTY_VALUE_TEXT`",
+    "since": "4.10"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:AccessibleRange",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "set_current_value": {
+      "brief": "Sets the current value of the accessible range.",
+      "file": "gtk/gtkaccessiblerange.h",
+      "line": 25,
+      "md": "Sets the current value of the accessible range.\n\nThis operation should behave similarly as if the user performed the\naction.",
+      "since": "4.10"
+    }
+  }
+}

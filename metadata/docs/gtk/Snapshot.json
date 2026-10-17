@@ -1,0 +1,394 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkSnapshot`.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 328,
+      "md": "Creates a new `GtkSnapshot`."
+    }
+  },
+  "doc": {
+    "brief": "Assists in creating [`RenderNode`](xref:gtk:Gsk.RenderNode)s for widgets.",
+    "file": "gtk/gtksnapshot.c",
+    "line": 55,
+    "md": "Assists in creating [`RenderNode`](xref:gtk:Gsk.RenderNode)s for widgets.\n\nIt functions in a similar way to a cairo context, and maintains a stack\nof render nodes and their associated transformations.\n\nThe node at the top of the stack is the one that `gtk_snapshot_append_…()`\nfunctions operate on. Use the `gtk_snapshot_push_…()` functions and\n[`Snapshot.pop()`](xref:gtk:Snapshot#method:pop) to change the current node.\n\nThe typical way to obtain a `GtkSnapshot` object is as an argument to\nthe [`Widget.snapshot()`](xref:gtk:Gtk.Widget#vfunc:snapshot) vfunc. If you need to create your own\n`GtkSnapshot`, use [`Snapshot.new()`](xref:gtk:Gtk.Snapshot#constructor:new).\n\nNote that `GtkSnapshot` applies some optimizations, so the node\nit produces may not match the API calls 1:1. For example, it will\nomit clip nodes if the child node is entirely contained within the\nclip rectangle."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Snapshot",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "append_border": {
+      "brief": "Appends a stroked border rectangle inside the given `outline`.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 3209,
+      "md": "Appends a stroked border rectangle inside the given `outline`.\n\nThe four sides of the border can have different widths and colors."
+    },
+    "append_cairo": {
+      "brief": "Creates a new [`CairoNode`](xref:gtk:Gsk.CairoNode) and appends it to the current render node of `snapshot`, without changing the current node.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 2667,
+      "md": "Creates a new [`CairoNode`](xref:gtk:Gsk.CairoNode) and appends it to the current\nrender node of `snapshot`, without changing the current node."
+    },
+    "append_color": {
+      "brief": "Creates a new render node drawing the `color` into the given `bounds` and appends it to the current render node of `snapshot`.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 2774,
+      "md": "Creates a new render node drawing the `color` into the\ngiven `bounds` and appends it to the current render node\nof `snapshot`.\n\nYou should try to avoid calling this function if\n`color` is transparent."
+    },
+    "append_conic_gradient": {
+      "brief": "Appends a conic gradient node with the given stops to `snapshot`.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 2989,
+      "md": "Appends a conic gradient node with the given stops to `snapshot`."
+    },
+    "append_fill": {
+      "brief": "A convenience method to fill a path with a color.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 1402,
+      "md": "A convenience method to fill a path with a color.\n\nSee [`Snapshot.push_fill()`](xref:gtk:Gtk.Snapshot#method:push_fill) if you need\nto fill a path with more complex content than\na color.",
+      "since": "4.14"
+    },
+    "append_inset_shadow": {
+      "brief": "Appends an inset shadow into the box given by `outline`.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 3282,
+      "md": "Appends an inset shadow into the box given by `outline`."
+    },
+    "append_layout": {
+      "brief": "Creates render nodes for rendering `layout` in the given foregound `color` and appends them to the current node of `snapshot` without changing the current node.",
+      "file": "gtk/gskpango.c",
+      "line": 571,
+      "md": "Creates render nodes for rendering `layout` in the given foregound `color`\nand appends them to the current node of `snapshot` without changing the\ncurrent node. The current theme's foreground color for a widget can be\nobtained with [`Widget.get_color()`](xref:gtk:Gtk.Widget#method:get_color).\n\nNote that if the layout does not produce any visible output, then nodes\nmay not be added to the `snapshot`."
+    },
+    "append_linear_gradient": {
+      "brief": "Appends a linear gradient node with the given stops to `snapshot`.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 2871,
+      "md": "Appends a linear gradient node with the given stops to `snapshot`."
+    },
+    "append_node": {
+      "brief": "Appends `node` to the current render node of `snapshot`, without changing the current node.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 2601,
+      "md": "Appends `node` to the current render node of `snapshot`,\nwithout changing the current node.\n\nIf `snapshot` does not have a current node yet, `node`\nwill become the initial node."
+    },
+    "append_outset_shadow": {
+      "brief": "Appends an outset shadow node around the box given by `outline`.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 3355,
+      "md": "Appends an outset shadow node around the box given by `outline`."
+    },
+    "append_paste": {
+      "brief": "Creates a new render node that pastes the contents copied by a previous call to [`Snapshot.push_copy()`](xref:gtk:Gtk.Snapshot#method:push_copy)",
+      "file": "gtk/gtksnapshot.c",
+      "line": 3428,
+      "md": "Creates a new render node that pastes the contents\ncopied by a previous call to [`Snapshot.push_copy()`](xref:gtk:Gtk.Snapshot#method:push_copy)",
+      "since": "4.22"
+    },
+    "append_radial_gradient": {
+      "brief": "Appends a radial gradient node with the given stops to `snapshot`.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 3065,
+      "md": "Appends a radial gradient node with the given stops to `snapshot`."
+    },
+    "append_repeating_linear_gradient": {
+      "brief": "Appends a repeating linear gradient node with the given stops to `snapshot`.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 2957,
+      "md": "Appends a repeating linear gradient node with the given stops to `snapshot`."
+    },
+    "append_repeating_radial_gradient": {
+      "brief": "Appends a repeating radial gradient node with the given stops to `snapshot`.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 3170,
+      "md": "Appends a repeating radial gradient node with the given stops to `snapshot`."
+    },
+    "append_scaled_texture": {
+      "brief": "Creates a new render node drawing the `texture` into the given `bounds` and appends it to the current render node of `snapshot`.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 2739,
+      "md": "Creates a new render node drawing the `texture`\ninto the given `bounds` and appends it to the\ncurrent render node of `snapshot`.\n\nIn contrast to [`Snapshot.append_texture()`](xref:gtk:Gtk.Snapshot#method:append_texture),\nthis function provides control about how the filter\nthat is used when scaling.",
+      "since": "4.10"
+    },
+    "append_stroke": {
+      "brief": "A convenience method to stroke a path with a color.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 1530,
+      "md": "A convenience method to stroke a path with a color.\n\nSee [`Snapshot.push_stroke()`](xref:gtk:Gtk.Snapshot#method:push_stroke) if you need\nto stroke a path with more complex content than\na color.",
+      "since": "4.14"
+    },
+    "append_texture": {
+      "brief": "Creates a new render node drawing the `texture` into the given `bounds` and appends it to the current render node of `snapshot`.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 2705,
+      "md": "Creates a new render node drawing the `texture`\ninto the given `bounds` and appends it to the\ncurrent render node of `snapshot`.\n\nIf the texture needs to be scaled to fill `bounds`,\nlinear filtering is used. See [`Snapshot.append_scaled_texture()`](xref:gtk:Gtk.Snapshot#method:append_scaled_texture)\nif you need other filtering, such as nearest-neighbour."
+    },
+    "free_to_node": {
+      "brief": "Returns the node that was constructed by `snapshot` and frees `snapshot`.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 341,
+      "md": "Returns the node that was constructed by `snapshot`\nand frees `snapshot`.\n\nSee also [`Snapshot.to_node()`](xref:gtk:Gtk.Snapshot#method:to_node)."
+    },
+    "free_to_paintable": {
+      "brief": "Returns a paintable for the node that was constructed by `snapshot` and frees `snapshot`.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 363,
+      "md": "Returns a paintable for the node that was\nconstructed by `snapshot` and frees `snapshot`."
+    },
+    "gl_shader_pop_texture": {
+      "brief": "Removes the top element from the stack of render nodes and adds it to the nearest [`GLShaderNode`](xref:gtk:Gsk.GLShaderNode) below it.",
+      "deprecated": "4.16",
+      "deprecated_md": "GTK's new Vulkan-focused rendering\n  does not support this feature. Use [`GLArea`](xref:gtk:Gtk.GLArea) for\n  OpenGL rendering.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 2321,
+      "md": "Removes the top element from the stack of render nodes and\nadds it to the nearest [`GLShaderNode`](xref:gtk:Gsk.GLShaderNode) below it.\n\nThis must be called the same number of times as the number\nof textures is needed for the shader in\n[`Snapshot.push_gl_shader()`](xref:gtk:Gtk.Snapshot#method:push_gl_shader)."
+    },
+    "perspective": {
+      "brief": "Applies a perspective projection transform.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 2580,
+      "md": "Applies a perspective projection transform.\n\nSee [`Transform.perspective()`](xref:gtk:Gsk.Transform#method:perspective) for a discussion on the details."
+    },
+    "pop": {
+      "brief": "Removes the top element from the stack of render nodes, and appends it to the node underneath it.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 2303,
+      "md": "Removes the top element from the stack of render nodes,\nand appends it to the node underneath it."
+    },
+    "push_blend": {
+      "brief": "Blends together two images with the given blend mode.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 1715,
+      "md": "Blends together two images with the given blend mode.\n\nUntil the first call to [`Snapshot.pop()`](xref:gtk:Gtk.Snapshot#method:pop), the\nbottom image for the blend operation will be recorded.\nAfter that call, the top image to be blended will be\nrecorded until the second call to [`Snapshot.pop()`](xref:gtk:Gtk.Snapshot#method:pop).\n\nCalling this function requires two subsequent calls\nto [`Snapshot.pop()`](xref:gtk:Gtk.Snapshot#method:pop)."
+    },
+    "push_blur": {
+      "brief": "Blurs an image.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 629,
+      "md": "Blurs an image.\n\nThe image is recorded until the next call to [`Snapshot.pop()`](xref:gtk:Gtk.Snapshot#method:pop)."
+    },
+    "push_clip": {
+      "brief": "Clips an image to a rectangle.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 1063,
+      "md": "Clips an image to a rectangle.\n\nThe image is recorded until the next call to [`Snapshot.pop()`](xref:gtk:Gtk.Snapshot#method:pop)."
+    },
+    "push_color_matrix": {
+      "brief": "Modifies the colors of an image by applying an affine transformation in RGB space.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 736,
+      "md": "Modifies the colors of an image by applying an affine transformation\nin RGB space.\n\nIn particular, the colors will be transformed by applying\n\n    pixel = transpose(color_matrix) * pixel + color_offset\n\nfor every pixel. The transformation operates on unpremultiplied\ncolors, with color components ordered R, G, B, A.\n\nThe image is recorded until the next call to [`Snapshot.pop()`](xref:gtk:Gtk.Snapshot#method:pop)."
+    },
+    "push_component_transfer": {
+      "brief": "Modifies the colors of an image by applying a transfer function for each component.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 802,
+      "md": "Modifies the colors of an image by applying a transfer\nfunction for each component.\n\nThe transfer functions operate on unpremultiplied colors.\n\nThe image is recorded until the next call to [`Snapshot.pop()`](xref:gtk:Gtk.Snapshot#method:pop).",
+      "since": "4.20"
+    },
+    "push_composite": {
+      "brief": "Until the first call to [`Snapshot.pop()`](xref:gtk:Gtk.Snapshot#method:pop), the mask image for the mask operation will be recorded.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 1923,
+      "md": "Until the first call to [`Snapshot.pop()`](xref:gtk:Gtk.Snapshot#method:pop), the\nmask image for the mask operation will be recorded.\n\nAfter that call, the child image will be recorded until\nthe second call to [`Snapshot.pop()`](xref:gtk:Gtk.Snapshot#method:pop).\n\nCalling this function requires 2 subsequent calls to gtk_snapshot_pop().",
+      "since": "4.22"
+    },
+    "push_copy": {
+      "brief": "Stores the current rendering state for later pasting via [`Snapshot.append_paste()`](xref:gtk:Gtk.Snapshot#method:append_paste).",
+      "file": "gtk/gtksnapshot.c",
+      "line": 1848,
+      "md": "Stores the current rendering state for later pasting via\n[`Snapshot.append_paste()`](xref:gtk:Gtk.Snapshot#method:append_paste).\n\nPasting is possible until the matching call to [`Snapshot.pop()`](xref:gtk:Gtk.Snapshot#method:pop).",
+      "since": "4.22"
+    },
+    "push_cross_fade": {
+      "brief": "Snapshots a cross-fade operation between two images with the given `progress`.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 2032,
+      "md": "Snapshots a cross-fade operation between two images with the\ngiven `progress`.\n\nUntil the first call to [`Snapshot.pop()`](xref:gtk:Gtk.Snapshot#method:pop), the start image\nwill be snapshot. After that call, the end image will be recorded\nuntil the second call to [`Snapshot.pop()`](xref:gtk:Gtk.Snapshot#method:pop).\n\nCalling this function requires two subsequent calls\nto [`Snapshot.pop()`](xref:gtk:Gtk.Snapshot#method:pop)."
+    },
+    "push_debug": {
+      "brief": "Inserts a debug node with a message.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 449,
+      "md": "Inserts a debug node with a message.\n\nDebug nodes don't affect the rendering at all, but can be\nhelpful in identifying parts of a render node tree dump,\nfor example in the GTK inspector."
+    },
+    "push_fill": {
+      "brief": "Fills the area given by `path` and `fill_rule` with an image and discards everything outside of it.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 1367,
+      "md": "Fills the area given by `path` and `fill_rule` with an image and discards everything\noutside of it.\n\nThe image is recorded until the next call to [`Snapshot.pop()`](xref:gtk:Gtk.Snapshot#method:pop).\n\nIf you want to fill the path with a color, [`Snapshot.append_fill()`](xref:gtk:Gtk.Snapshot#method:append_fill)\nthan rendering new ones, use [`Snapshot.append_fill()`](xref:gtk:Gtk.Snapshot#method:append_fill)\nmay be more convenient.",
+      "since": "4.14"
+    },
+    "push_gl_shader": {
+      "brief": "Push a [`GLShaderNode`](xref:gtk:Gsk.GLShaderNode).",
+      "deprecated": "4.16",
+      "deprecated_md": "GTK's new Vulkan-focused rendering\n  does not support this feature. Use [`GLArea`](xref:gtk:Gtk.GLArea) for\n  OpenGL rendering.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 1178,
+      "md": "Push a [`GLShaderNode`](xref:gtk:Gsk.GLShaderNode).\n\nThe node uses the given [`GLShader`](xref:gtk:Gsk.GLShader) and uniform values\nAdditionally this takes a list of `n_children` other nodes\nwhich will be passed to the [`GLShaderNode`](xref:gtk:Gsk.GLShaderNode).\n\nThe `take_args` argument is a block of data to use for uniform\narguments, as per types and offsets defined by the `shader`.\nNormally this is generated by [`GLShader.format_args()`](xref:gtk:Gsk.GLShader#method:format_args)\nor [`ShaderArgsBuilder`](xref:gtk:Gsk.ShaderArgsBuilder).\n\nThe snapshotter takes ownership of `take_args`, so the caller should\nnot free it after this.\n\nIf the renderer doesn't support GL shaders, or if there is any\nproblem when compiling the shader, then the node will draw pink.\nYou should use [`GLShader.compile()`](xref:gtk:Gsk.GLShader#method:compile) to ensure the `shader`\nwill work for the renderer before using it.\n\nIf the shader requires textures (see [`GLShader.get_n_textures()`](xref:gtk:Gsk.GLShader#method:get_n_textures)),\nthen it is expected that you call [`Snapshot.gl_shader_pop_texture()`](xref:gtk:Gtk.Snapshot#method:gl_shader_pop_texture)\nthe number of times that are required. Each of these calls will generate\na node that is added as a child to the `GskGLShaderNode`, which in turn\nwill render these offscreen and pass as a texture to the shader.\n\nOnce all textures (if any) are pop:ed, you must call the regular\n[`Snapshot.pop()`](xref:gtk:Gtk.Snapshot#method:pop).\n\nIf you want to use pre-existing textures as input to the shader rather\nthan rendering new ones, use [`Snapshot.append_texture()`](xref:gtk:Gtk.Snapshot#method:append_texture) to\npush a texture node. These will be used directly rather than being\nre-rendered.\n\nFor details on how to write shaders, see [`GLShader`](xref:gtk:Gsk.GLShader)."
+    },
+    "push_isolation": {
+      "brief": "Isolates the following drawing operations from previous ones.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 569,
+      "md": "Isolates the following drawing operations from previous ones.\n\nYou can express \"everything but these flags\" in a forward compatible\nway by using bit math:\n`GSK_ISOLATION_ALL & ~(GSK_ISOLATION_BACKGROUND | GSK_ISOLATION_COPY_PASTE)`\nwill isolate everything but background and copy/paste.\n\nFor what isolation features exist, see [`Isolation`](xref:gtk:Gsk.Isolation).\n\nContent is isolated until the next call to [`Snapshot.pop()`](xref:gtk:Gtk.Snapshot#method:pop).",
+      "since": "4.22"
+    },
+    "push_mask": {
+      "brief": "Until the first call to [`Snapshot.pop()`](xref:gtk:Gtk.Snapshot#method:pop), the mask image for the mask operation will be recorded.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 1795,
+      "md": "Until the first call to [`Snapshot.pop()`](xref:gtk:Gtk.Snapshot#method:pop), the\nmask image for the mask operation will be recorded.\n\nAfter that call, the source image will be recorded until\nthe second call to [`Snapshot.pop()`](xref:gtk:Gtk.Snapshot#method:pop).\n\nCalling this function requires 2 subsequent calls to gtk_snapshot_pop().",
+      "since": "4.10"
+    },
+    "push_opacity": {
+      "brief": "Modifies the opacity of an image.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 523,
+      "md": "Modifies the opacity of an image.\n\nThe image is recorded until the next call to [`Snapshot.pop()`](xref:gtk:Gtk.Snapshot#method:pop)."
+    },
+    "push_repeat": {
+      "brief": "Creates a node that repeats the child node.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 1013,
+      "md": "Creates a node that repeats the child node.\n\nThe child is recorded until the next call to [`Snapshot.pop()`](xref:gtk:Gtk.Snapshot#method:pop)."
+    },
+    "push_rounded_clip": {
+      "brief": "Clips an image to a rounded rectangle.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 1306,
+      "md": "Clips an image to a rounded rectangle.\n\nThe image is recorded until the next call to [`Snapshot.pop()`](xref:gtk:Gtk.Snapshot#method:pop)."
+    },
+    "push_shadow": {
+      "brief": "Applies a shadow to an image.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 1571,
+      "md": "Applies a shadow to an image.\n\nThe image is recorded until the next call to [`Snapshot.pop()`](xref:gtk:Gtk.Snapshot#method:pop)."
+    },
+    "push_stroke": {
+      "brief": "Strokes the given `path` with the attributes given by `stroke` and an image.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 1469,
+      "md": "Strokes the given `path` with the attributes given by `stroke` and\nan image.\n\nThe image is recorded until the next call to [`Snapshot.pop()`](xref:gtk:Gtk.Snapshot#method:pop).\n\nNote that the strokes are subject to the same transformation as\neverything else, so uneven scaling will cause horizontal and vertical\nstrokes to have different widths.\n\nIf you want to stroke the path with a color, [`Snapshot.append_stroke()`](xref:gtk:Gtk.Snapshot#method:append_stroke)\nmay be more convenient.",
+      "since": "4.14"
+    },
+    "render_background": {
+      "brief": "Creates a render node for the CSS background according to `context`, and appends it to the current node of `snapshot`, without changing the current node.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkrender.c",
+      "line": 548,
+      "md": "Creates a render node for the CSS background according to `context`,\nand appends it to the current node of `snapshot`, without changing\nthe current node."
+    },
+    "render_focus": {
+      "brief": "Creates a render node for the focus outline according to `context`, and appends it to the current node of `snapshot`, without changing the current node.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkrender.c",
+      "line": 616,
+      "md": "Creates a render node for the focus outline according to `context`,\nand appends it to the current node of `snapshot`, without changing\nthe current node."
+    },
+    "render_frame": {
+      "brief": "Creates a render node for the CSS border according to `context`, and appends it to the current node of `snapshot`, without changing the current node.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkrender.c",
+      "line": 582,
+      "md": "Creates a render node for the CSS border according to `context`,\nand appends it to the current node of `snapshot`, without changing\nthe current node."
+    },
+    "render_insertion_cursor": {
+      "brief": "Draws a text caret using `snapshot` at the specified index of `layout`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkrender.c",
+      "line": 683,
+      "md": "Draws a text caret using `snapshot` at the specified index of `layout`."
+    },
+    "render_layout": {
+      "brief": "Creates a render node for rendering `layout` according to the style information in `context`, and appends it to the current node of `snapshot`, without changing the current node.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkrender.c",
+      "line": 650,
+      "md": "Creates a render node for rendering `layout` according to the style\ninformation in `context`, and appends it to the current node of `snapshot`,\nwithout changing the current node."
+    },
+    "restore": {
+      "brief": "Restores `snapshot` to the state saved by a preceding call to [`Snapshot.save()`](xref:gtk:Snapshot#method:save) and removes that state from the stack of saved states.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 2374,
+      "md": "Restores `snapshot` to the state saved by a preceding call to\n[`Snapshot.save()`](xref:gtk:Snapshot#method:save) and removes that state from the stack of\nsaved states."
+    },
+    "rotate": {
+      "brief": "Rotates @@snapshot's coordinate system by `angle` degrees in 2D space - or in 3D speak, rotates around the Z axis.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 2486,
+      "md": "Rotates @@snapshot's coordinate system by `angle` degrees in 2D space -\nor in 3D speak, rotates around the Z axis. The rotation happens around\nthe origin point of (0, 0) in the `snapshot`'s current coordinate system.\n\nTo rotate around axes other than the Z axis, use [`Transform.rotate_3d()`](xref:gtk:Gsk.Transform#method:rotate_3d)."
+    },
+    "rotate_3d": {
+      "brief": "Rotates `snapshot`'s coordinate system by `angle` degrees around `axis`.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 2509,
+      "md": "Rotates `snapshot`'s coordinate system by `angle` degrees around `axis`.\n\nFor a rotation in 2D space, use [`Transform.rotate()`](xref:gtk:Gsk.Transform#method:rotate)."
+    },
+    "save": {
+      "brief": "Makes a copy of the current state of `snapshot` and saves it on an internal stack.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 2346,
+      "md": "Makes a copy of the current state of `snapshot` and saves it\non an internal stack.\n\nWhen [`Snapshot.restore()`](xref:gtk:Gtk.Snapshot#method:restore) is called, `snapshot` will\nbe restored to the saved state.\n\nMultiple calls to [`Snapshot.save()`](xref:gtk:Gtk.Snapshot#method:save) and [`Snapshot.restore()`](xref:gtk:Gtk.Snapshot#method:restore)\ncan be nested; each call to `gtk_snapshot_restore()` restores the state from\nthe matching paired `gtk_snapshot_save()`.\n\nIt is necessary to clear all saved states with corresponding\ncalls to `gtk_snapshot_restore()`."
+    },
+    "scale": {
+      "brief": "Scales `snapshot`'s coordinate system in 2-dimensional space by the given factors.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 2533,
+      "md": "Scales `snapshot`'s coordinate system in 2-dimensional space by\nthe given factors.\n\nUse [`Snapshot.scale_3d()`](xref:gtk:Gtk.Snapshot#method:scale_3d) to scale in all 3 dimensions."
+    },
+    "scale_3d": {
+      "brief": "Scales `snapshot`'s coordinate system by the given factors.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 2557,
+      "md": "Scales `snapshot`'s coordinate system by the given factors."
+    },
+    "to_node": {
+      "brief": "Returns the render node that was constructed by `snapshot`.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 2217,
+      "md": "Returns the render node that was constructed\nby `snapshot`.\n\nNote that this function may return `NULL` if nothing has been\nadded to the snapshot or if its content does not produce pixels\nto be rendered.\n\nAfter calling this function, it is no longer possible to\nadd more nodes to `snapshot`. The only function that should\nbe called after this is [`Object.unref()`](xref:gtk:GObject.Object#method:unref)."
+    },
+    "to_paintable": {
+      "brief": "Returns a paintable encapsulating the render node that was constructed by `snapshot`.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 2255,
+      "md": "Returns a paintable encapsulating the render node\nthat was constructed by `snapshot`.\n\nAfter calling this function, it is no longer possible to\nadd more nodes to `snapshot`. The only function that should\nbe called after this is [`Object.unref()`](xref:gtk:GObject.Object#method:unref)."
+    },
+    "transform": {
+      "brief": "Transforms `snapshot`'s coordinate system with the given `transform`.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 2407,
+      "md": "Transforms `snapshot`'s coordinate system with the given `transform`."
+    },
+    "transform_matrix": {
+      "brief": "Transforms `snapshot`'s coordinate system with the given `matrix`.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 2426,
+      "md": "Transforms `snapshot`'s coordinate system with the given `matrix`."
+    },
+    "translate": {
+      "brief": "Translates `snapshot`'s coordinate system by `point` in 2-dimensional space.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 2446,
+      "md": "Translates `snapshot`'s coordinate system by `point` in 2-dimensional space."
+    },
+    "translate_3d": {
+      "brief": "Translates `snapshot`'s coordinate system by `point`.",
+      "file": "gtk/gtksnapshot.c",
+      "line": 2466,
+      "md": "Translates `snapshot`'s coordinate system by `point`."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

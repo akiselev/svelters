@@ -1,0 +1,111 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new empty media file.",
+      "file": "gtk/gtkmediafile.c",
+      "line": 265,
+      "md": "Creates a new empty media file."
+    },
+    "new_for_file": {
+      "brief": "Creates a new media file to play `file`.",
+      "file": "gtk/gtkmediafile.c",
+      "line": 350,
+      "md": "Creates a new media file to play `file`."
+    },
+    "new_for_filename": {
+      "brief": "Creates a new media file for the given filename.",
+      "file": "gtk/gtkmediafile.c",
+      "line": 278,
+      "md": "Creates a new media file for the given filename.\n\nThis is a utility function that converts the given `filename`\nto a `GFile` and calls [`MediaFile.new_for_file()`](xref:gtk:Gtk.MediaFile#constructor:new_for_file)."
+    },
+    "new_for_input_stream": {
+      "brief": "Creates a new media file to play `stream`.",
+      "file": "gtk/gtkmediafile.c",
+      "line": 368,
+      "md": "Creates a new media file to play `stream`.\n\nIf you want the resulting media to be seekable,\nthe stream should implement the `GSeekable` interface."
+    },
+    "new_for_resource": {
+      "brief": "Creates a new new media file for the given resource.",
+      "file": "gtk/gtkmediafile.c",
+      "line": 308,
+      "md": "Creates a new new media file for the given resource.\n\nThis is a utility function that converts the given `resource`\nto a `GFile` and calls [`MediaFile.new_for_file()`](xref:gtk:Gtk.MediaFile#constructor:new_for_file)."
+    }
+  },
+  "doc": {
+    "brief": "Implements the `GtkMediaStream` interface for files.",
+    "file": "gtk/gtkmediafile.c",
+    "line": 33,
+    "md": "Implements the `GtkMediaStream` interface for files.\n\nThis provides a simple way to play back video files with GTK.\n\nGTK provides a GIO extension point for `GtkMediaFile` implementations\nto allow for external implementations using various media frameworks.\n\nGTK itself includes an implementation using GStreamer."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:MediaFile",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "clear": {
+      "brief": "Resets the media file to be empty.",
+      "file": "gtk/gtkmediafile.c",
+      "line": 397,
+      "md": "Resets the media file to be empty."
+    },
+    "get_file": {
+      "brief": "Returns the file that `self` is currently playing from.",
+      "file": "gtk/gtkmediafile.c",
+      "line": 534,
+      "md": "Returns the file that `self` is currently playing from.\n\nWhen `self` is not playing or not playing from a file,\n`NULL` is returned."
+    },
+    "get_input_stream": {
+      "brief": "Returns the stream that `self` is currently playing from.",
+      "file": "gtk/gtkmediafile.c",
+      "line": 594,
+      "md": "Returns the stream that `self` is currently playing from.\n\nWhen `self` is not playing or not playing from a stream,\n`NULL` is returned."
+    },
+    "set_file": {
+      "brief": "Sets the `GtkMediaFile` to play the given file.",
+      "file": "gtk/gtkmediafile.c",
+      "line": 498,
+      "md": "Sets the `GtkMediaFile` to play the given file.\n\nIf any file is still playing, stop playing it."
+    },
+    "set_filename": {
+      "brief": "Sets the `GtkMediaFile` to play the given file.",
+      "file": "gtk/gtkmediafile.c",
+      "line": 427,
+      "md": "Sets the `GtkMediaFile` to play the given file.\n\nThis is a utility function that converts the given `filename`\nto a `GFile` and calls [`MediaFile.set_file()`](xref:gtk:Gtk.MediaFile#method:set_file)."
+    },
+    "set_input_stream": {
+      "brief": "Sets the `GtkMediaFile` to play the given stream.",
+      "file": "gtk/gtkmediafile.c",
+      "line": 555,
+      "md": "Sets the `GtkMediaFile` to play the given stream.\n\nIf anything is still playing, stop playing it.\n\nFull control about the `stream` is assumed for the duration of\nplayback. The stream will not be closed."
+    },
+    "set_resource": {
+      "brief": "Sets the `GtkMediaFile` to play the given resource.",
+      "file": "gtk/gtkmediafile.c",
+      "line": 456,
+      "md": "Sets the `GtkMediaFile` to play the given resource.\n\nThis is a utility function that converts the given `resource_path`\nto a `GFile` and calls [`MediaFile.set_file()`](xref:gtk:Gtk.MediaFile#method:set_file)."
+    }
+  },
+  "properties": {
+    "file": {
+      "brief": "The file being played back or `NULL` if not playing a file.",
+      "file": "gtk/gtkmediafile.c",
+      "line": 156,
+      "md": "The file being played back or `NULL` if not playing a file."
+    },
+    "input-stream": {
+      "brief": "The stream being played back or `NULL` if not playing a stream.",
+      "file": "gtk/gtkmediafile.c",
+      "line": 166,
+      "md": "The stream being played back or `NULL` if not playing a stream.\n\nThis is `NULL` when playing a file."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -1,0 +1,49 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Describes the stage at which events are fed into a [`EventController`](xref:gtk:EventController).",
+    "file": "gtk/gtkenums.h",
+    "line": 1020,
+    "md": "Describes the stage at which events are fed into a [`EventController`](xref:gtk:EventController)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:PropagationPhase",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "bubble": {
+      "brief": "Events are delivered in the bubble phase.",
+      "file": "gtk/gtkenums.h",
+      "line": 1027,
+      "md": "Events are delivered in the bubble phase. The bubble\n  phase happens after the capture phase, and before the default handlers\n  are run. This phase runs from the event widget, up to the toplevel."
+    },
+    "capture": {
+      "brief": "Events are delivered in the capture phase.",
+      "file": "gtk/gtkenums.h",
+      "line": 1023,
+      "md": "Events are delivered in the capture phase. The\n  capture phase happens before the bubble phase, runs from the toplevel down\n  to the event widget. This option should only be used on containers that\n  might possibly handle events before their children do."
+    },
+    "none": {
+      "brief": "Events are not delivered.",
+      "file": "gtk/gtkenums.h",
+      "line": 1022,
+      "md": "Events are not delivered."
+    },
+    "target": {
+      "brief": "Events are delivered in the default widget event handlers, note that widget implementations must chain up on button, motion, touch and grab broken handlers for controllers in this phase to be run.",
+      "file": "gtk/gtkenums.h",
+      "line": 1030,
+      "md": "Events are delivered in the default widget event handlers,\n  note that widget implementations must chain up on button, motion, touch and\n  grab broken handlers for controllers in this phase to be run."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

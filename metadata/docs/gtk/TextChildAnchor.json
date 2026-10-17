@@ -1,0 +1,51 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkTextChildAnchor`.",
+      "file": "gtk/gtktextchild.c",
+      "line": 411,
+      "md": "Creates a new `GtkTextChildAnchor`.\n\nUsually you would then insert it into a `GtkTextBuffer` with\n[`TextBuffer.insert_child_anchor()`](xref:gtk:Gtk.TextBuffer#method:insert_child_anchor). To perform the\ncreation and insertion in one step, use the convenience\nfunction [`TextBuffer.create_child_anchor()`](xref:gtk:Gtk.TextBuffer#method:create_child_anchor)."
+    },
+    "new_with_replacement": {
+      "brief": "Creates a new `GtkTextChildAnchor` with the given replacement character.",
+      "file": "gtk/gtktextchild.c",
+      "line": 429,
+      "md": "Creates a new `GtkTextChildAnchor` with the given replacement character.\n\nUsually you would then insert it into a `GtkTextBuffer` with\n[`TextBuffer.insert_child_anchor()`](xref:gtk:Gtk.TextBuffer#method:insert_child_anchor).",
+      "since": "4.6"
+    }
+  },
+  "doc": {
+    "brief": "Marks a spot in a `GtkTextBuffer` where child widgets can be “anchored”.",
+    "file": "gtk/gtktextchild.h",
+    "line": 38,
+    "md": "Marks a spot in a `GtkTextBuffer` where child widgets can be “anchored”.\n\nThe anchor can have multiple widgets anchored, to allow for multiple views."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:TextChildAnchor",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_deleted": {
+      "brief": "Determines whether a child anchor has been deleted from the buffer.",
+      "file": "gtk/gtktextchild.c",
+      "line": 535,
+      "md": "Determines whether a child anchor has been deleted from\nthe buffer.\n\nKeep in mind that the child anchor will be unreferenced\nwhen removed from the buffer, so you need to hold your own\nreference (with g_object_ref()) if you plan to use this\nfunction — otherwise all deleted child anchors will also\nbe finalized."
+    },
+    "get_widgets": {
+      "brief": "Gets a list of all widgets anchored at this child anchor.",
+      "file": "gtk/gtktextchild.c",
+      "line": 487,
+      "md": "Gets a list of all widgets anchored at this child anchor.\n\nThe order in which the widgets are returned is not defined."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

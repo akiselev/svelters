@@ -1,0 +1,83 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkMapListModel` for the given arguments.",
+      "file": "gtk/gtkmaplistmodel.c",
+      "line": 485,
+      "md": "Creates a new `GtkMapListModel` for the given arguments."
+    }
+  },
+  "doc": {
+    "brief": "A list model that maps the items in another model to different items.",
+    "file": "gtk/gtkmaplistmodel.c",
+    "line": 28,
+    "md": "A list model that maps the items in another model to different items.\n\n`GtkMapListModel` uses a [`MapListModelMapFunc`](xref:gtk:Gtk.MapListModelMapFunc).\n\nExample: Create a list of `GtkEventControllers`\n```c\nstatic gpointer\nmap_to_controllers (gpointer widget,\n                    gpointer data)\n{\n  gpointer result = gtk_widget_observe_controllers (widget);\n  g_object_unref (widget);\n  return result;\n}\n\nwidgets = gtk_widget_observe_children (widget);\n\ncontrollers = gtk_map_list_model_new (widgets,\n                                      map_to_controllers,\n                                      NULL, NULL);\n\nmodel = gtk_flatten_list_model_new (GTK_TYPE_EVENT_CONTROLLER,\n                                    controllers);\n```\n\n`GtkMapListModel` will attempt to discard the mapped objects as soon as\nthey are no longer needed and recreate them if necessary.\n\n`GtkMapListModel` passes through sections from the underlying model."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:MapListModel",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_model": {
+      "brief": "Gets the model that is currently being mapped or `NULL` if none.",
+      "file": "gtk/gtkmaplistmodel.c",
+      "line": 669,
+      "md": "Gets the model that is currently being mapped or `NULL` if none."
+    },
+    "has_map": {
+      "brief": "Checks if a map function is currently set on `self`.",
+      "file": "gtk/gtkmaplistmodel.c",
+      "line": 685,
+      "md": "Checks if a map function is currently set on `self`."
+    },
+    "set_map_func": {
+      "brief": "Sets the function used to map items.",
+      "file": "gtk/gtkmaplistmodel.c",
+      "line": 562,
+      "md": "Sets the function used to map items.\n\nThe function will be called whenever an item needs to be mapped\nand must return the item to use for the given input item.\n\nNote that `GtkMapListModel` may call this function multiple times\non the same item, because it may delete items it doesn't need anymore.\n\nGTK makes no effort to ensure that `map_func` conforms to the item type\nof `self`. It assumes that the caller knows what they are doing and the map\nfunction returns items of the appropriate type."
+    },
+    "set_model": {
+      "brief": "Sets the model to be mapped.",
+      "file": "gtk/gtkmaplistmodel.c",
+      "line": 619,
+      "md": "Sets the model to be mapped.\n\nGTK makes no effort to ensure that `model` conforms to the item type\nexpected by the map function. It assumes that the caller knows what\nthey are doing and have set up an appropriate map function."
+    }
+  },
+  "properties": {
+    "has-map": {
+      "brief": "If a map is set for this model",
+      "file": "gtk/gtkmaplistmodel.c",
+      "line": 408,
+      "md": "If a map is set for this model"
+    },
+    "item-type": {
+      "brief": "The type of items. See [`ListModel.get_item_type()`](xref:gtk:Gio.ListModel#method:get_item_type).",
+      "file": "gtk/gtkmaplistmodel.c",
+      "line": 418,
+      "md": "The type of items. See [`ListModel.get_item_type()`](xref:gtk:Gio.ListModel#method:get_item_type).",
+      "since": "4.8"
+    },
+    "model": {
+      "brief": "The model being mapped.",
+      "file": "gtk/gtkmaplistmodel.c",
+      "line": 430,
+      "md": "The model being mapped."
+    },
+    "n-items": {
+      "brief": "The number of items.",
+      "file": "gtk/gtkmaplistmodel.c",
+      "line": 440,
+      "md": "The number of items. See [`ListModel.get_n_items()`](xref:gtk:Gio.ListModel#method:get_n_items).",
+      "since": "4.8"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

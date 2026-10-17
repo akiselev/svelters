@@ -1,0 +1,143 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkDirectoryList`.",
+      "file": "gtk/gtkdirectorylist.c",
+      "line": 381,
+      "md": "Creates a new `GtkDirectoryList`.\n\nThe `GtkDirectoryList` is querying the given `file`\nwith the given `attributes`."
+    }
+  },
+  "doc": {
+    "brief": "A list model that wraps [`File.enumerate_children_async()`](xref:gtk:Gio.File#method:enumerate_children_async).",
+    "file": "gtk/gtkdirectorylist.c",
+    "line": 26,
+    "md": "A list model that wraps [`File.enumerate_children_async()`](xref:gtk:Gio.File#method:enumerate_children_async).\n\nIt presents a `GListModel` and fills it asynchronously with the `GFileInfo`s\nreturned from that function.\n\nEnumeration will start automatically when the\n[`DirectoryList:file`](xref:gtk:Gtk.DirectoryList#property:file) property is set.\n\nWhile the `GtkDirectoryList` is being filled, the\n[`DirectoryList:loading`](xref:gtk:Gtk.DirectoryList#property:loading) property will be set to `TRUE`. You can\nlisten to that property if you want to show information like a `GtkSpinner`\nor a \"Loading...\" text.\n\nIf loading fails at any point, the [`DirectoryList:error`](xref:gtk:Gtk.DirectoryList#property:error)\nproperty will be set to give more indication about the failure.\n\nThe `GFileInfo`s returned from a `GtkDirectoryList` have the \"standard::file\"\nattribute set to the `GFile` they refer to. This way you can get at the file\nthat is referred to in the same way you would via g_file_enumerator_get_child().\nThis means you do not need access to the `GtkDirectoryList`, but can access\nthe `GFile` directly from the `GFileInfo` when operating with a `GtkListView`\nor similar."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:DirectoryList",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_attributes": {
+      "brief": "Gets the attributes queried on the children.",
+      "file": "gtk/gtkdirectorylist.c",
+      "line": 892,
+      "md": "Gets the attributes queried on the children."
+    },
+    "get_error": {
+      "brief": "Gets the loading error, if any.",
+      "file": "gtk/gtkdirectorylist.c",
+      "line": 974,
+      "md": "Gets the loading error, if any.\n\nIf an error occurs during the loading process, the loading process\nwill finish and this property allows querying the error that happened.\nThis error will persist until a file is loaded again.\n\nAn error being set does not mean that no files were loaded, and all\nsuccessfully queried files will remain in the list."
+    },
+    "get_file": {
+      "brief": "Gets the file whose children are currently enumerated.",
+      "file": "gtk/gtkdirectorylist.c",
+      "line": 845,
+      "md": "Gets the file whose children are currently enumerated."
+    },
+    "get_io_priority": {
+      "brief": "Gets the IO priority set via gtk_directory_list_set_io_priority().",
+      "file": "gtk/gtkdirectorylist.c",
+      "line": 937,
+      "md": "Gets the IO priority set via gtk_directory_list_set_io_priority()."
+    },
+    "get_monitored": {
+      "brief": "Returns whether the directory list is monitoring the directory for changes.",
+      "file": "gtk/gtkdirectorylist.c",
+      "line": 1033,
+      "md": "Returns whether the directory list is monitoring\nthe directory for changes."
+    },
+    "is_loading": {
+      "brief": "Returns `TRUE` if the children enumeration is currently in progress.",
+      "file": "gtk/gtkdirectorylist.c",
+      "line": 953,
+      "md": "Returns `TRUE` if the children enumeration is currently in\nprogress.\n\nFiles will be added to `self` from time to time while loading is\ngoing on. The order in which are added is undefined and may change\nin between runs."
+    },
+    "set_attributes": {
+      "brief": "Sets the `attributes` to be enumerated and starts the enumeration.",
+      "file": "gtk/gtkdirectorylist.c",
+      "line": 861,
+      "md": "Sets the `attributes` to be enumerated and starts the enumeration.\n\nIf `attributes` is `NULL`, the list of file infos will still be created, it will just\nnot contain any extra attributes."
+    },
+    "set_file": {
+      "brief": "Sets the `file` to be enumerated and starts the enumeration.",
+      "file": "gtk/gtkdirectorylist.c",
+      "line": 813,
+      "md": "Sets the `file` to be enumerated and starts the enumeration.\n\nIf `file` is `NULL`, the result will be an empty list."
+    },
+    "set_io_priority": {
+      "brief": "Sets the IO priority to use while loading directories.",
+      "file": "gtk/gtkdirectorylist.c",
+      "line": 908,
+      "md": "Sets the IO priority to use while loading directories.\n\nSetting the priority while `self` is loading will reprioritize the\nongoing load as soon as possible.\n\nThe default IO priority is %G_PRIORITY_DEFAULT, which is higher than\nthe GTK redraw priority. If you are loading a lot of directories in\nparallel, lowering it to something like %G_PRIORITY_DEFAULT_IDLE\nmay increase responsiveness."
+    },
+    "set_monitored": {
+      "brief": "Sets whether the directory list will monitor the directory for changes.",
+      "file": "gtk/gtkdirectorylist.c",
+      "line": 998,
+      "md": "Sets whether the directory list will monitor the directory\nfor changes.\n\nIf monitoring is enabled, the ::items-changed signal will\nbe emitted when the directory contents change.\n\nWhen monitoring is turned on after the initial creation\nof the directory list, the directory is reloaded to avoid\nmissing files that appeared between the initial loading\nand when monitoring was turned on."
+    }
+  },
+  "properties": {
+    "attributes": {
+      "brief": "The attributes to query.",
+      "file": "gtk/gtkdirectorylist.c",
+      "line": 285,
+      "md": "The attributes to query."
+    },
+    "error": {
+      "brief": "Error encountered while loading files.",
+      "file": "gtk/gtkdirectorylist.c",
+      "line": 295,
+      "md": "Error encountered while loading files."
+    },
+    "file": {
+      "brief": "File to query.",
+      "file": "gtk/gtkdirectorylist.c",
+      "line": 305,
+      "md": "File to query."
+    },
+    "io-priority": {
+      "brief": "Priority used when loading.",
+      "file": "gtk/gtkdirectorylist.c",
+      "line": 315,
+      "md": "Priority used when loading."
+    },
+    "item-type": {
+      "brief": "The type of items. See [`ListModel.get_item_type()`](xref:gtk:Gio.ListModel#method:get_item_type).",
+      "file": "gtk/gtkdirectorylist.c",
+      "line": 325,
+      "md": "The type of items. See [`ListModel.get_item_type()`](xref:gtk:Gio.ListModel#method:get_item_type).",
+      "since": "4.8"
+    },
+    "loading": {
+      "brief": "`TRUE` if files are being loaded.",
+      "file": "gtk/gtkdirectorylist.c",
+      "line": 337,
+      "md": "`TRUE` if files are being loaded."
+    },
+    "monitored": {
+      "brief": "`TRUE` if the directory is monitored for changed.",
+      "file": "gtk/gtkdirectorylist.c",
+      "line": 347,
+      "md": "`TRUE` if the directory is monitored for changed."
+    },
+    "n-items": {
+      "brief": "The number of items.",
+      "file": "gtk/gtkdirectorylist.c",
+      "line": 357,
+      "md": "The number of items. See [`ListModel.get_n_items()`](xref:gtk:Gio.ListModel#method:get_n_items).",
+      "since": "4.8"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

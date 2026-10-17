@@ -1,0 +1,167 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new icon theme object.",
+      "file": "gtk/gtkicontheme.c",
+      "line": 763,
+      "md": "Creates a new icon theme object.\n\nIcon theme objects are used to lookup up an icon by name\nin a particular icon theme. Usually, you’ll want to use\n`get_for_display` rather than creating\na new icon theme object for scratch."
+    }
+  },
+  "doc": {
+    "brief": "Loads themed icons.",
+    "file": "gtk/gtkicontheme.c",
+    "line": 67,
+    "md": "Loads themed icons.\n\nThe main reason for using a name rather than simply providing a filename\nis to allow different icons to be used depending on what “icon theme” is\nselected by the user. The operation of icon themes on Linux and Unix\nfollows the [Icon Theme Specification](http://www.freedesktop.org/Standards/icon-theme-spec)\nThere is a fallback icon theme, named `hicolor`, where applications\nshould install their icons, but additional icon themes can be installed\nas operating system vendors and users choose.\n\nIn many cases, named themes are used indirectly, via [`Image`](xref:gtk:Gtk.Image)\nrather than directly, but looking up icons directly is also simple. The\n`GtkIconTheme` object acts as a database of all the icons in the current\ntheme. You can create new `GtkIconTheme` objects, but it’s much more\nefficient to use the standard icon theme of the `GtkWidget` so that the\nicon information is shared with other people looking up icons.\n\n```c\nGtkIconTheme *icon_theme;\nGtkIconPaintable *icon;\nGdkPaintable *paintable;\n\nicon_theme = gtk_icon_theme_get_for_display (gtk_widget_get_display (my_widget));\nicon = gtk_icon_theme_lookup_icon (icon_theme,\n                                   \"my-icon-name\", // icon name\n                                   48, // icon size\n                                   1,  // scale\n                                   0,  // flags);\npaintable = GDK_PAINTABLE (icon);\n// Use the paintable\ng_object_unref (icon);\n```"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:IconTheme",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "add_resource_path": {
+      "brief": "Adds a resource path that will be looked at when looking for icons, similar to search paths.",
+      "file": "gtk/gtkicontheme.c",
+      "line": 1525,
+      "md": "Adds a resource path that will be looked at when looking\nfor icons, similar to search paths.\n\nSee [`IconTheme.set_resource_path()`](xref:gtk:Gtk.IconTheme#method:set_resource_path).\n\nThis function should be used to make application-specific icons\navailable as part of the icon theme."
+    },
+    "add_search_path": {
+      "brief": "Appends a directory to the search path.",
+      "file": "gtk/gtkicontheme.c",
+      "line": 1428,
+      "md": "Appends a directory to the search path.\n\nSee [`IconTheme.set_search_path()`](xref:gtk:Gtk.IconTheme#method:set_search_path)."
+    },
+    "get_display": {
+      "brief": "Returns the display that the `GtkIconTheme` object was created for.",
+      "file": "gtk/gtkicontheme.c",
+      "line": 3342,
+      "md": "Returns the display that the `GtkIconTheme` object was\ncreated for."
+    },
+    "get_for_display": {
+      "brief": "Gets the icon theme object associated with `display`.",
+      "file": "gtk/gtkicontheme.c",
+      "line": 806,
+      "md": "Gets the icon theme object associated with `display`.\n\nIf this function has not previously been called for the given\ndisplay, a new icon theme object will be created and associated\nwith the display. Icon theme objects are fairly expensive to create,\nso using this function is usually a better choice than calling\n[`IconTheme.new()`](xref:gtk:Gtk.IconTheme#constructor:new) and setting the display yourself; by using\nthis function a single icon theme object will be shared between users."
+    },
+    "get_icon_names": {
+      "brief": "Lists the names of icons in the current icon theme.",
+      "file": "gtk/gtkicontheme.c",
+      "line": 2580,
+      "md": "Lists the names of icons in the current icon theme."
+    },
+    "get_icon_sizes": {
+      "brief": "Returns an array of integers describing the sizes at which the icon is available without scaling.",
+      "file": "gtk/gtkicontheme.c",
+      "line": 2503,
+      "md": "Returns an array of integers describing the sizes at which\nthe icon is available without scaling.\n\nA size of -1 means that the icon is available in a scalable\nformat. The array is zero-terminated."
+    },
+    "get_resource_path": {
+      "brief": "Gets the current resource path.",
+      "file": "gtk/gtkicontheme.c",
+      "line": 1498,
+      "md": "Gets the current resource path.\n\nSee [`IconTheme.set_resource_path()`](xref:gtk:Gtk.IconTheme#method:set_resource_path)."
+    },
+    "get_search_path": {
+      "brief": "Gets the current search path.",
+      "file": "gtk/gtkicontheme.c",
+      "line": 1401,
+      "md": "Gets the current search path.\n\nSee [`IconTheme.set_search_path()`](xref:gtk:Gtk.IconTheme#method:set_search_path)."
+    },
+    "get_theme_name": {
+      "brief": "Gets the current icon theme name.",
+      "file": "gtk/gtkicontheme.c",
+      "line": 1605,
+      "md": "Gets the current icon theme name."
+    },
+    "has_gicon": {
+      "brief": "Checks whether an icon theme includes an icon for a particular `GIcon`.",
+      "file": "gtk/gtkicontheme.c",
+      "line": 2447,
+      "md": "Checks whether an icon theme includes an icon\nfor a particular `GIcon`.",
+      "since": "4.2"
+    },
+    "has_icon": {
+      "brief": "Checks whether an icon theme includes an icon for a particular name.",
+      "file": "gtk/gtkicontheme.c",
+      "line": 2410,
+      "md": "Checks whether an icon theme includes an icon\nfor a particular name."
+    },
+    "lookup_by_gicon": {
+      "brief": "Looks up a icon for a desired size and window scale.",
+      "file": "gtk/gtkicontheme.c",
+      "line": 3266,
+      "md": "Looks up a icon for a desired size and window scale.\n\nThe icon can then be rendered by using it as a `GdkPaintable`,\nor you can get information such as the filename and size."
+    },
+    "lookup_icon": {
+      "brief": "Looks up a named icon for a desired size and window scale, returning a `GtkIconPaintable`.",
+      "file": "gtk/gtkicontheme.c",
+      "line": 2300,
+      "md": "Looks up a named icon for a desired size and window scale,\nreturning a `GtkIconPaintable`.\n\nThe icon can then be rendered by using it as a `GdkPaintable`,\nor you can get information such as the filename and size.\n\nIf the available `icon_name` is not available and `fallbacks` are\nprovided, they will be tried in order.\n\nIf no matching icon is found, then a paintable that renders the\n\"missing icon\" icon is returned. If you need to do something else\nfor missing icons you need to use [`IconTheme.has_icon()`](xref:gtk:Gtk.IconTheme#method:has_icon).\n\nNote that you probably want to listen for icon theme changes and\nupdate the icon. This is usually done by overriding the\nGtkWidgetClass.css-changed() function."
+    },
+    "set_resource_path": {
+      "brief": "Sets the resource paths that will be looked at when looking for icons, similar to search paths.",
+      "file": "gtk/gtkicontheme.c",
+      "line": 1458,
+      "md": "Sets the resource paths that will be looked at when\nlooking for icons, similar to search paths.\n\nThe resources are considered as part of the hicolor icon theme\nand must be located in subdirectories that are defined in the\nhicolor icon theme, such as `@path/16x16/actions/run.png`\nor `@path/scalable/actions/run.svg`.\n\nIcons that are directly placed in the resource path instead\nof a subdirectory are also considered as ultimate fallback,\nbut they are treated like unthemed icons."
+    },
+    "set_search_path": {
+      "brief": "Sets the search path for the icon theme object.",
+      "file": "gtk/gtkicontheme.c",
+      "line": 1358,
+      "md": "Sets the search path for the icon theme object.\n\nWhen looking for an icon theme, GTK will search for a subdirectory\nof one or more of the directories in `path` with the same name\nas the icon theme containing an index.theme file. (Themes from\nmultiple of the path elements are combined to allow themes to be\nextended by adding icons in the user’s home directory.)\n\nIn addition if an icon found isn’t found either in the current\nicon theme or the default icon theme, and an image file with\nthe right name is found directly in one of the elements of\n`path`, then that image will be used for the icon name.\n(This is legacy feature, and new icons should be put\ninto the fallback icon theme, which is called hicolor,\nrather than directly on the icon path.)"
+    },
+    "set_theme_name": {
+      "brief": "Sets the name of the icon theme that the `GtkIconTheme` object uses overriding system configuration.",
+      "file": "gtk/gtkicontheme.c",
+      "line": 1559,
+      "md": "Sets the name of the icon theme that the `GtkIconTheme` object uses\noverriding system configuration.\n\nThis function cannot be called on the icon theme objects returned\nfrom `get_for_display`."
+    }
+  },
+  "properties": {
+    "display": {
+      "brief": "The display that this icon theme object is attached to.",
+      "file": "gtk/gtkicontheme.c",
+      "line": 954,
+      "md": "The display that this icon theme object is attached to."
+    },
+    "icon-names": {
+      "brief": "The icon names that are supported by the icon theme.",
+      "file": "gtk/gtkicontheme.c",
+      "line": 964,
+      "md": "The icon names that are supported by the icon theme."
+    },
+    "resource-path": {
+      "brief": "Resource paths that will be looked at when looking for icons, similar to search paths.",
+      "file": "gtk/gtkicontheme.c",
+      "line": 990,
+      "md": "Resource paths that will be looked at when looking for icons,\nsimilar to search paths.\n\nThe resources are considered as part of the hicolor icon theme\nand must be located in subdirectories that are defined in the\nhicolor icon theme, such as `@path/16x16/actions/run.png`.\nIcons that are directly placed in the resource path instead\nof a subdirectory are also considered as ultimate fallback."
+    },
+    "search-path": {
+      "brief": "The search path for this icon theme.",
+      "file": "gtk/gtkicontheme.c",
+      "line": 974,
+      "md": "The search path for this icon theme.\n\nWhen looking for icons, GTK will search for a subdirectory of\none or more of the directories in the search path with the same\nname as the icon theme containing an index.theme file. (Themes\nfrom multiple of the path elements are combined to allow themes\nto be extended by adding icons in the user’s home directory.)"
+    },
+    "theme-name": {
+      "brief": "The name of the icon theme that is being used.",
+      "file": "gtk/gtkicontheme.c",
+      "line": 1007,
+      "md": "The name of the icon theme that is being used.\n\nUnless set to a different value, this will be the value of\nthe `GtkSettings:gtk-icon-theme-name` property of the `GtkSettings`\nobject associated to the display of the icontheme object."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "changed": {
+      "brief": "Emitted when the icon theme changes.",
+      "file": "gtk/gtkicontheme.c",
+      "line": 936,
+      "md": "Emitted when the icon theme changes.\n\nThis can happen because current icon theme is switched or\nbecause GTK detects that a change has occurred in the\ncontents of the current icon theme."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

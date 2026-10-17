@@ -1,0 +1,38 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates an expression evaluating to the given `object` with a weak reference.",
+      "file": "gtk/gtkexpression.c",
+      "line": 1131,
+      "md": "Creates an expression evaluating to the given `object` with a weak reference.\n\nOnce the `object` is disposed, it will fail to evaluate.\n\nThis expression is meant to break reference cycles.\n\nIf you want to keep a reference to `object`, use [`ConstantExpression.new()`](xref:gtk:Gtk.ConstantExpression#constructor:new)."
+    }
+  },
+  "doc": {
+    "brief": "A `GObject` value in a `GtkExpression`.",
+    "file": "gtk/gtkexpression.c",
+    "line": 988,
+    "md": "A `GObject` value in a `GtkExpression`."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ObjectExpression",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_object": {
+      "brief": "Gets the object that the expression evaluates to.",
+      "file": "gtk/gtkexpression.c",
+      "line": 1166,
+      "md": "Gets the object that the expression evaluates to."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

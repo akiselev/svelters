@@ -1,0 +1,31 @@
+{
+  "doc": {
+    "brief": "The QStyleOptionMenuItemV2 class enhances [QStyleOptionMenuItem](xref:qt:QStyleOptionMenuItem) with new members.",
+    "index_brief": "Enhances QStyleOptionMenuItem with new members",
+    "url": "https://doc.qt.io/qt-6/qstyleoptionmenuitemv2.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOptionMenuItemV2",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QStyleOptionMenuItemV2()": {
+      "brief": "Constructs a QStyleOptionMenuItemV2, initializing the members variables to their default values.",
+      "url": "https://doc.qt.io/qt-6/qstyleoptionmenuitemv2.html#QStyleOptionMenuItemV2"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

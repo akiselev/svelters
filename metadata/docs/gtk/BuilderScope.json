@@ -1,0 +1,43 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Provides language binding support to `GtkBuilder`.",
+    "file": "gtk/gtkbuilderscope.c",
+    "line": 27,
+    "md": "Provides language binding support to `GtkBuilder`.\n\nThe goal of `GtkBuilderScope` is to look up programming-language-specific\nvalues for strings that are given in a `GtkBuilder` UI file.\n\nThe primary intended audience is bindings that want to provide deeper\nintegration of `GtkBuilder` into the language.\n\nA `GtkBuilderScope` instance may be used with multiple `GtkBuilder` objects,\neven at once.\n\nBy default, GTK will use its own implementation of `GtkBuilderScope`\nfor the C language which can be created via [`BuilderCScope.new()`](xref:gtk:Gtk.BuilderCScope#constructor:new).\n\nIf you implement `GtkBuilderScope` for a language binding, you\nmay want to (partially) derive from or fall back to a [`BuilderCScope`](xref:gtk:Gtk.BuilderCScope),\nas that class implements support for automatic lookups from C symbols."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:BuilderScope",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "create_closure": {
+      "brief": "Create a closure with the given arguments.",
+      "file": "gtk/gtkbuilderscope.h",
+      "line": 63,
+      "md": "Create a closure with the given arguments. See gtk_builder_create_closure()\n  for more details on those.\n  The C implementation will try to use dlsym() to locate the function name and then\n  g_cclosure_new() to create a closure for the symbol.\n  The default implementation just fails and returns `NULL`."
+    },
+    "get_type_from_function": {
+      "brief": "Try to lookup a `GType` via the given function name, specified explicitly in a GtkBuilder file, like via the \"type-func\" attribute in the `<object>` tag.",
+      "file": "gtk/gtkbuilderscope.h",
+      "line": 58,
+      "md": "Try to lookup a `GType` via the given function name, specified\n  explicitly in a GtkBuilder file, like via the \"type-func\" attribute in the `<object>` tag.\n  This function is very rarely used.\n  The C implementation will use dlsym() and call the resulting function as a `GTypeFunc`.\n  The default implementation will fail and just return %G_TYPE_INVALID."
+    },
+    "get_type_from_name": {
+      "brief": "Try to lookup a `GType` via the its name.",
+      "file": "gtk/gtkbuilderscope.h",
+      "line": 53,
+      "md": "Try to lookup a `GType` via the its name. See\n  gtk_builder_get_type_from_name() for more details.\n  The C implementation will use g_type_from_name() and if that fails try to guess the\n  correct function name for registering the type and then use dlsym() to load it.\n  The default implementation just tries g_type_from_name() and otherwise fails."
+    }
+  }
+}

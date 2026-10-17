@@ -1,0 +1,92 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "A `GtkGesture` subclass optimized for singe-touch and mouse gestures.",
+    "file": "gtk/gtkgesturesingle.c",
+    "line": 21,
+    "md": "A `GtkGesture` subclass optimized for singe-touch and mouse gestures.\n\nUnder interaction, these gestures stick to the first interacting sequence,\nwhich is accessible through [`GestureSingle.get_current_sequence()`](xref:gtk:Gtk.GestureSingle#method:get_current_sequence)\nwhile the gesture is being interacted with.\n\nBy default gestures react to both %GDK_BUTTON_PRIMARY and touch events.\n[`GestureSingle.set_touch_only()`](xref:gtk:Gtk.GestureSingle#method:set_touch_only) can be used to change the\ntouch behavior. Callers may also specify a different mouse button number\nto interact with through [`GestureSingle.set_button()`](xref:gtk:Gtk.GestureSingle#method:set_button), or react\nto any mouse button by setting it to 0. While the gesture is active, the\nbutton being currently pressed can be known through\n[`GestureSingle.get_current_button()`](xref:gtk:Gtk.GestureSingle#method:get_current_button)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:GestureSingle",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_button": {
+      "brief": "Returns the button number `gesture` listens for.",
+      "file": "gtk/gtkgesturesingle.c",
+      "line": 403,
+      "md": "Returns the button number `gesture` listens for.\n\nIf this is 0, the gesture reacts to any button press."
+    },
+    "get_current_button": {
+      "brief": "Returns the button number currently interacting with `gesture`, or 0 if there is none.",
+      "file": "gtk/gtkgesturesingle.c",
+      "line": 453,
+      "md": "Returns the button number currently interacting\nwith `gesture`, or 0 if there is none."
+    },
+    "get_current_sequence": {
+      "brief": "Returns the event sequence currently interacting with `gesture`.",
+      "file": "gtk/gtkgesturesingle.c",
+      "line": 474,
+      "md": "Returns the event sequence currently interacting with `gesture`.\n\nThis is only meaningful if [`Gesture.is_active()`](xref:gtk:Gtk.Gesture#method:is_active)\nreturns `TRUE`."
+    },
+    "get_exclusive": {
+      "brief": "Gets whether a gesture is exclusive.",
+      "file": "gtk/gtkgesturesingle.c",
+      "line": 352,
+      "md": "Gets whether a gesture is exclusive.\n\nFor more information, see [`GestureSingle.set_exclusive()`](xref:gtk:Gtk.GestureSingle#method:set_exclusive)."
+    },
+    "get_touch_only": {
+      "brief": "Returns `TRUE` if the gesture is only triggered by touch events.",
+      "file": "gtk/gtkgesturesingle.c",
+      "line": 303,
+      "md": "Returns `TRUE` if the gesture is only triggered by touch events."
+    },
+    "set_button": {
+      "brief": "Sets the button number `gesture` listens to.",
+      "file": "gtk/gtkgesturesingle.c",
+      "line": 425,
+      "md": "Sets the button number `gesture` listens to.\n\nIf non-0, every button press from a different button\nnumber will be ignored. Touch events implicitly match\nwith button 1."
+    },
+    "set_exclusive": {
+      "brief": "Sets whether `gesture` is exclusive.",
+      "file": "gtk/gtkgesturesingle.c",
+      "line": 374,
+      "md": "Sets whether `gesture` is exclusive.\n\nAn exclusive gesture will only handle pointer and \"pointer emulated\"\ntouch events, so at any given time, there is only one sequence able\nto interact with those."
+    },
+    "set_touch_only": {
+      "brief": "Sets whether to handle only touch events.",
+      "file": "gtk/gtkgesturesingle.c",
+      "line": 323,
+      "md": "Sets whether to handle only touch events.\n\nIf `touch_only` is `TRUE`, `gesture` will only handle events of type\n%GDK_TOUCH_BEGIN, %GDK_TOUCH_UPDATE or %GDK_TOUCH_END. If `FALSE`,\nmouse events will be handled too."
+    }
+  },
+  "properties": {
+    "button": {
+      "brief": "Mouse button number to listen to, or 0 to listen for any button.",
+      "file": "gtk/gtkgesturesingle.c",
+      "line": 279,
+      "md": "Mouse button number to listen to, or 0 to listen for any button."
+    },
+    "exclusive": {
+      "brief": "Whether the gesture is exclusive.",
+      "file": "gtk/gtkgesturesingle.c",
+      "line": 267,
+      "md": "Whether the gesture is exclusive.\n\nExclusive gestures only listen to pointer and pointer emulated events."
+    },
+    "touch-only": {
+      "brief": "Whether the gesture handles only touch events.",
+      "file": "gtk/gtkgesturesingle.c",
+      "line": 257,
+      "md": "Whether the gesture handles only touch events."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

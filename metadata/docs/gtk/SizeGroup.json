@@ -1,0 +1,69 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Create a new `GtkSizeGroup`.",
+      "file": "gtk/gtksizegroup.c",
+      "line": 334,
+      "md": "Create a new `GtkSizeGroup`."
+    }
+  },
+  "doc": {
+    "brief": "Groups widgets together so they all request the same size.",
+    "file": "gtk/gtksizegroup.c",
+    "line": 31,
+    "md": "Groups widgets together so they all request the same size.\n\nThis is typically useful when you want a column of widgets to have\nthe same size, but you can’t use a [`Grid`](xref:gtk:Gtk.Grid) or [`Box`](xref:gtk:Gtk.Box).\n\nIn detail, the size requested for each widget in a `GtkSizeGroup` is\nthe maximum of the sizes that would have been requested for each\nwidget in the size group if they were not in the size group. The\n[mode][`SizeGroup.set_mode()`](xref:gtk:Gtk.SizeGroup#method:set_mode) of the size group determines\nwhether this applies to the horizontal size, the vertical size, or\nboth sizes.\n\nNote that size groups only affect the amount of space requested, not\nthe size that the widgets finally receive. If you want the widgets in\na `GtkSizeGroup` to actually be the same size, you need to pack them in\nsuch a way that they get the size they request and not more. In\nparticular it doesn't make a lot of sense to set\n[the expand flags][`Widget.set_hexpand()`](xref:gtk:Gtk.Widget#method:set_hexpand) on the widgets that\nare members of a size group.\n\n`GtkSizeGroup` objects are referenced by each widget in the size group,\nso once you have added all widgets to a `GtkSizeGroup`, you can drop\nthe initial reference to the size group with\n[`Object.unref()`](xref:gtk:GObject.Object#method:unref). If the widgets in the size group are\nsubsequently destroyed, then they will be removed from the size group\nand drop their references on the size group; when all widgets have been\nremoved, the size group will be freed.\n\nWidgets can be part of multiple size groups; GTK will compute the\nhorizontal size of a widget from the horizontal requisition of all widgets\nthat can be reached from the widget by a chain of size groups with mode\n[`SizeGroupMode.HORIZONTAL`](xref:gtk:Gtk.SizeGroupMode#value:HORIZONTAL) or [`SizeGroupMode.BOTH`](xref:gtk:Gtk.SizeGroupMode#value:BOTH), and\nthe vertical size from the vertical requisition of all widgets that can be\nreached from the widget by a chain of size groups with mode\n[`SizeGroupMode.VERTICAL`](xref:gtk:Gtk.SizeGroupMode#value:VERTICAL) or [`SizeGroupMode.BOTH`](xref:gtk:Gtk.SizeGroupMode#value:BOTH).\n\n# Size groups and trading height-for-width\n\n::: warning\n    Generally, size groups don't interact well with widgets that\n    trade height for width (or width for height), such as wrappable\n    labels. Avoid using size groups with such widgets.\n\nA size group with mode [`SizeGroupMode.HORIZONTAL`](xref:gtk:Gtk.SizeGroupMode#value:HORIZONTAL) or\n[`SizeGroupMode.VERTICAL`](xref:gtk:Gtk.SizeGroupMode#value:VERTICAL) only consults non-contextual sizes\nof widgets other than the one being measured, since it has no\nknowledge of what size a widget will get allocated in the other\norientation. This can lead to widgets in a group actually requesting\ndifferent contextual sizes, contrary to the purpose of\n`GtkSizeGroup`.\n\nIn contrast, a size group with mode [`SizeGroupMode.BOTH`](xref:gtk:Gtk.SizeGroupMode#value:BOTH) can\nproperly propagate the available size in the opposite orientation\nwhen measuring widgets in the group, which results in consistent and\naccurate measurements.\n\nIn case some mechanism other than a size group is already used to\nensure that widgets in a group all get the same size in one\norientation (for example, some common ancestor is known to allocate\nthe same width to all its children), and the size group is only\nreally needed to also make the widgets request the same size in the\nother orientation, it is beneficial to still set the group's mode to\n[`SizeGroupMode.BOTH`](xref:gtk:Gtk.SizeGroupMode#value:BOTH). This lets the group assume and count\non sizes of the widgets in the former orientation being the same,\nwhich enables it to propagate the available size as described above.\n\n# Alternatives to size groups\n\nSize groups have many limitations, such as only influencing size\nrequests but not allocations, and poor height-for-width support. When\npossible, prefer using dedicated mechanisms that can properly ensure\nthat the widgets get the same size.\n\nVarious container widgets and layout managers support a homogeneous\nlayout mode, where they will explicitly give the same size to their\nchildren (see [`Box:homogeneous`](xref:gtk:Gtk.Box#property:homogeneous)). Using homogeneous mode\ncan also have large performance benefits compared to either the same\ncontainer in non-homogeneous mode, or to size groups.\n\n[`Grid`](xref:gtk:Gtk.Grid) can be used to position widgets into rows and\ncolumns. Members of each column will have the same width among them;\nlikewise, members of each row will have the same height. On top of\nthat, the heights can be made equal between all rows with\n[`Grid:row-homogeneous`](xref:gtk:Gtk.Grid#property:row-homogeneous), and the widths can be made equal\nbetween all columns with [`Grid:column-homogeneous`](xref:gtk:Gtk.Grid#property:column-homogeneous).\n\n# GtkSizeGroup as GtkBuildable\n\nSize groups can be specified in a UI definition by placing an `<object>`\nelement with `class=\"GtkSizeGroup\"` somewhere in the UI definition. The\nwidgets that belong to the size group are specified by a `<widgets>` element\nthat may contain multiple `<widget>` elements, one for each member of the\nsize group. The ”name” attribute gives the id of the widget.\n\nAn example of a UI definition fragment with `GtkSizeGroup`:\n```xml\n<object class=\"GtkSizeGroup\">\n  <property name=\"mode\">horizontal</property>\n  <widgets>\n    <widget name=\"radio1\"/>\n    <widget name=\"radio2\"/>\n  </widgets>\n</object>\n```"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:SizeGroup",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "add_widget": {
+      "brief": "Adds a widget to a `GtkSizeGroup`.",
+      "file": "gtk/gtksizegroup.c",
+      "line": 404,
+      "md": "Adds a widget to a `GtkSizeGroup`.\n\nIn the future, the requisition\nof the widget will be determined as the maximum of its requisition\nand the requisition of the other widgets in the size group.\nWhether this applies horizontally, vertically, or in both directions\ndepends on the mode of the size group.\nSee [`SizeGroup.set_mode()`](xref:gtk:Gtk.SizeGroup#method:set_mode).\n\nWhen the widget is destroyed or no longer referenced elsewhere, it\nwill be removed from the size group."
+    },
+    "get_mode": {
+      "brief": "Gets the current mode of the size group.",
+      "file": "gtk/gtksizegroup.c",
+      "line": 386,
+      "md": "Gets the current mode of the size group."
+    },
+    "get_widgets": {
+      "brief": "Returns the list of widgets associated with `size_group`.",
+      "file": "gtk/gtksizegroup.c",
+      "line": 472,
+      "md": "Returns the list of widgets associated with `size_group`."
+    },
+    "remove_widget": {
+      "brief": "Removes a widget from a `GtkSizeGroup`.",
+      "file": "gtk/gtksizegroup.c",
+      "line": 445,
+      "md": "Removes a widget from a `GtkSizeGroup`."
+    },
+    "set_mode": {
+      "brief": "Sets the `GtkSizeGroupMode` of the size group.",
+      "file": "gtk/gtksizegroup.c",
+      "line": 353,
+      "md": "Sets the `GtkSizeGroupMode` of the size group.\n\nThe mode of the size group determines whether the widgets in the\nsize group should all have the same horizontal requisition\n(%GTK_SIZE_GROUP_HORIZONTAL) all have the same vertical requisition\n(%GTK_SIZE_GROUP_VERTICAL), or should all have the same requisition\nin both directions (%GTK_SIZE_GROUP_BOTH)."
+    }
+  },
+  "properties": {
+    "mode": {
+      "brief": "The direction in which the size group affects requested sizes.",
+      "file": "gtk/gtksizegroup.c",
+      "line": 264,
+      "md": "The direction in which the size group affects requested sizes."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

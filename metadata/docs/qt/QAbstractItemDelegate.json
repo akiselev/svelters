@@ -1,0 +1,83 @@
+{
+  "doc": {
+    "brief": "The QAbstractItemDelegate class is used to display and edit data items from a model.",
+    "index_brief": "Used to display and edit data items from a model",
+    "url": "https://doc.qt.io/qt-6/qabstractitemdelegate.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractItemDelegate",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QAbstractItemDelegate(QObject *parent)": {
+      "brief": "Creates a new abstract item delegate with the given *parent*.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemdelegate.html#QAbstractItemDelegate"
+    },
+    "QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const = 0": {
+      "brief": "This pure abstract function must be reimplemented if you want to provide custom rendering.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemdelegate.html#sizeHint"
+    },
+    "QWidget * createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const": {
+      "brief": "Returns the editor to be used for editing the data item with the given *index*.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemdelegate.html#createEditor"
+    },
+    "bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index)": {
+      "brief": "When editing of an item starts, this function is called with the *event* that triggered the editing, the *model*, the *index* of the item, and the *option* used for rendering the item.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemdelegate.html#editorEvent"
+    },
+    "bool handleEditorEvent(QObject *editor, QEvent *event)": {
+      "brief": "Implements standard handling of events on behalf of the currently active *editor*.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemdelegate.html#handleEditorEvent"
+    },
+    "bool helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index)": {
+      "brief": "Whenever a help event occurs, this function is called with the *event* *view* *option* and the *index* that corresponds to the item where the event occurs.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemdelegate.html#helpEvent"
+    },
+    "void closeEditor(QWidget *editor, QAbstractItemDelegate::EndEditHint hint)": {
+      "brief": "This signal is emitted when the user has finished editing an item using the specified *editor*.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemdelegate.html#closeEditor"
+    },
+    "void commitData(QWidget *editor)": {
+      "brief": "This signal must be emitted when the *editor* widget has completed editing the data, and wants to write it back into the model.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemdelegate.html#commitData"
+    },
+    "void destroyEditor(QWidget *editor, const QModelIndex &index) const": {
+      "brief": "Called when the *editor* is no longer needed for editing the data item with the given *index* and should be destroyed.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemdelegate.html#destroyEditor"
+    },
+    "void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const = 0": {
+      "brief": "This pure abstract function must be reimplemented if you want to provide custom rendering.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemdelegate.html#paint"
+    },
+    "void setEditorData(QWidget *editor, const QModelIndex &index) const": {
+      "brief": "Sets the contents of the given *editor* to the data for the item at the given *index*.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemdelegate.html#setEditorData"
+    },
+    "void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const": {
+      "brief": "Sets the data for the item at the given *index* in the *model* to the contents of the given *editor*.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemdelegate.html#setModelData"
+    },
+    "void sizeHintChanged(const QModelIndex &index)": {
+      "brief": "This signal must be emitted when the [sizeHint](xref:qt:QAbstractItemDelegate)() of *index* changed.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemdelegate.html#sizeHintChanged"
+    },
+    "void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const": {
+      "brief": "Updates the geometry of the *editor* for the item with the given *index*, according to the rectangle specified in the *option*.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemdelegate.html#updateEditorGeometry"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

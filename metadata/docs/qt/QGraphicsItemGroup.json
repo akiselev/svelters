@@ -1,0 +1,59 @@
+{
+  "doc": {
+    "brief": "The QGraphicsItemGroup class provides a container that treats a group of items as a single item.",
+    "index_brief": "Container that treats a group of items as a single item",
+    "url": "https://doc.qt.io/qt-6/qgraphicsitemgroup.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsItemGroup",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QGraphicsItemGroup(QGraphicsItem *parent)": {
+      "brief": "Constructs a QGraphicsItemGroup. *parent* is passed to [QGraphicsItem](xref:qt:QGraphicsItem)'s constructor.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitemgroup.html#QGraphicsItemGroup"
+    },
+    "QPainterPath opaqueArea() const override": {
+      "brief": "Reimplements: [QGraphicsItem::opaqueArea](xref:qt:QGraphicsItem)() const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitemgroup.html#opaqueArea"
+    },
+    "QRectF boundingRect() const override": {
+      "brief": "Reimplements: [QGraphicsItem::boundingRect](xref:qt:QGraphicsItem)() const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitemgroup.html#boundingRect"
+    },
+    "bool isObscuredBy(const QGraphicsItem *item) const override": {
+      "brief": "Reimplements: [QGraphicsItem::isObscuredBy](xref:qt:QGraphicsItem)(const QGraphicsItem *item) const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitemgroup.html#isObscuredBy"
+    },
+    "int type() const override": {
+      "brief": "Reimplements: [QGraphicsItem::type](xref:qt:QGraphicsItem)() const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitemgroup.html#type"
+    },
+    "void addToGroup(QGraphicsItem *item)": {
+      "brief": "Adds the given *item* and item's child items to this item group.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitemgroup.html#addToGroup"
+    },
+    "void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override": {
+      "brief": "Reimplements: [QGraphicsItem::paint](xref:qt:QGraphicsItem)(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitemgroup.html#paint"
+    },
+    "void removeFromGroup(QGraphicsItem *item)": {
+      "brief": "Removes the specified *item* from this group.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitemgroup.html#removeFromGroup"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

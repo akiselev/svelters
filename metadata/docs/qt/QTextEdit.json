@@ -1,0 +1,593 @@
+{
+  "doc": {
+    "brief": "The QTextEdit class provides a widget that is used to edit and display both plain and rich text.",
+    "index_brief": "Widget that is used to edit and display both plain and rich text",
+    "url": "https://doc.qt.io/qt-6/qtextedit.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QTextEdit",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QColor textBackgroundColor() const": {
+      "brief": "Returns the text background color of the current format.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#textBackgroundColor"
+    },
+    "QColor textColor() const": {
+      "brief": "Returns the text color of the current format.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#textColor"
+    },
+    "QFont currentFont() const": {
+      "brief": "Returns the font of the current format.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#currentFont"
+    },
+    "QList<QTextEdit::ExtraSelection> extraSelections() const": {
+      "brief": "Returns previously set extra selections.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#extraSelections"
+    },
+    "QMenu * createStandardContextMenu()": {
+      "brief": "This function creates the standard context menu which is shown when the user clicks on the text edit with the right mouse button.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#createStandardContextMenu"
+    },
+    "QMenu * createStandardContextMenu(const QPoint &position)": {
+      "brief": "This function creates the standard context menu which is shown when the user clicks on the text edit with the right mouse button.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#createStandardContextMenu-1"
+    },
+    "QMimeData * createMimeDataFromSelection() const": {
+      "brief": "This function returns a new MIME data object to represent the contents of the text edit's current selection.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#createMimeDataFromSelection"
+    },
+    "QRect cursorRect() const": {
+      "brief": "returns a rectangle (in viewport coordinates) that includes the cursor of the text edit.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#cursorRect"
+    },
+    "QRect cursorRect(const QTextCursor &cursor) const": {
+      "brief": "returns a rectangle (in viewport coordinates) that includes the *cursor*.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#cursorRect-1"
+    },
+    "QString anchorAt(const QPoint &pos) const": {
+      "brief": "Returns the reference of the anchor at position *pos*, or an empty string if no anchor exists at that point.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#anchorAt"
+    },
+    "QString documentTitle() const": {
+      "brief": "This property holds the title of the document parsed from the text.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#documentTitle-prop"
+    },
+    "QString fontFamily() const": {
+      "brief": "Returns the font family of the current format.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#fontFamily"
+    },
+    "QString placeholderText() const": {
+      "brief": "This property holds the editor placeholder text",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#placeholderText-prop"
+    },
+    "QString toHtml() const": {
+      "brief": "This property provides an HTML interface to the text of the text edit.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#html-prop"
+    },
+    "QString toMarkdown(QTextDocument::MarkdownFeatures features) const": {
+      "brief": "This property provides a Markdown interface to the text of the text edit.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#markdown-prop"
+    },
+    "QString toPlainText() const": {
+      "brief": "[QString](xref:qt:QString) QTextEdit::toPlainText() const",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#toPlainText"
+    },
+    "QTextCharFormat currentCharFormat() const": {
+      "brief": "Returns the char format that is used when inserting new text.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#currentCharFormat"
+    },
+    "QTextCursor cursorForPosition(const QPoint &pos) const": {
+      "brief": "returns a [QTextCursor](xref:qt:QTextCursor) at position *pos* (in viewport coordinates).",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#cursorForPosition"
+    },
+    "QTextCursor textCursor() const": {
+      "brief": "Returns a copy of the [QTextCursor](xref:qt:QTextCursor) that represents the currently visible cursor.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#textCursor"
+    },
+    "QTextDocument * document() const": {
+      "brief": "This property holds the underlying document of the text editor.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#document-prop"
+    },
+    "QTextEdit(QWidget *parent)": {
+      "brief": "Constructs an empty QTextEdit with parent *parent*.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#QTextEdit"
+    },
+    "QTextEdit(const QString &text, QWidget *parent)": {
+      "brief": "Constructs a QTextEdit with parent *parent*.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#QTextEdit-1"
+    },
+    "QTextEdit::AutoFormatting autoFormatting() const": {
+      "brief": "This property holds the enabled set of auto formatting features",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#autoFormatting-prop"
+    },
+    "QTextEdit::LineWrapMode lineWrapMode() const": {
+      "brief": "This property holds the line wrap mode",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#lineWrapMode-prop"
+    },
+    "QTextOption::WrapMode wordWrapMode() const": {
+      "brief": "This property holds the mode [QTextEdit](xref:qt:QTextEdit) will use when wrapping text by words",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#wordWrapMode-prop"
+    },
+    "QVariant inputMethodQuery(Qt::InputMethodQuery property) const override": {
+      "brief": "Reimplements: [QWidget::inputMethodQuery](xref:qt:QWidget)(Qt::InputMethodQuery query) const.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#inputMethodQuery"
+    },
+    "QVariant loadResource(int type, const QUrl &name)": {
+      "brief": "Loads the resource specified by the given *type* and *name*.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#loadResource"
+    },
+    "Qt::Alignment alignment() const": {
+      "brief": "Returns the alignment of the current paragraph.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#alignment"
+    },
+    "Qt::TextInteractionFlags textInteractionFlags() const": {
+      "brief": "Specifies how the widget should interact with user input.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#textInteractionFlags-prop"
+    },
+    "bool acceptRichText() const": {
+      "brief": "This property holds whether the text edit accepts rich text insertions by the user",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#acceptRichText-prop"
+    },
+    "bool canInsertFromMimeData(const QMimeData *source) const": {
+      "brief": "This function returns `true` if the contents of the MIME data object, specified by *source*, can be decoded and inserted into the document.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#canInsertFromMimeData"
+    },
+    "bool canPaste() const": {
+      "brief": "Returns whether text can be pasted from the clipboard into the textedit.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#canPaste"
+    },
+    "bool find(const QRegularExpression &exp, QTextDocument::FindFlags options)": {
+      "brief": "Finds the next occurrence, matching the regular expression, *exp*, using the given *options*.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#find-1"
+    },
+    "bool find(const QString &exp, QTextDocument::FindFlags options)": {
+      "brief": "Finds the next occurrence of the string, *exp*, using the given *options*.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#find"
+    },
+    "bool focusNextPrevChild(bool next) override": {
+      "brief": "Reimplements: [QWidget::focusNextPrevChild](xref:qt:QWidget)(bool next).",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#focusNextPrevChild"
+    },
+    "bool fontItalic() const": {
+      "brief": "Returns `true` if the font of the current format is italic; otherwise returns false.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#fontItalic"
+    },
+    "bool fontUnderline() const": {
+      "brief": "Returns `true` if the font of the current format is underlined; otherwise returns false.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#fontUnderline"
+    },
+    "bool isReadOnly() const": {
+      "brief": "This property holds whether the text edit is read-only",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#readOnly-prop"
+    },
+    "bool isUndoRedoEnabled() const": {
+      "brief": "This property holds whether undo and redo are enabled.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#undoRedoEnabled-prop"
+    },
+    "bool overwriteMode() const": {
+      "brief": "This property holds whether text entered by the user will overwrite existing text",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#overwriteMode-prop"
+    },
+    "bool tabChangesFocus() const": {
+      "brief": "This property holds whether **Tab** changes focus or is accepted as input",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#tabChangesFocus-prop"
+    },
+    "int cursorWidth() const": {
+      "brief": "This property specifies the width of the cursor in pixels.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#cursorWidth-prop"
+    },
+    "int fontWeight() const": {
+      "brief": "Returns the font weight of the current format.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#fontWeight"
+    },
+    "int lineWrapColumnOrWidth() const": {
+      "brief": "This property holds the position (in pixels or columns depending on the wrap mode) where text will be wrapped",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#lineWrapColumnOrWidth-prop"
+    },
+    "qreal fontPointSize() const": {
+      "brief": "Returns the point size of the font of the current format.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#fontPointSize"
+    },
+    "qreal tabStopDistance() const": {
+      "brief": "This property holds the tab stop distance in pixels",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#tabStopDistance-prop"
+    },
+    "void append(const QString &text)": {
+      "brief": "Appends a new paragraph with *text* to the end of the text edit.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#append"
+    },
+    "void changeEvent(QEvent *e) override": {
+      "brief": "Reimplements: [QFrame::changeEvent](xref:qt:QFrame)(QEvent *ev).",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#changeEvent"
+    },
+    "void clear()": {
+      "brief": "Deletes all the text in the text edit.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#clear"
+    },
+    "void contextMenuEvent(QContextMenuEvent *event) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::contextMenuEvent](xref:qt:QAbstractScrollArea)(QContextMenuEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#contextMenuEvent"
+    },
+    "void copy()": {
+      "brief": "Copies any selected text to the clipboard.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#copy"
+    },
+    "void copyAvailable(bool yes)": {
+      "brief": "This signal is emitted when text is selected or de-selected in the text edit.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#copyAvailable"
+    },
+    "void currentCharFormatChanged(const QTextCharFormat &f)": {
+      "brief": "This signal is emitted if the current character format has changed, for example caused by a change of the cursor position.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#currentCharFormatChanged"
+    },
+    "void cursorPositionChanged()": {
+      "brief": "This signal is emitted whenever the position of the cursor changed.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#cursorPositionChanged"
+    },
+    "void cut()": {
+      "brief": "Copies the selected text to the clipboard and deletes it from the text edit.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#cut"
+    },
+    "void dragEnterEvent(QDragEnterEvent *e) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::dragEnterEvent](xref:qt:QAbstractScrollArea)(QDragEnterEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#dragEnterEvent"
+    },
+    "void dragLeaveEvent(QDragLeaveEvent *e) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::dragLeaveEvent](xref:qt:QAbstractScrollArea)(QDragLeaveEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#dragLeaveEvent"
+    },
+    "void dragMoveEvent(QDragMoveEvent *e) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::dragMoveEvent](xref:qt:QAbstractScrollArea)(QDragMoveEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#dragMoveEvent"
+    },
+    "void dropEvent(QDropEvent *e) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::dropEvent](xref:qt:QAbstractScrollArea)(QDropEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#dropEvent"
+    },
+    "void ensureCursorVisible()": {
+      "brief": "Ensures that the cursor is visible by scrolling the text edit if necessary.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#ensureCursorVisible"
+    },
+    "void focusInEvent(QFocusEvent *e) override": {
+      "brief": "Reimplements: [QWidget::focusInEvent](xref:qt:QWidget)(QFocusEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#focusInEvent"
+    },
+    "void focusOutEvent(QFocusEvent *e) override": {
+      "brief": "Reimplements: [QWidget::focusOutEvent](xref:qt:QWidget)(QFocusEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#focusOutEvent"
+    },
+    "void inputMethodEvent(QInputMethodEvent *e) override": {
+      "brief": "Reimplements: [QWidget::inputMethodEvent](xref:qt:QWidget)(QInputMethodEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#inputMethodEvent"
+    },
+    "void insertFromMimeData(const QMimeData *source)": {
+      "brief": "This function inserts the contents of the MIME data object, specified by *source*, into the text edit at the current cursor position.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#insertFromMimeData"
+    },
+    "void insertHtml(const QString &text)": {
+      "brief": "Convenience slot that inserts *text* which is assumed to be of html formatting at the current cursor position.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#insertHtml"
+    },
+    "void insertPlainText(const QString &text)": {
+      "brief": "Convenience slot that inserts *text* at the current cursor position.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#insertPlainText"
+    },
+    "void keyPressEvent(QKeyEvent *e) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::keyPressEvent](xref:qt:QAbstractScrollArea)(QKeyEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#keyPressEvent"
+    },
+    "void keyReleaseEvent(QKeyEvent *e) override": {
+      "brief": "Reimplements: [QWidget::keyReleaseEvent](xref:qt:QWidget)(QKeyEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#keyReleaseEvent"
+    },
+    "void mergeCurrentCharFormat(const QTextCharFormat &modifier)": {
+      "brief": "Merges the properties specified in *modifier* into the current character format by calling [QTextCursor::mergeCharFormat](xref:qt:QTextCursor) on the editor's cursor.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#mergeCurrentCharFormat"
+    },
+    "void mouseDoubleClickEvent(QMouseEvent *e) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::mouseDoubleClickEvent](xref:qt:QAbstractScrollArea)(QMouseEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#mouseDoubleClickEvent"
+    },
+    "void mouseMoveEvent(QMouseEvent *e) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::mouseMoveEvent](xref:qt:QAbstractScrollArea)(QMouseEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#mouseMoveEvent"
+    },
+    "void mousePressEvent(QMouseEvent *e) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::mousePressEvent](xref:qt:QAbstractScrollArea)(QMouseEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#mousePressEvent"
+    },
+    "void mouseReleaseEvent(QMouseEvent *e) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::mouseReleaseEvent](xref:qt:QAbstractScrollArea)(QMouseEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#mouseReleaseEvent"
+    },
+    "void moveCursor(QTextCursor::MoveOperation operation, QTextCursor::MoveMode mode)": {
+      "brief": "Moves the cursor by performing the given *operation*.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#moveCursor"
+    },
+    "void paintEvent(QPaintEvent *event) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::paintEvent](xref:qt:QAbstractScrollArea)(QPaintEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#paintEvent"
+    },
+    "void paste()": {
+      "brief": "Pastes the text from the clipboard into the text edit at the current cursor position.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#paste"
+    },
+    "void print(QPagedPaintDevice *printer) const": {
+      "brief": "Convenience function to print the text edit's document to the given *printer*.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#print"
+    },
+    "void redo()": {
+      "brief": "Redoes the last operation.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#redo"
+    },
+    "void redoAvailable(bool available)": {
+      "brief": "This signal is emitted whenever redo operations become available (*available* is true) or unavailable (*available* is false).",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#redoAvailable"
+    },
+    "void resizeEvent(QResizeEvent *e) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::resizeEvent](xref:qt:QAbstractScrollArea)(QResizeEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#resizeEvent"
+    },
+    "void scrollContentsBy(int dx, int dy) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::scrollContentsBy](xref:qt:QAbstractScrollArea)(int dx, int dy).",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#scrollContentsBy"
+    },
+    "void scrollToAnchor(const QString &name)": {
+      "brief": "Scrolls the text edit so that the anchor with the given *name* is visible; does nothing if the *name* is empty, or is already visible, or isn't found.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#scrollToAnchor"
+    },
+    "void selectAll()": {
+      "brief": "Selects all text.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#selectAll"
+    },
+    "void selectionChanged()": {
+      "brief": "This signal is emitted whenever the selection changes.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#selectionChanged"
+    },
+    "void setAcceptRichText(bool accept)": {
+      "brief": "This property holds whether the text edit accepts rich text insertions by the user",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#acceptRichText-prop"
+    },
+    "void setAlignment(Qt::Alignment a)": {
+      "brief": "Sets the alignment of the current paragraph to *a*.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#setAlignment"
+    },
+    "void setAutoFormatting(QTextEdit::AutoFormatting features)": {
+      "brief": "This property holds the enabled set of auto formatting features",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#autoFormatting-prop"
+    },
+    "void setCurrentCharFormat(const QTextCharFormat &format)": {
+      "brief": "Sets the char format that is be used when inserting new text to *format* by calling [QTextCursor::setCharFormat](xref:qt:QTextCursor)() on the editor's cursor.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#setCurrentCharFormat"
+    },
+    "void setCurrentFont(const QFont &f)": {
+      "brief": "Sets the font of the current format to *f*.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#setCurrentFont"
+    },
+    "void setCursorWidth(int width)": {
+      "brief": "This property specifies the width of the cursor in pixels.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#cursorWidth-prop"
+    },
+    "void setDocument(QTextDocument *document)": {
+      "brief": "This property holds the underlying document of the text editor.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#document-prop"
+    },
+    "void setDocumentTitle(const QString &title)": {
+      "brief": "This property holds the title of the document parsed from the text.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#documentTitle-prop"
+    },
+    "void setExtraSelections(const QList<QTextEdit::ExtraSelection> &selections)": {
+      "brief": "This function allows temporarily marking certain regions in the document with a given color, specified as *selections*.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#setExtraSelections"
+    },
+    "void setFontFamily(const QString &fontFamily)": {
+      "brief": "Sets the font family of the current format to *fontFamily*.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#setFontFamily"
+    },
+    "void setFontItalic(bool italic)": {
+      "brief": "If *italic* is true, sets the current format to italic; otherwise sets the current format to non-italic.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#setFontItalic"
+    },
+    "void setFontPointSize(qreal s)": {
+      "brief": "Sets the point size of the current format to *s*.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#setFontPointSize"
+    },
+    "void setFontUnderline(bool underline)": {
+      "brief": "If *underline* is true, sets the current format to underline; otherwise sets the current format to non-underline.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#setFontUnderline"
+    },
+    "void setFontWeight(int weight)": {
+      "brief": "Sets the font weight of the current format to the given *weight*, where the value used is in the range defined by the [QFont::Weight](xref:qt:QFont) enum.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#setFontWeight"
+    },
+    "void setHtml(const QString &text)": {
+      "brief": "This property provides an HTML interface to the text of the text edit.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#html-prop"
+    },
+    "void setLineWrapColumnOrWidth(int w)": {
+      "brief": "This property holds the position (in pixels or columns depending on the wrap mode) where text will be wrapped",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#lineWrapColumnOrWidth-prop"
+    },
+    "void setLineWrapMode(QTextEdit::LineWrapMode mode)": {
+      "brief": "This property holds the line wrap mode",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#lineWrapMode-prop"
+    },
+    "void setMarkdown(const QString &markdown)": {
+      "brief": "This property provides a Markdown interface to the text of the text edit.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#markdown-prop"
+    },
+    "void setOverwriteMode(bool overwrite)": {
+      "brief": "This property holds whether text entered by the user will overwrite existing text",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#overwriteMode-prop"
+    },
+    "void setPlaceholderText(const QString &placeholderText)": {
+      "brief": "This property holds the editor placeholder text",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#placeholderText-prop"
+    },
+    "void setPlainText(const QString &text)": {
+      "brief": "Changes the text of the text edit to the string *text*.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#setPlainText"
+    },
+    "void setReadOnly(bool ro)": {
+      "brief": "This property holds whether the text edit is read-only",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#readOnly-prop"
+    },
+    "void setTabChangesFocus(bool b)": {
+      "brief": "This property holds whether **Tab** changes focus or is accepted as input",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#tabChangesFocus-prop"
+    },
+    "void setTabStopDistance(qreal distance)": {
+      "brief": "This property holds the tab stop distance in pixels",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#tabStopDistance-prop"
+    },
+    "void setText(const QString &text)": {
+      "brief": "Sets the text edit's *text*.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#setText"
+    },
+    "void setTextBackgroundColor(const QColor &c)": {
+      "brief": "Sets the text background color of the current format to *c*.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#setTextBackgroundColor"
+    },
+    "void setTextColor(const QColor &c)": {
+      "brief": "Sets the text color of the current format to *c*.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#setTextColor"
+    },
+    "void setTextCursor(const QTextCursor &cursor)": {
+      "brief": "Sets the visible *cursor*.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#setTextCursor"
+    },
+    "void setTextInteractionFlags(Qt::TextInteractionFlags flags)": {
+      "brief": "Specifies how the widget should interact with user input.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#textInteractionFlags-prop"
+    },
+    "void setUndoRedoEnabled(bool enable)": {
+      "brief": "This property holds whether undo and redo are enabled.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#undoRedoEnabled-prop"
+    },
+    "void setWordWrapMode(QTextOption::WrapMode policy)": {
+      "brief": "This property holds the mode [QTextEdit](xref:qt:QTextEdit) will use when wrapping text by words",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#wordWrapMode-prop"
+    },
+    "void showEvent(QShowEvent *) override": {
+      "brief": "Reimplements: [QWidget::showEvent](xref:qt:QWidget)(QShowEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#showEvent"
+    },
+    "void textChanged()": {
+      "brief": "This signal is emitted whenever the document's content changes; for example, when text is inserted or deleted, or when formatting is applied.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#textChanged"
+    },
+    "void undo()": {
+      "brief": "Undoes the last operation.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#undo"
+    },
+    "void undoAvailable(bool available)": {
+      "brief": "This signal is emitted whenever undo operations become available (*available* is true) or unavailable (*available* is false).",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#undoAvailable"
+    },
+    "void wheelEvent(QWheelEvent *e) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::wheelEvent](xref:qt:QAbstractScrollArea)(QWheelEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#wheelEvent"
+    },
+    "void zoomIn(int range)": {
+      "brief": "Zooms in on the text by making the base font size *range* points larger and recalculating all font sizes to be the new size.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#zoomIn"
+    },
+    "void zoomOut(int range)": {
+      "brief": "Zooms out on the text by making the base font size *range* points smaller and recalculating all font sizes to be the new size.",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#zoomOut"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "acceptRichText": {
+      "brief": "Whether the text edit accepts rich text insertions by the user",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#acceptRichText-prop"
+    },
+    "autoFormatting": {
+      "brief": "The enabled set of auto formatting features",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#autoFormatting-prop"
+    },
+    "cursorWidth": {
+      "brief": "",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#cursorWidth-prop"
+    },
+    "document": {
+      "brief": "The underlying document of the text editor",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#document-prop"
+    },
+    "documentTitle": {
+      "brief": "The title of the document parsed from the text",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#documentTitle-prop"
+    },
+    "html": {
+      "brief": "",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#html-prop"
+    },
+    "lineWrapColumnOrWidth": {
+      "brief": "The position (in pixels or columns depending on the wrap mode) where text will be wrapped",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#lineWrapColumnOrWidth-prop"
+    },
+    "lineWrapMode": {
+      "brief": "The line wrap mode",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#lineWrapMode-prop"
+    },
+    "markdown": {
+      "brief": "",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#markdown-prop"
+    },
+    "overwriteMode": {
+      "brief": "Whether text entered by the user will overwrite existing text",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#overwriteMode-prop"
+    },
+    "placeholderText": {
+      "brief": "The editor placeholder text",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#placeholderText-prop"
+    },
+    "plainText": {
+      "brief": "The text editor's contents as plain text",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#plainText-prop"
+    },
+    "readOnly": {
+      "brief": "Whether the text edit is read-only",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#readOnly-prop"
+    },
+    "tabChangesFocus": {
+      "brief": "Whether Tab changes focus or is accepted as input",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#tabChangesFocus-prop"
+    },
+    "tabStopDistance": {
+      "brief": "The tab stop distance in pixels",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#tabStopDistance-prop"
+    },
+    "textInteractionFlags": {
+      "brief": "",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#textInteractionFlags-prop"
+    },
+    "undoRedoEnabled": {
+      "brief": "Whether undo and redo are enabled",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#undoRedoEnabled-prop"
+    },
+    "wordWrapMode": {
+      "brief": "The mode QTextEdit will use when wrapping text by words",
+      "url": "https://doc.qt.io/qt-6/qtextedit.html#wordWrapMode-prop"
+    }
+  },
+  "qss": {
+    "box_model": true,
+    "pseudo_states": [],
+    "sub_controls": [],
+    "url": "https://doc.qt.io/qt-6/stylesheet-reference.html#qtextedit-widget"
+  },
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

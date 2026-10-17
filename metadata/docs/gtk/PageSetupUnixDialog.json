@@ -1,0 +1,56 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new page setup dialog.",
+      "file": "gtk/print/gtkpagesetupunixdialog.c",
+      "line": 771,
+      "md": "Creates a new page setup dialog."
+    }
+  },
+  "doc": {
+    "brief": "Presents a page setup dialog for platforms which don’t provide a native page setup dialog, like Unix.",
+    "file": "gtk/print/gtkpagesetupunixdialog.c",
+    "line": 34,
+    "md": "Presents a page setup dialog for platforms which don’t provide\na native page setup dialog, like Unix.\n\nIt can be used very much like any other GTK dialog, at the\ncost of the portability offered by the high-level printing\nAPI in [`PrintOperation`](xref:gtk:Gtk.PrintOperation).\n\n## CSS nodes\n\n`GtkPageSetupUnixDialog` has a single CSS node with the name `window` and\nstyle class `.pagesetup`."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:PageSetupUnixDialog",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_page_setup": {
+      "brief": "Gets the currently selected page setup from the dialog.",
+      "file": "gtk/print/gtkpagesetupunixdialog.c",
+      "line": 853,
+      "md": "Gets the currently selected page setup from the dialog."
+    },
+    "get_print_settings": {
+      "brief": "Gets the current print settings from the dialog.",
+      "file": "gtk/print/gtkpagesetupunixdialog.c",
+      "line": 935,
+      "md": "Gets the current print settings from the dialog."
+    },
+    "set_page_setup": {
+      "brief": "Sets the `GtkPageSetup` from which the page setup dialog takes its values.",
+      "file": "gtk/print/gtkpagesetupunixdialog.c",
+      "line": 834,
+      "md": "Sets the `GtkPageSetup` from which the page setup\ndialog takes its values."
+    },
+    "set_print_settings": {
+      "brief": "Sets the `GtkPrintSettings` from which the page setup dialog takes its values.",
+      "file": "gtk/print/gtkpagesetupunixdialog.c",
+      "line": 901,
+      "md": "Sets the `GtkPrintSettings` from which the page setup dialog\ntakes its values."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

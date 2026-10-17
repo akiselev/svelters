@@ -1,0 +1,49 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "The result of a print operation.",
+    "file": "gtk/print/gtkprintoperation.h",
+    "line": 81,
+    "md": "The result of a print operation.\n\nA value of this type is returned by [`PrintOperation.run()`](xref:gtk:Gtk.PrintOperation#method:run)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:PrintOperationResult",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "apply": {
+      "brief": "The print settings should be stored.",
+      "file": "gtk/print/gtkprintoperation.h",
+      "line": 84,
+      "md": "The print settings should be stored."
+    },
+    "cancel": {
+      "brief": "The print operation has been canceled, the print settings should not be stored.",
+      "file": "gtk/print/gtkprintoperation.h",
+      "line": 85,
+      "md": "The print operation has been canceled,\n  the print settings should not be stored."
+    },
+    "error": {
+      "brief": "An error has occurred.",
+      "file": "gtk/print/gtkprintoperation.h",
+      "line": 83,
+      "md": "An error has occurred."
+    },
+    "in_progress": {
+      "brief": "The print operation is not complete yet.",
+      "file": "gtk/print/gtkprintoperation.h",
+      "line": 87,
+      "md": "The print operation is not complete\n  yet. This value will only be returned when running asynchronously."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

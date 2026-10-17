@@ -1,0 +1,145 @@
+{
+  "doc": {
+    "brief": "The QDialogButtonBox class is a widget that presents buttons in a layout that is appropriate to the current widget style.",
+    "index_brief": "Widget that presents buttons in a layout that is appropriate to the current widget style",
+    "url": "https://doc.qt.io/qt-6/qdialogbuttonbox.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QDialogButtonBox",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QDialogButtonBox(QDialogButtonBox::StandardButtons buttons, QWidget *parent)": {
+      "brief": "Constructs a horizontal button box with the given *parent*, containing the standard buttons specified by *buttons*.",
+      "url": "https://doc.qt.io/qt-6/qdialogbuttonbox.html#QDialogButtonBox-1"
+    },
+    "QDialogButtonBox(QDialogButtonBox::StandardButtons buttons, Qt::Orientation orientation, QWidget *parent)": {
+      "brief": "Constructs a button box with the given *orientation* and *parent*, containing the standard buttons specified by *buttons*.",
+      "url": "https://doc.qt.io/qt-6/qdialogbuttonbox.html#QDialogButtonBox-3"
+    },
+    "QDialogButtonBox(QWidget *parent)": {
+      "brief": "Constructs an empty, horizontal button box with the given *parent*.",
+      "url": "https://doc.qt.io/qt-6/qdialogbuttonbox.html#QDialogButtonBox"
+    },
+    "QDialogButtonBox(Qt::Orientation orientation, QWidget *parent)": {
+      "brief": "Constructs an empty button box with the given *orientation* and *parent*.",
+      "url": "https://doc.qt.io/qt-6/qdialogbuttonbox.html#QDialogButtonBox-2"
+    },
+    "QDialogButtonBox::ButtonRole buttonRole(QAbstractButton *button) const": {
+      "brief": "Returns the button role for the specified *button*.",
+      "url": "https://doc.qt.io/qt-6/qdialogbuttonbox.html#buttonRole"
+    },
+    "QDialogButtonBox::StandardButton standardButton(QAbstractButton *button) const": {
+      "brief": "Returns the standard button enum value corresponding to the given *button*, or [NoButton](xref:qt:QDialogButtonBox) if the given *button* isn't a standard button.",
+      "url": "https://doc.qt.io/qt-6/qdialogbuttonbox.html#standardButton"
+    },
+    "QDialogButtonBox::StandardButtons standardButtons() const": {
+      "brief": "collection of standard buttons in the button box",
+      "url": "https://doc.qt.io/qt-6/qdialogbuttonbox.html#standardButtons-prop"
+    },
+    "QList<QAbstractButton *> buttons() const": {
+      "brief": "Returns a list of all buttons that have been added to the button box.",
+      "url": "https://doc.qt.io/qt-6/qdialogbuttonbox.html#buttons"
+    },
+    "QPushButton * addButton(QDialogButtonBox::StandardButton button)": {
+      "brief": "Adds a standard *button* to the button box if it is valid to do so, and returns a push button.",
+      "url": "https://doc.qt.io/qt-6/qdialogbuttonbox.html#addButton"
+    },
+    "QPushButton * addButton(const QString &text, QDialogButtonBox::ButtonRole role)": {
+      "brief": "Creates a push button with the given *text*, adds it to the button box for the specified *role*, and returns the corresponding push button.",
+      "url": "https://doc.qt.io/qt-6/qdialogbuttonbox.html#addButton-2"
+    },
+    "QPushButton * button(QDialogButtonBox::StandardButton which) const": {
+      "brief": "Returns the [QPushButton](xref:qt:QPushButton) corresponding to the standard button *which*, or `nullptr` if the standard button doesn't exist in this button box.",
+      "url": "https://doc.qt.io/qt-6/qdialogbuttonbox.html#button"
+    },
+    "Qt::Orientation orientation() const": {
+      "brief": "This property holds the orientation of the button box",
+      "url": "https://doc.qt.io/qt-6/qdialogbuttonbox.html#orientation-prop"
+    },
+    "bool centerButtons() const": {
+      "brief": "This property holds whether the buttons in the button box are centered",
+      "url": "https://doc.qt.io/qt-6/qdialogbuttonbox.html#centerButtons-prop"
+    },
+    "bool event(QEvent *event) override": {
+      "brief": "Reimplements: [QWidget::event](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qdialogbuttonbox.html#event"
+    },
+    "void accepted()": {
+      "brief": "This signal is emitted when a button inside the button box is clicked, as long as it was defined with the [AcceptRole](xref:qt:QDialogButtonBox) or [YesRole](xref:qt:QDialogButtonBox).",
+      "url": "https://doc.qt.io/qt-6/qdialogbuttonbox.html#accepted"
+    },
+    "void addButton(QAbstractButton *button, QDialogButtonBox::ButtonRole role)": {
+      "brief": "Adds the given *button* to the button box with the specified *role*.",
+      "url": "https://doc.qt.io/qt-6/qdialogbuttonbox.html#addButton-1"
+    },
+    "void changeEvent(QEvent *event) override": {
+      "brief": "Reimplements: [QWidget::changeEvent](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qdialogbuttonbox.html#changeEvent"
+    },
+    "void clear()": {
+      "brief": "Clears the button box, deleting all buttons within it.",
+      "url": "https://doc.qt.io/qt-6/qdialogbuttonbox.html#clear"
+    },
+    "void clicked(QAbstractButton *button)": {
+      "brief": "This signal is emitted when a button inside the button box is clicked.",
+      "url": "https://doc.qt.io/qt-6/qdialogbuttonbox.html#clicked"
+    },
+    "void helpRequested()": {
+      "brief": "This signal is emitted when a button inside the button box is clicked, as long as it was defined with the [HelpRole](xref:qt:QDialogButtonBox).",
+      "url": "https://doc.qt.io/qt-6/qdialogbuttonbox.html#helpRequested"
+    },
+    "void rejected()": {
+      "brief": "This signal is emitted when a button inside the button box is clicked, as long as it was defined with the [RejectRole](xref:qt:QDialogButtonBox) or [NoRole](xref:qt:QDialogButtonBox).",
+      "url": "https://doc.qt.io/qt-6/qdialogbuttonbox.html#rejected"
+    },
+    "void removeButton(QAbstractButton *button)": {
+      "brief": "Removes *button* from the button box without deleting it and sets its parent to zero.",
+      "url": "https://doc.qt.io/qt-6/qdialogbuttonbox.html#removeButton"
+    },
+    "void setCenterButtons(bool center)": {
+      "brief": "This property holds whether the buttons in the button box are centered",
+      "url": "https://doc.qt.io/qt-6/qdialogbuttonbox.html#centerButtons-prop"
+    },
+    "void setOrientation(Qt::Orientation orientation)": {
+      "brief": "This property holds the orientation of the button box",
+      "url": "https://doc.qt.io/qt-6/qdialogbuttonbox.html#orientation-prop"
+    },
+    "void setStandardButtons(QDialogButtonBox::StandardButtons buttons)": {
+      "brief": "collection of standard buttons in the button box",
+      "url": "https://doc.qt.io/qt-6/qdialogbuttonbox.html#standardButtons-prop"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "centerButtons": {
+      "brief": "Whether the buttons in the button box are centered",
+      "url": "https://doc.qt.io/qt-6/qdialogbuttonbox.html#centerButtons-prop"
+    },
+    "orientation": {
+      "brief": "The orientation of the button box",
+      "url": "https://doc.qt.io/qt-6/qdialogbuttonbox.html#orientation-prop"
+    },
+    "standardButtons": {
+      "brief": "Collection of standard buttons in the button box",
+      "url": "https://doc.qt.io/qt-6/qdialogbuttonbox.html#standardButtons-prop"
+    }
+  },
+  "qss": {
+    "box_model": false,
+    "pseudo_states": [],
+    "sub_controls": [],
+    "url": "https://doc.qt.io/qt-6/stylesheet-reference.html#qdialogbuttonbox-widget"
+  },
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

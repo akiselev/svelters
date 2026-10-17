@@ -1,0 +1,336 @@
+{
+  "doc": {
+    "brief": "The QMenu class provides a menu widget for use in menu bars, context menus, and other popup menus.",
+    "index_brief": "Menu widget for use in menu bars, context menus, and other popup menus",
+    "url": "https://doc.qt.io/qt-6/qmenu.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QMenu",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "NSMenu * toNSMenu()": {
+      "brief": "Returns the native NSMenu for this menu.",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#toNSMenu"
+    },
+    "QAction * actionAt(const QPoint &pt) const": {
+      "brief": "Returns the item at *pt*; returns `nullptr` if there is no item there.",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#actionAt"
+    },
+    "QAction * activeAction() const": {
+      "brief": "Returns the currently highlighted action, or `nullptr` if no action is currently highlighted.",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#activeAction"
+    },
+    "QAction * addAction(const QIcon &icon, const QString &text, Functor functor, const QKeySequence &shortcut)": {
+      "url": "https://doc.qt.io/qt-6/qmenu-obsolete.html#addAction-1"
+    },
+    "QAction * addAction(const QIcon &icon, const QString &text, const QObject *context, Functor functor, const QKeySequence &shortcut)": {
+      "url": "https://doc.qt.io/qt-6/qmenu-obsolete.html#addAction-4"
+    },
+    "QAction * addAction(const QIcon &icon, const QString &text, const QObject *receiver, const char *member, const QKeySequence &shortcut)": {
+      "url": "https://doc.qt.io/qt-6/qmenu-obsolete.html#addAction-5"
+    },
+    "QAction * addAction(const QString &text, Functor functor, const QKeySequence &shortcut)": {
+      "url": "https://doc.qt.io/qt-6/qmenu-obsolete.html#addAction"
+    },
+    "QAction * addAction(const QString &text, const QObject *context, Functor functor, const QKeySequence &shortcut)": {
+      "url": "https://doc.qt.io/qt-6/qmenu-obsolete.html#addAction-2"
+    },
+    "QAction * addAction(const QString &text, const QObject *receiver, const char *member, const QKeySequence &shortcut)": {
+      "url": "https://doc.qt.io/qt-6/qmenu-obsolete.html#addAction-3"
+    },
+    "QAction * addMenu(QMenu *menu)": {
+      "brief": "This convenience function adds *menu* as a submenu to this menu.",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#addMenu"
+    },
+    "QAction * addSection(const QIcon &icon, const QString &text)": {
+      "brief": "This convenience function creates a new section action, i.e. an action with [QAction::isSeparator](xref:qt:QAction)() returning true but also having *text* and *icon* hints, and adds the new action...",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#addSection-1"
+    },
+    "QAction * addSection(const QString &text)": {
+      "brief": "This convenience function creates a new section action, i.e. an action with [QAction::isSeparator](xref:qt:QAction)() returning true but also having *text* hint, and adds the new action to this...",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#addSection"
+    },
+    "QAction * addSeparator()": {
+      "brief": "This convenience function creates a new separator action, i.e. an action with [QAction::isSeparator](xref:qt:QAction)() returning true, and adds the new action to this menu's list of actions.",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#addSeparator"
+    },
+    "QAction * defaultAction() const": {
+      "brief": "Returns the current default action.",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#defaultAction"
+    },
+    "QAction * exec()": {
+      "brief": "Executes this menu synchronously.",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#exec"
+    },
+    "QAction * exec(const QList<QAction *> &actions, const QPoint &pos, QAction *at, QWidget *parent)": {
+      "brief": "Executes a menu synchronously.",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#exec-2"
+    },
+    "QAction * exec(const QPoint &p, QAction *action)": {
+      "brief": "Executes this menu synchronously.",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#exec-1"
+    },
+    "QAction * insertMenu(QAction *before, QMenu *menu)": {
+      "brief": "This convenience function inserts *menu* before action *before* and returns the menus [menuAction](xref:qt:QMenu)().",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#insertMenu"
+    },
+    "QAction * insertSection(QAction *before, const QIcon &icon, const QString &text)": {
+      "brief": "This convenience function creates a new title action, i.e. an action with [QAction::isSeparator](xref:qt:QAction)() returning true but also having *text* and *icon* hints.",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#insertSection-1"
+    },
+    "QAction * insertSection(QAction *before, const QString &text)": {
+      "brief": "This convenience function creates a new title action, i.e. an action with [QAction::isSeparator](xref:qt:QAction)() returning true but also having *text* hint.",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#insertSection"
+    },
+    "QAction * insertSeparator(QAction *before)": {
+      "brief": "This convenience function creates a new separator action, i.e. an action with [QAction::isSeparator](xref:qt:QAction)() returning true.",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#insertSeparator"
+    },
+    "QAction * menuAction() const": {
+      "brief": "Returns the action associated with this menu.",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#menuAction"
+    },
+    "QIcon icon() const": {
+      "brief": "This property holds the icon of the menu",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#icon-prop"
+    },
+    "QMenu * addMenu(const QIcon &icon, const QString &title)": {
+      "brief": "Appends a new [QMenu](xref:qt:QMenu) with *icon* and *title* to the menu.",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#addMenu-2"
+    },
+    "QMenu * addMenu(const QString &title)": {
+      "brief": "Appends a new [QMenu](xref:qt:QMenu) with *title* to the menu.",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#addMenu-1"
+    },
+    "QMenu * menuInAction(const QAction *action)": {
+      "brief": "Returns the menu contained by *action*, or `nullptr` if *action* does not contain a menu.",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#menuInAction"
+    },
+    "QMenu(QWidget *parent)": {
+      "brief": "Constructs a menu with parent *parent*.",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#QMenu"
+    },
+    "QMenu(const QString &title, QWidget *parent)": {
+      "brief": "Constructs a menu with a *title* and a *parent*.",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#QMenu-1"
+    },
+    "QRect actionGeometry(QAction *act) const": {
+      "brief": "Returns the geometry of action *act*.",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#actionGeometry"
+    },
+    "QSize sizeHint() const override": {
+      "brief": "Reimplements an access function for property: [QWidget::sizeHint](xref:qt:QWidget).",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#sizeHint"
+    },
+    "QString title() const": {
+      "brief": "This property holds the title of the menu",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#title-prop"
+    },
+    "bool event(QEvent *e) override": {
+      "brief": "Reimplements: [QWidget::event](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#event"
+    },
+    "bool focusNextPrevChild(bool next) override": {
+      "brief": "Reimplements: [QWidget::focusNextPrevChild](xref:qt:QWidget)(bool next).",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#focusNextPrevChild"
+    },
+    "bool isEmpty() const": {
+      "brief": "Returns `true` if there are no visible actions inserted into the menu, false otherwise.",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#isEmpty"
+    },
+    "bool isTearOffEnabled() const": {
+      "brief": "This property holds whether the menu supports being torn off",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#tearOffEnabled-prop"
+    },
+    "bool isTearOffMenuVisible() const": {
+      "brief": "When a menu is torn off a second menu is shown to display the menu contents in a new window.",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#isTearOffMenuVisible"
+    },
+    "bool separatorsCollapsible() const": {
+      "brief": "This property holds whether consecutive separators should be collapsed",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#separatorsCollapsible-prop"
+    },
+    "bool toolTipsVisible() const": {
+      "brief": "This property holds whether tooltips of menu actions should be visible",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#toolTipsVisible-prop"
+    },
+    "int columnCount() const": {
+      "brief": "If a menu does not fit on the screen it lays itself out so that it does fit.",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#columnCount"
+    },
+    "void aboutToHide()": {
+      "brief": "This signal is emitted just before the menu is hidden from the user.",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#aboutToHide"
+    },
+    "void aboutToShow()": {
+      "brief": "This signal is emitted just before the menu is shown to the user.",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#aboutToShow"
+    },
+    "void actionEvent(QActionEvent *e) override": {
+      "brief": "Reimplements: [QWidget::actionEvent](xref:qt:QWidget)(QActionEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#actionEvent"
+    },
+    "void changeEvent(QEvent *e) override": {
+      "brief": "Reimplements: [QWidget::changeEvent](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#changeEvent"
+    },
+    "void clear()": {
+      "brief": "Removes all the menu's actions.",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#clear"
+    },
+    "void enterEvent(QEnterEvent *) override": {
+      "brief": "Reimplements: [QWidget::enterEvent](xref:qt:QWidget)(QEnterEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#enterEvent"
+    },
+    "void hideEvent(QHideEvent *) override": {
+      "brief": "Reimplements: [QWidget::hideEvent](xref:qt:QWidget)(QHideEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#hideEvent"
+    },
+    "void hideTearOffMenu()": {
+      "brief": "This function will forcibly hide the torn off menu making it disappear from the user's desktop.",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#hideTearOffMenu"
+    },
+    "void hovered(QAction *action)": {
+      "brief": "This signal is emitted when a menu action is highlighted; *action* is the action that caused the signal to be emitted.",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#hovered"
+    },
+    "void initStyleOption(QStyleOptionMenuItem *option, const QAction *action) const": {
+      "brief": "Initialize *option* with the values from this menu and information from *action*.",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#initStyleOption"
+    },
+    "void keyPressEvent(QKeyEvent *e) override": {
+      "brief": "Reimplements: [QWidget::keyPressEvent](xref:qt:QWidget)(QKeyEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#keyPressEvent"
+    },
+    "void leaveEvent(QEvent *) override": {
+      "brief": "Reimplements: [QWidget::leaveEvent](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#leaveEvent"
+    },
+    "void mouseMoveEvent(QMouseEvent *e) override": {
+      "brief": "Reimplements: [QWidget::mouseMoveEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#mouseMoveEvent"
+    },
+    "void mousePressEvent(QMouseEvent *e) override": {
+      "brief": "Reimplements: [QWidget::mousePressEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#mousePressEvent"
+    },
+    "void mouseReleaseEvent(QMouseEvent *e) override": {
+      "brief": "Reimplements: [QWidget::mouseReleaseEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#mouseReleaseEvent"
+    },
+    "void paintEvent(QPaintEvent *e) override": {
+      "brief": "Reimplements: [QWidget::paintEvent](xref:qt:QWidget)(QPaintEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#paintEvent"
+    },
+    "void popup(const QPoint &p, QAction *atAction)": {
+      "brief": "Displays the menu so that the action *atAction* will be at the specified *global* position *p*.",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#popup"
+    },
+    "void setActiveAction(QAction *act)": {
+      "brief": "Sets the currently highlighted action to *act*.",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#setActiveAction"
+    },
+    "void setAsDockMenu()": {
+      "brief": "Set this menu to be the dock menu available by option-clicking on the application dock icon.",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#setAsDockMenu"
+    },
+    "void setDefaultAction(QAction *act)": {
+      "brief": "This sets the default action to *act*.",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#setDefaultAction"
+    },
+    "void setIcon(const QIcon &icon)": {
+      "brief": "This property holds the icon of the menu",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#icon-prop"
+    },
+    "void setSeparatorsCollapsible(bool collapse)": {
+      "brief": "This property holds whether consecutive separators should be collapsed",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#separatorsCollapsible-prop"
+    },
+    "void setTearOffEnabled(bool)": {
+      "brief": "This property holds whether the menu supports being torn off",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#tearOffEnabled-prop"
+    },
+    "void setTitle(const QString &title)": {
+      "brief": "This property holds the title of the menu",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#title-prop"
+    },
+    "void setToolTipsVisible(bool visible)": {
+      "brief": "This property holds whether tooltips of menu actions should be visible",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#toolTipsVisible-prop"
+    },
+    "void showTearOffMenu()": {
+      "brief": "This function will forcibly show the torn off menu making it appear on the user's desktop under the mouse currsor.",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#showTearOffMenu-1"
+    },
+    "void showTearOffMenu(const QPoint &pos)": {
+      "brief": "This function will forcibly show the torn off menu making it appear on the user's desktop at the specified *global* position *pos*.",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#showTearOffMenu"
+    },
+    "void timerEvent(QTimerEvent *e) override": {
+      "brief": "Reimplements: [QObject::timerEvent](xref:qt:QObject)(QTimerEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#timerEvent"
+    },
+    "void triggered(QAction *action)": {
+      "brief": "This signal is emitted when an action in this menu is triggered.",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#triggered"
+    },
+    "void wheelEvent(QWheelEvent *e) override": {
+      "brief": "Reimplements: [QWidget::wheelEvent](xref:qt:QWidget)(QWheelEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#wheelEvent"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "icon": {
+      "brief": "Of the menu",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#icon-prop"
+    },
+    "separatorsCollapsible": {
+      "brief": "Whether consecutive separators should be collapsed",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#separatorsCollapsible-prop"
+    },
+    "tearOffEnabled": {
+      "brief": "Whether the menu supports being torn off",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#tearOffEnabled-prop"
+    },
+    "title": {
+      "brief": "Of the menu",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#title-prop"
+    },
+    "toolTipsVisible": {
+      "brief": "Whether tooltips of menu actions should be visible",
+      "url": "https://doc.qt.io/qt-6/qmenu.html#toolTipsVisible-prop"
+    }
+  },
+  "qss": {
+    "box_model": true,
+    "pseudo_states": [
+      ":default",
+      ":exclusive",
+      ":non-exclusive",
+      ":selected"
+    ],
+    "sub_controls": [
+      "::indicator",
+      "::item",
+      "::left-arrow",
+      "::right-arrow",
+      "::scroller",
+      "::separator",
+      "::tearoff"
+    ],
+    "url": "https://doc.qt.io/qt-6/stylesheet-reference.html#qmenu-widget"
+  },
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

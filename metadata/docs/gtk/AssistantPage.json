@@ -1,0 +1,68 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "`GtkAssistantPage` is an auxiliary object used by `GtkAssistant`.",
+    "deprecated": "4.10",
+    "deprecated_md": "This object will be removed in GTK 5",
+    "file": "gtk/deprecated/gtkassistant.c",
+    "line": 70,
+    "md": "`GtkAssistantPage` is an auxiliary object used by `GtkAssistant`."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:AssistantPage",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_child": {
+      "brief": "Returns the child to which `page` belongs.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkassistant.c",
+      "line": 2274,
+      "md": "Returns the child to which `page` belongs."
+    }
+  },
+  "properties": {
+    "child": {
+      "brief": "The child widget.",
+      "deprecated": "4.10",
+      "deprecated_md": "This object will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkassistant.c",
+      "line": 324,
+      "md": "The child widget."
+    },
+    "complete": {
+      "brief": "Whether all required fields are filled in.",
+      "deprecated": "4.10",
+      "deprecated_md": "This object will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkassistant.c",
+      "line": 308,
+      "md": "Whether all required fields are filled in.\n\nGTK uses this information to control the sensitivity\nof the navigation buttons."
+    },
+    "page-type": {
+      "brief": "The type of the assistant page.",
+      "deprecated": "4.10",
+      "deprecated_md": "This object will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkassistant.c",
+      "line": 281,
+      "md": "The type of the assistant page."
+    },
+    "title": {
+      "brief": "The title of the page.",
+      "deprecated": "4.10",
+      "deprecated_md": "This object will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkassistant.c",
+      "line": 295,
+      "md": "The title of the page."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

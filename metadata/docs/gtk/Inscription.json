@@ -1,0 +1,259 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkInscription` with the given text.",
+      "file": "gtk/gtkinscription.c",
+      "line": 806,
+      "md": "Creates a new `GtkInscription` with the given text.",
+      "since": "4.8"
+    }
+  },
+  "doc": {
+    "brief": "Shows text in a predefined area.",
+    "file": "gtk/gtkinscription.c",
+    "line": 35,
+    "md": "Shows text in a predefined area.\n\nYou likely want to use `GtkLabel` instead as this widget is intended only\nfor a small subset of use cases. The main scenario envisaged is inside lists\nsuch as `GtkColumnView`.\n\nWhile a `GtkLabel` sizes itself depending on the text that is displayed,\n`GtkInscription` is given a size and inscribes the given text into that\nspace as well as it can.\n\nUsers of this widget should take care to plan behaviour for the common case\nwhere the text doesn't fit exactly in the allocated space.\n\n## CSS nodes\n\n`GtkInscription` has a single CSS node with the name label.",
+    "since": "4.8"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Inscription",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_attributes": {
+      "brief": "Gets the inscription's attribute list.",
+      "file": "gtk/gtkinscription.c",
+      "line": 1200,
+      "md": "Gets the inscription's attribute list.",
+      "since": "4.8"
+    },
+    "get_min_chars": {
+      "brief": "Gets the `min-chars` of the inscription.",
+      "file": "gtk/gtkinscription.c",
+      "line": 905,
+      "md": "Gets the `min-chars` of the inscription.\n\nSee the [`Inscription:min-chars`](xref:gtk:Gtk.Inscription#property:min-chars) property.",
+      "since": "4.8"
+    },
+    "get_min_lines": {
+      "brief": "Gets the `min-lines` of the inscription.",
+      "file": "gtk/gtkinscription.c",
+      "line": 999,
+      "md": "Gets the `min-lines` of the inscription.\n\nSee the [`Inscription:min-lines`](xref:gtk:Gtk.Inscription#property:min-lines) property.",
+      "since": "4.8"
+    },
+    "get_nat_chars": {
+      "brief": "Gets the `nat-chars` of the inscription.",
+      "file": "gtk/gtkinscription.c",
+      "line": 952,
+      "md": "Gets the `nat-chars` of the inscription.\n\nSee the [`Inscription:nat-chars`](xref:gtk:Gtk.Inscription#property:nat-chars) property.",
+      "since": "4.8"
+    },
+    "get_nat_lines": {
+      "brief": "Gets the `nat-lines` of the inscription.",
+      "file": "gtk/gtkinscription.c",
+      "line": 1046,
+      "md": "Gets the `nat-lines` of the inscription.\n\nSee the [`Inscription:nat-lines`](xref:gtk:Gtk.Inscription#property:nat-lines) property.",
+      "since": "4.8"
+    },
+    "get_text": {
+      "brief": "Gets the text that is displayed.",
+      "file": "gtk/gtkinscription.c",
+      "line": 860,
+      "md": "Gets the text that is displayed.",
+      "since": "4.8"
+    },
+    "get_text_overflow": {
+      "brief": "Gets the inscription's overflow method.",
+      "file": "gtk/gtkinscription.c",
+      "line": 1262,
+      "md": "Gets the inscription's overflow method.",
+      "since": "4.8"
+    },
+    "get_wrap_mode": {
+      "brief": "Returns line wrap mode used by the inscription.",
+      "file": "gtk/gtkinscription.c",
+      "line": 1305,
+      "md": "Returns line wrap mode used by the inscription.\n\nSee [`Inscription.set_wrap_mode()`](xref:gtk:Gtk.Inscription#method:set_wrap_mode).",
+      "since": "4.8"
+    },
+    "get_xalign": {
+      "brief": "Gets the `xalign` of the inscription.",
+      "file": "gtk/gtkinscription.c",
+      "line": 1097,
+      "md": "Gets the `xalign` of the inscription.\n\nSee the [`Inscription:xalign`](xref:gtk:Gtk.Inscription#property:xalign) property.",
+      "since": "4.8"
+    },
+    "get_yalign": {
+      "brief": "Gets the `yalign` of the inscription.",
+      "file": "gtk/gtkinscription.c",
+      "line": 1146,
+      "md": "Gets the `yalign` of the inscription.\n\nSee the [`Inscription:yalign`](xref:gtk:Gtk.Inscription#property:yalign) property.",
+      "since": "4.8"
+    },
+    "set_attributes": {
+      "brief": "Apply attributes to the inscription text.",
+      "file": "gtk/gtkinscription.c",
+      "line": 1166,
+      "md": "Apply attributes to the inscription text.\n\nThese attributes will not be evaluated for sizing the inscription.",
+      "since": "4.8"
+    },
+    "set_markup": {
+      "brief": "Utility function to set the text and attributes to be displayed.",
+      "file": "gtk/gtkinscription.c",
+      "line": 1325,
+      "md": "Utility function to set the text and attributes to be displayed.\n\nSee the [`Inscription:markup`](xref:gtk:Gtk.Inscription#property:markup) property.",
+      "since": "4.8"
+    },
+    "set_min_chars": {
+      "brief": "Sets the `min-chars` of the inscription.",
+      "file": "gtk/gtkinscription.c",
+      "line": 878,
+      "md": "Sets the `min-chars` of the inscription.\n\nSee the [`Inscription:min-chars`](xref:gtk:Gtk.Inscription#property:min-chars) property.",
+      "since": "4.8"
+    },
+    "set_min_lines": {
+      "brief": "Sets the `min-lines` of the inscription.",
+      "file": "gtk/gtkinscription.c",
+      "line": 972,
+      "md": "Sets the `min-lines` of the inscription.\n\nSee the [`Inscription:min-lines`](xref:gtk:Gtk.Inscription#property:min-lines) property.",
+      "since": "4.8"
+    },
+    "set_nat_chars": {
+      "brief": "Sets the `nat-chars` of the inscription.",
+      "file": "gtk/gtkinscription.c",
+      "line": 925,
+      "md": "Sets the `nat-chars` of the inscription.\n\nSee the [`Inscription:nat-chars`](xref:gtk:Gtk.Inscription#property:nat-chars) property.",
+      "since": "4.8"
+    },
+    "set_nat_lines": {
+      "brief": "Sets the `nat-lines` of the inscription.",
+      "file": "gtk/gtkinscription.c",
+      "line": 1019,
+      "md": "Sets the `nat-lines` of the inscription.\n\nSee the [`Inscription:nat-lines`](xref:gtk:Gtk.Inscription#property:nat-lines) property.",
+      "since": "4.8"
+    },
+    "set_text": {
+      "brief": "Sets the text to be displayed.",
+      "file": "gtk/gtkinscription.c",
+      "line": 824,
+      "md": "Sets the text to be displayed.",
+      "since": "4.8"
+    },
+    "set_text_overflow": {
+      "brief": "Sets what to do when the text doesn't fit.",
+      "file": "gtk/gtkinscription.c",
+      "line": 1218,
+      "md": "Sets what to do when the text doesn't fit.",
+      "since": "4.8"
+    },
+    "set_wrap_mode": {
+      "brief": "Controls how line wrapping is done.",
+      "file": "gtk/gtkinscription.c",
+      "line": 1280,
+      "md": "Controls how line wrapping is done.",
+      "since": "4.8"
+    },
+    "set_xalign": {
+      "brief": "Sets the `xalign` of the inscription.",
+      "file": "gtk/gtkinscription.c",
+      "line": 1066,
+      "md": "Sets the `xalign` of the inscription.\n\nSee the [`Inscription:xalign`](xref:gtk:Gtk.Inscription#property:xalign) property.",
+      "since": "4.8"
+    },
+    "set_yalign": {
+      "brief": "Sets the `yalign` of the inscription.",
+      "file": "gtk/gtkinscription.c",
+      "line": 1117,
+      "md": "Sets the `yalign` of the inscription.\n\nSee the [`Inscription:yalign`](xref:gtk:Gtk.Inscription#property:yalign) property.",
+      "since": "4.8"
+    }
+  },
+  "properties": {
+    "attributes": {
+      "brief": "A list of style attributes to apply to the text of the inscription.",
+      "file": "gtk/gtkinscription.c",
+      "line": 591,
+      "md": "A list of style attributes to apply to the text of the inscription.",
+      "since": "4.8"
+    },
+    "markup": {
+      "brief": "Utility property that sets both the [`Inscription:text`](xref:gtk:Gtk.Inscription#property:text) and [`Inscription:attributes`](xref:gtk:Gtk.Inscription#property:attributes) properties, mainly intended for use in...",
+      "file": "gtk/gtkinscription.c",
+      "line": 603,
+      "md": "Utility property that sets both the [`Inscription:text`](xref:gtk:Gtk.Inscription#property:text) and\n[`Inscription:attributes`](xref:gtk:Gtk.Inscription#property:attributes) properties, mainly intended for use in\nGtkBuilder ui files to ease translation support and bindings.\n\nThis function uses `parse_markup` to parse the markup into text and\nattributes. The markup must be valid. If you cannot ensure that, consider using\n`parse_markup` and setting the two properties yourself.",
+      "since": "4.8"
+    },
+    "min-chars": {
+      "brief": "The number of characters that should fit into the inscription at minimum.",
+      "file": "gtk/gtkinscription.c",
+      "line": 621,
+      "md": "The number of characters that should fit into the inscription at minimum.\n\nThis influences the requested width, not the width actually given to the widget,\nwhich might turn out to be larger.\n\nNote that this is an approximate character width, so some characters might be\nwider and some might be thinner, so do not expect the number of characters to\nexactly match.\n\nIf you set this property to 0, the inscription will not request any width at all\nand its width will be determined entirely by its surroundings.",
+      "since": "4.8"
+    },
+    "min-lines": {
+      "brief": "The number of lines that should fit into the inscription at minimum.",
+      "file": "gtk/gtkinscription.c",
+      "line": 644,
+      "md": "The number of lines that should fit into the inscription at minimum.\n\nThis influences the requested height, not the height actually given to the widget,\nwhich might turn out to be larger.\n\nNote that this is an approximate line height, so if the text uses things like fancy\nUnicode or attribute that influence the height, the text might not fit.\n\nIf you set this property to 0, the inscription will not request any height at all\nand its height will be determined entirely by its surroundings.",
+      "since": "4.8"
+    },
+    "nat-chars": {
+      "brief": "The number of characters that should ideally fit into the inscription.",
+      "file": "gtk/gtkinscription.c",
+      "line": 666,
+      "md": "The number of characters that should ideally fit into the inscription.\n\nThis influences the requested width, not the width actually given to the widget.\nThe widget might turn out larger as well as smaller.\n\nIf this property is set to a value smaller than [`Inscription:min-chars`](xref:gtk:Gtk.Inscription#property:min-chars),\nthat value will be used. In particular, for the default value of 0, this will always\nbe the case.",
+      "since": "4.8"
+    },
+    "nat-lines": {
+      "brief": "The number of lines that should ideally fit into the inscription.",
+      "file": "gtk/gtkinscription.c",
+      "line": 686,
+      "md": "The number of lines that should ideally fit into the inscription.\n\nThis influences the requested height, not the height actually given to the widget.\nThe widget might turn out larger as well as smaller.\n\nIf this property is set to a value smaller than [`Inscription:min-lines`](xref:gtk:Gtk.Inscription#property:min-lines),\nthat value will be used. In particular, for the default value of 0, this will always\nbe the case.",
+      "since": "4.8"
+    },
+    "text": {
+      "brief": "The displayed text.",
+      "file": "gtk/gtkinscription.c",
+      "line": 706,
+      "md": "The displayed text.",
+      "since": "4.8"
+    },
+    "text-overflow": {
+      "brief": "The overflow method to use for the text.",
+      "file": "gtk/gtkinscription.c",
+      "line": 718,
+      "md": "The overflow method to use for the text.",
+      "since": "4.8"
+    },
+    "wrap-mode": {
+      "brief": "Controls how the line wrapping is done.",
+      "file": "gtk/gtkinscription.c",
+      "line": 731,
+      "md": "Controls how the line wrapping is done.\n\nNote that unlike `GtkLabel`, the default here is %PANGO_WRAP_WORD_CHAR.",
+      "since": "4.8"
+    },
+    "xalign": {
+      "brief": "The horizontal alignment of the text inside the allocated size.",
+      "file": "gtk/gtkinscription.c",
+      "line": 746,
+      "md": "The horizontal alignment of the text inside the allocated size.\n\nCompare this to [`Widget:halign`](xref:gtk:Gtk.Widget#property:halign), which determines how the\ninscription's size allocation is positioned in the available space.",
+      "since": "4.8"
+    },
+    "yalign": {
+      "brief": "The vertical alignment of the text inside the allocated size.",
+      "file": "gtk/gtkinscription.c",
+      "line": 762,
+      "md": "The vertical alignment of the text inside the allocated size.\n\nCompare this to [`Widget:valign`](xref:gtk:Gtk.Widget#property:valign), which determines how the\ninscription's size allocation is positioned in the available space.",
+      "since": "4.8"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -1,0 +1,188 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkPageSetup`.",
+      "file": "gtk/print/gtkpagesetup.c",
+      "line": 130,
+      "md": "Creates a new `GtkPageSetup`."
+    },
+    "new_from_file": {
+      "brief": "Reads the page setup from the file `file_name`.",
+      "file": "gtk/print/gtkpagesetup.c",
+      "line": 526,
+      "md": "Reads the page setup from the file `file_name`.\n\nReturns a new `GtkPageSetup` object with the restored\npage setup, or `NULL` if an error occurred.\nSee [`PageSetup.to_file()`](xref:gtk:Gtk.PageSetup#method:to_file)."
+    },
+    "new_from_gvariant": {
+      "brief": "Desrialize a page setup from an a{sv} variant.",
+      "file": "gtk/print/gtkpagesetup.c",
+      "line": 834,
+      "md": "Desrialize a page setup from an a{sv} variant.\n\nThe variant must be in the format produced by\n[`PageSetup.to_gvariant()`](xref:gtk:Gtk.PageSetup#method:to_gvariant)."
+    },
+    "new_from_key_file": {
+      "brief": "Reads the page setup from the group `group_name` in the key file `key_file`.",
+      "file": "gtk/print/gtkpagesetup.c",
+      "line": 662,
+      "md": "Reads the page setup from the group `group_name` in the key file\n`key_file`.\n\nReturns a new `GtkPageSetup` object with the restored\npage setup, or `NULL` if an error occurred."
+    }
+  },
+  "doc": {
+    "brief": "Stores page size, orientation and margins for printing.",
+    "file": "gtk/print/gtkpagesetup.c",
+    "line": 29,
+    "md": "Stores page size, orientation and margins for printing.\n\nThe idea is that you can get one of these from the page setup dialog\nand then pass it to the `GtkPrintOperation` when printing.\nThe benefit of splitting this out of the `GtkPrintSettings` is that\nthese affect the actual layout of the page, and thus need to be set\nlong before user prints.\n\n## Margins\n\nThe margins specified in this object are the “print margins”, i.e. the\nparts of the page that the printer cannot print on. These are different\nfrom the layout margins that a word processor uses; they are typically\nused to determine the minimal size for the layout margins.\n\nTo obtain a `GtkPageSetup` use [`PageSetup.new()`](xref:gtk:Gtk.PageSetup#constructor:new) to get the defaults,\nor use `print_run_page_setup_dialog` to show the page setup dialog\nand receive the resulting page setup.\n\n## A page setup dialog\n\n```c\nstatic GtkPrintSettings *settings = NULL;\nstatic GtkPageSetup *page_setup = NULL;\n\nstatic void\ndo_page_setup (void)\n{\n  GtkPageSetup *new_page_setup;\n\n  if (settings == NULL)\n    settings = gtk_print_settings_new ();\n\n  new_page_setup = gtk_print_run_page_setup_dialog (GTK_WINDOW (main_window),\n                                                    page_setup, settings);\n\n  if (page_setup)\n    g_object_unref (page_setup);\n\n  page_setup = new_page_setup;\n}\n```"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:PageSetup",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "copy": {
+      "brief": "Copies a `GtkPageSetup`.",
+      "file": "gtk/print/gtkpagesetup.c",
+      "line": 143,
+      "md": "Copies a `GtkPageSetup`."
+    },
+    "get_bottom_margin": {
+      "brief": "Gets the bottom margin in units of `unit`.",
+      "file": "gtk/print/gtkpagesetup.c",
+      "line": 290,
+      "md": "Gets the bottom margin in units of `unit`."
+    },
+    "get_left_margin": {
+      "brief": "Gets the left margin in units of `unit`.",
+      "file": "gtk/print/gtkpagesetup.c",
+      "line": 322,
+      "md": "Gets the left margin in units of `unit`."
+    },
+    "get_orientation": {
+      "brief": "Gets the page orientation of the `GtkPageSetup`.",
+      "file": "gtk/print/gtkpagesetup.c",
+      "line": 168,
+      "md": "Gets the page orientation of the `GtkPageSetup`."
+    },
+    "get_page_height": {
+      "brief": "Returns the page height in units of `unit`.",
+      "file": "gtk/print/gtkpagesetup.c",
+      "line": 463,
+      "md": "Returns the page height in units of `unit`.\n\nNote that this function takes orientation\nand margins into consideration.\nSee [`PageSetup.get_paper_height()`](xref:gtk:Gtk.PageSetup#method:get_paper_height)."
+    },
+    "get_page_width": {
+      "brief": "Returns the page width in units of `unit`.",
+      "file": "gtk/print/gtkpagesetup.c",
+      "line": 434,
+      "md": "Returns the page width in units of `unit`.\n\nNote that this function takes orientation\nand margins into consideration.\nSee [`PageSetup.get_paper_width()`](xref:gtk:Gtk.PageSetup#method:get_paper_width)."
+    },
+    "get_paper_height": {
+      "brief": "Returns the paper height in units of `unit`.",
+      "file": "gtk/print/gtkpagesetup.c",
+      "line": 410,
+      "md": "Returns the paper height in units of `unit`.\n\nNote that this function takes orientation,\nbut not margins into consideration.\nSee [`PageSetup.get_page_height()`](xref:gtk:Gtk.PageSetup#method:get_page_height)."
+    },
+    "get_paper_size": {
+      "brief": "Gets the paper size of the `GtkPageSetup`.",
+      "file": "gtk/print/gtkpagesetup.c",
+      "line": 196,
+      "md": "Gets the paper size of the `GtkPageSetup`."
+    },
+    "get_paper_width": {
+      "brief": "Returns the paper width in units of `unit`.",
+      "file": "gtk/print/gtkpagesetup.c",
+      "line": 386,
+      "md": "Returns the paper width in units of `unit`.\n\nNote that this function takes orientation,\nbut not margins into consideration.\nSee [`PageSetup.get_page_width()`](xref:gtk:Gtk.PageSetup#method:get_page_width)."
+    },
+    "get_right_margin": {
+      "brief": "Gets the right margin in units of `unit`.",
+      "file": "gtk/print/gtkpagesetup.c",
+      "line": 354,
+      "md": "Gets the right margin in units of `unit`."
+    },
+    "get_top_margin": {
+      "brief": "Gets the top margin in units of `unit`.",
+      "file": "gtk/print/gtkpagesetup.c",
+      "line": 258,
+      "md": "Gets the top margin in units of `unit`."
+    },
+    "load_file": {
+      "brief": "Reads the page setup from the file `file_name`.",
+      "file": "gtk/print/gtkpagesetup.c",
+      "line": 492,
+      "md": "Reads the page setup from the file `file_name`.\n\nSee [`PageSetup.to_file()`](xref:gtk:Gtk.PageSetup#method:to_file)."
+    },
+    "load_key_file": {
+      "brief": "Reads the page setup from the group `group_name` in the key file `key_file`.",
+      "file": "gtk/print/gtkpagesetup.c",
+      "line": 575,
+      "md": "Reads the page setup from the group `group_name` in the key file\n`key_file`."
+    },
+    "set_bottom_margin": {
+      "brief": "Sets the bottom margin of the `GtkPageSetup`.",
+      "file": "gtk/print/gtkpagesetup.c",
+      "line": 306,
+      "md": "Sets the bottom margin of the `GtkPageSetup`."
+    },
+    "set_left_margin": {
+      "brief": "Sets the left margin of the `GtkPageSetup`.",
+      "file": "gtk/print/gtkpagesetup.c",
+      "line": 338,
+      "md": "Sets the left margin of the `GtkPageSetup`."
+    },
+    "set_orientation": {
+      "brief": "Sets the page orientation of the `GtkPageSetup`.",
+      "file": "gtk/print/gtkpagesetup.c",
+      "line": 182,
+      "md": "Sets the page orientation of the `GtkPageSetup`."
+    },
+    "set_paper_size": {
+      "brief": "Sets the paper size of the `GtkPageSetup` without changing the margins.",
+      "file": "gtk/print/gtkpagesetup.c",
+      "line": 212,
+      "md": "Sets the paper size of the `GtkPageSetup` without\nchanging the margins.\n\nSee [`PageSetup.set_paper_size_and_default_margins()`](xref:gtk:Gtk.PageSetup#method:set_paper_size_and_default_margins)."
+    },
+    "set_paper_size_and_default_margins": {
+      "brief": "Sets the paper size of the `GtkPageSetup` and modifies the margins according to the new paper size.",
+      "file": "gtk/print/gtkpagesetup.c",
+      "line": 239,
+      "md": "Sets the paper size of the `GtkPageSetup` and modifies\nthe margins according to the new paper size."
+    },
+    "set_right_margin": {
+      "brief": "Sets the right margin of the `GtkPageSetup`.",
+      "file": "gtk/print/gtkpagesetup.c",
+      "line": 370,
+      "md": "Sets the right margin of the `GtkPageSetup`."
+    },
+    "set_top_margin": {
+      "brief": "Sets the top margin of the `GtkPageSetup`.",
+      "file": "gtk/print/gtkpagesetup.c",
+      "line": 274,
+      "md": "Sets the top margin of the `GtkPageSetup`."
+    },
+    "to_file": {
+      "brief": "This function saves the information from `setup` to `file_name`.",
+      "file": "gtk/print/gtkpagesetup.c",
+      "line": 693,
+      "md": "This function saves the information from `setup` to `file_name`."
+    },
+    "to_gvariant": {
+      "brief": "Serialize page setup to an a{sv} variant.",
+      "file": "gtk/print/gtkpagesetup.c",
+      "line": 796,
+      "md": "Serialize page setup to an a{sv} variant."
+    },
+    "to_key_file": {
+      "brief": "This function adds the page setup from `setup` to `key_file`.",
+      "file": "gtk/print/gtkpagesetup.c",
+      "line": 752,
+      "md": "This function adds the page setup from `setup` to `key_file`."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

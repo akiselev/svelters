@@ -1,0 +1,58 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "These identify the various errors that can occur while calling `GtkFileChooser` functions.",
+    "deprecated": "4.20",
+    "deprecated_md": "There is no replacement",
+    "file": "gtk/deprecated/gtkfilechooser.h",
+    "line": 70,
+    "md": "These identify the various errors that can occur while calling\n`GtkFileChooser` functions."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:FileChooserError",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "already_exists": {
+      "brief": "Indicates a duplicate path (e.g. when adding a bookmark).",
+      "file": "gtk/deprecated/gtkfilechooser.h",
+      "line": 74,
+      "md": "Indicates a duplicate path (e.g. when\n adding a bookmark)."
+    },
+    "bad_filename": {
+      "brief": "Indicates a malformed filename.",
+      "file": "gtk/deprecated/gtkfilechooser.h",
+      "line": 73,
+      "md": "Indicates a malformed filename."
+    },
+    "incomplete_hostname": {
+      "brief": "Indicates an incomplete hostname (e.g. \"http://foo\" without a slash after that).",
+      "file": "gtk/deprecated/gtkfilechooser.h",
+      "line": 76,
+      "md": "Indicates an incomplete hostname\n (e.g. \"http://foo\" without a slash after that)."
+    },
+    "nonexistent": {
+      "brief": "Indicates that a file does not exist.",
+      "file": "gtk/deprecated/gtkfilechooser.h",
+      "line": 72,
+      "md": "Indicates that a file does not exist."
+    }
+  },
+  "methods": {
+    "quark": {
+      "brief": "Registers an error quark for `GtkFileChooser` errors.",
+      "file": "gtk/deprecated/gtkfilechooser.c",
+      "line": 167,
+      "md": "Registers an error quark for `GtkFileChooser` errors."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

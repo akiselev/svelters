@@ -1,0 +1,228 @@
+{
+  "doc": {
+    "brief": "The QAbstractSlider class provides an integer value within a range.",
+    "index_brief": "Integer value within a range",
+    "url": "https://doc.qt.io/qt-6/qabstractslider.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSlider",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QAbstractSlider(QWidget *parent)": {
+      "brief": "Constructs an abstract slider.",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#QAbstractSlider"
+    },
+    "QAbstractSlider::SliderAction repeatAction() const": {
+      "brief": "Returns the current repeat action.",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#repeatAction"
+    },
+    "Qt::Orientation orientation() const": {
+      "brief": "This property holds the orientation of the slider",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#orientation-prop"
+    },
+    "bool event(QEvent *e) override": {
+      "brief": "Reimplements: [QWidget::event](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#event"
+    },
+    "bool hasTracking() const": {
+      "brief": "This property holds whether slider tracking is enabled",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#tracking-prop"
+    },
+    "bool invertedAppearance() const": {
+      "brief": "This property holds whether or not a slider shows its values inverted.",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#invertedAppearance-prop"
+    },
+    "bool invertedControls() const": {
+      "brief": "This property holds whether or not the slider inverts its wheel and key events.",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#invertedControls-prop"
+    },
+    "bool isSliderDown() const": {
+      "brief": "This property holds whether the slider is pressed down.",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#sliderDown-prop"
+    },
+    "int maximum() const": {
+      "brief": "This property holds the slider's maximum value",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#maximum-prop"
+    },
+    "int minimum() const": {
+      "brief": "This property holds the sliders's minimum value",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#minimum-prop"
+    },
+    "int pageStep() const": {
+      "brief": "This property holds the page step.",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#pageStep-prop"
+    },
+    "int singleStep() const": {
+      "brief": "This property holds the single step.",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#singleStep-prop"
+    },
+    "int sliderPosition() const": {
+      "brief": "This property holds the current slider position",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#sliderPosition-prop"
+    },
+    "int value() const": {
+      "brief": "This property holds the slider's current value",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#value-prop"
+    },
+    "void actionTriggered(int action)": {
+      "brief": "This signal is emitted when the slider action *action* is triggered.",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#actionTriggered"
+    },
+    "void changeEvent(QEvent *ev) override": {
+      "brief": "Reimplements: [QWidget::changeEvent](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#changeEvent"
+    },
+    "void keyPressEvent(QKeyEvent *ev) override": {
+      "brief": "Reimplements: [QWidget::keyPressEvent](xref:qt:QWidget)(QKeyEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#keyPressEvent"
+    },
+    "void rangeChanged(int min, int max)": {
+      "brief": "This signal is emitted when the slider range has changed, with *min* being the new minimum, and *max* being the new maximum.",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#rangeChanged"
+    },
+    "void setInvertedAppearance(bool)": {
+      "brief": "This property holds whether or not a slider shows its values inverted.",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#invertedAppearance-prop"
+    },
+    "void setInvertedControls(bool)": {
+      "brief": "This property holds whether or not the slider inverts its wheel and key events.",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#invertedControls-prop"
+    },
+    "void setMaximum(int)": {
+      "brief": "This property holds the slider's maximum value",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#maximum-prop"
+    },
+    "void setMinimum(int)": {
+      "brief": "This property holds the sliders's minimum value",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#minimum-prop"
+    },
+    "void setOrientation(Qt::Orientation)": {
+      "brief": "This property holds the orientation of the slider",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#orientation-prop"
+    },
+    "void setPageStep(int)": {
+      "brief": "This property holds the page step.",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#pageStep-prop"
+    },
+    "void setRange(int min, int max)": {
+      "brief": "Sets the slider's minimum to *min* and its maximum to *max*.",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#setRange"
+    },
+    "void setRepeatAction(QAbstractSlider::SliderAction action, int thresholdTime, int repeatTime)": {
+      "brief": "Sets action *action* to be triggered repetitively in intervals of *repeatTime*, after an initial delay of *thresholdTime*.",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#setRepeatAction"
+    },
+    "void setSingleStep(int)": {
+      "brief": "This property holds the single step.",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#singleStep-prop"
+    },
+    "void setSliderDown(bool)": {
+      "brief": "This property holds whether the slider is pressed down.",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#sliderDown-prop"
+    },
+    "void setSliderPosition(int)": {
+      "brief": "This property holds the current slider position",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#sliderPosition-prop"
+    },
+    "void setTracking(bool enable)": {
+      "brief": "This property holds whether slider tracking is enabled",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#tracking-prop"
+    },
+    "void setValue(int)": {
+      "brief": "This property holds the slider's current value",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#value-prop"
+    },
+    "void sliderChange(QAbstractSlider::SliderChange change)": {
+      "brief": "Reimplement this virtual function to track slider changes such as [SliderRangeChange](xref:qt:QAbstractSlider), [SliderOrientationChange](xref:qt:QAbstractSlider)...",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#sliderChange"
+    },
+    "void sliderMoved(int value)": {
+      "brief": "This signal is emitted when [sliderDown](xref:qt:QAbstractSlider) is true and the slider moves.",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#sliderMoved"
+    },
+    "void sliderPressed()": {
+      "brief": "This signal is emitted when the user presses the slider with the mouse, or programmatically when [setSliderDown](xref:qt:QAbstractSlider)(true) is called.",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#sliderPressed"
+    },
+    "void sliderReleased()": {
+      "brief": "This signal is emitted when the user releases the slider with the mouse, or programmatically when [setSliderDown](xref:qt:QAbstractSlider)(false) is called.",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#sliderReleased"
+    },
+    "void timerEvent(QTimerEvent *e) override": {
+      "brief": "Reimplements: [QObject::timerEvent](xref:qt:QObject)(QTimerEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#timerEvent"
+    },
+    "void triggerAction(QAbstractSlider::SliderAction action)": {
+      "brief": "Triggers a slider *action*.",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#triggerAction"
+    },
+    "void valueChanged(int value)": {
+      "brief": "This signal is emitted when the slider value has changed, with the new slider *value* as argument.",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#valueChanged"
+    },
+    "void wheelEvent(QWheelEvent *e) override": {
+      "brief": "Reimplements: [QWidget::wheelEvent](xref:qt:QWidget)(QWheelEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#wheelEvent"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "invertedAppearance": {
+      "brief": "Whether or not a slider shows its values inverted",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#invertedAppearance-prop"
+    },
+    "invertedControls": {
+      "brief": "Whether or not the slider inverts its wheel and key events",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#invertedControls-prop"
+    },
+    "maximum": {
+      "brief": "The slider's maximum value",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#maximum-prop"
+    },
+    "minimum": {
+      "brief": "The sliders's minimum value",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#minimum-prop"
+    },
+    "orientation": {
+      "brief": "The orientation of the slider",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#orientation-prop"
+    },
+    "pageStep": {
+      "brief": "The page step",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#pageStep-prop"
+    },
+    "singleStep": {
+      "brief": "The single step",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#singleStep-prop"
+    },
+    "sliderDown": {
+      "brief": "Whether the slider is pressed down",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#sliderDown-prop"
+    },
+    "sliderPosition": {
+      "brief": "The current slider position",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#sliderPosition-prop"
+    },
+    "tracking": {
+      "brief": "Whether slider tracking is enabled",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#tracking-prop"
+    },
+    "value": {
+      "brief": "The slider's current value",
+      "url": "https://doc.qt.io/qt-6/qabstractslider.html#value-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

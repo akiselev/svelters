@@ -1,0 +1,119 @@
+{
+  "doc": {
+    "brief": "The QAccessibleWidget class implements the [QAccessibleInterface](xref:qt:QAccessibleInterface) for QWidgets.",
+    "index_brief": "Implements the QAccessibleInterface for QWidgets",
+    "url": "https://doc.qt.io/qt-6/qaccessiblewidget.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QAccessibleWidget",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QAccessible::Role role() const override": {
+      "brief": "Reimplements: [QAccessibleInterface::role](xref:qt:QAccessibleInterface)() const.",
+      "url": "https://doc.qt.io/qt-6/qaccessiblewidget.html#role"
+    },
+    "QAccessible::State state() const override": {
+      "brief": "Reimplements: [QAccessibleInterface::state](xref:qt:QAccessibleInterface)() const.",
+      "url": "https://doc.qt.io/qt-6/qaccessiblewidget.html#state"
+    },
+    "QAccessibleInterface * child(int index) const override": {
+      "brief": "Reimplements: [QAccessibleInterface::child](xref:qt:QAccessibleInterface)(int index) const.",
+      "url": "https://doc.qt.io/qt-6/qaccessiblewidget.html#child"
+    },
+    "QAccessibleInterface * focusChild() const override": {
+      "brief": "Reimplements: [QAccessibleInterface::focusChild](xref:qt:QAccessibleInterface)() const.",
+      "url": "https://doc.qt.io/qt-6/qaccessiblewidget.html#focusChild"
+    },
+    "QAccessibleInterface * parent() const override": {
+      "brief": "Reimplements: [QAccessibleInterface::parent](xref:qt:QAccessibleInterface)() const.",
+      "url": "https://doc.qt.io/qt-6/qaccessiblewidget.html#parent"
+    },
+    "QAccessibleWidget(QWidget *w, QAccessible::Role role)": {
+      "brief": "Creates a QAccessibleWidget object for widget *w*. *role* is an optional parameter that sets the object's role property.",
+      "url": "https://doc.qt.io/qt-6/qaccessiblewidget.html#QAccessibleWidget"
+    },
+    "QAccessibleWidget(QWidget *w, QAccessible::Role role, const QString &name)": {
+      "brief": "Creates a QAccessibleWidget object for widget *w*. *role* and *name* are optional parameters that set the object's role and name properties.",
+      "url": "https://doc.qt.io/qt-6/qaccessiblewidget.html#QAccessibleWidget-1"
+    },
+    "QColor backgroundColor() const override": {
+      "brief": "Reimplements: [QAccessibleInterface::backgroundColor](xref:qt:QAccessibleInterface)() const.",
+      "url": "https://doc.qt.io/qt-6/qaccessiblewidget.html#backgroundColor"
+    },
+    "QColor foregroundColor() const override": {
+      "brief": "Reimplements: [QAccessibleInterface::foregroundColor](xref:qt:QAccessibleInterface)() const.",
+      "url": "https://doc.qt.io/qt-6/qaccessiblewidget.html#foregroundColor"
+    },
+    "QList<std::pair<QAccessibleInterface *, QAccessible::Relation>> relations(QAccessible::Relation match) const override": {
+      "brief": "Reimplements: [QAccessibleInterface::relations](xref:qt:QAccessibleInterface)(QAccessible::Relation match) const.",
+      "url": "https://doc.qt.io/qt-6/qaccessiblewidget.html#relations"
+    },
+    "QObject * parentObject() const": {
+      "brief": "Returns the associated widget's parent object, which is either the parent widget, or [qApp](xref:qt:QApplication) for top-level widgets.",
+      "url": "https://doc.qt.io/qt-6/qaccessiblewidget.html#parentObject"
+    },
+    "QRect rect() const override": {
+      "brief": "Reimplements: [QAccessibleObject::rect](xref:qt:QAccessibleObject)() const.",
+      "url": "https://doc.qt.io/qt-6/qaccessiblewidget.html#rect"
+    },
+    "QString text(QAccessible::Text t) const override": {
+      "brief": "Reimplements: [QAccessibleInterface::text](xref:qt:QAccessibleInterface)(QAccessible::Text t) const.",
+      "url": "https://doc.qt.io/qt-6/qaccessiblewidget.html#text"
+    },
+    "QStringList actionNames() const override": {
+      "brief": "Reimplements: [QAccessibleActionInterface::actionNames](xref:qt:QAccessibleActionInterface)() const.",
+      "url": "https://doc.qt.io/qt-6/qaccessiblewidget.html#actionNames"
+    },
+    "QStringList keyBindingsForAction(const QString &actionName) const override": {
+      "brief": "Reimplements: [QAccessibleActionInterface::keyBindingsForAction](xref:qt:QAccessibleActionInterface)(const QString &actionName) const.",
+      "url": "https://doc.qt.io/qt-6/qaccessiblewidget.html#keyBindingsForAction"
+    },
+    "QWidget * widget() const": {
+      "brief": "Returns the associated widget.",
+      "url": "https://doc.qt.io/qt-6/qaccessiblewidget.html#widget"
+    },
+    "QWindow * window() const override": {
+      "brief": "Reimplements: [QAccessibleInterface::window](xref:qt:QAccessibleInterface)() const.",
+      "url": "https://doc.qt.io/qt-6/qaccessiblewidget.html#window"
+    },
+    "bool isValid() const override": {
+      "brief": "Reimplements: [QAccessibleObject::isValid](xref:qt:QAccessibleObject)() const.",
+      "url": "https://doc.qt.io/qt-6/qaccessiblewidget.html#isValid"
+    },
+    "int childCount() const override": {
+      "brief": "Reimplements: [QAccessibleInterface::childCount](xref:qt:QAccessibleInterface)() const.",
+      "url": "https://doc.qt.io/qt-6/qaccessiblewidget.html#childCount"
+    },
+    "int indexOfChild(const QAccessibleInterface *child) const override": {
+      "brief": "Reimplements: [QAccessibleInterface::indexOfChild](xref:qt:QAccessibleInterface)(const QAccessibleInterface *child) const.",
+      "url": "https://doc.qt.io/qt-6/qaccessiblewidget.html#indexOfChild"
+    },
+    "void * interface_cast(QAccessible::InterfaceType t) override": {
+      "brief": "Reimplements: [QAccessibleInterface::interface_cast](xref:qt:QAccessibleInterface)(QAccessible::InterfaceType type).",
+      "url": "https://doc.qt.io/qt-6/qaccessiblewidget.html#interface_cast"
+    },
+    "void addControllingSignal(const QString &signal)": {
+      "brief": "Registers *signal* as a controlling signal.",
+      "url": "https://doc.qt.io/qt-6/qaccessiblewidget.html#addControllingSignal"
+    },
+    "void doAction(const QString &actionName) override": {
+      "brief": "Reimplements: [QAccessibleActionInterface::doAction](xref:qt:QAccessibleActionInterface)(const QString &actionName).",
+      "url": "https://doc.qt.io/qt-6/qaccessiblewidget.html#doAction"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

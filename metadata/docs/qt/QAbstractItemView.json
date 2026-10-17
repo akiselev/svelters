@@ -1,0 +1,615 @@
+{
+  "doc": {
+    "brief": "The QAbstractItemView class provides the basic functionality for item view classes.",
+    "index_brief": "The basic functionality for item view classes",
+    "url": "https://doc.qt.io/qt-6/qabstractitemview.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractItemView",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QAbstractItemDelegate * itemDelegate() const": {
+      "brief": "Returns the item delegate used by this view and model.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#itemDelegate"
+    },
+    "QAbstractItemDelegate * itemDelegate(const QModelIndex &index) const": {
+      "url": "https://doc.qt.io/qt-6/qabstractitemview-obsolete.html#itemDelegate-1"
+    },
+    "QAbstractItemDelegate * itemDelegateForColumn(int column) const": {
+      "brief": "Returns the item delegate used by this view and model for the given *column*.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#itemDelegateForColumn"
+    },
+    "QAbstractItemDelegate * itemDelegateForIndex(const QModelIndex &index) const": {
+      "brief": "Returns the item delegate used by this view and model for the given *index*.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#itemDelegateForIndex"
+    },
+    "QAbstractItemDelegate * itemDelegateForRow(int row) const": {
+      "brief": "Returns the item delegate used by this view and model for the given *row*, or `nullptr` if no delegate has been assigned.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#itemDelegateForRow"
+    },
+    "QAbstractItemModel * model() const": {
+      "brief": "Returns the model that this view is presenting.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#model"
+    },
+    "QAbstractItemView(QWidget *parent)": {
+      "brief": "Constructs an abstract item view with the given *parent*.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#QAbstractItemView"
+    },
+    "QAbstractItemView::DragDropMode dragDropMode() const": {
+      "brief": "This property holds the drag and drop event the view will act upon",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#dragDropMode-prop"
+    },
+    "QAbstractItemView::DropIndicatorPosition dropIndicatorPosition() const": {
+      "brief": "Returns the position of the drop indicator in relation to the closest item.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#dropIndicatorPosition"
+    },
+    "QAbstractItemView::EditTriggers editTriggers() const": {
+      "brief": "This property holds which actions will initiate item editing",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#editTriggers-prop"
+    },
+    "QAbstractItemView::ScrollMode horizontalScrollMode() const": {
+      "brief": "how the view scrolls its contents in the horizontal direction",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#horizontalScrollMode-prop"
+    },
+    "QAbstractItemView::ScrollMode verticalScrollMode() const": {
+      "brief": "how the view scrolls its contents in the vertical direction",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#verticalScrollMode-prop"
+    },
+    "QAbstractItemView::SelectionBehavior selectionBehavior() const": {
+      "brief": "This property holds which selection behavior the view uses",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#selectionBehavior-prop"
+    },
+    "QAbstractItemView::SelectionMode selectionMode() const": {
+      "brief": "This property holds which selection mode the view operates in",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#selectionMode-prop"
+    },
+    "QAbstractItemView::State state() const": {
+      "brief": "Returns the item view's state.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#state"
+    },
+    "QItemSelectionModel * selectionModel() const": {
+      "brief": "Returns the current selection model.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#selectionModel"
+    },
+    "QItemSelectionModel::SelectionFlags selectionCommand(const QModelIndex &index, const QEvent *event) const": {
+      "brief": "Returns the SelectionFlags to be used when updating a selection model for the specified *index*.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#selectionCommand"
+    },
+    "QModelIndex currentIndex() const": {
+      "brief": "Returns the model index of the current item.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#currentIndex"
+    },
+    "QModelIndex indexAt(const QPoint &point) const = 0": {
+      "brief": "Returns the model index of the item at the viewport coordinates *point*.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#indexAt"
+    },
+    "QModelIndex moveCursor(QAbstractItemView::CursorAction cursorAction, Qt::KeyboardModifiers modifiers) = 0": {
+      "brief": "Returns a [QModelIndex](xref:qt:QModelIndex) object pointing to the next object in the view, based on the given *cursorAction* and keyboard modifiers specified by *modifiers*.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#moveCursor"
+    },
+    "QModelIndex rootIndex() const": {
+      "brief": "Returns the model index of the model's root item.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#rootIndex"
+    },
+    "QModelIndexList selectedIndexes() const": {
+      "brief": "This convenience function returns a list of all selected and non-hidden item indexes in the view.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#selectedIndexes"
+    },
+    "QPoint dirtyRegionOffset() const": {
+      "brief": "Returns the offset of the dirty regions in the view.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#dirtyRegionOffset"
+    },
+    "QRect visualRect(const QModelIndex &index) const = 0": {
+      "brief": "Returns the rectangle on the viewport occupied by the item at *index*.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#visualRect"
+    },
+    "QRegion visualRegionForSelection(const QItemSelection &selection) const = 0": {
+      "brief": "Returns the region from the viewport of the items in the given *selection*.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#visualRegionForSelection"
+    },
+    "QSize iconSize() const": {
+      "brief": "This property holds the size of items' icons",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#iconSize-prop"
+    },
+    "QSize sizeHintForIndex(const QModelIndex &index) const": {
+      "brief": "Returns the size hint for the item with the specified *index* or an invalid size for invalid indexes.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#sizeHintForIndex"
+    },
+    "QSize viewportSizeHint() const override": {
+      "brief": "Reimplements: [QAbstractScrollArea::viewportSizeHint](xref:qt:QAbstractScrollArea)() const.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#viewportSizeHint"
+    },
+    "QVariant inputMethodQuery(Qt::InputMethodQuery query) const override": {
+      "brief": "Reimplements: [QWidget::inputMethodQuery](xref:qt:QWidget)(Qt::InputMethodQuery query) const.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#inputMethodQuery"
+    },
+    "QWidget * indexWidget(const QModelIndex &index) const": {
+      "brief": "Returns the widget for the item at the given *index*.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#indexWidget"
+    },
+    "Qt::DropAction defaultDropAction() const": {
+      "brief": "This property holds the drop action that will be used by default in QAbstractItemView::drag().",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#defaultDropAction-prop"
+    },
+    "Qt::MatchFlags keyboardSearchFlags() const": {
+      "brief": "This property determines how the default implementation of [keyboardSearch](xref:qt:QAbstractItemView)() matches the given string against the model's data.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#keyboardSearchFlags-prop"
+    },
+    "Qt::TextElideMode textElideMode() const": {
+      "brief": "This property holds the position of the \"...\" in elided text.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#textElideMode-prop"
+    },
+    "bool alternatingRowColors() const": {
+      "brief": "This property holds whether to draw the background using alternating colors",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#alternatingRowColors-prop"
+    },
+    "bool dragDropOverwriteMode() const": {
+      "brief": "This property holds the view's drag and drop behavior",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#dragDropOverwriteMode-prop"
+    },
+    "bool dragEnabled() const": {
+      "brief": "This property holds whether the view supports dragging of its own items",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#dragEnabled-prop"
+    },
+    "bool edit(const QModelIndex &index, QAbstractItemView::EditTrigger trigger, QEvent *event)": {
+      "brief": "Starts editing the item at *index*, creating an editor if necessary, and returns `true` if the view's [State](xref:qt:QAbstractItemView) is now [EditingState](xref:qt:QAbstractItemView); otherwise...",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#edit-1"
+    },
+    "bool event(QEvent *event) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::event](xref:qt:QAbstractScrollArea)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#event"
+    },
+    "bool eventFilter(QObject *object, QEvent *event) override": {
+      "brief": "Reimplements: [QObject::eventFilter](xref:qt:QObject)(QObject *watched, QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#eventFilter"
+    },
+    "bool focusNextPrevChild(bool next) override": {
+      "brief": "Reimplements: [QWidget::focusNextPrevChild](xref:qt:QWidget)(bool next).",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#focusNextPrevChild"
+    },
+    "bool hasAutoScroll() const": {
+      "brief": "This property holds whether autoscrolling in drag move events is enabled",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#autoScroll-prop"
+    },
+    "bool isIndexHidden(const QModelIndex &index) const = 0": {
+      "brief": "Returns `true` if the item referred to by the given *index* is hidden in the view, otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#isIndexHidden"
+    },
+    "bool isPersistentEditorOpen(const QModelIndex &index) const": {
+      "brief": "Returns whether a persistent editor is open for the item at index *index*.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#isPersistentEditorOpen"
+    },
+    "bool showDropIndicator() const": {
+      "brief": "This property holds whether the drop indicator is shown when dragging items and dropping.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#showDropIndicator-prop"
+    },
+    "bool tabKeyNavigation() const": {
+      "brief": "This property holds whether item navigation with tab and backtab is enabled.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#tabKeyNavigation-prop"
+    },
+    "bool viewportEvent(QEvent *event) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::viewportEvent](xref:qt:QAbstractScrollArea)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#viewportEvent"
+    },
+    "int autoScrollMargin() const": {
+      "brief": "This property holds the size of the area when auto scrolling is triggered",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#autoScrollMargin-prop"
+    },
+    "int horizontalOffset() const = 0": {
+      "brief": "Returns the horizontal offset of the view.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#horizontalOffset"
+    },
+    "int sizeHintForColumn(int column) const": {
+      "brief": "Returns the width size hint for the specified *column* or -1 if there is no model.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#sizeHintForColumn"
+    },
+    "int sizeHintForRow(int row) const": {
+      "brief": "Returns the height size hint for the specified *row* or -1 if there is no model.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#sizeHintForRow"
+    },
+    "int updateThreshold() const": {
+      "brief": "This property holds the amount of changed indexes to directly trigger a full update of the view inside [dataChanged](xref:qt:QAbstractItemView)().",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#updateThreshold-prop"
+    },
+    "int verticalOffset() const = 0": {
+      "brief": "Returns the vertical offset of the view.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#verticalOffset"
+    },
+    "void activated(const QModelIndex &index)": {
+      "brief": "This signal is emitted when the item specified by *index* is activated by the user.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#activated"
+    },
+    "void clearSelection()": {
+      "brief": "Deselects all selected items.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#clearSelection"
+    },
+    "void clicked(const QModelIndex &index)": {
+      "brief": "This signal is emitted when a mouse button is left-clicked.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#clicked"
+    },
+    "void closeEditor(QWidget *editor, QAbstractItemDelegate::EndEditHint hint)": {
+      "brief": "Closes the given *editor*, and releases it.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#closeEditor"
+    },
+    "void closePersistentEditor(const QModelIndex &index)": {
+      "brief": "Closes the persistent editor for the item at the given *index*.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#closePersistentEditor"
+    },
+    "void commitData(QWidget *editor)": {
+      "brief": "Commit the data in the *editor* to the model.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#commitData"
+    },
+    "void currentChanged(const QModelIndex &current, const QModelIndex &previous)": {
+      "brief": "This slot is called when a new item becomes the current item.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#currentChanged"
+    },
+    "void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QList<int> &roles)": {
+      "brief": "This slot is called when items with the given *roles* are changed in the model.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#dataChanged"
+    },
+    "void doubleClicked(const QModelIndex &index)": {
+      "brief": "This signal is emitted when a mouse button is double-clicked.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#doubleClicked"
+    },
+    "void dragEnterEvent(QDragEnterEvent *event) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::dragEnterEvent](xref:qt:QAbstractScrollArea)(QDragEnterEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#dragEnterEvent"
+    },
+    "void dragLeaveEvent(QDragLeaveEvent *event) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::dragLeaveEvent](xref:qt:QAbstractScrollArea)(QDragLeaveEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#dragLeaveEvent"
+    },
+    "void dragMoveEvent(QDragMoveEvent *event) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::dragMoveEvent](xref:qt:QAbstractScrollArea)(QDragMoveEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#dragMoveEvent"
+    },
+    "void dropEvent(QDropEvent *event) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::dropEvent](xref:qt:QAbstractScrollArea)(QDropEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#dropEvent"
+    },
+    "void edit(const QModelIndex &index)": {
+      "brief": "Starts editing the item corresponding to the given *index* if it is editable.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#edit"
+    },
+    "void editorDestroyed(QObject *editor)": {
+      "brief": "This function is called when the given *editor* has been destroyed.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#editorDestroyed"
+    },
+    "void entered(const QModelIndex &index)": {
+      "brief": "This signal is emitted when the mouse cursor enters the item specified by *index*.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#entered"
+    },
+    "void executeDelayedItemsLayout()": {
+      "brief": "Executes the scheduled layouts without waiting for the event processing to begin.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#executeDelayedItemsLayout"
+    },
+    "void focusInEvent(QFocusEvent *event) override": {
+      "brief": "Reimplements: [QWidget::focusInEvent](xref:qt:QWidget)(QFocusEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#focusInEvent"
+    },
+    "void focusOutEvent(QFocusEvent *event) override": {
+      "brief": "Reimplements: [QWidget::focusOutEvent](xref:qt:QWidget)(QFocusEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#focusOutEvent"
+    },
+    "void iconSizeChanged(const QSize &size)": {
+      "brief": "This property holds the size of items' icons",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#iconSize-prop"
+    },
+    "void initViewItemOption(QStyleOptionViewItem *option) const": {
+      "brief": "Initialize the *option* structure with the view's palette, font, state, alignments etc.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#initViewItemOption"
+    },
+    "void inputMethodEvent(QInputMethodEvent *event) override": {
+      "brief": "Reimplements: [QWidget::inputMethodEvent](xref:qt:QWidget)(QInputMethodEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#inputMethodEvent"
+    },
+    "void keyPressEvent(QKeyEvent *event) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::keyPressEvent](xref:qt:QAbstractScrollArea)(QKeyEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#keyPressEvent"
+    },
+    "void keyboardSearch(const QString &search)": {
+      "brief": "Moves to and selects the item best matching the string *search*.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#keyboardSearch"
+    },
+    "void mouseDoubleClickEvent(QMouseEvent *event) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::mouseDoubleClickEvent](xref:qt:QAbstractScrollArea)(QMouseEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#mouseDoubleClickEvent"
+    },
+    "void mouseMoveEvent(QMouseEvent *event) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::mouseMoveEvent](xref:qt:QAbstractScrollArea)(QMouseEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#mouseMoveEvent"
+    },
+    "void mousePressEvent(QMouseEvent *event) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::mousePressEvent](xref:qt:QAbstractScrollArea)(QMouseEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#mousePressEvent"
+    },
+    "void mouseReleaseEvent(QMouseEvent *event) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::mouseReleaseEvent](xref:qt:QAbstractScrollArea)(QMouseEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#mouseReleaseEvent"
+    },
+    "void openPersistentEditor(const QModelIndex &index)": {
+      "brief": "Opens a persistent editor on the item at the given *index*.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#openPersistentEditor"
+    },
+    "void pressed(const QModelIndex &index)": {
+      "brief": "This signal is emitted when a mouse button is pressed.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#pressed"
+    },
+    "void reset()": {
+      "brief": "Reset the internal state of the view.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#reset"
+    },
+    "void resetHorizontalScrollMode()": {
+      "brief": "how the view scrolls its contents in the horizontal direction",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#horizontalScrollMode-prop"
+    },
+    "void resetVerticalScrollMode()": {
+      "brief": "how the view scrolls its contents in the vertical direction",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#verticalScrollMode-prop"
+    },
+    "void resizeEvent(QResizeEvent *event) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::resizeEvent](xref:qt:QAbstractScrollArea)(QResizeEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#resizeEvent"
+    },
+    "void rowsAboutToBeRemoved(const QModelIndex &parent, int start, int end)": {
+      "brief": "This slot is called when rows are about to be removed.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#rowsAboutToBeRemoved"
+    },
+    "void rowsInserted(const QModelIndex &parent, int start, int end)": {
+      "brief": "This slot is called when rows are inserted.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#rowsInserted"
+    },
+    "void scheduleDelayedItemsLayout()": {
+      "brief": "Schedules a layout of the items in the view to be executed when the event processing starts.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#scheduleDelayedItemsLayout"
+    },
+    "void scrollDirtyRegion(int dx, int dy)": {
+      "brief": "Prepares the view for scrolling by (*dx*,*dy*) pixels by moving the dirty regions in the opposite direction.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#scrollDirtyRegion"
+    },
+    "void scrollTo(const QModelIndex &index, QAbstractItemView::ScrollHint hint) = 0": {
+      "brief": "Scrolls the view if necessary to ensure that the item at *index* is visible.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#scrollTo"
+    },
+    "void scrollToBottom()": {
+      "brief": "Scrolls the view to the bottom.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#scrollToBottom"
+    },
+    "void scrollToTop()": {
+      "brief": "Scrolls the view to the top.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#scrollToTop"
+    },
+    "void selectAll()": {
+      "brief": "Selects all items in the view.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#selectAll"
+    },
+    "void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected)": {
+      "brief": "This slot is called when the selection is changed.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#selectionChanged"
+    },
+    "void setAlternatingRowColors(bool enable)": {
+      "brief": "This property holds whether to draw the background using alternating colors",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#alternatingRowColors-prop"
+    },
+    "void setAutoScroll(bool enable)": {
+      "brief": "This property holds whether autoscrolling in drag move events is enabled",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#autoScroll-prop"
+    },
+    "void setAutoScrollMargin(int margin)": {
+      "brief": "This property holds the size of the area when auto scrolling is triggered",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#autoScrollMargin-prop"
+    },
+    "void setCurrentIndex(const QModelIndex &index)": {
+      "brief": "Sets the current item to be the item at *index*.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#setCurrentIndex"
+    },
+    "void setDefaultDropAction(Qt::DropAction dropAction)": {
+      "brief": "This property holds the drop action that will be used by default in QAbstractItemView::drag().",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#defaultDropAction-prop"
+    },
+    "void setDirtyRegion(const QRegion &region)": {
+      "brief": "Marks the given *region* as dirty and schedules it to be updated.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#setDirtyRegion"
+    },
+    "void setDragDropMode(QAbstractItemView::DragDropMode behavior)": {
+      "brief": "This property holds the drag and drop event the view will act upon",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#dragDropMode-prop"
+    },
+    "void setDragDropOverwriteMode(bool overwrite)": {
+      "brief": "This property holds the view's drag and drop behavior",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#dragDropOverwriteMode-prop"
+    },
+    "void setDragEnabled(bool enable)": {
+      "brief": "This property holds whether the view supports dragging of its own items",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#dragEnabled-prop"
+    },
+    "void setDropIndicatorShown(bool enable)": {
+      "brief": "This property holds whether the drop indicator is shown when dragging items and dropping.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#showDropIndicator-prop"
+    },
+    "void setEditTriggers(QAbstractItemView::EditTriggers triggers)": {
+      "brief": "This property holds which actions will initiate item editing",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#editTriggers-prop"
+    },
+    "void setHorizontalScrollMode(QAbstractItemView::ScrollMode mode)": {
+      "brief": "how the view scrolls its contents in the horizontal direction",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#horizontalScrollMode-prop"
+    },
+    "void setIconSize(const QSize &size)": {
+      "brief": "This property holds the size of items' icons",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#iconSize-prop"
+    },
+    "void setIndexWidget(const QModelIndex &index, QWidget *widget)": {
+      "brief": "Sets the given *widget* on the item at the given *index*, passing the ownership of the widget to the viewport.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#setIndexWidget"
+    },
+    "void setItemDelegate(QAbstractItemDelegate *delegate)": {
+      "brief": "Sets the item delegate for this view and its model to *delegate*.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#setItemDelegate"
+    },
+    "void setItemDelegateForColumn(int column, QAbstractItemDelegate *delegate)": {
+      "brief": "Sets the given item *delegate* used by this view and model for the given *column*.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#setItemDelegateForColumn"
+    },
+    "void setItemDelegateForRow(int row, QAbstractItemDelegate *delegate)": {
+      "brief": "Sets the given item *delegate* used by this view and model for the given *row*.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#setItemDelegateForRow"
+    },
+    "void setKeyboardSearchFlags(Qt::MatchFlags searchFlags)": {
+      "brief": "This property determines how the default implementation of [keyboardSearch](xref:qt:QAbstractItemView)() matches the given string against the model's data.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#keyboardSearchFlags-prop"
+    },
+    "void setModel(QAbstractItemModel *model)": {
+      "brief": "Sets the *model* for the view to present.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#setModel"
+    },
+    "void setRootIndex(const QModelIndex &index)": {
+      "brief": "Sets the root item to the item at the given *index*.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#setRootIndex"
+    },
+    "void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags flags) = 0": {
+      "brief": "Applies the selection *flags* to the items in or touched by the rectangle, *rect*.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#setSelection"
+    },
+    "void setSelectionBehavior(QAbstractItemView::SelectionBehavior behavior)": {
+      "brief": "This property holds which selection behavior the view uses",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#selectionBehavior-prop"
+    },
+    "void setSelectionMode(QAbstractItemView::SelectionMode mode)": {
+      "brief": "This property holds which selection mode the view operates in",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#selectionMode-prop"
+    },
+    "void setSelectionModel(QItemSelectionModel *selectionModel)": {
+      "brief": "Sets the current selection model to the given *selectionModel*.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#setSelectionModel"
+    },
+    "void setState(QAbstractItemView::State state)": {
+      "brief": "Sets the item view's state to the given *state*.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#setState"
+    },
+    "void setTabKeyNavigation(bool enable)": {
+      "brief": "This property holds whether item navigation with tab and backtab is enabled.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#tabKeyNavigation-prop"
+    },
+    "void setTextElideMode(Qt::TextElideMode mode)": {
+      "brief": "This property holds the position of the \"...\" in elided text.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#textElideMode-prop"
+    },
+    "void setUpdateThreshold(int threshold)": {
+      "brief": "This property holds the amount of changed indexes to directly trigger a full update of the view inside [dataChanged](xref:qt:QAbstractItemView)().",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#updateThreshold-prop"
+    },
+    "void setVerticalScrollMode(QAbstractItemView::ScrollMode mode)": {
+      "brief": "how the view scrolls its contents in the vertical direction",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#verticalScrollMode-prop"
+    },
+    "void startDrag(Qt::DropActions supportedActions)": {
+      "brief": "Starts a drag by calling drag->exec() using the given *supportedActions*.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#startDrag"
+    },
+    "void timerEvent(QTimerEvent *event) override": {
+      "brief": "Reimplements: [QObject::timerEvent](xref:qt:QObject)(QTimerEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#timerEvent"
+    },
+    "void update(const QModelIndex &index)": {
+      "brief": "Updates the area occupied by the given *index*.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#update"
+    },
+    "void updateGeometries()": {
+      "brief": "Updates the geometry of the child widgets of the view.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#updateGeometries"
+    },
+    "void viewportEntered()": {
+      "brief": "This signal is emitted when the mouse cursor enters the viewport.",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#viewportEntered"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "alternatingRowColors": {
+      "brief": "Whether to draw the background using alternating colors",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#alternatingRowColors-prop"
+    },
+    "autoScroll": {
+      "brief": "Whether autoscrolling in drag move events is enabled",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#autoScroll-prop"
+    },
+    "autoScrollMargin": {
+      "brief": "The size of the area when auto scrolling is triggered",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#autoScrollMargin-prop"
+    },
+    "defaultDropAction": {
+      "brief": "The drop action that will be used by default in QAbstractItemView::drag()",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#defaultDropAction-prop"
+    },
+    "dragDropMode": {
+      "brief": "The drag and drop event the view will act upon",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#dragDropMode-prop"
+    },
+    "dragDropOverwriteMode": {
+      "brief": "The view's drag and drop behavior",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#dragDropOverwriteMode-prop"
+    },
+    "dragEnabled": {
+      "brief": "Whether the view supports dragging of its own items",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#dragEnabled-prop"
+    },
+    "editTriggers": {
+      "brief": "Which actions will initiate item editing",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#editTriggers-prop"
+    },
+    "horizontalScrollMode": {
+      "brief": "How the view scrolls its contents in the horizontal direction",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#horizontalScrollMode-prop"
+    },
+    "iconSize": {
+      "brief": "The size of items' icons",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#iconSize-prop"
+    },
+    "keyboardSearchFlags": {
+      "brief": "",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#keyboardSearchFlags-prop"
+    },
+    "selectionBehavior": {
+      "brief": "Which selection behavior the view uses",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#selectionBehavior-prop"
+    },
+    "selectionMode": {
+      "brief": "Which selection mode the view operates in",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#selectionMode-prop"
+    },
+    "showDropIndicator": {
+      "brief": "Whether the drop indicator is shown when dragging items and dropping",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#showDropIndicator-prop"
+    },
+    "tabKeyNavigation": {
+      "brief": "Whether item navigation with tab and backtab is enabled",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#tabKeyNavigation-prop"
+    },
+    "textElideMode": {
+      "brief": "The position of the \"...\" in elided text",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#textElideMode-prop"
+    },
+    "updateThreshold": {
+      "brief": "",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#updateThreshold-prop"
+    },
+    "verticalScrollMode": {
+      "brief": "How the view scrolls its contents in the vertical direction",
+      "url": "https://doc.qt.io/qt-6/qabstractitemview.html#verticalScrollMode-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

@@ -1,0 +1,49 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Describes the image data representation used by a [`Image`](xref:gtk:Gtk.Image).",
+    "file": "gtk/gtkimage.h",
+    "line": 44,
+    "md": "Describes the image data representation used by a [`Image`](xref:gtk:Gtk.Image).\n\nIf you want to get the image from the widget, you can only get the\ncurrently-stored representation; for instance, if the gtk_image_get_storage_type()\nreturns %GTK_IMAGE_PAINTABLE, then you can call gtk_image_get_paintable().\n\nFor empty images, you can request any storage type (call any of the \"get\"\nfunctions), but they will all return `NULL` values."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ImageType",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "empty": {
+      "brief": "there is no image displayed by the widget",
+      "file": "gtk/gtkimage.h",
+      "line": 46,
+      "md": "there is no image displayed by the widget"
+    },
+    "gicon": {
+      "brief": "the widget contains a `GIcon`",
+      "file": "gtk/gtkimage.h",
+      "line": 48,
+      "md": "the widget contains a `GIcon`"
+    },
+    "icon_name": {
+      "brief": "the widget contains a named icon",
+      "file": "gtk/gtkimage.h",
+      "line": 47,
+      "md": "the widget contains a named icon"
+    },
+    "paintable": {
+      "brief": "the widget contains a `GdkPaintable`",
+      "file": "gtk/gtkimage.h",
+      "line": 49,
+      "md": "the widget contains a `GdkPaintable`"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}
