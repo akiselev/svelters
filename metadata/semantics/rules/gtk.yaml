@@ -9,7 +9,9 @@ event_aliases:
   click: clicked
   change: changed
   close: close-request
+event_aliases_provenance: "@svelters/renderer EVENT_TO_SIGNAL"
 
+# Kind rules are inherited along the kind chain (a rule on Gtk.Window applies to every window kind).
 kinds:
   Gtk.Window:
     lifetime: toplevel
@@ -33,6 +35,9 @@ kinds:
         echo: backend_blocks
         provenance: "Editable:text echo_suppress [changed, notify::text] in metadata; GtkEntry re-notifies identical sets (signals-and-slots §1.6), so the runtime also compares"
 
+# GTK defaults come from GParamSpec (metadata/gtk/*.json); entries here override or fill gaps.
+defaults: {}
+
 style:
   units:
     dp: { scale: 1, provenance: "GTK 4 sizes are logical pixels; the scale factor is applied by GDK" }
@@ -42,11 +47,13 @@ style:
       value: enum
       applies_to: Gtk.Orientable
       contract: common
+      provenance: "GtkOrientable:orientation (Gtk 4 docs)"
     spacing:
       prop: spacing
       value: length
       applies_to: Gtk.Box
       contract: common
+      provenance: "GtkBox:spacing, logical pixels (Gtk 4 docs)"
     min-width:
       prop: width-request
       value: length
@@ -58,11 +65,13 @@ style:
       value: length
       applies_to: Gtk.Widget
       contract: common
+      provenance: "GtkWidget:height-request is a minimum size request (default -1 = natural)"
     enabled:
       prop: sensitive
       value: bool
       applies_to: Gtk.Widget
       contract: common
+      provenance: "GtkWidget:sensitive (Gtk 4 docs)"
     emphasis:
       applies_to: Gtk.Button
       contract: native_intent

@@ -100,6 +100,14 @@ pub unsafe fn to_value(
                 }
                 _ => return Err("expected handle".into()),
             },
+            // GStrv (e.g. GtkWidget:css-classes): a space-separated token string, null = empty.
+            ValueTy::Other if vt == glib::StrV::static_type() => match v.tag {
+                SVL_NULL => glib::StrV::new().to_value(),
+                _ => {
+                    let s = as_str(v).ok_or("expected string")?;
+                    glib::StrV::from(s.split_ascii_whitespace().collect::<Vec<_>>()).to_value()
+                }
+            },
             other => return Err(format!("unsupported property type {other:?}")),
         })
     }
@@ -135,6 +143,11 @@ pub fn from_value(v: &glib::Value, handle_of: &dyn Fn(&glib::Object) -> u64, buf
             Ok(Some(s)) => buf.str_value(&s),
             _ => null_value(),
         };
+    }
+    if t == glib::StrV::static_type() {
+        let parts = v.get::<glib::StrV>().unwrap_or_default();
+        let joined: Vec<&str> = parts.iter().map(|s| s.as_str()).collect();
+        return buf.str_value(&joined.join(" "));
     }
     if t.is_a(Type::ENUM) {
         return match glib::EnumValue::from_value(v) {
