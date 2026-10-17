@@ -24,6 +24,7 @@
 #include <QtGui/QWindow>
 #include <QtWidgets/QAbstractButton>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QGridLayout>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLayout>
 #include <QtWidgets/QLineEdit>
@@ -924,6 +925,19 @@ extern "C" int svl_qt_type_text(svl_handle h, const char *utf8) {
     QKeyEvent release(QEvent::KeyRelease, 0, Qt::NoModifier, QString(c));
     QApplication::sendEvent(e, &release);
   }
+  return 0;
+}
+
+// Row, column, row span and column span of the cell of the widget `child` in the QGridLayout of the
+// widget `grid`; -1 when `child` is not in such a layout. For tests that check what the toolkit holds.
+extern "C" int svl_qt_grid_cell(svl_handle grid, svl_handle child, int *row, int *col, int *row_span, int *col_span) {
+  auto *p = qobject_cast<QWidget *>(debug_obj(grid));
+  auto *c = qobject_cast<QWidget *>(debug_obj(child));
+  auto *l = p ? qobject_cast<QGridLayout *>(p->layout()) : nullptr;
+  if (!l || !c) return -1;
+  int i = l->indexOf(c);
+  if (i < 0) return -1;
+  l->getItemPosition(i, row, col, row_span, col_span);
   return 0;
 }
 

@@ -35,3 +35,11 @@ harness = false
 [[test]]
 name = "borrowed"
 harness = false
+
+[[test]]
+name = "oplog_replay"
+harness = false
+
+[[test]]
+name = "host_childattr"
+harness = false
