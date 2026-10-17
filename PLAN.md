@@ -13,7 +13,7 @@ The 2026-08 plan had a sound architecture but an infrastructure-first order: not
 3. **Codegen everywhere it pays.** Widget metadata is ingested from upstream structured sources and hand annotations. Agents produce the annotations, and generated tests verify them.
 4. **No raw toolkit pointer crosses into JavaScript.** JS sees stable handles.
 5. **No ordinary `.svelte`/`.ts` edit invokes Cargo or a C++ compiler in development.**
-6. **Each toolkit's event loop is authoritative.** QuickJS jobs are pumped at host checkpoints and never busy-polled.
+6. **Each toolkit's event loop is authoritative.** QuickJS jobs are pumped at host checkpoints and never busy-polled. JS timers and animation frames use the toolkit's native timers and frame clock. The host never runs its own timing thread; the P2 timer thread is a stopgap (`plans/architecture/backend-abi.md#planned-change-timers-belong-to-the-toolkit-before-m2`).
 
 ## Core layers
 
@@ -57,7 +57,7 @@ Widget metadata and codegen run alongside these layers: upstream sources plus an
 | P3 | GTK lane: Python GIR/PyGObject ingestion → metadata → generated GTK4 backend tables + verification tests | ABI draft, schema v0 |
 | P4 | Qt lane: Python qdoc/metaobject/typesystem ingestion → metadata → generated C++ backend, built by a leaf-crate `build.rs` | ABI draft, schema v0 |
 | P5 | Integration: P1 bundle runs in P2 host on P3 and P4 backends; Xvfb screenshot tests | P1b, P2–P4 |
-| M2 | Dev loop: Vite watch → reload bundle in the running host without Cargo; source-mapped errors | P5 |
+| M2 | Native timers (`schedule_wake`, ABI v2) replace the host timer thread. Dev loop: Vite watch → reload bundle in the running host without Cargo; source-mapped errors | P5 |
 | M3 | Codegen at scale: port the Python generators to Rust (in-process from `build.rs`), annotate beyond the P kinds through the agent loop, GTK dynamic GI method invocation, full `.d.ts` | P5 |
 | M4 | Native semantics: named child slots/replaceable sub-widgets, sync handlers and return values, two-way binding, ownership/lifetime | M3, signals/slots research |
 | M5 | Virtualized lists/model-view (GListModel, QAbstractItemModel) | M4 |
