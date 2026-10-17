@@ -46,6 +46,8 @@ pub struct HostConfig {
     /// - loading a bundle drains nothing.
     pub scripted: bool,
     pub max_virtual_timer_fires: usize,
+    /// Accumulate [`Timing`] counters (two clock reads per host op and per entry into JS).
+    pub timing: bool,
 }
 
 impl Default for HostConfig {
@@ -59,8 +61,23 @@ impl Default for HostConfig {
             echo_errors: true,
             scripted: false,
             max_virtual_timer_fires: 10_000,
+            timing: false,
         }
     }
+}
+
+/// Time split counters, enabled by [`HostConfig::timing`].
+///
+/// `js_ns` is the wall time spent inside entries into JS (bundle load, checkpoints). `ops_ns` is
+/// the part of that spent inside host ops (marshalling, handle table, name resolution and the
+/// backend call itself), so JS-only time is `js_ns - ops_ns`; subtract the backend's own
+/// toolkit time from `ops_ns` to get host/ABI time.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct Timing {
+    pub js_ns: u64,
+    pub ops_ns: u64,
+    pub ops: u64,
+    pub checkpoints: u64,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -240,14 +257,21 @@ pub(crate) struct Core {
     pub(crate) interrupt: Arc<AtomicBool>,
     epoch: Instant,
     vnow: Cell<Duration>,
+    timing: Cell<Timing>,
+    checkpoints: Cell<u64>,
 }
 
 /// Held while JS runs. See the module docs on re-entrancy.
-pub(crate) struct JsGuard<'a>(&'a Core);
+pub(crate) struct JsGuard<'a>(&'a Core, Option<Instant>);
 
 impl Drop for JsGuard<'_> {
     fn drop(&mut self) {
         let c = self.0;
+        if let Some(t0) = self.1 {
+            let mut t = c.timing.get();
+            t.js_ns += t0.elapsed().as_nanos() as u64;
+            c.timing.set(t);
+        }
         c.busy.set(c.busy.get() - 1);
         if c.busy.get() == 0 && c.deferred.replace(false) {
             c.backend.wake();
@@ -267,7 +291,37 @@ impl Core {
             interrupt: Arc::new(AtomicBool::new(false)),
             epoch: Instant::now(),
             vnow: Cell::new(Duration::ZERO),
+            timing: Cell::new(Timing::default()),
+            checkpoints: Cell::new(0),
         }
+    }
+
+    pub(crate) fn take_timing(&self) -> Timing {
+        self.timing.replace(Timing::default())
+    }
+
+    pub(crate) fn checkpoint_count(&self) -> u64 {
+        self.checkpoints.get()
+    }
+
+    /// Runs one host op, adding its duration to the timing counters when enabled.
+    fn timed<R>(&self, f: impl FnOnce() -> R) -> R {
+        if !self.cfg.timing {
+            return f();
+        }
+        let t0 = Instant::now();
+        let r = f();
+        let mut t = self.timing.get();
+        t.ops_ns += t0.elapsed().as_nanos() as u64;
+        t.ops += 1;
+        self.timing.set(t);
+        r
+    }
+
+    /// True when nothing is waiting for the host: no queued events and no live timers.
+    pub(crate) fn is_idle(&self) -> bool {
+        let st = self.st.borrow();
+        self.busy.get() == 0 && st.events.is_empty() && st.timers.live.is_empty()
     }
 
     /// The timer clock: wall time, or the virtual clock in scripted mode.
@@ -291,7 +345,7 @@ impl Core {
             return None;
         }
         self.busy.set(1);
-        Some(JsGuard(self))
+        Some(JsGuard(self, self.cfg.timing.then(Instant::now)))
     }
 
     // ---- sinks ----
@@ -354,6 +408,50 @@ impl Core {
     // ---- JS host ops (called by the engine's `__svelters_host`) ----
 
     pub(crate) fn op_create(&self, kind: &str) -> Result<svl_handle, String> {
+        self.timed(|| self.op_create_raw(kind))
+    }
+
+    pub(crate) fn op_insert(
+        &self,
+        parent: svl_handle,
+        child: svl_handle,
+        before: Option<svl_handle>,
+        slot: Option<&str>,
+    ) -> Result<(), String> {
+        self.timed(|| self.op_insert_raw(parent, child, before, slot))
+    }
+
+    pub(crate) fn op_remove(&self, parent: svl_handle, child: svl_handle) -> Result<(), String> {
+        self.timed(|| self.op_remove_raw(parent, child))
+    }
+
+    pub(crate) fn op_destroy(&self, h: svl_handle) -> Result<(), String> {
+        self.timed(|| self.op_destroy_raw(h))
+    }
+
+    pub(crate) fn op_set_prop(&self, h: svl_handle, prop: &str, v: &Value) -> Result<(), String> {
+        self.timed(|| self.op_set_prop_raw(h, prop, v))
+    }
+
+    pub(crate) fn op_get_prop(&self, h: svl_handle, prop: &str) -> Result<Value, String> {
+        self.timed(|| self.op_get_prop_raw(h, prop))
+    }
+
+    pub(crate) fn op_call(
+        &self,
+        h: svl_handle,
+        method: &str,
+        args: &[Value],
+    ) -> Result<Value, String> {
+        self.timed(|| self.op_call_raw(h, method, args))
+    }
+
+    pub(crate) fn op_listen(&self, h: svl_handle, signal: &str, on: bool) -> Result<(), String> {
+        self.timed(|| self.op_listen_raw(h, signal, on))
+    }
+
+
+    fn op_create_raw(&self, kind: &str) -> Result<svl_handle, String> {
         let cached = self.st.borrow().kinds.get(kind).copied();
         let kid = match cached {
             Some(k) => k,
@@ -371,7 +469,7 @@ impl Core {
         Ok(h)
     }
 
-    pub(crate) fn op_insert(
+    fn op_insert_raw(
         &self,
         parent: svl_handle,
         child: svl_handle,
@@ -392,32 +490,32 @@ impl Core {
             .map_err(|e| e.message)
     }
 
-    pub(crate) fn op_remove(&self, parent: svl_handle, child: svl_handle) -> Result<(), String> {
+    fn op_remove_raw(&self, parent: svl_handle, child: svl_handle) -> Result<(), String> {
         self.kind_of(parent)?;
         self.kind_of(child)?;
         self.backend.remove(parent, child).map_err(|e| e.message)
     }
 
-    pub(crate) fn op_destroy(&self, h: svl_handle) -> Result<(), String> {
+    fn op_destroy_raw(&self, h: svl_handle) -> Result<(), String> {
         self.kind_of(h)?;
         self.st.borrow_mut().handles.remove(&h);
         self.backend.destroy(h);
         Ok(())
     }
 
-    pub(crate) fn op_set_prop(&self, h: svl_handle, prop: &str, v: &Value) -> Result<(), String> {
+    fn op_set_prop_raw(&self, h: svl_handle, prop: &str, v: &Value) -> Result<(), String> {
         let k = self.kind_of(h)?;
         let p = self.resolve(NameKind::Prop, k, prop)?;
         self.backend.set_prop(h, p, v).map_err(|e| e.message)
     }
 
-    pub(crate) fn op_get_prop(&self, h: svl_handle, prop: &str) -> Result<Value, String> {
+    fn op_get_prop_raw(&self, h: svl_handle, prop: &str) -> Result<Value, String> {
         let k = self.kind_of(h)?;
         let p = self.resolve(NameKind::Prop, k, prop)?;
         self.backend.get_prop(h, p).map_err(|e| e.message)
     }
 
-    pub(crate) fn op_call(
+    fn op_call_raw(
         &self,
         h: svl_handle,
         method: &str,
@@ -428,7 +526,7 @@ impl Core {
         self.backend.call(h, m, args).map_err(|e| e.message)
     }
 
-    pub(crate) fn op_listen(&self, h: svl_handle, signal: &str, on: bool) -> Result<(), String> {
+    fn op_listen_raw(&self, h: svl_handle, signal: &str, on: bool) -> Result<(), String> {
         let k = self.kind_of(h)?;
         let s = self.resolve(NameKind::Signal, k, signal)?;
         self.st
@@ -556,6 +654,12 @@ impl Core {
 /// stepping, see [`HostConfig::scripted`].
 pub(crate) fn checkpoint(core: &Core, engine: &RefCell<Box<dyn JsEngine>>) {
     let Some(_guard) = core.enter() else { return };
+    core.checkpoints.set(core.checkpoints.get() + 1);
+    if core.cfg.timing {
+        let mut t = core.timing.get();
+        t.checkpoints += 1;
+        core.timing.set(t);
+    }
     let mut eng = engine.borrow_mut();
     if core.cfg.scripted {
         checkpoint_scripted(core, &mut eng);

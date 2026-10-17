@@ -66,6 +66,15 @@ dependencies = [
 [[package]]
 name = "counter"
 version = "0.0.0"
+dependencies = [
+ "counter-qt",
+ "gtk4",
+ "serde_json",
+ "svelters-abi",
+ "svelters-backend-log",
+ "svelters-gtk",
+ "svelters-host",
+]
 
 [[package]]
 name = "counter-qt"

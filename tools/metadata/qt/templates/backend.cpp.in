@@ -8,17 +8,29 @@
 
 #include <QtCore/QByteArray>
 #include <QtCore/QCoreApplication>
+#include <QtCore/QEvent>
 #include <QtCore/QMetaObject>
 #include <QtCore/QObject>
 #include <QtCore/QPointer>
 #include <QtCore/QSignalBlocker>
 #include <QtCore/QString>
+#include <QtCore/QTimer>
 #include <QtCore/QVariant>
+#include <QtGui/QKeyEvent>
+#include <QtGui/QPixmap>
+#include <QtWidgets/QAbstractButton>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QLayout>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QScrollArea>
 #include <QtWidgets/QWidget>
 //@@INCLUDES@@
 
 #include <atomic>
+#include <chrono>
+#include <cstdio>
 #include <cstdint>
 #include <cstring>
 #include <map>
@@ -46,9 +58,32 @@ struct Core {
   std::string strbuf;
   std::atomic<QObject *> waker{nullptr};
   std::atomic<bool> wake_pending{false};
+  std::atomic<bool> queued{false};  // a checkpoint is already queued on the loop
 };
 
 Core g;
+
+// Optional measurement of the time spent inside backend calls (toolkit side of a host op).
+struct Timing {
+  bool on = false;
+  uint64_t ns = 0;
+  uint64_t calls = 0;
+};
+Timing g_timing;
+
+struct TimeScope {
+  bool on;
+  std::chrono::steady_clock::time_point t0;
+  TimeScope() : on(g_timing.on) {
+    if (on) t0 = std::chrono::steady_clock::now();
+  }
+  ~TimeScope() {
+    if (!on) return;
+    g_timing.ns += static_cast<uint64_t>(
+        std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now() - t0).count());
+    g_timing.calls++;
+  }
+};
 
 int fail(const std::string &m) {
   g.err = m;
@@ -69,6 +104,7 @@ void ensure_app() {
 }
 
 void run_checkpoint() {
+  g.queued.store(false);
   if (g.host && g.host->checkpoint) g.host->checkpoint(g.host->self);
 }
 
@@ -211,6 +247,7 @@ svl_id b_resolve(void *, uint32_t what, svl_id kind, const char *name, size_t le
 }
 
 svl_handle b_create(void *, svl_id kind) {
+  TimeScope timing_;
   ensure_app();
   QObject *o = gen_create(kind);
   if (!o) {
@@ -227,6 +264,7 @@ svl_handle b_create(void *, svl_id kind) {
 }
 
 int b_insert(void *, svl_handle parent, svl_handle child, svl_handle before, svl_id slot) {
+  TimeScope timing_;
   Entry *p = find(parent);
   if (!p) return fail("insert: stale or unknown parent handle");
   Entry *c = find(child);
@@ -241,6 +279,7 @@ int b_insert(void *, svl_handle parent, svl_handle child, svl_handle before, svl
 }
 
 int b_remove(void *, svl_handle parent, svl_handle child) {
+  TimeScope timing_;
   Entry *p = find(parent);
   if (!p) return fail("remove: stale or unknown parent handle");
   Entry *c = find(child);
@@ -249,6 +288,7 @@ int b_remove(void *, svl_handle parent, svl_handle child) {
 }
 
 void b_destroy(void *, svl_handle h) {
+  TimeScope timing_;
   auto it = g.table.find(h);
   if (it == g.table.end()) return;
   QObject *o = it->second.obj.data();
@@ -259,6 +299,7 @@ void b_destroy(void *, svl_handle h) {
 }
 
 int b_set_prop(void *, svl_handle h, svl_id prop, const svl_value *v) {
+  TimeScope timing_;
   Entry *e = find(h);
   if (!e) return fail("set_prop: stale or unknown handle");
   if (!v) return fail("set_prop: null value");
@@ -266,12 +307,14 @@ int b_set_prop(void *, svl_handle h, svl_id prop, const svl_value *v) {
 }
 
 int b_get_prop(void *, svl_handle h, svl_id prop, svl_value *out) {
+  TimeScope timing_;
   Entry *e = find(h);
   if (!e) return fail("get_prop: stale or unknown handle");
   return gen_get_prop(*e, prop, out);
 }
 
 int b_call(void *, svl_handle h, svl_id method, const svl_value *args, size_t n, svl_value *out) {
+  TimeScope timing_;
   Entry *e = find(h);
   if (!e) return fail("call: stale or unknown handle");
   out_null(out);
@@ -279,6 +322,7 @@ int b_call(void *, svl_handle h, svl_id method, const svl_value *args, size_t n,
 }
 
 int b_listen(void *, svl_handle h, svl_id sig, bool on) {
+  TimeScope timing_;
   Entry *e = find(h);
   if (!e) return fail("listen: stale or unknown handle");
   return gen_listen(h, *e, sig, on);
@@ -287,7 +331,11 @@ int b_listen(void *, svl_handle h, svl_id sig, bool on) {
 int b_run(void *, const svl_host *host) {
   g.host = host;
   ensure_app();
-  if (g.wake_pending.exchange(false)) QMetaObject::invokeMethod(g.waker.load(), [] { run_checkpoint(); }, Qt::QueuedConnection);
+  // Like GTK's `activate`: one checkpoint when the loop starts, whether or not a wake was pending.
+  if (g.wake_pending.exchange(false) || !g.queued.load()) {
+    g.queued.store(true);
+    QMetaObject::invokeMethod(g.waker.load(), [] { run_checkpoint(); }, Qt::QueuedConnection);
+  }
   return QCoreApplication::exec();
 }
 
@@ -297,6 +345,7 @@ void b_wake(void *) {
     g.wake_pending.store(true);
     return;
   }
+  g.queued.store(true);
   QMetaObject::invokeMethod(w, [] { run_checkpoint(); }, Qt::QueuedConnection);
 }
 
@@ -322,4 +371,153 @@ extern "C" void svl_qt_set_host(const svl_host *host) { g.host = host; }
 extern "C" void *svl_qt_debug_object(svl_handle h) {
   Entry *e = find(h);
   return e ? static_cast<void *>(e->obj.data()) : nullptr;
+}
+
+// ---- tooling hooks (tests and the counter example; not part of the backend ABI) -----------------
+
+namespace {
+
+QObject *debug_obj(svl_handle h) {
+  Entry *e = find(h);
+  return e ? e->obj.data() : nullptr;
+}
+
+void json_str(std::string &out, const QString &s) {
+  out += '"';
+  for (const QChar c : s) {
+    ushort u = c.unicode();
+    if (u == '"' || u == '\\') {
+      out += '\\';
+      out += static_cast<char>(u);
+    } else if (u < 0x20) {
+      char b[8];
+      std::snprintf(b, sizeof b, "\\u%04x", u);
+      out += b;
+    } else {
+      out += QString(c).toUtf8().constData();
+    }
+  }
+  out += '"';
+}
+
+void dump_widget(QWidget *w, int depth, std::string &out);
+
+void dump_layout(QLayout *l, int depth, std::string &out) {
+  for (int i = 0; i < l->count(); ++i) {
+    QLayoutItem *it = l->itemAt(i);
+    if (QWidget *cw = it->widget()) dump_widget(cw, depth, out);
+    else if (QLayout *cl = it->layout()) dump_layout(cl, depth, out);
+  }
+}
+
+void dump_widget(QWidget *w, int depth, std::string &out) {
+  QString text;
+  if (auto *l = qobject_cast<QLabel *>(w)) text = l->text();
+  else if (auto *b = qobject_cast<QAbstractButton *>(w)) text = b->text();
+  else if (auto *e = qobject_cast<QLineEdit *>(w)) text = e->text();
+  else if (w->isWindow()) text = w->windowTitle();
+  if (!out.empty()) out += ',';
+  out += "{\"d\":" + std::to_string(depth) + ",\"class\":";
+  json_str(out, QString::fromLatin1(w->metaObject()->className()));
+  out += ",\"text\":";
+  json_str(out, text);
+  out += '}';
+  if (auto *mw = qobject_cast<QMainWindow *>(w)) {
+    if (mw->centralWidget()) dump_widget(mw->centralWidget(), depth + 1, out);
+  } else if (auto *sa = qobject_cast<QScrollArea *>(w)) {
+    if (sa->widget()) dump_widget(sa->widget(), depth + 1, out);
+  } else if (w->layout()) {
+    dump_layout(w->layout(), depth + 1, out);
+  } else {
+    for (QObject *c : w->children())
+      if (auto *cw = qobject_cast<QWidget *>(c)) dump_widget(cw, depth + 1, out);
+  }
+}
+
+std::string dump_buf;
+
+}  // namespace
+
+// The widget tree below `h` in layout order as a JSON array of {d, class, text}. Valid until the next call.
+extern "C" const char *svl_qt_dump(svl_handle h) {
+  std::string body;
+  if (auto *w = qobject_cast<QWidget *>(debug_obj(h))) dump_widget(w, 0, body);
+  dump_buf = "[" + body + "]";
+  return dump_buf.c_str();
+}
+
+// Grab the widget behind `h` into a PNG; a null `path` only renders it.
+extern "C" int svl_qt_grab_png(svl_handle h, const char *path) {
+  auto *w = qobject_cast<QWidget *>(debug_obj(h));
+  if (!w) return -1;
+  QPixmap px = w->grab();
+  if (!path) return px.isNull() ? -1 : 0;
+  return px.save(QString::fromUtf8(path)) ? 0 : -1;
+}
+
+// Type `utf8` into the QLineEdit behind `h` through key events, replacing its content.
+extern "C" int svl_qt_type_text(svl_handle h, const char *utf8) {
+  auto *e = qobject_cast<QLineEdit *>(debug_obj(h));
+  if (!e) return -1;
+  const QString text = QString::fromUtf8(utf8);
+  e->selectAll();
+  if (text.isEmpty()) {
+    QKeyEvent press(QEvent::KeyPress, Qt::Key_Backspace, Qt::NoModifier);
+    QApplication::sendEvent(e, &press);
+    return 0;
+  }
+  for (const QChar c : text) {
+    QKeyEvent press(QEvent::KeyPress, 0, Qt::NoModifier, QString(c));
+    QApplication::sendEvent(e, &press);
+    QKeyEvent release(QEvent::KeyRelease, 0, Qt::NoModifier, QString(c));
+    QApplication::sendEvent(e, &release);
+  }
+  return 0;
+}
+
+// Close the top-level widget behind `h` as if the user clicked its close button.
+extern "C" int svl_qt_close(svl_handle h) {
+  auto *w = qobject_cast<QWidget *>(debug_obj(h));
+  return w && w->close() ? 0 : -1;
+}
+
+// Run `cb(ud)` on the Qt loop thread after `ms` milliseconds. Creates the QApplication if needed.
+extern "C" void svl_qt_run_later(void (*cb)(void *), void *ud, int ms) {
+  ensure_app();
+  QTimer::singleShot(ms, g.waker.load(), [cb, ud] { cb(ud); });
+}
+
+extern "C" void svl_qt_set_timing(int on) { g_timing.on = on != 0; }
+
+// Nanoseconds and call count spent inside backend calls since the last take; resets both.
+extern "C" void svl_qt_take_timing(uint64_t *ns, uint64_t *calls) {
+  *ns = g_timing.ns;
+  *calls = g_timing.calls;
+  g_timing.ns = 0;
+  g_timing.calls = 0;
+}
+
+namespace {
+// Reports the first QEvent::Paint delivered to any widget.
+struct PaintOnce : QObject {
+  void (*cb)(void *) = nullptr;
+  void *ud = nullptr;
+  bool eventFilter(QObject *, QEvent *e) override {
+    if (cb && e->type() == QEvent::Paint) {
+      auto f = cb;
+      cb = nullptr;
+      f(ud);
+    }
+    return false;
+  }
+};
+}  // namespace
+
+// Calls `cb(ud)` when the first widget paints. Creates the QApplication if needed.
+extern "C" void svl_qt_on_first_paint(void (*cb)(void *), void *ud) {
+  ensure_app();
+  auto *p = new PaintOnce;
+  p->cb = cb;
+  p->ud = ud;
+  QCoreApplication::instance()->installEventFilter(p);
 }

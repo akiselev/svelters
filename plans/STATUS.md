@@ -11,7 +11,9 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | P3 GTK lane | DONE | 8f5dfe1 | 443 Gtk kinds ingested; 298 kinds/1304 props/349 signals in tables; 22 tests + P1 oplog replay pass |
 | P4 Qt lane | DONE | dd6c28c | 192 classes ingested; 8 elements annotated; 41 generated tests pass; leaf-crate rebuild verified |
 | F1 fork bindings | IN PROGRESS | | phase A: bind:this + bind hook in fork; phase B after P5 |
-| P5 integration | IN PROGRESS | | |
+| D1 docs generator | IN PROGRESS | | generated API reference + guides site; separate docs ingestion pass |
+| S1 serdes main types | IN PROGRESS | | ABI v3 value model + converters; merges after P5 |
+| P5 integration | DONE | 1b22e76 | counter on GTK+Qt; 57/57 nextest incl. 12 integration; first frame GTK ~1.2 s / Qt ~0.2 s; binaries 3.4 / 2.6 MB; JS dominates the 1000-row split (host/ABI < 20 ms) |
 | M2 dev loop | QUEUED | | |
 | M3 metadata + codegen | QUEUED | | |
 | M4 native semantics | QUEUED | | |

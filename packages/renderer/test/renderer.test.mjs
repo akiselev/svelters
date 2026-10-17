@@ -107,3 +107,107 @@ test('move is remove + insert and is not destroyed; removal destroys children fi
   assert.equal(d.length, 3);
   assert.ok(d.every((l) => l.startsWith('destroy')));
 });
+
+// Replays insert/remove ops into per-parent child lists, the way a native backend orders them.
+function replay(lines, order = new Map()) {
+  for (const l of lines) {
+    let m = /^insert #(\d+) #(\d+) before=(end|#\d+)/.exec(l);
+    if (m) {
+      const list = order.get(m[1]) ?? [];
+      order.set(m[1], list);
+      assert.ok(!list.includes(m[2]), `double insert of #${m[2]}`);
+      const at = m[3] === 'end' ? list.length : list.indexOf(m[3].slice(1));
+      assert.ok(at >= 0, `before ${m[3]} is not a child of #${m[1]}`);
+      list.splice(at, 0, m[2]);
+    }
+    m = /^remove #(\d+) #(\d+)/.exec(l);
+    if (m) {
+      const list = order.get(m[1]);
+      const at = list.indexOf(m[2]);
+      assert.ok(at >= 0, `remove of non-child #${m[2]}`);
+      list.splice(at, 1);
+    }
+  }
+  return order;
+}
+
+function seeded(seed) {
+  let s = seed;
+  return () => (s = (s * 1664525 + 1013904223) >>> 0) / 2 ** 32;
+}
+
+test('keyed-each style moves keep the native order equal to the JS order', async () => {
+  const win = el('window');
+  const box = el('box');
+  r.insert(win, box, null);
+  r.insert(root, win, null);
+  const boxH = th.lines.find((l) => l.startsWith('create box')).split('#')[1];
+  const order = replay(th.lines.splice(0));
+  const rows = [];
+  const rnd = seeded(7);
+  let n = 0;
+  for (let step = 0; step < 400; step++) {
+    const op = rnd();
+    if (rows.length < 3 || op < 0.3) {
+      const row = el('label');
+      r.setText(row, `r${n++}`);
+      const at = Math.floor(rnd() * (rows.length + 1));
+      r.insert(box, row, rows[at] ?? null);
+      rows.splice(at, 0, row);
+    } else if (op < 0.5) {
+      const at = Math.floor(rnd() * rows.length);
+      r.remove(rows[at]);
+      rows.splice(at, 1);
+    } else {
+      // move an existing row before another (or to the end), like a keyed reorder
+      const from = Math.floor(rnd() * rows.length);
+      const [row] = rows.splice(from, 1);
+      const at = Math.floor(rnd() * (rows.length + 1));
+      r.insert(box, row, rows[at] ?? null);
+      rows.splice(at, 0, row);
+    }
+    if (step % 25 === 0) await tick();
+  }
+  await tick();
+  replay(th.lines.splice(0), order);
+  const jsOrder = [];
+  for (let c = box.first; c; c = c.next) jsOrder.push(c);
+  assert.deepEqual(jsOrder, rows);
+  const native = order.get(boxH);
+  assert.deepEqual(
+    native,
+    rows.map((row) => String(row.h)),
+  );
+});
+
+test('reordering many rows is not quadratic', async () => {
+  const run = async (n) => {
+    const win = el('window');
+    const box = el('box');
+    r.insert(win, box, null);
+    r.insert(root, win, null);
+    const rows = [];
+    for (let i = 0; i < n; i++) {
+      const row = el('label');
+      r.setText(row, `r${i}`);
+      r.insert(box, row, null);
+      rows.push(row);
+    }
+    await tick();
+    th.lines.length = 0;
+    const t0 = performance.now();
+    for (const row of [...rows].reverse()) r.insert(box, row, box.first === row ? null : box.first);
+    await tick();
+    const dt = performance.now() - t0;
+    th.lines.length = 0;
+    r.remove(win);
+    await tick();
+    th.lines.length = 0;
+    return dt;
+  };
+  await run(200); // warm up
+  const small = await run(1000);
+  const big = await run(4000);
+  // linear work grows 4x; a linear scan per move would grow 16x
+  assert.ok(big < Math.max(small, 5) * 9, `1000 rows ${small.toFixed(1)} ms, 4000 rows ${big.toFixed(1)} ms`);
+});

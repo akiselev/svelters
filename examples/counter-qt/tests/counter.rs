@@ -114,6 +114,10 @@ fn drive() {
 }
 
 fn main() {
+    counter_qt::run_as_test("counter_demo", demo);
+}
+
+fn demo() {
     let b = be();
     let host = svl_host { self_: std::ptr::null_mut(), post_event, checkpoint, call_sync, on_destroyed };
 

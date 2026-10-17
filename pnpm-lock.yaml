@@ -11,6 +11,22 @@ importers:
 
   .: {}
 
+  bench/keyed-bench:
+    dependencies:
+      svelte:
+        specifier: file:../../vendor/svelte/svelte-5.57.2-f3de3f2.tgz
+        version: file:vendor/svelte/svelte-5.57.2-f3de3f2.tgz
+    devDependencies:
+      '@svelters/build':
+        specifier: workspace:*
+        version: link:../../packages/build
+      '@svelters/testhost':
+        specifier: workspace:*
+        version: link:../../packages/testhost
+      vite:
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
+
   docs/site:
     dependencies:
       '@astrojs/starlight':
@@ -56,6 +72,22 @@ importers:
         version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
 
   fixtures/keyed-list:
+    dependencies:
+      svelte:
+        specifier: file:../../vendor/svelte/svelte-5.57.2-f3de3f2.tgz
+        version: file:vendor/svelte/svelte-5.57.2-f3de3f2.tgz
+    devDependencies:
+      '@svelters/build':
+        specifier: workspace:*
+        version: link:../../packages/build
+      '@svelters/testhost':
+        specifier: workspace:*
+        version: link:../../packages/testhost
+      vite:
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
+
+  fixtures/keyed-stress:
     dependencies:
       svelte:
         specifier: file:../../vendor/svelte/svelte-5.57.2-f3de3f2.tgz

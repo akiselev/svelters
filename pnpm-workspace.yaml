@@ -1,6 +1,7 @@
 packages:
   - "packages/*"
   - "fixtures/*"
+  - "bench/*"
   - "tests/*"
   - "docs/site"
 
