@@ -11,6 +11,8 @@ elements:
       - { js: dateEditAcceptDelay, native: dateEditAcceptDelay, provenance: "QCalendarWidget::dateEditAcceptDelay (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: selectionMode, native: selectionMode, provenance: "QCalendarWidget::selectionMode (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: selectedDate, native: selectedDate, provenance: "QCalendarWidget::selectedDate (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: minimumDate, native: minimumDate, provenance: "QCalendarWidget::minimumDate (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: maximumDate, native: maximumDate, provenance: "QCalendarWidget::maximumDate (qdoc); typed by the S1 value model (ABI v3)" }
     methods:
       - { js: showToday, native: showToday, provenance: "QCalendarWidget::showToday() slot (qdoc)" }
       - { js: showNextMonth, native: showNextMonth, provenance: "QCalendarWidget::showNextMonth() slot (qdoc)" }

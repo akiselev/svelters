@@ -16,7 +16,7 @@ use std::sync::{Arc, Condvar, Mutex, MutexGuard};
 use std::time::{Duration, Instant};
 use svelters_abi::{
     Backend, BackendVtable, HostRef, MemberDesc, NameKind, SVL_BOOL, SVL_F64, SVL_GONE_PARENT, SVL_I64, SVL_LIFE_OWNED,
-    SVL_LIFE_TOPLEVEL, SlotDesc, Value, Waker, gone_from_name, gone_name, svl_handle, svl_handle_info, svl_id,
+    SVL_LIFE_TOPLEVEL, SVL_STYLE_CLASSES, SVL_STYLE_INLINE, SVL_STYLE_NAME, SVL_STYLE_OPACITY, SVL_STYLE_SCHEME, SVL_STYLE_SEP, SVL_STYLE_SHEET, SVL_STYLE_TARGET, SVL_STYLE_TARGET_CSS, SlotDesc, Value, Waker, gone_from_name, gone_name, svl_handle, svl_handle_info, svl_id,
 };
 
 /// One scripted interaction step.
@@ -658,6 +658,46 @@ impl Backend for LogBackend {
         Ok(())
     }
 
+    fn style(&self, op: u32, h: svl_handle, text: Option<&str>) -> Result<i32, String> {
+        let t = |s: Option<&str>| match s {
+            Some(s) => json_string(&Value::Str(s.to_string())),
+            None => "null".to_string(),
+        };
+        let line = match op {
+            SVL_STYLE_TARGET => return Ok(SVL_STYLE_TARGET_CSS),
+            SVL_STYLE_CLASSES | SVL_STYLE_NAME | SVL_STYLE_INLINE | SVL_STYLE_OPACITY => {
+                self.check_live(h)?;
+                let what = match op {
+                    SVL_STYLE_CLASSES => "classes",
+                    SVL_STYLE_NAME => "name",
+                    SVL_STYLE_INLINE => "inline",
+                    _ => "opacity",
+                };
+                format!("style #{h} {what} {}", t(text))
+            }
+            SVL_STYLE_SHEET => {
+                let (id, body) = match text {
+                    Some(s) => match s.split_once(SVL_STYLE_SEP) {
+                        Some((id, body)) => (id, Some(body)),
+                        None => (s, None),
+                    },
+                    None => ("*", None),
+                };
+                format!("style sheet {} {}", json_string(&Value::Str(id.to_string())), t(body))
+            }
+            SVL_STYLE_SCHEME => {
+                let mut parts = text.unwrap_or("light").split(SVL_STYLE_SEP);
+                let scheme = parts.next().unwrap_or("light");
+                let rest: Vec<&str> = parts.collect();
+                format!("style scheme {} {}", json_string(&Value::Str(scheme.to_string())), rest.len())
+            }
+            _ => return Err(format!("unknown style op {op}")),
+        };
+        let mut st = self.shared.lock();
+        let _ = writeln!(st.log, "{line}");
+        Ok(0)
+    }
+
     fn set_child_attr(&self, parent: svl_handle, child: svl_handle, attr: svl_id, v: &Value) -> Result<(), String> {
         self.check_live(parent)?;
         self.check_live(child)?;
@@ -687,7 +727,11 @@ impl Backend for LogBackend {
 
     fn handle_info(&self, h: svl_handle) -> Result<svl_handle_info, String> {
         let kind = self.check_live(h)?;
-        let toplevel = self.shared.lock().names.name(kind) == "window";
+        let toplevel = {
+            let st = self.shared.lock();
+            let name = st.names.name(kind);
+            name == "window" || name.ends_with("dialog") || name == "messagebox" || name == "wizard"
+        };
         Ok(svl_handle_info {
             kind,
             lifetime: if toplevel { SVL_LIFE_TOPLEVEL } else { SVL_LIFE_OWNED },

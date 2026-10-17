@@ -988,7 +988,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "Mode",
+        "native": "QLCDNumber::Mode",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QLCDNumber::Mode>"
@@ -1031,7 +1031,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "SegmentStyle",
+        "native": "QLCDNumber::SegmentStyle",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QLCDNumber::SegmentStyle>"

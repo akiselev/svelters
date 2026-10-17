@@ -4,11 +4,13 @@
 // only elements become native widgets, created lazily when first inserted under a native parent.
 // Mapping rules and the dispatch return shape: docs/notes/p1-js-lane.md. Plain ES2022, no globals.
 import { createRenderer } from 'svelte/renderer';
-import { BINDINGS } from './bindings.generated.js';
+import { BINDINGS, TOPLEVELS } from './bindings.generated.js';
 import { coerceAttribute } from './coerce.js';
 import { kindRef, methodRef, propRef } from './hostops.js';
+import { applyStyle, bindElements, forgetStyle, markStyleDirty } from './style.js';
 
-export { BINDINGS };
+export { BINDINGS, TOPLEVELS };
+export { getColorScheme, getTokens, registerStyles, setColorScheme, setTokens } from './style.js';
 
 /** Kinds whose Text children are folded into the `label` prop. */
 export const LABEL_KINDS = new Set(['label', 'button']);
@@ -20,7 +22,9 @@ const signalFor = (type) => EVENT_TO_SIGNAL[type] ?? type;
 const eventFor = (signal) => SIGNAL_TO_EVENT[signal] ?? signal;
 
 /** Attributes that stay JS-side and never become host props. */
-const JS_ONLY_ATTRS = new Set(['class', 'style', 'id']);
+const JS_ONLY_ATTRS = new Set(['class', 'style', 'id', 'show']);
+/** Attributes handled by style.js: sent to the backend as classes, inline declarations and the widget name. */
+const STYLE_ATTRS = new Set(['class', 'style', 'id']);
 
 const PROXY_TAG = 'sv-slot';
 
@@ -87,6 +91,11 @@ class WNode {
       this.np = null; // native parent this element is inserted under
       this.dead = null; // reason the native object died (see `gone`), cleared when re-realized
       this.lastLabel = '';
+      this.mounted = false; // toplevel kinds: made transient and shown (or deferred) by `mountTop`
+      this.shown = false; // toplevel kinds: the show policy ran
+      this.tparent = null; // toplevel kinds: the enclosing toplevel this one is transient for
+      this.pending = null; // toplevel kinds: nested toplevels waiting for this one to be shown
+      this.sc = null; // what styling has been sent for this element (style.js)
     }
   }
 
@@ -124,6 +133,7 @@ const sweepSet = new Set(); // elements natively detached since the last sweep
 let sweepQueued = false;
 
 export const root = new WNode('element', 'svelters-root');
+bindElements(() => byHandle.values());
 
 // Borrowed handles (native objects a getter or call returned, such as a parent, a root or an
 // entry's inner text) are wrapped in nodes that are never part of the tree. They are held weakly
@@ -159,6 +169,9 @@ const noBorrowed = (what) => {
 };
 
 const isProxy = (n) => n.kind === 'element' && n.tag === PROXY_TAG;
+
+/** The TOPLEVELS entry of an element of a toplevel kind (a window or dialog), else undefined. */
+const topSpec = (n) => (n.kind === 'element' && !n.borrowed && Object.hasOwn(TOPLEVELS, n.tag) ? TOPLEVELS[n.tag] : undefined);
 const proxySlot = (n) => (typeof n.attrs.name === 'string' ? n.attrs.name : null);
 
 /** Native element descendants of `p` in document order, looking through sv-slot proxies. */
@@ -224,11 +237,14 @@ function destroyTree(el) {
   for (let c = el.first; c; c = c.next) if (c.kind === 'element') destroyTree(c);
   if (el.h != null) {
     byHandle.delete(el.h);
+    forgetStyle(el);
     host().destroy(el.h);
     el.h = null;
     el.dead = 'destroyed';
     el.np = null;
     el.lastLabel = '';
+    el.mounted = el.shown = false;
+    el.tparent = el.pending = null;
   }
 }
 
@@ -267,19 +283,85 @@ function realize(el) {
   byHandle.set(el.h, el);
   for (const [k, v] of el.props) hs.setProp(el.h, propRef(hs, el.tag, k), v);
   for (const { sig, flags } of el.signals.values()) nativeListen(el, sig, true, flags);
+  applyStyle(el);
   updateLabel(el);
   for (const { el: c, slot } of flat(el, null, [])) {
     realize(c);
+    if (topSpec(c)) {
+      mountTop(c);
+      continue;
+    }
     hs.insert(el.h, c.h, null, slot ?? undefined);
     c.np = el;
     applyChildAttrs(c);
   }
 }
 
+/** The nearest enclosing element of a toplevel kind, or null for a toplevel mounted at the root. */
+function topAncestor(el) {
+  for (let p = el.parent; p; p = p.parent) if (topSpec(p)) return p;
+  return null;
+}
+
+/** The first of `names` the host resolves as a method of `tag` (the last one when none does). */
+function pickMethod(tag, names) {
+  const hs = host();
+  if (names.length === 1 || typeof hs.methodId !== 'function') return names[0];
+  const kid = kindRef(hs, tag);
+  if (typeof kid === 'number') {
+    for (const n of names) {
+      try {
+        if (hs.methodId(kid, n) != null) return n;
+      } catch {
+        // not a method of this kind
+      }
+    }
+  }
+  return names[names.length - 1];
+}
+
+/**
+ * A realized toplevel element (window or dialog) joins the app: it becomes transient for the
+ * enclosing toplevel (`host.insert(enclosing, el)`, see backend-abi.md "Toplevels in the tree")
+ * and is shown with its policy, after the enclosing one was shown.
+ */
+function mountTop(el) {
+  if (el.mounted) return;
+  el.mounted = true;
+  const anc = topAncestor(el);
+  if (anc?.h != null) {
+    host().insert(anc.h, el.h, null);
+    el.tparent = anc;
+    if (!anc.shown) {
+      (anc.pending ??= []).push(el);
+      return;
+    }
+  }
+  showTop(el);
+}
+
+/** The `show` policy: 'modal' (dialog default), 'modeless' (window default) or 'none' (the app opens it). */
+function showTop(el) {
+  const spec = topSpec(el);
+  const mode = el.attrs.show ?? (spec.dialog ? 'modal' : 'modeless');
+  if (mode !== 'modal' && mode !== 'modeless' && mode !== 'none') {
+    throw new Error(`<${el.tag} show="${mode}">: expected modal, modeless or none`);
+  }
+  el.shown = true;
+  if (mode !== 'none') {
+    const m = pickMethod(el.tag, mode === 'modal' ? spec.open : spec.modeless);
+    if (mode === 'modal' && m === 'present' && spec.modalProp && !el.props.has('modal')) setNativeProp(el, 'modal', true);
+    host().call(el.h, methodRef(host(), el.tag, m), []);
+  }
+  const waiting = el.pending;
+  el.pending = null;
+  if (waiting) for (const c of waiting) if (c.h != null && c.mounted) showTop(c);
+}
+
 /** First native element in or under `s` (looking through sv-slot proxies), or null. */
 function firstFlat(s) {
   if (s.kind !== 'element') return null;
-  if (!isProxy(s)) return s;
+  if (!isProxy(s)) return topSpec(s) ? null : s;
   for (let c = s.first; c; c = c.next) {
     const e = firstFlat(c);
     if (e) return e;
@@ -330,10 +412,13 @@ function setChildAttr(el, name, value) {
 function attachNative(el) {
   const { parent, slot } = placement(el);
   if (!parent) return;
-  if (parent === root) {
-    if (el.tag !== 'window') throw new Error(`only <window> may be mounted at top level, got <${el.tag}>`);
-    realize(el);
-    host().call(el.h, methodRef(host(), el.tag, 'present'), []);
+  if (topSpec(el)) {
+    if (parent === root || (parent.kind === 'element' && parent.h != null)) {
+      realize(el);
+      mountTop(el);
+    }
+  } else if (parent === root) {
+    throw new Error(`only toplevel kinds (${Object.keys(TOPLEVELS).join(', ')}) may be mounted at top level, got <${el.tag}>`);
   } else if (parent.kind === 'element' && parent.h != null) {
     realize(el);
     nativeInsert(parent, el, slot);
@@ -362,7 +447,12 @@ function detach(n) {
   targets.forEach((t, i) => {
     const pl = places[i];
     if (!pl.parent || t.h == null) return;
-    if (pl.parent === root) markDetached(t);
+    if (topSpec(t)) {
+      if (t.tparent?.h != null) host().remove(t.tparent.h, t.h);
+      t.tparent = null;
+      t.mounted = false;
+      markDetached(t);
+    } else if (pl.parent === root) markDetached(t);
     else if (t.np === pl.parent && pl.parent.h != null) {
       host().remove(pl.parent.h, t.h);
       t.np = null;
@@ -404,11 +494,14 @@ const nativeIn = {
   string: (v) => (typeof v === 'string' ? v : v !== null && typeof v === 'object' ? String(v.detail ?? '') : String(v ?? '')),
   bool: Boolean,
   number: Number,
+  // Structured values (dates, records): passed through; the host's descriptors convert them.
+  value: (v) => v,
 };
 const nativeOut = {
   string: (v) => (v == null ? '' : String(v)),
   bool: Boolean,
   number: (v) => (v == null ? 0 : Number(v)),
+  value: (v) => v,
 };
 
 // `bind:<name>` on a native element (the fork's renderer.bind hook). The descriptor comes from the
@@ -466,12 +559,14 @@ const renderer = createRenderer({
     if (key.startsWith(CHILD_ATTR_PREFIX)) {
       if (!isProxy(el)) setChildAttr(el, key.slice(CHILD_ATTR_PREFIX.length), value);
     } else if (key === 'slot' || key === 'data-slot') el.slot = String(value);
+    else if (STYLE_ATTRS.has(key)) markStyleDirty(el);
     else if (!JS_ONLY_ATTRS.has(key) && !isProxy(el)) setNativeProp(el, key, coerceAttribute(host(), el.tag, key, value));
   },
   removeAttribute(el, name) {
     delete el.attrs[name];
     if (name.startsWith(CHILD_ATTR_PREFIX)) setChildAttr(el, name.slice(CHILD_ATTR_PREFIX.length), null);
     else if (name === 'slot' || name === 'data-slot') el.slot = null;
+    else if (STYLE_ATTRS.has(name)) markStyleDirty(el);
     else if (el.props.has(name)) {
       el.props.delete(name);
       if (el.h != null) host().setProp(el.h, propRef(host(), el.tag, name), null);
@@ -572,6 +667,8 @@ export function gone(h, reason) {
   el.np = null;
   el.lastLabel = '';
   el.dead = reason;
+  el.mounted = el.shown = false;
+  el.tparent = el.pending = null;
 }
 
 /**

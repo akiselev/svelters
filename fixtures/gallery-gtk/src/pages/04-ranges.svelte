@@ -5,20 +5,20 @@
   let levelEchoes = $state(0);
   let spin = $state(5);
   let spinEchoes = $state(0);
+  let scaleValue = $state(10);
+  let scaleEchoes = $state(0);
   let scaleChanges = $state(0);
   let offsets = $state(0);
   let bar = $state();
   let scale = $state();
   let spinner = $state();
   $effect(() => {
-    // the default adjustment is 0..0: the app sets the range first
-    scale?.call('set_range', 0, 100);
-    spinner?.call('set_range', 0, 100);
-    spinner?.call('set_increments', 1, 10);
+    // range and increments are plain props now (the adjustment behind them is forwarded by the backend)
     bar?.call('pulse');
     // programmatic writes after mount: must not come back as change events
     level = 0.75;
     spin = 7;
+    scaleValue = 30;
     fraction = 0.5;
   });
 </script>
@@ -30,11 +30,12 @@
     <label label="echo level: {levelEchoes}" />
   </box>
   <box orientation="horizontal" spacing="6">
-    <scale bind:this={scale} orientation="horizontal" digits={1} draw-value={true} has-origin={true} value-pos="right" show-fill-level={true} fill-level={60} restrict-to-fill-level={false} inverted={false} hexpand={true} onvalue-changed={() => scaleChanges++} />
+    <scale bind:this={scale} lower={0} upper={100} stepIncrement={1} pageIncrement={10} bind:value={() => scaleValue, (v) => { scaleValue = v; scaleEchoes++; }} orientation="horizontal" digits={1} draw-value={true} has-origin={true} value-pos="right" show-fill-level={true} fill-level={60} restrict-to-fill-level={false} inverted={false} hexpand={true} onvalue-changed={() => scaleChanges++} />
     <label label="scale changes: {scaleChanges}" />
+    <label label="echo scale: {scaleEchoes}" />
   </box>
   <box orientation="horizontal" spacing="6">
-    <spinbutton bind:this={spinner} bind:value={() => spin, (v) => { spin = v; spinEchoes++; }} digits={0} numeric={true} wrap={true} snap-to-ticks={false} climb-rate={1} update-policy="always" />
+    <spinbutton bind:this={spinner} lower={0} upper={100} stepIncrement={1} pageIncrement={10} bind:value={() => spin, (v) => { spin = v; spinEchoes++; }} digits={0} numeric={true} wrap={true} snap-to-ticks={false} climb-rate={1} update-policy="always" />
     <label label="echo spin: {spinEchoes}" />
   </box>
   <scrollbar orientation="horizontal" />

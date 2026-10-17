@@ -12,7 +12,8 @@
     "svelte": "5.57.2",
     "vite": "8.3.4",
     "@svelters/dom": "workspace:*",
-    "@svelters/renderer": "workspace:*"
+    "@svelters/renderer": "workspace:*",
+    "@svelters/style": "workspace:*"
   },
   "bin": {
     "svelters-build": "./bin/svelters-build.mjs"

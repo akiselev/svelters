@@ -213,10 +213,10 @@
   "native": "QCalendarWidget",
   "ownership": false,
   "props": [
-   9,
+   11,
    11
   ],
-  "props_annotated": 9,
+  "props_annotated": 11,
   "signal_results": 0,
   "signals": [
    4,
@@ -226,8 +226,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   20,
-   20
+   22,
+   22
   ]
  },
  {
@@ -268,7 +268,7 @@
   "bindings": 0,
   "defaults": 0,
   "element": "colordialog",
-  "gallery": null,
+  "gallery": "09-dialogs",
   "inherited": 0,
   "kind": "QColorDialog",
   "lifetime": "toplevel",
@@ -397,7 +397,7 @@
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "defaults": 0,
   "element": "dateedit",
   "gallery": "10-display",
@@ -424,13 +424,13 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   4,
-   4
+   7,
+   7
   ]
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "defaults": 7,
   "element": "datetimeedit",
   "gallery": "10-display",
@@ -444,10 +444,10 @@
   "native": "QDateTimeEdit",
   "ownership": false,
   "props": [
-   3,
+   9,
    17
   ],
-  "props_annotated": 3,
+  "props_annotated": 9,
   "signal_results": 0,
   "signals": [
    1,
@@ -457,8 +457,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   4,
-   4
+   11,
+   11
   ]
  },
  {
@@ -499,8 +499,8 @@
   "bindings": 0,
   "defaults": 2,
   "element": "dialog",
-  "gallery": null,
-  "inherited": 9,
+  "gallery": "09-dialogs",
+  "inherited": 10,
   "kind": "QDialog",
   "lifetime": "toplevel",
   "methods": [
@@ -523,8 +523,8 @@
   "slots_own": 1,
   "unexposed": null,
   "verified": [
-   11,
-   11
+   12,
+   12
   ]
  },
  {
@@ -574,7 +574,7 @@
    19
   ],
   "native": "QDockWidget",
-  "ownership": false,
+  "ownership": true,
   "props": [
    4,
    5
@@ -585,12 +585,12 @@
    4,
    5
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   8,
-   8
+   9,
+   9
   ]
  },
  {
@@ -631,7 +631,7 @@
   "bindings": 0,
   "defaults": 0,
   "element": "errormessage",
-  "gallery": null,
+  "gallery": "09-dialogs",
   "inherited": 0,
   "kind": "QErrorMessage",
   "lifetime": "toplevel",
@@ -664,7 +664,7 @@
   "bindings": 0,
   "defaults": 5,
   "element": "filedialog",
-  "gallery": null,
+  "gallery": "09-dialogs",
   "inherited": 0,
   "kind": "QFileDialog",
   "lifetime": "toplevel",
@@ -763,7 +763,7 @@
   "bindings": 0,
   "defaults": 0,
   "element": "fontdialog",
-  "gallery": null,
+  "gallery": "09-dialogs",
   "inherited": 0,
   "kind": "QFontDialog",
   "lifetime": "toplevel",
@@ -925,7 +925,7 @@
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "defaults": 5,
   "element": "groupbox",
   "gallery": "05-containers",
@@ -939,10 +939,10 @@
   "native": "QGroupBox",
   "ownership": true,
   "props": [
-   4,
+   5,
    5
   ],
-  "props_annotated": 4,
+  "props_annotated": 5,
   "signal_results": 0,
   "signals": [
    2,
@@ -952,8 +952,8 @@
   "slots_own": 1,
   "unexposed": null,
   "verified": [
-   8,
-   8
+   10,
+   10
   ]
  },
  {
@@ -1027,7 +1027,7 @@
   "bindings": 0,
   "defaults": 0,
   "element": "inputdialog",
-  "gallery": null,
+  "gallery": "09-dialogs",
   "inherited": 0,
   "kind": "QInputDialog",
   "lifetime": "toplevel",
@@ -1038,10 +1038,10 @@
   "native": "QInputDialog",
   "ownership": false,
   "props": [
-   8,
+   9,
    18
   ],
-  "props_annotated": 8,
+  "props_annotated": 9,
   "signal_results": 0,
   "signals": [
    2,
@@ -1051,8 +1051,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   10,
-   10
+   11,
+   11
   ]
  },
  {
@@ -1291,7 +1291,7 @@
   "bindings": 0,
   "defaults": 6,
   "element": "window",
-  "gallery": null,
+  "gallery": "06-layout",
   "inherited": 0,
   "kind": "QMainWindow",
   "lifetime": "toplevel",
@@ -1311,12 +1311,12 @@
    0,
    3
   ],
-  "slots": 3,
-  "slots_own": 3,
+  "slots": 5,
+  "slots_own": 5,
   "unexposed": null,
   "verified": [
-   14,
-   14
+   19,
+   19
   ]
  },
  {
@@ -1333,7 +1333,7 @@
    42
   ],
   "native": "QMdiArea",
-  "ownership": false,
+  "ownership": true,
   "props": [
    7,
    8
@@ -1344,12 +1344,12 @@
    0,
    1
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   10,
-   10
+   11,
+   11
   ]
  },
  {
@@ -1389,33 +1389,33 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 4,
-  "element": "menu",
+  "element": "menu, contextmenu",
   "gallery": null,
   "inherited": 0,
   "kind": "QMenu",
   "lifetime": "owned",
   "methods": [
-   1,
+   2,
    51
   ],
   "native": "QMenu",
   "ownership": false,
   "props": [
-   0,
+   5,
    5
   ],
-  "props_annotated": 0,
+  "props_annotated": 5,
   "signal_results": 0,
   "signals": [
    0,
    4
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 2,
+  "slots_own": 2,
   "unexposed": null,
   "verified": [
-   1,
-   1
+   12,
+   12
   ]
  },
  {
@@ -1443,12 +1443,12 @@
    0,
    2
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   2,
-   2
+   3,
+   3
   ]
  },
  {
@@ -1456,7 +1456,7 @@
   "bindings": 0,
   "defaults": 7,
   "element": "messagebox",
-  "gallery": null,
+  "gallery": "09-dialogs",
   "inherited": 0,
   "kind": "QMessageBox",
   "lifetime": "toplevel",
@@ -1555,7 +1555,7 @@
   "bindings": 0,
   "defaults": 8,
   "element": "progressdialog",
-  "gallery": null,
+  "gallery": "09-dialogs",
   "inherited": 0,
   "kind": "QProgressDialog",
   "lifetime": "toplevel",
@@ -2113,7 +2113,7 @@
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "defaults": 10,
   "element": "tabwidget",
   "gallery": "05-containers",
@@ -2127,10 +2127,10 @@
   "native": "QTabWidget",
   "ownership": true,
   "props": [
-   6,
+   7,
    11
   ],
-  "props_annotated": 6,
+  "props_annotated": 7,
   "signal_results": 0,
   "signals": [
    3,
@@ -2140,8 +2140,8 @@
   "slots_own": 1,
   "unexposed": null,
   "verified": [
-   13,
-   13
+   15,
+   15
   ]
  },
  {
@@ -2278,7 +2278,7 @@
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "defaults": 0,
   "element": "timeedit",
   "gallery": "10-display",
@@ -2305,8 +2305,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   3,
-   3
+   6,
+   6
   ]
  },
  {
@@ -2314,7 +2314,7 @@
   "bindings": 0,
   "defaults": 6,
   "element": "toolbar",
-  "gallery": "08-bars",
+  "gallery": "06-layout",
   "inherited": 0,
   "kind": "QToolBar",
   "lifetime": "owned",
@@ -2334,17 +2334,17 @@
    2,
    8
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   8,
-   8
+   9,
+   9
   ]
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "defaults": 2,
   "element": "toolbox",
   "gallery": "05-containers",
@@ -2356,23 +2356,23 @@
    23
   ],
   "native": "QToolBox",
-  "ownership": false,
+  "ownership": true,
   "props": [
-   0,
+   1,
    2
   ],
-  "props_annotated": 0,
+  "props_annotated": 1,
   "signal_results": 0,
   "signals": [
    1,
    1
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   1,
-   1
+   4,
+   4
   ]
  },
  {
@@ -2587,7 +2587,7 @@
    48
   ],
   "native": "QWizard",
-  "ownership": false,
+  "ownership": true,
   "props": [
    2,
    6
@@ -2598,12 +2598,12 @@
    1,
    5
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   3,
-   3
+   4,
+   4
   ]
  },
  {

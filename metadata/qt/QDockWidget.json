@@ -939,7 +939,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "DockWidgetFeatures",
+        "native": "QDockWidget::DockWidgetFeatures",
         "nullable": false,
         "origin": "qdoc",
         "ref": "flags<QDockWidget::DockWidgetFeature>"

@@ -1,0 +1,90 @@
+create window #1
+set #1 title "Menus"
+create box #2
+set #2 orientation "vertical"
+create menubar #3
+create menu #4
+set #4 label "File"
+create action #5
+set #5 label "Open"
+set #5 shortcut "Ctrl+O"
+listen #5 activate on
+insert #4 #5 before=end slot=default
+create action #6
+set #6 label "Autosave"
+set #6 checkable ""
+set #6 checked false
+listen #6 toggled on
+insert #4 #6 before=end slot=default
+create menuseparator #7
+insert #4 #7 before=end slot=default
+create menu #8
+set #8 label "Recent"
+create action #9
+set #9 label "a.txt"
+listen #9 activate on
+insert #8 #9 before=end slot=default
+create action #10
+set #10 label "b.txt"
+listen #10 activate on
+insert #8 #10 before=end slot=default
+insert #4 #8 before=end slot=default
+create action #11
+set #11 label "Quit"
+set #11 shortcut "Ctrl+Q"
+listen #11 activate on
+insert #4 #11 before=end slot=default
+insert #3 #4 before=end slot=default
+create menu #12
+set #12 label "Size"
+create action #13
+set #13 label "Small"
+set #13 group "size"
+set #13 checked true
+listen #13 toggled on
+insert #12 #13 before=end slot=default
+create action #14
+set #14 label "Large"
+set #14 group "size"
+set #14 checked false
+listen #14 toggled on
+insert #12 #14 before=end slot=default
+insert #3 #12 before=end slot=default
+insert #2 #3 before=end slot=default
+create toolbar #15
+create action #16
+set #16 icon "edit-copy"
+set #16 label "Copy"
+listen #16 activate on
+insert #15 #16 before=end slot=default
+insert #2 #15 before=end slot=default
+create button #17
+listen #17 clicked on
+set #17 label "Shuffle"
+insert #2 #17 before=end slot=default
+create label #18
+set #18 label "S:|false|true|false"
+insert #2 #18 before=end slot=default
+create button #19
+set #19 label "Context "
+create contextmenu #20
+create action #21
+set #21 label "Paste"
+listen #21 activate on
+insert #20 #21 before=end slot=default
+insert #19 #20 before=end slot=default
+insert #2 #19 before=end slot=default
+insert #1 #2 before=end slot=default
+call #1 present []
+event #5 activate [false]
+event #6 toggled [true]
+event #13 toggled [false]
+event #14 toggled [true]
+set #18 label "S:open;|true|false|true"
+event #17 clicked []
+create action #22
+set #22 label "c.txt"
+listen #22 activate on
+insert #8 #22 before=#9 slot=default
+remove #8 #9
+destroy #9

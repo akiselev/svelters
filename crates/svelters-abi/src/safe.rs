@@ -1030,6 +1030,22 @@ impl<'a> BackendRef<'a> {
         }
     }
 
+    /// ABI v2.3: a styling op (`SVL_STYLE_*`). `text` of `None` clears. Returns the op's result (`>= 0`).
+    pub fn style(&self, op: u32, h: svl_handle, text: Option<&str>) -> AbiResult<i32> {
+        let b = self.b();
+        let Some(f) = b.style else {
+            return Err(AbiError::plain(-1, "styling is not supported by this backend"));
+        };
+        let raw = text.map(str_raw);
+        let null = null_value();
+        let p: *const svl_value = match &raw {
+            Some(r) => r,
+            None => &null,
+        };
+        let rc = unsafe { f(b.self_, op, h, p) };
+        if rc < 0 { Err(self.fail(rc, None)) } else { Ok(rc) }
+    }
+
     /// ABI v2.2: sets a per-child attribute (`Value::Null` resets it).
     pub fn set_child_attr(&self, parent: svl_handle, child: svl_handle, attr: svl_id, v: &Value) -> AbiResult<()> {
         v.with_raw(|raw| self.set_child_attr_raw(parent, child, attr, raw))
@@ -1252,6 +1268,11 @@ pub trait Backend: 'static {
     fn get_child_attr(&self, _parent: svl_handle, _child: svl_handle, _attr: svl_id) -> StrResult<Value> {
         Err("child attributes are not supported by this backend".into())
     }
+    /// ABI v2.3: a styling op (`SVL_STYLE_*`); `text` is `None` to clear. Returns the op's result
+    /// (`SVL_STYLE_TARGET` answers the dialect, other ops `0`).
+    fn style(&self, _op: u32, _h: svl_handle, _text: Option<&str>) -> StrResult<i32> {
+        Err("styling is not supported by this backend".into())
+    }
     /// ABI v2.2: `listen` with `SVL_LISTEN_*` flags (never called with `flags == 0`).
     fn listen_ex(&self, _h: svl_handle, _signal: svl_id, _on: bool, _flags: u32) -> StrResult<()> {
         Err("this backend does not support listener phases (after, capture)".into())
@@ -1449,6 +1470,20 @@ unsafe extern "C" fn t_listen_ex(s: *mut c_void, h: svl_handle, signal: svl_id, 
     s.rc(|b| b.listen_ex(h, signal, on, flags))
 }
 
+unsafe extern "C" fn t_style(s: *mut c_void, op: u32, h: svl_handle, v: *const svl_value) -> c_int {
+    let s = unsafe { shim(s) };
+    let text = if v.is_null() || unsafe { (*v).tag } != SVL_STR {
+        None
+    } else {
+        Some(unsafe { str_of_raw(&*v) }.into_owned())
+    };
+    match catch_unwind(AssertUnwindSafe(|| s.backend.style(op, h, text.as_deref()))) {
+        Ok(Ok(n)) => n.max(0),
+        Ok(Err(e)) => s.fail(&e),
+        Err(_) => s.fail("panic in backend"),
+    }
+}
+
 unsafe extern "C" fn t_set_child_attr(
     s: *mut c_void,
     parent: svl_handle,
@@ -1599,6 +1634,7 @@ impl BackendVtable {
             set_child_attr: Some(t_set_child_attr),
             get_child_attr: Some(t_get_child_attr),
             listen_ex: Some(t_listen_ex),
+            style: Some(t_style),
         });
         BackendVtable { raw, shim }
     }

@@ -29,6 +29,12 @@ kinds:
         args: [{ name: text, type: string }]
         provenance: "svelters-gtk backend contract (P5 fix 2): `changed` delivers [text], matching Qt"
     # bind:text comes from the `bindings` annotation in metadata/overrides/gtk/Entry.yaml.
+  Gtk.TextView:
+    signals:
+      changed:
+        args: [{ name: text, type: string }]
+        provenance: "svelters-gtk backend contract (backend.rs deliver): TextView `changed` is its buffer's (X7 forwarding) and delivers [text] like an entry"
+    # bind:text comes from the `bindings` annotation in metadata/overrides/gtk/TextView.yaml.
 
 # GTK defaults come from GParamSpec (metadata/gtk/*.json); entries here override or fill gaps.
 defaults: {}

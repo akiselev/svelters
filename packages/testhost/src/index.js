@@ -138,6 +138,38 @@ export function createTestHost({ schema = defaultSchema } = {}) {
     getChildAttr(parent, child, nameRef) {
       return w(child).attrs?.get(nameRef) ?? null;
     },
+    // Styling (ABI v2.3). The op numbers and payload formats are in plans/architecture/backend-abi.md.
+    // The test host speaks the CSS dialect (target 1), like the log backend.
+    style(op, h, text) {
+      const t = text === undefined || text === null ? 'null' : JSON.stringify(String(text));
+      switch (op) {
+        case 0:
+          return 1;
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+          if (h !== 0 && dead.has(h)) return 0;
+          w(h);
+          lines.push(`style #${h} ${['classes', 'name', 'inline', 'opacity'][op - 1]} ${t}`);
+          return 0;
+        case 5: {
+          const s = text === undefined || text === null ? null : String(text);
+          const i = s === null ? -1 : s.indexOf('\u0001');
+          const id = s === null ? '*' : i < 0 ? s : s.slice(0, i);
+          const body = i < 0 ? 'null' : JSON.stringify(s.slice(i + 1));
+          lines.push(`style sheet ${JSON.stringify(id)} ${body}`);
+          return 0;
+        }
+        case 6: {
+          const parts = String(text ?? 'light').split('\u0001');
+          lines.push(`style scheme ${JSON.stringify(parts[0])} ${parts.length - 1}`);
+          return 0;
+        }
+        default:
+          throw new Error(`unknown style op ${op}`);
+      }
+    },
   };
 
   /**

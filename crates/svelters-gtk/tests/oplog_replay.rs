@@ -115,6 +115,44 @@ fn replay(name: &str, log: String) {
                         assert_eq!(h.get_child_attr(hd(rest[1]), hd(rest[2]), rest[3]), v, "{ctx}: read back");
                     }
                 }
+                // ABI v2.3 styling: `style #h classes|name|inline|opacity json`, `style sheet "id" json`,
+                // `style scheme "dark" n` (the palette pairs only matter to Qt).
+                "style" => {
+                    use svelters_abi::*;
+                    let text = |v: Val| match v {
+                        Val::Str(s) => Some(s),
+                        Val::Null => None,
+                        _ => panic!("{ctx}: style payload must be a string or null"),
+                    };
+                    let r = if parts[1] == "sheet" {
+                        let Val::Str(id) = parse_val(parts[2]) else { panic!("{ctx}: sheet id") };
+                        match (id.as_str(), text(parse_val(parts[3]))) {
+                            ("*", _) => h.style(SVL_STYLE_SHEET, 0, None),
+                            (_, None) => h.style(SVL_STYLE_SHEET, 0, Some(&id)),
+                            (_, Some(body)) => h.style(SVL_STYLE_SHEET, 0, Some(&format!("{id}{SVL_STYLE_SEP}{body}"))),
+                        }
+                    } else if parts[1] == "scheme" {
+                        let Val::Str(s) = parse_val(parts[2]) else { panic!("{ctx}: scheme") };
+                        h.style(SVL_STYLE_SCHEME, 0, Some(&s))
+                    } else {
+                        let op = match parts[2] {
+                            "classes" => SVL_STYLE_CLASSES,
+                            "name" => SVL_STYLE_NAME,
+                            "inline" => SVL_STYLE_INLINE,
+                            "opacity" => SVL_STYLE_OPACITY,
+                            other => panic!("{ctx}: unknown style op {other}"),
+                        };
+                        let t = text(parse_val(parts[3]));
+                        let r = h.style(op, hd(parts[1]), t.as_deref());
+                        if op == SVL_STYLE_CLASSES {
+                            for c in t.as_deref().unwrap_or("").split_whitespace() {
+                                assert!(h.widget(hd(parts[1])).has_css_class(c), "{ctx}: class {c} not applied");
+                            }
+                        }
+                        r
+                    };
+                    r.unwrap_or_else(|e| panic!("{ctx}: {e}"));
+                }
                 // A native death in the log: the first `gone` of a run is produced by closing
                 // the window natively; the descendants it lists (`parent`) must be reported by the
                 // backend's cascade, in order.
@@ -136,6 +174,18 @@ fn replay(name: &str, log: String) {
                     let (o, sig) = (hd(parts[1]), parts[2]);
                     h.take_events();
                     match sig {
+                        // Menu actions (X4): activating the action is what a click or shortcut does. A
+                        // radio member turning off is the consequence of its sibling turning on.
+                        "activate" | "toggled" if h.backend.menu_action_name(o).is_some() => {
+                            if sig == "toggled" && parts[3] == "[false]" {
+                                continue;
+                            }
+                            let name = h.backend.menu_action_name(o).unwrap();
+                            let (_, short) = name.split_once('.').unwrap();
+                            let radio = !short.starts_with('a') || short.starts_with("g");
+                            let target = radio.then(|| format!("a{o}").to_variant());
+                            h.backend.menu_group(o).unwrap().activate_action(short, target.as_ref());
+                        }
                         "clicked" => h.widget(o).downcast::<gtk::Button>().unwrap().emit_clicked(),
                         "changed" => {
                             let Val::Str(s) = parse_val(parts[3].trim_start_matches('[').trim_end_matches(']')) else { panic!() };

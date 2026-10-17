@@ -24,3 +24,24 @@ signals:
       rust: 'let lb = o.downcast_ref::<gtk::ListBox>().unwrap(); lb.select_row(lb.row_at_index((i % 2) as i32).as_ref());'
       values: [a, b, c]
     provenance: "GtkListBox::row-selected, run-first, void (Gtk 4 docs)"
+children:
+  policy: ordered
+  default_slot: children
+  slots:
+    - name: children
+      content: widget
+      accepts: [Gtk.Widget]
+      route_by_kind: false
+      cardinality: many
+      order: native_index
+      default: {kind: none}
+      on_remove: empty
+      attrs: []
+      requires: []
+      ops:
+        get:    {contains: ancestor}
+        insert: {native: "GtkListBox::insert(GtkWidget*, int)", args: [child, index], effects: {child: "wrapped:ListBoxRow"}}
+        # remove() wants the GtkListBoxRow the list box wrapped the child in; the row is destroyed with it.
+        remove: {native: "GtkListBox::remove(GtkWidget*)", args: [wrapper], effects: {child: unparented}}
+      verify: {}
+      provenance: [{origin: gir, ref: "gtk_list_box_insert"}, {origin: gir, ref: "gtk_list_box_remove"}, {origin: manual, ref: "non-row children are wrapped in a GtkListBoxRow (Gtk 4 docs)"}]

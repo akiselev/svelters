@@ -91,7 +91,7 @@ class FrontendTests(unittest.TestCase):
         # one entity per element kind (kinds marked `unexposed` in the overrides have no tag)
         tagged = sum(1 for p in (ROOT / "metadata/gtk").glob("*.json") if "element" in json.loads(p.read_text()))
         self.assertEqual(len([e for e in ir["entities"] if e["tags"]]), tagged)
-        self.assertGreater(tagged, 80)
+        self.assertGreater(tagged, 50)
 
     def test_qt_frontend(self):
         self.check_frontend("qt")

@@ -141,7 +141,7 @@ fn unsupported(b: &BackendRef, log: &str) -> Option<String> {
                     return Some(format!("no Qt child attribute {}", rest[3]));
                 }
             }
-            "event" if !matches!(parts[2], "clicked") => return Some(format!("cannot produce {} natively", parts[2])),
+            "event" if !matches!(parts[2], "clicked" | "activate" | "toggled") => return Some(format!("cannot produce {} natively", parts[2])),
             _ => {}
         }
     }
@@ -181,7 +181,14 @@ fn replay(b: &BackendRef, name: &str, log: &str) {
             "set" => {
                 let o = hd(parts[1]);
                 let prop = b.resolve(NameKind::Prop, kind(o), parts[2]);
-                b.set_prop(o, prop, &parse_val(parts[3]).value()).unwrap_or_else(|e| panic!("{ctx}: {}", e.message));
+                let mut v = parse_val(parts[3]).value();
+                // A bare attribute (`<action checkable>`) is text until the renderer coerces it by the prop's descriptor.
+                if let svelters_abi::Value::Str(t) = &v {
+                    if matches!(t.as_str(), "" | "true" | "false") && b.describe(NameKind::Prop, kind(o), prop).is_some_and(|d| d.params.first().is_some_and(|p| p.tag == svelters_abi::SVL_BOOL)) {
+                        v = svelters_abi::Value::Bool(t != "false");
+                    }
+                }
+                b.set_prop(o, prop, &v).unwrap_or_else(|e| panic!("{ctx}: {}", e.message));
             }
             "call" => {
                 let o = hd(parts[1]);
@@ -209,11 +216,49 @@ fn replay(b: &BackendRef, name: &str, log: &str) {
                 }
                 attrs += 1;
             }
+            // ABI v2.3 styling. The logs speak the CSS dialect, so sheet and inline text (which Qt
+            // would read as QSS) is skipped; classes, names and opacity replay as they are.
+            "style" => {
+                let text = |s: &str| match parse_val(s).value() {
+                    Value::Str(t) => Some(t),
+                    _ => None,
+                };
+                match parts[1] {
+                    "sheet" => {
+                        b.style(SVL_STYLE_SHEET, 0, None).unwrap_or_else(|e| panic!("{ctx}: {}", e.message));
+                    }
+                    "scheme" => {
+                        let Some(sc) = text(parts[2]) else { panic!("{ctx}: scheme") };
+                        b.style(SVL_STYLE_SCHEME, 0, Some(&sc)).unwrap_or_else(|e| panic!("{ctx}: {}", e.message));
+                    }
+                    _ => {
+                        let op = match parts[2] {
+                            "classes" => SVL_STYLE_CLASSES,
+                            "name" => SVL_STYLE_NAME,
+                            "opacity" => SVL_STYLE_OPACITY,
+                            _ => continue,
+                        };
+                        let t = text(parts[3]);
+                        b.style(op, hd(parts[1]), t.as_deref()).unwrap_or_else(|e| panic!("{ctx}: {}", e.message));
+                        if op == SVL_STYLE_CLASSES {
+                            let cls = counter_qt::hooks::native_prop(hd(parts[1]), "class", false);
+                            for c in t.as_deref().unwrap_or("").split_whitespace() {
+                                assert!(cls.contains(c), "{ctx}: class {c} missing in {cls}");
+                            }
+                        }
+                    }
+                }
+            }
             "event" => {
                 let (o, sig) = (hd(parts[1]), parts[2]);
                 let sid = b.resolve(NameKind::Signal, kind(o), sig);
                 EVENTS.lock().unwrap().clear();
-                let click = b.resolve(NameKind::Method, kind(o), "click");
+                // Menu actions (X4): `trigger()` is what a click or shortcut does. A radio member turning
+                // off is the consequence of its sibling turning on.
+                if sig == "toggled" && parts[3] == "[false]" {
+                    continue;
+                }
+                let click = b.resolve(NameKind::Method, kind(o), if matches!(sig, "activate" | "toggled") { "trigger" } else { "click" });
                 b.call(o, click, &[]).unwrap_or_else(|e| panic!("{ctx}: {}", e.message));
                 let got = EVENTS.lock().unwrap().clone();
                 assert!(got.contains(&(o, sid)), "{ctx}: event not delivered, got {got:?}");

@@ -114,6 +114,14 @@
   ],
   "id": "svelters-api:v1:type:gtk:Gtk:Scale",
   "inherited": {
+    "bindings": [
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:binding:value",
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "value",
+        "origin": "manual"
+      }
+    ],
     "methods": [
       {
         "fact": "svelters-api:v1:type:gtk:Gtk:Range:method:get_value",
@@ -208,6 +216,12 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:prop:lower",
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "lower",
+        "origin": "manual"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-bottom",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "margin-bottom",
@@ -250,6 +264,18 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:prop:pageIncrement",
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "pageIncrement",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:prop:pageSize",
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "pageSize",
+        "origin": "manual"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Range:prop:restrict-to-fill-level",
         "from": "svelters-api:v1:type:gtk:Gtk:Range",
         "name": "restrict-to-fill-level",
@@ -268,6 +294,12 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:prop:stepIncrement",
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "stepIncrement",
+        "origin": "manual"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:tooltip-markup",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "tooltip-markup",
@@ -280,9 +312,21 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:prop:upper",
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "upper",
+        "origin": "manual"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:valign",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "valign",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:prop:value",
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "value",
         "origin": "manual"
       },
       {

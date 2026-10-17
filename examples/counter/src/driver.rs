@@ -89,6 +89,7 @@ struct St {
     pending: Option<Pending>,
     failures: Vec<String>,
     dump: Option<Json>,
+    dump_all: Option<Json>,
     step_log: Vec<Json>,
     started: Instant,
     closed_at: Option<Instant>,
@@ -106,6 +107,8 @@ pub struct Driver {
 pub struct DriverReport {
     pub failures: Vec<String>,
     pub dump: Option<Json>,
+    /// The root tree followed by every other live toplevel (transient dialogs, secondary windows).
+    pub dump_all: Option<Json>,
     pub steps: Vec<Json>,
 }
 
@@ -124,6 +127,7 @@ impl Driver {
                 pending: None,
                 failures: Vec::new(),
                 dump: None,
+                dump_all: None,
                 step_log: Vec::new(),
                 started: Instant::now(),
                 closed_at: None,
@@ -143,6 +147,7 @@ impl Driver {
         DriverReport {
             failures: std::mem::take(&mut st.failures),
             dump: st.dump.take(),
+            dump_all: st.dump_all.take(),
             steps: std::mem::take(&mut st.step_log),
         }
     }
@@ -202,7 +207,16 @@ impl Driver {
             None => {
                 self.st.borrow_mut().phase = Phase::Painting;
                 let dump = self.tk.dump(ROOT);
-                self.st.borrow_mut().dump = Some(dump);
+                // Other live toplevels (dialogs, secondary windows) follow the root window's tree.
+                let mut all = dump.clone();
+                for t in self.host.toplevel_handles().into_iter().filter(|t| *t != ROOT) {
+                    if let (Json::Array(all), Json::Array(more)) = (&mut all, self.tk.dump(t)) {
+                        all.extend(more);
+                    }
+                }
+                let mut st = self.st.borrow_mut();
+                st.dump = Some(dump);
+                st.dump_all = Some(all);
                 self.schedule(PAINT_MS);
             }
             Some(step) => {

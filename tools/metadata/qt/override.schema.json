@@ -132,6 +132,15 @@
             },
             "composite": {
               "type": "object"
+            },
+            "args": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "C++ constructor arguments (QActionGroup needs a parent: [\"nullptr\"])."
+            },
+            "context_menu": {
+              "type": "boolean",
+              "description": "The element attaches to the widget it is inserted into and pops up on that widget's context-menu request (X4 contextmenu)."
             }
           }
         },
@@ -262,6 +271,14 @@
         "setup": {
           "type": "string",
           "description": "C++ statement run after the element is created in the generated prop tests ($w = the widget), e.g. adding pages before testing currentIndex."
+        },
+        "dynamic": {
+          "type": "string",
+          "description": "A string held as a dynamic QObject property of this name (not part of the class's API). Give it meaning with `after_set`."
+        },
+        "after_set": {
+          "type": "string",
+          "description": "Backend glue function `int f(Entry &, QObject *)` called after a dynamic property was written (menus.hpp.in)."
         }
       }
     },
@@ -544,7 +561,8 @@
             "none",
             "append_only",
             "native_index",
-            "unordered"
+            "unordered",
+            "actions"
           ]
         },
         "host": {
@@ -602,6 +620,23 @@
           "items": {
             "$ref": "#/$defs/attr"
           }
+        },
+        "id_of": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "list",
+            "item"
+          ],
+          "properties": {
+            "list": {
+              "type": "string"
+            },
+            "item": {
+              "type": "string"
+            }
+          },
+          "description": "Append-only slots removed by an id (op arg `id`): ids from `list` (e.g. QWizard::pageIds() const), the child is `item(id)` (QWizard::page(int) const)."
         }
       }
     },
@@ -746,7 +781,6 @@
           "type": "object",
           "additionalProperties": false,
           "required": [
-            "native",
             "args"
           ],
           "properties": {
@@ -763,6 +797,10 @@
             "readd": {
               "type": "boolean",
               "description": "Remove the child from the host (the slot's remove call, without its `then` steps) before the call; the argument values are read first. For positions fixed at add time."
+            },
+            "expr": {
+              "type": "string",
+              "description": "Instead of `native`: a C++ statement over `$h` (the slot host), `$c` (the child as the slot's accepted class) and `$v` (the value)."
             }
           }
         },
@@ -772,7 +810,7 @@
           "properties": {
             "expr": {
               "type": "string",
-              "description": "Instead of `native`: a C++ expression over `h` (the slot host), `ch` (the child widget) and `ci` (its index)."
+              "description": "Instead of `native`: a C++ expression over `h` (the slot host), `ch` (the child widget) and `ci` (its index). `$h` and `$c` (the child as the slot's accepted class) are also available."
             },
             "native": {
               "type": "string"
@@ -805,6 +843,10 @@
         },
         "provenance": {
           "$ref": "#/$defs/provenance"
+        },
+        "setup": {
+          "type": "string",
+          "description": "C++ statements the generated test runs after the first insert (`pw` the parent, `w` the child widget): state the attribute needs to be observable."
         }
       }
     }

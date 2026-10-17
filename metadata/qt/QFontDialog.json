@@ -770,7 +770,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "FontDialogOptions",
+        "native": "QFontDialog::FontDialogOptions",
         "nullable": false,
         "origin": "qdoc",
         "ref": "flags<QFontDialog::FontDialogOption>"

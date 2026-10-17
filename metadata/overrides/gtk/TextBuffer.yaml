@@ -1,0 +1,70 @@
+# Not an element: reached through GtkTextView:buffer (a borrowed handle).
+verify_subject: {borrowed: {tag: textview, getter: get_buffer}}
+properties:
+  - name: text
+    js_name: text
+    sample: "buffer text"
+    provenance: "GtkTextBuffer:text (Gtk 4 docs)"
+  - name: enable-undo
+    js_name: enableUndo
+    provenance: "GtkTextBuffer:enable-undo (Gtk 4 docs)"
+signals:
+  - name: changed
+    js_event: changed
+    handler_result: none
+    sync_required: false
+    trigger: {rust: 'o.downcast_ref::<gtk::TextBuffer>().unwrap().set_text(&format!("text {i}"));', values: [a, b, c]}
+    provenance: "GtkTextBuffer::changed, run-last, void (Gtk 4 docs)"
+  - name: begin-user-action
+    js_event: begin-user-action
+    handler_result: none
+    sync_required: false
+    trigger: {rust: 'o.downcast_ref::<gtk::TextBuffer>().unwrap().begin_user_action();', values: [a, b, c]}
+    provenance: "GtkTextBuffer::begin-user-action, run-last, void (Gtk 4 docs)"
+  - name: end-user-action
+    js_event: end-user-action
+    handler_result: none
+    sync_required: false
+    trigger: {rust: 'let b = o.downcast_ref::<gtk::TextBuffer>().unwrap(); b.begin_user_action(); b.end_user_action();', values: [a, b, c]}
+    provenance: "GtkTextBuffer::end-user-action, run-last, void (Gtk 4 docs)"
+  - name: modified-changed
+    js_event: modified-changed
+    handler_result: none
+    sync_required: false
+    trigger: {rust: 'o.downcast_ref::<gtk::TextBuffer>().unwrap().set_modified(i % 2 == 0);', values: [a, b, c]}
+    provenance: "GtkTextBuffer::modified-changed, run-last, void (Gtk 4 docs); emitted when the flag flips"
+methods:
+  - name: set_text
+    js_name: set_text
+    dispatch: dynamic
+    args: ["hello", -1]
+    expect: 'h.get(o, "text") == V::Str("hello".into())'
+    provenance: "gtk_text_buffer_set_text (Gtk 4 docs); string + int arguments through GIRepository (X1)"
+  - name: insert_at_cursor
+    js_name: insert_at_cursor
+    dispatch: dynamic
+    setup: 'h.set_str(o, "text", "ab").unwrap();'
+    args: ["X", -1]
+    expect: 'matches!(h.get(o, "text"), V::Str(s) if s.contains("X") && s.len() == 3)'
+    provenance: "gtk_text_buffer_insert_at_cursor inserts at the insert mark (Gtk 4 docs)"
+  - name: get_char_count
+    js_name: get_char_count
+    dispatch: dynamic
+    setup: 'h.set_str(o, "text", "h\u{e9}llo").unwrap();'
+    args: []
+    expect: 'r == V::I64(5)'
+    provenance: "gtk_text_buffer_get_char_count counts characters, not bytes (Gtk 4 docs)"
+  - name: get_line_count
+    js_name: get_line_count
+    dispatch: dynamic
+    setup: 'h.set_str(o, "text", "a\nb\nc").unwrap();'
+    args: []
+    expect: 'r == V::I64(3)'
+    provenance: "gtk_text_buffer_get_line_count (Gtk 4 docs)"
+  - name: undo
+    js_name: undo
+    dispatch: dynamic
+    setup: 'h.set_bool(o, "enableUndo", true).unwrap(); let b = h.obj(o).downcast::<gtk::TextBuffer>().unwrap(); b.begin_user_action(); b.insert_at_cursor("typed"); b.end_user_action();'
+    args: []
+    expect: 'h.get(o, "text") == V::Str("".into())'
+    provenance: "gtk_text_buffer_undo reverts the last user action when enable-undo is set (Gtk 4 docs)"

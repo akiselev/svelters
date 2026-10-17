@@ -1,4 +1,8 @@
 properties:
+  - name: file
+    provenance: "GtkPicture:file, GFile string form (ABI v3); round trip"
+  - name: paintable
+    provenance: "GtkPicture:paintable, object reference; round trip"
   - name: alternative-text
     js_name: alternativeText
     provenance: "GtkPicture:alternative-text (Gtk 4 docs)"

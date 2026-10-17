@@ -598,6 +598,11 @@
         "get": "gtk_font_dialog_button_get_font_desc",
         "set": "gtk_font_dialog_button_set_font_desc"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkFontDialogButton:font-desc, PangoFontDescription (Gtk 4 docs); boxed round trip (handle ids blanked)"
+      },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:prop:font-desc",
       "invocation": "reflected",
@@ -721,6 +726,11 @@
         "get": "gtk_font_dialog_button_get_level",
         "set": "gtk_font_dialog_button_set_level"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkFontDialogButton:level, GtkFontLevel enum (Gtk 4 docs)"
+      },
       "default": "font",
       "id": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:prop:level",
       "invocation": "reflected",
@@ -761,6 +771,11 @@
         "get": "gtk_font_dialog_button_get_use_font",
         "set": "gtk_font_dialog_button_set_use_font"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkFontDialogButton:use-font (Gtk 4 docs)"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:prop:use-font",
       "invocation": "reflected",
@@ -800,6 +815,11 @@
       "accessors": {
         "get": "gtk_font_dialog_button_get_use_size",
         "set": "gtk_font_dialog_button_set_use_size"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkFontDialogButton:use-size (Gtk 4 docs)"
       },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:prop:use-size",
@@ -866,7 +886,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/FontDialogButton.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"

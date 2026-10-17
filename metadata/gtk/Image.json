@@ -754,6 +754,13 @@
         "get": null,
         "set": null
       },
+      "annotated": {
+        "fields": [
+          "sample"
+        ],
+        "origin": "manual",
+        "provenance": "GtkImage:file, string path; the image must load for GTK to keep it (Gtk 4 docs)"
+      },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Image:prop:file",
       "invocation": "reflected",
@@ -775,6 +782,7 @@
         "origin": "runtime",
         "owner": "GtkImage"
       },
+      "sample": "../../docs/site/public/favicon.svg",
       "type": {
         "gtype": "gchararray",
         "native": "gchar*",
@@ -792,6 +800,11 @@
       "accessors": {
         "get": "gtk_image_get_gicon",
         "set": "gtk_image_set_from_gicon"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkImage:gicon, GIcon string form (ABI v3); round trip"
       },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Image:prop:gicon",
@@ -926,6 +939,11 @@
       "accessors": {
         "get": "gtk_image_get_paintable",
         "set": "gtk_image_set_from_paintable"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkImage:paintable, object reference; round trip"
       },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Image:prop:paintable",

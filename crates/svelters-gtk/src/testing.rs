@@ -96,6 +96,32 @@ pub enum V {
     Boxed(u64),
 }
 
+/// Debug form of a value with boxed handle numbers blanked: every read of a boxed property mints a
+/// new handle, so round-trip tests compare the shape and the plain fields, not the handle ids.
+pub fn shape(v: &impl std::fmt::Debug) -> String {
+    let s = format!("{v:?}");
+    let mut out = String::with_capacity(s.len());
+    let mut it = s.chars().peekable();
+    while let Some(c) = it.next() {
+        out.push(c);
+        if out.ends_with("handle: ") || out.ends_with("Boxed(") {
+            while it.peek().is_some_and(|d| d.is_ascii_digit()) {
+                it.next();
+            }
+            out.push('#');
+        }
+    }
+    out
+}
+
+/// The name of a signal id: generated table, or one of the hand-written kinds (menu actions).
+fn signal_name(id: u32) -> String {
+    match SIGNALS.get((id as usize).wrapping_sub(1)) {
+        Some(s) if id < 0x4000 => s.name.to_string(),
+        _ => crate::backend::menus_signal_name(id).to_string(),
+    }
+}
+
 /// What the harness host answers to `call_sync`.
 #[derive(Debug, Clone, PartialEq, Default)]
 pub enum SyncReply {
@@ -238,6 +264,16 @@ impl Harness {
     }
     pub fn create(&self, kind: &str) -> u64 {
         self.try_create(kind).unwrap_or_else(|e| panic!("create {kind}: {e}"))
+    }
+
+    /// A BORROWED handle: the object `getter` (a no-argument method of element `tag`, e.g.
+    /// `get_buffer`) returns. The element stays alive in the harness.
+    pub fn borrow_from(&self, tag: &str, getter: &str) -> u64 {
+        let owner = self.create(tag);
+        match self.call_args(owner, getter, &[]) {
+            Ok(V::Handle(b)) => b,
+            other => panic!("{tag}.{getter} did not return a handle: {other:?}"),
+        }
     }
 
     fn kind_of(&self, h: u64) -> u32 {
@@ -515,6 +551,25 @@ impl Harness {
         Ok(self.name_value(&unsafe { Value::from_raw(&out) }))
     }
 
+    /// A styling op (ABI v2.3). `text` of `None` is `SVL_NULL`. Returns the op's result.
+    pub fn style(&self, op: u32, h: u64, text: Option<&str>) -> Result<i32, String> {
+        let vt = self.vt();
+        let f = vt.style.expect("style");
+        let v = match text {
+            Some(t) => Value::Str(t.to_string()),
+            None => Value::Null,
+        };
+        v.with_raw(|raw| {
+            let rc = unsafe { f(vt.self_, op, h, raw) };
+            if rc < 0 { Err(self.err()) } else { Ok(rc) }
+        })
+    }
+
+    /// CSS parse errors the backend's providers reported since the last call.
+    pub fn style_errors(&self) -> Vec<String> {
+        self.backend.take_style_errors()
+    }
+
     pub fn listen(&self, h: u64, signal: &str, on: bool) -> Result<(), String> {
         let id = self.resolve(SVL_SIGNAL, self.kind_of(h), signal);
         if id == 0 {
@@ -552,7 +607,7 @@ impl Harness {
     }
     pub fn take_events_with_args(&self) -> Vec<(u64, String, Vec<V>)> {
         let evs: Vec<_> = self.rec.events.borrow_mut().drain(..).collect();
-        evs.into_iter().map(|(h, s, a)| (h, SIGNALS[(s & SVL_SIGNAL_ID_MASK) as usize - 1].name.to_string(), a.iter().map(|x| self.name_value(x)).collect())).collect()
+        evs.into_iter().map(|(h, s, a)| (h, signal_name(s & SVL_SIGNAL_ID_MASK), a.iter().map(|x| self.name_value(x)).collect())).collect()
     }
     pub fn take_destroyed(&self) -> Vec<u64> {
         self.rec.destroyed.borrow_mut().drain(..).map(|(h, _)| h).collect()

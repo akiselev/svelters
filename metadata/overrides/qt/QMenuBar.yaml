@@ -1,8 +1,6 @@
-# Element `menubar`. Menus and actions need QAction children (gap G7): QMenuBar::addMenu(QString)
-# returns a QMenu* the menubar owns, but a menu created that way has no element handle to add items
-# to, and addMenu(QMenu*)/insertMenu take or return QAction*, so the `menu` element cannot be a slot
-# child yet. Only the plain facts are annotated. nativeMenuBar was dropped: it cannot be enabled on the
-# xcb test platform (setNativeMenuBar(true) reads back false).
+# Element `menubar`: its items are menus (QMenu::menuAction()) and actions, held by the `items` slot
+# (QWidget::insertAction/removeAction, glue in menus.hpp.in; see QMenu.yaml). Place it in a vertical `box` like any widget.
+# nativeMenuBar was dropped: it cannot be enabled on the xcb test platform (setNativeMenuBar(true) reads back false).
 elements:
   - tag: menubar
     construct: { class: QMenuBar }
@@ -10,3 +8,17 @@ elements:
       - { js: defaultUp, native: defaultUp, provenance: "QMenuBar::defaultUp (qdoc)" }
     methods:
       - { js: clear, native: clear, provenance: "QMenuBar::clear() (qdoc)" }
+    children:
+      policy: ordered
+      default_slot: items
+      slots:
+        - name: items
+          content: widget
+          accepts: [QAction, QMenu]
+          cardinality: many
+          order: actions
+          host: self
+          default: { kind: none }
+          on_remove: empty
+          ops: {}
+          provenance: "QWidget::insertAction/removeAction (qdoc); a QMenu item is its menuAction(); X4"

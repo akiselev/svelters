@@ -4939,7 +4939,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "DragDropMode",
+        "native": "QAbstractItemView::DragDropMode",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QAbstractItemView::DragDropMode>"
@@ -5065,7 +5065,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "EditTriggers",
+        "native": "QAbstractItemView::EditTriggers",
         "nullable": false,
         "origin": "qdoc",
         "ref": "flags<QAbstractItemView::EditTrigger>"
@@ -5107,7 +5107,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "ScrollMode",
+        "native": "QAbstractItemView::ScrollMode",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QAbstractItemView::ScrollMode>"
@@ -5236,7 +5236,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "SelectionBehavior",
+        "native": "QAbstractItemView::SelectionBehavior",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QAbstractItemView::SelectionBehavior>"
@@ -5278,7 +5278,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "SelectionMode",
+        "native": "QAbstractItemView::SelectionMode",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QAbstractItemView::SelectionMode>"
@@ -5458,7 +5458,7 @@
         "write": true
       },
       "accessors": {
-        "get": "resetVerticalScrollMode",
+        "get": "verticalScrollMode",
         "origin": "qdoc",
         "reset": "resetVerticalScrollMode",
         "set": "setVerticalScrollMode"
@@ -5488,7 +5488,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "ScrollMode",
+        "native": "QAbstractItemView::ScrollMode",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QAbstractItemView::ScrollMode>"

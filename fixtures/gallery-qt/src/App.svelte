@@ -2,17 +2,22 @@
   // Qt widget gallery: a sidebar of family pages (src/pages/*.svelte, sorted by file name) and
   // the selected page on the right. Handle layout is fixed so screenshot tests can click a page:
   // window #1, outer box #2, sidebar box #3, sidebar button i = #(4 + i). Keep the sidebar first.
-  // Only annotated Qt props exist; the window size comes from the content.
+  // Only annotated Qt props exist.
   const modules = import.meta.glob('./pages/*.svelte', { eager: true });
   const pages = Object.keys(modules)
     .sort()
     .map((path) => ({ name: path.slice('./pages/'.length, -'.svelte'.length), component: modules[path].default }));
   const title = (name) => name.replace(/^\d+-/, '').replace(/-/g, ' ');
   let current = $state(0);
+  // The window size: Qt sizes a window to its content, which is too small for the pages.
+  let win = $state(null);
+  $effect(() => {
+    win?.call('resize', 960, 640);
+  });
   const Page = $derived(pages[current].component);
 </script>
 
-<window title="svelters gallery (Qt)">
+<window title="svelters gallery (Qt)" bind:this={win}>
   <box orientation="horizontal" spacing="12">
     <box orientation="vertical" spacing="4">
       {#each pages as p, i}

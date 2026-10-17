@@ -117,6 +117,12 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:ScaleButton:prop:icons",
+        "from": "svelters-api:v1:type:gtk:Gtk:ScaleButton",
+        "name": "icons",
+        "origin": "manual"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-bottom",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "margin-bottom",

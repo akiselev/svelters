@@ -46,6 +46,15 @@ BOXED = {"QIcon", "QFont", "QPixmap", "QImage", "QBrush", "QPalette", "QCursor",
 DATES = {"QDate": "date", "QTime": "time", "QDateTime": "datetime"}
 
 
+# QtGui classes the menu model needs (X4): actions are non-widget children of menus, menu bars and tool bars.
+QTGUI_CLASSES = {"QAction", "QActionGroup", "QTextDocument"}
+_MODULES: dict = {}
+
+
+def n_module(name):
+    return _MODULES.get(name, "qtwidgets")
+
+
 class EnumIndex:
     """Enums and flags typedefs from the qdoc indexes, by fully qualified name.
 
@@ -233,7 +242,7 @@ def instance_defaults(cls, mo, QtCore) -> dict:
 
 def metaobject_dump(names):
     os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
-    from PySide6 import QtCore, QtWidgets, __version__ as pyside
+    from PySide6 import QtCore, QtGui, QtWidgets, __version__ as pyside
 
     app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841 - widgets need one
 
@@ -244,7 +253,7 @@ def metaobject_dump(names):
 
     dumps = {}
     for n in names:
-        cls = getattr(QtWidgets, n, None)
+        cls = getattr(QtWidgets, n, None) or getattr(QtGui, n, None)
         if not (isinstance(cls, type) and issubclass(cls, QtCore.QObject)):
             continue
         mo = cls.staticMetaObject
@@ -334,10 +343,19 @@ def build_kind(name, c, classes, qobjects, enums, meta, tsys, src):
     for p in c.findall("property"):
         pn = p.get("name")
         accs = func_prop.get(pn, [])
-        getter = next((a["name"] for a in accs if not a["params"]), None)
+        # The getter is the parameterless accessor that returns something; `clearMinimumDate()` and
+        # `resetX()` are parameterless too, but return void.
+        cap = pn[:1].upper() + pn[1:]
+        getters = [a for a in accs if not a["params"] and (a["returns"].get("native") or "void").strip() != "void"]
+        getter = next((a["name"] for a in getters if a["name"] in (pn, f"is{cap}", f"has{cap}", f"get{cap}")),
+                      next((a["name"] for a in getters), None))
+        # qdoc's property dataType is sometimes wrong (QInputDialog::doubleValue says int); the
+        # getter's declared return type is authoritative when there is one.
+        grec = next((a for a in getters if a["name"] == getter), None)
+        dtype = (grec["returns"].get("native") if grec else None) or p.get("dataType")
         setter = next((a["name"] for a in accs if len(a["params"]) == 1 and a["name"].startswith("set")), None)
         reset = next((a["name"] for a in accs if a["name"].startswith("reset")), None)
-        rec = {"name": pn, "js_name": pn, "type": neutral_type(p.get("dataType"), qobjects, enums, ctx),
+        rec = {"name": pn, "js_name": pn, "type": neutral_type(dtype, qobjects, enums, ctx),
                "access": {"read": True, "write": p.get("writable") != "false"},
                "accessors": {"get": getter, "set": setter, "reset": reset, "origin": "qdoc"},
                "brief": p.get("brief"), "role": "value", "origin": "qdoc"}
@@ -388,7 +406,7 @@ def build_kind(name, c, classes, qobjects, enums, meta, tsys, src):
     return {
         "schema": svmeta.SCHEMA, "toolkit": "qt",
         "id": f"{prefix}:{name}",
-        "native": {"name": name, "header": c.get("location"), "module": "QtWidgets", "brief": c.get("brief")},
+        "native": {"name": name, "header": c.get("location"), "module": "QtGui" if n_module(name) == "qtgui" else "QtWidgets", "brief": c.get("brief")},
         "kind": "object", "abstract": any(f.get("virtual") == "pure" for f in c.findall("function")),
         "qobject": md is not None,
         "bases": base_chain(name, classes), "interfaces": [],
@@ -440,9 +458,10 @@ def main() -> int:
     a = ap.parse_args()
     docdir = Path(a.docdir)
     classes, files, namespaces = parse_qdoc(docdir)
+    _MODULES.update({n: m for n, (m, _) in classes.items()})
     widget_classes = sorted(
         n for n, (m, c) in classes.items()
-        if m == "qtwidgets" and c.get("access") == "public" and c.get("status") in ("active", "deprecated")
+        if (m == "qtwidgets" or (m == "qtgui" and n in QTGUI_CLASSES)) and c.get("access") == "public" and c.get("status") in ("active", "deprecated")
         and c.get("location") and "::" not in n and "<" not in n)
     qobjects = {n for n in classes if n == "QObject" or "QObject" in base_chain(n, classes)}
     owners = [(n, c) for n, (_, c) in sorted(classes.items())] + [(n, c) for n, (_, c) in sorted(namespaces.items())]

@@ -1146,7 +1146,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "ToolButtonPopupMode",
+        "native": "QToolButton::ToolButtonPopupMode",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QToolButton::ToolButtonPopupMode>"

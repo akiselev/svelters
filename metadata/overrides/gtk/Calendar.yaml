@@ -24,6 +24,30 @@ properties:
     js_name: showWeekNumbers
     provenance: "GtkCalendar:show-week-numbers (Gtk 4 docs)"
 signals:
+  - name: next-month
+    js_event: next-month
+    handler_result: none
+    sync_required: false
+    trigger: {rust: 'o.emit_by_name::<()>("next-month", &[]);', values: [a, b, c]}
+    provenance: "GtkCalendar::next-month, run-first, action signal (Gtk 4 docs)"
+  - name: next-year
+    js_event: next-year
+    handler_result: none
+    sync_required: false
+    trigger: {rust: 'o.emit_by_name::<()>("next-year", &[]);', values: [a, b, c]}
+    provenance: "GtkCalendar::next-year, run-first, action signal (Gtk 4 docs)"
+  - name: prev-month
+    js_event: prev-month
+    handler_result: none
+    sync_required: false
+    trigger: {rust: 'o.emit_by_name::<()>("prev-month", &[]);', values: [a, b, c]}
+    provenance: "GtkCalendar::prev-month, run-first, action signal (Gtk 4 docs)"
+  - name: prev-year
+    js_event: prev-year
+    handler_result: none
+    sync_required: false
+    trigger: {rust: 'o.emit_by_name::<()>("prev-year", &[]);', values: [a, b, c]}
+    provenance: "GtkCalendar::prev-year, run-first, action signal (Gtk 4 docs)"
   - name: day-selected
     handler_result: none
     sync_required: false
@@ -58,3 +82,15 @@ methods:
     args: [1905508800000]
     expect: 'h.get(o, "day") == V::I64(20)'
     provenance: "gtk_calendar_select_day (Gtk 4 docs)"
+  - name: mark_day
+    js_name: markDay
+    dispatch: dynamic
+    args: [5]
+    expect: 'r == V::Null'
+    provenance: "gtk_calendar_mark_day (Gtk 4 docs)"
+  - name: clear_marks
+    js_name: clearMarks
+    dispatch: dynamic
+    args: []
+    expect: 'r == V::Null'
+    provenance: "gtk_calendar_clear_marks (Gtk 4 docs)"

@@ -10,13 +10,15 @@
     "./types": {
       "types": "./types/index.d.ts"
     },
-    "./coerce": "./src/coerce.js"
+    "./coerce": "./src/coerce.js",
+    "./style": "./src/style.js"
   },
   "dependencies": {
-    "svelte": "5.57.2"
+    "svelte": "5.57.2",
+    "@svelters/style": "workspace:*"
   },
   "scripts": {
-    "test": "node --conditions=custom-renderer --test test/renderer.test.mjs test/serdes.test.mjs && pnpm run check",
+    "test": "node --conditions=custom-renderer --test test/renderer.test.mjs test/serdes.test.mjs test/style.test.mjs && pnpm run check",
     "check": "svelte-check --workspace check --tsconfig ./tsconfig.json --threshold error"
   },
   "devDependencies": {

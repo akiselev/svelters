@@ -3,6 +3,30 @@
 import type { Boxed, DateParts, Insets, Point, Rect, Size, TimeParts, Color, Variant } from './values';
 
 export interface QtElementDescriptors {
+  action: {
+    props: {
+      label?: string;
+      icon?: Boxed<"QIcon"> | string;
+      shortcut?: Boxed<"QKeySequence"> | string;
+      tooltip?: string;
+      statusTip?: string;
+      enabled?: boolean;
+      visible?: boolean;
+      checkable?: boolean;
+      checked?: boolean;
+      group?: string;
+    };
+    events: {
+      toggled: (checked: boolean) => void;
+      activate: (checked: boolean) => void;
+      hover: () => void;
+    };
+    methods: {
+      trigger(): void;
+      toggle(): void;
+    };
+    slots: never;
+  };
   box: {
     props: {
       orientation?: "horizontal" | "vertical";
@@ -94,6 +118,8 @@ export interface QtElementDescriptors {
       dateEditAcceptDelay?: number;
       selectionMode?: "no-selection" | "single-selection";
       selectedDate?: DateParts;
+      minimumDate?: DateParts;
+      maximumDate?: DateParts;
       enabled?: boolean;
       toolTip?: string;
       statusTip?: string;
@@ -194,6 +220,7 @@ export interface QtElementDescriptors {
       open(options?: { signal?: AbortSignal }): Promise<number>;
       accept(): void;
       reject(): void;
+      present(): void;
       done(r: number): void;
       show(): void;
       hide(): void;
@@ -282,11 +309,40 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
+  contextmenu: {
+    props: {
+      label?: string;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+    };
+    methods: {
+      popup(p: Point, atAction: number): void;
+      popdown(): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: "items";
+  };
   dateedit: {
     props: {
       date?: DateParts;
       displayFormat?: string;
       calendarPopup?: boolean;
+      minimumDate?: DateParts;
+      maximumDate?: DateParts;
       readOnly?: boolean;
       wrapping?: boolean;
       frame?: boolean;
@@ -322,6 +378,12 @@ export interface QtElementDescriptors {
       dateTime?: Date;
       displayFormat?: string;
       calendarPopup?: boolean;
+      minimumDate?: DateParts;
+      maximumDate?: DateParts;
+      minimumTime?: TimeParts;
+      maximumTime?: TimeParts;
+      minimumDateTime?: Date;
+      maximumDateTime?: Date;
       readOnly?: boolean;
       wrapping?: boolean;
       frame?: boolean;
@@ -413,6 +475,7 @@ export interface QtElementDescriptors {
     };
     methods: {
       open(): void;
+      present(): void;
       accept(): void;
       reject(): void;
       done(r: number): void;
@@ -485,7 +548,7 @@ export interface QtElementDescriptors {
       update(): void;
       adjustSize(): void;
     };
-    slots: never;
+    slots: "widget";
   };
   doublespinbox: {
     props: {
@@ -594,6 +657,7 @@ export interface QtElementDescriptors {
     methods: {
       showMessage(message: string): void;
       open(): void;
+      present(): void;
       accept(): void;
       reject(): void;
       done(r: number): void;
@@ -632,6 +696,7 @@ export interface QtElementDescriptors {
     methods: {
       setDirectory(directory: string): void;
       open(): void;
+      present(): void;
       accept(): void;
       reject(): void;
       done(r: number): void;
@@ -694,6 +759,7 @@ export interface QtElementDescriptors {
     };
     methods: {
       open(): void;
+      present(): void;
       accept(): void;
       reject(): void;
       done(r: number): void;
@@ -763,6 +829,7 @@ export interface QtElementDescriptors {
       orientation?: "horizontal" | "vertical";
       title?: string;
       checkable?: boolean;
+      checked?: boolean;
       flat?: boolean;
       alignment?: Array<"absolute" | "baseline" | "bottom" | "center" | "hcenter" | "horizontal-mask" | "justify" | "leading" | "left" | "right" | "top" | "trailing" | "vcenter" | "vertical-mask">;
       enabled?: boolean;
@@ -794,6 +861,7 @@ export interface QtElementDescriptors {
       labelText?: string;
       textValue?: string;
       intValue?: number;
+      doubleValue?: number;
       intMinimum?: number;
       intMaximum?: number;
       inputMode?: "double-input" | "int-input" | "text-input";
@@ -821,6 +889,7 @@ export interface QtElementDescriptors {
     };
     methods: {
       open(): void;
+      present(): void;
       accept(): void;
       reject(): void;
       done(result: number): void;
@@ -1011,10 +1080,15 @@ export interface QtElementDescriptors {
       update(): void;
       adjustSize(): void;
     };
-    slots: never;
+    slots: "subwindows";
   };
   menu: {
     props: {
+      label?: string;
+      icon?: Boxed<"QIcon"> | string;
+      tearOffEnabled?: boolean;
+      separatorsCollapsible?: boolean;
+      toolTipsVisible?: boolean;
       enabled?: boolean;
       toolTip?: string;
       statusTip?: string;
@@ -1036,7 +1110,7 @@ export interface QtElementDescriptors {
       update(): void;
       adjustSize(): void;
     };
-    slots: never;
+    slots: "items";
   };
   menubar: {
     props: {
@@ -1061,6 +1135,16 @@ export interface QtElementDescriptors {
       setFocus(): void;
       update(): void;
       adjustSize(): void;
+    };
+    slots: "items";
+  };
+  menuseparator: {
+    props: {
+      visible?: boolean;
+    };
+    events: {
+    };
+    methods: {
     };
     slots: never;
   };
@@ -1092,6 +1176,7 @@ export interface QtElementDescriptors {
     };
     methods: {
       open(): void;
+      present(): void;
       accept(): void;
       reject(): void;
       done(r: number): void;
@@ -1225,6 +1310,7 @@ export interface QtElementDescriptors {
       reset(): void;
       cancel(): void;
       open(): void;
+      present(): void;
       accept(): void;
       reject(): void;
       done(r: number): void;
@@ -1561,6 +1647,7 @@ export interface QtElementDescriptors {
       movable?: boolean;
       documentMode?: boolean;
       usesScrollButtons?: boolean;
+      currentIndex?: number;
       enabled?: boolean;
       toolTip?: string;
       statusTip?: string;
@@ -1622,6 +1709,36 @@ export interface QtElementDescriptors {
       setFocus(): void;
       update(): void;
       adjustSize(): void;
+    };
+    slots: never;
+  };
+  textdocument: {
+    props: {
+      undoRedoEnabled?: boolean;
+      modified?: boolean;
+      maximumBlockCount?: number;
+      documentMargin?: number;
+      indentWidth?: number;
+      textWidth?: number;
+      useDesignMetrics?: boolean;
+      defaultStyleSheet?: string;
+      readonly blockCount?: number;
+    };
+    events: {
+      contentsChanged: () => void;
+      blockCountChanged: (newBlockCount: number) => void;
+      modificationChanged: (changed: boolean) => void;
+    };
+    methods: {
+      setPlainText(text: string): void;
+      toPlainText(): string;
+      setHtml(html: string): void;
+      clear(): void;
+      isEmpty(): boolean;
+      characterCount(): number;
+      lineCount(): number;
+      undo(): void;
+      redo(): void;
     };
     slots: never;
   };
@@ -1688,6 +1805,8 @@ export interface QtElementDescriptors {
     props: {
       time?: TimeParts;
       displayFormat?: string;
+      minimumTime?: TimeParts;
+      maximumTime?: TimeParts;
       readOnly?: boolean;
       wrapping?: boolean;
       frame?: boolean;
@@ -1748,10 +1867,11 @@ export interface QtElementDescriptors {
       update(): void;
       adjustSize(): void;
     };
-    slots: never;
+    slots: "items";
   };
   toolbox: {
     props: {
+      currentIndex?: number;
       frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
       frameShadow?: "plain" | "raised" | "sunken";
       lineWidth?: number;
@@ -1777,7 +1897,7 @@ export interface QtElementDescriptors {
       update(): void;
       adjustSize(): void;
     };
-    slots: never;
+    slots: "pages";
   };
   toolbutton: {
     props: {
@@ -1852,7 +1972,7 @@ export interface QtElementDescriptors {
       update(): void;
       adjustSize(): void;
     };
-    slots: "central" | "menubar" | "statusbar";
+    slots: "central" | "menubar" | "statusbar" | "toolbars" | "docks";
   };
   wizard: {
     props: {
@@ -1879,6 +1999,7 @@ export interface QtElementDescriptors {
     };
     methods: {
       open(): void;
+      present(): void;
       accept(): void;
       reject(): void;
       done(r: number): void;
@@ -1888,7 +2009,7 @@ export interface QtElementDescriptors {
       update(): void;
       adjustSize(): void;
     };
-    slots: never;
+    slots: "pages";
   };
   wizardpage: {
     props: {
@@ -1923,6 +2044,8 @@ export type QtElementTag = keyof QtElementDescriptors;
 /** `parent:<name>` attributes any child element can carry; which apply depends on the parent and the slot. */
 export interface QtChildAttrs {
   'parent:align'?: ("bottom" | "center" | "hcenter" | "left" | "none" | "right" | "top" | "vcenter");
+  'parent:area'?: ("bottom" | "left" | "right" | "top");
+  'parent:breakBefore'?: boolean;
   'parent:column'?: number;
   'parent:columnSpan'?: number;
   'parent:row'?: number;

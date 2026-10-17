@@ -83,3 +83,86 @@ elements:
               args: [null]
               effects: { child: deleted }
           provenance: [{ origin: typesystem, ref: replace_child }, { origin: probe, ref: qt_slot_ownership_probe.py }]
+        # Toolbars and dock widgets (X7). QMainWindow has no indexOf/count for them, so the slots are
+        # append-only (membership by isAncestorOf, A1-GAPS G13) and the placement is a child attribute
+        # (X3): `<toolbar parent:area="left" parent:breakBefore={true}>`, `<dockwidget parent:area="right">`.
+        # removeToolBar / removeDockWidget hide the widget and keep it parented, so remove also unparents it.
+        - name: toolbars
+          content: widget
+          accepts: [QToolBar]
+          route_by_kind: true
+          cardinality: many
+          order: append_only
+          host: self
+          default: { kind: none }
+          on_remove: empty
+          attrs:
+            - name: area
+              type: enum
+              values:
+                top: "Qt::TopToolBarArea"
+                left: "Qt::LeftToolBarArea"
+                right: "Qt::RightToolBarArea"
+                bottom: "Qt::BottomToolBarArea"
+              default: top
+              samples: [left, bottom]
+              set: { native: "QMainWindow::addToolBar(Qt::ToolBarArea, QToolBar*)", args: [value, child] }
+              get: { native: "QMainWindow::toolBarArea(QToolBar*) const", args: [child] }
+              expect: "$p->toolBarArea(static_cast<QToolBar *>($w)) == Qt::LeftToolBarArea"
+              provenance: "QMainWindow::addToolBar(Qt::ToolBarArea, QToolBar*) moves a toolbar the window already manages; toolBarArea(QToolBar*) (qdoc); X3 child attribute"
+            - name: breakBefore
+              type: bool
+              default: false
+              samples: [true, false]
+              set: { expr: "if ($v) $h->insertToolBarBreak($c); else $h->removeToolBarBreak($c)", args: [] }
+              get: { native: "QMainWindow::toolBarBreak(QToolBar*) const", args: [child] }
+              setup: "pw->insertToolBar(static_cast<QToolBar *>(w), new QToolBar(pw));"   # a break needs a toolbar before it
+              expect: "$p->toolBarBreak(static_cast<QToolBar *>($w))"
+              provenance: "QMainWindow::insertToolBarBreak / removeToolBarBreak / toolBarBreak (qdoc); X3 child attribute"
+          ops:
+            insert:
+              native: "QMainWindow::addToolBar(QToolBar*)"
+              args: [child]
+              effects: { child: parented }
+            remove:
+              native: "QMainWindow::removeToolBar(QToolBar*)"
+              args: [child]
+              then:
+                - { native: "QWidget::setParent(QWidget*)", receiver: child, args: [null] }
+              effects: { child: unparented }
+          provenance: [{ origin: qdoc, ref: "QMainWindow::addToolBar, removeToolBar: the toolbar is hidden, not deleted" }, { origin: typesystem, ref: addownership-1 }]
+        - name: docks
+          content: widget
+          accepts: [QDockWidget]
+          route_by_kind: true
+          cardinality: many
+          order: append_only
+          host: self
+          default: { kind: none }
+          on_remove: empty
+          attrs:
+            - name: area
+              type: enum
+              values:
+                left: "Qt::LeftDockWidgetArea"
+                right: "Qt::RightDockWidgetArea"
+                top: "Qt::TopDockWidgetArea"
+                bottom: "Qt::BottomDockWidgetArea"
+              default: left
+              samples: [right, bottom]
+              set: { native: "QMainWindow::addDockWidget(Qt::DockWidgetArea, QDockWidget*)", args: [value, child] }
+              get: { native: "QMainWindow::dockWidgetArea(QDockWidget*) const", args: [child] }
+              expect: "$p->dockWidgetArea(static_cast<QDockWidget *>($w)) == Qt::RightDockWidgetArea"
+              provenance: "QMainWindow::addDockWidget(Qt::DockWidgetArea, QDockWidget*) moves a dock widget the window already manages; dockWidgetArea(QDockWidget*) (qdoc); X3 child attribute"
+          ops:
+            insert:
+              native: "QMainWindow::addDockWidget(Qt::DockWidgetArea, QDockWidget*)"
+              args: ["const:Qt::LeftDockWidgetArea", child]
+              effects: { child: parented }
+            remove:
+              native: "QMainWindow::removeDockWidget(QDockWidget*)"
+              args: [child]
+              then:
+                - { native: "QWidget::setParent(QWidget*)", receiver: child, args: [null] }
+              effects: { child: unparented }
+          provenance: [{ origin: qdoc, ref: "QMainWindow::addDockWidget, removeDockWidget: the dock widget is hidden, not deleted" }]

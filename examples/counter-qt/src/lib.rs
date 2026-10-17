@@ -14,6 +14,10 @@ unsafe extern "C" {
     fn svl_qt_test_throw_next();
     fn svl_qt_native_prop(h: u64, name: *const std::ffi::c_char, on_layout: i32) -> *const std::ffi::c_char;
     fn svl_qt_grab_png(h: u64, path: *const std::ffi::c_char) -> i32;
+    fn svl_qt_pixel(h: u64, x: i32, y: i32) -> i32;
+    fn svl_qt_palette_color(h: u64, background: i32) -> i32;
+    fn svl_qt_app_stylesheet() -> *const std::ffi::c_char;
+    fn svl_qt_opacity(h: u64) -> f64;
     fn svl_qt_type_text(h: u64, utf8: *const std::ffi::c_char) -> i32;
     fn svl_qt_close(h: u64) -> i32;
     fn svl_qt_grid_cell(grid: u64, child: u64, row: *mut i32, col: *mut i32, row_span: *mut i32, col_span: *mut i32) -> i32;
@@ -34,6 +38,15 @@ unsafe extern "C" {
     fn svl_qt_vlist_select(pos: i32) -> i32;
     fn svl_qt_vlist_activate(pos: i32) -> i32;
     fn svl_qt_live_handles() -> usize;
+    fn svl_qt_find_item(label: *const std::ffi::c_char) -> u64;
+    fn svl_qt_find_button(label: *const std::ffi::c_char) -> u64;
+    fn svl_qt_trigger_item(h: u64) -> i32;
+    fn svl_qt_item_checked(h: u64) -> i32;
+    fn svl_qt_menu_dump(h: u64) -> *const std::ffi::c_char;
+    fn svl_qt_shortcut(h: u64, seq: *const std::ffi::c_char) -> i32;
+    fn svl_qt_context_request(h: u64) -> i32;
+    fn svl_qt_open_menus() -> i32;
+    fn svl_qt_close_menus();
 }
 
 /// The Qt backend vtable. `run` creates the `QApplication` (if none exists) and owns the loop.
@@ -86,6 +99,33 @@ pub mod hooks {
             0 => Ok(()),
             _ => Err(format!("cannot grab handle {h}")),
         }
+    }
+
+    /// A rendered pixel of the widget behind `h` as 0xRRGGBB (from `grab()`), or None when out of range.
+    pub fn pixel(h: u64, x: i32, y: i32) -> Option<u32> {
+        match unsafe { svl_qt_pixel(h, x, y) } {
+            v if v >= 0 => Some(v as u32),
+            _ => None,
+        }
+    }
+
+    /// The widget's foreground (or background) palette colour after QSS, 0xRRGGBB.
+    pub fn palette_color(h: u64, background: bool) -> Option<u32> {
+        match unsafe { svl_qt_palette_color(h, background as i32) } {
+            v if v >= 0 => Some(v as u32),
+            _ => None,
+        }
+    }
+
+    /// The application stylesheet currently set.
+    pub fn app_stylesheet() -> String {
+        // SAFETY: NUL-terminated buffer valid until the next call; copied here.
+        unsafe { std::ffi::CStr::from_ptr(svl_qt_app_stylesheet()) }.to_string_lossy().into_owned()
+    }
+
+    /// The opacity of the widget's `QGraphicsOpacityEffect` (1.0 without one).
+    pub fn opacity(h: u64) -> f64 {
+        unsafe { svl_qt_opacity(h) }
     }
 
     /// Types `text` into the `QLineEdit` behind `h` with key events, replacing its content.
@@ -158,6 +198,56 @@ pub mod hooks {
     pub fn click_button(label: &str) -> bool {
         let l = CString::new(label).expect("label");
         unsafe { svl_qt_click_button(l.as_ptr()) == 0 }
+    }
+
+    /// The lowest handle of the action or menu with this text, or 0.
+    pub fn find_item(label: &str) -> u64 {
+        let l = CString::new(label).expect("label");
+        unsafe { svl_qt_find_item(l.as_ptr()) }
+    }
+
+    /// The handle of the push button with this text, or 0.
+    pub fn find_button(label: &str) -> u64 {
+        let l = CString::new(label).expect("label");
+        unsafe { svl_qt_find_button(l.as_ptr()) }
+    }
+
+    /// `QAction::trigger()` on the action (or the menu's action) behind `h`.
+    pub fn trigger_item(h: u64) -> bool {
+        unsafe { svl_qt_trigger_item(h) == 0 }
+    }
+
+    /// `isChecked()` of the action behind `h`.
+    pub fn item_checked(h: u64) -> Option<bool> {
+        match unsafe { svl_qt_item_checked(h) } {
+            -1 => None,
+            n => Some(n == 1),
+        }
+    }
+
+    /// The items of a menu, menu bar or tool bar: `Open,Autosave*,-,Recent[a,b,],` (`-` separator, `*` checked).
+    pub fn menu_dump(h: u64) -> String {
+        text(unsafe { svl_qt_menu_dump(h) })
+    }
+
+    /// Presses a key sequence (`Ctrl+O`) in the window behind `h` through the shortcut map: did a shortcut run?
+    pub fn shortcut(h: u64, seq: &str) -> bool {
+        let s = CString::new(seq).expect("seq");
+        unsafe { svl_qt_shortcut(h, s.as_ptr()) == 1 }
+    }
+
+    /// Sends the widget behind `h` a context-menu request (a right click).
+    pub fn context_request(h: u64) -> bool {
+        unsafe { svl_qt_context_request(h) == 0 }
+    }
+
+    /// Number of open menu popups.
+    pub fn open_menus() -> usize {
+        unsafe { svl_qt_open_menus() }.max(0) as usize
+    }
+
+    pub fn close_menus() {
+        unsafe { svl_qt_close_menus() }
     }
 
     /// Text of the first label that starts with `prefix`, or "".

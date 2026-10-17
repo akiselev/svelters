@@ -1,0 +1,2 @@
+unexposed:
+  reason: "needs render/resize/create-context callbacks that run GL code in JS; native-to-JS draw callbacks are open under gap G8 (DrawingArea draw func)"

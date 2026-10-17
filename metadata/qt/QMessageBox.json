@@ -3629,7 +3629,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "Icon",
+        "native": "QMessageBox::Icon",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QMessageBox::Icon>"
@@ -3756,7 +3756,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "Options",
+        "native": "QMessageBox::Options",
         "nullable": false,
         "origin": "qdoc",
         "ref": "flags<QMessageBox::Option>"
@@ -3799,7 +3799,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "StandardButtons",
+        "native": "QMessageBox::StandardButtons",
         "nullable": false,
         "origin": "qdoc",
         "ref": "flags<QMessageBox::StandardButton>"

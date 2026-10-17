@@ -34,7 +34,11 @@
   <box orientation="horizontal" spacing="6">
     <linkbutton uri="https://example.org" label="Link" onactivate-link={() => { linkEvents++; }} />
     <lockbutton />
-    <menubutton label="Menu" direction="down" always-show-arrow={true} />
+    <menubutton label="Menu" direction="down" always-show-arrow={true}>
+      <popover autohide={true}>
+        <label label="popover content" />
+      </popover>
+    </menubutton>
   </box>
   <box orientation="horizontal" spacing="6">
     <scalebutton />

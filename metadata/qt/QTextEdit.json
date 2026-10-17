@@ -4058,7 +4058,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "AutoFormatting",
+        "native": "QTextEdit::AutoFormatting",
         "nullable": false,
         "origin": "qdoc",
         "ref": "flags<QTextEdit::AutoFormattingFlag>"
@@ -4143,7 +4143,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "QTextDocument*",
+        "native": "QTextDocument *",
         "nullable": true,
         "origin": "qdoc",
         "ref": "object<QTextDocument>"
@@ -4318,7 +4318,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "LineWrapMode",
+        "native": "QTextEdit::LineWrapMode",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QTextEdit::LineWrapMode>"

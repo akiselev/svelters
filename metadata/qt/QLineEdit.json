@@ -3390,7 +3390,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "EchoMode",
+        "native": "QLineEdit::EchoMode",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QLineEdit::EchoMode>"

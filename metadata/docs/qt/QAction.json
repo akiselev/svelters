@@ -1,0 +1,373 @@
+{
+  "doc": {
+    "brief": "The QAction class provides an abstraction for user commands that can be added to different user interface components.",
+    "index_brief": "Abstraction for user commands that can be added to different user interface components",
+    "url": "https://doc.qt.io/qt-6/qaction.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QAction",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QAction(QObject *parent)": {
+      "brief": "Constructs an action with *parent*.",
+      "url": "https://doc.qt.io/qt-6/qaction.html#QAction"
+    },
+    "QAction(const QIcon &icon, const QString &text, QObject *parent)": {
+      "brief": "Constructs an action with an *icon* and some *text* and *parent*.",
+      "url": "https://doc.qt.io/qt-6/qaction.html#QAction-2"
+    },
+    "QAction(const QString &text, QObject *parent)": {
+      "brief": "Constructs an action with some *text* and *parent*.",
+      "url": "https://doc.qt.io/qt-6/qaction.html#QAction-1"
+    },
+    "QAction::MenuRole menuRole() const": {
+      "brief": "This property holds the action's menu role",
+      "url": "https://doc.qt.io/qt-6/qaction.html#menuRole-prop"
+    },
+    "QAction::Priority priority() const": {
+      "brief": "This property holds the actions's priority in the user interface.",
+      "url": "https://doc.qt.io/qt-6/qaction.html#priority-prop"
+    },
+    "QActionGroup * actionGroup() const": {
+      "brief": "Returns the action group for this action.",
+      "url": "https://doc.qt.io/qt-6/qaction.html#actionGroup"
+    },
+    "QFont font() const": {
+      "brief": "This property holds the action's font",
+      "url": "https://doc.qt.io/qt-6/qaction.html#font-prop"
+    },
+    "QIcon icon() const": {
+      "brief": "This property holds the action's icon",
+      "url": "https://doc.qt.io/qt-6/qaction.html#icon-prop"
+    },
+    "QKeySequence shortcut() const": {
+      "brief": "Returns the primary shortcut.",
+      "url": "https://doc.qt.io/qt-6/qaction.html#shortcut"
+    },
+    "QList<QGraphicsWidget *> associatedGraphicsWidgets() const": {
+      "url": "https://doc.qt.io/qt-6/qaction-obsolete.html#associatedGraphicsWidgets"
+    },
+    "QList<QKeySequence> shortcuts() const": {
+      "brief": "Returns the list of shortcuts, with the primary shortcut as the first element of the list.",
+      "url": "https://doc.qt.io/qt-6/qaction.html#shortcuts"
+    },
+    "QList<QObject *> associatedObjects() const": {
+      "brief": "Returns a list of objects this action has been added to.",
+      "url": "https://doc.qt.io/qt-6/qaction.html#associatedObjects"
+    },
+    "QList<QWidget *> associatedWidgets() const": {
+      "url": "https://doc.qt.io/qt-6/qaction-obsolete.html#associatedWidgets"
+    },
+    "QMenu * menu() const": {
+      "brief": "Returns the menu contained by this action.",
+      "url": "https://doc.qt.io/qt-6/qaction.html#menu"
+    },
+    "QString iconText() const": {
+      "brief": "This property holds the action's descriptive icon text",
+      "url": "https://doc.qt.io/qt-6/qaction.html#iconText-prop"
+    },
+    "QString statusTip() const": {
+      "brief": "This property holds the action's status tip",
+      "url": "https://doc.qt.io/qt-6/qaction.html#statusTip-prop"
+    },
+    "QString text() const": {
+      "brief": "This property holds the action's descriptive text",
+      "url": "https://doc.qt.io/qt-6/qaction.html#text-prop"
+    },
+    "QString toolTip() const": {
+      "brief": "This property holds the action's tooltip",
+      "url": "https://doc.qt.io/qt-6/qaction.html#toolTip-prop"
+    },
+    "QString whatsThis() const": {
+      "brief": "This property holds the action's \"What's This?\" help text",
+      "url": "https://doc.qt.io/qt-6/qaction.html#whatsThis-prop"
+    },
+    "QVariant data() const": {
+      "brief": "Returns the user data as set in [QAction::setData](xref:qt:QAction).",
+      "url": "https://doc.qt.io/qt-6/qaction.html#data"
+    },
+    "QWidget * parentWidget() const": {
+      "url": "https://doc.qt.io/qt-6/qaction-obsolete.html#parentWidget"
+    },
+    "Qt::ShortcutContext shortcutContext() const": {
+      "brief": "This property holds the context for the action's shortcut",
+      "url": "https://doc.qt.io/qt-6/qaction.html#shortcutContext-prop"
+    },
+    "bool autoRepeat() const": {
+      "brief": "This property holds whether the action can auto repeat",
+      "url": "https://doc.qt.io/qt-6/qaction.html#autoRepeat-prop"
+    },
+    "bool event(QEvent *e) override": {
+      "brief": "Reimplements: [QObject::event](xref:qt:QObject)(QEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qaction.html#event"
+    },
+    "bool isCheckable() const": {
+      "brief": "This property holds whether the action is a checkable action",
+      "url": "https://doc.qt.io/qt-6/qaction.html#checkable-prop"
+    },
+    "bool isChecked() const": {
+      "brief": "This property holds whether the action is checked.",
+      "url": "https://doc.qt.io/qt-6/qaction.html#checked-prop"
+    },
+    "bool isEnabled() const": {
+      "brief": "This property holds whether the action is enabled",
+      "url": "https://doc.qt.io/qt-6/qaction.html#enabled-prop"
+    },
+    "bool isIconVisibleInMenu() const": {
+      "brief": "This property holds whether or not an action should show an icon in a menu",
+      "url": "https://doc.qt.io/qt-6/qaction.html#iconVisibleInMenu-prop"
+    },
+    "bool isSeparator() const": {
+      "brief": "Returns `true` if this action is a separator action; otherwise it returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qaction.html#isSeparator"
+    },
+    "bool isShortcutVisibleInContextMenu() const": {
+      "brief": "This property holds whether or not an action should show a shortcut in a context menu",
+      "url": "https://doc.qt.io/qt-6/qaction.html#shortcutVisibleInContextMenu-prop"
+    },
+    "bool isVisible() const": {
+      "brief": "This property holds whether the action can be seen (e.g. in menus and toolbars)",
+      "url": "https://doc.qt.io/qt-6/qaction.html#visible-prop"
+    },
+    "bool showStatusText(QObject *object)": {
+      "brief": "Updates the relevant status bar for the UI represented by *object* by sending a [QStatusTipEvent](xref:qt:QStatusTipEvent).",
+      "url": "https://doc.qt.io/qt-6/qaction.html#showStatusText"
+    },
+    "void activate(QAction::ActionEvent event)": {
+      "brief": "Sends the relevant signals for [ActionEvent](xref:qt:QAction) *event*.",
+      "url": "https://doc.qt.io/qt-6/qaction.html#activate"
+    },
+    "void changed()": {
+      "brief": "This signal is emitted when an action has changed.",
+      "url": "https://doc.qt.io/qt-6/qaction.html#changed"
+    },
+    "void checkableChanged(bool checkable)": {
+      "brief": "This property holds whether the action is a checkable action",
+      "url": "https://doc.qt.io/qt-6/qaction.html#checkable-prop"
+    },
+    "void enabledChanged(bool enabled)": {
+      "brief": "This property holds whether the action is enabled",
+      "url": "https://doc.qt.io/qt-6/qaction.html#enabled-prop"
+    },
+    "void hover()": {
+      "brief": "This is a convenience slot that calls activate(Hover).",
+      "url": "https://doc.qt.io/qt-6/qaction.html#hover"
+    },
+    "void hovered()": {
+      "brief": "This signal is emitted when an action is highlighted by the user; for example, when the user pauses with the cursor over a menu option, toolbar button, or presses an action's shortcut key combination.",
+      "url": "https://doc.qt.io/qt-6/qaction.html#hovered"
+    },
+    "void resetEnabled()": {
+      "brief": "This property holds whether the action is enabled",
+      "url": "https://doc.qt.io/qt-6/qaction.html#enabled-prop"
+    },
+    "void setActionGroup(QActionGroup *group)": {
+      "brief": "Sets this action group to *group*.",
+      "url": "https://doc.qt.io/qt-6/qaction.html#setActionGroup"
+    },
+    "void setAutoRepeat(bool)": {
+      "brief": "This property holds whether the action can auto repeat",
+      "url": "https://doc.qt.io/qt-6/qaction.html#autoRepeat-prop"
+    },
+    "void setCheckable(bool)": {
+      "brief": "This property holds whether the action is a checkable action",
+      "url": "https://doc.qt.io/qt-6/qaction.html#checkable-prop"
+    },
+    "void setChecked(bool)": {
+      "brief": "This property holds whether the action is checked.",
+      "url": "https://doc.qt.io/qt-6/qaction.html#checked-prop"
+    },
+    "void setData(const QVariant &data)": {
+      "brief": "Sets the action's internal data to the given *data*.",
+      "url": "https://doc.qt.io/qt-6/qaction.html#setData"
+    },
+    "void setDisabled(bool b)": {
+      "brief": "This is a convenience function for the [enabled](xref:qt:QAction) property, that is useful for signals–slots connections.",
+      "url": "https://doc.qt.io/qt-6/qaction.html#setDisabled"
+    },
+    "void setEnabled(bool)": {
+      "brief": "This property holds whether the action is enabled",
+      "url": "https://doc.qt.io/qt-6/qaction.html#enabled-prop"
+    },
+    "void setFont(const QFont &font)": {
+      "brief": "This property holds the action's font",
+      "url": "https://doc.qt.io/qt-6/qaction.html#font-prop"
+    },
+    "void setIcon(const QIcon &icon)": {
+      "brief": "This property holds the action's icon",
+      "url": "https://doc.qt.io/qt-6/qaction.html#icon-prop"
+    },
+    "void setIconText(const QString &text)": {
+      "brief": "This property holds the action's descriptive icon text",
+      "url": "https://doc.qt.io/qt-6/qaction.html#iconText-prop"
+    },
+    "void setIconVisibleInMenu(bool visible)": {
+      "brief": "This property holds whether or not an action should show an icon in a menu",
+      "url": "https://doc.qt.io/qt-6/qaction.html#iconVisibleInMenu-prop"
+    },
+    "void setMenu(QMenu *menu)": {
+      "brief": "Sets the menu contained by this action to the specified *menu*.",
+      "url": "https://doc.qt.io/qt-6/qaction.html#setMenu"
+    },
+    "void setMenuRole(QAction::MenuRole menuRole)": {
+      "brief": "This property holds the action's menu role",
+      "url": "https://doc.qt.io/qt-6/qaction.html#menuRole-prop"
+    },
+    "void setPriority(QAction::Priority priority)": {
+      "brief": "This property holds the actions's priority in the user interface.",
+      "url": "https://doc.qt.io/qt-6/qaction.html#priority-prop"
+    },
+    "void setSeparator(bool b)": {
+      "brief": "If *b* is true then this action will be considered a separator.",
+      "url": "https://doc.qt.io/qt-6/qaction.html#setSeparator"
+    },
+    "void setShortcut(const QKeySequence &shortcut)": {
+      "brief": "Sets *shortcut* as the sole shortcut that triggers the action.",
+      "url": "https://doc.qt.io/qt-6/qaction.html#setShortcut"
+    },
+    "void setShortcutContext(Qt::ShortcutContext context)": {
+      "brief": "This property holds the context for the action's shortcut",
+      "url": "https://doc.qt.io/qt-6/qaction.html#shortcutContext-prop"
+    },
+    "void setShortcutVisibleInContextMenu(bool show)": {
+      "brief": "This property holds whether or not an action should show a shortcut in a context menu",
+      "url": "https://doc.qt.io/qt-6/qaction.html#shortcutVisibleInContextMenu-prop"
+    },
+    "void setShortcuts(QKeySequence::StandardKey key)": {
+      "brief": "Sets a platform dependent list of shortcuts based on the *key*.",
+      "url": "https://doc.qt.io/qt-6/qaction.html#setShortcuts"
+    },
+    "void setShortcuts(const QList<QKeySequence> &shortcuts)": {
+      "brief": "Sets *shortcuts* as the list of shortcuts that trigger the action.",
+      "url": "https://doc.qt.io/qt-6/qaction.html#setShortcuts-1"
+    },
+    "void setStatusTip(const QString &statusTip)": {
+      "brief": "This property holds the action's status tip",
+      "url": "https://doc.qt.io/qt-6/qaction.html#statusTip-prop"
+    },
+    "void setText(const QString &text)": {
+      "brief": "This property holds the action's descriptive text",
+      "url": "https://doc.qt.io/qt-6/qaction.html#text-prop"
+    },
+    "void setToolTip(const QString &tip)": {
+      "brief": "This property holds the action's tooltip",
+      "url": "https://doc.qt.io/qt-6/qaction.html#toolTip-prop"
+    },
+    "void setVisible(bool)": {
+      "brief": "This property holds whether the action can be seen (e.g. in menus and toolbars)",
+      "url": "https://doc.qt.io/qt-6/qaction.html#visible-prop"
+    },
+    "void setWhatsThis(const QString &what)": {
+      "brief": "This property holds the action's \"What's This?\" help text",
+      "url": "https://doc.qt.io/qt-6/qaction.html#whatsThis-prop"
+    },
+    "void toggle()": {
+      "brief": "This is a convenience function for the [checked](xref:qt:QAction) property.",
+      "url": "https://doc.qt.io/qt-6/qaction.html#toggle"
+    },
+    "void toggled(bool checked)": {
+      "brief": "This signal is emitted whenever a checkable action changes its [isChecked](xref:qt:QAction)() status.",
+      "url": "https://doc.qt.io/qt-6/qaction.html#toggled"
+    },
+    "void trigger()": {
+      "brief": "This is a convenience slot that calls activate(Trigger).",
+      "url": "https://doc.qt.io/qt-6/qaction.html#trigger"
+    },
+    "void triggered(bool checked)": {
+      "brief": "This signal is emitted when an action is activated by the user; for example, when the user clicks a menu option, toolbar button, or presses an action's shortcut key combination, or when...",
+      "url": "https://doc.qt.io/qt-6/qaction.html#triggered"
+    },
+    "void visibleChanged()": {
+      "brief": "This property holds whether the action can be seen (e.g. in menus and toolbars)",
+      "url": "https://doc.qt.io/qt-6/qaction.html#visible-prop"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "autoRepeat": {
+      "brief": "Whether the action can auto repeat",
+      "url": "https://doc.qt.io/qt-6/qaction.html#autoRepeat-prop"
+    },
+    "checkable": {
+      "brief": "Whether the action is a checkable action",
+      "url": "https://doc.qt.io/qt-6/qaction.html#checkable-prop"
+    },
+    "checked": {
+      "brief": "Whether the action is checked",
+      "url": "https://doc.qt.io/qt-6/qaction.html#checked-prop"
+    },
+    "enabled": {
+      "brief": "Whether the action is enabled",
+      "url": "https://doc.qt.io/qt-6/qaction.html#enabled-prop"
+    },
+    "font": {
+      "brief": "The action's font",
+      "url": "https://doc.qt.io/qt-6/qaction.html#font-prop"
+    },
+    "icon": {
+      "brief": "The action's icon",
+      "url": "https://doc.qt.io/qt-6/qaction.html#icon-prop"
+    },
+    "iconText": {
+      "brief": "The action's descriptive icon text",
+      "url": "https://doc.qt.io/qt-6/qaction.html#iconText-prop"
+    },
+    "iconVisibleInMenu": {
+      "brief": "Whether or not an action should show an icon in a menu",
+      "url": "https://doc.qt.io/qt-6/qaction.html#iconVisibleInMenu-prop"
+    },
+    "menuRole": {
+      "brief": "The action's menu role",
+      "url": "https://doc.qt.io/qt-6/qaction.html#menuRole-prop"
+    },
+    "priority": {
+      "brief": "The actions's priority in the user interface",
+      "url": "https://doc.qt.io/qt-6/qaction.html#priority-prop"
+    },
+    "shortcut": {
+      "brief": "The action's primary shortcut key",
+      "url": "https://doc.qt.io/qt-6/qaction.html#shortcut-prop"
+    },
+    "shortcutContext": {
+      "brief": "The context for the action's shortcut",
+      "url": "https://doc.qt.io/qt-6/qaction.html#shortcutContext-prop"
+    },
+    "shortcutVisibleInContextMenu": {
+      "brief": "Whether or not an action should show a shortcut in a context menu",
+      "url": "https://doc.qt.io/qt-6/qaction.html#shortcutVisibleInContextMenu-prop"
+    },
+    "statusTip": {
+      "brief": "The action's status tip",
+      "url": "https://doc.qt.io/qt-6/qaction.html#statusTip-prop"
+    },
+    "text": {
+      "brief": "The action's descriptive text",
+      "url": "https://doc.qt.io/qt-6/qaction.html#text-prop"
+    },
+    "toolTip": {
+      "brief": "The action's tooltip",
+      "url": "https://doc.qt.io/qt-6/qaction.html#toolTip-prop"
+    },
+    "visible": {
+      "brief": "Whether the action can be seen (e.g. in menus and toolbars)",
+      "url": "https://doc.qt.io/qt-6/qaction.html#visible-prop"
+    },
+    "whatsThis": {
+      "brief": "The action's \"What's This?\" help text",
+      "url": "https://doc.qt.io/qt-6/qaction.html#whatsThis-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

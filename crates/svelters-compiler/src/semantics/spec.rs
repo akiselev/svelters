@@ -322,7 +322,13 @@ pub enum SlotOrder {
     NativeIndex,
     /// Position is not the order (a grid): `insert` ignores `before` (X3).
     Unordered,
+    /// QWidget action lists (menus, toolbars: X4): ordered by `before` among the parent's actions.
+    Actions,
     None,
+    /// An order a newer generator emits that this compiler does not know yet: treated as
+    /// ordered, so a new metadata value never stops a whole spec from loading.
+    #[serde(other)]
+    Unknown,
 }
 
 #[derive(Debug, Clone, Deserialize)]

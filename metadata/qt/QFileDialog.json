@@ -2969,7 +2969,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "AcceptMode",
+        "native": "QFileDialog::AcceptMode",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QFileDialog::AcceptMode>"
@@ -3055,7 +3055,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "FileMode",
+        "native": "QFileDialog::FileMode",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QFileDialog::FileMode>"
@@ -3098,7 +3098,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "Options",
+        "native": "QFileDialog::Options",
         "nullable": false,
         "origin": "qdoc",
         "ref": "flags<QFileDialog::Option>"
@@ -3158,7 +3158,7 @@
         "set": "setViewMode"
       },
       "brief": "Way files and directories are displayed in the dialog",
-      "default": "Detail",
+      "default": "List",
       "default_origin": "runtime",
       "js_name": "viewMode",
       "metaobject": {
@@ -3183,7 +3183,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "ViewMode",
+        "native": "QFileDialog::ViewMode",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QFileDialog::ViewMode>"

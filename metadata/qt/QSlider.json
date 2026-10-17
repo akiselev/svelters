@@ -631,7 +631,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "TickPosition",
+        "native": "QSlider::TickPosition",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QSlider::TickPosition>"

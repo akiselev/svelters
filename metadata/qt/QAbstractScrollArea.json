@@ -1633,7 +1633,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "SizeAdjustPolicy",
+        "native": "QAbstractScrollArea::SizeAdjustPolicy",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QAbstractScrollArea::SizeAdjustPolicy>"

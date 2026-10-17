@@ -300,4 +300,8 @@ From `docs/notes/js-native-serdes.md` section 5.1, which has the exact C proposa
 
 Things done now without an ABI change: JS passes cached IDs rather than names (1430 to 770 ns per `setProp`), strings are borrowed, descriptor-driven prop coercion replaces the renderer's hand-written `INT_PROPS`, and enums go out as names on both toolkits. The S1 milestone (ABI v3 value model and converters) is IN PROGRESS and merges after P5.
 
+## ABI v2.3: styling (X6)
+
+One optional member, `int (*style)(void *self, uint32_t op, svl_handle h, const svl_value *v)`, appended after `listen_ex`. `v` is a string or null. The ops are `TARGET` (which dialect the backend renders: CSS or QSS), `CLASSES`, `NAME`, `INLINE`, `OPACITY`, `SHEET` (install, replace, remove or clear a component sheet, `@tokens` being the token layer) and `SCHEME` (colour scheme plus palette pairs). The renderer asks `TARGET` first and then renders only that dialect. Payload formats and the per-toolkit behaviour are in `plans/architecture/backend-abi.md#abi-v23-additive-x6-styling`; the user-facing side is the [styling guide](/guides/styling/).
+
 Sources: `plans/architecture/backend-abi.md`, `crates/svelters-abi/include/svelters_backend.h`, `docs/notes/ownership-and-lifetimes.md`, `docs/notes/p2-host-lane.md`, `docs/notes/p5-integration.md`, `docs/notes/js-native-serdes.md`.
