@@ -152,7 +152,7 @@ GTK batches are about verified facts, slots, bindings, signal semantics and the 
 - Blocked: PopoverMenuBar, PopoverMenu (G7: GMenuModel).
 - Gallery: `07-bars.svelte`.
 - Tests `<re>`: `_(headerbar|windowcontrols)_`.
-- Status: todo
+- Status: done (HeaderBar 3 P, WindowControls 3 P; Statusbar, InfoBar unexposed; dropped: none; blocked: gap:G7 for PopoverMenuBar; note: tools/docs/test_ir.py hard-codes 101 tagged entities, now 89 after unexposing 12 kinds)
 
 ### gtk-dialogs: windows, popovers and non-blocking dialogs
 
@@ -171,7 +171,7 @@ GTK batches are about verified facts, slots, bindings, signal semantics and the 
   marked unexposed with the reason.
 - Gallery: `08-dialogs.svelte` (a button that opens an AboutDialog and a MenuButton with a popover).
 - Tests `<re>`: `_(window|popover|aboutdialog|emojichooser)_`.
-- Status: todo
+- Status: done (Window 9 P + 7 methods; Popover 4 P, child slot, 2 S, 2 M; AboutDialog 7 P; EmojiChooser 1 S; deprecated dialogs, Assistant, ShortcutsWindow unexposed; dropped: Window.transient-for (reference, not tried); AboutDialog not mounted in gallery (gap:G9))
 
 ### gtk-display: images, separators, spinners, calendar
 
