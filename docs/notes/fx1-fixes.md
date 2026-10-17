@@ -20,3 +20,17 @@ Branched from master at ff0fcb4. Written as the work goes.
   - WinUI: `check-box` `is-checked` (`click`, read back: ToggleButton toggles before Click; programmatic sets raise
     only Checked/Unchecked), `slider` `value` (value-changed arg0, compare), `text-box` `text` (text-changed arg0, compare).
     Unverified on Windows: Click-after-toggle ordering, and the async TextChanged echo.
+
+## fx1-gen (renderer side)
+
+- `gen_bindings.py` reads AppKit (`appkit_bindings`: overrides + `metadata/appkit`) and WinUI (`winui_bindings`: overrides + `metadata/winui`)
+  bindings, validated against the facts (property in the class chain and writable, signal in the chain's overrides, arg0 needs a payload/args).
+  A binding on a base class applies to every element class deriving from it. Enum refs (`enum<...>`) are renderer type `string`.
+- Merge order gtk, qt, appkit, winui. Same renderer-visible fields: one descriptor (`toolkits` lists them). Different (slider `value`: Qt
+  `valueChanged`, WinUI `value-changed`): `BINDINGS[tag][name]` is an array of descriptors; `bind()` picks the first whose prop and signal
+  the host resolves (`pickVariant`), else the first. Generated tag/prop keys with hyphens are quoted.
+- `TEXT_PROPS` is generated (`text_props()`, union of `kinds.<id>.text_content` over the semantics files that exist); rerun gen_bindings
+  when a semantics file changes.
+- Not done: per-binding Rust tests in the AppKit/WinUI generators (`tests()`/`gen_tests()`); they would touch generated Rust that cannot
+  run on Linux, so left out as disproportionate.
+- Unverified on Mac/Windows: that a real host resolves `click`/`value-changed` through `signalId` (tests stub `signalId`).
