@@ -212,6 +212,10 @@ impl JsEngine for QjsEngine {
         st
     }
 
+    fn collect_garbage(&mut self) {
+        self.rt.run_gc();
+    }
+
     fn take_errors(&mut self) -> Vec<JsError> {
         std::mem::take(&mut *self.async_errors.borrow_mut())
     }
@@ -285,6 +289,17 @@ fn op<'js, T>(ctx: &Ctx<'js>, r: Result<T, OpError>) -> Res<T> {
     match r {
         Ok(v) => Ok(v),
         Err(e) => throw(ctx, e),
+    }
+}
+
+/// Like [`op`], but rethrows an exception that user JS threw while the value was converted.
+fn op_conv<'js, T>(ctx: &Ctx<'js>, conv: &QjsConv<'js>, r: Result<T, OpError>) -> Res<T> {
+    match r {
+        Ok(v) => Ok(v),
+        Err(e) => match conv.take_pending() {
+            Some(ex) => Err(ctx.throw(ex)),
+            None => throw(ctx, e),
+        },
     }
 }
 
@@ -418,9 +433,12 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, base: Instant) -> Res<()> {
         let w = core.clone();
         host.set(
             "propType",
-            Function::new(ctx.clone(), move |ctx: Ctx<'js>, kind: u32, prop: u32| -> Res<Option<String>> {
+            Function::new(ctx.clone(), move |ctx: Ctx<'js>, kind: u32, prop: u32| -> Res<Value<'js>> {
                 let c = core_of(&ctx, &w)?;
-                Ok(c.op_prop_type(kind, prop).map(str::to_string))
+                match c.op_prop_type(kind, prop) {
+                    Some(t) => Ok(rquickjs::String::from_str(ctx.clone(), t)?.into_value()),
+                    None => Ok(Value::new_null(ctx.clone())),
+                }
             })?,
         )?;
         let w = core.clone();
@@ -483,7 +501,7 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, base: Instant) -> Res<()> {
                     let conv = QjsConv::new(ctx.clone(), c.clone());
                     let h = handle_of(&ctx, h)?;
                     let r = msg(&ctx, conv.with_name(&name, |n| c.op_set_prop(&conv, h, n, &value)))?;
-                    op(&ctx, r)
+                    op_conv(&ctx, &conv, r)
                 },
             )?,
         )?;
@@ -514,7 +532,7 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, base: Instant) -> Res<()> {
                     let conv = QjsConv::new(ctx.clone(), c.clone());
                     let h = handle_of(&ctx, h)?;
                     let r = msg(&ctx, conv.with_name(&method, |n| c.op_call(&conv, h, n, &args)))?;
-                    op(&ctx, r)
+                    op_conv(&ctx, &conv, r)
                 },
             )?,
         )?;

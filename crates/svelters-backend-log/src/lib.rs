@@ -120,7 +120,7 @@ fn write_json(v: &Value, out: &mut String) {
         Value::I64(i) => {
             let _ = write!(out, "{i}");
         }
-        Value::F64(f) => js_number(*f, out),
+        Value::F64(f) | Value::DateTime(f) => js_number(*f, out),
         Value::Handle(h) => {
             let _ = write!(out, "{h}");
         }

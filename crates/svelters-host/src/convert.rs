@@ -62,6 +62,8 @@ pub(crate) trait JsReader {
     fn keys(&self, obj: &Self::V) -> Result<Vec<String>, String>;
     fn len(&self, arr: &Self::V) -> Result<usize, String>;
     fn index(&self, arr: &Self::V, i: usize) -> Result<Self::V, String>;
+    /// Epoch milliseconds when `v` is a `Date`.
+    fn date_ms(&self, v: &Self::V) -> Option<f64>;
     /// True for an ArrayBuffer or a typed array / DataView over one.
     fn is_bytes(&self, v: &Self::V) -> bool;
     /// Borrowed bytes of an ArrayBuffer / typed array, valid while the guard lives.
@@ -80,6 +82,7 @@ pub(crate) trait JsWriter {
     fn array(&self, items: Vec<Self::V>) -> Result<Self::V, String>;
     fn object(&self, entries: Vec<(String, Self::V)>) -> Result<Self::V, String>;
     fn bytes(&self, b: &[u8]) -> Result<Self::V, String>;
+    fn date(&self, ms: f64) -> Result<Self::V, String>;
     fn boxed(&self, handle: svl_handle, ty: svl_id, type_name: &str) -> Result<Self::V, String>;
     fn native_error(&self, domain: &str, code: Self::V, message: &str) -> Result<Self::V, String>;
 }
@@ -250,6 +253,7 @@ fn slot_type_name(slot: &SlotDesc, cx: &Cx) -> String {
     match slot.tag {
         SVL_BOOL => "boolean".into(),
         SVL_I64 => "integer".into(),
+        SVL_F64 if slot.ty == SVL_T_DATETIME => "Date".into(),
         SVL_F64 => "number".into(),
         SVL_STR => "string".into(),
         SVL_HANDLE => "object handle".into(),
@@ -449,6 +453,18 @@ fn encode_int<R: JsReader>(r: &R, v: &R::V, kind: JsKind, slot: &SlotDesc) -> Re
 }
 
 fn encode_float<R: JsReader>(r: &R, v: &R::V, kind: JsKind, slot: &SlotDesc) -> Result<svl_value, ConvError> {
+    if slot.ty == SVL_T_DATETIME {
+        // A datetime slot takes a Date (or epoch milliseconds) and travels as typed F64.
+        let ms = match r.date_ms(v) {
+            Some(ms) => ms,
+            None if kind == JsKind::Number => r.number(v),
+            None => return Err(expected(r, v, "Date")),
+        };
+        if !ms.is_finite() {
+            return Err(ConvError::range("invalid Date"));
+        }
+        return Ok(svl_value::typed(SVL_F64, SVL_T_DATETIME, svl_value_u { f: ms }));
+    }
     let n = number_of(r, v, kind, "number")?;
     if !slot.min.is_nan() && n < slot.min || !slot.max.is_nan() && n > slot.max {
         return Err(ConvError::range(format!("{n} is out of range")));
@@ -719,6 +735,13 @@ fn dynamic<R: JsReader>(
             let l = ar.list(items);
             Ok(svl_value::new(SVL_LIST, svl_value_u { l }))
         }
+        JsKind::Object if r.date_ms(v).is_some() => Ok(svl_value::typed(
+            SVL_F64,
+            SVL_T_DATETIME,
+            svl_value_u {
+                f: r.date_ms(v).unwrap_or(f64::NAN),
+            },
+        )),
         JsKind::Object if r.is_bytes(v) => {
             let (ptr, len) = r.bytes(v, &mut ar.guards)?;
             Ok(svl_value::new(
@@ -768,6 +791,7 @@ fn decode_at<W: JsWriter>(w: &W, v: &Value, types: &dyn TypeSource, depth: u32) 
             }
         }
         Value::F64(f) => w.number(*f),
+        Value::DateTime(ms) => w.date(*ms),
         Value::Str(s) => w.string(s),
         Value::Handle(h) => w.number(*h as f64),
         Value::List(items) => {

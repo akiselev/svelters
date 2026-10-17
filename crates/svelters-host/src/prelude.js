@@ -87,7 +87,9 @@
       this.#h = h;
       this.#t = t;
       this.#name = name;
-      if (registry) registry.register(this, h, this);
+      // No unregister token: QuickJS holds a token strongly, which would keep the wrapper alive.
+      // A handle released by dispose() is simply ignored when its finalization callback fires.
+      if (registry) registry.register(this, h);
     }
     get disposed() {
       return this.#h === 0;
@@ -102,7 +104,6 @@
       if (this.#h === 0) return;
       const h = this.#h;
       this.#h = 0;
-      if (registry) registry.unregister(this);
       native.releaseBoxed(h);
     }
   }
@@ -118,9 +119,11 @@
   const makeBoxed = (h, t, name) => new NativeBoxed(h, t, name);
   const makeNativeError = (domain, code, message) => new NativeError(domain, code, message);
   const isView = (v) => ArrayBuffer.isView(v);
+  const dateMs = (v) => (v instanceof Date ? v.getTime() : null);
+  const makeDate = (ms) => new Date(ms);
 
   Object.defineProperty(global, '__svelters_internal', {
-    value: { fire, makeBoxed, makeNativeError, isView },
+    value: { fire, makeBoxed, makeNativeError, isView, dateMs, makeDate },
     enumerable: false,
   });
 })

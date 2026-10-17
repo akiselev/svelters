@@ -95,6 +95,8 @@ pub enum Value {
     /// `I64` with `SVL_F_UNSIGNED`: values above `i64::MAX`.
     U64(u64),
     F64(f64),
+    /// Epoch milliseconds (`F64` typed `SVL_T_DATETIME`): a JS `Date`.
+    DateTime(f64),
     /// UTF-8 text. UTF-16 input is transcoded when copied into an owned value.
     Str(String),
     Handle(svl_handle),
@@ -140,6 +142,7 @@ fn build_raw(v: &Value, lists: &mut Vec<Vec<svl_value>>) -> svl_value {
             r
         }
         Value::F64(f) => svl_value::new(SVL_F64, svl_value_u { f: *f }),
+        Value::DateTime(ms) => svl_value::typed(SVL_F64, SVL_T_DATETIME, svl_value_u { f: *ms }),
         Value::Handle(h) => svl_value::new(SVL_HANDLE, svl_value_u { h: *h }),
         Value::Str(s) => svl_value::new(
             SVL_STR,
@@ -261,6 +264,7 @@ impl Value {
                 }
                 SVL_I64 if v.flags & SVL_F_UNSIGNED != 0 => Value::I64(v.u.u as i64),
                 SVL_I64 => Value::I64(v.u.i),
+                SVL_F64 if v.type_ == SVL_T_DATETIME => Value::DateTime(v.u.f),
                 SVL_F64 => Value::F64(v.u.f),
                 SVL_HANDLE => Value::Handle(v.u.h),
                 SVL_STR => Value::Str(str_of_raw(v).into_owned()),

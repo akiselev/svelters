@@ -127,6 +127,18 @@ impl<'a> Host<'a> {
         core::checkpoint(&self.core, &self.engine);
     }
 
+    /// Runs a full garbage collection. Values JS dropped without `dispose()` are queued for release
+    /// by their finalization callbacks (jobs) and handed to the backend at the next checkpoint.
+    pub fn collect_garbage(&self) {
+        let Some(_guard) = self.core.enter() else { return };
+        self.engine.borrow_mut().collect_garbage();
+    }
+
+    /// Number of live boxed values held by JS wrappers (released, disposed or collected ones excluded).
+    pub fn live_boxed(&self) -> usize {
+        self.core.live_boxed()
+    }
+
     /// Runs queued JS jobs to exhaustion without firing timers or events.
     pub fn drain_jobs(&self) {
         core::drain_jobs(&self.core, &self.engine);

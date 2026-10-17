@@ -37,17 +37,30 @@ impl Drop for CStr16 {
 pub(crate) struct QjsConv<'js> {
     pub ctx: Ctx<'js>,
     pub core: Rc<Core>,
+    /// An exception thrown by user JS while a value was read (a getter, a Proxy trap). The op
+    /// rethrows it as is instead of wrapping its message.
+    pending: std::cell::RefCell<Option<Value<'js>>>,
 }
 
 impl<'js> QjsConv<'js> {
     pub(crate) fn new(ctx: Ctx<'js>, core: Rc<Core>) -> QjsConv<'js> {
-        QjsConv { ctx, core }
+        QjsConv {
+            ctx,
+            core,
+            pending: Default::default(),
+        }
+    }
+
+    /// The exception user JS threw during the last conversion, if any.
+    pub(crate) fn take_pending(&self) -> Option<Value<'js>> {
+        self.pending.borrow_mut().take()
     }
 
     fn err(&self, e: rquickjs::Error) -> String {
         match e {
             rquickjs::Error::Exception => {
                 let ex = self.ctx.catch();
+                *self.pending.borrow_mut() = Some(ex.clone());
                 match ex.as_object().and_then(|o| rquickjs::Exception::from_object(o.clone())) {
                     Some(ex) => ex.message().unwrap_or_default(),
                     None => "JS exception".to_string(),
@@ -174,6 +187,15 @@ impl<'js> JsReader for QjsConv<'js> {
             .map_err(|e| self.err(e))
     }
 
+    fn date_ms(&self, v: &Value<'js>) -> Option<f64> {
+        if v.type_of() != Type::Object {
+            return None;
+        }
+        let internal = self.internal().ok()?;
+        let f = internal.get::<_, Function>("dateMs").ok()?;
+        f.call::<_, Option<f64>>((v.clone(),)).ok().flatten()
+    }
+
     fn is_bytes(&self, v: &Value<'js>) -> bool {
         if v.type_of() != Type::Object {
             return false;
@@ -269,6 +291,11 @@ impl<'js> JsWriter for QjsConv<'js> {
         rquickjs::TypedArray::<u8>::new_copy(self.ctx.clone(), b)
             .map(|t| t.into_value())
             .map_err(|e| self.err(e))
+    }
+
+    fn date(&self, ms: f64) -> R<Value<'js>> {
+        let f: Function = self.internal()?.get("makeDate").map_err(|e| self.err(e))?;
+        f.call::<_, Value>((ms,)).map_err(|e| self.err(e))
     }
 
     fn boxed(&self, handle: svl_handle, ty: svl_id, type_name: &str) -> R<Value<'js>> {
