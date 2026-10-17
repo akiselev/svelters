@@ -63,7 +63,7 @@ listen #17 clicked on
 set #17 label "Shuffle"
 insert #2 #17 before=end slot=default
 create label #18
-set #18 label "|false|true|false"
+set #18 label "S:|false|true|false"
 insert #2 #18 before=end slot=default
 create button #19
 set #19 label "Context "
@@ -80,7 +80,7 @@ event #5 activate [false]
 event #6 toggled [true]
 event #13 toggled [false]
 event #14 toggled [true]
-set #18 label "open;|true|false|true"
+set #18 label "S:open;|true|false|true"
 event #17 clicked []
 create action #22
 set #22 label "c.txt"

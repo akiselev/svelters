@@ -99,6 +99,7 @@ gallery_page!(gtk_02_buttons, "gtk", "02-buttons", ["GtkButton", "GtkToggleButto
 gallery_page!(gtk_07_bars, "gtk", "07-bars", ["GtkHeaderBar", "GtkWindowControls"]);
 gallery_page!(gtk_08_dialogs, "gtk", "08-dialogs", ["GtkMenuButton", "GtkPopover", "GtkEmojiChooser"]);
 
+gallery_page!(gtk_10_menus, "gtk", "10-menus", ["GtkPopoverMenuBar", "GtkBox", "GtkButton", "GtkLabel"]);
 gallery_page!(gtk_04_ranges, "gtk", "04-ranges", ["GtkProgressBar", "GtkLevelBar", "GtkScale", "GtkSpinButton", "GtkScrollbar"]);
 
 // ---- Qt pages (fixtures/gallery-qt/src/pages) ----
@@ -112,4 +113,5 @@ gallery_page!(qt_07_selection, "qt", "07-selection", ["QComboBox", "QFontComboBo
 gallery_page!(qt_08_bars, "qt", "08-bars", ["QTabBar", "QDialogButtonBox", "QStatusBar", "QMenuBar", "QToolBar"]);
 gallery_page!(qt_10_display, "qt", "10-display", ["QCalendarWidget", "QDateEdit", "QTimeEdit", "QDateTimeEdit"]);
 gallery_page!(qt_09_dialogs, "qt", "09-dialogs", ["QLabel"]);
+gallery_page!(qt_11_menus, "qt", "11-menus", ["QMenuBar", "QToolBar", "QPushButton", "QLabel"]);
 gallery_page!(qt_03_text, "qt", "03-text", ["QLineEdit", "QLabel", "QPlainTextEdit", "QTextEdit", "QTextBrowser", "QKeySequenceEdit"]);

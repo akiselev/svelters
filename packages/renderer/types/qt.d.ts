@@ -22,6 +22,8 @@ export interface QtElementDescriptors {
       hover: () => void;
     };
     methods: {
+      trigger(): void;
+      toggle(): void;
     };
     slots: never;
   };

@@ -32,7 +32,7 @@ fn all_widgets() -> Vec<gtk::Widget> {
 }
 
 fn status() -> String {
-    all_widgets().iter().filter_map(|w| w.downcast_ref::<gtk::Label>()).map(|l| l.text().to_string()).find(|t| t.contains('|')).unwrap_or_default()
+    all_widgets().iter().filter_map(|w| w.downcast_ref::<gtk::Label>()).map(|l| l.text().to_string()).find(|t| t.starts_with("S:")).map(|t| t[2..].to_string()).unwrap_or_default()
 }
 
 fn button(text: &str) -> gtk::Button {

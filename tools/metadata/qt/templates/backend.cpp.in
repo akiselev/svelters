@@ -1050,6 +1050,98 @@ extern "C" const char *svl_qt_label_starting(const char *prefix) {
   return g_vl_str.c_str();
 }
 
+// ---- menu test hooks (X4; not part of the backend ABI) ---------------------------------------------
+
+// Declared by QtTest's qtestkeyboard.h, exported by QtGui: runs the shortcut map for a key press.
+Q_GUI_EXPORT bool qt_sendShortcutOverrideEvent(QObject *o, ulong timestamp, int k, Qt::KeyboardModifiers mods, const QString &text, bool autorep, ushort count);
+
+// The lowest handle of a QAction (not a separator) or QMenu whose text or title is `label`, or 0.
+extern "C" svl_handle svl_qt_find_item(const char *label) {
+  svl_handle best = 0;
+  const QString l = QString::fromUtf8(label);
+  for (auto &kv : g.table) {
+    QObject *o = kv.second.obj.data();
+    bool hit = false;
+    if (auto *a = qobject_cast<QAction *>(o)) hit = !a->isSeparator() && a->text() == l;
+    else if (auto *m = qobject_cast<QMenu *>(o)) hit = m->title() == l;
+    if (hit && (!best || kv.first < best)) best = kv.first;
+  }
+  return best;
+}
+
+// The handle of the push button with this text, or 0.
+extern "C" svl_handle svl_qt_find_button(const char *label) {
+  for (QWidget *w : QApplication::allWidgets())
+    if (auto *b = qobject_cast<QPushButton *>(w); b && b->text().trimmed() == QString::fromUtf8(label))
+      if (auto it = g.by_obj.find(b); it != g.by_obj.end()) return it->second;
+  return 0;
+}
+
+extern "C" int svl_qt_trigger_item(svl_handle h) {
+  QAction *a = menu_item_action(debug_obj(h));
+  if (!a) return -1;
+  a->trigger();
+  return 0;
+}
+
+extern "C" int svl_qt_item_checked(svl_handle h) {
+  QAction *a = menu_item_action(debug_obj(h));
+  return a ? (a->isChecked() ? 1 : 0) : -1;
+}
+
+static void menu_dump_into(QWidget *w, std::string &out) {
+  for (QAction *a : w->actions()) {
+    if (a->isSeparator()) {
+      out += "-,";
+    } else if (QMenu *m = a->menu()) {
+      out += m->title().toStdString() + "[";
+      menu_dump_into(m, out);
+      out += "],";
+    } else {
+      out += a->text().toStdString() + (a->isChecked() ? "*" : "") + ",";
+    }
+  }
+}
+
+// The items of the menu, menu bar or tool bar behind `h`: `Open,Autosave*,-,Recent[a,b,],` (`-` separator, `*` checked).
+extern "C" const char *svl_qt_menu_dump(svl_handle h) {
+  g_vl_str.clear();
+  if (auto *w = qobject_cast<QWidget *>(debug_obj(h))) menu_dump_into(w, g_vl_str);
+  return g_vl_str.c_str();
+}
+
+// Presses a key sequence like `Ctrl+O` in the window behind `h` through the shortcut map; 1 when a shortcut ran.
+extern "C" int svl_qt_shortcut(svl_handle h, const char *seq) {
+  auto *w = qobject_cast<QWidget *>(debug_obj(h));
+  const QKeySequence ks(QString::fromUtf8(seq));
+  if (!w || ks.isEmpty()) return -1;
+  QApplication::setActiveWindow(w->window());  // no window manager under xvfb: nothing else activates it
+  const QKeyCombination kc = ks[0];
+  return qt_sendShortcutOverrideEvent(w->window()->windowHandle(), 0, kc.key(), kc.keyboardModifiers(), QString(), false, 1) ? 1 : 0;
+}
+
+// Sends the widget behind `h` a real context-menu request (what a right click delivers).
+extern "C" int svl_qt_context_request(svl_handle h) {
+  auto *w = qobject_cast<QWidget *>(debug_obj(h));
+  if (!w) return -1;
+  QContextMenuEvent ev(QContextMenuEvent::Mouse, QPoint(3, 4), w->mapToGlobal(QPoint(3, 4)));
+  QApplication::sendEvent(w, &ev);
+  return 0;
+}
+
+// QMenus that are open (visible popups).
+extern "C" int svl_qt_open_menus(void) {
+  int n = 0;
+  for (QWidget *w : QApplication::allWidgets())
+    if (qobject_cast<QMenu *>(w) && w->isVisible()) ++n;
+  return n;
+}
+
+extern "C" void svl_qt_close_menus(void) {
+  for (QWidget *w : QApplication::allWidgets())
+    if (qobject_cast<QMenu *>(w) && w->isVisible()) w->hide();
+}
+
 // One line per visible row widget: the texts of its labels joined by a space.
 extern "C" const char *svl_qt_vlist_rows(void) {
   g_vl_str.clear();

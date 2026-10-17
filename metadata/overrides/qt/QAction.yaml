@@ -18,6 +18,9 @@ elements:
       # Radio sets: the actions of one parent that share a name form an exclusive QActionGroup (the group is made
       # by the parent's `items` slot, menus.hpp.in), so the sets survive reordering and keyed lists.
       - { js: group, dynamic: svlGroup, after_set: menu_regroup, provenance: "manual: dynamic property `svlGroup`; the items slot puts actions with the same name into one QActionGroup (QActionGroup::exclusive, qdoc)" }
+    methods:
+      - { js: trigger, native: trigger, provenance: "QAction::trigger() slot (qdoc): what a click or shortcut does" }
+      - { js: toggle, native: toggle, expect: "$w->isChecked() || !$w->isCheckable()", provenance: "QAction::toggle() slot (qdoc)" }
     signals:
       - js: toggled
         native: toggled

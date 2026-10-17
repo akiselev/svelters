@@ -36,7 +36,7 @@
         recent = [...recent.slice(1), 'c.txt'].reverse();
       }}>Shuffle</button
     >
-    <label>{log}|{autosave}|{small}|{large}</label>
+    <label>S:{log}|{autosave}|{small}|{large}</label>
     <button>
       Context
       <contextmenu>
