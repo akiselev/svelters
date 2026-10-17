@@ -99,13 +99,14 @@ unsafe extern "C" fn invoke_callback(_: *mut c_void, _: u64, _: *const svl_value
     -1
 }
 unsafe extern "C" fn release_callback(_: *mut c_void, _: u64) {}
+unsafe extern "C" fn frame(_: *mut c_void) {}
 
 type Step = Box<dyn FnOnce()>;
 
 /// Runs `steps` inside the Qt loop, one per loop turn (50 ms apart), then quits. A panic in a
 /// step fails the process.
 fn run_steps(steps: Vec<Step>) {
-    let host = Box::leak(Box::new(svl_host { self_: std::ptr::null_mut(), post_event, checkpoint, call_sync, on_destroyed, invoke_callback, release_callback }));
+    let host = Box::leak(Box::new(svl_host { self_: std::ptr::null_mut(), post_event, checkpoint, call_sync, on_destroyed, invoke_callback, release_callback, frame }));
     unsafe { counter_qt::set_host(host) };
 
     fn next(mut steps: Vec<Step>) {
