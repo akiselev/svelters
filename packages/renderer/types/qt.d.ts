@@ -805,6 +805,7 @@ export interface QtElementDescriptors {
       labelText?: string;
       textValue?: string;
       intValue?: number;
+      doubleValue?: number;
       intMinimum?: number;
       intMaximum?: number;
       inputMode?: "double-input" | "int-input" | "text-input";

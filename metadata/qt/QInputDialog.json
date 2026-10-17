@@ -2411,10 +2411,10 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "int",
+        "native": "double",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "i32"
+        "ref": "f64"
       }
     },
     {
@@ -2436,7 +2436,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "InputMode",
+        "native": "QInputDialog::InputMode",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QInputDialog::InputMode>"
@@ -2611,7 +2611,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "InputDialogOptions",
+        "native": "QInputDialog::InputDialogOptions",
         "nullable": false,
         "origin": "qdoc",
         "ref": "flags<QInputDialog::InputDialogOption>"

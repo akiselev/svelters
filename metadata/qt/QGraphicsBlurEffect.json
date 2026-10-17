@@ -337,7 +337,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "BlurHints",
+        "native": "QGraphicsBlurEffect::BlurHints",
         "nullable": false,
         "origin": "qdoc",
         "ref": "flags<QGraphicsBlurEffect::BlurHint>"

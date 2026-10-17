@@ -11395,7 +11395,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "QFont",
+        "native": "const QFont &",
         "nullable": false,
         "origin": "qdoc",
         "ref": "boxed<QFont>"
@@ -11564,7 +11564,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "QRect",
+        "native": "const QRect &",
         "nullable": false,
         "origin": "qdoc",
         "ref": "record<Rect>"
@@ -12332,7 +12332,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "QPalette",
+        "native": "const QPalette &",
         "nullable": false,
         "origin": "qdoc",
         "ref": "boxed<QPalette>"
@@ -13259,7 +13259,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "double",
+        "native": "qreal",
         "nullable": false,
         "origin": "qdoc",
         "ref": "f64"

@@ -1038,10 +1038,10 @@
   "native": "QInputDialog",
   "ownership": false,
   "props": [
-   8,
+   9,
    18
   ],
-  "props_annotated": 8,
+  "props_annotated": 9,
   "signal_results": 0,
   "signals": [
    2,
@@ -1051,8 +1051,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   10,
-   10
+   11,
+   11
   ]
  },
  {

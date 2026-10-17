@@ -3344,7 +3344,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "QGraphicsLayout*",
+        "native": "QGraphicsLayout *",
         "nullable": true,
         "origin": "qdoc",
         "ref": "opaque"

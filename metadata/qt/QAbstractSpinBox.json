@@ -2155,7 +2155,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "ButtonSymbols",
+        "native": "QAbstractSpinBox::ButtonSymbols",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QAbstractSpinBox::ButtonSymbols>"
@@ -2198,7 +2198,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "CorrectionMode",
+        "native": "QAbstractSpinBox::CorrectionMode",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QAbstractSpinBox::CorrectionMode>"

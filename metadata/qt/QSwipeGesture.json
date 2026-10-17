@@ -236,7 +236,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "SwipeDirection",
+        "native": "QSwipeGesture::SwipeDirection",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QSwipeGesture::SwipeDirection>"
@@ -322,7 +322,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "SwipeDirection",
+        "native": "QSwipeGesture::SwipeDirection",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QSwipeGesture::SwipeDirection>"

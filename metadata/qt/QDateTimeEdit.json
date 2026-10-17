@@ -2438,7 +2438,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "Section",
+        "native": "QDateTimeEdit::Section",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QDateTimeEdit::Section>"
@@ -2657,7 +2657,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "Sections",
+        "native": "QDateTimeEdit::Sections",
         "nullable": false,
         "origin": "qdoc",
         "ref": "flags<QDateTimeEdit::Section>"

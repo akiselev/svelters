@@ -1085,7 +1085,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "TextureFormat",
+        "native": "QRhiWidget::TextureFormat",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QRhiWidget::TextureFormat>"
