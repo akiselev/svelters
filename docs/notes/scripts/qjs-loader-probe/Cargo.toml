@@ -1,0 +1,16 @@
+[package]
+name = "qjs-loader-probe"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+# Standalone: not a member of the svelters workspace.
+[workspace]
+
+[dependencies]
+rquickjs = { version = "0.14.0", default-features = false, features = ["std", "loader"] }
+oxc_resolver = "11"
+svelters-compiler = { path = "../../../../crates/svelters-compiler" }
+
+[profile.dev.package.rquickjs-sys]
+opt-level = 2
