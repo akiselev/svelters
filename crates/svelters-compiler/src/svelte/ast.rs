@@ -48,8 +48,8 @@ node! {
     }
 }
 
-/// `<svelte:options>`; only the fields Svelte interprets, plus the raw attributes.
 node! {
+    /// `<svelte:options>`; only the fields Svelte interprets, plus the raw attributes.
     pub struct SvelteOptions {
         #[serde(skip_serializing_if = "Option::is_none")]
         pub runes: Option<bool>,

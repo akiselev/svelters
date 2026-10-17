@@ -7,6 +7,7 @@ pub mod acorn;
 pub mod codegen;
 pub mod diag;
 pub mod estree;
+pub mod lower;
 pub mod semantics;
 pub mod style;
 pub mod svelte;
