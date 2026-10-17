@@ -49,6 +49,8 @@ enum Class {
     Prop,
     /// each-block item / index: a runtime source, plain in the key function.
     EachSource,
+    /// Snippet parameter: a thunk, read `x()`, not assignable.
+    Thunk,
     Other,
 }
 
@@ -62,6 +64,9 @@ fn classify(arena: &ScopeArena<'_>, id: &Identifier) -> Class {
         BindingKind::Prop | BindingKind::BindableProp => Class::Prop,
         BindingKind::Each => Class::EachSource,
         BindingKind::Template | BindingKind::Static if matches!(b.initial, Some(Initial::EachBlock(_))) => Class::EachSource,
+        // `{@const x}` (a derived) and `{:then v}` / `{:catch e}` (sources): read `$.get(x)`
+        BindingKind::Template => Class::Source { proxied: false, writable: false },
+        BindingKind::Snippet => Class::Thunk,
         _ => Class::Other,
     }
 }
@@ -128,7 +133,7 @@ impl Rewriter for ScopeRewriter<'_> {
                 // never proxied: bound values are native values or runtime nodes (Svelte does the same)
                 Class::Source { writable: true, .. } => format!("$.set({}, {value})", id.name),
                 Class::Prop => format!("{}({value})", id.name),
-                Class::Source { writable: false, .. } | Class::EachSource => {
+                Class::Source { writable: false, .. } | Class::EachSource | Class::Thunk => {
                     self.diags.borrow_mut().error("bind_invalid_target", (id.start, id.end), format!("cannot bind to `{}`: it is not assignable", id.name));
                     "void 0".to_string()
                 }
@@ -382,7 +387,7 @@ impl<'r, 'a> Rw<'r, 'a> {
                 self.edits.overwrite(a.start, right.start, prefix);
                 self.edits.close(a.end, if bin.is_some() { "))" } else { ")" });
             }
-            Class::Source { writable: false, .. } | Class::EachSource => {
+            Class::Source { writable: false, .. } | Class::EachSource | Class::Thunk => {
                 self.diags.borrow_mut().error("constant_assignment", (id.start, id.end), format!("cannot assign to `{}`", id.name));
             }
             Class::Other => return false,
@@ -398,7 +403,7 @@ impl<'r, 'a> Rw<'r, 'a> {
         let text = match class {
             Class::Source { writable: true, .. } => format!("$.update{}({}{delta})", if u.prefix { "_pre" } else { "" }, id.name),
             Class::Prop => format!("$.update{}_prop({}{delta})", if u.prefix { "_pre" } else { "" }, id.name),
-            Class::Source { writable: false, .. } | Class::EachSource => {
+            Class::Source { writable: false, .. } | Class::EachSource | Class::Thunk => {
                 self.diags.borrow_mut().error("constant_assignment", (id.start, id.end), format!("cannot assign to `{}`", id.name));
                 return true;
             }
@@ -415,7 +420,7 @@ impl<'r, 'a> Rw<'r, 'a> {
         let (open, close) = match classify(self.arena(), id) {
             Class::Source { .. } => ("$.get(", ")"),
             Class::EachSource if self.mode == Mode::Read => ("$.get(", ")"),
-            Class::Prop => ("", "()"),
+            Class::Prop | Class::Thunk => ("", "()"),
             _ => return,
         };
         // `{ count }` shorthand property -> `{ count: $.get(count) }`

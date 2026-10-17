@@ -1,0 +1,2 @@
+[plugin svelters-native-compiler] experiments/native-compiler/fixtures/snippet-slots-qt/App.svelte:17:5
+unknown_element (gtk): <menubar> is not an element of the gtk backend (help: did you mean one of `infobar`, `levelbar`, `popovermenubar`?)

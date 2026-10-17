@@ -1,0 +1,57 @@
+[
+ {
+  "class": "QMainWindow",
+  "d": 0,
+  "text": "Snippets"
+ },
+ {
+  "class": "QWidget",
+  "d": 1,
+  "text": ""
+ },
+ {
+  "class": "QLabel",
+  "d": 2,
+  "text": "0: z"
+ },
+ {
+  "class": "QLabel",
+  "d": 2,
+  "text": "1: a"
+ },
+ {
+  "class": "QLabel",
+  "d": 2,
+  "text": "2: b"
+ },
+ {
+  "class": "QWidget",
+  "d": 2,
+  "text": ""
+ },
+ {
+  "class": "QLabel",
+  "d": 3,
+  "text": "Card #2"
+ },
+ {
+  "class": "QLabel",
+  "d": 3,
+  "text": "plain 2"
+ },
+ {
+  "class": "QPushButton",
+  "d": 3,
+  "text": "Swap"
+ },
+ {
+  "class": "QPushButton",
+  "d": 3,
+  "text": "More"
+ },
+ {
+  "class": "QPushButton",
+  "d": 2,
+  "text": "Add"
+ }
+]

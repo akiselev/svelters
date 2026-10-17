@@ -81,3 +81,27 @@ None change behaviour (90,940 / 90,940 verdicts agree with acorn 8.19.0, message
 - `extract_paths` returns only `node`, `is_rest`, `has_default_value`.
 - `Evaluation` of a cyclic expression returns the initial in-progress state; cases where upstream throws inside JS (BigInt arithmetic, `in`/`instanceof` on primitives, out-of-range `fromCodePoint`) evaluate to UNKNOWN; lone surrogates become U+FFFD; `Math.*` may differ from V8 in the last ulp.
 - `analyze.rs` omits warnings and the legacy-mode binding kinds set by other analysis visitors (`export let` props).
+
+## Native lowering of template blocks (`lower`, `codegen/component.rs`, agent T)
+
+Semantics are specified in `runtime-contract.md` "Template blocks"; departures from Svelte 5:
+
+- **`{#await}` pending in a microtask**: Svelte batches it through `queue_micro_task`; the runtime
+  uses one promise job per input. Same order relative to the promise's own reactions (registered
+  first), so an already-settled promise never shows `pending` in both.
+- **Snippet params, `{@const}`, `{:then}`/`{:catch}`**: plain identifiers only (Svelte supports
+  destructuring and parameter defaults via `$.derived`/`$.fallback`): `unsupported_feature`.
+- **Top-level snippets** are declared in the component body after the instance script (Svelte
+  hoists them so the script can reference them during initialisation; here only lazily, e.g. in
+  functions or `$derived`).
+- **`{@render}` dynamic test**: `$n.snippet` is used when the callee reads reactive state
+  (codegen's `is_reactive`); Svelte uses `node.metadata.dynamic` (callee not a non-reassigned
+  snippet declaration). Imported or plain-variable snippet functions are called directly here.
+- **`<sv-slot name>`** is not Svelte: a slot proxy for native slots (a custom-element-like tag the
+  upstream parser accepts). Spread attributes on native elements are rejected.
+- **Style matching through snippets**: a snippet body is matched with the ancestors of its
+  declaration site (Svelte's CSS pruning considers render sites).
+- **Text-content `{#if}`**: only `{#if}` (no `{#each}`/`{#key}`) folds into a text prop; branch
+  edges are trimmed.
+- `transform.rs` hook: `BindingKind::Template` reads as `$.get(x)` (read-only), `BindingKind::Snippet`
+  as a thunk `x()` (`constant_assignment` on writes).

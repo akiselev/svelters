@@ -1,0 +1,32 @@
+[
+ {
+  "class": "QMainWindow",
+  "d": 0,
+  "text": "Classes"
+ },
+ {
+  "class": "QWidget",
+  "d": 1,
+  "text": ""
+ },
+ {
+  "class": "QPushButton",
+  "d": 2,
+  "text": "Save"
+ },
+ {
+  "class": "QPushButton",
+  "d": 2,
+  "text": "Other"
+ },
+ {
+  "class": "QPushButton",
+  "d": 2,
+  "text": "Mode"
+ },
+ {
+  "class": "QPushButton",
+  "d": 2,
+  "text": "Dense"
+ }
+]

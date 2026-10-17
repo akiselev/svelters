@@ -19,8 +19,12 @@ pub struct Component<'a> {
     pub elements: usize,
 }
 
+/// A run of template content. Generated code declares `consts` first (`{@const}`, source order),
+/// then `snippets` (hoisted within the fragment, as Svelte does), then builds `items`.
 #[derive(Debug, Default)]
 pub struct Fragment<'a> {
+    pub consts: Vec<ConstDecl<'a>>,
+    pub snippets: Vec<Snippet<'a>>,
     pub items: Vec<Item<'a>>,
 }
 
@@ -29,7 +33,25 @@ pub enum Item<'a> {
     Element(Element<'a>),
     If(IfBlock<'a>),
     Each(EachBlock<'a>),
+    Key(KeyBlock<'a>),
+    Await(AwaitBlock<'a>),
+    Render(RenderCall<'a>),
     Component(ComponentCall<'a>),
+}
+
+impl Item<'_> {
+    /// The parent slot this item's natives go to.
+    pub fn slot(&self) -> &Slot {
+        match self {
+            Item::Element(e) => &e.slot,
+            Item::If(b) => &b.slot,
+            Item::Each(b) => &b.slot,
+            Item::Key(b) => &b.slot,
+            Item::Await(b) => &b.slot,
+            Item::Render(r) => &r.slot,
+            Item::Component(c) => &c.slot,
+        }
+    }
 }
 
 /// Where an item is placed in its native parent. `None` = the parent's default slot.
@@ -44,6 +66,9 @@ pub struct Element<'a> {
     /// Zero-argument method to call once a toplevel is complete (root items only).
     pub present: Option<String>,
     pub slot: Slot,
+    /// `class={expr}` (or an interpolated `class`): the element's runtime class set, declared as
+    /// `const c<id> = $.derived(() => $n.classes(expr))` and read by style conditions.
+    pub class_expr: Option<Dynamic<'a>>,
     pub ops: Vec<Op<'a>>,
     pub children: Fragment<'a>,
 }
@@ -69,8 +94,16 @@ pub enum Op<'a> {
     StyleProp { prop: String, candidates: Vec<(Cond<'a>, Json)>, fallback: Fallback, span: Span },
 }
 
-/// A conjunction of class conditions (`class:x={e}` expressions); empty = always true.
-pub type Cond<'a> = Vec<&'a Expression>;
+/// A conjunction of class conditions; empty = always true.
+pub type Cond<'a> = Vec<CondAtom<'a>>;
+
+#[derive(Debug, Clone)]
+pub enum CondAtom<'a> {
+    /// `class:x={e}`: `!!(e)`.
+    Expr(&'a Expression),
+    /// Element `element`'s dynamic class set contains `class` (`$.get(c<id>).has(class)`).
+    Class { element: usize, class: String },
+}
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Fallback {
@@ -91,6 +124,8 @@ pub enum Dynamic<'a> {
 pub enum TemplatePart<'a> {
     Text(String),
     Expr(&'a Expression),
+    /// `{#if test}..{:else}..{/if}` holding only text/expressions: `${(test) ? `..` : `..`}`.
+    If { test: &'a Expression, consequent: Vec<TemplatePart<'a>>, alternate: Vec<TemplatePart<'a>> },
 }
 
 #[derive(Debug)]
@@ -115,12 +150,73 @@ pub struct EachBlock<'a> {
     pub fallback: Option<Fragment<'a>>,
 }
 
+/// `{@const name = init}`: a template-scoped derived (`const name = $.derived(() => init)`),
+/// read as `$.get(name)`.
+#[derive(Debug)]
+pub struct ConstDecl<'a> {
+    pub span: Span,
+    pub name: String,
+    pub init: &'a Expression,
+}
+
+/// `{#snippet name(a, b)}`: a native content factory `(anchor, a = $.noop, b = $.noop) => {...}`
+/// that builds its body into the region `anchor` it is given; parameters are thunks (read `a()`).
+#[derive(Debug)]
+pub struct Snippet<'a> {
+    pub span: Span,
+    pub name: String,
+    pub params: Vec<String>,
+    pub body: Fragment<'a>,
+}
+
+/// `{@render callee(args)}`. When the callee reads reactive state (a snippet prop), codegen
+/// renders through `$n.snippet` (re-created when the function changes); otherwise the snippet
+/// is called directly with a fresh region. Arguments are passed as thunks.
+#[derive(Debug)]
+pub struct RenderCall<'a> {
+    pub span: Span,
+    pub slot: Slot,
+    pub callee: &'a Expression,
+    pub args: Vec<&'a Expression>,
+    /// `{@render f?.()}`: a nullish snippet renders nothing.
+    pub optional: bool,
+}
+
+/// `{#key expr}`: the body's natives are destroyed and re-created when `expr` changes.
+#[derive(Debug)]
+pub struct KeyBlock<'a> {
+    pub span: Span,
+    pub slot: Slot,
+    pub key: &'a Expression,
+    pub body: Fragment<'a>,
+}
+
+/// `{#await expr}..{:then value}..{:catch error}..{/await}`.
+#[derive(Debug)]
+pub struct AwaitBlock<'a> {
+    pub span: Span,
+    pub slot: Slot,
+    pub expression: &'a Expression,
+    pub value: Option<String>,
+    pub error: Option<String>,
+    pub pending: Option<Fragment<'a>>,
+    pub then: Option<Fragment<'a>>,
+    pub catch: Option<Fragment<'a>>,
+}
+
 #[derive(Debug)]
 pub struct ComponentCall<'a> {
     pub span: Span,
     pub slot: Slot,
     pub name: String,
     pub props: Vec<ComponentProp<'a>>,
+    /// `{@const}` tags directly inside the component tag: declared before its snippets.
+    pub consts: Vec<ConstDecl<'a>>,
+    /// Snippets declared directly inside the component tag: declared before the call and passed
+    /// as props of the same name.
+    pub snippets: Vec<Snippet<'a>>,
+    /// The other children: the implicit `children` snippet.
+    pub children: Option<Fragment<'a>>,
 }
 
 #[derive(Debug)]
@@ -129,4 +225,6 @@ pub enum ComponentProp<'a> {
     Dynamic { name: String, value: Dynamic<'a> },
     /// `bind:name={target}`: getter + setter.
     Bind { name: String, target: &'a Expression },
+    /// `{...expr}`: an argument of Svelte's `$.spread_props` (a thunk when `expr` is reactive).
+    Spread(&'a Expression),
 }
