@@ -17,6 +17,8 @@ globalThis.__svelters_dispatch_sync = (_h, _signal, args) => {
       return undefined;
     case 'object':
       return { a: 1 };
+    case 'nested':
+      return { a: { b: 1 } };
     default:
       return null;
   }
