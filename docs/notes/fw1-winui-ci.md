@@ -51,3 +51,21 @@ which owns its main thread.
 - Test logs go to `logs/` and are uploaded with the report artifact.
 
 ## Run log
+
+### Run 1 (c068d494): https://github.com/akiselev/svelters/actions/runs/39078861247
+
+- Init succeeds with the islands order: every trace step through "XamlControlsResources merged".
+  `Microsoft.UI.Xaml.Window` works in islands mode, so the `DesktopWindowXamlSource` fallback is
+  not needed.
+- `generated`: **60 passed, 0 failed**. No refcount panic.
+- The counter-win selftest **passes functionally**: three UI Automation clicks, read-backs all as
+  expected, `ok: true`, `report.json` written. But the process then exits with **0xE0464645**
+  (a fail-fast) after `main` returns. The backend lives in a leaked `BackendVtable`, so
+  `Drop for WinUiBackend` / `Xaml` never ran, and the process exited with a live XAML `Window`,
+  XAML manager and dispatcher queue. The generated binary (all windows destroyed by the harness)
+  exits cleanly.
+- Fix: `WinUiBackend::shutdown()` (explicit, idempotent). It releases the handles and their event
+  registrations, closes our windows, stops the timers, clears the `after` callbacks and the
+  graveyard, and pumps 50 ms. Then `Xaml::shutdown` closes the `Application` (IClosable), then the
+  `WindowsXamlManager`, then runs `ShutdownQueue`, in the islands samples' order. counter-win calls
+  it after `run()`; `Drop` uses the same path.

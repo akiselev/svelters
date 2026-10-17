@@ -68,7 +68,9 @@ pub struct Xaml {
     /// Kept alive: XAML resources hang off the Application for the lifetime of the thread.
     #[allow(dead_code)]
     pub app: Application,
-    pub manager: Option<WindowsXamlManager>,
+    pub manager: std::cell::RefCell<Option<WindowsXamlManager>>,
+    /// Set by [`Xaml::shutdown`].
+    pub down: std::cell::Cell<bool>,
     pub pretranslate: Option<PreTranslate>,
 }
 
@@ -215,20 +217,36 @@ impl Xaml {
         if pretranslate.is_none() {
             eprintln!("[svelters-winui] ContentPreTranslateMessage not found: keyboard accelerators may not reach XAML");
         }
-        Ok(Xaml { controller, queue, app, manager, pretranslate })
+        Ok(Xaml { controller, queue, app, manager: std::cell::RefCell::new(manager), pretranslate, down: std::cell::Cell::new(false) })
+    }
+
+    /// The islands samples' shutdown: close the Application (it holds XAML resources), then the
+    /// XAML manager, then shut the dispatcher queue down. Idempotent. Windows must be closed and
+    /// every XAML object released before this (`WinUiBackend::shutdown`).
+    pub fn shutdown(&self) {
+        if self.down.replace(true) {
+            return;
+        }
+        trace("shutdown: Application.Close");
+        if let Ok(c) = self.app.cast::<IClosable>() {
+            if let Err(e) = c.Close() {
+                trace(&format!("Application.Close: {}", crate::conv::err(e)));
+            }
+        }
+        trace("shutdown: WindowsXamlManager.Close");
+        if let Some(m) = self.manager.borrow_mut().take() {
+            let _ = m.Close();
+        }
+        trace("shutdown: DispatcherQueueController.ShutdownQueue");
+        if let Err(e) = self.controller.ShutdownQueue() {
+            trace(&format!("ShutdownQueue: {}", crate::conv::err(e)));
+        }
+        trace("shutdown: done");
     }
 }
 
 impl Drop for Xaml {
     fn drop(&mut self) {
-        // The islands samples' shutdown: close the Application (it holds XAML resources), then
-        // the XAML manager, then shut the dispatcher queue down.
-        if let Ok(c) = self.app.cast::<IClosable>() {
-            let _ = c.Close();
-        }
-        if let Some(m) = self.manager.take() {
-            let _ = m.Close();
-        }
-        let _ = self.controller.ShutdownQueue();
+        self.shutdown();
     }
 }

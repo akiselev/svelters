@@ -450,27 +450,58 @@ impl WinUiBackend {
     }
 }
 
-impl Drop for WinUiBackend {
-    fn drop(&mut self) {
-        if Rc::strong_count(&self.inner) > 1 {
+impl WinUiBackend {
+    /// Tears WinUI down on this thread: closes the windows we own, releases every XAML object and
+    /// event registration the backend holds, then closes the Application and the XAML manager and
+    /// shuts the dispatcher queue down (the islands order, `Xaml::shutdown`). Call it after `run`
+    /// returns and before the process exits: exiting with live XAML windows and a running XAML
+    /// core fail-fasts (0xE0464645, CI run 1 of FW1). Idempotent; the backend is unusable after.
+    pub fn shutdown(&self) {
+        let inner = &self.inner;
+        if inner.xaml.down.get() {
             return;
         }
-        // Close windows we still own, then let Xaml (in Inner) shut the dispatcher queue down.
-        let wins: Vec<IInspectable> = self
-            .inner
-            .handles
-            .borrow_mut()
-            .drain()
-            .filter(|(_, e)| table::kind(e.kind).is_some_and(|k| k.toplevel))
-            .map(|(_, e)| e.obj)
-            .collect();
+        let entries: Vec<Entry> = inner.handles.borrow_mut().drain().map(|(_, e)| e).collect();
+        inner.by_ptr.borrow_mut().clear();
+        let mut wins = Vec::new();
+        let mut regs = Vec::new();
+        for e in entries {
+            let top = table::kind(e.kind).is_some_and(|k| k.toplevel);
+            regs.extend(e.listeners.into_values());
+            regs.extend(e.internal);
+            if top {
+                wins.push(e.obj);
+            }
+        }
+        // Unsubscribe first, so the close rule's handler does not run against a drained table.
+        drop(regs);
         for w in wins {
             if let Ok(w) = w.cast::<Window>() {
                 let _ = w.Close();
             }
         }
-        self.inner.timer_subs.borrow_mut().clear();
+        let _ = inner.timer.Stop();
+        let _ = inner.frame_timer.Stop();
+        inner.frame_sub.borrow_mut().take();
+        inner.timer_subs.borrow_mut().clear();
+        let after: Vec<_> = AFTER.with(|a| a.borrow_mut().drain().map(|(_, v)| v).collect());
+        for (t, rev, f) in after {
+            let _ = t.Stop();
+            drop((rev, f));
+        }
         GRAVEYARD.with(|g| g.borrow_mut().clear());
+        // Let the closes and releases above run through the queue before it shuts down.
+        self.pump(50);
+        inner.xaml.shutdown();
+    }
+}
+
+impl Drop for WinUiBackend {
+    fn drop(&mut self) {
+        if Rc::strong_count(&self.inner) > 1 {
+            return;
+        }
+        self.shutdown();
         CURRENT.with(|c| *c.borrow_mut() = Weak::new());
     }
 }
