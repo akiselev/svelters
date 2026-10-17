@@ -1401,6 +1401,23 @@ extern "C" int svl_qt_trigger_actions(svl_handle h) {
 }
 
 // Type `utf8` into the QLineEdit behind `h` through key events, replacing its content.
+// Test hook: a mouse event for the widget behind `h`. kind: 0 press, 1 release, 2 move, 3 wheel (dy in `button`).
+// Returns whether the widget (or an event filter) accepted it, or -1 for an unknown handle.
+extern "C" int svl_qt_send_mouse(svl_handle h, int kind, double x, double y, int button) {
+  auto *w = qobject_cast<QWidget *>(debug_obj(h));
+  if (!w) return -1;
+  const QPointF pos(x, y);
+  const QPointF global = w->mapToGlobal(pos);
+  if (kind == 3) {
+    QWheelEvent ev(pos, global, QPoint(), QPoint(0, button), Qt::NoButton, Qt::NoModifier, Qt::NoScrollPhase, false);
+    return QApplication::sendEvent(w, &ev) ? 1 : 0;
+  }
+  const QEvent::Type t = kind == 0 ? QEvent::MouseButtonPress : kind == 1 ? QEvent::MouseButtonRelease : QEvent::MouseMove;
+  const Qt::MouseButton b = static_cast<Qt::MouseButton>(button);
+  QMouseEvent ev(t, pos, global, b, kind == 1 ? Qt::NoButton : b, Qt::NoModifier);
+  return QApplication::sendEvent(w, &ev) ? 1 : 0;
+}
+
 extern "C" int svl_qt_type_text(svl_handle h, const char *utf8) {
   auto *e = qobject_cast<QLineEdit *>(debug_obj(h));
   if (!e) return -1;
