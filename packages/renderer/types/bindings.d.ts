@@ -28,6 +28,9 @@ export interface BindableProps {
   expander: {
     expanded: boolean; // gtk
   };
+  groupbox: {
+    checked: boolean; // qt
+  };
   levelbar: {
     value: number; // gtk
   };
@@ -73,6 +76,9 @@ export interface BindableProps {
   tabbar: {
     currentIndex: number; // qt
   };
+  tabwidget: {
+    currentIndex: number; // qt
+  };
   text: {
     text: string; // gtk
   };
@@ -81,5 +87,8 @@ export interface BindableProps {
   };
   togglebutton: {
     active: boolean; // gtk
+  };
+  toolbox: {
+    currentIndex: number; // qt
   };
 }

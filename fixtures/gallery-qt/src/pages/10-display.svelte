@@ -15,14 +15,14 @@
 </script>
 
 <box orientation="vertical" spacing="4">
-  <calendar bind:this={cal} selectedDate={day} gridVisible={true}
+  <calendar bind:this={cal} minimumDate={{ year: 2024, month: 1, day: 1 }} maximumDate={{ year: 2024, month: 12, day: 31 }} selectedDate={day} gridVisible={true}
             navigationBarVisible={true} firstDayOfWeek="monday" horizontalHeaderFormat="short-day-names"
             verticalHeaderFormat="no-vertical-header" dateEditEnabled={true}
             onselection-changed={() => selected++} onpage-changed={() => pages++} />
   <label label="selection changes: {selected}, page changes: {pages}" />
-  <dateedit date={day} displayFormat="yyyy-MM-dd" calendarPopup={true} ondate-changed={() => dates++} />
+  <dateedit minimumDate={{ year: 2024, month: 1, day: 1 }} maximumDate={{ year: 2024, month: 12, day: 31 }} date={day} displayFormat="yyyy-MM-dd" calendarPopup={true} ondate-changed={() => dates++} />
   <label label="date changes: {dates}" />
-  <timeedit time={{ hour: 9, minute: 30, second: 0, ms: 0 }} displayFormat="HH:mm" ontime-changed={() => times++} />
+  <timeedit minimumTime={{ hour: 8, minute: 0, second: 0, ms: 0 }} maximumTime={{ hour: 18, minute: 0, second: 0, ms: 0 }} time={{ hour: 9, minute: 30, second: 0, ms: 0 }} displayFormat="HH:mm" ontime-changed={() => times++} />
   <label label="time changes: {times}" />
   <datetimeedit dateTime={new Date(2024, 2, 15, 9, 30)} displayFormat="yyyy-MM-dd HH:mm"
                 ondate-time-changed={() => dts++} />

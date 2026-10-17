@@ -28,6 +28,9 @@ export const BINDINGS = {
   expander: {
     expanded: { prop: "expanded", signal: "notify::expanded", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
   },
+  groupbox: {
+    checked: { prop: "checked", signal: "toggled", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
+  },
   levelbar: {
     value: { prop: "value", signal: "notify::value", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
   },
@@ -73,6 +76,9 @@ export const BINDINGS = {
   tabbar: {
     currentIndex: { prop: "currentIndex", signal: "changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
+  tabwidget: {
+    currentIndex: { prop: "currentIndex", signal: "changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
+  },
   text: {
     text: { prop: "text", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["gtk"] },
   },
@@ -81,5 +87,8 @@ export const BINDINGS = {
   },
   togglebutton: {
     active: { prop: "active", signal: "toggled", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
+  },
+  toolbox: {
+    currentIndex: { prop: "currentIndex", signal: "changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
 };
