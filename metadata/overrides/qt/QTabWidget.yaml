@@ -79,14 +79,6 @@ elements:
               get: { native: "QTabWidget::isTabEnabled(int) const", args: [child_index] }
               expect: "!static_cast<QTabWidget *>($p)->isTabEnabled(static_cast<QTabWidget *>($p)->indexOf($w))"
               provenance: "QTabWidget::setTabEnabled(int, bool) (qdoc); X3 child attribute"
-            - name: tabIcon
-              type: string
-              default: ""
-              samples: ["document-new", "edit-copy"]
-              set: { expr: "$h->setTabIcon(ci, $v.isEmpty() ? QIcon() : QIcon::fromTheme($v))", args: [] }
-              get: { expr: "$h->tabIcon(ci).name()" }
-              expect: "static_cast<QTabWidget *>($p)->tabIcon(static_cast<QTabWidget *>($p)->indexOf($w)).name() == QString(\"document-new\")"
-              provenance: "QTabWidget::setTabIcon(int, QIcon) with the icon named by a theme icon name (QIcon::fromTheme, the icon form of the S1 value model); X3 child attribute"
           ops:
             insert:
               native: "QTabWidget::addTab(QWidget*, const QString&)"

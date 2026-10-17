@@ -1,0 +1,107 @@
+=== gtk ===
+.app.svelte-card {
+  background-color: var(--sv-bg);
+  background-image: none;
+}
+.card.svelte-card {
+  padding: var(--sv-space-3);
+  background-color: var(--sv-surface);
+  border: 1px solid var(--sv-border);
+  border-radius: var(--sv-radius);
+  background-image: none;
+}
+.count.svelte-card {
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--sv-fg, #222);
+}
+button.sv-k-button.primary.svelte-card {
+  background: var(--sv-accent);
+  color: var(--sv-accent-fg);
+  border-radius: 6px;
+  padding: 6px 14px;
+}
+button.sv-k-button.primary.svelte-card:hover {
+  background: var(--sv-accent-hover);
+}
+button.sv-k-button.primary.svelte-card:active {
+  background: #1a5fb4;
+}
+button.sv-k-button.primary.svelte-card:disabled {
+  opacity: 0.5;
+}
+button.sv-k-togglebutton.tog.svelte-card:checked {
+  background-color: #26a269;
+  background-image: none;
+}
+.card.svelte-card > .count.svelte-card,
+.card.svelte-card .tog.svelte-card {
+  margin: 4px;
+}
+entry.sv-k-entry.field.svelte-card:focus {
+  border-color: var(--sv-accent);
+}
+.card.svelte-card:not(.count) {
+  min-width: 120px;
+}
+@media (prefers-color-scheme: dark) {
+.card.svelte-card {
+  border-color: #666;
+}
+}
+
+=== qt ===
+.app.svelte-card {
+  background-color: ${--sv-bg};
+  border: none;
+}
+.card.svelte-card {
+  padding: ${--sv-space-3};
+  background-color: ${--sv-surface};
+  border: 1px solid ${--sv-border};
+  border-radius: ${--sv-radius};
+}
+.count.svelte-card {
+  font-size: 20px;
+  font-weight: bold;
+  color: ${--sv-fg|#222};
+}
+.QPushButton.primary.svelte-card {
+  background: ${--sv-accent};
+  color: ${--sv-accent-fg};
+  border-radius: 6px;
+  padding: 6px 14px;
+  border: none;
+}
+.QPushButton.primary.svelte-card:hover {
+  background: ${--sv-accent-hover};
+  border: none;
+}
+.QPushButton.primary.svelte-card:pressed {
+  background: #1a5fb4;
+  border: none;
+}
+.card.svelte-card > .count.svelte-card,
+.card.svelte-card .tog.svelte-card {
+  margin: 4px;
+}
+.QLineEdit.field.svelte-card:focus {
+  border-color: ${--sv-accent};
+}
+
+=== qt dark ===
+.card.svelte-card {
+  border-color: #666;
+}
+
+=== diagnostics ===
+info [gtk] background-color needs 'background-image: none' to show over the theme's gradients; added
+info [gtk] background-color needs 'background-image: none' to show over the theme's gradients; added
+info [gtk] background-color needs 'background-image: none' to show over the theme's gradients; added
+info [qt] background needs a border in QSS to paint on buttons and inputs; added 'border: none'
+info [qt] background needs a border in QSS to paint on buttons and inputs; added 'border: none'
+info [qt] background needs a border in QSS to paint on buttons and inputs; added 'border: none'
+info [qt] background needs a border in QSS to paint on buttons and inputs; added 'border: none'
+warning [qt] property 'opacity' is not supported on qt: QSS has no opacity: Qt honours it for style= / style: only (QGraphicsOpacityEffect)
+warning [qt] <togglebutton> is not an element on qt; rule dropped
+error [qt] :not(...) of this form is not expressible on qt; rule dropped

@@ -38,6 +38,11 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QScrollArea>
 #include <QtWidgets/QWidget>
+#include <QtWidgets/QGraphicsEffect>
+#include <QtWidgets/QStyle>
+#include <QtWidgets/QStyleFactory>
+#include <QtGui/QPalette>
+#include <QtGui/QImage>
 //@@INCLUDES@@
 
 // Headers of the value-model converters (serdes.hpp.in is included inside the anonymous namespace).
@@ -835,6 +840,174 @@ int b_cancel(void *, uint64_t callback) {
 // One host->frame on the next frame: QWindow::requestUpdate() on a platform-backed toplevel, whose
 // UpdateRequest event the frame filter turns into the callback. Without such a window a 16 ms
 // timer stands in; with one, a 250 ms watchdog covers a window that stops updating (hidden).
+// ---- styling (ABI v2.3 `style`; plans/architecture/backend-abi.md, docs/notes/x6-styling.md) -------
+//
+// Qt speaks QSS. JS renders the token placeholders before sending, so the backend only keeps the
+// component sheets by id, concatenates them in registration order into the application stylesheet
+// and sets it once. Setting the sheet is a full re-polish, so it happens immediately while no
+// window is visible (the app's startup: nothing to polish yet) and coalesced into one zero-delay
+// timer turn afterwards. Classes are the dynamic property `class = "<QtClass> a b"`: QSS reads the
+// class name from that very property, so `.QPushButton` keeps matching next to our classes.
+struct StyleState {
+  std::vector<std::pair<std::string, std::string>> sheets;  // id -> QSS text, registration order
+  bool fusion = false;
+  bool apply_queued = false;
+  std::string applied;  // the last application stylesheet set
+};
+StyleState g_style;
+
+QString style_class_name(QObject *o) { return QString::fromLatin1(o->metaObject()->className()); }
+
+void style_repolish(QObject *o) {
+  if (auto *w = qobject_cast<QWidget *>(o)) {
+    if (QStyle *st = w->style()) {
+      st->unpolish(w);
+      st->polish(w);
+    }
+    w->update();
+  }
+}
+
+void style_ensure_fusion() {
+  if (g_style.fusion) return;
+  g_style.fusion = true;
+  if (QApplication::style() && QApplication::style()->name().compare(QLatin1String("fusion"), Qt::CaseInsensitive) != 0) {
+    if (QStyle *s = QStyleFactory::create(QStringLiteral("Fusion"))) QApplication::setStyle(s);
+  }
+}
+
+bool style_any_visible() {
+  for (QWidget *w : QApplication::topLevelWidgets())
+    if (w->isVisible()) return true;
+  return false;
+}
+
+void style_apply_now() {
+  g_style.apply_queued = false;
+  std::string all;
+  for (auto &s : g_style.sheets) {
+    all += s.second;
+    if (!all.empty() && all.back() != '\n') all += '\n';
+  }
+  if (all == g_style.applied) return;
+  g_style.applied = all;
+  qApp->setStyleSheet(QString::fromUtf8(all.data(), static_cast<qsizetype>(all.size())));
+}
+
+void style_apply() {
+  if (!style_any_visible()) {
+    style_apply_now();
+    return;
+  }
+  if (g_style.apply_queued) return;
+  g_style.apply_queued = true;
+  QTimer::singleShot(0, g.waker.load(), [] { style_apply_now(); });
+}
+
+QString style_str(const svl_value *v) { return QString::fromUtf8(static_cast<const char *>(v->u.s.ptr), static_cast<qsizetype>(v->u.s.len)); }
+
+int b_style(void *, uint32_t op, svl_handle h, const svl_value *v) {
+  TimeScope timing_;
+  ensure_app();
+  const bool has = v && v->tag == SVL_STR;
+  const QString text = has ? style_str(v) : QString();
+  try {
+    switch (op) {
+      case SVL_STYLE_TARGET:
+        return SVL_STYLE_TARGET_QSS;
+      case SVL_STYLE_CLASSES:
+      case SVL_STYLE_NAME:
+      case SVL_STYLE_INLINE:
+      case SVL_STYLE_OPACITY: {
+        Entry *e = find(h);
+        if (!e) return fail("style: stale or unknown handle");
+        QObject *o = e->obj.data();
+        if (op == SVL_STYLE_CLASSES) {
+          style_ensure_fusion();
+          const QString value = text.isEmpty() ? style_class_name(o) : style_class_name(o) + QLatin1Char(' ') + text;
+          o->setProperty("class", value);
+          style_repolish(o);
+        } else if (op == SVL_STYLE_NAME) {
+          o->setObjectName(text);
+          style_repolish(o);
+        } else if (auto *w = qobject_cast<QWidget *>(o)) {
+          if (op == SVL_STYLE_INLINE) {
+            style_ensure_fusion();
+            w->setStyleSheet(text.trimmed().isEmpty() ? QString() : QStringLiteral(".") + style_class_name(o) + QStringLiteral(" {\n") + text + QStringLiteral("\n}"));
+          } else {
+            bool ok = true;
+            const double a = has ? text.toDouble(&ok) : 1.0;
+            if (!ok) return fail("style: opacity is not a number");
+            if (!has || a >= 1.0) {
+              w->setGraphicsEffect(nullptr);
+            } else {
+              auto *fx = qobject_cast<QGraphicsOpacityEffect *>(w->graphicsEffect());
+              if (!fx) {
+                fx = new QGraphicsOpacityEffect(w);
+                w->setGraphicsEffect(fx);
+              }
+              fx->setOpacity(a < 0.0 ? 0.0 : a);
+            }
+          }
+        } else {
+          return fail("style: inline style and opacity need a widget");
+        }
+        return 0;
+      }
+      case SVL_STYLE_SHEET: {
+        style_ensure_fusion();
+        if (!v || v->tag != SVL_STR) {
+          g_style.sheets.clear();
+          style_apply();
+          return 0;
+        }
+        const std::string raw(static_cast<const char *>(v->u.s.ptr), v->u.s.len);
+        const size_t sep = raw.find('\x01');
+        const std::string id = raw.substr(0, sep);
+        auto it = g_style.sheets.begin();
+        for (; it != g_style.sheets.end(); ++it)
+          if (it->first == id) break;
+        if (sep == std::string::npos) {
+          if (it != g_style.sheets.end()) g_style.sheets.erase(it);
+        } else if (it != g_style.sheets.end()) {
+          it->second = raw.substr(sep + 1);
+        } else {
+          g_style.sheets.emplace_back(id, raw.substr(sep + 1));
+        }
+        style_apply();
+        return 0;
+      }
+      case SVL_STYLE_SCHEME: {
+        style_ensure_fusion();
+        const QStringList parts = text.split(QChar(1));
+        static const QPalette original = QApplication::palette();
+        QPalette pal = original;
+        static const std::pair<const char *, QPalette::ColorRole> roles[] = {
+            {"window", QPalette::Window},       {"button", QPalette::Button},
+            {"windowText", QPalette::WindowText}, {"text", QPalette::Text},
+            {"buttonText", QPalette::ButtonText}, {"base", QPalette::Base},
+            {"highlight", QPalette::Highlight}, {"highlightedText", QPalette::HighlightedText},
+            {"placeholderText", QPalette::PlaceholderText}};
+        for (int i = 1; i < parts.size(); ++i) {
+          const int eq = parts[i].indexOf(QLatin1Char('='));
+          if (eq < 0) continue;
+          const QString name = parts[i].left(eq);
+          const QColor c(parts[i].mid(eq + 1));
+          if (!c.isValid()) continue;
+          for (const auto &r : roles)
+            if (name == QLatin1String(r.first)) pal.setColor(r.second, c);
+        }
+        QApplication::setPalette(pal);
+        return 0;
+      }
+      default:
+        return fail("style: unknown op " + std::to_string(op));
+    }
+  } catch (const std::exception &x) {
+    return fail(std::string("style: C++ exception: ") + x.what());
+  }
+}
+
 void b_request_frame(void *) {
   ensure_app();
   if (g.frame_pending) return;
@@ -863,7 +1036,7 @@ void b_request_frame(void *) {
 const svl_backend kBackend = {SVL_ABI_VERSION, &g, b_resolve, b_create, b_insert, b_remove, b_destroy,
                               b_set_prop, b_get_prop, b_call, b_listen, b_handle_info, b_run, b_wake, b_schedule_wake, b_quit,
                               b_last_error, SVL_CAP_UTF16_IN | SVL_CAP_UTF16_OUT, b_describe, b_describe_type, b_cancel, b_request_frame,
-                              b_set_child_attr, b_get_child_attr, b_listen_ex};
+                              b_set_child_attr, b_get_child_attr, b_listen_ex, b_style};
 
 }  // namespace
 
@@ -979,6 +1152,35 @@ extern "C" int svl_qt_grab_png(svl_handle h, const char *path) {
   QPixmap px = w->grab();
   if (!path) return px.isNull() ? -1 : 0;
   return px.save(QString::fromUtf8(path)) ? 0 : -1;
+}
+
+// Styling read-back for tests (X6): a rendered pixel (0xRRGGBB, -1 if out of range or not a widget), the
+// widget's foreground / background palette colour after QSS, the application stylesheet.
+extern "C" int svl_qt_pixel(svl_handle h, int x, int y) {
+  auto *w = qobject_cast<QWidget *>(debug_obj(h));
+  if (!w) return -1;
+  QImage img = w->grab().toImage();
+  if (x < 0 || y < 0 || x >= img.width() || y >= img.height()) return -1;
+  return static_cast<int>(img.pixelColor(x, y).rgb() & 0xFFFFFF);
+}
+
+extern "C" int svl_qt_palette_color(svl_handle h, int background) {
+  auto *w = qobject_cast<QWidget *>(debug_obj(h));
+  if (!w) return -1;
+  return static_cast<int>(w->palette().color(background ? w->backgroundRole() : w->foregroundRole()).rgb() & 0xFFFFFF);
+}
+
+extern "C" const char *svl_qt_app_stylesheet(void) {
+  static std::string buf;
+  buf = qApp->styleSheet().toStdString();
+  return buf.c_str();
+}
+
+extern "C" double svl_qt_opacity(svl_handle h) {
+  auto *w = qobject_cast<QWidget *>(debug_obj(h));
+  if (!w) return -1.0;
+  auto *fx = qobject_cast<QGraphicsOpacityEffect *>(w->graphicsEffect());
+  return fx ? fx->opacity() : 1.0;
 }
 
 // Triggers every QAction of the widget behind `h` (a menu's items), as a click on each would.

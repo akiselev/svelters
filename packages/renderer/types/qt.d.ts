@@ -1986,7 +1986,6 @@ export interface QtChildAttrs {
   'parent:rowSpan'?: number;
   'parent:stretch'?: number;
   'parent:tabEnabled'?: boolean;
-  'parent:tabIcon'?: string;
   'parent:tabLabel'?: string;
   'parent:tabToolTip'?: string;
 }

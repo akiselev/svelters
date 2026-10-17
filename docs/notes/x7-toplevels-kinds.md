@@ -34,3 +34,17 @@ Qt:
 
 - `tools/metadata/qt/ingest.py` has an allowlist `EXTRA_CLASSES` of non-QtWidgets classes (module recorded in `native.module`, which `gen_cpp.py inc()` now uses for the include). Ingested: `QTextDocument`. `QItemSelectionModel` needs a `QAbstractItemModel` to be useful (M5 territory) and is left out.
 - `QTextDocument.yaml`: element `textdocument` (a QObject, not a widget; the generator needed no change beyond the include): 9 props, 9 methods, 3 signals, all with generated tests. `QTextEdit::document()` was already annotated, so `edit.call('document')` returns a borrowed handle of kind `textdocument`: test `borrowed.rs document_kind`, gallery page `03-text` (`document blocks: 2`).
+
+## Item 3: QMainWindow toolbars and docks
+
+- `QMainWindow.yaml` slots `toolbars` and `docks` (append-only; membership by isAncestorOf), with child attributes `area` (top/left/right/bottom) on both and `breakBefore` on toolbars: `<toolbar parent:area="left">`, `<dockwidget parent:area="right">`. Remove also unparents (removeToolBar/removeDockWidget only hide).
+- Generator: append-only slots may carry attrs; attr `set.expr` (`$h`, `$c`, `$v`) and `get.expr` with `$c`; a `child` argument is cast to the native parameter type; attr `setup:` (a toolbar break needs a toolbar before it); `route_by_kind: true` slots now take unnamed children by class (a `<toolbar>` in a `<window>` goes to `toolbars`, the label stays central). Test: `toplevels.rs areas_route_by_kind`, gallery `06-layout` (second window with toolbars and a dock).
+- `tabIcon` dropped: an icon attribute as a theme name cannot be read back without an icon theme (`QIcon::name()` is empty headless), so no honest generated test; needs a real icon value form.
+
+## Merge of master (X6 styling)
+
+Resolved in `index.js` (STYLE_ATTRS and TOPLEVELS exports), `index.d.ts`, ABI doc, `gallery.rs` (`run_page` takes colours; `run_page_clicks` too). The counter report has a new field `dump_all` (root tree plus the other live toplevels); `dump` stays root-only. `kinds.generated.js` regenerated with `gen_kinds.py`. The Qt "open all dialogs" handle in the gallery is now #26 (two more sidebar buttons).
+
+## Not done (follow-up lane)
+
+Items 4 (typed sync results, Qt key-release/mouse/wheel/focus event families) and 5 (GTK DrawingArea draw func, ListBox/FlowBox sort/filter/header funcs) were not started. Notes for them: for the draw func prefer a recording canvas (ops recorded in JS and replayed natively at snapshot time) so no JS runs during snapshot; sort/filter/header can follow X5's push-the-result approach.

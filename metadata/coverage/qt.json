@@ -1291,7 +1291,7 @@
   "bindings": 0,
   "defaults": 6,
   "element": "window",
-  "gallery": null,
+  "gallery": "06-layout",
   "inherited": 0,
   "kind": "QMainWindow",
   "lifetime": "toplevel",
@@ -1315,7 +1315,7 @@
   "slots_own": 5,
   "unexposed": null,
   "verified": [
-   14,
+   19,
    19
   ]
  },
@@ -2314,7 +2314,7 @@
   "bindings": 0,
   "defaults": 6,
   "element": "toolbar",
-  "gallery": "08-bars",
+  "gallery": "06-layout",
   "inherited": 0,
   "kind": "QToolBar",
   "lifetime": "owned",

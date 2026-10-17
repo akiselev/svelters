@@ -1,6 +1,7 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
+import { stylePlugin } from './style-plugin.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 
@@ -12,13 +13,17 @@ const here = path.dirname(fileURLToPath(import.meta.url));
  * condition, components compiled with experimental.customRenderer -> @svelters/renderer.
  * backend 'shim': stock-style DOM output (fragments: 'tree') on the @svelters/dom shim.
  * Select with SVELTERS_BACKEND=shim|renderer.
+ *
+ * Renderer builds take component <style> blocks out of the compile as data (`style-plugin.js`):
+ * `options.style` = { strict, verbose, tokens } (docs/site: styling guide).
  */
-export function svelteConfig(root, backend = process.env.SVELTERS_BACKEND ?? 'renderer') {
+export function svelteConfig(root, backend = process.env.SVELTERS_BACKEND ?? 'renderer', options = {}) {
   if (backend !== 'renderer' && backend !== 'shim') throw new Error(`unknown SVELTERS_BACKEND ${backend}`);
   const renderer = backend === 'renderer';
   const compilerOptions = renderer
     ? { experimental: { customRenderer: fileURLToPath(import.meta.resolve('@svelters/renderer')) } }
     : { fragments: 'tree' };
+  const styles = renderer ? stylePlugin(options.style) : null;
   return {
     root,
     resolve: {
@@ -26,8 +31,10 @@ export function svelteConfig(root, backend = process.env.SVELTERS_BACKEND ?? 're
       alias: { '@app': path.join(root, 'src/App.svelte') },
     },
     plugins: [
+      ...(styles ? [styles.plugin] : []),
       svelte({
         compilerOptions,
+        ...(styles ? { preprocess: [styles.preprocessor] } : {}),
         onwarn(warning, handler) {
           if (warning.code.startsWith('a11y_')) return;
           handler(warning);

@@ -7,8 +7,10 @@ import { createRenderer } from 'svelte/renderer';
 import { BINDINGS, TOPLEVELS } from './bindings.generated.js';
 import { coerceAttribute } from './coerce.js';
 import { kindRef, methodRef, propRef } from './hostops.js';
+import { applyStyle, bindElements, forgetStyle, markStyleDirty } from './style.js';
 
 export { BINDINGS, TOPLEVELS };
+export { getColorScheme, getTokens, registerStyles, setColorScheme, setTokens } from './style.js';
 
 /** Kinds whose Text children are folded into the `label` prop. */
 export const LABEL_KINDS = new Set(['label', 'button']);
@@ -21,6 +23,8 @@ const eventFor = (signal) => SIGNAL_TO_EVENT[signal] ?? signal;
 
 /** Attributes that stay JS-side and never become host props. */
 const JS_ONLY_ATTRS = new Set(['class', 'style', 'id', 'show']);
+/** Attributes handled by style.js: sent to the backend as classes, inline declarations and the widget name. */
+const STYLE_ATTRS = new Set(['class', 'style', 'id']);
 
 const PROXY_TAG = 'sv-slot';
 
@@ -91,6 +95,7 @@ class WNode {
       this.shown = false; // toplevel kinds: the show policy ran
       this.tparent = null; // toplevel kinds: the enclosing toplevel this one is transient for
       this.pending = null; // toplevel kinds: nested toplevels waiting for this one to be shown
+      this.sc = null; // what styling has been sent for this element (style.js)
     }
   }
 
@@ -128,6 +133,7 @@ const sweepSet = new Set(); // elements natively detached since the last sweep
 let sweepQueued = false;
 
 export const root = new WNode('element', 'svelters-root');
+bindElements(() => byHandle.values());
 
 // Borrowed handles (native objects a getter or call returned, such as a parent, a root or an
 // entry's inner text) are wrapped in nodes that are never part of the tree. They are held weakly
@@ -231,6 +237,7 @@ function destroyTree(el) {
   for (let c = el.first; c; c = c.next) if (c.kind === 'element') destroyTree(c);
   if (el.h != null) {
     byHandle.delete(el.h);
+    forgetStyle(el);
     host().destroy(el.h);
     el.h = null;
     el.dead = 'destroyed';
@@ -276,6 +283,7 @@ function realize(el) {
   byHandle.set(el.h, el);
   for (const [k, v] of el.props) hs.setProp(el.h, propRef(hs, el.tag, k), v);
   for (const { sig, flags } of el.signals.values()) nativeListen(el, sig, true, flags);
+  applyStyle(el);
   updateLabel(el);
   for (const { el: c, slot } of flat(el, null, [])) {
     realize(c);
@@ -551,12 +559,14 @@ const renderer = createRenderer({
     if (key.startsWith(CHILD_ATTR_PREFIX)) {
       if (!isProxy(el)) setChildAttr(el, key.slice(CHILD_ATTR_PREFIX.length), value);
     } else if (key === 'slot' || key === 'data-slot') el.slot = String(value);
+    else if (STYLE_ATTRS.has(key)) markStyleDirty(el);
     else if (!JS_ONLY_ATTRS.has(key) && !isProxy(el)) setNativeProp(el, key, coerceAttribute(host(), el.tag, key, value));
   },
   removeAttribute(el, name) {
     delete el.attrs[name];
     if (name.startsWith(CHILD_ATTR_PREFIX)) setChildAttr(el, name.slice(CHILD_ATTR_PREFIX.length), null);
     else if (name === 'slot' || name === 'data-slot') el.slot = null;
+    else if (STYLE_ATTRS.has(name)) markStyleDirty(el);
     else if (el.props.has(name)) {
       el.props.delete(name);
       if (el.h != null) host().setProp(el.h, propRef(host(), el.tag, name), null);
