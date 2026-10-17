@@ -771,6 +771,46 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Calendar:signal:next-month",
+   "fingerprint": "d7aa1d0c43ce04e3",
+   "kind": "Calendar",
+   "name": "next-month",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_calendar_next_month"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Calendar:signal:next-year",
+   "fingerprint": "9ff597c682cf4610",
+   "kind": "Calendar",
+   "name": "next-year",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_calendar_next_year"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Calendar:signal:prev-month",
+   "fingerprint": "b1b2d312122ef99d",
+   "kind": "Calendar",
+   "name": "prev-month",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_calendar_prev_month"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Calendar:signal:prev-year",
+   "fingerprint": "d33a86428b2cba47",
+   "kind": "Calendar",
+   "name": "prev-year",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_calendar_prev_year"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Calendar:signal:notify::day",
    "fingerprint": "1bceeeebd5817661",
    "kind": "Calendar",
@@ -849,6 +889,26 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_calendar_year"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Calendar:method:clear_marks",
+   "fingerprint": "8dfdf30234a58b0c",
+   "kind": "Calendar",
+   "name": "clear_marks",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_calendar_clear_marks"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Calendar:method:mark_day",
+   "fingerprint": "6051ab6b65e05f00",
+   "kind": "Calendar",
+   "name": "mark_day",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_calendar_mark_day"
    ]
   },
   {
@@ -1556,6 +1616,26 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Image:prop:file",
+   "fingerprint": "289e75b12c820177",
+   "kind": "Image",
+   "name": "file",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_image_file"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Image:prop:gicon",
+   "fingerprint": "809e6e81674faa98",
+   "kind": "Image",
+   "name": "gicon",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_image_gicon"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Image:prop:icon-name",
    "fingerprint": "8823d9c5b8c49b7f",
    "kind": "Image",
@@ -1573,6 +1653,16 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_image_icon_size"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Image:prop:paintable",
+   "fingerprint": "9b1d6ee5adab5283",
+   "kind": "Image",
+   "name": "paintable",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_image_paintable"
    ]
   },
   {
@@ -1984,6 +2074,16 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_listbox_show_separators"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:LockButton:prop:permission",
+   "fingerprint": "42b2e6d0c4e342d4",
+   "kind": "LockButton",
+   "name": "permission",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_lockbutton_permission"
    ]
   },
   {
@@ -2408,6 +2508,16 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Picture:prop:file",
+   "fingerprint": "d39dac4a0af2279c",
+   "kind": "Picture",
+   "name": "file",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_picture_file"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Picture:prop:keep-aspect-ratio",
    "fingerprint": "8730329745e55036",
    "kind": "Picture",
@@ -2415,6 +2525,16 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_picture_keep_aspect_ratio"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Picture:prop:paintable",
+   "fingerprint": "1815b9323c45150b",
+   "kind": "Picture",
+   "name": "paintable",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_picture_paintable"
    ]
   },
   {
@@ -2745,6 +2865,16 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_scalebutton_has_frame"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:ScaleButton:prop:icons",
+   "fingerprint": "116535412cd4a51d",
+   "kind": "ScaleButton",
+   "name": "icons",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_scalebutton_icons"
    ]
   },
   {

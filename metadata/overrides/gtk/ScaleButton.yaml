@@ -1,4 +1,6 @@
 properties:
+  - name: icons
+    provenance: "GtkScaleButton:icons, string list (ABI v3); round trip"
   - name: has-frame
     provenance: "GtkScaleButton:has-frame (Gtk 4 docs)"
   - name: value

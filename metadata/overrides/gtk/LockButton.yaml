@@ -1,4 +1,6 @@
 properties:
+  - name: permission
+    provenance: "GtkLockButton:permission, object reference; round trip"
   - name: text-lock
     provenance: "GtkLockButton:text-lock (Gtk 4 docs)"
   - name: text-unlock

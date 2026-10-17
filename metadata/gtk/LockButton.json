@@ -356,6 +356,11 @@
         "get": "gtk_lock_button_get_permission",
         "set": "gtk_lock_button_set_permission"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkLockButton:permission, object reference; round trip"
+      },
       "default": null,
       "deprecated": true,
       "id": "svelters-api:v1:type:gtk:Gtk:LockButton:prop:permission",
