@@ -637,10 +637,17 @@ impl Codegen<'_, '_> {
         if this_bind.is_some() {
             self.w.write("$.bind_this(");
         }
-        match self.rw.dynamic_component(c.node) {
-            // re-created when the component function changes (Svelte's `$.component`)
-            Some(get) => self.w.write(&format!("$n.snippet({container}, () => {get}, ")),
-            None => self.w.write(&format!("{}($n.region({container}), ", c.name)),
+        if let Some(this) = c.this {
+            // `<svelte:component this>`: re-created when the function changes, nothing if nullish
+            self.w.write(&format!("$n.snippet({container}, () => "));
+            self.paren_expr(this, Mode::Read);
+            self.w.write(", ");
+        } else {
+            match c.node.and_then(|n| self.rw.dynamic_component(n)) {
+                // re-created when the component function changes (Svelte's `$.component`)
+                Some(get) => self.w.write(&format!("$n.snippet({container}, () => {get}, ")),
+                None => self.w.write(&format!("{}($n.region({container}), ", c.name)),
+            }
         }
         let spread = c.props.iter().any(|p| matches!(p, ComponentProp::Spread(_)));
         if spread {

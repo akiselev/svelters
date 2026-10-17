@@ -1,6 +1,6 @@
 {
  "note": "samples that pass; run.mjs --check fails if one stops passing",
- "count": 473,
+ "count": 475,
  "pass": [
   "1000-reading-derived-effects",
   "accessors-props",
@@ -29,6 +29,7 @@
   "bind-this-proxy-deep",
   "bind-value-state",
   "bindable-prop-and-export",
+  "binding-property-non-reactive-ignored",
   "binding-property-non-reactive-ignored-2",
   "binding-property-store",
   "binding-update-in-each",
@@ -452,6 +453,7 @@
   "store-unsubscribe-not-referenced-after",
   "svelte-boundary-dev-const",
   "svelte-component-props-update",
+  "svelte-component-switch-dev",
   "svelte-set-generators",
   "tagged-template-literal-reactive",
   "text-effect-multi-deps",

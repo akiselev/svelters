@@ -100,7 +100,7 @@ Semantics are specified in `runtime-contract.md` "Template blocks"; departures f
   Observable only through side effects in template expressions (`lifecycle-render-order-*`).
 - **Dynamic components** (`<Comp />` with `Comp` state/prop/each item/snippet param, or
   `<obj.Comp />`) render through `$n.snippet` (Svelte's `$.component`), re-created when the
-  function changes.
+  function changes. `<svelte:component this={expr}>` likewise (always dynamic).
 - **Legacy `on:event={handler}`** on native elements is a listener, as `onevent={handler}` (both
   run, in attribute order). Svelte attaches it with `addEventListener` (not delegated), so its
   order relative to delegated `onevent` handlers can differ. Modifiers, bare forwarding

@@ -253,6 +253,11 @@ impl<'a> Lower<'a, '_, '_> {
                 }
                 // `<svelte:boundary onerror failed>`: called like a component whose props are its
                 // attributes and snippets (`failed`, `pending`, `children`), see runtime `boundary`
+                FragmentNode::SvelteComponent(n) => {
+                    if let Some(c) = self.svelte_component(n, ancestors) {
+                        out.items.push(Item::Component(c));
+                    }
+                }
                 FragmentNode::SvelteBoundary(el) => {
                     if let Some(mut c) = self.component(el, ancestors) {
                         c.name = "$n.boundary".to_string();
@@ -933,10 +938,21 @@ impl<'a> Lower<'a, '_, '_> {
     /// A component call. Children: `{#snippet}` blocks directly inside become props of the same
     /// name; everything else becomes the implicit `children` snippet (Svelte 5 semantics).
     fn component(&mut self, el: &'a AstElement, ancestors: &[StyleSubject<'a>]) -> Option<ComponentCall<'a>> {
+        let parts = TagParts { name: &el.name, name_span: el.name_span, span: el.span(), attributes: &el.attributes, fragment: &el.fragment };
+        self.component_parts(parts, Some(el), None, ancestors)
+    }
+
+    /// `<svelte:component this={expr}>`: a dynamic component call (Svelte's `$.component`).
+    fn svelte_component(&mut self, n: &'a crate::svelte::ast::SvelteComponent, ancestors: &[StyleSubject<'a>]) -> Option<ComponentCall<'a>> {
+        let parts = TagParts { name: &n.name, name_span: n.name_span, span: n.span(), attributes: &n.attributes, fragment: &n.fragment };
+        self.component_parts(parts, None, Some(&n.expression), ancestors)
+    }
+
+    fn component_parts(&mut self, el: TagParts<'a>, node: Option<&'a AstElement>, this: Option<&'a Expression>, ancestors: &[StyleSubject<'a>]) -> Option<ComponentCall<'a>> {
         let mut props = Vec::new();
         let mut binds = Vec::new();
         let mut slot = None;
-        for a in &el.attributes {
+        for a in el.attributes {
             match a {
                 AttributeLike::Attribute(at) if at.name == "slot" => slot = static_text(at),
                 AttributeLike::Attribute(at) => match &at.value {
@@ -969,7 +985,7 @@ impl<'a> Lower<'a, '_, '_> {
         let forced = self.forced_slot.take();
         let outer = std::mem::replace(&mut self.in_block, true);
         self.const_ok = true;
-        let mut frag = self.fragment(&el.fragment, &Parent::Detached, ancestors);
+        let mut frag = self.fragment(el.fragment, &Parent::Detached, ancestors);
         self.in_block = outer;
         self.forced_slot = forced;
         let snippets = std::mem::take(&mut frag.snippets);
@@ -977,13 +993,22 @@ impl<'a> Lower<'a, '_, '_> {
         if snippets.iter().any(|s| s.name == "children") && !frag.items.is_empty() {
             self.diags.error(
                 "snippet_conflict",
-                (el.start, el.end),
+                (el.span.start, el.span.end),
                 "Cannot use explicit children snippet at the same time as implicit children content. Remove either the non-whitespace content or the children snippet block",
             );
         }
         let children = (!frag.items.is_empty()).then_some(frag);
-        Some(ComponentCall { span: el.span(), node: el, slot, name: el.name.clone(), props, consts, snippets, children })
+        Some(ComponentCall { span: el.span, node, this, slot, name: el.name.to_string(), props, consts, snippets, children })
     }
+}
+
+/// The parts of a component-like tag (`<Comp>`, `<svelte:component>`, `<svelte:boundary>`).
+struct TagParts<'a> {
+    name: &'a str,
+    name_span: Span,
+    span: Span,
+    attributes: &'a [AttributeLike],
+    fragment: &'a AstFragment,
 }
 
 /// Trims a branch's leading and trailing whitespace and drops empty text parts.
