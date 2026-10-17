@@ -436,6 +436,33 @@ fn slot_headerbar_title() {
     });
 }
 
+/// slot ListBox.children: gir: gtk_list_box_insert; gir: gtk_list_box_remove; manual: non-row children are wrapped in a GtkListBoxRow (Gtk 4 docs)
+#[test]
+fn slot_listbox_children() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("listbox");
+        let a = h.create("label");
+        let b = h.create("label");
+        let c = h.create("label");
+        h.insert(parent, a, None, Some("children")).unwrap();
+        assert!((h.widget(a).ancestor(h.widget(parent).type_()).as_ref() == Some(&h.widget(parent))), "a in children");
+        let pw = h.widget(parent);
+        let idx = |c: u64| -> Option<u32> { let parent = &pw; let w = h.widget(c); crate::util::direct_child_index(parent, &w) };
+        h.insert(parent, b, Some(a), Some("children")).unwrap();
+        h.insert(parent, c, None, None).unwrap();
+        assert!(idx(b) < idx(a) && idx(a) < idx(c), "order b a c: {:?}", (idx(b), idx(a), idx(c)));
+        h.remove(parent, a).unwrap();
+        assert!(!(h.widget(a).ancestor(h.widget(parent).type_()).as_ref() == Some(&h.widget(parent))), "a in children");
+        assert!(h.widget(a).parent().is_none());
+        h.insert(parent, a, Some(c), Some("children")).unwrap();
+        assert!(idx(b) < idx(a) && idx(a) < idx(c), "order b a c after re-insert");
+        for x in [a, b, c] { h.remove(parent, x).unwrap(); }
+        assert!(!(h.widget(a).ancestor(h.widget(parent).type_()).as_ref() == Some(&h.widget(parent))), "a in children");
+        assert!(!(h.widget(b).ancestor(h.widget(parent).type_()).as_ref() == Some(&h.widget(parent))), "b in children");
+    });
+}
+
 /// slot MenuButton.popover: gir: gtk_menu_button_set_popover; manual: the popover is parented to the button (Gtk 4 docs)
 #[test]
 fn slot_menubutton_popover() {

@@ -174,6 +174,7 @@
 {"fact": "svelters-api:v1:type:gtk:Gtk:ListBox:prop:show-separators", "fingerprint": "c974a0afa81f0dbb", "result": "pass", "test": "generated::verify::prop_listbox_show_separators", "version": "4.22.4"},
 {"fact": "svelters-api:v1:type:gtk:Gtk:ListBox:signal:row-activated", "fingerprint": "87b648fbafc2540a", "result": "pass", "test": "generated::verify::signal_listbox_row_activated", "version": "4.22.4"},
 {"fact": "svelters-api:v1:type:gtk:Gtk:ListBox:signal:row-selected", "fingerprint": "e8c3ac484f599821", "result": "pass", "test": "generated::verify::signal_listbox_row_selected", "version": "4.22.4"},
+{"fact": "svelters-api:v1:type:gtk:Gtk:ListBox:slot:children", "fingerprint": "6c63c1800cd8db9e", "result": "pass", "test": "generated::verify::slot_listbox_children", "version": "4.22.4"},
 {"fact": "svelters-api:v1:type:gtk:Gtk:LockButton:prop:text-lock", "fingerprint": "a204a609db80f9d2", "result": "pass", "test": "generated::verify::prop_lockbutton_text_lock", "version": "4.22.4"},
 {"fact": "svelters-api:v1:type:gtk:Gtk:LockButton:prop:text-unlock", "fingerprint": "c30beb37c9d66ff6", "result": "pass", "test": "generated::verify::prop_lockbutton_text_unlock", "version": "4.22.4"},
 {"fact": "svelters-api:v1:type:gtk:Gtk:LockButton:prop:tooltip-lock", "fingerprint": "2ebc20d36f15ba86", "result": "pass", "test": "generated::verify::prop_lockbutton_tooltip_lock", "version": "4.22.4"},

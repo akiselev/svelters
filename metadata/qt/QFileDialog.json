@@ -3158,7 +3158,7 @@
         "set": "setViewMode"
       },
       "brief": "Way files and directories are displayed in the dialog",
-      "default": "Detail",
+      "default": "List",
       "default_origin": "runtime",
       "js_name": "viewMode",
       "metaobject": {

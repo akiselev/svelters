@@ -181,6 +181,16 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:ListBox:slot:children",
+   "fingerprint": "6c63c1800cd8db9e",
+   "kind": "ListBox",
+   "name": "children",
+   "section": "slots",
+   "tests": [
+    "generated::verify::slot_listbox_children"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:MenuButton:slot:popover",
    "fingerprint": "d69a0710007c9d23",
    "kind": "MenuButton",

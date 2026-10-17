@@ -19,9 +19,92 @@
       ],
       "widget_props": []
     },
-    "default_slot": null,
-    "policy": "unknown",
-    "slots": []
+    "default_slot": "children",
+    "policy": "ordered",
+    "slots": [
+      {
+        "accepts": [
+          "Gtk.Widget"
+        ],
+        "annotated": {
+          "fields": [
+            "accepts",
+            "attrs",
+            "cardinality",
+            "content",
+            "default",
+            "on_remove",
+            "ops",
+            "order",
+            "requires",
+            "route_by_kind",
+            "verify"
+          ],
+          "origin": "manual",
+          "provenance": [
+            {
+              "origin": "gir",
+              "ref": "gtk_list_box_insert"
+            },
+            {
+              "origin": "gir",
+              "ref": "gtk_list_box_remove"
+            },
+            {
+              "origin": "manual",
+              "ref": "non-row children are wrapped in a GtkListBoxRow (Gtk 4 docs)"
+            }
+          ]
+        },
+        "attrs": [],
+        "cardinality": "many",
+        "content": "widget",
+        "default": {
+          "kind": "none",
+          "origin": "manual"
+        },
+        "id": "svelters-api:v1:type:gtk:Gtk:ListBox:slot:children",
+        "name": "children",
+        "on_remove": "empty",
+        "ops": {
+          "get": {
+            "contains": "ancestor",
+            "origin": "manual"
+          },
+          "insert": {
+            "args": [
+              "child",
+              "index"
+            ],
+            "effects": {
+              "child": "wrapped:ListBoxRow",
+              "origin": "manual"
+            },
+            "native": "GtkListBox::insert(GtkWidget*, int)",
+            "origin": "manual"
+          },
+          "origin": "manual",
+          "remove": {
+            "args": [
+              "wrapper"
+            ],
+            "effects": {
+              "child": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkListBox::remove(GtkWidget*)",
+            "origin": "manual"
+          }
+        },
+        "order": "native_index",
+        "origin": "manual",
+        "requires": [],
+        "route_by_kind": false,
+        "verify": {
+          "origin": "manual"
+        }
+      }
+    ]
   },
   "constructors": [
     {

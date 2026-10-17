@@ -2669,7 +2669,7 @@
         "write": true
       },
       "accessors": {
-        "get": "clearMaximumDate",
+        "get": "maximumDate",
         "origin": "qdoc",
         "reset": null,
         "set": "setMaximumDate"
@@ -2711,7 +2711,7 @@
         "write": true
       },
       "accessors": {
-        "get": "clearMaximumDateTime",
+        "get": "maximumDateTime",
         "origin": "qdoc",
         "reset": null,
         "set": "setMaximumDateTime"
@@ -2753,7 +2753,7 @@
         "write": true
       },
       "accessors": {
-        "get": "clearMaximumTime",
+        "get": "maximumTime",
         "origin": "qdoc",
         "reset": null,
         "set": "setMaximumTime"
@@ -2795,7 +2795,7 @@
         "write": true
       },
       "accessors": {
-        "get": "clearMinimumDate",
+        "get": "minimumDate",
         "origin": "qdoc",
         "reset": null,
         "set": "setMinimumDate"
@@ -2837,7 +2837,7 @@
         "write": true
       },
       "accessors": {
-        "get": "clearMinimumDateTime",
+        "get": "minimumDateTime",
         "origin": "qdoc",
         "reset": null,
         "set": "setMinimumDateTime"
@@ -2879,7 +2879,7 @@
         "write": true
       },
       "accessors": {
-        "get": "clearMinimumTime",
+        "get": "minimumTime",
         "origin": "qdoc",
         "reset": null,
         "set": "setMinimumTime"

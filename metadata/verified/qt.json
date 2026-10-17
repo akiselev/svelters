@@ -291,7 +291,7 @@
 {"fact": "svelters-api:v1:type:qt:QtWidgets:QFileDialog:element:filedialog:prop:acceptMode", "fingerprint": "b165fe4886a554e4", "result": "pass", "test": "prop/filedialog.acceptMode", "version": "6.11.0"},
 {"fact": "svelters-api:v1:type:qt:QtWidgets:QFileDialog:element:filedialog:prop:defaultSuffix", "fingerprint": "8925728386790363", "result": "pass", "test": "prop/filedialog.defaultSuffix", "version": "6.11.0"},
 {"fact": "svelters-api:v1:type:qt:QtWidgets:QFileDialog:element:filedialog:prop:fileMode", "fingerprint": "3251a000b1d29142", "result": "pass", "test": "prop/filedialog.fileMode", "version": "6.11.0"},
-{"fact": "svelters-api:v1:type:qt:QtWidgets:QFileDialog:element:filedialog:prop:viewMode", "fingerprint": "fb67bb62f710f7a0", "result": "pass", "test": "prop/filedialog.viewMode", "version": "6.11.0"},
+{"fact": "svelters-api:v1:type:qt:QtWidgets:QFileDialog:element:filedialog:prop:viewMode", "fingerprint": "54547ba71c239c1d", "result": "pass", "test": "prop/filedialog.viewMode", "version": "6.11.0"},
 {"fact": "svelters-api:v1:type:qt:QtWidgets:QFileDialog:element:filedialog:signal:accepted", "fingerprint": "e6537e9aa0e3228e", "result": "pass", "test": "signal/filedialog.accepted/delivered_once", "version": "6.11.0"},
 {"fact": "svelters-api:v1:type:qt:QtWidgets:QFontComboBox:element:fontcombobox:prop:currentFont", "fingerprint": "6dba87dfc181d691", "result": "pass", "test": "prop/fontcombobox.currentFont/round_trip", "version": "6.11.0"},
 {"fact": "svelters-api:v1:type:qt:QtWidgets:QFontComboBox:element:fontcombobox:prop:fontFilters", "fingerprint": "7ccc10e00a4bd8dd", "result": "pass", "test": "prop/fontcombobox.fontFilters/round_trip", "version": "6.11.0"},

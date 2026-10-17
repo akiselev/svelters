@@ -334,7 +334,12 @@ def build_kind(name, c, classes, qobjects, enums, meta, tsys, src):
     for p in c.findall("property"):
         pn = p.get("name")
         accs = func_prop.get(pn, [])
-        getter = next((a["name"] for a in accs if not a["params"]), None)
+        # The getter is the parameterless accessor that returns something; `clearMinimumDate()` and
+        # `resetX()` are parameterless too, but return void.
+        cap = pn[:1].upper() + pn[1:]
+        getters = [a for a in accs if not a["params"] and (a["returns"].get("native") or "void").strip() != "void"]
+        getter = next((a["name"] for a in getters if a["name"] in (pn, f"is{cap}", f"has{cap}", f"get{cap}")),
+                      next((a["name"] for a in getters), None))
         setter = next((a["name"] for a in accs if len(a["params"]) == 1 and a["name"].startswith("set")), None)
         reset = next((a["name"] for a in accs if a["name"].startswith("reset")), None)
         rec = {"name": pn, "js_name": pn, "type": neutral_type(p.get("dataType"), qobjects, enums, ctx),

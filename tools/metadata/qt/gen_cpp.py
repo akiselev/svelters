@@ -1098,8 +1098,11 @@ def emit_insert(m: Model) -> str:
             out.append(f"          if (!ch) return fail(\"slot {s['name']} of <{e['tag']}> does not accept this child\");")
             out.append(f"          auto *h = {host_expr(e, s['host'])};")
             if s["cardinality"] == "one":
-                if s["replace"] == "releases_old" and "take" in ops:
-                    out.append(f"          if (auto *old = {op_call('h', ops['get'])}; old && old != ch) {op_call('h', ops['take'])};")
+                # Release the old child first when the setter would not (takeCentralWidget, or a clearing
+                # remove with `then` steps such as QDockWidget::setWidget(nullptr) + setParent(nullptr)).
+                rm = ops.get("take") or (ops["clear"] if ops.get("clear", {}).get("then") else None)
+                if s["replace"] == "releases_old" and rm:
+                    out.append(f"          if (auto *old = {op_call('h', ops['get'])}; old && old != ch) {{ {op_call('h', rm, 'old')}; }}")
                 out.append(f"          {op_call('h', ops['set'], 'ch')};")
             elif s.get("append_only"):
                 out.append(f"          if (before) return fail(\"slot {s['name']} of <{e['tag']}> is append-only (no insert-before)\");")
@@ -1143,9 +1146,9 @@ def emit_remove(m: Model) -> str:
             if s["cardinality"] == "one":
                 out.append(f"        if (static_cast<QWidget *>(o)->isAncestorOf(ch) && {op_call('h', ops['get'])} == ch) {{")
                 if "take" in ops:
-                    out.append(f"          {op_call('h', ops['take'])};")
+                    out.append(f"          {op_call('h', ops['take'], 'ch')};")
                 else:
-                    out.append(f"          {op_call('h', ops['clear'])};")
+                    out.append(f"          {op_call('h', ops['clear'], 'ch')};")
                 out.append("          return 0;\n        }")
             elif s.get("append_only"):
                 out.append(f"        if (static_cast<QWidget *>(o)->isAncestorOf(ch)) {{")
