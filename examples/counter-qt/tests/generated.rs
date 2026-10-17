@@ -6,11 +6,14 @@ unsafe extern "C" {
 }
 
 fn main() {
-    // Make sure the backend is linked in and initialised through the public entry point.
-    let _ = counter_qt::backend();
-    let failures = unsafe { svl_qt_verify_run() };
-    if failures != 0 {
-        eprintln!("{failures} generated Qt verification test(s) failed");
-        std::process::exit(1);
-    }
+    // One nextest test: the generated tests share a process-wide QApplication.
+    counter_qt::run_as_test("verify_all", || {
+        // Make sure the backend is linked in and initialised through the public entry point.
+        let _ = counter_qt::backend();
+        let failures = unsafe { svl_qt_verify_run() };
+        if failures != 0 {
+            eprintln!("{failures} generated Qt verification test(s) failed");
+            std::process::exit(1);
+        }
+    });
 }

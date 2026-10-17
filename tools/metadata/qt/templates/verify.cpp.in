@@ -218,10 +218,3 @@ extern "C" int svl_qt_verify_run(void) {
   std::fflush(stdout);
   return failures;
 }
-
-// Grab the widget behind `h` into a PNG (screenshot support for the demo test).
-extern "C" int svl_qt_grab_png(svl_handle h, const char *path) {
-  auto *w = qobject_cast<QWidget *>(static_cast<QObject *>(svl_qt_debug_object(h)));
-  if (!w) return -1;
-  return w->grab().save(QString::fromUtf8(path)) ? 0 : -1;
-}

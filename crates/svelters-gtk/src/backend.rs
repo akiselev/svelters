@@ -97,32 +97,53 @@ impl Inner {
         };
         if let Some(win) = obj.downcast_ref::<gtk::Window>() {
             let weak = Rc::downgrade(self);
-            win.connect_destroy(move |_| {
+            win.connect_destroy(move |win| {
                 if let Some(inner) = weak.upgrade() {
-                    inner.native_destroyed(h);
+                    inner.native_destroyed(h, win.upcast_ref());
                 }
             });
         }
         Ok(h)
     }
 
-    /// A toplevel was destroyed by GTK (close, `gtk_window_destroy`).
-    fn native_destroyed(&self, h: u64) {
-        let entry = {
+    /// A toplevel was destroyed by GTK (close, `gtk_window_destroy`). Its descendants are
+    /// invalidated with it: GTK leaves them alive but orphaned, and the handle table would
+    /// otherwise keep reporting them live. Descendants are reported first.
+    fn native_destroyed(&self, h: u64, win: &gtk::Widget) {
+        let mut gone: Vec<(u64, Entry)> = {
             let mut st = self.state.borrow_mut();
-            let e = st.entries.remove(&h);
-            if let Some(e) = &e {
+            let kids: Vec<u64> = st
+                .entries
+                .iter()
+                .filter(|(k, e)| {
+                    **k != h && e.obj.upgrade().and_then(|o| o.downcast::<gtk::Widget>().ok()).is_some_and(|w| w.is_ancestor(win))
+                })
+                .map(|(k, _)| *k)
+                .collect();
+            let mut v: Vec<(u64, Entry)> = kids.into_iter().filter_map(|k| st.entries.remove(&k).map(|e| (k, e))).collect();
+            v.sort_by_key(|(k, _)| std::cmp::Reverse(*k));
+            if let Some(e) = st.entries.remove(&h) {
+                v.push((h, e));
+            }
+            for (_, e) in &v {
                 st.by_obj.remove(&e.ptr);
             }
-            e
+            v
         };
-        // The object is being disposed: its handlers go with it.
-        if entry.is_none() {
-            return;
-        }
         let host = self.host.load(Ordering::Acquire);
-        if !host.is_null() {
-            unsafe { ((*host).on_destroyed)((*host).self_, h) };
+        for (k, e) in gone.drain(..) {
+            // The window itself is being disposed: its handlers go with it.
+            if k != h {
+                if let Some(obj) = e.obj.upgrade() {
+                    for (_, id) in e.signals {
+                        obj.disconnect(id);
+                    }
+                }
+            }
+            drop(e.hold);
+            if !host.is_null() {
+                unsafe { ((*host).on_destroyed)((*host).self_, k) };
+            }
         }
     }
 
@@ -308,7 +329,13 @@ impl Inner {
         let host = self.host.load(Ordering::Acquire);
         if !host.is_null() {
             let mut buf = StrBuf::default();
-            let args: Vec<svl_value> = vals.iter().skip(1).map(|v| convert::from_value(v, &|o| self.handle_of(o), &mut buf)).collect();
+            let mut args: Vec<svl_value> = vals.iter().skip(1).map(|v| convert::from_value(v, &|o| self.handle_of(o), &mut buf)).collect();
+            // GtkEditable::changed has no arguments; the JS contract (and the Qt backend) delivers `[text]`.
+            if sig.name == "changed" && args.is_empty() {
+                if let Some(e) = vals.first().and_then(|v| v.get::<glib::Object>().ok()).and_then(|o| o.downcast::<gtk::Editable>().ok()) {
+                    args.push(buf.str_value(&e.text()));
+                }
+            }
             unsafe { ((*host).post_event)((*host).self_, h, signal, args.as_ptr(), args.len()) };
         }
         match sig.handler_result {
@@ -405,6 +432,7 @@ unsafe fn ctl<'a>(p: *mut c_void) -> &'a Ctl {
 }
 
 fn run_int(c: &Ctl, f: impl FnOnce(&Rc<Inner>) -> Res<()>) -> c_int {
+    let _t = crate::timing::scope();
     match catch_unwind(AssertUnwindSafe(|| f(&c.local))) {
         Ok(Ok(())) => 0,
         Ok(Err(e)) => {
