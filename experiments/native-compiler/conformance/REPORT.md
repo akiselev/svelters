@@ -5,10 +5,10 @@ Svelte 5.57.2 @ f3de3f2, `tests/runtime-runes/samples`, `dom` variant, assertion
 
 | outcome | samples | share |
 | --- | ---: | ---: |
-| pass | 492 | 63.6% |
-| rejected at compile time | 183 | 23.6% |
-| runtime error | 25 | 3.2% |
-| assertion mismatch | 71 | 9.2% |
+| pass | 498 | 64.3% |
+| rejected at compile time | 171 | 22.1% |
+| runtime error | 27 | 3.5% |
+| assertion mismatch | 75 | 9.7% |
 | timeout | 0 | 0.0% |
 | skipped upstream (`skip: true`) | 3 | 0.4% |
 | **samples with a dom variant** | **774** | |
@@ -26,27 +26,26 @@ Svelte 5.57.2 @ f3de3f2, `tests/runtime-runes/samples`, `dom` variant, assertion
 | bindable | 4 | 4 | 0 | 0 | 0 |
 | proxy | 12 | 11 | 1 | 0 | 0 |
 | untrack | 2 | 2 | 0 | 0 | 0 |
-| flush | 2 | 1 | 1 | 0 | 0 |
+| flush | 2 | 1 | 0 | 1 | 0 |
 | each | 32 | 23 | 5 | 0 | 4 |
 | if | 6 | 2 | 4 | 0 | 0 |
 | binding | 10 | 7 | 1 | 0 | 2 |
-| event | 49 | 23 | 20 | 3 | 3 |
+| event | 49 | 25 | 18 | 3 | 3 |
 | class | 46 | 44 | 1 | 0 | 1 |
 
 ## Compile-time rejections: first diagnostic per sample
 
 | reason | samples |
 | --- | ---: |
-| native_spread_unsupported | 43 |
+| native_spread_unsupported | 33 |
 | unsupported_feature: transitions | 31 |
-| unsupported_feature: use: actions | 18 |
+| unsupported_feature: use: actions | 19 |
 | unsupported_feature: destructured or defaulted snippet parameters | 10 |
 | unsupported_feature: this svelte: element | 8 |
 | unknown_element: svg | 7 |
 | unsupported_feature: this DOM-only element | 7 |
 | unsupported_feature: destructuring in {#each} | 5 |
 | unsupported_feature: style: directives (use <style> rules) | 5 |
-| unsupported_feature: {@attach} | 5 |
 | unsupported_feature: {@html} | 5 |
 | style_unknown_declaration | 4 |
 | unsupported_feature: <slot> (Svelte 4 slots) | 4 |
@@ -55,6 +54,7 @@ Svelte 5.57.2 @ f3de3f2, `tests/runtime-runes/samples`, `dom` variant, assertion
 | unknown_property: input | 3 |
 | unknown_property: select | 3 |
 | unknown_element: my-element | 2 |
+| unknown_event: div | 2 |
 | unsupported_feature: this attribute kind | 2 |
 | unknown_element: g | 1 |
 | unknown_element: mrow | 1 |
@@ -62,9 +62,9 @@ Svelte 5.57.2 @ f3de3f2, `tests/runtime-runes/samples`, `dom` variant, assertion
 | unknown_element: o | 1 |
 | unknown_element: script | 1 |
 | unknown_element: text | 1 |
-| unknown_event: div | 1 |
 | unknown_event: video | 1 |
 | unknown_property: audio | 1 |
+| unknown_property: button | 1 |
 | unknown_property: div | 1 |
 | unknown_property: video | 1 |
 | unsupported_feature: destructuring in {@const} | 1 |
@@ -77,7 +77,7 @@ A sample counts once per distinct reason, so this shows what fixing one feature 
 
 | reason | samples |
 | --- | ---: |
-| native_spread_unsupported | 49 |
+| native_spread_unsupported | 39 |
 | unsupported_feature: transitions | 32 |
 | unsupported_feature: use: actions | 19 |
 | unsupported_feature: this attribute kind | 12 |
@@ -87,15 +87,14 @@ A sample counts once per distinct reason, so this shows what fixing one feature 
 | unsupported_feature: <slot> (Svelte 4 slots) | 8 |
 | unsupported_feature: this DOM-only element | 8 |
 | unsupported_feature: {@html} | 7 |
-| unsupported_feature: {@attach} | 6 |
 | unsupported_feature: destructuring in {#each} | 5 |
 | unsupported_feature: on: directives with modifiers or without a handler (use on<event>={handler}) | 5 |
 | unsupported_feature: style: directives (use <style> rules) | 5 |
 | style_unknown_declaration | 4 |
+| unknown_property: input | 4 |
 | unsupported_feature: declaration tags | 4 |
 | legacy_export_invalid | 3 |
 | unknown_element: custom-element | 3 |
-| unknown_property: input | 3 |
 | unknown_property: select | 3 |
 | unknown_element: my-element | 2 |
 | unknown_element: text | 2 |
@@ -117,6 +116,7 @@ A sample counts once per distinct reason, so this shows what fixing one feature 
 | unknown_event: video | 1 |
 | unknown_property: a | 1 |
 | unknown_property: audio | 1 |
+| unknown_property: button | 1 |
 
 ## Runtime errors and mismatches
 
@@ -125,17 +125,19 @@ A sample counts once per distinct reason, so this shows what fixing one feature 
 | mismatch: expected [] to deeply equal [ Array(N) ] | 6 |
 | mismatch: expected [ { log: 'effect' } ] to deeply equal [ { log: 'effect' }, …(N) ] | 5 |
 | runtime_error: Cannot read properties of undefined (reading 'call') | 5 |
+| runtime_error: parent.appendChild is not a function | 5 |
 | mismatch: expected 'N' to equal 'N' | 4 |
 | mismatch: expected [ 'parent: $effect.pre N', …(N) ] to deeply equal [ 'parent: $effect.pre N', …(N) | 3 |
 | runtime_error: node:internal/modules/run_main:N     triggerUncaughtException(     ^ Error [ERR_MODULE_NOT | 3 |
-| runtime_error: parent.appendChild is not a function | 3 |
 | mismatch: expected '<p>props: N N N N N N N N</p>\n<p>log…' to deeply equal '<p>props: N N N N N N N | 2 |
 | mismatch: expected 'Expected a runtime error' to include 'snippet_without_render_tag' | 2 |
 | mismatch: expected [Function] to throw an error | 2 |
 | mismatch: expected [] to deeply equal [ …(N) ] | 2 |
+| runtime_error: Cannot find module '/home/user/svelters/.claude/worktrees/agent-aNeNfNdeaN/experiments/nat | 2 |
 | runtime_error: Cannot read properties of undefined (reading 'loc') | 2 |
 | runtime_error: Unexpected reserved word | 2 |
 | mismatch: Expected a runtime error | 1 |
+| mismatch: N of N: <div></div>: expected true to equal false | 1 |
 | mismatch: expected '' to deeply equal 'loading' | 1 |
 | mismatch: expected '<button>+N</button>\n<button>add numb…' to deeply equal '<button>+N</button>\n<b | 1 |
 | mismatch: expected '<button></button>' to deeply equal '<button>N</button>' | 1 |
@@ -143,6 +145,8 @@ A sample counts once per distinct reason, so this shows what fixing one feature 
 | mismatch: expected '<button>Shuffle</button>\n<br>\n<b>N<…' to deeply equal '<button>Shuffle</button | 1 |
 | mismatch: expected '<button>fulfil</button>\n<hr>\n<p>N<…' to deeply equal '<button>fulfil</button>\ | 1 |
 | mismatch: expected '<button>increment</button>' to deeply equal '<button>increment</button>\n<p>load | 1 |
+| mismatch: expected '<div></div>' to deeply equal '<div>DIV</div>' | 1 |
+| mismatch: expected '<div></div>\n<button>increment</butto…' to deeply equal '<div>N</div>\n<button>i | 1 |
 | mismatch: expected '<div>Hello</div>' to deeply equal '<svelte-css-wrapper style="display: c…' | 1 |
 | mismatch: expected '<p>\n  <input type="number">\n</p> {"…' to deeply equal '<p>\n  <input type="num | 1 |
 | mismatch: expected '<p>no parent</p>\n<button>toggle</but…' to deeply equal '<p>no parent</p>\n<butt | 1 |
@@ -151,26 +155,25 @@ A sample counts once per distinct reason, so this shows what fixing one feature 
 | mismatch: expected 'N <button>Update</button>' to deeply equal 'N <button>Update</button>' | 1 |
 | mismatch: expected 'N N N N <button>+</button>' to deeply equal 'N N N N <button>+</button>' | 1 |
 | mismatch: expected 'foo <button>foo</button> foo <button>…' to deeply equal 'bar <button>bar</button | 1 |
+| mismatch: expected 'lineNlineNlineN' to equal 'lineN\nlineN\nlineN' | 1 |
 | mismatch: expected +N to deeply equal N | 1 |
 | mismatch: expected <img src="https://ds" …(N)></img> to equal Native{ kind: 'img', h: N, …(N) } | 1 |
 | mismatch: expected [ 'N', true, 'N', false, 'N', …(N) ] to deeply equal [ 'N', true, 'N', false, 'N' | 1 |
 | mismatch: expected [ 'a', 'b', 'c', 'pending' ] to deeply equal [ 'pending', 'a', 'b', 'c', 'pending | 1 |
 | mismatch: expected [ 'invoked', 'invoked' ] to deeply equal [ 'invoked' ] | 1 |
 | mismatch: expected [ 'parent: render N', …(N) ] to deeply equal [ 'N: $effect.pre N', …(N) ] | 1 |
-| mismatch: expected [ 'rendering then block' ] to deeply equal [ 'rendering pending block', …(N) ] | 1 |
-| mismatch: expected [ 'x', 'y', 'x', 'y', 'x', 'y' ] to deeply equal [ 'x', 'y', 'x', 'y' ] | 1 |
-| mismatch: expected [ +N, +N, N, +N, 'at dispatch', …(N) ] to deeply equal [ +N, +N, N, +N, …(N) ] | 1 |
-| mismatch: expected [ +N, N ] to deeply equal [ +N, N, 'at $effect' ] | 1 |
-| mismatch: expected [ +N, N, 'at dispatch' ] to deeply equal [ +N, N, 'at HTMLButtonElement.click' ] | 1 |
 
 ## Failing samples (runtime error / mismatch / timeout)
 
 `compileOptions.dev` is passed through (`svelters-compile --dev`); other compile options are not
-honoured. 54 of the 96 failing samples set compile options.
+honoured. 54 of the 102 failing samples set compile options.
 
 | sample | outcome | compileOptions | message |
 | --- | --- | --- | --- |
 | abort-signal-derived-rerun-on-reconnect | mismatch |  | expected '' to deeply equal 'loading' |
+| attachment-basic | mismatch |  | expected '<div></div>' to deeply equal '<div>DIV</div>' |
+| attachment-reactive | mismatch |  | expected '<div></div>\n<button>increment</butto…' to deeply equal '<div>1</div>\n<button>increment</butt…' |
+| attribute-if-string | mismatch |  | 1 of 4: <div></div>: expected true to equal false |
 | await-hydrate-maybe-promise | mismatch |  | expected '<button>fulfil</button>\n<hr>\n<p>42<…' to deeply equal '<button>fulfil</button>\n<p>loading..…' |
 | await-pending-destroy | mismatch |  | expected [] to deeply equal [ 'await' ] |
 | await-pending-wait | runtime_error |  | Unexpected reserved word |
@@ -186,10 +189,11 @@ honoured. 54 of the 96 failing samples set compile options.
 | bound-store-sub | mismatch | { dev: true } | expected '<p>\n  <input type="number">\n</p> {"…' to deeply equal '<p>\n  <input type="number">\n</p> {"…' |
 | class-state-constructor-predeclared-field | mismatch |  | expected '<button></button>' to deeply equal '<button>0</button>' |
 | component-css-props-falsy | mismatch |  | expected '<div>Hello</div>' to deeply equal '<svelte-css-wrapper style="display: c…' |
+| create-context-programmatic | runtime_error |  | parent.appendChild is not a function |
 | create-raw-snippet-invalid-render | runtime_error | { dev: true } | Cannot read properties of undefined (reading 'call') |
 | derived-read-outside-reaction | mismatch |  | expected '<button>+1</button>\n<button>add numb…' to deeply equal '<button>+1</button>\n<button>add numb…' |
 | destructure-async-assignments | runtime_error |  | Unexpected reserved word |
-| each-bind-this-member | mismatch |  | expected <img src="https://ds" …(1)></img> to equal Native{ kind: 'img', h: 2, …(14) } |
+| each-bind-this-member | mismatch |  | expected <img src="https://ds" …(1)></img> to equal Native{ kind: 'img', h: 2, …(16) } |
 | each-key-volatile | mismatch | { dev: true } | Expected a runtime error |
 | each-updates-4 | mismatch |  | expected '100 <button>Update</button>' to deeply equal '1000 <button>Update</button>' |
 | each-updates-5 | mismatch |  | expected '1 1 1 1 <button>+</button>' to deeply equal '2 2 2 2 <button>+</button>' |
@@ -200,9 +204,11 @@ honoured. 54 of the 96 failing samples set compile options.
 | event-handler-invalid-warning | mismatch | { dev: true } | the given combination of arguments (undefined and string) is invalid for this assertion. You can use an array, a map, an object, a set, a string, or a weakset i |
 | event-listener-moved-outside-container | runtime_error |  | Failed to execute 'appendChild' on 'Node': parameter 1 is not of type 'Node'. |
 | event-on | runtime_error |  | target.addEventListener is not a function |
+| flush-sync-inside-attachment | runtime_error |  | parent.appendChild is not a function |
 | form-default-value | mismatch |  | field 0: expected '' to equal 'x' |
 | get-abort-signal | mismatch |  | expected '<button>increment</button>' to deeply equal '<button>increment</button>\n<p>loadin…' |
-| hmr-dynamic-component | runtime_error | { dev: true, hmr: true } | Cannot find module '/home/user/svelters/experiments/native-compiler/conformance/out/hmr-dynamic-component/_output/client/Component.svelte.js' imported from /hom |
+| hmr-dynamic-component | runtime_error | { dev: true, hmr: true } | Cannot find module '/home/user/svelters/.claude/worktrees/agent-a0630e0f19dea4598/experiments/native-compiler/conformance/out/hmr-dynamic-component/_output/clie |
+| input-type-before-value-spread | mismatch |  | expected 'line1line2line3' to equal 'line1\nline2\nline3' |
 | inspect | mismatch | { dev: true } | expected [ +0, 1, 'at dispatch' ] to deeply equal [ +0, 1, 'at HTMLButtonElement.click' ] |
 | inspect-console-trace | mismatch | { dev: true } | expected false to be truthy |
 | inspect-deep | mismatch | { dev: true } | expected [ undefined, [ {} ] ] to deeply equal [ undefined, [ {} ], 'at $effect' ] |
@@ -240,7 +246,7 @@ honoured. 54 of the 96 failing samples set compile options.
 | mount-props-updates | runtime_error |  | parent.appendChild is not a function |
 | mount-unmount-anchor | runtime_error |  | parent.appendChild is not a function |
 | non-local-mutation-discouraged | mismatch | { dev: true } | expected [] to deeply equal [ Array(1) ] |
-| non-local-mutation-inherited-owner-2 | runtime_error | { dev: true } | Cannot find module '/home/user/svelters/experiments/native-compiler/conformance/out/non-local-mutation-inherited-owner-2/state.svelte' imported from /home/user/ |
+| non-local-mutation-inherited-owner-2 | runtime_error | { dev: true } | Cannot find module '/home/user/svelters/.claude/worktrees/agent-a0630e0f19dea4598/experiments/native-compiler/conformance/out/non-local-mutation-inherited-owner |
 | non-local-mutation-inherited-owner-3 | mismatch | { dev: true } | expected +0 to deeply equal 1 |
 | non-local-mutation-with-binding-2 | mismatch | { dev: true } | expected [] to deeply equal [ Array(1) ] |
 | non-local-mutation-with-binding-3 | mismatch | { dev: true } | expected [] to deeply equal [ Array(1) ] |
@@ -269,4 +275,4 @@ honoured. 54 of the 96 failing samples set compile options.
 
 ## Passing samples
 
-1000-reading-derived-effects, abort-signal-derived-destroy, abort-signal-derived-set-state, accessors-props, ambiguous-source, array-delete-item, array-lastindexof, array-sort-in-effect, array-to-string, assign-prop-to-prop, assignment-value-stale-lazy-rhs, assignment-value-stale-lazy-rhs-async, attribute-parts, autofocus-with-call, await-immediate-fulfilled, await-no-catch-error, await-non-promise, await-pending-persistent, bigint-increment, bigint-increment-mutation, bigint-invalid, bind-getter-setter, bind-this-component-in-state, bind-this-component-in-state-dev, bind-this-destroy-timing, bind-this-destroy-timing2, bind-this-proxy-deep, bind-value-state, bindable-prop-and-export, binding-property-non-reactive-ignored, binding-property-non-reactive-ignored-2, binding-property-store, binding-update-in-each, binding-update-while-focused, binding-update-while-focused-2, binding-update-while-focused-3, block-dependency-sequence, boundary-effect-error, checkbox-binding-derived, class-directive-memoize, class-disabinguate-private-method-definition, class-private-fields-assignment-shorthand, class-private-fields-logical-assignment, class-private-fields-reassigned-this, class-private-raw-state, class-private-raw-state-object, class-private-state, class-private-state-increment, class-private-state-increment-other-receiver, class-private-state-init, class-private-state-proxy, class-raw-state, class-raw-state-object, class-state, class-state-conflicting-get-name, class-state-constructor, class-state-constructor-closure, class-state-constructor-closure-private-1, class-state-constructor-closure-private-2, class-state-constructor-closure-private-3, class-state-constructor-conflicting-get-name, class-state-constructor-derived-unowned, class-state-constructor-subclass, class-state-deep-update, class-state-derived, class-state-derived-2, class-state-derived-3, class-state-derived-fn, class-state-derived-private, class-state-derived-unowned, class-state-effect, class-state-effect-derived, class-state-extended-effect-derived, class-state-increment, class-state-init, class-state-init-conflict, class-state-init-eager, class-state-init-eager-2, class-state-init-eager-3, class-state-proxy, class-state-public-private, class-state-raw, class-state-with-literal, clean-block-inner-effects, comment-separated-text, component-dont-fuse-whitespace, component-prop-unescaped, const-snippet-reactive, const-tag-boundary, const-tag-boundary-deprecated-usage, create-context, deferred-events-consistency, delete-proxy-key, dependencyless-abort-signal, derived-cascade, derived-cleanup-old-value, derived-dep-set-while-rendering, derived-dependencies, derived-dependencies-2, derived-destructure, derived-destructured, derived-destructured-from-derived, derived-destructured-iterator, derived-direct, derived-disconnect, derived-fn, derived-fn-recursive, derived-get-context, derived-indirect-arrow-fn, derived-indirect-fn, derived-indirect-fn-2, derived-leading-comments, derived-map, derived-name-shadowed, derived-proxy, derived-rest-includes-symbol, derived-server-memoization, derived-shadowed, derived-stale-value, derived-unowned, derived-unowned-10, derived-unowned-11, derived-unowned-12, derived-unowned-2, derived-unowned-3, derived-unowned-4, derived-unowned-5, derived-unowned-6, derived-unowned-7, derived-unowned-8, derived-unowned-9, derived-write-read-write-read, deriveds-in-constructor, destructure-derived-by, destructure-derived-object, destructure-state-from-props, details-binding-initial, dot-notation-component, dynamic-component, dynamic-component-falsy-hydrate, dynamic-component-member, dynamic-component-nested, dynamic-event-handler, dynamic-event-handler-2, dynamic-hof-delegated-event, dynamic-style-attr, each-bind-store-no-warning, each-bind-this-member-2, each-effect-linking, each-fallback, each-fallback-outer-scope, each-keyed-child-effect, each-mutation, each-mutation-2, each-non-branch-effects, each-text-template, each-updates, each-updates-10, each-updates-11, each-updates-2, each-updates-3, each-updates-6, each-updates-7, each-updates-8, each-updates-9, each-updates-raw, each-was-empty, each-whitespace, each-without-as, effect, effect-active-derived, effect-cleanup, effect-dependencies, effect-in-pending-boundary, effect-inside-derived, effect-inside-derived-frozen, effect-loop, effect-loop-2, effect-loop-3, effect-loop-infinite, effect-loop-teardown-value, effect-order, effect-order-2, effect-order-3, effect-order-4, effect-order-5, effect-order-6, effect-root, effect-root-2, effect-root-3, effect-root-4, effect-root-5, effect-root-6, effect-self-scheduling, effect-teardown-derived, effect-teardown-multiple-writes, effect-teardown-stale-value, effect-tracking, effects-order, empty-class-attribute-template, error-boundary, error-boundary-10, error-boundary-11, error-boundary-12, error-boundary-13, error-boundary-14, error-boundary-15, error-boundary-16, error-boundary-17, error-boundary-19, error-boundary-2, error-boundary-20, error-boundary-21, error-boundary-22, error-boundary-24, error-boundary-25, error-boundary-26, error-boundary-27, error-boundary-28, error-boundary-3, error-boundary-4, error-boundary-5, error-boundary-6, error-boundary-7, error-boundary-8, error-boundary-9, error-boundary-reset-onerror, error-boundary-reset-premature, error-boundary-reset-with-error, error-recovery, event-arguments, event-arguments-2, event-attribute, event-attribute-bubble, event-attribute-capture, event-attribute-delegation-2, event-attribute-delegation-7, event-attribute-delegation-8, event-attribute-import, event-attribute-not-hoistable, event-attribute-not-reactive, event-attribute-rest-prop, event-attribute-template, event-exported, event-handler-async-delegated, event-import-no-param-hoisting, event-on-3, event-prop-current-target, event-prop-reference, event-propagation-with-error, event-store-no-hoisting, event-used-in-component-and-element, event-without-params-clash, exports-1, exports-2, exports-3, exports-4, flush-sync-no-scheduled, form-novalidate-casing, function-parameter-shadowing, functional-templating, global-variable-assignment, globals-deconflicted, guard-else-effect, guard-if-nested, guard-nested-if-pre, hmr-each-keyed-unshift, hmr-removal, html-entity-line-feed, html-namespace-infer-a-tag, hydration-attribute-changed-ignored, if-block-dependencies, if-dependency-order, image-loading-attribute, img-loading-lazy-no-static, increment-and-decrement-strings, inline-expressions, inspect-derived, inspect-derived-if-destroy, inspect-recursive-2, inspect-state-unsafe-mutation, inspect-with-untracked, invalidate-effect, key-nan, key-unchanged-value, labeled-statement-derived, legacy-runes-ambiguous, legacy-runes-ambiguous-export-const, lifecycle-render-order-for-children-5, member-expression-component, member-mutation, module-context-export, mutate-state-in-context-dev, mutation, mutation-both, mutation-local, name-clash-hoisting, nested-destructure-assignment, nested-effect-conflict, new-branch-reschedule, new-branch-reschedule-2, non-configurable-errors, non-error-boundary-preserve-on-error, non-local-mutation-global, non-local-mutation-inherited-owner-1, non-local-mutation-ok, non-local-mutation-with-binding, non-local-mutation-with-binding-4, non-local-mutation-with-binding-5, non-local-mutation-with-binding-6, non-local-mutation-with-binding-7, not-actual-runes, nullish-empty-string, nullish-operator, object-has-own-reactive, onmount-prop-access, optgroup-rich-content, option-rich-content, ownership-function-bindings, ownership-invalid-binding-bindable-fallback, ownership-invalid-binding-ignored, ownership-invalid-mutation-bindable-fallback, ownership-invalid-mutation-binding-ignore, ownership-invalid-mutation-ignored, ownership-invalid-mutation-use-transform, ownership-with-proxy, pre-effect, pre-effect-ordering, pre-no-content, private-identifiers-not-this, props, props-alias, props-alias-weird, props-array-each, props-assignment-tracking, props-bound, props-bound-fallback, props-bound-to-normal, props-default-reactivity, props-default-value-behavior, props-default-value-function, props-default-value-reactivity, props-default-value-rest, props-derived, props-derived-2, props-derived-teardown, props-equality, props-id, props-id-prefix, props-local-teardown, props-quoted, props-reactive-destroy, props-rest, props-rest-2, props-spread-fallback, props-spread-operator, proxied-state-property-access, proxy, proxy-array, proxy-array-length, proxy-coercive-assignment, proxy-cyclical, proxy-deep, proxy-nested, proxy-not-shared, proxy-prop-bound, proxy-set-accessor, proxy-set-with-parent, random, reactive-date, reactive-identifier, reactive-set, reactive-to-string, reactive-url, read-version-previous-reaction, readonly-state, readonly-state-push, readonly-state-replace, reassigned-store-not-state, rest-props-excludes-properties, rich-option-component, rune-name-used-by-rune, runes-from-func, runes-in-module-context, select-function-binding-derived, select-option-added, select-value-with-call, set-context-after-mount, set-text-stable-coercion, side-effect-derived-array, side-effect-derived-date, side-effect-derived-map, side-effect-derived-object, side-effect-derived-primitive, side-effect-derived-set, side-effect-derived-spring, side-effect-derived-tween, side-effect-derived-url, side-effect-derived-url-search-params, side-effect-each, snippet, snippet-access-in-script, snippet-after-text, snippet-argument, snippet-argument-multiple, snippet-block-without-render-tag-prod, snippet-children-without-render-tag-dev-prod, snippet-comment-sibling, snippet-const, snippet-const-same-block, snippet-deconflict, snippet-duplicate-children, snippet-dynamic-children, snippet-expressions, snippet-hoisted-module, snippet-hoisted-module-2, snippet-hoisting, snippet-hoisting-2, snippet-hoisting-3, snippet-hoisting-4, snippet-optional-arguments, snippet-prop-explicit, snippet-prop-explicit-no-args, snippet-prop-implicit, snippet-prop-reactive, snippet-reactive, snippet-ref, snippet-scope, snippet-slot-no-error, snippet-store, snippet-top-level, state-delete-property, state-eager-declaration, state-in-template, state-proxy-version, state-raw-bindable, state-readonly, state-reuse, state-snapshot, state-snapshot-array-holes, state-snapshot-date, state-snapshot-svelte-date, state-space, state-store, state-store-props, state-undefined, state-update, static-boundary, store-assignments, store-async-first-value, store-from-derived, store-from-props-hoisting, store-from-props-runelike, store-from-state, store-from-state-2, store-increment-decrement, store-inside-derived, store-no-mutation-validation, store-reassign-object, store-subscribe-effect-init, store-unsubscribe-not-referenced-after, store-update-on-destroy, svelte-boundary-dev-const, svelte-component-props-update, svelte-component-switch-dev, svelte-set-generators, tagged-template-literal-reactive, text-effect-multi-deps, text-multiple-nullish-expression, toStore-subscribe, toStore-subscribe2, toStore-teardown, typescript, typescript-const1, typescript-each-indexed, typescript-non-null-expression, undefined-event-handler, unhoist-function-accessing-snippet, untrack-allows-writes, untrack-own-deriveds, untracked, untracked-derived-local, untracked-write-pre, value-attribute-isolated-update, value-attribute-null-undefined, var-declarations, wrapped-$state, wrapped-$state-2, writable-derived, writable-derived-2, writable-derived-3, writable-derived-4
+1000-reading-derived-effects, abort-signal-derived-destroy, abort-signal-derived-set-state, accessors-props, ambiguous-source, array-delete-item, array-lastindexof, array-sort-in-effect, array-to-string, assign-prop-to-prop, assignment-value-stale-lazy-rhs, assignment-value-stale-lazy-rhs-async, attribute-parts, attribute-spread-hidden, attribute-spread-input, autofocus-with-call, await-immediate-fulfilled, await-no-catch-error, await-non-promise, await-pending-persistent, bigint-increment, bigint-increment-mutation, bigint-invalid, bind-getter-setter, bind-this-component-in-state, bind-this-component-in-state-dev, bind-this-destroy-timing, bind-this-destroy-timing2, bind-this-proxy-deep, bind-value-state, bindable-prop-and-export, binding-property-non-reactive-ignored, binding-property-non-reactive-ignored-2, binding-property-store, binding-update-in-each, binding-update-while-focused, binding-update-while-focused-2, binding-update-while-focused-3, block-dependency-sequence, boundary-effect-error, checkbox-binding-derived, class-directive-memoize, class-disabinguate-private-method-definition, class-private-fields-assignment-shorthand, class-private-fields-logical-assignment, class-private-fields-reassigned-this, class-private-raw-state, class-private-raw-state-object, class-private-state, class-private-state-increment, class-private-state-increment-other-receiver, class-private-state-init, class-private-state-proxy, class-raw-state, class-raw-state-object, class-state, class-state-conflicting-get-name, class-state-constructor, class-state-constructor-closure, class-state-constructor-closure-private-1, class-state-constructor-closure-private-2, class-state-constructor-closure-private-3, class-state-constructor-conflicting-get-name, class-state-constructor-derived-unowned, class-state-constructor-subclass, class-state-deep-update, class-state-derived, class-state-derived-2, class-state-derived-3, class-state-derived-fn, class-state-derived-private, class-state-derived-unowned, class-state-effect, class-state-effect-derived, class-state-extended-effect-derived, class-state-increment, class-state-init, class-state-init-conflict, class-state-init-eager, class-state-init-eager-2, class-state-init-eager-3, class-state-proxy, class-state-public-private, class-state-raw, class-state-with-literal, clean-block-inner-effects, comment-separated-text, component-dont-fuse-whitespace, component-prop-unescaped, const-snippet-reactive, const-tag-boundary, const-tag-boundary-deprecated-usage, create-context, deferred-events-consistency, delete-proxy-key, dependencyless-abort-signal, derived-cascade, derived-cleanup-old-value, derived-dep-set-while-rendering, derived-dependencies, derived-dependencies-2, derived-destructure, derived-destructured, derived-destructured-from-derived, derived-destructured-iterator, derived-direct, derived-disconnect, derived-fn, derived-fn-recursive, derived-get-context, derived-indirect-arrow-fn, derived-indirect-fn, derived-indirect-fn-2, derived-leading-comments, derived-map, derived-name-shadowed, derived-proxy, derived-rest-includes-symbol, derived-server-memoization, derived-shadowed, derived-stale-value, derived-unowned, derived-unowned-10, derived-unowned-11, derived-unowned-12, derived-unowned-2, derived-unowned-3, derived-unowned-4, derived-unowned-5, derived-unowned-6, derived-unowned-7, derived-unowned-8, derived-unowned-9, derived-write-read-write-read, deriveds-in-constructor, destructure-derived-by, destructure-derived-object, destructure-state-from-props, details-binding-initial, dot-notation-component, dynamic-component, dynamic-component-falsy-hydrate, dynamic-component-member, dynamic-component-nested, dynamic-event-handler, dynamic-event-handler-2, dynamic-hof-delegated-event, dynamic-style-attr, each-bind-store-no-warning, each-bind-this-member-2, each-effect-linking, each-fallback, each-fallback-outer-scope, each-keyed-child-effect, each-mutation, each-mutation-2, each-non-branch-effects, each-text-template, each-updates, each-updates-10, each-updates-11, each-updates-2, each-updates-3, each-updates-6, each-updates-7, each-updates-8, each-updates-9, each-updates-raw, each-was-empty, each-whitespace, each-without-as, effect, effect-active-derived, effect-cleanup, effect-dependencies, effect-in-pending-boundary, effect-inside-derived, effect-inside-derived-frozen, effect-loop, effect-loop-2, effect-loop-3, effect-loop-infinite, effect-loop-teardown-value, effect-order, effect-order-2, effect-order-3, effect-order-4, effect-order-5, effect-order-6, effect-root, effect-root-2, effect-root-3, effect-root-4, effect-root-5, effect-root-6, effect-self-scheduling, effect-teardown-derived, effect-teardown-multiple-writes, effect-teardown-stale-value, effect-tracking, effects-order, empty-class-attribute-template, error-boundary, error-boundary-10, error-boundary-11, error-boundary-12, error-boundary-13, error-boundary-14, error-boundary-15, error-boundary-16, error-boundary-17, error-boundary-19, error-boundary-2, error-boundary-20, error-boundary-21, error-boundary-22, error-boundary-23, error-boundary-24, error-boundary-25, error-boundary-26, error-boundary-27, error-boundary-28, error-boundary-3, error-boundary-4, error-boundary-5, error-boundary-6, error-boundary-7, error-boundary-8, error-boundary-9, error-boundary-reset-onerror, error-boundary-reset-premature, error-boundary-reset-with-error, error-recovery, event-arguments, event-arguments-2, event-attribute, event-attribute-after-spread, event-attribute-bubble, event-attribute-capture, event-attribute-delegation-2, event-attribute-delegation-7, event-attribute-delegation-8, event-attribute-import, event-attribute-not-hoistable, event-attribute-not-reactive, event-attribute-rest-prop, event-attribute-spread-capture, event-attribute-template, event-exported, event-handler-async-delegated, event-import-no-param-hoisting, event-on-3, event-prop-current-target, event-prop-reference, event-propagation-with-error, event-store-no-hoisting, event-used-in-component-and-element, event-without-params-clash, exports-1, exports-2, exports-3, exports-4, flush-sync-no-scheduled, form-novalidate-casing, function-parameter-shadowing, functional-templating, global-variable-assignment, globals-deconflicted, guard-else-effect, guard-if-nested, guard-nested-if-pre, hmr-each-keyed-unshift, hmr-removal, html-entity-line-feed, html-namespace-infer-a-tag, hydration-attribute-changed-ignored, if-block-dependencies, if-dependency-order, image-loading-attribute, img-loading-lazy-no-static, increment-and-decrement-strings, inline-expressions, inspect-derived, inspect-derived-if-destroy, inspect-recursive-2, inspect-state-unsafe-mutation, inspect-with-untracked, invalidate-effect, key-nan, key-unchanged-value, labeled-statement-derived, legacy-runes-ambiguous, legacy-runes-ambiguous-export-const, lifecycle-render-order-for-children-5, member-expression-component, member-mutation, module-context-export, mutate-state-in-context-dev, mutation, mutation-both, mutation-local, name-clash-hoisting, nested-destructure-assignment, nested-effect-conflict, new-branch-reschedule, new-branch-reschedule-2, non-configurable-errors, non-error-boundary-preserve-on-error, non-local-mutation-global, non-local-mutation-inherited-owner-1, non-local-mutation-ok, non-local-mutation-with-binding, non-local-mutation-with-binding-4, non-local-mutation-with-binding-5, non-local-mutation-with-binding-6, non-local-mutation-with-binding-7, not-actual-runes, nullish-empty-string, nullish-operator, object-has-own-reactive, onmount-prop-access, optgroup-rich-content, option-rich-content, ownership-function-bindings, ownership-invalid-binding-bindable-fallback, ownership-invalid-binding-ignored, ownership-invalid-mutation-bindable-fallback, ownership-invalid-mutation-binding-ignore, ownership-invalid-mutation-ignored, ownership-invalid-mutation-use-transform, ownership-with-proxy, pre-effect, pre-effect-ordering, pre-no-content, private-identifiers-not-this, props, props-alias, props-alias-weird, props-array-each, props-assignment-tracking, props-bound, props-bound-fallback, props-bound-to-normal, props-default-reactivity, props-default-value-behavior, props-default-value-function, props-default-value-reactivity, props-default-value-rest, props-derived, props-derived-2, props-derived-teardown, props-equality, props-id, props-id-prefix, props-local-teardown, props-quoted, props-reactive-destroy, props-rest, props-rest-2, props-spread-fallback, props-spread-operator, proxied-state-property-access, proxy, proxy-array, proxy-array-length, proxy-coercive-assignment, proxy-cyclical, proxy-deep, proxy-nested, proxy-not-shared, proxy-prop-bound, proxy-set-accessor, proxy-set-with-parent, random, reactive-date, reactive-identifier, reactive-set, reactive-to-string, reactive-url, read-version-previous-reaction, readonly-state, readonly-state-push, readonly-state-replace, reassigned-store-not-state, remove-spreaded-handlers, rest-props-excludes-properties, rich-option-component, rune-name-used-by-rune, runes-from-func, runes-in-module-context, select-function-binding-derived, select-option-added, select-value-with-call, set-context-after-mount, set-text-stable-coercion, side-effect-derived-array, side-effect-derived-date, side-effect-derived-map, side-effect-derived-object, side-effect-derived-primitive, side-effect-derived-set, side-effect-derived-spring, side-effect-derived-tween, side-effect-derived-url, side-effect-derived-url-search-params, side-effect-each, snippet, snippet-access-in-script, snippet-after-text, snippet-argument, snippet-argument-multiple, snippet-block-without-render-tag-prod, snippet-children-without-render-tag-dev-prod, snippet-comment-sibling, snippet-const, snippet-const-same-block, snippet-deconflict, snippet-duplicate-children, snippet-dynamic-children, snippet-expressions, snippet-hoisted-module, snippet-hoisted-module-2, snippet-hoisting, snippet-hoisting-2, snippet-hoisting-3, snippet-hoisting-4, snippet-optional-arguments, snippet-prop-explicit, snippet-prop-explicit-no-args, snippet-prop-implicit, snippet-prop-reactive, snippet-reactive, snippet-ref, snippet-scope, snippet-slot-no-error, snippet-store, snippet-top-level, state-delete-property, state-eager-declaration, state-in-template, state-proxy-version, state-raw-bindable, state-readonly, state-reuse, state-snapshot, state-snapshot-array-holes, state-snapshot-date, state-snapshot-svelte-date, state-space, state-store, state-store-props, state-undefined, state-update, static-boundary, store-assignments, store-async-first-value, store-from-derived, store-from-props-hoisting, store-from-props-runelike, store-from-state, store-from-state-2, store-increment-decrement, store-inside-derived, store-no-mutation-validation, store-reassign-object, store-subscribe-effect-init, store-unsubscribe-not-referenced-after, store-update-on-destroy, svelte-boundary-dev-const, svelte-component-props-update, svelte-component-switch-dev, svelte-set-generators, tagged-template-literal-reactive, text-effect-multi-deps, text-multiple-nullish-expression, toStore-subscribe, toStore-subscribe2, toStore-teardown, typescript, typescript-const1, typescript-each-indexed, typescript-non-null-expression, undefined-event-handler, unhoist-function-accessing-snippet, untrack-allows-writes, untrack-own-deriveds, untracked, untracked-derived-local, untracked-write-pre, value-attribute-isolated-update, value-attribute-null-undefined, var-declarations, wrapped-$state, wrapped-$state-2, writable-derived, writable-derived-2, writable-derived-3, writable-derived-4

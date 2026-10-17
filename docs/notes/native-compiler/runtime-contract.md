@@ -120,6 +120,16 @@ signal accepts (`phases`); anything else is `listen_phase_unsupported` at compil
 `after` on any signal, `capture` on event controllers only; Qt: `after` on QObject signals,
 `capture` on `key-press` only).
 
+**Borrowed handles.** `mount` installs `__svelters_node(h)` (the renderer's `nodeFor`): the host
+wraps handles in `call`/`getProp` results with it, so `node.call('getParent')` returns the
+runtime node of an object the app created (identity holds), or one stable `borrowed` node per
+other handle (held weakly, `host.destroy` once collected, stale after `gone`).
+
+**Keyed each and effect order.** After a keyed update the item branch effects are relinked in list
+order in Svelte's effect tree (as Svelte's each block moves effects), so later updates, and the ops
+they produce (child attributes re-sent to a grid, whose Qt cell order follows the writes), come in
+the JS pipeline's order.
+
 ## Child attributes
 
 `parent:<name>={value}` on a native element (X3, `docs/notes/x3-childattr-listen.md`) is

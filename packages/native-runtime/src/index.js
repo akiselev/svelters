@@ -443,11 +443,56 @@ export function dispatch_sync(h, signal, args = [], flags = 0) {
 
 export function gone(h, reason) {
   const t = table();
-  const node = t.get(h);
+  const b = borrowedTable();
+  const node = t.get(h) ?? b.get(h)?.deref();
+  b.delete(h);
   if (!node) return;
   t.delete(h);
   node.dead = reason;
   node.np = null;
+}
+
+// Borrowed handles (native objects a getter or call returned: a parent, a root, an inner child),
+// as @svelters/renderer's `nodeFor`: a handle we created resolves to its own node (identity across
+// getters), any other to one stable `borrowed` node per handle, held weakly and released natively
+// (`host.destroy`) once collected. A borrowed node is never part of the tree; it goes stale when
+// the host reports it gone.
+const borrowedTables = new WeakMap(); // host -> Map<handle, WeakRef<Native>>
+function borrowedTable(hs = host()) {
+  let t = borrowedTables.get(hs);
+  if (!t) borrowedTables.set(hs, (t = new Map()));
+  return t;
+}
+const borrowedRegistry =
+  typeof FinalizationRegistry === 'function'
+    ? new FinalizationRegistry(({ hs, h }) => {
+        const t = borrowedTable(hs);
+        if (t.get(h)?.deref()) return; // a newer wrapper took over the handle
+        t.delete(h);
+        try {
+          hs.destroy(h);
+        } catch {
+          // the host is shutting down
+        }
+      })
+    : null;
+
+/** `__svelters_node(h)`: the node for a handle in a host call result. */
+export function nodeFor(h) {
+  const hs = host();
+  const own = table(hs).get(h);
+  if (own) return own;
+  const b = borrowedTable(hs);
+  const live = b.get(h)?.deref();
+  if (live) return live;
+  const prev = scope;
+  scope = null;
+  const n = new Native('borrowed', h, null);
+  scope = prev;
+  n.borrowed = true;
+  b.set(h, typeof WeakRef === 'function' ? new WeakRef(n) : { deref: () => n });
+  borrowedRegistry?.register(n, { hs, h });
+  return n;
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -544,12 +589,14 @@ export function each_block(container, collection, key, render, fallback = null) 
   block(() => {
     const c = collection();
     const arr = Array.isArray(c) ? [...c] : Array.from(c ?? []);
+    const self = $.active_effect;
     $.untrack(() => {
       if (arr.length && fb) {
         close(fb);
         fb = null;
       }
       items = key ? keyed(r, owner, items, arr, key, render) : indexed(r, owner, items, arr, render);
+      if (key) relink(self, items.map((b) => b.effect));
       if (!arr.length && fallback && !fb) fb = open(r, owner, fallback);
     });
   });
@@ -867,6 +914,30 @@ function keyed(r, owner, old, arr, key, render) {
   return next;
 }
 
+/**
+ * Puts the item branch effects of a keyed each block in list order in Svelte's effect tree (as
+ * Svelte's own each block moves effects), so later updates run in list order: the order of the
+ * ops they produce (child attributes re-sent to a grid, ...) then matches the JS pipeline. Only
+ * when the block's children are exactly the item branches.
+ */
+function relink(parent, effects) {
+  if (!parent || !effects.length) return;
+  let n = 0;
+  for (let e = parent.first; e; e = e.next) n++;
+  const set = new Set(effects);
+  if (n !== effects.length || set.size !== n) return;
+  for (let e = parent.first; e; e = e.next) if (!set.has(e)) return;
+  let prev = null;
+  for (const e of effects) {
+    e.prev = prev;
+    if (prev) prev.next = e;
+    else parent.first = e;
+    prev = e;
+  }
+  prev.next = null;
+  parent.last = prev;
+}
+
 function move(b) {
   const before = nextNative(b);
   for (const n of natives(b)) {
@@ -911,6 +982,7 @@ export function mount(Component, { props = {}, target, transformError } = {}) {
   globalThis.__svelters_dispatch = dispatch;
   globalThis.__svelters_dispatch_sync = dispatch_sync;
   globalThis.__svelters_gone = gone;
+  globalThis.__svelters_node = nodeFor;
   // a runtime node (a list row's outlet, lists.js) or a bare host handle
   const root = target == null ? new Root() : slot(target instanceof Native ? target : new Native('#target', target, null), null);
   const s = new Scope(null);
