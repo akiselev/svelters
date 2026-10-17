@@ -5,7 +5,7 @@ Written at the coordinator's request; the implementing agent stopped here with a
 
 ## Branch state
 
-- Branch `worktree-agent-aba56fbf823e6a71f` (worktree `/projects/svelters/.claude/worktrees/agent-aba56fbf823e6a71f`). HEAD is the commit that carries this file; the previous commit is "value model: variants ...".
+- Branch `worktree-agent-aba56fbf823e6a71f` (worktree `/projects/svelters/.claude/worktrees/agent-aba56fbf823e6a71f`). HEAD is the commit that carries this file; it also contains the variants / GDateTime / string-form work (not committed separately). The commit before it is d42eabf.
 - Master merged in up to **4f2e859** (ABI v2 complete, hot reload, bind hooks, docs site). Master is now **8997ea0+**: **not merged**. Expect conflicts there (see below).
 - `SVL_ABI_VERSION` is **3**, applied on top of v2. v2's members sit where master put them (`handle_info` after `listen`, `schedule_wake` after `wake`); the v3 members (`caps, describe, describe_type, cancel`) and the two new `svl_host` members (`invoke_callback, release_callback`) are appended.
 - Not done: nothing is half-applied. Everything is committed.
