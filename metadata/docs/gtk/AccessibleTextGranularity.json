@@ -1,0 +1,56 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "The granularity for queries about the text contents of a [`AccessibleText`](xref:gtk:Gtk.AccessibleText) implementation.",
+    "file": "gtk/gtkaccessibletext.h",
+    "line": 51,
+    "md": "The granularity for queries about the text contents of a [`AccessibleText`](xref:gtk:Gtk.AccessibleText)\nimplementation.",
+    "since": "4.14"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:AccessibleTextGranularity",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "character": {
+      "brief": "Use the boundary between characters (including non-printing characters)",
+      "file": "gtk/gtkaccessibletext.h",
+      "line": 53,
+      "md": "Use the boundary between\n  characters (including non-printing characters)"
+    },
+    "line": {
+      "brief": "Use the boundary between lines, starting from the beginning of the current line and ending at the beginning of the next line",
+      "file": "gtk/gtkaccessibletext.h",
+      "line": 61,
+      "md": "Use the boundary between lines,\n  starting from the beginning of the current line and ending at the\n  beginning of the next line"
+    },
+    "paragraph": {
+      "brief": "Use the boundary between paragraphs, starting from the beginning of the current paragraph and ending at the beginning of the next paragraph",
+      "file": "gtk/gtkaccessibletext.h",
+      "line": 64,
+      "md": "Use the boundary between\n  paragraphs, starting from the beginning of the current paragraph and\n  ending at the beginning of the next paragraph"
+    },
+    "sentence": {
+      "brief": "Use the boundary between sentences, starting from the beginning of the current sentence and ending at the beginning of the next sentence",
+      "file": "gtk/gtkaccessibletext.h",
+      "line": 58,
+      "md": "Use the boundary between\n  sentences, starting from the beginning of the current sentence and\n  ending at the beginning of the next sentence"
+    },
+    "word": {
+      "brief": "Use the boundary between words, starting from the beginning of the current word and ending at the beginning of the next word",
+      "file": "gtk/gtkaccessibletext.h",
+      "line": 55,
+      "md": "Use the boundary between words,\n  starting from the beginning of the current word and ending at the\n  beginning of the next word"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

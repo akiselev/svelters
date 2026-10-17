@@ -1,0 +1,106 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkDropTargetAsync` object.",
+      "file": "gtk/gtkdroptargetasync.c",
+      "line": 579,
+      "md": "Creates a new `GtkDropTargetAsync` object."
+    }
+  },
+  "doc": {
+    "brief": "An event controller to receive Drag-and-Drop operations, asynchronously.",
+    "file": "gtk/gtkdroptargetasync.c",
+    "line": 39,
+    "md": "An event controller to receive Drag-and-Drop operations, asynchronously.\n\nIt is the more complete but also more complex method of handling drop\noperations compared to [`DropTarget`](xref:gtk:Gtk.DropTarget), and you should only use\nit if `GtkDropTarget` doesn't provide all the features you need.\n\nTo use a `GtkDropTargetAsync` to receive drops on a widget, you create\na `GtkDropTargetAsync` object, configure which data formats and actions\nyou support, connect to its signals, and then attach it to the widget\nwith [`Widget.add_controller()`](xref:gtk:Gtk.Widget#method:add_controller).\n\nDuring a drag operation, the first signal that a `GtkDropTargetAsync`\nemits is [`DropTargetAsync::accept`](xref:gtk:Gtk.DropTargetAsync#event:accept), which is meant to determine\nwhether the target is a possible drop site for the ongoing drop. The\ndefault handler for the ::accept signal accepts the drop if it finds\na compatible data format and an action that is supported on both sides.\n\nIf it is, and the widget becomes a target, you will receive a\n[`DropTargetAsync::drag-enter`](xref:gtk:Gtk.DropTargetAsync#event:drag-enter) signal, followed by\n[`DropTargetAsync::drag-motion`](xref:gtk:Gtk.DropTargetAsync#event:drag-motion) signals as the pointer moves,\noptionally a [`DropTargetAsync::drop`](xref:gtk:Gtk.DropTargetAsync#event:drop) signal when a drop happens,\nand finally a [`DropTargetAsync::drag-leave`](xref:gtk:Gtk.DropTargetAsync#event:drag-leave) signal when the\npointer moves off the widget.\n\nThe ::drag-enter and ::drag-motion handler return a `GdkDragAction`\nto update the status of the ongoing operation. The ::drop handler\nshould decide if it ultimately accepts the drop and if it does, it\nshould initiate the data transfer and finish the operation by calling\n[`Drop.finish()`](xref:gtk:Gdk.Drop#method:finish).\n\nBetween the ::drag-enter and ::drag-leave signals the widget is a\ncurrent drop target, and will receive the %GTK_STATE_FLAG_DROP_ACTIVE\nstate, which can be used by themes to style the widget as a drop target."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:DropTargetAsync",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_actions": {
+      "brief": "Gets the actions that this drop target supports.",
+      "file": "gtk/gtkdroptargetasync.c",
+      "line": 670,
+      "md": "Gets the actions that this drop target supports."
+    },
+    "get_formats": {
+      "brief": "Gets the data formats that this drop target accepts.",
+      "file": "gtk/gtkdroptargetasync.c",
+      "line": 631,
+      "md": "Gets the data formats that this drop target accepts.\n\nIf the result is `NULL`, all formats are expected to be supported."
+    },
+    "reject_drop": {
+      "brief": "Sets the `drop` as not accepted on this drag site.",
+      "file": "gtk/gtkdroptargetasync.c",
+      "line": 686,
+      "md": "Sets the `drop` as not accepted on this drag site.\n\nThis function should be used when delaying the decision\non whether to accept a drag or not until after reading\nthe data."
+    },
+    "set_actions": {
+      "brief": "Sets the actions that this drop target supports.",
+      "file": "gtk/gtkdroptargetasync.c",
+      "line": 649,
+      "md": "Sets the actions that this drop target supports."
+    },
+    "set_formats": {
+      "brief": "Sets the data formats that this drop target will accept.",
+      "file": "gtk/gtkdroptargetasync.c",
+      "line": 604,
+      "md": "Sets the data formats that this drop target will accept."
+    }
+  },
+  "properties": {
+    "actions": {
+      "brief": "The `GdkDragActions` that this drop target supports.",
+      "file": "gtk/gtkdroptargetasync.c",
+      "line": 408,
+      "md": "The `GdkDragActions` that this drop target supports."
+    },
+    "formats": {
+      "brief": "The `GdkContentFormats` that determines the supported data formats.",
+      "file": "gtk/gtkdroptargetasync.c",
+      "line": 418,
+      "md": "The `GdkContentFormats` that determines the supported data formats."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "accept": {
+      "brief": "Emitted on the drop site when a drop operation is about to begin.",
+      "file": "gtk/gtkdroptargetasync.c",
+      "line": 430,
+      "md": "Emitted on the drop site when a drop operation is about to begin.\n\nIf the drop is not accepted, `FALSE` will be returned and the drop target\nwill ignore the drop. If `TRUE` is returned, the drop is accepted for now\nbut may be rejected later via a call to [`DropTargetAsync.reject_drop()`](xref:gtk:Gtk.DropTargetAsync#method:reject_drop)\nor ultimately by returning `FALSE` from a [`DropTargetAsync::drop`](xref:gtk:Gtk.DropTargetAsync#event:drop)\nhandler.\n\nThe default handler for this signal decides whether to accept the drop\nbased on the formats provided by the `drop`.\n\nIf the decision whether the drop will be accepted or rejected needs\nfurther processing, such as inspecting the data, this function should\nreturn `TRUE` and proceed as is `drop` was accepted and if it decides to\nreject the drop later, it should call [`DropTargetAsync.reject_drop()`](xref:gtk:Gtk.DropTargetAsync#method:reject_drop)."
+    },
+    "drag-enter": {
+      "brief": "Emitted on the drop site when the pointer enters the widget.",
+      "file": "gtk/gtkdroptargetasync.c",
+      "line": 466,
+      "md": "Emitted on the drop site when the pointer enters the widget.\n\nIt can be used to set up custom highlighting."
+    },
+    "drag-leave": {
+      "brief": "Emitted on the drop site when the pointer leaves the widget.",
+      "file": "gtk/gtkdroptargetasync.c",
+      "line": 516,
+      "md": "Emitted on the drop site when the pointer leaves the widget.\n\nIts main purpose it to undo things done in\n`GtkDropTargetAsync`::drag-enter."
+    },
+    "drag-motion": {
+      "brief": "Emitted while the pointer is moving over the drop target.",
+      "file": "gtk/gtkdroptargetasync.c",
+      "line": 492,
+      "md": "Emitted while the pointer is moving over the drop target."
+    },
+    "drop": {
+      "brief": "Emitted on the drop site when the user drops the data onto the widget.",
+      "file": "gtk/gtkdroptargetasync.c",
+      "line": 536,
+      "md": "Emitted on the drop site when the user drops the data onto the widget.\n\nThe signal handler must determine whether the pointer position is in a\ndrop zone or not. If it is not in a drop zone, it returns `FALSE` and no\nfurther processing is necessary.\n\nOtherwise, the handler returns `TRUE`. In this case, this handler will\naccept the drop. The handler must ensure that [`Drop.finish()`](xref:gtk:Gdk.Drop#method:finish)\nis called to let the source know that the drop is done. The call to\n[`Drop.finish()`](xref:gtk:Gdk.Drop#method:finish) must only be done when all data has been received.\n\nTo receive the data, use one of the read functions provided by\n[`Drop`](xref:gtk:Gdk.Drop) such as [`Drop.read_async()`](xref:gtk:Gdk.Drop#method:read_async) or\n[`Drop.read_value_async()`](xref:gtk:Gdk.Drop#method:read_value_async)."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

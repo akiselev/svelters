@@ -1,0 +1,51 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkStackSidebar`.",
+      "file": "gtk/gtkstacksidebar.c",
+      "line": 398,
+      "md": "Creates a new `GtkStackSidebar`."
+    }
+  },
+  "doc": {
+    "brief": "Uses a sidebar to switch between `GtkStack` pages.",
+    "file": "gtk/gtkstacksidebar.c",
+    "line": 38,
+    "md": "Uses a sidebar to switch between `GtkStack` pages.\n\nIn order to use a `GtkStackSidebar`, you simply use a `GtkStack` to\norganize your UI flow, and add the sidebar to your sidebar area. You\ncan use [`StackSidebar.set_stack()`](xref:gtk:Gtk.StackSidebar#method:set_stack) to connect the `GtkStackSidebar`\nto the `GtkStack`.\n\n# CSS nodes\n\n`GtkStackSidebar` has a single CSS node with name stacksidebar and\nstyle class .sidebar.\n\nWhen circumstances require it, `GtkStackSidebar` adds the\n.needs-attention style class to the widgets representing the stack\npages."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:StackSidebar",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_stack": {
+      "brief": "Retrieves the stack.",
+      "file": "gtk/gtkstacksidebar.c",
+      "line": 440,
+      "md": "Retrieves the stack."
+    },
+    "set_stack": {
+      "brief": "Set the `GtkStack` associated with this `GtkStackSidebar`.",
+      "file": "gtk/gtkstacksidebar.c",
+      "line": 411,
+      "md": "Set the `GtkStack` associated with this `GtkStackSidebar`.\n\nThe sidebar widget will automatically update according to\nthe order and items within the given `GtkStack`."
+    }
+  },
+  "properties": {
+    "stack": {
+      "brief": "The stack.",
+      "file": "gtk/gtkstacksidebar.c",
+      "line": 382,
+      "md": "The stack."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -1,0 +1,44 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a `GtkVolumeButton`.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkvolumebutton.c",
+      "line": 200,
+      "md": "Creates a `GtkVolumeButton`.\n\nThe button has a range between 0.0 and 1.0, with a stepping of 0.02.\nVolume values can be obtained and modified using the functions from\n[`ScaleButton`](xref:gtk:Gtk.ScaleButton)."
+    }
+  },
+  "doc": {
+    "brief": "`GtkVolumeButton` is a `GtkScaleButton` subclass tailored for volume control.",
+    "deprecated": "4.10",
+    "deprecated_md": "This widget will be removed in GTK 5",
+    "file": "gtk/deprecated/gtkvolumebutton.c",
+    "line": 40,
+    "md": "`GtkVolumeButton` is a `GtkScaleButton` subclass tailored for\nvolume control."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:VolumeButton",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {},
+  "properties": {
+    "use-symbolic": {
+      "brief": "Whether to use symbolic icons as the icons.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkvolumebutton.c",
+      "line": 169,
+      "md": "Whether to use symbolic icons as the icons.\n\nNote that if the symbolic icons are not available in your installed\ntheme, then the normal (potentially colorful) icons will be used."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

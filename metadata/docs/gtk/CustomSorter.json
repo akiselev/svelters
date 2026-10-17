@@ -1,0 +1,38 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkSorter` that works by calling `sort_func` to compare items.",
+      "file": "gtk/gtkcustomsorter.c",
+      "line": 98,
+      "md": "Creates a new `GtkSorter` that works by calling\n`sort_func` to compare items.\n\nIf `sort_func` is `NULL`, all items are considered equal."
+    }
+  },
+  "doc": {
+    "brief": "Sorts items via a callback function.",
+    "file": "gtk/gtkcustomsorter.c",
+    "line": 26,
+    "md": "Sorts items via a callback function."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:CustomSorter",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "set_sort_func": {
+      "brief": "Sets (or unsets) the function used for sorting items.",
+      "file": "gtk/gtkcustomsorter.c",
+      "line": 125,
+      "md": "Sets (or unsets) the function used for sorting items.\n\nIf `sort_func` is `NULL`, all items are considered equal.\n\nIf the sort func changes its sorting behavior,\ngtk_sorter_changed() needs to be called.\n\nIf a previous function was set, its `user_destroy` will be\ncalled now."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -1,0 +1,56 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkSignalListItemFactory`.",
+      "file": "gtk/gtksignallistitemfactory.c",
+      "line": 275,
+      "md": "Creates a new `GtkSignalListItemFactory`.\n\nYou need to connect signal handlers before you use it."
+    }
+  },
+  "doc": {
+    "brief": "Emits signals to manage listitems.",
+    "file": "gtk/gtksignallistitemfactory.c",
+    "line": 28,
+    "md": "Emits signals to manage listitems.\n\nSignals are emitted for every listitem in the same order:\n\n 1. [`SignalListItemFactory::setup`](xref:gtk:Gtk.SignalListItemFactory#event:setup) is emitted to set up permanent\n things on the listitem. This usually means constructing the widgets used in\n the row and adding them to the listitem.\n\n 2. [`SignalListItemFactory::bind`](xref:gtk:Gtk.SignalListItemFactory#event:bind) is emitted to bind the item passed\n via [`ListItem:item`](xref:gtk:Gtk.ListItem#property:item) to the widgets that have been created in\n step 1 or to add item-specific widgets. Signals are connected to listen to\n changes - both to changes in the item to update the widgets or to changes\n in the widgets to update the item. After this signal has been called, the\n listitem may be shown in a list widget.\n\n 3. [`SignalListItemFactory::unbind`](xref:gtk:Gtk.SignalListItemFactory#event:unbind) is emitted to undo everything\n done in step 2. Usually this means disconnecting signal handlers. Once this\n signal has been called, the listitem will no longer be used in a list\n widget.\n\n 4. [`SignalListItemFactory::bind`](xref:gtk:Gtk.SignalListItemFactory#event:bind) and\n [`SignalListItemFactory::unbind`](xref:gtk:Gtk.SignalListItemFactory#event:unbind) may be emitted multiple times\n again to bind the listitem for use with new items. By reusing listitems,\n potentially costly setup can be avoided. However, it means code needs to\n make sure to properly clean up the listitem in step 3 so that no information\n from the previous use leaks into the next one.\n\n 5. [`SignalListItemFactory::teardown`](xref:gtk:Gtk.SignalListItemFactory#event:teardown) is emitted to allow undoing\n the effects of [`SignalListItemFactory::setup`](xref:gtk:Gtk.SignalListItemFactory#event:setup). After this signal\n was emitted on a listitem, the listitem will be destroyed and not be used again.\n\nNote that during the signal emissions, changing properties on the listitems\npassed will not trigger notify signals as the listitem's notifications are\nfrozen. See [`Object.freeze_notify()`](xref:gtk:GObject.Object#method:freeze_notify) for details.\n\nFor tracking changes in other properties in the listitem, the\n::notify signal is recommended. The signal can be connected in the\n[`SignalListItemFactory::setup`](xref:gtk:Gtk.SignalListItemFactory#event:setup) signal and removed again during\n[`SignalListItemFactory::teardown`](xref:gtk:Gtk.SignalListItemFactory#event:teardown)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:SignalListItemFactory",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "bind": {
+      "brief": "Emitted when an object has been bound to an item.",
+      "file": "gtk/gtksignallistitemfactory.c",
+      "line": 187,
+      "md": "Emitted when an object has been bound to an item.\n\nThe handler for this signal must set\nto populate the listitem with widgets.\n\nAfter this signal was emitted, the object might be shown in\na [`ListView`](xref:gtk:Gtk.ListView) or other widget.\n\nThe [`SignalListItemFactory::unbind`](xref:gtk:Gtk.SignalListItemFactory#event:unbind) signal is the\nopposite of this signal and can be used to undo everything done\nin this signal."
+    },
+    "setup": {
+      "brief": "Emitted when a newly created listitem needs to be prepared for use.",
+      "file": "gtk/gtksignallistitemfactory.c",
+      "line": 159,
+      "md": "Emitted when a newly created listitem needs to be prepared for use.\n\nIt is the first signal emitted for every listitem.\n\nThe handler for this signal must call [`ListItem.set_child()`](xref:gtk:Gtk.ListItem#method:set_child)\nto populate the listitem with widgets.\n\nThe [`SignalListItemFactory::teardown`](xref:gtk:Gtk.SignalListItemFactory#event:teardown) signal is the opposite\nof this signal and can be used to undo everything done in this signal."
+    },
+    "teardown": {
+      "brief": "Emitted when an object is about to be destroyed.",
+      "file": "gtk/gtksignallistitemfactory.c",
+      "line": 244,
+      "md": "Emitted when an object is about to be destroyed.\n\nIt is the last signal ever emitted for this `object`.\n\nThis signal is the opposite of the [`SignalListItemFactory::setup`](xref:gtk:Gtk.SignalListItemFactory#event:setup)\nsignal and should be used to undo everything done in that signal."
+    },
+    "unbind": {
+      "brief": "Emitted when an object has been unbound from its item.",
+      "file": "gtk/gtksignallistitemfactory.c",
+      "line": 217,
+      "md": "Emitted when an object has been unbound from its item.\n\nThis happens for example when a listitem was removed from use\nin a list widget and its [`ListItem:item`](xref:gtk:Gtk.ListItem#property:item) is about\nto be unset.\n\nThis signal is the opposite of the [`SignalListItemFactory::bind`](xref:gtk:Gtk.SignalListItemFactory#event:bind)\nsignal and should be used to undo everything done in that signal."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -1,0 +1,589 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a `GtkTextTag`.",
+      "file": "gtk/gtktexttag.c",
+      "line": 1130,
+      "md": "Creates a `GtkTextTag`."
+    }
+  },
+  "doc": {
+    "brief": "Can be applied to text contained in a `GtkTextBuffer`.",
+    "file": "gtk/gtktexttag.c",
+    "line": 50,
+    "md": "Can be applied to text contained in a `GtkTextBuffer`.\n\nYou may wish to begin by reading the\n[text widget conceptual overview](section-text-widget.html),\nwhich gives an overview of all the objects and data types\nrelated to the text widget and how they work together.\n\nTags should be in the [`TextTagTable`](xref:gtk:Gtk.TextTagTable) for a given\n`GtkTextBuffer` before using them with that buffer.\n\n[`TextBuffer.create_tag()`](xref:gtk:Gtk.TextBuffer#method:create_tag) is the best way to create tags.\nSee “gtk4-demo” for numerous examples.\n\nFor each property of `GtkTextTag`, there is a “set” property, e.g.\n“font-set” corresponds to “font”. These “set” properties reflect\nwhether a property has been set or not.\n\nThey are maintained by GTK and you should not set them independently."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:TextTag",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "changed": {
+      "brief": "Emits the [`TextTagTable::tag-changed`](xref:gtk:Gtk.TextTagTable#event:tag-changed) signal on the `GtkTextTagTable` where the tag is included.",
+      "file": "gtk/gtktexttag.c",
+      "line": 2547,
+      "md": "Emits the [`TextTagTable::tag-changed`](xref:gtk:Gtk.TextTagTable#event:tag-changed) signal on the\n`GtkTextTagTable` where the tag is included.\n\nThe signal is already emitted when setting a `GtkTextTag` property.\nThis function is useful for a `GtkTextTag` subclass."
+    },
+    "get_priority": {
+      "brief": "Get the tag priority.",
+      "file": "gtk/gtktexttag.c",
+      "line": 2473,
+      "md": "Get the tag priority."
+    },
+    "set_priority": {
+      "brief": "Sets the priority of a `GtkTextTag`.",
+      "file": "gtk/gtktexttag.c",
+      "line": 2489,
+      "md": "Sets the priority of a `GtkTextTag`.\n\nValid priorities start at 0 and go to one less than\n[`TextTagTable.get_size()`](xref:gtk:Gtk.TextTagTable#method:get_size). Each tag in a table\nhas a unique priority; setting the priority of one tag shifts\nthe priorities of all the other tags in the table to maintain\na unique priority for each tag.\n\nHigher priority tags “win” if two tags both set the same text\nattribute. When adding a tag to a tag table, it will be assigned\nthe highest priority in the table by default; so normally the\nprecedence of a set of tags is the order in which they were added\nto the table, or created with [`TextBuffer.create_tag()`](xref:gtk:Gtk.TextBuffer#method:create_tag),\nwhich adds the tag to the buffer’s table automatically."
+    }
+  },
+  "properties": {
+    "accumulative-margin": {
+      "brief": "Whether the margins accumulate or override each other.",
+      "file": "gtk/gtktexttag.c",
+      "line": 823,
+      "md": "Whether the margins accumulate or override each other.\n\nWhen set to `TRUE` the margins of this tag are added to the margins\nof any other non-accumulative margins present. When set to `FALSE`\nthe margins override one another (the default)."
+    },
+    "allow-breaks": {
+      "brief": "Whether breaks are allowed.",
+      "file": "gtk/gtktexttag.c",
+      "line": 745,
+      "md": "Whether breaks are allowed."
+    },
+    "allow-breaks-set": {
+      "brief": "Whether the `allow-breaks` property is set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 1080,
+      "md": "Whether the `allow-breaks` property is set."
+    },
+    "background": {
+      "brief": "Background color as a string.",
+      "file": "gtk/gtktexttag.c",
+      "line": 225,
+      "md": "Background color as a string."
+    },
+    "background-full-height": {
+      "brief": "Whether the background color fills the entire line height or only the height of the tagged characters.",
+      "file": "gtk/gtktexttag.c",
+      "line": 247,
+      "md": "Whether the background color fills the entire line height\nor only the height of the tagged characters."
+    },
+    "background-full-height-set": {
+      "brief": "Whether the `background-full-height` property is set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 849,
+      "md": "Whether the `background-full-height` property is set."
+    },
+    "background-rgba": {
+      "brief": "Background color as a `GdkRGBA`.",
+      "file": "gtk/gtktexttag.c",
+      "line": 236,
+      "md": "Background color as a `GdkRGBA`."
+    },
+    "background-set": {
+      "brief": "Whether the `background` property is set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 842,
+      "md": "Whether the `background` property is set."
+    },
+    "direction": {
+      "brief": "Text direction, e.g. right-to-left or left-to-right.",
+      "file": "gtk/gtktexttag.c",
+      "line": 281,
+      "md": "Text direction, e.g. right-to-left or left-to-right."
+    },
+    "editable": {
+      "brief": "Whether the text can be modified by the user.",
+      "file": "gtk/gtktexttag.c",
+      "line": 293,
+      "md": "Whether the text can be modified by the user."
+    },
+    "editable-set": {
+      "brief": "Whether the `editable` property is set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 863,
+      "md": "Whether the `editable` property is set."
+    },
+    "fallback": {
+      "brief": "Whether font fallback is enabled.",
+      "file": "gtk/gtktexttag.c",
+      "line": 709,
+      "md": "Whether font fallback is enabled.\n\nWhen set to `TRUE`, other fonts will be substituted\nwhere the current font is missing glyphs."
+    },
+    "fallback-set": {
+      "brief": "Whether the `fallback` property is set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 1059,
+      "md": "Whether the `fallback` property is set."
+    },
+    "family": {
+      "brief": "Name of the font family, e.g.",
+      "file": "gtk/gtktexttag.c",
+      "line": 329,
+      "md": "Name of the font family, e.g. Sans, Helvetica, Times, Monospace."
+    },
+    "family-set": {
+      "brief": "Whether the `family` property is set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 870,
+      "md": "Whether the `family` property is set."
+    },
+    "font": {
+      "brief": "Font description as string, e.g. \\\"Sans Italic 12\\\".",
+      "file": "gtk/gtktexttag.c",
+      "line": 304,
+      "md": "Font description as string, e.g. \\\"Sans Italic 12\\\".\n\nNote that the initial value of this property depends on\nthe internals of `PangoFontDescription`."
+    },
+    "font-desc": {
+      "brief": "Font description as a `PangoFontDescription`.",
+      "file": "gtk/gtktexttag.c",
+      "line": 318,
+      "md": "Font description as a `PangoFontDescription`."
+    },
+    "font-features": {
+      "brief": "OpenType font features, as a string.",
+      "file": "gtk/gtktexttag.c",
+      "line": 734,
+      "md": "OpenType font features, as a string."
+    },
+    "font-features-set": {
+      "brief": "Whether the `font-features` property is set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 1073,
+      "md": "Whether the `font-features` property is set."
+    },
+    "foreground": {
+      "brief": "Foreground color as a string.",
+      "file": "gtk/gtktexttag.c",
+      "line": 259,
+      "md": "Foreground color as a string."
+    },
+    "foreground-rgba": {
+      "brief": "Foreground color as a `GdkRGBA`.",
+      "file": "gtk/gtktexttag.c",
+      "line": 270,
+      "md": "Foreground color as a `GdkRGBA`."
+    },
+    "foreground-set": {
+      "brief": "Whether the `foreground` property is set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 856,
+      "md": "Whether the `foreground` property is set."
+    },
+    "indent": {
+      "brief": "Amount to indent the paragraph, in pixels.",
+      "file": "gtk/gtktexttag.c",
+      "line": 485,
+      "md": "Amount to indent the paragraph, in pixels.\n\nA negative value of indent will produce a hanging indentation.\nThat is, the first line will have the full width, and subsequent\nlines will be indented by the absolute value of indent."
+    },
+    "indent-set": {
+      "brief": "Whether the `indent` property is set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 940,
+      "md": "Whether the `indent` property is set."
+    },
+    "insert-hyphens": {
+      "brief": "Whether to insert hyphens at breaks.",
+      "file": "gtk/gtktexttag.c",
+      "line": 768,
+      "md": "Whether to insert hyphens at breaks."
+    },
+    "insert-hyphens-set": {
+      "brief": "Whether the `insert-hyphens` property is set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 1094,
+      "md": "Whether the `insert-hyphens` property is set."
+    },
+    "invisible": {
+      "brief": "Whether this text is hidden.",
+      "file": "gtk/gtktexttag.c",
+      "line": 672,
+      "md": "Whether this text is hidden.\n\nNote that there may still be problems with the support for invisible\ntext, in particular when navigating programmatically inside a buffer\ncontaining invisible segments."
+    },
+    "invisible-set": {
+      "brief": "Whether the `invisible` property is set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 1045,
+      "md": "Whether the `invisible` property is set."
+    },
+    "justification": {
+      "brief": "Left, right, or center justification.",
+      "file": "gtk/gtktexttag.c",
+      "line": 430,
+      "md": "Left, right, or center justification."
+    },
+    "justification-set": {
+      "brief": "Whether the `justification` property is set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 919,
+      "md": "Whether the `justification` property is set."
+    },
+    "language": {
+      "brief": "The language this text is in, as an ISO code.",
+      "file": "gtk/gtktexttag.c",
+      "line": 442,
+      "md": "The language this text is in, as an ISO code.\n\nPango can use this as a hint when rendering the text.\nIf not set, an appropriate default will be used.\n\nNote that the initial value of this property depends\non the current locale, see also `get_default_language`."
+    },
+    "language-set": {
+      "brief": "Whether the `language` property is set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 926,
+      "md": "Whether the `language` property is set."
+    },
+    "left-margin": {
+      "brief": "Width of the left margin in pixels.",
+      "file": "gtk/gtktexttag.c",
+      "line": 459,
+      "md": "Width of the left margin in pixels."
+    },
+    "left-margin-set": {
+      "brief": "Whether the `left-margin` property is set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 933,
+      "md": "Whether the `left-margin` property is set."
+    },
+    "letter-spacing": {
+      "brief": "Extra spacing between graphemes, in Pango units.",
+      "file": "gtk/gtktexttag.c",
+      "line": 723,
+      "md": "Extra spacing between graphemes, in Pango units."
+    },
+    "letter-spacing-set": {
+      "brief": "Whether the `letter-spacing` property is set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 1066,
+      "md": "Whether the `letter-spacing` property is set."
+    },
+    "line-height": {
+      "brief": "Factor to scale line height by.",
+      "file": "gtk/gtktexttag.c",
+      "line": 557,
+      "md": "Factor to scale line height by.",
+      "since": "4.6"
+    },
+    "line-height-set": {
+      "brief": "Whether the `line-height` property is set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 975,
+      "md": "Whether the `line-height` property is set."
+    },
+    "name": {
+      "brief": "The name used to refer to the tag.",
+      "file": "gtk/gtktexttag.c",
+      "line": 210,
+      "md": "The name used to refer to the tag.\n\n`NULL` for anonymous tags."
+    },
+    "overline": {
+      "brief": "Style of overline for this text.",
+      "file": "gtk/gtktexttag.c",
+      "line": 610,
+      "md": "Style of overline for this text."
+    },
+    "overline-rgba": {
+      "brief": "This property modifies the color of overlines.",
+      "file": "gtk/gtktexttag.c",
+      "line": 622,
+      "md": "This property modifies the color of overlines.\n\nIf not set, overlines will use the foreground color."
+    },
+    "overline-rgba-set": {
+      "brief": "Whether the `overline-rgba` property is set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 1017,
+      "md": "Whether the `overline-rgba` property is set."
+    },
+    "overline-set": {
+      "brief": "Whether the `overline` property is set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 1010,
+      "md": "Whether the `overline` property is set."
+    },
+    "paragraph-background": {
+      "brief": "The paragraph background color as a string.",
+      "file": "gtk/gtktexttag.c",
+      "line": 687,
+      "md": "The paragraph background color as a string."
+    },
+    "paragraph-background-rgba": {
+      "brief": "The paragraph background color as a `GdkRGBA`.",
+      "file": "gtk/gtktexttag.c",
+      "line": 698,
+      "md": "The paragraph background color as a `GdkRGBA`."
+    },
+    "paragraph-background-set": {
+      "brief": "Whether the `paragraph-background` property is set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 1052,
+      "md": "Whether the `paragraph-background` property is set."
+    },
+    "pixels-above-lines": {
+      "brief": "Pixels of blank space above paragraphs.",
+      "file": "gtk/gtktexttag.c",
+      "line": 518,
+      "md": "Pixels of blank space above paragraphs."
+    },
+    "pixels-above-lines-set": {
+      "brief": "Whether the `pixels-above-lines` property is set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 954,
+      "md": "Whether the `pixels-above-lines` property is set."
+    },
+    "pixels-below-lines": {
+      "brief": "Pixels of blank space below paragraphs.",
+      "file": "gtk/gtktexttag.c",
+      "line": 531,
+      "md": "Pixels of blank space below paragraphs."
+    },
+    "pixels-below-lines-set": {
+      "brief": "Whether the `pixels-below-lines` property is set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 961,
+      "md": "Whether the `pixels-below-lines` property is set."
+    },
+    "pixels-inside-wrap": {
+      "brief": "Pixels of blank space between wrapped lines in a paragraph.",
+      "file": "gtk/gtktexttag.c",
+      "line": 544,
+      "md": "Pixels of blank space between wrapped lines in a paragraph."
+    },
+    "pixels-inside-wrap-set": {
+      "brief": "Whether the `pixels-inside-wrap` property is set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 968,
+      "md": "Whether the `pixels-inside-wrap` property is set."
+    },
+    "right-margin": {
+      "brief": "Width of the right margin, in pixels.",
+      "file": "gtk/gtktexttag.c",
+      "line": 472,
+      "md": "Width of the right margin, in pixels."
+    },
+    "right-margin-set": {
+      "brief": "Whether the `right-margin` property is set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 989,
+      "md": "Whether the `right-margin` property is set."
+    },
+    "rise": {
+      "brief": "Offset of text above the baseline, in Pango units.",
+      "file": "gtk/gtktexttag.c",
+      "line": 503,
+      "md": "Offset of text above the baseline, in Pango units.\n\nNegative values go below the baseline."
+    },
+    "rise-set": {
+      "brief": "Whether the `rise` property is set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 947,
+      "md": "Whether the `rise` property is set."
+    },
+    "scale": {
+      "brief": "Font size as a scale factor relative to the default font size.",
+      "file": "gtk/gtktexttag.c",
+      "line": 401,
+      "md": "Font size as a scale factor relative to the default font size.\n\nThis properly adapts to theme changes, etc. so is recommended.\nPango predefines some scales such as %PANGO_SCALE_X_LARGE."
+    },
+    "scale-set": {
+      "brief": "Whether the `scale` property is set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 912,
+      "md": "Whether the `scale` property is set."
+    },
+    "sentence": {
+      "brief": "Whether this tag represents a single sentence.",
+      "file": "gtk/gtktexttag.c",
+      "line": 808,
+      "md": "Whether this tag represents a single sentence.\n\nThis affects cursor movement.",
+      "since": "4.6"
+    },
+    "sentence-set": {
+      "brief": "Whether the `sentence` property is set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 1115,
+      "md": "Whether the `sentence` property is set."
+    },
+    "show-spaces": {
+      "brief": "How to render invisible characters.",
+      "file": "gtk/gtktexttag.c",
+      "line": 756,
+      "md": "How to render invisible characters."
+    },
+    "show-spaces-set": {
+      "brief": "Whether the `show-spaces` property is set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 1087,
+      "md": "Whether the `show-spaces` property is set."
+    },
+    "size": {
+      "brief": "Font size in Pango units.",
+      "file": "gtk/gtktexttag.c",
+      "line": 388,
+      "md": "Font size in Pango units."
+    },
+    "size-points": {
+      "brief": "Font size in points.",
+      "file": "gtk/gtktexttag.c",
+      "line": 417,
+      "md": "Font size in points."
+    },
+    "size-set": {
+      "brief": "Whether the `size` property is set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 905,
+      "md": "Whether the `size` property is set."
+    },
+    "stretch": {
+      "brief": "Font stretch as a `PangoStretch`, e.g. %PANGO_STRETCH_CONDENSED.",
+      "file": "gtk/gtktexttag.c",
+      "line": 376,
+      "md": "Font stretch as a `PangoStretch`, e.g. %PANGO_STRETCH_CONDENSED."
+    },
+    "stretch-set": {
+      "brief": "Whether the `stretch` property is set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 898,
+      "md": "Whether the `stretch` property is set."
+    },
+    "strikethrough": {
+      "brief": "Whether to strike through the text.",
+      "file": "gtk/gtktexttag.c",
+      "line": 570,
+      "md": "Whether to strike through the text."
+    },
+    "strikethrough-rgba": {
+      "brief": "This property modifies the color of strikeouts.",
+      "file": "gtk/gtktexttag.c",
+      "line": 635,
+      "md": "This property modifies the color of strikeouts.\n\nIf not set, strikeouts will use the foreground color."
+    },
+    "strikethrough-rgba-set": {
+      "brief": "If the `strikethrough-rgba` property has been set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 1024,
+      "md": "If the `strikethrough-rgba` property has been set."
+    },
+    "strikethrough-set": {
+      "brief": "Whether the `strikethrough` property is set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 982,
+      "md": "Whether the `strikethrough` property is set."
+    },
+    "style": {
+      "brief": "Font style as a `PangoStyle`, e.g. %PANGO_STYLE_ITALIC.",
+      "file": "gtk/gtktexttag.c",
+      "line": 340,
+      "md": "Font style as a `PangoStyle`, e.g. %PANGO_STYLE_ITALIC."
+    },
+    "style-set": {
+      "brief": "Whether the `style` property is set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 877,
+      "md": "Whether the `style` property is set."
+    },
+    "tabs": {
+      "brief": "Custom tabs for this text.",
+      "file": "gtk/gtktexttag.c",
+      "line": 661,
+      "md": "Custom tabs for this text."
+    },
+    "tabs-set": {
+      "brief": "Whether the `tabs` property is set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 1038,
+      "md": "Whether the `tabs` property is set."
+    },
+    "text-transform": {
+      "brief": "How to transform the text for display.",
+      "file": "gtk/gtktexttag.c",
+      "line": 779,
+      "md": "How to transform the text for display.",
+      "since": "4.6"
+    },
+    "text-transform-set": {
+      "brief": "Whether the `text-transform` property is set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 1101,
+      "md": "Whether the `text-transform` property is set."
+    },
+    "underline": {
+      "brief": "Style of underline for this text.",
+      "file": "gtk/gtktexttag.c",
+      "line": 581,
+      "md": "Style of underline for this text."
+    },
+    "underline-rgba": {
+      "brief": "This property modifies the color of underlines.",
+      "file": "gtk/gtktexttag.c",
+      "line": 593,
+      "md": "This property modifies the color of underlines.\n\nIf not set, underlines will use the foreground color.\n\nIf [`TextTag:underline`](xref:gtk:Gtk.TextTag#property:underline) is set to %PANGO_UNDERLINE_ERROR,\nan alternate color may be applied instead of the foreground. Setting\nthis property will always override those defaults."
+    },
+    "underline-rgba-set": {
+      "brief": "If the `underline-rgba` property has been set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 1003,
+      "md": "If the `underline-rgba` property has been set."
+    },
+    "underline-set": {
+      "brief": "Whether the `underline` property is set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 996,
+      "md": "Whether the `underline` property is set."
+    },
+    "variant": {
+      "brief": "Font variant as a `PangoVariant`, e.g. %PANGO_VARIANT_SMALL_CAPS.",
+      "file": "gtk/gtktexttag.c",
+      "line": 352,
+      "md": "Font variant as a `PangoVariant`, e.g. %PANGO_VARIANT_SMALL_CAPS."
+    },
+    "variant-set": {
+      "brief": "Whether the `variant` property is set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 884,
+      "md": "Whether the `variant` property is set."
+    },
+    "weight": {
+      "brief": "Font weight as an integer.",
+      "file": "gtk/gtktexttag.c",
+      "line": 363,
+      "md": "Font weight as an integer."
+    },
+    "weight-set": {
+      "brief": "Whether the `weight` property is set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 891,
+      "md": "Whether the `weight` property is set."
+    },
+    "word": {
+      "brief": "Whether this tag represents a single word.",
+      "file": "gtk/gtktexttag.c",
+      "line": 793,
+      "md": "Whether this tag represents a single word.\n\nThis affects line breaks and cursor movement.",
+      "since": "4.6"
+    },
+    "word-set": {
+      "brief": "Whether the `word` property is set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 1108,
+      "md": "Whether the `word` property is set."
+    },
+    "wrap-mode": {
+      "brief": "Whether to wrap lines never, at word boundaries, or at character boundaries.",
+      "file": "gtk/gtktexttag.c",
+      "line": 648,
+      "md": "Whether to wrap lines never, at word boundaries, or\nat character boundaries."
+    },
+    "wrap-mode-set": {
+      "brief": "Whether the `wrap-mode` property is set.",
+      "file": "gtk/gtktexttag.c",
+      "line": 1031,
+      "md": "Whether the `wrap-mode` property is set."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

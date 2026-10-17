@@ -1,0 +1,38 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new legacy event controller.",
+      "file": "gtk/gtkeventcontrollerlegacy.c",
+      "line": 105,
+      "md": "Creates a new legacy event controller."
+    }
+  },
+  "doc": {
+    "brief": "Provides raw access to the event stream.",
+    "file": "gtk/gtkeventcontrollerlegacy.c",
+    "line": 20,
+    "md": "Provides raw access to the event stream.\n\nIt should only be used as a last resort if none of the other event\ncontrollers or gestures do the job."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:EventControllerLegacy",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "event": {
+      "brief": "Emitted for each GDK event delivered to `controller`.",
+      "file": "gtk/gtkeventcontrollerlegacy.c",
+      "line": 77,
+      "md": "Emitted for each GDK event delivered to `controller`."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

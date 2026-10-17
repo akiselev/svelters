@@ -1,0 +1,81 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkMountOperation`.",
+      "file": "gtk/gtkmountoperation.c",
+      "line": 1712,
+      "md": "Creates a new `GtkMountOperation`."
+    }
+  },
+  "doc": {
+    "brief": "Asks the user for passwords and other information required to mount a volume.",
+    "file": "gtk/gtkmountoperation.c",
+    "line": 60,
+    "md": "Asks the user for passwords and other information required to\nmount a volume.\n\n`GtkMountOperation` is needed when mounting volumes:\nIt is an implementation of `GMountOperation` that can be used with\nGIO functions for mounting volumes such as\n[`File.mount_enclosing_volume()`](xref:gtk:Gio.File#method:mount_enclosing_volume),\n[`File.mount_mountable()`](xref:gtk:Gio.File#method:mount_mountable),\n[`Volume.mount()`](xref:gtk:Gio.Volume#method:mount),\n[`Mount.unmount_with_operation()`](xref:gtk:Gio.Mount#method:unmount_with_operation) and others.\n\nWhen necessary, `GtkMountOperation` shows dialogs to let the user\nenter passwords, ask questions or show processes blocking unmount."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:MountOperation",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_display": {
+      "brief": "Gets the display on which windows of the `GtkMountOperation` will be shown.",
+      "file": "gtk/gtkmountoperation.c",
+      "line": 1839,
+      "md": "Gets the display on which windows of the `GtkMountOperation`\nwill be shown."
+    },
+    "get_parent": {
+      "brief": "Gets the transient parent used by the `GtkMountOperation`.",
+      "file": "gtk/gtkmountoperation.c",
+      "line": 1791,
+      "md": "Gets the transient parent used by the `GtkMountOperation`."
+    },
+    "is_showing": {
+      "brief": "Returns whether the `GtkMountOperation` is currently displaying a window.",
+      "file": "gtk/gtkmountoperation.c",
+      "line": 1731,
+      "md": "Returns whether the `GtkMountOperation` is currently displaying\na window."
+    },
+    "set_display": {
+      "brief": "Sets the display to show windows of the `GtkMountOperation` on.",
+      "file": "gtk/gtkmountoperation.c",
+      "line": 1807,
+      "md": "Sets the display to show windows of the `GtkMountOperation` on."
+    },
+    "set_parent": {
+      "brief": "Sets the transient parent for windows shown by the `GtkMountOperation`.",
+      "file": "gtk/gtkmountoperation.c",
+      "line": 1748,
+      "md": "Sets the transient parent for windows shown by the\n`GtkMountOperation`."
+    }
+  },
+  "properties": {
+    "display": {
+      "brief": "The display where dialogs will be shown.",
+      "file": "gtk/gtkmountoperation.c",
+      "line": 182,
+      "md": "The display where dialogs will be shown."
+    },
+    "is-showing": {
+      "brief": "Whether a dialog is currently shown.",
+      "file": "gtk/gtkmountoperation.c",
+      "line": 171,
+      "md": "Whether a dialog is currently shown."
+    },
+    "parent": {
+      "brief": "The parent window.",
+      "file": "gtk/gtkmountoperation.c",
+      "line": 160,
+      "md": "The parent window."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

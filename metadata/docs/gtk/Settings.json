@@ -1,0 +1,388 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Provides a mechanism to share global settings between applications.",
+    "file": "gtk/gtksettings.c",
+    "line": 64,
+    "md": "Provides a mechanism to share global settings between applications.\n\nGTK relies on the platform-specific API for getting desktop-wide\nsettings.\n\nOn Wayland, the settings are obtained via a settings portal that\nis part of the Linux desktop APIs for application.\n\nOn the X window system, this sharing is realized by an\n[XSettings](http://www.freedesktop.org/wiki/Specifications/xsettings-spec)\nmanager.\n\nOn macOS, the settings are obtained from `NSUserDefaults`.\n\nIn the absence of these sharing mechanisms, GTK reads default values for\nsettings from `settings.ini` files in `/etc/gtk-4.0`, `$XDG_CONFIG_DIRS/gtk-4.0`\nand `$XDG_CONFIG_HOME/gtk-4.0`. These files must be valid key files (see\n`GKeyFile`), and have a section called Settings. Themes can also provide\ndefault values for settings by installing a `settings.ini` file\nnext to their `gtk.css` file.\n\nApplications can override system-wide settings by setting the property\nof the `GtkSettings` object with g_object_set(). This should be restricted\nto special cases though; `GtkSettings` are not meant as an application\nconfiguration facility.\n\nThere is one `GtkSettings` instance per display. It can be obtained with\n`get_for_display`, but in many cases, it is more\nconvenient to use [`Widget.get_settings()`](xref:gtk:Gtk.Widget#method:get_settings)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Settings",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_default": {
+      "brief": "Gets the `GtkSettings` object for the default display, creating it if necessary.",
+      "file": "gtk/gtksettings.c",
+      "line": 1250,
+      "md": "Gets the `GtkSettings` object for the default display, creating\nit if necessary.\n\nSee `get_for_display`."
+    },
+    "get_for_display": {
+      "brief": "Gets the `GtkSettings` object for `display`, creating it if necessary.",
+      "file": "gtk/gtksettings.c",
+      "line": 1222,
+      "md": "Gets the `GtkSettings` object for `display`, creating it if necessary."
+    },
+    "reset_property": {
+      "brief": "Undoes the effect of calling g_object_set() to install an application-specific value for a setting.",
+      "file": "gtk/gtksettings.c",
+      "line": 2002,
+      "md": "Undoes the effect of calling g_object_set() to install an\napplication-specific value for a setting.\n\nAfter this call, the setting will again follow the session-wide\nvalue for this setting."
+    }
+  },
+  "properties": {
+    "gtk-alternative-button-order": {
+      "brief": "Whether buttons in dialogs should use the alternative button order.",
+      "file": "gtk/gtksettings.c",
+      "line": 537,
+      "md": "Whether buttons in dialogs should use the alternative button order."
+    },
+    "gtk-alternative-sort-arrows": {
+      "brief": "Controls the direction of the sort indicators in sorted list and tree views.",
+      "file": "gtk/gtksettings.c",
+      "line": 546,
+      "md": "Controls the direction of the sort indicators in sorted list and tree\nviews.\n\nBy default an arrow pointing down means the column is sorted\nin ascending order. When set to `TRUE`, this order will be inverted."
+    },
+    "gtk-application-prefer-dark-theme": {
+      "brief": "Whether the application prefers to use a dark theme.",
+      "deprecated": "4.20",
+      "deprecated_md": "Use `GtkCssProvider` properties instead",
+      "file": "gtk/gtksettings.c",
+      "line": 737,
+      "md": "Whether the application prefers to use a dark theme.\n\nIf a GTK theme includes a dark variant, it will be used\ninstead of the configured theme.\n\nSome applications benefit from minimizing the amount of light\npollution that interferes with the content. Good candidates for\ndark themes are photo and video editors that make the actual\ncontent get all the attention and minimize the distraction of\nthe chrome.\n\nDark themes should not be used for documents, where large spaces\nare white/light and the dark chrome creates too much contrast\n(web browser, text editor...)."
+    },
+    "gtk-cursor-aspect-ratio": {
+      "brief": "The aspect ratio of the text caret.",
+      "file": "gtk/gtksettings.c",
+      "line": 389,
+      "md": "The aspect ratio of the text caret."
+    },
+    "gtk-cursor-blink": {
+      "brief": "Whether the cursor should blink.",
+      "file": "gtk/gtksettings.c",
+      "line": 344,
+      "md": "Whether the cursor should blink.\n\nAlso see the [`Settings:gtk-cursor-blink-timeout`](xref:gtk:Gtk.Settings#property:gtk-cursor-blink-timeout) setting,\nwhich allows more flexible control over cursor blinking."
+    },
+    "gtk-cursor-blink-time": {
+      "brief": "Length of the cursor blink cycle, in milliseconds.",
+      "file": "gtk/gtksettings.c",
+      "line": 356,
+      "md": "Length of the cursor blink cycle, in milliseconds."
+    },
+    "gtk-cursor-blink-timeout": {
+      "brief": "Time after which the cursor stops blinking, in seconds.",
+      "file": "gtk/gtksettings.c",
+      "line": 365,
+      "md": "Time after which the cursor stops blinking, in seconds.\n\nThe timer is reset after each user interaction.\n\nSetting this to zero has the same effect as setting\n[`Settings:gtk-cursor-blink`](xref:gtk:Gtk.Settings#property:gtk-cursor-blink) to `FALSE`."
+    },
+    "gtk-cursor-theme-name": {
+      "brief": "Name of the cursor theme to use.",
+      "file": "gtk/gtksettings.c",
+      "line": 515,
+      "md": "Name of the cursor theme to use.\n\nUse `NULL` to use the default theme."
+    },
+    "gtk-cursor-theme-size": {
+      "brief": "The size to use for cursors.",
+      "file": "gtk/gtksettings.c",
+      "line": 526,
+      "md": "The size to use for cursors.\n\n0 means to use the default size."
+    },
+    "gtk-decoration-layout": {
+      "brief": "Determines which buttons should be put in the titlebar of client-side decorated windows, and whether they should be placed on the left or right.",
+      "file": "gtk/gtksettings.c",
+      "line": 830,
+      "md": "Determines which buttons should be put in the\ntitlebar of client-side decorated windows, and whether they\nshould be placed on the left or right.\n\nThe format of the string is button names, separated by commas.\nA colon separates the buttons that should appear on the left\nfrom those on the right. Recognized button names are minimize,\nmaximize, close, icon (the window icon) and menu (a menu button\nfor the fallback app menu).\n\nFor example, \"menu:minimize,maximize,close\" specifies a menu\non the left, and minimize, maximize and close buttons on the right.\n\nNote that buttons will only be shown when they are meaningful.\nE.g. a menu button only appears when the desktop shell does not\nshow the app menu, and a close button only appears on a window\nthat can be closed.\n\nAlso note that the setting can be overridden with the\n[`HeaderBar:decoration-layout`](xref:gtk:Gtk.HeaderBar#property:decoration-layout) property."
+    },
+    "gtk-dialogs-use-header": {
+      "brief": "Whether builtin GTK dialogs such as the file chooser, the color chooser or the font chooser will use a header bar at the top to show action widgets, or an action area at the bottom.",
+      "file": "gtk/gtksettings.c",
+      "line": 897,
+      "md": "Whether builtin GTK dialogs such as the file chooser, the\ncolor chooser or the font chooser will use a header bar at\nthe top to show action widgets, or an action area at the bottom.\n\nThis setting does not affect custom dialogs using `GtkDialog`\ndirectly, or message dialogs."
+    },
+    "gtk-dnd-drag-threshold": {
+      "brief": "The number of pixels the cursor can move before dragging.",
+      "file": "gtk/gtksettings.c",
+      "line": 422,
+      "md": "The number of pixels the cursor can move before dragging."
+    },
+    "gtk-double-click-distance": {
+      "brief": "The maximum distance allowed between two clicks for them to be considered a double click, in pixels.",
+      "file": "gtk/gtksettings.c",
+      "line": 334,
+      "md": "The maximum distance allowed between two clicks for them to be considered\na double click, in pixels."
+    },
+    "gtk-double-click-time": {
+      "brief": "The maximum time to allow between two clicks for them to be considered a double click, in milliseconds.",
+      "file": "gtk/gtksettings.c",
+      "line": 324,
+      "md": "The maximum time to allow between two clicks for them to be considered\na double click, in milliseconds."
+    },
+    "gtk-enable-accels": {
+      "brief": "Whether menu items should have visible accelerators which can be activated.",
+      "file": "gtk/gtksettings.c",
+      "line": 624,
+      "md": "Whether menu items should have visible accelerators which can be\nactivated."
+    },
+    "gtk-enable-animations": {
+      "brief": "Whether to enable toolkit-wide animations.",
+      "file": "gtk/gtksettings.c",
+      "line": 559,
+      "md": "Whether to enable toolkit-wide animations."
+    },
+    "gtk-enable-event-sounds": {
+      "brief": "Whether to play any event sounds at all.",
+      "file": "gtk/gtksettings.c",
+      "line": 704,
+      "md": "Whether to play any event sounds at all.\n\nSee the [Sound Theme Specifications](http://www.freedesktop.org/wiki/Specifications/sound-theme-spec)\nfor more information on event sounds and sound themes.\n\nGTK itself does not support event sounds, you have to use a loadable\nmodule like the one that comes with libcanberra."
+    },
+    "gtk-enable-input-feedback-sounds": {
+      "brief": "Whether to play event sounds as feedback to user input.",
+      "file": "gtk/gtksettings.c",
+      "line": 689,
+      "md": "Whether to play event sounds as feedback to user input.\n\nSee the [Sound Theme Specifications](http://www.freedesktop.org/wiki/Specifications/sound-theme-spec)\nfor more information on event sounds and sound themes.\n\nGTK itself does not support event sounds, you have to use a loadable\nmodule like the one that comes with libcanberra."
+    },
+    "gtk-enable-primary-paste": {
+      "brief": "Whether a middle click on a mouse should paste the 'PRIMARY' clipboard content at the cursor location.",
+      "file": "gtk/gtksettings.c",
+      "line": 911,
+      "md": "Whether a middle click on a mouse should paste the\n'PRIMARY' clipboard content at the cursor location."
+    },
+    "gtk-entry-password-hint-timeout": {
+      "brief": "How long to show the last input character in hidden entries.",
+      "file": "gtk/gtksettings.c",
+      "line": 770,
+      "md": "How long to show the last input character in hidden\nentries.\n\nThis value is in milliseconds. 0 disables showing the\nlast char. 600 is a good value for enabling it."
+    },
+    "gtk-entry-select-on-focus": {
+      "brief": "Whether to select the contents of an entry when it is focused.",
+      "file": "gtk/gtksettings.c",
+      "line": 761,
+      "md": "Whether to select the contents of an entry when it is focused."
+    },
+    "gtk-error-bell": {
+      "brief": "When `TRUE`, keyboard navigation and other input-related errors will cause a beep.",
+      "file": "gtk/gtksettings.c",
+      "line": 568,
+      "md": "When `TRUE`, keyboard navigation and other input-related errors\nwill cause a beep.\n\nSince the error bell is implemented using gdk_surface_beep(), the\nwindowing system may offer ways to configure the error bell in many\nways, such as flashing the window or similar visual effects."
+    },
+    "gtk-font-name": {
+      "brief": "The default font to use.",
+      "file": "gtk/gtksettings.c",
+      "line": 431,
+      "md": "The default font to use.\n\nGTK uses the family name and size from this string."
+    },
+    "gtk-font-rendering": {
+      "brief": "How GTK font rendering is set up.",
+      "file": "gtk/gtksettings.c",
+      "line": 968,
+      "md": "How GTK font rendering is set up.\n\nWhen set to [`FontRendering.MANUAL`](xref:gtk:Gtk.FontRendering#value:MANUAL), GTK respects the low-level\nfont-related settings ([`Settings:gtk-hint-font-metrics`](xref:gtk:Gtk.Settings#property:gtk-hint-font-metrics),\n[`Settings:gtk-xft-antialias`](xref:gtk:Gtk.Settings#property:gtk-xft-antialias), [`Settings:gtk-xft-hinting`](xref:gtk:Gtk.Settings#property:gtk-xft-hinting),\n[`Settings:gtk-xft-hintstyle`](xref:gtk:Gtk.Settings#property:gtk-xft-hintstyle) and [`Settings:gtk-xft-rgba`](xref:gtk:Gtk.Settings#property:gtk-xft-rgba))\nas much as practical.\n\nWhen set to [`FontRendering.AUTOMATIC`](xref:gtk:Gtk.FontRendering#value:AUTOMATIC), GTK will consider factors such\nas screen resolution and scale in deciding how to render fonts.",
+      "since": "4.16"
+    },
+    "gtk-fontconfig-timestamp": {
+      "brief": "Timestamp of the current fontconfig configuration.",
+      "file": "gtk/gtksettings.c",
+      "line": 665,
+      "md": "Timestamp of the current fontconfig configuration."
+    },
+    "gtk-hint-font-metrics": {
+      "brief": "Whether hinting should be applied to font metrics.",
+      "file": "gtk/gtksettings.c",
+      "line": 501,
+      "md": "Whether hinting should be applied to font metrics.\n\nNote that this also turns off subpixel positioning of glyphs,\nsince it conflicts with metrics hinting.",
+      "since": "4.6"
+    },
+    "gtk-icon-theme-name": {
+      "brief": "Name of the icon theme to use.",
+      "file": "gtk/gtksettings.c",
+      "line": 410,
+      "md": "Name of the icon theme to use.\n\nSee [`IconTheme`](xref:gtk:Gtk.IconTheme) for details about how\nGTK handles icon themes."
+    },
+    "gtk-im-module": {
+      "brief": "Which IM (input method) module should be used by default.",
+      "file": "gtk/gtksettings.c",
+      "line": 634,
+      "md": "Which IM (input method) module should be used by default.\n\nThis is the input method that will be used if the user has not\nexplicitly chosen another input method from the IM context menu.\nThis also can be a colon-separated list of input methods, which GTK\nwill try in turn until it finds one available on the system.\n\nSee [`IMContext`](xref:gtk:Gtk.IMContext)."
+    },
+    "gtk-interface-color-scheme": {
+      "brief": "The color scheme used for rendering the user interface.",
+      "file": "gtk/gtksettings.c",
+      "line": 989,
+      "md": "The color scheme used for rendering the user interface.\n\nThis setting communicates the system-wide preference.\nThe color scheme that is actually used when applying CSS\nstyles can be set with the [`CssProvider:prefers-color-scheme`](xref:gtk:Gtk.CssProvider#property:prefers-color-scheme)\nproperty.",
+      "since": "4.20"
+    },
+    "gtk-interface-contrast": {
+      "brief": "The level of contrast to use for the user interface.",
+      "file": "gtk/gtksettings.c",
+      "line": 1006,
+      "md": "The level of contrast to use for the user interface.\n\nThis setting communicates the system-wide preference.\nThe contrast level that is actually used when applying CSS\nstyles can be set with the [`CssProvider:prefers-contrast`](xref:gtk:Gtk.CssProvider#property:prefers-contrast)\nproperty.",
+      "since": "4.20"
+    },
+    "gtk-interface-reduced-motion": {
+      "brief": "Whether animations should be reduced to essential motions.",
+      "file": "gtk/gtksettings.c",
+      "line": 1023,
+      "md": "Whether animations should be reduced to essential motions.\n\nThis setting communicates the system-wide preference.\nThe motion level that is actually used when applying CSS\nstyles can be set with the [`CssProvider:prefers-reduced-motion`](xref:gtk:Gtk.CssProvider#property:prefers-reduced-motion)\nproperty.",
+      "since": "4.22"
+    },
+    "gtk-keynav-use-caret": {
+      "brief": "Whether GTK should make sure that text can be navigated with a caret, even if it is not editable.",
+      "file": "gtk/gtksettings.c",
+      "line": 944,
+      "md": "Whether GTK should make sure that text can be navigated with\na caret, even if it is not editable.\n\nThis is useful when using a screen reader."
+    },
+    "gtk-label-select-on-focus": {
+      "brief": "Whether to select the contents of a selectable label when it is focused.",
+      "file": "gtk/gtksettings.c",
+      "line": 784,
+      "md": "Whether to select the contents of a selectable\nlabel when it is focused."
+    },
+    "gtk-long-press-time": {
+      "brief": "The time for a button or touch press to be considered a “long press”.",
+      "file": "gtk/gtksettings.c",
+      "line": 933,
+      "md": "The time for a button or touch press to be considered a “long press”.\n\nSee [`GestureLongPress`](xref:gtk:Gtk.GestureLongPress)."
+    },
+    "gtk-overlay-scrolling": {
+      "brief": "Whether scrolled windows may use overlaid scrolling indicators.",
+      "file": "gtk/gtksettings.c",
+      "line": 956,
+      "md": "Whether scrolled windows may use overlaid scrolling indicators.\n\nIf this is set to `FALSE`, scrolled windows will have permanent\nscrollbars."
+    },
+    "gtk-primary-button-warps-slider": {
+      "brief": "If the value of this setting is `TRUE`, clicking the primary button in a `GtkRange` trough will move the slider, and hence set the range’s value, to the point that you clicked.",
+      "file": "gtk/gtksettings.c",
+      "line": 719,
+      "md": "If the value of this setting is `TRUE`, clicking the primary button in a\n`GtkRange` trough will move the slider, and hence set the range’s value, to\nthe point that you clicked.\n\nIf it is `FALSE`, a primary click will cause the slider/value to move\nby the range’s page-size towards the point clicked.\n\nWhichever action you choose for the primary button, the other action will\nbe available by holding Shift and primary-clicking, or clicking the middle\nmouse button."
+    },
+    "gtk-print-backends": {
+      "brief": "A comma-separated list of print backends to use in the print dialog.",
+      "file": "gtk/gtksettings.c",
+      "line": 593,
+      "md": "A comma-separated list of print backends to use in the print\ndialog.\n\nAvailable print backends depend on the GTK installation,\nand may include \"file\", \"cups\", \"lpr\" or \"papi\"."
+    },
+    "gtk-print-preview-command": {
+      "brief": "A command to run for displaying the print preview.",
+      "file": "gtk/gtksettings.c",
+      "line": 606,
+      "md": "A command to run for displaying the print preview.\n\nThe command should contain a `%f` placeholder, which will get\nreplaced by the path to the pdf file. The command may also\ncontain a `%s` placeholder, which will get replaced by the\npath to a file containing the print settings in the format\nproduced by [`PrintSettings.to_file()`](xref:gtk:Gtk.PrintSettings#method:to_file).\n\nThe preview application is responsible for removing the pdf\nfile and the print settings file when it is done."
+    },
+    "gtk-recent-files-enabled": {
+      "brief": "Whether GTK should keep track of items inside the recently used resources list.",
+      "file": "gtk/gtksettings.c",
+      "line": 921,
+      "md": "Whether GTK should keep track of items inside the recently used\nresources list.\n\nIf set to `FALSE`, the list will always be empty."
+    },
+    "gtk-recent-files-max-age": {
+      "brief": "The maximum age, in days, of the items inside the recently used resources list.",
+      "file": "gtk/gtksettings.c",
+      "line": 650,
+      "md": "The maximum age, in days, of the items inside the recently used\nresources list.\n\nItems older than this setting will be excised from the list.\nIf set to 0, the list will always be empty; if set to -1, no\nitem will be removed."
+    },
+    "gtk-shell-shows-app-menu": {
+      "brief": "Set to `TRUE` if the desktop environment is displaying the app menu, `FALSE` if the app should display it itself.",
+      "deprecated": "4.20",
+      "deprecated_md": "This setting is not relevant anymore",
+      "file": "gtk/gtksettings.c",
+      "line": 794,
+      "md": "Set to `TRUE` if the desktop environment is displaying\nthe app menu, `FALSE` if the app should display it itself."
+    },
+    "gtk-shell-shows-desktop": {
+      "brief": "Set to `TRUE` if the desktop environment is displaying the desktop folder, `FALSE` if not.",
+      "deprecated": "4.20",
+      "deprecated_md": "This setting is not relevant anymore",
+      "file": "gtk/gtksettings.c",
+      "line": 818,
+      "md": "Set to `TRUE` if the desktop environment is displaying\nthe desktop folder, `FALSE` if not."
+    },
+    "gtk-shell-shows-menubar": {
+      "brief": "Set to `TRUE` if the desktop environment is displaying the menubar, `FALSE` if the app should display it itself.",
+      "deprecated": "4.20",
+      "deprecated_md": "This setting is not relevant anymore",
+      "file": "gtk/gtksettings.c",
+      "line": 806,
+      "md": "Set to `TRUE` if the desktop environment is displaying\nthe menubar, `FALSE` if the app should display it itself."
+    },
+    "gtk-show-status-shapes": {
+      "brief": "When `TRUE`, widgets like switches include shapes to indicate their on/off state.",
+      "file": "gtk/gtksettings.c",
+      "line": 582,
+      "md": "When `TRUE`, widgets like switches include shapes to indicate their on/off state.",
+      "since": "4.14"
+    },
+    "gtk-sound-theme-name": {
+      "brief": "The XDG sound theme to use for event sounds.",
+      "file": "gtk/gtksettings.c",
+      "line": 674,
+      "md": "The XDG sound theme to use for event sounds.\n\nSee the [Sound Theme Specifications](http://www.freedesktop.org/wiki/Specifications/sound-theme-spec)\nfor more information on event sounds and sound themes.\n\nGTK itself does not support event sounds, you have to use\na loadable module like the one that comes with libcanberra."
+    },
+    "gtk-split-cursor": {
+      "brief": "Whether two cursors should be displayed for mixed left-to-right and right-to-left text.",
+      "file": "gtk/gtksettings.c",
+      "line": 379,
+      "md": "Whether two cursors should be displayed for mixed left-to-right and\nright-to-left text."
+    },
+    "gtk-theme-name": {
+      "brief": "Name of the theme to load.",
+      "file": "gtk/gtksettings.c",
+      "line": 398,
+      "md": "Name of the theme to load.\n\nSee [`CssProvider`](xref:gtk:Gtk.CssProvider) for details about how\nGTK finds the CSS stylesheet for a theme."
+    },
+    "gtk-titlebar-double-click": {
+      "brief": "Determines the action to take when a double-click occurs on the titlebar of client-side decorated windows.",
+      "file": "gtk/gtksettings.c",
+      "line": 858,
+      "md": "Determines the action to take when a double-click\noccurs on the titlebar of client-side decorated windows.\n\nRecognized actions are minimize, toggle-maximize, menu, lower\nor none."
+    },
+    "gtk-titlebar-middle-click": {
+      "brief": "Determines the action to take when a middle-click occurs on the titlebar of client-side decorated windows.",
+      "file": "gtk/gtksettings.c",
+      "line": 871,
+      "md": "Determines the action to take when a middle-click\noccurs on the titlebar of client-side decorated windows.\n\nRecognized actions are minimize, toggle-maximize, menu, lower\nor none."
+    },
+    "gtk-titlebar-right-click": {
+      "brief": "Determines the action to take when a right-click occurs on the titlebar of client-side decorated windows.",
+      "file": "gtk/gtksettings.c",
+      "line": 884,
+      "md": "Determines the action to take when a right-click\noccurs on the titlebar of client-side decorated windows.\n\nRecognized actions are minimize, toggle-maximize, menu, lower\nor none."
+    },
+    "gtk-xft-antialias": {
+      "brief": "Whether to antialias fonts.",
+      "file": "gtk/gtksettings.c",
+      "line": 442,
+      "md": "Whether to antialias fonts.\n\nThe values are 0 for no, 1 for yes, or -1 for the system default."
+    },
+    "gtk-xft-dpi": {
+      "brief": "The font resolution, in 1024 * dots/inch.",
+      "file": "gtk/gtksettings.c",
+      "line": 490,
+      "md": "The font resolution, in 1024 * dots/inch.\n\n-1 to use the default value."
+    },
+    "gtk-xft-hinting": {
+      "brief": "Whether to enable font hinting.",
+      "file": "gtk/gtksettings.c",
+      "line": 453,
+      "md": "Whether to enable font hinting.\n\nThe values are 0 for no, 1 for yes, or -1 for the system default."
+    },
+    "gtk-xft-hintstyle": {
+      "brief": "What degree of font hinting to use.",
+      "file": "gtk/gtksettings.c",
+      "line": 464,
+      "md": "What degree of font hinting to use.\n\nThe possible vaues are hintnone, hintslight,\nhintmedium, hintfull."
+    },
+    "gtk-xft-rgba": {
+      "brief": "The type of subpixel antialiasing to use.",
+      "file": "gtk/gtksettings.c",
+      "line": 476,
+      "md": "The type of subpixel antialiasing to use.\n\nThe possible values are none, rgb, bgr, vrgb, vbgr.\n\nNote that GSK does not support subpixel antialiasing, and this\nsetting has no effect on font rendering in GTK."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

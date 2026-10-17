@@ -1,0 +1,395 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "The tree interface used by GtkTreeView",
+    "deprecated": "4.10",
+    "deprecated_md": "Use [`ListModel`](xref:gtk:Gio.ListModel) instead",
+    "file": "gtk/deprecated/gtktreemodel.c",
+    "line": 32,
+    "md": "The tree interface used by GtkTreeView\n\nThe `GtkTreeModel` interface defines a generic tree interface for\nuse by the `GtkTreeView` widget. It is an abstract interface, and\nis designed to be usable with any appropriate data structure. The\nprogrammer just has to implement this interface on their own data\ntype for it to be viewable by a `GtkTreeView` widget.\n\nThe model is represented as a hierarchical tree of strongly-typed,\ncolumned data. In other words, the model can be seen as a tree where\nevery node has different values depending on which column is being\nqueried. The type of data found in a column is determined by using\nthe GType system (ie. %G_TYPE_INT, %GTK_TYPE_BUTTON, %G_TYPE_POINTER,\netc). The types are homogeneous per column across all nodes. It is\nimportant to note that this interface only provides a way of examining\na model and observing changes. The implementation of each individual\nmodel decides how and if changes are made.\n\nIn order to make life simpler for programmers who do not need to\nwrite their own specialized model, two generic models are provided\n— the `GtkTreeStore` and the `GtkListStore`. To use these, the\ndeveloper simply pushes data into these models as necessary. These\nmodels provide the data structure as well as all appropriate tree\ninterfaces. As a result, implementing drag and drop, sorting, and\nstoring data is trivial. For the vast majority of trees and lists,\nthese two models are sufficient.\n\nModels are accessed on a node/column level of granularity. One can\nquery for the value of a model at a certain node and a certain\ncolumn on that node. There are two structures used to reference a\nparticular node in a model. They are the [`TreePath`](xref:gtk:Gtk.TreePath) and\nthe [`TreeIter`](xref:gtk:Gtk.TreeIter) (“iter” is short for iterator). Most of the\ninterface consists of operations on a [`TreeIter`](xref:gtk:Gtk.TreeIter).\n\nA path is essentially a potential node. It is a location on a model\nthat may or may not actually correspond to a node on a specific\nmodel. A [`TreePath`](xref:gtk:Gtk.TreePath) can be converted into either an\narray of unsigned integers or a string. The string form is a list\nof numbers separated by a colon. Each number refers to the offset\nat that level. Thus, the path `0` refers to the root\nnode and the path `2:4` refers to the fifth child of\nthe third node.\n\nBy contrast, a [`TreeIter`](xref:gtk:Gtk.TreeIter) is a reference to a specific node on\na specific model. It is a generic struct with an integer and three\ngeneric pointers. These are filled in by the model in a model-specific\nway. One can convert a path to an iterator by calling\ngtk_tree_model_get_iter(). These iterators are the primary way\nof accessing a model and are similar to the iterators used by\n`GtkTextBuffer`. They are generally statically allocated on the\nstack and only used for a short time. The model interface defines\na set of operations using them for navigating the model.\n\nIt is expected that models fill in the iterator with private data.\nFor example, the `GtkListStore` model, which is internally a simple\nlinked list, stores a list node in one of the pointers. The\n`GtkTreeModel`Sort stores an array and an offset in two of the\npointers. Additionally, there is an integer field. This field is\ngenerally filled with a unique stamp per model. This stamp is for\ncatching errors resulting from using invalid iterators with a model.\n\nThe lifecycle of an iterator can be a little confusing at first.\nIterators are expected to always be valid for as long as the model\nis unchanged (and doesn’t emit a signal). The model is considered\nto own all outstanding iterators and nothing needs to be done to\nfree them from the user’s point of view. Additionally, some models\nguarantee that an iterator is valid for as long as the node it refers\nto is valid (most notably the `GtkTreeStore` and `GtkListStore`).\nAlthough generally uninteresting, as one always has to allow for\nthe case where iterators do not persist beyond a signal, some very\nimportant performance enhancements were made in the sort model.\nAs a result, the %GTK_TREE_MODEL_ITERS_PERSIST flag was added to\nindicate this behavior.\n\nTo help show some common operation of a model, some examples are\nprovided. The first example shows three ways of getting the iter at\nthe location `3:2:5`. While the first method shown is\neasier, the second is much more common, as you often get paths from\ncallbacks.\n\n## Acquiring a `GtkTreeIter`\n\n```c\n// Three ways of getting the iter pointing to the location\nGtkTreePath *path;\nGtkTreeIter iter;\nGtkTreeIter parent_iter;\n\n// get the iterator from a string\ngtk_tree_model_get_iter_from_string (model,\n                                     &iter,\n                                     \"3:2:5\");\n\n// get the iterator from a path\npath = gtk_tree_path_new_from_string (\"3:2:5\");\ngtk_tree_model_get_iter (model, &iter, path);\ngtk_tree_path_free (path);\n\n// walk the tree to find the iterator\ngtk_tree_model_iter_nth_child (model, &iter,\n                               NULL, 3);\nparent_iter = iter;\ngtk_tree_model_iter_nth_child (model, &iter,\n                               &parent_iter, 2);\nparent_iter = iter;\ngtk_tree_model_iter_nth_child (model, &iter,\n                               &parent_iter, 5);\n```\n\nThis second example shows a quick way of iterating through a list\nand getting a string and an integer from each row. The\npopulate_model() function used below is not\nshown, as it is specific to the `GtkListStore`. For information on\nhow to write such a function, see the `GtkListStore` documentation.\n\n## Reading data from a `GtkTreeModel`\n\n```c\nenum\n{\n  STRING_COLUMN,\n  INT_COLUMN,\n  N_COLUMNS\n};\n\n...\n\nGtkTreeModel *list_store;\nGtkTreeIter iter;\ngboolean valid;\nint row_count = 0;\n\n// make a new list_store\nlist_store = gtk_list_store_new (N_COLUMNS,\n                                 G_TYPE_STRING,\n                                 G_TYPE_INT);\n\n// Fill the list store with data\npopulate_model (list_store);\n\n// Get the first iter in the list, check it is valid and walk\n// through the list, reading each row.\n\nvalid = gtk_tree_model_get_iter_first (list_store,\n                                       &iter);\nwhile (valid)\n {\n   char *str_data;\n   int    int_data;\n\n   // Make sure you terminate calls to gtk_tree_model_get() with a “-1” value\n   gtk_tree_model_get (list_store, &iter,\n                       STRING_COLUMN, &str_data,\n                       INT_COLUMN, &int_data,\n                       -1);\n\n   // Do something with the data\n   g_print (\"Row %d: (%s,%d)\\n\",\n            row_count, str_data, int_data);\n   g_free (str_data);\n\n   valid = gtk_tree_model_iter_next (list_store,\n                                     &iter);\n   row_count++;\n }\n```\n\nThe `GtkTreeModel` interface contains two methods for reference\ncounting: gtk_tree_model_ref_node() and gtk_tree_model_unref_node().\nThese two methods are optional to implement. The reference counting\nis meant as a way for views to let models know when nodes are being\ndisplayed. `GtkTreeView` will take a reference on a node when it is\nvisible, which means the node is either in the toplevel or expanded.\nBeing displayed does not mean that the node is currently directly\nvisible to the user in the viewport. Based on this reference counting\nscheme a caching model, for example, can decide whether or not to cache\na node based on the reference count. A file-system based model would\nnot want to keep the entire file hierarchy in memory, but just the\nfolders that are currently expanded in every current view.\n\nWhen working with reference counting, the following rules must be taken\ninto account:\n\n- Never take a reference on a node without owning a reference on its parent.\n  This means that all parent nodes of a referenced node must be referenced\n  as well.\n\n- Outstanding references on a deleted node are not released. This is not\n  possible because the node has already been deleted by the time the\n  row-deleted signal is received.\n\n- Models are not obligated to emit a signal on rows of which none of its\n  siblings are referenced. To phrase this differently, signals are only\n  required for levels in which nodes are referenced. For the root level\n  however, signals must be emitted at all times (however the root level\n  is always referenced when any view is attached)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:TreeModel",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "filter_new": {
+      "brief": "Creates a new `GtkTreeModel`, with `child_model` as the child_model and `root` as the virtual root.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodelfilter.c",
+      "line": 3767,
+      "md": "Creates a new `GtkTreeModel`, with `child_model` as the child_model\nand `root` as the virtual root."
+    },
+    "foreach": {
+      "brief": "Calls `func` on each node in model in a depth-first fashion.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 2129,
+      "md": "Calls `func` on each node in model in a depth-first fashion.\n\nIf `func` returns `TRUE`, then the tree ceases to be walked,\nand gtk_tree_model_foreach() returns."
+    },
+    "get": {
+      "brief": "Gets the value of one or more cells in the row referenced by `iter`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1823,
+      "md": "Gets the value of one or more cells in the row referenced by `iter`.\n\nThe variable argument list should contain integer column numbers,\neach column number followed by a place to store the value being\nretrieved.  The list is terminated by a -1. For example, to get a\nvalue from column 0 with type %G_TYPE_STRING, you would\nwrite: `gtk_tree_model_get (model, iter, 0, &place_string_here, -1)`,\nwhere `place_string_here` is a #gchararray\nto be filled with the string.\n\nReturned values with type %G_TYPE_OBJECT have to be unreferenced,\nvalues with type %G_TYPE_STRING or %G_TYPE_BOXED have to be freed.\nOther values are passed by value."
+    },
+    "get_column_type": {
+      "brief": "Returns the type of the column.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1278,
+      "md": "Returns the type of the column."
+    },
+    "get_flags": {
+      "brief": "Returns a set of flags supported by this interface.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1228,
+      "md": "Returns a set of flags supported by this interface.\n\nThe flags are a bitwise combination of `GtkTreeModel`Flags.\nThe flags supported should not change during the lifetime\nof the `tree_model`."
+    },
+    "get_iter": {
+      "brief": "Sets `iter` to a valid iterator pointing to `path`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1304,
+      "md": "Sets `iter` to a valid iterator pointing to `path`.\n\nIf `path` does not exist, `iter` is set to an invalid\niterator and `FALSE` is returned."
+    },
+    "get_iter_first": {
+      "brief": "Initializes `iter` with the first iterator in the tree (the one at the path \"0\").",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1411,
+      "md": "Initializes `iter` with the first iterator in the tree\n(the one at the path \"0\").\n\nReturns `FALSE` if the tree is empty, `TRUE` otherwise."
+    },
+    "get_iter_from_string": {
+      "brief": "Sets `iter` to a valid iterator pointing to `path_string`, if it exists.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1339,
+      "md": "Sets `iter` to a valid iterator pointing to `path_string`, if it\nexists.\n\nOtherwise, `iter` is left invalid and `FALSE` is returned."
+    },
+    "get_n_columns": {
+      "brief": "Returns the number of columns supported by `tree_model`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1256,
+      "md": "Returns the number of columns supported by `tree_model`."
+    },
+    "get_path": {
+      "brief": "Returns a newly-created `GtkTreePath` referenced by `iter`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1442,
+      "md": "Returns a newly-created `GtkTreePath` referenced by `iter`.\n\nThis path should be freed with gtk_tree_path_free()."
+    },
+    "get_string_from_iter": {
+      "brief": "Generates a string representation of the iter.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1376,
+      "md": "Generates a string representation of the iter.\n\nThis string is a “:” separated list of numbers.\nFor example, “4:10:0:3” would be an acceptable\nreturn value for this string."
+    },
+    "get_valist": {
+      "brief": "Gets the value of one or more cells in the row referenced by `iter`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1861,
+      "md": "Gets the value of one or more cells in the row referenced by `iter`.\n\nSee [`TreeModel.get()`](xref:gtk:Gtk.TreeModel#method:get), this version takes a va_list\nfor language bindings to use."
+    },
+    "get_value": {
+      "brief": "Initializes and sets `value` to that at `column`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1470,
+      "md": "Initializes and sets `value` to that at `column`.\n\nWhen done with `value`, g_value_unset() needs to be called\nto free any allocated memory."
+    },
+    "iter_children": {
+      "brief": "Sets `iter` to point to the first child of `parent`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1586,
+      "md": "Sets `iter` to point to the first child of `parent`.\n\nIf `parent` has no children, `FALSE` is returned and `iter` is\nset to be invalid. `parent` will remain a valid node after this\nfunction has been called.\n\nIf `parent` is `NULL` returns the first node, equivalent to\n`gtk_tree_model_get_iter_first (tree_model, iter);`"
+    },
+    "iter_has_child": {
+      "brief": "Returns `TRUE` if `iter` has children, `FALSE` otherwise.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1623,
+      "md": "Returns `TRUE` if `iter` has children, `FALSE` otherwise."
+    },
+    "iter_n_children": {
+      "brief": "Returns the number of children that `iter` has.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1649,
+      "md": "Returns the number of children that `iter` has.\n\nAs a special case, if `iter` is `NULL`, then the number\nof toplevel nodes is returned."
+    },
+    "iter_next": {
+      "brief": "Sets `iter` to point to the node following it at the current level.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1502,
+      "md": "Sets `iter` to point to the node following it at the current level.\n\nIf there is no next `iter`, `FALSE` is returned and `iter` is set\nto be invalid."
+    },
+    "iter_nth_child": {
+      "brief": "Sets `iter` to be the child of `parent`, using the given index.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1677,
+      "md": "Sets `iter` to be the child of `parent`, using the given index.\n\nThe first index is 0. If `n` is too big, or `parent` has no children,\n`iter` is set to an invalid iterator and `FALSE` is returned. `parent`\nwill remain a valid node after this function has been called. As a\nspecial case, if `parent` is `NULL`, then the `n`-th root node\nis set."
+    },
+    "iter_parent": {
+      "brief": "Sets `iter` to be the parent of `child`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1716,
+      "md": "Sets `iter` to be the parent of `child`.\n\nIf `child` is at the toplevel, and doesn’t have a parent, then\n`iter` is set to an invalid iterator and `FALSE` is returned.\n`child` will remain a valid node after this function has been\ncalled.\n\n`iter` will be initialized before the lookup is performed, so `child`\nand `iter` cannot point to the same memory location."
+    },
+    "iter_previous": {
+      "brief": "Sets `iter` to point to the previous node at the current level.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1552,
+      "md": "Sets `iter` to point to the previous node at the current level.\n\nIf there is no previous `iter`, `FALSE` is returned and `iter` is\nset to be invalid."
+    },
+    "ref_node": {
+      "brief": "Lets the tree ref the node.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1755,
+      "md": "Lets the tree ref the node.\n\nThis is an optional method for models to implement.\nTo be more specific, models may ignore this call as it exists\nprimarily for performance reasons.\n\nThis function is primarily meant as a way for views to let\ncaching models know when nodes are being displayed (and hence,\nwhether or not to cache that node). Being displayed means a node\nis in an expanded branch, regardless of whether the node is currently\nvisible in the viewport. For example, a file-system based model\nwould not want to keep the entire file-hierarchy in memory,\njust the sections that are currently being displayed by\nevery current view.\n\nA model should be expected to be able to get an iter independent\nof its reffed state."
+    },
+    "row_changed": {
+      "brief": "Emits the ::row-changed signal on `tree_model`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1917,
+      "md": "Emits the ::row-changed signal on `tree_model`.\n\nSee [`TreeModel::row-changed`](xref:gtk:Gtk.TreeModel#event:row-changed)."
+    },
+    "row_deleted": {
+      "brief": "Emits the ::row-deleted signal on `tree_model`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1992,
+      "md": "Emits the ::row-deleted signal on `tree_model`.\n\nSee [`TreeModel::row-deleted`](xref:gtk:Gtk.TreeModel#event:row-deleted).\n\nThis should be called by models after a row has been removed.\nThe location pointed to by `path` should be the location that\nthe row previously was at. It may not be a valid location anymore.\n\nNodes that are deleted are not unreffed, this means that any\noutstanding references on the deleted node should not be released."
+    },
+    "row_has_child_toggled": {
+      "brief": "Emits the ::row-has-child-toggled signal on `tree_model`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1965,
+      "md": "Emits the ::row-has-child-toggled signal on `tree_model`.\n\nSee [`TreeModel::row-has-child-toggled`](xref:gtk:Gtk.TreeModel#event:row-has-child-toggled).\n\nThis should be called by models after the child\nstate of a node changes."
+    },
+    "row_inserted": {
+      "brief": "Emits the ::row-inserted signal on `tree_model`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1941,
+      "md": "Emits the ::row-inserted signal on `tree_model`.\n\nSee [`TreeModel::row-inserted`](xref:gtk:Gtk.TreeModel#event:row-inserted)."
+    },
+    "rows_reordered": {
+      "brief": "Emits the ::rows-reordered signal on `tree_model`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 2021,
+      "md": "Emits the ::rows-reordered signal on `tree_model`.\n\nSee [`TreeModel::rows-reordered`](xref:gtk:Gtk.TreeModel#event:rows-reordered).\n\nThis should be called by models when their rows have been\nreordered."
+    },
+    "rows_reordered_with_length": {
+      "brief": "Emits the ::rows-reordered signal on `tree_model`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 2053,
+      "md": "Emits the ::rows-reordered signal on `tree_model`.\n\nSee [`TreeModel::rows-reordered`](xref:gtk:Gtk.TreeModel#event:rows-reordered).\n\nThis should be called by models when their rows have been\nreordered."
+    },
+    "unref_node": {
+      "brief": "Lets the tree unref the node.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1793,
+      "md": "Lets the tree unref the node.\n\nThis is an optional method for models to implement.\nTo be more specific, models may ignore this call as it exists\nprimarily for performance reasons. For more information on what\nthis means, see gtk_tree_model_ref_node().\n\nPlease note that nodes that are deleted are not unreffed."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "row-changed": {
+      "brief": "This signal is emitted when a row in the model has changed.",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 358,
+      "md": "This signal is emitted when a row in the model has changed."
+    },
+    "row-deleted": {
+      "brief": "This signal is emitted when a row has been deleted.",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 444,
+      "md": "This signal is emitted when a row has been deleted.\n\nNote that no iterator is passed to the signal handler,\nsince the row is already deleted.\n\nThis should be called by models after a row has been removed.\nThe location pointed to by `path` should be the location that\nthe row previously was at. It may not be a valid location anymore."
+    },
+    "row-has-child-toggled": {
+      "brief": "This signal is emitted when a row has gotten the first child row or lost its last child row.",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 421,
+      "md": "This signal is emitted when a row has gotten the first child\nrow or lost its last child row."
+    },
+    "row-inserted": {
+      "brief": "This signal is emitted when a new row has been inserted in the model.",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 393,
+      "md": "This signal is emitted when a new row has been inserted in\nthe model.\n\nNote that the row may still be empty at this point, since\nit is a common pattern to first insert an empty row, and\nthen fill it with the desired values."
+    },
+    "rows-reordered": {
+      "brief": "This signal is emitted when the children of a node in the `GtkTreeModel` have been reordered.",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 470,
+      "md": "This signal is emitted when the children of a node in the\n`GtkTreeModel` have been reordered.\n\nNote that this signal is not emitted\nwhen rows are reordered by DND, since this is implemented\nby removing and then reinserting the row."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "get_column_type": {
+      "brief": "Returns the type of the column.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1278,
+      "md": "Returns the type of the column."
+    },
+    "get_flags": {
+      "brief": "Returns a set of flags supported by this interface.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1228,
+      "md": "Returns a set of flags supported by this interface.\n\nThe flags are a bitwise combination of `GtkTreeModel`Flags.\nThe flags supported should not change during the lifetime\nof the `tree_model`."
+    },
+    "get_iter": {
+      "brief": "Sets `iter` to a valid iterator pointing to `path`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1304,
+      "md": "Sets `iter` to a valid iterator pointing to `path`.\n\nIf `path` does not exist, `iter` is set to an invalid\niterator and `FALSE` is returned."
+    },
+    "get_n_columns": {
+      "brief": "Returns the number of columns supported by `tree_model`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1256,
+      "md": "Returns the number of columns supported by `tree_model`."
+    },
+    "get_path": {
+      "brief": "Returns a newly-created `GtkTreePath` referenced by `iter`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1442,
+      "md": "Returns a newly-created `GtkTreePath` referenced by `iter`.\n\nThis path should be freed with gtk_tree_path_free()."
+    },
+    "get_value": {
+      "brief": "Initializes and sets `value` to that at `column`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1470,
+      "md": "Initializes and sets `value` to that at `column`.\n\nWhen done with `value`, g_value_unset() needs to be called\nto free any allocated memory."
+    },
+    "iter_children": {
+      "brief": "Sets `iter` to point to the first child of `parent`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1586,
+      "md": "Sets `iter` to point to the first child of `parent`.\n\nIf `parent` has no children, `FALSE` is returned and `iter` is\nset to be invalid. `parent` will remain a valid node after this\nfunction has been called.\n\nIf `parent` is `NULL` returns the first node, equivalent to\n`gtk_tree_model_get_iter_first (tree_model, iter);`"
+    },
+    "iter_has_child": {
+      "brief": "Returns `TRUE` if `iter` has children, `FALSE` otherwise.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1623,
+      "md": "Returns `TRUE` if `iter` has children, `FALSE` otherwise."
+    },
+    "iter_n_children": {
+      "brief": "Returns the number of children that `iter` has.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1649,
+      "md": "Returns the number of children that `iter` has.\n\nAs a special case, if `iter` is `NULL`, then the number\nof toplevel nodes is returned."
+    },
+    "iter_next": {
+      "brief": "Sets `iter` to point to the node following it at the current level.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1502,
+      "md": "Sets `iter` to point to the node following it at the current level.\n\nIf there is no next `iter`, `FALSE` is returned and `iter` is set\nto be invalid."
+    },
+    "iter_nth_child": {
+      "brief": "Sets `iter` to be the child of `parent`, using the given index.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1677,
+      "md": "Sets `iter` to be the child of `parent`, using the given index.\n\nThe first index is 0. If `n` is too big, or `parent` has no children,\n`iter` is set to an invalid iterator and `FALSE` is returned. `parent`\nwill remain a valid node after this function has been called. As a\nspecial case, if `parent` is `NULL`, then the `n`-th root node\nis set."
+    },
+    "iter_parent": {
+      "brief": "Sets `iter` to be the parent of `child`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1716,
+      "md": "Sets `iter` to be the parent of `child`.\n\nIf `child` is at the toplevel, and doesn’t have a parent, then\n`iter` is set to an invalid iterator and `FALSE` is returned.\n`child` will remain a valid node after this function has been\ncalled.\n\n`iter` will be initialized before the lookup is performed, so `child`\nand `iter` cannot point to the same memory location."
+    },
+    "iter_previous": {
+      "brief": "Sets `iter` to point to the previous node at the current level.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1552,
+      "md": "Sets `iter` to point to the previous node at the current level.\n\nIf there is no previous `iter`, `FALSE` is returned and `iter` is\nset to be invalid."
+    },
+    "ref_node": {
+      "brief": "Lets the tree ref the node.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1755,
+      "md": "Lets the tree ref the node.\n\nThis is an optional method for models to implement.\nTo be more specific, models may ignore this call as it exists\nprimarily for performance reasons.\n\nThis function is primarily meant as a way for views to let\ncaching models know when nodes are being displayed (and hence,\nwhether or not to cache that node). Being displayed means a node\nis in an expanded branch, regardless of whether the node is currently\nvisible in the viewport. For example, a file-system based model\nwould not want to keep the entire file-hierarchy in memory,\njust the sections that are currently being displayed by\nevery current view.\n\nA model should be expected to be able to get an iter independent\nof its reffed state."
+    },
+    "row_changed": {
+      "brief": "Emits the ::row-changed signal on `tree_model`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1917,
+      "md": "Emits the ::row-changed signal on `tree_model`.\n\nSee [`TreeModel::row-changed`](xref:gtk:Gtk.TreeModel#event:row-changed)."
+    },
+    "row_deleted": {
+      "brief": "Emits the ::row-deleted signal on `tree_model`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1992,
+      "md": "Emits the ::row-deleted signal on `tree_model`.\n\nSee [`TreeModel::row-deleted`](xref:gtk:Gtk.TreeModel#event:row-deleted).\n\nThis should be called by models after a row has been removed.\nThe location pointed to by `path` should be the location that\nthe row previously was at. It may not be a valid location anymore.\n\nNodes that are deleted are not unreffed, this means that any\noutstanding references on the deleted node should not be released."
+    },
+    "row_has_child_toggled": {
+      "brief": "Emits the ::row-has-child-toggled signal on `tree_model`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1965,
+      "md": "Emits the ::row-has-child-toggled signal on `tree_model`.\n\nSee [`TreeModel::row-has-child-toggled`](xref:gtk:Gtk.TreeModel#event:row-has-child-toggled).\n\nThis should be called by models after the child\nstate of a node changes."
+    },
+    "row_inserted": {
+      "brief": "Emits the ::row-inserted signal on `tree_model`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1941,
+      "md": "Emits the ::row-inserted signal on `tree_model`.\n\nSee [`TreeModel::row-inserted`](xref:gtk:Gtk.TreeModel#event:row-inserted)."
+    },
+    "rows_reordered": {
+      "brief": "Emits the ::rows-reordered signal on `tree_model`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 2021,
+      "md": "Emits the ::rows-reordered signal on `tree_model`.\n\nSee [`TreeModel::rows-reordered`](xref:gtk:Gtk.TreeModel#event:rows-reordered).\n\nThis should be called by models when their rows have been\nreordered."
+    },
+    "unref_node": {
+      "brief": "Lets the tree unref the node.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtktreemodel.c",
+      "line": 1793,
+      "md": "Lets the tree unref the node.\n\nThis is an optional method for models to implement.\nTo be more specific, models may ignore this call as it exists\nprimarily for performance reasons. For more information on what\nthis means, see gtk_tree_model_ref_node().\n\nPlease note that nodes that are deleted are not unreffed."
+    }
+  }
+}

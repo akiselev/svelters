@@ -1,0 +1,1484 @@
+{
+  "doc": {
+    "brief": "The QWidget class is the base class of all user interface objects.",
+    "index_brief": "The base class of all user interface objects",
+    "url": "https://doc.qt.io/qt-6/qwidget.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QWidget",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QAction * addAction(const QIcon &icon, const QString &text)": {
+      "url": "https://doc.qt.io/qt-6/qwidget.html#addAction-2"
+    },
+    "QAction * addAction(const QIcon &icon, const QString &text, Args &&... args)": {
+      "url": "https://doc.qt.io/qt-6/qwidget.html#addAction-6"
+    },
+    "QAction * addAction(const QIcon &icon, const QString &text, const QKeySequence &shortcut)": {
+      "url": "https://doc.qt.io/qt-6/qwidget.html#addAction-4"
+    },
+    "QAction * addAction(const QIcon &icon, const QString &text, const QKeySequence &shortcut, Args &&... args)": {
+      "url": "https://doc.qt.io/qt-6/qwidget.html#addAction-8"
+    },
+    "QAction * addAction(const QIcon &icon, const QString &text, const QKeySequence &shortcut, const QObject *receiver, const char *member, Qt::ConnectionType type)": {
+      "url": "https://doc.qt.io/qt-6/qwidget.html#addAction-12"
+    },
+    "QAction * addAction(const QIcon &icon, const QString &text, const QObject *receiver, const char *member, Qt::ConnectionType type)": {
+      "url": "https://doc.qt.io/qt-6/qwidget.html#addAction-10"
+    },
+    "QAction * addAction(const QString &text)": {
+      "url": "https://doc.qt.io/qt-6/qwidget.html#addAction-1"
+    },
+    "QAction * addAction(const QString &text, Args &&... args)": {
+      "url": "https://doc.qt.io/qt-6/qwidget.html#addAction-5"
+    },
+    "QAction * addAction(const QString &text, const QKeySequence &shortcut)": {
+      "url": "https://doc.qt.io/qt-6/qwidget.html#addAction-3"
+    },
+    "QAction * addAction(const QString &text, const QKeySequence &shortcut, Args &&... args)": {
+      "url": "https://doc.qt.io/qt-6/qwidget.html#addAction-7"
+    },
+    "QAction * addAction(const QString &text, const QKeySequence &shortcut, const QObject *receiver, const char *member, Qt::ConnectionType type)": {
+      "url": "https://doc.qt.io/qt-6/qwidget.html#addAction-11"
+    },
+    "QAction * addAction(const QString &text, const QObject *receiver, const char *member, Qt::ConnectionType type)": {
+      "url": "https://doc.qt.io/qt-6/qwidget.html#addAction-9"
+    },
+    "QBackingStore * backingStore() const": {
+      "brief": "Returns the [QBackingStore](xref:qt:QBackingStore) this widget will be drawn into.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#backingStore"
+    },
+    "QByteArray saveGeometry() const": {
+      "brief": "Saves the current geometry and state for top-level widgets.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#saveGeometry"
+    },
+    "QCursor cursor() const": {
+      "brief": "This property holds the cursor shape for this widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#cursor-prop"
+    },
+    "QFontInfo fontInfo() const": {
+      "brief": "Returns the font info for the widget's current font.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#fontInfo"
+    },
+    "QFontMetrics fontMetrics() const": {
+      "brief": "Returns the font metrics for the widget's current font.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#fontMetrics"
+    },
+    "QGraphicsEffect * graphicsEffect() const": {
+      "brief": "The graphicsEffect function returns a pointer to the widget's graphics effect.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#graphicsEffect"
+    },
+    "QGraphicsProxyWidget * graphicsProxyWidget() const": {
+      "brief": "Returns the proxy widget for the corresponding embedded widget in a graphics view; otherwise returns `nullptr`.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#graphicsProxyWidget"
+    },
+    "QIcon windowIcon() const": {
+      "brief": "This property holds the widget's icon",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#windowIcon-prop"
+    },
+    "QLayout * layout() const": {
+      "brief": "Returns the layout manager that is installed on this widget, or `nullptr` if no layout manager is installed.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#layout"
+    },
+    "QList<QAction *> actions() const": {
+      "brief": "Returns the (possibly empty) list of this widget's actions.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#actions"
+    },
+    "QLocale locale() const": {
+      "brief": "This property holds the widget's locale",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#locale-prop"
+    },
+    "QMargins contentsMargins() const": {
+      "brief": "The contentsMargins function returns the widget's contents margins.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#contentsMargins"
+    },
+    "QPaintEngine * paintEngine() const override": {
+      "brief": "Reimplements: [QPaintDevice::paintEngine](xref:qt:QPaintDevice)() const.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#paintEngine"
+    },
+    "QPalette::ColorRole backgroundRole() const": {
+      "brief": "Returns the background role of the widget.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#backgroundRole"
+    },
+    "QPalette::ColorRole foregroundRole() const": {
+      "brief": "Returns the foreground role.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#foregroundRole"
+    },
+    "QPixmap grab(const QRect &rectangle)": {
+      "brief": "Renders the widget into a pixmap restricted by the given *rectangle*.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#grab"
+    },
+    "QPoint mapFrom(const QWidget *parent, const QPoint &pos) const": {
+      "brief": "> This is an overloaded function.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#mapFrom-1"
+    },
+    "QPoint mapFromGlobal(const QPoint &pos) const": {
+      "brief": "> This is an overloaded function.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#mapFromGlobal-1"
+    },
+    "QPoint mapFromParent(const QPoint &pos) const": {
+      "brief": "> This is an overloaded function.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#mapFromParent-1"
+    },
+    "QPoint mapTo(const QWidget *parent, const QPoint &pos) const": {
+      "brief": "> This is an overloaded function.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#mapTo-1"
+    },
+    "QPoint mapToGlobal(const QPoint &pos) const": {
+      "brief": "> This is an overloaded function.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#mapToGlobal-1"
+    },
+    "QPoint mapToParent(const QPoint &pos) const": {
+      "brief": "> This is an overloaded function.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#mapToParent-1"
+    },
+    "QPoint pos() const": {
+      "brief": "This property holds the position of the widget within its parent widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#pos-prop"
+    },
+    "QPointF mapFrom(const QWidget *parent, const QPointF &pos) const": {
+      "brief": "Translates the widget coordinate *pos* from the coordinate system of *parent* to this widget's coordinate system.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#mapFrom"
+    },
+    "QPointF mapFromGlobal(const QPointF &pos) const": {
+      "brief": "Translates the global screen coordinate *pos* to widget coordinates.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#mapFromGlobal"
+    },
+    "QPointF mapFromParent(const QPointF &pos) const": {
+      "brief": "Translates the parent widget coordinate *pos* to widget coordinates.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#mapFromParent"
+    },
+    "QPointF mapTo(const QWidget *parent, const QPointF &pos) const": {
+      "brief": "Translates the widget coordinate *pos* to the coordinate system of *parent*.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#mapTo"
+    },
+    "QPointF mapToGlobal(const QPointF &pos) const": {
+      "brief": "Translates the widget coordinate *pos* to global screen coordinates.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#mapToGlobal"
+    },
+    "QPointF mapToParent(const QPointF &pos) const": {
+      "brief": "Translates the widget coordinate *pos* to a coordinate in the parent widget.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#mapToParent"
+    },
+    "QRect childrenRect() const": {
+      "brief": "This property holds the bounding rectangle of the widget's children",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#childrenRect-prop"
+    },
+    "QRect contentsRect() const": {
+      "brief": "Returns the area inside the widget's margins.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#contentsRect"
+    },
+    "QRect frameGeometry() const": {
+      "brief": "geometry of the widget relative to its parent including any window frame",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#frameGeometry-prop"
+    },
+    "QRect normalGeometry() const": {
+      "brief": "This property holds the geometry of the widget as it will appear when shown as a normal (not maximized or full screen) top-level widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#normalGeometry-prop"
+    },
+    "QRect rect() const": {
+      "brief": "This property holds the internal geometry of the widget excluding any window frame",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#rect-prop"
+    },
+    "QRegion childrenRegion() const": {
+      "brief": "This property holds the combined region occupied by the widget's children",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#childrenRegion-prop"
+    },
+    "QRegion mask() const": {
+      "brief": "Returns the mask currently set on a widget.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#mask"
+    },
+    "QRegion visibleRegion() const": {
+      "brief": "Returns the unobscured region where paint events can occur.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#visibleRegion"
+    },
+    "QScreen * screen() const": {
+      "brief": "Returns the screen the widget is on.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#screen"
+    },
+    "QSize baseSize() const": {
+      "brief": "This property holds the base size of the widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#baseSize-prop"
+    },
+    "QSize frameSize() const": {
+      "brief": "This property holds the size of the widget including any window frame",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#frameSize-prop"
+    },
+    "QSize maximumSize() const": {
+      "brief": "This property holds the widget's maximum size in pixels",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#maximumSize-prop"
+    },
+    "QSize minimumSize() const": {
+      "brief": "This property holds the widget's minimum size",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#minimumSize-prop"
+    },
+    "QSize minimumSizeHint() const": {
+      "brief": "This property holds the recommended minimum size for the widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#minimumSizeHint-prop"
+    },
+    "QSize size() const": {
+      "brief": "This property holds the size of the widget excluding any window frame",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#size-prop"
+    },
+    "QSize sizeHint() const": {
+      "brief": "This property holds the recommended size for the widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#sizeHint-prop"
+    },
+    "QSize sizeIncrement() const": {
+      "brief": "This property holds the size increment of the widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#sizeIncrement-prop"
+    },
+    "QSizePolicy sizePolicy() const": {
+      "brief": "This property holds the default layout behavior of the widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#sizePolicy-prop"
+    },
+    "QString accessibleDescription() const": {
+      "brief": "This property holds the widget's description as seen by assistive technologies",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#accessibleDescription-prop"
+    },
+    "QString accessibleIdentifier() const": {
+      "brief": "This property holds the widget's identifier as seen by assistive technologies",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#accessibleIdentifier-prop"
+    },
+    "QString accessibleName() const": {
+      "brief": "This property holds the widget's name as seen by assistive technologies",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#accessibleName-prop"
+    },
+    "QString statusTip() const": {
+      "brief": "This property holds the widget's status tip",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#statusTip-prop"
+    },
+    "QString styleSheet() const": {
+      "brief": "This property holds the widget's style sheet",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#styleSheet-prop"
+    },
+    "QString toolTip() const": {
+      "brief": "This property holds the widget's tooltip",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#toolTip-prop"
+    },
+    "QString whatsThis() const": {
+      "brief": "This property holds the widget's What's This help text.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#whatsThis-prop"
+    },
+    "QString windowFilePath() const": {
+      "brief": "This property holds the file path associated with a widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#windowFilePath-prop"
+    },
+    "QString windowIconText() const": {
+      "url": "https://doc.qt.io/qt-6/qwidget-obsolete.html#windowIconText-prop"
+    },
+    "QString windowRole() const": {
+      "brief": "Returns the window's role, or an empty string.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#windowRole"
+    },
+    "QString windowTitle() const": {
+      "brief": "This property holds the window title (caption)",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#windowTitle-prop"
+    },
+    "QStyle * style() const": {
+      "brief": "**See also **[QWidget::setStyle](xref:qt:QWidget)(), [QApplication::setStyle](xref:qt:QApplication)(), and [QApplication::style](xref:qt:QApplication)().",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#style"
+    },
+    "QVariant inputMethodQuery(Qt::InputMethodQuery query) const": {
+      "brief": "This method is only relevant for input widgets.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#inputMethodQuery"
+    },
+    "QWidget * childAt(const QPoint &p) const": {
+      "brief": "Returns the visible child widget at point *p* in the widget's own coordinate system.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#childAt-1"
+    },
+    "QWidget * childAt(const QPointF &p) const": {
+      "brief": "Returns the visible child widget at point *p* in the widget's own coordinate system.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#childAt-2"
+    },
+    "QWidget * childAt(int x, int y) const": {
+      "brief": "Returns the visible child widget at the position (*x*, *y*) in the widget's coordinate system.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#childAt"
+    },
+    "QWidget * createWindowContainer(QWindow *window, QWidget *parent, Qt::WindowFlags flags)": {
+      "brief": "Creates a [QWidget](xref:qt:QWidget) that makes it possible to embed *window* into a [QWidget](xref:qt:QWidget)-based application.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#createWindowContainer"
+    },
+    "QWidget * find(WId id)": {
+      "brief": "Returns a pointer to the widget with window identifier/handle *id*.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#find"
+    },
+    "QWidget * focusProxy() const": {
+      "brief": "Returns the focus proxy, or `nullptr` if there is no focus proxy.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#focusProxy"
+    },
+    "QWidget * focusWidget() const": {
+      "brief": "Returns the last child of this widget that [setFocus](xref:qt:QWidget) had been called on.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#focusWidget"
+    },
+    "QWidget * keyboardGrabber()": {
+      "brief": "Returns the widget that is currently grabbing the keyboard input.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#keyboardGrabber"
+    },
+    "QWidget * mouseGrabber()": {
+      "brief": "Returns the widget that is currently grabbing the mouse input.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#mouseGrabber"
+    },
+    "QWidget * nativeParentWidget() const": {
+      "brief": "Returns the native parent for this widget, i.e. the next ancestor widget that has a system identifier, or `nullptr` if it does not have any native parent.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#nativeParentWidget"
+    },
+    "QWidget * nextInFocusChain() const": {
+      "brief": "Returns the next widget in this widget's focus chain.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#nextInFocusChain"
+    },
+    "QWidget * parentWidget() const": {
+      "brief": "Returns the parent of this widget, or `nullptr` if it does not have any parent widget.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#parentWidget"
+    },
+    "QWidget * previousInFocusChain() const": {
+      "brief": "The previousInFocusChain function returns the previous widget in this widget's focus chain.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#previousInFocusChain"
+    },
+    "QWidget * topLevelWidget() const": {
+      "url": "https://doc.qt.io/qt-6/qwidget-obsolete.html#topLevelWidget"
+    },
+    "QWidget * window() const": {
+      "brief": "Returns the window for this widget, i.e. the next ancestor widget that has (or could have) a window-system frame.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#window"
+    },
+    "QWidget(QWidget *parent, Qt::WindowFlags f)": {
+      "brief": "Constructs a widget which is a child of *parent*, with widget flags set to *f*.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#QWidget"
+    },
+    "QWindow * windowHandle() const": {
+      "brief": "If this is a native widget, return the associated [QWindow](xref:qt:QWindow).",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#windowHandle"
+    },
+    "Qt::ContextMenuPolicy contextMenuPolicy() const": {
+      "brief": "how the widget shows a context menu",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#contextMenuPolicy-prop"
+    },
+    "Qt::FocusPolicy focusPolicy() const": {
+      "brief": "This property holds the way the widget accepts keyboard focus",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#focusPolicy-prop"
+    },
+    "Qt::InputMethodHints inputMethodHints() const": {
+      "brief": "What input method specific hints the widget has.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#inputMethodHints-prop"
+    },
+    "Qt::LayoutDirection layoutDirection() const": {
+      "brief": "This property holds the layout direction for this widget.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#layoutDirection-prop"
+    },
+    "Qt::WindowFlags windowFlags() const": {
+      "brief": "Window flags are a combination of a type (e.g.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#windowFlags-prop"
+    },
+    "Qt::WindowModality windowModality() const": {
+      "brief": "This property holds which windows are blocked by the modal widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#windowModality-prop"
+    },
+    "Qt::WindowStates windowState() const": {
+      "brief": "Returns the current window state.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#windowState"
+    },
+    "Qt::WindowType windowType() const": {
+      "brief": "Returns the window type of this widget.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#windowType"
+    },
+    "WId effectiveWinId() const": {
+      "brief": "Returns the effective window system identifier of the widget, i.e. the native parent's window system identifier.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#effectiveWinId"
+    },
+    "WId winId() const": {
+      "brief": "Returns the window system identifier of the widget.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#winId"
+    },
+    "bool acceptDrops() const": {
+      "brief": "This property holds whether drop events are enabled for this widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#acceptDrops-prop"
+    },
+    "bool autoFillBackground() const": {
+      "brief": "This property holds whether the widget background is filled automatically",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#autoFillBackground-prop"
+    },
+    "bool close()": {
+      "brief": "Closes this widget. Returns `true` if the widget was closed; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#close"
+    },
+    "bool event(QEvent *event) override": {
+      "brief": "Reimplements: [QObject::event](xref:qt:QObject)(QEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#event"
+    },
+    "bool focusNextChild()": {
+      "brief": "Finds a new widget to give the keyboard focus to, as appropriate for **Tab**, and returns `true` if it can find a new widget, or false if it can't.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#focusNextChild"
+    },
+    "bool focusNextPrevChild(bool next)": {
+      "brief": "Finds a new widget to give the keyboard focus to, as appropriate for Tab and Shift+Tab, and returns `true` if it can find a new widget, or false if it can't.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#focusNextPrevChild"
+    },
+    "bool focusPreviousChild()": {
+      "brief": "Finds a new widget to give the keyboard focus to, as appropriate for **Shift+Tab**, and returns `true` if it can find a new widget, or false if it can't.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#focusPreviousChild"
+    },
+    "bool hasEditFocus() const": {
+      "brief": "Returns `true` if this widget currently has edit focus; otherwise false.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#hasEditFocus"
+    },
+    "bool hasFocus() const": {
+      "brief": "This property holds whether this widget (or its focus proxy) has the keyboard input focus",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#focus-prop"
+    },
+    "bool hasHeightForWidth() const": {
+      "brief": "Returns `true` if the widget's preferred height depends on its width; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#hasHeightForWidth"
+    },
+    "bool hasMouseTracking() const": {
+      "brief": "This property holds whether mouse tracking is enabled for the widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#mouseTracking-prop"
+    },
+    "bool hasTabletTracking() const": {
+      "brief": "This property holds whether tablet tracking is enabled for the widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#tabletTracking-prop"
+    },
+    "bool isActiveWindow() const": {
+      "brief": "This property holds whether this widget's window is the active window",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#isActiveWindow-prop"
+    },
+    "bool isAncestorOf(const QWidget *child) const": {
+      "brief": "Returns `true` if this widget is a parent, (or grandparent and so on to any level), of the given *child*, and both widgets are within the same window; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#isAncestorOf"
+    },
+    "bool isEnabled() const": {
+      "brief": "This property holds whether the widget is enabled",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#enabled-prop"
+    },
+    "bool isEnabledTo(const QWidget *ancestor) const": {
+      "brief": "Returns `true` if this widget would become enabled if *ancestor* is enabled; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#isEnabledTo"
+    },
+    "bool isFullScreen() const": {
+      "brief": "This property holds whether the widget is shown in full screen mode",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#fullScreen-prop"
+    },
+    "bool isHidden() const": {
+      "brief": "Returns `true` if the widget is hidden, otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#isHidden"
+    },
+    "bool isMaximized() const": {
+      "brief": "This property holds whether this widget is maximized",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#maximized-prop"
+    },
+    "bool isMinimized() const": {
+      "brief": "This property holds whether this widget is minimized (iconified)",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#minimized-prop"
+    },
+    "bool isModal() const": {
+      "brief": "This property holds whether the widget is a modal widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#modal-prop"
+    },
+    "bool isTopLevel() const": {
+      "url": "https://doc.qt.io/qt-6/qwidget-obsolete.html#isTopLevel"
+    },
+    "bool isVisible() const": {
+      "brief": "This property holds whether the widget is visible",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#visible-prop"
+    },
+    "bool isVisibleTo(const QWidget *ancestor) const": {
+      "brief": "Returns `true` if this widget would become visible if *ancestor* is shown; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#isVisibleTo"
+    },
+    "bool isWindow() const": {
+      "brief": "Returns `true` if the widget is an independent window, otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#isWindow"
+    },
+    "bool isWindowModified() const": {
+      "brief": "This property holds whether the document shown in the window has unsaved changes",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#windowModified-prop"
+    },
+    "bool nativeEvent(const QByteArray &eventType, void *message, qintptr *result)": {
+      "brief": "This special event handler can be reimplemented in a subclass to receive native platform events identified by *eventType* which are passed in the *message* parameter.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#nativeEvent"
+    },
+    "bool restoreGeometry(const QByteArray &geometry)": {
+      "brief": "Restores the geometry and state of top-level widgets stored in the byte array *geometry*.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#restoreGeometry"
+    },
+    "bool testAttribute(Qt::WidgetAttribute attribute) const": {
+      "brief": "Returns `true` if attribute *attribute* is set on this widget; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#testAttribute"
+    },
+    "bool underMouse() const": {
+      "brief": "Returns `true` if the widget is under the mouse cursor; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#underMouse"
+    },
+    "bool updatesEnabled() const": {
+      "brief": "This property holds whether updates are enabled",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#updatesEnabled-prop"
+    },
+    "const QFont & font() const": {
+      "brief": "This property holds the font currently set for the widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#font-prop"
+    },
+    "const QPalette & palette() const": {
+      "brief": "This property holds the widget's palette",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#palette-prop"
+    },
+    "const QRect & geometry() const": {
+      "brief": "This property holds the geometry of the widget relative to its parent and excluding the window frame",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#geometry-prop"
+    },
+    "int grabShortcut(const QKeySequence &key, Qt::ShortcutContext context)": {
+      "brief": "Adds a shortcut to Qt's shortcut system that watches for the given *key* sequence in the given *context*.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#grabShortcut"
+    },
+    "int height() const": {
+      "brief": "This property holds the height of the widget excluding any window frame",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#height-prop"
+    },
+    "int heightForWidth(int w) const": {
+      "brief": "Returns the preferred height for this widget, given the width *w*.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#heightForWidth"
+    },
+    "int maximumHeight() const": {
+      "brief": "This property holds the widget's maximum height in pixels",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#maximumHeight-prop"
+    },
+    "int maximumWidth() const": {
+      "brief": "This property holds the widget's maximum width in pixels",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#maximumWidth-prop"
+    },
+    "int metric(QPaintDevice::PaintDeviceMetric m) const override": {
+      "brief": "Reimplements: [QPaintDevice::metric](xref:qt:QPaintDevice)(QPaintDevice::PaintDeviceMetric metric) const.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#metric"
+    },
+    "int minimumHeight() const": {
+      "brief": "This property holds the widget's minimum height in pixels",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#minimumHeight-prop"
+    },
+    "int minimumWidth() const": {
+      "brief": "This property holds the widget's minimum width in pixels",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#minimumWidth-prop"
+    },
+    "int toolTipDuration() const": {
+      "brief": "This property holds the widget's tooltip duration",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#toolTipDuration-prop"
+    },
+    "int width() const": {
+      "brief": "This property holds the width of the widget excluding any window frame",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#width-prop"
+    },
+    "int x() const": {
+      "brief": "This property holds the x coordinate of the widget relative to its parent including any window frame",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#x-prop"
+    },
+    "int y() const": {
+      "brief": "This property holds the y coordinate of the widget relative to its parent and including any window frame",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#y-prop"
+    },
+    "qreal windowOpacity() const": {
+      "brief": "This property holds the level of opacity for the window.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#windowOpacity-prop"
+    },
+    "void actionEvent(QActionEvent *event)": {
+      "brief": "This event handler is called with the given *event* whenever the widget's actions are changed.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#actionEvent"
+    },
+    "void activateWindow()": {
+      "brief": "Sets the top-level widget containing this widget to be the active window.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#activateWindow"
+    },
+    "void addAction(QAction *action)": {
+      "brief": "Appends the action *action* to this widget's list of actions.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#addAction"
+    },
+    "void addActions(const QList<QAction *> &actions)": {
+      "brief": "Appends the actions *actions* to this widget's list of actions.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#addActions"
+    },
+    "void adjustSize()": {
+      "brief": "Adjusts the size of the widget to fit its contents.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#adjustSize"
+    },
+    "void changeEvent(QEvent *event)": {
+      "brief": "This event handler can be reimplemented to handle state changes.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#changeEvent"
+    },
+    "void clearFocus()": {
+      "brief": "Takes keyboard input focus from the widget.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#clearFocus"
+    },
+    "void clearMask()": {
+      "brief": "Removes any mask set by [setMask](xref:qt:QWidget)().",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#clearMask"
+    },
+    "void closeEvent(QCloseEvent *event)": {
+      "brief": "This event handler is called with the given *event* when Qt receives a window close request for a top-level widget from the window system.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#closeEvent"
+    },
+    "void contextMenuEvent(QContextMenuEvent *event)": {
+      "brief": "This event handler, for event *event*, can be reimplemented in a subclass to receive widget context menu events.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#contextMenuEvent"
+    },
+    "void create(WId window, bool initializeWindow, bool destroyOldWindow)": {
+      "brief": "Creates a new widget window.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#create"
+    },
+    "void customContextMenuRequested(const QPoint &pos)": {
+      "brief": "This signal is emitted when the widget's [contextMenuPolicy](xref:qt:QWidget) is [Qt::CustomContextMenu](https://doc.qt.io/qt-6/qt.html#ContextMenuPolicy-enum), and the user has requested a context...",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#customContextMenuRequested"
+    },
+    "void destroy(bool destroyWindow, bool destroySubWindows)": {
+      "brief": "Frees up window system resources.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#destroy"
+    },
+    "void dragEnterEvent(QDragEnterEvent *event)": {
+      "brief": "This event handler is called when a drag is in progress and the mouse enters this widget.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#dragEnterEvent"
+    },
+    "void dragLeaveEvent(QDragLeaveEvent *event)": {
+      "brief": "This event handler is called when a drag is in progress and the mouse leaves this widget.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#dragLeaveEvent"
+    },
+    "void dragMoveEvent(QDragMoveEvent *event)": {
+      "brief": "This event handler is called if a drag is in progress, and when any of the following conditions occur: the cursor enters this widget, the cursor moves within this widget, or a modifier key is pressed...",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#dragMoveEvent"
+    },
+    "void dropEvent(QDropEvent *event)": {
+      "brief": "This event handler is called when the drag is dropped on this widget.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#dropEvent"
+    },
+    "void ensurePolished() const": {
+      "brief": "Ensures that the widget and its children have been polished by [QStyle](xref:qt:QStyle) (i.e., have a proper font and palette).",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#ensurePolished"
+    },
+    "void enterEvent(QEnterEvent *event)": {
+      "brief": "This event handler can be reimplemented in a subclass to receive widget enter events which are passed in the *event* parameter.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#enterEvent"
+    },
+    "void focusInEvent(QFocusEvent *event)": {
+      "brief": "This event handler can be reimplemented in a subclass to receive keyboard focus events (focus received) for the widget.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#focusInEvent"
+    },
+    "void focusOutEvent(QFocusEvent *event)": {
+      "brief": "This event handler can be reimplemented in a subclass to receive keyboard focus events (focus lost) for the widget.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#focusOutEvent"
+    },
+    "void grabGesture(Qt::GestureType gesture, Qt::GestureFlags flags)": {
+      "brief": "Subscribes the widget to a given *gesture* with specific *flags*.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#grabGesture"
+    },
+    "void grabKeyboard()": {
+      "brief": "Grabs the keyboard input.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#grabKeyboard"
+    },
+    "void grabMouse()": {
+      "brief": "Grabs the mouse input.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#grabMouse"
+    },
+    "void grabMouse(const QCursor &cursor)": {
+      "brief": "Grabs the mouse input and changes the cursor shape.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#grabMouse-1"
+    },
+    "void hide()": {
+      "brief": "Hides the widget. This function is equivalent to [setVisible](xref:qt:QWidget)(false).",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#hide"
+    },
+    "void hideEvent(QHideEvent *event)": {
+      "brief": "This event handler can be reimplemented in a subclass to receive widget hide events.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#hideEvent"
+    },
+    "void initPainter(QPainter *painter) const override": {
+      "brief": "Initializes the *painter* pen, background and font to the same as the given widget's.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#initPainter"
+    },
+    "void inputMethodEvent(QInputMethodEvent *event)": {
+      "brief": "This event handler, for event *event*, can be reimplemented in a subclass to receive Input Method composition events.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#inputMethodEvent"
+    },
+    "void insertAction(QAction *before, QAction *action)": {
+      "brief": "Inserts the action *action* to this widget's list of actions, before the action *before*.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#insertAction"
+    },
+    "void insertActions(QAction *before, const QList<QAction *> &actions)": {
+      "brief": "Inserts the actions *actions* to this widget's list of actions, before the action *before*.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#insertActions"
+    },
+    "void keyPressEvent(QKeyEvent *event)": {
+      "brief": "This event handler, for event *event*, can be reimplemented in a subclass to receive key press events for the widget.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#keyPressEvent"
+    },
+    "void keyReleaseEvent(QKeyEvent *event)": {
+      "brief": "This event handler, for event *event*, can be reimplemented in a subclass to receive key release events for the widget.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#keyReleaseEvent"
+    },
+    "void leaveEvent(QEvent *event)": {
+      "brief": "This event handler can be reimplemented in a subclass to receive widget leave events which are passed in the *event* parameter.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#leaveEvent"
+    },
+    "void lower()": {
+      "brief": "Lowers the widget to the bottom of the parent widget's stack.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#lower"
+    },
+    "void mouseDoubleClickEvent(QMouseEvent *event)": {
+      "brief": "This event handler, for event *event*, can be reimplemented in a subclass to receive mouse double click events for the widget.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#mouseDoubleClickEvent"
+    },
+    "void mouseMoveEvent(QMouseEvent *event)": {
+      "brief": "This event handler, for event *event*, can be reimplemented in a subclass to receive mouse move events for the widget.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#mouseMoveEvent"
+    },
+    "void mousePressEvent(QMouseEvent *event)": {
+      "brief": "This event handler, for event *event*, can be reimplemented in a subclass to receive mouse press events for the widget.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#mousePressEvent"
+    },
+    "void mouseReleaseEvent(QMouseEvent *event)": {
+      "brief": "This event handler, for event *event*, can be reimplemented in a subclass to receive mouse release events for the widget.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#mouseReleaseEvent"
+    },
+    "void move(const QPoint &)": {
+      "brief": "This property holds the position of the widget within its parent widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#pos-prop"
+    },
+    "void move(int x, int y)": {
+      "brief": "This corresponds to move([QPoint](xref:qt:QPoint)(*x*, *y*)).",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#move"
+    },
+    "void moveEvent(QMoveEvent *event)": {
+      "brief": "This event handler can be reimplemented in a subclass to receive widget move events which are passed in the *event* parameter.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#moveEvent"
+    },
+    "void overrideWindowFlags(Qt::WindowFlags flags)": {
+      "brief": "Sets the window flags for the widget to *flags*, *without* telling the window system.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#overrideWindowFlags"
+    },
+    "void paintEvent(QPaintEvent *event)": {
+      "brief": "This event handler can be reimplemented in a subclass to receive paint events passed in *event*.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#paintEvent"
+    },
+    "void raise()": {
+      "brief": "Raises this widget to the top of the parent widget's stack.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#raise"
+    },
+    "void releaseKeyboard()": {
+      "brief": "Releases the keyboard grab.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#releaseKeyboard"
+    },
+    "void releaseMouse()": {
+      "brief": "Releases the mouse grab.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#releaseMouse"
+    },
+    "void releaseShortcut(int id)": {
+      "brief": "Removes the shortcut with the given *id* from Qt's shortcut system.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#releaseShortcut"
+    },
+    "void removeAction(QAction *action)": {
+      "brief": "Removes the action *action* from this widget's list of actions.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#removeAction"
+    },
+    "void render(QPaintDevice *target, const QPoint &targetOffset, const QRegion &sourceRegion, QWidget::RenderFlags renderFlags)": {
+      "brief": "Renders the *sourceRegion* of this widget into the *target* using *renderFlags* to determine how to render.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#render"
+    },
+    "void render(QPainter *painter, const QPoint &targetOffset, const QRegion &sourceRegion, QWidget::RenderFlags renderFlags)": {
+      "brief": "Renders the widget into the *painter*'s [QPainter::device](xref:qt:QPainter)().",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#render-1"
+    },
+    "void repaint()": {
+      "brief": "Repaints the widget directly by calling [paintEvent](xref:qt:QWidget)() immediately, unless updates are disabled or the widget is hidden.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#repaint"
+    },
+    "void repaint(const QRect &rect)": {
+      "brief": "This version repaints a rectangle *rect* inside the widget.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#repaint-1"
+    },
+    "void repaint(const QRegion &rgn)": {
+      "brief": "This version repaints a region *rgn* inside the widget.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#repaint-2"
+    },
+    "void repaint(int x, int y, int w, int h)": {
+      "brief": "This version repaints a rectangle (*x*, *y*, *w*, *h*) inside the widget.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#repaint-3"
+    },
+    "void resize(const QSize &)": {
+      "brief": "This property holds the size of the widget excluding any window frame",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#size-prop"
+    },
+    "void resize(int w, int h)": {
+      "brief": "This corresponds to resize([QSize](xref:qt:QSize)(*w*, *h*)).",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#resize"
+    },
+    "void resizeEvent(QResizeEvent *event)": {
+      "brief": "This event handler can be reimplemented in a subclass to receive widget resize events which are passed in the *event* parameter.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#resizeEvent"
+    },
+    "void scroll(int dx, int dy)": {
+      "brief": "Scrolls the widget including its children *dx* pixels to the right and *dy* downward.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#scroll"
+    },
+    "void scroll(int dx, int dy, const QRect &r)": {
+      "brief": "This version only scrolls *r* and does not move the children of the widget.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#scroll-1"
+    },
+    "void setAcceptDrops(bool on)": {
+      "brief": "This property holds whether drop events are enabled for this widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#acceptDrops-prop"
+    },
+    "void setAccessibleDescription(const QString &description)": {
+      "brief": "This property holds the widget's description as seen by assistive technologies",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#accessibleDescription-prop"
+    },
+    "void setAccessibleIdentifier(const QString &identifier)": {
+      "brief": "This property holds the widget's identifier as seen by assistive technologies",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#accessibleIdentifier-prop"
+    },
+    "void setAccessibleName(const QString &name)": {
+      "brief": "This property holds the widget's name as seen by assistive technologies",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#accessibleName-prop"
+    },
+    "void setAttribute(Qt::WidgetAttribute attribute, bool on)": {
+      "brief": "Sets the attribute *attribute* on this widget if *on* is true; otherwise clears the attribute.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#setAttribute"
+    },
+    "void setAutoFillBackground(bool enabled)": {
+      "brief": "This property holds whether the widget background is filled automatically",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#autoFillBackground-prop"
+    },
+    "void setBackgroundRole(QPalette::ColorRole role)": {
+      "brief": "Sets the background role of the widget to *role*.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#setBackgroundRole"
+    },
+    "void setBaseSize(const QSize &)": {
+      "brief": "This property holds the base size of the widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#baseSize-prop"
+    },
+    "void setBaseSize(int basew, int baseh)": {
+      "brief": "This corresponds to setBaseSize([QSize](xref:qt:QSize)(*basew*, *baseh*)).",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#setBaseSize"
+    },
+    "void setContentsMargins(const QMargins &margins)": {
+      "brief": "The setContentsMargins function sets the margins around the widget's contents.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#setContentsMargins-1"
+    },
+    "void setContentsMargins(int left, int top, int right, int bottom)": {
+      "brief": "Sets the margins around the contents of the widget to have the sizes *left*, *top*, *right*, and *bottom*.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#setContentsMargins"
+    },
+    "void setContextMenuPolicy(Qt::ContextMenuPolicy policy)": {
+      "brief": "how the widget shows a context menu",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#contextMenuPolicy-prop"
+    },
+    "void setCursor(const QCursor &)": {
+      "brief": "This property holds the cursor shape for this widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#cursor-prop"
+    },
+    "void setDisabled(bool disable)": {
+      "brief": "Disables widget input events if *disable* is true; otherwise enables input events.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#setDisabled"
+    },
+    "void setEditFocus(bool enable)": {
+      "brief": "If *enable* is true, make this widget have edit focus, in which case [Qt::Key_Up](https://doc.qt.io/qt-6/qt.html#Key-enum) and [Qt::Key_Down](https://doc.qt.io/qt-6/qt.html#Key-enum) will be...",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#setEditFocus"
+    },
+    "void setEnabled(bool)": {
+      "brief": "This property holds whether the widget is enabled",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#enabled-prop"
+    },
+    "void setFixedHeight(int h)": {
+      "brief": "Sets both the minimum and maximum heights of the widget to *h* without changing the widths.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#setFixedHeight"
+    },
+    "void setFixedSize(const QSize &s)": {
+      "brief": "Sets both the minimum and maximum sizes of the widget to *s*, thereby preventing it from ever growing or shrinking.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#setFixedSize"
+    },
+    "void setFixedSize(int w, int h)": {
+      "brief": "Sets the width of the widget to *w* and the height to *h*.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#setFixedSize-1"
+    },
+    "void setFixedWidth(int w)": {
+      "brief": "Sets both the minimum and maximum width of the widget to *w* without changing the heights.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#setFixedWidth"
+    },
+    "void setFocus()": {
+      "brief": "Gives the keyboard input focus to this widget (or its focus proxy) if this widget or one of its parents is the [active window](xref:qt:QWidget).",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#setFocus-1"
+    },
+    "void setFocus(Qt::FocusReason reason)": {
+      "brief": "Gives the keyboard input focus to this widget (or its focus proxy) if this widget or one of its parents is the [active window](xref:qt:QWidget).",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#setFocus"
+    },
+    "void setFocusPolicy(Qt::FocusPolicy policy)": {
+      "brief": "This property holds the way the widget accepts keyboard focus",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#focusPolicy-prop"
+    },
+    "void setFocusProxy(QWidget *w)": {
+      "brief": "Sets the widget's focus proxy to widget *w*.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#setFocusProxy"
+    },
+    "void setFont(const QFont &)": {
+      "brief": "This property holds the font currently set for the widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#font-prop"
+    },
+    "void setForegroundRole(QPalette::ColorRole role)": {
+      "brief": "Sets the foreground role of the widget to *role*.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#setForegroundRole"
+    },
+    "void setGeometry(const QRect &)": {
+      "brief": "This property holds the geometry of the widget relative to its parent and excluding the window frame",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#geometry-prop"
+    },
+    "void setGeometry(int x, int y, int w, int h)": {
+      "brief": "This corresponds to setGeometry([QRect](xref:qt:QRect)(*x*, *y*, *w*, *h*)).",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#setGeometry"
+    },
+    "void setGraphicsEffect(QGraphicsEffect *effect)": {
+      "brief": "The setGraphicsEffect function is for setting the widget's graphics effect.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#setGraphicsEffect"
+    },
+    "void setHidden(bool hidden)": {
+      "brief": "Convenience function, equivalent to [setVisible](xref:qt:QWidget)(!*hidden*).",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#setHidden"
+    },
+    "void setInputMethodHints(Qt::InputMethodHints hints)": {
+      "brief": "What input method specific hints the widget has.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#inputMethodHints-prop"
+    },
+    "void setLayout(QLayout *layout)": {
+      "brief": "Sets the layout manager for this widget to *layout*.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#setLayout"
+    },
+    "void setLayoutDirection(Qt::LayoutDirection direction)": {
+      "brief": "This property holds the layout direction for this widget.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#layoutDirection-prop"
+    },
+    "void setLocale(const QLocale &locale)": {
+      "brief": "This property holds the widget's locale",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#locale-prop"
+    },
+    "void setMask(const QBitmap &bitmap)": {
+      "brief": "Causes only the pixels of the widget for which *bitmap* has a corresponding 1 bit to be visible.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#setMask"
+    },
+    "void setMask(const QRegion &region)": {
+      "brief": "Causes only the parts of the widget which overlap *region* to be visible.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#setMask-1"
+    },
+    "void setMaximumHeight(int maxh)": {
+      "brief": "This property holds the widget's maximum height in pixels",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#maximumHeight-prop"
+    },
+    "void setMaximumSize(const QSize &)": {
+      "brief": "This property holds the widget's maximum size in pixels",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#maximumSize-prop"
+    },
+    "void setMaximumSize(int maxw, int maxh)": {
+      "brief": "This function corresponds to setMaximumSize([QSize](xref:qt:QSize)(*maxw*, *maxh*)).",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#setMaximumSize"
+    },
+    "void setMaximumWidth(int maxw)": {
+      "brief": "This property holds the widget's maximum width in pixels",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#maximumWidth-prop"
+    },
+    "void setMinimumHeight(int minh)": {
+      "brief": "This property holds the widget's minimum height in pixels",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#minimumHeight-prop"
+    },
+    "void setMinimumSize(const QSize &)": {
+      "brief": "This property holds the widget's minimum size",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#minimumSize-prop"
+    },
+    "void setMinimumSize(int minw, int minh)": {
+      "brief": "This function corresponds to setMinimumSize([QSize](xref:qt:QSize)(minw, minh)).",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#setMinimumSize"
+    },
+    "void setMinimumWidth(int minw)": {
+      "brief": "This property holds the widget's minimum width in pixels",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#minimumWidth-prop"
+    },
+    "void setMouseTracking(bool enable)": {
+      "brief": "This property holds whether mouse tracking is enabled for the widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#mouseTracking-prop"
+    },
+    "void setPalette(const QPalette &)": {
+      "brief": "This property holds the widget's palette",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#palette-prop"
+    },
+    "void setParent(QWidget *parent)": {
+      "brief": "Sets the parent of the widget to *parent*, and resets the window flags.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#setParent"
+    },
+    "void setParent(QWidget *parent, Qt::WindowFlags f)": {
+      "brief": "This function also takes widget flags, *f* as an argument.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#setParent-1"
+    },
+    "void setScreen(QScreen *screen)": {
+      "brief": "Sets the screen on which the widget should be shown to *screen*.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#setScreen"
+    },
+    "void setShortcutAutoRepeat(int id, bool enable)": {
+      "brief": "If *enable* is true, auto repeat of the shortcut with the given *id* is enabled; otherwise it is disabled.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#setShortcutAutoRepeat"
+    },
+    "void setShortcutEnabled(int id, bool enable)": {
+      "brief": "If *enable* is true, the shortcut with the given *id* is enabled; otherwise the shortcut is disabled.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#setShortcutEnabled"
+    },
+    "void setSizeIncrement(const QSize &)": {
+      "brief": "This property holds the size increment of the widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#sizeIncrement-prop"
+    },
+    "void setSizeIncrement(int w, int h)": {
+      "brief": "Sets the x (width) size increment to *w* and the y (height) size increment to *h*.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#setSizeIncrement"
+    },
+    "void setSizePolicy(QSizePolicy)": {
+      "brief": "This property holds the default layout behavior of the widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#sizePolicy-prop"
+    },
+    "void setSizePolicy(QSizePolicy::Policy horizontal, QSizePolicy::Policy vertical)": {
+      "brief": "Sets the size policy of the widget to *horizontal* and *vertical*, with standard stretch and no height-for-width.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#setSizePolicy"
+    },
+    "void setStatusTip(const QString &)": {
+      "brief": "This property holds the widget's status tip",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#statusTip-prop"
+    },
+    "void setStyle(QStyle *style)": {
+      "brief": "Sets the widget's GUI style to *style*.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#setStyle"
+    },
+    "void setStyleSheet(const QString &styleSheet)": {
+      "brief": "This property holds the widget's style sheet",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#styleSheet-prop"
+    },
+    "void setTabOrder(QWidget *first, QWidget *second)": {
+      "brief": "Puts the *second* widget after the *first* widget in the focus order.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#setTabOrder"
+    },
+    "void setTabOrder(std::initializer_list<QWidget *> widgets)": {
+      "brief": "Sets the tab order for the widgets in the *widgets* list by calling [QWidget::setTabOrder](xref:qt:QWidget)(QWidget *, QWidget *) for each consecutive pair of widgets.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#setTabOrder-1"
+    },
+    "void setTabletTracking(bool enable)": {
+      "brief": "This property holds whether tablet tracking is enabled for the widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#tabletTracking-prop"
+    },
+    "void setToolTip(const QString &)": {
+      "brief": "This property holds the widget's tooltip",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#toolTip-prop"
+    },
+    "void setToolTipDuration(int msec)": {
+      "brief": "This property holds the widget's tooltip duration",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#toolTipDuration-prop"
+    },
+    "void setUpdatesEnabled(bool enable)": {
+      "brief": "This property holds whether updates are enabled",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#updatesEnabled-prop"
+    },
+    "void setVisible(bool visible)": {
+      "brief": "This property holds whether the widget is visible",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#visible-prop"
+    },
+    "void setWhatsThis(const QString &)": {
+      "brief": "This property holds the widget's What's This help text.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#whatsThis-prop"
+    },
+    "void setWindowFilePath(const QString &filePath)": {
+      "brief": "This property holds the file path associated with a widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#windowFilePath-prop"
+    },
+    "void setWindowFlag(Qt::WindowType flag, bool on)": {
+      "brief": "Sets the window flag *flag* on this widget if *on* is true; otherwise clears the flag.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#setWindowFlag"
+    },
+    "void setWindowFlags(Qt::WindowFlags type)": {
+      "brief": "Window flags are a combination of a type (e.g.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#windowFlags-prop"
+    },
+    "void setWindowIcon(const QIcon &icon)": {
+      "brief": "This property holds the widget's icon",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#windowIcon-prop"
+    },
+    "void setWindowIconText(const QString &)": {
+      "url": "https://doc.qt.io/qt-6/qwidget-obsolete.html#windowIconText-prop"
+    },
+    "void setWindowModality(Qt::WindowModality windowModality)": {
+      "brief": "This property holds which windows are blocked by the modal widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#windowModality-prop"
+    },
+    "void setWindowModified(bool)": {
+      "brief": "This property holds whether the document shown in the window has unsaved changes",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#windowModified-prop"
+    },
+    "void setWindowOpacity(qreal level)": {
+      "brief": "This property holds the level of opacity for the window.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#windowOpacity-prop"
+    },
+    "void setWindowRole(const QString &role)": {
+      "brief": "Sets the window's role to *role*.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#setWindowRole"
+    },
+    "void setWindowState(Qt::WindowStates windowState)": {
+      "brief": "Sets the window state to *windowState*.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#setWindowState"
+    },
+    "void setWindowTitle(const QString &)": {
+      "brief": "This property holds the window title (caption)",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#windowTitle-prop"
+    },
+    "void setupUi(QWidget *widget)": {
+      "brief": "Sets up the user interface for the specified *widget*.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#setupUi"
+    },
+    "void show()": {
+      "brief": "Shows the widget and its child widgets.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#show"
+    },
+    "void showEvent(QShowEvent *event)": {
+      "brief": "This event handler can be reimplemented in a subclass to receive widget show events which are passed in the *event* parameter.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#showEvent"
+    },
+    "void showFullScreen()": {
+      "brief": "Shows the widget in full-screen mode.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#showFullScreen"
+    },
+    "void showMaximized()": {
+      "brief": "Shows the widget maximized.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#showMaximized"
+    },
+    "void showMinimized()": {
+      "brief": "Shows the widget minimized, as an icon.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#showMinimized"
+    },
+    "void showNormal()": {
+      "brief": "Restores the widget after it has been maximized or minimized.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#showNormal"
+    },
+    "void stackUnder(QWidget *w)": {
+      "brief": "Places the widget under *w* in the parent widget's stack.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#stackUnder"
+    },
+    "void tabletEvent(QTabletEvent *event)": {
+      "brief": "This event handler, for event *event*, can be reimplemented in a subclass to receive tablet events for the widget.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#tabletEvent"
+    },
+    "void ungrabGesture(Qt::GestureType gesture)": {
+      "brief": "Unsubscribes the widget from a given *gesture* type",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#ungrabGesture"
+    },
+    "void unsetCursor()": {
+      "brief": "This property holds the cursor shape for this widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#cursor-prop"
+    },
+    "void unsetLayoutDirection()": {
+      "brief": "This property holds the layout direction for this widget.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#layoutDirection-prop"
+    },
+    "void unsetLocale()": {
+      "brief": "This property holds the widget's locale",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#locale-prop"
+    },
+    "void update()": {
+      "brief": "Updates the widget unless updates are disabled or the widget is hidden.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#update"
+    },
+    "void update(const QRect &rect)": {
+      "brief": "This version updates a rectangle *rect* inside the widget.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#update-1"
+    },
+    "void update(const QRegion &rgn)": {
+      "brief": "This version repaints a region *rgn* inside the widget.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#update-2"
+    },
+    "void update(int x, int y, int w, int h)": {
+      "brief": "This version updates a rectangle (*x*, *y*, *w*, *h*) inside the widget.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#update-3"
+    },
+    "void updateGeometry()": {
+      "brief": "Notifies the layout system that this widget has changed and may need to change geometry.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#updateGeometry"
+    },
+    "void updateMicroFocus(Qt::InputMethodQuery query)": {
+      "brief": "Updates the widget's micro focus and informs input methods that the state specified by *query* has changed.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#updateMicroFocus"
+    },
+    "void wheelEvent(QWheelEvent *event)": {
+      "brief": "This event handler, for event *event*, can be reimplemented in a subclass to receive wheel events for the widget.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#wheelEvent"
+    },
+    "void windowIconChanged(const QIcon &icon)": {
+      "brief": "This signal is emitted when the window's icon has changed, with the new *icon* as an argument.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#windowIconChanged"
+    },
+    "void windowIconTextChanged(const QString &iconText)": {
+      "url": "https://doc.qt.io/qt-6/qwidget-obsolete.html#windowIconTextChanged"
+    },
+    "void windowTitleChanged(const QString &title)": {
+      "brief": "This signal is emitted when the window's title has changed, with the new *title* as an argument.",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#windowTitleChanged"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "acceptDrops": {
+      "brief": "Whether drop events are enabled for this widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#acceptDrops-prop"
+    },
+    "accessibleDescription": {
+      "brief": "The widget's description as seen by assistive technologies",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#accessibleDescription-prop"
+    },
+    "accessibleIdentifier": {
+      "brief": "The widget's identifier as seen by assistive technologies",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#accessibleIdentifier-prop"
+    },
+    "accessibleName": {
+      "brief": "The widget's name as seen by assistive technologies",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#accessibleName-prop"
+    },
+    "autoFillBackground": {
+      "brief": "Whether the widget background is filled automatically",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#autoFillBackground-prop"
+    },
+    "baseSize": {
+      "brief": "The base size of the widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#baseSize-prop"
+    },
+    "childrenRect": {
+      "brief": "The bounding rectangle of the widget's children",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#childrenRect-prop"
+    },
+    "childrenRegion": {
+      "brief": "The combined region occupied by the widget's children",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#childrenRegion-prop"
+    },
+    "contextMenuPolicy": {
+      "brief": "How the widget shows a context menu",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#contextMenuPolicy-prop"
+    },
+    "cursor": {
+      "brief": "The cursor shape for this widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#cursor-prop"
+    },
+    "enabled": {
+      "brief": "Whether the widget is enabled",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#enabled-prop"
+    },
+    "focus": {
+      "brief": "Whether this widget (or its focus proxy) has the keyboard input focus",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#focus-prop"
+    },
+    "focusPolicy": {
+      "brief": "The way the widget accepts keyboard focus",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#focusPolicy-prop"
+    },
+    "font": {
+      "brief": "The font currently set for the widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#font-prop"
+    },
+    "frameGeometry": {
+      "brief": "Geometry of the widget relative to its parent including any window frame",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#frameGeometry-prop"
+    },
+    "frameSize": {
+      "brief": "The size of the widget including any window frame",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#frameSize-prop"
+    },
+    "fullScreen": {
+      "brief": "Whether the widget is shown in full screen mode",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#fullScreen-prop"
+    },
+    "geometry": {
+      "brief": "The geometry of the widget relative to its parent and excluding the window frame",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#geometry-prop"
+    },
+    "height": {
+      "brief": "The height of the widget excluding any window frame",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#height-prop"
+    },
+    "inputMethodHints": {
+      "brief": "What input method specific hints the widget has",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#inputMethodHints-prop"
+    },
+    "isActiveWindow": {
+      "brief": "Whether this widget's window is the active window",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#isActiveWindow-prop"
+    },
+    "layoutDirection": {
+      "brief": "The layout direction for this widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#layoutDirection-prop"
+    },
+    "locale": {
+      "brief": "The widget's locale",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#locale-prop"
+    },
+    "maximized": {
+      "brief": "Whether this widget is maximized",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#maximized-prop"
+    },
+    "maximumHeight": {
+      "brief": "The widget's maximum height in pixels",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#maximumHeight-prop"
+    },
+    "maximumSize": {
+      "brief": "The widget's maximum size in pixels",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#maximumSize-prop"
+    },
+    "maximumWidth": {
+      "brief": "The widget's maximum width in pixels",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#maximumWidth-prop"
+    },
+    "minimized": {
+      "brief": "Whether this widget is minimized (iconified)",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#minimized-prop"
+    },
+    "minimumHeight": {
+      "brief": "The widget's minimum height in pixels",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#minimumHeight-prop"
+    },
+    "minimumSize": {
+      "brief": "The widget's minimum size",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#minimumSize-prop"
+    },
+    "minimumSizeHint": {
+      "brief": "The recommended minimum size for the widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#minimumSizeHint-prop"
+    },
+    "minimumWidth": {
+      "brief": "The widget's minimum width in pixels",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#minimumWidth-prop"
+    },
+    "modal": {
+      "brief": "Whether the widget is a modal widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#modal-prop"
+    },
+    "mouseTracking": {
+      "brief": "Whether mouse tracking is enabled for the widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#mouseTracking-prop"
+    },
+    "normalGeometry": {
+      "brief": "The geometry of the widget as it will appear when shown as a normal (not maximized or full screen) top-level widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#normalGeometry-prop"
+    },
+    "palette": {
+      "brief": "The widget's palette",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#palette-prop"
+    },
+    "pos": {
+      "brief": "The position of the widget within its parent widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#pos-prop"
+    },
+    "rect": {
+      "brief": "The internal geometry of the widget excluding any window frame",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#rect-prop"
+    },
+    "size": {
+      "brief": "The size of the widget excluding any window frame",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#size-prop"
+    },
+    "sizeHint": {
+      "brief": "The recommended size for the widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#sizeHint-prop"
+    },
+    "sizeIncrement": {
+      "brief": "The size increment of the widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#sizeIncrement-prop"
+    },
+    "sizePolicy": {
+      "brief": "The default layout behavior of the widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#sizePolicy-prop"
+    },
+    "statusTip": {
+      "brief": "The widget's status tip",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#statusTip-prop"
+    },
+    "styleSheet": {
+      "brief": "The widget's style sheet",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#styleSheet-prop"
+    },
+    "tabletTracking": {
+      "brief": "Whether tablet tracking is enabled for the widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#tabletTracking-prop"
+    },
+    "toolTip": {
+      "brief": "The widget's tooltip",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#toolTip-prop"
+    },
+    "toolTipDuration": {
+      "brief": "The widget's tooltip duration",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#toolTipDuration-prop"
+    },
+    "updatesEnabled": {
+      "brief": "Whether updates are enabled",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#updatesEnabled-prop"
+    },
+    "visible": {
+      "brief": "Whether the widget is visible",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#visible-prop"
+    },
+    "whatsThis": {
+      "brief": "The widget's What's This help text",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#whatsThis-prop"
+    },
+    "width": {
+      "brief": "The width of the widget excluding any window frame",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#width-prop"
+    },
+    "windowFilePath": {
+      "brief": "The file path associated with a widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#windowFilePath-prop"
+    },
+    "windowFlags": {
+      "brief": "",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#windowFlags-prop"
+    },
+    "windowIcon": {
+      "brief": "The widget's icon",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#windowIcon-prop"
+    },
+    "windowIconText": {
+      "brief": "The text to be displayed on the icon of a minimized window",
+      "url": "https://doc.qt.io/qt-6/qwidget-obsolete.html#windowIconText-prop"
+    },
+    "windowModality": {
+      "brief": "Which windows are blocked by the modal widget",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#windowModality-prop"
+    },
+    "windowModified": {
+      "brief": "Whether the document shown in the window has unsaved changes",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#windowModified-prop"
+    },
+    "windowOpacity": {
+      "brief": "Level of opacity for the window",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#windowOpacity-prop"
+    },
+    "windowTitle": {
+      "brief": "The window title (caption)",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#windowTitle-prop"
+    },
+    "x": {
+      "brief": "The x coordinate of the widget relative to its parent including any window frame",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#x-prop"
+    },
+    "y": {
+      "brief": "The y coordinate of the widget relative to its parent and including any window frame",
+      "url": "https://doc.qt.io/qt-6/qwidget.html#y-prop"
+    }
+  },
+  "qss": {
+    "box_model": false,
+    "pseudo_states": [],
+    "sub_controls": [],
+    "url": "https://doc.qt.io/qt-6/stylesheet-reference.html#qwidget-widget"
+  },
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

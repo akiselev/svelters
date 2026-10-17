@@ -1,0 +1,85 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Specifies which features the print dialog should offer.",
+    "file": "gtk/print/gtkprinter.h",
+    "line": 34,
+    "md": "Specifies which features the print dialog should offer.\n\nIf neither %GTK_PRINT_CAPABILITY_GENERATE_PDF nor\n%GTK_PRINT_CAPABILITY_GENERATE_PS is specified, GTK assumes that all\nformats are supported."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:PrintCapabilities",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "collate": {
+      "brief": "Print dialog will allow to collate multiple copies.",
+      "file": "gtk/print/gtkprinter.h",
+      "line": 38,
+      "md": "Print dialog will allow to collate multiple copies."
+    },
+    "copies": {
+      "brief": "Print dialog will allow to print multiple copies.",
+      "file": "gtk/print/gtkprinter.h",
+      "line": 37,
+      "md": "Print dialog will allow to print multiple copies."
+    },
+    "generate_pdf": {
+      "brief": "The program will send the document to the printer in PDF format",
+      "file": "gtk/print/gtkprinter.h",
+      "line": 41,
+      "md": "The program will send the document to\n  the printer in PDF format"
+    },
+    "generate_ps": {
+      "brief": "The program will send the document to the printer in Postscript format",
+      "file": "gtk/print/gtkprinter.h",
+      "line": 43,
+      "md": "The program will send the document to\n  the printer in Postscript format"
+    },
+    "number_up": {
+      "brief": "Print dialog will offer printing multiple pages per sheet",
+      "file": "gtk/print/gtkprinter.h",
+      "line": 46,
+      "md": "Print dialog will offer printing multiple\n  pages per sheet"
+    },
+    "number_up_layout": {
+      "brief": "Print dialog will allow to rearrange pages when printing multiple pages per sheet",
+      "file": "gtk/print/gtkprinter.h",
+      "line": 48,
+      "md": "Print dialog will allow to rearrange\n  pages when printing multiple pages per sheet"
+    },
+    "page_set": {
+      "brief": "Print dialog will offer printing even/odd pages.",
+      "file": "gtk/print/gtkprinter.h",
+      "line": 36,
+      "md": "Print dialog will offer printing even/odd pages."
+    },
+    "preview": {
+      "brief": "Print dialog will offer a preview",
+      "file": "gtk/print/gtkprinter.h",
+      "line": 45,
+      "md": "Print dialog will offer a preview"
+    },
+    "reverse": {
+      "brief": "Print dialog will allow to print pages in reverse order.",
+      "file": "gtk/print/gtkprinter.h",
+      "line": 39,
+      "md": "Print dialog will allow to print pages in reverse order."
+    },
+    "scale": {
+      "brief": "Print dialog will allow to scale the output.",
+      "file": "gtk/print/gtkprinter.h",
+      "line": 40,
+      "md": "Print dialog will allow to scale the output."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

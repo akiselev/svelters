@@ -1,0 +1,50 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkBuilderCScope` object to use with future `GtkBuilder` instances.",
+      "file": "gtk/gtkbuilderscope.c",
+      "line": 417,
+      "md": "Creates a new `GtkBuilderCScope` object to use with future\n`GtkBuilder` instances.\n\nCalling this function is only necessary if you want to add\ncustom callbacks via [`BuilderCScope.add_callback_symbol()`](xref:gtk:Gtk.BuilderCScope#method:add_callback_symbol)."
+    }
+  },
+  "doc": {
+    "brief": "A `GtkBuilderScope` implementation for the C language.",
+    "file": "gtk/gtkbuilderscope.c",
+    "line": 49,
+    "md": "A `GtkBuilderScope` implementation for the C language.\n\n`GtkBuilderCScope` instances use symbols explicitly added to `builder`\nwith prior calls to [`BuilderCScope.add_callback_symbol()`](xref:gtk:Gtk.BuilderCScope#method:add_callback_symbol).\nIf developers want to do that, they are encouraged to create their\nown scopes for that purpose.\n\nIn the case that symbols are not explicitly added; GTK will uses\n`GModule`’s introspective features (by opening the module `NULL`) to\nlook at the application’s symbol table. From here it tries to match\nthe signal function names given in the interface description with\nsymbols in the application.\n\nNote that unless [`BuilderCScope.add_callback_symbol()`](xref:gtk:Gtk.BuilderCScope#method:add_callback_symbol) is\ncalled for all signal callbacks which are referenced by the loaded XML,\nthis functionality will require that `GModule` be supported on the platform."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:BuilderCScope",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "add_callback_symbol": {
+      "brief": "Adds the `callback_symbol` to the scope of `builder` under the given `callback_name`.",
+      "file": "gtk/gtkbuilderscope.c",
+      "line": 446,
+      "md": "Adds the `callback_symbol` to the scope of `builder` under the\ngiven `callback_name`.\n\nUsing this function overrides the behavior of\n[`Builder.create_closure()`](xref:gtk:Gtk.Builder#method:create_closure) for any callback symbols that\nare added. Using this method allows for better encapsulation as it\ndoes not require that callback symbols be declared in the global\nnamespace."
+    },
+    "add_callback_symbols": {
+      "brief": "A convenience function to add many callbacks.",
+      "file": "gtk/gtkbuilderscope.c",
+      "line": 479,
+      "md": "A convenience function to add many callbacks.\n\nThis is equivalent to calling [`BuilderCScope.add_callback_symbol()`](xref:gtk:Gtk.BuilderCScope#method:add_callback_symbol)\nfor each symbol."
+    },
+    "lookup_callback_symbol": {
+      "brief": "Fetches a symbol previously added with gtk_builder_cscope_add_callback_symbol().",
+      "file": "gtk/gtkbuilderscope.c",
+      "line": 524,
+      "md": "Fetches a symbol previously added with\ngtk_builder_cscope_add_callback_symbol()."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

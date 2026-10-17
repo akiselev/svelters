@@ -1,0 +1,45 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates an action that when activated, activates the named action on the widget.",
+      "file": "gtk/gtkshortcutaction.c",
+      "line": 1211,
+      "md": "Creates an action that when activated, activates\nthe named action on the widget.\n\nIt also passes the given arguments to it.\n\nSee [`Widget.insert_action_group()`](xref:gtk:Gtk.Widget#method:insert_action_group) for\nhow to add actions to widgets."
+    }
+  },
+  "doc": {
+    "brief": "Activates a named action.",
+    "file": "gtk/gtkshortcutaction.h",
+    "line": 155,
+    "md": "Activates a named action.\n\nSee [`WidgetClass.install_action()`](xref:gtk:Gtk.WidgetClass#method:install_action) and\n[`Widget.insert_action_group()`](xref:gtk:Gtk.Widget#method:insert_action_group) for ways\nto associate named actions with widgets."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:NamedAction",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_action_name": {
+      "brief": "Returns the name of the action that will be activated.",
+      "file": "gtk/gtkshortcutaction.c",
+      "line": 1235,
+      "md": "Returns the name of the action that will be activated."
+    }
+  },
+  "properties": {
+    "action-name": {
+      "brief": "The name of the action to activate.",
+      "file": "gtk/gtkshortcutaction.c",
+      "line": 1191,
+      "md": "The name of the action to activate."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

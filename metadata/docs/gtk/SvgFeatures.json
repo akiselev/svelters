@@ -1,0 +1,56 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Features of the SVG renderer that can be enabled or disabled.",
+    "file": "gtk/gtksvg.h",
+    "line": 91,
+    "md": "Features of the SVG renderer that can be enabled or disabled.\n\nBy default, all features except `GTK_SVG_TRADITIONAL_SYMBOLIC`\nare enabled.\n\nNew values may be added in the future.",
+    "since": "4.22"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:SvgFeatures",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "animations": {
+      "brief": "Whether to run animations.",
+      "file": "gtk/gtksvg.h",
+      "line": 93,
+      "md": "Whether to run animations. If disabled,\n  state changes are applied without transitions"
+    },
+    "extensions": {
+      "brief": "Whether to allow gpa extensions, such as states and transitions",
+      "file": "gtk/gtksvg.h",
+      "line": 100,
+      "md": "Whether to allow gpa extensions, such\n  as states and transitions"
+    },
+    "external_resources": {
+      "brief": "Whether to load external resources, such as images.",
+      "file": "gtk/gtksvg.h",
+      "line": 97,
+      "md": "Whether to load external\n  resources, such as images. If disabled, only embedded\n  images are loaded"
+    },
+    "system_resources": {
+      "brief": "Whether to use system resources, such as fonts.",
+      "file": "gtk/gtksvg.h",
+      "line": 95,
+      "md": "Whether to use system resources,\n  such as fonts. If disabled, only embedded fonts are used"
+    },
+    "traditional_symbolic": {
+      "brief": "This feature is meant for compatibility with old symbolic icons.",
+      "file": "gtk/gtksvg.h",
+      "line": 102,
+      "md": "This feature is meant for\n  compatibility with old symbolic icons. If this is enabled,\n  fill and stroke attributes are ignored. The used colors\n  are derived from symbolic style classes if present, and\n  the default fill color is the symbolic foreground color."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

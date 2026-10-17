@@ -1,0 +1,45 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a `GtkShortcutTrigger` that will trigger whenever the key with the given `keyval` is pressed and mnemonics have been activated.",
+      "file": "gtk/gtkshortcuttrigger.c",
+      "line": 948,
+      "md": "Creates a `GtkShortcutTrigger` that will trigger whenever the key with\nthe given `keyval` is pressed and mnemonics have been activated.\n\nMnemonics are activated by calling code when a key event with the right\nmodifiers is detected."
+    }
+  },
+  "doc": {
+    "brief": "Triggers when a specific mnemonic is pressed.",
+    "file": "gtk/gtkshortcuttrigger.h",
+    "line": 100,
+    "md": "Triggers when a specific mnemonic is pressed.\n\nMnemonics require a *mnemonic modifier* (typically <kbd>Alt</kbd>) to be\npressed together with the mnemonic key."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:MnemonicTrigger",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_keyval": {
+      "brief": "Gets the keyval that must be pressed to succeed triggering `self`.",
+      "file": "gtk/gtkshortcuttrigger.c",
+      "line": 968,
+      "md": "Gets the keyval that must be pressed to succeed triggering `self`."
+    }
+  },
+  "properties": {
+    "keyval": {
+      "brief": "The key value for the trigger.",
+      "file": "gtk/gtkshortcuttrigger.c",
+      "line": 927,
+      "md": "The key value for the trigger."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

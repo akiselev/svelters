@@ -1,0 +1,183 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkPrintUnixDialog`.",
+      "file": "gtk/print/gtkprintunixdialog.c",
+      "line": 2975,
+      "md": "Creates a new `GtkPrintUnixDialog`."
+    }
+  },
+  "doc": {
+    "brief": "A print dialog for platforms which don’t provide a native print dialog, like Unix.",
+    "file": "gtk/print/gtkprintunixdialog.c",
+    "line": 45,
+    "md": "A print dialog for platforms which don’t provide a native\nprint dialog, like Unix.\n\nIt can be used very much like any other GTK dialog, at the cost of\nthe portability offered by the high-level printing API with\n[`PrintOperation`](xref:gtk:Gtk.PrintOperation).\n\nIn order to print something with `GtkPrintUnixDialog`, you need to\nuse [`PrintUnixDialog.get_selected_printer()`](xref:gtk:Gtk.PrintUnixDialog#method:get_selected_printer) to obtain a\n[`Printer`](xref:gtk:Gtk.Printer) object and use it to construct a [`PrintJob`](xref:gtk:Gtk.PrintJob)\nusing [`PrintJob.new()`](xref:gtk:Gtk.PrintJob#constructor:new).\n\n`GtkPrintUnixDialog` uses the following response values:\n\n- %GTK_RESPONSE_OK: for the “Print” button\n- %GTK_RESPONSE_APPLY: for the “Preview” button\n- %GTK_RESPONSE_CANCEL: for the “Cancel” button\n\n# GtkPrintUnixDialog as GtkBuildable\n\nThe `GtkPrintUnixDialog` implementation of the `GtkBuildable` interface\nexposes its `notebook` internal children with the name “notebook”.\n\nAn example of a `GtkPrintUnixDialog` UI definition fragment:\n\n```xml\n<object class=\"GtkPrintUnixDialog\" id=\"dialog1\">\n  <child internal-child=\"notebook\">\n    <object class=\"GtkNotebook\" id=\"notebook\">\n      <child>\n        <object type=\"GtkNotebookPage\">\n          <property name=\"tab_expand\">False</property>\n          <property name=\"tab_fill\">False</property>\n          <property name=\"tab\">\n            <object class=\"GtkLabel\" id=\"tablabel\">\n              <property name=\"label\">Tab label</property>\n            </object>\n          </property>\n          <property name=\"child\">\n            <object class=\"GtkLabel\" id=\"tabcontent\">\n              <property name=\"label\">Content on notebook tab</property>\n            </object>\n          </property>\n        </object>\n      </child>\n    </object>\n  </child>\n</object>\n```\n\n# CSS nodes\n\n`GtkPrintUnixDialog` has a single CSS node with name window. The style classes\ndialog and print are added."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:PrintUnixDialog",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "add_custom_tab": {
+      "brief": "Adds a custom tab to the print dialog.",
+      "file": "gtk/print/gtkprintunixdialog.c",
+      "line": 3275,
+      "md": "Adds a custom tab to the print dialog."
+    },
+    "get_current_page": {
+      "brief": "Gets the current page of the `GtkPrintUnixDialog`.",
+      "file": "gtk/print/gtkprintunixdialog.c",
+      "line": 3098,
+      "md": "Gets the current page of the `GtkPrintUnixDialog`."
+    },
+    "get_embed_page_setup": {
+      "brief": "Gets whether to embed the page setup.",
+      "file": "gtk/print/gtkprintunixdialog.c",
+      "line": 3476,
+      "md": "Gets whether to embed the page setup."
+    },
+    "get_has_selection": {
+      "brief": "Gets whether there is a selection.",
+      "file": "gtk/print/gtkprintunixdialog.c",
+      "line": 3416,
+      "md": "Gets whether there is a selection."
+    },
+    "get_manual_capabilities": {
+      "brief": "Gets the capabilities that have been set on this `GtkPrintUnixDialog`.",
+      "file": "gtk/print/gtkprintunixdialog.c",
+      "line": 3326,
+      "md": "Gets the capabilities that have been set on this `GtkPrintUnixDialog`."
+    },
+    "get_page_setup": {
+      "brief": "Gets the page setup that is used by the `GtkPrintUnixDialog`.",
+      "file": "gtk/print/gtkprintunixdialog.c",
+      "line": 3039,
+      "md": "Gets the page setup that is used by the `GtkPrintUnixDialog`."
+    },
+    "get_page_setup_set": {
+      "brief": "Gets whether a page setup was set by the user.",
+      "file": "gtk/print/gtkprintunixdialog.c",
+      "line": 3055,
+      "md": "Gets whether a page setup was set by the user."
+    },
+    "get_selected_printer": {
+      "brief": "Gets the currently selected printer.",
+      "file": "gtk/print/gtkprintunixdialog.c",
+      "line": 2998,
+      "md": "Gets the currently selected printer."
+    },
+    "get_settings": {
+      "brief": "Gets a new `GtkPrintSettings` object that represents the current values in the print dialog.",
+      "file": "gtk/print/gtkprintunixdialog.c",
+      "line": 3207,
+      "md": "Gets a new `GtkPrintSettings` object that represents the\ncurrent values in the print dialog.\n\nNote that this creates a new object, and you need to unref\nit if don’t want to keep it."
+    },
+    "get_support_selection": {
+      "brief": "Gets whether the print dialog allows user to print a selection.",
+      "file": "gtk/print/gtkprintunixdialog.c",
+      "line": 3370,
+      "md": "Gets whether the print dialog allows user to print a selection."
+    },
+    "set_current_page": {
+      "brief": "Sets the current page number.",
+      "file": "gtk/print/gtkprintunixdialog.c",
+      "line": 3071,
+      "md": "Sets the current page number.\n\nIf `current_page` is not -1, this enables the current page choice\nfor the range of pages to print."
+    },
+    "set_embed_page_setup": {
+      "brief": "Embed page size combo box and orientation combo box into page setup page.",
+      "file": "gtk/print/gtkprintunixdialog.c",
+      "line": 3432,
+      "md": "Embed page size combo box and orientation combo box into page setup page."
+    },
+    "set_has_selection": {
+      "brief": "Sets whether a selection exists.",
+      "file": "gtk/print/gtkprintunixdialog.c",
+      "line": 3386,
+      "md": "Sets whether a selection exists."
+    },
+    "set_manual_capabilities": {
+      "brief": "This lets you specify the printing capabilities your application supports.",
+      "file": "gtk/print/gtkprintunixdialog.c",
+      "line": 3294,
+      "md": "This lets you specify the printing capabilities your application\nsupports.\n\nFor instance, if you can handle scaling the output then you pass\n%GTK_PRINT_CAPABILITY_SCALE. If you don’t pass that, then the dialog\nwill only let you select the scale if the printing system automatically\nhandles scaling."
+    },
+    "set_page_setup": {
+      "brief": "Sets the page setup of the `GtkPrintUnixDialog`.",
+      "file": "gtk/print/gtkprintunixdialog.c",
+      "line": 3014,
+      "md": "Sets the page setup of the `GtkPrintUnixDialog`."
+    },
+    "set_settings": {
+      "brief": "Sets the `GtkPrintSettings` for the `GtkPrintUnixDialog`.",
+      "file": "gtk/print/gtkprintunixdialog.c",
+      "line": 3145,
+      "md": "Sets the `GtkPrintSettings` for the `GtkPrintUnixDialog`.\n\nTypically, this is used to restore saved print settings\nfrom a previous print operation before the print dialog\nis shown."
+    },
+    "set_support_selection": {
+      "brief": "Sets whether the print dialog allows user to print a selection.",
+      "file": "gtk/print/gtkprintunixdialog.c",
+      "line": 3342,
+      "md": "Sets whether the print dialog allows user to print a selection."
+    }
+  },
+  "properties": {
+    "current-page": {
+      "brief": "The current page in the document.",
+      "file": "gtk/print/gtkprintunixdialog.c",
+      "line": 417,
+      "md": "The current page in the document."
+    },
+    "embed-page-setup": {
+      "brief": "`TRUE` if the page setup controls are embedded.",
+      "file": "gtk/print/gtkprintunixdialog.c",
+      "line": 486,
+      "md": "`TRUE` if the page setup controls are embedded."
+    },
+    "has-selection": {
+      "brief": "Whether the application has a selection.",
+      "file": "gtk/print/gtkprintunixdialog.c",
+      "line": 475,
+      "md": "Whether the application has a selection."
+    },
+    "manual-capabilities": {
+      "brief": "Capabilities the application can handle.",
+      "file": "gtk/print/gtkprintunixdialog.c",
+      "line": 452,
+      "md": "Capabilities the application can handle."
+    },
+    "page-setup": {
+      "brief": "The `GtkPageSetup` object to use.",
+      "file": "gtk/print/gtkprintunixdialog.c",
+      "line": 406,
+      "md": "The `GtkPageSetup` object to use."
+    },
+    "print-settings": {
+      "brief": "The `GtkPrintSettings` object used for this dialog.",
+      "file": "gtk/print/gtkprintunixdialog.c",
+      "line": 430,
+      "md": "The `GtkPrintSettings` object used for this dialog."
+    },
+    "selected-printer": {
+      "brief": "The `GtkPrinter` which is selected.",
+      "file": "gtk/print/gtkprintunixdialog.c",
+      "line": 441,
+      "md": "The `GtkPrinter` which is selected."
+    },
+    "support-selection": {
+      "brief": "Whether the dialog supports selection.",
+      "file": "gtk/print/gtkprintunixdialog.c",
+      "line": 464,
+      "md": "Whether the dialog supports selection."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

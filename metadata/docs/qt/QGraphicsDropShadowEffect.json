@@ -1,0 +1,120 @@
+{
+  "doc": {
+    "brief": "The QGraphicsDropShadowEffect class provides a drop shadow effect.",
+    "index_brief": "Drop shadow effect",
+    "url": "https://doc.qt.io/qt-6/qgraphicsdropshadoweffect.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsDropShadowEffect",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QColor color() const": {
+      "brief": "This property holds the color of the drop shadow.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsdropshadoweffect.html#color-prop"
+    },
+    "QGraphicsDropShadowEffect(QObject *parent)": {
+      "brief": "Constructs a new QGraphicsDropShadowEffect instance.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsdropshadoweffect.html#QGraphicsDropShadowEffect"
+    },
+    "QPointF offset() const": {
+      "brief": "This property holds the shadow offset in pixels.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsdropshadoweffect.html#offset-prop"
+    },
+    "QRectF boundingRectFor(const QRectF &rect) const override": {
+      "brief": "Reimplements: [QGraphicsEffect::boundingRectFor](xref:qt:QGraphicsEffect)(const QRectF &rect) const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsdropshadoweffect.html#boundingRectFor"
+    },
+    "qreal blurRadius() const": {
+      "brief": "This property holds the blur radius in pixels of the drop shadow.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsdropshadoweffect.html#blurRadius-prop"
+    },
+    "qreal xOffset() const": {
+      "brief": "This property holds the horizontal shadow offset in pixels.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsdropshadoweffect.html#xOffset-prop"
+    },
+    "qreal yOffset() const": {
+      "brief": "This property holds the vertical shadow offset in pixels.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsdropshadoweffect.html#yOffset-prop"
+    },
+    "void blurRadiusChanged(qreal blurRadius)": {
+      "brief": "This signal is emitted whenever the effect's blur radius changes.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsdropshadoweffect.html#blurRadiusChanged"
+    },
+    "void colorChanged(const QColor &color)": {
+      "brief": "This signal is emitted whenever the effect's color changes.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsdropshadoweffect.html#colorChanged"
+    },
+    "void draw(QPainter *painter) override": {
+      "brief": "Reimplements: [QGraphicsEffect::draw](xref:qt:QGraphicsEffect)(QPainter *painter).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsdropshadoweffect.html#draw"
+    },
+    "void offsetChanged(const QPointF &offset)": {
+      "brief": "This signal is emitted whenever the effect's shadow offset changes.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsdropshadoweffect.html#offsetChanged"
+    },
+    "void setBlurRadius(qreal blurRadius)": {
+      "brief": "This property holds the blur radius in pixels of the drop shadow.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsdropshadoweffect.html#blurRadius-prop"
+    },
+    "void setColor(const QColor &color)": {
+      "brief": "This property holds the color of the drop shadow.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsdropshadoweffect.html#color-prop"
+    },
+    "void setOffset(const QPointF &ofs)": {
+      "brief": "This property holds the shadow offset in pixels.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsdropshadoweffect.html#offset-prop"
+    },
+    "void setOffset(qreal d)": {
+      "brief": "This property holds the shadow offset in pixels.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsdropshadoweffect.html#offset-prop"
+    },
+    "void setOffset(qreal dx, qreal dy)": {
+      "brief": "This property holds the shadow offset in pixels.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsdropshadoweffect.html#offset-prop"
+    },
+    "void setXOffset(qreal dx)": {
+      "brief": "This property holds the horizontal shadow offset in pixels.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsdropshadoweffect.html#xOffset-prop"
+    },
+    "void setYOffset(qreal dy)": {
+      "brief": "This property holds the vertical shadow offset in pixels.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsdropshadoweffect.html#yOffset-prop"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "blurRadius": {
+      "brief": "The blur radius in pixels of the drop shadow",
+      "url": "https://doc.qt.io/qt-6/qgraphicsdropshadoweffect.html#blurRadius-prop"
+    },
+    "color": {
+      "brief": "The color of the drop shadow",
+      "url": "https://doc.qt.io/qt-6/qgraphicsdropshadoweffect.html#color-prop"
+    },
+    "offset": {
+      "brief": "The shadow offset in pixels",
+      "url": "https://doc.qt.io/qt-6/qgraphicsdropshadoweffect.html#offset-prop"
+    },
+    "xOffset": {
+      "brief": "The horizontal shadow offset in pixels",
+      "url": "https://doc.qt.io/qt-6/qgraphicsdropshadoweffect.html#xOffset-prop"
+    },
+    "yOffset": {
+      "brief": "The vertical shadow offset in pixels",
+      "url": "https://doc.qt.io/qt-6/qgraphicsdropshadoweffect.html#yOffset-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

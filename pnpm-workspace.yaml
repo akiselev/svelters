@@ -3,6 +3,7 @@ packages:
   - "fixtures/*"
   - "bench/*"
   - "tests/*"
+  - "docs/site"
 
 # Every package resolves svelte to the vendored custom-renderer fork (see vendor/svelte/PIN).
 overrides:

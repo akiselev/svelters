@@ -1,0 +1,50 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Values for the [`Settings:gtk-interface-color-scheme`](xref:gtk:Gtk.Settings#property:gtk-interface-color-scheme) and [`CssProvider:prefers-color-scheme`](xref:gtk:Gtk.CssProvider#property:prefers-color-scheme)...",
+    "file": "gtk/gtkenums.h",
+    "line": 1997,
+    "md": "Values for the [`Settings:gtk-interface-color-scheme`](xref:gtk:Gtk.Settings#property:gtk-interface-color-scheme)\nand [`CssProvider:prefers-color-scheme`](xref:gtk:Gtk.CssProvider#property:prefers-color-scheme) properties\nthat indicates what color scheme is used.\n\nThis information can be used inside CSS via media queries.\n\nMore values may be added to this enumeration. Unknown values\nshould be treated the same as `GTK_INTERFACE_COLOR_SCHEME_DEFAULT`.",
+    "since": "4.20"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:InterfaceColorScheme",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "dark": {
+      "brief": "A dark color scheme is used",
+      "file": "gtk/gtkenums.h",
+      "line": 2001,
+      "md": "A dark color scheme is used"
+    },
+    "default": {
+      "brief": "The default color scheme is used",
+      "file": "gtk/gtkenums.h",
+      "line": 2000,
+      "md": "The default color scheme is used"
+    },
+    "light": {
+      "brief": "A light color scheme is used",
+      "file": "gtk/gtkenums.h",
+      "line": 2002,
+      "md": "A light color scheme is used"
+    },
+    "unsupported": {
+      "brief": "The system doesn't support color schemes",
+      "file": "gtk/gtkenums.h",
+      "line": 1999,
+      "md": "The system doesn't support color schemes"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

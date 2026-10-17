@@ -1,0 +1,24 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "A `GParamSpec` for properties holding a `GtkExpression`.",
+    "file": "gtk/gtkexpression.h",
+    "line": 194,
+    "md": "A `GParamSpec` for properties holding a `GtkExpression`."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ParamSpecExpression",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

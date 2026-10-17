@@ -1,0 +1,153 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "The possible accessible properties of a [`Accessible`](xref:gtk:Accessible).",
+    "file": "gtk/gtkenums.h",
+    "line": 1595,
+    "md": "The possible accessible properties of a [`Accessible`](xref:gtk:Accessible)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:AccessibleProperty",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "autocomplete": {
+      "brief": "Indicates whether inputting text could trigger display of one or more predictions of the user's intended value for a combobox, searchbox, or textbox and specifies how predictions would be presented if they were made.",
+      "file": "gtk/gtkenums.h",
+      "line": 1597,
+      "md": "Indicates whether inputting text\n   could trigger display of one or more predictions of the user's intended\n   value for a combobox, searchbox, or textbox and specifies how predictions\n   would be presented if they were made. Value type: [`AccessibleAutocomplete`](xref:gtk:AccessibleAutocomplete)"
+    },
+    "description": {
+      "brief": "Defines a string value that describes or annotates the current element.",
+      "file": "gtk/gtkenums.h",
+      "line": 1601,
+      "md": "Defines a string value that describes\n   or annotates the current element. Value type: string"
+    },
+    "has_popup": {
+      "brief": "Indicates the availability of interactive popup element, such as menu or popover, that can be triggered by an element.",
+      "file": "gtk/gtkenums.h",
+      "line": 1603,
+      "md": "Indicates the availability of interactive\n   popup element, such as menu or popover, that can be triggered by an\n   element. Contrary to “aria-haspopup”, it doesn't indicate the type of the\n   element, as such it cannot be used to indicate the availability of more\n   complex elements such as dialog. Value type: boolean"
+    },
+    "help_text": {
+      "brief": "Defines a string value that provides a description of non-standard keyboard interactions of the current element.",
+      "file": "gtk/gtkenums.h",
+      "line": 1658,
+      "md": "Defines a string value that provides a description of non-standard keyboard\ninteractions of the current element. Value type: string",
+      "since": "4.16"
+    },
+    "key_shortcuts": {
+      "brief": "Indicates keyboard shortcuts that an author has implemented to activate or give focus to an element.",
+      "file": "gtk/gtkenums.h",
+      "line": 1608,
+      "md": "Indicates keyboard shortcuts that an\n   author has implemented to activate or give focus to an element. Value type:\n   string. The format of the value is a space-separated list of shortcuts, with\n   each shortcut consisting of one or more modifiers (`Control`, `Alt` or `Shift`),\n   followed by a non-modifier key, all separated by `+`. The\n   [WAI-ARIA](https://www.w3.org/TR/wai-aria/#aria-keyshortcuts) reference\n   specifies how to build keyboard shortcuts strings, with specific values\n   for each key which are the same regardless of the language, so these\n   strings can't be built from localized key names. You can convert an\n   accelerator into the matching key shortcuts label with\n   `accelerator_get_accessible_label`.\n   Examples: `F2`, `Alt+F`, `Control+Shift+N`"
+    },
+    "label": {
+      "brief": "Defines a string value that labels the current element.",
+      "file": "gtk/gtkenums.h",
+      "line": 1620,
+      "md": "Defines a string value that labels the current\n   element. Value type: string"
+    },
+    "level": {
+      "brief": "Defines the hierarchical level of an element within a structure.",
+      "file": "gtk/gtkenums.h",
+      "line": 1622,
+      "md": "Defines the hierarchical level of an element\n   within a structure. Value type: integer"
+    },
+    "modal": {
+      "brief": "Indicates whether an element is modal when displayed.",
+      "file": "gtk/gtkenums.h",
+      "line": 1624,
+      "md": "Indicates whether an element is modal when\n   displayed. Value type: boolean"
+    },
+    "multi_line": {
+      "brief": "Indicates whether a text box accepts multiple lines of input or only a single line.",
+      "file": "gtk/gtkenums.h",
+      "line": 1626,
+      "md": "Indicates whether a text box accepts\n   multiple lines of input or only a single line. Value type: boolean"
+    },
+    "multi_selectable": {
+      "brief": "Indicates that the user may select more than one item from the current selectable descendants.",
+      "file": "gtk/gtkenums.h",
+      "line": 1628,
+      "md": "Indicates that the user may select\n   more than one item from the current selectable descendants. Value type:\n   boolean"
+    },
+    "orientation": {
+      "brief": "Indicates whether the element's orientation is horizontal, vertical, or unknown/ambiguous.",
+      "file": "gtk/gtkenums.h",
+      "line": 1631,
+      "md": "Indicates whether the element's\n   orientation is horizontal, vertical, or unknown/ambiguous. Value type:\n   [`Orientation`](xref:gtk:Orientation)"
+    },
+    "placeholder": {
+      "brief": "Defines a short hint (a word or short phrase) intended to aid the user with data entry when the control has no value.",
+      "file": "gtk/gtkenums.h",
+      "line": 1634,
+      "md": "Defines a short hint (a word or short\n   phrase) intended to aid the user with data entry when the control has no\n   value. A hint could be a sample value or a brief description of the expected\n   format. Value type: string"
+    },
+    "read_only": {
+      "brief": "Indicates that the element is not editable, but is otherwise operable.",
+      "file": "gtk/gtkenums.h",
+      "line": 1638,
+      "md": "Indicates that the element is not editable,\n   but is otherwise operable. Value type: boolean"
+    },
+    "required": {
+      "brief": "Indicates that user input is required on the element before a form may be submitted.",
+      "file": "gtk/gtkenums.h",
+      "line": 1640,
+      "md": "Indicates that user input is required on\n   the element before a form may be submitted. Value type: boolean"
+    },
+    "role_description": {
+      "brief": "Defines a human-readable, author-localized description for the role of an element.",
+      "file": "gtk/gtkenums.h",
+      "line": 1642,
+      "md": "Defines a human-readable,\n   author-localized description for the role of an element. Value type: string"
+    },
+    "sort": {
+      "brief": "Indicates if items in a table or grid are sorted in ascending or descending order.",
+      "file": "gtk/gtkenums.h",
+      "line": 1644,
+      "md": "Indicates if items in a table or grid are\n   sorted in ascending or descending order. Value type: [`AccessibleSort`](xref:gtk:AccessibleSort)"
+    },
+    "value_max": {
+      "brief": "Defines the maximum allowed value for a range widget.",
+      "file": "gtk/gtkenums.h",
+      "line": 1646,
+      "md": "Defines the maximum allowed value for a\n   range widget. Value type: double"
+    },
+    "value_min": {
+      "brief": "Defines the minimum allowed value for a range widget.",
+      "file": "gtk/gtkenums.h",
+      "line": 1648,
+      "md": "Defines the minimum allowed value for a\n   range widget. Value type: double"
+    },
+    "value_now": {
+      "brief": "Defines the current value for a range widget.",
+      "file": "gtk/gtkenums.h",
+      "line": 1650,
+      "md": "Defines the current value for a range widget.\n   Value type: double"
+    },
+    "value_text": {
+      "brief": "Defines the human readable text alternative of [`AccessibleProperty.VALUE_NOW`](xref:gtk:Gtk.AccessibleProperty#value:VALUE_NOW) for a range widget.",
+      "file": "gtk/gtkenums.h",
+      "line": 1652,
+      "md": "Defines the human readable text alternative\n   of [`AccessibleProperty.VALUE_NOW`](xref:gtk:Gtk.AccessibleProperty#value:VALUE_NOW) for a range widget. Value type: string"
+    }
+  },
+  "methods": {
+    "init_value": {
+      "brief": "Initializes `value` with the appropriate type for the `property`.",
+      "file": "gtk/gtkaccessiblevalue.c",
+      "line": 1857,
+      "md": "Initializes `value` with the appropriate type for the `property`.\n\nThis function is mostly meant for language bindings, in conjunction\nwith gtk_accessible_update_property_value()."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

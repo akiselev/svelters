@@ -1,0 +1,42 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkFontChooserWidget`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Direct use of `GtkFontChooserWidget` is deprecated.",
+      "file": "gtk/gtkfontchooserwidget.c",
+      "line": 1346,
+      "md": "Creates a new `GtkFontChooserWidget`."
+    }
+  },
+  "doc": {
+    "brief": "The `GtkFontChooserWidget` widget lets the user select a font.",
+    "deprecated": "4.10",
+    "deprecated_md": "Direct use of `GtkFontChooserWidget` is deprecated.",
+    "file": "gtk/gtkfontchooserwidget.c",
+    "line": 76,
+    "md": "The `GtkFontChooserWidget` widget lets the user select a font.\n\nIt is used in the `GtkFontChooserDialog` widget to provide a\ndialog for selecting fonts.\n\nTo set the font which is initially selected, use\n[`FontChooser.set_font()`](xref:gtk:Gtk.FontChooser#method:set_font) or [`FontChooser.set_font_desc()`](xref:gtk:Gtk.FontChooser#method:set_font_desc).\n\nTo get the selected font use [`FontChooser.get_font()`](xref:gtk:Gtk.FontChooser#method:get_font) or\n[`FontChooser.get_font_desc()`](xref:gtk:Gtk.FontChooser#method:get_font_desc).\n\nTo change the text which is shown in the preview area, use\n[`FontChooser.set_preview_text()`](xref:gtk:Gtk.FontChooser#method:set_preview_text).\n\n# CSS nodes\n\n`GtkFontChooserWidget` has a single CSS node with name fontchooser."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:FontChooserWidget",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {},
+  "properties": {
+    "tweak-action": {
+      "brief": "A toggle action that can be used to switch to the tweak page of the font chooser widget, which lets the user tweak the OpenType features and variation axes of the selected font.",
+      "file": "gtk/gtkfontchooserwidget.c",
+      "line": 873,
+      "md": "A toggle action that can be used to switch to the tweak page\nof the font chooser widget, which lets the user tweak the\nOpenType features and variation axes of the selected font.\n\nThe action will be enabled or disabled depending on whether\nthe selected font has any features or axes."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -1,0 +1,193 @@
+{
+  "doc": {
+    "brief": "The QProgressBar widget provides a horizontal or vertical progress bar.",
+    "index_brief": "Horizontal or vertical progress bar",
+    "url": "https://doc.qt.io/qt-6/qprogressbar.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QProgressBar",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QProgressBar(QWidget *parent)": {
+      "brief": "Constructs a progress bar with the given *parent*.",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#QProgressBar"
+    },
+    "QProgressBar::Direction textDirection() const": {
+      "brief": "This property holds the reading direction of the [text](xref:qt:QProgressBar) for vertical progress bars",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#textDirection-prop"
+    },
+    "QSize minimumSizeHint() const override": {
+      "brief": "Reimplements an access function for property: [QWidget::minimumSizeHint](xref:qt:QWidget).",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#minimumSizeHint"
+    },
+    "QSize sizeHint() const override": {
+      "brief": "Reimplements an access function for property: [QWidget::sizeHint](xref:qt:QWidget).",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#sizeHint"
+    },
+    "QString format() const": {
+      "brief": "This property holds the string used to generate the current text",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#format-prop"
+    },
+    "QString text() const": {
+      "brief": "This property holds the descriptive text shown with the progress bar",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#text-prop"
+    },
+    "Qt::Alignment alignment() const": {
+      "brief": "This property holds the alignment of the progress bar",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#alignment-prop"
+    },
+    "Qt::Orientation orientation() const": {
+      "brief": "This property holds the orientation of the progress bar",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#orientation-prop"
+    },
+    "bool event(QEvent *e) override": {
+      "brief": "Reimplements: [QWidget::event](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#event"
+    },
+    "bool invertedAppearance() const": {
+      "brief": "This property holds whether or not a progress bar shows its progress inverted",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#invertedAppearance-prop"
+    },
+    "bool isTextVisible() const": {
+      "brief": "This property holds whether the current completed percentage should be displayed",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#textVisible-prop"
+    },
+    "int maximum() const": {
+      "brief": "This property holds the progress bar's maximum value",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#maximum-prop"
+    },
+    "int minimum() const": {
+      "brief": "This property holds the progress bar's minimum value",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#minimum-prop"
+    },
+    "int value() const": {
+      "brief": "This property holds the progress bar's current value",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#value-prop"
+    },
+    "void initStyleOption(QStyleOptionProgressBar *option) const": {
+      "brief": "Initialize *option* with the values from this [QProgressBar](xref:qt:QProgressBar).",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#initStyleOption"
+    },
+    "void paintEvent(QPaintEvent *) override": {
+      "brief": "Reimplements: [QWidget::paintEvent](xref:qt:QWidget)(QPaintEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#paintEvent"
+    },
+    "void reset()": {
+      "brief": "Reset the progress bar.",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#reset"
+    },
+    "void resetFormat()": {
+      "brief": "This property holds the string used to generate the current text",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#format-prop"
+    },
+    "void setAlignment(Qt::Alignment alignment)": {
+      "brief": "This property holds the alignment of the progress bar",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#alignment-prop"
+    },
+    "void setFormat(const QString &format)": {
+      "brief": "This property holds the string used to generate the current text",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#format-prop"
+    },
+    "void setInvertedAppearance(bool invert)": {
+      "brief": "This property holds whether or not a progress bar shows its progress inverted",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#invertedAppearance-prop"
+    },
+    "void setMaximum(int maximum)": {
+      "brief": "This property holds the progress bar's maximum value",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#maximum-prop"
+    },
+    "void setMinimum(int minimum)": {
+      "brief": "This property holds the progress bar's minimum value",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#minimum-prop"
+    },
+    "void setOrientation(Qt::Orientation)": {
+      "brief": "This property holds the orientation of the progress bar",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#orientation-prop"
+    },
+    "void setRange(int minimum, int maximum)": {
+      "brief": "Sets the progress bar's minimum and maximum values to *minimum* and *maximum* respectively.",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#setRange"
+    },
+    "void setTextDirection(QProgressBar::Direction textDirection)": {
+      "brief": "This property holds the reading direction of the [text](xref:qt:QProgressBar) for vertical progress bars",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#textDirection-prop"
+    },
+    "void setTextVisible(bool visible)": {
+      "brief": "This property holds whether the current completed percentage should be displayed",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#textVisible-prop"
+    },
+    "void setValue(int value)": {
+      "brief": "This property holds the progress bar's current value",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#value-prop"
+    },
+    "void valueChanged(int value)": {
+      "brief": "This signal is emitted when the value shown in the progress bar changes. *value* is the new value shown by the progress bar.",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#valueChanged"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "alignment": {
+      "brief": "The alignment of the progress bar",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#alignment-prop"
+    },
+    "format": {
+      "brief": "The string used to generate the current text",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#format-prop"
+    },
+    "invertedAppearance": {
+      "brief": "Whether or not a progress bar shows its progress inverted",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#invertedAppearance-prop"
+    },
+    "maximum": {
+      "brief": "The progress bar's maximum value",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#maximum-prop"
+    },
+    "minimum": {
+      "brief": "The progress bar's minimum value",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#minimum-prop"
+    },
+    "orientation": {
+      "brief": "The orientation of the progress bar",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#orientation-prop"
+    },
+    "text": {
+      "brief": "The descriptive text shown with the progress bar",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#text-prop"
+    },
+    "textDirection": {
+      "brief": "The reading direction of the text for vertical progress bars",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#textDirection-prop"
+    },
+    "textVisible": {
+      "brief": "Whether the current completed percentage should be displayed",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#textVisible-prop"
+    },
+    "value": {
+      "brief": "The progress bar's current value",
+      "url": "https://doc.qt.io/qt-6/qprogressbar.html#value-prop"
+    }
+  },
+  "qss": {
+    "box_model": true,
+    "pseudo_states": [
+      ":indeterminate"
+    ],
+    "sub_controls": [
+      "::chunk"
+    ],
+    "url": "https://doc.qt.io/qt-6/stylesheet-reference.html#qprogressbar-widget"
+  },
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

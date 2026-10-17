@@ -1,0 +1,120 @@
+{
+  "doc": {
+    "brief": "The QColorDialog class provides a dialog widget for specifying colors.",
+    "index_brief": "Dialog widget for specifying colors",
+    "url": "https://doc.qt.io/qt-6/qcolordialog.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QColorDialog",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QColor currentColor() const": {
+      "brief": "This property holds the currently selected color in the dialog",
+      "url": "https://doc.qt.io/qt-6/qcolordialog.html#currentColor-prop"
+    },
+    "QColor customColor(int index)": {
+      "brief": "Returns the custom color at the given *index* as a [QColor](xref:qt:QColor) value.",
+      "url": "https://doc.qt.io/qt-6/qcolordialog.html#customColor"
+    },
+    "QColor getColor(const QColor &initial, QWidget *parent, const QString &title, QColorDialog::ColorDialogOptions options)": {
+      "brief": "Pops up a modal color dialog with the given window *title* (or \"Select Color\" if none is specified), lets the user choose a color, and returns that color.",
+      "url": "https://doc.qt.io/qt-6/qcolordialog.html#getColor"
+    },
+    "QColor selectedColor() const": {
+      "brief": "Returns the color that the user selected by clicking the **OK** or equivalent button.",
+      "url": "https://doc.qt.io/qt-6/qcolordialog.html#selectedColor"
+    },
+    "QColor standardColor(int index)": {
+      "brief": "Returns the standard color at the given *index* as a [QColor](xref:qt:QColor) value.",
+      "url": "https://doc.qt.io/qt-6/qcolordialog.html#standardColor"
+    },
+    "QColorDialog(QWidget *parent)": {
+      "brief": "Constructs a color dialog with the given *parent*.",
+      "url": "https://doc.qt.io/qt-6/qcolordialog.html#QColorDialog"
+    },
+    "QColorDialog(const QColor &initial, QWidget *parent)": {
+      "brief": "Constructs a color dialog with the given *parent* and specified *initial* color.",
+      "url": "https://doc.qt.io/qt-6/qcolordialog.html#QColorDialog-1"
+    },
+    "QColorDialog::ColorDialogOptions options() const": {
+      "brief": "This property holds the various options that affect the look and feel of the dialog",
+      "url": "https://doc.qt.io/qt-6/qcolordialog.html#options-prop"
+    },
+    "bool testOption(QColorDialog::ColorDialogOption option) const": {
+      "brief": "Returns `true` if the given *option* is enabled; otherwise, returns false.",
+      "url": "https://doc.qt.io/qt-6/qcolordialog.html#testOption"
+    },
+    "int customCount()": {
+      "brief": "Returns the number of custom colors supported by [QColorDialog](xref:qt:QColorDialog).",
+      "url": "https://doc.qt.io/qt-6/qcolordialog.html#customCount"
+    },
+    "void changeEvent(QEvent *e) override": {
+      "brief": "Reimplements: [QWidget::changeEvent](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qcolordialog.html#changeEvent"
+    },
+    "void colorSelected(const QColor &color)": {
+      "brief": "This signal is emitted just after the user has clicked **OK** to select a color to use.",
+      "url": "https://doc.qt.io/qt-6/qcolordialog.html#colorSelected"
+    },
+    "void currentColorChanged(const QColor &color)": {
+      "brief": "This signal is emitted whenever the current color changes in the dialog.",
+      "url": "https://doc.qt.io/qt-6/qcolordialog.html#currentColorChanged"
+    },
+    "void done(int result) override": {
+      "brief": "Reimplements: [QDialog::done](xref:qt:QDialog)(int r).",
+      "url": "https://doc.qt.io/qt-6/qcolordialog.html#done"
+    },
+    "void open(QObject *receiver, const char *member)": {
+      "brief": "Opens the dialog and connects its [colorSelected](xref:qt:QColorDialog)() signal to the slot specified by *receiver* and *member*.",
+      "url": "https://doc.qt.io/qt-6/qcolordialog.html#open"
+    },
+    "void setCurrentColor(const QColor &color)": {
+      "brief": "This property holds the currently selected color in the dialog",
+      "url": "https://doc.qt.io/qt-6/qcolordialog.html#currentColor-prop"
+    },
+    "void setCustomColor(int index, QColor color)": {
+      "brief": "Sets the custom color at *index* to the [QColor](xref:qt:QColor) *color* value.",
+      "url": "https://doc.qt.io/qt-6/qcolordialog.html#setCustomColor"
+    },
+    "void setOption(QColorDialog::ColorDialogOption option, bool on)": {
+      "brief": "Sets the given *option* to be enabled if *on* is true; otherwise, clears the given *option*.",
+      "url": "https://doc.qt.io/qt-6/qcolordialog.html#setOption"
+    },
+    "void setOptions(QColorDialog::ColorDialogOptions options)": {
+      "brief": "This property holds the various options that affect the look and feel of the dialog",
+      "url": "https://doc.qt.io/qt-6/qcolordialog.html#options-prop"
+    },
+    "void setStandardColor(int index, QColor color)": {
+      "brief": "Sets the standard color at *index* to the [QColor](xref:qt:QColor) *color* value.",
+      "url": "https://doc.qt.io/qt-6/qcolordialog.html#setStandardColor"
+    },
+    "void setVisible(bool visible) override": {
+      "brief": "Reimplements: [QDialog::setVisible](xref:qt:QDialog)(bool visible).",
+      "url": "https://doc.qt.io/qt-6/qcolordialog.html#setVisible"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "currentColor": {
+      "brief": "The currently selected color in the dialog",
+      "url": "https://doc.qt.io/qt-6/qcolordialog.html#currentColor-prop"
+    },
+    "options": {
+      "brief": "The various options that affect the look and feel of the dialog",
+      "url": "https://doc.qt.io/qt-6/qcolordialog.html#options-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

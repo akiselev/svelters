@@ -1,0 +1,301 @@
+{
+  "doc": {
+    "brief": "The QLabel widget provides a text or image display.",
+    "index_brief": "Text or image display",
+    "url": "https://doc.qt.io/qt-6/qlabel.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QLabel",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QLabel(QWidget *parent, Qt::WindowFlags f)": {
+      "brief": "Constructs an empty label.",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#QLabel"
+    },
+    "QLabel(const QString &text, QWidget *parent, Qt::WindowFlags f)": {
+      "brief": "Constructs a label that displays the text, *text*.",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#QLabel-1"
+    },
+    "QMovie * movie() const": {
+      "brief": "Returns a pointer to the label's movie, or nullptr if no movie has been set.",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#movie"
+    },
+    "QPicture picture() const": {
+      "brief": "Returns the label's picture.",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#picture"
+    },
+    "QPicture picture(Qt::ReturnByValueConstant) const": {
+      "url": "https://doc.qt.io/qt-6/qlabel-obsolete.html#picture-1"
+    },
+    "QPixmap pixmap() const": {
+      "brief": "This property holds the label's pixmap.",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#pixmap-prop"
+    },
+    "QPixmap pixmap(Qt::ReturnByValueConstant) const": {
+      "url": "https://doc.qt.io/qt-6/qlabel-obsolete.html#pixmap"
+    },
+    "QSize minimumSizeHint() const override": {
+      "brief": "Reimplements an access function for property: [QWidget::minimumSizeHint](xref:qt:QWidget).",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#minimumSizeHint"
+    },
+    "QSize sizeHint() const override": {
+      "brief": "Reimplements: [QFrame::sizeHint](xref:qt:QFrame)() const.",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#sizeHint"
+    },
+    "QString selectedText() const": {
+      "brief": "This property holds the selected text",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#selectedText-prop"
+    },
+    "QString text() const": {
+      "brief": "This property holds the label's text",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#text-prop"
+    },
+    "QTextDocument::ResourceProvider resourceProvider() const": {
+      "brief": "Returns the resource provider for rich text of this label.",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#resourceProvider"
+    },
+    "QWidget * buddy() const": {
+      "brief": "Returns this label's buddy, or nullptr if no buddy is currently set.",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#buddy"
+    },
+    "Qt::Alignment alignment() const": {
+      "brief": "This property holds the alignment of the label's contents",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#alignment-prop"
+    },
+    "Qt::TextFormat textFormat() const": {
+      "brief": "This property holds the label's text format",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#textFormat-prop"
+    },
+    "Qt::TextInteractionFlags textInteractionFlags() const": {
+      "brief": "Specifies how the label should interact with user input if it displays text.",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#textInteractionFlags-prop"
+    },
+    "bool event(QEvent *e) override": {
+      "brief": "Reimplements: [QFrame::event](xref:qt:QFrame)(QEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#event"
+    },
+    "bool focusNextPrevChild(bool next) override": {
+      "brief": "Reimplements: [QWidget::focusNextPrevChild](xref:qt:QWidget)(bool next).",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#focusNextPrevChild"
+    },
+    "bool hasScaledContents() const": {
+      "brief": "This property holds whether the label will scale its contents to fill all available space.",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#scaledContents-prop"
+    },
+    "bool hasSelectedText() const": {
+      "brief": "This property holds whether there is any text selected",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#hasSelectedText-prop"
+    },
+    "bool openExternalLinks() const": {
+      "brief": "Specifies whether [QLabel](xref:qt:QLabel) should automatically open links using [QDesktopServices::openUrl](xref:qt:QDesktopServices)() instead of emitting the [linkActivated](xref:qt:QLabel)()...",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#openExternalLinks-prop"
+    },
+    "bool wordWrap() const": {
+      "brief": "This property holds the label's word-wrapping policy",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#wordWrap-prop"
+    },
+    "int heightForWidth(int w) const override": {
+      "brief": "Reimplements: [QWidget::heightForWidth](xref:qt:QWidget)(int w) const.",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#heightForWidth"
+    },
+    "int indent() const": {
+      "brief": "This property holds the label's text indent in pixels",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#indent-prop"
+    },
+    "int margin() const": {
+      "brief": "This property holds the width of the margin",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#margin-prop"
+    },
+    "int selectionStart() const": {
+      "brief": "selectionStart() returns the index of the first selected character in the label or -1 if no text is selected.",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#selectionStart"
+    },
+    "void changeEvent(QEvent *ev) override": {
+      "brief": "Reimplements: [QFrame::changeEvent](xref:qt:QFrame)(QEvent *ev).",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#changeEvent"
+    },
+    "void clear()": {
+      "brief": "Clears any label contents.",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#clear"
+    },
+    "void contextMenuEvent(QContextMenuEvent *ev) override": {
+      "brief": "Reimplements: [QWidget::contextMenuEvent](xref:qt:QWidget)(QContextMenuEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#contextMenuEvent"
+    },
+    "void focusInEvent(QFocusEvent *ev) override": {
+      "brief": "Reimplements: [QWidget::focusInEvent](xref:qt:QWidget)(QFocusEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#focusInEvent"
+    },
+    "void focusOutEvent(QFocusEvent *ev) override": {
+      "brief": "Reimplements: [QWidget::focusOutEvent](xref:qt:QWidget)(QFocusEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#focusOutEvent"
+    },
+    "void keyPressEvent(QKeyEvent *ev) override": {
+      "brief": "Reimplements: [QWidget::keyPressEvent](xref:qt:QWidget)(QKeyEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#keyPressEvent"
+    },
+    "void linkActivated(const QString &link)": {
+      "brief": "This signal is emitted when the user clicks a link.",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#linkActivated"
+    },
+    "void linkHovered(const QString &link)": {
+      "brief": "This signal is emitted when the user hovers over a link.",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#linkHovered"
+    },
+    "void mouseMoveEvent(QMouseEvent *ev) override": {
+      "brief": "Reimplements: [QWidget::mouseMoveEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#mouseMoveEvent"
+    },
+    "void mousePressEvent(QMouseEvent *ev) override": {
+      "brief": "Reimplements: [QWidget::mousePressEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#mousePressEvent"
+    },
+    "void mouseReleaseEvent(QMouseEvent *ev) override": {
+      "brief": "Reimplements: [QWidget::mouseReleaseEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#mouseReleaseEvent"
+    },
+    "void paintEvent(QPaintEvent *) override": {
+      "brief": "Reimplements: [QFrame::paintEvent](xref:qt:QFrame)(QPaintEvent *).",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#paintEvent"
+    },
+    "void setAlignment(Qt::Alignment)": {
+      "brief": "This property holds the alignment of the label's contents",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#alignment-prop"
+    },
+    "void setBuddy(QWidget *buddy)": {
+      "brief": "Sets this label's buddy to *buddy*.",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#setBuddy"
+    },
+    "void setIndent(int)": {
+      "brief": "This property holds the label's text indent in pixels",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#indent-prop"
+    },
+    "void setMargin(int)": {
+      "brief": "This property holds the width of the margin",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#margin-prop"
+    },
+    "void setMovie(QMovie *movie)": {
+      "brief": "Sets the label contents to *movie*.",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#setMovie"
+    },
+    "void setNum(double num)": {
+      "brief": "Sets the label contents to plain text containing the textual representation of double *num*.",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#setNum-1"
+    },
+    "void setNum(int num)": {
+      "brief": "Sets the label contents to plain text containing the textual representation of integer *num*.",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#setNum"
+    },
+    "void setOpenExternalLinks(bool open)": {
+      "brief": "Specifies whether [QLabel](xref:qt:QLabel) should automatically open links using [QDesktopServices::openUrl](xref:qt:QDesktopServices)() instead of emitting the [linkActivated](xref:qt:QLabel)()...",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#openExternalLinks-prop"
+    },
+    "void setPicture(const QPicture &picture)": {
+      "brief": "Sets the label contents to *picture*.",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#setPicture"
+    },
+    "void setPixmap(const QPixmap &)": {
+      "brief": "This property holds the label's pixmap.",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#pixmap-prop"
+    },
+    "void setResourceProvider(const QTextDocument::ResourceProvider &provider)": {
+      "brief": "Sets the *provider* of resources for rich text of this label.",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#setResourceProvider"
+    },
+    "void setScaledContents(bool)": {
+      "brief": "This property holds whether the label will scale its contents to fill all available space.",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#scaledContents-prop"
+    },
+    "void setSelection(int start, int length)": {
+      "brief": "Selects text from position *start* and for *length* characters.",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#setSelection"
+    },
+    "void setText(const QString &)": {
+      "brief": "This property holds the label's text",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#text-prop"
+    },
+    "void setTextFormat(Qt::TextFormat)": {
+      "brief": "This property holds the label's text format",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#textFormat-prop"
+    },
+    "void setTextInteractionFlags(Qt::TextInteractionFlags flags)": {
+      "brief": "Specifies how the label should interact with user input if it displays text.",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#textInteractionFlags-prop"
+    },
+    "void setWordWrap(bool on)": {
+      "brief": "This property holds the label's word-wrapping policy",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#wordWrap-prop"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "alignment": {
+      "brief": "The alignment of the label's contents",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#alignment-prop"
+    },
+    "hasSelectedText": {
+      "brief": "Whether there is any text selected",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#hasSelectedText-prop"
+    },
+    "indent": {
+      "brief": "The label's text indent in pixels",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#indent-prop"
+    },
+    "margin": {
+      "brief": "The width of the margin",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#margin-prop"
+    },
+    "openExternalLinks": {
+      "brief": "",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#openExternalLinks-prop"
+    },
+    "pixmap": {
+      "brief": "The label's pixmap",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#pixmap-prop"
+    },
+    "scaledContents": {
+      "brief": "Whether the label will scale its contents to fill all available space",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#scaledContents-prop"
+    },
+    "selectedText": {
+      "brief": "The selected text",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#selectedText-prop"
+    },
+    "text": {
+      "brief": "The label's text",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#text-prop"
+    },
+    "textFormat": {
+      "brief": "The label's text format",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#textFormat-prop"
+    },
+    "textInteractionFlags": {
+      "brief": "",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#textInteractionFlags-prop"
+    },
+    "wordWrap": {
+      "brief": "The label's word-wrapping policy",
+      "url": "https://doc.qt.io/qt-6/qlabel.html#wordWrap-prop"
+    }
+  },
+  "qss": {
+    "box_model": true,
+    "pseudo_states": [
+      ":hover"
+    ],
+    "sub_controls": [],
+    "url": "https://doc.qt.io/qt-6/stylesheet-reference.html#qlabel-widget"
+  },
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

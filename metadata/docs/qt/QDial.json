@@ -1,0 +1,116 @@
+{
+  "doc": {
+    "brief": "The QDial class provides a rounded range control (like a speedometer or potentiometer).",
+    "index_brief": "Rounded range control (like a speedometer or potentiometer)",
+    "url": "https://doc.qt.io/qt-6/qdial.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QDial",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QDial(QWidget *parent)": {
+      "brief": "Constructs a dial.",
+      "url": "https://doc.qt.io/qt-6/qdial.html#QDial"
+    },
+    "QSize minimumSizeHint() const override": {
+      "brief": "Reimplements an access function for property: [QWidget::minimumSizeHint](xref:qt:QWidget).",
+      "url": "https://doc.qt.io/qt-6/qdial.html#minimumSizeHint"
+    },
+    "QSize sizeHint() const override": {
+      "brief": "Reimplements an access function for property: [QWidget::sizeHint](xref:qt:QWidget).",
+      "url": "https://doc.qt.io/qt-6/qdial.html#sizeHint"
+    },
+    "bool event(QEvent *e) override": {
+      "brief": "Reimplements: [QAbstractSlider::event](xref:qt:QAbstractSlider)(QEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qdial.html#event"
+    },
+    "bool notchesVisible() const": {
+      "brief": "This property holds whether the notches are shown",
+      "url": "https://doc.qt.io/qt-6/qdial.html#notchesVisible-prop"
+    },
+    "bool wrapping() const": {
+      "brief": "This property holds whether wrapping is enabled",
+      "url": "https://doc.qt.io/qt-6/qdial.html#wrapping-prop"
+    },
+    "int notchSize() const": {
+      "brief": "This property holds the current notch size",
+      "url": "https://doc.qt.io/qt-6/qdial.html#notchSize-prop"
+    },
+    "qreal notchTarget() const": {
+      "brief": "This property holds the target number of pixels between notches",
+      "url": "https://doc.qt.io/qt-6/qdial.html#notchTarget-prop"
+    },
+    "void initStyleOption(QStyleOptionSlider *option) const": {
+      "brief": "Initialize *option* with the values from this [QDial](xref:qt:QDial).",
+      "url": "https://doc.qt.io/qt-6/qdial.html#initStyleOption"
+    },
+    "void mouseMoveEvent(QMouseEvent *e) override": {
+      "brief": "Reimplements: [QWidget::mouseMoveEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qdial.html#mouseMoveEvent"
+    },
+    "void mousePressEvent(QMouseEvent *e) override": {
+      "brief": "Reimplements: [QWidget::mousePressEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qdial.html#mousePressEvent"
+    },
+    "void mouseReleaseEvent(QMouseEvent *e) override": {
+      "brief": "Reimplements: [QWidget::mouseReleaseEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qdial.html#mouseReleaseEvent"
+    },
+    "void paintEvent(QPaintEvent *pe) override": {
+      "brief": "Reimplements: [QWidget::paintEvent](xref:qt:QWidget)(QPaintEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qdial.html#paintEvent"
+    },
+    "void resizeEvent(QResizeEvent *e) override": {
+      "brief": "Reimplements: [QWidget::resizeEvent](xref:qt:QWidget)(QResizeEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qdial.html#resizeEvent"
+    },
+    "void setNotchTarget(double target)": {
+      "brief": "This property holds the target number of pixels between notches",
+      "url": "https://doc.qt.io/qt-6/qdial.html#notchTarget-prop"
+    },
+    "void setNotchesVisible(bool visible)": {
+      "brief": "This property holds whether the notches are shown",
+      "url": "https://doc.qt.io/qt-6/qdial.html#notchesVisible-prop"
+    },
+    "void setWrapping(bool on)": {
+      "brief": "This property holds whether wrapping is enabled",
+      "url": "https://doc.qt.io/qt-6/qdial.html#wrapping-prop"
+    },
+    "void sliderChange(QAbstractSlider::SliderChange change) override": {
+      "brief": "Reimplements: [QAbstractSlider::sliderChange](xref:qt:QAbstractSlider)(QAbstractSlider::SliderChange change).",
+      "url": "https://doc.qt.io/qt-6/qdial.html#sliderChange"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "notchSize": {
+      "brief": "The current notch size",
+      "url": "https://doc.qt.io/qt-6/qdial.html#notchSize-prop"
+    },
+    "notchTarget": {
+      "brief": "The target number of pixels between notches",
+      "url": "https://doc.qt.io/qt-6/qdial.html#notchTarget-prop"
+    },
+    "notchesVisible": {
+      "brief": "Whether the notches are shown",
+      "url": "https://doc.qt.io/qt-6/qdial.html#notchesVisible-prop"
+    },
+    "wrapping": {
+      "brief": "Whether wrapping is enabled",
+      "url": "https://doc.qt.io/qt-6/qdial.html#wrapping-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

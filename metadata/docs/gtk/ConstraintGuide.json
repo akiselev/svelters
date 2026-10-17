@@ -1,0 +1,141 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkConstraintGuide` object.",
+      "file": "gtk/gtkconstraintguide.c",
+      "line": 438,
+      "md": "Creates a new `GtkConstraintGuide` object."
+    }
+  },
+  "doc": {
+    "brief": "An invisible layout element in a `GtkConstraintLayout`.",
+    "file": "gtk/gtkconstraintguide.c",
+    "line": 20,
+    "md": "An invisible layout element in a `GtkConstraintLayout`.\n\nThe `GtkConstraintLayout` treats guides like widgets. They\ncan be used as the source or target of a `GtkConstraint`.\n\nGuides have a minimum, maximum and natural size. Depending\non the constraints that are applied, they can act like a\nguideline that widgets can be aligned to, or like *flexible\nspace*.\n\nUnlike a `GtkWidget`, a `GtkConstraintGuide` will not be drawn."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ConstraintGuide",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_max_size": {
+      "brief": "Gets the maximum size of `guide`.",
+      "file": "gtk/gtkconstraintguide.c",
+      "line": 586,
+      "md": "Gets the maximum size of `guide`."
+    },
+    "get_min_size": {
+      "brief": "Gets the minimum size of `guide`.",
+      "file": "gtk/gtkconstraintguide.c",
+      "line": 482,
+      "md": "Gets the minimum size of `guide`."
+    },
+    "get_name": {
+      "brief": "Retrieves the name set using gtk_constraint_guide_set_name().",
+      "file": "gtk/gtkconstraintguide.c",
+      "line": 607,
+      "md": "Retrieves the name set using gtk_constraint_guide_set_name()."
+    },
+    "get_nat_size": {
+      "brief": "Gets the natural size of `guide`.",
+      "file": "gtk/gtkconstraintguide.c",
+      "line": 534,
+      "md": "Gets the natural size of `guide`."
+    },
+    "get_strength": {
+      "brief": "Retrieves the strength set using gtk_constraint_guide_set_strength().",
+      "file": "gtk/gtkconstraintguide.c",
+      "line": 643,
+      "md": "Retrieves the strength set using gtk_constraint_guide_set_strength()."
+    },
+    "set_max_size": {
+      "brief": "Sets the maximum size of `guide`.",
+      "file": "gtk/gtkconstraintguide.c",
+      "line": 555,
+      "md": "Sets the maximum size of `guide`.\n\nIf `guide` is attached to a `GtkConstraintLayout`,\nthe constraints will be updated to reflect the new size."
+    },
+    "set_min_size": {
+      "brief": "Sets the minimum size of `guide`.",
+      "file": "gtk/gtkconstraintguide.c",
+      "line": 451,
+      "md": "Sets the minimum size of `guide`.\n\nIf `guide` is attached to a `GtkConstraintLayout`,\nthe constraints will be updated to reflect the new size."
+    },
+    "set_name": {
+      "brief": "Sets a name for the given `GtkConstraintGuide`.",
+      "file": "gtk/gtkconstraintguide.c",
+      "line": 623,
+      "md": "Sets a name for the given `GtkConstraintGuide`.\n\nThe name is useful for debugging purposes."
+    },
+    "set_nat_size": {
+      "brief": "Sets the natural size of `guide`.",
+      "file": "gtk/gtkconstraintguide.c",
+      "line": 503,
+      "md": "Sets the natural size of `guide`.\n\nIf `guide` is attached to a `GtkConstraintLayout`,\nthe constraints will be updated to reflect the new size."
+    },
+    "set_strength": {
+      "brief": "Sets the strength of the constraint on the natural size of the given `GtkConstraintGuide`.",
+      "file": "gtk/gtkconstraintguide.c",
+      "line": 660,
+      "md": "Sets the strength of the constraint on the natural size of the\ngiven `GtkConstraintGuide`."
+    }
+  },
+  "properties": {
+    "max-height": {
+      "brief": "The maximum height of the guide.",
+      "file": "gtk/gtkconstraintguide.c",
+      "line": 401,
+      "md": "The maximum height of the guide."
+    },
+    "max-width": {
+      "brief": "The maximum width of the guide.",
+      "file": "gtk/gtkconstraintguide.c",
+      "line": 390,
+      "md": "The maximum width of the guide."
+    },
+    "min-height": {
+      "brief": "The minimum height of the guide.",
+      "file": "gtk/gtkconstraintguide.c",
+      "line": 357,
+      "md": "The minimum height of the guide."
+    },
+    "min-width": {
+      "brief": "The minimum width of the guide.",
+      "file": "gtk/gtkconstraintguide.c",
+      "line": 346,
+      "md": "The minimum width of the guide."
+    },
+    "name": {
+      "brief": "A name that identifies the `GtkConstraintGuide`, for debugging.",
+      "file": "gtk/gtkconstraintguide.c",
+      "line": 425,
+      "md": "A name that identifies the `GtkConstraintGuide`, for debugging."
+    },
+    "nat-height": {
+      "brief": "The preferred, or natural, height of the guide.",
+      "file": "gtk/gtkconstraintguide.c",
+      "line": 379,
+      "md": "The preferred, or natural, height of the guide."
+    },
+    "nat-width": {
+      "brief": "The preferred, or natural, width of the guide.",
+      "file": "gtk/gtkconstraintguide.c",
+      "line": 368,
+      "md": "The preferred, or natural, width of the guide."
+    },
+    "strength": {
+      "brief": "The `GtkConstraintStrength` to be used for the constraint on the natural size of the guide.",
+      "file": "gtk/gtkconstraintguide.c",
+      "line": 412,
+      "md": "The `GtkConstraintStrength` to be used for the constraint on\nthe natural size of the guide."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

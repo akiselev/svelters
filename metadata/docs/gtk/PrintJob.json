@@ -1,0 +1,250 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkPrintJob`.",
+      "file": "gtk/print/gtkprintjob.c",
+      "line": 299,
+      "md": "Creates a new `GtkPrintJob`."
+    }
+  },
+  "doc": {
+    "brief": "Represents a job that is sent to a printer.",
+    "file": "gtk/print/gtkprintjob.c",
+    "line": 18,
+    "md": "Represents a job that is sent to a printer.\n\nYou only need to deal directly with print jobs if you use the\nnon-portable [`PrintUnixDialog`](xref:gtk:Gtk.PrintUnixDialog) API.\n\nUse [`PrintJob.get_surface()`](xref:gtk:Gtk.PrintJob#method:get_surface) to obtain the cairo surface\nonto which the pages must be drawn. Use [`PrintJob.send()`](xref:gtk:Gtk.PrintJob#method:send)\nto send the finished job to the printer. If you don’t use cairo\n`GtkPrintJob` also supports printing of manually generated PostScript,\nvia [`PrintJob.set_source_file()`](xref:gtk:Gtk.PrintJob#method:set_source_file)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:PrintJob",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_collate": {
+      "brief": "Gets whether this job is printed collated.",
+      "file": "gtk/print/gtkprintjob.c",
+      "line": 945,
+      "md": "Gets whether this job is printed collated."
+    },
+    "get_n_up": {
+      "brief": "Gets the n-up setting for this job.",
+      "file": "gtk/print/gtkprintjob.c",
+      "line": 861,
+      "md": "Gets the n-up setting for this job."
+    },
+    "get_n_up_layout": {
+      "brief": "Gets the n-up layout setting for this job.",
+      "file": "gtk/print/gtkprintjob.c",
+      "line": 889,
+      "md": "Gets the n-up layout setting for this job."
+    },
+    "get_num_copies": {
+      "brief": "Gets the number of copies of this job.",
+      "file": "gtk/print/gtkprintjob.c",
+      "line": 802,
+      "md": "Gets the number of copies of this job."
+    },
+    "get_page_ranges": {
+      "brief": "Gets the page ranges for this job.",
+      "file": "gtk/print/gtkprintjob.c",
+      "line": 737,
+      "md": "Gets the page ranges for this job."
+    },
+    "get_page_set": {
+      "brief": "Gets the `GtkPageSet` setting for this job.",
+      "file": "gtk/print/gtkprintjob.c",
+      "line": 774,
+      "md": "Gets the `GtkPageSet` setting for this job."
+    },
+    "get_pages": {
+      "brief": "Gets the `GtkPrintPages` setting for this job.",
+      "file": "gtk/print/gtkprintjob.c",
+      "line": 709,
+      "md": "Gets the `GtkPrintPages` setting for this job."
+    },
+    "get_printer": {
+      "brief": "Gets the `GtkPrinter` of the print job.",
+      "file": "gtk/print/gtkprintjob.c",
+      "line": 342,
+      "md": "Gets the `GtkPrinter` of the print job."
+    },
+    "get_reverse": {
+      "brief": "Gets whether this job is printed reversed.",
+      "file": "gtk/print/gtkprintjob.c",
+      "line": 973,
+      "md": "Gets whether this job is printed reversed."
+    },
+    "get_rotate": {
+      "brief": "Gets whether the job is printed rotated.",
+      "file": "gtk/print/gtkprintjob.c",
+      "line": 917,
+      "md": "Gets whether the job is printed rotated."
+    },
+    "get_scale": {
+      "brief": "Gets the scale for this job.",
+      "file": "gtk/print/gtkprintjob.c",
+      "line": 830,
+      "md": "Gets the scale for this job."
+    },
+    "get_settings": {
+      "brief": "Gets the `GtkPrintSettings` of the print job.",
+      "file": "gtk/print/gtkprintjob.c",
+      "line": 326,
+      "md": "Gets the `GtkPrintSettings` of the print job."
+    },
+    "get_status": {
+      "brief": "Gets the status of the print job.",
+      "file": "gtk/print/gtkprintjob.c",
+      "line": 374,
+      "md": "Gets the status of the print job."
+    },
+    "get_surface": {
+      "brief": "Gets a cairo surface onto which the pages of the print job should be rendered.",
+      "file": "gtk/print/gtkprintjob.c",
+      "line": 485,
+      "md": "Gets a cairo surface onto which the pages of\nthe print job should be rendered."
+    },
+    "get_title": {
+      "brief": "Gets the job title.",
+      "file": "gtk/print/gtkprintjob.c",
+      "line": 358,
+      "md": "Gets the job title."
+    },
+    "get_track_print_status": {
+      "brief": "Returns whether jobs will be tracked after printing.",
+      "file": "gtk/print/gtkprintjob.c",
+      "line": 585,
+      "md": "Returns whether jobs will be tracked after printing.\n\nFor details, see [`PrintJob.set_track_print_status()`](xref:gtk:Gtk.PrintJob#method:set_track_print_status)."
+    },
+    "send": {
+      "brief": "Sends the print job off to the printer.",
+      "file": "gtk/print/gtkprintjob.c",
+      "line": 680,
+      "md": "Sends the print job off to the printer."
+    },
+    "set_collate": {
+      "brief": "Sets whether this job is printed collated.",
+      "file": "gtk/print/gtkprintjob.c",
+      "line": 959,
+      "md": "Sets whether this job is printed collated."
+    },
+    "set_n_up": {
+      "brief": "Sets the n-up setting for this job.",
+      "file": "gtk/print/gtkprintjob.c",
+      "line": 875,
+      "md": "Sets the n-up setting for this job."
+    },
+    "set_n_up_layout": {
+      "brief": "Sets the n-up layout setting for this job.",
+      "file": "gtk/print/gtkprintjob.c",
+      "line": 903,
+      "md": "Sets the n-up layout setting for this job."
+    },
+    "set_num_copies": {
+      "brief": "Sets the number of copies for this job.",
+      "file": "gtk/print/gtkprintjob.c",
+      "line": 816,
+      "md": "Sets the number of copies for this job."
+    },
+    "set_page_ranges": {
+      "brief": "Sets the page ranges for this job.",
+      "file": "gtk/print/gtkprintjob.c",
+      "line": 755,
+      "md": "Sets the page ranges for this job."
+    },
+    "set_page_set": {
+      "brief": "Sets the `GtkPageSet` setting for this job.",
+      "file": "gtk/print/gtkprintjob.c",
+      "line": 788,
+      "md": "Sets the `GtkPageSet` setting for this job."
+    },
+    "set_pages": {
+      "brief": "Sets the `GtkPrintPages` setting for this job.",
+      "file": "gtk/print/gtkprintjob.c",
+      "line": 723,
+      "md": "Sets the `GtkPrintPages` setting for this job."
+    },
+    "set_reverse": {
+      "brief": "Sets whether this job is printed reversed.",
+      "file": "gtk/print/gtkprintjob.c",
+      "line": 987,
+      "md": "Sets whether this job is printed reversed."
+    },
+    "set_rotate": {
+      "brief": "Sets whether this job is printed rotated.",
+      "file": "gtk/print/gtkprintjob.c",
+      "line": 931,
+      "md": "Sets whether this job is printed rotated."
+    },
+    "set_scale": {
+      "brief": "Sets the scale for this job.",
+      "file": "gtk/print/gtkprintjob.c",
+      "line": 845,
+      "md": "Sets the scale for this job.\n\n1.0 means unscaled."
+    },
+    "set_source_fd": {
+      "brief": "Make the `GtkPrintJob` send an existing document to the printing system.",
+      "file": "gtk/print/gtkprintjob.c",
+      "line": 447,
+      "md": "Make the `GtkPrintJob` send an existing document to the\nprinting system.\n\nThe file can be in any format understood by the platforms\nprinting system (typically PostScript, but on many platforms\nPDF may work too). See [`Printer.accepts_pdf()`](xref:gtk:Gtk.Printer#method:accepts_pdf) and\n[`Printer.accepts_ps()`](xref:gtk:Gtk.Printer#method:accepts_ps).\n\nThis is similar to [`PrintJob.set_source_file()`](xref:gtk:Gtk.PrintJob#method:set_source_file),\nbut takes expects an open file descriptor for the file,\ninstead of a filename."
+    },
+    "set_source_file": {
+      "brief": "Make the `GtkPrintJob` send an existing document to the printing system.",
+      "file": "gtk/print/gtkprintjob.c",
+      "line": 403,
+      "md": "Make the `GtkPrintJob` send an existing document to the\nprinting system.\n\nThe file can be in any format understood by the platforms\nprinting system (typically PostScript, but on many platforms\nPDF may work too). See [`Printer.accepts_pdf()`](xref:gtk:Gtk.Printer#method:accepts_pdf) and\n[`Printer.accepts_ps()`](xref:gtk:Gtk.Printer#method:accepts_ps)."
+    },
+    "set_track_print_status": {
+      "brief": "If track_status is `TRUE`, the print job will try to continue report on the status of the print job in the printer queues and printer.",
+      "file": "gtk/print/gtkprintjob.c",
+      "line": 555,
+      "md": "If track_status is `TRUE`, the print job will try to continue report\non the status of the print job in the printer queues and printer.\n\nThis can allow your application to show things like “out of paper”\nissues, and when the print job actually reaches the printer.\n\nThis function is often implemented using some form of polling,\nso it should not be enabled unless needed."
+    }
+  },
+  "properties": {
+    "page-setup": {
+      "brief": "Page setup.",
+      "file": "gtk/print/gtkprintjob.c",
+      "line": 173,
+      "md": "Page setup."
+    },
+    "printer": {
+      "brief": "The printer to send the job to.",
+      "file": "gtk/print/gtkprintjob.c",
+      "line": 149,
+      "md": "The printer to send the job to."
+    },
+    "settings": {
+      "brief": "Printer settings.",
+      "file": "gtk/print/gtkprintjob.c",
+      "line": 161,
+      "md": "Printer settings."
+    },
+    "title": {
+      "brief": "The title of the print job.",
+      "file": "gtk/print/gtkprintjob.c",
+      "line": 137,
+      "md": "The title of the print job."
+    },
+    "track-print-status": {
+      "brief": "`TRUE` if the print job will continue to emit status-changed signals after the print data has been setn to the printer.",
+      "file": "gtk/print/gtkprintjob.c",
+      "line": 185,
+      "md": "`TRUE` if the print job will continue to emit status-changed\nsignals after the print data has been setn to the printer."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "status-changed": {
+      "brief": "Emitted when the status of a job changes.",
+      "file": "gtk/print/gtkprintjob.c",
+      "line": 197,
+      "md": "Emitted when the status of a job changes.\n\nThe signal handler can use [`PrintJob.get_status()`](xref:gtk:Gtk.PrintJob#method:get_status)\nto obtain the new status."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

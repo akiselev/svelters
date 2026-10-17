@@ -1,0 +1,49 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "An opaque structure representing a watched `GtkExpression`.",
+    "file": "gtk/gtkexpression.c",
+    "line": 312,
+    "md": "An opaque structure representing a watched `GtkExpression`.\n\nThe contents of `GtkExpressionWatch` should only be accessed through the\nprovided API."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ExpressionWatch",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "evaluate": {
+      "brief": "Evaluates the watched expression and on success stores the result in `value`.",
+      "file": "gtk/gtkexpression.c",
+      "line": 2362,
+      "md": "Evaluates the watched expression and on success stores the result\nin `value`.\n\nThis is equivalent to calling [`Expression.evaluate()`](xref:gtk:Gtk.Expression#method:evaluate) with the\nexpression and this pointer originally used to create `watch`."
+    },
+    "ref": {
+      "brief": "Acquires a reference on the given `GtkExpressionWatch`.",
+      "file": "gtk/gtkexpression.c",
+      "line": 2283,
+      "md": "Acquires a reference on the given `GtkExpressionWatch`."
+    },
+    "unref": {
+      "brief": "Releases a reference on the given `GtkExpressionWatch`.",
+      "file": "gtk/gtkexpression.c",
+      "line": 2309,
+      "md": "Releases a reference on the given `GtkExpressionWatch`.\n\nIf the reference was the last, the resources associated to `self` are\nfreed."
+    },
+    "unwatch": {
+      "brief": "Stops watching an expression.",
+      "file": "gtk/gtkexpression.c",
+      "line": 2324,
+      "md": "Stops watching an expression.\n\nSee [`Expression.watch()`](xref:gtk:Gtk.Expression#method:watch) for how the watch\nwas established."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

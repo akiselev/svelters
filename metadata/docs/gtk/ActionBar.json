@@ -1,0 +1,81 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new action bar widget.",
+      "file": "gtk/gtkactionbar.c",
+      "line": 328,
+      "md": "Creates a new action bar widget."
+    }
+  },
+  "doc": {
+    "brief": "Presents contextual actions.",
+    "file": "gtk/gtkactionbar.c",
+    "line": 34,
+    "md": "Presents contextual actions.\n\n`GtkActionBar` is expected to be displayed below the content and expand\nhorizontally to fill the area.\n\nIt allows placing children at the start or the end. In addition, it\ncontains an internal centered box which is centered with respect to\nthe full width of the box, even if the children at either side take\nup different amounts of space.\n\n# GtkActionBar as GtkBuildable\n\nThe `GtkActionBar` implementation of the `GtkBuildable` interface supports\nadding children at the start or end sides by specifying “start” or “end” as\nthe “type” attribute of a `<child>` element, or setting the center widget\nby specifying “center” value.\n\n# CSS nodes\n\n```\nactionbar\n╰── revealer\n    ╰── box\n        ├── box.start\n        │   ╰── [start children]\n        ├── [center widget]\n        ╰── box.end\n            ╰── [end children]\n```\n\nA `GtkActionBar`'s CSS node is called `actionbar`. It contains a `revealer`\nsubnode, which contains a `box` subnode, which contains two `box` subnodes at\nthe start and end of the action bar, with `start` and `end` style classes\nrespectively, as well as a center node that represents the center child.\n\nEach of the boxes contains children packed for that side."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ActionBar",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_center_widget": {
+      "brief": "Retrieves the center bar widget of the bar.",
+      "file": "gtk/gtkactionbar.c",
+      "line": 312,
+      "md": "Retrieves the center bar widget of the bar."
+    },
+    "get_revealed": {
+      "brief": "Gets whether the contents of the action bar are revealed.",
+      "file": "gtk/gtkactionbar.c",
+      "line": 365,
+      "md": "Gets whether the contents of the action bar are revealed."
+    },
+    "pack_end": {
+      "brief": "Adds a child to the action bar, packed with reference to the end of the action bar.",
+      "file": "gtk/gtkactionbar.c",
+      "line": 261,
+      "md": "Adds a child to the action bar, packed with reference to the\nend of the action bar."
+    },
+    "pack_start": {
+      "brief": "Adds a child to the action, packed with reference to the start of the action bar.",
+      "file": "gtk/gtkactionbar.c",
+      "line": 246,
+      "md": "Adds a child to the action, packed with reference to the\nstart of the action bar."
+    },
+    "remove": {
+      "brief": "Removes a child from the action bar.",
+      "file": "gtk/gtkactionbar.c",
+      "line": 276,
+      "md": "Removes a child from the action bar."
+    },
+    "set_center_widget": {
+      "brief": "Sets the center widget for the action bar.",
+      "file": "gtk/gtkactionbar.c",
+      "line": 298,
+      "md": "Sets the center widget for the action bar."
+    },
+    "set_revealed": {
+      "brief": "Reveals or conceals the content of the action bar.",
+      "file": "gtk/gtkactionbar.c",
+      "line": 341,
+      "md": "Reveals or conceals the content of the action bar.\n\nNote: this does not show or hide the action bar in the\n[`Widget:visible`](xref:gtk:Gtk.Widget#property:visible) sense, so revealing has\nno effect if the action bar is hidden."
+    }
+  },
+  "properties": {
+    "revealed": {
+      "brief": "Controls whether the action bar shows its contents.",
+      "file": "gtk/gtkactionbar.c",
+      "line": 177,
+      "md": "Controls whether the action bar shows its contents."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

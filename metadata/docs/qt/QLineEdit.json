@@ -1,0 +1,493 @@
+{
+  "doc": {
+    "brief": "The QLineEdit widget is a one-line text editor.",
+    "index_brief": "One-line text editor",
+    "url": "https://doc.qt.io/qt-6/qlineedit.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QLineEdit",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QAction * addAction(const QIcon &icon, QLineEdit::ActionPosition position)": {
+      "brief": "Creates a new action with the given *icon* at the *position*.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#addAction-1"
+    },
+    "QCompleter * completer() const": {
+      "brief": "Returns the current [QCompleter](xref:qt:QCompleter) that provides completions.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#completer"
+    },
+    "QLineEdit(QWidget *parent)": {
+      "brief": "Constructs a line edit with no text.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#QLineEdit"
+    },
+    "QLineEdit(const QString &contents, QWidget *parent)": {
+      "brief": "Constructs a line edit containing the text *contents* as a child of *parent*.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#QLineEdit-1"
+    },
+    "QLineEdit::EchoMode echoMode() const": {
+      "brief": "This property holds the line edit's echo mode.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#echoMode-prop"
+    },
+    "QMargins textMargins() const": {
+      "brief": "Returns the widget's text margins.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#textMargins"
+    },
+    "QMenu * createStandardContextMenu()": {
+      "brief": "Creates the standard context menu, which is shown when the user clicks on the line edit with the right mouse button.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#createStandardContextMenu"
+    },
+    "QRect cursorRect() const": {
+      "brief": "Returns a rectangle that includes the line edit cursor.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#cursorRect"
+    },
+    "QSize minimumSizeHint() const override": {
+      "brief": "Reimplements an access function for property: [QWidget::minimumSizeHint](xref:qt:QWidget).",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#minimumSizeHint"
+    },
+    "QSize sizeHint() const override": {
+      "brief": "Reimplements an access function for property: [QWidget::sizeHint](xref:qt:QWidget).",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#sizeHint"
+    },
+    "QString displayText() const": {
+      "brief": "This property holds the displayed text.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#displayText-prop"
+    },
+    "QString inputMask() const": {
+      "brief": "This property holds the validation input mask.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#inputMask-prop"
+    },
+    "QString placeholderText() const": {
+      "brief": "This property holds the line edit's placeholder text.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#placeholderText-prop"
+    },
+    "QString selectedText() const": {
+      "brief": "This property holds the selected text.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#selectedText-prop"
+    },
+    "QString text() const": {
+      "brief": "This property holds the line edit's text.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#text-prop"
+    },
+    "QVariant inputMethodQuery(Qt::InputMethodQuery property) const override": {
+      "brief": "Reimplements: [QWidget::inputMethodQuery](xref:qt:QWidget)(Qt::InputMethodQuery query) const.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#inputMethodQuery"
+    },
+    "Qt::Alignment alignment() const": {
+      "brief": "This property holds the alignment of the line edit.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#alignment-prop"
+    },
+    "Qt::CursorMoveStyle cursorMoveStyle() const": {
+      "brief": "This property holds the movement style of the cursor in this line edit.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#cursorMoveStyle-prop"
+    },
+    "bool dragEnabled() const": {
+      "brief": "This property holds whether the line edit starts a drag if the user presses and moves the mouse on some selected text.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#dragEnabled-prop"
+    },
+    "bool event(QEvent *e) override": {
+      "brief": "Reimplements: [QWidget::event](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#event"
+    },
+    "bool hasAcceptableInput() const": {
+      "brief": "This property holds whether the input satisfies the [inputMask](xref:qt:QLineEdit) and the validator.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#acceptableInput-prop"
+    },
+    "bool hasFrame() const": {
+      "brief": "This property holds whether the line edit draws itself with a frame.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#frame-prop"
+    },
+    "bool hasSelectedText() const": {
+      "brief": "This property holds whether there is any text selected.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#hasSelectedText-prop"
+    },
+    "bool isClearButtonEnabled() const": {
+      "brief": "This property holds whether the line edit displays a clear button when it is not empty.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#clearButtonEnabled-prop"
+    },
+    "bool isModified() const": {
+      "brief": "This property holds whether the line edit's contents has been modified by the user.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#modified-prop"
+    },
+    "bool isReadOnly() const": {
+      "brief": "This property holds whether the line edit is read-only.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#readOnly-prop"
+    },
+    "bool isRedoAvailable() const": {
+      "brief": "This property holds whether redo is available.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#redoAvailable-prop"
+    },
+    "bool isUndoAvailable() const": {
+      "brief": "This property holds whether undo is available.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#undoAvailable-prop"
+    },
+    "const QValidator * validator() const": {
+      "brief": "Returns a pointer to the current input validator, or `nullptr` if no validator has been set.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#validator"
+    },
+    "int cursorPosition() const": {
+      "brief": "This property holds the current cursor position for this line edit.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#cursorPosition-prop"
+    },
+    "int cursorPositionAt(const QPoint &pos)": {
+      "brief": "Returns the cursor position under the point *pos*.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#cursorPositionAt"
+    },
+    "int maxLength() const": {
+      "brief": "This property holds the maximum permitted length of the text.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#maxLength-prop"
+    },
+    "int selectionEnd() const": {
+      "brief": "Returns the index of the character directly after the selection in the line edit (or -1 if no text is selected).",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#selectionEnd"
+    },
+    "int selectionLength() const": {
+      "brief": "Returns the length of the selection.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#selectionLength"
+    },
+    "int selectionStart() const": {
+      "brief": "Returns the index of the first selected character in the line edit (or -1 if no text is selected).",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#selectionStart"
+    },
+    "void addAction(QAction *action, QLineEdit::ActionPosition position)": {
+      "brief": "Adds the *action* to the list of actions at the *position*.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#addAction"
+    },
+    "void backspace()": {
+      "brief": "If no text is selected, deletes the character to the left of the text cursor, and moves the cursor one position to the left.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#backspace"
+    },
+    "void changeEvent(QEvent *ev) override": {
+      "brief": "Reimplements: [QWidget::changeEvent](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#changeEvent"
+    },
+    "void clear()": {
+      "brief": "Clears the contents of the line edit.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#clear"
+    },
+    "void contextMenuEvent(QContextMenuEvent *event) override": {
+      "brief": "Reimplements: [QWidget::contextMenuEvent](xref:qt:QWidget)(QContextMenuEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#contextMenuEvent"
+    },
+    "void copy() const": {
+      "brief": "Copies the selected text to the clipboard, if there is any, and if [echoMode](xref:qt:QLineEdit)() is [Normal](xref:qt:QLineEdit).",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#copy"
+    },
+    "void cursorBackward(bool mark, int steps)": {
+      "brief": "Moves the cursor back *steps* characters.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#cursorBackward"
+    },
+    "void cursorForward(bool mark, int steps)": {
+      "brief": "Moves the cursor forward *steps* characters.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#cursorForward"
+    },
+    "void cursorPositionChanged(int oldPos, int newPos)": {
+      "brief": "This signal is emitted whenever the cursor moves.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#cursorPositionChanged"
+    },
+    "void cursorWordBackward(bool mark)": {
+      "brief": "Moves the cursor one word backward.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#cursorWordBackward"
+    },
+    "void cursorWordForward(bool mark)": {
+      "brief": "Moves the cursor one word forward.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#cursorWordForward"
+    },
+    "void cut()": {
+      "brief": "Copies the selected text to the clipboard and deletes it, if there is any, and if [echoMode](xref:qt:QLineEdit)() is [Normal](xref:qt:QLineEdit).",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#cut"
+    },
+    "void del()": {
+      "brief": "If no text is selected, deletes the character to the right of the text cursor.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#del"
+    },
+    "void deselect()": {
+      "brief": "Deselects any selected text.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#deselect"
+    },
+    "void dragEnterEvent(QDragEnterEvent *e) override": {
+      "brief": "Reimplements: [QWidget::dragEnterEvent](xref:qt:QWidget)(QDragEnterEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#dragEnterEvent"
+    },
+    "void dragLeaveEvent(QDragLeaveEvent *e) override": {
+      "brief": "Reimplements: [QWidget::dragLeaveEvent](xref:qt:QWidget)(QDragLeaveEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#dragLeaveEvent"
+    },
+    "void dragMoveEvent(QDragMoveEvent *e) override": {
+      "brief": "Reimplements: [QWidget::dragMoveEvent](xref:qt:QWidget)(QDragMoveEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#dragMoveEvent"
+    },
+    "void dropEvent(QDropEvent *e) override": {
+      "brief": "Reimplements: [QWidget::dropEvent](xref:qt:QWidget)(QDropEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#dropEvent"
+    },
+    "void editingFinished()": {
+      "brief": "This signal is emitted when the Return or Enter key is used, or if the line edit loses focus and its contents have changed since the last time this signal was emitted.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#editingFinished"
+    },
+    "void end(bool mark)": {
+      "brief": "Moves the text cursor to the end of the line unless it is already there.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#end"
+    },
+    "void focusInEvent(QFocusEvent *e) override": {
+      "brief": "Reimplements: [QWidget::focusInEvent](xref:qt:QWidget)(QFocusEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#focusInEvent"
+    },
+    "void focusOutEvent(QFocusEvent *e) override": {
+      "brief": "Reimplements: [QWidget::focusOutEvent](xref:qt:QWidget)(QFocusEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#focusOutEvent"
+    },
+    "void home(bool mark)": {
+      "brief": "Moves the text cursor to the beginning of the line unless it is already there.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#home"
+    },
+    "void initStyleOption(QStyleOptionFrame *option) const": {
+      "brief": "Initialize *option* with the values from this [QLineEdit](xref:qt:QLineEdit).",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#initStyleOption"
+    },
+    "void inputMethodEvent(QInputMethodEvent *e) override": {
+      "brief": "Reimplements: [QWidget::inputMethodEvent](xref:qt:QWidget)(QInputMethodEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#inputMethodEvent"
+    },
+    "void inputRejected()": {
+      "brief": "This signal is emitted when the user uses a key that is not considered to be valid input.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#inputRejected"
+    },
+    "void insert(const QString &newText)": {
+      "brief": "Deletes any selected text, inserts *newText*, and validates the result.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#insert"
+    },
+    "void keyPressEvent(QKeyEvent *event) override": {
+      "brief": "Reimplements: [QWidget::keyPressEvent](xref:qt:QWidget)(QKeyEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#keyPressEvent"
+    },
+    "void keyReleaseEvent(QKeyEvent *e) override": {
+      "brief": "Reimplements: [QWidget::keyReleaseEvent](xref:qt:QWidget)(QKeyEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#keyReleaseEvent"
+    },
+    "void mouseDoubleClickEvent(QMouseEvent *e) override": {
+      "brief": "Reimplements: [QWidget::mouseDoubleClickEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#mouseDoubleClickEvent"
+    },
+    "void mouseMoveEvent(QMouseEvent *e) override": {
+      "brief": "Reimplements: [QWidget::mouseMoveEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#mouseMoveEvent"
+    },
+    "void mousePressEvent(QMouseEvent *e) override": {
+      "brief": "Reimplements: [QWidget::mousePressEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#mousePressEvent"
+    },
+    "void mouseReleaseEvent(QMouseEvent *e) override": {
+      "brief": "Reimplements: [QWidget::mouseReleaseEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#mouseReleaseEvent"
+    },
+    "void paintEvent(QPaintEvent *) override": {
+      "brief": "Reimplements: [QWidget::paintEvent](xref:qt:QWidget)(QPaintEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#paintEvent"
+    },
+    "void paste()": {
+      "brief": "Inserts the clipboard's text at the cursor position, deleting any selected text, providing the line edit is not [read-only](xref:qt:QLineEdit).",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#paste"
+    },
+    "void redo()": {
+      "brief": "Redoes the last operation if redo is [available](xref:qt:QLineEdit).",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#redo"
+    },
+    "void returnPressed()": {
+      "brief": "This signal is emitted when the Return or Enter key is used.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#returnPressed"
+    },
+    "void selectAll()": {
+      "brief": "Selects all the text (highlights it) and moves the cursor to the end.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#selectAll"
+    },
+    "void selectionChanged()": {
+      "brief": "This signal is emitted whenever the selection changes.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#selectionChanged"
+    },
+    "void setAlignment(Qt::Alignment flag)": {
+      "brief": "This property holds the alignment of the line edit.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#alignment-prop"
+    },
+    "void setClearButtonEnabled(bool enable)": {
+      "brief": "This property holds whether the line edit displays a clear button when it is not empty.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#clearButtonEnabled-prop"
+    },
+    "void setCompleter(QCompleter *c)": {
+      "brief": "Sets this line edit to provide auto completions from the completer, *c*.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#setCompleter"
+    },
+    "void setCursorMoveStyle(Qt::CursorMoveStyle style)": {
+      "brief": "This property holds the movement style of the cursor in this line edit.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#cursorMoveStyle-prop"
+    },
+    "void setCursorPosition(int)": {
+      "brief": "This property holds the current cursor position for this line edit.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#cursorPosition-prop"
+    },
+    "void setDragEnabled(bool b)": {
+      "brief": "This property holds whether the line edit starts a drag if the user presses and moves the mouse on some selected text.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#dragEnabled-prop"
+    },
+    "void setEchoMode(QLineEdit::EchoMode)": {
+      "brief": "This property holds the line edit's echo mode.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#echoMode-prop"
+    },
+    "void setFrame(bool)": {
+      "brief": "This property holds whether the line edit draws itself with a frame.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#frame-prop"
+    },
+    "void setInputMask(const QString &inputMask)": {
+      "brief": "This property holds the validation input mask.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#inputMask-prop"
+    },
+    "void setMaxLength(int)": {
+      "brief": "This property holds the maximum permitted length of the text.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#maxLength-prop"
+    },
+    "void setModified(bool)": {
+      "brief": "This property holds whether the line edit's contents has been modified by the user.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#modified-prop"
+    },
+    "void setPlaceholderText(const QString &)": {
+      "brief": "This property holds the line edit's placeholder text.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#placeholderText-prop"
+    },
+    "void setReadOnly(bool)": {
+      "brief": "This property holds whether the line edit is read-only.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#readOnly-prop"
+    },
+    "void setSelection(int start, int length)": {
+      "brief": "Selects text from position *start* and for *length* characters.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#setSelection"
+    },
+    "void setText(const QString &)": {
+      "brief": "This property holds the line edit's text.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#text-prop"
+    },
+    "void setTextMargins(const QMargins &margins)": {
+      "brief": "Sets the *margins* around the text inside the frame.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#setTextMargins"
+    },
+    "void setTextMargins(int left, int top, int right, int bottom)": {
+      "brief": "Sets the margins around the text inside the frame to have the sizes *left*, *top*, *right*, and *bottom*.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#setTextMargins-1"
+    },
+    "void setValidator(const QValidator *v)": {
+      "brief": "Sets the validator for values of line edit to *v*.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#setValidator"
+    },
+    "void textChanged(const QString &text)": {
+      "brief": "This signal is emitted whenever the text changes.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#textChanged"
+    },
+    "void textEdited(const QString &text)": {
+      "brief": "This signal is emitted whenever the text is edited.",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#textEdited"
+    },
+    "void timerEvent(QTimerEvent *e) override": {
+      "brief": "Reimplements: [QObject::timerEvent](xref:qt:QObject)(QTimerEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#timerEvent"
+    },
+    "void undo()": {
+      "brief": "Undoes the last operation if undo is [available](xref:qt:QLineEdit).",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#undo"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "acceptableInput": {
+      "brief": "Whether the input satisfies the inputMask and the validator",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#acceptableInput-prop"
+    },
+    "alignment": {
+      "brief": "Of the line edit",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#alignment-prop"
+    },
+    "clearButtonEnabled": {
+      "brief": "Whether the line edit displays a clear button when it is not empty",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#clearButtonEnabled-prop"
+    },
+    "cursorMoveStyle": {
+      "brief": "Movement style of the cursor in this line edit",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#cursorMoveStyle-prop"
+    },
+    "cursorPosition": {
+      "brief": "Current cursor position for this line edit",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#cursorPosition-prop"
+    },
+    "displayText": {
+      "brief": "Displayed text",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#displayText-prop"
+    },
+    "dragEnabled": {
+      "brief": "Whether the line edit starts a drag if the user presses and moves the mouse on some selected text",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#dragEnabled-prop"
+    },
+    "echoMode": {
+      "brief": "Line edit's echo mode",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#echoMode-prop"
+    },
+    "frame": {
+      "brief": "Whether the line edit draws itself with a frame",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#frame-prop"
+    },
+    "hasSelectedText": {
+      "brief": "Whether there is any text selected",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#hasSelectedText-prop"
+    },
+    "inputMask": {
+      "brief": "Validation input mask",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#inputMask-prop"
+    },
+    "maxLength": {
+      "brief": "Maximum permitted length of the text",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#maxLength-prop"
+    },
+    "modified": {
+      "brief": "Whether the line edit's contents has been modified by the user",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#modified-prop"
+    },
+    "placeholderText": {
+      "brief": "Line edit's placeholder text",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#placeholderText-prop"
+    },
+    "readOnly": {
+      "brief": "Whether the line edit is read-only",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#readOnly-prop"
+    },
+    "redoAvailable": {
+      "brief": "Whether redo is available",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#redoAvailable-prop"
+    },
+    "selectedText": {
+      "brief": "Selected text",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#selectedText-prop"
+    },
+    "text": {
+      "brief": "Line edit's text",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#text-prop"
+    },
+    "undoAvailable": {
+      "brief": "Whether undo is available",
+      "url": "https://doc.qt.io/qt-6/qlineedit.html#undoAvailable-prop"
+    }
+  },
+  "qss": {
+    "box_model": true,
+    "pseudo_states": [],
+    "sub_controls": [],
+    "url": "https://doc.qt.io/qt-6/stylesheet-reference.html#qlineedit-widget"
+  },
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

@@ -1,0 +1,39 @@
+{
+  "doc": {
+    "brief": "The QItemEditorCreator class makes it possible to create item editor creator bases without subclassing [QItemEditorCreatorBase](xref:qt:QItemEditorCreatorBase).",
+    "index_brief": "Makes it possible to create item editor creator bases without subclassing QItemEditorCreatorBase",
+    "url": "https://doc.qt.io/qt-6/qitemeditorcreator.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QItemEditorCreator",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QByteArray valuePropertyName() const override": {
+      "brief": "Reimplements: [QItemEditorCreatorBase::valuePropertyName](xref:qt:QItemEditorCreatorBase)() const.",
+      "url": "https://doc.qt.io/qt-6/qitemeditorcreator.html#valuePropertyName"
+    },
+    "QItemEditorCreator(const QByteArray &valuePropertyName)": {
+      "brief": "Constructs an editor creator object using *valuePropertyName* as the name of the property to be used for editing.",
+      "url": "https://doc.qt.io/qt-6/qitemeditorcreator.html#QItemEditorCreator"
+    },
+    "QWidget * createWidget(QWidget *parent) const override": {
+      "brief": "Reimplements: [QItemEditorCreatorBase::createWidget](xref:qt:QItemEditorCreatorBase)(QWidget *parent) const.",
+      "url": "https://doc.qt.io/qt-6/qitemeditorcreator.html#createWidget"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

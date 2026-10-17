@@ -1,0 +1,87 @@
+{
+  "doc": {
+    "brief": "The QGestureEvent class provides the description of triggered gestures.",
+    "index_brief": "The description of triggered gestures",
+    "url": "https://doc.qt.io/qt-6/qgestureevent.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QGestureEvent",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QGesture * gesture(Qt::GestureType type) const": {
+      "brief": "Returns a gesture object by *type*.",
+      "url": "https://doc.qt.io/qt-6/qgestureevent.html#gesture"
+    },
+    "QGestureEvent(const QList<QGesture *> &gestures)": {
+      "brief": "Creates new QGestureEvent containing a list of *gestures*.",
+      "url": "https://doc.qt.io/qt-6/qgestureevent.html#QGestureEvent"
+    },
+    "QList<QGesture *> activeGestures() const": {
+      "brief": "Returns a list of active (not canceled) gestures.",
+      "url": "https://doc.qt.io/qt-6/qgestureevent.html#activeGestures"
+    },
+    "QList<QGesture *> canceledGestures() const": {
+      "brief": "Returns a list of canceled gestures.",
+      "url": "https://doc.qt.io/qt-6/qgestureevent.html#canceledGestures"
+    },
+    "QList<QGesture *> gestures() const": {
+      "brief": "Returns all gestures that are delivered in the event.",
+      "url": "https://doc.qt.io/qt-6/qgestureevent.html#gestures"
+    },
+    "QPointF mapToGraphicsScene(const QPointF &gesturePoint) const": {
+      "brief": "Returns the scene-local coordinates if the *gesturePoint* is inside a graphics view.",
+      "url": "https://doc.qt.io/qt-6/qgestureevent.html#mapToGraphicsScene"
+    },
+    "QWidget * widget() const": {
+      "brief": "Returns the widget on which the event occurred.",
+      "url": "https://doc.qt.io/qt-6/qgestureevent.html#widget"
+    },
+    "bool isAccepted(QGesture *gesture) const": {
+      "brief": "Returns `true` if the *gesture* is accepted; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qgestureevent.html#isAccepted"
+    },
+    "bool isAccepted(Qt::GestureType gestureType) const": {
+      "brief": "Returns `true` if the gesture of type *gestureType* is accepted; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qgestureevent.html#isAccepted-1"
+    },
+    "void accept(QGesture *gesture)": {
+      "brief": "Sets the accept flag of the given *gesture* object, the equivalent of calling [setAccepted](xref:qt:QGestureEvent)(gesture, true).",
+      "url": "https://doc.qt.io/qt-6/qgestureevent.html#accept"
+    },
+    "void accept(Qt::GestureType gestureType)": {
+      "brief": "Sets the accept flag of the given *gestureType*, the equivalent of calling [setAccepted](xref:qt:QGestureEvent)(gestureType, true).",
+      "url": "https://doc.qt.io/qt-6/qgestureevent.html#accept-1"
+    },
+    "void ignore(QGesture *gesture)": {
+      "brief": "Clears the accept flag parameter of the given *gesture* object, the equivalent of calling [setAccepted](xref:qt:QGestureEvent)(gesture, false).",
+      "url": "https://doc.qt.io/qt-6/qgestureevent.html#ignore"
+    },
+    "void ignore(Qt::GestureType gestureType)": {
+      "brief": "Clears the accept flag parameter of the given *gestureType*, the equivalent of calling [setAccepted](xref:qt:QGestureEvent)(gesture, false).",
+      "url": "https://doc.qt.io/qt-6/qgestureevent.html#ignore-1"
+    },
+    "void setAccepted(QGesture *gesture, bool value)": {
+      "brief": "Sets the accept flag of the given *gesture* object to the specified *value*.",
+      "url": "https://doc.qt.io/qt-6/qgestureevent.html#setAccepted"
+    },
+    "void setAccepted(Qt::GestureType gestureType, bool value)": {
+      "brief": "Sets the accept flag of the given *gestureType* object to the specified *value*.",
+      "url": "https://doc.qt.io/qt-6/qgestureevent.html#setAccepted-1"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

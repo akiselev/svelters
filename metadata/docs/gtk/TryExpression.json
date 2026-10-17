@@ -1,0 +1,33 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a `GtkExpression` with an array of expressions.",
+      "file": "gtk/gtkexpression.c",
+      "line": 2034,
+      "md": "Creates a `GtkExpression` with an array of expressions.\n\nWhen evaluated, the `GtkTryExpression` tries to evaluate each of its expressions until it succeeds.\nIf all expressions fail to evaluate, the `GtkTryExpression`'s evaluation fails as well.\n\nThe value type of the expressions in the array must match.",
+      "since": "4.22"
+    }
+  },
+  "doc": {
+    "brief": "A `GtkExpression` that tries to evaluate each of its expressions until it succeeds.",
+    "file": "gtk/gtkexpression.c",
+    "line": 1866,
+    "md": "A `GtkExpression` that tries to evaluate each of its expressions until it succeeds.\n\nIf all expressions fail to evaluate, the `GtkTryExpression`'s evaluation fails as well.",
+    "since": "4.22"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:TryExpression",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

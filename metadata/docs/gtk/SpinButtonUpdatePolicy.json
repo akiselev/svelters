@@ -1,0 +1,37 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Determines whether the spin button displays values outside the adjustment bounds.",
+    "file": "gtk/gtkspinbutton.h",
+    "line": 54,
+    "md": "Determines whether the spin button displays values outside the adjustment\nbounds.\n\nSee [`SpinButton.set_update_policy()`](xref:gtk:Gtk.SpinButton#method:set_update_policy)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:SpinButtonUpdatePolicy",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "always": {
+      "brief": "When refreshing your `GtkSpinButton`, the value is always displayed",
+      "file": "gtk/gtkspinbutton.h",
+      "line": 56,
+      "md": "When refreshing your `GtkSpinButton`, the value is\n  always displayed"
+    },
+    "if_valid": {
+      "brief": "When refreshing your `GtkSpinButton`, the value is only displayed if it is valid within the bounds of the spin button's adjustment",
+      "file": "gtk/gtkspinbutton.h",
+      "line": 58,
+      "md": "When refreshing your `GtkSpinButton`, the value is\n  only displayed if it is valid within the bounds of the spin button's\n  adjustment"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

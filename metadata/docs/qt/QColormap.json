@@ -1,0 +1,55 @@
+{
+  "doc": {
+    "brief": "The QColormap class maps device independent QColors to device dependent pixel values.",
+    "index_brief": "Maps device independent QColors to device dependent pixel values",
+    "url": "https://doc.qt.io/qt-6/qcolormap.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QColormap",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QColormap instance(int screen)": {
+      "brief": "Returns the colormap for the specified *screen*.",
+      "url": "https://doc.qt.io/qt-6/qcolormap.html#instance"
+    },
+    "QColormap::Mode mode() const": {
+      "brief": "Returns the mode of this colormap.",
+      "url": "https://doc.qt.io/qt-6/qcolormap.html#mode"
+    },
+    "const QColor colorAt(uint pixel) const": {
+      "brief": "Returns a [QColor](xref:qt:QColor) for the *pixel*.",
+      "url": "https://doc.qt.io/qt-6/qcolormap.html#colorAt"
+    },
+    "const QList<QColor> colormap() const": {
+      "brief": "Returns a list of colors which represents the devices colormap for `Indexed` and `Gray` modes.",
+      "url": "https://doc.qt.io/qt-6/qcolormap.html#colormap"
+    },
+    "int depth() const": {
+      "brief": "Returns the depth of the device.",
+      "url": "https://doc.qt.io/qt-6/qcolormap.html#depth"
+    },
+    "int size() const": {
+      "brief": "Returns the size of the colormap for `Indexed` and `Gray` modes; Returns -1 for `Direct` mode.",
+      "url": "https://doc.qt.io/qt-6/qcolormap.html#size"
+    },
+    "uint pixel(const QColor &color) const": {
+      "brief": "Returns a device dependent pixel value for the *color*.",
+      "url": "https://doc.qt.io/qt-6/qcolormap.html#pixel"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

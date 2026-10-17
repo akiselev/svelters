@@ -1,0 +1,43 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Flags that influence the behavior of [`Widget.pick()`](xref:gtk:Widget#method:pick).",
+    "file": "gtk/gtkenums.h",
+    "line": 1113,
+    "md": "Flags that influence the behavior of [`Widget.pick()`](xref:gtk:Widget#method:pick)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:PickFlags",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "default": {
+      "brief": "The default behavior, include widgets that are receiving events",
+      "file": "gtk/gtkenums.h",
+      "line": 1115,
+      "md": "The default behavior, include widgets that are receiving events"
+    },
+    "insensitive": {
+      "brief": "Include widgets that are insensitive",
+      "file": "gtk/gtkenums.h",
+      "line": 1116,
+      "md": "Include widgets that are insensitive"
+    },
+    "non_targetable": {
+      "brief": "Include widgets that are marked as non-targetable.",
+      "file": "gtk/gtkenums.h",
+      "line": 1117,
+      "md": "Include widgets that are marked as non-targetable. See [`Widget:can-target`](xref:gtk:Widget#property:can-target)"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

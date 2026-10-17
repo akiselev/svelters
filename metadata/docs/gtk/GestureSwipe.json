@@ -1,0 +1,45 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Returns a newly created `GtkGesture` that recognizes swipes.",
+      "file": "gtk/gtkgestureswipe.c",
+      "line": 269,
+      "md": "Returns a newly created `GtkGesture` that recognizes swipes."
+    }
+  },
+  "doc": {
+    "brief": "Recognizes swipe gestures.",
+    "file": "gtk/gtkgestureswipe.c",
+    "line": 21,
+    "md": "Recognizes swipe gestures.\n\nAfter a press/move/.../move/release sequence happens, the\n[`GestureSwipe::swipe`](xref:gtk:Gtk.GestureSwipe#event:swipe) signal will be emitted,\nproviding the velocity and directionality of the sequence\nat the time it was lifted.\n\nIf the velocity is desired in intermediate points,\n[`GestureSwipe.get_velocity()`](xref:gtk:Gtk.GestureSwipe#method:get_velocity) can be called in a\n[`Gesture::update`](xref:gtk:Gtk.Gesture#event:update) handler.\n\nAll velocities are reported in pixels/sec units."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:GestureSwipe",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_velocity": {
+      "brief": "Gets the current velocity.",
+      "file": "gtk/gtkgestureswipe.c",
+      "line": 283,
+      "md": "Gets the current velocity.\n\nIf the gesture is recognized, this function returns `TRUE` and fills\nin `velocity_x` and `velocity_y` with the recorded velocity, as per the\nlast events processed."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "swipe": {
+      "brief": "Emitted when the recognized gesture is finished.",
+      "file": "gtk/gtkgestureswipe.c",
+      "line": 237,
+      "md": "Emitted when the recognized gesture is finished.\n\nVelocity and direction are a product of previously recorded events."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

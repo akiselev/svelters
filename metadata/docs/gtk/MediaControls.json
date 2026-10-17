@@ -1,0 +1,51 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkMediaControls` managing the `stream` passed to it.",
+      "file": "gtk/gtkmediacontrols.c",
+      "line": 309,
+      "md": "Creates a new `GtkMediaControls` managing the `stream` passed to it."
+    }
+  },
+  "doc": {
+    "brief": "Shows controls for video playback.",
+    "file": "gtk/gtkmediacontrols.c",
+    "line": 31,
+    "md": "Shows controls for video playback.\n\nUsually, `GtkMediaControls` is used as part of [`Video`](xref:gtk:Gtk.Video)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:MediaControls",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_media_stream": {
+      "brief": "Gets the media stream managed by `controls` or `NULL` if none.",
+      "file": "gtk/gtkmediacontrols.c",
+      "line": 325,
+      "md": "Gets the media stream managed by `controls` or `NULL` if none."
+    },
+    "set_media_stream": {
+      "brief": "Sets the stream that is controlled by `controls`.",
+      "file": "gtk/gtkmediacontrols.c",
+      "line": 490,
+      "md": "Sets the stream that is controlled by `controls`."
+    }
+  },
+  "properties": {
+    "media-stream": {
+      "brief": "The media-stream managed by this object or `NULL` if none.",
+      "file": "gtk/gtkmediacontrols.c",
+      "line": 273,
+      "md": "The media-stream managed by this object or `NULL` if none."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

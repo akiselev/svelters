@@ -1,0 +1,37 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Used to reference the layers of `GtkTextView` for the purpose of customized drawing with the ::snapshot_layer vfunc.",
+    "file": "gtk/gtktextview.h",
+    "line": 65,
+    "md": "Used to reference the layers of `GtkTextView` for the purpose of customized\ndrawing with the ::snapshot_layer vfunc."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:TextViewLayer",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "above_text": {
+      "brief": "The layer rendered above the text.",
+      "file": "gtk/gtktextview.h",
+      "line": 68,
+      "md": "The layer rendered above the text."
+    },
+    "below_text": {
+      "brief": "The layer rendered below the text (but above the background).",
+      "file": "gtk/gtktextview.h",
+      "line": 67,
+      "md": "The layer rendered below the text (but above the background)."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

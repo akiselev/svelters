@@ -1,0 +1,56 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Returns a newly created `GtkGesture` that recognizes single and multiple presses.",
+      "file": "gtk/gtkgestureclick.c",
+      "line": 441,
+      "md": "Returns a newly created `GtkGesture` that recognizes\nsingle and multiple presses."
+    }
+  },
+  "doc": {
+    "brief": "Recognizes click gestures.",
+    "file": "gtk/gtkgestureclick.c",
+    "line": 20,
+    "md": "Recognizes click gestures.\n\nIt is able to recognize multiple clicks on a nearby zone, which\ncan be listened for through the [`GestureClick::pressed`](xref:gtk:Gtk.GestureClick#event:pressed)\nsignal. Whenever time or distance between clicks exceed the GTK\ndefaults, [`GestureClick::stopped`](xref:gtk:Gtk.GestureClick#event:stopped) is emitted, and the\nclick counter is reset."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:GestureClick",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "pressed": {
+      "brief": "Emitted whenever a button or touch press happens.",
+      "file": "gtk/gtkgestureclick.c",
+      "line": 344,
+      "md": "Emitted whenever a button or touch press happens."
+    },
+    "released": {
+      "brief": "Emitted when a button or touch is released.",
+      "file": "gtk/gtkgestureclick.c",
+      "line": 366,
+      "md": "Emitted when a button or touch is released.\n\n`n_press` will report the number of press that is paired to\nthis event, note that [`GestureClick::stopped`](xref:gtk:Gtk.GestureClick#event:stopped) may\nhave been emitted between the press and its release, `n_press`\nwill only start over at the next press."
+    },
+    "stopped": {
+      "brief": "Emitted whenever any time/distance threshold has been exceeded.",
+      "file": "gtk/gtkgestureclick.c",
+      "line": 393,
+      "md": "Emitted whenever any time/distance threshold has been exceeded."
+    },
+    "unpaired-release": {
+      "brief": "Emitted whenever the gesture receives a release event that had no previous corresponding press.",
+      "file": "gtk/gtkgestureclick.c",
+      "line": 407,
+      "md": "Emitted whenever the gesture receives a release\nevent that had no previous corresponding press.\n\nDue to implicit grabs, this can only happen on situations\nwhere input is grabbed elsewhere mid-press or the pressed\nwidget voluntarily relinquishes its implicit grab."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

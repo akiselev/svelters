@@ -1,0 +1,67 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Iterates over the elements of a [`Bitset`](xref:gtk:Gtk.Bitset).",
+    "file": "gtk/gtkbitset.h",
+    "line": 133,
+    "md": "Iterates over the elements of a [`Bitset`](xref:gtk:Gtk.Bitset).\n\n`GtkBitSetIter is an opaque, stack-allocated struct.\n\nBefore a `GtkBitsetIter` can be used, it needs to be initialized with\n`init_first`, `init_last`\nor `init_at`."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:BitsetIter",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_value": {
+      "brief": "Gets the current value that `iter` points to.",
+      "file": "gtk/gtkbitset.c",
+      "line": 918,
+      "md": "Gets the current value that `iter` points to.\n\nIf `iter` is not valid and [`BitsetIter.is_valid()`](xref:gtk:Gtk.BitsetIter#method:is_valid)\nreturns `FALSE`, this function returns 0."
+    },
+    "init_at": {
+      "brief": "Initializes `iter` to point to `target`.",
+      "file": "gtk/gtkbitset.c",
+      "line": 811,
+      "md": "Initializes `iter` to point to `target`.\n\nIf `target` is not found, finds the next value after it.\nIf no value >= `target` exists in `set`, this function returns `FALSE`."
+    },
+    "init_first": {
+      "brief": "Initializes an iterator for `set` and points it to the first value in `set`.",
+      "file": "gtk/gtkbitset.c",
+      "line": 749,
+      "md": "Initializes an iterator for `set` and points it to the first\nvalue in `set`.\n\nIf `set` is empty, `FALSE` is returned and `value` is set to %G_MAXUINT."
+    },
+    "init_last": {
+      "brief": "Initializes an iterator for `set` and points it to the last value in `set`.",
+      "file": "gtk/gtkbitset.c",
+      "line": 780,
+      "md": "Initializes an iterator for `set` and points it to the last\nvalue in `set`.\n\nIf `set` is empty, `FALSE` is returned."
+    },
+    "is_valid": {
+      "brief": "Checks if `iter` points to a valid value.",
+      "file": "gtk/gtkbitset.c",
+      "line": 942,
+      "md": "Checks if `iter` points to a valid value."
+    },
+    "next": {
+      "brief": "Moves `iter` to the next value in the set.",
+      "file": "gtk/gtkbitset.c",
+      "line": 850,
+      "md": "Moves `iter` to the next value in the set.\n\nIf it was already pointing to the last value in the set,\n`FALSE` is returned and `iter` is invalidated."
+    },
+    "previous": {
+      "brief": "Moves `iter` to the previous value in the set.",
+      "file": "gtk/gtkbitset.c",
+      "line": 884,
+      "md": "Moves `iter` to the previous value in the set.\n\nIf it was already pointing to the first value in the set,\n`FALSE` is returned and `iter` is invalidated."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

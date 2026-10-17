@@ -1,0 +1,61 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Focus movement types.",
+    "file": "gtk/gtkenums.h",
+    "line": 196,
+    "md": "Focus movement types."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:DirectionType",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "down": {
+      "brief": "Move down.",
+      "file": "gtk/gtkenums.h",
+      "line": 201,
+      "md": "Move down."
+    },
+    "left": {
+      "brief": "Move left.",
+      "file": "gtk/gtkenums.h",
+      "line": 202,
+      "md": "Move left."
+    },
+    "right": {
+      "brief": "Move right.",
+      "file": "gtk/gtkenums.h",
+      "line": 203,
+      "md": "Move right."
+    },
+    "tab_backward": {
+      "brief": "Move backward.",
+      "file": "gtk/gtkenums.h",
+      "line": 199,
+      "md": "Move backward."
+    },
+    "tab_forward": {
+      "brief": "Move forward.",
+      "file": "gtk/gtkenums.h",
+      "line": 198,
+      "md": "Move forward."
+    },
+    "up": {
+      "brief": "Move up.",
+      "file": "gtk/gtkenums.h",
+      "line": 200,
+      "md": "Move up."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -1,0 +1,152 @@
+{
+  "doc": {
+    "brief": "The QDataWidgetMapper class provides mapping between a section of a data model to widgets.",
+    "index_brief": "Mapping between a section of a data model to widgets",
+    "url": "https://doc.qt.io/qt-6/qdatawidgetmapper.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QDataWidgetMapper",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QAbstractItemDelegate * itemDelegate() const": {
+      "brief": "Returns the current item delegate.",
+      "url": "https://doc.qt.io/qt-6/qdatawidgetmapper.html#itemDelegate"
+    },
+    "QAbstractItemModel * model() const": {
+      "brief": "Returns the current model.",
+      "url": "https://doc.qt.io/qt-6/qdatawidgetmapper.html#model"
+    },
+    "QByteArray mappedPropertyName(QWidget *widget) const": {
+      "brief": "Returns the name of the property that is used when mapping data to the given *widget*.",
+      "url": "https://doc.qt.io/qt-6/qdatawidgetmapper.html#mappedPropertyName"
+    },
+    "QDataWidgetMapper(QObject *parent)": {
+      "brief": "Constructs a new QDataWidgetMapper with parent object *parent*.",
+      "url": "https://doc.qt.io/qt-6/qdatawidgetmapper.html#QDataWidgetMapper"
+    },
+    "QDataWidgetMapper::SubmitPolicy submitPolicy() const": {
+      "brief": "This property holds the current submit policy",
+      "url": "https://doc.qt.io/qt-6/qdatawidgetmapper.html#submitPolicy-prop"
+    },
+    "QModelIndex rootIndex() const": {
+      "brief": "Returns the current root index.",
+      "url": "https://doc.qt.io/qt-6/qdatawidgetmapper.html#rootIndex"
+    },
+    "QWidget * mappedWidgetAt(int section) const": {
+      "brief": "Returns the widget that is mapped at *section*, or 0 if no widget is mapped at that section.",
+      "url": "https://doc.qt.io/qt-6/qdatawidgetmapper.html#mappedWidgetAt"
+    },
+    "Qt::Orientation orientation() const": {
+      "brief": "This property holds the orientation of the model",
+      "url": "https://doc.qt.io/qt-6/qdatawidgetmapper.html#orientation-prop"
+    },
+    "bool submit()": {
+      "brief": "Submits all changes from the mapped widgets to the model.",
+      "url": "https://doc.qt.io/qt-6/qdatawidgetmapper.html#submit"
+    },
+    "int currentIndex() const": {
+      "brief": "This property holds the current row or column",
+      "url": "https://doc.qt.io/qt-6/qdatawidgetmapper.html#currentIndex-prop"
+    },
+    "int mappedSection(QWidget *widget) const": {
+      "brief": "Returns the section the *widget* is mapped to or -1 if the widget is not mapped.",
+      "url": "https://doc.qt.io/qt-6/qdatawidgetmapper.html#mappedSection"
+    },
+    "void addMapping(QWidget *widget, int section)": {
+      "brief": "Adds a mapping between a *widget* and a *section* from the model.",
+      "url": "https://doc.qt.io/qt-6/qdatawidgetmapper.html#addMapping"
+    },
+    "void addMapping(QWidget *widget, int section, const QByteArray &propertyName)": {
+      "brief": "Essentially the same as addMapping(), but adds the possibility to specify the property to use specifying *propertyName*.",
+      "url": "https://doc.qt.io/qt-6/qdatawidgetmapper.html#addMapping-1"
+    },
+    "void clearMapping()": {
+      "brief": "Clears all mappings.",
+      "url": "https://doc.qt.io/qt-6/qdatawidgetmapper.html#clearMapping"
+    },
+    "void currentIndexChanged(int index)": {
+      "brief": "This signal is emitted after the current index has changed and all widgets were populated with new data. *index* is the new current index.",
+      "url": "https://doc.qt.io/qt-6/qdatawidgetmapper.html#currentIndexChanged"
+    },
+    "void removeMapping(QWidget *widget)": {
+      "brief": "Removes the mapping for the given *widget*.",
+      "url": "https://doc.qt.io/qt-6/qdatawidgetmapper.html#removeMapping"
+    },
+    "void revert()": {
+      "brief": "Repopulates all widgets with the current data of the model.",
+      "url": "https://doc.qt.io/qt-6/qdatawidgetmapper.html#revert"
+    },
+    "void setCurrentIndex(int index)": {
+      "brief": "This property holds the current row or column",
+      "url": "https://doc.qt.io/qt-6/qdatawidgetmapper.html#currentIndex-prop"
+    },
+    "void setCurrentModelIndex(const QModelIndex &index)": {
+      "brief": "Sets the current index to the row of the *index* if the orientation is horizontal (the default), otherwise to the column of the *index*.",
+      "url": "https://doc.qt.io/qt-6/qdatawidgetmapper.html#setCurrentModelIndex"
+    },
+    "void setItemDelegate(QAbstractItemDelegate *delegate)": {
+      "brief": "Sets the item delegate to *delegate*.",
+      "url": "https://doc.qt.io/qt-6/qdatawidgetmapper.html#setItemDelegate"
+    },
+    "void setModel(QAbstractItemModel *model)": {
+      "brief": "Sets the current model to *model*.",
+      "url": "https://doc.qt.io/qt-6/qdatawidgetmapper.html#setModel"
+    },
+    "void setOrientation(Qt::Orientation aOrientation)": {
+      "brief": "This property holds the orientation of the model",
+      "url": "https://doc.qt.io/qt-6/qdatawidgetmapper.html#orientation-prop"
+    },
+    "void setRootIndex(const QModelIndex &index)": {
+      "brief": "Sets the root item to *index*.",
+      "url": "https://doc.qt.io/qt-6/qdatawidgetmapper.html#setRootIndex"
+    },
+    "void setSubmitPolicy(QDataWidgetMapper::SubmitPolicy policy)": {
+      "brief": "This property holds the current submit policy",
+      "url": "https://doc.qt.io/qt-6/qdatawidgetmapper.html#submitPolicy-prop"
+    },
+    "void toFirst()": {
+      "brief": "Populates the widgets with data from the first row of the model if the orientation is horizontal (the default), otherwise with data from the first column.",
+      "url": "https://doc.qt.io/qt-6/qdatawidgetmapper.html#toFirst"
+    },
+    "void toLast()": {
+      "brief": "Populates the widgets with data from the last row of the model if the orientation is horizontal (the default), otherwise with data from the last column.",
+      "url": "https://doc.qt.io/qt-6/qdatawidgetmapper.html#toLast"
+    },
+    "void toNext()": {
+      "brief": "Populates the widgets with data from the next row of the model if the orientation is horizontal (the default), otherwise with data from the next column.",
+      "url": "https://doc.qt.io/qt-6/qdatawidgetmapper.html#toNext"
+    },
+    "void toPrevious()": {
+      "brief": "Populates the widgets with data from the previous row of the model if the orientation is horizontal (the default), otherwise with data from the previous column.",
+      "url": "https://doc.qt.io/qt-6/qdatawidgetmapper.html#toPrevious"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "currentIndex": {
+      "brief": "The current row or column",
+      "url": "https://doc.qt.io/qt-6/qdatawidgetmapper.html#currentIndex-prop"
+    },
+    "orientation": {
+      "brief": "The orientation of the model",
+      "url": "https://doc.qt.io/qt-6/qdatawidgetmapper.html#orientation-prop"
+    },
+    "submitPolicy": {
+      "brief": "The current submit policy",
+      "url": "https://doc.qt.io/qt-6/qdatawidgetmapper.html#submitPolicy-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

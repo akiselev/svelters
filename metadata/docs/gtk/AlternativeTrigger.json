@@ -1,0 +1,57 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a `GtkShortcutTrigger` that will trigger whenever either of the two given triggers gets triggered.",
+      "file": "gtk/gtkshortcuttrigger.c",
+      "line": 1203,
+      "md": "Creates a `GtkShortcutTrigger` that will trigger whenever\neither of the two given triggers gets triggered.\n\nNote that nesting is allowed, so if you want more than two\nalternative, create a new alternative trigger for each option."
+    }
+  },
+  "doc": {
+    "brief": "Combines two shortcut triggers.",
+    "file": "gtk/gtkshortcuttrigger.h",
+    "line": 118,
+    "md": "Combines two shortcut triggers.\n\nThe `GtkAlternativeTrigger` triggers when either of the two trigger.\n\nThis can be cascaded to combine more than two triggers."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:AlternativeTrigger",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_first": {
+      "brief": "Gets the first of the two alternative triggers that may trigger `self`.",
+      "file": "gtk/gtkshortcuttrigger.c",
+      "line": 1236,
+      "md": "Gets the first of the two alternative triggers that may\ntrigger `self`.\n\n[`AlternativeTrigger.get_second()`](xref:gtk:Gtk.AlternativeTrigger#method:get_second) will return\nthe other one."
+    },
+    "get_second": {
+      "brief": "Gets the second of the two alternative triggers that may trigger `self`.",
+      "file": "gtk/gtkshortcuttrigger.c",
+      "line": 1256,
+      "md": "Gets the second of the two alternative triggers that may\ntrigger `self`.\n\n[`AlternativeTrigger.get_first()`](xref:gtk:Gtk.AlternativeTrigger#method:get_first) will return\nthe other one."
+    }
+  },
+  "properties": {
+    "first": {
+      "brief": "The first `GtkShortcutTrigger` to check.",
+      "file": "gtk/gtkshortcuttrigger.c",
+      "line": 1171,
+      "md": "The first `GtkShortcutTrigger` to check."
+    },
+    "second": {
+      "brief": "The second `GtkShortcutTrigger` to check.",
+      "file": "gtk/gtkshortcuttrigger.c",
+      "line": 1183,
+      "md": "The second `GtkShortcutTrigger` to check."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

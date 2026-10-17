@@ -1,0 +1,184 @@
+{
+  "doc": {
+    "brief": "The QRhiWidget class is a widget for rendering 3D graphics via an accelerated grapics API, such as Vulkan, Metal, or Direct 3D.",
+    "index_brief": "Widget for rendering 3D graphics via an accelerated grapics API, such as Vulkan, Metal, or Direct 3D",
+    "url": "https://doc.qt.io/qt-6/qrhiwidget.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QRhiWidget",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QImage grabFramebuffer() const": {
+      "brief": "Renders a new frame, reads the contents of the texture back, and returns it as a [QImage](xref:qt:QImage).",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#grabFramebuffer"
+    },
+    "QRhi * rhi() const": {
+      "brief": "Returns the current [QRhi](xref:qt:QRhi) object.",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#rhi"
+    },
+    "QRhiRenderBuffer * depthStencilBuffer() const": {
+      "brief": "Returns the depth-stencil buffer used by the widget's rendering.",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#depthStencilBuffer"
+    },
+    "QRhiRenderBuffer * msaaColorBuffer() const": {
+      "brief": "Returns the renderbuffer serving as the multisample color buffer for the widget.",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#msaaColorBuffer"
+    },
+    "QRhiRenderTarget * renderTarget() const": {
+      "brief": "Returns the render target object that must be used with [QRhiCommandBuffer::beginPass](xref:qt:QRhiCommandBuffer)() in reimplementations of [render](xref:qt:QRhiWidget)().",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#renderTarget"
+    },
+    "QRhiTexture * colorTexture() const": {
+      "brief": "Returns the texture serving as the color buffer for the widget.",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#colorTexture"
+    },
+    "QRhiTexture * resolveTexture() const": {
+      "brief": "Returns the non-multisample texture to which the multisample content is resolved.",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#resolveTexture"
+    },
+    "QRhiWidget(QWidget *parent, Qt::WindowFlags f)": {
+      "brief": "Constructs a widget which is a child of *parent*, with widget flags set to *f*.",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#QRhiWidget"
+    },
+    "QRhiWidget::Api api() const": {
+      "brief": "Returns the currently set graphics API ([QRhi](xref:qt:QRhi) backend).",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#api"
+    },
+    "QRhiWidget::TextureFormat colorBufferFormat() const": {
+      "brief": "This property controls the texture format of the texture (or renderbuffer) used as the color buffer.",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#colorBufferFormat-prop"
+    },
+    "QSize fixedColorBufferSize() const": {
+      "brief": "The fixed size, in pixels, of the [QRhiWidget](xref:qt:QRhiWidget)'s associated texture.",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#fixedColorBufferSize-prop"
+    },
+    "bool event(QEvent *e) override": {
+      "brief": "Reimplements: [QWidget::event](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#event"
+    },
+    "bool isDebugLayerEnabled() const": {
+      "brief": "Returns true if a debug or validation layer will be requested if applicable to the graphics API in use.",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#isDebugLayerEnabled"
+    },
+    "bool isMirrorVerticallyEnabled() const": {
+      "brief": "When enabled, flips the image around the X axis when compositing the [QRhiWidget](xref:qt:QRhiWidget)'s backing texture with the rest of the widget content in the top-level window.",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#mirrorVertically-prop"
+    },
+    "int sampleCount() const": {
+      "brief": "This property controls for sample count for multisample antialiasing.",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#sampleCount-prop"
+    },
+    "void colorBufferFormatChanged(QRhiWidget::TextureFormat format)": {
+      "brief": "This property controls the texture format of the texture (or renderbuffer) used as the color buffer.",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#colorBufferFormat-prop"
+    },
+    "void fixedColorBufferSizeChanged(const QSize &pixelSize)": {
+      "brief": "The fixed size, in pixels, of the [QRhiWidget](xref:qt:QRhiWidget)'s associated texture.",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#fixedColorBufferSize-prop"
+    },
+    "void frameSubmitted()": {
+      "brief": "This signal is emitted after the widget's top-level window has finished composition and has [submitted a frame](xref:qt:QRhi).",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#frameSubmitted"
+    },
+    "void initialize(QRhiCommandBuffer *cb)": {
+      "brief": "Called when the widget is initialized for the first time, when the associated texture's size, format, or sample count changes, or when the [QRhi](xref:qt:QRhi) and texture change for any reason.",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#initialize"
+    },
+    "void mirrorVerticallyChanged(bool enabled)": {
+      "brief": "When enabled, flips the image around the X axis when compositing the [QRhiWidget](xref:qt:QRhiWidget)'s backing texture with the rest of the widget content in the top-level window.",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#mirrorVertically-prop"
+    },
+    "void paintEvent(QPaintEvent *e) override": {
+      "brief": "Reimplements: [QWidget::paintEvent](xref:qt:QWidget)(QPaintEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#paintEvent"
+    },
+    "void releaseResources()": {
+      "brief": "Called when the need to early-release the graphics resources arises.",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#releaseResources"
+    },
+    "void render(QRhiCommandBuffer *cb)": {
+      "brief": "Called when the widget contents (i.e. the contents of the texture) need updating.",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#render"
+    },
+    "void renderFailed()": {
+      "brief": "This signal is emitted whenever the widget is supposed to render to its backing texture (either due to a [widget update](xref:qt:QWidget) or due to a call to [grabFramebuffer](xref:qt:QRhiWidget)())...",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#renderFailed"
+    },
+    "void resizeEvent(QResizeEvent *e) override": {
+      "brief": "Reimplements: [QWidget::resizeEvent](xref:qt:QWidget)(QResizeEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#resizeEvent"
+    },
+    "void sampleCountChanged(int samples)": {
+      "brief": "This property controls for sample count for multisample antialiasing.",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#sampleCount-prop"
+    },
+    "void setApi(QRhiWidget::Api api)": {
+      "brief": "Sets the graphics API and [QRhi](xref:qt:QRhi) backend to use to *api*.",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#setApi"
+    },
+    "void setAutoRenderTarget(bool enabled)": {
+      "brief": "Controls if a depth-stencil [QRhiRenderBuffer](xref:qt:QRhiRenderBuffer) and a [QRhiTextureRenderTarget](xref:qt:QRhiTextureRenderTarget) is created and maintained automatically by the widget.",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#setAutoRenderTarget"
+    },
+    "void setColorBufferFormat(QRhiWidget::TextureFormat format)": {
+      "brief": "This property controls the texture format of the texture (or renderbuffer) used as the color buffer.",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#colorBufferFormat-prop"
+    },
+    "void setDebugLayerEnabled(bool enable)": {
+      "brief": "Requests the debug or validation layer of the underlying graphics API when *enable* is true.",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#setDebugLayerEnabled"
+    },
+    "void setFixedColorBufferSize(QSize pixelSize)": {
+      "brief": "The fixed size, in pixels, of the [QRhiWidget](xref:qt:QRhiWidget)'s associated texture.",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#fixedColorBufferSize-prop"
+    },
+    "void setFixedColorBufferSize(int w, int h)": {
+      "brief": "The fixed size, in pixels, of the [QRhiWidget](xref:qt:QRhiWidget)'s associated texture.",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#fixedColorBufferSize-prop"
+    },
+    "void setMirrorVertically(bool enabled)": {
+      "brief": "When enabled, flips the image around the X axis when compositing the [QRhiWidget](xref:qt:QRhiWidget)'s backing texture with the rest of the widget content in the top-level window.",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#mirrorVertically-prop"
+    },
+    "void setSampleCount(int samples)": {
+      "brief": "This property controls for sample count for multisample antialiasing.",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#sampleCount-prop"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "autoRenderTarget": {
+      "brief": "",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#autoRenderTarget-prop"
+    },
+    "colorBufferFormat": {
+      "brief": "",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#colorBufferFormat-prop"
+    },
+    "fixedColorBufferSize": {
+      "brief": "",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#fixedColorBufferSize-prop"
+    },
+    "mirrorVertically": {
+      "brief": "",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#mirrorVertically-prop"
+    },
+    "sampleCount": {
+      "brief": "",
+      "url": "https://doc.qt.io/qt-6/qrhiwidget.html#sampleCount-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

@@ -1,0 +1,107 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new color button.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`ColorDialogButton`](xref:gtk:Gtk.ColorDialogButton) instead",
+      "file": "gtk/deprecated/gtkcolorbutton.c",
+      "line": 354,
+      "md": "Creates a new color button.\n\nThis returns a widget in the form of a small button containing\na swatch representing the current selected color. When the button\nis clicked, a color chooser dialog will open, allowing the user\nto select a color. The swatch will be updated to reflect the new\ncolor when the user finishes."
+    },
+    "new_with_rgba": {
+      "brief": "Creates a new color button showing the given color.",
+      "file": "gtk/deprecated/gtkcolorbutton.c",
+      "line": 375,
+      "md": "Creates a new color button showing the given color."
+    }
+  },
+  "doc": {
+    "brief": "The `GtkColorButton` allows to open a color chooser dialog to change the color.",
+    "deprecated": "4.10",
+    "deprecated_md": "Use [`ColorDialogButton`](xref:gtk:Gtk.ColorDialogButton) instead",
+    "file": "gtk/deprecated/gtkcolorbutton.c",
+    "line": 51,
+    "md": "The `GtkColorButton` allows to open a color chooser dialog to change\nthe color.\n\nIt is suitable widget for selecting a color in a preference dialog.\n\n# CSS nodes\n\n```\ncolorbutton\n╰── button.color\n    ╰── [content]\n```\n\n`GtkColorButton` has a single CSS node with name colorbutton which\ncontains a button node. To differentiate it from a plain `GtkButton`,\nit gets the .color style class."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ColorButton",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_modal": {
+      "brief": "Gets whether the dialog is modal.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`ColorDialogButton`](xref:gtk:Gtk.ColorDialogButton) instead",
+      "file": "gtk/deprecated/gtkcolorbutton.c",
+      "line": 641,
+      "md": "Gets whether the dialog is modal."
+    },
+    "get_title": {
+      "brief": "Gets the title of the color chooser dialog.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`ColorDialogButton`](xref:gtk:Gtk.ColorDialogButton) instead",
+      "file": "gtk/deprecated/gtkcolorbutton.c",
+      "line": 597,
+      "md": "Gets the title of the color chooser dialog."
+    },
+    "set_modal": {
+      "brief": "Sets whether the dialog should be modal.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`ColorDialogButton`](xref:gtk:Gtk.ColorDialogButton) instead",
+      "file": "gtk/deprecated/gtkcolorbutton.c",
+      "line": 615,
+      "md": "Sets whether the dialog should be modal."
+    },
+    "set_title": {
+      "brief": "Sets the title for the color chooser dialog.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`ColorDialogButton`](xref:gtk:Gtk.ColorDialogButton) instead",
+      "file": "gtk/deprecated/gtkcolorbutton.c",
+      "line": 570,
+      "md": "Sets the title for the color chooser dialog."
+    }
+  },
+  "properties": {
+    "modal": {
+      "brief": "Whether the color chooser dialog should be modal.",
+      "file": "gtk/deprecated/gtkcolorbutton.c",
+      "line": 248,
+      "md": "Whether the color chooser dialog should be modal."
+    },
+    "show-editor": {
+      "brief": "Whether the color chooser should open in editor mode.",
+      "file": "gtk/deprecated/gtkcolorbutton.c",
+      "line": 233,
+      "md": "Whether the color chooser should open in editor mode.\n\nThis property should be used in cases where the palette\nin the editor would be redundant, such as when the color\nbutton is already part of a palette."
+    },
+    "title": {
+      "brief": "The title of the color chooser dialog",
+      "file": "gtk/deprecated/gtkcolorbutton.c",
+      "line": 178,
+      "md": "The title of the color chooser dialog"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "activate": {
+      "brief": "Emitted to when the color button is activated.",
+      "file": "gtk/deprecated/gtkcolorbutton.c",
+      "line": 211,
+      "md": "Emitted to when the color button is activated.\n\nThe `::activate` signal on `GtkMenuButton` is an action signal and\nemitting it causes the button to pop up its dialog.",
+      "since": "4.4"
+    },
+    "color-set": {
+      "brief": "Emitted when the user selects a color.",
+      "file": "gtk/deprecated/gtkcolorbutton.c",
+      "line": 190,
+      "md": "Emitted when the user selects a color.\n\nWhen handling this signal, use [`ColorChooser.get_rgba()`](xref:gtk:Gtk.ColorChooser#method:get_rgba)\nto find out which color was just selected.\n\nNote that this signal is only emitted when the user changes the color.\nIf you need to react to programmatic color changes as well, use\nthe notify::rgba signal."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

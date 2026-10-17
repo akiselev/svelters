@@ -1,0 +1,131 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new selection to handle `model`.",
+      "file": "gtk/gtksingleselection.c",
+      "line": 520,
+      "md": "Creates a new selection to handle `model`."
+    }
+  },
+  "doc": {
+    "brief": "A selection model that allows selecting a single item.",
+    "file": "gtk/gtksingleselection.c",
+    "line": 28,
+    "md": "A selection model that allows selecting a single item.\n\nNote that the selection is *persistent* -- if the selected item is removed\nand re-added in the same [`ListModel::items-changed`](xref:gtk:Gio.ListModel#event:items-changed) emission, it\nstays selected. In particular, this means that changing the sort order of an\nunderlying sort model will preserve the selection."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:SingleSelection",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_autoselect": {
+      "brief": "Checks if autoselect has been enabled or disabled via gtk_single_selection_set_autoselect().",
+      "file": "gtk/gtksingleselection.c",
+      "line": 718,
+      "md": "Checks if autoselect has been enabled or disabled via\ngtk_single_selection_set_autoselect()."
+    },
+    "get_can_unselect": {
+      "brief": "If `TRUE`, gtk_selection_model_unselect_item() is supported and allows unselecting the selected item.",
+      "file": "gtk/gtksingleselection.c",
+      "line": 767,
+      "md": "If `TRUE`, gtk_selection_model_unselect_item() is supported and allows\nunselecting the selected item."
+    },
+    "get_model": {
+      "brief": "Gets the model that `self` is wrapping.",
+      "file": "gtk/gtksingleselection.c",
+      "line": 545,
+      "md": "Gets the model that `self` is wrapping."
+    },
+    "get_selected": {
+      "brief": "Gets the position of the selected item.",
+      "file": "gtk/gtksingleselection.c",
+      "line": 623,
+      "md": "Gets the position of the selected item.\n\nIf no item is selected, %GTK_INVALID_LIST_POSITION is returned."
+    },
+    "get_selected_item": {
+      "brief": "Gets the selected item.",
+      "file": "gtk/gtksingleselection.c",
+      "line": 700,
+      "md": "Gets the selected item.\n\nIf no item is selected, `NULL` is returned."
+    },
+    "set_autoselect": {
+      "brief": "Enables or disables autoselect.",
+      "file": "gtk/gtksingleselection.c",
+      "line": 735,
+      "md": "Enables or disables autoselect.\n\nIf `autoselect` is `TRUE`, `self` will enforce that an item is always\nselected. It will select a new item when the currently selected\nitem is deleted and it will disallow unselecting the current item."
+    },
+    "set_can_unselect": {
+      "brief": "If `TRUE`, unselecting the current item via gtk_selection_model_unselect_item() is supported.",
+      "file": "gtk/gtksingleselection.c",
+      "line": 784,
+      "md": "If `TRUE`, unselecting the current item via\ngtk_selection_model_unselect_item() is supported.\n\nNote that setting [`SingleSelection:autoselect`](xref:gtk:Gtk.SingleSelection#property:autoselect) will\ncause unselecting to not work, so it practically makes no sense\nto set both at the same time."
+    },
+    "set_model": {
+      "brief": "Sets the model that `self` should wrap.",
+      "file": "gtk/gtksingleselection.c",
+      "line": 561,
+      "md": "Sets the model that `self` should wrap.\n\nIf `model` is `NULL`, `self` will be empty."
+    },
+    "set_selected": {
+      "brief": "Selects the item at the given position.",
+      "file": "gtk/gtksingleselection.c",
+      "line": 641,
+      "md": "Selects the item at the given position.\n\nIf the list does not have an item at `position` or\n%GTK_INVALID_LIST_POSITION is given, the behavior depends on the\nvalue of the [`SingleSelection:autoselect`](xref:gtk:Gtk.SingleSelection#property:autoselect) property:\nIf it is set, no change will occur and the old item will stay\nselected. If it is unset, the selection will be unset and no item\nwill be selected. This also applies if [`SingleSelection:can-unselect`](xref:gtk:Gtk.SingleSelection#property:can-unselect)\nis set to `FALSE`."
+    }
+  },
+  "properties": {
+    "autoselect": {
+      "brief": "If the selection will always select an item.",
+      "file": "gtk/gtksingleselection.c",
+      "line": 436,
+      "md": "If the selection will always select an item."
+    },
+    "can-unselect": {
+      "brief": "If unselecting the selected item is allowed.",
+      "file": "gtk/gtksingleselection.c",
+      "line": 446,
+      "md": "If unselecting the selected item is allowed."
+    },
+    "item-type": {
+      "brief": "The type of items. See [`ListModel.get_item_type()`](xref:gtk:Gio.ListModel#method:get_item_type).",
+      "file": "gtk/gtksingleselection.c",
+      "line": 456,
+      "md": "The type of items. See [`ListModel.get_item_type()`](xref:gtk:Gio.ListModel#method:get_item_type).",
+      "since": "4.8"
+    },
+    "model": {
+      "brief": "The model being managed.",
+      "file": "gtk/gtksingleselection.c",
+      "line": 468,
+      "md": "The model being managed."
+    },
+    "n-items": {
+      "brief": "The number of items.",
+      "file": "gtk/gtksingleselection.c",
+      "line": 478,
+      "md": "The number of items. See [`ListModel.get_n_items()`](xref:gtk:Gio.ListModel#method:get_n_items).",
+      "since": "4.8"
+    },
+    "selected": {
+      "brief": "Position of the selected item.",
+      "file": "gtk/gtksingleselection.c",
+      "line": 490,
+      "md": "Position of the selected item."
+    },
+    "selected-item": {
+      "brief": "The selected item.",
+      "file": "gtk/gtksingleselection.c",
+      "line": 500,
+      "md": "The selected item."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

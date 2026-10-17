@@ -1,0 +1,178 @@
+{
+  "doc": {
+    "brief": "The QSpinBox class provides a spin box widget.",
+    "index_brief": "Spin box widget",
+    "url": "https://doc.qt.io/qt-6/qspinbox.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QSpinBox",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QAbstractSpinBox::StepType stepType() const": {
+      "brief": "This property holds the step type.",
+      "url": "https://doc.qt.io/qt-6/qspinbox.html#stepType-prop"
+    },
+    "QSpinBox(QWidget *parent)": {
+      "brief": "Constructs a spin box with 0 as minimum value and 99 as maximum value, a step value of 1.",
+      "url": "https://doc.qt.io/qt-6/qspinbox.html#QSpinBox"
+    },
+    "QString cleanText() const": {
+      "brief": "This property holds the text of the spin box excluding any prefix, suffix, or leading or trailing whitespace.",
+      "url": "https://doc.qt.io/qt-6/qspinbox.html#cleanText-prop"
+    },
+    "QString prefix() const": {
+      "brief": "This property holds the spin box's prefix",
+      "url": "https://doc.qt.io/qt-6/qspinbox.html#prefix-prop"
+    },
+    "QString suffix() const": {
+      "brief": "This property holds the suffix of the spin box",
+      "url": "https://doc.qt.io/qt-6/qspinbox.html#suffix-prop"
+    },
+    "QString textFromValue(int value) const": {
+      "brief": "This virtual function is used by the spin box whenever it needs to display the given *value*.",
+      "url": "https://doc.qt.io/qt-6/qspinbox.html#textFromValue"
+    },
+    "QValidator::State validate(QString &text, int &pos) const override": {
+      "brief": "Reimplements: [QAbstractSpinBox::validate](xref:qt:QAbstractSpinBox)(QString &input, int &pos) const.",
+      "url": "https://doc.qt.io/qt-6/qspinbox.html#validate"
+    },
+    "bool event(QEvent *event) override": {
+      "brief": "Reimplements: [QAbstractSpinBox::event](xref:qt:QAbstractSpinBox)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qspinbox.html#event"
+    },
+    "int displayIntegerBase() const": {
+      "brief": "This property holds the base used to display the value of the spin box",
+      "url": "https://doc.qt.io/qt-6/qspinbox.html#displayIntegerBase-prop"
+    },
+    "int maximum() const": {
+      "brief": "This property holds the maximum value of the spin box",
+      "url": "https://doc.qt.io/qt-6/qspinbox.html#maximum-prop"
+    },
+    "int minimum() const": {
+      "brief": "This property holds the minimum value of the spin box",
+      "url": "https://doc.qt.io/qt-6/qspinbox.html#minimum-prop"
+    },
+    "int singleStep() const": {
+      "brief": "This property holds the step value",
+      "url": "https://doc.qt.io/qt-6/qspinbox.html#singleStep-prop"
+    },
+    "int value() const": {
+      "brief": "This property holds the value of the spin box",
+      "url": "https://doc.qt.io/qt-6/qspinbox.html#value-prop"
+    },
+    "int valueFromText(const QString &text) const": {
+      "brief": "This virtual function is used by the spin box whenever it needs to interpret *text* entered by the user as a value.",
+      "url": "https://doc.qt.io/qt-6/qspinbox.html#valueFromText"
+    },
+    "void fixup(QString &input) const override": {
+      "brief": "Reimplements: [QAbstractSpinBox::fixup](xref:qt:QAbstractSpinBox)(QString &input) const.",
+      "url": "https://doc.qt.io/qt-6/qspinbox.html#fixup"
+    },
+    "void setDisplayIntegerBase(int base)": {
+      "brief": "This property holds the base used to display the value of the spin box",
+      "url": "https://doc.qt.io/qt-6/qspinbox.html#displayIntegerBase-prop"
+    },
+    "void setMaximum(int max)": {
+      "brief": "This property holds the maximum value of the spin box",
+      "url": "https://doc.qt.io/qt-6/qspinbox.html#maximum-prop"
+    },
+    "void setMinimum(int min)": {
+      "brief": "This property holds the minimum value of the spin box",
+      "url": "https://doc.qt.io/qt-6/qspinbox.html#minimum-prop"
+    },
+    "void setPrefix(const QString &prefix)": {
+      "brief": "This property holds the spin box's prefix",
+      "url": "https://doc.qt.io/qt-6/qspinbox.html#prefix-prop"
+    },
+    "void setRange(int minimum, int maximum)": {
+      "brief": "Convenience function to set the *minimum*, and *maximum* values with a single function call.",
+      "url": "https://doc.qt.io/qt-6/qspinbox.html#setRange"
+    },
+    "void setSingleStep(int val)": {
+      "brief": "This property holds the step value",
+      "url": "https://doc.qt.io/qt-6/qspinbox.html#singleStep-prop"
+    },
+    "void setStepType(QAbstractSpinBox::StepType stepType)": {
+      "brief": "Sets the step type for the spin box to *stepType*, which is single step or adaptive decimal step.",
+      "url": "https://doc.qt.io/qt-6/qspinbox.html#setStepType"
+    },
+    "void setSuffix(const QString &suffix)": {
+      "brief": "This property holds the suffix of the spin box",
+      "url": "https://doc.qt.io/qt-6/qspinbox.html#suffix-prop"
+    },
+    "void setValue(int val)": {
+      "brief": "This property holds the value of the spin box",
+      "url": "https://doc.qt.io/qt-6/qspinbox.html#value-prop"
+    },
+    "void textChanged(const QString &text)": {
+      "brief": "This signal is emitted whenever the spin box's text is changed.",
+      "url": "https://doc.qt.io/qt-6/qspinbox.html#textChanged"
+    },
+    "void valueChanged(int i)": {
+      "brief": "This signal is emitted whenever the spin box's value is changed.",
+      "url": "https://doc.qt.io/qt-6/qspinbox.html#valueChanged"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "cleanText": {
+      "brief": "The text of the spin box excluding any prefix, suffix, or leading or trailing whitespace",
+      "url": "https://doc.qt.io/qt-6/qspinbox.html#cleanText-prop"
+    },
+    "displayIntegerBase": {
+      "brief": "The base used to display the value of the spin box",
+      "url": "https://doc.qt.io/qt-6/qspinbox.html#displayIntegerBase-prop"
+    },
+    "maximum": {
+      "brief": "The maximum value of the spin box",
+      "url": "https://doc.qt.io/qt-6/qspinbox.html#maximum-prop"
+    },
+    "minimum": {
+      "brief": "The minimum value of the spin box",
+      "url": "https://doc.qt.io/qt-6/qspinbox.html#minimum-prop"
+    },
+    "prefix": {
+      "brief": "The spin box's prefix",
+      "url": "https://doc.qt.io/qt-6/qspinbox.html#prefix-prop"
+    },
+    "singleStep": {
+      "brief": "The step value",
+      "url": "https://doc.qt.io/qt-6/qspinbox.html#singleStep-prop"
+    },
+    "stepType": {
+      "brief": "Step type",
+      "url": "https://doc.qt.io/qt-6/qspinbox.html#stepType-prop"
+    },
+    "suffix": {
+      "brief": "The suffix of the spin box",
+      "url": "https://doc.qt.io/qt-6/qspinbox.html#suffix-prop"
+    },
+    "value": {
+      "brief": "The value of the spin box",
+      "url": "https://doc.qt.io/qt-6/qspinbox.html#value-prop"
+    }
+  },
+  "qss": {
+    "box_model": true,
+    "pseudo_states": [],
+    "sub_controls": [
+      "::down-arrow",
+      "::down-button",
+      "::up-arrow",
+      "::up-button"
+    ],
+    "url": "https://doc.qt.io/qt-6/stylesheet-reference.html#qspinbox-widget"
+  },
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

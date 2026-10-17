@@ -1,0 +1,304 @@
+{
+  "doc": {
+    "brief": "The QAbstractSpinBox class provides a spinbox and a line edit to display values.",
+    "index_brief": "Spinbox and a line edit to display values",
+    "url": "https://doc.qt.io/qt-6/qabstractspinbox.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QAbstractSpinBox(QWidget *parent)": {
+      "brief": "Constructs an abstract spinbox with the given *parent* with default [wrapping](xref:qt:QAbstractSpinBox), and [alignment](https://doc.qt.io/qt-6/stylesheet-reference.html#alignment) properties.",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#QAbstractSpinBox"
+    },
+    "QAbstractSpinBox::ButtonSymbols buttonSymbols() const": {
+      "brief": "This property holds the current button symbol mode",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#buttonSymbols-prop"
+    },
+    "QAbstractSpinBox::CorrectionMode correctionMode() const": {
+      "brief": "This property holds the mode to correct an [Intermediate](xref:qt:QValidator) value if editing finishes",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#correctionMode-prop"
+    },
+    "QAbstractSpinBox::StepEnabled stepEnabled() const": {
+      "brief": "Virtual function that determines whether stepping up and down is legal at any given time.",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#stepEnabled"
+    },
+    "QLineEdit * lineEdit() const": {
+      "brief": "This function returns a pointer to the line edit of the spin box.",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#lineEdit"
+    },
+    "QSize minimumSizeHint() const override": {
+      "brief": "Reimplements an access function for property: [QWidget::minimumSizeHint](xref:qt:QWidget).",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#minimumSizeHint"
+    },
+    "QSize sizeHint() const override": {
+      "brief": "Reimplements an access function for property: [QWidget::sizeHint](xref:qt:QWidget).",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#sizeHint"
+    },
+    "QString specialValueText() const": {
+      "brief": "This property holds the special-value text",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#specialValueText-prop"
+    },
+    "QString text() const": {
+      "brief": "This property holds the spin box's text, including any prefix and suffix",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#text-prop"
+    },
+    "QValidator::State validate(QString &input, int &pos) const": {
+      "brief": "This virtual function is called by the [QAbstractSpinBox](xref:qt:QAbstractSpinBox) to determine whether *input* is valid.",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#validate"
+    },
+    "QVariant inputMethodQuery(Qt::InputMethodQuery query) const override": {
+      "brief": "Reimplements: [QWidget::inputMethodQuery](xref:qt:QWidget)(Qt::InputMethodQuery query) const.",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#inputMethodQuery"
+    },
+    "Qt::Alignment alignment() const": {
+      "brief": "This property holds the alignment of the spin box",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#alignment-prop"
+    },
+    "bool event(QEvent *event) override": {
+      "brief": "Reimplements: [QWidget::event](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#event"
+    },
+    "bool hasAcceptableInput() const": {
+      "brief": "This property holds whether the input satisfies the current validation",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#acceptableInput-prop"
+    },
+    "bool hasFrame() const": {
+      "brief": "This property holds whether the spin box draws itself with a frame",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#frame-prop"
+    },
+    "bool isAccelerated() const": {
+      "brief": "This property holds whether the spin box will accelerate the frequency of the steps when pressing the step Up/Down buttons.",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#accelerated-prop"
+    },
+    "bool isGroupSeparatorShown() const": {
+      "brief": "This property holds whether a thousands separator is enabled.",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#showGroupSeparator-prop"
+    },
+    "bool isReadOnly() const": {
+      "brief": "This property holds whether the spin box is read only.",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#readOnly-prop"
+    },
+    "bool keyboardTracking() const": {
+      "brief": "This property holds whether keyboard tracking is enabled for the spinbox.",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#keyboardTracking-prop"
+    },
+    "bool wrapping() const": {
+      "brief": "This property holds whether the spin box is circular.",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#wrapping-prop"
+    },
+    "void changeEvent(QEvent *event) override": {
+      "brief": "Reimplements: [QWidget::changeEvent](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#changeEvent"
+    },
+    "void clear()": {
+      "brief": "Clears the lineedit of all text but prefix and suffix.",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#clear"
+    },
+    "void closeEvent(QCloseEvent *event) override": {
+      "brief": "Reimplements: [QWidget::closeEvent](xref:qt:QWidget)(QCloseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#closeEvent"
+    },
+    "void contextMenuEvent(QContextMenuEvent *event) override": {
+      "brief": "Reimplements: [QWidget::contextMenuEvent](xref:qt:QWidget)(QContextMenuEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#contextMenuEvent"
+    },
+    "void editingFinished()": {
+      "brief": "This signal is emitted editing is finished.",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#editingFinished"
+    },
+    "void fixup(QString &input) const": {
+      "brief": "This virtual function is called by the [QAbstractSpinBox](xref:qt:QAbstractSpinBox) if the *input* is not validated to [QValidator::Acceptable](xref:qt:QValidator) when Return is pressed or...",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#fixup"
+    },
+    "void focusInEvent(QFocusEvent *event) override": {
+      "brief": "Reimplements: [QWidget::focusInEvent](xref:qt:QWidget)(QFocusEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#focusInEvent"
+    },
+    "void focusOutEvent(QFocusEvent *event) override": {
+      "brief": "Reimplements: [QWidget::focusOutEvent](xref:qt:QWidget)(QFocusEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#focusOutEvent"
+    },
+    "void hideEvent(QHideEvent *event) override": {
+      "brief": "Reimplements: [QWidget::hideEvent](xref:qt:QWidget)(QHideEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#hideEvent"
+    },
+    "void initStyleOption(QStyleOptionSpinBox *option) const": {
+      "brief": "Initialize *option* with the values from this [QSpinBox](xref:qt:QSpinBox).",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#initStyleOption"
+    },
+    "void interpretText()": {
+      "brief": "This function interprets the text of the spin box.",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#interpretText"
+    },
+    "void keyPressEvent(QKeyEvent *event) override": {
+      "brief": "Reimplements: [QWidget::keyPressEvent](xref:qt:QWidget)(QKeyEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#keyPressEvent"
+    },
+    "void keyReleaseEvent(QKeyEvent *event) override": {
+      "brief": "Reimplements: [QWidget::keyReleaseEvent](xref:qt:QWidget)(QKeyEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#keyReleaseEvent"
+    },
+    "void mouseMoveEvent(QMouseEvent *event) override": {
+      "brief": "Reimplements: [QWidget::mouseMoveEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#mouseMoveEvent"
+    },
+    "void mousePressEvent(QMouseEvent *event) override": {
+      "brief": "Reimplements: [QWidget::mousePressEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#mousePressEvent"
+    },
+    "void mouseReleaseEvent(QMouseEvent *event) override": {
+      "brief": "Reimplements: [QWidget::mouseReleaseEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#mouseReleaseEvent"
+    },
+    "void paintEvent(QPaintEvent *event) override": {
+      "brief": "Reimplements: [QWidget::paintEvent](xref:qt:QWidget)(QPaintEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#paintEvent"
+    },
+    "void resizeEvent(QResizeEvent *event) override": {
+      "brief": "Reimplements: [QWidget::resizeEvent](xref:qt:QWidget)(QResizeEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#resizeEvent"
+    },
+    "void returnPressed()": {
+      "brief": "This signal is emitted when the Return or Enter key is used.",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#returnPressed"
+    },
+    "void selectAll()": {
+      "brief": "Selects all the text in the spinbox except the prefix and suffix.",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#selectAll"
+    },
+    "void setAccelerated(bool on)": {
+      "brief": "This property holds whether the spin box will accelerate the frequency of the steps when pressing the step Up/Down buttons.",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#accelerated-prop"
+    },
+    "void setAlignment(Qt::Alignment flag)": {
+      "brief": "This property holds the alignment of the spin box",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#alignment-prop"
+    },
+    "void setButtonSymbols(QAbstractSpinBox::ButtonSymbols bs)": {
+      "brief": "This property holds the current button symbol mode",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#buttonSymbols-prop"
+    },
+    "void setCorrectionMode(QAbstractSpinBox::CorrectionMode cm)": {
+      "brief": "This property holds the mode to correct an [Intermediate](xref:qt:QValidator) value if editing finishes",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#correctionMode-prop"
+    },
+    "void setFrame(bool)": {
+      "brief": "This property holds whether the spin box draws itself with a frame",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#frame-prop"
+    },
+    "void setGroupSeparatorShown(bool shown)": {
+      "brief": "This property holds whether a thousands separator is enabled.",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#showGroupSeparator-prop"
+    },
+    "void setKeyboardTracking(bool kt)": {
+      "brief": "This property holds whether keyboard tracking is enabled for the spinbox.",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#keyboardTracking-prop"
+    },
+    "void setLineEdit(QLineEdit *lineEdit)": {
+      "brief": "Sets the line edit of the spinbox to be *lineEdit* instead of the current line edit widget. *lineEdit* cannot be `nullptr`.",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#setLineEdit"
+    },
+    "void setReadOnly(bool r)": {
+      "brief": "This property holds whether the spin box is read only.",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#readOnly-prop"
+    },
+    "void setSpecialValueText(const QString &txt)": {
+      "brief": "This property holds the special-value text",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#specialValueText-prop"
+    },
+    "void setWrapping(bool w)": {
+      "brief": "This property holds whether the spin box is circular.",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#wrapping-prop"
+    },
+    "void showEvent(QShowEvent *event) override": {
+      "brief": "Reimplements: [QWidget::showEvent](xref:qt:QWidget)(QShowEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#showEvent"
+    },
+    "void stepBy(int steps)": {
+      "brief": "Virtual function that is called whenever the user triggers a step.",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#stepBy"
+    },
+    "void stepDown()": {
+      "brief": "Steps down by one linestep Calling this slot is analogous to calling [stepBy](xref:qt:QAbstractSpinBox)(-1);",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#stepDown"
+    },
+    "void stepUp()": {
+      "brief": "Steps up by one linestep Calling this slot is analogous to calling [stepBy](xref:qt:QAbstractSpinBox)(1);",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#stepUp"
+    },
+    "void timerEvent(QTimerEvent *event) override": {
+      "brief": "Reimplements: [QObject::timerEvent](xref:qt:QObject)(QTimerEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#timerEvent"
+    },
+    "void wheelEvent(QWheelEvent *event) override": {
+      "brief": "Reimplements: [QWidget::wheelEvent](xref:qt:QWidget)(QWheelEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#wheelEvent"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "accelerated": {
+      "brief": "Whether the spin box will accelerate the frequency of the steps when pressing the step Up/Down buttons",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#accelerated-prop"
+    },
+    "acceptableInput": {
+      "brief": "Whether the input satisfies the current validation",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#acceptableInput-prop"
+    },
+    "alignment": {
+      "brief": "The alignment of the spin box",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#alignment-prop"
+    },
+    "buttonSymbols": {
+      "brief": "The current button symbol mode",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#buttonSymbols-prop"
+    },
+    "correctionMode": {
+      "brief": "The mode to correct an Intermediate value if editing finishes",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#correctionMode-prop"
+    },
+    "frame": {
+      "brief": "Whether the spin box draws itself with a frame",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#frame-prop"
+    },
+    "keyboardTracking": {
+      "brief": "Whether keyboard tracking is enabled for the spinbox",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#keyboardTracking-prop"
+    },
+    "readOnly": {
+      "brief": "Whether the spin box is read only",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#readOnly-prop"
+    },
+    "showGroupSeparator": {
+      "brief": "Whether a thousands separator is enabled. By default this property is false",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#showGroupSeparator-prop"
+    },
+    "specialValueText": {
+      "brief": "The special-value text",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#specialValueText-prop"
+    },
+    "text": {
+      "brief": "The spin box's text, including any prefix and suffix",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#text-prop"
+    },
+    "wrapping": {
+      "brief": "Whether the spin box is circular",
+      "url": "https://doc.qt.io/qt-6/qabstractspinbox.html#wrapping-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

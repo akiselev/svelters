@@ -1,0 +1,37 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Represents the orientation of widgets and other objects.",
+    "file": "gtk/gtkenums.h",
+    "line": 428,
+    "md": "Represents the orientation of widgets and other objects.\n\nTypical examples are [`Box`](xref:gtk:Box) or [`GesturePan`](xref:gtk:GesturePan)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Orientation",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "horizontal": {
+      "brief": "The element is in horizontal orientation.",
+      "file": "gtk/gtkenums.h",
+      "line": 430,
+      "md": "The element is in horizontal orientation."
+    },
+    "vertical": {
+      "brief": "The element is in vertical orientation.",
+      "file": "gtk/gtkenums.h",
+      "line": 431,
+      "md": "The element is in vertical orientation."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

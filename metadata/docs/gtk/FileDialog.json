@@ -1,0 +1,315 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkFileDialog` object.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 353,
+      "md": "Creates a new `GtkFileDialog` object.",
+      "since": "4.10"
+    }
+  },
+  "doc": {
+    "brief": "Asynchronous API to present a file chooser dialog.",
+    "file": "gtk/gtkfiledialog.c",
+    "line": 32,
+    "md": "Asynchronous API to present a file chooser dialog.\n\n`GtkFileDialog` collects the arguments that are needed to present\nthe dialog to the user, such as a title for the dialog and whether\nit should be modal.\n\nThe dialog is shown with [`FileDialog.open()`](xref:gtk:Gtk.FileDialog#method:open),\n[`FileDialog.save()`](xref:gtk:Gtk.FileDialog#method:save), etc.",
+    "since": "4.10"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:FileDialog",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_accept_label": {
+      "brief": "Retrieves the text used by the dialog on its accept button.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 748,
+      "md": "Retrieves the text used by the dialog on its accept button.",
+      "since": "4.10"
+    },
+    "get_default_filter": {
+      "brief": "Gets the filter that will be selected by default in the file chooser dialog.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 503,
+      "md": "Gets the filter that will be selected by default\nin the file chooser dialog.",
+      "since": "4.10"
+    },
+    "get_filters": {
+      "brief": "Gets the filters that will be offered to the user in the file chooser dialog.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 460,
+      "md": "Gets the filters that will be offered to the user\nin the file chooser dialog.",
+      "since": "4.10"
+    },
+    "get_initial_file": {
+      "brief": "Gets the file that will be initially selected in the file chooser dialog.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 653,
+      "md": "Gets the file that will be initially selected in\nthe file chooser dialog.",
+      "since": "4.10"
+    },
+    "get_initial_folder": {
+      "brief": "Gets the folder that will be set as the initial folder in the file chooser dialog.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 549,
+      "md": "Gets the folder that will be set as the\ninitial folder in the file chooser dialog.",
+      "since": "4.10"
+    },
+    "get_initial_name": {
+      "brief": "Gets the filename that will be initially selected.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 599,
+      "md": "Gets the filename that will be initially selected.",
+      "since": "4.10"
+    },
+    "get_modal": {
+      "brief": "Returns whether the file chooser dialog blocks interaction with the parent window while it is presented.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 417,
+      "md": "Returns whether the file chooser dialog blocks interaction\nwith the parent window while it is presented.",
+      "since": "4.10"
+    },
+    "get_title": {
+      "brief": "Returns the title that will be shown on the file chooser dialog.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 371,
+      "md": "Returns the title that will be shown on the file chooser dialog.",
+      "since": "4.10"
+    },
+    "open": {
+      "brief": "Presents a file chooser dialog to the user.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 1002,
+      "md": "Presents a file chooser dialog to the user.\n\nThe file chooser dialog will be set up to select a single file.\n\nThe `callback` will be called when the dialog is closed.",
+      "since": "4.10"
+    },
+    "open_finish": {
+      "brief": "Finishes the [`FileDialog.open()`](xref:gtk:Gtk.FileDialog#method:open) call.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 1046,
+      "md": "Finishes the [`FileDialog.open()`](xref:gtk:Gtk.FileDialog#method:open) call.\n\nNote that this function returns a [`DISMISSED`](xref:gtk:Gtk.DialogError.DISMISSED)\nerror if the user cancels the dialog.",
+      "since": "4.10"
+    },
+    "open_multiple": {
+      "brief": "Presents a file chooser dialog to the user.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 1219,
+      "md": "Presents a file chooser dialog to the user.\n\nThe file chooser dialog will be set up to select multiple files.\n\nThe file chooser dialog will initially be opened in the directory\n[`FileDialog:initial-folder`](xref:gtk:Gtk.FileDialog#property:initial-folder).\n\nThe `callback` will be called when the dialog is closed.",
+      "since": "4.10"
+    },
+    "open_multiple_finish": {
+      "brief": "Finishes the [`FileDialog.open()`](xref:gtk:Gtk.FileDialog#method:open) call.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 1266,
+      "md": "Finishes the [`FileDialog.open()`](xref:gtk:Gtk.FileDialog#method:open) call.\n\nNote that this function returns a [`DISMISSED`](xref:gtk:Gtk.DialogError.DISMISSED)\nerror if the user cancels the dialog.",
+      "since": "4.10"
+    },
+    "open_multiple_text_files": {
+      "brief": "Presents a file chooser dialog to the user.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 1489,
+      "md": "Presents a file chooser dialog to the user.\n\nThe file chooser dialog will be set up to select multiple files.\n\nThe file chooser dialog will initially be opened in the directory\n[`FileDialog:initial-folder`](xref:gtk:Gtk.FileDialog#property:initial-folder).\n\nIn contrast to [`FileDialog.open()`](xref:gtk:Gtk.FileDialog#method:open), this function\nlets the user select the text encoding for the files, if possible.\n\nThe `callback` will be called when the dialog is closed.",
+      "since": "4.18"
+    },
+    "open_multiple_text_files_finish": {
+      "brief": "Finishes the [`FileDialog.open()`](xref:gtk:Gtk.FileDialog#method:open) call.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 1559,
+      "md": "Finishes the [`FileDialog.open()`](xref:gtk:Gtk.FileDialog#method:open) call.\n\nNote that this function returns a [`DISMISSED`](xref:gtk:Gtk.DialogError.DISMISSED)\nerror if the user cancels the dialog.",
+      "since": "4.18"
+    },
+    "open_text_file": {
+      "brief": "Initiates a file selection operation by presenting a file chooser dialog to the user.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 1373,
+      "md": "Initiates a file selection operation by presenting a file chooser\ndialog to the user.\n\nIn contrast to [`FileDialog.open()`](xref:gtk:Gtk.FileDialog#method:open), this function\nlets the user select the text encoding for the file, if possible.\n\nThe `callback` will be called when the dialog is closed.",
+      "since": "4.18"
+    },
+    "open_text_file_finish": {
+      "brief": "Finishes the [`FileDialog.open_text_file()`](xref:gtk:Gtk.FileDialog#method:open_text_file) call and returns the resulting file and text encoding.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 1439,
+      "md": "Finishes the [`FileDialog.open_text_file()`](xref:gtk:Gtk.FileDialog#method:open_text_file) call\nand returns the resulting file and text encoding.\n\nIf the user has explicitly selected a text encoding to use\nfor the file, then `encoding` will be set to a codeset name that\nis suitable for passing to iconv_open(). Otherwise, it will\nbe `NULL`.\n\nNote that this function returns a [`DISMISSED`](xref:gtk:Gtk.DialogError.DISMISSED)\nerror if the user cancels the dialog.",
+      "since": "4.18"
+    },
+    "save": {
+      "brief": "Presents a file chooser dialog to the user.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 1148,
+      "md": "Presents a file chooser dialog to the user.\n\nThe file chooser dialog will be save mode.\n\nThe `callback` will be called when the dialog is closed.",
+      "since": "4.10"
+    },
+    "save_finish": {
+      "brief": "Finishes the [`FileDialog.save()`](xref:gtk:Gtk.FileDialog#method:save) call.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 1192,
+      "md": "Finishes the [`FileDialog.save()`](xref:gtk:Gtk.FileDialog#method:save) call.\n\nNote that this function returns a [`DISMISSED`](xref:gtk:Gtk.DialogError.DISMISSED)\nerror if the user cancels the dialog.",
+      "since": "4.10"
+    },
+    "save_text_file": {
+      "brief": "Initiates a file save operation by presenting a file chooser dialog to the user.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 1604,
+      "md": "Initiates a file save operation by presenting a file chooser\ndialog to the user.\n\nIn contrast to [`FileDialog.save()`](xref:gtk:Gtk.FileDialog#method:save), this function\nlets the user select the text encoding and line endings for\nthe text file, if possible.\n\nThe `callback` will be called when the dialog is closed.",
+      "since": "4.18"
+    },
+    "save_text_file_finish": {
+      "brief": "Finishes the [`FileDialog.save_text_file()`](xref:gtk:Gtk.FileDialog#method:save_text_file) call and returns the resulting file, text encoding and line endings.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 1685,
+      "md": "Finishes the [`FileDialog.save_text_file()`](xref:gtk:Gtk.FileDialog#method:save_text_file) call\nand returns the resulting file, text encoding and line endings.\n\nIf the user has explicitly selected a text encoding to use\nfor the file, then `encoding` will be set to a codeset name that\nis suitable for passing to iconv_open(). Otherwise, it will\nbe `NULL`.\n\nThe `line_ending` will be set to one of \"\\n\", \"\\r\\n\", \"\\r\" or \"\",\nwhere the latter means to preserve existing line endings.\n\nNote that this function returns a [`DISMISSED`](xref:gtk:Gtk.DialogError.DISMISSED)\nerror if the user cancels the dialog.",
+      "since": "4.18"
+    },
+    "select_folder": {
+      "brief": "Presents a file chooser dialog to the user.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 1073,
+      "md": "Presents a file chooser dialog to the user.\n\nThe file chooser dialog will be set up to select a single folder.\n\nIf you pass `initial_folder`, the file chooser dialog will initially\nbe opened in the parent directory of that folder, otherwise, it\nwill be in the directory [`FileDialog:initial-folder`](xref:gtk:Gtk.FileDialog#property:initial-folder).\n\nThe `callback` will be called when the dialog is closed.",
+      "since": "4.10"
+    },
+    "select_folder_finish": {
+      "brief": "Finishes the [`FileDialog.select_folder()`](xref:gtk:Gtk.FileDialog#method:select_folder) call.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 1121,
+      "md": "Finishes the [`FileDialog.select_folder()`](xref:gtk:Gtk.FileDialog#method:select_folder) call.\n\nNote that this function returns a [`DISMISSED`](xref:gtk:Gtk.DialogError.DISMISSED)\nerror if the user cancels the dialog.",
+      "since": "4.10"
+    },
+    "select_multiple_folders": {
+      "brief": "Presents a file chooser dialog to the user.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 1294,
+      "md": "Presents a file chooser dialog to the user.\n\nThe file chooser dialog will be set up to allow selecting\nmultiple folders.\n\nThe file chooser dialog will initially be opened in the\ndirectory [`FileDialog:initial-folder`](xref:gtk:Gtk.FileDialog#property:initial-folder).\n\nThe `callback` will be called when the dialog is closed.",
+      "since": "4.10"
+    },
+    "select_multiple_folders_finish": {
+      "brief": "Finishes the [`FileDialog.select_multiple_folders()`](xref:gtk:Gtk.FileDialog#method:select_multiple_folders) call.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 1342,
+      "md": "Finishes the [`FileDialog.select_multiple_folders()`](xref:gtk:Gtk.FileDialog#method:select_multiple_folders) call.\n\nNote that this function returns a [`DISMISSED`](xref:gtk:Gtk.DialogError.DISMISSED)\nerror if the user cancels the dialog.",
+      "since": "4.10"
+    },
+    "set_accept_label": {
+      "brief": "Sets the label shown on the file chooser's accept button.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 766,
+      "md": "Sets the label shown on the file chooser's accept button.\n\nLeaving the accept label unset or setting it as `NULL` will\nfall back to a default label, depending on what API is used\nto launch the file dialog.",
+      "since": "4.10"
+    },
+    "set_default_filter": {
+      "brief": "Sets the filter that will be selected by default in the file chooser dialog.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 522,
+      "md": "Sets the filter that will be selected by default\nin the file chooser dialog.\n\nIf set to `NULL`, the first item in [`FileDialog:filters`](xref:gtk:Gtk.FileDialog#property:filters)\nwill be used as the default filter. If that list is empty, the dialog\nwill be unfiltered.",
+      "since": "4.10"
+    },
+    "set_filters": {
+      "brief": "Sets the filters that will be offered to the user in the file chooser dialog.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 480,
+      "md": "Sets the filters that will be offered to the user\nin the file chooser dialog.",
+      "since": "4.10"
+    },
+    "set_initial_file": {
+      "brief": "Sets the file that will be initially selected in the file chooser dialog.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 672,
+      "md": "Sets the file that will be initially selected in\nthe file chooser dialog.\n\nThis function is a shortcut for calling both\n[`FileDialog.set_initial_folder()`](xref:gtk:Gtk.FileDialog#method:set_initial_folder) and\n[`FileDialog.set_initial_name()`](xref:gtk:Gtk.FileDialog#method:set_initial_name) with the\ndirectory and name of `file`, respectively.",
+      "since": "4.10"
+    },
+    "set_initial_folder": {
+      "brief": "Sets the folder that will be set as the initial folder in the file chooser dialog.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 568,
+      "md": "Sets the folder that will be set as the\ninitial folder in the file chooser dialog.",
+      "since": "4.10"
+    },
+    "set_initial_name": {
+      "brief": "Sets the filename that will be initially selected.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 617,
+      "md": "Sets the filename that will be initially selected.\n\nFor save dialogs, `name` will usually be pre-entered into the\nname field.\n\nIf a file with this name already exists in the directory set\nvia [`FileDialog:initial-folder`](xref:gtk:Gtk.FileDialog#property:initial-folder), the dialog will\npreselect it.",
+      "since": "4.10"
+    },
+    "set_modal": {
+      "brief": "Sets whether the file chooser dialog blocks interaction with the parent window while it is presented.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 436,
+      "md": "Sets whether the file chooser dialog blocks interaction\nwith the parent window while it is presented.",
+      "since": "4.10"
+    },
+    "set_title": {
+      "brief": "Sets the title that will be shown on the file chooser dialog.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 389,
+      "md": "Sets the title that will be shown on the file chooser dialog.",
+      "since": "4.10"
+    }
+  },
+  "properties": {
+    "accept-label": {
+      "brief": "Label for the file chooser's accept button.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 315,
+      "md": "Label for the file chooser's accept button.",
+      "since": "4.10"
+    },
+    "default-filter": {
+      "brief": "The default filter.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 249,
+      "md": "The default filter.\n\nThis filter is initially active in the file chooser dialog.\n\nIf the default filter is `NULL`, the first filter of [`FileDialog:filters`](xref:gtk:Gtk.FileDialog#property:filters)\nis used as the default filter. If that property contains no filter, the dialog will\nbe unfiltered.\n\nIf [`FileDialog:filters`](xref:gtk:Gtk.FileDialog#property:filters) is not `NULL`, the default filter should be\npart of the list. If it is not, the dialog may choose to not make it available.",
+      "since": "4.10"
+    },
+    "filters": {
+      "brief": "The list of filters.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 234,
+      "md": "The list of filters.\n\nSee [`FileDialog:default-filter`](xref:gtk:Gtk.FileDialog#property:default-filter) about how these\ntwo properties interact.",
+      "since": "4.10"
+    },
+    "initial-file": {
+      "brief": "The initial file.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 270,
+      "md": "The initial file.\n\nThis file is initially selected in the file chooser dialog\n\nThis is a utility property that sets both [`FileDialog:initial-folder`](xref:gtk:Gtk.FileDialog#property:initial-folder)\nand [`FileDialog:initial-name`](xref:gtk:Gtk.FileDialog#property:initial-name).",
+      "since": "4.10"
+    },
+    "initial-folder": {
+      "brief": "The initial folder.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 287,
+      "md": "The initial folder.\n\nThis is the directory that is initially opened in the file chooser dialog.",
+      "since": "4.10"
+    },
+    "initial-name": {
+      "brief": "The initial name.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 301,
+      "md": "The initial name.\n\nThis is the name of the file that is initially selected in the file chooser dialog.",
+      "since": "4.10"
+    },
+    "modal": {
+      "brief": "Whether the file chooser dialog is modal.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 222,
+      "md": "Whether the file chooser dialog is modal.",
+      "since": "4.10"
+    },
+    "title": {
+      "brief": "A title that may be shown on the file chooser dialog.",
+      "file": "gtk/gtkfiledialog.c",
+      "line": 210,
+      "md": "A title that may be shown on the file chooser dialog.",
+      "since": "4.10"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

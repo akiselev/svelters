@@ -1,0 +1,81 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new event controller that will handle key events.",
+      "file": "gtk/gtkeventcontrollerkey.c",
+      "line": 279,
+      "md": "Creates a new event controller that will handle key events."
+    }
+  },
+  "doc": {
+    "brief": "Provides access to key events.",
+    "file": "gtk/gtkeventcontrollerkey.c",
+    "line": 20,
+    "md": "Provides access to key events."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:EventControllerKey",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "forward": {
+      "brief": "Forwards the current event of this `controller` to a `widget`.",
+      "file": "gtk/gtkeventcontrollerkey.c",
+      "line": 328,
+      "md": "Forwards the current event of this `controller` to a `widget`.\n\nThis function can only be used in handlers for the\n[`EventControllerKey::key-pressed`](xref:gtk:Gtk.EventControllerKey#event:key-pressed),\n[`EventControllerKey::key-released`](xref:gtk:Gtk.EventControllerKey#event:key-released)\nor [`EventControllerKey::modifiers`](xref:gtk:Gtk.EventControllerKey#event:modifiers) signals."
+    },
+    "get_group": {
+      "brief": "Gets the key group of the current event of this `controller`.",
+      "file": "gtk/gtkeventcontrollerkey.c",
+      "line": 368,
+      "md": "Gets the key group of the current event of this `controller`.\n\nSee [`KeyEvent.get_layout()`](xref:gtk:Gdk.KeyEvent#method:get_layout)."
+    },
+    "get_im_context": {
+      "brief": "Gets the input method context of the key `controller`.",
+      "file": "gtk/gtkeventcontrollerkey.c",
+      "line": 312,
+      "md": "Gets the input method context of the key `controller`."
+    },
+    "set_im_context": {
+      "brief": "Sets the input method context of the key `controller`.",
+      "file": "gtk/gtkeventcontrollerkey.c",
+      "line": 292,
+      "md": "Sets the input method context of the key `controller`."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "im-update": {
+      "brief": "Emitted whenever the input method context filters away a keypress and prevents the `controller` receiving it.",
+      "file": "gtk/gtkeventcontrollerkey.c",
+      "line": 254,
+      "md": "Emitted whenever the input method context filters away\na keypress and prevents the `controller` receiving it.\n\nSee [`EventControllerKey.set_im_context()`](xref:gtk:Gtk.EventControllerKey#method:set_im_context) and\n[`IMContext.filter_keypress()`](xref:gtk:Gtk.IMContext#method:filter_keypress)."
+    },
+    "key-pressed": {
+      "brief": "Emitted whenever a key is pressed.",
+      "file": "gtk/gtkeventcontrollerkey.c",
+      "line": 190,
+      "md": "Emitted whenever a key is pressed."
+    },
+    "key-released": {
+      "brief": "Emitted whenever a key is released.",
+      "file": "gtk/gtkeventcontrollerkey.c",
+      "line": 212,
+      "md": "Emitted whenever a key is released."
+    },
+    "modifiers": {
+      "brief": "Emitted whenever the state of modifier keys and pointer buttons change.",
+      "file": "gtk/gtkeventcontrollerkey.c",
+      "line": 232,
+      "md": "Emitted whenever the state of modifier keys and pointer buttons change."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

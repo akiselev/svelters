@@ -1,0 +1,268 @@
+{
+  "doc": {
+    "brief": "The QWizard class provides a framework for wizards.",
+    "index_brief": "Framework for wizards",
+    "url": "https://doc.qt.io/qt-6/qwizard.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QWizard",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QAbstractButton * button(QWizard::WizardButton which) const": {
+      "brief": "Returns the button corresponding to role *which*.",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#button"
+    },
+    "QList<int> pageIds() const": {
+      "brief": "Returns the list of page IDs.",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#pageIds"
+    },
+    "QList<int> visitedIds() const": {
+      "brief": "Returns the list of IDs of visited pages, in the order in which the pages were visited.",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#visitedIds"
+    },
+    "QPixmap pixmap(QWizard::WizardPixmap which) const": {
+      "brief": "Returns the pixmap set for role *which*.",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#pixmap"
+    },
+    "QSize sizeHint() const override": {
+      "brief": "Reimplements: [QDialog::sizeHint](xref:qt:QDialog)() const.",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#sizeHint"
+    },
+    "QString buttonText(QWizard::WizardButton which) const": {
+      "brief": "Returns the text on button *which*.",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#buttonText"
+    },
+    "QVariant field(const QString &name) const": {
+      "brief": "Returns the value of the field called *name*.",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#field"
+    },
+    "QWidget * sideWidget() const": {
+      "brief": "Returns the widget on the left side of the wizard or `nullptr`.",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#sideWidget"
+    },
+    "QWizard(QWidget *parent, Qt::WindowFlags flags)": {
+      "brief": "Constructs a wizard with the given *parent* and window *flags*.",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#QWizard"
+    },
+    "QWizard::WizardOptions options() const": {
+      "brief": "This property holds the various options that affect the look and feel of the wizard",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#options-prop"
+    },
+    "QWizard::WizardStyle wizardStyle() const": {
+      "brief": "This property holds the look and feel of the wizard",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#wizardStyle-prop"
+    },
+    "QWizardPage * currentPage() const": {
+      "brief": "Returns a pointer to the current page, or `nullptr` if there is no current page (e.g., before the wizard is shown).",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#currentPage"
+    },
+    "QWizardPage * page(int id) const": {
+      "brief": "Returns the page with the given *id*, or `nullptr` if there is no such page.",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#page"
+    },
+    "Qt::TextFormat subTitleFormat() const": {
+      "brief": "This property holds the text format used by page subtitles",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#subTitleFormat-prop"
+    },
+    "Qt::TextFormat titleFormat() const": {
+      "brief": "This property holds the text format used by page titles",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#titleFormat-prop"
+    },
+    "bool event(QEvent *event) override": {
+      "brief": "Reimplements: [QWidget::event](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#event"
+    },
+    "bool hasVisitedPage(int id) const": {
+      "brief": "Returns `true` if the page history contains page *id*; otherwise, returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#hasVisitedPage"
+    },
+    "bool nativeEvent(const QByteArray &eventType, void *message, qintptr *result) override": {
+      "brief": "Reimplements: [QWidget::nativeEvent](xref:qt:QWidget)(const QByteArray &eventType, void *message, qintptr *result).",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#nativeEvent"
+    },
+    "bool testOption(QWizard::WizardOption option) const": {
+      "brief": "Returns `true` if the given *option* is enabled; otherwise, returns false.",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#testOption"
+    },
+    "bool validateCurrentPage()": {
+      "brief": "This virtual function is called by [QWizard](xref:qt:QWizard) when the user clicks **Next** or **Finish** to perform some last-minute validation.",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#validateCurrentPage"
+    },
+    "int addPage(QWizardPage *page)": {
+      "brief": "Adds the given *page* to the wizard, and returns the page's ID.",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#addPage"
+    },
+    "int currentId() const": {
+      "brief": "This property holds the ID of the current page",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#currentId-prop"
+    },
+    "int nextId() const": {
+      "brief": "This virtual function is called by [QWizard](xref:qt:QWizard) to find out which page to show when the user clicks the **Next** button.",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#nextId"
+    },
+    "int startId() const": {
+      "brief": "This property holds the ID of the first page",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#startId-prop"
+    },
+    "void back()": {
+      "brief": "Goes back to the previous page.",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#back"
+    },
+    "void cleanupPage(int id)": {
+      "brief": "This virtual function is called by [QWizard](xref:qt:QWizard) to clean up page *id* just before the user leaves it by clicking **Back** (unless the [QWizard::IndependentPages](xref:qt:QWizard) option...",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#cleanupPage"
+    },
+    "void currentIdChanged(int id)": {
+      "brief": "This signal is emitted when the current page changes, with the new current *id*.",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#currentIdChanged"
+    },
+    "void customButtonClicked(int which)": {
+      "brief": "This signal is emitted when the user clicks a custom button. *which* can be [CustomButton1](xref:qt:QWizard), [CustomButton2](xref:qt:QWizard), or [CustomButton3](xref:qt:QWizard).",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#customButtonClicked"
+    },
+    "void done(int result) override": {
+      "brief": "Reimplements: [QDialog::done](xref:qt:QDialog)(int r).",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#done"
+    },
+    "void helpRequested()": {
+      "brief": "This signal is emitted when the user clicks the **Help** button.",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#helpRequested"
+    },
+    "void initializePage(int id)": {
+      "brief": "This virtual function is called by [QWizard](xref:qt:QWizard) to prepare page *id* just before it is shown either as a result of [QWizard::restart](xref:qt:QWizard)() being called, or as a result of...",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#initializePage"
+    },
+    "void next()": {
+      "brief": "Advances to the next page.",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#next"
+    },
+    "void pageAdded(int id)": {
+      "brief": "This signal is emitted whenever a page is added to the wizard.",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#pageAdded"
+    },
+    "void pageRemoved(int id)": {
+      "brief": "This signal is emitted whenever a page is removed from the wizard.",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#pageRemoved"
+    },
+    "void paintEvent(QPaintEvent *event) override": {
+      "brief": "Reimplements: [QWidget::paintEvent](xref:qt:QWidget)(QPaintEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#paintEvent"
+    },
+    "void removePage(int id)": {
+      "brief": "Removes the page with the given *id*.",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#removePage"
+    },
+    "void resizeEvent(QResizeEvent *event) override": {
+      "brief": "Reimplements: [QDialog::resizeEvent](xref:qt:QDialog)(QResizeEvent *).",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#resizeEvent"
+    },
+    "void restart()": {
+      "brief": "Restarts the wizard at the start page.",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#restart"
+    },
+    "void setButton(QWizard::WizardButton which, QAbstractButton *button)": {
+      "brief": "Sets the button corresponding to role *which* to *button*.",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#setButton"
+    },
+    "void setButtonLayout(const QList<QWizard::WizardButton> &layout)": {
+      "brief": "Sets the order in which buttons are displayed to *layout*, where *layout* is a list of [WizardButton](xref:qt:QWizard)s.",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#setButtonLayout"
+    },
+    "void setButtonText(QWizard::WizardButton which, const QString &text)": {
+      "brief": "Sets the text on button *which* to be *text*.",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#setButtonText"
+    },
+    "void setCurrentId(int id)": {
+      "brief": "Sets [currentId](xref:qt:QWizard) to *id*, without visiting the pages between [currentId](xref:qt:QWizard) and *id*.",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#setCurrentId"
+    },
+    "void setDefaultProperty(const char *className, const char *property, const char *changedSignal)": {
+      "brief": "Sets the default property for *className* to be *property*, and the associated change signal to be *changedSignal*.",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#setDefaultProperty"
+    },
+    "void setField(const QString &name, const QVariant &value)": {
+      "brief": "Sets the value of the field called *name* to *value*.",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#setField"
+    },
+    "void setOption(QWizard::WizardOption option, bool on)": {
+      "brief": "Sets the given *option* to be enabled if *on* is true; otherwise, clears the given *option*.",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#setOption"
+    },
+    "void setOptions(QWizard::WizardOptions options)": {
+      "brief": "This property holds the various options that affect the look and feel of the wizard",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#options-prop"
+    },
+    "void setPage(int id, QWizardPage *page)": {
+      "brief": "Adds the given *page* to the wizard with the given *id*.",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#setPage"
+    },
+    "void setPixmap(QWizard::WizardPixmap which, const QPixmap &pixmap)": {
+      "brief": "Sets the pixmap for role *which* to *pixmap*.",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#setPixmap"
+    },
+    "void setSideWidget(QWidget *widget)": {
+      "brief": "Sets the given *widget* to be shown on the left side of the wizard.",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#setSideWidget"
+    },
+    "void setStartId(int id)": {
+      "brief": "This property holds the ID of the first page",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#startId-prop"
+    },
+    "void setSubTitleFormat(Qt::TextFormat format)": {
+      "brief": "This property holds the text format used by page subtitles",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#subTitleFormat-prop"
+    },
+    "void setTitleFormat(Qt::TextFormat format)": {
+      "brief": "This property holds the text format used by page titles",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#titleFormat-prop"
+    },
+    "void setVisible(bool visible) override": {
+      "brief": "Reimplements: [QDialog::setVisible](xref:qt:QDialog)(bool visible).",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#setVisible"
+    },
+    "void setWizardStyle(QWizard::WizardStyle style)": {
+      "brief": "This property holds the look and feel of the wizard",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#wizardStyle-prop"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "currentId": {
+      "brief": "The ID of the current page",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#currentId-prop"
+    },
+    "options": {
+      "brief": "The various options that affect the look and feel of the wizard",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#options-prop"
+    },
+    "startId": {
+      "brief": "The ID of the first page",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#startId-prop"
+    },
+    "subTitleFormat": {
+      "brief": "The text format used by page subtitles",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#subTitleFormat-prop"
+    },
+    "titleFormat": {
+      "brief": "The text format used by page titles",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#titleFormat-prop"
+    },
+    "wizardStyle": {
+      "brief": "The look and feel of the wizard",
+      "url": "https://doc.qt.io/qt-6/qwizard.html#wizardStyle-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

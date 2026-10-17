@@ -1,0 +1,164 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkCheckButton`.",
+      "file": "gtk/gtkcheckbutton.c",
+      "line": 788,
+      "md": "Creates a new `GtkCheckButton`."
+    },
+    "new_with_label": {
+      "brief": "Creates a new `GtkCheckButton` with the given text.",
+      "file": "gtk/gtkcheckbutton.c",
+      "line": 801,
+      "md": "Creates a new `GtkCheckButton` with the given text."
+    },
+    "new_with_mnemonic": {
+      "brief": "Creates a new `GtkCheckButton` with the given text and a mnemonic.",
+      "file": "gtk/gtkcheckbutton.c",
+      "line": 815,
+      "md": "Creates a new `GtkCheckButton` with the given text and a mnemonic."
+    }
+  },
+  "doc": {
+    "brief": "Places a label next to an indicator.",
+    "file": "gtk/gtkcheckbutton.c",
+    "line": 40,
+    "md": "Places a label next to an indicator.\n\nA `GtkCheckButton` is created by calling either [`CheckButton.new()`](xref:gtk:Gtk.CheckButton#constructor:new)\nor [`CheckButton.new_with_label()`](xref:gtk:Gtk.CheckButton#constructor:new_with_label).\n\nThe state of a `GtkCheckButton` can be set specifically using\n[`CheckButton.set_active()`](xref:gtk:Gtk.CheckButton#method:set_active), and retrieved using\n[`CheckButton.get_active()`](xref:gtk:Gtk.CheckButton#method:get_active).\n\n# Inconsistent state\n\nIn addition to \"on\" and \"off\", check buttons can be an\n\"in between\" state that is neither on nor off. This can be used\ne.g. when the user has selected a range of elements (such as some\ntext or spreadsheet cells) that are affected by a check button,\nand the current values in that range are inconsistent.\n\nTo set a `GtkCheckButton` to inconsistent state, use\n[`CheckButton.set_inconsistent()`](xref:gtk:Gtk.CheckButton#method:set_inconsistent).\n\n# Grouping\n\nCheck buttons can be grouped together, to form mutually exclusive\ngroups - only one of the buttons can be toggled at a time, and toggling\nanother one will switch the currently toggled one off.\n\nGrouped check buttons use a different indicator, and are commonly referred\nto as *radio buttons*.\n\nTo add a `GtkCheckButton` to a group, use [`CheckButton.set_group()`](xref:gtk:Gtk.CheckButton#method:set_group).\n\nWhen the code must keep track of the state of a group of radio buttons, it\nis recommended to keep track of such state through a stateful\n`GAction` with a target for each button. Using the `toggled` signals to keep\ntrack of the group changes and state is discouraged.\n\n# Shortcuts and Gestures\n\n`GtkCheckButton` supports the following keyboard shortcuts:\n\n- <kbd>␣</kbd> or <kbd>Enter</kbd> activates the button.\n\n# CSS nodes\n\n```\ncheckbutton[.text-button][.grouped]\n├── check\n╰── [label]\n```\n\nA `GtkCheckButton` has a main node with name checkbutton. If the\n[`CheckButton:label`](xref:gtk:Gtk.CheckButton#property:label) or [`CheckButton:child`](xref:gtk:Gtk.CheckButton#property:child)\nproperties are set, it contains a child widget. The indicator node\nis named check when no group is set, and radio if the checkbutton\nis grouped together with other checkbuttons.\n\n# Accessibility\n\n`GtkCheckButton` uses the [`AccessibleRole.checkbox`](xref:gtk:Gtk.AccessibleRole#value:checkbox) role."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:CheckButton",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_active": {
+      "brief": "Returns whether the check button is active.",
+      "file": "gtk/gtkcheckbutton.c",
+      "line": 891,
+      "md": "Returns whether the check button is active."
+    },
+    "get_child": {
+      "brief": "Gets the child widget of `button` or `NULL` if [`CheckButton:label`](xref:gtk:CheckButton#property:label) is set.",
+      "file": "gtk/gtkcheckbutton.c",
+      "line": 1218,
+      "md": "Gets the child widget of `button` or `NULL` if [`CheckButton:label`](xref:gtk:CheckButton#property:label) is set.",
+      "since": "4.8"
+    },
+    "get_inconsistent": {
+      "brief": "Returns whether the check button is in an inconsistent state.",
+      "file": "gtk/gtkcheckbutton.c",
+      "line": 873,
+      "md": "Returns whether the check button is in an inconsistent state."
+    },
+    "get_label": {
+      "brief": "Returns the label of the check button or `NULL` if [`CheckButton:child`](xref:gtk:CheckButton#property:child) is set.",
+      "file": "gtk/gtkcheckbutton.c",
+      "line": 961,
+      "md": "Returns the label of the check button or `NULL` if [`CheckButton:child`](xref:gtk:CheckButton#property:child) is set."
+    },
+    "get_use_underline": {
+      "brief": "Returns whether underlines in the label indicate mnemonics.",
+      "file": "gtk/gtkcheckbutton.c",
+      "line": 1129,
+      "md": "Returns whether underlines in the label indicate mnemonics."
+    },
+    "set_active": {
+      "brief": "Changes the check buttons active state.",
+      "file": "gtk/gtkcheckbutton.c",
+      "line": 909,
+      "md": "Changes the check buttons active state."
+    },
+    "set_child": {
+      "brief": "Sets the child widget of `button`.",
+      "file": "gtk/gtkcheckbutton.c",
+      "line": 1180,
+      "md": "Sets the child widget of `button`.\n\nNote that by using this API, you take full responsibility for setting\nup the proper accessibility label and description information for `button`.\nMost likely, you'll either set the accessibility label or description\nfor `button` explicitly, or you'll set a labelled-by or described-by\nrelations from `child` to `button`.",
+      "since": "4.8"
+    },
+    "set_group": {
+      "brief": "Adds `self` to the group of `group`.",
+      "file": "gtk/gtkcheckbutton.c",
+      "line": 1048,
+      "md": "Adds `self` to the group of `group`.\n\nIn a group of multiple check buttons, only one button can be active\nat a time. The behavior of a checkbutton in a group is also commonly\nknown as a *radio button*.\n\nSetting the group of a check button also changes the css name of the\nindicator widget's CSS node to 'radio'.\n\nSetting up groups in a cycle leads to undefined behavior.\n\nNote that the same effect can be achieved via the [`Actionable`](xref:gtk:Gtk.Actionable)\nAPI, by using the same action with parameter type and state type 's'\nfor all buttons in the group, and giving each button its own target\nvalue."
+    },
+    "set_inconsistent": {
+      "brief": "Sets the `GtkCheckButton` to inconsistent state.",
+      "file": "gtk/gtkcheckbutton.c",
+      "line": 833,
+      "md": "Sets the `GtkCheckButton` to inconsistent state.\n\nYou should turn off the inconsistent state again if the user checks\nthe check button. This has to be done manually."
+    },
+    "set_label": {
+      "brief": "Sets the text of `self`.",
+      "file": "gtk/gtkcheckbutton.c",
+      "line": 983,
+      "md": "Sets the text of `self`.\n\nIf [`CheckButton:use-underline`](xref:gtk:Gtk.CheckButton#property:use-underline) is `TRUE`, an underscore\nin `label` is interpreted as mnemonic indicator, see\n[`CheckButton.set_use_underline()`](xref:gtk:Gtk.CheckButton#method:set_use_underline) for details on this behavior."
+    },
+    "set_use_underline": {
+      "brief": "Sets whether underlines in the label indicate mnemonics.",
+      "file": "gtk/gtkcheckbutton.c",
+      "line": 1149,
+      "md": "Sets whether underlines in the label indicate mnemonics.\n\nIf `setting` is `TRUE`, an underscore character in `self`'s label\nindicates a mnemonic accelerator key. This behavior is similar\nto [`Label:use-underline`](xref:gtk:Gtk.Label#property:use-underline)."
+    }
+  },
+  "properties": {
+    "active": {
+      "brief": "If the check button is active.",
+      "file": "gtk/gtkcheckbutton.c",
+      "line": 629,
+      "md": "If the check button is active.\n\nSetting `active` to `TRUE` will add the `:checked:` state to both\nthe check button and the indicator CSS node."
+    },
+    "child": {
+      "brief": "The child widget.",
+      "file": "gtk/gtkcheckbutton.c",
+      "line": 686,
+      "md": "The child widget.",
+      "since": "4.8"
+    },
+    "group": {
+      "brief": "The check button whose group this widget belongs to.",
+      "file": "gtk/gtkcheckbutton.c",
+      "line": 642,
+      "md": "The check button whose group this widget belongs to."
+    },
+    "inconsistent": {
+      "brief": "If the check button is in an “in between” state.",
+      "file": "gtk/gtkcheckbutton.c",
+      "line": 662,
+      "md": "If the check button is in an “in between” state.\n\nThe inconsistent state only affects visual appearance,\nnot the semantics of the button."
+    },
+    "label": {
+      "brief": "Text of the label inside the check button, if it contains a label widget.",
+      "file": "gtk/gtkcheckbutton.c",
+      "line": 652,
+      "md": "Text of the label inside the check button, if it contains a label widget."
+    },
+    "use-underline": {
+      "brief": "If set, an underline in the text indicates that the following character is to be used as mnemonic.",
+      "file": "gtk/gtkcheckbutton.c",
+      "line": 675,
+      "md": "If set, an underline in the text indicates that the following\ncharacter is to be used as mnemonic."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "activate": {
+      "brief": "Emitted to when the check button is activated.",
+      "file": "gtk/gtkcheckbutton.c",
+      "line": 718,
+      "md": "Emitted to when the check button is activated.\n\nThe `::activate` signal on `GtkCheckButton` is an action signal and\nemitting it causes the button to animate press then release.\n\nApplications should never connect to this signal, but use the\n[`CheckButton::toggled`](xref:gtk:Gtk.CheckButton#event:toggled) signal.\n\nThe default bindings for this signal are all forms of the\n<kbd>␣</kbd> and <kbd>Enter</kbd> keys.",
+      "since": "4.2"
+    },
+    "toggled": {
+      "brief": "Emitted when the buttons's [`CheckButton:active`](xref:gtk:Gtk.CheckButton#property:active) property changes.",
+      "file": "gtk/gtkcheckbutton.c",
+      "line": 703,
+      "md": "Emitted when the buttons's [`CheckButton:active`](xref:gtk:Gtk.CheckButton#property:active)\nproperty changes."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

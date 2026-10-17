@@ -1,0 +1,132 @@
+{
+  "doc": {
+    "brief": "The QGraphicsObject class provides a base class for all graphics items that require signals, slots and properties.",
+    "index_brief": "Base class for all graphics items that require signals, slots and properties",
+    "url": "https://doc.qt.io/qt-6/qgraphicsobject.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsObject",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QGraphicsObject(QGraphicsItem *parent)": {
+      "brief": "Constructs a QGraphicsObject with *parent*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsobject.html#QGraphicsObject"
+    },
+    "bool event(QEvent *ev) override": {
+      "brief": "Reimplements: [QObject::event](xref:qt:QObject)(QEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsobject.html#event"
+    },
+    "void enabledChanged()": {
+      "brief": "This signal gets emitted whenever the item gets enabled or disabled.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsobject.html#enabledChanged"
+    },
+    "void grabGesture(Qt::GestureType gesture, Qt::GestureFlags flags)": {
+      "brief": "Subscribes the graphics object to the given *gesture* with specific *flags*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsobject.html#grabGesture"
+    },
+    "void opacityChanged()": {
+      "brief": "This signal gets emitted whenever the opacity of the item changes",
+      "url": "https://doc.qt.io/qt-6/qgraphicsobject.html#opacityChanged"
+    },
+    "void parentChanged()": {
+      "brief": "This signal gets emitted whenever the parent of the item changes",
+      "url": "https://doc.qt.io/qt-6/qgraphicsobject.html#parentChanged"
+    },
+    "void rotationChanged()": {
+      "brief": "This signal gets emitted whenever the rotation of the item changes.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsobject.html#rotationChanged"
+    },
+    "void scaleChanged()": {
+      "brief": "This signal is emitted when the scale of the item changes.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsobject.html#scaleChanged"
+    },
+    "void ungrabGesture(Qt::GestureType gesture)": {
+      "brief": "Unsubscribes the graphics object from the given *gesture*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsobject.html#ungrabGesture"
+    },
+    "void updateMicroFocus()": {
+      "brief": "Updates the item's micro focus.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsobject.html#updateMicroFocus"
+    },
+    "void visibleChanged()": {
+      "brief": "This signal gets emitted whenever the visibility of the item changes",
+      "url": "https://doc.qt.io/qt-6/qgraphicsobject.html#visibleChanged"
+    },
+    "void xChanged()": {
+      "brief": "This signal gets emitted whenever the x position of the item changes",
+      "url": "https://doc.qt.io/qt-6/qgraphicsobject.html#xChanged"
+    },
+    "void yChanged()": {
+      "brief": "This signal gets emitted whenever the y position of the item changes.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsobject.html#yChanged"
+    },
+    "void zChanged()": {
+      "brief": "This signal gets emitted whenever the z value of the item changes.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsobject.html#zChanged"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "effect": {
+      "brief": "The effect attached to this item",
+      "url": "https://doc.qt.io/qt-6/qgraphicsobject.html#effect-prop"
+    },
+    "enabled": {
+      "brief": "Whether the item is enabled or not",
+      "url": "https://doc.qt.io/qt-6/qgraphicsobject.html#enabled-prop"
+    },
+    "opacity": {
+      "brief": "The opacity of the item",
+      "url": "https://doc.qt.io/qt-6/qgraphicsobject.html#opacity-prop"
+    },
+    "parent": {
+      "brief": "The parent of the item",
+      "url": "https://doc.qt.io/qt-6/qgraphicsobject.html#parent-prop"
+    },
+    "pos": {
+      "brief": "The position of the item",
+      "url": "https://doc.qt.io/qt-6/qgraphicsobject.html#pos-prop"
+    },
+    "rotation": {
+      "brief": "The rotation of the item in degrees",
+      "url": "https://doc.qt.io/qt-6/qgraphicsobject.html#rotation-prop"
+    },
+    "scale": {
+      "brief": "The scale of the item",
+      "url": "https://doc.qt.io/qt-6/qgraphicsobject.html#scale-prop"
+    },
+    "transformOriginPoint": {
+      "brief": "The transformation origin",
+      "url": "https://doc.qt.io/qt-6/qgraphicsobject.html#transformOriginPoint-prop"
+    },
+    "visible": {
+      "brief": "Whether the item is visible or not",
+      "url": "https://doc.qt.io/qt-6/qgraphicsobject.html#visible-prop"
+    },
+    "x": {
+      "brief": "The x position of the item",
+      "url": "https://doc.qt.io/qt-6/qgraphicsobject.html#x-prop"
+    },
+    "y": {
+      "brief": "The y position of the item",
+      "url": "https://doc.qt.io/qt-6/qgraphicsobject.html#y-prop"
+    },
+    "z": {
+      "brief": "The z value of the item",
+      "url": "https://doc.qt.io/qt-6/qgraphicsobject.html#z-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

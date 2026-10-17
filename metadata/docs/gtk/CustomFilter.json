@@ -1,0 +1,38 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new filter using the given function to filter items.",
+      "file": "gtk/gtkcustomfilter.c",
+      "line": 93,
+      "md": "Creates a new filter using the given function to filter items.\n\nIf `match_func` is `NULL`, the filter matches all items.\n\nIf the filter func changes its filtering behavior,\n[`Filter.changed()`](xref:gtk:Gtk.Filter#method:changed) needs to be called."
+    }
+  },
+  "doc": {
+    "brief": "Determines whether to include items with a callback.",
+    "file": "gtk/gtkcustomfilter.c",
+    "line": 26,
+    "md": "Determines whether to include items with a callback."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:CustomFilter",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "set_filter_func": {
+      "brief": "Sets the function used for filtering items.",
+      "file": "gtk/gtkcustomfilter.c",
+      "line": 122,
+      "md": "Sets the function used for filtering items.\n\nIf `match_func` is `NULL`, the filter matches all items.\n\nIf the filter func changes its filtering behavior,\n[`Filter.changed()`](xref:gtk:Gtk.Filter#method:changed) needs to be called.\n\nIf a previous function was set, its `user_destroy`\nwill be called."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -1,0 +1,38 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "The type of contents change operation.",
+    "file": "gtk/gtkaccessibletext.h",
+    "line": 81,
+    "md": "The type of contents change operation.",
+    "since": "4.14"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:AccessibleTextContentChange",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "insert": {
+      "brief": "contents change as the result of an insert operation",
+      "file": "gtk/gtkaccessibletext.h",
+      "line": 83,
+      "md": "contents change as the result of\n  an insert operation"
+    },
+    "remove": {
+      "brief": "contents change as the result of a remove operation",
+      "file": "gtk/gtkaccessibletext.h",
+      "line": 85,
+      "md": "contents change as the result of\n  a remove operation"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

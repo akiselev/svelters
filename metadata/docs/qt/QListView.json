@@ -1,0 +1,355 @@
+{
+  "doc": {
+    "brief": "The QListView class provides a list or icon view onto a model.",
+    "index_brief": "List or icon view onto a model",
+    "url": "https://doc.qt.io/qt-6/qlistview.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QListView",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QListView(QWidget *parent)": {
+      "brief": "Creates a new QListView with the given *parent* to view a model.",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#QListView"
+    },
+    "QListView::Flow flow() const": {
+      "brief": "This property holds which direction the items layout should flow.",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#flow-prop"
+    },
+    "QListView::LayoutMode layoutMode() const": {
+      "brief": "determines whether the layout of items should happen immediately or be delayed.",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#layoutMode-prop"
+    },
+    "QListView::Movement movement() const": {
+      "brief": "This property holds whether the items can be moved freely, are snapped to a grid, or cannot be moved at all.",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#movement-prop"
+    },
+    "QListView::ResizeMode resizeMode() const": {
+      "brief": "This property holds whether the items are laid out again when the view is resized.",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#resizeMode-prop"
+    },
+    "QListView::ViewMode viewMode() const": {
+      "brief": "This property holds the view mode of the [QListView](xref:qt:QListView).",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#viewMode-prop"
+    },
+    "QModelIndex indexAt(const QPoint &p) const override": {
+      "brief": "Reimplements: [QAbstractItemView::indexAt](xref:qt:QAbstractItemView)(const QPoint &point) const.",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#indexAt"
+    },
+    "QModelIndex moveCursor(QAbstractItemView::CursorAction cursorAction, Qt::KeyboardModifiers modifiers) override": {
+      "brief": "Reimplements: [QAbstractItemView::moveCursor](xref:qt:QAbstractItemView)(QAbstractItemView::CursorAction cursorAction, Qt::KeyboardModifiers modifiers).",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#moveCursor"
+    },
+    "QModelIndexList selectedIndexes() const override": {
+      "brief": "Reimplements: [QAbstractItemView::selectedIndexes](xref:qt:QAbstractItemView)() const.",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#selectedIndexes"
+    },
+    "QRect rectForIndex(const QModelIndex &index) const": {
+      "brief": "Returns the rectangle of the item at position *index* in the model.",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#rectForIndex"
+    },
+    "QRect visualRect(const QModelIndex &index) const override": {
+      "brief": "Reimplements: [QAbstractItemView::visualRect](xref:qt:QAbstractItemView)(const QModelIndex &index) const.",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#visualRect"
+    },
+    "QRegion visualRegionForSelection(const QItemSelection &selection) const override": {
+      "brief": "Reimplements: [QAbstractItemView::visualRegionForSelection](xref:qt:QAbstractItemView)(const QItemSelection &selection) const.",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#visualRegionForSelection"
+    },
+    "QSize gridSize() const": {
+      "brief": "This property holds the size of the layout grid",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#gridSize-prop"
+    },
+    "QSize viewportSizeHint() const override": {
+      "brief": "Reimplements: [QAbstractItemView::viewportSizeHint](xref:qt:QAbstractItemView)() const.",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#viewportSizeHint"
+    },
+    "Qt::Alignment itemAlignment() const": {
+      "brief": "This property holds the alignment of each item in its cell",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#itemAlignment-prop"
+    },
+    "bool event(QEvent *e) override": {
+      "brief": "Reimplements: [QAbstractItemView::event](xref:qt:QAbstractItemView)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#event"
+    },
+    "bool isIndexHidden(const QModelIndex &index) const override": {
+      "brief": "Reimplements: [QAbstractItemView::isIndexHidden](xref:qt:QAbstractItemView)(const QModelIndex &index) const.",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#isIndexHidden"
+    },
+    "bool isRowHidden(int row) const": {
+      "brief": "Returns `true` if the *row* is hidden; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#isRowHidden"
+    },
+    "bool isSelectionRectVisible() const": {
+      "brief": "if the selection rectangle should be visible",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#selectionRectVisible-prop"
+    },
+    "bool isWrapping() const": {
+      "brief": "This property holds whether the items layout should wrap.",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#isWrapping-prop"
+    },
+    "bool uniformItemSizes() const": {
+      "brief": "This property holds whether all items in the listview have the same size",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#uniformItemSizes-prop"
+    },
+    "bool wordWrap() const": {
+      "brief": "This property holds the item text word-wrapping policy",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#wordWrap-prop"
+    },
+    "int batchSize() const": {
+      "brief": "This property holds the number of items laid out in each batch if [layoutMode](xref:qt:QListView) is set to [Batched](xref:qt:QListView).",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#batchSize-prop"
+    },
+    "int horizontalOffset() const override": {
+      "brief": "Reimplements: [QAbstractItemView::horizontalOffset](xref:qt:QAbstractItemView)() const.",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#horizontalOffset"
+    },
+    "int modelColumn() const": {
+      "brief": "This property holds the column in the model that is visible",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#modelColumn-prop"
+    },
+    "int spacing() const": {
+      "brief": "This property holds the space around the items in the layout",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#spacing-prop"
+    },
+    "int verticalOffset() const override": {
+      "brief": "Reimplements: [QAbstractItemView::verticalOffset](xref:qt:QAbstractItemView)() const.",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#verticalOffset"
+    },
+    "void clearPropertyFlags()": {
+      "brief": "Clears the [QListView](xref:qt:QListView)-specific property flags.",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#clearPropertyFlags"
+    },
+    "void currentChanged(const QModelIndex &current, const QModelIndex &previous) override": {
+      "brief": "Reimplements: [QAbstractItemView::currentChanged](xref:qt:QAbstractItemView)(const QModelIndex &current, const QModelIndex &previous).",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#currentChanged"
+    },
+    "void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QList<int> &roles) override": {
+      "brief": "Reimplements: [QAbstractItemView::dataChanged](xref:qt:QAbstractItemView)(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QList<int> &roles).",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#dataChanged"
+    },
+    "void dragLeaveEvent(QDragLeaveEvent *e) override": {
+      "brief": "Reimplements: [QAbstractItemView::dragLeaveEvent](xref:qt:QAbstractItemView)(QDragLeaveEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#dragLeaveEvent"
+    },
+    "void dragMoveEvent(QDragMoveEvent *e) override": {
+      "brief": "Reimplements: [QAbstractItemView::dragMoveEvent](xref:qt:QAbstractItemView)(QDragMoveEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#dragMoveEvent"
+    },
+    "void dropEvent(QDropEvent *event) override": {
+      "brief": "Reimplements: [QAbstractItemView::dropEvent](xref:qt:QAbstractItemView)(QDropEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#dropEvent"
+    },
+    "void indexesMoved(const QModelIndexList &indexes)": {
+      "brief": "This signal is emitted when the specified *indexes* are moved in the view.",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#indexesMoved"
+    },
+    "void initViewItemOption(QStyleOptionViewItem *option) const override": {
+      "brief": "Reimplements: [QAbstractItemView::initViewItemOption](xref:qt:QAbstractItemView)(QStyleOptionViewItem *option) const.",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#initViewItemOption"
+    },
+    "void mouseMoveEvent(QMouseEvent *e) override": {
+      "brief": "Reimplements: [QAbstractItemView::mouseMoveEvent](xref:qt:QAbstractItemView)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#mouseMoveEvent"
+    },
+    "void mouseReleaseEvent(QMouseEvent *e) override": {
+      "brief": "Reimplements: [QAbstractItemView::mouseReleaseEvent](xref:qt:QAbstractItemView)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#mouseReleaseEvent"
+    },
+    "void paintEvent(QPaintEvent *e) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::paintEvent](xref:qt:QAbstractScrollArea)(QPaintEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#paintEvent"
+    },
+    "void resizeEvent(QResizeEvent *e) override": {
+      "brief": "Reimplements: [QAbstractItemView::resizeEvent](xref:qt:QAbstractItemView)(QResizeEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#resizeEvent"
+    },
+    "void rowsAboutToBeRemoved(const QModelIndex &parent, int start, int end) override": {
+      "brief": "Reimplements: [QAbstractItemView::rowsAboutToBeRemoved](xref:qt:QAbstractItemView)(const QModelIndex &parent, int start, int end).",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#rowsAboutToBeRemoved"
+    },
+    "void rowsInserted(const QModelIndex &parent, int start, int end) override": {
+      "brief": "Reimplements: [QAbstractItemView::rowsInserted](xref:qt:QAbstractItemView)(const QModelIndex &parent, int start, int end).",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#rowsInserted"
+    },
+    "void scrollContentsBy(int dx, int dy) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::scrollContentsBy](xref:qt:QAbstractScrollArea)(int dx, int dy).",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#scrollContentsBy"
+    },
+    "void scrollTo(const QModelIndex &index, QAbstractItemView::ScrollHint hint) override": {
+      "brief": "Reimplements: [QAbstractItemView::scrollTo](xref:qt:QAbstractItemView)(const QModelIndex &index, QAbstractItemView::ScrollHint hint).",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#scrollTo"
+    },
+    "void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override": {
+      "brief": "Reimplements: [QAbstractItemView::selectionChanged](xref:qt:QAbstractItemView)(const QItemSelection &selected, const QItemSelection &deselected).",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#selectionChanged"
+    },
+    "void setBatchSize(int batchSize)": {
+      "brief": "This property holds the number of items laid out in each batch if [layoutMode](xref:qt:QListView) is set to [Batched](xref:qt:QListView).",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#batchSize-prop"
+    },
+    "void setFlow(QListView::Flow flow)": {
+      "brief": "This property holds which direction the items layout should flow.",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#flow-prop"
+    },
+    "void setGridSize(const QSize &size)": {
+      "brief": "This property holds the size of the layout grid",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#gridSize-prop"
+    },
+    "void setItemAlignment(Qt::Alignment alignment)": {
+      "brief": "This property holds the alignment of each item in its cell",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#itemAlignment-prop"
+    },
+    "void setLayoutMode(QListView::LayoutMode mode)": {
+      "brief": "determines whether the layout of items should happen immediately or be delayed.",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#layoutMode-prop"
+    },
+    "void setModelColumn(int column)": {
+      "brief": "This property holds the column in the model that is visible",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#modelColumn-prop"
+    },
+    "void setMovement(QListView::Movement movement)": {
+      "brief": "This property holds whether the items can be moved freely, are snapped to a grid, or cannot be moved at all.",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#movement-prop"
+    },
+    "void setPositionForIndex(const QPoint &position, const QModelIndex &index)": {
+      "brief": "Sets the contents position of the item at *index* in the model to the given *position*.",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#setPositionForIndex"
+    },
+    "void setResizeMode(QListView::ResizeMode mode)": {
+      "brief": "This property holds whether the items are laid out again when the view is resized.",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#resizeMode-prop"
+    },
+    "void setRootIndex(const QModelIndex &index) override": {
+      "brief": "Reimplements: [QAbstractItemView::setRootIndex](xref:qt:QAbstractItemView)(const QModelIndex &index).",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#setRootIndex"
+    },
+    "void setRowHidden(int row, bool hide)": {
+      "brief": "If *hide* is true, the given *row* will be hidden; otherwise the *row* will be shown.",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#setRowHidden"
+    },
+    "void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command) override": {
+      "brief": "Reimplements: [QAbstractItemView::setSelection](xref:qt:QAbstractItemView)(const QRect &rect, QItemSelectionModel::SelectionFlags flags).",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#setSelection"
+    },
+    "void setSelectionRectVisible(bool show)": {
+      "brief": "if the selection rectangle should be visible",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#selectionRectVisible-prop"
+    },
+    "void setSpacing(int space)": {
+      "brief": "This property holds the space around the items in the layout",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#spacing-prop"
+    },
+    "void setUniformItemSizes(bool enable)": {
+      "brief": "This property holds whether all items in the listview have the same size",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#uniformItemSizes-prop"
+    },
+    "void setViewMode(QListView::ViewMode mode)": {
+      "brief": "This property holds the view mode of the [QListView](xref:qt:QListView).",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#viewMode-prop"
+    },
+    "void setWordWrap(bool on)": {
+      "brief": "This property holds the item text word-wrapping policy",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#wordWrap-prop"
+    },
+    "void setWrapping(bool enable)": {
+      "brief": "This property holds whether the items layout should wrap.",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#isWrapping-prop"
+    },
+    "void startDrag(Qt::DropActions supportedActions) override": {
+      "brief": "Reimplements: [QAbstractItemView::startDrag](xref:qt:QAbstractItemView)(Qt::DropActions supportedActions).",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#startDrag"
+    },
+    "void timerEvent(QTimerEvent *e) override": {
+      "brief": "Reimplements: [QAbstractItemView::timerEvent](xref:qt:QAbstractItemView)(QTimerEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#timerEvent"
+    },
+    "void updateGeometries() override": {
+      "brief": "Reimplements: [QAbstractItemView::updateGeometries](xref:qt:QAbstractItemView)().",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#updateGeometries"
+    },
+    "void wheelEvent(QWheelEvent *e) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::wheelEvent](xref:qt:QAbstractScrollArea)(QWheelEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#wheelEvent"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "batchSize": {
+      "brief": "The number of items laid out in each batch if layoutMode is set to Batched",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#batchSize-prop"
+    },
+    "flow": {
+      "brief": "Which direction the items layout should flow",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#flow-prop"
+    },
+    "gridSize": {
+      "brief": "The size of the layout grid",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#gridSize-prop"
+    },
+    "isWrapping": {
+      "brief": "Whether the items layout should wrap",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#isWrapping-prop"
+    },
+    "itemAlignment": {
+      "brief": "The alignment of each item in its cell",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#itemAlignment-prop"
+    },
+    "layoutMode": {
+      "brief": "Determines whether the layout of items should happen immediately or be delayed",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#layoutMode-prop"
+    },
+    "modelColumn": {
+      "brief": "The column in the model that is visible",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#modelColumn-prop"
+    },
+    "movement": {
+      "brief": "Whether the items can be moved freely, are snapped to a grid, or cannot be moved at all",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#movement-prop"
+    },
+    "resizeMode": {
+      "brief": "Whether the items are laid out again when the view is resized",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#resizeMode-prop"
+    },
+    "selectionRectVisible": {
+      "brief": "If the selection rectangle should be visible",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#selectionRectVisible-prop"
+    },
+    "spacing": {
+      "brief": "The space around the items in the layout",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#spacing-prop"
+    },
+    "uniformItemSizes": {
+      "brief": "Whether all items in the listview have the same size",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#uniformItemSizes-prop"
+    },
+    "viewMode": {
+      "brief": "The view mode of the QListView",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#viewMode-prop"
+    },
+    "wordWrap": {
+      "brief": "The item text word-wrapping policy",
+      "url": "https://doc.qt.io/qt-6/qlistview.html#wordWrap-prop"
+    }
+  },
+  "qss": {
+    "box_model": true,
+    "pseudo_states": [],
+    "sub_controls": [
+      "::item"
+    ],
+    "url": "https://doc.qt.io/qt-6/stylesheet-reference.html#qlistview-widget"
+  },
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

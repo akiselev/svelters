@@ -1,0 +1,49 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "The mode of the size group determines the directions in which the size group affects the requested sizes of its component widgets.",
+    "file": "gtk/gtkenums.h",
+    "line": 787,
+    "md": "The mode of the size group determines the directions in which the size\ngroup affects the requested sizes of its component widgets."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:SizeGroupMode",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "both": {
+      "brief": "group affects both horizontal and vertical requisition",
+      "file": "gtk/gtkenums.h",
+      "line": 792,
+      "md": "group affects both horizontal and vertical requisition"
+    },
+    "horizontal": {
+      "brief": "group affects horizontal requisition",
+      "file": "gtk/gtkenums.h",
+      "line": 790,
+      "md": "group affects horizontal requisition"
+    },
+    "none": {
+      "brief": "group has no effect",
+      "file": "gtk/gtkenums.h",
+      "line": 789,
+      "md": "group has no effect"
+    },
+    "vertical": {
+      "brief": "group affects vertical requisition",
+      "file": "gtk/gtkenums.h",
+      "line": 791,
+      "md": "group affects vertical requisition"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

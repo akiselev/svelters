@@ -1,0 +1,55 @@
+{
+  "doc": {
+    "brief": "The QScrollerProperties class stores the settings for a [QScroller](xref:qt:QScroller).",
+    "index_brief": "Stores the settings for a QScroller",
+    "url": "https://doc.qt.io/qt-6/qscrollerproperties.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QScrollerProperties",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QScrollerProperties()": {
+      "brief": "Constructs new scroller properties.",
+      "url": "https://doc.qt.io/qt-6/qscrollerproperties.html#QScrollerProperties"
+    },
+    "QVariant scrollMetric(QScrollerProperties::ScrollMetric metric) const": {
+      "brief": "Query the *metric* value of the scroller properties.",
+      "url": "https://doc.qt.io/qt-6/qscrollerproperties.html#scrollMetric"
+    },
+    "bool operator!=(const QScrollerProperties &sp) const": {
+      "brief": "Returns `true` if these scroller properties are different from *sp*; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qscrollerproperties.html#operator-not-eq"
+    },
+    "bool operator==(const QScrollerProperties &sp) const": {
+      "brief": "Returns `true` if these scroller properties are equal to *sp*; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qscrollerproperties.html#operator-eq-eq"
+    },
+    "void setDefaultScrollerProperties(const QScrollerProperties &sp)": {
+      "brief": "Sets the scroller properties for all new [QScrollerProperties](xref:qt:QScrollerProperties) objects to *sp*.",
+      "url": "https://doc.qt.io/qt-6/qscrollerproperties.html#setDefaultScrollerProperties"
+    },
+    "void setScrollMetric(QScrollerProperties::ScrollMetric metric, const QVariant &value)": {
+      "brief": "Set a specific value of the *metric* ScrollerMetric to *value*.",
+      "url": "https://doc.qt.io/qt-6/qscrollerproperties.html#setScrollMetric"
+    },
+    "void unsetDefaultScrollerProperties()": {
+      "brief": "Sets the scroller properties returned by the default constructor back to the platform default properties.",
+      "url": "https://doc.qt.io/qt-6/qscrollerproperties.html#unsetDefaultScrollerProperties"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

@@ -1,0 +1,304 @@
+{
+  "doc": {
+    "brief": "The QCalendarWidget class provides a monthly based calendar widget allowing the user to select a date.",
+    "index_brief": "Monthly based calendar widget allowing the user to select a date",
+    "url": "https://doc.qt.io/qt-6/qcalendarwidget.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QCalendarWidget",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QCalendar calendar() const": {
+      "brief": "Report the calendar system in use by this widget.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#calendar"
+    },
+    "QCalendarWidget(QWidget *parent)": {
+      "brief": "Constructs a calendar widget with the given *parent*.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#QCalendarWidget"
+    },
+    "QCalendarWidget::HorizontalHeaderFormat horizontalHeaderFormat() const": {
+      "brief": "This property holds the format of the horizontal header.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#horizontalHeaderFormat-prop"
+    },
+    "QCalendarWidget::SelectionMode selectionMode() const": {
+      "brief": "This property holds the type of selection the user can make in the calendar",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#selectionMode-prop"
+    },
+    "QCalendarWidget::VerticalHeaderFormat verticalHeaderFormat() const": {
+      "brief": "This property holds the format of the vertical header.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#verticalHeaderFormat-prop"
+    },
+    "QDate maximumDate() const": {
+      "brief": "This property holds the maximum date of the currently specified date range.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#maximumDate-prop"
+    },
+    "QDate minimumDate() const": {
+      "brief": "This property holds the minimum date of the currently specified date range.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#minimumDate-prop"
+    },
+    "QDate selectedDate() const": {
+      "brief": "This property holds the currently selected date.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#selectedDate-prop"
+    },
+    "QMap<QDate, QTextCharFormat> dateTextFormat() const": {
+      "brief": "Returns a [QMap](xref:qt:QMap) from [QDate](xref:qt:QDate) to [QTextCharFormat](xref:qt:QTextCharFormat) showing all dates that use a special format that alters their rendering.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#dateTextFormat"
+    },
+    "QSize minimumSizeHint() const override": {
+      "brief": "Reimplements an access function for property: [QWidget::minimumSizeHint](xref:qt:QWidget).",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#minimumSizeHint"
+    },
+    "QSize sizeHint() const override": {
+      "brief": "Reimplements an access function for property: [QWidget::sizeHint](xref:qt:QWidget).",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#sizeHint"
+    },
+    "QTextCharFormat dateTextFormat(QDate date) const": {
+      "brief": "Returns a [QTextCharFormat](xref:qt:QTextCharFormat) for *date*.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#dateTextFormat-1"
+    },
+    "QTextCharFormat headerTextFormat() const": {
+      "brief": "Returns the text char format for rendering the header.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#headerTextFormat"
+    },
+    "QTextCharFormat weekdayTextFormat(Qt::DayOfWeek dayOfWeek) const": {
+      "brief": "Returns the text char format for rendering of day in the week *dayOfWeek*.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#weekdayTextFormat"
+    },
+    "Qt::DayOfWeek firstDayOfWeek() const": {
+      "brief": "This property holds a value identifying the day displayed in the first column.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#firstDayOfWeek-prop"
+    },
+    "bool event(QEvent *event) override": {
+      "brief": "Reimplements: [QWidget::event](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#event"
+    },
+    "bool eventFilter(QObject *watched, QEvent *event) override": {
+      "brief": "Reimplements: [QObject::eventFilter](xref:qt:QObject)(QObject *watched, QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#eventFilter"
+    },
+    "bool isDateEditEnabled() const": {
+      "brief": "This property holds whether the date edit popup is enabled",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#dateEditEnabled-prop"
+    },
+    "bool isGridVisible() const": {
+      "brief": "This property holds whether the table grid is displayed.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#gridVisible-prop"
+    },
+    "bool isNavigationBarVisible() const": {
+      "brief": "This property holds whether the navigation bar is shown or not",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#navigationBarVisible-prop"
+    },
+    "int dateEditAcceptDelay() const": {
+      "brief": "This property holds the time an inactive date edit is shown before its contents are accepted",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#dateEditAcceptDelay-prop"
+    },
+    "int monthShown() const": {
+      "brief": "Returns the currently displayed month.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#monthShown"
+    },
+    "int yearShown() const": {
+      "brief": "Returns the year of the currently displayed month.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#yearShown"
+    },
+    "void activated(QDate date)": {
+      "brief": "This signal is emitted whenever the user presses the Return or Enter key or double-clicks a *date* in the calendar widget.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#activated"
+    },
+    "void clearMaximumDate()": {
+      "brief": "This property holds the maximum date of the currently specified date range.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#maximumDate-prop"
+    },
+    "void clearMinimumDate()": {
+      "brief": "This property holds the minimum date of the currently specified date range.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#minimumDate-prop"
+    },
+    "void clicked(QDate date)": {
+      "brief": "This signal is emitted when a mouse button is clicked.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#clicked"
+    },
+    "void currentPageChanged(int year, int month)": {
+      "brief": "This signal is emitted when the currently shown month is changed.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#currentPageChanged"
+    },
+    "void keyPressEvent(QKeyEvent *event) override": {
+      "brief": "Reimplements: [QWidget::keyPressEvent](xref:qt:QWidget)(QKeyEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#keyPressEvent"
+    },
+    "void mousePressEvent(QMouseEvent *event) override": {
+      "brief": "Reimplements: [QWidget::mousePressEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#mousePressEvent"
+    },
+    "void paintCell(QPainter *painter, const QRect &rect, QDate date) const": {
+      "brief": "Paints the cell specified by the given *date*, using the given *painter* and *rect*.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#paintCell"
+    },
+    "void resizeEvent(QResizeEvent *event) override": {
+      "brief": "Reimplements: [QWidget::resizeEvent](xref:qt:QWidget)(QResizeEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#resizeEvent"
+    },
+    "void selectionChanged()": {
+      "brief": "This signal is emitted when the currently selected date is changed.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#selectionChanged"
+    },
+    "void setCalendar(QCalendar c)": {
+      "brief": "Set *c* as the calendar system to be used by this widget.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#setCalendar"
+    },
+    "void setCurrentPage(int year, int month)": {
+      "brief": "Displays the given *month* of the given *year* without changing the selected date.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#setCurrentPage"
+    },
+    "void setDateEditAcceptDelay(int delay)": {
+      "brief": "This property holds the time an inactive date edit is shown before its contents are accepted",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#dateEditAcceptDelay-prop"
+    },
+    "void setDateEditEnabled(bool enable)": {
+      "brief": "This property holds whether the date edit popup is enabled",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#dateEditEnabled-prop"
+    },
+    "void setDateRange(QDate min, QDate max)": {
+      "brief": "Defines a date range by setting the [minimumDate](xref:qt:QCalendarWidget) and [maximumDate](xref:qt:QCalendarWidget) properties.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#setDateRange"
+    },
+    "void setDateTextFormat(QDate date, const QTextCharFormat &format)": {
+      "brief": "Sets the format used to render the given *date* to that specified by *format*.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#setDateTextFormat"
+    },
+    "void setFirstDayOfWeek(Qt::DayOfWeek dayOfWeek)": {
+      "brief": "This property holds a value identifying the day displayed in the first column.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#firstDayOfWeek-prop"
+    },
+    "void setGridVisible(bool show)": {
+      "brief": "This property holds whether the table grid is displayed.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#gridVisible-prop"
+    },
+    "void setHeaderTextFormat(const QTextCharFormat &format)": {
+      "brief": "Sets the text char format for rendering the header to *format*.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#setHeaderTextFormat"
+    },
+    "void setHorizontalHeaderFormat(QCalendarWidget::HorizontalHeaderFormat format)": {
+      "brief": "This property holds the format of the horizontal header.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#horizontalHeaderFormat-prop"
+    },
+    "void setMaximumDate(QDate date)": {
+      "brief": "This property holds the maximum date of the currently specified date range.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#maximumDate-prop"
+    },
+    "void setMinimumDate(QDate date)": {
+      "brief": "This property holds the minimum date of the currently specified date range.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#minimumDate-prop"
+    },
+    "void setNavigationBarVisible(bool visible)": {
+      "brief": "This property holds whether the navigation bar is shown or not",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#navigationBarVisible-prop"
+    },
+    "void setSelectedDate(QDate date)": {
+      "brief": "This property holds the currently selected date.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#selectedDate-prop"
+    },
+    "void setSelectionMode(QCalendarWidget::SelectionMode mode)": {
+      "brief": "This property holds the type of selection the user can make in the calendar",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#selectionMode-prop"
+    },
+    "void setVerticalHeaderFormat(QCalendarWidget::VerticalHeaderFormat format)": {
+      "brief": "This property holds the format of the vertical header.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#verticalHeaderFormat-prop"
+    },
+    "void setWeekdayTextFormat(Qt::DayOfWeek dayOfWeek, const QTextCharFormat &format)": {
+      "brief": "Sets the text char format for rendering of day in the week *dayOfWeek* to *format*.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#setWeekdayTextFormat"
+    },
+    "void showNextMonth()": {
+      "brief": "Shows the next month relative to the currently displayed month.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#showNextMonth"
+    },
+    "void showNextYear()": {
+      "brief": "Shows the currently displayed month in the *next* year relative to the currently displayed year.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#showNextYear"
+    },
+    "void showPreviousMonth()": {
+      "brief": "Shows the previous month relative to the currently displayed month.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#showPreviousMonth"
+    },
+    "void showPreviousYear()": {
+      "brief": "Shows the currently displayed month in the *previous* year relative to the currently displayed year.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#showPreviousYear"
+    },
+    "void showSelectedDate()": {
+      "brief": "Shows the month of the selected date.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#showSelectedDate"
+    },
+    "void showToday()": {
+      "brief": "Shows the month of the today's date.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#showToday"
+    },
+    "void updateCell(QDate date)": {
+      "brief": "Updates the cell specified by the given *date* unless updates are disabled or the cell is hidden.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#updateCell"
+    },
+    "void updateCells()": {
+      "brief": "Updates all visible cells unless updates are disabled.",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#updateCells"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "dateEditAcceptDelay": {
+      "brief": "The time an inactive date edit is shown before its contents are accepted",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#dateEditAcceptDelay-prop"
+    },
+    "dateEditEnabled": {
+      "brief": "Whether the date edit popup is enabled",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#dateEditEnabled-prop"
+    },
+    "firstDayOfWeek": {
+      "brief": "Value identifying the day displayed in the first column",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#firstDayOfWeek-prop"
+    },
+    "gridVisible": {
+      "brief": "Whether the table grid is displayed",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#gridVisible-prop"
+    },
+    "horizontalHeaderFormat": {
+      "brief": "The format of the horizontal header",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#horizontalHeaderFormat-prop"
+    },
+    "maximumDate": {
+      "brief": "The maximum date of the currently specified date range",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#maximumDate-prop"
+    },
+    "minimumDate": {
+      "brief": "The minimum date of the currently specified date range",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#minimumDate-prop"
+    },
+    "navigationBarVisible": {
+      "brief": "Whether the navigation bar is shown or not",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#navigationBarVisible-prop"
+    },
+    "selectedDate": {
+      "brief": "The currently selected date",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#selectedDate-prop"
+    },
+    "selectionMode": {
+      "brief": "The type of selection the user can make in the calendar",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#selectionMode-prop"
+    },
+    "verticalHeaderFormat": {
+      "brief": "The format of the vertical header",
+      "url": "https://doc.qt.io/qt-6/qcalendarwidget.html#verticalHeaderFormat-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

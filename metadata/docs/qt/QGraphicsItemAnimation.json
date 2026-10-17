@@ -1,0 +1,139 @@
+{
+  "doc": {
+    "brief": "The QGraphicsItemAnimation class provides simple animation support for [QGraphicsItem](xref:qt:QGraphicsItem).",
+    "index_brief": "Simple animation support for QGraphicsItem",
+    "url": "https://doc.qt.io/qt-6/qgraphicsitemanimation.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsItemAnimation",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QGraphicsItem * item() const": {
+      "brief": "Returns the item on which the animation object operates.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitemanimation.html#item"
+    },
+    "QGraphicsItemAnimation(QObject *parent)": {
+      "brief": "Constructs an animation object with the given *parent*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitemanimation.html#QGraphicsItemAnimation"
+    },
+    "QList<std::pair<qreal, QPointF>> posList() const": {
+      "brief": "Returns all explicitly inserted positions.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitemanimation.html#posList"
+    },
+    "QList<std::pair<qreal, QPointF>> scaleList() const": {
+      "brief": "Returns all explicitly inserted scales.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitemanimation.html#scaleList"
+    },
+    "QList<std::pair<qreal, QPointF>> shearList() const": {
+      "brief": "Returns all explicitly inserted shears.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitemanimation.html#shearList"
+    },
+    "QList<std::pair<qreal, QPointF>> translationList() const": {
+      "brief": "Returns all explicitly inserted translations.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitemanimation.html#translationList"
+    },
+    "QList<std::pair<qreal, qreal>> rotationList() const": {
+      "brief": "Returns all explicitly inserted rotations.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitemanimation.html#rotationList"
+    },
+    "QPointF posAt(qreal step) const": {
+      "brief": "Returns the position of the item at the given *step* value.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitemanimation.html#posAt"
+    },
+    "QTimeLine * timeLine() const": {
+      "brief": "Returns the timeline object used to control the rate at which the animation occurs.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitemanimation.html#timeLine"
+    },
+    "QTransform transformAt(qreal step) const": {
+      "brief": "Returns the transform used for the item at the specified *step* value.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitemanimation.html#transformAt"
+    },
+    "qreal horizontalScaleAt(qreal step) const": {
+      "brief": "Returns the horizontal scale for the item at the specified *step* value.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitemanimation.html#horizontalScaleAt"
+    },
+    "qreal horizontalShearAt(qreal step) const": {
+      "brief": "Returns the horizontal shear for the item at the specified *step* value.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitemanimation.html#horizontalShearAt"
+    },
+    "qreal rotationAt(qreal step) const": {
+      "brief": "Returns the angle at which the item is rotated at the specified *step* value.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitemanimation.html#rotationAt"
+    },
+    "qreal verticalScaleAt(qreal step) const": {
+      "brief": "Returns the vertical scale for the item at the specified *step* value.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitemanimation.html#verticalScaleAt"
+    },
+    "qreal verticalShearAt(qreal step) const": {
+      "brief": "Returns the vertical shear for the item at the specified *step* value.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitemanimation.html#verticalShearAt"
+    },
+    "qreal xTranslationAt(qreal step) const": {
+      "brief": "Returns the horizontal translation of the item at the specified *step* value.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitemanimation.html#xTranslationAt"
+    },
+    "qreal yTranslationAt(qreal step) const": {
+      "brief": "Returns the vertical translation of the item at the specified *step* value.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitemanimation.html#yTranslationAt"
+    },
+    "void afterAnimationStep(qreal step)": {
+      "brief": "This method is meant to be overridden in subclasses that need to execute additional code after a new step has taken place.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitemanimation.html#afterAnimationStep"
+    },
+    "void beforeAnimationStep(qreal step)": {
+      "brief": "This method is meant to be overridden by subclassed that needs to execute additional code before a new step takes place.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitemanimation.html#beforeAnimationStep"
+    },
+    "void clear()": {
+      "brief": "Clears the scheduled transformations used for the animation, but retains the item and timeline.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitemanimation.html#clear"
+    },
+    "void setItem(QGraphicsItem *item)": {
+      "brief": "Sets the specified *item* to be used in the animation.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitemanimation.html#setItem"
+    },
+    "void setPosAt(qreal step, const QPointF &point)": {
+      "brief": "Sets the position of the item at the given *step* value to the *point* specified.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitemanimation.html#setPosAt"
+    },
+    "void setRotationAt(qreal step, qreal angle)": {
+      "brief": "Sets the rotation of the item at the given *step* value to the *angle* specified.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitemanimation.html#setRotationAt"
+    },
+    "void setScaleAt(qreal step, qreal sx, qreal sy)": {
+      "brief": "Sets the scale of the item at the given *step* value using the horizontal and vertical scale factors specified by *sx* and *sy*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitemanimation.html#setScaleAt"
+    },
+    "void setShearAt(qreal step, qreal sh, qreal sv)": {
+      "brief": "Sets the shear of the item at the given *step* value using the horizontal and vertical shear factors specified by *sh* and *sv*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitemanimation.html#setShearAt"
+    },
+    "void setStep(qreal step)": {
+      "brief": "Sets the current *step* value for the animation, causing the transformations scheduled at this step to be performed.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitemanimation.html#setStep"
+    },
+    "void setTimeLine(QTimeLine *timeLine)": {
+      "brief": "Sets the timeline object used to control the rate of animation to the *timeLine* specified.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitemanimation.html#setTimeLine"
+    },
+    "void setTranslationAt(qreal step, qreal dx, qreal dy)": {
+      "brief": "Sets the translation of the item at the given *step* value using the horizontal and vertical coordinates specified by *dx* and *dy*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsitemanimation.html#setTranslationAt"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

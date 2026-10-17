@@ -1,0 +1,175 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new application instance.",
+      "file": "gtk/gtkapplication.c",
+      "line": 792,
+      "md": "Creates a new application instance.\n\nWhen using `GtkApplication`, it is not necessary to call `init`\nmanually. It is called as soon as the application gets registered as\nthe primary instance.\n\nConcretely, `init` is called in the default handler for the\n`GApplication::startup` signal. Therefore, `GtkApplication` subclasses\nshould always chain up in their [`Application.startup()`](xref:gtk:GIO.Application#vfunc:startup) handler\nbefore using any GTK API.\n\nNote that commandline arguments are not passed to `init`.\n\nIf `application_id` is not `NULL`, then it must be valid. See\n`id_is_valid`.\n\nIf no application ID is given then some features (most notably application\nuniqueness) will be disabled."
+    }
+  },
+  "doc": {
+    "brief": "A high-level API for writing applications.",
+    "file": "gtk/gtkapplication.c",
+    "line": 58,
+    "md": "A high-level API for writing applications.\n\n`GtkApplication` supports many aspects of writing a GTK application\nin a convenient fashion, without enforcing a one-size-fits-all model.\n\nCurrently, it handles GTK initialization, application uniqueness, session\nmanagement, provides some basic scriptability and desktop shell integration\nby exporting actions and menus and manages a list of toplevel windows whose\nlife-cycle is automatically tied to the life-cycle of your application.\n\nWhile `GtkApplication` works fine with plain [`Window`](xref:gtk:Gtk.Window)s,\nit is recommended to use it together with [`ApplicationWindow`](xref:gtk:Gtk.ApplicationWindow).\n\n## Initialization\n\nA typical `GtkApplication` will create a window in its\n[`Application::activate`](xref:gtk:GIO.Application#event:activate), [`Application::open`](xref:gtk:GIO.Application#event:open)\nor [`Application::command-line`](xref:gtk:GIO.Application#event:command-line) handlers. Note that all\nof these signals may be emitted multiple times, so handlers must\nbe careful to take existing windows into account.\n\nA typical ::activate handler should look like this:\n\n```\nstatic void\nactivate (GApplication *gapp)\n{\n  GtkApplication *app = GTK_APPLICATION (gapp);\n  GtkWindow *window;\n\n  window = gtk_application_get_active_window (app);\n  if (!window)\n    window = create_window (app);\n\n  gtk_window_present (window);\n}\n```\n\n## Automatic resources\n\n`GtkApplication` will automatically load menus from the `GtkBuilder`\nresource located at \"gtk/menus.ui\", relative to the application's\nresource base path (see [`Application.set_resource_base_path()`](xref:gtk:Gio.Application#method:set_resource_base_path)).\nThe menu with the ID \"menubar\" is taken as the application's\nmenubar. Additional menus (most interesting submenus) can be named\nand accessed via [`Application.get_menu_by_id()`](xref:gtk:Gtk.Application#method:get_menu_by_id) which allows for\ndynamic population of a part of the menu structure.\n\nNote that automatic resource loading uses the resource base path\nthat is set at construction time and will not work if the resource\nbase path is changed at a later time.\n\nIt is also possible to provide the menubar manually using\n[`Application.set_menubar()`](xref:gtk:Gtk.Application#method:set_menubar).\n\n`GtkApplication` will also automatically setup an icon search path for\nthe default icon theme by appending \"icons\" to the resource base\npath. This allows your application to easily store its icons as\nresources. See [`IconTheme.add_resource_path()`](xref:gtk:Gtk.IconTheme#method:add_resource_path) for more\ninformation.\n\nIf there is a resource located at `gtk/help-overlay.ui` which\ndefines a [`ShortcutsWindow`](xref:gtk:Gtk.ShortcutsWindow) with ID `help_overlay` then\n`GtkApplication` associates an instance of this shortcuts window with\neach [`ApplicationWindow`](xref:gtk:Gtk.ApplicationWindow) and sets up the keyboard accelerator\n<kbd>Control</kbd>+<kbd>?</kbd> to open it. To create a menu item that\ndisplays the shortcuts window, associate the item with the action\n`win.show-help-overlay`.\n\n`GtkApplication` will also automatically set the application id as the\ndefault window icon. Use `set_default_icon_name` or\n[`Window:icon-name`](xref:gtk:Gtk.Window#property:icon-name) to override that behavior.\n\n# Inhibiting\n\nAn application can block various ways to end the session with\nthe [`Application.inhibit()`](xref:gtk:Gtk.Application#method:inhibit) function. Typical use cases for\nthis kind of inhibiting are long-running, uninterruptible operations,\nsuch as burning a CD or performing a disk backup. The session\nmanager may not honor the inhibitor, but it can be expected to\ninform the user about the negative consequences of ending the\nsession while inhibitors are present.\n\n## A simple application\n\n[A simple example](https://gitlab.gnome.org/GNOME/gtk/tree/main/examples/bp/bloatpad.c)\nis available in the GTK source code repository\n\n## See Also\n\n- [Using GtkApplication](https://developer.gnome.org/documentation/tutorials/application.html)\n- [Getting Started with GTK: Basics](getting_started.html#basics)"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Application",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "add_window": {
+      "brief": "Adds a window to the application.",
+      "file": "gtk/gtkapplication.c",
+      "line": 830,
+      "md": "Adds a window to the application.\n\nThis call can only happen after the application has started;\ntypically, you should add new application windows in response\nto the emission of the [`Application::activate`](xref:gtk:GIO.Application#event:activate) signal.\n\nThis call is equivalent to setting the [`Window:application`](xref:gtk:Gtk.Window#property:application)\nproperty of the window to `application`.\n\nNormally, the connection between the application and the window\nwill remain until the window is destroyed, but you can explicitly\nremove it with [`Application.remove_window()`](xref:gtk:Gtk.Application#method:remove_window).\n\nGTK will keep the application running as long as it has any windows."
+    },
+    "get_accels_for_action": {
+      "brief": "Gets the accelerators that are currently associated with the given action.",
+      "file": "gtk/gtkapplication.c",
+      "line": 1229,
+      "md": "Gets the accelerators that are currently associated with\nthe given action."
+    },
+    "get_actions_for_accel": {
+      "brief": "Returns the list of actions (possibly empty) that the accelerator maps to.",
+      "file": "gtk/gtkapplication.c",
+      "line": 1254,
+      "md": "Returns the list of actions (possibly empty) that the accelerator maps to.\n\nEach item in the list is a detailed action name in the usual form.\n\nThis might be useful to discover if an accel already exists in\norder to prevent installation of a conflicting accelerator (from\nan accelerator editor or a plugin system, for example). Note that\nhaving more than one action per accelerator may not be a bad thing\nand might make sense in cases where the actions never appear in the\nsame context.\n\nIn case there are no actions for a given accelerator, an empty array\nis returned. `NULL` is never returned.\n\nIt is a programmer error to pass an invalid accelerator string.\n\nIf you are unsure, check it with `accelerator_parse` first."
+    },
+    "get_active_window": {
+      "brief": "Gets the “active” window for the application.",
+      "file": "gtk/gtkapplication.c",
+      "line": 956,
+      "md": "Gets the “active” window for the application.\n\nThe active window is the one that was most recently focused\n(within the application). This window may not have the focus\nat the moment if another application has it — this is just\nthe most recently-focused window within this application."
+    },
+    "get_menu_by_id": {
+      "brief": "Gets a menu from automatically loaded resources.",
+      "file": "gtk/gtkapplication.c",
+      "line": 1331,
+      "md": "Gets a menu from automatically loaded resources.\n\nSee [the section on Automatic resources](class.Application.html#automatic-resources)\nfor more information."
+    },
+    "get_menubar": {
+      "brief": "Returns the menu model for the menu bar of the application.",
+      "file": "gtk/gtkapplication.c",
+      "line": 1032,
+      "md": "Returns the menu model for the menu bar of the application."
+    },
+    "get_window_by_id": {
+      "brief": "Returns the window with the given ID.",
+      "file": "gtk/gtkapplication.c",
+      "line": 925,
+      "md": "Returns the window with the given ID.\n\nThe ID of a `GtkApplicationWindow` can be retrieved with\n[`ApplicationWindow.get_id()`](xref:gtk:Gtk.ApplicationWindow#method:get_id)."
+    },
+    "get_windows": {
+      "brief": "Gets a list of the window associated with the application.",
+      "file": "gtk/gtkapplication.c",
+      "line": 899,
+      "md": "Gets a list of the window associated with the application.\n\nThe list is sorted by most recently focused window, such that the first\nelement is the currently focused window. (Useful for choosing a parent\nfor a transient window.)\n\nThe list that is returned should not be modified in any way. It will\nonly remain valid until the next focus change or window creation or\ndeletion."
+    },
+    "inhibit": {
+      "brief": "Informs the session manager that certain types of actions should be inhibited.",
+      "file": "gtk/gtkapplication.c",
+      "line": 1065,
+      "md": "Informs the session manager that certain types of actions should be\ninhibited.\n\nThis is not guaranteed to work on all platforms and for all types of\nactions.\n\nApplications should invoke this method when they begin an operation\nthat should not be interrupted, such as creating a CD or DVD. The\ntypes of actions that may be blocked are specified by the `flags`\nparameter. When the application completes the operation it should\ncall [`Application.uninhibit()`](xref:gtk:Gtk.Application#method:uninhibit) to remove the inhibitor. Note\nthat an application can have multiple inhibitors, and all of them must\nbe individually removed. Inhibitors are also cleared when the\napplication exits.\n\nApplications should not expect that they will always be able to block\nthe action. In most cases, users will be given the option to force\nthe action to take place.\n\nThe `reason` message should be short and to the point.\n\nIf a window is given, the session manager may point the user to\nthis window to find out more about why the action is inhibited.\n\nThe cookie that is returned by this function  should be used as an\nargument to [`Application.uninhibit()`](xref:gtk:Gtk.Application#method:uninhibit) in order to remove\nthe request."
+    },
+    "list_action_descriptions": {
+      "brief": "Lists the detailed action names which have associated accelerators.",
+      "file": "gtk/gtkapplication.c",
+      "line": 1166,
+      "md": "Lists the detailed action names which have associated accelerators.\n\nSee [`Application.set_accels_for_action()`](xref:gtk:Gtk.Application#method:set_accels_for_action)."
+    },
+    "remove_window": {
+      "brief": "Remove a window from the application.",
+      "file": "gtk/gtkapplication.c",
+      "line": 871,
+      "md": "Remove a window from the application.\n\nIf the window belongs to the application then this call is\nequivalent to setting the [`Window:application`](xref:gtk:Gtk.Window#property:application)\nproperty of the window to `NULL`.\n\nThe application may stop running as a result of a call to this\nfunction, if the window was the last window of the application."
+    },
+    "set_accels_for_action": {
+      "brief": "Sets zero or more keyboard accelerators that will trigger the given action.",
+      "file": "gtk/gtkapplication.c",
+      "line": 1186,
+      "md": "Sets zero or more keyboard accelerators that will trigger the\ngiven action.\n\nThe first item in `accels` will be the primary accelerator,\nwhich may be displayed in the UI.\n\nTo remove all accelerators for an action, use an empty,\nzero-terminated array for `accels`.\n\nFor the `detailed_action_name`, see `parse_detailed_name`\nand [Gio.Action.print_detailed_name]."
+    },
+    "set_menubar": {
+      "brief": "Sets or unsets the menubar for windows of the application.",
+      "file": "gtk/gtkapplication.c",
+      "line": 989,
+      "md": "Sets or unsets the menubar for windows of the application.\n\nThis is a menubar in the traditional sense.\n\nThis can only be done in the primary instance of the application,\nafter it has been registered. [`Application.startup()`](xref:gtk:GIO.Application#vfunc:startup) is\na good place to call this.\n\nDepending on the desktop environment, this may appear at the top of\neach window, or at the top of the screen. In some environments, if\nboth the application menu and the menubar are set, the application\nmenu will be presented as if it were the first item of the menubar.\nOther environments treat the two as completely separate — for example,\nthe application menu may be rendered by the desktop shell while the\nmenubar (if set) remains in each individual window.\n\nUse the base `GActionMap` interface to add actions, to respond to the\nuser selecting these menu items."
+    },
+    "uninhibit": {
+      "brief": "Removes an inhibitor that has been previously established.",
+      "file": "gtk/gtkapplication.c",
+      "line": 1120,
+      "md": "Removes an inhibitor that has been previously established.\n\nSee [`Application.inhibit()`](xref:gtk:Gtk.Application#method:inhibit).\n\nInhibitors are also cleared when the application exits."
+    }
+  },
+  "properties": {
+    "active-window": {
+      "brief": "The currently focused window of the application.",
+      "file": "gtk/gtkapplication.c",
+      "line": 779,
+      "md": "The currently focused window of the application."
+    },
+    "menubar": {
+      "brief": "The menu model to be used for the application's menu bar.",
+      "file": "gtk/gtkapplication.c",
+      "line": 769,
+      "md": "The menu model to be used for the application's menu bar."
+    },
+    "register-session": {
+      "brief": "Set this property to true to register with the session manager.",
+      "deprecated": "4.22",
+      "deprecated_md": "This property is ignored. GTK always registers\nwith the session manager",
+      "file": "gtk/gtkapplication.c",
+      "line": 739,
+      "md": "Set this property to true to register with the session manager.\n\nThis will make GTK track the session state (such as the\n[`Application:screensaver-active`](xref:gtk:Gtk.Application#property:screensaver-active) property)."
+    },
+    "screensaver-active": {
+      "brief": "This property is true if GTK believes that the screensaver is currently active.",
+      "file": "gtk/gtkapplication.c",
+      "line": 755,
+      "md": "This property is true if GTK believes that the screensaver\nis currently active.\n\nTracking the screensaver state is currently only supported on\nLinux."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "query-end": {
+      "brief": "Emitted when the session manager is about to end the session.",
+      "file": "gtk/gtkapplication.c",
+      "line": 722,
+      "md": "Emitted when the session manager is about to end the session.\n\nApplications can connect to this signal and call\n[`Application.inhibit()`](xref:gtk:Gtk.Application#method:inhibit) with [`ApplicationInhibitFlags.logout`](xref:gtk:Gtk.ApplicationInhibitFlags#value:logout)\nto delay the end of the session until state has been saved."
+    },
+    "window-added": {
+      "brief": "Emitted when a window is added to an application.",
+      "file": "gtk/gtkapplication.c",
+      "line": 689,
+      "md": "Emitted when a window is added to an application.\n\nSee [`Application.add_window()`](xref:gtk:Gtk.Application#method:add_window)."
+    },
+    "window-removed": {
+      "brief": "Emitted when a window is removed from an application.",
+      "file": "gtk/gtkapplication.c",
+      "line": 705,
+      "md": "Emitted when a window is removed from an application.\n\nThis can happen as a side-effect of the window being destroyed\nor explicitly through [`Application.remove_window()`](xref:gtk:Gtk.Application#method:remove_window)."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "window_added": {
+      "brief": "Signal emitted when a `GtkWindow` is added to application through gtk_application_add_window().",
+      "file": "gtk/gtkapplication.h",
+      "line": 49,
+      "md": "Signal emitted when a `GtkWindow` is added to\n   application through gtk_application_add_window()."
+    },
+    "window_removed": {
+      "brief": "Signal emitted when a `GtkWindow` is removed from application, either as a side-effect of being destroyed or explicitly through gtk_application_remove_window().",
+      "file": "gtk/gtkapplication.h",
+      "line": 51,
+      "md": "Signal emitted when a `GtkWindow` is removed from\n   application, either as a side-effect of being destroyed or\n   explicitly through gtk_application_remove_window()."
+    }
+  }
+}

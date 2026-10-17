@@ -1,0 +1,219 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Base class for widgets which visualize an adjustment.",
+    "file": "gtk/gtkrange.c",
+    "line": 53,
+    "md": "Base class for widgets which visualize an adjustment.\n\nWidgets that are derived from `GtkRange` include\n[`Scale`](xref:gtk:Gtk.Scale) and [`Scrollbar`](xref:gtk:Gtk.Scrollbar).\n\nApart from signals for monitoring the parameters of the adjustment,\n`GtkRange` provides properties and methods for setting a\n“fill level” on range widgets. See [`Range.set_fill_level()`](xref:gtk:Gtk.Range#method:set_fill_level).\n\n# Shortcuts and Gestures\n\nThe `GtkRange` slider is draggable. Holding the <kbd>Shift</kbd> key while\ndragging, or initiating the drag with a long-press will enable the\nfine-tuning mode."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Range",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_adjustment": {
+      "brief": "Get the adjustment which is the “model” object for `GtkRange`.",
+      "file": "gtk/gtkrange.c",
+      "line": 641,
+      "md": "Get the adjustment which is the “model” object for `GtkRange`."
+    },
+    "get_fill_level": {
+      "brief": "Gets the current position of the fill level indicator.",
+      "file": "gtk/gtkrange.c",
+      "line": 1330,
+      "md": "Gets the current position of the fill level indicator."
+    },
+    "get_flippable": {
+      "brief": "Gets whether the `GtkRange` respects text direction.",
+      "file": "gtk/gtkrange.c",
+      "line": 911,
+      "md": "Gets whether the `GtkRange` respects text direction.\n\nSee [`Range.set_flippable()`](xref:gtk:Gtk.Range#method:set_flippable)."
+    },
+    "get_inverted": {
+      "brief": "Gets whether the range is inverted.",
+      "file": "gtk/gtkrange.c",
+      "line": 859,
+      "md": "Gets whether the range is inverted.\n\nSee [`Range.set_inverted()`](xref:gtk:Gtk.Range#method:set_inverted)."
+    },
+    "get_range_rect": {
+      "brief": "This function returns the area that contains the range’s trough, in coordinates relative to `range`'s origin.",
+      "file": "gtk/gtkrange.c",
+      "line": 978,
+      "md": "This function returns the area that contains the range’s trough,\nin coordinates relative to `range`'s origin.\n\nThis function is useful mainly for `GtkRange` subclasses."
+    },
+    "get_restrict_to_fill_level": {
+      "brief": "Gets whether the range is restricted to the fill level.",
+      "file": "gtk/gtkrange.c",
+      "line": 1265,
+      "md": "Gets whether the range is restricted to the fill level."
+    },
+    "get_round_digits": {
+      "brief": "Gets the number of digits to round the value to when it changes.",
+      "file": "gtk/gtkrange.c",
+      "line": 3052,
+      "md": "Gets the number of digits to round the value to when\nit changes.\n\nSee [`Range::change-value`](xref:gtk:Gtk.Range#event:change-value)."
+    },
+    "get_show_fill_level": {
+      "brief": "Gets whether the range displays the fill level graphically.",
+      "file": "gtk/gtkrange.c",
+      "line": 1216,
+      "md": "Gets whether the range displays the fill level graphically."
+    },
+    "get_slider_range": {
+      "brief": "This function returns sliders range along the long dimension, in widget->window coordinates.",
+      "file": "gtk/gtkrange.c",
+      "line": 1013,
+      "md": "This function returns sliders range along the long dimension,\nin widget->window coordinates.\n\nThis function is useful mainly for `GtkRange` subclasses."
+    },
+    "get_slider_size_fixed": {
+      "brief": "This function is useful mainly for `GtkRange` subclasses.",
+      "file": "gtk/gtkrange.c",
+      "line": 958,
+      "md": "This function is useful mainly for `GtkRange` subclasses.\n\nSee [`Range.set_slider_size_fixed()`](xref:gtk:Gtk.Range#method:set_slider_size_fixed)."
+    },
+    "get_value": {
+      "brief": "Gets the current value of the range.",
+      "file": "gtk/gtkrange.c",
+      "line": 1158,
+      "md": "Gets the current value of the range."
+    },
+    "set_adjustment": {
+      "brief": "Sets the adjustment to be used as the “model” object for the `GtkRange`",
+      "file": "gtk/gtkrange.c",
+      "line": 662,
+      "md": "Sets the adjustment to be used as the “model” object for the `GtkRange`\n\nThe adjustment indicates the current range value, the minimum and\nmaximum range values, the step/page increments used for keybindings\nand scrolling, and the page size.\n\nThe page size is normally 0 for `GtkScale` and nonzero for `GtkScrollbar`,\nand indicates the size of the visible area of the widget being scrolled.\nThe page size affects the size of the scrollbar slider."
+    },
+    "set_fill_level": {
+      "brief": "Set the new position of the fill level indicator.",
+      "file": "gtk/gtkrange.c",
+      "line": 1283,
+      "md": "Set the new position of the fill level indicator.\n\nThe “fill level” is probably best described by its most prominent\nuse case, which is an indicator for the amount of pre-buffering in\na streaming media player. In that use case, the value of the range\nwould indicate the current play position, and the fill level would\nbe the position up to which the file/stream has been downloaded.\n\nThis amount of prebuffering can be displayed on the range’s trough\nand is themeable separately from the trough. To enable fill level\ndisplay, use [`Range.set_show_fill_level()`](xref:gtk:Gtk.Range#method:set_show_fill_level). The range defaults\nto not showing the fill level.\n\nAdditionally, it’s possible to restrict the range’s slider position\nto values which are smaller than the fill level. This is controlled\nby [`Range.set_restrict_to_fill_level()`](xref:gtk:Gtk.Range#method:set_restrict_to_fill_level) and is by default\nenabled."
+    },
+    "set_flippable": {
+      "brief": "Sets whether the `GtkRange` respects text direction.",
+      "file": "gtk/gtkrange.c",
+      "line": 879,
+      "md": "Sets whether the `GtkRange` respects text direction.\n\nIf a range is flippable, it will switch its direction\nif it is horizontal and its direction is %GTK_TEXT_DIR_RTL.\n\nSee [`Widget.get_direction()`](xref:gtk:Gtk.Widget#method:get_direction)."
+    },
+    "set_increments": {
+      "brief": "Sets the step and page sizes for the range.",
+      "file": "gtk/gtkrange.c",
+      "line": 1059,
+      "md": "Sets the step and page sizes for the range.\n\nThe step size is used when the user clicks the `GtkScrollbar`\narrows or moves a `GtkScale` via arrow keys. The page size\nis used for example when moving via Page Up or Page Down keys."
+    },
+    "set_inverted": {
+      "brief": "Sets whether to invert the range.",
+      "file": "gtk/gtkrange.c",
+      "line": 824,
+      "md": "Sets whether to invert the range.\n\nRanges normally move from lower to higher values as the\nslider moves from top to bottom or left to right. Inverted\nranges have higher values at the top or on the right rather\nthan on the bottom or left."
+    },
+    "set_range": {
+      "brief": "Sets the allowable values in the `GtkRange`.",
+      "file": "gtk/gtkrange.c",
+      "line": 1092,
+      "md": "Sets the allowable values in the `GtkRange`.\n\nThe range value is clamped to be between `min` and `max`.\n(If the range has a non-zero page size, it is clamped\nbetween `min` and `max` - page-size.)"
+    },
+    "set_restrict_to_fill_level": {
+      "brief": "Sets whether the slider is restricted to the fill level.",
+      "file": "gtk/gtkrange.c",
+      "line": 1234,
+      "md": "Sets whether the slider is restricted to the fill level.\n\nSee [`Range.set_fill_level()`](xref:gtk:Gtk.Range#method:set_fill_level) for a general description\nof the fill level concept."
+    },
+    "set_round_digits": {
+      "brief": "Sets the number of digits to round the value to when it changes.",
+      "file": "gtk/gtkrange.c",
+      "line": 3026,
+      "md": "Sets the number of digits to round the value to when\nit changes.\n\nSee [`Range::change-value`](xref:gtk:Gtk.Range#event:change-value)."
+    },
+    "set_show_fill_level": {
+      "brief": "Sets whether a graphical fill level is show on the trough.",
+      "file": "gtk/gtkrange.c",
+      "line": 1176,
+      "md": "Sets whether a graphical fill level is show on the trough.\n\nSee [`Range.set_fill_level()`](xref:gtk:Gtk.Range#method:set_fill_level) for a general description\nof the fill level concept."
+    },
+    "set_slider_size_fixed": {
+      "brief": "Sets whether the range’s slider has a fixed size, or a size that depends on its adjustment’s page size.",
+      "file": "gtk/gtkrange.c",
+      "line": 931,
+      "md": "Sets whether the range’s slider has a fixed size, or a size that\ndepends on its adjustment’s page size.\n\nThis function is useful mainly for `GtkRange` subclasses."
+    },
+    "set_value": {
+      "brief": "Sets the current value of the range.",
+      "file": "gtk/gtkrange.c",
+      "line": 1132,
+      "md": "Sets the current value of the range.\n\nIf the value is outside the minimum or maximum range values,\nit will be clamped to fit inside them. The range emits the\n[`Range::value-changed`](xref:gtk:Gtk.Range#event:value-changed) signal if the value changes."
+    }
+  },
+  "properties": {
+    "adjustment": {
+      "brief": "The adjustment that is controlled by the range.",
+      "file": "gtk/gtkrange.c",
+      "line": 389,
+      "md": "The adjustment that is controlled by the range."
+    },
+    "fill-level": {
+      "brief": "The fill level (e.g. prebuffering of a network stream).",
+      "file": "gtk/gtkrange.c",
+      "line": 431,
+      "md": "The fill level (e.g. prebuffering of a network stream)."
+    },
+    "inverted": {
+      "brief": "If `TRUE`, the direction in which the slider moves is inverted.",
+      "file": "gtk/gtkrange.c",
+      "line": 399,
+      "md": "If `TRUE`, the direction in which the slider moves is inverted."
+    },
+    "restrict-to-fill-level": {
+      "brief": "Controls whether slider movement is restricted to an upper boundary set by the fill level.",
+      "file": "gtk/gtkrange.c",
+      "line": 420,
+      "md": "Controls whether slider movement is restricted to an\nupper boundary set by the fill level."
+    },
+    "round-digits": {
+      "brief": "The number of digits to round the value to when it changes.",
+      "file": "gtk/gtkrange.c",
+      "line": 442,
+      "md": "The number of digits to round the value to when\nit changes.\n\nSee [`Range::change-value`](xref:gtk:Gtk.Range#event:change-value)."
+    },
+    "show-fill-level": {
+      "brief": "Controls whether fill level indicator graphics are displayed on the trough.",
+      "file": "gtk/gtkrange.c",
+      "line": 409,
+      "md": "Controls whether fill level indicator graphics are displayed\non the trough."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "adjust-bounds": {
+      "brief": "Emitted before clamping a value, to give the application a chance to adjust the bounds.",
+      "file": "gtk/gtkrange.c",
+      "line": 314,
+      "md": "Emitted before clamping a value, to give the application a\nchance to adjust the bounds."
+    },
+    "change-value": {
+      "brief": "Emitted when a scroll action is performed on a range.",
+      "file": "gtk/gtkrange.c",
+      "line": 351,
+      "md": "Emitted when a scroll action is performed on a range.\n\nIt allows an application to determine the type of scroll event\nthat occurred and the resultant new value. The application can\nhandle the event itself and return `TRUE` to prevent further\nprocessing. Or, by returning `FALSE`, it can pass the event to\nother handlers until the default GTK handler is reached.\n\nThe value parameter is unrounded. An application that overrides\nthe ::change-value signal is responsible for clamping the value\nto the desired number of decimal digits; the default GTK\nhandler clamps the value based on [`Range:round-digits`](xref:gtk:Gtk.Range#property:round-digits)."
+    },
+    "move-slider": {
+      "brief": "Virtual function that moves the slider.",
+      "file": "gtk/gtkrange.c",
+      "line": 332,
+      "md": "Virtual function that moves the slider.\n\nUsed for keybindings."
+    },
+    "value-changed": {
+      "brief": "Emitted when the range value changes.",
+      "file": "gtk/gtkrange.c",
+      "line": 299,
+      "md": "Emitted when the range value changes."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

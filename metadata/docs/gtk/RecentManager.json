@@ -1,0 +1,106 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new recent manager object.",
+      "file": "gtk/gtkrecentmanager.c",
+      "line": 715,
+      "md": "Creates a new recent manager object.\n\nRecent manager objects are used to handle the list of recently used\nresources. A `GtkRecentManager` object monitors the recently used\nresources list, and emits the [`RecentManager::changed`](xref:gtk:Gtk.RecentManager#event:changed)\nsignal each time something inside the list changes.\n\n`GtkRecentManager` objects are expensive: be sure to create them\nonly when needed. You should use `get_default`\ninstead."
+    }
+  },
+  "doc": {
+    "brief": "Manages and looks up recently used files.",
+    "file": "gtk/gtkrecentmanager.c",
+    "line": 20,
+    "md": "Manages and looks up recently used files.\n\nEach recently used file is identified by its URI, and has meta-data\nassociated to it, like the names and command lines of the applications\nthat have registered it, the number of time each application has\nregistered the same file, the mime type of the file and whether\nthe file should be displayed only by the applications that have\nregistered it.\n\nThe recently used files list is per user.\n\n`GtkRecentManager` acts like a database of all the recently\nused files. You can create new `GtkRecentManager` objects, but\nit is more efficient to use the default manager created by GTK.\n\nAdding a new recently used file is as simple as:\n\n```c\nGtkRecentManager *manager;\n\nmanager = gtk_recent_manager_get_default ();\ngtk_recent_manager_add_item (manager, file_uri);\n```\n\nThe `GtkRecentManager` will try to gather all the needed information\nfrom the file itself through GIO.\n\nLooking up the meta-data associated with a recently used file\ngiven its URI requires calling [`RecentManager.lookup_item()`](xref:gtk:Gtk.RecentManager#method:lookup_item):\n\n```c\nGtkRecentManager *manager;\nGtkRecentInfo *info;\nGError *error = NULL;\n\nmanager = gtk_recent_manager_get_default ();\ninfo = gtk_recent_manager_lookup_item (manager, file_uri, &error);\nif (error)\n  {\n    g_warning (\"Could not find the file: %s\", error->message);\n    g_error_free (error);\n  }\nelse\n {\n   // Use the info object\n   gtk_recent_info_unref (info);\n }\n```\n\nIn order to retrieve the list of recently used files, you can use\n[`RecentManager.get_items()`](xref:gtk:Gtk.RecentManager#method:get_items), which returns a list of\n[`RecentInfo`](xref:gtk:Gtk.RecentInfo).\n\nNote that the maximum age of the recently used files list is\ncontrollable through the [`Settings:gtk-recent-files-max-age`](xref:gtk:Gtk.Settings#property:gtk-recent-files-max-age)\nproperty."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:RecentManager",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "add_full": {
+      "brief": "Adds a new resource, pointed by `uri`, into the recently used resources list, using the metadata specified inside the `GtkRecentData` passed in `recent_data`.",
+      "file": "gtk/gtkrecentmanager.c",
+      "line": 858,
+      "md": "Adds a new resource, pointed by `uri`, into the recently used\nresources list, using the metadata specified inside the\n`GtkRecentData` passed in `recent_data`.\n\nThe passed URI will be used to identify this resource inside the\nlist.\n\nIn order to register the new recently used resource, metadata about\nthe resource must be passed as well as the URI; the metadata is\nstored in a `GtkRecentData`, which must contain the MIME\ntype of the resource pointed by the URI; the name of the application\nthat is registering the item, and a command line to be used when\nlaunching the item.\n\nOptionally, a `GtkRecentData` might contain a UTF-8 string\nto be used when viewing the item instead of the last component of\nthe URI; a short description of the item; whether the item should\nbe considered private - that is, should be displayed only by the\napplications that have registered it."
+    },
+    "add_item": {
+      "brief": "Adds a new resource, pointed by `uri`, into the recently used resources list.",
+      "file": "gtk/gtkrecentmanager.c",
+      "line": 816,
+      "md": "Adds a new resource, pointed by `uri`, into the recently used\nresources list.\n\nThis function automatically retrieves some of the needed\nmetadata and setting other metadata to common default values;\nit then feeds the data to [`RecentManager.add_full()`](xref:gtk:Gtk.RecentManager#method:add_full).\n\nSee [`RecentManager.add_full()`](xref:gtk:Gtk.RecentManager#method:add_full) if you want to explicitly\ndefine the metadata for the resource pointed by `uri`."
+    },
+    "get_default": {
+      "brief": "Gets a unique instance of `GtkRecentManager` that you can share in your application without caring about memory management.",
+      "file": "gtk/gtkrecentmanager.c",
+      "line": 737,
+      "md": "Gets a unique instance of `GtkRecentManager` that you can share\nin your application without caring about memory management."
+    },
+    "get_items": {
+      "brief": "Gets the list of recently used resources.",
+      "file": "gtk/gtkrecentmanager.c",
+      "line": 1276,
+      "md": "Gets the list of recently used resources."
+    },
+    "has_item": {
+      "brief": "Checks whether there is a recently used resource registered with `uri` inside the recent manager.",
+      "file": "gtk/gtkrecentmanager.c",
+      "line": 1055,
+      "md": "Checks whether there is a recently used resource registered\nwith `uri` inside the recent manager."
+    },
+    "lookup_item": {
+      "brief": "Searches for a URI inside the recently used resources list, and returns a `GtkRecentInfo` containing information about the resource like its MIME type, or its display name.",
+      "file": "gtk/gtkrecentmanager.c",
+      "line": 1146,
+      "md": "Searches for a URI inside the recently used resources list, and\nreturns a `GtkRecentInfo` containing information about the resource\nlike its MIME type, or its display name."
+    },
+    "move_item": {
+      "brief": "Changes the location of a recently used resource from `uri` to `new_uri`.",
+      "file": "gtk/gtkrecentmanager.c",
+      "line": 1207,
+      "md": "Changes the location of a recently used resource from `uri` to `new_uri`.\n\nPlease note that this function will not affect the resource pointed\nby the URIs, but only the URI used in the recently used resources list."
+    },
+    "purge_items": {
+      "brief": "Purges every item from the recently used resources list.",
+      "file": "gtk/gtkrecentmanager.c",
+      "line": 1335,
+      "md": "Purges every item from the recently used resources list."
+    },
+    "remove_item": {
+      "brief": "Removes a resource pointed by `uri` from the recently used resources list handled by a recent manager.",
+      "file": "gtk/gtkrecentmanager.c",
+      "line": 997,
+      "md": "Removes a resource pointed by `uri` from the recently used resources\nlist handled by a recent manager."
+    }
+  },
+  "properties": {
+    "filename": {
+      "brief": "The full path to the file to be used to store and read the recently used resources list",
+      "file": "gtk/gtkrecentmanager.c",
+      "line": 269,
+      "md": "The full path to the file to be used to store and read the\nrecently used resources list"
+    },
+    "size": {
+      "brief": "The size of the recently used resources list.",
+      "file": "gtk/gtkrecentmanager.c",
+      "line": 281,
+      "md": "The size of the recently used resources list."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "changed": {
+      "brief": "Emitted when the current recently used resources manager changes its contents.",
+      "file": "gtk/gtkrecentmanager.c",
+      "line": 292,
+      "md": "Emitted when the current recently used resources manager changes\nits contents.\n\nThis can happen either by calling [`RecentManager.add_item()`](xref:gtk:Gtk.RecentManager#method:add_item)\nor by another application."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

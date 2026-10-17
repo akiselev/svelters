@@ -1,0 +1,161 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "An interface for packing cells",
+    "deprecated": "4.10",
+    "deprecated_md": "List views use widgets to display their contents.\n  See [`LayoutManager`](xref:gtk:Gtk.LayoutManager) for layout manager delegate objects",
+    "file": "gtk/deprecated/gtkcelllayout.c",
+    "line": 18,
+    "md": "An interface for packing cells\n\n`GtkCellLayout` is an interface to be implemented by all objects which\nwant to provide a `GtkTreeViewColumn` like API for packing cells,\nsetting attributes and data funcs.\n\nOne of the notable features provided by implementations of\n`GtkCellLayout` are attributes. Attributes let you set the properties\nin flexible ways. They can just be set to constant values like regular\nproperties. But they can also be mapped to a column of the underlying\ntree model with gtk_cell_layout_set_attributes(), which means that the value\nof the attribute can change from cell to cell as they are rendered by\nthe cell renderer. Finally, it is possible to specify a function with\ngtk_cell_layout_set_cell_data_func() that is called to determine the\nvalue of the attribute for each cell that is rendered.\n\n## GtkCellLayouts as GtkBuildable\n\nImplementations of GtkCellLayout which also implement the GtkBuildable\ninterface (`GtkCellView`, `GtkIconView`, `GtkComboBox`,\n`GtkEntryCompletion`, `GtkTreeViewColumn`) accept `GtkCellRenderer` objects\nas `<child>` elements in UI definitions. They support a custom `<attributes>`\nelement for their children, which can contain multiple `<attribute>`\nelements. Each `<attribute>` element has a name attribute which specifies\na property of the cell renderer; the content of the element is the\nattribute value.\n\nThis is an example of a UI definition fragment specifying attributes:\n\n```xml\n<object class=\"GtkCellView\">\n  <child>\n    <object class=\"GtkCellRendererText\"/>\n    <attributes>\n      <attribute name=\"text\">0</attribute>\n    </attributes>\n  </child>\n</object>\n```\n\nFurthermore for implementations of `GtkCellLayout` that use a `GtkCellArea`\nto lay out cells (all `GtkCellLayout`s in GTK use a `GtkCellArea`)\n[cell properties](class.CellArea.html#cell-properties) can also be defined\nin the format by specifying the custom `<cell-packing>` attribute which can\ncontain multiple `<property>` elements.\n\nHere is a UI definition fragment specifying cell properties:\n\n```xml\n<object class=\"GtkTreeViewColumn\">\n  <child>\n    <object class=\"GtkCellRendererText\"/>\n    <cell-packing>\n      <property name=\"align\">True</property>\n      <property name=\"expand\">False</property>\n    </cell-packing>\n  </child>\n</object>\n```\n\n## Subclassing GtkCellLayout implementations\n\nWhen subclassing a widget that implements `GtkCellLayout` like\n`GtkIconView` or `GtkComboBox`, there are some considerations related\nto the fact that these widgets internally use a `GtkCellArea`.\nThe cell area is exposed as a construct-only property by these\nwidgets. This means that it is possible to e.g. do\n\n```c\nGtkWIdget *combo =\n  g_object_new (GTK_TYPE_COMBO_BOX, \"cell-area\", my_cell_area, NULL);\n```\n\nto use a custom cell area with a combo box. But construct properties\nare only initialized after instance `init()`\nfunctions have run, which means that using functions which rely on\nthe existence of the cell area in your subclass `init()` function will\ncause the default cell area to be instantiated. In this case, a provided\nconstruct property value will be ignored (with a warning, to alert\nyou to the problem).\n\n```c\nstatic void\nmy_combo_box_init (MyComboBox *b)\n{\n  GtkCellRenderer *cell;\n\n  cell = gtk_cell_renderer_pixbuf_new ();\n\n  // The following call causes the default cell area for combo boxes,\n  // a GtkCellAreaBox, to be instantiated\n  gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (b), cell, FALSE);\n  ...\n}\n\nGtkWidget *\nmy_combo_box_new (GtkCellArea *area)\n{\n  // This call is going to cause a warning about area being ignored\n  return g_object_new (MY_TYPE_COMBO_BOX, \"cell-area\", area, NULL);\n}\n```\n\nIf supporting alternative cell areas with your derived widget is\nnot important, then this does not have to concern you. If you want\nto support alternative cell areas, you can do so by moving the\nproblematic calls out of `init()` and into a `constructor()`\nfor your class."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:CellLayout",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "add_attribute": {
+      "brief": "Adds an attribute mapping to the list in `cell_layout`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcelllayout.c",
+      "line": 478,
+      "md": "Adds an attribute mapping to the list in `cell_layout`.\n\nThe `column` is the column of the model to get a value from, and the\n`attribute` is the property on `cell` to be set from that value. So for\nexample if column 2 of the model contains strings, you could have the\n“text” attribute of a `GtkCellRendererText` get its values from column 2.\nIn this context \"attribute\" and \"property\" are used interchangeably."
+    },
+    "clear": {
+      "brief": "Unsets all the mappings on all renderers on `cell_layout` and removes all renderers from `cell_layout`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcelllayout.c",
+      "line": 407,
+      "md": "Unsets all the mappings on all renderers on `cell_layout` and\nremoves all renderers from `cell_layout`."
+    },
+    "clear_attributes": {
+      "brief": "Clears all existing attributes previously set with gtk_cell_layout_set_attributes().",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcelllayout.c",
+      "line": 541,
+      "md": "Clears all existing attributes previously set with\ngtk_cell_layout_set_attributes()."
+    },
+    "get_area": {
+      "brief": "Returns the underlying `GtkCellArea` which might be `cell_layout` if called on a `GtkCellArea` or might be `NULL` if no `GtkCellArea` is used by `cell_layout`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcelllayout.c",
+      "line": 606,
+      "md": "Returns the underlying `GtkCellArea` which might be `cell_layout`\nif called on a `GtkCellArea` or might be `NULL` if no `GtkCellArea`\nis used by `cell_layout`."
+    },
+    "get_cells": {
+      "brief": "Returns the cell renderers which have been added to `cell_layout`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcelllayout.c",
+      "line": 585,
+      "md": "Returns the cell renderers which have been added to `cell_layout`."
+    },
+    "pack_end": {
+      "brief": "Adds the `cell` to the end of `cell_layout`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcelllayout.c",
+      "line": 382,
+      "md": "Adds the `cell` to the end of `cell_layout`. If `expand` is `FALSE`, then the\n`cell` is allocated no more space than it needs. Any unused space is\ndivided evenly between cells for which `expand` is `TRUE`.\n\nNote that reusing the same cell renderer is not supported."
+    },
+    "pack_start": {
+      "brief": "Packs the `cell` into the beginning of `cell_layout`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcelllayout.c",
+      "line": 357,
+      "md": "Packs the `cell` into the beginning of `cell_layout`. If `expand` is `FALSE`,\nthen the `cell` is allocated no more space than it needs. Any unused space\nis divided evenly between cells for which `expand` is `TRUE`.\n\nNote that reusing the same cell renderer is not supported."
+    },
+    "reorder": {
+      "brief": "Re-inserts `cell` at `position`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcelllayout.c",
+      "line": 561,
+      "md": "Re-inserts `cell` at `position`.\n\nNote that `cell` has already to be packed into `cell_layout`\nfor this to function properly."
+    },
+    "set_attributes": {
+      "brief": "Sets the attributes in the parameter list as the attributes of `cell_layout`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcelllayout.c",
+      "line": 446,
+      "md": "Sets the attributes in the parameter list as the attributes\nof `cell_layout`.\n\nSee [`CellLayout.add_attribute()`](xref:gtk:Gtk.CellLayout#method:add_attribute) for more details.\n\nThe attributes should be in attribute/column order, as in\ngtk_cell_layout_add_attribute(). All existing attributes are\nremoved, and replaced with the new attributes."
+    },
+    "set_cell_data_func": {
+      "brief": "Sets the `GtkCellLayout`DataFunc to use for `cell_layout`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcelllayout.c",
+      "line": 509,
+      "md": "Sets the `GtkCellLayout`DataFunc to use for `cell_layout`.\n\nThis function is used instead of the standard attributes mapping\nfor setting the column value, and should set the value of `cell_layout`’s\ncell renderer(s) as appropriate.\n\n`func` may be `NULL` to remove a previously set function."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "add_attribute": {
+      "brief": "Adds an attribute mapping to the list in `cell_layout`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcelllayout.c",
+      "line": 478,
+      "md": "Adds an attribute mapping to the list in `cell_layout`.\n\nThe `column` is the column of the model to get a value from, and the\n`attribute` is the property on `cell` to be set from that value. So for\nexample if column 2 of the model contains strings, you could have the\n“text” attribute of a `GtkCellRendererText` get its values from column 2.\nIn this context \"attribute\" and \"property\" are used interchangeably."
+    },
+    "clear": {
+      "brief": "Unsets all the mappings on all renderers on `cell_layout` and removes all renderers from `cell_layout`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcelllayout.c",
+      "line": 407,
+      "md": "Unsets all the mappings on all renderers on `cell_layout` and\nremoves all renderers from `cell_layout`."
+    },
+    "clear_attributes": {
+      "brief": "Clears all existing attributes previously set with gtk_cell_layout_set_attributes().",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcelllayout.c",
+      "line": 541,
+      "md": "Clears all existing attributes previously set with\ngtk_cell_layout_set_attributes()."
+    },
+    "get_area": {
+      "brief": "Returns the underlying `GtkCellArea` which might be `cell_layout` if called on a `GtkCellArea` or might be `NULL` if no `GtkCellArea` is used by `cell_layout`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcelllayout.c",
+      "line": 606,
+      "md": "Returns the underlying `GtkCellArea` which might be `cell_layout`\nif called on a `GtkCellArea` or might be `NULL` if no `GtkCellArea`\nis used by `cell_layout`."
+    },
+    "get_cells": {
+      "brief": "Returns the cell renderers which have been added to `cell_layout`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcelllayout.c",
+      "line": 585,
+      "md": "Returns the cell renderers which have been added to `cell_layout`."
+    },
+    "pack_end": {
+      "brief": "Adds the `cell` to the end of `cell_layout`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcelllayout.c",
+      "line": 382,
+      "md": "Adds the `cell` to the end of `cell_layout`. If `expand` is `FALSE`, then the\n`cell` is allocated no more space than it needs. Any unused space is\ndivided evenly between cells for which `expand` is `TRUE`.\n\nNote that reusing the same cell renderer is not supported."
+    },
+    "pack_start": {
+      "brief": "Packs the `cell` into the beginning of `cell_layout`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcelllayout.c",
+      "line": 357,
+      "md": "Packs the `cell` into the beginning of `cell_layout`. If `expand` is `FALSE`,\nthen the `cell` is allocated no more space than it needs. Any unused space\nis divided evenly between cells for which `expand` is `TRUE`.\n\nNote that reusing the same cell renderer is not supported."
+    },
+    "reorder": {
+      "brief": "Re-inserts `cell` at `position`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcelllayout.c",
+      "line": 561,
+      "md": "Re-inserts `cell` at `position`.\n\nNote that `cell` has already to be packed into `cell_layout`\nfor this to function properly."
+    },
+    "set_cell_data_func": {
+      "brief": "Sets the `GtkCellLayout`DataFunc to use for `cell_layout`.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcelllayout.c",
+      "line": 509,
+      "md": "Sets the `GtkCellLayout`DataFunc to use for `cell_layout`.\n\nThis function is used instead of the standard attributes mapping\nfor setting the column value, and should set the value of `cell_layout`’s\ncell renderer(s) as appropriate.\n\n`func` may be `NULL` to remove a previously set function."
+    }
+  }
+}

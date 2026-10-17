@@ -1,0 +1,203 @@
+{
+  "doc": {
+    "brief": "The QMenuBar class provides a horizontal menu bar.",
+    "index_brief": "Horizontal menu bar",
+    "url": "https://doc.qt.io/qt-6/qmenubar.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QMenuBar",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "NSMenu * toNSMenu()": {
+      "brief": "Returns the native NSMenu for this menu bar.",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#toNSMenu"
+    },
+    "QAction * actionAt(const QPoint &pt) const": {
+      "brief": "Returns the [QAction](xref:qt:QAction) at *pt*.",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#actionAt"
+    },
+    "QAction * activeAction() const": {
+      "brief": "Returns the [QAction](xref:qt:QAction) that is currently highlighted, if any, else `nullptr`.",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#activeAction"
+    },
+    "QAction * addMenu(QMenu *menu)": {
+      "brief": "Appends *menu* to the menu bar.",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#addMenu"
+    },
+    "QAction * addSeparator()": {
+      "brief": "Appends a separator to the menu.",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#addSeparator"
+    },
+    "QAction * insertMenu(QAction *before, QMenu *menu)": {
+      "brief": "This convenience function inserts *menu* before action *before* and returns the menus menuAction().",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#insertMenu"
+    },
+    "QAction * insertSeparator(QAction *before)": {
+      "brief": "This convenience function creates a new separator action, i.e. an action with [QAction::isSeparator](xref:qt:QAction)() returning true.",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#insertSeparator"
+    },
+    "QMenu * addMenu(const QIcon &icon, const QString &title)": {
+      "brief": "Appends a new [QMenu](xref:qt:QMenu) with *icon* and *title* to the menu bar.",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#addMenu-2"
+    },
+    "QMenu * addMenu(const QString &title)": {
+      "brief": "Appends a new [QMenu](xref:qt:QMenu) with *title* to the menu bar.",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#addMenu-1"
+    },
+    "QMenuBar(QWidget *parent)": {
+      "brief": "Constructs a menu bar with parent *parent*.",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#QMenuBar"
+    },
+    "QRect actionGeometry(QAction *act) const": {
+      "brief": "Returns the geometry of action *act* as a [QRect](xref:qt:QRect).",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#actionGeometry"
+    },
+    "QSize minimumSizeHint() const override": {
+      "brief": "Reimplements an access function for property: [QWidget::minimumSizeHint](xref:qt:QWidget).",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#minimumSizeHint"
+    },
+    "QSize sizeHint() const override": {
+      "brief": "Reimplements an access function for property: [QWidget::sizeHint](xref:qt:QWidget).",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#sizeHint"
+    },
+    "QWidget * cornerWidget(Qt::Corner corner) const": {
+      "brief": "Returns the widget on the left of the first or on the right of the last menu item, depending on *corner*.",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#cornerWidget"
+    },
+    "bool event(QEvent *e) override": {
+      "brief": "Reimplements: [QWidget::event](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#event"
+    },
+    "bool eventFilter(QObject *object, QEvent *event) override": {
+      "brief": "Reimplements: [QObject::eventFilter](xref:qt:QObject)(QObject *watched, QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#eventFilter"
+    },
+    "bool isDefaultUp() const": {
+      "brief": "This property holds the popup orientation",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#defaultUp-prop"
+    },
+    "bool isNativeMenuBar() const": {
+      "brief": "This property holds whether or not a menubar will be used as a native menubar on platforms that support it",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#nativeMenuBar-prop"
+    },
+    "int heightForWidth(int) const override": {
+      "brief": "Reimplements: [QWidget::heightForWidth](xref:qt:QWidget)(int w) const.",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#heightForWidth"
+    },
+    "void actionEvent(QActionEvent *e) override": {
+      "brief": "Reimplements: [QWidget::actionEvent](xref:qt:QWidget)(QActionEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#actionEvent"
+    },
+    "void changeEvent(QEvent *e) override": {
+      "brief": "Reimplements: [QWidget::changeEvent](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#changeEvent"
+    },
+    "void clear()": {
+      "brief": "Removes all the actions from the menu bar.",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#clear"
+    },
+    "void focusInEvent(QFocusEvent *) override": {
+      "brief": "Reimplements: [QWidget::focusInEvent](xref:qt:QWidget)(QFocusEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#focusInEvent"
+    },
+    "void focusOutEvent(QFocusEvent *) override": {
+      "brief": "Reimplements: [QWidget::focusOutEvent](xref:qt:QWidget)(QFocusEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#focusOutEvent"
+    },
+    "void hovered(QAction *action)": {
+      "brief": "This signal is emitted when a menu action is highlighted; *action* is the action that caused the event to be sent.",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#hovered"
+    },
+    "void initStyleOption(QStyleOptionMenuItem *option, const QAction *action) const": {
+      "brief": "Initialize *option* with the values from the menu bar and information from *action*.",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#initStyleOption"
+    },
+    "void keyPressEvent(QKeyEvent *e) override": {
+      "brief": "Reimplements: [QWidget::keyPressEvent](xref:qt:QWidget)(QKeyEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#keyPressEvent"
+    },
+    "void leaveEvent(QEvent *) override": {
+      "brief": "Reimplements: [QWidget::leaveEvent](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#leaveEvent"
+    },
+    "void mouseMoveEvent(QMouseEvent *e) override": {
+      "brief": "Reimplements: [QWidget::mouseMoveEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#mouseMoveEvent"
+    },
+    "void mousePressEvent(QMouseEvent *e) override": {
+      "brief": "Reimplements: [QWidget::mousePressEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#mousePressEvent"
+    },
+    "void mouseReleaseEvent(QMouseEvent *e) override": {
+      "brief": "Reimplements: [QWidget::mouseReleaseEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#mouseReleaseEvent"
+    },
+    "void paintEvent(QPaintEvent *e) override": {
+      "brief": "Reimplements: [QWidget::paintEvent](xref:qt:QWidget)(QPaintEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#paintEvent"
+    },
+    "void resizeEvent(QResizeEvent *) override": {
+      "brief": "Reimplements: [QWidget::resizeEvent](xref:qt:QWidget)(QResizeEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#resizeEvent"
+    },
+    "void setActiveAction(QAction *act)": {
+      "brief": "Sets the currently highlighted action to *act*.",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#setActiveAction"
+    },
+    "void setCornerWidget(QWidget *widget, Qt::Corner corner)": {
+      "brief": "This sets the given *widget* to be shown directly on the left of the first menu item, or on the right of the last menu item, depending on *corner*.",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#setCornerWidget"
+    },
+    "void setDefaultUp(bool)": {
+      "brief": "This property holds the popup orientation",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#defaultUp-prop"
+    },
+    "void setNativeMenuBar(bool nativeMenuBar)": {
+      "brief": "This property holds whether or not a menubar will be used as a native menubar on platforms that support it",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#nativeMenuBar-prop"
+    },
+    "void setVisible(bool visible) override": {
+      "brief": "Reimplements an access function for property: [QWidget::visible](xref:qt:QWidget).",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#setVisible"
+    },
+    "void timerEvent(QTimerEvent *e) override": {
+      "brief": "Reimplements: [QObject::timerEvent](xref:qt:QObject)(QTimerEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#timerEvent"
+    },
+    "void triggered(QAction *action)": {
+      "brief": "This signal is emitted when an action in a menu belonging to this menubar is triggered as a result of a mouse click; *action* is the action that caused the signal to be emitted.",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#triggered"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "defaultUp": {
+      "brief": "The popup orientation",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#defaultUp-prop"
+    },
+    "nativeMenuBar": {
+      "brief": "Whether or not a menubar will be used as a native menubar on platforms that support it",
+      "url": "https://doc.qt.io/qt-6/qmenubar.html#nativeMenuBar-prop"
+    }
+  },
+  "qss": {
+    "box_model": true,
+    "pseudo_states": [],
+    "sub_controls": [
+      "::item"
+    ],
+    "url": "https://doc.qt.io/qt-6/stylesheet-reference.html#qmenubar-widget"
+  },
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

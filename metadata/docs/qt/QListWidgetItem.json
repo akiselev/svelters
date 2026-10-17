@@ -1,0 +1,194 @@
+{
+  "doc": {
+    "brief": "The QListWidgetItem class provides an item for use with the [QListWidget](xref:qt:QListWidget) item view class.",
+    "index_brief": "Item for use with the QListWidget item view class",
+    "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QListWidgetItem",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QBrush background() const": {
+      "brief": "Returns the brush used to display the list item's background.",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#background"
+    },
+    "QBrush foreground() const": {
+      "brief": "Returns the brush used to display the list item's foreground (e.g. text).",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#foreground"
+    },
+    "QDataStream & operator<<(QDataStream &out, const QListWidgetItem &item)": {
+      "brief": "Writes the list widget item *item* to stream *out*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#operator-lt-lt"
+    },
+    "QDataStream & operator>>(QDataStream &in, QListWidgetItem &item)": {
+      "brief": "Reads a list widget item from stream *in* into *item*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#operator-gt-gt"
+    },
+    "QFont font() const": {
+      "brief": "Returns the font used to display this list item's text.",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#font"
+    },
+    "QIcon icon() const": {
+      "brief": "Returns the list item's icon.",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#icon"
+    },
+    "QListWidget * listWidget() const": {
+      "brief": "Returns the list widget containing the item.",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#listWidget"
+    },
+    "QListWidgetItem * clone() const": {
+      "brief": "Creates an exact copy of the item.",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#clone"
+    },
+    "QListWidgetItem(QListWidget *parent, int type)": {
+      "brief": "Constructs an empty list widget item of the specified *type* with the given *parent*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#QListWidgetItem-1"
+    },
+    "QListWidgetItem(const QIcon &icon, const QString &text, QListWidget *parent, int type)": {
+      "brief": "Constructs an empty list widget item of the specified *type* with the given *icon*, *text* and *parent*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#QListWidgetItem-3"
+    },
+    "QListWidgetItem(const QString &text, QListWidget *parent, int type)": {
+      "brief": "Constructs an empty list widget item of the specified *type* with the given *text* and *parent*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#QListWidgetItem-2"
+    },
+    "QSize sizeHint() const": {
+      "brief": "Returns the size hint set for the list item.",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#sizeHint"
+    },
+    "QString statusTip() const": {
+      "brief": "Returns the list item's status tip.",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#statusTip"
+    },
+    "QString text() const": {
+      "brief": "Returns the list item's text.",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#text"
+    },
+    "QString toolTip() const": {
+      "brief": "Returns the list item's tooltip.",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#toolTip"
+    },
+    "QString whatsThis() const": {
+      "brief": "Returns the list item's \"What's This?\" help text.",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#whatsThis"
+    },
+    "QVariant data(int role) const": {
+      "brief": "Returns the item's data for a given *role*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#data"
+    },
+    "Qt::CheckState checkState() const": {
+      "brief": "Returns the checked state of the list item (see [Qt::CheckState](https://doc.qt.io/qt-6/qt.html#CheckState-enum)).",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#checkState"
+    },
+    "Qt::ItemFlags flags() const": {
+      "brief": "Returns the item flags for this item (see [Qt::ItemFlags](https://doc.qt.io/qt-6/qt.html#ItemFlag-enum)).",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#flags"
+    },
+    "bool isHidden() const": {
+      "brief": "Returns `true` if the item is hidden; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#isHidden"
+    },
+    "bool isSelected() const": {
+      "brief": "Returns `true` if the item is selected; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#isSelected"
+    },
+    "bool operator<(const QListWidgetItem &other) const": {
+      "brief": "Returns `true` if this item's text is less then *other* item's text; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#operator-lt"
+    },
+    "int textAlignment() const": {
+      "brief": "Returns the text alignment for the list item.",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#textAlignment"
+    },
+    "int type() const": {
+      "brief": "Returns the type passed to the [QListWidgetItem](xref:qt:QListWidgetItem) constructor.",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#type"
+    },
+    "void read(QDataStream &in)": {
+      "brief": "Reads the item from stream *in*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#read"
+    },
+    "void setBackground(const QBrush &brush)": {
+      "brief": "Sets the background brush of the list item to the given *brush*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#setBackground"
+    },
+    "void setCheckState(Qt::CheckState state)": {
+      "brief": "Sets the check state of the list item to *state*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#setCheckState"
+    },
+    "void setData(int role, const QVariant &value)": {
+      "brief": "Sets the data for a given *role* to the given *value*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#setData"
+    },
+    "void setFlags(Qt::ItemFlags flags)": {
+      "brief": "Sets the item flags for the list item to *flags*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#setFlags"
+    },
+    "void setFont(const QFont &font)": {
+      "brief": "Sets the font used when painting the item to the given *font*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#setFont"
+    },
+    "void setForeground(const QBrush &brush)": {
+      "brief": "Sets the foreground brush of the list item to the given *brush*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#setForeground"
+    },
+    "void setHidden(bool hide)": {
+      "brief": "Hides the item if *hide* is true; otherwise shows the item.",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#setHidden"
+    },
+    "void setIcon(const QIcon &icon)": {
+      "brief": "Sets the icon for the list item to the given *icon*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#setIcon"
+    },
+    "void setSelected(bool select)": {
+      "brief": "Sets the selected state of the item to *select*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#setSelected"
+    },
+    "void setSizeHint(const QSize &size)": {
+      "brief": "Sets the size hint for the list item to be *size*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#setSizeHint"
+    },
+    "void setStatusTip(const QString &statusTip)": {
+      "brief": "Sets the status tip for the list item to the text specified by *statusTip*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#setStatusTip"
+    },
+    "void setText(const QString &text)": {
+      "brief": "Sets the text for the list widget item's to the given *text*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#setText"
+    },
+    "void setTextAlignment(Qt::Alignment alignment)": {
+      "brief": "Sets the list item's text alignment to *alignment*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#setTextAlignment"
+    },
+    "void setTextAlignment(int alignment)": {
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem-obsolete.html#setTextAlignment-1"
+    },
+    "void setToolTip(const QString &toolTip)": {
+      "brief": "Sets the tooltip for the list item to the text specified by *toolTip*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#setToolTip"
+    },
+    "void setWhatsThis(const QString &whatsThis)": {
+      "brief": "Sets the \"What's This?\" help for the list item to the text specified by *whatsThis*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#setWhatsThis"
+    },
+    "void write(QDataStream &out) const": {
+      "brief": "Writes the item to stream *out*.",
+      "url": "https://doc.qt.io/qt-6/qlistwidgetitem.html#write"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

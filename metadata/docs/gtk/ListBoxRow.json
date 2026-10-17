@@ -1,0 +1,124 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkListBoxRow`.",
+      "file": "gtk/gtklistbox.c",
+      "line": 3312,
+      "md": "Creates a new `GtkListBoxRow`."
+    }
+  },
+  "doc": {
+    "brief": "The kind of widget that can be added to a `GtkListBox`.",
+    "file": "gtk/gtklistbox.c",
+    "line": 112,
+    "md": "The kind of widget that can be added to a `GtkListBox`.\n\n[`ListBox`](xref:gtk:Gtk.ListBox) will automatically wrap its children in a `GtkListboxRow`\nwhen necessary."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ListBoxRow",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "changed": {
+      "brief": "Marks `row` as changed, causing any state that depends on this to be updated.",
+      "file": "gtk/gtklistbox.c",
+      "line": 3488,
+      "md": "Marks `row` as changed, causing any state that depends on this\nto be updated.\n\nThis affects sorting, filtering and headers.\n\nNote that calls to this method must be in sync with the data\nused for the row functions. For instance, if the list is\nmirroring some external data set, and *two* rows changed in the\nexternal data set then when you call gtk_list_box_row_changed()\non the first row the sort function must only read the new data\nfor the first of the two changed rows, otherwise the resorting\nof the rows will be wrong.\n\nThis generally means that if you don’t fully control the data\nmodel you have to duplicate the data that affects the listbox\nrow functions into the row widgets themselves. Another alternative\nis to call [`ListBox.invalidate_sort()`](xref:gtk:Gtk.ListBox#method:invalidate_sort) on any model change,\nbut that is more expensive."
+    },
+    "get_activatable": {
+      "brief": "Gets whether the row is activatable.",
+      "file": "gtk/gtklistbox.c",
+      "line": 3683,
+      "md": "Gets whether the row is activatable."
+    },
+    "get_child": {
+      "brief": "Gets the child widget of `row`.",
+      "file": "gtk/gtklistbox.c",
+      "line": 3353,
+      "md": "Gets the child widget of `row`."
+    },
+    "get_header": {
+      "brief": "Returns the current header of the `row`.",
+      "file": "gtk/gtklistbox.c",
+      "line": 3523,
+      "md": "Returns the current header of the `row`.\n\nThis can be used\nin a [`ListBoxUpdateHeaderFunc`](xref:gtk:Gtk.ListBoxUpdateHeaderFunc) to see if\nthere is a header set already, and if so to update\nthe state of it."
+    },
+    "get_index": {
+      "brief": "Gets the current index of the `row` in its `GtkListBox` container.",
+      "file": "gtk/gtklistbox.c",
+      "line": 3574,
+      "md": "Gets the current index of the `row` in its `GtkListBox` container."
+    },
+    "get_selectable": {
+      "brief": "Gets whether the row can be selected.",
+      "file": "gtk/gtklistbox.c",
+      "line": 3727,
+      "md": "Gets whether the row can be selected."
+    },
+    "is_selected": {
+      "brief": "Returns whether the child is currently selected in its `GtkListBox` container.",
+      "file": "gtk/gtklistbox.c",
+      "line": 3595,
+      "md": "Returns whether the child is currently selected in its\n`GtkListBox` container."
+    },
+    "set_activatable": {
+      "brief": "Set whether the row is activatable.",
+      "file": "gtk/gtklistbox.c",
+      "line": 3659,
+      "md": "Set whether the row is activatable."
+    },
+    "set_child": {
+      "brief": "Sets the child widget of `self`.",
+      "file": "gtk/gtklistbox.c",
+      "line": 3325,
+      "md": "Sets the child widget of `self`."
+    },
+    "set_header": {
+      "brief": "Sets the current header of the `row`.",
+      "file": "gtk/gtklistbox.c",
+      "line": 3544,
+      "md": "Sets the current header of the `row`.\n\nThis is only allowed to be called\nfrom a [`ListBoxUpdateHeaderFunc`](xref:gtk:Gtk.ListBoxUpdateHeaderFunc).\nIt will replace any existing header in the row,\nand be shown in front of the row in the listbox."
+    },
+    "set_selectable": {
+      "brief": "Set whether the row can be selected.",
+      "file": "gtk/gtklistbox.c",
+      "line": 3699,
+      "md": "Set whether the row can be selected."
+    }
+  },
+  "properties": {
+    "activatable": {
+      "brief": "Determines whether the ::row-activated signal will be emitted for this row.",
+      "file": "gtk/gtklistbox.c",
+      "line": 3934,
+      "md": "Determines whether the ::row-activated\nsignal will be emitted for this row."
+    },
+    "child": {
+      "brief": "The child widget.",
+      "file": "gtk/gtklistbox.c",
+      "line": 3955,
+      "md": "The child widget."
+    },
+    "selectable": {
+      "brief": "Determines whether this row can be selected.",
+      "file": "gtk/gtklistbox.c",
+      "line": 3945,
+      "md": "Determines whether this row can be selected."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "activate": {
+      "brief": "This is a keybinding signal, which will cause this row to be activated.",
+      "file": "gtk/gtklistbox.c",
+      "line": 3914,
+      "md": "This is a keybinding signal, which will cause this row to be activated.\n\nIf you want to be notified when the user activates a row (by key or not),\nuse the [`ListBox::row-activated`](xref:gtk:Gtk.ListBox#event:row-activated) signal on the row’s parent\n`GtkListBox`."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

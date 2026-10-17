@@ -1,0 +1,115 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "A `GtkShortcutsShortcut` represents a single keyboard shortcut or gesture with a short text.",
+    "deprecated": "4.18",
+    "deprecated_md": "This widget will be removed in GTK 5",
+    "file": "gtk/deprecated/gtkshortcutsshortcut.c",
+    "line": 36,
+    "md": "A `GtkShortcutsShortcut` represents a single keyboard shortcut or gesture\nwith a short text.\n\nThis widget is only meant to be used with `GtkShortcutsWindow`."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ShortcutsShortcut",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {},
+  "properties": {
+    "accel-size-group": {
+      "brief": "The size group for the accelerator portion of this shortcut.",
+      "deprecated": "4.18",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkshortcutsshortcut.c",
+      "line": 659,
+      "md": "The size group for the accelerator portion of this shortcut.\n\nThis is used internally by GTK, and must not be modified by applications."
+    },
+    "accelerator": {
+      "brief": "The accelerator(s) represented by this object.",
+      "deprecated": "4.18",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkshortcutsshortcut.c",
+      "line": 549,
+      "md": "The accelerator(s) represented by this object.\n\nThis property is used if [`ShortcutsShortcut:shortcut-type`](xref:gtk:Gtk.ShortcutsShortcut#property:shortcut-type)\nis set to %GTK_SHORTCUT_ACCELERATOR.\n\nThe syntax of this property is (an extension of) the syntax understood\nby `accelerator_parse`. Multiple accelerators can be specified\nby separating them with a space, but keep in mind that the available width\nis limited.\n\nIt is also possible to specify ranges of shortcuts, using `...` between\nthe keys. Sequences of keys can be specified using a `+` or `&` between\nthe keys.\n\nExamples:\n\n- A single shortcut: `<ctl><alt>delete`\n- Two alternative shortcuts: `<shift>a Home`\n- A range of shortcuts: `<alt>1...<alt>9`\n- Several keys pressed together: `Control_L&Control_R`\n- A sequence of shortcuts or keys: `<ctl>c+<ctl>x`\n\nUse \"+\" instead of \"&\" when the keys may (or have to be) pressed\nsequentially (e.g use \"t+t\" for 'press the t key twice').\n\nNote that `<`, `>` and `&` need to be escaped as `&lt;`, `&gt`; and `&amp`; when used\nin .ui files."
+    },
+    "action-name": {
+      "brief": "A detailed action name.",
+      "deprecated": "4.18",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkshortcutsshortcut.c",
+      "line": 716,
+      "md": "A detailed action name.\n\nIf this is set for a shortcut of type %GTK_SHORTCUT_ACCELERATOR,\nthen GTK will use the accelerators that are associated with the\naction via [`Application.set_accels_for_action()`](xref:gtk:Gtk.Application#method:set_accels_for_action), and\nsetting [`ShortcutsShortcut:accelerator`](xref:gtk:Gtk.ShortcutsShortcut#property:accelerator) is not necessary."
+    },
+    "direction": {
+      "brief": "The text direction for which this shortcut is active.",
+      "deprecated": "4.18",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkshortcutsshortcut.c",
+      "line": 687,
+      "md": "The text direction for which this shortcut is active.\n\nIf the shortcut is used regardless of the text direction,\nset this property to %GTK_TEXT_DIR_NONE."
+    },
+    "icon": {
+      "brief": "An icon to represent the shortcut or gesture.",
+      "deprecated": "4.18",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkshortcutsshortcut.c",
+      "line": 587,
+      "md": "An icon to represent the shortcut or gesture.\n\nThis property is used if [`ShortcutsShortcut:shortcut-type`](xref:gtk:Gtk.ShortcutsShortcut#property:shortcut-type)\nis set to %GTK_SHORTCUT_GESTURE.\n\nFor the other predefined gesture types, GTK provides an icon on its own."
+    },
+    "icon-set": {
+      "brief": "`TRUE` if an icon has been set.",
+      "deprecated": "4.18",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkshortcutsshortcut.c",
+      "line": 604,
+      "md": "`TRUE` if an icon has been set."
+    },
+    "shortcut-type": {
+      "brief": "The type of shortcut that is represented.",
+      "deprecated": "4.18",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkshortcutsshortcut.c",
+      "line": 703,
+      "md": "The type of shortcut that is represented."
+    },
+    "subtitle": {
+      "brief": "The subtitle for the shortcut or gesture.",
+      "deprecated": "4.18",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkshortcutsshortcut.c",
+      "line": 631,
+      "md": "The subtitle for the shortcut or gesture.\n\nThis is typically used for gestures and should be a short, one-line\ntext that describes the gesture itself. For the predefined gesture\ntypes, GTK provides a subtitle on its own."
+    },
+    "subtitle-set": {
+      "brief": "`TRUE` if a subtitle has been set.",
+      "deprecated": "4.18",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkshortcutsshortcut.c",
+      "line": 647,
+      "md": "`TRUE` if a subtitle has been set."
+    },
+    "title": {
+      "brief": "The textual description for the shortcut or gesture represented by this object.",
+      "deprecated": "4.18",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkshortcutsshortcut.c",
+      "line": 616,
+      "md": "The textual description for the shortcut or gesture represented by\nthis object.\n\nThis should be a short string that can fit in a single line."
+    },
+    "title-size-group": {
+      "brief": "The size group for the textual portion of this shortcut.",
+      "deprecated": "4.18",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkshortcutsshortcut.c",
+      "line": 673,
+      "md": "The size group for the textual portion of this shortcut.\n\nThis is used internally by GTK, and must not be modified by applications."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -1,0 +1,119 @@
+{
+  "doc": {
+    "brief": "The QGraphicsLinearLayout class provides a horizontal or vertical layout for managing widgets in Graphics View.",
+    "index_brief": "Horizontal or vertical layout for managing widgets in Graphics View",
+    "url": "https://doc.qt.io/qt-6/qgraphicslinearlayout.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsLinearLayout",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QGraphicsLayoutItem * itemAt(int index) const override": {
+      "brief": "Reimplements: [QGraphicsLayout::itemAt](xref:qt:QGraphicsLayout)(int i) const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslinearlayout.html#itemAt"
+    },
+    "QGraphicsLinearLayout(QGraphicsLayoutItem *parent)": {
+      "brief": "Constructs a QGraphicsLinearLayout instance using [Qt::Horizontal](https://doc.qt.io/qt-6/qt.html#Orientation-enum) orientation. *parent* is passed to [QGraphicsLayout](xref:qt:QGraphicsLayout)'s...",
+      "url": "https://doc.qt.io/qt-6/qgraphicslinearlayout.html#QGraphicsLinearLayout"
+    },
+    "QGraphicsLinearLayout(Qt::Orientation orientation, QGraphicsLayoutItem *parent)": {
+      "brief": "Constructs a QGraphicsLinearLayout instance.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslinearlayout.html#QGraphicsLinearLayout-1"
+    },
+    "QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint) const override": {
+      "brief": "Reimplements: [QGraphicsLayoutItem::sizeHint](xref:qt:QGraphicsLayoutItem)(Qt::SizeHint which, const QSizeF &constraint) const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslinearlayout.html#sizeHint"
+    },
+    "Qt::Alignment alignment(QGraphicsLayoutItem *item) const": {
+      "brief": "Returns the alignment for *item*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslinearlayout.html#alignment"
+    },
+    "Qt::Orientation orientation() const": {
+      "brief": "Returns the layout orientation.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslinearlayout.html#orientation"
+    },
+    "int count() const override": {
+      "brief": "Reimplements: [QGraphicsLayout::count](xref:qt:QGraphicsLayout)() const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslinearlayout.html#count"
+    },
+    "int stretchFactor(QGraphicsLayoutItem *item) const": {
+      "brief": "Returns the stretch factor for *item*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslinearlayout.html#stretchFactor"
+    },
+    "qreal itemSpacing(int index) const": {
+      "brief": "Returns the spacing after item at *index*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslinearlayout.html#itemSpacing"
+    },
+    "qreal spacing() const": {
+      "brief": "Returns the layout's spacing.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslinearlayout.html#spacing"
+    },
+    "void addItem(QGraphicsLayoutItem *item)": {
+      "brief": "This convenience function is equivalent to calling [insertItem](xref:qt:QGraphicsLinearLayout)(-1, *item*).",
+      "url": "https://doc.qt.io/qt-6/qgraphicslinearlayout.html#addItem"
+    },
+    "void addStretch(int stretch)": {
+      "brief": "This convenience function is equivalent to calling [insertStretch](xref:qt:QGraphicsLinearLayout)(-1, *stretch*).",
+      "url": "https://doc.qt.io/qt-6/qgraphicslinearlayout.html#addStretch"
+    },
+    "void insertItem(int index, QGraphicsLayoutItem *item)": {
+      "brief": "Inserts *item* into the layout at *index*, or before any item that is currently at *index*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslinearlayout.html#insertItem"
+    },
+    "void insertStretch(int index, int stretch)": {
+      "brief": "Inserts a stretch of *stretch* at *index*, or before any item that is currently at *index*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslinearlayout.html#insertStretch"
+    },
+    "void invalidate() override": {
+      "brief": "Reimplements: [QGraphicsLayout::invalidate](xref:qt:QGraphicsLayout)().",
+      "url": "https://doc.qt.io/qt-6/qgraphicslinearlayout.html#invalidate"
+    },
+    "void removeAt(int index) override": {
+      "brief": "Reimplements: [QGraphicsLayout::removeAt](xref:qt:QGraphicsLayout)(int index).",
+      "url": "https://doc.qt.io/qt-6/qgraphicslinearlayout.html#removeAt"
+    },
+    "void removeItem(QGraphicsLayoutItem *item)": {
+      "brief": "Removes *item* from the layout without destroying it.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslinearlayout.html#removeItem"
+    },
+    "void setAlignment(QGraphicsLayoutItem *item, Qt::Alignment alignment)": {
+      "brief": "Sets the alignment of *item* to *alignment*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslinearlayout.html#setAlignment"
+    },
+    "void setGeometry(const QRectF &rect) override": {
+      "brief": "Reimplements: [QGraphicsLayoutItem::setGeometry](xref:qt:QGraphicsLayoutItem)(const QRectF &rect).",
+      "url": "https://doc.qt.io/qt-6/qgraphicslinearlayout.html#setGeometry"
+    },
+    "void setItemSpacing(int index, qreal spacing)": {
+      "brief": "Sets the spacing after item at *index* to *spacing*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslinearlayout.html#setItemSpacing"
+    },
+    "void setOrientation(Qt::Orientation orientation)": {
+      "brief": "Change the layout orientation to *orientation*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslinearlayout.html#setOrientation"
+    },
+    "void setSpacing(qreal spacing)": {
+      "brief": "Sets the layout's spacing to *spacing*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslinearlayout.html#setSpacing"
+    },
+    "void setStretchFactor(QGraphicsLayoutItem *item, int stretch)": {
+      "brief": "Sets the stretch factor for *item* to *stretch*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicslinearlayout.html#setStretchFactor"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

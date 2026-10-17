@@ -1,0 +1,276 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "`GtkFileChooser` is an interface that can be implemented by file selection widgets.",
+    "deprecated": "4.10",
+    "deprecated_md": "Use [`FileDialog`](xref:gtk:Gtk.FileDialog) instead",
+    "file": "gtk/deprecated/gtkfilechooser.c",
+    "line": 29,
+    "md": "`GtkFileChooser` is an interface that can be implemented by file\nselection widgets.\n\nIn GTK, the main objects that implement this interface are\n[`FileChooserWidget`](xref:gtk:Gtk.FileChooserWidget) and [`FileChooserDialog`](xref:gtk:Gtk.FileChooserDialog).\n\nYou do not need to write an object that implements the `GtkFileChooser`\ninterface unless you are trying to adapt an existing file selector to\nexpose a standard programming interface.\n\n`GtkFileChooser` allows for shortcuts to various places in the filesystem.\nIn the default implementation these are displayed in the left pane. It\nmay be a bit confusing at first that these shortcuts come from various\nsources and in various flavours, so lets explain the terminology here:\n\n- Bookmarks: are created by the user, by dragging folders from the\n  right pane to the left pane, or by using the “Add”. Bookmarks\n  can be renamed and deleted by the user.\n\n- Shortcuts: can be provided by the application. For example, a Paint\n  program may want to add a shortcut for a Clipart folder. Shortcuts\n  cannot be modified by the user.\n\n- Volumes: are provided by the underlying filesystem abstraction. They are\n  the “roots” of the filesystem.\n\n# File Names and Encodings\n\nWhen the user is finished selecting files in a `GtkFileChooser`, your\nprogram can get the selected filenames as `GFile`s.\n\n# Adding options\n\nYou can add extra widgets to a file chooser to provide options\nthat are not present in the default design, by using\n[`FileChooser.add_choice()`](xref:gtk:Gtk.FileChooser#method:add_choice). Each choice has an identifier and\na user visible label; additionally, each choice can have multiple\noptions. If a choice has no option, it will be rendered as a\ncheck button with the given label; if a choice has options, it will\nbe rendered as a combo box."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:FileChooser",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "add_choice": {
+      "brief": "Adds a 'choice' to the file chooser.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FileDialog`](xref:gtk:Gtk.FileDialog) instead",
+      "file": "gtk/deprecated/gtkfilechooser.c",
+      "line": 765,
+      "md": "Adds a 'choice' to the file chooser.\n\nThis is typically implemented as a combobox or, for boolean choices,\nas a checkbutton. You can select a value using\n[`FileChooser.set_choice()`](xref:gtk:Gtk.FileChooser#method:set_choice) before the dialog is shown,\nand you can obtain the user-selected value in the\n[`Dialog::response`](xref:gtk:Gtk.Dialog#event:response) signal handler using\n[`FileChooser.get_choice()`](xref:gtk:Gtk.FileChooser#method:get_choice)."
+    },
+    "add_filter": {
+      "brief": "Adds `filter` to the list of filters that the user can select between.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FileDialog`](xref:gtk:Gtk.FileDialog) instead",
+      "file": "gtk/deprecated/gtkfilechooser.c",
+      "line": 622,
+      "md": "Adds `filter` to the list of filters that the user can select between.\n\nWhen a filter is selected, only files that are passed by that\nfilter are displayed.\n\nNote that the `chooser` takes ownership of the filter if it is floating,\nso you have to ref and sink it if you want to keep a reference."
+    },
+    "add_shortcut_folder": {
+      "brief": "Adds a folder to be displayed with the shortcut folders in a file chooser.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FileDialog`](xref:gtk:Gtk.FileDialog) instead",
+      "file": "gtk/deprecated/gtkfilechooser.c",
+      "line": 573,
+      "md": "Adds a folder to be displayed with the shortcut folders\nin a file chooser."
+    },
+    "get_action": {
+      "brief": "Gets the type of operation that the file chooser is performing.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FileDialog`](xref:gtk:Gtk.FileDialog) instead",
+      "file": "gtk/deprecated/gtkfilechooser.c",
+      "line": 204,
+      "md": "Gets the type of operation that the file chooser is performing."
+    },
+    "get_choice": {
+      "brief": "Gets the currently selected option in the 'choice' with the given ID.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FileDialog`](xref:gtk:Gtk.FileDialog) instead",
+      "file": "gtk/deprecated/gtkfilechooser.c",
+      "line": 840,
+      "md": "Gets the currently selected option in the 'choice' with the given ID."
+    },
+    "get_create_folders": {
+      "brief": "Gets whether file chooser will offer to create new folders.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FileDialog`](xref:gtk:Gtk.FileDialog) instead",
+      "file": "gtk/deprecated/gtkfilechooser.c",
+      "line": 292,
+      "md": "Gets whether file chooser will offer to create new folders."
+    },
+    "get_current_folder": {
+      "brief": "Gets the current folder of `chooser` as `GFile`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FileDialog`](xref:gtk:Gtk.FileDialog) instead",
+      "file": "gtk/deprecated/gtkfilechooser.c",
+      "line": 412,
+      "md": "Gets the current folder of `chooser` as `GFile`."
+    },
+    "get_current_name": {
+      "brief": "Gets the current name in the file selector, as entered by the user.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FileDialog`](xref:gtk:Gtk.FileDialog) instead",
+      "file": "gtk/deprecated/gtkfilechooser.c",
+      "line": 345,
+      "md": "Gets the current name in the file selector, as entered by the user.\n\nThis is meant to be used in save dialogs, to get the currently typed\nfilename when the file itself does not exist yet."
+    },
+    "get_file": {
+      "brief": "Gets the `GFile` for the currently selected file in the file selector.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FileDialog`](xref:gtk:Gtk.FileDialog) instead",
+      "file": "gtk/deprecated/gtkfilechooser.c",
+      "line": 539,
+      "md": "Gets the `GFile` for the currently selected file in\nthe file selector.\n\nIf multiple files are selected, one of the files will be\nreturned at random.\n\nIf the file chooser is in folder mode, this function returns\nthe selected folder."
+    },
+    "get_files": {
+      "brief": "Lists all the selected files and subfolders in the current folder of `chooser` as `GFile`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FileDialog`](xref:gtk:Gtk.FileDialog) instead",
+      "file": "gtk/deprecated/gtkfilechooser.c",
+      "line": 452,
+      "md": "Lists all the selected files and subfolders in the current folder\nof `chooser` as `GFile`."
+    },
+    "get_filter": {
+      "brief": "Gets the current filter.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FileDialog`](xref:gtk:Gtk.FileDialog) instead",
+      "file": "gtk/deprecated/gtkfilechooser.c",
+      "line": 716,
+      "md": "Gets the current filter."
+    },
+    "get_filters": {
+      "brief": "Gets the current set of user-selectable filters, as a list model.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FileDialog`](xref:gtk:Gtk.FileDialog) instead",
+      "file": "gtk/deprecated/gtkfilechooser.c",
+      "line": 664,
+      "md": "Gets the current set of user-selectable filters, as a list model.\n\nSee [`FileChooser.add_filter()`](xref:gtk:Gtk.FileChooser#method:add_filter) and\n[`FileChooser.remove_filter()`](xref:gtk:Gtk.FileChooser#method:remove_filter) for changing individual filters.\n\nYou should not modify the returned list model. Future changes to\n`chooser` may or may not affect the returned model."
+    },
+    "get_select_multiple": {
+      "brief": "Gets whether multiple files can be selected in the file chooser.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FileDialog`](xref:gtk:Gtk.FileDialog) instead",
+      "file": "gtk/deprecated/gtkfilechooser.c",
+      "line": 248,
+      "md": "Gets whether multiple files can be selected in the file\nchooser."
+    },
+    "get_shortcut_folders": {
+      "brief": "Queries the list of shortcut folders in the file chooser.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FileDialog`](xref:gtk:Gtk.FileDialog) instead",
+      "file": "gtk/deprecated/gtkfilechooser.c",
+      "line": 744,
+      "md": "Queries the list of shortcut folders in the file chooser.\n\nYou should not modify the returned list model. Future changes to\n`chooser` may or may not affect the returned model."
+    },
+    "remove_choice": {
+      "brief": "Removes a 'choice' that has been added with gtk_file_chooser_add_choice().",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FileDialog`](xref:gtk:Gtk.FileDialog) instead",
+      "file": "gtk/deprecated/gtkfilechooser.c",
+      "line": 797,
+      "md": "Removes a 'choice' that has been added with gtk_file_chooser_add_choice()."
+    },
+    "remove_filter": {
+      "brief": "Removes `filter` from the list of filters that the user can select between.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FileDialog`](xref:gtk:Gtk.FileDialog) instead",
+      "file": "gtk/deprecated/gtkfilechooser.c",
+      "line": 646,
+      "md": "Removes `filter` from the list of filters that the user can select between."
+    },
+    "remove_shortcut_folder": {
+      "brief": "Removes a folder from the shortcut folders in a file chooser.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FileDialog`](xref:gtk:Gtk.FileDialog) instead",
+      "file": "gtk/deprecated/gtkfilechooser.c",
+      "line": 598,
+      "md": "Removes a folder from the shortcut folders in a file chooser."
+    },
+    "set_action": {
+      "brief": "Sets the type of operation that the chooser is performing.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FileDialog`](xref:gtk:Gtk.FileDialog) instead",
+      "file": "gtk/deprecated/gtkfilechooser.c",
+      "line": 180,
+      "md": "Sets the type of operation that the chooser is performing.\n\nThe user interface is adapted to suit the selected action.\n\nFor example, an option to create a new folder might be shown\nif the action is %GTK_FILE_CHOOSER_ACTION_SAVE but not if the\naction is %GTK_FILE_CHOOSER_ACTION_OPEN."
+    },
+    "set_choice": {
+      "brief": "Selects an option in a 'choice' that has been added with gtk_file_chooser_add_choice().",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FileDialog`](xref:gtk:Gtk.FileDialog) instead",
+      "file": "gtk/deprecated/gtkfilechooser.c",
+      "line": 816,
+      "md": "Selects an option in a 'choice' that has been added with\ngtk_file_chooser_add_choice().\n\nFor a boolean choice, the possible options are \"true\" and \"false\"."
+    },
+    "set_create_folders": {
+      "brief": "Sets whether file chooser will offer to create new folders.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FileDialog`](xref:gtk:Gtk.FileDialog) instead",
+      "file": "gtk/deprecated/gtkfilechooser.c",
+      "line": 271,
+      "md": "Sets whether file chooser will offer to create new folders.\n\nThis is only relevant if the action is not set to be\n%GTK_FILE_CHOOSER_ACTION_OPEN."
+    },
+    "set_current_folder": {
+      "brief": "Sets the current folder for `chooser` from a `GFile`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FileDialog`](xref:gtk:Gtk.FileDialog) instead",
+      "file": "gtk/deprecated/gtkfilechooser.c",
+      "line": 387,
+      "md": "Sets the current folder for `chooser` from a `GFile`."
+    },
+    "set_current_name": {
+      "brief": "Sets the current name in the file selector, as if entered by the user.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FileDialog`](xref:gtk:Gtk.FileDialog) instead",
+      "file": "gtk/deprecated/gtkfilechooser.c",
+      "line": 314,
+      "md": "Sets the current name in the file selector, as if entered\nby the user.\n\nNote that the name passed in here is a UTF-8 string rather\nthan a filename. This function is meant for such uses as a\nsuggested name in a “Save As...” dialog.  You can pass\n“Untitled.doc” or a similarly suitable suggestion for the `name`.\n\nIf you want to preselect a particular existing file, you should\nuse [`FileChooser.set_file()`](xref:gtk:Gtk.FileChooser#method:set_file) instead.\n\nPlease see the documentation for those functions for an example\nof using [`FileChooser.set_current_name()`](xref:gtk:Gtk.FileChooser#method:set_current_name) as well."
+    },
+    "set_file": {
+      "brief": "Sets `file` as the current filename for the file chooser.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FileDialog`](xref:gtk:Gtk.FileDialog) instead",
+      "file": "gtk/deprecated/gtkfilechooser.c",
+      "line": 473,
+      "md": "Sets `file` as the current filename for the file chooser.\n\nThis includes changing to the file’s parent folder and actually selecting\nthe file in list. If the `chooser` is in %GTK_FILE_CHOOSER_ACTION_SAVE mode,\nthe file’s base name will also appear in the dialog’s file name entry.\n\nIf the file name isn’t in the current folder of `chooser`, then the current\nfolder of `chooser` will be changed to the folder containing `file`.\n\nNote that the file must exist, or nothing will be done except\nfor the directory change.\n\nIf you are implementing a save dialog, you should use this function if\nyou already have a file name to which the user may save; for example,\nwhen the user opens an existing file and then does “Save As…”. If you\ndon’t have a file name already — for example, if the user just created\na new file and is saving it for the first time, do not call this function.\n\nInstead, use something similar to this:\n\n```c\nstatic void\nprepare_file_chooser (GtkFileChooser *chooser,\n                      GFile          *existing_file)\n{\n  gboolean document_is_new = (existing_file == NULL);\n\n  if (document_is_new)\n    {\n      GFile *default_file_for_saving = g_file_new_for_path (\"./out.txt\");\n      // the user just created a new document\n      gtk_file_chooser_set_current_folder (chooser, default_file_for_saving, NULL);\n      gtk_file_chooser_set_current_name (chooser, \"Untitled document\");\n      g_object_unref (default_file_for_saving);\n    }\n  else\n    {\n      // the user edited an existing document\n      gtk_file_chooser_set_file (chooser, existing_file, NULL);\n    }\n}\n```"
+    },
+    "set_filter": {
+      "brief": "Sets the current filter.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FileDialog`](xref:gtk:Gtk.FileDialog) instead",
+      "file": "gtk/deprecated/gtkfilechooser.c",
+      "line": 689,
+      "md": "Sets the current filter.\n\nOnly the files that pass the filter will be displayed.\nIf the user-selectable list of filters is non-empty, then\nthe filter should be one of the filters in that list.\n\nSetting the current filter when the list of filters is\nempty is useful if you want to restrict the displayed\nset of files without letting the user change it."
+    },
+    "set_select_multiple": {
+      "brief": "Sets whether multiple files can be selected in the file chooser.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FileDialog`](xref:gtk:Gtk.FileDialog) instead",
+      "file": "gtk/deprecated/gtkfilechooser.c",
+      "line": 226,
+      "md": "Sets whether multiple files can be selected in the file chooser.\n\nThis is only relevant if the action is set to be\n%GTK_FILE_CHOOSER_ACTION_OPEN or\n%GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER."
+    }
+  },
+  "properties": {
+    "action": {
+      "brief": "The type of operation that the file chooser is performing.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FileDialog`](xref:gtk:Gtk.FileDialog) instead",
+      "file": "gtk/deprecated/gtkfilechooser.c",
+      "line": 83,
+      "md": "The type of operation that the file chooser is performing."
+    },
+    "create-folders": {
+      "brief": "Whether a file chooser not in %GTK_FILE_CHOOSER_ACTION_OPEN mode will offer the user to create new folders.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FileDialog`](xref:gtk:Gtk.FileDialog) instead",
+      "file": "gtk/deprecated/gtkfilechooser.c",
+      "line": 153,
+      "md": "Whether a file chooser not in %GTK_FILE_CHOOSER_ACTION_OPEN mode\nwill offer the user to create new folders."
+    },
+    "filter": {
+      "brief": "The current filter for selecting files that are displayed.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FileDialog`](xref:gtk:Gtk.FileDialog) instead",
+      "file": "gtk/deprecated/gtkfilechooser.c",
+      "line": 97,
+      "md": "The current filter for selecting files that are displayed."
+    },
+    "filters": {
+      "brief": "A `GListModel` containing the filters that have been added with gtk_file_chooser_add_filter().",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FileDialog`](xref:gtk:Gtk.FileDialog) instead",
+      "file": "gtk/deprecated/gtkfilechooser.c",
+      "line": 121,
+      "md": "A `GListModel` containing the filters that have been\nadded with gtk_file_chooser_add_filter().\n\nThe returned object should not be modified. It may\nor may not be updated for later changes."
+    },
+    "select-multiple": {
+      "brief": "Whether to allow multiple files to be selected.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FileDialog`](xref:gtk:Gtk.FileDialog) instead",
+      "file": "gtk/deprecated/gtkfilechooser.c",
+      "line": 109,
+      "md": "Whether to allow multiple files to be selected."
+    },
+    "shortcut-folders": {
+      "brief": "A `GListModel` containing the shortcut folders that have been added with gtk_file_chooser_add_shortcut_folder().",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`FileDialog`](xref:gtk:Gtk.FileDialog) instead",
+      "file": "gtk/deprecated/gtkfilechooser.c",
+      "line": 137,
+      "md": "A `GListModel` containing the shortcut folders that have been\nadded with gtk_file_chooser_add_shortcut_folder().\n\nThe returned object should not be modified. It may\nor may not be updated for later changes."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -1,0 +1,383 @@
+{
+  "doc": {
+    "brief": "The QDateTimeEdit class provides a widget for editing dates and times.",
+    "index_brief": "Widget for editing dates and times",
+    "url": "https://doc.qt.io/qt-6/qdatetimeedit.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QDateTimeEdit",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QAbstractSpinBox::StepEnabled stepEnabled() const override": {
+      "brief": "Reimplements: [QAbstractSpinBox::stepEnabled](xref:qt:QAbstractSpinBox)() const.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#stepEnabled"
+    },
+    "QCalendar calendar() const": {
+      "brief": "Report the calendar system in use by this widget.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#calendar"
+    },
+    "QCalendarWidget * calendarWidget() const": {
+      "brief": "Returns the calendar widget for the editor if [calendarPopup](xref:qt:QDateTimeEdit) is set to true and (sections() & [DateSections_Mask](xref:qt:QDateTimeEdit)) != 0.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#calendarWidget"
+    },
+    "QDate date() const": {
+      "brief": "Returns the date of the date time edit.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#date"
+    },
+    "QDate maximumDate() const": {
+      "brief": "This property holds the maximum date of the date time edit.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#maximumDate-prop"
+    },
+    "QDate minimumDate() const": {
+      "brief": "This property holds the minimum date of the date time edit.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#minimumDate-prop"
+    },
+    "QDateTime dateTime() const": {
+      "brief": "This property holds the [QDateTime](xref:qt:QDateTime) that is set in the [QDateTimeEdit](xref:qt:QDateTimeEdit).",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#dateTime-prop"
+    },
+    "QDateTime dateTimeFromText(const QString &text) const": {
+      "brief": "Returns an appropriate datetime for the given *text*.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#dateTimeFromText"
+    },
+    "QDateTime maximumDateTime() const": {
+      "brief": "This property holds the maximum datetime of the date time edit.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#maximumDateTime-prop"
+    },
+    "QDateTime minimumDateTime() const": {
+      "brief": "This property holds the minimum datetime of the date time edit.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#minimumDateTime-prop"
+    },
+    "QDateTimeEdit(QDate date, QWidget *parent)": {
+      "brief": "Constructs an empty date time editor with a *parent*.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#QDateTimeEdit-1"
+    },
+    "QDateTimeEdit(QTime time, QWidget *parent)": {
+      "brief": "Constructs an empty date time editor with a *parent*.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#QDateTimeEdit-2"
+    },
+    "QDateTimeEdit(QWidget *parent)": {
+      "brief": "Constructs an empty date time editor with a *parent*.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#QDateTimeEdit"
+    },
+    "QDateTimeEdit(const QDateTime &datetime, QWidget *parent)": {
+      "brief": "Constructs an empty date time editor with a *parent*.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#QDateTimeEdit-3"
+    },
+    "QDateTimeEdit::Section currentSection() const": {
+      "brief": "This property holds the current section of the spinbox.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#currentSection-prop"
+    },
+    "QDateTimeEdit::Section sectionAt(int index) const": {
+      "brief": "Returns the Section at *index*.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#sectionAt"
+    },
+    "QDateTimeEdit::Sections displayedSections() const": {
+      "brief": "This property holds the currently displayed fields of the date time edit.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#displayedSections-prop"
+    },
+    "QSize sizeHint() const override": {
+      "brief": "Reimplements: [QAbstractSpinBox::sizeHint](xref:qt:QAbstractSpinBox)() const.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#sizeHint"
+    },
+    "QString displayFormat() const": {
+      "brief": "This property holds the format used to display the time/date of the date time edit.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#displayFormat-prop"
+    },
+    "QString sectionText(QDateTimeEdit::Section section) const": {
+      "brief": "Returns the text from the given *section*.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#sectionText"
+    },
+    "QString textFromDateTime(const QDateTime &dateTime) const": {
+      "brief": "This virtual function is used by the date time edit whenever it needs to display *dateTime*.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#textFromDateTime"
+    },
+    "QTime maximumTime() const": {
+      "brief": "This property holds the maximum time of the date time edit.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#maximumTime-prop"
+    },
+    "QTime minimumTime() const": {
+      "brief": "This property holds the minimum time of the date time edit.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#minimumTime-prop"
+    },
+    "QTime time() const": {
+      "brief": "Returns the time of the date time edit.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#time"
+    },
+    "QTimeZone timeZone() const": {
+      "brief": "This property holds the current timezone used by the datetime editing widget",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#timeZone-prop"
+    },
+    "QValidator::State validate(QString &text, int &pos) const override": {
+      "brief": "Reimplements: [QAbstractSpinBox::validate](xref:qt:QAbstractSpinBox)(QString &input, int &pos) const.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#validate"
+    },
+    "Qt::TimeSpec timeSpec() const": {
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit-obsolete.html#timeSpec-prop"
+    },
+    "bool calendarPopup() const": {
+      "brief": "This property holds the current calendar pop-up show mode.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#calendarPopup-prop"
+    },
+    "bool event(QEvent *event) override": {
+      "brief": "Reimplements: [QAbstractSpinBox::event](xref:qt:QAbstractSpinBox)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#event"
+    },
+    "bool focusNextPrevChild(bool next) override": {
+      "brief": "Reimplements: [QWidget::focusNextPrevChild](xref:qt:QWidget)(bool next).",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#focusNextPrevChild"
+    },
+    "int currentSectionIndex() const": {
+      "brief": "This property holds the current section index of the spinbox.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#currentSectionIndex-prop"
+    },
+    "int sectionCount() const": {
+      "brief": "This property holds the number of sections displayed.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#sectionCount-prop"
+    },
+    "void clear() override": {
+      "brief": "Reimplements: [QAbstractSpinBox::clear](xref:qt:QAbstractSpinBox)().",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#clear"
+    },
+    "void clearMaximumDate()": {
+      "brief": "This property holds the maximum date of the date time edit.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#maximumDate-prop"
+    },
+    "void clearMaximumDateTime()": {
+      "brief": "This property holds the maximum datetime of the date time edit.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#maximumDateTime-prop"
+    },
+    "void clearMaximumTime()": {
+      "brief": "This property holds the maximum time of the date time edit.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#maximumTime-prop"
+    },
+    "void clearMinimumDate()": {
+      "brief": "This property holds the minimum date of the date time edit.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#minimumDate-prop"
+    },
+    "void clearMinimumDateTime()": {
+      "brief": "This property holds the minimum datetime of the date time edit.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#minimumDateTime-prop"
+    },
+    "void clearMinimumTime()": {
+      "brief": "This property holds the minimum time of the date time edit.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#minimumTime-prop"
+    },
+    "void dateChanged(QDate date)": {
+      "brief": "This signal is emitted whenever the date is changed.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#dateChanged"
+    },
+    "void dateTimeChanged(const QDateTime &datetime)": {
+      "brief": "This signal is emitted whenever the date or time is changed.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#dateTimeChanged"
+    },
+    "void fixup(QString &input) const override": {
+      "brief": "Reimplements: [QAbstractSpinBox::fixup](xref:qt:QAbstractSpinBox)(QString &input) const.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#fixup"
+    },
+    "void focusInEvent(QFocusEvent *event) override": {
+      "brief": "Reimplements: [QAbstractSpinBox::focusInEvent](xref:qt:QAbstractSpinBox)(QFocusEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#focusInEvent"
+    },
+    "void initStyleOption(QStyleOptionSpinBox *option) const override": {
+      "brief": "Reimplements: [QAbstractSpinBox::initStyleOption](xref:qt:QAbstractSpinBox)(QStyleOptionSpinBox *option) const.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#initStyleOption"
+    },
+    "void keyPressEvent(QKeyEvent *event) override": {
+      "brief": "Reimplements: [QAbstractSpinBox::keyPressEvent](xref:qt:QAbstractSpinBox)(QKeyEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#keyPressEvent"
+    },
+    "void mousePressEvent(QMouseEvent *event) override": {
+      "brief": "Reimplements: [QAbstractSpinBox::mousePressEvent](xref:qt:QAbstractSpinBox)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#mousePressEvent"
+    },
+    "void paintEvent(QPaintEvent *event) override": {
+      "brief": "Reimplements: [QAbstractSpinBox::paintEvent](xref:qt:QAbstractSpinBox)(QPaintEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#paintEvent"
+    },
+    "void setCalendar(QCalendar calendar)": {
+      "brief": "Set *calendar* as the calendar system to be used by this widget.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#setCalendar"
+    },
+    "void setCalendarPopup(bool enable)": {
+      "brief": "This property holds the current calendar pop-up show mode.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#calendarPopup-prop"
+    },
+    "void setCalendarWidget(QCalendarWidget *calendarWidget)": {
+      "brief": "Sets the given *calendarWidget* as the widget to be used for the calendar pop-up.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#setCalendarWidget"
+    },
+    "void setCurrentSection(QDateTimeEdit::Section section)": {
+      "brief": "This property holds the current section of the spinbox.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#currentSection-prop"
+    },
+    "void setCurrentSectionIndex(int index)": {
+      "brief": "This property holds the current section index of the spinbox.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#currentSectionIndex-prop"
+    },
+    "void setDate(QDate date)": {
+      "brief": "This property holds the [QDate](xref:qt:QDate) that is set in the widget.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#date-prop"
+    },
+    "void setDateRange(QDate min, QDate max)": {
+      "brief": "Set the range of allowed dates for the date time edit.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#setDateRange"
+    },
+    "void setDateTime(const QDateTime &dateTime)": {
+      "brief": "This property holds the [QDateTime](xref:qt:QDateTime) that is set in the [QDateTimeEdit](xref:qt:QDateTimeEdit).",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#dateTime-prop"
+    },
+    "void setDateTimeRange(const QDateTime &min, const QDateTime &max)": {
+      "brief": "Set the range of allowed date-times for the date time edit.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#setDateTimeRange"
+    },
+    "void setDisplayFormat(const QString &format)": {
+      "brief": "This property holds the format used to display the time/date of the date time edit.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#displayFormat-prop"
+    },
+    "void setMaximumDate(QDate max)": {
+      "brief": "This property holds the maximum date of the date time edit.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#maximumDate-prop"
+    },
+    "void setMaximumDateTime(const QDateTime &dt)": {
+      "brief": "This property holds the maximum datetime of the date time edit.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#maximumDateTime-prop"
+    },
+    "void setMaximumTime(QTime max)": {
+      "brief": "This property holds the maximum time of the date time edit.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#maximumTime-prop"
+    },
+    "void setMinimumDate(QDate min)": {
+      "brief": "This property holds the minimum date of the date time edit.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#minimumDate-prop"
+    },
+    "void setMinimumDateTime(const QDateTime &dt)": {
+      "brief": "This property holds the minimum datetime of the date time edit.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#minimumDateTime-prop"
+    },
+    "void setMinimumTime(QTime min)": {
+      "brief": "This property holds the minimum time of the date time edit.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#minimumTime-prop"
+    },
+    "void setSelectedSection(QDateTimeEdit::Section section)": {
+      "brief": "Selects *section*. If *section* doesn't exist in the currently displayed sections, this function does nothing. If *section* is [NoSection](xref:qt:QDateTimeEdit), this function will unselect all text...",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#setSelectedSection"
+    },
+    "void setTime(QTime time)": {
+      "brief": "This property holds the [QTime](xref:qt:QTime) that is set in the widget.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#time-prop"
+    },
+    "void setTimeRange(QTime min, QTime max)": {
+      "brief": "Set the range of allowed times for the date time edit.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#setTimeRange"
+    },
+    "void setTimeSpec(Qt::TimeSpec spec)": {
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit-obsolete.html#timeSpec-prop"
+    },
+    "void setTimeZone(const QTimeZone &zone)": {
+      "brief": "This property holds the current timezone used by the datetime editing widget",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#timeZone-prop"
+    },
+    "void stepBy(int steps) override": {
+      "brief": "Reimplements: [QAbstractSpinBox::stepBy](xref:qt:QAbstractSpinBox)(int steps).",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#stepBy"
+    },
+    "void timeChanged(QTime time)": {
+      "brief": "This signal is emitted whenever the time is changed.",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#timeChanged"
+    },
+    "void wheelEvent(QWheelEvent *event) override": {
+      "brief": "Reimplements: [QAbstractSpinBox::wheelEvent](xref:qt:QAbstractSpinBox)(QWheelEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#wheelEvent"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "calendarPopup": {
+      "brief": "Current calendar pop-up show mode",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#calendarPopup-prop"
+    },
+    "currentSection": {
+      "brief": "Current section of the spinbox",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#currentSection-prop"
+    },
+    "currentSectionIndex": {
+      "brief": "Current section index of the spinbox",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#currentSectionIndex-prop"
+    },
+    "date": {
+      "brief": "QDate that is set in the widget",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#date-prop"
+    },
+    "dateTime": {
+      "brief": "QDateTime that is set in the QDateTimeEdit",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#dateTime-prop"
+    },
+    "displayFormat": {
+      "brief": "Format used to display the time/date of the date time edit",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#displayFormat-prop"
+    },
+    "displayedSections": {
+      "brief": "Currently displayed fields of the date time edit",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#displayedSections-prop"
+    },
+    "maximumDate": {
+      "brief": "Maximum date of the date time edit",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#maximumDate-prop"
+    },
+    "maximumDateTime": {
+      "brief": "Maximum datetime of the date time edit",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#maximumDateTime-prop"
+    },
+    "maximumTime": {
+      "brief": "Maximum time of the date time edit",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#maximumTime-prop"
+    },
+    "minimumDate": {
+      "brief": "Minimum date of the date time edit",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#minimumDate-prop"
+    },
+    "minimumDateTime": {
+      "brief": "Minimum datetime of the date time edit",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#minimumDateTime-prop"
+    },
+    "minimumTime": {
+      "brief": "Minimum time of the date time edit",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#minimumTime-prop"
+    },
+    "sectionCount": {
+      "brief": "Number of sections displayed. If the format is 'yyyy/yy/yyyy', sectionCount returns 3",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#sectionCount-prop"
+    },
+    "time": {
+      "brief": "QTime that is set in the widget",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#time-prop"
+    },
+    "timeSpec": {
+      "brief": "Current timespec used by the date time edit",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit-obsolete.html#timeSpec-prop"
+    },
+    "timeZone": {
+      "brief": "Current timezone used by the datetime editing widget",
+      "url": "https://doc.qt.io/qt-6/qdatetimeedit.html#timeZone-prop"
+    }
+  },
+  "qss": {
+    "box_model": false,
+    "pseudo_states": [],
+    "sub_controls": [],
+    "url": "https://doc.qt.io/qt-6/stylesheet-reference.html#qdatetimeedit-widget"
+  },
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

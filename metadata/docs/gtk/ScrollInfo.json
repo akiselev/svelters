@@ -1,0 +1,76 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new scroll info for scrolling an element into view.",
+      "file": "gtk/gtkscrollinfo.c",
+      "line": 52,
+      "md": "Creates a new scroll info for scrolling an element into view.",
+      "since": "4.12"
+    }
+  },
+  "doc": {
+    "brief": "Provides detailed information on how a scroll operation should be performed.",
+    "file": "gtk/gtkscrollinfo.c",
+    "line": 18,
+    "md": "Provides detailed information on how a scroll operation should be performed.\n\nScrolling functions usually allow passing a `NULL` scroll info which will\ncause the default values to be used and just scroll the element into view.",
+    "since": "4.12"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ScrollInfo",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_enable_horizontal": {
+      "brief": "Checks if horizontal scrolling is enabled.",
+      "file": "gtk/gtkscrollinfo.c",
+      "line": 136,
+      "md": "Checks if horizontal scrolling is enabled.",
+      "since": "4.12"
+    },
+    "get_enable_vertical": {
+      "brief": "Checks if vertical scrolling is enabled.",
+      "file": "gtk/gtkscrollinfo.c",
+      "line": 173,
+      "md": "Checks if vertical scrolling is enabled.",
+      "since": "4.12"
+    },
+    "ref": {
+      "brief": "Increases the reference count of a `GtkScrollInfo` by one.",
+      "file": "gtk/gtkscrollinfo.c",
+      "line": 74,
+      "md": "Increases the reference count of a `GtkScrollInfo` by one.",
+      "since": "4.12"
+    },
+    "set_enable_horizontal": {
+      "brief": "Turns horizontal scrolling on or off.",
+      "file": "gtk/gtkscrollinfo.c",
+      "line": 117,
+      "md": "Turns horizontal scrolling on or off.",
+      "since": "4.12"
+    },
+    "set_enable_vertical": {
+      "brief": "Turns vertical scrolling on or off.",
+      "file": "gtk/gtkscrollinfo.c",
+      "line": 154,
+      "md": "Turns vertical scrolling on or off.",
+      "since": "4.12"
+    },
+    "unref": {
+      "brief": "Decreases the reference count of a `GtkScrollInfo` by one.",
+      "file": "gtk/gtkscrollinfo.c",
+      "line": 94,
+      "md": "Decreases the reference count of a `GtkScrollInfo` by one.\n\nIf the resulting reference count is zero, frees the self.",
+      "since": "4.12"
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

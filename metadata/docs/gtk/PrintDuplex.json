@@ -1,0 +1,43 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "See also gtk_print_settings_set_duplex().",
+    "file": "gtk/gtkenums.h",
+    "line": 733,
+    "md": "See also gtk_print_settings_set_duplex()."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:PrintDuplex",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "horizontal": {
+      "brief": "Horizontal duplex.",
+      "file": "gtk/gtkenums.h",
+      "line": 736,
+      "md": "Horizontal duplex."
+    },
+    "simplex": {
+      "brief": "No duplex.",
+      "file": "gtk/gtkenums.h",
+      "line": 735,
+      "md": "No duplex."
+    },
+    "vertical": {
+      "brief": "Vertical duplex.",
+      "file": "gtk/gtkenums.h",
+      "line": 737,
+      "md": "Vertical duplex."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

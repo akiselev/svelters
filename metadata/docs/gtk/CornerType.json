@@ -1,0 +1,49 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Specifies which corner a child widget should be placed in when packed into a `GtkScrolledWindow.`",
+    "file": "gtk/gtkscrolledwindow.h",
+    "line": 43,
+    "md": "Specifies which corner a child widget should be placed in when packed into\na `GtkScrolledWindow.`\n\nThis is effectively the opposite of where the scroll bars are placed."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:CornerType",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "bottom_left": {
+      "brief": "Place the scrollbars on the top and right of the widget.",
+      "file": "gtk/gtkscrolledwindow.h",
+      "line": 47,
+      "md": "Place the scrollbars on the top and right of the\n  widget."
+    },
+    "bottom_right": {
+      "brief": "Place the scrollbars on the top and left of the widget.",
+      "file": "gtk/gtkscrolledwindow.h",
+      "line": 51,
+      "md": "Place the scrollbars on the top and left of the\n  widget."
+    },
+    "top_left": {
+      "brief": "Place the scrollbars on the right and bottom of the widget (default behaviour).",
+      "file": "gtk/gtkscrolledwindow.h",
+      "line": 45,
+      "md": "Place the scrollbars on the right and bottom of the\n  widget (default behaviour)."
+    },
+    "top_right": {
+      "brief": "Place the scrollbars on the left and bottom of the widget.",
+      "file": "gtk/gtkscrolledwindow.h",
+      "line": 49,
+      "md": "Place the scrollbars on the left and bottom of the\n  widget."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

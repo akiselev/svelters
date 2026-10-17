@@ -1,0 +1,156 @@
+{
+  "doc": {
+    "brief": "The QGroupBox widget provides a group box frame with a title.",
+    "index_brief": "Group box frame with a title",
+    "url": "https://doc.qt.io/qt-6/qgroupbox.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QGroupBox",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QGroupBox(QWidget *parent)": {
+      "brief": "Constructs a group box widget with the given *parent* but with no title.",
+      "url": "https://doc.qt.io/qt-6/qgroupbox.html#QGroupBox"
+    },
+    "QGroupBox(const QString &title, QWidget *parent)": {
+      "brief": "Constructs a group box with the given *title* and *parent*.",
+      "url": "https://doc.qt.io/qt-6/qgroupbox.html#QGroupBox-1"
+    },
+    "QSize minimumSizeHint() const override": {
+      "brief": "Reimplements an access function for property: [QWidget::minimumSizeHint](xref:qt:QWidget).",
+      "url": "https://doc.qt.io/qt-6/qgroupbox.html#minimumSizeHint"
+    },
+    "QString title() const": {
+      "brief": "This property holds the group box title text",
+      "url": "https://doc.qt.io/qt-6/qgroupbox.html#title-prop"
+    },
+    "Qt::Alignment alignment() const": {
+      "brief": "This property holds the alignment of the group box title.",
+      "url": "https://doc.qt.io/qt-6/qgroupbox.html#alignment-prop"
+    },
+    "bool event(QEvent *e) override": {
+      "brief": "Reimplements: [QWidget::event](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgroupbox.html#event"
+    },
+    "bool isCheckable() const": {
+      "brief": "This property holds whether the group box has a checkbox in its title",
+      "url": "https://doc.qt.io/qt-6/qgroupbox.html#checkable-prop"
+    },
+    "bool isChecked() const": {
+      "brief": "This property holds whether the group box is checked",
+      "url": "https://doc.qt.io/qt-6/qgroupbox.html#checked-prop"
+    },
+    "bool isFlat() const": {
+      "brief": "This property holds whether the group box is painted flat or has a frame",
+      "url": "https://doc.qt.io/qt-6/qgroupbox.html#flat-prop"
+    },
+    "void changeEvent(QEvent *ev) override": {
+      "brief": "Reimplements: [QWidget::changeEvent](xref:qt:QWidget)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgroupbox.html#changeEvent"
+    },
+    "void childEvent(QChildEvent *c) override": {
+      "brief": "Reimplements: [QObject::childEvent](xref:qt:QObject)(QChildEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgroupbox.html#childEvent"
+    },
+    "void clicked(bool checked)": {
+      "brief": "This signal is emitted when the check box is activated (i.e., pressed down then released while the mouse cursor is inside the button), or when the shortcut key is typed.",
+      "url": "https://doc.qt.io/qt-6/qgroupbox.html#clicked"
+    },
+    "void focusInEvent(QFocusEvent *fe) override": {
+      "brief": "Reimplements: [QWidget::focusInEvent](xref:qt:QWidget)(QFocusEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgroupbox.html#focusInEvent"
+    },
+    "void initStyleOption(QStyleOptionGroupBox *option) const": {
+      "brief": "Initialize *option* with the values from this [QGroupBox](xref:qt:QGroupBox).",
+      "url": "https://doc.qt.io/qt-6/qgroupbox.html#initStyleOption"
+    },
+    "void mouseMoveEvent(QMouseEvent *event) override": {
+      "brief": "Reimplements: [QWidget::mouseMoveEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgroupbox.html#mouseMoveEvent"
+    },
+    "void mousePressEvent(QMouseEvent *event) override": {
+      "brief": "Reimplements: [QWidget::mousePressEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgroupbox.html#mousePressEvent"
+    },
+    "void mouseReleaseEvent(QMouseEvent *event) override": {
+      "brief": "Reimplements: [QWidget::mouseReleaseEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgroupbox.html#mouseReleaseEvent"
+    },
+    "void paintEvent(QPaintEvent *event) override": {
+      "brief": "Reimplements: [QWidget::paintEvent](xref:qt:QWidget)(QPaintEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgroupbox.html#paintEvent"
+    },
+    "void resizeEvent(QResizeEvent *e) override": {
+      "brief": "Reimplements: [QWidget::resizeEvent](xref:qt:QWidget)(QResizeEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qgroupbox.html#resizeEvent"
+    },
+    "void setAlignment(int alignment)": {
+      "brief": "This property holds the alignment of the group box title.",
+      "url": "https://doc.qt.io/qt-6/qgroupbox.html#alignment-prop"
+    },
+    "void setCheckable(bool checkable)": {
+      "brief": "This property holds whether the group box has a checkbox in its title",
+      "url": "https://doc.qt.io/qt-6/qgroupbox.html#checkable-prop"
+    },
+    "void setChecked(bool checked)": {
+      "brief": "This property holds whether the group box is checked",
+      "url": "https://doc.qt.io/qt-6/qgroupbox.html#checked-prop"
+    },
+    "void setFlat(bool flat)": {
+      "brief": "This property holds whether the group box is painted flat or has a frame",
+      "url": "https://doc.qt.io/qt-6/qgroupbox.html#flat-prop"
+    },
+    "void setTitle(const QString &title)": {
+      "brief": "This property holds the group box title text",
+      "url": "https://doc.qt.io/qt-6/qgroupbox.html#title-prop"
+    },
+    "void toggled(bool on)": {
+      "brief": "If the group box is checkable, this signal is emitted when the check box is toggled. *on* is true if the check box is checked; otherwise, it is false.",
+      "url": "https://doc.qt.io/qt-6/qgroupbox.html#toggled"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "alignment": {
+      "brief": "The alignment of the group box title",
+      "url": "https://doc.qt.io/qt-6/qgroupbox.html#alignment-prop"
+    },
+    "checkable": {
+      "brief": "Whether the group box has a checkbox in its title",
+      "url": "https://doc.qt.io/qt-6/qgroupbox.html#checkable-prop"
+    },
+    "checked": {
+      "brief": "Whether the group box is checked",
+      "url": "https://doc.qt.io/qt-6/qgroupbox.html#checked-prop"
+    },
+    "flat": {
+      "brief": "Whether the group box is painted flat or has a frame",
+      "url": "https://doc.qt.io/qt-6/qgroupbox.html#flat-prop"
+    },
+    "title": {
+      "brief": "The group box title text",
+      "url": "https://doc.qt.io/qt-6/qgroupbox.html#title-prop"
+    }
+  },
+  "qss": {
+    "box_model": true,
+    "pseudo_states": [],
+    "sub_controls": [
+      "::indicator",
+      "::title"
+    ],
+    "url": "https://doc.qt.io/qt-6/stylesheet-reference.html#qgroupbox-widget"
+  },
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

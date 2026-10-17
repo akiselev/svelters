@@ -1,0 +1,51 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Describes the way two values can be compared.",
+    "file": "gtk/gtkenums.h",
+    "line": 656,
+    "md": "Describes the way two values can be compared.\n\nThese values can be used with a [`CompareFunc`](xref:gtk:GLib.CompareFunc). However,\na `GCompareFunc` is allowed to return any integer values.\nFor converting such a value to a `GtkOrdering` value, use\n`from_cmpfunc`."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Ordering",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "equal": {
+      "brief": "the two values are equal",
+      "file": "gtk/gtkenums.h",
+      "line": 659,
+      "md": "the two values are equal"
+    },
+    "larger": {
+      "brief": "the first value is larger than the second",
+      "file": "gtk/gtkenums.h",
+      "line": 660,
+      "md": "the first value is larger than the second"
+    },
+    "smaller": {
+      "brief": "the first value is smaller than the second",
+      "file": "gtk/gtkenums.h",
+      "line": 658,
+      "md": "the first value is smaller than the second"
+    }
+  },
+  "methods": {
+    "from_cmpfunc": {
+      "brief": "Converts the result of a `GCompareFunc` like strcmp() to a `GtkOrdering` value.",
+      "file": "gtk/gtksorter.c",
+      "line": 374,
+      "md": "Converts the result of a `GCompareFunc` like strcmp() to a\n`GtkOrdering` value.",
+      "since": "4.2"
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

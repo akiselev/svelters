@@ -1,0 +1,44 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Describes how a [`StringSorter`](xref:gtk:Gtk.StringSorter) turns strings into sort keys to compare them.",
+    "file": "gtk/gtkstringsorter.h",
+    "line": 49,
+    "md": "Describes how a [`StringSorter`](xref:gtk:Gtk.StringSorter) turns strings into sort keys to\ncompare them.\n\nNote that the result of sorting will in general depend on the current locale\nunless the mode is @GTK_COLLATION_NONE.",
+    "since": "4.10"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Collation",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "filename": {
+      "brief": "Use `utf8_collate_key_for_filename`",
+      "file": "gtk/gtkstringsorter.h",
+      "line": 53,
+      "md": "Use `utf8_collate_key_for_filename`"
+    },
+    "none": {
+      "brief": "Don't do any collation",
+      "file": "gtk/gtkstringsorter.h",
+      "line": 51,
+      "md": "Don't do any collation"
+    },
+    "unicode": {
+      "brief": "Use `utf8_collate_key`",
+      "file": "gtk/gtkstringsorter.h",
+      "line": 52,
+      "md": "Use `utf8_collate_key`"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

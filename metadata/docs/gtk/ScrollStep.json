@@ -1,0 +1,61 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Passed as argument to various keybinding signals.",
+    "file": "gtk/gtkenums.h",
+    "line": 407,
+    "md": "Passed as argument to various keybinding signals."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ScrollStep",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "ends": {
+      "brief": "Scroll to ends.",
+      "file": "gtk/gtkenums.h",
+      "line": 411,
+      "md": "Scroll to ends."
+    },
+    "horizontal_ends": {
+      "brief": "Scroll to the horizontal ends.",
+      "file": "gtk/gtkenums.h",
+      "line": 414,
+      "md": "Scroll to the horizontal ends."
+    },
+    "horizontal_pages": {
+      "brief": "Scroll by horizontal pages.",
+      "file": "gtk/gtkenums.h",
+      "line": 413,
+      "md": "Scroll by horizontal pages."
+    },
+    "horizontal_steps": {
+      "brief": "Scroll in horizontal steps.",
+      "file": "gtk/gtkenums.h",
+      "line": 412,
+      "md": "Scroll in horizontal steps."
+    },
+    "pages": {
+      "brief": "Scroll by pages.",
+      "file": "gtk/gtkenums.h",
+      "line": 410,
+      "md": "Scroll by pages."
+    },
+    "steps": {
+      "brief": "Scroll in steps.",
+      "file": "gtk/gtkenums.h",
+      "line": 409,
+      "md": "Scroll in steps."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

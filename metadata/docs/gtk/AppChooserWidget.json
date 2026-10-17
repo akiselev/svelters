@@ -1,0 +1,182 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkAppChooserWidget` for applications that can handle content of the given type.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkappchooserwidget.c",
+      "line": 947,
+      "md": "Creates a new `GtkAppChooserWidget` for applications\nthat can handle content of the given type."
+    }
+  },
+  "doc": {
+    "brief": "`GtkAppChooserWidget` is a widget for selecting applications.",
+    "deprecated": "4.10",
+    "deprecated_md": "The application selection widgets should be\n  implemented according to the design of each platform and/or\n  application requiring them.",
+    "file": "gtk/deprecated/gtkappchooserwidget.c",
+    "line": 58,
+    "md": "`GtkAppChooserWidget` is a widget for selecting applications.\n\nIt is the main building block for [`AppChooserDialog`](xref:gtk:Gtk.AppChooserDialog).\nMost applications only need to use the latter; but you can use\nthis widget as part of a larger widget if you have special needs.\n\n`GtkAppChooserWidget` offers detailed control over what applications\nare shown, using the\n[`AppChooserWidget:show-default`](xref:gtk:Gtk.AppChooserWidget#property:show-default),\n[`AppChooserWidget:show-recommended`](xref:gtk:Gtk.AppChooserWidget#property:show-recommended),\n[`AppChooserWidget:show-fallback`](xref:gtk:Gtk.AppChooserWidget#property:show-fallback),\n[`AppChooserWidget:show-other`](xref:gtk:Gtk.AppChooserWidget#property:show-other) and\n[`AppChooserWidget:show-all`](xref:gtk:Gtk.AppChooserWidget#property:show-all) properties. See the\n[`AppChooser`](xref:gtk:Gtk.AppChooser) documentation for more information about these\ngroups of applications.\n\nTo keep track of the selected application, use the\n[`AppChooserWidget::application-selected`](xref:gtk:Gtk.AppChooserWidget#event:application-selected) and\n[`AppChooserWidget::application-activated`](xref:gtk:Gtk.AppChooserWidget#event:application-activated) signals.\n\n## CSS nodes\n\n`GtkAppChooserWidget` has a single CSS node with name appchooser."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:AppChooserWidget",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_default_text": {
+      "brief": "Returns the text that is shown if there are not applications that can handle the content type.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkappchooserwidget.c",
+      "line": 1218,
+      "md": "Returns the text that is shown if there are not applications\nthat can handle the content type."
+    },
+    "get_show_all": {
+      "brief": "Gets whether the app chooser should show all applications in a flat list.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkappchooserwidget.c",
+      "line": 1172,
+      "md": "Gets whether the app chooser should show all applications\nin a flat list."
+    },
+    "get_show_default": {
+      "brief": "Gets whether the app chooser should show the default handler for the content type in a separate section.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkappchooserwidget.c",
+      "line": 992,
+      "md": "Gets whether the app chooser should show the default handler\nfor the content type in a separate section."
+    },
+    "get_show_fallback": {
+      "brief": "Gets whether the app chooser should show related applications for the content type in a separate section.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkappchooserwidget.c",
+      "line": 1082,
+      "md": "Gets whether the app chooser should show related applications\nfor the content type in a separate section."
+    },
+    "get_show_other": {
+      "brief": "Gets whether the app chooser should show applications which are unrelated to the content type.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkappchooserwidget.c",
+      "line": 1127,
+      "md": "Gets whether the app chooser should show applications\nwhich are unrelated to the content type."
+    },
+    "get_show_recommended": {
+      "brief": "Gets whether the app chooser should show recommended applications for the content type in a separate section.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkappchooserwidget.c",
+      "line": 1037,
+      "md": "Gets whether the app chooser should show recommended applications\nfor the content type in a separate section."
+    },
+    "set_default_text": {
+      "brief": "Sets the text that is shown if there are not applications that can handle the content type.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkappchooserwidget.c",
+      "line": 1191,
+      "md": "Sets the text that is shown if there are not applications\nthat can handle the content type."
+    },
+    "set_show_all": {
+      "brief": "Sets whether the app chooser should show all applications in a flat list.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkappchooserwidget.c",
+      "line": 1146,
+      "md": "Sets whether the app chooser should show all applications\nin a flat list."
+    },
+    "set_show_default": {
+      "brief": "Sets whether the app chooser should show the default handler for the content type in a separate section.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkappchooserwidget.c",
+      "line": 966,
+      "md": "Sets whether the app chooser should show the default handler\nfor the content type in a separate section."
+    },
+    "set_show_fallback": {
+      "brief": "Sets whether the app chooser should show related applications for the content type in a separate section.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkappchooserwidget.c",
+      "line": 1056,
+      "md": "Sets whether the app chooser should show related applications\nfor the content type in a separate section."
+    },
+    "set_show_other": {
+      "brief": "Sets whether the app chooser should show applications which are unrelated to the content type.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkappchooserwidget.c",
+      "line": 1101,
+      "md": "Sets whether the app chooser should show applications\nwhich are unrelated to the content type."
+    },
+    "set_show_recommended": {
+      "brief": "Sets whether the app chooser should show recommended applications for the content type in a separate section.",
+      "deprecated": "4.10",
+      "deprecated_md": "This widget will be removed in GTK 5",
+      "file": "gtk/deprecated/gtkappchooserwidget.c",
+      "line": 1011,
+      "md": "Sets whether the app chooser should show recommended applications\nfor the content type in a separate section."
+    }
+  },
+  "properties": {
+    "default-text": {
+      "brief": "The text that appears in the widget when there are no applications for the given content type.",
+      "file": "gtk/deprecated/gtkappchooserwidget.c",
+      "line": 665,
+      "md": "The text that appears in the widget when there are no applications\nfor the given content type."
+    },
+    "show-all": {
+      "brief": "If `TRUE`, the app chooser presents all applications in a single list, without subsections for default, recommended or related applications.",
+      "file": "gtk/deprecated/gtkappchooserwidget.c",
+      "line": 653,
+      "md": "If `TRUE`, the app chooser presents all applications\nin a single list, without subsections for default,\nrecommended or related applications."
+    },
+    "show-default": {
+      "brief": "Determines whether the app chooser should show the default handler for the content type in a separate section.",
+      "file": "gtk/deprecated/gtkappchooserwidget.c",
+      "line": 600,
+      "md": "Determines whether the app chooser should show the default\nhandler for the content type in a separate section.\n\nIf `FALSE`, the default handler is listed among the recommended\napplications."
+    },
+    "show-fallback": {
+      "brief": "Determines whether the app chooser should show a section for fallback applications.",
+      "file": "gtk/deprecated/gtkappchooserwidget.c",
+      "line": 628,
+      "md": "Determines whether the app chooser should show a section\nfor fallback applications.\n\nIf `FALSE`, the fallback applications are listed among the\nother applications."
+    },
+    "show-other": {
+      "brief": "Determines whether the app chooser should show a section for other applications.",
+      "file": "gtk/deprecated/gtkappchooserwidget.c",
+      "line": 642,
+      "md": "Determines whether the app chooser should show a section\nfor other applications."
+    },
+    "show-recommended": {
+      "brief": "Determines whether the app chooser should show a section for recommended applications.",
+      "file": "gtk/deprecated/gtkappchooserwidget.c",
+      "line": 614,
+      "md": "Determines whether the app chooser should show a section\nfor recommended applications.\n\nIf `FALSE`, the recommended applications are listed\namong the other applications."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "application-activated": {
+      "brief": "Emitted when an application item is activated from the widget's list.",
+      "file": "gtk/deprecated/gtkappchooserwidget.c",
+      "line": 693,
+      "md": "Emitted when an application item is activated from the widget's list.\n\nThis usually happens when the user double clicks an item, or an item\nis selected and the user presses one of the keys Space, Shift+Space,\nReturn or Enter."
+    },
+    "application-selected": {
+      "brief": "Emitted when an application item is selected from the widget's list.",
+      "file": "gtk/deprecated/gtkappchooserwidget.c",
+      "line": 676,
+      "md": "Emitted when an application item is selected from the widget's list."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

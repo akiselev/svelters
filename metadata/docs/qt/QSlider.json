@@ -1,0 +1,100 @@
+{
+  "doc": {
+    "brief": "The QSlider widget provides a vertical or horizontal slider.",
+    "index_brief": "Vertical or horizontal slider",
+    "url": "https://doc.qt.io/qt-6/qslider.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QSlider",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QSize minimumSizeHint() const override": {
+      "brief": "Reimplements an access function for property: [QWidget::minimumSizeHint](xref:qt:QWidget).",
+      "url": "https://doc.qt.io/qt-6/qslider.html#minimumSizeHint"
+    },
+    "QSize sizeHint() const override": {
+      "brief": "Reimplements an access function for property: [QWidget::sizeHint](xref:qt:QWidget).",
+      "url": "https://doc.qt.io/qt-6/qslider.html#sizeHint"
+    },
+    "QSlider(QWidget *parent)": {
+      "brief": "Constructs a vertical slider with the given *parent*.",
+      "url": "https://doc.qt.io/qt-6/qslider.html#QSlider"
+    },
+    "QSlider(Qt::Orientation orientation, QWidget *parent)": {
+      "brief": "Constructs a slider with the given *parent*.",
+      "url": "https://doc.qt.io/qt-6/qslider.html#QSlider-1"
+    },
+    "QSlider::TickPosition tickPosition() const": {
+      "brief": "This property holds the tickmark position for this slider",
+      "url": "https://doc.qt.io/qt-6/qslider.html#tickPosition-prop"
+    },
+    "bool event(QEvent *event) override": {
+      "brief": "Reimplements: [QAbstractSlider::event](xref:qt:QAbstractSlider)(QEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qslider.html#event"
+    },
+    "int tickInterval() const": {
+      "brief": "This property holds the interval between tickmarks",
+      "url": "https://doc.qt.io/qt-6/qslider.html#tickInterval-prop"
+    },
+    "void initStyleOption(QStyleOptionSlider *option) const": {
+      "brief": "Initialize *option* with the values from this [QSlider](xref:qt:QSlider).",
+      "url": "https://doc.qt.io/qt-6/qslider.html#initStyleOption"
+    },
+    "void mouseMoveEvent(QMouseEvent *ev) override": {
+      "brief": "Reimplements: [QWidget::mouseMoveEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qslider.html#mouseMoveEvent"
+    },
+    "void mousePressEvent(QMouseEvent *ev) override": {
+      "brief": "Reimplements: [QWidget::mousePressEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qslider.html#mousePressEvent"
+    },
+    "void mouseReleaseEvent(QMouseEvent *ev) override": {
+      "brief": "Reimplements: [QWidget::mouseReleaseEvent](xref:qt:QWidget)(QMouseEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qslider.html#mouseReleaseEvent"
+    },
+    "void paintEvent(QPaintEvent *ev) override": {
+      "brief": "Reimplements: [QWidget::paintEvent](xref:qt:QWidget)(QPaintEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qslider.html#paintEvent"
+    },
+    "void setTickInterval(int ti)": {
+      "brief": "This property holds the interval between tickmarks",
+      "url": "https://doc.qt.io/qt-6/qslider.html#tickInterval-prop"
+    },
+    "void setTickPosition(QSlider::TickPosition position)": {
+      "brief": "This property holds the tickmark position for this slider",
+      "url": "https://doc.qt.io/qt-6/qslider.html#tickPosition-prop"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "tickInterval": {
+      "brief": "The interval between tickmarks",
+      "url": "https://doc.qt.io/qt-6/qslider.html#tickInterval-prop"
+    },
+    "tickPosition": {
+      "brief": "The tickmark position for this slider",
+      "url": "https://doc.qt.io/qt-6/qslider.html#tickPosition-prop"
+    }
+  },
+  "qss": {
+    "box_model": true,
+    "pseudo_states": [],
+    "sub_controls": [
+      "::groove",
+      "::handle"
+    ],
+    "url": "https://doc.qt.io/qt-6/stylesheet-reference.html#qslider-widget"
+  },
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

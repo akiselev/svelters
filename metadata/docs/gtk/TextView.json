@@ -1,0 +1,770 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkTextView`.",
+      "file": "gtk/gtktextview.c",
+      "line": 2257,
+      "md": "Creates a new `GtkTextView`.\n\nIf you don’t call [`TextView.set_buffer()`](xref:gtk:Gtk.TextView#method:set_buffer) before using the\ntext view, an empty default buffer will be created for you. Get the\nbuffer with [`TextView.get_buffer()`](xref:gtk:Gtk.TextView#method:get_buffer). If you want to specify\nyour own buffer, consider [`TextView.new_with_buffer()`](xref:gtk:Gtk.TextView#constructor:new_with_buffer)."
+    },
+    "new_with_buffer": {
+      "brief": "Creates a new `GtkTextView` widget displaying the buffer `buffer`.",
+      "file": "gtk/gtktextview.c",
+      "line": 2275,
+      "md": "Creates a new `GtkTextView` widget displaying the buffer `buffer`.\n\nOne buffer can be shared among many widgets. `buffer` may be `NULL`\nto create a default buffer, in which case this function is equivalent\nto [`TextView.new()`](xref:gtk:Gtk.TextView#constructor:new). The text view adds its own reference count\nto the buffer; it does not take over an existing reference."
+    }
+  },
+  "doc": {
+    "brief": "Displays the contents of a [`TextBuffer`](xref:gtk:Gtk.TextBuffer).",
+    "file": "gtk/gtktextview.c",
+    "line": 66,
+    "md": "Displays the contents of a [`TextBuffer`](xref:gtk:Gtk.TextBuffer).\n\nYou may wish to begin by reading the [conceptual overview](section-text-widget.html),\nwhich gives an overview of all the objects and data types related to the\ntext widget and how they work together.\n\n## Shortcuts and Gestures\n\n`GtkTextView` supports the following keyboard shortcuts:\n\n- <kbd>Shift</kbd>+<kbd>F10</kbd> or <kbd>Menu</kbd> opens the context menu.\n- <kbd>Ctrl</kbd>+<kbd>Z</kbd> undoes the last modification.\n- <kbd>Ctrl</kbd>+<kbd>Y</kbd> or <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Z</kbd>\n   redoes the last undone modification.\n- <kbd>Clear</kbd> clears the content.\n\nAdditionally, the following signals have default keybindings:\n\n- [`TextView::backspace`](xref:gtk:Gtk.TextView#event:backspace)\n- [`TextView::copy-clipboard`](xref:gtk:Gtk.TextView#event:copy-clipboard)\n- [`TextView::cut-clipboard`](xref:gtk:Gtk.TextView#event:cut-clipboard)\n- [`TextView::delete-from-cursor`](xref:gtk:Gtk.TextView#event:delete-from-cursor)\n- [`TextView::insert-emoji`](xref:gtk:Gtk.TextView#event:insert-emoji)\n- [`TextView::move-cursor`](xref:gtk:Gtk.TextView#event:move-cursor)\n- [`TextView::paste-clipboard`](xref:gtk:Gtk.TextView#event:paste-clipboard)\n- [`TextView::select-all`](xref:gtk:Gtk.TextView#event:select-all)\n- [`TextView::toggle-cursor-visible`](xref:gtk:Gtk.TextView#event:toggle-cursor-visible)\n- [`TextView::toggle-overwrite`](xref:gtk:Gtk.TextView#event:toggle-overwrite)\n\n## Actions\n\n`GtkTextView` defines a set of built-in actions:\n\n- `clipboard.copy` copies the contents to the clipboard.\n- `clipboard.cut` copies the contents to the clipboard and deletes it from\n  the widget.\n- `clipboard.paste` inserts the contents of the clipboard into the widget.\n- `menu.popup` opens the context menu.\n- `misc.insert-emoji` opens the Emoji chooser.\n- `selection.delete` deletes the current selection.\n- `selection.select-all` selects all of the widgets content.\n- `text.redo` redoes the last change to the contents.\n- `text.undo` undoes the last change to the contents.\n- `text.clear` clears the content.\n\n## CSS nodes\n\n```\ntextview.view\n├── border.top\n├── border.left\n├── text\n│   ╰── [selection]\n├── border.right\n├── border.bottom\n╰── [window.popup]\n```\n\n`GtkTextView` has a main css node with name textview and style class .view,\nand subnodes for each of the border windows, and the main text area,\nwith names border and text, respectively. The border nodes each get\none of the style classes .left, .right, .top or .bottom.\n\nA node representing the selection will appear below the text node.\n\nIf a context menu is opened, the window node will appear as a subnode\nof the main node.\n\n## Accessibility\n\n`GtkTextView` uses the [`AccessibleRole.text_box`](xref:gtk:Gtk.AccessibleRole#value:text_box) role."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:TextView",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "add_child_at_anchor": {
+      "brief": "Adds a child widget in the text buffer, at the given `anchor`.",
+      "file": "gtk/gtktextview.c",
+      "line": 10031,
+      "md": "Adds a child widget in the text buffer, at the given `anchor`."
+    },
+    "add_overlay": {
+      "brief": "Adds `child` at a fixed coordinate in the `GtkTextView`'s text window.",
+      "file": "gtk/gtktextview.c",
+      "line": 10080,
+      "md": "Adds `child` at a fixed coordinate in the `GtkTextView`'s text window.\n\nThe `xpos` and `ypos` must be in buffer coordinates (see\n[`TextView.get_iter_location()`](xref:gtk:Gtk.TextView#method:get_iter_location) to convert to\nbuffer coordinates).\n\n`child` will scroll with the text view.\n\nIf instead you want a widget that will not move with the\n`GtkTextView` contents see `GtkOverlay`."
+    },
+    "backward_display_line": {
+      "brief": "Moves the given `iter` backward by one display (wrapped) line.",
+      "file": "gtk/gtktextview.c",
+      "line": 10174,
+      "md": "Moves the given `iter` backward by one display (wrapped) line.\n\nA display line is different from a paragraph. Paragraphs are\nseparated by newlines or other paragraph separator characters.\nDisplay lines are created by line-wrapping a paragraph. If\nwrapping is turned off, display lines and paragraphs will be the\nsame. Display lines are divided differently for each view, since\nthey depend on the view’s width; paragraphs are the same in all\nviews, since they depend on the contents of the `GtkTextBuffer`."
+    },
+    "backward_display_line_start": {
+      "brief": "Moves the given `iter` backward to the next display line start.",
+      "file": "gtk/gtktextview.c",
+      "line": 10232,
+      "md": "Moves the given `iter` backward to the next display line start.\n\nA display line is different from a paragraph. Paragraphs are\nseparated by newlines or other paragraph separator characters.\nDisplay lines are created by line-wrapping a paragraph. If\nwrapping is turned off, display lines and paragraphs will be the\nsame. Display lines are divided differently for each view, since\nthey depend on the view’s width; paragraphs are the same in all\nviews, since they depend on the contents of the `GtkTextBuffer`."
+    },
+    "buffer_to_window_coords": {
+      "brief": "Converts buffer coordinates to window coordinates.",
+      "file": "gtk/gtktextview.c",
+      "line": 9854,
+      "md": "Converts buffer coordinates to window coordinates."
+    },
+    "forward_display_line": {
+      "brief": "Moves the given `iter` forward by one display (wrapped) line.",
+      "file": "gtk/gtktextview.c",
+      "line": 10145,
+      "md": "Moves the given `iter` forward by one display (wrapped) line.\n\nA display line is different from a paragraph. Paragraphs are\nseparated by newlines or other paragraph separator characters.\nDisplay lines are created by line-wrapping a paragraph. If\nwrapping is turned off, display lines and paragraphs will be the\nsame. Display lines are divided differently for each view, since\nthey depend on the view’s width; paragraphs are the same in all\nviews, since they depend on the contents of the `GtkTextBuffer`."
+    },
+    "forward_display_line_end": {
+      "brief": "Moves the given `iter` forward to the next display line end.",
+      "file": "gtk/gtktextview.c",
+      "line": 10203,
+      "md": "Moves the given `iter` forward to the next display line end.\n\nA display line is different from a paragraph. Paragraphs are\nseparated by newlines or other paragraph separator characters.\nDisplay lines are created by line-wrapping a paragraph. If\nwrapping is turned off, display lines and paragraphs will be the\nsame. Display lines are divided differently for each view, since\nthey depend on the view’s width; paragraphs are the same in all\nviews, since they depend on the contents of the `GtkTextBuffer`."
+    },
+    "get_accepts_tab": {
+      "brief": "Returns whether pressing the <kbd>Tab</kbd> key inserts a tab characters.",
+      "file": "gtk/gtktextview.c",
+      "line": 7511,
+      "md": "Returns whether pressing the <kbd>Tab</kbd> key inserts a tab characters.\n\nSee [`TextView.set_accepts_tab()`](xref:gtk:Gtk.TextView#method:set_accepts_tab)."
+    },
+    "get_bottom_margin": {
+      "brief": "Gets the bottom margin for text in the `text_view`.",
+      "file": "gtk/gtktextview.c",
+      "line": 3903,
+      "md": "Gets the bottom margin for text in the `text_view`."
+    },
+    "get_buffer": {
+      "brief": "Returns the `GtkTextBuffer` being displayed by this text view.",
+      "file": "gtk/gtktextview.c",
+      "line": 2459,
+      "md": "Returns the `GtkTextBuffer` being displayed by this text view.\n\nThe reference count on the buffer is not incremented; the caller\nof this function won’t own a new reference."
+    },
+    "get_cursor_locations": {
+      "brief": "Determine the positions of the strong and weak cursors if the insertion point is at `iter`.",
+      "file": "gtk/gtktextview.c",
+      "line": 2478,
+      "md": "Determine the positions of the strong and weak cursors if the\ninsertion point is at `iter`.\n\nThe position of each cursor is stored as a zero-width rectangle.\nThe strong cursor location is the location where characters of\nthe directionality equal to the base direction of the paragraph\nare inserted. The weak cursor location is the location where\ncharacters of the directionality opposite to the base direction\nof the paragraph are inserted.\n\nIf `iter` is `NULL`, the actual cursor position is used.\n\nNote that if `iter` happens to be the actual cursor position, and\nthere is currently an IM preedit sequence being entered, the\nreturned locations will be adjusted to account for the preedit\ncursor’s offset within the preedit sequence.\n\nThe rectangle position is in buffer coordinates; use\n[`TextView.buffer_to_window_coords()`](xref:gtk:Gtk.TextView#method:buffer_to_window_coords) to convert these\ncoordinates to coordinates for one of the windows in the text view."
+    },
+    "get_cursor_visible": {
+      "brief": "Find out whether the cursor should be displayed.",
+      "file": "gtk/gtktextview.c",
+      "line": 4079,
+      "md": "Find out whether the cursor should be displayed."
+    },
+    "get_editable": {
+      "brief": "Returns the default editability of the `GtkTextView`.",
+      "file": "gtk/gtktextview.c",
+      "line": 3496,
+      "md": "Returns the default editability of the `GtkTextView`.\n\nTags in the buffer may override this setting for some ranges of text."
+    },
+    "get_extra_menu": {
+      "brief": "Gets the menu model that gets added to the context menu or `NULL` if none has been set.",
+      "file": "gtk/gtktextview.c",
+      "line": 10557,
+      "md": "Gets the menu model that gets added to the context menu\nor `NULL` if none has been set."
+    },
+    "get_gutter": {
+      "brief": "Gets a `GtkWidget` that has previously been set as gutter.",
+      "file": "gtk/gtktextview.c",
+      "line": 4750,
+      "md": "Gets a `GtkWidget` that has previously been set as gutter.\n\nSee [`TextView.set_gutter()`](xref:gtk:Gtk.TextView#method:set_gutter).\n\n`win` must be one of %GTK_TEXT_WINDOW_LEFT, %GTK_TEXT_WINDOW_RIGHT,\n%GTK_TEXT_WINDOW_TOP, or %GTK_TEXT_WINDOW_BOTTOM."
+    },
+    "get_indent": {
+      "brief": "Gets the default indentation of paragraphs in `text_view`.",
+      "file": "gtk/gtktextview.c",
+      "line": 3952,
+      "md": "Gets the default indentation of paragraphs in `text_view`.\n\nTags in the view’s buffer may override the default.\nThe indentation may be negative."
+    },
+    "get_input_hints": {
+      "brief": "Gets the `input-hints` of the `GtkTextView`.",
+      "file": "gtk/gtktextview.c",
+      "line": 10397,
+      "md": "Gets the `input-hints` of the `GtkTextView`."
+    },
+    "get_input_purpose": {
+      "brief": "Gets the `input-purpose` of the `GtkTextView`.",
+      "file": "gtk/gtktextview.c",
+      "line": 10347,
+      "md": "Gets the `input-purpose` of the `GtkTextView`."
+    },
+    "get_iter_at_location": {
+      "brief": "Retrieves the iterator at buffer coordinates `x` and `y`.",
+      "file": "gtk/gtktextview.c",
+      "line": 2530,
+      "md": "Retrieves the iterator at buffer coordinates `x` and `y`.\n\nBuffer coordinates are coordinates for the entire buffer, not just\nthe currently-displayed portion. If you have coordinates from an\nevent, you have to convert those to buffer coordinates with\n[`TextView.window_to_buffer_coords()`](xref:gtk:Gtk.TextView#method:window_to_buffer_coords)."
+    },
+    "get_iter_at_position": {
+      "brief": "Retrieves the iterator pointing to the character at buffer coordinates `x` and `y`.",
+      "file": "gtk/gtktextview.c",
+      "line": 2560,
+      "md": "Retrieves the iterator pointing to the character at buffer\ncoordinates `x` and `y`.\n\nBuffer coordinates are coordinates for the entire buffer, not just\nthe currently-displayed portion. If you have coordinates from an event,\nyou have to convert those to buffer coordinates with\n[`TextView.window_to_buffer_coords()`](xref:gtk:Gtk.TextView#method:window_to_buffer_coords).\n\nNote that this is different from [`TextView.get_iter_at_location()`](xref:gtk:Gtk.TextView#method:get_iter_at_location),\nwhich returns cursor locations, i.e. positions between characters."
+    },
+    "get_iter_location": {
+      "brief": "Gets a rectangle which roughly contains the character at `iter`.",
+      "file": "gtk/gtktextview.c",
+      "line": 2599,
+      "md": "Gets a rectangle which roughly contains the character at `iter`.\n\nThe rectangle position is in buffer coordinates; use\n[`TextView.buffer_to_window_coords()`](xref:gtk:Gtk.TextView#method:buffer_to_window_coords) to convert these\ncoordinates to coordinates for one of the windows in the text view."
+    },
+    "get_justification": {
+      "brief": "Gets the default justification of paragraphs in `text_view`.",
+      "file": "gtk/gtktextview.c",
+      "line": 3703,
+      "md": "Gets the default justification of paragraphs in `text_view`.\n\nTags in the buffer may override the default."
+    },
+    "get_left_margin": {
+      "brief": "Gets the default left margin size of paragraphs in the `text_view`.",
+      "file": "gtk/gtktextview.c",
+      "line": 3755,
+      "md": "Gets the default left margin size of paragraphs in the `text_view`.\n\nTags in the buffer may override the default."
+    },
+    "get_line_at_y": {
+      "brief": "Gets the `GtkTextIter` at the start of the line containing the coordinate `y`.",
+      "file": "gtk/gtktextview.c",
+      "line": 2654,
+      "md": "Gets the `GtkTextIter` at the start of the line containing\nthe coordinate `y`.\n\n`y` is in buffer coordinates, convert from window coordinates with\n[`TextView.window_to_buffer_coords()`](xref:gtk:Gtk.TextView#method:window_to_buffer_coords). If non-`NULL`,\n`line_top` will be filled with the coordinate of the top edge\nof the line."
+    },
+    "get_line_yrange": {
+      "brief": "Gets the y coordinate of the top of the line containing `iter`, and the height of the line.",
+      "file": "gtk/gtktextview.c",
+      "line": 2624,
+      "md": "Gets the y coordinate of the top of the line containing `iter`,\nand the height of the line.\n\nThe coordinate is a buffer coordinate; convert to window\ncoordinates with [`TextView.buffer_to_window_coords()`](xref:gtk:Gtk.TextView#method:buffer_to_window_coords)."
+    },
+    "get_ltr_context": {
+      "brief": "Gets the `PangoContext` that is used for rendering LTR directed text layouts.",
+      "file": "gtk/gtktextview.c",
+      "line": 10628,
+      "md": "Gets the `PangoContext` that is used for rendering LTR directed\ntext layouts.\n\nThe context may be replaced when CSS changes occur.",
+      "since": "4.4"
+    },
+    "get_monospace": {
+      "brief": "Gets whether the `GtkTextView` uses monospace styling.",
+      "file": "gtk/gtktextview.c",
+      "line": 10448,
+      "md": "Gets whether the `GtkTextView` uses monospace styling."
+    },
+    "get_overwrite": {
+      "brief": "Returns whether the `GtkTextView` is in overwrite mode or not.",
+      "file": "gtk/gtktextview.c",
+      "line": 7446,
+      "md": "Returns whether the `GtkTextView` is in overwrite mode or not."
+    },
+    "get_pixels_above_lines": {
+      "brief": "Gets the default number of pixels to put above paragraphs.",
+      "file": "gtk/gtktextview.c",
+      "line": 3547,
+      "md": "Gets the default number of pixels to put above paragraphs.\n\nAdding this function with [`TextView.get_pixels_below_lines()`](xref:gtk:Gtk.TextView#method:get_pixels_below_lines)\nis equal to the line space between each paragraph."
+    },
+    "get_pixels_below_lines": {
+      "brief": "Gets the default number of pixels to put below paragraphs.",
+      "file": "gtk/gtktextview.c",
+      "line": 3600,
+      "md": "Gets the default number of pixels to put below paragraphs.\n\nThe line space is the sum of the value returned by this function and\nthe value returned by [`TextView.get_pixels_above_lines()`](xref:gtk:Gtk.TextView#method:get_pixels_above_lines)."
+    },
+    "get_pixels_inside_wrap": {
+      "brief": "Gets the default number of pixels to put between wrapped lines inside a paragraph.",
+      "file": "gtk/gtktextview.c",
+      "line": 3653,
+      "md": "Gets the default number of pixels to put between wrapped lines\ninside a paragraph."
+    },
+    "get_right_margin": {
+      "brief": "Gets the default right margin for text in `text_view`.",
+      "file": "gtk/gtktextview.c",
+      "line": 3807,
+      "md": "Gets the default right margin for text in `text_view`.\n\nTags in the buffer may override the default."
+    },
+    "get_rtl_context": {
+      "brief": "Gets the `PangoContext` that is used for rendering RTL directed text layouts.",
+      "file": "gtk/gtktextview.c",
+      "line": 10651,
+      "md": "Gets the `PangoContext` that is used for rendering RTL directed\ntext layouts.\n\nThe context may be replaced when CSS changes occur.",
+      "since": "4.4"
+    },
+    "get_tabs": {
+      "brief": "Gets the default tabs for `text_view`.",
+      "file": "gtk/gtktextview.c",
+      "line": 4010,
+      "md": "Gets the default tabs for `text_view`.\n\nTags in the buffer may override the defaults. The returned array\nwill be `NULL` if “standard” (8-space) tabs are used. Free the\nreturn value with [`TabArray.free()`](xref:gtk:Pango.TabArray#method:free)."
+    },
+    "get_top_margin": {
+      "brief": "Gets the top margin for text in the `text_view`.",
+      "file": "gtk/gtktextview.c",
+      "line": 3858,
+      "md": "Gets the top margin for text in the `text_view`."
+    },
+    "get_visible_offset": {
+      "brief": "Gets the X,Y offset in buffer coordinates of the top-left corner of the textview's text contents.",
+      "file": "gtk/gtktextview.c",
+      "line": 3359,
+      "md": "Gets the X,Y offset in buffer coordinates of the top-left corner of\nthe textview's text contents.\n\nThis allows for more-precise positioning than what is provided by\n[`TextView.get_visible_rect()`](xref:gtk:Gtk.TextView#method:get_visible_rect) as you can discover what\ndevice pixel is being quantized for text positioning.\n\nYou might want this when making ulterior widgets align with quantized\ndevice pixels of the textview contents such as line numbers.",
+      "since": "4.18"
+    },
+    "get_visible_rect": {
+      "brief": "Fills `visible_rect` with the currently-visible region of the buffer, in buffer coordinates.",
+      "file": "gtk/gtktextview.c",
+      "line": 3323,
+      "md": "Fills `visible_rect` with the currently-visible\nregion of the buffer, in buffer coordinates.\n\nConvert to window coordinates with\n[`TextView.buffer_to_window_coords()`](xref:gtk:Gtk.TextView#method:buffer_to_window_coords)."
+    },
+    "get_wrap_mode": {
+      "brief": "Gets the line wrapping for the view.",
+      "file": "gtk/gtktextview.c",
+      "line": 3422,
+      "md": "Gets the line wrapping for the view."
+    },
+    "im_context_filter_keypress": {
+      "brief": "Allow the `GtkTextView` input method to internally handle key press and release events.",
+      "file": "gtk/gtktextview.c",
+      "line": 8378,
+      "md": "Allow the `GtkTextView` input method to internally handle key press\nand release events.\n\nIf this function returns `TRUE`, then no further processing should be\ndone for this key event. See [`IMContext.filter_keypress()`](xref:gtk:Gtk.IMContext#method:filter_keypress).\n\nNote that you are expected to call this function from your handler\nwhen overriding key event handling. This is needed in the case when\nyou need to insert your own key handling between the input method\nand the default key event handling of the `GtkTextView`.\n\n```c\nstatic gboolean\ngtk_foo_bar_key_press_event (GtkWidget *widget,\n                             GdkEvent  *event)\n{\n  guint keyval;\n\n  gdk_event_get_keyval ((GdkEvent*)event, &keyval);\n\n  if (keyval == GDK_KEY_Return || keyval == GDK_KEY_KP_Enter)\n    {\n      if (gtk_text_view_im_context_filter_keypress (GTK_TEXT_VIEW (widget), event))\n        return TRUE;\n    }\n\n  // Do some stuff\n\n  return GTK_WIDGET_CLASS (gtk_foo_bar_parent_class)->key_press_event (widget, event);\n}\n```"
+    },
+    "move_mark_onscreen": {
+      "brief": "Moves a mark within the buffer so that it's located within the currently-visible text area.",
+      "file": "gtk/gtktextview.c",
+      "line": 3293,
+      "md": "Moves a mark within the buffer so that it's\nlocated within the currently-visible text area."
+    },
+    "move_overlay": {
+      "brief": "Updates the position of a child.",
+      "file": "gtk/gtktextview.c",
+      "line": 10116,
+      "md": "Updates the position of a child.\n\nSee [`TextView.add_overlay()`](xref:gtk:Gtk.TextView#method:add_overlay)."
+    },
+    "move_visually": {
+      "brief": "Move the iterator a given number of characters visually, treating it as the strong cursor position.",
+      "file": "gtk/gtktextview.c",
+      "line": 10285,
+      "md": "Move the iterator a given number of characters visually, treating\nit as the strong cursor position.\n\nIf `count` is positive, then the new strong cursor position will\nbe `count` positions to the right of the old cursor position.\nIf `count` is negative then the new strong cursor position will\nbe `count` positions to the left of the old cursor position.\n\nIn the presence of bi-directional text, the correspondence\nbetween logical and visual order will depend on the direction\nof the current run, and there may be jumps when the cursor\nis moved off of the end of a run."
+    },
+    "place_cursor_onscreen": {
+      "brief": "Moves the cursor to the currently visible region of the buffer.",
+      "file": "gtk/gtktextview.c",
+      "line": 4117,
+      "md": "Moves the cursor to the currently visible region of the\nbuffer."
+    },
+    "remove": {
+      "brief": "Removes a child widget from `text_view`.",
+      "file": "gtk/gtktextview.c",
+      "line": 6235,
+      "md": "Removes a child widget from `text_view`."
+    },
+    "reset_cursor_blink": {
+      "brief": "Ensures that the cursor is shown.",
+      "file": "gtk/gtktextview.c",
+      "line": 4095,
+      "md": "Ensures that the cursor is shown.\n\nThis also resets the time that it will stay blinking (or\nvisible, in case blinking is disabled).\n\nThis function should be called in response to user input\n(e.g. from derived classes that override the textview's\nevent handlers)."
+    },
+    "reset_im_context": {
+      "brief": "Reset the input method context of the text view if needed.",
+      "file": "gtk/gtktextview.c",
+      "line": 8357,
+      "md": "Reset the input method context of the text view if needed.\n\nThis can be necessary in the case where modifying the buffer\nwould confuse on-going input method behavior."
+    },
+    "scroll_mark_onscreen": {
+      "brief": "Scrolls `text_view` the minimum distance such that `mark` is contained within the visible area of the widget.",
+      "file": "gtk/gtktextview.c",
+      "line": 3259,
+      "md": "Scrolls `text_view` the minimum distance such that `mark` is contained\nwithin the visible area of the widget."
+    },
+    "scroll_to_iter": {
+      "brief": "Scrolls `text_view` so that `iter` is on the screen in the position indicated by `xalign` and `yalign`.",
+      "file": "gtk/gtktextview.c",
+      "line": 2901,
+      "md": "Scrolls `text_view` so that `iter` is on the screen in the position\nindicated by `xalign` and `yalign`.\n\nAn alignment of 0.0 indicates left or top, 1.0 indicates right or\nbottom, 0.5 means center. If `use_align` is `FALSE`, the text scrolls\nthe minimal distance to get the mark onscreen, possibly not scrolling\nat all. The effective screen for purposes of this function is reduced\nby a margin of size `within_margin`.\n\nNote that this function uses the currently-computed height of the\nlines in the text buffer. Line heights are computed in an idle\nhandler; so this function may not have the desired effect if it’s\ncalled before the height computations. To avoid oddness, consider\nusing [`TextView.scroll_to_mark()`](xref:gtk:Gtk.TextView#method:scroll_to_mark) which saves a point to be\nscrolled to after line validation."
+    },
+    "scroll_to_mark": {
+      "brief": "Scrolls `text_view` so that `mark` is on the screen in the position indicated by `xalign` and `yalign`.",
+      "file": "gtk/gtktextview.c",
+      "line": 3207,
+      "md": "Scrolls `text_view` so that `mark` is on the screen in the position\nindicated by `xalign` and `yalign`.\n\nAn alignment of 0.0 indicates left or top, 1.0 indicates right or\nbottom, 0.5 means center. If `use_align` is `FALSE`, the text scrolls\nthe minimal distance to get the mark onscreen, possibly not scrolling\nat all. The effective screen for purposes of this function is reduced\nby a margin of size `within_margin`."
+    },
+    "set_accepts_tab": {
+      "brief": "Sets the behavior of the text widget when the <kbd>Tab</kbd> key is pressed.",
+      "file": "gtk/gtktextview.c",
+      "line": 7480,
+      "md": "Sets the behavior of the text widget when the <kbd>Tab</kbd> key is pressed.\n\nIf `accepts_tab` is `TRUE`, a tab character is inserted. If `accepts_tab`\nis `FALSE` the keyboard focus is moved to the next widget in the focus\nchain.\n\nFocus can always be moved using <kbd>Ctrl</kbd>+<kbd>Tab</kbd>."
+    },
+    "set_bottom_margin": {
+      "brief": "Sets the bottom margin for text in `text_view`.",
+      "file": "gtk/gtktextview.c",
+      "line": 3874,
+      "md": "Sets the bottom margin for text in `text_view`.\n\nNote that this function is confusingly named.\nIn CSS terms, the value set here is padding."
+    },
+    "set_buffer": {
+      "brief": "Sets `buffer` as the buffer being displayed by `text_view`.",
+      "file": "gtk/gtktextview.c",
+      "line": 2300,
+      "md": "Sets `buffer` as the buffer being displayed by `text_view`.\n\nThe previous buffer displayed by the text view is unreferenced, and\na reference is added to `buffer`. If you owned a reference to `buffer`\nbefore passing it to this function, you must remove that reference\nyourself; `GtkTextView` will not “adopt” it."
+    },
+    "set_cursor_visible": {
+      "brief": "Toggles whether the insertion point should be displayed.",
+      "file": "gtk/gtktextview.c",
+      "line": 4038,
+      "md": "Toggles whether the insertion point should be displayed.\n\nA buffer with no editable text probably shouldn’t have a visible\ncursor, so you may want to turn the cursor off.\n\nNote that this property may be overridden by the\n[`Settings:gtk-keynav-use-caret`](xref:gtk:Gtk.Settings#property:gtk-keynav-use-caret) setting."
+    },
+    "set_editable": {
+      "brief": "Sets the default editability of the `GtkTextView`.",
+      "file": "gtk/gtktextview.c",
+      "line": 3438,
+      "md": "Sets the default editability of the `GtkTextView`.\n\nYou can override this default setting with tags in the buffer,\nusing the “editable” attribute of tags."
+    },
+    "set_extra_menu": {
+      "brief": "Sets a menu model to add when constructing the context menu for `text_view`.",
+      "file": "gtk/gtktextview.c",
+      "line": 10532,
+      "md": "Sets a menu model to add when constructing the context\nmenu for `text_view`.\n\nYou can pass `NULL` to remove a previously set extra menu."
+    },
+    "set_gutter": {
+      "brief": "Places `widget` into the gutter specified by `win`.",
+      "file": "gtk/gtktextview.c",
+      "line": 4784,
+      "md": "Places `widget` into the gutter specified by `win`.\n\n`win` must be one of %GTK_TEXT_WINDOW_LEFT, %GTK_TEXT_WINDOW_RIGHT,\n%GTK_TEXT_WINDOW_TOP, or %GTK_TEXT_WINDOW_BOTTOM."
+    },
+    "set_indent": {
+      "brief": "Sets the default indentation for paragraphs in `text_view`.",
+      "file": "gtk/gtktextview.c",
+      "line": 3919,
+      "md": "Sets the default indentation for paragraphs in `text_view`.\n\nTags in the buffer may override the default."
+    },
+    "set_input_hints": {
+      "brief": "Sets the `input-hints` of the `GtkTextView`.",
+      "file": "gtk/gtktextview.c",
+      "line": 10369,
+      "md": "Sets the `input-hints` of the `GtkTextView`.\n\nThe `input-hints` allow input methods to fine-tune\ntheir behaviour."
+    },
+    "set_input_purpose": {
+      "brief": "Sets the `input-purpose` of the `GtkTextView`.",
+      "file": "gtk/gtktextview.c",
+      "line": 10320,
+      "md": "Sets the `input-purpose` of the `GtkTextView`.\n\nThe `input-purpose` can be used by on-screen keyboards\nand other input methods to adjust their behaviour."
+    },
+    "set_justification": {
+      "brief": "Sets the default justification of text in `text_view`.",
+      "file": "gtk/gtktextview.c",
+      "line": 3670,
+      "md": "Sets the default justification of text in `text_view`.\n\nTags in the view’s buffer may override the default."
+    },
+    "set_left_margin": {
+      "brief": "Sets the default left margin for text in `text_view`.",
+      "file": "gtk/gtktextview.c",
+      "line": 3721,
+      "md": "Sets the default left margin for text in `text_view`.\n\nTags in the buffer may override the default.\n\nNote that this function is confusingly named.\nIn CSS terms, the value set here is padding."
+    },
+    "set_monospace": {
+      "brief": "Sets whether the `GtkTextView` should display text in monospace styling.",
+      "file": "gtk/gtktextview.c",
+      "line": 10419,
+      "md": "Sets whether the `GtkTextView` should display text in\nmonospace styling."
+    },
+    "set_overwrite": {
+      "brief": "Changes the `GtkTextView` overwrite mode.",
+      "file": "gtk/gtktextview.c",
+      "line": 7462,
+      "md": "Changes the `GtkTextView` overwrite mode."
+    },
+    "set_pixels_above_lines": {
+      "brief": "Sets the default number of blank pixels above paragraphs in `text_view`.",
+      "file": "gtk/gtktextview.c",
+      "line": 3514,
+      "md": "Sets the default number of blank pixels above paragraphs in `text_view`.\n\nTags in the buffer for `text_view` may override the defaults."
+    },
+    "set_pixels_below_lines": {
+      "brief": "Sets the default number of pixels of blank space to put below paragraphs in `text_view`.",
+      "file": "gtk/gtktextview.c",
+      "line": 3566,
+      "md": "Sets the default number of pixels of blank space\nto put below paragraphs in `text_view`.\n\nMay be overridden by tags applied to `text_view`’s buffer."
+    },
+    "set_pixels_inside_wrap": {
+      "brief": "Sets the default number of pixels of blank space to leave between display/wrapped lines within a paragraph.",
+      "file": "gtk/gtktextview.c",
+      "line": 3619,
+      "md": "Sets the default number of pixels of blank space to leave between\ndisplay/wrapped lines within a paragraph.\n\nMay be overridden by tags in `text_view`’s buffer."
+    },
+    "set_right_margin": {
+      "brief": "Sets the default right margin for text in the text view.",
+      "file": "gtk/gtktextview.c",
+      "line": 3773,
+      "md": "Sets the default right margin for text in the text view.\n\nTags in the buffer may override the default.\n\nNote that this function is confusingly named.\nIn CSS terms, the value set here is padding."
+    },
+    "set_tabs": {
+      "brief": "Sets the default tab stops for paragraphs in `text_view`.",
+      "file": "gtk/gtktextview.c",
+      "line": 3971,
+      "md": "Sets the default tab stops for paragraphs in `text_view`.\n\nTags in the buffer may override the default."
+    },
+    "set_top_margin": {
+      "brief": "Sets the top margin for text in `text_view`.",
+      "file": "gtk/gtktextview.c",
+      "line": 3825,
+      "md": "Sets the top margin for text in `text_view`.\n\nNote that this function is confusingly named.\nIn CSS terms, the value set here is padding."
+    },
+    "set_wrap_mode": {
+      "brief": "Sets the line wrapping for the view.",
+      "file": "gtk/gtktextview.c",
+      "line": 3392,
+      "md": "Sets the line wrapping for the view."
+    },
+    "starts_display_line": {
+      "brief": "Determines whether `iter` is at the start of a display line.",
+      "file": "gtk/gtktextview.c",
+      "line": 10261,
+      "md": "Determines whether `iter` is at the start of a display line.\n\nSee [`TextView.forward_display_line()`](xref:gtk:Gtk.TextView#method:forward_display_line) for an\nexplanation of display lines vs. paragraphs."
+    },
+    "window_to_buffer_coords": {
+      "brief": "Converts coordinates on the window identified by `win` to buffer coordinates.",
+      "file": "gtk/gtktextview.c",
+      "line": 9917,
+      "md": "Converts coordinates on the window identified by `win` to buffer\ncoordinates."
+    }
+  },
+  "properties": {
+    "accepts-tab": {
+      "brief": "Whether Tab will result in a tab character being entered.",
+      "file": "gtk/gtktextview.c",
+      "line": 1138,
+      "md": "Whether Tab will result in a tab character being entered."
+    },
+    "bottom-margin": {
+      "brief": "The bottom margin for text in the text view.",
+      "file": "gtk/gtktextview.c",
+      "line": 1061,
+      "md": "The bottom margin for text in the text view.\n\nNote that this property is confusingly named. In CSS terms,\nthe value set here is padding, and it is applied in addition\nto the padding from the theme.\n\nDon't confuse this property with [`Widget:margin-bottom`](xref:gtk:Gtk.Widget#property:margin-bottom)."
+    },
+    "buffer": {
+      "brief": "The buffer which is displayed.",
+      "file": "gtk/gtktextview.c",
+      "line": 1116,
+      "md": "The buffer which is displayed."
+    },
+    "cursor-visible": {
+      "brief": "If the insertion cursor is shown.",
+      "file": "gtk/gtktextview.c",
+      "line": 1105,
+      "md": "If the insertion cursor is shown."
+    },
+    "editable": {
+      "brief": "Whether the text can be modified by the user.",
+      "file": "gtk/gtktextview.c",
+      "line": 975,
+      "md": "Whether the text can be modified by the user."
+    },
+    "extra-menu": {
+      "brief": "A menu model whose contents will be appended to the context menu.",
+      "file": "gtk/gtktextview.c",
+      "line": 1209,
+      "md": "A menu model whose contents will be appended to the context menu."
+    },
+    "im-module": {
+      "brief": "Which IM (input method) module should be used for this text_view.",
+      "file": "gtk/gtktextview.c",
+      "line": 1149,
+      "md": "Which IM (input method) module should be used for this text_view.\n\nSee [`IMMulticontext`](xref:gtk:Gtk.IMMulticontext).\n\nSetting this to a non-`NULL` value overrides the system-wide IM module\nsetting. See the GtkSettings [`Settings:gtk-im-module`](xref:gtk:Gtk.Settings#property:gtk-im-module) property."
+    },
+    "indent": {
+      "brief": "Amount to indent the paragraph, in pixels.",
+      "file": "gtk/gtktextview.c",
+      "line": 1078,
+      "md": "Amount to indent the paragraph, in pixels.\n\nA negative value of indent will produce a hanging indentation.\nThat is, the first line will have the full width, and subsequent\nlines will be indented by the absolute value of indent."
+    },
+    "input-hints": {
+      "brief": "Additional hints (beyond [`TextView:input-purpose`](xref:gtk:Gtk.TextView#property:input-purpose)) that allow input methods to fine-tune their behaviour.",
+      "file": "gtk/gtktextview.c",
+      "line": 1181,
+      "md": "Additional hints (beyond [`TextView:input-purpose`](xref:gtk:Gtk.TextView#property:input-purpose))\nthat allow input methods to fine-tune their behaviour."
+    },
+    "input-purpose": {
+      "brief": "The purpose of this text field.",
+      "file": "gtk/gtktextview.c",
+      "line": 1165,
+      "md": "The purpose of this text field.\n\nThis property can be used by on-screen keyboards and other input\nmethods to adjust their behaviour."
+    },
+    "justification": {
+      "brief": "Left, right, or center justification.",
+      "file": "gtk/gtktextview.c",
+      "line": 998,
+      "md": "Left, right, or center justification."
+    },
+    "left-margin": {
+      "brief": "The default left margin for text in the text view.",
+      "file": "gtk/gtktextview.c",
+      "line": 1010,
+      "md": "The default left margin for text in the text view.\n\nTags in the buffer may override the default.\n\nNote that this property is confusingly named. In CSS terms,\nthe value set here is padding, and it is applied in addition\nto the padding from the theme."
+    },
+    "monospace": {
+      "brief": "Whether text should be displayed in a monospace font.",
+      "file": "gtk/gtktextview.c",
+      "line": 1195,
+      "md": "Whether text should be displayed in a monospace font.\n\nIf `TRUE`, set the .monospace style class on the\ntext view to indicate that a monospace font is desired."
+    },
+    "overwrite": {
+      "brief": "Whether entered text overwrites existing contents.",
+      "file": "gtk/gtktextview.c",
+      "line": 1127,
+      "md": "Whether entered text overwrites existing contents."
+    },
+    "pixels-above-lines": {
+      "brief": "Pixels of blank space above paragraphs.",
+      "file": "gtk/gtktextview.c",
+      "line": 942,
+      "md": "Pixels of blank space above paragraphs."
+    },
+    "pixels-below-lines": {
+      "brief": "Pixels of blank space below paragraphs.",
+      "file": "gtk/gtktextview.c",
+      "line": 953,
+      "md": "Pixels of blank space below paragraphs."
+    },
+    "pixels-inside-wrap": {
+      "brief": "Pixels of blank space between wrapped lines in a paragraph.",
+      "file": "gtk/gtktextview.c",
+      "line": 964,
+      "md": "Pixels of blank space between wrapped lines in a paragraph."
+    },
+    "right-margin": {
+      "brief": "The default right margin for text in the text view.",
+      "file": "gtk/gtktextview.c",
+      "line": 1027,
+      "md": "The default right margin for text in the text view.\n\nTags in the buffer may override the default.\n\nNote that this property is confusingly named. In CSS terms,\nthe value set here is padding, and it is applied in addition\nto the padding from the theme."
+    },
+    "tabs": {
+      "brief": "Custom tabs for this text.",
+      "file": "gtk/gtktextview.c",
+      "line": 1094,
+      "md": "Custom tabs for this text."
+    },
+    "top-margin": {
+      "brief": "The top margin for text in the text view.",
+      "file": "gtk/gtktextview.c",
+      "line": 1044,
+      "md": "The top margin for text in the text view.\n\nNote that this property is confusingly named. In CSS terms,\nthe value set here is padding, and it is applied in addition\nto the padding from the theme.\n\nDon't confuse this property with [`Widget:margin-top`](xref:gtk:Gtk.Widget#property:margin-top)."
+    },
+    "wrap-mode": {
+      "brief": "Whether to wrap lines never, at word boundaries, or at character boundaries.",
+      "file": "gtk/gtktextview.c",
+      "line": 986,
+      "md": "Whether to wrap lines never, at word boundaries, or at character boundaries."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "backspace": {
+      "brief": "Gets emitted when the user asks for it.",
+      "file": "gtk/gtktextview.c",
+      "line": 1382,
+      "md": "Gets emitted when the user asks for it.\n\nThe ::backspace signal is a [keybinding signal](class.SignalAction.html).\n\nThe default bindings for this signal are\n<kbd>Backspace</kbd> and <kbd>Shift</kbd>+<kbd>Backspace</kbd>."
+    },
+    "copy-clipboard": {
+      "brief": "Gets emitted to copy the selection to the clipboard.",
+      "file": "gtk/gtktextview.c",
+      "line": 1423,
+      "md": "Gets emitted to copy the selection to the clipboard.\n\nThe ::copy-clipboard signal is a [keybinding signal](class.SignalAction.html).\n\nThe default bindings for this signal are\n<kbd>Ctrl</kbd>+<kbd>c</kbd> and\n<kbd>Ctrl</kbd>+<kbd>Insert</kbd>."
+    },
+    "cut-clipboard": {
+      "brief": "Gets emitted to cut the selection to the clipboard.",
+      "file": "gtk/gtktextview.c",
+      "line": 1402,
+      "md": "Gets emitted to cut the selection to the clipboard.\n\nThe ::cut-clipboard signal is a [keybinding signal](class.SignalAction.html).\n\nThe default bindings for this signal are\n<kbd>Ctrl</kbd>+<kbd>x</kbd> and\n<kbd>Shift</kbd>+<kbd>Delete</kbd>."
+    },
+    "delete-from-cursor": {
+      "brief": "Gets emitted when the user initiates a text deletion.",
+      "file": "gtk/gtktextview.c",
+      "line": 1349,
+      "md": "Gets emitted when the user initiates a text deletion.\n\nThe ::delete-from-cursor signal is a [keybinding signal](class.SignalAction.html).\n\nIf the `type` is %GTK_DELETE_CHARS, GTK deletes the selection\nif there is one, otherwise it deletes the requested number\nof characters.\n\nThe default bindings for this signal are <kbd>Delete</kbd> for\ndeleting a character, <kbd>Ctrl</kbd>+<kbd>Delete</kbd> for\ndeleting a word and <kbd>Ctrl</kbd>+<kbd>Backspace</kbd> for\ndeleting a word backwards."
+    },
+    "extend-selection": {
+      "brief": "Emitted when the selection needs to be extended at `location`.",
+      "file": "gtk/gtktextview.c",
+      "line": 1553,
+      "md": "Emitted when the selection needs to be extended at `location`."
+    },
+    "insert-at-cursor": {
+      "brief": "Gets emitted when the user initiates the insertion of a fixed string at the cursor.",
+      "file": "gtk/gtktextview.c",
+      "line": 1327,
+      "md": "Gets emitted when the user initiates the insertion of a\nfixed string at the cursor.\n\nThe ::insert-at-cursor signal is a [keybinding signal](class.SignalAction.html).\n\nThis signal has no default bindings."
+    },
+    "insert-emoji": {
+      "brief": "Gets emitted to present the Emoji chooser for the `text_view`.",
+      "file": "gtk/gtktextview.c",
+      "line": 1582,
+      "md": "Gets emitted to present the Emoji chooser for the `text_view`.\n\nThe ::insert-emoji signal is a [keybinding signal](class.SignalAction.html).\n\nThe default bindings for this signal are\n<kbd>Ctrl</kbd>+<kbd>.</kbd> and\n<kbd>Ctrl</kbd>+<kbd>;</kbd>"
+    },
+    "move-cursor": {
+      "brief": "Gets emitted when the user initiates a cursor movement.",
+      "file": "gtk/gtktextview.c",
+      "line": 1230,
+      "md": "Gets emitted when the user initiates a cursor movement.\n\nThe ::move-cursor signal is a [keybinding signal](class.SignalAction.html).\nIf the cursor is not visible in `text_view`, this signal causes\nthe viewport to be moved instead.\n\nApplications should not connect to it, but may emit it with\ng_signal_emit_by_name() if they need to control the cursor\nprogrammatically.\n\nThe default bindings for this signal come in two variants,\nthe variant with the <kbd>Shift</kbd> modifier extends the\nselection, the variant without it does not.\nThere are too many key combinations to list them all here.\n\n- <kbd>←</kbd>, <kbd>→</kbd>, <kbd>↑</kbd>, <kbd>↓</kbd>\n  move by individual characters/lines\n- <kbd>Ctrl</kbd>+<kbd>←</kbd>, etc. move by words/paragraphs\n- <kbd>Home</kbd> and <kbd>End</kbd> move to the ends of the buffer\n- <kbd>PgUp</kbd> and <kbd>PgDn</kbd> move vertically by pages\n- <kbd>Ctrl</kbd>+<kbd>PgUp</kbd> and <kbd>Ctrl</kbd>+<kbd>PgDn</kbd>\n  move horizontally by pages"
+    },
+    "move-viewport": {
+      "brief": "Gets emitted to move the viewport.",
+      "file": "gtk/gtktextview.c",
+      "line": 1276,
+      "md": "Gets emitted to move the viewport.\n\nThe ::move-viewport signal is a [keybinding signal](class.SignalAction.html),\nwhich can be bound to key combinations to allow the user to move the viewport,\ni.e. change what part of the text view is visible in a containing scrolled\nwindow.\n\nThere are no default bindings for this signal."
+    },
+    "paste-clipboard": {
+      "brief": "Gets emitted to paste the contents of the clipboard into the text view.",
+      "file": "gtk/gtktextview.c",
+      "line": 1444,
+      "md": "Gets emitted to paste the contents of the clipboard\ninto the text view.\n\nThe ::paste-clipboard signal is a [keybinding signal](class.SignalAction.html).\n\nThe default bindings for this signal are\n<kbd>Ctrl</kbd>+<kbd>v</kbd> and\n<kbd>Shift</kbd>+<kbd>Insert</kbd>."
+    },
+    "preedit-changed": {
+      "brief": "Emitted when preedit text of the active IM changes.",
+      "file": "gtk/gtktextview.c",
+      "line": 1529,
+      "md": "Emitted when preedit text of the active IM changes.\n\nIf an input method is used, the typed text will not immediately\nbe committed to the buffer. So if you are interested in the text,\nconnect to this signal.\n\nThis signal is only emitted if the text at the given position\nis actually editable."
+    },
+    "select-all": {
+      "brief": "Gets emitted to select or unselect the complete contents of the text view.",
+      "file": "gtk/gtktextview.c",
+      "line": 1485,
+      "md": "Gets emitted to select or unselect the complete contents of the text view.\n\nThe ::select-all signal is a [keybinding signal](class.SignalAction.html).\n\nThe default bindings for this signal are\n<kbd>Ctrl</kbd>+<kbd>a</kbd> and\n<kbd>Ctrl</kbd>+<kbd>/</kbd> for selecting and\n<kbd>Shift</kbd>+<kbd>Ctrl</kbd>+<kbd>a</kbd> and\n<kbd>Ctrl</kbd>+<kbd>\\</kbd> for unselecting."
+    },
+    "set-anchor": {
+      "brief": "Gets emitted when the user initiates settings the \"anchor\" mark.",
+      "file": "gtk/gtktextview.c",
+      "line": 1305,
+      "md": "Gets emitted when the user initiates settings the \"anchor\" mark.\n\nThe ::set-anchor signal is a [keybinding signal](class.SignalAction.html)\nwhich gets emitted when the user initiates setting the \"anchor\"\nmark. The \"anchor\" mark gets placed at the same position as the\n\"insert\" mark.\n\nThis signal has no default bindings."
+    },
+    "toggle-cursor-visible": {
+      "brief": "Gets emitted to toggle the `cursor-visible` property.",
+      "file": "gtk/gtktextview.c",
+      "line": 1509,
+      "md": "Gets emitted to toggle the `cursor-visible` property.\n\nThe ::toggle-cursor-visible signal is a\n[keybinding signal](class.SignalAction.html).\n\nThe default binding for this signal is <kbd>F7</kbd>."
+    },
+    "toggle-overwrite": {
+      "brief": "Gets emitted to toggle the overwrite mode of the text view.",
+      "file": "gtk/gtktextview.c",
+      "line": 1466,
+      "md": "Gets emitted to toggle the overwrite mode of the text view.\n\nThe ::toggle-overwrite signal is a [keybinding signal](class.SignalAction.html).\n\nThe default binding for this signal is <kbd>Insert</kbd>."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "backspace": {
+      "brief": "The class handler for the `GtkTextView::backspace` keybinding signal.",
+      "file": "gtk/gtktextview.h",
+      "line": 127,
+      "md": "The class handler for the `GtkTextView::backspace`\n  keybinding signal."
+    },
+    "copy_clipboard": {
+      "brief": "The class handler for the `GtkTextView::copy-clipboard` keybinding signal.",
+      "file": "gtk/gtktextview.h",
+      "line": 131,
+      "md": "The class handler for the `GtkTextView::copy-clipboard`\n  keybinding signal."
+    },
+    "create_buffer": {
+      "brief": "The create_buffer vfunc is called to create a `GtkTextBuffer` for the text view.",
+      "file": "gtk/gtktextview.h",
+      "line": 137,
+      "md": "The create_buffer vfunc is called to create a `GtkTextBuffer`\n  for the text view. The default implementation is to just call\n  gtk_text_buffer_new()."
+    },
+    "cut_clipboard": {
+      "brief": "The class handler for the `GtkTextView::cut-clipboard` keybinding signal",
+      "file": "gtk/gtktextview.h",
+      "line": 129,
+      "md": "The class handler for the `GtkTextView::cut-clipboard`\n  keybinding signal"
+    },
+    "delete_from_cursor": {
+      "brief": "The class handler for the `GtkTextView::delete-from-cursor` keybinding signal.",
+      "file": "gtk/gtktextview.h",
+      "line": 125,
+      "md": "The class handler for the `GtkTextView::delete-from-cursor`\n  keybinding signal."
+    },
+    "extend_selection": {
+      "brief": "The class handler for the `GtkTextView::extend-selection` signal.",
+      "file": "gtk/gtktextview.h",
+      "line": 145,
+      "md": "The class handler for the `GtkTextView::extend-selection` signal."
+    },
+    "insert_at_cursor": {
+      "brief": "The class handler for the `GtkTextView::insert-at-cursor` keybinding signal.",
+      "file": "gtk/gtktextview.h",
+      "line": 123,
+      "md": "The class handler for the `GtkTextView::insert-at-cursor`\n  keybinding signal."
+    },
+    "insert_emoji": {
+      "brief": "The class handler for the `GtkTextView::insert-emoji` signal.",
+      "file": "gtk/gtktextview.h",
+      "line": 146,
+      "md": "The class handler for the `GtkTextView::insert-emoji` signal."
+    },
+    "move_cursor": {
+      "brief": "The class handler for the `GtkTextView::move-cursor` keybinding signal.",
+      "file": "gtk/gtktextview.h",
+      "line": 119,
+      "md": "The class handler for the `GtkTextView::move-cursor`\n  keybinding signal."
+    },
+    "paste_clipboard": {
+      "brief": "The class handler for the `GtkTextView::paste-clipboard` keybinding signal.",
+      "file": "gtk/gtktextview.h",
+      "line": 133,
+      "md": "The class handler for the `GtkTextView::paste-clipboard`\n  keybinding signal."
+    },
+    "set_anchor": {
+      "brief": "The class handler for the `GtkTextView::set-anchor` keybinding signal.",
+      "file": "gtk/gtktextview.h",
+      "line": 121,
+      "md": "The class handler for the `GtkTextView::set-anchor`\n  keybinding signal."
+    },
+    "snapshot_layer": {
+      "brief": "The snapshot_layer vfunc is called before and after the text view is drawing its own text.",
+      "file": "gtk/gtktextview.h",
+      "line": 140,
+      "md": "The snapshot_layer vfunc is called before and after the text\n  view is drawing its own text. Applications can override this vfunc\n  in a subclass to draw customized content underneath or above the\n  text. In the %GTK_TEXT_VIEW_LAYER_BELOW_TEXT and %GTK_TEXT_VIEW_LAYER_ABOVE_TEXT\n  layers the drawing is done in the buffer coordinate space."
+    },
+    "toggle_overwrite": {
+      "brief": "The class handler for the `GtkTextView::toggle-overwrite` keybinding signal.",
+      "file": "gtk/gtktextview.h",
+      "line": 135,
+      "md": "The class handler for the `GtkTextView::toggle-overwrite`\n  keybinding signal."
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "The level of granularity for the font selection.",
+    "file": "gtk/gtkfontdialogbutton.h",
+    "line": 46,
+    "md": "The level of granularity for the font selection.\n\nDepending on this value, the `PangoFontDescription` that\nis returned by [`FontDialogButton.get_font_desc()`](xref:gtk:Gtk.FontDialogButton#method:get_font_desc)\nwill have more or less fields set.",
+    "since": "4.10"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:FontLevel",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "face": {
+      "brief": "Select a font face (i.e. a family and a style)",
+      "file": "gtk/gtkfontdialogbutton.h",
+      "line": 49,
+      "md": "Select a font face (i.e. a family and a style)"
+    },
+    "family": {
+      "brief": "Select a font family",
+      "file": "gtk/gtkfontdialogbutton.h",
+      "line": 48,
+      "md": "Select a font family"
+    },
+    "features": {
+      "brief": "Select a font and font features",
+      "file": "gtk/gtkfontdialogbutton.h",
+      "line": 51,
+      "md": "Select a font and font features"
+    },
+    "font": {
+      "brief": "Select a font (i.e. a face with a size, and possibly font variations)",
+      "file": "gtk/gtkfontdialogbutton.h",
+      "line": 50,
+      "md": "Select a font (i.e. a face with a size, and possibly font variations)"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

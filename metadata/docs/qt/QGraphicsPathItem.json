@@ -1,0 +1,71 @@
+{
+  "doc": {
+    "brief": "The QGraphicsPathItem class provides a path item that you can add to a [QGraphicsScene](xref:qt:QGraphicsScene).",
+    "index_brief": "Path item that you can add to a QGraphicsScene",
+    "url": "https://doc.qt.io/qt-6/qgraphicspathitem.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsPathItem",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QGraphicsPathItem(QGraphicsItem *parent)": {
+      "brief": "Constructs a QGraphicsPath. *parent* is passed to [QAbstractGraphicsShapeItem](xref:qt:QAbstractGraphicsShapeItem)'s constructor.",
+      "url": "https://doc.qt.io/qt-6/qgraphicspathitem.html#QGraphicsPathItem"
+    },
+    "QGraphicsPathItem(const QPainterPath &path, QGraphicsItem *parent)": {
+      "brief": "Constructs a QGraphicsPath item using *path* as the default path. *parent* is passed to [QAbstractGraphicsShapeItem](xref:qt:QAbstractGraphicsShapeItem)'s constructor.",
+      "url": "https://doc.qt.io/qt-6/qgraphicspathitem.html#QGraphicsPathItem-1"
+    },
+    "QPainterPath opaqueArea() const override": {
+      "brief": "Reimplements: [QAbstractGraphicsShapeItem::opaqueArea](xref:qt:QAbstractGraphicsShapeItem)() const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicspathitem.html#opaqueArea"
+    },
+    "QPainterPath path() const": {
+      "brief": "Returns the item's path as a [QPainterPath](xref:qt:QPainterPath).",
+      "url": "https://doc.qt.io/qt-6/qgraphicspathitem.html#path"
+    },
+    "QPainterPath shape() const override": {
+      "brief": "Reimplements: [QGraphicsItem::shape](xref:qt:QGraphicsItem)() const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicspathitem.html#shape"
+    },
+    "QRectF boundingRect() const override": {
+      "brief": "Reimplements: [QGraphicsItem::boundingRect](xref:qt:QGraphicsItem)() const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicspathitem.html#boundingRect"
+    },
+    "bool contains(const QPointF &point) const override": {
+      "brief": "Reimplements: [QGraphicsItem::contains](xref:qt:QGraphicsItem)(const QPointF &point) const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicspathitem.html#contains"
+    },
+    "bool isObscuredBy(const QGraphicsItem *item) const override": {
+      "brief": "Reimplements: [QAbstractGraphicsShapeItem::isObscuredBy](xref:qt:QAbstractGraphicsShapeItem)(const QGraphicsItem *item) const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicspathitem.html#isObscuredBy"
+    },
+    "int type() const override": {
+      "brief": "Reimplements: [QGraphicsItem::type](xref:qt:QGraphicsItem)() const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicspathitem.html#type"
+    },
+    "void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override": {
+      "brief": "Reimplements: [QGraphicsItem::paint](xref:qt:QGraphicsItem)(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget).",
+      "url": "https://doc.qt.io/qt-6/qgraphicspathitem.html#paint"
+    },
+    "void setPath(const QPainterPath &path)": {
+      "brief": "Sets the item's path to be the given *path*.",
+      "url": "https://doc.qt.io/qt-6/qgraphicspathitem.html#setPath"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

@@ -1,0 +1,236 @@
+{
+  "doc": {
+    "brief": "The QMdiArea widget provides an area in which MDI windows are displayed.",
+    "index_brief": "Area in which MDI windows are displayed",
+    "url": "https://doc.qt.io/qt-6/qmdiarea.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QMdiArea",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QBrush background() const": {
+      "brief": "This property holds the background brush for the workspace",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#background-prop"
+    },
+    "QList<QMdiSubWindow *> subWindowList(QMdiArea::WindowOrder order) const": {
+      "brief": "Returns a list of all subwindows in the MDI area.",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#subWindowList"
+    },
+    "QMdiArea(QWidget *parent)": {
+      "brief": "Constructs an empty mdi area. *parent* is passed to [QWidget](xref:qt:QWidget)'s constructor.",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#QMdiArea"
+    },
+    "QMdiArea::ViewMode viewMode() const": {
+      "brief": "This property holds the way sub-windows are displayed in the [QMdiArea](xref:qt:QMdiArea).",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#viewMode-prop"
+    },
+    "QMdiArea::WindowOrder activationOrder() const": {
+      "brief": "This property holds the ordering criteria for subwindow lists",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#activationOrder-prop"
+    },
+    "QMdiSubWindow * activeSubWindow() const": {
+      "brief": "Returns a pointer to the current active subwindow.",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#activeSubWindow"
+    },
+    "QMdiSubWindow * addSubWindow(QWidget *widget, Qt::WindowFlags windowFlags)": {
+      "brief": "Adds *widget* as a new subwindow to the MDI area.",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#addSubWindow"
+    },
+    "QMdiSubWindow * currentSubWindow() const": {
+      "brief": "Returns a pointer to the current subwindow, or `nullptr` if there is no current subwindow.",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#currentSubWindow"
+    },
+    "QSize minimumSizeHint() const override": {
+      "brief": "Reimplements: [QAbstractScrollArea::minimumSizeHint](xref:qt:QAbstractScrollArea)() const.",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#minimumSizeHint"
+    },
+    "QSize sizeHint() const override": {
+      "brief": "Reimplements: [QAbstractScrollArea::sizeHint](xref:qt:QAbstractScrollArea)() const.",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#sizeHint"
+    },
+    "QTabWidget::TabPosition tabPosition() const": {
+      "brief": "This property holds the position of the tabs in tabbed view mode.",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#tabPosition-prop"
+    },
+    "QTabWidget::TabShape tabShape() const": {
+      "brief": "This property holds the shape of the tabs in tabbed view mode.",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#tabShape-prop"
+    },
+    "bool documentMode() const": {
+      "brief": "This property holds whether the tab bar is set to document mode in tabbed view mode.",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#documentMode-prop"
+    },
+    "bool event(QEvent *event) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::event](xref:qt:QAbstractScrollArea)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#event"
+    },
+    "bool eventFilter(QObject *object, QEvent *event) override": {
+      "brief": "Reimplements: [QObject::eventFilter](xref:qt:QObject)(QObject *watched, QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#eventFilter"
+    },
+    "bool tabsClosable() const": {
+      "brief": "This property holds whether the tab bar should place close buttons on each tab in tabbed view mode.",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#tabsClosable-prop"
+    },
+    "bool tabsMovable() const": {
+      "brief": "This property holds whether the user can move the tabs within the tabbar area in tabbed view mode.",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#tabsMovable-prop"
+    },
+    "bool testOption(QMdiArea::AreaOption option) const": {
+      "brief": "Returns `true` if *option* is enabled; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#testOption"
+    },
+    "bool viewportEvent(QEvent *event) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::viewportEvent](xref:qt:QAbstractScrollArea)(QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#viewportEvent"
+    },
+    "void activateNextSubWindow()": {
+      "brief": "Gives the keyboard focus to another window in the list of child windows.",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#activateNextSubWindow"
+    },
+    "void activatePreviousSubWindow()": {
+      "brief": "Gives the keyboard focus to another window in the list of child windows.",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#activatePreviousSubWindow"
+    },
+    "void cascadeSubWindows()": {
+      "brief": "Arranges all the child windows in a cascade pattern.",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#cascadeSubWindows"
+    },
+    "void childEvent(QChildEvent *childEvent) override": {
+      "brief": "Reimplements: [QObject::childEvent](xref:qt:QObject)(QChildEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#childEvent"
+    },
+    "void closeActiveSubWindow()": {
+      "brief": "Closes the active subwindow.",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#closeActiveSubWindow"
+    },
+    "void closeAllSubWindows()": {
+      "brief": "Closes all subwindows by sending a [QCloseEvent](xref:qt:QCloseEvent) to each window.",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#closeAllSubWindows"
+    },
+    "void paintEvent(QPaintEvent *paintEvent) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::paintEvent](xref:qt:QAbstractScrollArea)(QPaintEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#paintEvent"
+    },
+    "void removeSubWindow(QWidget *widget)": {
+      "brief": "Removes *widget* from the MDI area.",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#removeSubWindow"
+    },
+    "void resizeEvent(QResizeEvent *resizeEvent) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::resizeEvent](xref:qt:QAbstractScrollArea)(QResizeEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#resizeEvent"
+    },
+    "void scrollContentsBy(int dx, int dy) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::scrollContentsBy](xref:qt:QAbstractScrollArea)(int dx, int dy).",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#scrollContentsBy"
+    },
+    "void setActivationOrder(QMdiArea::WindowOrder order)": {
+      "brief": "This property holds the ordering criteria for subwindow lists",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#activationOrder-prop"
+    },
+    "void setActiveSubWindow(QMdiSubWindow *window)": {
+      "brief": "Activates the subwindow *window*.",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#setActiveSubWindow"
+    },
+    "void setBackground(const QBrush &background)": {
+      "brief": "This property holds the background brush for the workspace",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#background-prop"
+    },
+    "void setDocumentMode(bool enabled)": {
+      "brief": "This property holds whether the tab bar is set to document mode in tabbed view mode.",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#documentMode-prop"
+    },
+    "void setOption(QMdiArea::AreaOption option, bool on)": {
+      "brief": "If *on* is true, *option* is enabled on the MDI area; otherwise it is disabled.",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#setOption"
+    },
+    "void setTabPosition(QTabWidget::TabPosition position)": {
+      "brief": "This property holds the position of the tabs in tabbed view mode.",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#tabPosition-prop"
+    },
+    "void setTabShape(QTabWidget::TabShape shape)": {
+      "brief": "This property holds the shape of the tabs in tabbed view mode.",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#tabShape-prop"
+    },
+    "void setTabsClosable(bool closable)": {
+      "brief": "This property holds whether the tab bar should place close buttons on each tab in tabbed view mode.",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#tabsClosable-prop"
+    },
+    "void setTabsMovable(bool movable)": {
+      "brief": "This property holds whether the user can move the tabs within the tabbar area in tabbed view mode.",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#tabsMovable-prop"
+    },
+    "void setViewMode(QMdiArea::ViewMode mode)": {
+      "brief": "This property holds the way sub-windows are displayed in the [QMdiArea](xref:qt:QMdiArea).",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#viewMode-prop"
+    },
+    "void setupViewport(QWidget *viewport) override": {
+      "brief": "Reimplements: [QAbstractScrollArea::setupViewport](xref:qt:QAbstractScrollArea)(QWidget *viewport).",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#setupViewport"
+    },
+    "void showEvent(QShowEvent *showEvent) override": {
+      "brief": "Reimplements: [QWidget::showEvent](xref:qt:QWidget)(QShowEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#showEvent"
+    },
+    "void subWindowActivated(QMdiSubWindow *window)": {
+      "brief": "[QMdiArea](xref:qt:QMdiArea) emits this signal after *window* has been activated.",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#subWindowActivated"
+    },
+    "void tileSubWindows()": {
+      "brief": "Arranges all child windows in a tile pattern.",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#tileSubWindows"
+    },
+    "void timerEvent(QTimerEvent *timerEvent) override": {
+      "brief": "Reimplements: [QObject::timerEvent](xref:qt:QObject)(QTimerEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#timerEvent"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "activationOrder": {
+      "brief": "The ordering criteria for subwindow lists",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#activationOrder-prop"
+    },
+    "background": {
+      "brief": "The background brush for the workspace",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#background-prop"
+    },
+    "documentMode": {
+      "brief": "Whether the tab bar is set to document mode in tabbed view mode",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#documentMode-prop"
+    },
+    "tabPosition": {
+      "brief": "The position of the tabs in tabbed view mode",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#tabPosition-prop"
+    },
+    "tabShape": {
+      "brief": "The shape of the tabs in tabbed view mode",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#tabShape-prop"
+    },
+    "tabsClosable": {
+      "brief": "Whether the tab bar should place close buttons on each tab in tabbed view mode",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#tabsClosable-prop"
+    },
+    "tabsMovable": {
+      "brief": "Whether the user can move the tabs within the tabbar area in tabbed view mode",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#tabsMovable-prop"
+    },
+    "viewMode": {
+      "brief": "The way sub-windows are displayed in the QMdiArea",
+      "url": "https://doc.qt.io/qt-6/qmdiarea.html#viewMode-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

@@ -1,0 +1,230 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkDropDown`.",
+      "file": "gtk/gtkdropdown.c",
+      "line": 897,
+      "md": "Creates a new `GtkDropDown`.\n\nYou may want to call [`DropDown.set_factory()`](xref:gtk:Gtk.DropDown#method:set_factory)\nto set up a way to map its items to widgets."
+    },
+    "new_from_strings": {
+      "brief": "Creates a new `GtkDropDown` that is populated with the strings.",
+      "file": "gtk/gtkdropdown.c",
+      "line": 927,
+      "md": "Creates a new `GtkDropDown` that is populated with\nthe strings."
+    }
+  },
+  "doc": {
+    "brief": "Allows the user to choose an item from a list of options.",
+    "file": "gtk/gtkdropdown.c",
+    "line": 49,
+    "md": "Allows the user to choose an item from a list of options.\n\nThe `GtkDropDown` displays the [selected][`DropDown:selected`](xref:gtk:Gtk.DropDown#property:selected)\nchoice.\n\nThe options are given to `GtkDropDown` in the form of `GListModel`\nand how the individual options are represented is determined by\na [`ListItemFactory`](xref:gtk:Gtk.ListItemFactory). The default factory displays simple strings,\nand adds a checkmark to the selected item in the popup.\n\nTo set your own factory, use [`DropDown.set_factory()`](xref:gtk:Gtk.DropDown#method:set_factory). It is\npossible to use a separate factory for the items in the popup, with\n[`DropDown.set_list_factory()`](xref:gtk:Gtk.DropDown#method:set_list_factory).\n\n`GtkDropDown` knows how to obtain strings from the items in a\n[`StringList`](xref:gtk:Gtk.StringList); for other models, you have to provide an expression\nto find the strings via [`DropDown.set_expression()`](xref:gtk:Gtk.DropDown#method:set_expression).\n\n`GtkDropDown` can optionally allow search in the popup, which is\nuseful if the list of options is long. To enable the search entry,\nuse [`DropDown.set_enable_search()`](xref:gtk:Gtk.DropDown#method:set_enable_search).\n\nHere is a UI definition example for `GtkDropDown` with a simple model:\n\n```xml\n<object class=\"GtkDropDown\">\n  <property name=\"model\">\n    <object class=\"GtkStringList\">\n      <items>\n        <item translatable=\"yes\">Factory</item>\n        <item translatable=\"yes\">Home</item>\n        <item translatable=\"yes\">Subway</item>\n      </items>\n    </object>\n  </property>\n</object>\n```\n\nIf a `GtkDropDown` is created in this manner, or with\n[`DropDown.new_from_strings()`](xref:gtk:Gtk.DropDown#constructor:new_from_strings), for instance, the object returned from\n[`DropDown.get_selected_item()`](xref:gtk:Gtk.DropDown#method:get_selected_item) will be a [`StringObject`](xref:gtk:Gtk.StringObject).\n\nTo learn more about the list widget framework, see the\n[overview](section-list-widget.html).\n\n## CSS nodes\n\n`GtkDropDown` has a single CSS node with name dropdown,\nwith the button and popover nodes as children.\n\n## Accessibility\n\n`GtkDropDown` uses the [`AccessibleRole.combo_box`](xref:gtk:Gtk.AccessibleRole#value:combo_box) role."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:DropDown",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_enable_search": {
+      "brief": "Returns whether search is enabled.",
+      "file": "gtk/gtkdropdown.c",
+      "line": 1244,
+      "md": "Returns whether search is enabled."
+    },
+    "get_expression": {
+      "brief": "Gets the expression set that is used to obtain strings from items.",
+      "file": "gtk/gtkdropdown.c",
+      "line": 1295,
+      "md": "Gets the expression set that is used to obtain strings from items.\n\nSee [`DropDown.set_expression()`](xref:gtk:Gtk.DropDown#method:set_expression)."
+    },
+    "get_factory": {
+      "brief": "Gets the factory that's currently used to populate list items.",
+      "file": "gtk/gtkdropdown.c",
+      "line": 1017,
+      "md": "Gets the factory that's currently used to populate list items.\n\nThe factory returned by this function is always used for the\nitem in the button. It is also used for items in the popup\nif [`DropDown:list-factory`](xref:gtk:Gtk.DropDown#property:list-factory) is not set."
+    },
+    "get_header_factory": {
+      "brief": "Gets the factory that's currently used to create header widgets for the popup.",
+      "file": "gtk/gtkdropdown.c",
+      "line": 1068,
+      "md": "Gets the factory that's currently used to create header widgets for the popup.",
+      "since": "4.12"
+    },
+    "get_list_factory": {
+      "brief": "Gets the factory that's currently used to populate list items in the popup.",
+      "file": "gtk/gtkdropdown.c",
+      "line": 1110,
+      "md": "Gets the factory that's currently used to populate list items in the popup."
+    },
+    "get_model": {
+      "brief": "Gets the model that provides the displayed items.",
+      "file": "gtk/gtkdropdown.c",
+      "line": 942,
+      "md": "Gets the model that provides the displayed items."
+    },
+    "get_search_match_mode": {
+      "brief": "Returns the match mode that the search filter is using.",
+      "file": "gtk/gtkdropdown.c",
+      "line": 1382,
+      "md": "Returns the match mode that the search filter is using.",
+      "since": "4.12"
+    },
+    "get_selected": {
+      "brief": "Gets the position of the selected item.",
+      "file": "gtk/gtkdropdown.c",
+      "line": 1175,
+      "md": "Gets the position of the selected item."
+    },
+    "get_selected_item": {
+      "brief": "Gets the selected item.",
+      "file": "gtk/gtkdropdown.c",
+      "line": 1195,
+      "md": "Gets the selected item. If no item is selected, `NULL` is returned."
+    },
+    "get_show_arrow": {
+      "brief": "Returns whether to show an arrow within the widget.",
+      "file": "gtk/gtkdropdown.c",
+      "line": 1339,
+      "md": "Returns whether to show an arrow within the widget.",
+      "since": "4.6"
+    },
+    "set_enable_search": {
+      "brief": "Sets whether a search entry will be shown in the popup that allows to search for items in the list.",
+      "file": "gtk/gtkdropdown.c",
+      "line": 1214,
+      "md": "Sets whether a search entry will be shown in the popup that\nallows to search for items in the list.\n\nNote that [`DropDown:expression`](xref:gtk:Gtk.DropDown#property:expression) must be set for\nsearch to work."
+    },
+    "set_expression": {
+      "brief": "Sets the expression that gets evaluated to obtain strings from items.",
+      "file": "gtk/gtkdropdown.c",
+      "line": 1260,
+      "md": "Sets the expression that gets evaluated to obtain strings from items.\n\nThis is used for search in the popup. The expression must have\na value type of %G_TYPE_STRING."
+    },
+    "set_factory": {
+      "brief": "Sets the `GtkListItemFactory` to use for populating list items.",
+      "file": "gtk/gtkdropdown.c",
+      "line": 1037,
+      "md": "Sets the `GtkListItemFactory` to use for populating list items."
+    },
+    "set_header_factory": {
+      "brief": "Sets the `GtkListItemFactory` to use for creating header widgets for the popup.",
+      "file": "gtk/gtkdropdown.c",
+      "line": 1086,
+      "md": "Sets the `GtkListItemFactory` to use for creating header widgets for the popup.",
+      "since": "4.12"
+    },
+    "set_list_factory": {
+      "brief": "Sets the `GtkListItemFactory` to use for populating list items in the popup.",
+      "file": "gtk/gtkdropdown.c",
+      "line": 1126,
+      "md": "Sets the `GtkListItemFactory` to use for populating list items in the popup."
+    },
+    "set_model": {
+      "brief": "Sets the `GListModel` to use.",
+      "file": "gtk/gtkdropdown.c",
+      "line": 958,
+      "md": "Sets the `GListModel` to use."
+    },
+    "set_search_match_mode": {
+      "brief": "Sets the match mode for the search filter.",
+      "file": "gtk/gtkdropdown.c",
+      "line": 1357,
+      "md": "Sets the match mode for the search filter.",
+      "since": "4.12"
+    },
+    "set_selected": {
+      "brief": "Selects the item at the given position.",
+      "file": "gtk/gtkdropdown.c",
+      "line": 1153,
+      "md": "Selects the item at the given position."
+    },
+    "set_show_arrow": {
+      "brief": "Sets whether an arrow will be displayed within the widget.",
+      "file": "gtk/gtkdropdown.c",
+      "line": 1313,
+      "md": "Sets whether an arrow will be displayed within the widget.",
+      "since": "4.6"
+    }
+  },
+  "properties": {
+    "enable-search": {
+      "brief": "Whether to show a search entry in the popup.",
+      "file": "gtk/gtkdropdown.c",
+      "line": 657,
+      "md": "Whether to show a search entry in the popup.\n\nNote that search requires [`DropDown:expression`](xref:gtk:Gtk.DropDown#property:expression)\nto be set."
+    },
+    "expression": {
+      "brief": "An expression to evaluate to obtain strings to match against the search term.",
+      "file": "gtk/gtkdropdown.c",
+      "line": 670,
+      "md": "An expression to evaluate to obtain strings to match against the search\nterm.\n\nSee [`DropDown:enable-search`](xref:gtk:Gtk.DropDown#property:enable-search) for how to enable search.\nIf [`DropDown:factory`](xref:gtk:Gtk.DropDown#property:factory) is not set, the expression is also\nused to bind strings to labels produced by a default factory."
+    },
+    "factory": {
+      "brief": "Factory for populating list items.",
+      "file": "gtk/gtkdropdown.c",
+      "line": 590,
+      "md": "Factory for populating list items."
+    },
+    "header-factory": {
+      "brief": "The factory for creating header widgets for the popup.",
+      "file": "gtk/gtkdropdown.c",
+      "line": 600,
+      "md": "The factory for creating header widgets for the popup.",
+      "since": "4.12"
+    },
+    "list-factory": {
+      "brief": "The factory for populating list items in the popup.",
+      "file": "gtk/gtkdropdown.c",
+      "line": 612,
+      "md": "The factory for populating list items in the popup.\n\nIf this is not set, [`DropDown:factory`](xref:gtk:Gtk.DropDown#property:factory) is used."
+    },
+    "model": {
+      "brief": "Model for the displayed items.",
+      "file": "gtk/gtkdropdown.c",
+      "line": 624,
+      "md": "Model for the displayed items."
+    },
+    "search-match-mode": {
+      "brief": "The match mode for the search filter.",
+      "file": "gtk/gtkdropdown.c",
+      "line": 696,
+      "md": "The match mode for the search filter.",
+      "since": "4.12"
+    },
+    "selected": {
+      "brief": "The position of the selected item.",
+      "file": "gtk/gtkdropdown.c",
+      "line": 634,
+      "md": "The position of the selected item.\n\nIf no item is selected, the property has the value\n%GTK_INVALID_LIST_POSITION."
+    },
+    "selected-item": {
+      "brief": "The selected item.",
+      "file": "gtk/gtkdropdown.c",
+      "line": 647,
+      "md": "The selected item."
+    },
+    "show-arrow": {
+      "brief": "Whether to show an arrow within the GtkDropDown widget.",
+      "file": "gtk/gtkdropdown.c",
+      "line": 684,
+      "md": "Whether to show an arrow within the GtkDropDown widget.",
+      "since": "4.6"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "activate": {
+      "brief": "Emitted to when the drop down is activated.",
+      "file": "gtk/gtkdropdown.c",
+      "line": 711,
+      "md": "Emitted to when the drop down is activated.\n\nThe `::activate` signal on `GtkDropDown` is an action signal and\nemitting it causes the drop down to pop up its dropdown.",
+      "since": "4.6"
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

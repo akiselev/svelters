@@ -1,0 +1,126 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkFileLauncher` object.",
+      "file": "gtk/gtkfilelauncher.c",
+      "line": 208,
+      "md": "Creates a new `GtkFileLauncher` object.",
+      "since": "4.10"
+    }
+  },
+  "doc": {
+    "brief": "Asynchronous API to open a file with an application.",
+    "file": "gtk/gtkfilelauncher.c",
+    "line": 44,
+    "md": "Asynchronous API to open a file with an application.\n\n`GtkFileLauncher` collects the arguments that are needed to open the file.\n\nDepending on system configuration, user preferences and available APIs, this\nmay or may not show an app chooser dialog or launch the default application\nright away.\n\nThe operation is started with the [`FileLauncher.launch()`](xref:gtk:Gtk.FileLauncher#method:launch) function.\n\nTo launch uris that don't represent files, use [`UriLauncher`](xref:gtk:Gtk.UriLauncher).",
+    "since": "4.10"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:FileLauncher",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_always_ask": {
+      "brief": "Returns whether to ask the user which app to use.",
+      "file": "gtk/gtkfilelauncher.c",
+      "line": 269,
+      "md": "Returns whether to ask the user which app to use.",
+      "since": "4.12"
+    },
+    "get_file": {
+      "brief": "Gets the file that will be opened.",
+      "file": "gtk/gtkfilelauncher.c",
+      "line": 229,
+      "md": "Gets the file that will be opened.",
+      "since": "4.10"
+    },
+    "get_writable": {
+      "brief": "Returns whether to make the file writable for the handler.",
+      "file": "gtk/gtkfilelauncher.c",
+      "line": 313,
+      "md": "Returns whether to make the file writable for the handler.",
+      "since": "4.14"
+    },
+    "launch": {
+      "brief": "Launches an application to open the file.",
+      "file": "gtk/gtkfilelauncher.c",
+      "line": 536,
+      "md": "Launches an application to open the file.\n\nThis may present an app chooser dialog to the user.",
+      "since": "4.10"
+    },
+    "launch_finish": {
+      "brief": "Finishes the [`FileLauncher.launch()`](xref:gtk:Gtk.FileLauncher#method:launch) call and returns the result.",
+      "file": "gtk/gtkfilelauncher.c",
+      "line": 621,
+      "md": "Finishes the [`FileLauncher.launch()`](xref:gtk:Gtk.FileLauncher#method:launch) call and\nreturns the result.",
+      "since": "4.10"
+    },
+    "open_containing_folder": {
+      "brief": "Launches a file manager to show the file in its parent directory.",
+      "file": "gtk/gtkfilelauncher.c",
+      "line": 646,
+      "md": "Launches a file manager to show the file in its parent directory.\n\nThis is only supported for native files. It will fail if `file`\nis e.g. a http:// uri.",
+      "since": "4.10"
+    },
+    "open_containing_folder_finish": {
+      "brief": "Finishes the [`FileLauncher.open_containing_folder()`](xref:gtk:Gtk.FileLauncher#method:open_containing_folder) call and returns the result.",
+      "file": "gtk/gtkfilelauncher.c",
+      "line": 721,
+      "md": "Finishes the [`FileLauncher.open_containing_folder()`](xref:gtk:Gtk.FileLauncher#method:open_containing_folder)\ncall and returns the result.",
+      "since": "4.10"
+    },
+    "set_always_ask": {
+      "brief": "Sets whether to always ask the user which app to use.",
+      "file": "gtk/gtkfilelauncher.c",
+      "line": 287,
+      "md": "Sets whether to always ask the user which app to use.\n\nIf false, the file might be opened with a default app\nor the previous choice.",
+      "since": "4.12"
+    },
+    "set_file": {
+      "brief": "Sets the file that will be opened.",
+      "file": "gtk/gtkfilelauncher.c",
+      "line": 247,
+      "md": "Sets the file that will be opened.",
+      "since": "4.10"
+    },
+    "set_writable": {
+      "brief": "Sets whether to make the file writable for the handler.",
+      "file": "gtk/gtkfilelauncher.c",
+      "line": 331,
+      "md": "Sets whether to make the file writable for the handler.",
+      "since": "4.14"
+    }
+  },
+  "properties": {
+    "always-ask": {
+      "brief": "Whether to ask the user to choose an app for opening the file.",
+      "file": "gtk/gtkfilelauncher.c",
+      "line": 177,
+      "md": "Whether to ask the user to choose an app for opening the file. If `FALSE`,\nthe file might be opened with a default app or the previous choice.",
+      "since": "4.12"
+    },
+    "file": {
+      "brief": "The file to launch.",
+      "file": "gtk/gtkfilelauncher.c",
+      "line": 165,
+      "md": "The file to launch.",
+      "since": "4.10"
+    },
+    "writable": {
+      "brief": "Whether to make the file writable for the handler.",
+      "file": "gtk/gtkfilelauncher.c",
+      "line": 190,
+      "md": "Whether to make the file writable for the handler.",
+      "since": "4.14"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -1,0 +1,61 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "An interface for widgets that have their own [`Surface`](xref:gtk:Gdk.Surface).",
+    "file": "gtk/gtknative.c",
+    "line": 46,
+    "md": "An interface for widgets that have their own [`Surface`](xref:gtk:Gdk.Surface).\n\nThe obvious example of a `GtkNative` is `GtkWindow`.\n\nEvery widget that is not itself a `GtkNative` is contained in one,\nand you can get it with [`Widget.get_native()`](xref:gtk:Gtk.Widget#method:get_native).\n\nTo get the surface of a `GtkNative`, use [`Native.get_surface()`](xref:gtk:Gtk.Native#method:get_surface).\nIt is also possible to find the `GtkNative` to which a surface\nbelongs, with `get_for_surface`.\n\nIn addition to a [`Surface`](xref:gtk:Gdk.Surface), a `GtkNative` also provides\na [`Renderer`](xref:gtk:Gsk.Renderer) for rendering on that surface. To get the\nrenderer, use [`Native.get_renderer()`](xref:gtk:Gtk.Native#method:get_renderer)."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Native",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_for_surface": {
+      "brief": "Finds the `GtkNative` associated with the surface.",
+      "file": "gtk/gtknative.c",
+      "line": 290,
+      "md": "Finds the `GtkNative` associated with the surface."
+    },
+    "get_renderer": {
+      "brief": "Returns the renderer that is used for this `GtkNative`.",
+      "file": "gtk/gtknative.c",
+      "line": 251,
+      "md": "Returns the renderer that is used for this `GtkNative`."
+    },
+    "get_surface": {
+      "brief": "Returns the surface of this `GtkNative`.",
+      "file": "gtk/gtknative.c",
+      "line": 235,
+      "md": "Returns the surface of this `GtkNative`."
+    },
+    "get_surface_transform": {
+      "brief": "Retrieves the surface transform of `self`.",
+      "file": "gtk/gtknative.c",
+      "line": 267,
+      "md": "Retrieves the surface transform of `self`.\n\nThis is the translation from `self`'s surface coordinates into\n`self`'s widget coordinates."
+    },
+    "realize": {
+      "brief": "Realizes a `GtkNative`.",
+      "file": "gtk/gtknative.c",
+      "line": 157,
+      "md": "Realizes a `GtkNative`.\n\nThis should only be used by subclasses."
+    },
+    "unrealize": {
+      "brief": "Unrealizes a `GtkNative`.",
+      "file": "gtk/gtknative.c",
+      "line": 204,
+      "md": "Unrealizes a `GtkNative`.\n\nThis should only be used by subclasses."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

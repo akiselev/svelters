@@ -1,0 +1,59 @@
+import { defineConfig } from 'astro/config';
+import starlight from '@astrojs/starlight';
+import starlightLinksValidator from 'starlight-links-validator';
+import { BASE, SITE, REPO, REPO_BRANCH } from './site.config.mjs';
+
+const guide = (slug, label) => ({ slug, label });
+
+export default defineConfig({
+  site: SITE,
+  base: BASE,
+  trailingSlash: 'always',
+  build: { concurrency: 4 },
+  vite: { build: { sourcemap: false } },
+  integrations: [
+    starlight({
+      title: 'Svelters',
+      description: 'Stock Svelte 5 rendered by native toolkits: GTK 4, Qt 6 and more.',
+      social: [{ icon: 'github', label: 'GitHub', href: REPO }],
+      editLink: { baseUrl: `${REPO}/edit/${REPO_BRANCH}/docs/site/` },
+      customCss: ['./src/styles/custom.css'],
+      components: { ThemeSelect: './src/components/ThemeSelect.astro' },
+      tableOfContents: { minHeadingLevel: 2, maxHeadingLevel: 3 },
+      plugins: [starlightLinksValidator({ errorOnRelativeLinks: false, errorOnInvalidHashes: true, errorOnLocalLinks: true })],
+      sidebar: [
+        {
+          label: 'Guides',
+          items: [
+            guide('guides/getting-started', 'Getting started'),
+            guide('guides/architecture', 'Architecture'),
+            guide('guides/svelte-support', 'Svelte feature support'),
+            guide('guides/lists-and-snippets', 'Snippets, lists, virtual lists'),
+            guide('guides/events', 'Events and modifiers'),
+            guide('guides/bindings', 'Bindings'),
+            guide('guides/styling', 'Styling (planned)'),
+            guide('guides/annotation-workflow', 'Metadata and annotations'),
+            guide('guides/platforms', 'Platform status'),
+          ],
+        },
+        {
+          label: 'Concepts',
+          items: [guide('concepts/ownership', 'Ownership and lifetimes'), guide('concepts/abi', 'Backend ABI reference'), guide('concepts/docs-generator', 'How these docs are made')],
+        },
+        {
+          label: 'API reference',
+          items: [
+            guide('api', 'Overview'),
+            guide('api/matrix', 'Support matrix'),
+            { label: 'GTK 4 elements', slug: 'api/gtk' },
+            { label: 'GTK 4 types', slug: 'api/gtk/types' },
+            { label: 'Qt 6 elements', slug: 'api/qt' },
+            { label: 'Qt 6 types', slug: 'api/qt/types' },
+            guide('coverage', 'Coverage dashboard'),
+          ],
+        },
+        { label: 'Project', items: [guide('about/licensing', 'Licensing of documentation text')] },
+      ],
+    }),
+  ],
+});

@@ -1,0 +1,196 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new list store.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`ListStore`](xref:gtk:Gio.ListStore) instead",
+      "file": "gtk/deprecated/gtkliststore.c",
+      "line": 406,
+      "md": "Creates a new list store.\n\nThe list store will have `n_columns` columns, with each column using\nthe given type passed to this function.\n\nNote that only types derived from standard GObject fundamental types\nare supported.\n\nAs an example:\n\n```c\ngtk_list_store_new (3, G_TYPE_INT, G_TYPE_STRING, GDK_TYPE_TEXTURE);\n```\n\nwill create a new `GtkListStore` with three columns, of type `int`,\n`gchararray` and `GdkTexture`, respectively."
+    },
+    "newv": {
+      "brief": "Creates a new `GtkListStore`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use [`ListStore`](xref:gtk:Gio.ListStore) instead",
+      "file": "gtk/deprecated/gtkliststore.c",
+      "line": 469,
+      "md": "Creates a new `GtkListStore`.\n\nThis function is meant to be used by language bindings."
+    }
+  },
+  "doc": {
+    "brief": "A list-like data structure that can be used with the [`TreeView`](xref:gtk:Gtk.TreeView).",
+    "deprecated": "4.10",
+    "deprecated_md": "Use [`ListStore`](xref:gtk:Gio.ListStore) instead",
+    "file": "gtk/deprecated/gtkliststore.c",
+    "line": 32,
+    "md": "A list-like data structure that can be used with the [`TreeView`](xref:gtk:Gtk.TreeView).\n\nThe `GtkListStore` object is a list model for use with a `GtkTreeView`\nwidget.  It implements the `GtkTreeModel` interface, and consequentialy,\ncan use all of the methods available there.  It also implements the\n`GtkTreeSortable` interface so it can be sorted by the view.\nFinally, it also implements the tree\n[drag](iface.TreeDragSource.html) and [drop](iface.TreeDragDest.html)\ninterfaces.\n\nThe `GtkListStore` can accept most `GType`s as a column type, though\nit can’t accept all custom types.  Internally, it will keep a copy of\ndata passed in (such as a string or a boxed pointer).  Columns that\naccept `GObject`s are handled a little differently.  The\n`GtkListStore` will keep a reference to the object instead of copying the\nvalue.  As a result, if the object is modified, it is up to the\napplication writer to call [`TreeModel.row_changed()`](xref:gtk:Gtk.TreeModel#method:row_changed) to emit the\n[`TreeModel::row_changed`](xref:gtk:Gtk.TreeModel#event:row_changed) signal. This most commonly affects lists\nwith [`Texture`](xref:gtk:Gdk.Texture)s stored.\n\nAn example for creating a simple list store:\n\n```c\nenum {\n  COLUMN_STRING,\n  COLUMN_INT,\n  COLUMN_BOOLEAN,\n  N_COLUMNS\n};\n\n{\n  GtkListStore *list_store;\n  GtkTreePath *path;\n  GtkTreeIter iter;\n  int i;\n\n  list_store = gtk_list_store_new (N_COLUMNS,\n                                   G_TYPE_STRING,\n                                   G_TYPE_INT,\n                                   G_TYPE_BOOLEAN);\n\n  for (i = 0; i < 10; i++)\n    {\n      char *some_data;\n\n      some_data = get_some_data (i);\n\n      // Add a new row to the model\n      gtk_list_store_append (list_store, &iter);\n      gtk_list_store_set (list_store, &iter,\n                          COLUMN_STRING, some_data,\n                          COLUMN_INT, i,\n                          COLUMN_BOOLEAN,  FALSE,\n                          -1);\n\n      // As the store will keep a copy of the string internally,\n      // we free some_data.\n      g_free (some_data);\n    }\n\n  // Modify a particular row\n  path = gtk_tree_path_new_from_string (\"4\");\n  gtk_tree_model_get_iter (GTK_TREE_MODEL (list_store),\n                           &iter,\n                           path);\n  gtk_tree_path_free (path);\n  gtk_list_store_set (list_store, &iter,\n                      COLUMN_BOOLEAN, TRUE,\n                      -1);\n}\n```\n\n`GtkListStore` is deprecated since GTK 4.10, and should not be used in newly\nwritten code. You should use [`ListStore`](xref:gtk:Gio.ListStore) instead, and the various\nlist models provided by GTK.\n\n## Performance Considerations\n\nInternally, the `GtkListStore` was originally implemented with a linked list\nwith a tail pointer.  As a result, it was fast at data insertion and deletion,\nand not fast at random data access.  The `GtkListStore` sets the\n`GTK_TREE_MODEL_ITERS_PERSIST` flag, which means that `GtkTreeIter`s can be\ncached while the row exists.  Thus, if access to a particular row is needed\noften and your code is expected to run on older versions of GTK, it is worth\nkeeping the iter around.\n\n## Atomic Operations\n\nIt is important to note that only the methods\ngtk_list_store_insert_with_values() and gtk_list_store_insert_with_valuesv()\nare atomic, in the sense that the row is being appended to the store and the\nvalues filled in in a single operation with regard to `GtkTreeModel` signaling.\nIn contrast, using e.g. gtk_list_store_append() and then gtk_list_store_set()\nwill first create a row, which triggers the `GtkTreeModel::row-inserted` signal\non `GtkListStore`. The row, however, is still empty, and any signal handler\nconnecting to `GtkTreeModel::row-inserted` on this particular store should be prepared\nfor the situation that the row might be empty. This is especially important\nif you are wrapping the `GtkListStore` inside a `GtkTreeModel`Filter and are\nusing a `GtkTreeModel`FilterVisibleFunc. Using any of the non-atomic operations\nto append rows to the `GtkListStore` will cause the\n`GtkTreeModel`FilterVisibleFunc to be visited with an empty row first; the\nfunction must be prepared for that.\n\n## GtkListStore as GtkBuildable\n\nThe GtkListStore implementation of the [`Buildable`](xref:gtk:Gtk.Buildable) interface allows\nto specify the model columns with a `<columns>` element that may contain\nmultiple `<column>` elements, each specifying one model column. The “type”\nattribute specifies the data type for the column.\n\nAdditionally, it is possible to specify content for the list store\nin the UI definition, with the `<data>` element. It can contain multiple\n`<row>` elements, each specifying to content for one row of the list model.\nInside a `<row>`, the `<col>` elements specify the content for individual cells.\n\nNote that it is probably more common to define your models in the code,\nand one might consider it a layering violation to specify the content of\na list store in a UI definition, data, not presentation, and common wisdom\nis to separate the two, as far as possible.\n\nAn example of a UI Definition fragment for a list store:\n\n```xml\n<object class=\"GtkListStore\">\n  <columns>\n    <column type=\"gchararray\"/>\n    <column type=\"gchararray\"/>\n    <column type=\"gint\"/>\n  </columns>\n  <data>\n    <row>\n      <col id=\"0\">John</col>\n      <col id=\"1\">Doe</col>\n      <col id=\"2\">25</col>\n    </row>\n    <row>\n      <col id=\"0\">Johan</col>\n      <col id=\"1\">Dahlin</col>\n      <col id=\"2\">50</col>\n    </row>\n  </data>\n</object>\n```"
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ListStore",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "append": {
+      "brief": "Appends a new row to `list_store`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use list models",
+      "file": "gtk/deprecated/gtkliststore.c",
+      "line": 1417,
+      "md": "Appends a new row to `list_store`.  `iter` will be changed to point to this new\nrow.  The row will be empty after this function is called.  To fill in\nvalues, you need to call gtk_list_store_set() or gtk_list_store_set_value()."
+    },
+    "clear": {
+      "brief": "Removes all rows from the list store.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use list models",
+      "file": "gtk/deprecated/gtkliststore.c",
+      "line": 1450,
+      "md": "Removes all rows from the list store."
+    },
+    "insert": {
+      "brief": "Creates a new row at `position`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use list models",
+      "file": "gtk/deprecated/gtkliststore.c",
+      "line": 1268,
+      "md": "Creates a new row at `position`.  `iter` will be changed to point to this new\nrow.  If `position` is -1 or is larger than the number of rows on the list,\nthen the new row will be appended to the list. The row will be empty after\nthis function is called.  To fill in values, you need to call\ngtk_list_store_set() or gtk_list_store_set_value()."
+    },
+    "insert_after": {
+      "brief": "Inserts a new row after `sibling`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use list models",
+      "file": "gtk/deprecated/gtkliststore.c",
+      "line": 1359,
+      "md": "Inserts a new row after `sibling`. If `sibling` is `NULL`, then the row will be\nprepended to the beginning of the list. `iter` will be changed to point to\nthis new row. The row will be empty after this function is called. To fill\nin values, you need to call gtk_list_store_set() or gtk_list_store_set_value()."
+    },
+    "insert_before": {
+      "brief": "Inserts a new row before `sibling`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use list models",
+      "file": "gtk/deprecated/gtkliststore.c",
+      "line": 1322,
+      "md": "Inserts a new row before `sibling`. If `sibling` is `NULL`, then the row will\nbe appended to the end of the list. `iter` will be changed to point to this\nnew row. The row will be empty after this function is called. To fill in\nvalues, you need to call gtk_list_store_set() or gtk_list_store_set_value()."
+    },
+    "insert_with_values": {
+      "brief": "Creates a new row at `position`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use list models",
+      "file": "gtk/deprecated/gtkliststore.c",
+      "line": 2202,
+      "md": "Creates a new row at `position`. `iter` will be changed to point to this new\nrow. If `position` is -1, or larger than the number of rows in the list, then\nthe new row will be appended to the list. The row will be filled with the\nvalues given to this function.\n\nCalling\n`gtk_list_store_insert_with_values (list_store, iter, position...)`\nhas the same effect as calling:\n\n```c\nstatic void\ninsert_value (GtkListStore *list_store,\n              GtkTreeIter  *iter,\n              int           position)\n{\n  gtk_list_store_insert (list_store, iter, position);\n  gtk_list_store_set (list_store,\n                      iter\n                      // ...\n                      );\n}\n```\n\nwith the difference that the former will only emit `GtkTreeModel`::row-inserted\nonce, while the latter will emit `GtkTreeModel`::row-inserted,\n`GtkTreeModel`::row-changed and, if the list store is sorted,\n`GtkTreeModel`::rows-reordered for every inserted value.\n\nSince emitting the `GtkTreeModel::rows-reordered` signal repeatedly can\naffect the performance of the program, gtk_list_store_insert_with_values()\nshould generally be preferred when inserting rows in a sorted list store."
+    },
+    "insert_with_valuesv": {
+      "brief": "A variant of gtk_list_store_insert_with_values() which takes the columns and values as two arrays, instead of varargs.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use list models",
+      "file": "gtk/deprecated/gtkliststore.c",
+      "line": 2305,
+      "md": "A variant of gtk_list_store_insert_with_values() which\ntakes the columns and values as two arrays, instead of\nvarargs.\n\nThis function is mainly intended for language-bindings."
+    },
+    "iter_is_valid": {
+      "brief": "Checks if the given iter is a valid iter for this `GtkListStore`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use list models",
+      "file": "gtk/deprecated/gtkliststore.c",
+      "line": 1478,
+      "md": "Checks if the given iter is a valid iter for this `GtkListStore`.\n\nThis function is slow. Only use it for debugging and/or testing\npurposes."
+    },
+    "move_after": {
+      "brief": "Moves `iter` in `store` to the position after `position`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use list models",
+      "file": "gtk/deprecated/gtkliststore.c",
+      "line": 1922,
+      "md": "Moves `iter` in `store` to the position after `position`. Note that this\nfunction only works with unsorted stores. If `position` is `NULL`, `iter`\nwill be moved to the start of the list."
+    },
+    "move_before": {
+      "brief": "Moves `iter` in `store` to the position before `position`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use list models",
+      "file": "gtk/deprecated/gtkliststore.c",
+      "line": 1889,
+      "md": "Moves `iter` in `store` to the position before `position`. Note that this\nfunction only works with unsorted stores. If `position` is `NULL`, `iter`\nwill be moved to the end of the list."
+    },
+    "prepend": {
+      "brief": "Prepends a new row to `list_store`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use list models",
+      "file": "gtk/deprecated/gtkliststore.c",
+      "line": 1396,
+      "md": "Prepends a new row to `list_store`. `iter` will be changed to point to this new\nrow. The row will be empty after this function is called. To fill in\nvalues, you need to call gtk_list_store_set() or gtk_list_store_set_value()."
+    },
+    "remove": {
+      "brief": "Removes the given row from the list store.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use list models",
+      "file": "gtk/deprecated/gtkliststore.c",
+      "line": 1216,
+      "md": "Removes the given row from the list store.  After being removed,\n`iter` is set to be the next valid row, or invalidated if it pointed\nto the last row in `list_store`."
+    },
+    "reorder": {
+      "brief": "Reorders `store` to follow the order indicated by `new_order`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use list models",
+      "file": "gtk/deprecated/gtkliststore.c",
+      "line": 1725,
+      "md": "Reorders `store` to follow the order indicated by `new_order`. Note that\nthis function only works with unsorted stores."
+    },
+    "set": {
+      "brief": "Sets the value of one or more cells in the row referenced by `iter`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use list models",
+      "file": "gtk/deprecated/gtkliststore.c",
+      "line": 1186,
+      "md": "Sets the value of one or more cells in the row referenced by `iter`.\nThe variable argument list should contain integer column numbers,\neach column number followed by the value to be set.\nThe list is terminated by a -1. For example, to set column 0 with type\n%G_TYPE_STRING to “Foo”, you would write `gtk_list_store_set (store, iter,\n0, \"Foo\", -1)`.\n\nThe value will be referenced by the store if it is a %G_TYPE_OBJECT, and it\nwill be copied if it is a %G_TYPE_STRING or %G_TYPE_BOXED."
+    },
+    "set_column_types": {
+      "brief": "Sets the types of the columns of a list store.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use list models",
+      "file": "gtk/deprecated/gtkliststore.c",
+      "line": 509,
+      "md": "Sets the types of the columns of a list store.\n\nThis function is meant primarily for objects that inherit\nfrom `GtkListStore`, and should only be used when constructing\na new instance.\n\nThis function cannot be called after a row has been added, or\na method on the `GtkTreeModel` interface is called."
+    },
+    "set_valist": {
+      "brief": "See gtk_list_store_set(); this version takes a va_list for use by language bindings.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use list models",
+      "file": "gtk/deprecated/gtkliststore.c",
+      "line": 1143,
+      "md": "See gtk_list_store_set(); this version takes a va_list for use by language\nbindings."
+    },
+    "set_value": {
+      "brief": "Sets the data in the cell specified by `iter` and `column`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use list models",
+      "file": "gtk/deprecated/gtkliststore.c",
+      "line": 941,
+      "md": "Sets the data in the cell specified by `iter` and `column`.\nThe type of `value` must be convertible to the type of the\ncolumn."
+    },
+    "set_valuesv": {
+      "brief": "A variant of gtk_list_store_set_valist() which takes the columns and values as two arrays, instead of varargs.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use list models",
+      "file": "gtk/deprecated/gtkliststore.c",
+      "line": 1093,
+      "md": "A variant of gtk_list_store_set_valist() which\ntakes the columns and values as two arrays, instead of\nvarargs. This function is mainly intended for\nlanguage-bindings and in case the number of columns to\nchange is not known until run-time."
+    },
+    "swap": {
+      "brief": "Swaps `a` and `b` in `store`.",
+      "deprecated": "4.10",
+      "deprecated_md": "Use list models",
+      "file": "gtk/deprecated/gtkliststore.c",
+      "line": 1821,
+      "md": "Swaps `a` and `b` in `store`. Note that this function only works with\nunsorted stores."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

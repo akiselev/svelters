@@ -1,0 +1,44 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "An interface for widgets that can be oriented horizontally or vertically.",
+    "file": "gtk/gtkorientable.c",
+    "line": 31,
+    "md": "An interface for widgets that can be oriented horizontally or vertically.\n\n`GtkOrientable` is more flexible in that it allows the orientation to be\nchanged at runtime, allowing the widgets to “flip”.\n\n## CSS nodes\n\n`GtkWidget` types implementing the `GtkOrientable` interface will\nautomatically acquire the `horizontal` or `vertical` CSS class depending on\nthe value of the [`Orientable:orientation`](xref:gtk:Gtk.Orientable#property:orientation) property."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Orientable",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_orientation": {
+      "brief": "Retrieves the orientation of the `orientable`.",
+      "file": "gtk/gtkorientable.c",
+      "line": 87,
+      "md": "Retrieves the orientation of the `orientable`."
+    },
+    "set_orientation": {
+      "brief": "Sets the orientation of the `orientable`.",
+      "file": "gtk/gtkorientable.c",
+      "line": 66,
+      "md": "Sets the orientation of the `orientable`."
+    }
+  },
+  "properties": {
+    "orientation": {
+      "brief": "The orientation of the orientable.",
+      "file": "gtk/gtkorientable.c",
+      "line": 54,
+      "md": "The orientation of the orientable."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

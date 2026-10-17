@@ -1,0 +1,59 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new multi sorter.",
+      "file": "gtk/gtkmultisorter.c",
+      "line": 428,
+      "md": "Creates a new multi sorter.\n\nThis sorter compares items by trying each of the sorters\nin turn, until one returns non-zero. In particular, if\nno sorter has been added to it, it will always compare\nitems as equal."
+    }
+  },
+  "doc": {
+    "brief": "Combines multiple sorters by trying them in turn.",
+    "file": "gtk/gtkmultisorter.c",
+    "line": 35,
+    "md": "Combines multiple sorters by trying them in turn.\n\nIf the first sorter compares two items as equal,\nthe second is tried next, and so on."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:MultiSorter",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "append": {
+      "brief": "Add `sorter` to `self` to use for sorting at the end.",
+      "file": "gtk/gtkmultisorter.c",
+      "line": 446,
+      "md": "Add `sorter` to `self` to use for sorting at the end.\n\n`self` will consult all existing sorters before it will\nsort with the given `sorter`."
+    },
+    "remove": {
+      "brief": "Removes the sorter at the given `position` from the list of sorter used by `self`.",
+      "file": "gtk/gtkmultisorter.c",
+      "line": 473,
+      "md": "Removes the sorter at the given `position` from the list of sorter\nused by `self`.\n\nIf `position` is larger than the number of sorters, nothing happens."
+    }
+  },
+  "properties": {
+    "item-type": {
+      "brief": "The type of items. See [`ListModel.get_item_type()`](xref:gtk:Gio.ListModel#method:get_item_type).",
+      "file": "gtk/gtkmultisorter.c",
+      "line": 391,
+      "md": "The type of items. See [`ListModel.get_item_type()`](xref:gtk:Gio.ListModel#method:get_item_type).",
+      "since": "4.8"
+    },
+    "n-items": {
+      "brief": "The number of items.",
+      "file": "gtk/gtkmultisorter.c",
+      "line": 403,
+      "md": "The number of items. See [`ListModel.get_n_items()`](xref:gtk:Gio.ListModel#method:get_n_items).",
+      "since": "4.8"
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

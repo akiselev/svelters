@@ -1,0 +1,39 @@
+{
+  "doc": {
+    "brief": "The QGraphicsSceneMoveEvent class provides events for widget moving in the graphics view framework.",
+    "index_brief": "Events for widget moving in the graphics view framework",
+    "url": "https://doc.qt.io/qt-6/qgraphicsscenemoveevent.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsSceneMoveEvent",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QGraphicsSceneMoveEvent()": {
+      "brief": "Constructs a QGraphicsSceneMoveEvent.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscenemoveevent.html#QGraphicsSceneMoveEvent"
+    },
+    "QPointF newPos() const": {
+      "brief": "Returns the new position (i.e., the current position).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscenemoveevent.html#newPos"
+    },
+    "QPointF oldPos() const": {
+      "brief": "Returns the old position (i.e., the position immediately before the widget was moved).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsscenemoveevent.html#oldPos"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

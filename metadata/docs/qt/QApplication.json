@@ -1,0 +1,262 @@
+{
+  "doc": {
+    "brief": "The QApplication class manages the GUI application's control flow and main settings.",
+    "index_brief": "Manages the GUI application's control flow and main settings",
+    "url": "https://doc.qt.io/qt-6/qapplication.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QApplication",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QApplication(int &argc, char **argv)": {
+      "brief": "Initializes the window system and constructs an application object with *argc* command line arguments in *argv*.",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#QApplication"
+    },
+    "QFont font()": {
+      "brief": "Returns the default application font.",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#font"
+    },
+    "QFont font(const QWidget *widget)": {
+      "brief": "Returns the default font for the *widget*.",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#font-1"
+    },
+    "QFont font(const char *className)": {
+      "brief": "Returns the font for widgets of the given *className*.",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#font-2"
+    },
+    "QFontMetrics fontMetrics()": {
+      "url": "https://doc.qt.io/qt-6/qapplication-obsolete.html#fontMetrics"
+    },
+    "QPalette palette(const QWidget *widget)": {
+      "brief": "If a *widget* is passed, the default palette for the widget's class is returned.",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#palette"
+    },
+    "QPalette palette(const char *className)": {
+      "brief": "Returns the palette for widgets of the given *className*.",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#palette-1"
+    },
+    "QString styleSheet() const": {
+      "brief": "This property holds the application style sheet",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#styleSheet-prop"
+    },
+    "QStyle * setStyle(const QString &style)": {
+      "brief": "Requests a [QStyle](xref:qt:QStyle) object for *style* from the [QStyleFactory](xref:qt:QStyleFactory).",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#setStyle-1"
+    },
+    "QStyle * style()": {
+      "brief": "Returns the application's style object.",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#style"
+    },
+    "QWidget * activeModalWidget()": {
+      "brief": "Returns the active modal widget.",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#activeModalWidget"
+    },
+    "QWidget * activePopupWidget()": {
+      "brief": "Returns the active popup widget.",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#activePopupWidget"
+    },
+    "QWidget * activeWindow()": {
+      "brief": "Returns the application top-level window that has the keyboard input focus, or `nullptr` if no application window has the focus.",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#activeWindow"
+    },
+    "QWidget * focusWidget()": {
+      "brief": "Returns the application widget that has the keyboard input focus, or `nullptr` if no widget in this application has the focus.",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#focusWidget"
+    },
+    "QWidget * topLevelAt(const QPoint &point)": {
+      "brief": "Returns the top-level widget at the given *point*; returns `nullptr` if there is no such widget.",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#topLevelAt"
+    },
+    "QWidget * topLevelAt(int x, int y)": {
+      "brief": "Returns the top-level widget at the point (*x*, *y*); returns 0 if there is no such widget.",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#topLevelAt-1"
+    },
+    "QWidget * widgetAt(const QPoint &point)": {
+      "brief": "Returns the widget at global screen position *point*, or `nullptr` if there is no Qt widget there.",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#widgetAt"
+    },
+    "QWidget * widgetAt(int x, int y)": {
+      "brief": "Returns the widget at global screen position (*x*, *y*), or `nullptr` if there is no Qt widget there.",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#widgetAt-1"
+    },
+    "QWidgetList allWidgets()": {
+      "brief": "Returns a list of all the widgets in the application.",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#allWidgets"
+    },
+    "QWidgetList topLevelWidgets()": {
+      "brief": "Returns a list of the top-level widgets (windows) in the application.",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#topLevelWidgets"
+    },
+    "Qt::NavigationMode navigationMode()": {
+      "brief": "Returns what kind of focus navigation Qt is using.",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#navigationMode"
+    },
+    "bool autoSipEnabled() const": {
+      "brief": "toggles automatic SIP (software input panel) visibility",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#autoSipEnabled-prop"
+    },
+    "bool event(QEvent *e) override": {
+      "brief": "Reimplements: [QGuiApplication::event](xref:qt:QGuiApplication)(QEvent *e).",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#event"
+    },
+    "bool isEffectEnabled(Qt::UIEffect effect)": {
+      "brief": "Returns `true` if *effect* is enabled; otherwise returns `false`.",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#isEffectEnabled"
+    },
+    "bool notify(QObject *receiver, QEvent *e) override": {
+      "brief": "Reimplements: [QGuiApplication::notify](xref:qt:QGuiApplication)(QObject *object, QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#notify"
+    },
+    "int cursorFlashTime()": {
+      "brief": "This property holds the text cursor's flash (blink) time in milliseconds",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#cursorFlashTime-prop"
+    },
+    "int doubleClickInterval()": {
+      "brief": "This property holds the time limit in milliseconds that distinguishes a double click from two consecutive mouse clicks",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#doubleClickInterval-prop"
+    },
+    "int exec()": {
+      "brief": "Enters the main event loop and waits until [exit](xref:qt:QCoreApplication)() is called, then returns the value that was set to [exit](xref:qt:QCoreApplication)() (which is 0 if...",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#exec"
+    },
+    "int keyboardInputInterval()": {
+      "brief": "This property holds the time limit in milliseconds that distinguishes a key press from two consecutive key presses",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#keyboardInputInterval-prop"
+    },
+    "int startDragDistance()": {
+      "brief": "This property holds the minimum distance required for a drag and drop operation to start.",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#startDragDistance-prop"
+    },
+    "int startDragTime()": {
+      "brief": "This property holds the time in milliseconds that a mouse button must be held down before a drag and drop operation will begin",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#startDragTime-prop"
+    },
+    "int wheelScrollLines()": {
+      "brief": "This property holds the number of lines to scroll a widget, when the mouse wheel is rotated.",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#wheelScrollLines-prop"
+    },
+    "void aboutQt()": {
+      "brief": "Displays a simple message box about Qt.",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#aboutQt"
+    },
+    "void alert(QWidget *widget, int msec)": {
+      "brief": "Causes an alert to be shown for *widget* if the window is not the active window.",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#alert"
+    },
+    "void beep()": {
+      "brief": "Sounds the bell, using the default volume and sound.",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#beep"
+    },
+    "void closeAllWindows()": {
+      "brief": "Closes all top-level windows.",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#closeAllWindows"
+    },
+    "void focusChanged(QWidget *old, QWidget *now)": {
+      "brief": "This signal is emitted when the widget that has keyboard focus changed from *old* to *now*, i.e., because the user pressed the tab-key, clicked into a widget or changed the active window.",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#focusChanged"
+    },
+    "void setActiveWindow(QWidget *active)": {
+      "url": "https://doc.qt.io/qt-6/qapplication-obsolete.html#setActiveWindow"
+    },
+    "void setAutoSipEnabled(const bool enabled)": {
+      "brief": "toggles automatic SIP (software input panel) visibility",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#autoSipEnabled-prop"
+    },
+    "void setCursorFlashTime(int)": {
+      "brief": "This property holds the text cursor's flash (blink) time in milliseconds",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#cursorFlashTime-prop"
+    },
+    "void setDoubleClickInterval(int)": {
+      "brief": "This property holds the time limit in milliseconds that distinguishes a double click from two consecutive mouse clicks",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#doubleClickInterval-prop"
+    },
+    "void setEffectEnabled(Qt::UIEffect effect, bool enable)": {
+      "brief": "Enables the UI effect *effect* if *enable* is true, otherwise the effect will not be used.",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#setEffectEnabled"
+    },
+    "void setFont(const QFont &font, const char *className)": {
+      "brief": "Changes the default application font to *font*.",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#setFont"
+    },
+    "void setKeyboardInputInterval(int)": {
+      "brief": "This property holds the time limit in milliseconds that distinguishes a key press from two consecutive key presses",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#keyboardInputInterval-prop"
+    },
+    "void setNavigationMode(Qt::NavigationMode mode)": {
+      "brief": "Sets the kind of focus navigation Qt should use to *mode*.",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#setNavigationMode"
+    },
+    "void setPalette(const QPalette &palette, const char *className)": {
+      "brief": "Changes the application palette to *palette*.",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#setPalette"
+    },
+    "void setStartDragDistance(int l)": {
+      "brief": "This property holds the minimum distance required for a drag and drop operation to start.",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#startDragDistance-prop"
+    },
+    "void setStartDragTime(int ms)": {
+      "brief": "This property holds the time in milliseconds that a mouse button must be held down before a drag and drop operation will begin",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#startDragTime-prop"
+    },
+    "void setStyle(QStyle *style)": {
+      "brief": "Sets the application's GUI style to *style*.",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#setStyle"
+    },
+    "void setStyleSheet(const QString &sheet)": {
+      "brief": "This property holds the application style sheet",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#styleSheet-prop"
+    },
+    "void setWheelScrollLines(int)": {
+      "brief": "This property holds the number of lines to scroll a widget, when the mouse wheel is rotated.",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#wheelScrollLines-prop"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "autoSipEnabled": {
+      "brief": "Toggles automatic SIP (software input panel) visibility",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#autoSipEnabled-prop"
+    },
+    "cursorFlashTime": {
+      "brief": "The text cursor's flash (blink) time in milliseconds",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#cursorFlashTime-prop"
+    },
+    "doubleClickInterval": {
+      "brief": "The time limit in milliseconds that distinguishes a double click from two consecutive mouse clicks",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#doubleClickInterval-prop"
+    },
+    "keyboardInputInterval": {
+      "brief": "The time limit in milliseconds that distinguishes a key press from two consecutive key presses",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#keyboardInputInterval-prop"
+    },
+    "startDragDistance": {
+      "brief": "The minimum distance required for a drag and drop operation to start",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#startDragDistance-prop"
+    },
+    "startDragTime": {
+      "brief": "The time in milliseconds that a mouse button must be held down before a drag and drop operation will begin",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#startDragTime-prop"
+    },
+    "styleSheet": {
+      "brief": "The application style sheet",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#styleSheet-prop"
+    },
+    "wheelScrollLines": {
+      "brief": "The number of lines to scroll a widget, when the mouse wheel is rotated",
+      "url": "https://doc.qt.io/qt-6/qapplication.html#wheelScrollLines-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

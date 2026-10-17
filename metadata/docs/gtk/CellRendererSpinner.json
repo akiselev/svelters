@@ -1,0 +1,53 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Returns a new cell renderer which will show a spinner to indicate activity.",
+      "deprecated": "4.10",
+      "file": "gtk/deprecated/gtkcellrendererspinner.c",
+      "line": 225,
+      "md": "Returns a new cell renderer which will show a spinner to indicate\nactivity."
+    }
+  },
+  "doc": {
+    "brief": "Renders a spinning animation in a cell",
+    "deprecated": "4.10",
+    "deprecated_md": "List views use widgets to display their contents.\n  You should use [`Spinner`](xref:gtk:Gtk.Spinner) instead",
+    "file": "gtk/deprecated/gtkcellrendererspinner.c",
+    "line": 42,
+    "md": "Renders a spinning animation in a cell\n\n`GtkCellRendererSpinner` renders a spinning animation in a cell, very\nsimilar to `GtkSpinner`. It can often be used as an alternative\nto a `GtkCellRendererProgress` for displaying indefinite activity,\ninstead of actual progress.\n\nTo start the animation in a cell, set the `GtkCellRendererSpinner:active`\nproperty to `TRUE` and increment the `GtkCellRendererSpinner:pulse` property\nat regular intervals. The usual way to set the cell renderer properties\nfor each cell is to bind them to columns in your tree model using e.g.\ngtk_tree_view_column_add_attribute()."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:CellRendererSpinner",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {},
+  "properties": {
+    "active": {
+      "brief": "Whether the spinner is active (ie. shown) in the cell",
+      "file": "gtk/deprecated/gtkcellrendererspinner.c",
+      "line": 178,
+      "md": "Whether the spinner is active (ie. shown) in the cell"
+    },
+    "pulse": {
+      "brief": "Pulse of the spinner.",
+      "file": "gtk/deprecated/gtkcellrendererspinner.c",
+      "line": 189,
+      "md": "Pulse of the spinner. Increment this value to draw the next frame of the\nspinner animation. Usually, you would update this value in a timeout.\n\nBy default, the `GtkSpinner` widget draws one full cycle of the animation,\nconsisting of 12 frames, in 750 milliseconds."
+    },
+    "size": {
+      "brief": "The `GtkIconSize` value that specifies the size of the rendered spinner.",
+      "file": "gtk/deprecated/gtkcellrendererspinner.c",
+      "line": 204,
+      "md": "The `GtkIconSize` value that specifies the size of the rendered spinner."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

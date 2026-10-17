@@ -1,0 +1,72 @@
+{
+  "doc": {
+    "brief": "The QGraphicsBlurEffect class provides a blur effect.",
+    "index_brief": "Blur effect",
+    "url": "https://doc.qt.io/qt-6/qgraphicsblureffect.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsBlurEffect",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QGraphicsBlurEffect(QObject *parent)": {
+      "brief": "Constructs a new QGraphicsBlurEffect instance.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsblureffect.html#QGraphicsBlurEffect"
+    },
+    "QGraphicsBlurEffect::BlurHints blurHints() const": {
+      "brief": "This property holds the blur hint of the effect.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsblureffect.html#blurHints-prop"
+    },
+    "QRectF boundingRectFor(const QRectF &rect) const override": {
+      "brief": "Reimplements: [QGraphicsEffect::boundingRectFor](xref:qt:QGraphicsEffect)(const QRectF &rect) const.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsblureffect.html#boundingRectFor"
+    },
+    "qreal blurRadius() const": {
+      "brief": "This property holds the blur radius of the effect.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsblureffect.html#blurRadius-prop"
+    },
+    "void blurHintsChanged(QGraphicsBlurEffect::BlurHints hints)": {
+      "brief": "This signal is emitted whenever the effect's blur hints changes.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsblureffect.html#blurHintsChanged"
+    },
+    "void blurRadiusChanged(qreal radius)": {
+      "brief": "This signal is emitted whenever the effect's blur radius changes.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsblureffect.html#blurRadiusChanged"
+    },
+    "void draw(QPainter *painter) override": {
+      "brief": "Reimplements: [QGraphicsEffect::draw](xref:qt:QGraphicsEffect)(QPainter *painter).",
+      "url": "https://doc.qt.io/qt-6/qgraphicsblureffect.html#draw"
+    },
+    "void setBlurHints(QGraphicsBlurEffect::BlurHints hints)": {
+      "brief": "This property holds the blur hint of the effect.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsblureffect.html#blurHints-prop"
+    },
+    "void setBlurRadius(qreal blurRadius)": {
+      "brief": "This property holds the blur radius of the effect.",
+      "url": "https://doc.qt.io/qt-6/qgraphicsblureffect.html#blurRadius-prop"
+    }
+  },
+  "mode": "brief",
+  "properties": {
+    "blurHints": {
+      "brief": "The blur hint of the effect",
+      "url": "https://doc.qt.io/qt-6/qgraphicsblureffect.html#blurHints-prop"
+    },
+    "blurRadius": {
+      "brief": "The blur radius of the effect",
+      "url": "https://doc.qt.io/qt-6/qgraphicsblureffect.html#blurRadius-prop"
+    }
+  },
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

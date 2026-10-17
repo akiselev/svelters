@@ -1,0 +1,37 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Granularity types that extend the text selection.",
+    "file": "gtk/gtktextview.h",
+    "line": 79,
+    "md": "Granularity types that extend the text selection. Use the\n`GtkTextView::extend-selection` signal to customize the selection."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:TextExtendSelection",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "line": {
+      "brief": "Selects the current line.",
+      "file": "gtk/gtktextview.h",
+      "line": 83,
+      "md": "Selects the current line. It is triggered by\n  a triple-click for example."
+    },
+    "word": {
+      "brief": "Selects the current word.",
+      "file": "gtk/gtktextview.h",
+      "line": 81,
+      "md": "Selects the current word. It is triggered by\n  a double-click for example."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

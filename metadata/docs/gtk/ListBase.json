@@ -1,0 +1,31 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "The abstract base class for GTK's list widgets.",
+    "file": "gtk/gtklistbase.h",
+    "line": 38,
+    "md": "The abstract base class for GTK's list widgets.\n\n# Shortcuts and Gestures\n\n`GtkListBase` supports the following keyboard shortcuts:\n\n- <kbd>Ctrl</kbd>+<kbd>A</kbd> or <kbd>Ctrl</kbd>+<kbd>&sol;</kbd>\n  selects all items.\n- <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd> or\n  <kbd>Ctrl</kbd>+<kbd>&bsol;</kbd> unselects all items.\n\nThe focused item is controlled by the navigation keys below, combined\nwith the <kbd>Ctrl</kbd> modifier to prevent moving the selection,\nand the <kbd>Shift</kbd> modifier to extend the current selection.\n\n- <kbd>←</kbd>, <kbd>→</kbd>, <kbd>↑</kbd>, <kbd>↓</kbd> move the focus\n  on the next item in the designed direction.\n- <kbd>Home</kbd> and <kbd>End</kbd> focus the first or last item.\n- <kbd>PgUp</kbd> and <kbd>PgDn</kbd> move the focus one page up or down.\n\nList item widgets support the following keyboard shortcuts:\n\n- <kbd>Enter</kbd> activates the item.\n- <kbd>␣</kbd> selects the item, with the same <kbd>Ctrl</kbd> and\n  <kbd>Shift</kbd> modifiers combinations as the navigation keys.\n\n# Actions\n\n`GtkListBase` defines a set of built-in actions:\n\n- `list.scroll-to-item` moves the visible area to the item at given position\n  with the minimum amount of scrolling required. If the item is already\n  visible, nothing happens.\n- `list.select-item` changes the selection.\n- `list.select-all` selects all items in the model, if the selection model\n  supports it.\n- `list.unselect-all` unselects all items in the model, if the selection\n  model supports it.\n\nList item widgets install the following actions:\n\n- `listitem.select` changes selection if the item is selectable.\n- `listitem.scroll-to` moves the visible area of the list to this item with\n  the minimum amount of scrolling required."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ListBase",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {},
+  "properties": {
+    "orientation": {
+      "brief": "The orientation of the list.",
+      "file": "gtk/gtklistbase.c",
+      "line": 1288,
+      "md": "The orientation of the list. See GtkOrientable:orientation\nfor details."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

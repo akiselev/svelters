@@ -1,0 +1,238 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkGLArea` widget.",
+      "file": "gtk/gtkglarea.c",
+      "line": 1110,
+      "md": "Creates a new `GtkGLArea` widget."
+    }
+  },
+  "doc": {
+    "brief": "Allows drawing with OpenGL.",
+    "file": "gtk/gtkglarea.c",
+    "line": 46,
+    "md": "Allows drawing with OpenGL.\n\n`GtkGLArea` sets up its own [`GLContext`](xref:gtk:Gdk.GLContext), and creates a custom\nGL framebuffer that the widget will do GL rendering onto. It also ensures\nthat this framebuffer is the default GL rendering target when rendering.\nThe completed rendering is integrated into the larger GTK scene graph as\na texture.\n\nIn order to draw, you have to connect to the [`GLArea::render`](xref:gtk:Gtk.GLArea#event:render)\nsignal, or subclass `GtkGLArea` and override the GtkGLAreaClass.render\nvirtual function.\n\nThe `GtkGLArea` widget ensures that the `GdkGLContext` is associated with\nthe widget's drawing area, and it is kept updated when the size and\nposition of the drawing area changes.\n\n## Drawing with GtkGLArea\n\nThe simplest way to draw using OpenGL commands in a `GtkGLArea` is to\ncreate a widget instance and connect to the [`GLArea::render`](xref:gtk:Gtk.GLArea#event:render) signal:\n\nThe `render()` function will be called when the `GtkGLArea` is ready\nfor you to draw its content:\n\nThe initial contents of the framebuffer are transparent.\n\n```c\nstatic gboolean\nrender (GtkGLArea *area, GdkGLContext *context)\n{\n  // inside this function it's safe to use GL; the given\n  // GdkGLContext has been made current to the drawable\n  // surface used by the `GtkGLArea` and the viewport has\n  // already been set to be the size of the allocation\n\n  // we can start by clearing the buffer\n  glClearColor (0, 0, 0, 0);\n  glClear (GL_COLOR_BUFFER_BIT);\n\n  // record the active framebuffer ID, so we can return to it\n  // with `glBindFramebuffer (GL_FRAMEBUFFER, screen_fb)` should\n  // we, for instance, intend on utilizing the results of an\n  // intermediate render texture pass\n  GLuint screen_fb = 0;\n  glGetIntegerv (GL_FRAMEBUFFER_BINDING, &screen_fb);\n\n  // draw your object\n  // draw_an_object ();\n\n  // we completed our drawing; the draw commands will be\n  // flushed at the end of the signal emission chain, and\n  // the buffers will be drawn on the window\n  return TRUE;\n}\n\nvoid setup_glarea (void)\n{\n  // create a GtkGLArea instance\n  GtkWidget *gl_area = gtk_gl_area_new ();\n\n  // connect to the \"render\" signal\n  g_signal_connect (gl_area, \"render\", G_CALLBACK (render), NULL);\n}\n```\n\nIf you need to initialize OpenGL state, e.g. buffer objects or\nshaders, you should use the [`Widget::realize`](xref:gtk:Gtk.Widget#event:realize) signal;\nyou can use the [`Widget::unrealize`](xref:gtk:Gtk.Widget#event:unrealize) signal to clean up.\nSince the `GdkGLContext` creation and initialization may fail, you\nwill need to check for errors, using [`GLArea.get_error()`](xref:gtk:Gtk.GLArea#method:get_error).\n\nAn example of how to safely initialize the GL state is:\n\n```c\nstatic void\non_realize (GtkGLArea *area)\n{\n  // We need to make the context current if we want to\n  // call GL API\n  gtk_gl_area_make_current (area);\n\n  // If there were errors during the initialization or\n  // when trying to make the context current, this\n  // function will return a GError for you to catch\n  if (gtk_gl_area_get_error (area) != NULL)\n    return;\n\n  // You can also use gtk_gl_area_set_error() in order\n  // to show eventual initialization errors on the\n  // GtkGLArea widget itself\n  GError *internal_error = NULL;\n  init_buffer_objects (&error);\n  if (error != NULL)\n    {\n      gtk_gl_area_set_error (area, error);\n      g_error_free (error);\n      return;\n    }\n\n  init_shaders (&error);\n  if (error != NULL)\n    {\n      gtk_gl_area_set_error (area, error);\n      g_error_free (error);\n      return;\n    }\n}\n```\n\nIf you need to change the options for creating the `GdkGLContext`\nyou should use the [`GLArea::create-context`](xref:gtk:Gtk.GLArea#event:create-context) signal."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:GLArea",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "attach_buffers": {
+      "brief": "Binds buffers to the framebuffer.",
+      "file": "gtk/gtkglarea.c",
+      "line": 568,
+      "md": "Binds buffers to the framebuffer.\n\nEnsures that the `area` framebuffer object is made the current draw\nand read target, and that all the required buffers for the `area`\nare created and bound to the framebuffer.\n\nThis function is automatically called before emitting the\n[`GLArea::render`](xref:gtk:Gtk.GLArea#event:render) signal, and doesn't normally need to be\ncalled by application code."
+    },
+    "get_allowed_apis": {
+      "brief": "Gets the allowed APIs.",
+      "file": "gtk/gtkglarea.c",
+      "line": 1257,
+      "md": "Gets the allowed APIs.\n\nSee [`GLArea.set_allowed_apis()`](xref:gtk:Gtk.GLArea#method:set_allowed_apis).",
+      "since": "4.12"
+    },
+    "get_api": {
+      "brief": "Gets the API that is currently in use.",
+      "file": "gtk/gtkglarea.c",
+      "line": 1279,
+      "md": "Gets the API that is currently in use.\n\nIf the GL area has not been realized yet, 0 is returned.",
+      "since": "4.12"
+    },
+    "get_auto_render": {
+      "brief": "Returns whether the area is in auto render mode or not.",
+      "file": "gtk/gtkglarea.c",
+      "line": 1478,
+      "md": "Returns whether the area is in auto render mode or not."
+    },
+    "get_context": {
+      "brief": "Retrieves the `GdkGLContext` used by `area`.",
+      "file": "gtk/gtkglarea.c",
+      "line": 1534,
+      "md": "Retrieves the `GdkGLContext` used by `area`."
+    },
+    "get_error": {
+      "brief": "Gets the current error set on the `area`.",
+      "file": "gtk/gtkglarea.c",
+      "line": 1147,
+      "md": "Gets the current error set on the `area`."
+    },
+    "get_has_depth_buffer": {
+      "brief": "Returns whether the area has a depth buffer.",
+      "file": "gtk/gtkglarea.c",
+      "line": 1353,
+      "md": "Returns whether the area has a depth buffer."
+    },
+    "get_has_stencil_buffer": {
+      "brief": "Returns whether the area has a stencil buffer.",
+      "file": "gtk/gtkglarea.c",
+      "line": 1402,
+      "md": "Returns whether the area has a stencil buffer."
+    },
+    "get_required_version": {
+      "brief": "Retrieves the required version of OpenGL.",
+      "file": "gtk/gtkglarea.c",
+      "line": 1328,
+      "md": "Retrieves the required version of OpenGL.\n\nSee [`GLArea.set_required_version()`](xref:gtk:Gtk.GLArea#method:set_required_version)."
+    },
+    "get_use_es": {
+      "brief": "Returns whether the `GtkGLArea` should use OpenGL ES.",
+      "deprecated": "4.12",
+      "deprecated_md": "Use [`GLArea.get_api()`](xref:gtk:Gtk.GLArea#method:get_api)",
+      "file": "gtk/gtkglarea.c",
+      "line": 1195,
+      "md": "Returns whether the `GtkGLArea` should use OpenGL ES.\n\nSee [`GLArea.set_use_es()`](xref:gtk:Gtk.GLArea#method:set_use_es)."
+    },
+    "make_current": {
+      "brief": "Ensures that the `GdkGLContext` used by `area` is associated with the `GtkGLArea`.",
+      "file": "gtk/gtkglarea.c",
+      "line": 1552,
+      "md": "Ensures that the `GdkGLContext` used by `area` is associated with\nthe `GtkGLArea`.\n\nThis function is automatically called before emitting the\n[`GLArea::render`](xref:gtk:Gtk.GLArea#event:render) signal, and doesn't normally need\nto be called by application code."
+    },
+    "queue_render": {
+      "brief": "Marks the currently rendered data (if any) as invalid, and queues a redraw of the widget.",
+      "file": "gtk/gtkglarea.c",
+      "line": 1451,
+      "md": "Marks the currently rendered data (if any) as invalid, and queues\na redraw of the widget.\n\nThis ensures that the [`GLArea::render`](xref:gtk:Gtk.GLArea#event:render) signal\nis emitted during the draw.\n\nThis is only needed when [`GLArea.set_auto_render()`](xref:gtk:Gtk.GLArea#method:set_auto_render) has\nbeen called with a `FALSE` value. The default behaviour is to\nemit [`GLArea::render`](xref:gtk:Gtk.GLArea#event:render) on each draw."
+    },
+    "set_allowed_apis": {
+      "brief": "Sets the allowed APIs to create a context with.",
+      "file": "gtk/gtkglarea.c",
+      "line": 1221,
+      "md": "Sets the allowed APIs to create a context with.\n\nYou should check [`GLArea:api`](xref:gtk:Gtk.GLArea#property:api) before drawing\nwith either API.\n\nBy default, all APIs are allowed.",
+      "since": "4.12"
+    },
+    "set_auto_render": {
+      "brief": "Sets whether the `GtkGLArea` is in auto render mode.",
+      "file": "gtk/gtkglarea.c",
+      "line": 1496,
+      "md": "Sets whether the `GtkGLArea` is in auto render mode.\n\nIf `auto_render` is `TRUE` the [`GLArea::render`](xref:gtk:Gtk.GLArea#event:render) signal will\nbe emitted every time the widget draws. This is the default and is\nuseful if drawing the widget is faster.\n\nIf `auto_render` is `FALSE` the data from previous rendering is kept\naround and will be used for drawing the widget the next time,\nunless the window is resized. In order to force a rendering\n[`GLArea.queue_render()`](xref:gtk:Gtk.GLArea#method:queue_render) must be called. This mode is\nuseful when the scene changes seldom, but takes a long time to redraw."
+    },
+    "set_error": {
+      "brief": "Sets an error on the area which will be shown instead of the GL rendering.",
+      "file": "gtk/gtkglarea.c",
+      "line": 1123,
+      "md": "Sets an error on the area which will be shown instead of the\nGL rendering.\n\nThis is useful in the [`GLArea::create-context`](xref:gtk:Gtk.GLArea#event:create-context)\nsignal if GL context creation fails."
+    },
+    "set_has_depth_buffer": {
+      "brief": "Sets whether the `GtkGLArea` should use a depth buffer.",
+      "file": "gtk/gtkglarea.c",
+      "line": 1371,
+      "md": "Sets whether the `GtkGLArea` should use a depth buffer.\n\nIf `has_depth_buffer` is `TRUE` the widget will allocate and\nenable a depth buffer for the target framebuffer. Otherwise\nthere will be none."
+    },
+    "set_has_stencil_buffer": {
+      "brief": "Sets whether the `GtkGLArea` should use a stencil buffer.",
+      "file": "gtk/gtkglarea.c",
+      "line": 1420,
+      "md": "Sets whether the `GtkGLArea` should use a stencil buffer.\n\nIf `has_stencil_buffer` is `TRUE` the widget will allocate and\nenable a stencil buffer for the target framebuffer. Otherwise\nthere will be none."
+    },
+    "set_required_version": {
+      "brief": "Sets the required version of OpenGL to be used when creating the context for the widget.",
+      "file": "gtk/gtkglarea.c",
+      "line": 1304,
+      "md": "Sets the required version of OpenGL to be used when creating\nthe context for the widget.\n\nThis function must be called before the area has been realized."
+    },
+    "set_use_es": {
+      "brief": "Sets whether the `area` should create an OpenGL or an OpenGL ES context.",
+      "deprecated": "4.12",
+      "deprecated_md": "Use [`GLArea.set_allowed_apis()`](xref:gtk:Gtk.GLArea#method:set_allowed_apis)",
+      "file": "gtk/gtkglarea.c",
+      "line": 1165,
+      "md": "Sets whether the `area` should create an OpenGL or an OpenGL ES context.\n\nYou should check the capabilities of the `GdkGLContext` before drawing\nwith either API."
+    }
+  },
+  "properties": {
+    "allowed-apis": {
+      "brief": "The allowed APIs.",
+      "file": "gtk/gtkglarea.c",
+      "line": 976,
+      "md": "The allowed APIs.",
+      "since": "4.12"
+    },
+    "api": {
+      "brief": "The API currently in use.",
+      "file": "gtk/gtkglarea.c",
+      "line": 991,
+      "md": "The API currently in use.",
+      "since": "4.12"
+    },
+    "auto-render": {
+      "brief": "If set to `TRUE` the ::render signal will be emitted every time the widget draws.",
+      "file": "gtk/gtkglarea.c",
+      "line": 910,
+      "md": "If set to `TRUE` the ::render signal will be emitted every time\nthe widget draws.\n\nThis is the default and is useful if drawing the widget is faster.\n\nIf set to `FALSE` the data from previous rendering is kept around and will\nbe used for drawing the widget the next time, unless the window is resized.\nIn order to force a rendering [`GLArea.queue_render()`](xref:gtk:Gtk.GLArea#method:queue_render) must be called.\nThis mode is useful when the scene changes seldom, but takes a long time\nto redraw."
+    },
+    "context": {
+      "brief": "The `GdkGLContext` used by the `GtkGLArea` widget.",
+      "file": "gtk/gtkglarea.c",
+      "line": 895,
+      "md": "The `GdkGLContext` used by the `GtkGLArea` widget.\n\nThe `GtkGLArea` widget is responsible for creating the `GdkGLContext`\ninstance. If you need to render with other kinds of buffers (stencil,\ndepth, etc), use render buffers."
+    },
+    "has-depth-buffer": {
+      "brief": "If set to `TRUE` the widget will allocate and enable a depth buffer for the target framebuffer.",
+      "file": "gtk/gtkglarea.c",
+      "line": 931,
+      "md": "If set to `TRUE` the widget will allocate and enable a depth buffer for the\ntarget framebuffer.\n\nSetting this property will enable GL's depth testing as a side effect. If\nyou don't need depth testing, you should call `glDisable(GL_DEPTH_TEST)`\nin your `GtkGLArea::render` handler."
+    },
+    "has-stencil-buffer": {
+      "brief": "If set to `TRUE` the widget will allocate and enable a stencil buffer for the target framebuffer.",
+      "file": "gtk/gtkglarea.c",
+      "line": 948,
+      "md": "If set to `TRUE` the widget will allocate and enable a stencil buffer for the\ntarget framebuffer."
+    },
+    "use-es": {
+      "brief": "If set to `TRUE` the widget will try to create a `GdkGLContext` using OpenGL ES instead of OpenGL.",
+      "deprecated": "4.12",
+      "deprecated_md": "Use [`GLArea:allowed-apis`](xref:gtk:Gtk.GLArea#property:allowed-apis)",
+      "file": "gtk/gtkglarea.c",
+      "line": 961,
+      "md": "If set to `TRUE` the widget will try to create a `GdkGLContext` using\nOpenGL ES instead of OpenGL."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "create-context": {
+      "brief": "Emitted when the widget is being realized.",
+      "file": "gtk/gtkglarea.c",
+      "line": 1068,
+      "md": "Emitted when the widget is being realized.\n\nThis allows you to override how the GL context is created.\nThis is useful when you want to reuse an existing GL context,\nor if you want to try creating different kinds of GL options.\n\nIf context creation fails then the signal handler can use\n[`GLArea.set_error()`](xref:gtk:Gtk.GLArea#method:set_error) to register a more detailed error\nof how the construction failed."
+    },
+    "render": {
+      "brief": "Emitted every time the contents of the `GtkGLArea` should be redrawn.",
+      "file": "gtk/gtkglarea.c",
+      "line": 1012,
+      "md": "Emitted every time the contents of the `GtkGLArea` should be redrawn.\n\nThe `context` is bound to the `area` prior to emitting this function,\nand the buffers are painted to the window once the emission terminates."
+    },
+    "resize": {
+      "brief": "Emitted once when the widget is realized, and then each time the widget is changed while realized.",
+      "file": "gtk/gtkglarea.c",
+      "line": 1038,
+      "md": "Emitted once when the widget is realized, and then each time the widget\nis changed while realized.\n\nThis is useful in order to keep GL state up to date with the widget size,\nlike for instance camera properties which may depend on the width/height\nratio.\n\nThe GL context for the area is guaranteed to be current when this signal\nis emitted.\n\nThe default handler sets up the GL viewport."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {
+    "create_context": {
+      "brief": "class closure for the `GtkGLArea::create-context` signal",
+      "file": "gtk/gtkglarea.h",
+      "line": 51,
+      "md": "class closure for the `GtkGLArea::create-context` signal"
+    },
+    "render": {
+      "brief": "class closure for the `GtkGLArea::render` signal",
+      "file": "gtk/gtkglarea.h",
+      "line": 49,
+      "md": "class closure for the `GtkGLArea::render` signal"
+    },
+    "resize": {
+      "brief": "class closeure for the `GtkGLArea::resize` signal",
+      "file": "gtk/gtkglarea.h",
+      "line": 50,
+      "md": "class closeure for the `GtkGLArea::resize` signal"
+    }
+  }
+}

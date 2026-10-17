@@ -1,0 +1,81 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a text mark.",
+      "file": "gtk/gtktextmark.c",
+      "line": 241,
+      "md": "Creates a text mark.\n\nAdd it to a buffer using [`TextBuffer.add_mark()`](xref:gtk:Gtk.TextBuffer#method:add_mark).\nIf `name` is `NULL`, the mark is anonymous; otherwise, the mark can be\nretrieved by name using [`TextBuffer.get_mark()`](xref:gtk:Gtk.TextBuffer#method:get_mark). If a mark\nhas left gravity, and text is inserted at the mark’s current location,\nthe mark will be moved to the left of the newly-inserted text. If the\nmark has right gravity (`left_gravity` = `FALSE`), the mark will end up\non the right of newly-inserted text. The standard left-to-right cursor\nis a mark with right gravity (when you type, the cursor stays on the\nright side of the text you’re typing)."
+    }
+  },
+  "doc": {
+    "brief": "Marks a position in a `GtkTextbuffer` that is preserved across modifications.",
+    "file": "gtk/gtktextmark.c",
+    "line": 55,
+    "md": "Marks a position in a `GtkTextbuffer` that is preserved\nacross modifications.\n\nYou may wish to begin by reading the\n[text widget conceptual overview](section-text-widget.html),\nwhich gives an overview of all the objects and data types\nrelated to the text widget and how they work together.\n\nA `GtkTextMark` is like a bookmark in a text buffer; it preserves\na position in the text. You can convert the mark to an iterator using\n[`TextBuffer.get_iter_at_mark()`](xref:gtk:Gtk.TextBuffer#method:get_iter_at_mark). Unlike iterators, marks remain\nvalid across buffer mutations, because their behavior is defined when\ntext is inserted or deleted. When text containing a mark is deleted,\nthe mark remains in the position originally occupied by the deleted\ntext. When text is inserted at a mark, a mark with “left gravity” will\nbe moved to the beginning of the newly-inserted text, and a mark with\n“right gravity” will be moved to the end.\n\nNote that “left” and “right” here refer to logical direction (left\nis the toward the start of the buffer); in some languages such as\nHebrew the logically-leftmost text is not actually on the left when\ndisplayed.\n\nMarks are reference counted, but the reference count only controls\nthe validity of the memory; marks can be deleted from the buffer at\nany time with [`TextBuffer.delete_mark()`](xref:gtk:Gtk.TextBuffer#method:delete_mark). Once deleted from\nthe buffer, a mark is essentially useless.\n\nMarks optionally have names; these can be convenient to avoid passing\nthe `GtkTextMark` object around.\n\nMarks are typically created using the [`TextBuffer.create_mark()`](xref:gtk:Gtk.TextBuffer#method:create_mark)\nfunction."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:TextMark",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_buffer": {
+      "brief": "Gets the buffer this mark is located inside.",
+      "file": "gtk/gtktextmark.c",
+      "line": 336,
+      "md": "Gets the buffer this mark is located inside.\n\nReturns `NULL` if the mark is deleted."
+    },
+    "get_deleted": {
+      "brief": "Returns `TRUE` if the mark has been removed from its buffer.",
+      "file": "gtk/gtktextmark.c",
+      "line": 310,
+      "md": "Returns `TRUE` if the mark has been removed from its buffer.\n\nSee [`TextBuffer.add_mark()`](xref:gtk:Gtk.TextBuffer#method:add_mark) for a way to add it\nto a buffer again."
+    },
+    "get_left_gravity": {
+      "brief": "Determines whether the mark has left gravity.",
+      "file": "gtk/gtktextmark.c",
+      "line": 361,
+      "md": "Determines whether the mark has left gravity."
+    },
+    "get_name": {
+      "brief": "Returns the mark name.",
+      "file": "gtk/gtktextmark.c",
+      "line": 290,
+      "md": "Returns the mark name.\n\nReturns `NULL` for anonymous marks."
+    },
+    "get_visible": {
+      "brief": "Returns `TRUE` if the mark is visible.",
+      "file": "gtk/gtktextmark.c",
+      "line": 270,
+      "md": "Returns `TRUE` if the mark is visible.\n\nA cursor is displayed for visible marks."
+    },
+    "set_visible": {
+      "brief": "Sets the visibility of `mark`.",
+      "file": "gtk/gtktextbtree.c",
+      "line": 3002,
+      "md": "Sets the visibility of `mark`.\n\nThe insertion point is normally visible, i.e. you can see it as\na vertical bar. Also, the text widget uses a visible mark to\nindicate where a drop will occur when dragging-and-dropping text.\nMost other marks are not visible.\n\nMarks are not visible by default."
+    }
+  },
+  "properties": {
+    "left-gravity": {
+      "brief": "Whether the mark has left gravity.",
+      "file": "gtk/gtktextmark.c",
+      "line": 139,
+      "md": "Whether the mark has left gravity.\n\nWhen text is inserted at the mark’s current location, if the mark\nhas left gravity it will be moved to the left of the newly-inserted\ntext, otherwise to the right."
+    },
+    "name": {
+      "brief": "The name of the mark or `NULL` if the mark is anonymous.",
+      "file": "gtk/gtktextmark.c",
+      "line": 128,
+      "md": "The name of the mark or `NULL` if the mark is anonymous."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

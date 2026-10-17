@@ -1,0 +1,37 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Determines the direction of a sort.",
+    "file": "gtk/gtkenums.h",
+    "line": 585,
+    "md": "Determines the direction of a sort."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:SortType",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "ascending": {
+      "brief": "Sorting is in ascending order.",
+      "file": "gtk/gtkenums.h",
+      "line": 587,
+      "md": "Sorting is in ascending order."
+    },
+    "descending": {
+      "brief": "Sorting is in descending order.",
+      "file": "gtk/gtkenums.h",
+      "line": 588,
+      "md": "Sorting is in descending order."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

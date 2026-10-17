@@ -1,0 +1,44 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Allocates a new `GtkBorder` struct and initializes its elements to zero.",
+      "file": "gtk/gtkborder.c",
+      "line": 29,
+      "md": "Allocates a new `GtkBorder` struct and initializes its elements to zero."
+    }
+  },
+  "doc": {
+    "brief": "Specifies a border around a rectangular area.",
+    "file": "gtk/gtkborder.h",
+    "line": 40,
+    "md": "Specifies a border around a rectangular area.\n\nEach side can have a different width."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Border",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "copy": {
+      "brief": "Copies a `GtkBorder`.",
+      "file": "gtk/gtkborder.c",
+      "line": 43,
+      "md": "Copies a `GtkBorder`."
+    },
+    "free": {
+      "brief": "Frees a `GtkBorder`.",
+      "file": "gtk/gtkborder.c",
+      "line": 63,
+      "md": "Frees a `GtkBorder`."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

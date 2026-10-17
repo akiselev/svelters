@@ -1,0 +1,31 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkFixedLayout`.",
+      "file": "gtk/gtkfixedlayout.c",
+      "line": 355,
+      "md": "Creates a new `GtkFixedLayout`."
+    }
+  },
+  "doc": {
+    "brief": "Places child widgets at fixed positions.",
+    "file": "gtk/gtkfixedlayout.c",
+    "line": 21,
+    "md": "Places child widgets at fixed positions.\n\nMost applications should never use this layout manager; fixed positioning\nand sizing requires constant recalculations on where children need to be\npositioned and sized. Other layout managers perform this kind of work\ninternally so that application developers don't need to do it. Specifically,\nwidgets positioned in a fixed layout manager will need to take into account:\n\n- Themes, which may change widget sizes.\n\n- Fonts other than the one you used to write the app will of course\n  change the size of widgets containing text; keep in mind that\n  users may use a larger font because of difficulty reading the\n  default, or they may be using a different OS that provides different\n  fonts.\n\n- Translation of text into other languages changes its size. Also,\n  display of non-English text will use a different font in many\n  cases.\n\nIn addition, `GtkFixedLayout` does not pay attention to text direction and\nthus may produce unwanted results if your app is run under right-to-left\nlanguages such as Hebrew or Arabic. That is: normally GTK will order\ncontainers appropriately depending on the text direction, e.g. to put labels\nto the right of the thing they label when using an RTL language;\n`GtkFixedLayout` won't be able to do that for you.\n\nFinally, fixed positioning makes it kind of annoying to add/remove UI\nelements, since you have to reposition all the other  elements. This is a\nlong-term maintenance problem for your application."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:FixedLayout",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

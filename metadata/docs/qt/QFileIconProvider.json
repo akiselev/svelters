@@ -1,0 +1,39 @@
+{
+  "doc": {
+    "brief": "The QFileIconProvider class provides file icons for the [QFileSystemModel](xref:qt:QFileSystemModel) class.",
+    "index_brief": "File icons for the QFileSystemModel class",
+    "url": "https://doc.qt.io/qt-6/qfileiconprovider.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QFileIconProvider",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QFileIconProvider()": {
+      "brief": "Constructs a file icon provider.",
+      "url": "https://doc.qt.io/qt-6/qfileiconprovider.html#QFileIconProvider"
+    },
+    "QIcon icon(QAbstractFileIconProvider::IconType type) const override": {
+      "brief": "Reimplements: [QAbstractFileIconProvider::icon](xref:qt:QAbstractFileIconProvider)(QAbstractFileIconProvider::IconType type) const.",
+      "url": "https://doc.qt.io/qt-6/qfileiconprovider.html#icon"
+    },
+    "QIcon icon(const QFileInfo &info) const override": {
+      "brief": "Reimplements: [QAbstractFileIconProvider::icon](xref:qt:QAbstractFileIconProvider)(const QFileInfo &info) const.",
+      "url": "https://doc.qt.io/qt-6/qfileiconprovider.html#icon-1"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

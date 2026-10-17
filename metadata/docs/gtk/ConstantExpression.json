@@ -1,0 +1,44 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a `GtkExpression` that evaluates to the object given by the arguments.",
+      "file": "gtk/gtkexpression.c",
+      "line": 898,
+      "md": "Creates a `GtkExpression` that evaluates to the\nobject given by the arguments."
+    },
+    "new_for_value": {
+      "brief": "Creates an expression that always evaluates to the given `value`.",
+      "file": "gtk/gtkexpression.c",
+      "line": 939,
+      "md": "Creates an expression that always evaluates to the given `value`."
+    }
+  },
+  "doc": {
+    "brief": "A constant value in a `GtkExpression`.",
+    "file": "gtk/gtkexpression.c",
+    "line": 842,
+    "md": "A constant value in a `GtkExpression`."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:ConstantExpression",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_value": {
+      "brief": "Gets the value that a constant expression evaluates to.",
+      "file": "gtk/gtkexpression.c",
+      "line": 964,
+      "md": "Gets the value that a constant expression evaluates to."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

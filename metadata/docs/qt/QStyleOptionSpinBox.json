@@ -1,0 +1,31 @@
+{
+  "doc": {
+    "brief": "The QStyleOptionSpinBox class is used to describe the parameters necessary for drawing a spin box.",
+    "index_brief": "Used to describe the parameters necessary for drawing a spin box",
+    "url": "https://doc.qt.io/qt-6/qstyleoptionspinbox.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOptionSpinBox",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QStyleOptionSpinBox()": {
+      "brief": "Constructs a QStyleOptionSpinBox, initializing the members variables to their default values.",
+      "url": "https://doc.qt.io/qt-6/qstyleoptionspinbox.html#QStyleOptionSpinBox"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

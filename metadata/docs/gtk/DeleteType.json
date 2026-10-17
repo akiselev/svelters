@@ -1,0 +1,73 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Passed to various keybinding signals for deleting text.",
+    "file": "gtk/gtkenums.h",
+    "line": 164,
+    "md": "Passed to various keybinding signals for deleting text."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:DeleteType",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "chars": {
+      "brief": "Delete characters.",
+      "file": "gtk/gtkenums.h",
+      "line": 166,
+      "md": "Delete characters."
+    },
+    "display_line_ends": {
+      "brief": "Delete only the portion of the display-line to the left/right of cursor.",
+      "file": "gtk/gtkenums.h",
+      "line": 174,
+      "md": "Delete only the portion of the\n  display-line to the left/right of cursor."
+    },
+    "display_lines": {
+      "brief": "Delete display-lines.",
+      "file": "gtk/gtkenums.h",
+      "line": 170,
+      "md": "Delete display-lines. Display-lines\n  refers to the visible lines, with respect to the current line\n  breaks. As opposed to paragraphs, which are defined by line\n  breaks in the input."
+    },
+    "paragraph_ends": {
+      "brief": "Delete to the end of the paragraph.",
+      "file": "gtk/gtkenums.h",
+      "line": 176,
+      "md": "Delete to the end of the\n  paragraph. Like C-k in Emacs (or its reverse)."
+    },
+    "paragraphs": {
+      "brief": "Delete entire line. Like C-k in pico.",
+      "file": "gtk/gtkenums.h",
+      "line": 178,
+      "md": "Delete entire line. Like C-k in pico."
+    },
+    "whitespace": {
+      "brief": "Delete only whitespace.",
+      "file": "gtk/gtkenums.h",
+      "line": 179,
+      "md": "Delete only whitespace. Like M-\\ in Emacs."
+    },
+    "word_ends": {
+      "brief": "Delete only the portion of the word to the left/right of cursor if we’re in the middle of a word.",
+      "file": "gtk/gtkenums.h",
+      "line": 167,
+      "md": "Delete only the portion of the word to the\n  left/right of cursor if we’re in the middle of a word."
+    },
+    "words": {
+      "brief": "Delete words.",
+      "file": "gtk/gtkenums.h",
+      "line": 169,
+      "md": "Delete words."
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

@@ -1,0 +1,38 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Flags that affect how [`PopoverMenu`](xref:gtk:Gtk.PopoverMenu) widgets built from a [`MenuModel`](xref:gtk:Gio.MenuModel) are created and displayed.",
+    "file": "gtk/gtkenums.h",
+    "line": 1937,
+    "md": "Flags that affect how [`PopoverMenu`](xref:gtk:Gtk.PopoverMenu) widgets built from\na [`MenuModel`](xref:gtk:Gio.MenuModel) are created and displayed."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:PopoverMenuFlags",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "nested": {
+      "brief": "Submenus are presented as traditional, nested popovers.",
+      "file": "gtk/gtkenums.h",
+      "line": 1939,
+      "md": "Submenus are presented as traditional, nested\n  popovers."
+    },
+    "sliding": {
+      "brief": "Submenus are presented as sliding submenus that replace the main menu.",
+      "file": "gtk/gtkenums.h",
+      "line": 1945,
+      "md": "Submenus are presented as sliding submenus that replace the main menu.",
+      "since": "4.14"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

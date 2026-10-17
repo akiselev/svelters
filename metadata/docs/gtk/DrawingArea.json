@@ -1,0 +1,82 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new drawing area.",
+      "file": "gtk/gtkdrawingarea.c",
+      "line": 337,
+      "md": "Creates a new drawing area."
+    }
+  },
+  "doc": {
+    "brief": "Allows drawing with cairo.",
+    "file": "gtk/gtkdrawingarea.c",
+    "line": 60,
+    "md": "Allows drawing with cairo.\n\nIt’s essentially a blank widget; you can draw on it. After\ncreating a drawing area, the application may want to connect to:\n\n- The [`Widget::realize`](xref:gtk:Gtk.Widget#event:realize) signal to take any necessary actions\n  when the widget is instantiated on a particular display.\n  (Create GDK resources in response to this signal.)\n\n- The [`DrawingArea::resize`](xref:gtk:Gtk.DrawingArea#event:resize) signal to take any necessary\n  actions when the widget changes size.\n\n- Call [`DrawingArea.set_draw_func()`](xref:gtk:Gtk.DrawingArea#method:set_draw_func) to handle redrawing the\n  contents of the widget.\n\nThe following code portion demonstrates using a drawing\narea to display a circle in the normal widget foreground\ncolor.\n\n## Simple GtkDrawingArea usage\n\n```c\nstatic void\ndraw_function (GtkDrawingArea *area,\n               cairo_t        *cr,\n               int             width,\n               int             height,\n               gpointer        data)\n{\n  GdkRGBA color;\n\n  cairo_arc (cr,\n             width / 2.0, height / 2.0,\n             MIN (width, height) / 2.0,\n             0, 2 * G_PI);\n\n  gtk_widget_get_color (GTK_WIDGET (area),\n                        &color);\n  gdk_cairo_set_source_rgba (cr, &color);\n\n  cairo_fill (cr);\n}\n\nint\nmain (int argc, char **argv)\n{\n  gtk_init ();\n\n  GtkWidget *area = gtk_drawing_area_new ();\n  gtk_drawing_area_set_content_width (GTK_DRAWING_AREA (area), 100);\n  gtk_drawing_area_set_content_height (GTK_DRAWING_AREA (area), 100);\n  gtk_drawing_area_set_draw_func (GTK_DRAWING_AREA (area),\n                                  draw_function,\n                                  NULL, NULL);\n  return 0;\n}\n```\n\nThe draw function is normally called when a drawing area first comes\nonscreen, or when it’s covered by another window and then uncovered.\nYou can also force a redraw by adding to the “damage region” of the\ndrawing area’s window using [`Widget.queue_draw()`](xref:gtk:Gtk.Widget#method:queue_draw).\nThis will cause the drawing area to call the draw function again.\n\nThe available routines for drawing are documented in the\n[Cairo documentation](https://www.cairographics.org/manual/); GDK\noffers additional API to integrate with Cairo, like `cairo_set_source_rgba`\nor `cairo_set_source_pixbuf`.\n\nTo receive mouse events on a drawing area, you will need to use\nevent controllers. To receive keyboard events, you will need to set\nthe “can-focus” property on the drawing area, and you should probably\ndraw some user-visible indication that the drawing area is focused.\n\nIf you need more complex control over your widget, you should consider\ncreating your own `GtkWidget` subclass."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:DrawingArea",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_content_height": {
+      "brief": "Retrieves the content height of the `GtkDrawingArea`.",
+      "file": "gtk/gtkdrawingarea.c",
+      "line": 432,
+      "md": "Retrieves the content height of the `GtkDrawingArea`."
+    },
+    "get_content_width": {
+      "brief": "Retrieves the content width of the `GtkDrawingArea`.",
+      "file": "gtk/gtkdrawingarea.c",
+      "line": 382,
+      "md": "Retrieves the content width of the `GtkDrawingArea`."
+    },
+    "set_content_height": {
+      "brief": "Sets the desired height of the contents of the drawing area.",
+      "file": "gtk/gtkdrawingarea.c",
+      "line": 400,
+      "md": "Sets the desired height of the contents of the drawing area.\n\nNote that because widgets may be allocated larger sizes than they\nrequested, it is possible that the actual height passed to your draw\nfunction is larger than the height set here. You can use\n[`Widget.set_valign()`](xref:gtk:Gtk.Widget#method:set_valign) to avoid that.\n\nIf the height is set to 0 (the default), the drawing area may disappear."
+    },
+    "set_content_width": {
+      "brief": "Sets the desired width of the contents of the drawing area.",
+      "file": "gtk/gtkdrawingarea.c",
+      "line": 350,
+      "md": "Sets the desired width of the contents of the drawing area.\n\nNote that because widgets may be allocated larger sizes than they\nrequested, it is possible that the actual width passed to your draw\nfunction is larger than the width set here. You can use\n[`Widget.set_halign()`](xref:gtk:Gtk.Widget#method:set_halign) to avoid that.\n\nIf the width is set to 0 (the default), the drawing area may disappear."
+    },
+    "set_draw_func": {
+      "brief": "Setting a draw function is the main thing you want to do when using a drawing area.",
+      "file": "gtk/gtkdrawingarea.c",
+      "line": 450,
+      "md": "Setting a draw function is the main thing you want to do when using\na drawing area.\n\nThe draw function is called whenever GTK needs to draw the contents\nof the drawing area to the screen.\n\nThe draw function will be called during the drawing stage of GTK.\nIn the drawing stage it is not allowed to change properties of any\nGTK widgets or call any functions that would cause any properties\nto be changed. You should restrict yourself exclusively to drawing\nyour contents in the draw function.\n\nIf what you are drawing does change, call [`Widget.queue_draw()`](xref:gtk:Gtk.Widget#method:queue_draw)\non the drawing area. This will cause a redraw and will call `draw_func` again."
+    }
+  },
+  "properties": {
+    "content-height": {
+      "brief": "The content height.",
+      "file": "gtk/gtkdrawingarea.c",
+      "line": 294,
+      "md": "The content height."
+    },
+    "content-width": {
+      "brief": "The content width.",
+      "file": "gtk/gtkdrawingarea.c",
+      "line": 284,
+      "md": "The content width."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {
+    "resize": {
+      "brief": "Emitted once when the widget is realized, and then each time the widget is changed while realized.",
+      "file": "gtk/gtkdrawingarea.c",
+      "line": 306,
+      "md": "Emitted once when the widget is realized, and then each time the widget\nis changed while realized.\n\nThis is useful in order to keep state up to date with the widget size,\nlike for instance a backing surface."
+    }
+  },
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

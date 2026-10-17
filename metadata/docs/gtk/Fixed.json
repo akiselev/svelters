@@ -1,0 +1,68 @@
+{
+  "constructors": {
+    "new": {
+      "brief": "Creates a new `GtkFixed`.",
+      "file": "gtk/gtkfixed.c",
+      "line": 199,
+      "md": "Creates a new `GtkFixed`."
+    }
+  },
+  "doc": {
+    "brief": "Places its child widgets at fixed positions and with fixed sizes.",
+    "file": "gtk/gtkfixed.c",
+    "line": 25,
+    "md": "Places its child widgets at fixed positions and with fixed sizes.\n\n`GtkFixed` performs no automatic layout management.\n\nFor most applications, you should not use this container! It keeps\nyou from having to learn about the other GTK containers, but it\nresults in broken applications.  With `GtkFixed`, the following\nthings will result in truncated text, overlapping widgets, and\nother display bugs:\n\n- Themes, which may change widget sizes.\n\n- Fonts other than the one you used to write the app will of course\n  change the size of widgets containing text; keep in mind that\n  users may use a larger font because of difficulty reading the\n  default, or they may be using a different OS that provides different fonts.\n\n- Translation of text into other languages changes its size. Also,\n  display of non-English text will use a different font in many\n  cases.\n\nIn addition, `GtkFixed` does not pay attention to text direction and\nthus may produce unwanted results if your app is run under right-to-left\nlanguages such as Hebrew or Arabic. That is: normally GTK will order\ncontainers appropriately for the text direction, e.g. to put labels to\nthe right of the thing they label when using an RTL language, but it can’t\ndo that with `GtkFixed`. So if you need to reorder widgets depending on\nthe text direction, you would need to manually detect it and adjust child\npositions accordingly.\n\nFinally, fixed positioning makes it kind of annoying to add/remove\nUI elements, since you have to reposition all the other elements. This\nis a long-term maintenance problem for your application.\n\nIf you know none of these things are an issue for your application,\nand prefer the simplicity of `GtkFixed`, by all means use the\nwidget. But you should be aware of the tradeoffs."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:Fixed",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_child_position": {
+      "brief": "Retrieves the translation transformation of the given child `GtkWidget` in the `GtkFixed`.",
+      "file": "gtk/gtkfixed.c",
+      "line": 244,
+      "md": "Retrieves the translation transformation of the\ngiven child `GtkWidget` in the `GtkFixed`.\n\nSee also: [`Fixed.get_child_transform()`](xref:gtk:Gtk.Fixed#method:get_child_transform)."
+    },
+    "get_child_transform": {
+      "brief": "Retrieves the transformation for `widget` set using gtk_fixed_set_child_transform().",
+      "file": "gtk/gtkfixed.c",
+      "line": 308,
+      "md": "Retrieves the transformation for `widget` set using\ngtk_fixed_set_child_transform()."
+    },
+    "move": {
+      "brief": "Sets a translation transformation to the given `x` and `y` coordinates to the child `widget` of the `GtkFixed`.",
+      "file": "gtk/gtkfixed.c",
+      "line": 333,
+      "md": "Sets a translation transformation to the given `x` and `y`\ncoordinates to the child `widget` of the `GtkFixed`."
+    },
+    "put": {
+      "brief": "Adds a widget to a `GtkFixed` at the given position.",
+      "file": "gtk/gtkfixed.c",
+      "line": 212,
+      "md": "Adds a widget to a `GtkFixed` at the given position."
+    },
+    "remove": {
+      "brief": "Removes a child from `fixed`.",
+      "file": "gtk/gtkfixed.c",
+      "line": 364,
+      "md": "Removes a child from `fixed`."
+    },
+    "set_child_transform": {
+      "brief": "Sets the transformation for `widget`.",
+      "file": "gtk/gtkfixed.c",
+      "line": 279,
+      "md": "Sets the transformation for `widget`.\n\nThis is a convenience function that retrieves the\n[`FixedLayoutChild`](xref:gtk:Gtk.FixedLayoutChild) instance associated to\n`widget` and calls [`FixedLayoutChild.set_transform()`](xref:gtk:Gtk.FixedLayoutChild#method:set_transform)."
+    }
+  },
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

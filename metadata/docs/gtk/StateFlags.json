@@ -1,0 +1,121 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "Describes a widget state.",
+    "file": "gtk/gtkenums.h",
+    "line": 834,
+    "md": "Describes a widget state.\n\nWidget states are used to match the widget against CSS pseudo-classes.\nNote that GTK extends the regular CSS classes and sometimes uses\ndifferent names."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:StateFlags",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "active": {
+      "brief": "Widget is active",
+      "file": "gtk/gtkenums.h",
+      "line": 837,
+      "md": "Widget is active"
+    },
+    "backdrop": {
+      "brief": "Widget is in a background toplevel window",
+      "file": "gtk/gtkenums.h",
+      "line": 843,
+      "md": "Widget is in a background toplevel window"
+    },
+    "checked": {
+      "brief": "Widget is checked",
+      "file": "gtk/gtkenums.h",
+      "line": 848,
+      "md": "Widget is checked"
+    },
+    "dir_ltr": {
+      "brief": "Widget is in left-to-right text direction",
+      "file": "gtk/gtkenums.h",
+      "line": 844,
+      "md": "Widget is in left-to-right text direction"
+    },
+    "dir_rtl": {
+      "brief": "Widget is in right-to-left text direction",
+      "file": "gtk/gtkenums.h",
+      "line": 845,
+      "md": "Widget is in right-to-left text direction"
+    },
+    "drop_active": {
+      "brief": "Widget is highlighted as a drop target for DND",
+      "file": "gtk/gtkenums.h",
+      "line": 849,
+      "md": "Widget is highlighted as a drop target for DND"
+    },
+    "focus_visible": {
+      "brief": "Widget has the visible focus",
+      "file": "gtk/gtkenums.h",
+      "line": 850,
+      "md": "Widget has the visible focus"
+    },
+    "focus_within": {
+      "brief": "Widget contains the keyboard focus",
+      "file": "gtk/gtkenums.h",
+      "line": 851,
+      "md": "Widget contains the keyboard focus"
+    },
+    "focused": {
+      "brief": "Widget has the keyboard focus",
+      "file": "gtk/gtkenums.h",
+      "line": 842,
+      "md": "Widget has the keyboard focus"
+    },
+    "inconsistent": {
+      "brief": "Widget is inconsistent",
+      "file": "gtk/gtkenums.h",
+      "line": 841,
+      "md": "Widget is inconsistent"
+    },
+    "insensitive": {
+      "brief": "Widget is insensitive",
+      "file": "gtk/gtkenums.h",
+      "line": 840,
+      "md": "Widget is insensitive"
+    },
+    "link": {
+      "brief": "Widget is a link",
+      "file": "gtk/gtkenums.h",
+      "line": 846,
+      "md": "Widget is a link"
+    },
+    "normal": {
+      "brief": "State during normal operation",
+      "file": "gtk/gtkenums.h",
+      "line": 836,
+      "md": "State during normal operation"
+    },
+    "prelight": {
+      "brief": "Widget has a mouse pointer over it",
+      "file": "gtk/gtkenums.h",
+      "line": 838,
+      "md": "Widget has a mouse pointer over it"
+    },
+    "selected": {
+      "brief": "Widget is selected",
+      "file": "gtk/gtkenums.h",
+      "line": 839,
+      "md": "Widget is selected"
+    },
+    "visited": {
+      "brief": "The location the widget points to has already been visited",
+      "file": "gtk/gtkenums.h",
+      "line": 847,
+      "md": "The location the widget points to has already been visited"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

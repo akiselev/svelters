@@ -1,0 +1,158 @@
+{
+  "doc": {
+    "brief": "The QStyle class is an abstract base class that encapsulates the look and feel of a GUI.",
+    "index_brief": "Abstract base class that encapsulates the look and feel of a GUI",
+    "url": "https://doc.qt.io/qt-6/qstyle.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QStyle",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QIcon standardIcon(QStyle::StandardPixmap standardIcon, const QStyleOption *option, const QWidget *widget) const = 0": {
+      "brief": "Returns an icon for the given *standardIcon*.",
+      "url": "https://doc.qt.io/qt-6/qstyle.html#standardIcon"
+    },
+    "QPalette standardPalette() const": {
+      "brief": "Returns the style's standard palette.",
+      "url": "https://doc.qt.io/qt-6/qstyle.html#standardPalette"
+    },
+    "QPixmap generatedIconPixmap(QIcon::Mode iconMode, const QPixmap &pixmap, const QStyleOption *option) const = 0": {
+      "brief": "Returns a copy of the given *pixmap*, styled to conform to the specified *iconMode* and taking into account the palette specified by *option*.",
+      "url": "https://doc.qt.io/qt-6/qstyle.html#generatedIconPixmap"
+    },
+    "QPixmap standardPixmap(QStyle::StandardPixmap standardPixmap, const QStyleOption *option, const QWidget *widget) const = 0": {
+      "url": "https://doc.qt.io/qt-6/qstyle-obsolete.html#standardPixmap"
+    },
+    "QPoint visualPos(Qt::LayoutDirection direction, const QRect &boundingRectangle, const QPoint &logicalPosition)": {
+      "brief": "Returns the given *logicalPosition* converted to screen coordinates based on the specified *direction*.",
+      "url": "https://doc.qt.io/qt-6/qstyle.html#visualPos"
+    },
+    "QRect alignedRect(Qt::LayoutDirection direction, Qt::Alignment alignment, const QSize &size, const QRect &rectangle)": {
+      "brief": "Returns a new rectangle of the specified *size* that is aligned to the given *rectangle* according to the specified *alignment* and *direction*.",
+      "url": "https://doc.qt.io/qt-6/qstyle.html#alignedRect"
+    },
+    "QRect itemPixmapRect(const QRect &rectangle, int alignment, const QPixmap &pixmap) const": {
+      "brief": "Returns the area within the given *rectangle* in which to draw the specified *pixmap* according to the defined *alignment*.",
+      "url": "https://doc.qt.io/qt-6/qstyle.html#itemPixmapRect"
+    },
+    "QRect itemTextRect(const QFontMetrics &metrics, const QRect &rectangle, int alignment, bool enabled, const QString &text) const": {
+      "brief": "Returns the area within the given *rectangle* in which to draw the provided *text* according to the specified font *metrics* and *alignment*.",
+      "url": "https://doc.qt.io/qt-6/qstyle.html#itemTextRect"
+    },
+    "QRect subControlRect(QStyle::ComplexControl control, const QStyleOptionComplex *option, QStyle::SubControl subControl, const QWidget *widget) const = 0": {
+      "brief": "Returns the rectangle containing the specified *subControl* of the given complex *control* (with the style specified by *option*).",
+      "url": "https://doc.qt.io/qt-6/qstyle.html#subControlRect"
+    },
+    "QRect subElementRect(QStyle::SubElement element, const QStyleOption *option, const QWidget *widget) const = 0": {
+      "brief": "Returns the sub-area for the given *element* as described in the provided style *option*.",
+      "url": "https://doc.qt.io/qt-6/qstyle.html#subElementRect"
+    },
+    "QRect visualRect(Qt::LayoutDirection direction, const QRect &boundingRectangle, const QRect &logicalRectangle)": {
+      "brief": "Returns the given *logicalRectangle* converted to screen coordinates based on the specified *direction*.",
+      "url": "https://doc.qt.io/qt-6/qstyle.html#visualRect"
+    },
+    "QSize sizeFromContents(QStyle::ContentsType type, const QStyleOption *option, const QSize &contentsSize, const QWidget *widget) const = 0": {
+      "brief": "Returns the size of the element described by the specified *option* and *type*, based on the provided *contentsSize*.",
+      "url": "https://doc.qt.io/qt-6/qstyle.html#sizeFromContents"
+    },
+    "QString name() const": {
+      "brief": "Returns the name of the style.",
+      "url": "https://doc.qt.io/qt-6/qstyle.html#name"
+    },
+    "QStyle()": {
+      "brief": "Constructs a style object.",
+      "url": "https://doc.qt.io/qt-6/qstyle.html#QStyle"
+    },
+    "QStyle::SubControl hitTestComplexControl(QStyle::ComplexControl control, const QStyleOptionComplex *option, const QPoint &position, const QWidget *widget) const = 0": {
+      "brief": "Returns the sub control at the given *position* in the given complex *control* (with the style options specified by *option*).",
+      "url": "https://doc.qt.io/qt-6/qstyle.html#hitTestComplexControl"
+    },
+    "Qt::Alignment visualAlignment(Qt::LayoutDirection direction, Qt::Alignment alignment)": {
+      "brief": "Transforms an *alignment* of [Qt::AlignLeft](https://doc.qt.io/qt-6/qt.html#AlignmentFlag-enum) or [Qt::AlignRight](https://doc.qt.io/qt-6/qt.html#AlignmentFlag-enum) without...",
+      "url": "https://doc.qt.io/qt-6/qstyle.html#visualAlignment"
+    },
+    "const QStyle * proxy() const": {
+      "brief": "This function returns the current proxy for this style.",
+      "url": "https://doc.qt.io/qt-6/qstyle.html#proxy"
+    },
+    "int combinedLayoutSpacing(QSizePolicy::ControlTypes controls1, QSizePolicy::ControlTypes controls2, Qt::Orientation orientation, QStyleOption *option, QWidget *widget) const": {
+      "brief": "Returns the spacing that should be used between *controls1* and *controls2* in a layout. *orientation* specifies whether the controls are laid out side by side or stacked vertically.",
+      "url": "https://doc.qt.io/qt-6/qstyle.html#combinedLayoutSpacing"
+    },
+    "int layoutSpacing(QSizePolicy::ControlType control1, QSizePolicy::ControlType control2, Qt::Orientation orientation, const QStyleOption *option, const QWidget *widget) const = 0": {
+      "brief": "Returns the spacing that should be used between *control1* and *control2* in a layout. *orientation* specifies whether the controls are laid out side by side or stacked vertically.",
+      "url": "https://doc.qt.io/qt-6/qstyle.html#layoutSpacing"
+    },
+    "int pixelMetric(QStyle::PixelMetric metric, const QStyleOption *option, const QWidget *widget) const = 0": {
+      "brief": "Returns the value of the given pixel *metric*.",
+      "url": "https://doc.qt.io/qt-6/qstyle.html#pixelMetric"
+    },
+    "int sliderPositionFromValue(int min, int max, int logicalValue, int span, bool upsideDown)": {
+      "brief": "Converts the given *logicalValue* to a pixel position.",
+      "url": "https://doc.qt.io/qt-6/qstyle.html#sliderPositionFromValue"
+    },
+    "int sliderValueFromPosition(int min, int max, int position, int span, bool upsideDown)": {
+      "brief": "Converts the given pixel *position* to a logical value. 0 maps to the *min* parameter, *span* maps to *max* and other values are distributed evenly in-between.",
+      "url": "https://doc.qt.io/qt-6/qstyle.html#sliderValueFromPosition"
+    },
+    "int styleHint(QStyle::StyleHint hint, const QStyleOption *option, const QWidget *widget, QStyleHintReturn *returnData) const = 0": {
+      "brief": "Returns an integer representing the specified style *hint* for the given *widget* described by the provided style *option*.",
+      "url": "https://doc.qt.io/qt-6/qstyle.html#styleHint"
+    },
+    "void drawComplexControl(QStyle::ComplexControl control, const QStyleOptionComplex *option, QPainter *painter, const QWidget *widget) const = 0": {
+      "brief": "Draws the given *control* using the provided *painter* with the style options specified by *option*.",
+      "url": "https://doc.qt.io/qt-6/qstyle.html#drawComplexControl"
+    },
+    "void drawControl(QStyle::ControlElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const = 0": {
+      "brief": "Draws the given *element* with the provided *painter* with the style options specified by *option*.",
+      "url": "https://doc.qt.io/qt-6/qstyle.html#drawControl"
+    },
+    "void drawItemPixmap(QPainter *painter, const QRect &rectangle, int alignment, const QPixmap &pixmap) const": {
+      "brief": "Draws the given *pixmap* in the specified *rectangle*, according to the specified *alignment*, using the provided *painter*.",
+      "url": "https://doc.qt.io/qt-6/qstyle.html#drawItemPixmap"
+    },
+    "void drawItemText(QPainter *painter, const QRect &rectangle, int alignment, const QPalette &palette, bool enabled, const QString &text, QPalette::ColorRole textRole) const": {
+      "brief": "Draws the given *text* in the specified *rectangle* using the provided *painter* and *palette*.",
+      "url": "https://doc.qt.io/qt-6/qstyle.html#drawItemText"
+    },
+    "void drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const = 0": {
+      "brief": "Draws the given primitive *element* with the provided *painter* using the style options specified by *option*.",
+      "url": "https://doc.qt.io/qt-6/qstyle.html#drawPrimitive"
+    },
+    "void polish(QApplication *application)": {
+      "brief": "Late initialization of the given *application* object.",
+      "url": "https://doc.qt.io/qt-6/qstyle.html#polish-1"
+    },
+    "void polish(QPalette &palette)": {
+      "brief": "Changes the *palette* according to style specific requirements for color palettes (if any).",
+      "url": "https://doc.qt.io/qt-6/qstyle.html#polish-2"
+    },
+    "void polish(QWidget *widget)": {
+      "brief": "Initializes the appearance of the given *widget*.",
+      "url": "https://doc.qt.io/qt-6/qstyle.html#polish"
+    },
+    "void unpolish(QApplication *application)": {
+      "brief": "Uninitialize the given *application*.",
+      "url": "https://doc.qt.io/qt-6/qstyle.html#unpolish-1"
+    },
+    "void unpolish(QWidget *widget)": {
+      "brief": "Uninitialize the given *widget*'s appearance.",
+      "url": "https://doc.qt.io/qt-6/qstyle.html#unpolish"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

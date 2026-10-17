@@ -1,0 +1,79 @@
+{
+  "doc": {
+    "brief": "The QStyledItemDelegate class provides display and editing facilities for data items from a model.",
+    "index_brief": "Display and editing facilities for data items from a model",
+    "url": "https://doc.qt.io/qt-6/qstyleditemdelegate.html"
+  },
+  "id": "svelters-api:v1:type:qt:QtWidgets:QStyledItemDelegate",
+  "license": "GFDL-1.3-only",
+  "members": {
+    "QItemEditorFactory * itemEditorFactory() const": {
+      "brief": "Returns the editor factory used by the item delegate.",
+      "url": "https://doc.qt.io/qt-6/qstyleditemdelegate.html#itemEditorFactory"
+    },
+    "QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override": {
+      "brief": "Reimplements: [QAbstractItemDelegate::sizeHint](xref:qt:QAbstractItemDelegate)(const QStyleOptionViewItem &option, const QModelIndex &index) const.",
+      "url": "https://doc.qt.io/qt-6/qstyleditemdelegate.html#sizeHint"
+    },
+    "QString displayText(const QVariant &value, const QLocale &locale) const": {
+      "brief": "This function returns the string that the delegate will use to display the [Qt::DisplayRole](https://doc.qt.io/qt-6/qt.html#ItemDataRole-enum) of the model in *locale*. *value* is the value of the...",
+      "url": "https://doc.qt.io/qt-6/qstyleditemdelegate.html#displayText"
+    },
+    "QStyledItemDelegate(QObject *parent)": {
+      "brief": "Constructs an item delegate with the given *parent*.",
+      "url": "https://doc.qt.io/qt-6/qstyleditemdelegate.html#QStyledItemDelegate"
+    },
+    "QWidget * createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override": {
+      "brief": "Reimplements: [QAbstractItemDelegate::createEditor](xref:qt:QAbstractItemDelegate)(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const.",
+      "url": "https://doc.qt.io/qt-6/qstyleditemdelegate.html#createEditor"
+    },
+    "bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index) override": {
+      "brief": "Reimplements: [QAbstractItemDelegate::editorEvent](xref:qt:QAbstractItemDelegate)(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index).",
+      "url": "https://doc.qt.io/qt-6/qstyleditemdelegate.html#editorEvent"
+    },
+    "bool eventFilter(QObject *object, QEvent *event) override": {
+      "brief": "Reimplements: [QObject::eventFilter](xref:qt:QObject)(QObject *watched, QEvent *event).",
+      "url": "https://doc.qt.io/qt-6/qstyleditemdelegate.html#eventFilter"
+    },
+    "void initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const": {
+      "brief": "Initialize *option* with the values using the index *index*.",
+      "url": "https://doc.qt.io/qt-6/qstyleditemdelegate.html#initStyleOption"
+    },
+    "void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override": {
+      "brief": "Reimplements: [QAbstractItemDelegate::paint](xref:qt:QAbstractItemDelegate)(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const.",
+      "url": "https://doc.qt.io/qt-6/qstyleditemdelegate.html#paint"
+    },
+    "void setEditorData(QWidget *editor, const QModelIndex &index) const override": {
+      "brief": "Reimplements: [QAbstractItemDelegate::setEditorData](xref:qt:QAbstractItemDelegate)(QWidget *editor, const QModelIndex &index) const.",
+      "url": "https://doc.qt.io/qt-6/qstyleditemdelegate.html#setEditorData"
+    },
+    "void setItemEditorFactory(QItemEditorFactory *factory)": {
+      "brief": "Sets the editor factory to be used by the item delegate to be the *factory* specified.",
+      "url": "https://doc.qt.io/qt-6/qstyleditemdelegate.html#setItemEditorFactory"
+    },
+    "void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const override": {
+      "brief": "Reimplements: [QAbstractItemDelegate::setModelData](xref:qt:QAbstractItemDelegate)(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const.",
+      "url": "https://doc.qt.io/qt-6/qstyleditemdelegate.html#setModelData"
+    },
+    "void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const override": {
+      "brief": "Reimplements: [QAbstractItemDelegate::updateEditorGeometry](xref:qt:QAbstractItemDelegate)(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const.",
+      "url": "https://doc.qt.io/qt-6/qstyleditemdelegate.html#updateEditorGeometry"
+    }
+  },
+  "mode": "brief",
+  "properties": {},
+  "qss": null,
+  "schema": "svelters-docs/v0",
+  "source": {
+    "html": true,
+    "qdoc": {
+      "files": [
+        "qtcore.index",
+        "qtgui.index",
+        "qtwidgets.index"
+      ],
+      "version": "index"
+    }
+  },
+  "toolkit": "qt"
+}

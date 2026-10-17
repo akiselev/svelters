@@ -1,0 +1,73 @@
+{
+  "constructors": {
+    "new_for_file": {
+      "brief": "Creates a `GtkIconPaintable` for a file with a given size and scale.",
+      "file": "gtk/gtkiconpaintable.c",
+      "line": 761,
+      "md": "Creates a `GtkIconPaintable` for a file with a given size and scale.\n\nThe icon can then be rendered by using it as a `GdkPaintable`."
+    }
+  },
+  "doc": {
+    "brief": "Contains information found when looking up an icon in `GtkIconTheme` or loading it from a file.",
+    "file": "gtk/gtkiconpaintable.c",
+    "line": 32,
+    "md": "Contains information found when looking up an icon in `GtkIconTheme`\nor loading it from a file.\n\n`GtkIconPaintable` implements `GdkPaintable` and `GtkSymbolicPaintable`."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:IconPaintable",
+  "license": "LGPL-2.1-or-later",
+  "members": {},
+  "methods": {
+    "get_file": {
+      "brief": "Gets the `GFile` that was used to load the icon.",
+      "file": "gtk/gtkiconpaintable.c",
+      "line": 834,
+      "md": "Gets the `GFile` that was used to load the icon.\n\nReturns `NULL` if the icon was not loaded from a file."
+    },
+    "get_icon_name": {
+      "brief": "Get the icon name being used for this icon.",
+      "deprecated": "4.20",
+      "file": "gtk/gtkiconpaintable.c",
+      "line": 807,
+      "md": "Get the icon name being used for this icon.\n\nWhen an icon looked up in the icon theme was not available, the\nicon theme may use fallback icons - either those specified to\ngtk_icon_theme_lookup_icon() or the always-available\n\"image-missing\". The icon chosen is returned by this function.\n\nIf the icon was created without an icon theme, this function\nreturns `NULL`."
+    },
+    "is_symbolic": {
+      "brief": "Checks if the icon is symbolic or not.",
+      "deprecated": "4.20",
+      "file": "gtk/gtkiconpaintable.c",
+      "line": 786,
+      "md": "Checks if the icon is symbolic or not.\n\nThis currently uses only the file name and not the file contents\nfor determining this. This behaviour may change in the future."
+    }
+  },
+  "properties": {
+    "file": {
+      "brief": "The file representing the icon, if any.",
+      "file": "gtk/gtkiconpaintable.c",
+      "line": 630,
+      "md": "The file representing the icon, if any."
+    },
+    "icon-name": {
+      "brief": "The icon name that was chosen during lookup.",
+      "deprecated": "4.20",
+      "file": "gtk/gtkiconpaintable.c",
+      "line": 640,
+      "md": "The icon name that was chosen during lookup."
+    },
+    "is-symbolic": {
+      "brief": "Whether the icon is symbolic or not.",
+      "deprecated": "4.20",
+      "file": "gtk/gtkiconpaintable.c",
+      "line": 652,
+      "md": "Whether the icon is symbolic or not."
+    }
+  },
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}

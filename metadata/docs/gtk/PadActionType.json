@@ -1,0 +1,49 @@
+{
+  "constructors": {},
+  "doc": {
+    "brief": "The type of a pad action.",
+    "file": "gtk/gtkpadcontroller.h",
+    "line": 42,
+    "md": "The type of a pad action."
+  },
+  "id": "svelters-api:v1:type:gtk:Gtk:PadActionType",
+  "license": "LGPL-2.1-or-later",
+  "members": {
+    "button": {
+      "brief": "Action is triggered by a pad button",
+      "file": "gtk/gtkpadcontroller.h",
+      "line": 44,
+      "md": "Action is triggered by a pad button"
+    },
+    "dial": {
+      "brief": "Action is triggered by a pad dial",
+      "file": "gtk/gtkpadcontroller.h",
+      "line": 47,
+      "md": "Action is triggered by a pad dial"
+    },
+    "ring": {
+      "brief": "Action is triggered by a pad ring",
+      "file": "gtk/gtkpadcontroller.h",
+      "line": 45,
+      "md": "Action is triggered by a pad ring"
+    },
+    "strip": {
+      "brief": "Action is triggered by a pad strip",
+      "file": "gtk/gtkpadcontroller.h",
+      "line": 46,
+      "md": "Action is triggered by a pad strip"
+    }
+  },
+  "methods": {},
+  "properties": {},
+  "schema": "svelters-docs/v0",
+  "signals": {},
+  "source": {
+    "gir": {
+      "file": "Gtk-4.0.gir",
+      "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c"
+    }
+  },
+  "toolkit": "gtk",
+  "vfuncs": {}
+}
