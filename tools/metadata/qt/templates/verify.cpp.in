@@ -13,6 +13,8 @@
 #include <QtGui/QAction>
 #include <QtGui/QActionGroup>
 #include <QtGui/QKeyEvent>
+#include <QtGui/QImage>
+#include <QtGui/QPixmap>
 #include <QtGui/QMouseEvent>
 #include <QtGui/QWheelEvent>
 #include <QtGui/QEnterEvent>
@@ -470,6 +472,58 @@ bool t_runtime_capture_reaches_descendant_mouse_press_first(std::string &why) {
   return true;
 }
 
+// ---- canvas (X8) -----------------------------------------------------------------------------------
+
+bool t_runtime_canvas_replays_ops_into_pixels(std::string &why) {
+  svl_handle c = mk("canvas");
+  auto *w = qobject_cast<QWidget *>(O(c));
+  CHECK(w);
+  w->resize(60, 50);
+  auto set_ops = [&](const char *json) {
+    svl_value v{};
+    v.tag = SVL_STR;
+    v.u.s.ptr = json;
+    v.u.s.len = std::strlen(json);
+    return B->set_prop(B->self, c, P("canvas", "ops"), &v);
+  };
+  auto px = [&](int x, int y) { return w->grab().toImage().pixelColor(x, y).name().toStdString(); };
+  CHECK(set_ops(R"J([["fillStyle","#ff0000"],["fillRect",0,0,10,10],
+    ["save"],["translate",20,0],["fillStyle","rgba(0,0,255,1)"],["fillRect",0,0,10,10],["restore"],
+    ["beginPath"],["arc",30,30,8,0,6.2831853],["fillStyle","#00ff00"],["fill"],
+    ["beginPath"],["rect",0,0,50,5],["clip"],["fillStyle","#ffff00"],["fillRect",40,0,10,40]])J"
+            ) == 0);
+  CHECK(px(5, 5) == "#ff0000");
+  CHECK(px(25, 8) == "#0000ff");  // translate inside save/restore (y 8 is below the clip band)
+  CHECK(px(30, 30) == "#00ff00");  // arc
+  CHECK(px(45, 3) == "#ffff00");   // inside the clip
+  CHECK(px(45, 20) != "#ffff00");  // clipped away
+  CHECK(px(55, 45) != "#ff0000");
+  // Text inks pixels.
+  CHECK(set_ops(R"J([["fillStyle","#000000"],["font","bold 20px sans-serif"],["fillText","Hi",2,25]])J") == 0);
+  QImage img = w->grab().toImage();
+  int dark = 0;
+  for (int y = 0; y < img.height(); ++y)
+    for (int x = 0; x < img.width(); ++x)
+      if (img.pixelColor(x, y).lightness() < 100) ++dark;
+  CHECK(dark > 30);
+  // Invalid lists are errors, not crashes; a null value clears the canvas.
+  CHECK(set_ops("{not json") != 0);
+  CHECK(set_ops(R"({"a":1})") != 0);
+  svl_value n{};
+  CHECK(B->set_prop(B->self, c, P("canvas", "ops"), &n) == 0);
+  svl_value out{};
+  CHECK(B->get_prop(B->self, c, P("canvas", "ops"), &out) == 0 && str_of(out).empty());
+  // The event families work on the canvas: resize is posted with [size, oldSize].
+  svl_id rs = G("canvas", "resize");
+  CHECK(rs != 0 && B->listen(B->self, c, rs, true) == 0);
+  rec.events.clear();
+  QResizeEvent re(QSize(7, 8), QSize(1, 2));
+  QCoreApplication::sendEvent(w, &re);
+  CHECK(rec.events.size() == 1 && rec.events[0].sig == rs && rec.events[0].n == 2);
+  B->destroy(B->self, c);
+  return true;
+}
+
 // ---- listener phases (ABI v2.2 listen_ex) ----------------------------------------------------
 
 constexpr svl_id wire_id(svl_id sig, uint32_t flags) { return sig | (flags << SVL_SIGNAL_FLAGS_SHIFT); }
@@ -640,6 +694,7 @@ const TestCase kTests[] = {
     {"runtime/mouse_press_handler_consumes_and_reports_a_point", t_runtime_mouse_press_handler_consumes_and_reports_a_point},
     {"runtime/other_event_families_deliver_their_payloads", t_runtime_other_event_families_deliver_their_payloads},
     {"runtime/capture_reaches_descendant_mouse_press_first", t_runtime_capture_reaches_descendant_mouse_press_first},
+    {"runtime/canvas_replays_ops_into_pixels", t_runtime_canvas_replays_ops_into_pixels},
     {"runtime/listen_after_runs_behind_plain", t_runtime_listen_after_runs_behind_plain},
     {"runtime/listen_phase_refusals", t_runtime_listen_phase_refusals},
     {"runtime/capture_reaches_descendant_key_before_its_own_listener", t_runtime_capture_reaches_descendant_key_before_its_own_listener},

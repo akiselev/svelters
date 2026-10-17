@@ -20,6 +20,16 @@
 #include <exception>
 #include <stdexcept>
 #include <QtGui/QKeyEvent>
+#include <QtGui/QPainter>
+#include <QtGui/QPainterPath>
+#include <QtGui/QPaintEvent>
+#include <QtGui/QTransform>
+#include <QtGui/QFontMetricsF>
+#include <QtCore/QJsonArray>
+#include <QtCore/QJsonDocument>
+#include <QtCore/QJsonValue>
+#include <QtCore/QRegularExpression>
+#include <QtCore/QStringList>
 #include <QtGui/QMouseEvent>
 #include <QtGui/QWheelEvent>
 #include <QtGui/QEnterEvent>
@@ -654,6 +664,8 @@ int listen_event(svl_handle h, Entry &e, svl_id sig, bool on, uint32_t flags, in
   return 0;
 }
 
+//@@CANVAS@@
+
 // ---- name tables -----------------------------------------------------------------------------
 
 struct NameId {
@@ -706,7 +718,9 @@ T from_int(int v) {
 svl_id b_resolve(void *, uint32_t what, svl_id kind, const char *name, size_t len) {
   std::string_view n(name, len);
   if (what == SVL_KIND && n == "virtuallist") return kVListKind;
+  if (what == SVL_KIND && n == "canvas") return kCanvasKind;
   if (kind == kVListKind) return vl_resolve(what, n);
+  if (kind == kCanvasKind) return cv_resolve(what, n);
   Table t = table_for(what, kind);
   for (size_t i = 0; i < t.n; ++i)
     if (t.items[i].name == n) return t.items[i].id;
@@ -720,7 +734,7 @@ svl_id b_resolve(void *, uint32_t what, svl_id kind, const char *name, size_t le
 svl_handle b_create(void *, svl_id kind) {
   TimeScope timing_;
   ensure_app();
-  QObject *o = kind == kVListKind ? vl_create() : gen_create(kind);
+  QObject *o = kind == kVListKind ? vl_create() : kind == kCanvasKind ? cv_create() : gen_create(kind);
   if (!o) {
     fail("create: unknown kind id " + std::to_string(kind));
     return 0;
@@ -832,6 +846,7 @@ int b_set_prop(void *, svl_handle h, svl_id prop, const svl_value *v) {
   g_in.clear();
   try {
     if (e->kind == kVListKind) return vl_set_prop(*e, prop, v);
+    if (e->kind == kCanvasKind) return cv_set_prop(*e, prop, v);
     return gen_set_prop(*e, prop, v);
   } catch (const std::exception &x) {
     return fail(std::string("set_prop: C++ exception: ") + x.what());
@@ -848,6 +863,7 @@ int b_get_prop(void *, svl_handle h, svl_id prop, svl_value *out) {
   g_owner = e->obj.data();
   try {
     if (e->kind == kVListKind) return vl_get_prop(*e, prop, out);
+    if (e->kind == kCanvasKind) return cv_get_prop(*e, prop, out);
     return gen_get_prop(*e, prop, out);
   } catch (const std::exception &x) {
     out_error(out, "c++", x.what());
@@ -872,6 +888,7 @@ int b_call(void *, svl_handle h, svl_id method, const svl_value *args, size_t n,
       throw std::runtime_error("test exception");
     }
     if (e->kind == kVListKind) return vl_call(*e, method, args, n, out);
+    if (e->kind == kCanvasKind) return fail("call: the canvas has no methods");
     if (method >= kGetterBase) {
       if (n != 0) return fail("call: object getters take no arguments");
       QObject *r = nullptr;
@@ -903,6 +920,7 @@ int b_listen_ex(void *, svl_handle h, svl_id sig, bool on, uint32_t flags) {
   if (!e) return fail("listen: stale or unknown handle");
   if (flags & ~static_cast<uint32_t>(SVL_LISTEN_AFTER | SVL_LISTEN_CAPTURE)) return fail("listen: unknown listener flags");
   if (e->kind == kVListKind) return vl_listen(*e, sig, on);
+  if (e->kind == kCanvasKind) return cv_listen(h, *e, sig, on, flags);
   return gen_listen(h, *e, sig, on, flags);
 }
 
