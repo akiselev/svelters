@@ -51,3 +51,73 @@ impl Idx for Option<u32> {
 pub fn idx_i32(i: Option<u32>) -> i32 {
     i.map_or(-1, |x| x as i32)
 }
+
+/// Position of `child` in a `GtkFixed`, read from its layout child's transform.
+/// (`gtk_fixed_get_child_position` reports 0,0 on GTK 4.22 even after `gtk_fixed_move`.)
+pub fn fixed_position(fixed: &gtk::Fixed, child: &gtk::Widget) -> (f64, f64) {
+    fixed
+        .layout_manager()
+        .and_then(|lm| lm.layout_child(child).downcast::<gtk::FixedLayoutChild>().ok())
+        .and_then(|lc| lc.transform())
+        .map(|t| {
+            let (x, y) = t.to_translate();
+            (x as f64, y as f64)
+        })
+        .unwrap_or((0.0, 0.0))
+}
+
+/// A child-attribute value on its way to or from a native call (ABI v2.2).
+#[derive(Clone, Debug, PartialEq)]
+pub enum AttrV {
+    Null,
+    Bool(bool),
+    Int(i64),
+    Float(f64),
+    Str(String),
+}
+
+#[allow(dead_code)] // each accessor is used by the generated attribute code that needs it
+impl AttrV {
+    pub fn as_bool(&self) -> Result<bool, String> {
+        match self {
+            AttrV::Bool(b) => Ok(*b),
+            AttrV::Int(i) => Ok(*i != 0),
+            other => Err(format!("expected a boolean, got {other:?}")),
+        }
+    }
+
+    pub fn as_i64(&self) -> Result<i64, String> {
+        match self {
+            AttrV::Int(i) => Ok(*i),
+            AttrV::Float(f) if f.fract() == 0.0 && f.abs() < 9.0e15 => Ok(*f as i64),
+            other => Err(format!("expected an integer, got {other:?}")),
+        }
+    }
+
+    pub fn as_i32(&self) -> Result<i32, String> {
+        i32::try_from(self.as_i64()?).map_err(|_| "integer out of range".to_string())
+    }
+
+    pub fn as_u32(&self) -> Result<u32, String> {
+        u32::try_from(self.as_i64()?).map_err(|_| "integer out of range".to_string())
+    }
+
+    pub fn as_f64(&self) -> Result<f64, String> {
+        match self {
+            AttrV::Float(f) => Ok(*f),
+            AttrV::Int(i) => Ok(*i as f64),
+            other => Err(format!("expected a number, got {other:?}")),
+        }
+    }
+
+    pub fn as_f32(&self) -> Result<f32, String> {
+        Ok(self.as_f64()? as f32)
+    }
+
+    pub fn as_str(&self) -> Result<&str, String> {
+        match self {
+            AttrV::Str(s) => Ok(s),
+            other => Err(format!("expected a string, got {other:?}")),
+        }
+    }
+}

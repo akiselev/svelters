@@ -17,9 +17,160 @@
       ],
       "widget_props": []
     },
-    "default_slot": null,
-    "policy": "unknown",
-    "slots": []
+    "default_slot": "children",
+    "policy": "layout_managed",
+    "slots": [
+      {
+        "accepts": [
+          "Gtk.Widget"
+        ],
+        "annotated": {
+          "fields": [
+            "accepts",
+            "attrs",
+            "cardinality",
+            "content",
+            "default",
+            "on_remove",
+            "ops",
+            "order",
+            "requires",
+            "route_by_kind",
+            "verify"
+          ],
+          "origin": "manual",
+          "provenance": [
+            {
+              "origin": "gir",
+              "ref": "gtk_fixed_put"
+            },
+            {
+              "origin": "gir",
+              "ref": "gtk_fixed_remove"
+            }
+          ]
+        },
+        "attrs": [
+          {
+            "default": 0.0,
+            "expect": "crate::util::fixed_position(pw.downcast_ref::<gtk::Fixed>().unwrap(), &w).0 == 12.0",
+            "get": {
+              "class": "Fixed",
+              "expr": "crate::util::fixed_position(p, child).0",
+              "origin": "manual"
+            },
+            "name": "x",
+            "origin": "manual",
+            "provenance": [
+              {
+                "origin": "gir",
+                "ref": "gtk_fixed_move"
+              },
+              {
+                "origin": "runtime",
+                "ref": "gtk_fixed_get_child_position returns 0,0 on GTK 4.22; the layout child transform is the position"
+              }
+            ],
+            "samples": [
+              12.0,
+              30.5
+            ],
+            "set": {
+              "args": [
+                "child",
+                "value",
+                "current:y"
+              ],
+              "native": "GtkFixed::move(GtkWidget*, double, double)",
+              "origin": "manual"
+            },
+            "type": "f64"
+          },
+          {
+            "default": 0.0,
+            "expect": "crate::util::fixed_position(pw.downcast_ref::<gtk::Fixed>().unwrap(), &w).1 == 7.0",
+            "get": {
+              "class": "Fixed",
+              "expr": "crate::util::fixed_position(p, child).1",
+              "origin": "manual"
+            },
+            "name": "y",
+            "origin": "manual",
+            "provenance": [
+              {
+                "origin": "gir",
+                "ref": "gtk_fixed_move"
+              },
+              {
+                "origin": "runtime",
+                "ref": "gtk_fixed_get_child_position returns 0,0 on GTK 4.22; the layout child transform is the position"
+              }
+            ],
+            "samples": [
+              7.0,
+              41.25
+            ],
+            "set": {
+              "args": [
+                "child",
+                "current:x",
+                "value"
+              ],
+              "native": "GtkFixed::move(GtkWidget*, double, double)",
+              "origin": "manual"
+            },
+            "type": "f64"
+          }
+        ],
+        "cardinality": "many",
+        "content": "widget",
+        "default": {
+          "kind": "none",
+          "origin": "manual"
+        },
+        "id": "svelters-api:v1:type:gtk:Gtk:Fixed:slot:children",
+        "name": "children",
+        "on_remove": "empty",
+        "ops": {
+          "get": {
+            "contains": "parent",
+            "origin": "manual"
+          },
+          "insert": {
+            "args": [
+              "child",
+              "const:0",
+              "const:0"
+            ],
+            "effects": {
+              "child": "parented",
+              "origin": "manual"
+            },
+            "native": "GtkFixed::put(GtkWidget*, double, double)",
+            "origin": "manual"
+          },
+          "origin": "manual",
+          "remove": {
+            "args": [
+              "child"
+            ],
+            "effects": {
+              "child": "unparented",
+              "origin": "manual"
+            },
+            "native": "GtkFixed::remove(GtkWidget*)",
+            "origin": "manual"
+          }
+        },
+        "order": "unordered",
+        "origin": "manual",
+        "requires": [],
+        "route_by_kind": false,
+        "verify": {
+          "origin": "manual"
+        }
+      }
+    ]
   },
   "constructors": [
     {
@@ -292,7 +443,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/Fixed.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"

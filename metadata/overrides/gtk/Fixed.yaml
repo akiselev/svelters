@@ -1,0 +1,38 @@
+# GtkFixed: children sit at x/y (X3). `put` places a new child at 0,0; the attributes move it.
+# Svelte: <fixed><label parent:x={10} parent:y={20}>x</label></fixed>
+children:
+  policy: layout_managed
+  default_slot: children
+  slots:
+    - name: children
+      content: widget
+      accepts: [Gtk.Widget]
+      route_by_kind: false
+      cardinality: many
+      order: unordered
+      default: {kind: none}
+      on_remove: empty
+      attrs:
+        - name: x
+          type: f64
+          default: 0.0
+          samples: [12.0, 30.5]
+          set: {native: "GtkFixed::move(GtkWidget*, double, double)", args: [child, value, "current:y"]}
+          get: {class: Fixed, expr: "crate::util::fixed_position(p, child).0"}
+          expect: 'crate::util::fixed_position(pw.downcast_ref::<gtk::Fixed>().unwrap(), &w).0 == 12.0'
+          provenance: [{origin: gir, ref: "gtk_fixed_move"}, {origin: runtime, ref: "gtk_fixed_get_child_position returns 0,0 on GTK 4.22; the layout child transform is the position"}]
+        - name: y
+          type: f64
+          default: 0.0
+          samples: [7.0, 41.25]
+          set: {native: "GtkFixed::move(GtkWidget*, double, double)", args: [child, "current:x", value]}
+          get: {class: Fixed, expr: "crate::util::fixed_position(p, child).1"}
+          expect: 'crate::util::fixed_position(pw.downcast_ref::<gtk::Fixed>().unwrap(), &w).1 == 7.0'
+          provenance: [{origin: gir, ref: "gtk_fixed_move"}, {origin: runtime, ref: "gtk_fixed_get_child_position returns 0,0 on GTK 4.22; the layout child transform is the position"}]
+      requires: []
+      ops:
+        get:    {contains: parent}
+        insert: {native: "GtkFixed::put(GtkWidget*, double, double)", args: [child, "const:0", "const:0"], effects: {child: parented}}
+        remove: {native: "GtkFixed::remove(GtkWidget*)", args: [child], effects: {child: unparented}}
+      verify: {}
+      provenance: [{origin: gir, ref: "gtk_fixed_put"}, {origin: gir, ref: "gtk_fixed_remove"}]

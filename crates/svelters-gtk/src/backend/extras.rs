@@ -163,7 +163,7 @@ impl Inner {
         let h = st.next;
         st.entries.insert(
             h,
-            Entry { obj: obj.downgrade(), hold: Some(obj.clone()), class: SVL_LIFE_OWNED, owner: 0, note: std::ptr::null_mut(), kind, signals: HashMap::new(), slot: None },
+            Entry { obj: obj.downgrade(), hold: Some(obj.clone()), class: SVL_LIFE_OWNED, owner: 0, note: std::ptr::null_mut(), kind, signals: HashMap::new(), slot: None, capture_prev: None },
         );
         drop(st);
         self.tag_object(&obj, h);

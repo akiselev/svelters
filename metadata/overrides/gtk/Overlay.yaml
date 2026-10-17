@@ -1,0 +1,37 @@
+# GtkOverlay overlays (X3 child attributes only; the `child` slot belongs to gtk-containers-a).
+# `measure` and `clip` are per-overlay flags set through methods of the overlay.
+# Svelte: <overlay><label parent:measure={true}>over</label></overlay> (overlays slot)
+children:
+  policy: named_slots
+  default_slot: overlays
+  slots:
+    - name: overlays
+      content: widget
+      accepts: [Gtk.Widget]
+      route_by_kind: false
+      cardinality: many
+      order: append_only
+      default: {kind: none}
+      on_remove: empty
+      attrs:
+        - name: measure
+          type: bool
+          default: false
+          samples: [true, false]
+          set: {native: "GtkOverlay::set_measure_overlay(GtkWidget*, gboolean)", args: [child, value]}
+          get: {native: "GtkOverlay::get_measure_overlay(GtkWidget*)", args: [child], rust: is_measure_overlay}
+          provenance: [{origin: gir, ref: "gtk_overlay_set_measure_overlay"}]
+        - name: clip
+          type: bool
+          default: false
+          samples: [true, false]
+          set: {native: "GtkOverlay::set_clip_overlay(GtkWidget*, gboolean)", args: [child, value]}
+          get: {native: "GtkOverlay::get_clip_overlay(GtkWidget*)", args: [child], rust: is_clip_overlay}
+          provenance: [{origin: gir, ref: "gtk_overlay_set_clip_overlay"}]
+      requires: []
+      ops:
+        get:    {contains: parent}
+        insert: {native: "GtkOverlay::add_overlay(GtkWidget*)", args: [child], effects: {child: parented}}
+        remove: {native: "GtkOverlay::remove_overlay(GtkWidget*)", args: [child], effects: {child: unparented}}
+      verify: {}
+      provenance: [{origin: gir, ref: "gtk_overlay_add_overlay"}, {origin: gir, ref: "gtk_overlay_remove_overlay"}]

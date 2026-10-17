@@ -1196,7 +1196,7 @@
    6
   ],
   "native": "GtkFixed",
-  "ownership": false,
+  "ownership": true,
   "props": [
    0,
    0
@@ -1207,12 +1207,12 @@
    0,
    0
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   3,
+   3
   ]
  },
  {
@@ -1548,7 +1548,7 @@
    22
   ],
   "native": "GtkGrid",
-  "ownership": false,
+  "ownership": true,
   "props": [
    5,
    5
@@ -1559,12 +1559,12 @@
    0,
    0
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   5,
+   5
   ]
  },
  {
@@ -2124,7 +2124,7 @@
    44
   ],
   "native": "GtkNotebook",
-  "ownership": false,
+  "ownership": true,
   "props": [
    8,
    8
@@ -2135,12 +2135,12 @@
    10,
    10
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   7,
+   7
   ]
  },
  {
@@ -2188,7 +2188,7 @@
    8
   ],
   "native": "GtkOverlay",
-  "ownership": false,
+  "ownership": true,
   "props": [
    1,
    1
@@ -2199,12 +2199,12 @@
    1,
    1
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   3,
+   3
   ]
  },
  {
@@ -3084,7 +3084,7 @@
    23
   ],
   "native": "GtkStack",
-  "ownership": false,
+  "ownership": true,
   "props": [
    9,
    9
@@ -3095,12 +3095,12 @@
    0,
    0
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   6,
+   6
   ]
  },
  {

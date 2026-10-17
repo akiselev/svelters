@@ -2,7 +2,7 @@
  "facts": [
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Box:slot:children",
-   "fingerprint": "e056f754c37013cf",
+   "fingerprint": "6d6a32c3031fd280",
    "kind": "Box",
    "name": "children",
    "section": "slots",
@@ -11,8 +11,28 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Fixed:slot:children",
+   "fingerprint": "b77bebcaa20832ae",
+   "kind": "Fixed",
+   "name": "children",
+   "section": "slots",
+   "tests": [
+    "generated::verify::slot_fixed_children"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Grid:slot:cells",
+   "fingerprint": "addf0cc395a3bfd2",
+   "kind": "Grid",
+   "name": "cells",
+   "section": "slots",
+   "tests": [
+    "generated::verify::slot_grid_cells"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:HeaderBar:slot:end",
-   "fingerprint": "66a0966464afaf7c",
+   "fingerprint": "d9a1a91005f8a387",
    "kind": "HeaderBar",
    "name": "end",
    "section": "slots",
@@ -22,7 +42,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:HeaderBar:slot:start",
-   "fingerprint": "1347cea50567263f",
+   "fingerprint": "2ed59828fca63acd",
    "kind": "HeaderBar",
    "name": "start",
    "section": "slots",
@@ -32,7 +52,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:HeaderBar:slot:title",
-   "fingerprint": "143b234460110fb2",
+   "fingerprint": "8c1eaf80a3ea8e3f",
    "kind": "HeaderBar",
    "name": "title",
    "section": "slots",
@@ -41,8 +61,28 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Notebook:slot:pages",
+   "fingerprint": "a3917241e1b7629f",
+   "kind": "Notebook",
+   "name": "pages",
+   "section": "slots",
+   "tests": [
+    "generated::verify::slot_notebook_pages"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Overlay:slot:overlays",
+   "fingerprint": "e779cd762a629316",
+   "kind": "Overlay",
+   "name": "overlays",
+   "section": "slots",
+   "tests": [
+    "generated::verify::slot_overlay_overlays"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:slot:child",
-   "fingerprint": "b9d6357bfda0e1a9",
+   "fingerprint": "48c38212b11a25d0",
    "kind": "ScrolledWindow",
    "name": "child",
    "section": "slots",
@@ -51,8 +91,18 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Stack:slot:pages",
+   "fingerprint": "587ff0f4c06efe0c",
+   "kind": "Stack",
+   "name": "pages",
+   "section": "slots",
+   "tests": [
+    "generated::verify::slot_stack_pages"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Window:slot:child",
-   "fingerprint": "7d9b09269591c309",
+   "fingerprint": "09dc5d930f3e4d5f",
    "kind": "Window",
    "name": "child",
    "section": "slots",
@@ -62,12 +112,202 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Window:slot:titlebar",
-   "fingerprint": "b07557021d29c57c",
+   "fingerprint": "8e76a0e52758b2ab",
    "kind": "Window",
    "name": "titlebar",
    "section": "slots",
    "tests": [
     "generated::verify::slot_window_titlebar"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Fixed:slot:children:attr:x",
+   "fingerprint": "1ee0f62ca2a568e1",
+   "kind": "Fixed",
+   "name": "children.x",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_fixed_children_x"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Fixed:slot:children:attr:y",
+   "fingerprint": "8a501184752ddba0",
+   "kind": "Fixed",
+   "name": "children.y",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_fixed_children_y"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Grid:slot:cells:attr:column",
+   "fingerprint": "71160d922933ec30",
+   "kind": "Grid",
+   "name": "cells.column",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_grid_cells_column"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Grid:slot:cells:attr:row",
+   "fingerprint": "b15de7e59bf41e9d",
+   "kind": "Grid",
+   "name": "cells.row",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_grid_cells_row"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Grid:slot:cells:attr:columnSpan",
+   "fingerprint": "3b5702340463a9f8",
+   "kind": "Grid",
+   "name": "cells.columnSpan",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_grid_cells_columnspan"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Grid:slot:cells:attr:rowSpan",
+   "fingerprint": "5487cee7bf73c039",
+   "kind": "Grid",
+   "name": "cells.rowSpan",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_grid_cells_rowspan"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Notebook:slot:pages:attr:tabLabel",
+   "fingerprint": "4b2732ddaa71ac92",
+   "kind": "Notebook",
+   "name": "pages.tabLabel",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_notebook_pages_tablabel"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Notebook:slot:pages:attr:menuLabel",
+   "fingerprint": "99366056953715a8",
+   "kind": "Notebook",
+   "name": "pages.menuLabel",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_notebook_pages_menulabel"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Notebook:slot:pages:attr:reorderable",
+   "fingerprint": "73b536a3424f692e",
+   "kind": "Notebook",
+   "name": "pages.reorderable",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_notebook_pages_reorderable"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Notebook:slot:pages:attr:detachable",
+   "fingerprint": "c7ff1a2768f94dd6",
+   "kind": "Notebook",
+   "name": "pages.detachable",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_notebook_pages_detachable"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Notebook:slot:pages:attr:tabExpand",
+   "fingerprint": "dcc672426a350225",
+   "kind": "Notebook",
+   "name": "pages.tabExpand",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_notebook_pages_tabexpand"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Notebook:slot:pages:attr:tabFill",
+   "fingerprint": "c95864715cb7d070",
+   "kind": "Notebook",
+   "name": "pages.tabFill",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_notebook_pages_tabfill"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Overlay:slot:overlays:attr:measure",
+   "fingerprint": "a96e9249375089a4",
+   "kind": "Overlay",
+   "name": "overlays.measure",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_overlay_overlays_measure"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Overlay:slot:overlays:attr:clip",
+   "fingerprint": "8487784061e2ada8",
+   "kind": "Overlay",
+   "name": "overlays.clip",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_overlay_overlays_clip"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Stack:slot:pages:attr:name",
+   "fingerprint": "d9f6b68566d8c83f",
+   "kind": "Stack",
+   "name": "pages.name",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_stack_pages_name"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Stack:slot:pages:attr:title",
+   "fingerprint": "9031298a21e3ed31",
+   "kind": "Stack",
+   "name": "pages.title",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_stack_pages_title"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Stack:slot:pages:attr:iconName",
+   "fingerprint": "e52020cfb7b11621",
+   "kind": "Stack",
+   "name": "pages.iconName",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_stack_pages_iconname"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Stack:slot:pages:attr:needsAttention",
+   "fingerprint": "ca83476b4cfcca50",
+   "kind": "Stack",
+   "name": "pages.needsAttention",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_stack_pages_needsattention"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Stack:slot:pages:attr:useUnderline",
+   "fingerprint": "2678eaabab3e3559",
+   "kind": "Stack",
+   "name": "pages.useUnderline",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_stack_pages_useunderline"
    ]
   },
   {
