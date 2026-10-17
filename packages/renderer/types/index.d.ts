@@ -7,9 +7,11 @@
 import type { GtkElements } from './gtk';
 import type { QtElementDescriptors } from './qt';
 import type { BindableProps } from './bindings';
+import type { MenuElements } from './menus';
 
 export type { GtkElements, QtElementDescriptors };
 export type { BindableProps } from './bindings';
+export type { MenuElements } from './menus';
 export type { NativeElement, StaleHandleError } from './native';
 
 // `bind:<name>` attributes per tag, from the binding metadata (bindings.d.ts).
@@ -22,6 +24,6 @@ type WithBindings<E> = {
 declare global {
   namespace svelteHTML {
     // GTK's property tables are the superset; Qt apps check against `QtElementDescriptors`.
-    interface IntrinsicElements extends WithBindings<GtkElements> {}
+    interface IntrinsicElements extends WithBindings<GtkElements & MenuElements> {}
   }
 }

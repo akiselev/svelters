@@ -2,7 +2,7 @@
 // `bind:<name>` targets per element tag; two-way unless marked read-only.
 export interface BindableProps {
   action: {
-    checked: boolean; // gtk
+    checked: boolean; // gtk/qt
   };
   calendar: {
     day: number; // gtk

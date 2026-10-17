@@ -15,7 +15,7 @@
       <menu label="File">
         <action label="Open" shortcut="Ctrl+O" onactivate={() => add('open')} />
         <action label="Autosave" checkable bind:checked={autosave} />
-        <separator />
+        <menuseparator />
         <menu label="Recent">
           {#each recent as r (r)}
             <action label={r} onactivate={() => add('recent:' + r)} />

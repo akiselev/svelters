@@ -1,0 +1,59 @@
+# Menu items (X4, gap G7). A QAction is not a widget: it is a QObject child of the menu, menu bar or
+# tool bar that holds it (slot `items`, see QMenu.yaml / QMenuBar.yaml / QToolBar.yaml). The portable
+# names follow the GTK menu model (crates/svelters-gtk/src/backend/menus.rs): label, icon, shortcut,
+# tooltip, enabled, visible, checkable, checked, group; signals activate(checked) and toggled(checked).
+elements:
+  - tag: action
+    construct: { class: QAction }
+    props:
+      - { js: label, native: text, provenance: "QAction::text (qdoc)" }
+      - { js: icon, native: icon, provenance: "QAction::icon (qdoc); a theme icon name converts to QIcon::fromTheme (ABI v3 string form)" }
+      - { js: shortcut, native: shortcut, provenance: "QAction::shortcut (qdoc); a string like Ctrl+O converts to QKeySequence (ABI v3 string form)" }
+      - { js: tooltip, native: toolTip, provenance: "QAction::toolTip (qdoc)" }
+      - { js: statusTip, native: statusTip, provenance: "QAction::statusTip (qdoc)" }
+      - { js: enabled, native: enabled, provenance: "QAction::enabled (qdoc)" }
+      - { js: visible, native: visible, provenance: "QAction::visible (qdoc)" }
+      - { js: checkable, native: checkable, provenance: "QAction::checkable (qdoc)" }
+      - { js: checked, native: checked, suppress_signals: true, setup: "$w->setCheckable(true)", provenance: "QAction::checked (qdoc); echo suppressed so a JS write is not posted back" }
+      # Radio sets: the actions of one parent that share a name form an exclusive QActionGroup (the group is made
+      # by the parent's `items` slot, menus.hpp.in), so the sets survive reordering and keyed lists.
+      - { js: group, dynamic: svlGroup, after_set: menu_regroup, provenance: "manual: dynamic property `svlGroup`; the items slot puts actions with the same name into one QActionGroup (QActionGroup::exclusive, qdoc)" }
+    signals:
+      - js: toggled
+        native: toggled
+        connect: "toggled(bool)"
+        args: [{ name: checked, type: bool }]
+        trigger: "$w->setCheckable(true); $w->setChecked(!$w->isChecked())"
+        expect_args: ["true"]
+        provenance: "QAction::toggled(bool) (qdoc)"
+      - js: activate
+        native: triggered
+        connect: "triggered(bool)"
+        args: [{ name: checked, type: bool }]
+        trigger: "$w->trigger()"
+        expect_args: ["false"]
+        provenance: "QAction::triggered(bool) (qdoc); trigger() activates with Trigger"
+      - js: hover
+        native: hovered
+        connect: "hovered()"
+        args: []
+        trigger: "$w->hover()"
+        provenance: "QAction::hovered() (qdoc)"
+    bindings:
+      - name: checked
+        direction: two_way
+        property: checked
+        type: { ref: bool, nullable: false }
+        change: { signal: toggled, role: any_change, value: arg0 }
+        write: { natively_normalizes: false }
+        echo: { strategy: host_suppressed, compare_before_set: true, read_back: false, sync_signals_on_set: ["toggled(bool)"] }
+        lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
+        provenance: "QAction::toggled(bool) is emitted by setChecked only on change (qdoc)"
+  # A separator item: a QAction with setSeparator(true). Named `menuseparator` because GTK's `separator` is a widget.
+  - tag: menuseparator
+    construct:
+      class: QAction
+      init:
+        - { method: setSeparator, args: [true] }
+    props:
+      - { js: visible, native: visible, provenance: "QAction::visible (qdoc)" }

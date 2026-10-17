@@ -132,6 +132,15 @@
             },
             "composite": {
               "type": "object"
+            },
+            "args": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "C++ constructor arguments (QActionGroup needs a parent: [\"nullptr\"])."
+            },
+            "context_menu": {
+              "type": "boolean",
+              "description": "The element attaches to the widget it is inserted into and pops up on that widget's context-menu request (X4 contextmenu)."
             }
           }
         },
@@ -262,6 +271,14 @@
         "setup": {
           "type": "string",
           "description": "C++ statement run after the element is created in the generated prop tests ($w = the widget), e.g. adding pages before testing currentIndex."
+        },
+        "dynamic": {
+          "type": "string",
+          "description": "A string held as a dynamic QObject property of this name (not part of the class's API). Give it meaning with `after_set`."
+        },
+        "after_set": {
+          "type": "string",
+          "description": "Backend glue function `int f(Entry &, QObject *)` called after a dynamic property was written (menus.hpp.in)."
         }
       }
     },
@@ -544,7 +561,8 @@
             "none",
             "append_only",
             "native_index",
-            "unordered"
+            "unordered",
+            "actions"
           ]
         },
         "host": {

@@ -1,6 +1,7 @@
-# Actions (addAction/addSeparator/addWidget) need QAction children (gap G7); only plain facts here.
-# The window has no toolbar slot yet (gap G1: addToolBar(area, toolbar)), so the element is not mountable
-# under <window>; the generated tests still exercise it standalone.
+# Items are actions, separators and menus held by the `items` slot (QWidget::insertAction/removeAction, glue in
+# menus.hpp.in; see QMenu.yaml): a menu item becomes a tool button that opens the menu.
+# Place it in a vertical box like any widget (QMainWindow::addToolBar areas are gap G1); the element is a plain
+# QToolBar there.
 elements:
   - tag: toolbar
     construct: { class: QToolBar }
@@ -26,3 +27,17 @@ elements:
         provenance: "QToolBar::orientationChanged(Qt::Orientation) (qdoc)"
     methods:
       - { js: clear, native: clear, provenance: "QToolBar::clear() (qdoc)" }
+    children:
+      policy: ordered
+      default_slot: items
+      slots:
+        - name: items
+          content: widget
+          accepts: [QAction, QMenu]
+          cardinality: many
+          order: actions
+          host: self
+          default: { kind: none }
+          on_remove: empty
+          ops: {}
+          provenance: "QWidget::insertAction/removeAction (qdoc); a QMenu item is its menuAction(); X4"

@@ -46,7 +46,7 @@ fn a_menubar_follows_inserts_removes_and_reorders() {
         let file = mk(&h, "menu", &[("label", "File")]);
         h.insert(bar, file, None, None).unwrap();
         let open = action(&h, file, "Open");
-        let sep = h.create("separator");
+        let sep = h.create("menuseparator");
         h.insert(file, sep, None, None).unwrap();
         let quit = action(&h, file, "Quit");
         let recent = mk(&h, "menu", &[("label", "Recent")]);
@@ -83,10 +83,10 @@ fn sections_split_at_separators() {
         let h = Harness::new();
         let m = h.create("menu");
         let a = action(&h, m, "A");
-        let s1 = h.create("separator");
+        let s1 = h.create("menuseparator");
         h.insert(m, s1, None, None).unwrap();
         let b = action(&h, m, "B");
-        let s2 = h.create("separator");
+        let s2 = h.create("menuseparator");
         h.insert(m, s2, None, None).unwrap();
         let _c = action(&h, m, "C");
         assert_eq!(h.backend.menu_dump(m), "{A,}{B,}{C,}");
@@ -297,7 +297,7 @@ fn a_toolbar_shows_one_button_per_action() {
         let tb = h.create("toolbar");
         let copy = mk(&h, "action", &[("label", "Copy"), ("icon", "edit-copy")]);
         h.insert(tb, copy, None, None).unwrap();
-        let sep = h.create("separator");
+        let sep = h.create("menuseparator");
         h.insert(tb, sep, None, None).unwrap();
         let bold = mk(&h, "action", &[("label", "Bold")]);
         h.set_bool(bold, "checkable", true).unwrap();

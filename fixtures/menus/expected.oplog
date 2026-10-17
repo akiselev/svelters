@@ -16,7 +16,7 @@ set #6 checkable ""
 set #6 checked false
 listen #6 toggled on
 insert #4 #6 before=end slot=default
-create separator #7
+create menuseparator #7
 insert #4 #7 before=end slot=default
 create menu #8
 set #8 label "Recent"

@@ -1,5 +1,5 @@
 //! Menus and actions (X4, gap G7): the kinds `menubar`, `toolbar`, `contextmenu`, `menu`, `action`
-//! and `separator`.
+//! and `menuseparator`.
 //!
 //! GTK describes menus with a `GMenuModel` and handles them with `GAction`s found through
 //! `insert_action_group`; neither is a widget, so the generated widget tables have no kind for them.
@@ -12,7 +12,7 @@
 //! | `contextmenu` | `GtkPopoverMenu` parented to the target widget, popped up by a secondary-button gesture |
 //! | `menu` | a `GMenu` referenced as a submenu item by its parent, or the `menu-model` of a `GtkMenuButton` |
 //! | `action` | a `GSimpleAction` (stateless, boolean state for `checkable`, or a member of the string-state action of its radio `group`) |
-//! | `separator` | a section boundary of the parent `GMenu` |
+//! | `menuseparator` | a section boundary of the parent `GMenu` |
 //!
 //! Every structural or presentational change re-syncs the whole tree of its root: the root's
 //! `GSimpleActionGroup` (prefix `svl`, inserted on the widget that shows the menu), the `GMenu`
@@ -65,7 +65,7 @@ pub fn kind_by_name(name: &str) -> u32 {
         "contextmenu" => KIND_CONTEXT,
         "menu" => KIND_MENU,
         "action" => KIND_ACTION,
-        "separator" => KIND_SEPARATOR,
+        "menuseparator" => KIND_SEPARATOR,
         _ => 0,
     }
 }

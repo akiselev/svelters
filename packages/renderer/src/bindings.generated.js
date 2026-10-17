@@ -2,7 +2,7 @@
 // tag -> bind:<name> -> descriptor. `signal` is the JS event name of the change signal.
 export const BINDINGS = {
   action: {
-    checked: { prop: "checked", signal: "toggled", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["gtk"] },
+    checked: { prop: "checked", signal: "toggled", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["gtk", "qt"] },
   },
   calendar: {
     day: { prop: "day", signal: "notify::day", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
