@@ -61,7 +61,14 @@ pub struct svl_host {
     pub self_: *mut c_void,
     pub post_event: unsafe extern "C" fn(*mut c_void, svl_handle, svl_id, *const svl_value, usize),
     pub checkpoint: unsafe extern "C" fn(*mut c_void),
-    pub call_sync: unsafe extern "C" fn(*mut c_void, svl_handle, svl_id, *const svl_value, usize, *mut svl_value) -> c_int,
+    pub call_sync: unsafe extern "C" fn(
+        *mut c_void,
+        svl_handle,
+        svl_id,
+        *const svl_value,
+        usize,
+        *mut svl_value,
+    ) -> c_int,
     pub on_destroyed: unsafe extern "C" fn(*mut c_void, svl_handle),
 }
 
@@ -71,12 +78,20 @@ pub struct svl_backend {
     pub self_: *mut c_void,
     pub resolve: unsafe extern "C" fn(*mut c_void, u32, svl_id, *const c_char, usize) -> svl_id,
     pub create: unsafe extern "C" fn(*mut c_void, svl_id) -> svl_handle,
-    pub insert: unsafe extern "C" fn(*mut c_void, svl_handle, svl_handle, svl_handle, svl_id) -> c_int,
+    pub insert:
+        unsafe extern "C" fn(*mut c_void, svl_handle, svl_handle, svl_handle, svl_id) -> c_int,
     pub remove: unsafe extern "C" fn(*mut c_void, svl_handle, svl_handle) -> c_int,
     pub destroy: unsafe extern "C" fn(*mut c_void, svl_handle),
     pub set_prop: unsafe extern "C" fn(*mut c_void, svl_handle, svl_id, *const svl_value) -> c_int,
     pub get_prop: unsafe extern "C" fn(*mut c_void, svl_handle, svl_id, *mut svl_value) -> c_int,
-    pub call: unsafe extern "C" fn(*mut c_void, svl_handle, svl_id, *const svl_value, usize, *mut svl_value) -> c_int,
+    pub call: unsafe extern "C" fn(
+        *mut c_void,
+        svl_handle,
+        svl_id,
+        *const svl_value,
+        usize,
+        *mut svl_value,
+    ) -> c_int,
     pub listen: unsafe extern "C" fn(*mut c_void, svl_handle, svl_id, bool) -> c_int,
     pub run: unsafe extern "C" fn(*mut c_void, *const svl_host) -> c_int,
     pub wake: unsafe extern "C" fn(*mut c_void),

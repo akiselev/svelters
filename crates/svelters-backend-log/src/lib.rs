@@ -2,14 +2,12 @@
 //! (`plans/architecture/backend-abi.md#op-log-format`) and drives a fake event loop from a script.
 //!
 //! The fake loop in [`Backend::run`]:
-//! 1. processes the script steps in order: `event` posts an event to the host (and logs it),
-//!    `checkpoint` calls `host.checkpoint`;
+//! 1. processes the script steps in order: `event` logs the event, posts it to the host and
+//!    calls `host.checkpoint` so it is delivered at once; `checkpoint` calls `host.checkpoint`
+//!    (what that drains is the host's business; see `HostConfig::scripted`);
 //! 2. before each step, and after the last, runs a checkpoint if the host called `wake` meanwhile;
 //! 3. then idles, running a checkpoint on every `wake`, and returns when `quit` is called or when
 //!    no wake arrives for [`LogOptions::settle`].
-//!
-//! Event steps are queued by the host and delivered at the next checkpoint, so a script that
-//! wants an event handled puts a `checkpoint` step after it.
 
 use std::collections::HashMap;
 use std::fmt::Write as _;
@@ -21,7 +19,11 @@ use svelters_abi::{Backend, BackendVtable, HostRef, NameKind, Value, Waker, svl_
 /// One scripted interaction step.
 #[derive(Clone, Debug, PartialEq)]
 pub enum Step {
-    Event { handle: svl_handle, signal: String, args: Vec<Value> },
+    Event {
+        handle: svl_handle,
+        signal: String,
+        args: Vec<Value>,
+    },
     Checkpoint,
 }
 
@@ -30,20 +32,42 @@ pub enum Step {
 pub fn parse_script(json: &str) -> Result<Vec<Step>, String> {
     let root: serde_json::Value = serde_json::from_str(json).map_err(|e| format!("script: {e}"))?;
     let steps = root.as_array().ok_or("script: expected a JSON array")?;
-    steps.iter().enumerate().map(|(i, s)| parse_step(s).map_err(|e| format!("script step {i}: {e}"))).collect()
+    steps
+        .iter()
+        .enumerate()
+        .map(|(i, s)| parse_step(s).map_err(|e| format!("script step {i}: {e}")))
+        .collect()
 }
 
 fn parse_step(s: &serde_json::Value) -> Result<Step, String> {
     let obj = s.as_object().ok_or("expected an object")?;
     if let Some(ev) = obj.get("event") {
-        let ev = ev.as_array().ok_or("event: expected [handle, signal, args]")?;
-        let handle = ev.first().and_then(|h| h.as_u64()).ok_or("event: bad handle")?;
-        let signal = ev.get(1).and_then(|s| s.as_str()).ok_or("event: bad signal")?.to_string();
+        let ev = ev
+            .as_array()
+            .ok_or("event: expected [handle, signal, args]")?;
+        let handle = ev
+            .first()
+            .and_then(|h| h.as_u64())
+            .ok_or("event: bad handle")?;
+        let signal = ev
+            .get(1)
+            .and_then(|s| s.as_str())
+            .ok_or("event: bad signal")?
+            .to_string();
         let args = match ev.get(2) {
             None => Vec::new(),
-            Some(a) => a.as_array().ok_or("event: args must be an array")?.iter().map(json_to_value).collect::<Result<_, _>>()?,
+            Some(a) => a
+                .as_array()
+                .ok_or("event: args must be an array")?
+                .iter()
+                .map(json_to_value)
+                .collect::<Result<_, _>>()?,
         };
-        Ok(Step::Event { handle, signal, args })
+        Ok(Step::Event {
+            handle,
+            signal,
+            args,
+        })
     } else if obj.contains_key("checkpoint") {
         Ok(Step::Checkpoint)
     } else {
@@ -149,7 +173,9 @@ pub struct LogOptions {
 
 impl Default for LogOptions {
     fn default() -> Self {
-        LogOptions { settle: Duration::from_millis(150) }
+        LogOptions {
+            settle: Duration::from_millis(150),
+        }
     }
 }
 
@@ -158,6 +184,8 @@ struct State {
     next_handle: u64,
     live: HashMap<svl_handle, svl_id>,
     props: HashMap<(svl_handle, svl_id), Value>,
+    parent: HashMap<svl_handle, svl_handle>,
+    children: HashMap<svl_handle, Vec<svl_handle>>,
     names: Names,
     script: Vec<Step>,
     wake_pending: bool,
@@ -198,6 +226,8 @@ impl LogBackend {
                     next_handle: 1,
                     live: HashMap::new(),
                     props: HashMap::new(),
+                    parent: HashMap::new(),
+                    children: HashMap::new(),
                     names: Names::default(),
                     script,
                     wake_pending: false,
@@ -238,7 +268,12 @@ impl LogBackend {
     }
 
     fn check_live(&self, h: svl_handle) -> Result<svl_id, String> {
-        self.shared.lock().live.get(&h).copied().ok_or_else(|| format!("stale or foreign handle #{h}"))
+        self.shared
+            .lock()
+            .live
+            .get(&h)
+            .copied()
+            .ok_or_else(|| format!("stale or foreign handle #{h}"))
     }
 
     fn checkpoint(&self, host: &HostRef<'_>) {
@@ -270,29 +305,70 @@ impl Backend for LogBackend {
         Ok(h)
     }
 
-    fn insert(&self, parent: svl_handle, child: svl_handle, before: Option<svl_handle>, slot: svl_id) -> Result<(), String> {
+    fn insert(
+        &self,
+        parent: svl_handle,
+        child: svl_handle,
+        before: Option<svl_handle>,
+        slot: svl_id,
+    ) -> Result<(), String> {
         self.check_live(parent)?;
         self.check_live(child)?;
         if let Some(b) = before {
             self.check_live(b)?;
         }
         let mut st = self.shared.lock();
+        if parent == child {
+            return Err(format!("cannot insert #{child} into itself"));
+        }
+        if let Some(p) = st.parent.get(&child) {
+            return Err(format!("#{child} already has parent #{p}"));
+        }
+        let siblings = st.children.entry(parent).or_default();
+        let at = match before {
+            Some(b) => siblings
+                .iter()
+                .position(|c| *c == b)
+                .ok_or_else(|| format!("before #{b} is not a child of #{parent}"))?,
+            None => siblings.len(),
+        };
+        siblings.insert(at, child);
+        st.parent.insert(child, parent);
         let before = before.map_or("end".to_string(), |b| format!("#{b}"));
-        let slot = if slot == 0 { "default".to_string() } else { st.names.name(slot).to_string() };
-        let _ = writeln!(st.log, "insert #{parent} #{child} before={before} slot={slot}");
+        let slot = if slot == 0 {
+            "default".to_string()
+        } else {
+            st.names.name(slot).to_string()
+        };
+        let _ = writeln!(
+            st.log,
+            "insert #{parent} #{child} before={before} slot={slot}"
+        );
         Ok(())
     }
 
     fn remove(&self, parent: svl_handle, child: svl_handle) -> Result<(), String> {
         self.check_live(parent)?;
         self.check_live(child)?;
-        self.append(format_args!("remove #{parent} #{child}"));
+        let mut st = self.shared.lock();
+        if st.parent.get(&child) != Some(&parent) {
+            return Err(format!("#{child} is not a child of #{parent}"));
+        }
+        st.parent.remove(&child);
+        if let Some(c) = st.children.get_mut(&parent) {
+            c.retain(|x| *x != child);
+        }
+        let _ = writeln!(st.log, "remove #{parent} #{child}");
         Ok(())
     }
 
     fn destroy(&self, h: svl_handle) {
         let mut st = self.shared.lock();
         if st.live.remove(&h).is_some() {
+            if let Some(c) = st.parent.remove(&h).and_then(|p| st.children.get_mut(&p)) {
+                c.retain(|x| *x != h);
+            }
+            st.children.remove(&h);
             st.props.retain(|(ph, _), _| *ph != h);
             let _ = writeln!(st.log, "destroy #{h}");
         }
@@ -309,14 +385,24 @@ impl Backend for LogBackend {
 
     fn get_prop(&self, h: svl_handle, prop: svl_id) -> Result<Value, String> {
         self.check_live(h)?;
-        Ok(self.shared.lock().props.get(&(h, prop)).cloned().unwrap_or(Value::Null))
+        Ok(self
+            .shared
+            .lock()
+            .props
+            .get(&(h, prop))
+            .cloned()
+            .unwrap_or(Value::Null))
     }
 
     fn call(&self, h: svl_handle, method: svl_id, args: &[Value]) -> Result<Value, String> {
         self.check_live(h)?;
         let mut st = self.shared.lock();
         let name = st.names.name(method).to_string();
-        let _ = writeln!(st.log, "call #{h} {name} {}", json_string(&Value::List(args.to_vec())));
+        let _ = writeln!(
+            st.log,
+            "call #{h} {name} {}",
+            json_string(&Value::List(args.to_vec()))
+        );
         Ok(Value::Null)
     }
 
@@ -324,7 +410,11 @@ impl Backend for LogBackend {
         self.check_live(h)?;
         let mut st = self.shared.lock();
         let name = st.names.name(signal).to_string();
-        let _ = writeln!(st.log, "listen #{h} {name} {}", if on { "on" } else { "off" });
+        let _ = writeln!(
+            st.log,
+            "listen #{h} {name} {}",
+            if on { "on" } else { "off" }
+        );
         Ok(())
     }
 
@@ -339,18 +429,34 @@ impl Backend for LogBackend {
             }
             match step {
                 Step::Checkpoint => self.checkpoint(host),
-                Step::Event { handle, signal, args } => {
+                Step::Event {
+                    handle,
+                    signal,
+                    args,
+                } => {
                     let kind = self.check_live(handle)?;
-                    let sig = self.shared.lock().names.intern(NameKind::Signal as u32, kind, &signal);
-                    self.append(format_args!("event #{handle} {signal} {}", json_string(&Value::List(args.clone()))));
+                    let sig =
+                        self.shared
+                            .lock()
+                            .names
+                            .intern(NameKind::Signal as u32, kind, &signal);
+                    self.append(format_args!(
+                        "event #{handle} {signal} {}",
+                        json_string(&Value::List(args.clone()))
+                    ));
                     host.post_event(handle, sig, &args);
+                    self.checkpoint(host);
                 }
             }
         }
         loop {
             let mut st = self.shared.lock();
             while !st.wake_pending && !st.quit {
-                let (g, res) = self.shared.cv.wait_timeout(st, self.shared.opts.settle).unwrap_or_else(|e| e.into_inner());
+                let (g, res) = self
+                    .shared
+                    .cv
+                    .wait_timeout(st, self.shared.opts.settle)
+                    .unwrap_or_else(|e| e.into_inner());
                 st = g;
                 if res.timed_out() && !st.wake_pending {
                     return Ok(());
@@ -398,14 +504,29 @@ mod tests {
 
     #[test]
     fn strings_and_lists_are_compact_json() {
-        let v = Value::List(vec![Value::Str("a\"b\n".into()), Value::Null, Value::Bool(true), Value::I64(-3)]);
+        let v = Value::List(vec![
+            Value::Str("a\"b\n".into()),
+            Value::Null,
+            Value::Bool(true),
+            Value::I64(-3),
+        ]);
         assert_eq!(json_string(&v), r#"["a\"b\n",null,true,-3]"#);
     }
 
     #[test]
     fn script_parses() {
         let s = parse_script(r#"[{"event":[1,"click",[]]},{"checkpoint":true}]"#).unwrap();
-        assert_eq!(s, vec![Step::Event { handle: 1, signal: "click".into(), args: vec![] }, Step::Checkpoint]);
+        assert_eq!(
+            s,
+            vec![
+                Step::Event {
+                    handle: 1,
+                    signal: "click".into(),
+                    args: vec![]
+                },
+                Step::Checkpoint
+            ]
+        );
         assert!(parse_script(r#"[{"nope":1}]"#).is_err());
     }
 
@@ -418,8 +539,18 @@ mod tests {
         let parent = b.create(kind).unwrap();
         let child = b.create(b.resolve(NameKind::Kind, 0, "label")).unwrap();
         b.insert(parent, child, None, 0).unwrap();
-        b.set_prop(child, b.resolve(NameKind::Prop, kind, "label"), &Value::Str("hi".into())).unwrap();
-        b.call(parent, b.resolve(NameKind::Method, kind, "show"), &[Value::I64(1)]).unwrap();
+        b.set_prop(
+            child,
+            b.resolve(NameKind::Prop, kind, "label"),
+            &Value::Str("hi".into()),
+        )
+        .unwrap();
+        b.call(
+            parent,
+            b.resolve(NameKind::Method, kind, "show"),
+            &[Value::I64(1)],
+        )
+        .unwrap();
         b.remove(parent, child).unwrap();
         b.destroy(child);
         assert!(b.insert(parent, child, None, 0).is_err());

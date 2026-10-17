@@ -58,7 +58,7 @@ impl fmt::Display for AbiError {
 
 impl std::error::Error for AbiError {}
 
-pub type Result<T> = std::result::Result<T, AbiError>;
+pub type AbiResult<T> = std::result::Result<T, AbiError>;
 
 /// Owned counterpart of `svl_value`.
 #[derive(Clone, Debug, PartialEq)]
@@ -82,21 +82,47 @@ pub struct RawValues<'a> {
 
 fn build_raw(v: &Value, lists: &mut Vec<Vec<svl_value>>) -> svl_value {
     match v {
-        Value::Null => svl_value { tag: SVL_NULL, u: svl_value_u { i: 0 } },
-        Value::Bool(b) => svl_value { tag: SVL_BOOL, u: svl_value_u { b: *b } },
-        Value::I64(i) => svl_value { tag: SVL_I64, u: svl_value_u { i: *i } },
-        Value::F64(f) => svl_value { tag: SVL_F64, u: svl_value_u { f: *f } },
-        Value::Handle(h) => svl_value { tag: SVL_HANDLE, u: svl_value_u { h: *h } },
+        Value::Null => svl_value {
+            tag: SVL_NULL,
+            u: svl_value_u { i: 0 },
+        },
+        Value::Bool(b) => svl_value {
+            tag: SVL_BOOL,
+            u: svl_value_u { b: *b },
+        },
+        Value::I64(i) => svl_value {
+            tag: SVL_I64,
+            u: svl_value_u { i: *i },
+        },
+        Value::F64(f) => svl_value {
+            tag: SVL_F64,
+            u: svl_value_u { f: *f },
+        },
+        Value::Handle(h) => svl_value {
+            tag: SVL_HANDLE,
+            u: svl_value_u { h: *h },
+        },
         Value::Str(s) => svl_value {
             tag: SVL_STR,
-            u: svl_value_u { s: svl_str { ptr: s.as_ptr().cast(), len: s.len() } },
+            u: svl_value_u {
+                s: svl_str {
+                    ptr: s.as_ptr().cast(),
+                    len: s.len(),
+                },
+            },
         },
         Value::List(items) => {
             let inner: Vec<svl_value> = items.iter().map(|x| build_raw(x, lists)).collect();
             // The Vec's heap buffer does not move when the Vec itself is moved into `lists`.
-            let l = svl_list { ptr: inner.as_ptr(), len: inner.len() };
+            let l = svl_list {
+                ptr: inner.as_ptr(),
+                len: inner.len(),
+            };
             lists.push(inner);
-            svl_value { tag: SVL_LIST, u: svl_value_u { l } }
+            svl_value {
+                tag: SVL_LIST,
+                u: svl_value_u { l },
+            }
         }
     }
 }
@@ -105,7 +131,11 @@ impl<'a> RawValues<'a> {
     pub fn new(values: &'a [Value]) -> RawValues<'a> {
         let mut lists = Vec::new();
         let raw = values.iter().map(|v| build_raw(v, &mut lists)).collect();
-        RawValues { raw, _lists: lists, _src: PhantomData }
+        RawValues {
+            raw,
+            _lists: lists,
+            _src: PhantomData,
+        }
     }
     pub fn as_ptr(&self) -> *const svl_value {
         self.raw.as_ptr()
@@ -160,12 +190,20 @@ impl Value {
         if ptr.is_null() || n == 0 {
             return Vec::new();
         }
-        unsafe { std::slice::from_raw_parts(ptr, n).iter().map(|v| Value::from_raw(v)).collect() }
+        unsafe {
+            std::slice::from_raw_parts(ptr, n)
+                .iter()
+                .map(|v| Value::from_raw(v))
+                .collect()
+        }
     }
 }
 
 fn null_value() -> svl_value {
-    svl_value { tag: SVL_NULL, u: svl_value_u { i: 0 } }
+    svl_value {
+        tag: SVL_NULL,
+        u: svl_value_u { i: 0 },
+    }
 }
 
 /// A thread-safe handle to a backend's `wake`.
@@ -197,7 +235,7 @@ pub struct BackendRef<'a> {
 impl<'a> BackendRef<'a> {
     /// # Safety
     /// `raw` must point to a valid vtable that outlives `'a`.
-    pub unsafe fn from_raw(raw: *const svl_backend) -> Result<BackendRef<'a>> {
+    pub unsafe fn from_raw(raw: *const svl_backend) -> AbiResult<BackendRef<'a>> {
         let v = unsafe { (*raw).abi_version };
         if v != SVL_ABI_VERSION {
             return Err(AbiError {
@@ -205,7 +243,10 @@ impl<'a> BackendRef<'a> {
                 message: format!("backend ABI version {v}, host expects {SVL_ABI_VERSION}"),
             });
         }
-        Ok(BackendRef { raw, _p: PhantomData })
+        Ok(BackendRef {
+            raw,
+            _p: PhantomData,
+        })
     }
 
     /// Drops the borrow lifetime, for code that stores the reference where a lifetime parameter
@@ -214,7 +255,10 @@ impl<'a> BackendRef<'a> {
     /// # Safety
     /// The backend must outlive every use of the result.
     pub unsafe fn erase_lifetime(self) -> BackendRef<'static> {
-        BackendRef { raw: self.raw, _p: PhantomData }
+        BackendRef {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
     pub fn as_raw(&self) -> *const svl_backend {
@@ -234,8 +278,15 @@ impl<'a> BackendRef<'a> {
         unsafe { CStr::from_ptr(p) }.to_string_lossy().into_owned()
     }
 
-    fn check(&self, rc: c_int) -> Result<()> {
-        if rc < 0 { Err(AbiError { code: rc, message: self.last_error() }) } else { Ok(()) }
+    fn check(&self, rc: c_int) -> AbiResult<()> {
+        if rc < 0 {
+            Err(AbiError {
+                code: rc,
+                message: self.last_error(),
+            })
+        } else {
+            Ok(())
+        }
     }
 
     /// Returns 0 for unknown names.
@@ -244,10 +295,17 @@ impl<'a> BackendRef<'a> {
         unsafe { (b.resolve)(b.self_, what as u32, kind, name.as_ptr().cast(), name.len()) }
     }
 
-    pub fn create(&self, kind: svl_id) -> Result<svl_handle> {
+    pub fn create(&self, kind: svl_id) -> AbiResult<svl_handle> {
         let b = self.b();
         let h = unsafe { (b.create)(b.self_, kind) };
-        if h == 0 { Err(AbiError { code: -1, message: self.last_error() }) } else { Ok(h) }
+        if h == 0 {
+            Err(AbiError {
+                code: -1,
+                message: self.last_error(),
+            })
+        } else {
+            Ok(h)
+        }
     }
 
     pub fn insert(
@@ -256,12 +314,12 @@ impl<'a> BackendRef<'a> {
         child: svl_handle,
         before: Option<svl_handle>,
         slot: svl_id,
-    ) -> Result<()> {
+    ) -> AbiResult<()> {
         let b = self.b();
         self.check(unsafe { (b.insert)(b.self_, parent, child, before.unwrap_or(0), slot) })
     }
 
-    pub fn remove(&self, parent: svl_handle, child: svl_handle) -> Result<()> {
+    pub fn remove(&self, parent: svl_handle, child: svl_handle) -> AbiResult<()> {
         let b = self.b();
         self.check(unsafe { (b.remove)(b.self_, parent, child) })
     }
@@ -271,19 +329,19 @@ impl<'a> BackendRef<'a> {
         unsafe { (b.destroy)(b.self_, h) }
     }
 
-    pub fn set_prop(&self, h: svl_handle, prop: svl_id, v: &Value) -> Result<()> {
+    pub fn set_prop(&self, h: svl_handle, prop: svl_id, v: &Value) -> AbiResult<()> {
         let b = self.b();
         self.check(v.with_raw(|raw| unsafe { (b.set_prop)(b.self_, h, prop, raw) }))
     }
 
-    pub fn get_prop(&self, h: svl_handle, prop: svl_id) -> Result<Value> {
+    pub fn get_prop(&self, h: svl_handle, prop: svl_id) -> AbiResult<Value> {
         let b = self.b();
         let mut out = null_value();
         self.check(unsafe { (b.get_prop)(b.self_, h, prop, &mut out) })?;
         Ok(unsafe { Value::from_raw(&out) })
     }
 
-    pub fn call(&self, h: svl_handle, method: svl_id, args: &[Value]) -> Result<Value> {
+    pub fn call(&self, h: svl_handle, method: svl_id, args: &[Value]) -> AbiResult<Value> {
         let b = self.b();
         let raw = RawValues::new(args);
         let mut out = null_value();
@@ -291,13 +349,13 @@ impl<'a> BackendRef<'a> {
         Ok(unsafe { Value::from_raw(&out) })
     }
 
-    pub fn listen(&self, h: svl_handle, signal: svl_id, on: bool) -> Result<()> {
+    pub fn listen(&self, h: svl_handle, signal: svl_id, on: bool) -> AbiResult<()> {
         let b = self.b();
         self.check(unsafe { (b.listen)(b.self_, h, signal, on) })
     }
 
     /// Runs the backend's loop; returns when the app quits.
-    pub fn run(&self, host: &HostVtable) -> Result<()> {
+    pub fn run(&self, host: &HostVtable) -> AbiResult<()> {
         let b = self.b();
         self.check(unsafe { (b.run)(b.self_, host.as_raw()) })
     }
@@ -318,7 +376,10 @@ impl<'a> BackendRef<'a> {
     /// The caller must stop using it before the backend is dropped.
     pub fn wake_handle(&self) -> WakeHandle {
         let b = self.b();
-        WakeHandle { wake: b.wake, self_: b.self_ }
+        WakeHandle {
+            wake: b.wake,
+            self_: b.self_,
+        }
     }
 }
 
@@ -333,7 +394,10 @@ impl<'a> HostRef<'a> {
     /// # Safety
     /// `raw` must point to a valid `svl_host` that outlives `'a`.
     pub unsafe fn from_raw(raw: *const svl_host) -> HostRef<'a> {
-        HostRef { raw, _p: PhantomData }
+        HostRef {
+            raw,
+            _p: PhantomData,
+        }
     }
 
     fn h(&self) -> &svl_host {
@@ -353,15 +417,17 @@ impl<'a> HostRef<'a> {
         unsafe { (host.checkpoint)(host.self_) }
     }
 
-    pub fn call_sync(&self, h: svl_handle, signal: svl_id, args: &[Value]) -> Result<Value> {
+    pub fn call_sync(&self, h: svl_handle, signal: svl_id, args: &[Value]) -> AbiResult<Value> {
         let host = self.h();
         let raw = RawValues::new(args);
         let mut out = null_value();
-        let rc = unsafe {
-            (host.call_sync)(host.self_, h, signal, raw.as_ptr(), raw.len(), &mut out)
-        };
+        let rc =
+            unsafe { (host.call_sync)(host.self_, h, signal, raw.as_ptr(), raw.len(), &mut out) };
         if rc < 0 {
-            return Err(AbiError { code: rc, message: "call_sync failed".into() });
+            return Err(AbiError {
+                code: rc,
+                message: "call_sync failed".into(),
+            });
         }
         Ok(unsafe { Value::from_raw(&out) })
     }
@@ -373,7 +439,7 @@ impl<'a> HostRef<'a> {
 }
 
 pub type Waker = Arc<dyn Fn() + Send + Sync>;
-type StrResult<T> = std::result::Result<T, String>;
+pub type StrResult<T> = std::result::Result<T, String>;
 
 /// Implement this to provide a backend in Rust, then call [`BackendVtable::new`].
 ///
@@ -444,11 +510,25 @@ unsafe fn shim<'a>(p: *mut c_void) -> &'a Shim {
     unsafe { &*(p as *const Shim) }
 }
 
-unsafe extern "C" fn t_resolve(s: *mut c_void, what: u32, kind: svl_id, name: *const c_char, len: usize) -> svl_id {
+unsafe extern "C" fn t_resolve(
+    s: *mut c_void,
+    what: u32,
+    kind: svl_id,
+    name: *const c_char,
+    len: usize,
+) -> svl_id {
     let s = unsafe { shim(s) };
-    let Some(what) = NameKind::from_u32(what) else { return 0 };
-    let bytes = if name.is_null() { &[][..] } else { unsafe { std::slice::from_raw_parts(name.cast::<u8>(), len) } };
-    let Ok(name) = std::str::from_utf8(bytes) else { return 0 };
+    let Some(what) = NameKind::from_u32(what) else {
+        return 0;
+    };
+    let bytes = if name.is_null() {
+        &[][..]
+    } else {
+        unsafe { std::slice::from_raw_parts(name.cast::<u8>(), len) }
+    };
+    let Ok(name) = std::str::from_utf8(bytes) else {
+        return 0;
+    };
     catch_unwind(AssertUnwindSafe(|| s.backend.resolve(what, kind, name))).unwrap_or(0)
 }
 
@@ -467,7 +547,13 @@ unsafe extern "C" fn t_create(s: *mut c_void, kind: svl_id) -> svl_handle {
     }
 }
 
-unsafe extern "C" fn t_insert(s: *mut c_void, parent: svl_handle, child: svl_handle, before: svl_handle, slot: svl_id) -> c_int {
+unsafe extern "C" fn t_insert(
+    s: *mut c_void,
+    parent: svl_handle,
+    child: svl_handle,
+    before: svl_handle,
+    slot: svl_id,
+) -> c_int {
     let s = unsafe { shim(s) };
     s.rc(|b| b.insert(parent, child, (before != 0).then_some(before), slot))
 }
@@ -482,7 +568,12 @@ unsafe extern "C" fn t_destroy(s: *mut c_void, h: svl_handle) {
     let _ = catch_unwind(AssertUnwindSafe(|| s.backend.destroy(h)));
 }
 
-unsafe extern "C" fn t_set_prop(s: *mut c_void, h: svl_handle, prop: svl_id, v: *const svl_value) -> c_int {
+unsafe extern "C" fn t_set_prop(
+    s: *mut c_void,
+    h: svl_handle,
+    prop: svl_id,
+    v: *const svl_value,
+) -> c_int {
     let s = unsafe { shim(s) };
     if v.is_null() {
         return s.fail("set_prop: null value");
@@ -491,7 +582,12 @@ unsafe extern "C" fn t_set_prop(s: *mut c_void, h: svl_handle, prop: svl_id, v: 
     s.rc(|b| b.set_prop(h, prop, &v))
 }
 
-unsafe extern "C" fn t_get_prop(s: *mut c_void, h: svl_handle, prop: svl_id, out: *mut svl_value) -> c_int {
+unsafe extern "C" fn t_get_prop(
+    s: *mut c_void,
+    h: svl_handle,
+    prop: svl_id,
+    out: *mut svl_value,
+) -> c_int {
     let s = unsafe { shim(s) };
     let mut res = None;
     let rc = s.rc(|b| {
@@ -504,7 +600,14 @@ unsafe extern "C" fn t_get_prop(s: *mut c_void, h: svl_handle, prop: svl_id, out
     rc
 }
 
-unsafe extern "C" fn t_call(s: *mut c_void, h: svl_handle, method: svl_id, args: *const svl_value, n: usize, out: *mut svl_value) -> c_int {
+unsafe extern "C" fn t_call(
+    s: *mut c_void,
+    h: svl_handle,
+    method: svl_id,
+    args: *const svl_value,
+    n: usize,
+    out: *mut svl_value,
+) -> c_int {
     let s = unsafe { shim(s) };
     let args = unsafe { Value::vec_from_raw(args, n) };
     let mut res = None;
@@ -588,7 +691,10 @@ impl BackendVtable {
     }
 
     pub fn backend_ref(&self) -> BackendRef<'_> {
-        BackendRef { raw: self.as_raw(), _p: PhantomData }
+        BackendRef {
+            raw: self.as_raw(),
+            _p: PhantomData,
+        }
     }
 }
 
@@ -615,7 +721,13 @@ unsafe fn hshim<'a>(p: *mut c_void) -> &'a HostShim {
     unsafe { &*(p as *const HostShim) }
 }
 
-unsafe extern "C" fn h_post_event(s: *mut c_void, h: svl_handle, sig: svl_id, args: *const svl_value, n: usize) {
+unsafe extern "C" fn h_post_event(
+    s: *mut c_void,
+    h: svl_handle,
+    sig: svl_id,
+    args: *const svl_value,
+    n: usize,
+) {
     let s = unsafe { hshim(s) };
     let args = unsafe { Value::vec_from_raw(args, n) };
     let _ = catch_unwind(AssertUnwindSafe(|| s.cb.post_event(h, sig, &args)));
@@ -626,7 +738,14 @@ unsafe extern "C" fn h_checkpoint(s: *mut c_void) {
     let _ = catch_unwind(AssertUnwindSafe(|| s.cb.checkpoint()));
 }
 
-unsafe extern "C" fn h_call_sync(s: *mut c_void, h: svl_handle, sig: svl_id, args: *const svl_value, n: usize, out: *mut svl_value) -> c_int {
+unsafe extern "C" fn h_call_sync(
+    s: *mut c_void,
+    h: svl_handle,
+    sig: svl_id,
+    args: *const svl_value,
+    n: usize,
+    out: *mut svl_value,
+) -> c_int {
     let s = unsafe { hshim(s) };
     let args = unsafe { Value::vec_from_raw(args, n) };
     match catch_unwind(AssertUnwindSafe(|| s.cb.call_sync(h, sig, &args))) {
@@ -651,7 +770,10 @@ pub struct HostVtable {
 
 impl HostVtable {
     pub fn new<C: HostCallbacks>(cb: C) -> HostVtable {
-        let shim = Box::into_raw(Box::new(HostShim { cb: Box::new(cb), out: RefCell::new(None) }));
+        let shim = Box::into_raw(Box::new(HostShim {
+            cb: Box::new(cb),
+            out: RefCell::new(None),
+        }));
         let raw = Box::new(svl_host {
             self_: shim.cast(),
             post_event: h_post_event,
@@ -667,7 +789,10 @@ impl HostVtable {
     }
 
     pub fn host_ref(&self) -> HostRef<'_> {
-        HostRef { raw: self.as_raw(), _p: PhantomData }
+        HostRef {
+            raw: self.as_raw(),
+            _p: PhantomData,
+        }
     }
 }
 
