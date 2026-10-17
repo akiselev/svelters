@@ -409,3 +409,23 @@ test('dispatch with deferred=true gives listeners the same event shape and ignor
   assert.deepEqual(got, [true, false, []]);
   assert.equal(out.event.defaultPrevented, false, 'a late event cannot veto anything');
 });
+
+test('dispatchSync warns about handlers that return a Promise', () => {
+  const win = el('window');
+  r.addEventListener(win, 'close', async (e) => {
+    await null;
+    e.preventDefault();
+  });
+  r.insert(root, win, null);
+  const h = Number(take().split('\n').find((l) => l.startsWith('create window')).split('#')[1]);
+  const warned = [];
+  const orig = console.warn;
+  console.warn = (m) => warned.push(m);
+  try {
+    assert.equal(dispatchSync(h, 'close-request', []), null, 'the late flag does not count');
+  } finally {
+    console.warn = orig;
+  }
+  assert.equal(warned.length, 1);
+  assert.match(warned[0], /returned a Promise/);
+});

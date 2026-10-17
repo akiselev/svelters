@@ -74,7 +74,7 @@ typedef struct svl_host {
   void (*post_event)(void *self, svl_handle h, svl_id signal, const svl_value *args, size_t n);
   /* run queued events + JS jobs + flush; the backend calls this from its loop after wake() */
   void (*checkpoint)(void *self);
-  /* synchronous handler call for return-value signals/virtuals (M4; see open questions) */
+  /* synchronous handler call for return-value signals/virtuals; see "ABI v2.1 additive" */
   int  (*call_sync)(void *self, svl_handle h, svl_id signal, const svl_value *args, size_t n, svl_value *out);
   /* native object went away underneath us (parent destroyed it, window closed) */
   void (*on_destroyed)(void *self, svl_handle h, uint32_t reason /* svl_gone */);
@@ -136,7 +136,7 @@ my-app-qt/                  (leaf crate: no project deps, nothing depends on it 
 
 ## Open questions
 
-- **`call_sync` re-entrancy rules.** Can JS mutate the tree during a sync handler? What happens on a returned Promise, or on a timeout? See `docs/notes/signals-and-slots-semantics.md`.
+- **`call_sync` re-entrancy rules.** Answered in "ABI v2.1 additive" (X2). JS may issue host ops during a sync handler and they apply at once; a nested sync signal is deferred; a returned Promise is ignored (the renderer warns); the turn budget is the timeout.
 - **Slot routing:** answered by `docs/notes/signals-and-slots-semantics.md`.
   - `insert(…, slot)` is enough for placement.
   - Per-child attributes (grid cell, tab title, dock area) need a new `set_child_attr(parent, child, attr_id, value)` op, planned for M4.
@@ -157,10 +157,14 @@ set #<h> <prop> <json>
 call #<h> <method> <json-args-array>
 listen #<h> <signal> on|off
 event #<h> <signal> <json-args-array>        # an injected native event, logged when delivered
+sync #<h> <signal> <json-args-array>         # an injected sync signal, logged before its handlers run
+result #<h> <json>|busy|error                # what call_sync returned, logged after the handlers' own ops
 gone #<h> <reason>                           # the native object died (ABI v2), logged when it happens
 ```
 
-Kinds, props, signals and slots appear by their JS-facing names, never by IDs. A fixture's scripted interaction is a JSON array of `{"event": [<handle-number>, <signal>, <args>]}`, `{"gone": [<handle-number>, <reason>]}` and `{"checkpoint": true}` steps.
+Kinds, props, signals and slots appear by their JS-facing names, never by IDs. A fixture's scripted interaction is a JSON array of `{"event": [<handle-number>, <signal>, <args>]}`, `{"sync": [<handle-number>, <signal>, <args>]}`, `{"gone": [<handle-number>, <reason>]}` and `{"checkpoint": true}` steps.
+
+A `sync` step calls `__svelters_dispatch_sync(h, signal, args)` (Node) or `host.call_sync` (log backend) directly and does not checkpoint. The `result` line is the handler result as JSON (`null` = no decision, `true` = stop) or `busy`/`error` when the host refused. Ops the handler issues appear between the two lines; microtasks it queued run at the next `checkpoint` step. Toolkit replays skip fixtures with `sync` lines, because a result changes what the toolkit does next.
 
 `gone` is a native death. `<reason>` is the lower-case `svl_gone` name: `unknown`, `closed`, `parent`, `owner`, `replaced`, `shutdown`. A scripted `gone` step kills the handle with the given reason, and the log gets one `gone` line for it followed by one line per descendant (pre-order, reason `parent`). The Node TestHost and the log backend both do the cascade themselves. On a real toolkit the replay produces the first death natively (closing the window) and checks the rest against what the backend reports. Ops the host swallows for dead handles (`setProp`, `listen off`, `remove`, `destroy`) are not logged.
 

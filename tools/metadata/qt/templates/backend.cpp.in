@@ -536,7 +536,10 @@ int b_run(void *, const svl_host *host) {
     g.queued.store(true);
     QMetaObject::invokeMethod(g.waker.load(), [] { run_checkpoint(); }, Qt::QueuedConnection);
   }
-  return QCoreApplication::exec();
+  const int rc = QCoreApplication::exec();
+  // The host vtable is only guaranteed while `run` is on the stack; late timers must not use it.
+  g.host = nullptr;
+  return rc;
 }
 
 void b_wake(void *) {

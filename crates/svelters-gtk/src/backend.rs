@@ -734,7 +734,11 @@ unsafe extern "C" fn b_run(p: *mut c_void, host: *const svl_host) -> c_int {
             unsafe { ((*h).checkpoint)((*h).self_) };
         }
     });
-    c.local.app.run_with_args::<&str>(&[]).get() as c_int
+    let rc = c.local.app.run_with_args::<&str>(&[]).get() as c_int;
+    // The host vtable is only guaranteed while `run` is on the stack: timers (a pending frame, a
+    // wakeup) that fire later must not call into it.
+    c.host.store(std::ptr::null_mut(), Ordering::Release);
+    rc
 }
 
 /// Thread-safe: schedules a host checkpoint on the default main context.

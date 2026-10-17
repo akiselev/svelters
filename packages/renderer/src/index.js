@@ -504,7 +504,10 @@ export function dispatchSync(h, signal, args = []) {
   const ev = new NativeEvent(eventFor(signal), signal, el, args, false);
   run: for (const type of new Set([eventFor(signal), signal])) {
     for (const f of [...(el.listeners[type] ?? [])]) {
-      f.call(el, ev, ...args);
+      const r = f.call(el, ev, ...args);
+      if (r !== null && typeof r === 'object' && typeof r.then === 'function') {
+        console.warn(`sync handler for '${signal}' returned a Promise: flags set after its first await come too late and are ignored`);
+      }
       if (ev.immediateStopped) break run;
     }
   }
