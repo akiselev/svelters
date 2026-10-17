@@ -10,11 +10,14 @@
 #include <QtCore/QEvent>
 #include <QtCore/QPointer>
 #include <QtCore/QString>
+#include <QtGui/QKeyEvent>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QLineEdit>
 #include <QtWidgets/QWidget>
 //@@INCLUDES@@
 
 #include <algorithm>
+#include <chrono>
 #include <cstdio>
 #include <cstring>
 #include <string>
@@ -22,6 +25,7 @@
 #include <vector>
 
 extern "C" const svl_backend *svl_qt_backend(void);
+extern "C" unsigned svl_qt_frames_by_update();
 extern "C" void svl_qt_set_host(const svl_host *host);
 extern "C" void *svl_qt_debug_object(svl_handle h);
 
@@ -48,12 +52,40 @@ void h_post(void *, svl_handle h, svl_id sig, const svl_value *args, size_t n) {
   rec.events.push_back(std::move(e));
 }
 void h_checkpoint(void *) { rec.checkpoints++; }
-int h_call_sync(void *, svl_handle, svl_id, const svl_value *, size_t, svl_value *) { return -1; }
+// What the stub host answers to call_sync: busy (queue the call as an event, like a host that is
+// already running JS), a failure, or a handler result.
+enum class Reply { Busy, Failed, Stop, Continue, Null };
+Reply reply = Reply::Busy;
+struct SyncCall {
+  svl_handle h;
+  svl_id sig;
+  size_t n;
+  int64_t key;
+  std::string text;
+};
+std::vector<SyncCall> sync_calls;
+int h_call_sync(void *, svl_handle h, svl_id sig, const svl_value *args, size_t n, svl_value *out) {
+  if (reply == Reply::Busy) {
+    h_post(nullptr, h, sig, args, n);
+    return SVL_SYNC_BUSY;
+  }
+  SyncCall c{h, sig, n, n > 0 && args[0].tag == SVL_I64 ? args[0].u.i : 0,
+             n > 1 && args[1].tag == SVL_STR ? std::string(args[1].u.s.ptr, args[1].u.s.len) : std::string()};
+  sync_calls.push_back(c);
+  switch (reply) {
+    case Reply::Failed: return SVL_SYNC_FAILED;
+    case Reply::Stop: out->tag = SVL_BOOL; out->u.b = true; return 0;
+    case Reply::Continue: out->tag = SVL_BOOL; out->u.b = false; return 0;
+    default: out->tag = SVL_NULL; out->u.i = 0; return 0;
+  }
+}
 void h_destroyed(void *, svl_handle h, uint32_t reason) {
   rec.destroyed.push_back(h);
   rec.reasons.push_back(reason);
 }
-const svl_host kHost = {nullptr, h_post, h_checkpoint, h_call_sync, h_destroyed};
+int frames = 0;
+void h_frame(void *) { frames++; }
+const svl_host kHost = {nullptr, h_post, h_checkpoint, h_call_sync, h_destroyed, h_frame};
 
 const svl_backend *B = nullptr;
 
@@ -205,6 +237,7 @@ bool t_runtime_uncontrolled_close_cascades(std::string &why) {
 }
 
 bool t_runtime_controlled_close_is_vetoed(std::string &why) {
+  reply = Reply::Busy;
   svl_handle w = mk("window");
   svl_id sig = G("window", "close-request");
   CHECK(sig != 0);
@@ -219,6 +252,102 @@ bool t_runtime_controlled_close_is_vetoed(std::string &why) {
   CHECK(B->listen(B->self, w, sig, false) == 0);
   CHECK(widget->close());  // no listener: closed for good
   CHECK(rec.destroyed.size() == 1 && rec.destroyed[0] == w && rec.reasons[0] == SVL_GONE_CLOSED);
+  return true;
+}
+
+bool t_runtime_close_handler_decides_through_call_sync(std::string &why) {
+  svl_handle w = mk("window");
+  svl_id sig = G("window", "close-request");
+  CHECK(B->listen(B->self, w, sig, true) == 0);
+  auto *widget = qobject_cast<QWidget *>(O(w));
+  CHECK(widget);
+  // The handler vetoes: the window stays, the call is synchronous and nothing is queued.
+  reply = Reply::Stop;
+  CHECK(!widget->close());
+  CHECK(sync_calls.size() == 1 && sync_calls[0].h == w && sync_calls[0].sig == sig && sync_calls[0].n == 0);
+  CHECK(rec.events.empty() && rec.destroyed.empty());
+  // Explicit "continue" and no decision both let the close through.
+  reply = Reply::Continue;
+  CHECK(widget->close());
+  CHECK(rec.destroyed.size() == 1 && rec.destroyed[0] == w && rec.reasons[0] == SVL_GONE_CLOSED);
+  // A failing call (no handler ran) also falls back to the toolkit default.
+  svl_handle w2 = mk("window");
+  CHECK(B->listen(B->self, w2, G("window", "close-request"), true) == 0);
+  reply = Reply::Failed;
+  CHECK(qobject_cast<QWidget *>(O(w2))->close());
+  CHECK(rec.destroyed.size() == 2 && rec.destroyed[1] == w2);
+  return true;
+}
+
+bool t_runtime_key_press_handler_consumes_the_key(std::string &why) {
+  svl_handle e = mk("entry");
+  svl_id sig = G("entry", "key-press");
+  CHECK(sig != 0);
+  auto *edit = qobject_cast<QLineEdit *>(O(e));
+  CHECK(edit);
+  auto press = [&](int key, const char *text) {
+    QKeyEvent ev(QEvent::KeyPress, key, Qt::NoModifier, QString::fromUtf8(text));
+    QCoreApplication::sendEvent(edit, &ev);
+  };
+  // Not listened: the widget handles the key as usual.
+  press(Qt::Key_A, "a");
+  CHECK(edit->text() == "a");
+  CHECK(B->listen(B->self, e, sig, true) == 0);
+  CHECK(B->listen(B->self, e, sig, true) == 0);  // idempotent: one filter
+  reply = Reply::Stop;  // handled: the entry never sees the key
+  press(Qt::Key_B, "b");
+  CHECK(edit->text() == "a");
+  CHECK(sync_calls.size() == 1 && sync_calls[0].h == e && sync_calls[0].n == 3);
+  CHECK(sync_calls[0].key == Qt::Key_B && sync_calls[0].text == "b");
+  // Not handled (false, no decision, failed call, busy host): default handling goes on.
+  for (Reply r : {Reply::Continue, Reply::Null, Reply::Failed, Reply::Busy}) {
+    reply = r;
+    press(Qt::Key_C, "c");
+  }
+  CHECK(edit->text() == "acccc");
+  CHECK(rec.events.size() == 1);  // the busy call was queued as an ordinary event
+  // Listening off restores plain delivery.
+  CHECK(B->listen(B->self, e, sig, false) == 0);
+  reply = Reply::Stop;
+  sync_calls.clear();
+  press(Qt::Key_D, "d");
+  CHECK(edit->text() == "accccd" && sync_calls.empty());
+  B->destroy(B->self, e);
+  return true;
+}
+
+bool t_runtime_request_frame_delivers_once_per_request(std::string &why) {
+  // No visible window: the fallback timer stands in for the frame clock.
+  B->request_frame(B->self);
+  B->request_frame(B->self);  // idempotent while pending
+  CHECK(frames == 0);
+  for (int i = 0; i < 100 && frames == 0; ++i) {
+    QCoreApplication::processEvents(QEventLoop::AllEvents, 10);
+    std::this_thread::sleep_for(std::chrono::milliseconds(5));
+  }
+  CHECK(frames == 1);
+  for (int i = 0; i < 20; ++i) {
+    QCoreApplication::processEvents(QEventLoop::AllEvents, 10);
+    std::this_thread::sleep_for(std::chrono::milliseconds(5));
+  }
+  CHECK(frames == 1);
+  // A visible window: QWindow::requestUpdate drives it.
+  svl_handle w = mk("window");
+  auto *widget = qobject_cast<QWidget *>(O(w));
+  widget->show();
+  for (int i = 0; i < 40; ++i) QCoreApplication::processEvents(QEventLoop::AllEvents, 10);
+  const unsigned before = svl_qt_frames_by_update();
+  for (int round = 0; round < 3; ++round) {
+    const int start = frames;
+    B->request_frame(B->self);
+    for (int i = 0; i < 100 && frames == start; ++i) {
+      QCoreApplication::processEvents(QEventLoop::AllEvents, 10);
+      std::this_thread::sleep_for(std::chrono::milliseconds(5));
+    }
+    CHECK(frames == start + 1);
+  }
+  CHECK(svl_qt_frames_by_update() - before == 3);
+  B->destroy(B->self, w);
   return true;
 }
 
@@ -255,6 +384,9 @@ const TestCase kTests[] = {
     {"runtime/handle_info_and_idempotent_destroy", t_runtime_handle_info_and_idempotent_destroy},
     {"runtime/uncontrolled_close_cascades", t_runtime_uncontrolled_close_cascades},
     {"runtime/controlled_close_is_vetoed", t_runtime_controlled_close_is_vetoed},
+    {"runtime/close_handler_decides_through_call_sync", t_runtime_close_handler_decides_through_call_sync},
+    {"runtime/key_press_handler_consumes_the_key", t_runtime_key_press_handler_consumes_the_key},
+    {"runtime/request_frame_delivers_once_per_request", t_runtime_request_frame_delivers_once_per_request},
     {"runtime/wake_queues_checkpoint", t_runtime_wake_queues_checkpoint},
     {"runtime/wrong_value_type_is_error", t_runtime_wrong_value_type_is_error},
 //@@TEST_TABLE@@
@@ -271,6 +403,9 @@ extern "C" int svl_qt_verify_run(void) {
   int failures = 0;
   for (const TestCase &t : kTests) {
     rec.clear();
+    reply = Reply::Busy;
+    sync_calls.clear();
+    frames = 0;
     std::string why;
     bool ok = t.fn(why);
     flush();

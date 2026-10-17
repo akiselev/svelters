@@ -30,6 +30,7 @@ export interface QtElementDescriptors {
       placeholder?: string;
     };
     events: {
+      key-press: () => void;
       changed: (text: string) => void;
     };
     methods: {

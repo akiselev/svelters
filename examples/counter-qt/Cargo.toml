@@ -9,6 +9,9 @@ publish.workspace = true
 [dependencies]
 svelters-abi.workspace = true
 
+[dev-dependencies]
+svelters-host.workspace = true
+
 [build-dependencies]
 svelters-qt-build.workspace = true
 
@@ -19,4 +22,8 @@ harness = false
 
 [[test]]
 name = "counter"
+harness = false
+
+[[test]]
+name = "host_sync"
 harness = false
