@@ -1,6 +1,7 @@
 {
   "name": "@svelters/canvas",
   "version": "0.0.0",
+  "license": "MIT",
   "private": true,
   "type": "module",
   "description": "Recording canvas for svelters: a Canvas2D-like API records a display list that GtkDrawingArea (cairo) and the Qt canvas element (QPainter) replay natively",
