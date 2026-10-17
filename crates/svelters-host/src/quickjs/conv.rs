@@ -246,6 +246,15 @@ impl<'js> JsReader for QjsConv<'js> {
         }
     }
 
+    fn typed_variant(&self, v: &Value<'js>) -> R<Option<(String, Value<'js>)>> {
+        let Some(o) = v.as_object() else { return Ok(None) };
+        let marker: Value = o.get("__svlVariant").map_err(|e| self.err(e))?;
+        let Some(a) = marker.as_array() else { return Ok(None) };
+        let sig: String = a.get(0).map_err(|e| self.err(e))?;
+        let value: Value = a.get(1).map_err(|e| self.err(e))?;
+        Ok(Some((sig, value)))
+    }
+
     fn boxed(&self, v: &Value<'js>) -> R<Option<(svl_handle, svl_id)>> {
         let Some(o) = v.as_object() else { return Ok(None) };
         let marker: Value = o.get("__svlBoxed").map_err(|e| self.err(e))?;

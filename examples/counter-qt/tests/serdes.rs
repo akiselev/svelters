@@ -398,6 +398,18 @@ fn variants() {
     let Value::Map(cur) = cd else { panic!("map, got {cd:?}") };
     assert_eq!(cur.len(), 5);
     assert!(c.set("currentData", &Value::Null).is_err(), "currentData has no setter");
+    // variant(signature, value): a basic signature fixes the QMetaType and range, the rest is the value.
+    let typed = |sig: &str, v: Value| Value::Record { ty: SVL_T_TYPED_VARIANT, fields: vec![Value::Str(sig.into()), v] };
+    c.call("addItem", &[Value::Str("u".into()), typed("u", i(5))]).unwrap();
+    assert_eq!(c.call("itemData", &[i(3), i(256)]).unwrap(), i(5));
+    c.call("addItem", &[Value::Str("d".into()), typed("d", i(2))]).unwrap();
+    assert_eq!(c.call("itemData", &[i(4), i(256)]).unwrap(), f(2.0));
+    c.call("addItem", &[Value::Str("pair".into()), typed("(is)", Value::List(vec![i(1), Value::Str("x".into())]))]).unwrap();
+    assert_eq!(c.call("itemData", &[i(5), i(256)]).unwrap(), Value::List(vec![i(1), Value::Str("x".into())]));
+    let e = c.call("addItem", &[Value::Str("x".into()), typed("y", i(300))]).unwrap_err();
+    assert!(e.contains("300 does not fit the type"), "{e}");
+    let e = c.call("addItem", &[Value::Str("x".into()), typed("s", i(1))]).unwrap_err();
+    assert!(e.contains("does not match the signature"), "{e}");
     // A typed record cannot be nested in a variant.
     let ty = mk("box").desc("geometry").params[0].ty;
     let rec = Value::Record { ty, fields: vec![i(1), i(2), i(3), i(4)] };

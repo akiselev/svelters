@@ -72,6 +72,10 @@ pub(crate) trait JsReader {
     fn bytes(&self, v: &Self::V, guards: &mut Vec<Guard>) -> Result<(*const u8, usize), String>;
     /// `(handle, type id)` when `v` is a boxed-value wrapper that has not been disposed.
     fn boxed(&self, v: &Self::V) -> Result<Option<(svl_handle, svl_id)>, String>;
+    /// `(signature, value)` when `v` was made by `variant(signature, value)`.
+    fn typed_variant(&self, _v: &Self::V) -> Result<Option<(String, Self::V)>, String> {
+        Ok(None)
+    }
 }
 
 /// What async native methods need from a JS engine.
@@ -795,6 +799,15 @@ fn dynamic<R: JsReader>(
             }
             let l = ar.list(items);
             Ok(svl_value::new(SVL_LIST, svl_value_u { l }))
+        }
+        JsKind::Object if r.typed_variant(v)?.is_some() => {
+            let (sig, inner) = r.typed_variant(v)?.expect("checked above");
+            let sb: Box<str> = sig.into_boxed_str();
+            let sv = svl_value::new(SVL_STR, svl_value_u { s: svl_str { ptr: sb.as_ptr().cast(), len: sb.len() } });
+            ar.guards.push(Box::new(sb));
+            let val = encode_at(r, &inner, &variant_slot(), cx, ar, depth + 1).map_err(|e| e.at("value".to_string()))?;
+            let l = ar.list(vec![sv, val]);
+            Ok(svl_value::typed(SVL_RECORD, SVL_T_TYPED_VARIANT, svl_value_u { l }))
         }
         JsKind::Object if r.date_ms(v).is_some() => Ok(svl_value::typed(
             SVL_F64,

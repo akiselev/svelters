@@ -90,6 +90,7 @@ enum {
   SVL_T_TIME = 7,    /* {hour, minute, second, ms} */
   SVL_T_DATETIME = 8, /* F64 epoch ms */
   SVL_T_VARIANT = 9,
+  SVL_T_TYPED_VARIANT = 10, /* RECORD {signature: string, value}: a variant with an exact GVariant type signature */
   SVL_T_FIRST_BACKEND = 0x10000
 };
 

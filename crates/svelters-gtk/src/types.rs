@@ -112,7 +112,7 @@ pub fn slot_for(table: &mut TypeTable, t: Type, ps: Option<&glib::ParamSpec>) ->
         SlotDesc::new(SVL_ENUM).typed(table.id(t))
     } else if t.is_a(Type::FLAGS) {
         SlotDesc::new(SVL_FLAGS).typed(table.id(t))
-    } else if t == Type::VARIANT {
+    } else if t == Type::VARIANT || t == crate::convert::gvalue_type() {
         SlotDesc::new(SVL_NULL).typed(SVL_T_VARIANT).flags(SVL_D_NULLABLE)
     } else if t == glib::DateTime::static_type() {
         SlotDesc::new(SVL_F64).typed(SVL_T_DATETIME).flags(SVL_D_NULLABLE)

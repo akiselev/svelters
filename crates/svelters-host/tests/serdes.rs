@@ -495,6 +495,25 @@ fn attribute_strings_are_coerced_from_descriptors() {
 }
 
 #[test]
+fn typed_variants_cross_as_records() {
+    let r = rig(false);
+    let (out, errs) = run(&r, "serdes_variant.js");
+    assert!(errs.is_empty(), "{errs:?}");
+    assert_eq!(lines(&out), ["empty signature: TypeError", "class: i true"], "{out:?}");
+    let typed = |sig: &str, v: Value| Value::Record { ty: SVL_T_TYPED_VARIANT, fields: vec![Value::Str(sig.into()), v] };
+    assert_eq!(
+        r.st.borrow().props[&15],
+        typed(
+            "a{sv}",
+            Value::Map(vec![
+                ("n".into(), typed("(is)", Value::List(vec![Value::I64(1), Value::Str("x".into())]))),
+                ("list".into(), Value::List(vec![Value::I64(1), Value::I64(2)])),
+            ])
+        )
+    );
+}
+
+#[test]
 fn values_round_trip_through_the_host() {
     let r = rig(false);
     let (out, errs) = run(&r, "serdes_values.js");

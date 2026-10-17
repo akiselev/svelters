@@ -301,3 +301,11 @@ Both are generated from the Qt override YAML (`tools/metadata/qt/gen_cpp.py`), w
 #### UTF-16 string results (S2)
 
 A backend that advertises `SVL_CAP_UTF16_OUT` may return `STR` values flagged `SVL_F_UTF16` (pointer to `char16_t`, length in code units) from `get_prop`, `call`, and in event, sync-handler and callback arguments. The host (`Value::from_raw_wide`, `Value::Str16`) builds the JS string with `JS_NewStringUTF16` and does not transcode. Consumers of raw values must honour the flag (`str_of_raw` does); `Value::from_raw` still transcodes to `Value::Str` for callers that want text. Strings inside `ERROR` values and `MAP` keys may stay UTF-8. The Qt backend returns every `QString` this way and shares the `QString` buffer, so no copy is made.
+
+#### Exact variant types and GValue-typed properties (S2)
+
+- **Typed variants.** `variant(signature, value)` (a global in the JS prelude; class `NativeVariant`) wraps a value with an exact GVariant type signature. On the wire it is a `RECORD` of well-known type `SVL_T_TYPED_VARIANT` (10) with fields `[signature: string, value]`, valid wherever a variant slot accepts a value (and nested inside variants and maps). Without it a variant's type is inferred (integers `x`, floats `d`, strings `s`, bytes `ay`, lists `av`, objects `a{sv}`).
+  - GTK builds exactly that type: basic types with range checks, `aX`, `a{sV}` from objects (string-like keys only), `(..)`, `mX` (null = nothing), `v`, `ay` from bytes. A mismatch fails the set with a message naming the signature and the path.
+  - Qt has no signatures: a basic one fixes the `QMetaType` and the range (`y n q i u x t d b s o g`); a container signature passes the value as it is.
+  - Reading a variant still yields the inferred JS shape; the signature does not come back.
+- **GValue props.** A property of boxed type `G_TYPE_VALUE` (e.g. `GtkDropTarget:value`) has a variant-like dynamic slot: the JS value is converted to a GValue by inference (bool, int64, double, string, bytes -> `GBytes`, boxed or object handles as themselves, typed variants as `GVariant`) and read back by unwrapping the contained GValue.

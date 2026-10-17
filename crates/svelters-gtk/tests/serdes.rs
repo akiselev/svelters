@@ -246,6 +246,32 @@ fn variants_dates_and_string_forms() {
         assert_eq!(h.get_value(b, "action-target"), Value::Null);
         assert!(h.set_value(b, "action-target", &Value::List(vec![Value::Null])).unwrap_err().contains("null cannot be nested"));
 
+        // Exact types: `variant(signature, value)` sends a typed-variant record.
+        let typed = |sig: &str, v: Value| Value::Record { ty: SVL_T_TYPED_VARIANT, fields: vec![Value::Str(sig.into()), v] };
+        let ty_after = |h: &Harness, v: Value| -> Result<String, String> {
+            h.set_value(b, "action-target", &v)?;
+            Ok(h.obj(b).property::<Option<glib::Variant>>("action-target").map(|v| v.print(true).to_string()).unwrap_or_default())
+        };
+        assert_eq!(ty_after(&h, typed("(is)", Value::List(vec![i(3), Value::Str("x".into())]))).unwrap(), "(3, 'x')");
+        assert_eq!(h.obj(b).property::<Option<glib::Variant>>("action-target").unwrap().type_().as_str(), "(is)");
+        assert_eq!(ty_after(&h, typed("u", i(5))).unwrap(), "uint32 5");
+        assert_eq!(ty_after(&h, typed("y", i(255))).unwrap(), "byte 0xff");
+        assert_eq!(ty_after(&h, typed("d", i(2))).unwrap(), "2.0");
+        assert_eq!(ty_after(&h, typed("ai", Value::List(vec![i(1), i(2)]))).unwrap(), "[1, 2]");
+        assert_eq!(ty_after(&h, typed("ay", Value::Bytes(vec![1, 2]))).unwrap(), "[byte 0x01, 0x02]");
+        assert_eq!(ty_after(&h, typed("a{ss}", Value::Map(vec![("k".into(), Value::Str("v".into()))]))).unwrap(), "{'k': 'v'}");
+        assert_eq!(ty_after(&h, typed("a{sv}", Value::Map(vec![("n".into(), typed("q", i(9)))]))).unwrap(), "{'n': <uint16 9>}");
+        assert_eq!(ty_after(&h, typed("ms", Value::Null)).unwrap(), "@ms nothing");
+        assert_eq!(ty_after(&h, typed("ms", Value::Str("a".into()))).unwrap(), "@ms 'a'");
+        let e = ty_after(&h, typed("y", i(300))).unwrap_err();
+        assert!(e.contains("300 does not fit type y"), "{e}");
+        let e = ty_after(&h, typed("(ii)", Value::List(vec![i(1)]))).unwrap_err();
+        assert!(e.contains("expected a list of 2 item(s)"), "{e}");
+        let e = ty_after(&h, typed("a{is}", Value::Map(vec![("k".into(), Value::Str("v".into()))]))).unwrap_err();
+        assert!(e.contains("only with string keys"), "{e}");
+        let e = ty_after(&h, typed("(", Value::Null)).unwrap_err();
+        assert!(e.contains("invalid GVariant type"), "{e}");
+
         // GDateTime <-> a Date (epoch milliseconds typed DATETIME): GtkCalendar:date
         let c = h.create("Calendar");
         let slot = h.prop_desc(c, "date").unwrap().params[0].clone();

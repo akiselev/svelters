@@ -764,8 +764,47 @@ struct Conv<QVariant> {
         o = QVariant(m);
         return true;
       }
-      default: e = "this value cannot be held in a variant"; return false;
+      case SVL_RECORD: {
+        // variant(signature, value): a QVariant has no GVariant signature, but a basic one fixes the
+        // QMetaType (and range) of the value; a container signature just takes the value as it is.
+        if (v->type != SVL_T_TYPED_VARIANT || v->u.l.len != 2) break;
+        QString sig;
+        if (!Conv<QString>::in(&v->u.l.ptr[0], sig, e)) return false;
+        QVariant inner;
+        if (!in(&v->u.l.ptr[1], inner, e)) return false;
+        int meta = -1;
+        qlonglong lo = 0, hi = 0;
+        bool ranged = true;
+        if (sig == QLatin1String("y")) { meta = QMetaType::UChar; lo = 0; hi = 255; }
+        else if (sig == QLatin1String("n")) { meta = QMetaType::Short; lo = -32768; hi = 32767; }
+        else if (sig == QLatin1String("q")) { meta = QMetaType::UShort; lo = 0; hi = 65535; }
+        else if (sig == QLatin1String("i")) { meta = QMetaType::Int; lo = INT32_MIN; hi = INT32_MAX; }
+        else if (sig == QLatin1String("u")) { meta = QMetaType::UInt; lo = 0; hi = UINT32_MAX; }
+        else if (sig == QLatin1String("x")) { meta = QMetaType::LongLong; ranged = false; }
+        else if (sig == QLatin1String("t")) { meta = QMetaType::ULongLong; ranged = false; }
+        else if (sig == QLatin1String("d")) { meta = QMetaType::Double; ranged = false; }
+        else if (sig == QLatin1String("b")) { meta = QMetaType::Bool; ranged = false; }
+        else if (sig == QLatin1String("s") || sig == QLatin1String("o") || sig == QLatin1String("g")) { meta = QMetaType::QString; ranged = false; }
+        if (meta >= 0) {
+          const bool numeric = sig != QLatin1String("s") && sig != QLatin1String("o") && sig != QLatin1String("g") && sig != QLatin1String("b");
+          if (numeric ? !(inner.typeId() == QMetaType::LongLong || inner.typeId() == QMetaType::ULongLong || inner.typeId() == QMetaType::Double)
+                      : (sig == QLatin1String("b") ? inner.typeId() != QMetaType::Bool : inner.typeId() != QMetaType::QString)) {
+            e = "variant(\"" + sig.toStdString() + "\"): the value does not match the signature";
+            return false;
+          }
+          if (ranged) {
+            const qlonglong n = inner.toLongLong();
+            if (n < lo || n > hi) { e = "variant(\"" + sig.toStdString() + "\"): " + std::to_string(n) + " does not fit the type"; return false; }
+          }
+          inner.convert(QMetaType(meta));
+        }
+        o = inner;
+        return true;
+      }
+      default: break;
     }
+    e = "this value cannot be held in a variant";
+    return false;
   }
   static void out(const QVariant &v, svl_value *o) {
     switch (v.typeId()) {

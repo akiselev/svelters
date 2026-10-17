@@ -29,3 +29,9 @@
 | 1 KiB Latin-1 | 15514 | 1728 |
 | 1 KiB wide (BMP) | 32592 | 1792 |
 | 1 KiB wide + astral | 24977 | 1974 |
+
+## 4. GVariant exact typing and GValue props (done)
+
+- `variant(sig, v)` / `NativeVariant` in `prelude.js`; `JsReader::typed_variant` (default `None`, QuickJS reads `__svlVariant`); `SVL_T_TYPED_VARIANT = 10`. GTK `typed_variant` in `convert.rs`; Qt `Conv<QVariant>::in` (basic signatures only). Typings: `values.d.ts` (`NativeVariant`, `variant`).
+- GValue (`G_TYPE_VALUE`) props: `gvalue_type()`, `gvalue_in` / unwrap in `from_value`; descriptor is the dynamic variant slot. `glib::Value` has no `StaticType` in glib-rs, hence the raw `g_value_get_type`. No widget kind in the generated GTK tables has such a property today (`GtkDropTarget:value`, `GtkConstantExpression` are not kinds), so the proof is the round-trip unit test in `convert.rs`.
+- Tests: `svelters-gtk` serdes `variants_dates_and_string_forms` (GtkActionable:action-target with 13 signatures), `convert::gvalue_properties_hold_an_inferred_value`, host `typed_variants_cross_as_records`, Qt `variants`.
