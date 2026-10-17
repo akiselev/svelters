@@ -69,3 +69,14 @@ test('randomized', () => {
     check(a, b);
   }
 });
+
+test('many scattered changes collapse to one range replace', () => {
+  const a = range(100);
+  const b = a.filter((k) => k % 2 === 1);
+  const ops = check(a, b);
+  assert.equal(ops.length, 1);
+  assert.deepEqual([ops[0].pos, ops[0].removed], [0, 99]);
+  assert.equal(check(a, b.slice(), ).length, 1);
+  // under the limit stays exact
+  assert.equal(check(range(10), [1, 2, 3, 5, 6, 7, 8]).length, 3);
+});

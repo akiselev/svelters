@@ -28,11 +28,19 @@ export function lis(seq) {
 }
 
 /**
+ * Beyond this many splices the update is sent as one range replace over the changed window
+ * (prefix and suffix that did not change stay out of it). Each splice is a native notification
+ * that the view reacts to, so dozens of one-row splices (every other row removed by a filter)
+ * cost more than replacing the window once.
+ */
+export const MAX_OPS = 16;
+
+/**
  * @param {readonly unknown[]} oldKeys
  * @param {readonly unknown[]} newKeys
  * @returns {{ pos: number, removed: number, add: unknown[] }[]} splices to apply in order
  */
-export function diffKeys(oldKeys, newKeys) {
+export function diffKeys(oldKeys, newKeys, maxOps = MAX_OPS) {
   const ol = oldKeys.length;
   const nl = newKeys.length;
   let s = 0;
@@ -91,6 +99,7 @@ export function diffKeys(oldKeys, newKeys) {
     }
   }
   if (run.length) ops.push({ pos, removed: 0, add: run });
+  if (ops.length > maxOps) return [{ pos: s, removed: oe - s, add: newKeys.slice(s, ne) }];
   return ops;
 }
 

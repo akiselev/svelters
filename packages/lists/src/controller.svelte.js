@@ -80,17 +80,10 @@ export class ListController {
     for (const k of this.keys) if (!present.has(k)) this.entries.delete(k);
     for (const k of newKeys) if (!this.entries.has(k)) this.entries.set(k, this.nextId++);
     for (const op of ops) {
-      // diffKeys never mixes removal and insertion in one op.
-      if (op.removed) {
-        this.ids = spliceArray(this.ids, op.pos, op.removed, []);
-        this.#shiftBound(op.pos, op.removed, 0);
-        this.view.call('splice', op.pos, op.removed, []);
-      } else {
-        const ids = op.add.map((k) => this.entries.get(k));
-        this.ids = spliceArray(this.ids, op.pos, 0, ids);
-        this.#shiftBound(op.pos, 0, ids.length);
-        this.view.call('splice', op.pos, 0, ids);
-      }
+      const ids = op.add.map((k) => this.entries.get(k));
+      this.ids = spliceArray(this.ids, op.pos, op.removed, ids);
+      this.#shiftBound(op.pos, op.removed, ids.length);
+      this.view.call('splice', op.pos, op.removed, ids);
       this.splices++;
     }
   }
