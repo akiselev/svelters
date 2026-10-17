@@ -169,7 +169,7 @@
   "bindings": 0,
   "defaults": 0,
   "element": null,
-  "gallery": null,
+  "gallery": "06-layout",
   "inherited": 0,
   "kind": "QBoxLayout",
   "lifetime": "owned",
@@ -191,7 +191,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "A standalone layout is not an element: the box and frame elements are the layout-managed widgets (each owns a QBoxLayout, orientation is their prop).",
   "verified": [
    0,
    0
@@ -564,8 +564,8 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 5,
-  "element": null,
-  "gallery": null,
+  "element": "dockwidget",
+  "gallery": "06-layout",
   "inherited": 0,
   "kind": "QDockWidget",
   "lifetime": "owned",
@@ -576,21 +576,21 @@
   "native": "QDockWidget",
   "ownership": false,
   "props": [
-   0,
+   4,
    5
   ],
-  "props_annotated": 0,
+  "props_annotated": 4,
   "signal_results": 0,
   "signals": [
-   0,
+   4,
    5
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   8,
+   8
   ]
  },
  {
@@ -796,7 +796,7 @@
   "bindings": 0,
   "defaults": 6,
   "element": null,
-  "gallery": null,
+  "gallery": "06-layout",
   "inherited": 0,
   "kind": "QFormLayout",
   "lifetime": "owned",
@@ -818,7 +818,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "Label/field rows are child attributes, blocked by gap:G1; not a standalone layout element either (layouts are reached through layout-managed widgets).",
   "verified": [
    0,
    0
@@ -895,7 +895,7 @@
   "bindings": 0,
   "defaults": 0,
   "element": null,
-  "gallery": null,
+  "gallery": "06-layout",
   "inherited": 0,
   "kind": "QGridLayout",
   "lifetime": "owned",
@@ -917,7 +917,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "Cells (row, column, spans) are child attributes, blocked by gap:G1; not a standalone layout element either (layouts are reached through layout-managed widgets).",
   "verified": [
    0,
    0
@@ -961,7 +961,7 @@
   "bindings": 0,
   "defaults": 0,
   "element": null,
-  "gallery": null,
+  "gallery": "06-layout",
   "inherited": 0,
   "kind": "QHBoxLayout",
   "lifetime": "owned",
@@ -983,7 +983,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "A standalone layout is not an element: the box and frame elements are the layout-managed widgets (orientation horizontal is their prop).",
   "verified": [
    0,
    0
@@ -1323,22 +1323,22 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 5,
-  "element": null,
-  "gallery": null,
+  "element": "mdiarea",
+  "gallery": "06-layout",
   "inherited": 0,
   "kind": "QMdiArea",
   "lifetime": "owned",
   "methods": [
-   0,
+   3,
    42
   ],
   "native": "QMdiArea",
   "ownership": false,
   "props": [
-   0,
+   7,
    8
   ],
-  "props_annotated": 0,
+  "props_annotated": 7,
   "signal_results": 0,
   "signals": [
    0,
@@ -1348,8 +1348,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   10,
+   10
   ]
  },
  {
@@ -1357,7 +1357,7 @@
   "bindings": 0,
   "defaults": 2,
   "element": null,
-  "gallery": null,
+  "gallery": "06-layout",
   "inherited": 0,
   "kind": "QMdiSubWindow",
   "lifetime": "owned",
@@ -1379,7 +1379,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "Created by QMdiArea::addSubWindow as the wrapper of a child, never constructed by the app; the mdiarea subwindows slot is blocked by gap:G13.",
   "verified": [
    0,
    0
@@ -1984,7 +1984,7 @@
   "bindings": 0,
   "defaults": 2,
   "element": null,
-  "gallery": null,
+  "gallery": "06-layout",
   "inherited": 0,
   "kind": "QStackedLayout",
   "lifetime": "owned",
@@ -2006,7 +2006,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "Use the stackedwidget element, which owns a QStackedLayout; a standalone layout is not an element.",
   "verified": [
    0,
    0
@@ -2512,7 +2512,7 @@
   "bindings": 0,
   "defaults": 0,
   "element": null,
-  "gallery": null,
+  "gallery": "06-layout",
   "inherited": 0,
   "kind": "QVBoxLayout",
   "lifetime": "owned",
@@ -2534,7 +2534,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "A standalone layout is not an element: the box and frame elements are the layout-managed widgets (orientation vertical is their prop).",
   "verified": [
    0,
    0

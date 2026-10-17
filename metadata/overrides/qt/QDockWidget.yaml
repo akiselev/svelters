@@ -1,0 +1,39 @@
+# Element `dockwidget`. The `widget` one slot is left out: QDockWidget::setWidget() replaces the old widget by hiding
+# it and removing it from the layout, but it stays parented to the dock widget (probe, Qt 6), so neither
+# `old: unparented` nor `old: deleted` is true and the one-slot ops cannot unparent it (new generator gap, see notes).
+# Main-window dock areas need child attributes (gap:G1).
+elements:
+  - tag: dockwidget
+    construct: { class: QDockWidget }
+    props:
+      - { js: features, native: features, provenance: "QDockWidget::features (qdoc); flags (ABI v3)" }
+      - { js: allowedAreas, native: allowedAreas, provenance: "QDockWidget::allowedAreas (qdoc); flags (ABI v3)" }
+      - { js: floating, native: floating, provenance: "QDockWidget::floating (qdoc)" }
+      - { js: windowTitle, native: windowTitle, provenance: "QWidget::windowTitle (qdoc)" }
+    signals:
+      - js: top-level-changed
+        native: topLevelChanged
+        connect: "topLevelChanged(bool)"
+        args: [{ name: topLevel, type: bool }]
+        trigger: '$w->topLevelChanged(($i % 2) == 0)'
+        expect_args: ["true"]
+        provenance: "QDockWidget::topLevelChanged(bool) (qdoc); emitted directly (a drag needs a shown main window)"
+      - js: visibility-changed
+        native: visibilityChanged
+        connect: "visibilityChanged(bool)"
+        args: [{ name: visible, type: bool }]
+        trigger: '$w->visibilityChanged(($i % 2) == 0)'
+        expect_args: ["true"]
+        provenance: "QDockWidget::visibilityChanged(bool) (qdoc); emitted directly (needs a shown main window)"
+      - js: features-changed
+        native: featuresChanged
+        connect: "featuresChanged(QDockWidget::DockWidgetFeatures)"
+        args: [{ name: features, type: "flags<QDockWidget::DockWidgetFeature>" }]
+        trigger: '$w->setFeatures(($i % 2) == 0 ? QDockWidget::NoDockWidgetFeatures : QDockWidget::DockWidgetClosable)'
+        provenance: "QDockWidget::featuresChanged(DockWidgetFeatures) (qdoc)"
+      - js: allowed-areas-changed
+        native: allowedAreasChanged
+        connect: "allowedAreasChanged(Qt::DockWidgetAreas)"
+        args: [{ name: allowedAreas, type: "flags<Qt::DockWidgetArea>" }]
+        trigger: '$w->setAllowedAreas(($i % 2) == 0 ? Qt::LeftDockWidgetArea : Qt::RightDockWidgetArea)'
+        provenance: "QDockWidget::allowedAreasChanged(DockWidgetAreas) (qdoc)"

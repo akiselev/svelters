@@ -405,6 +405,38 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
+  dockwidget: {
+    props: {
+      features?: Array<"dock-widget-closable" | "dock-widget-feature-mask" | "dock-widget-floatable" | "dock-widget-movable" | "dock-widget-vertical-title-bar" | "no-dock-widget-features" | "reserved">;
+      allowedAreas?: Array<"all-dock-widget-areas" | "bottom-dock-widget-area" | "dock-widget-area-mask" | "left-dock-widget-area" | "no-dock-widget-area" | "right-dock-widget-area" | "top-dock-widget-area">;
+      floating?: boolean;
+      windowTitle?: string;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      "top-level-changed": (topLevel: boolean) => void;
+      "visibility-changed": (visible: boolean) => void;
+      "features-changed": (features: Array<"dock-widget-closable" | "dock-widget-feature-mask" | "dock-widget-floatable" | "dock-widget-movable" | "dock-widget-vertical-title-bar" | "no-dock-widget-features" | "reserved">) => void;
+      "allowed-areas-changed": (allowedAreas: Array<"all-dock-widget-areas" | "bottom-dock-widget-area" | "dock-widget-area-mask" | "left-dock-widget-area" | "no-dock-widget-area" | "right-dock-widget-area" | "top-dock-widget-area">) => void;
+    };
+    methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
   doublespinbox: {
     props: {
       value?: number;
@@ -861,6 +893,44 @@ export interface QtElementDescriptors {
       addItem(label: string): void;
       insertItem(row: number, label: string): void;
       clear(): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  mdiarea: {
+    props: {
+      activationOrder?: "activation-history-order" | "creation-order" | "stacking-order";
+      documentMode?: boolean;
+      tabPosition?: "east" | "north" | "south" | "west";
+      tabShape?: "rounded" | "triangular";
+      tabsClosable?: boolean;
+      tabsMovable?: boolean;
+      viewMode?: "sub-window-view" | "tabbed-view";
+      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      frameShadow?: "plain" | "raised" | "sunken";
+      lineWidth?: number;
+      midLineWidth?: number;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+    };
+    methods: {
+      cascadeSubWindows(): void;
+      tileSubWindows(): void;
+      closeAllSubWindows(): void;
       show(): void;
       hide(): void;
       setFocus(): void;
