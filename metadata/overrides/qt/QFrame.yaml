@@ -1,0 +1,53 @@
+# Element `frame`: a QFrame carrying a QBoxLayout (like `box`). Children are layout-managed.
+elements:
+  - tag: frame
+    construct:
+      class: QFrame
+      composite:
+        layout: { class: QBoxLayout, args: ["QBoxLayout::TopToBottom"] }
+    props:
+      - js: orientation
+        target: layout
+        type: enum
+        getter: direction
+        setter: setDirection
+        values:
+          horizontal: QBoxLayout::LeftToRight
+          vertical: QBoxLayout::TopToBottom
+        provenance: "QBoxLayout::direction (qdoc); GTK orientation vocabulary"
+      - { js: frameShape, native: frameShape, provenance: "QFrame::frameShape (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: frameShadow, native: frameShadow, provenance: "QFrame::frameShadow (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: lineWidth, native: lineWidth, provenance: "QFrame::lineWidth (qdoc)" }
+      - { js: midLineWidth, native: midLineWidth, provenance: "QFrame::midLineWidth (qdoc)" }
+    children:
+      policy: layout_managed
+      default_slot: children
+      slots:
+        - name: children
+          content: widget
+          accepts: [QWidget]
+          cardinality: many
+          order: native_index
+          host: layout
+          default: { kind: none }
+          on_remove: empty
+          requires:
+            - { check: "QWidget::layout(self) != null", otherwise: error }   # satisfied by construction (composite layout)
+          ops:
+            insert:
+              native: "QBoxLayout::addWidget(QWidget*, int, Qt::Alignment)"
+              args: [child]
+              variants:
+                - when: "before != null"
+                  native: "QBoxLayout::insertWidget(int, QWidget*, int, Qt::Alignment)"
+                  args: [index, child]
+              effects: { child: parented }
+            remove:
+              native: "QLayout::removeWidget(QWidget*)"
+              args: [child]
+              then:
+                - { native: "QWidget::setParent(QWidget*)", receiver: child, args: [null] }
+              effects: { child: unparented }
+            index_of: { native: "QLayout::indexOf(const QWidget*) const", args: [child] }
+            list: { native: "QLayout::count() const", item: "QLayout::itemAt(int) const" }
+          provenance: [{ origin: uic, ref: "layout/item" }, { origin: typesystem, ref: addownership-1 }, { origin: probe, ref: qt_slot_ownership_probe.py }]

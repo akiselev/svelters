@@ -828,8 +828,8 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 5,
-  "element": null,
-  "gallery": null,
+  "element": "frame",
+  "gallery": "05-containers",
   "inherited": 0,
   "kind": "QFrame",
   "lifetime": "owned",
@@ -838,23 +838,23 @@
    18
   ],
   "native": "QFrame",
-  "ownership": false,
+  "ownership": true,
   "props": [
-   0,
+   4,
    6
   ],
-  "props_annotated": 0,
+  "props_annotated": 4,
   "signal_results": 0,
   "signals": [
    0,
    0
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   6,
+   6
   ]
  },
  {
@@ -927,8 +927,8 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 5,
-  "element": null,
-  "gallery": null,
+  "element": "groupbox",
+  "gallery": "05-containers",
   "inherited": 0,
   "kind": "QGroupBox",
   "lifetime": "owned",
@@ -937,23 +937,23 @@
    21
   ],
   "native": "QGroupBox",
-  "ownership": false,
+  "ownership": true,
   "props": [
-   0,
+   4,
    5
   ],
-  "props_annotated": 0,
+  "props_annotated": 4,
   "signal_results": 0,
   "signals": [
-   0,
+   2,
    2
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   8,
+   8
   ]
  },
  {
@@ -1731,10 +1731,10 @@
   "native": "QScrollArea",
   "ownership": true,
   "props": [
-   0,
+   1,
    2
   ],
-  "props_annotated": 0,
+  "props_annotated": 1,
   "signal_results": 0,
   "signals": [
    0,
@@ -1744,8 +1744,8 @@
   "slots_own": 1,
   "unexposed": null,
   "verified": [
-   1,
-   1
+   4,
+   4
   ]
  },
  {
@@ -1917,8 +1917,8 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 4,
-  "element": null,
-  "gallery": null,
+  "element": "splitter",
+  "gallery": "05-containers",
   "inherited": 0,
   "kind": "QSplitter",
   "lifetime": "owned",
@@ -1927,23 +1927,23 @@
    34
   ],
   "native": "QSplitter",
-  "ownership": false,
+  "ownership": true,
   "props": [
-   0,
+   4,
    4
   ],
-  "props_annotated": 0,
+  "props_annotated": 4,
   "signal_results": 0,
   "signals": [
-   0,
+   1,
    1
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   6,
+   6
   ]
  },
  {
@@ -2014,10 +2014,10 @@
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "defaults": 2,
-  "element": null,
-  "gallery": null,
+  "element": "stackedwidget",
+  "gallery": "05-containers",
   "inherited": 0,
   "kind": "QStackedWidget",
   "lifetime": "owned",
@@ -2026,23 +2026,23 @@
    11
   ],
   "native": "QStackedWidget",
-  "ownership": false,
+  "ownership": true,
   "props": [
-   0,
+   1,
    2
   ],
-  "props_annotated": 0,
+  "props_annotated": 1,
   "signal_results": 0,
   "signals": [
-   0,
+   1,
    3
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   4,
+   4
   ]
  },
  {
@@ -2115,8 +2115,8 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 10,
-  "element": null,
-  "gallery": null,
+  "element": "tabwidget",
+  "gallery": "05-containers",
   "inherited": 0,
   "kind": "QTabWidget",
   "lifetime": "owned",
@@ -2127,21 +2127,21 @@
   "native": "QTabWidget",
   "ownership": false,
   "props": [
-   0,
+   6,
    11
   ],
-  "props_annotated": 0,
+  "props_annotated": 6,
   "signal_results": 0,
   "signals": [
-   0,
+   3,
    4
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   9,
+   9
   ]
  },
  {
@@ -2346,8 +2346,8 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 2,
-  "element": null,
-  "gallery": null,
+  "element": "toolbox",
+  "gallery": "05-containers",
   "inherited": 0,
   "kind": "QToolBox",
   "lifetime": "owned",
@@ -2364,15 +2364,15 @@
   "props_annotated": 0,
   "signal_results": 0,
   "signals": [
-   0,
+   1,
    1
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   1,
+   1
   ]
  },
  {

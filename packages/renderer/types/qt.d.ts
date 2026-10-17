@@ -115,6 +115,36 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
+  frame: {
+    props: {
+      orientation?: "horizontal" | "vertical";
+      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      frameShadow?: "plain" | "raised" | "sunken";
+      lineWidth?: number;
+      midLineWidth?: number;
+    };
+    events: {
+    };
+    methods: {
+    };
+    slots: "children";
+  };
+  groupbox: {
+    props: {
+      orientation?: "horizontal" | "vertical";
+      title?: string;
+      checkable?: boolean;
+      flat?: boolean;
+      alignment?: Array<"absolute" | "baseline" | "bottom" | "center" | "hcenter" | "horizontal-mask" | "justify" | "leading" | "left" | "right" | "top" | "trailing" | "vcenter" | "vertical-mask">;
+    };
+    events: {
+      toggled: (on: boolean) => void;
+      clicked: (checked: boolean) => void;
+    };
+    methods: {
+    };
+    slots: "children";
+  };
   label: {
     props: {
       label?: string;
@@ -142,6 +172,9 @@ export interface QtElementDescriptors {
   };
   scrolledwindow: {
     props: {
+      widgetResizable?: boolean;
+      horizontalScrollBarPolicy?: "always-off" | "always-on" | "as-needed";
+      verticalScrollBarPolicy?: "always-off" | "always-on" | "as-needed";
     };
     events: {
     };
@@ -163,10 +196,53 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
+  splitter: {
+    props: {
+      orientation?: "horizontal" | "vertical";
+      childrenCollapsible?: boolean;
+      handleWidth?: number;
+      opaqueResize?: boolean;
+    };
+    events: {
+      "splitter-moved": (pos: number, index: number) => void;
+    };
+    methods: {
+    };
+    slots: "children";
+  };
+  stackedwidget: {
+    props: {
+      currentIndex?: number;
+    };
+    events: {
+      changed: (index: number) => void;
+    };
+    methods: {
+    };
+    slots: "pages";
+  };
   statusbar: {
     props: {
     };
     events: {
+    };
+    methods: {
+    };
+    slots: never;
+  };
+  tabwidget: {
+    props: {
+      tabPosition?: "east" | "north" | "south" | "west";
+      tabShape?: "rounded" | "triangular";
+      tabsClosable?: boolean;
+      movable?: boolean;
+      documentMode?: boolean;
+      usesScrollButtons?: boolean;
+    };
+    events: {
+      changed: (index: number) => void;
+      "tab-close-requested": (index: number) => void;
+      "tab-bar-clicked": (index: number) => void;
     };
     methods: {
     };
@@ -177,6 +253,16 @@ export interface QtElementDescriptors {
       time?: TimeParts;
     };
     events: {
+    };
+    methods: {
+    };
+    slots: never;
+  };
+  toolbox: {
+    props: {
+    };
+    events: {
+      changed: (index: number) => void;
     };
     methods: {
     };

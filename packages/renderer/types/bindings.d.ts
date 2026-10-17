@@ -4,4 +4,7 @@ export interface BindableProps {
   entry: {
     text: string; // gtk/qt
   };
+  stackedwidget: {
+    currentIndex: number; // qt
+  };
 }
