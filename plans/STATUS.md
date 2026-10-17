@@ -33,5 +33,5 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | Apple GUI backends (AppKit / UIKit / SwiftUI) + JavaScriptCore | apple-gui-backend.md | done: AppKit+UIKit via objc2; JSC optional engine |
 | JS ↔ native serdes | js-native-serdes.md | in progress |
 | Ownership and lifetimes | ownership-and-lifetimes.md | done: explicit tree-driven lifetime, 4 lifetime classes, ABI v2 proposal |
-| Svelte feature survey (lists, snippets, bindings) | svelte-feature-survey.md | in progress |
+| Svelte feature survey (lists, snippets, bindings, modifiers) | svelte-feature-survey.md | done |
 | Styling: GTK CSS and Qt QSS | styling-gtk-css-qss.md | in progress |
