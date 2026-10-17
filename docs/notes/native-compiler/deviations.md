@@ -1,4 +1,4 @@
-# X1 compiler: deliberate deviations from upstream
+# NC1 compiler: deliberate deviations from upstream
 
 Every entry corresponds to a `// SVELTERS:` comment in the code. Behaviour not listed here is
 meant to match upstream exactly (checked by the oracle, `tools/oracle/run.sh`).

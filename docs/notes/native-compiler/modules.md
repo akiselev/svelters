@@ -1,6 +1,6 @@
-# X1 compiler: module map, ownership and contracts
+# NC1 compiler: module map, ownership and contracts
 
-Crate `crates/svelters-compiler` (experimental, see `plans/milestones/X1-native-compiler.md`).
+Crate `crates/svelters-compiler` (experimental, see `plans/milestones/NC1-native-compiler.md`).
 Front end = verbatim ports of Svelte 5.57.2 @ f3de3f2 and acorn 8.19.0. Upstream sources for the
 port: `git clone https://github.com/sveltejs/svelte` @ f3de3f236bd586c764fd48bab04f41c54c5ff80d and
 `https://github.com/acornjs/acorn` tag 8.19.0. No JS parser crates (oxc/swc/biome/boa are ruled

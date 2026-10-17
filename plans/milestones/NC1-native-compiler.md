@@ -1,4 +1,4 @@
-# X1: experimental Rust Svelte compiler with native semantics
+# NC1: experimental Rust Svelte compiler with native semantics
 
 Status: IN PROGRESS (audit + foundation choice). Runs side by side with the existing JS pipeline;
 nothing in the working Vite/@svelters/renderer path changes.

@@ -1,4 +1,4 @@
-# Oracle harness (X1)
+# Oracle harness (NC1)
 
 Correctness of the Rust front end (`crates/svelters-compiler`: `acorn`, `svelte::parse`) is
 defined by the output of the real acorn 8.19.0 and `svelte/compiler` 5.57.2 on a fixed corpus.

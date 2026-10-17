@@ -1,4 +1,4 @@
-//! Shared oracle harness (X1, agent F): corpus loading, byte -> UTF-16 offset conversion,
+//! Shared oracle harness (NC1, agent F): corpus loading, byte -> UTF-16 offset conversion,
 //! normalization (ignore list), deep JSON diff, guarded execution, reporting, baseline ratchet.
 //!
 //! The corpus (target/oracle/{acorn,svelte}.jsonl) is produced by `tools/oracle/gen.mjs` from the

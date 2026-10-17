@@ -1,4 +1,4 @@
-# X1 native styling: accepted `<style>` syntax
+# NC1 native styling: accepted `<style>` syntax
 
 `<style>` in a native component is not browser CSS. `style::parse_style` (crate
 `svelters-compiler`, `src/style.rs`) parses only the subset that the lowering pass can map to

@@ -1,4 +1,4 @@
-//! svelters-compiler (experimental, X1): a Rust Svelte compiler that emits JavaScript for the
+//! svelters-compiler (experimental, NC1): a Rust Svelte compiler that emits JavaScript for the
 //! svelters host, lowered through per-backend native semantic specifications.
 //!
 //! Module map and ownership: docs/notes/native-compiler/modules.md.

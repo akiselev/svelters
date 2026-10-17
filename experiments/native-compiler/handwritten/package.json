@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Hand-written components in the X1 generated-code shape, run against the fixtures' scripts",
+  "description": "Hand-written components in the NC1 generated-code shape, run against the fixtures' scripts",
   "scripts": {
     "build": "node build.mjs",
     "test": "node build.mjs && node --experimental-vm-modules --no-warnings run.mjs"

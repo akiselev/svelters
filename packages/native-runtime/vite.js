@@ -55,7 +55,7 @@ export function compilerPath() {
 }
 
 /**
- * Vite plugin: compiles `.svelte` modules with the experimental Rust compiler (X1) for one
+ * Vite plugin: compiles `.svelte` modules with the experimental Rust compiler (NC1) for one
  * backend. Diagnostics become Vite errors/warnings with positions; the compiler's source map
  * maps generated code back to the component.
  */

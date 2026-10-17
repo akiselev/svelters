@@ -1,5 +1,5 @@
 // The compiled cases: the existing JS-pipeline fixtures (same App.svelte, same script) and the
-// X1-only fixtures under ../fixtures (native binding, styling, slots, teardown).
+// NC1-only fixtures under ../fixtures (native binding, styling, slots, teardown).
 import path from 'node:path';
 import fs from 'node:fs';
 

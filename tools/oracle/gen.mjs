@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Oracle corpus generator (X1, agent F). Runs the REAL acorn 8.19.0 and svelte/compiler 5.57.2
+// Oracle corpus generator (NC1, agent F). Runs the REAL acorn 8.19.0 and svelte/compiler 5.57.2
 // over a fixed set of inputs and writes their output as JSONL under target/oracle/:
 //
 //   acorn.jsonl   { id, code, options, ast, comments } | { id, code, options, error: { message, pos, raisedAt } }

@@ -1,6 +1,6 @@
 [package]
 name = "svelters-compiler"
-description = "Experimental Rust Svelte compiler with native framework semantics (X1)"
+description = "Experimental Rust Svelte compiler with native framework semantics (NC1)"
 edition.workspace = true
 version.workspace = true
 license.workspace = true

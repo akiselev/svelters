@@ -1,6 +1,6 @@
-# Hand-written components in the X1 generated-code shape
+# Hand-written components in the NC1 generated-code shape
 
-Each directory holds `App.js`, written the way the X1 compiler is to emit
+Each directory holds `App.js`, written the way the NC1 compiler is to emit
 `fixtures/<name>/src/App.svelte` (`docs/notes/native-compiler/runtime-contract.md`), a `main.js`
 entry calling `$n.mount`, the fixture's `script.json` (copied unchanged: the same handle numbers
 drive both pipelines) and our own `expected.oplog`.

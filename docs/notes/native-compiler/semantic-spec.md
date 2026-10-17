@@ -1,6 +1,6 @@
 # Native semantic specifications (`svelters-semantics/v0`)
 
-The X1 compiler does not hard-code widget knowledge. Each backend has a checked-in spec,
+The NC1 compiler does not hard-code widget knowledge. Each backend has a checked-in spec,
 `metadata/semantics/gtk.json` and `metadata/semantics/qt.json`. The compiler reads a spec through
 `svelters_compiler::semantics::BackendSemantics`, which `SpecBackend` implements
 (`SpecBackend::builtin("gtk")` embeds the checked-in file; `from_path`/`from_json` load others).

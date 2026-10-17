@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Fixtures compiled by the experimental Rust compiler (X1), per backend, compared with the JS pipeline",
+  "description": "Fixtures compiled by the experimental Rust compiler (NC1), per backend, compared with the JS pipeline",
   "scripts": {
     "build": "node build.mjs",
     "test": "node build.mjs && node --experimental-vm-modules --no-warnings run.mjs"
