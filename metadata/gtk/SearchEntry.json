@@ -9,6 +9,46 @@
     "GObject.InitiallyUnowned",
     "GObject.Object"
   ],
+  "bindings": [
+    {
+      "change": {
+        "origin": "manual",
+        "role": "any_change",
+        "signal": "changed"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "manual",
+        "read_back": false,
+        "strategy": "host_suppressed",
+        "sync_signals_on_set": [
+          "changed",
+          "notify::text"
+        ]
+      },
+      "id": "svelters-api:v1:type:gtk:Gtk:SearchEntry:binding:text",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "manual"
+      },
+      "name": "text",
+      "origin": "manual",
+      "property": "text",
+      "provenance": "same as Entry bind:text (docs/notes/signals-and-slots-semantics.md 1.6); GtkEditable:text through set_text",
+      "type": {
+        "nullable": false,
+        "origin": "manual",
+        "ref": "string"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "manual"
+      }
+    }
+  ],
   "children": {
     "candidates": {
       "child_ops": [
@@ -339,6 +379,11 @@
         "get": null,
         "set": null
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkSearchEntry:activates-default (Gtk 4 docs)"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:SearchEntry:prop:activates-default",
       "invocation": "reflected",
@@ -503,10 +548,17 @@
         "get": "gtk_search_entry_get_placeholder_text",
         "set": "gtk_search_entry_set_placeholder_text"
       },
+      "annotated": {
+        "fields": [
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "GtkSearchEntry:placeholder-text (Gtk 4 docs)"
+      },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:SearchEntry:prop:placeholder-text",
       "invocation": "reflected",
-      "js_name": "placeholderText",
+      "js_name": "placeholder",
       "name": "placeholder-text",
       "notify": {
         "explicit": false,
@@ -541,6 +593,11 @@
       "accessors": {
         "get": "gtk_search_entry_get_search_delay",
         "set": "gtk_search_entry_set_search_delay"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkSearchEntry:search-delay (Gtk 4 docs)"
       },
       "default": 150,
       "id": "svelters-api:v1:type:gtk:Gtk:SearchEntry:prop:search-delay",
@@ -579,6 +636,15 @@
   "schema": "svelters-element-kind/v0",
   "signals": [
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required"
+        ],
+        "origin": "manual",
+        "provenance": "GtkSearchEntry::activate, action signal, void (Gtk 4 docs)"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -657,6 +723,16 @@
       "sync_required": false
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GtkSearchEntry::search-changed, run-last, void (Gtk 4 docs)"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -678,7 +754,16 @@
         "origin": "runtime",
         "return_gtype": "void"
       },
-      "sync_required": false
+      "sync_required": false,
+      "trigger": {
+        "origin": "manual",
+        "rust": "o.emit_by_name::<()>(\"search-changed\", &[]);",
+        "values": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
     },
     {
       "connection": {
@@ -705,6 +790,15 @@
       "sync_required": false
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required"
+        ],
+        "origin": "manual",
+        "provenance": "GtkSearchEntry::stop-search, action signal, void (Gtk 4 docs)"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -737,7 +831,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/SearchEntry.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"

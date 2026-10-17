@@ -170,11 +170,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name",
+          "setup"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_inscription_get_text (Gtk 4 docs); called through GIRepository (X1)"
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == V::Str(\"ins\".into())",
       "id": "svelters-api:v1:type:gtk:Gtk:Inscription:method:get_text",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "get_text",
       "name": "get_text",
       "native": "gtk_inscription_get_text",
       "origin": "gir",
@@ -185,6 +200,7 @@
         "ownership": "borrowed",
         "type": "string"
       },
+      "setup": "h.set_str(o, \"text\", \"ins\").unwrap();",
       "unsupported_reason": null
     },
     {
@@ -690,6 +706,11 @@
         "get": "gtk_inscription_get_min_lines",
         "set": "gtk_inscription_set_min_lines"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkInscription:min-lines (Gtk 4 docs)"
+      },
       "default": 1,
       "id": "svelters-api:v1:type:gtk:Gtk:Inscription:prop:min-lines",
       "invocation": "reflected",
@@ -733,6 +754,11 @@
       "accessors": {
         "get": "gtk_inscription_get_nat_chars",
         "set": "gtk_inscription_set_nat_chars"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkInscription:nat-chars (Gtk 4 docs)"
       },
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Inscription:prop:nat-chars",
@@ -821,6 +847,11 @@
       "accessors": {
         "get": "gtk_inscription_get_text",
         "set": "gtk_inscription_set_text"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkInscription:text (Gtk 4 docs)"
       },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Inscription:prop:text",
@@ -1031,7 +1062,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/Inscription.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"

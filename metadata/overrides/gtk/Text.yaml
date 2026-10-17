@@ -1,0 +1,32 @@
+properties:
+  - name: visibility
+    provenance: "GtkText:visibility (Gtk 4 docs)"
+  - name: max-length
+    provenance: "GtkText:max-length (Gtk 4 docs)"
+  - name: placeholder-text
+    js_name: placeholder
+    provenance: "GtkText:placeholder-text (Gtk 4 docs)"
+  - name: overwrite-mode
+    provenance: "GtkText:overwrite-mode (Gtk 4 docs)"
+  - name: activates-default
+    provenance: "GtkText:activates-default (Gtk 4 docs)"
+signals:
+  - name: activate
+    js_event: activate
+    handler_result: none
+    sync_required: false
+    provenance: "GtkText::activate, action signal, void (Gtk 4 docs)"
+bindings:
+  - name: text
+    direction: two_way
+    property: text                  # GtkEditable:text (interface-owned), written through set_text
+    type: { ref: string, nullable: false }
+    change: { signal: changed, role: any_change }
+    write: { natively_normalizes: false }
+    echo:
+      strategy: host_suppressed     # the backend blocks `changed` and `notify::text` during a programmatic set (Editable.yaml echo_suppress)
+      compare_before_set: true
+      read_back: false
+      sync_signals_on_set: [changed, "notify::text"]
+    lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
+    provenance: "same as Entry bind:text (docs/notes/signals-and-slots-semantics.md 1.6); GtkEditable:text through set_text"

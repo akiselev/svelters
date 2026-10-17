@@ -2,8 +2,38 @@ properties:
   - name: placeholder-text
     js_name: placeholder
     provenance: "GtkEntry:placeholder-text (Gtk 4 docs); P prop, JS name 'placeholder'"
-# Binding metadata (schema extension `bindings`, docs/notes/fork-bindings.md section 6): what
-# `bind:text` on <entry> means natively. Consumed by tools/metadata/common/gen_bindings.py.
+  - name: visibility
+    provenance: "GtkEntry:visibility (Gtk 4 docs)"
+  - name: max-length
+    provenance: "GtkEntry:max-length (Gtk 4 docs)"
+  - name: has-frame
+    provenance: "GtkEntry:has-frame (Gtk 4 docs)"
+  - name: input-purpose
+    provenance: "GtkEntry:input-purpose (Gtk 4 docs)"
+  - name: activates-default
+    provenance: "GtkEntry:activates-default (Gtk 4 docs)"
+  - name: overwrite-mode
+    provenance: "GtkEntry:overwrite-mode (Gtk 4 docs)"
+signals:
+  - name: activate
+    js_event: activate
+    handler_result: none
+    sync_required: false
+    provenance: "GtkEntry::activate, action signal, void (Gtk 4 docs)"
+methods:
+  - name: get_text_length
+    js_name: get_text_length
+    dispatch: dynamic
+    args: []
+    setup: 'h.set_str(o, "text", "hello").unwrap();'
+    expect: 'r == V::I64(5)'
+    provenance: "gtk_entry_get_text_length (Gtk 4 docs); called through GIRepository (X1)"
+  - name: progress_pulse
+    js_name: progress_pulse
+    dispatch: dynamic
+    args: []
+    expect: 'r == V::Null'
+    provenance: "gtk_entry_progress_pulse (Gtk 4 docs); called through GIRepository (X1)"
 bindings:
   - name: text
     direction: two_way
@@ -13,8 +43,8 @@ bindings:
     write: { natively_normalizes: false }
     echo:
       strategy: host_suppressed     # the backend blocks `changed` and `notify::text` during a programmatic set (Editable.yaml echo_suppress)
-      compare_before_set: true      # GtkEntry re-notifies on identical text and moves the cursor
+      compare_before_set: true
       read_back: false
       sync_signals_on_set: [changed, "notify::text"]
     lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
-    provenance: "docs/notes/signals-and-slots-semantics.md 1.6 (gtk_sync_probe.py: set_text re-emits notify::text on identical text); renderer compares before set, the backend suppresses"
+    provenance: "same as Entry bind:text (docs/notes/signals-and-slots-semantics.md 1.6); GtkEditable:text through set_text"

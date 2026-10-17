@@ -1,0 +1,3 @@
+properties:
+  - name: accelerator
+    provenance: "GtkShortcutLabel:accelerator (Gtk 4 docs)"

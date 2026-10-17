@@ -132,6 +132,107 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:EditableLabel:signal:notify::editing",
+   "fingerprint": "1deb8f646b9ef257",
+   "kind": "EditableLabel",
+   "name": "notify::editing",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_editablelabel_notify_editing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:EditableLabel:prop:editing",
+   "fingerprint": "06f14e75f218edc3",
+   "kind": "EditableLabel",
+   "name": "editing",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_editablelabel_editing",
+    "generated::verify::echo_editablelabel_editing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:EditableLabel:method:start_editing",
+   "fingerprint": "e42d8d81f7a9abf6",
+   "kind": "EditableLabel",
+   "name": "start_editing",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_editablelabel_start_editing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:EditableLabel:binding:editing",
+   "fingerprint": "2f5e04bc04ff1b71",
+   "kind": "EditableLabel",
+   "name": "editing",
+   "section": "bindings",
+   "tests": [
+    "generated::verify::binding_editablelabel_editing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Entry:signal:activate",
+   "fingerprint": "c3a1182385f5ab00",
+   "kind": "Entry",
+   "name": "activate",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_entry_activate"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:activates-default",
+   "fingerprint": "7912af3b15977d57",
+   "kind": "Entry",
+   "name": "activates-default",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_entry_activates_default"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:has-frame",
+   "fingerprint": "da28275264931932",
+   "kind": "Entry",
+   "name": "has-frame",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_entry_has_frame"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:input-purpose",
+   "fingerprint": "a7a8d96a228d6253",
+   "kind": "Entry",
+   "name": "input-purpose",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_entry_input_purpose"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:max-length",
+   "fingerprint": "d14d484143d80edb",
+   "kind": "Entry",
+   "name": "max-length",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_entry_max_length"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:overwrite-mode",
+   "fingerprint": "ca02bb0909896f14",
+   "kind": "Entry",
+   "name": "overwrite-mode",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_entry_overwrite_mode"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:placeholder-text",
    "fingerprint": "6ef454b5626fe171",
    "kind": "Entry",
@@ -142,8 +243,38 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:visibility",
+   "fingerprint": "60c9301c23e14209",
+   "kind": "Entry",
+   "name": "visibility",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_entry_visibility"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Entry:method:get_text_length",
+   "fingerprint": "90aeee289ebad90f",
+   "kind": "Entry",
+   "name": "get_text_length",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_entry_get_text_length"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Entry:method:progress_pulse",
+   "fingerprint": "f69143d0e6e6ae5d",
+   "kind": "Entry",
+   "name": "progress_pulse",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_entry_progress_pulse"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Entry:binding:text",
-   "fingerprint": "3df4ac2501ba7e82",
+   "fingerprint": "130d1d31b88d1465",
    "kind": "Entry",
    "name": "text",
    "section": "bindings",
@@ -162,6 +293,66 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Inscription:prop:min-lines",
+   "fingerprint": "c47f8d6fa45304cb",
+   "kind": "Inscription",
+   "name": "min-lines",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_inscription_min_lines"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Inscription:prop:nat-chars",
+   "fingerprint": "6b14e4134f83df99",
+   "kind": "Inscription",
+   "name": "nat-chars",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_inscription_nat_chars"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Inscription:prop:text",
+   "fingerprint": "e2fcf8e539d2d085",
+   "kind": "Inscription",
+   "name": "text",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_inscription_text"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Inscription:method:get_text",
+   "fingerprint": "e7e686c9f0a221b5",
+   "kind": "Inscription",
+   "name": "get_text",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_inscription_get_text"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Label:signal:activate-link",
+   "fingerprint": "c795c9be8819341b",
+   "kind": "Label",
+   "name": "activate-link",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_label_activate_link"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Label:prop:justify",
+   "fingerprint": "e1c66fce482f8375",
+   "kind": "Label",
+   "name": "justify",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_label_justify"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Label:prop:label",
    "fingerprint": "148cc637bc63e985",
    "kind": "Label",
@@ -172,6 +363,116 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Label:prop:lines",
+   "fingerprint": "9eddfc0f6e0a477b",
+   "kind": "Label",
+   "name": "lines",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_label_lines"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Label:prop:max-width-chars",
+   "fingerprint": "67fd2b2bc2116fc9",
+   "kind": "Label",
+   "name": "max-width-chars",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_label_max_width_chars"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Label:prop:selectable",
+   "fingerprint": "dbce2e8fa2b29e09",
+   "kind": "Label",
+   "name": "selectable",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_label_selectable"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Label:prop:use-markup",
+   "fingerprint": "ec24d59b71c661f9",
+   "kind": "Label",
+   "name": "use-markup",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_label_use_markup"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Label:prop:use-underline",
+   "fingerprint": "195a67968fd67aab",
+   "kind": "Label",
+   "name": "use-underline",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_label_use_underline"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Label:prop:wrap",
+   "fingerprint": "be0a5e8017f11d63",
+   "kind": "Label",
+   "name": "wrap",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_label_wrap"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Label:prop:xalign",
+   "fingerprint": "4844a19f1660b072",
+   "kind": "Label",
+   "name": "xalign",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_label_xalign"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Label:prop:yalign",
+   "fingerprint": "e2cd8079d2f8e2a7",
+   "kind": "Label",
+   "name": "yalign",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_label_yalign"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Label:method:get_text",
+   "fingerprint": "b11b9d3ed91e7b9e",
+   "kind": "Label",
+   "name": "get_text",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_label_get_text"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Label:method:select_region",
+   "fingerprint": "fd3dc618dbb1b3ce",
+   "kind": "Label",
+   "name": "select_region",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_label_select_region"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Label:method:set_text",
+   "fingerprint": "4b6fa213d4d4c165",
+   "kind": "Label",
+   "name": "set_text",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_label_set_text"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Orientable:prop:orientation",
    "fingerprint": "63d313dbd2010718",
    "kind": "Orientable",
@@ -179,6 +480,296 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_orientable_orientation"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:PasswordEntry:signal:activate",
+   "fingerprint": "822914ff602d9160",
+   "kind": "PasswordEntry",
+   "name": "activate",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_passwordentry_activate"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:PasswordEntry:prop:activates-default",
+   "fingerprint": "9709ed21aa3b42b7",
+   "kind": "PasswordEntry",
+   "name": "activates-default",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_passwordentry_activates_default"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:PasswordEntry:prop:placeholder-text",
+   "fingerprint": "36b6bc3d3897eeb0",
+   "kind": "PasswordEntry",
+   "name": "placeholder-text",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_passwordentry_placeholder_text"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:PasswordEntry:prop:show-peek-icon",
+   "fingerprint": "807faa1a02b1a798",
+   "kind": "PasswordEntry",
+   "name": "show-peek-icon",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_passwordentry_show_peek_icon"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:PasswordEntry:binding:text",
+   "fingerprint": "407e94b9c92e361d",
+   "kind": "PasswordEntry",
+   "name": "text",
+   "section": "bindings",
+   "tests": [
+    "generated::verify::binding_passwordentry_text"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:SearchEntry:signal:activate",
+   "fingerprint": "5f8972a519b23dd6",
+   "kind": "SearchEntry",
+   "name": "activate",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_searchentry_activate"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:SearchEntry:signal:search-changed",
+   "fingerprint": "960bceafabab6888",
+   "kind": "SearchEntry",
+   "name": "search-changed",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_searchentry_search_changed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:SearchEntry:signal:stop-search",
+   "fingerprint": "d25d6d77ca6937c4",
+   "kind": "SearchEntry",
+   "name": "stop-search",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_searchentry_stop_search"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:SearchEntry:prop:activates-default",
+   "fingerprint": "ba38a1cd55507938",
+   "kind": "SearchEntry",
+   "name": "activates-default",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_searchentry_activates_default"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:SearchEntry:prop:placeholder-text",
+   "fingerprint": "3333fc3719aaeab4",
+   "kind": "SearchEntry",
+   "name": "placeholder-text",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_searchentry_placeholder_text"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:SearchEntry:prop:search-delay",
+   "fingerprint": "fa51e365eb575327",
+   "kind": "SearchEntry",
+   "name": "search-delay",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_searchentry_search_delay"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:SearchEntry:binding:text",
+   "fingerprint": "e13fbdbc67076a88",
+   "kind": "SearchEntry",
+   "name": "text",
+   "section": "bindings",
+   "tests": [
+    "generated::verify::binding_searchentry_text"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:ShortcutLabel:prop:accelerator",
+   "fingerprint": "73d622cde2e2af8e",
+   "kind": "ShortcutLabel",
+   "name": "accelerator",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_shortcutlabel_accelerator"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Text:signal:activate",
+   "fingerprint": "f92563280d66f9a1",
+   "kind": "Text",
+   "name": "activate",
+   "section": "signals",
+   "tests": [
+    "generated::verify::signal_text_activate"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Text:prop:activates-default",
+   "fingerprint": "a04d340f3e5a62c4",
+   "kind": "Text",
+   "name": "activates-default",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_text_activates_default"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Text:prop:max-length",
+   "fingerprint": "53934ba9242b1117",
+   "kind": "Text",
+   "name": "max-length",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_text_max_length"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Text:prop:overwrite-mode",
+   "fingerprint": "76efd418b152e83a",
+   "kind": "Text",
+   "name": "overwrite-mode",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_text_overwrite_mode"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Text:prop:placeholder-text",
+   "fingerprint": "153ea91629dd83bb",
+   "kind": "Text",
+   "name": "placeholder-text",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_text_placeholder_text"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Text:prop:visibility",
+   "fingerprint": "454623af95947308",
+   "kind": "Text",
+   "name": "visibility",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_text_visibility"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Text:binding:text",
+   "fingerprint": "863888b0e0f53973",
+   "kind": "Text",
+   "name": "text",
+   "section": "bindings",
+   "tests": [
+    "generated::verify::binding_text_text"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:TextView:prop:cursor-visible",
+   "fingerprint": "2230419add55c025",
+   "kind": "TextView",
+   "name": "cursor-visible",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_textview_cursor_visible"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:TextView:prop:editable",
+   "fingerprint": "9e57fddc1d973709",
+   "kind": "TextView",
+   "name": "editable",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_textview_editable"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:TextView:prop:justification",
+   "fingerprint": "05ae695fa77441cc",
+   "kind": "TextView",
+   "name": "justification",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_textview_justification"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:TextView:prop:left-margin",
+   "fingerprint": "a422186763e79d80",
+   "kind": "TextView",
+   "name": "left-margin",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_textview_left_margin"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:TextView:prop:monospace",
+   "fingerprint": "e3695030d3dfc6e3",
+   "kind": "TextView",
+   "name": "monospace",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_textview_monospace"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:TextView:prop:top-margin",
+   "fingerprint": "2c62a1548f3bce75",
+   "kind": "TextView",
+   "name": "top-margin",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_textview_top_margin"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:TextView:prop:wrap-mode",
+   "fingerprint": "d785698ea06b7453",
+   "kind": "TextView",
+   "name": "wrap-mode",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_textview_wrap_mode"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:TextView:method:get_buffer",
+   "fingerprint": "867d078791402496",
+   "kind": "TextView",
+   "name": "get_buffer",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_textview_get_buffer"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:TextView:method:place_cursor_onscreen",
+   "fingerprint": "e9eb2f085e280b65",
+   "kind": "TextView",
+   "name": "place_cursor_onscreen",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_textview_place_cursor_onscreen"
    ]
   },
   {

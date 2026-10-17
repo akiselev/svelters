@@ -9,6 +9,46 @@
     "GObject.InitiallyUnowned",
     "GObject.Object"
   ],
+  "bindings": [
+    {
+      "change": {
+        "origin": "manual",
+        "role": "any_change",
+        "signal": "changed"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "manual",
+        "read_back": false,
+        "strategy": "host_suppressed",
+        "sync_signals_on_set": [
+          "changed",
+          "notify::text"
+        ]
+      },
+      "id": "svelters-api:v1:type:gtk:Gtk:Text:binding:text",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "manual"
+      },
+      "name": "text",
+      "origin": "manual",
+      "property": "text",
+      "provenance": "same as Entry bind:text (docs/notes/signals-and-slots-semantics.md 1.6); GtkEditable:text through set_text",
+      "type": {
+        "nullable": false,
+        "origin": "manual",
+        "ref": "string"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "manual"
+      }
+    }
+  ],
   "children": {
     "candidates": {
       "child_ops": [],
@@ -894,6 +934,11 @@
         "get": "gtk_text_get_activates_default",
         "set": "gtk_text_set_activates_default"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkText:activates-default (Gtk 4 docs)"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Text:prop:activates-default",
       "invocation": "reflected",
@@ -1294,6 +1339,11 @@
         "get": "gtk_text_get_max_length",
         "set": "gtk_text_set_max_length"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkText:max-length (Gtk 4 docs)"
+      },
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Text:prop:max-length",
       "invocation": "reflected",
@@ -1337,6 +1387,11 @@
         "get": "gtk_text_get_overwrite_mode",
         "set": "gtk_text_set_overwrite_mode"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkText:overwrite-mode (Gtk 4 docs)"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Text:prop:overwrite-mode",
       "invocation": "reflected",
@@ -1377,10 +1432,17 @@
         "get": "gtk_text_get_placeholder_text",
         "set": "gtk_text_set_placeholder_text"
       },
+      "annotated": {
+        "fields": [
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "GtkText:placeholder-text (Gtk 4 docs)"
+      },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Text:prop:placeholder-text",
       "invocation": "reflected",
-      "js_name": "placeholderText",
+      "js_name": "placeholder",
       "name": "placeholder-text",
       "notify": {
         "explicit": true,
@@ -1579,6 +1641,11 @@
         "get": "gtk_text_get_visibility",
         "set": "gtk_text_set_visibility"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkText:visibility (Gtk 4 docs)"
+      },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Text:prop:visibility",
       "invocation": "reflected",
@@ -1612,6 +1679,15 @@
   "schema": "svelters-element-kind/v0",
   "signals": [
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required"
+        ],
+        "origin": "manual",
+        "provenance": "GtkText::activate, action signal, void (Gtk 4 docs)"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -1943,7 +2019,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/Text.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"

@@ -447,11 +447,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name",
+          "setup"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_label_get_text (Gtk 4 docs); called through GIRepository (X1)"
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == V::Str(\"shown\".into())",
       "id": "svelters-api:v1:type:gtk:Gtk:Label:method:get_text",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "get_text",
       "name": "get_text",
       "native": "gtk_label_get_text",
       "origin": "gir",
@@ -462,6 +477,7 @@
         "ownership": "borrowed",
         "type": "string"
       },
+      "setup": "h.set_str(o, \"label\", \"shown\").unwrap();",
       "unsupported_reason": null
     },
     {
@@ -591,11 +607,29 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name",
+          "setup"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_label_select_region (Gtk 4 docs); called through GIRepository (X1)"
+      },
+      "args": [
+        1,
+        3
+      ],
+      "dispatch": "dynamic",
+      "expect": "r == V::Null",
       "id": "svelters-api:v1:type:gtk:Gtk:Label:method:select_region",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "select_region",
       "name": "select_region",
       "native": "gtk_label_select_region",
       "origin": "gir",
@@ -621,6 +655,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "setup": "h.set_str(o, \"label\", \"hello\").unwrap(); h.set_bool(o, \"selectable\", true).unwrap();",
       "unsupported_reason": null
     },
     {
@@ -988,11 +1023,27 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_label_set_text (Gtk 4 docs); called through GIRepository (X1)"
+      },
+      "args": [
+        "plain"
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"label\") == V::Str(\"plain\".into())",
       "id": "svelters-api:v1:type:gtk:Gtk:Label:method:set_text",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "set_text",
       "name": "set_text",
       "native": "gtk_label_set_text",
       "origin": "gir",
@@ -1360,6 +1411,11 @@
         "get": "gtk_label_get_justify",
         "set": "gtk_label_set_justify"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkLabel:justify (Gtk 4 docs)"
+      },
       "default": "left",
       "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:justify",
       "invocation": "reflected",
@@ -1446,6 +1502,11 @@
         "get": "gtk_label_get_lines",
         "set": "gtk_label_set_lines"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkLabel:lines (Gtk 4 docs)"
+      },
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:lines",
       "invocation": "reflected",
@@ -1488,6 +1549,11 @@
       "accessors": {
         "get": "gtk_label_get_max_width_chars",
         "set": "gtk_label_set_max_width_chars"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkLabel:max-width-chars (Gtk 4 docs)"
       },
       "default": -1,
       "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:max-width-chars",
@@ -1654,6 +1720,11 @@
         "get": "gtk_label_get_selectable",
         "set": "gtk_label_set_selectable"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkLabel:selectable (Gtk 4 docs)"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:selectable",
       "invocation": "reflected",
@@ -1775,6 +1846,11 @@
         "get": "gtk_label_get_use_markup",
         "set": "gtk_label_set_use_markup"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkLabel:use-markup (Gtk 4 docs)"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:use-markup",
       "invocation": "reflected",
@@ -1814,6 +1890,11 @@
       "accessors": {
         "get": "gtk_label_get_use_underline",
         "set": "gtk_label_set_use_underline"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkLabel:use-underline (Gtk 4 docs)"
       },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:use-underline",
@@ -1898,6 +1979,11 @@
         "get": "gtk_label_get_wrap",
         "set": "gtk_label_set_wrap"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkLabel:wrap (Gtk 4 docs)"
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:wrap",
       "invocation": "reflected",
@@ -1978,6 +2064,11 @@
         "get": "gtk_label_get_xalign",
         "set": "gtk_label_set_xalign"
       },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkLabel:xalign (Gtk 4 docs)"
+      },
       "default": 0.5,
       "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:xalign",
       "invocation": "reflected",
@@ -2020,6 +2111,11 @@
       "accessors": {
         "get": "gtk_label_get_yalign",
         "set": "gtk_label_set_yalign"
+      },
+      "annotated": {
+        "fields": [],
+        "origin": "manual",
+        "provenance": "GtkLabel:yalign (Gtk 4 docs)"
       },
       "default": 0.5,
       "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:yalign",
@@ -2083,6 +2179,16 @@
       "sync_required": false
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "js_event",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GtkLabel::activate-link, run-last, returns gboolean (Gtk 4 docs); X2 sync handler"
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -2110,7 +2216,16 @@
         "origin": "runtime",
         "return_gtype": "gboolean"
       },
-      "sync_required": false
+      "sync_required": true,
+      "trigger": {
+        "origin": "manual",
+        "rust": "let _ = o.emit_by_name::<bool>(\"activate-link\", &[&\"https://example.org\"]);",
+        "values": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
     },
     {
       "connection": {

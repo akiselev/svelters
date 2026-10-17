@@ -85,7 +85,7 @@ GTK batches are about verified facts, slots, bindings, signal semantics and the 
 - Blocked: TextView text (G3: buffer), Label `attributes` (G4).
 - Gallery: `03-text.svelte`.
 - Tests `<re>`: `_(entry|passwordentry|searchentry|text|editablelabel|label|inscription|textview|shortcutlabel)_`.
-- Status: todo
+- Status: done (~64 facts verified: 40 props, 8 signals, 5 bindings, 8 methods, plus the 4 bind:text; dropped: Label.ellipsize and Label.wrap-mode (Pango enums not in metadata); blocked: TextView text and buffer methods (GtkTextBuffer has no kind; only get_buffer verified), Label.attributes (no value form for Pango AttrList), Label activate-link verified as bool_stop sync; see docs/notes/a1-gtk-text.md)
 
 ### gtk-ranges: ranges, progress and levels
 

@@ -9,6 +9,46 @@
     "GObject.InitiallyUnowned",
     "GObject.Object"
   ],
+  "bindings": [
+    {
+      "change": {
+        "origin": "manual",
+        "role": "any_change",
+        "signal": "notify::editing",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "manual",
+        "read_back": false,
+        "strategy": "host_suppressed",
+        "sync_signals_on_set": [
+          "notify::editing"
+        ]
+      },
+      "id": "svelters-api:v1:type:gtk:Gtk:EditableLabel:binding:editing",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "manual"
+      },
+      "name": "editing",
+      "origin": "manual",
+      "property": "editing",
+      "provenance": "GtkEditableLabel:editing, toggled by start and stop editing (Gtk 4 docs)",
+      "type": {
+        "nullable": false,
+        "origin": "manual",
+        "ref": "bool"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "manual"
+      }
+    }
+  ],
   "children": {
     "candidates": {
       "child_ops": [],
@@ -119,11 +159,25 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect",
+          "js_name"
+        ],
+        "origin": "manual",
+        "provenance": "gtk_editable_label_start_editing (Gtk 4 docs); called through GIRepository (X1)"
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"editing\") == V::Bool(true)",
       "id": "svelters-api:v1:type:gtk:Gtk:EditableLabel:method:start_editing",
       "invocation": {
         "dev": "introspected",
         "release": "generated_thunk"
       },
+      "js_name": "start_editing",
       "name": "start_editing",
       "native": "gtk_editable_label_start_editing",
       "origin": "gir",
@@ -182,7 +236,17 @@
         "get": "gtk_editable_label_get_editing",
         "set": null
       },
+      "annotated": {
+        "fields": [
+          "echo_suppress"
+        ],
+        "origin": "manual",
+        "provenance": "GtkEditableLabel:editing (Gtk 4 docs)"
+      },
       "default": false,
+      "echo_suppress": [
+        "notify::editing"
+      ],
       "id": "svelters-api:v1:type:gtk:Gtk:EditableLabel:prop:editing",
       "invocation": "reflected",
       "js_name": "editing",
@@ -213,14 +277,67 @@
     }
   ],
   "schema": "svelters-element-kind/v0",
-  "signals": [],
+  "signals": [
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "origin": "manual",
+        "provenance": "GObject::notify for GtkEditableLabel:editing"
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "manual"
+      },
+      "derived_from": {
+        "origin": "manual",
+        "property": "editing"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::editing",
+      "name": "notify::editing",
+      "origin": "manual",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "manual",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "manual",
+        "property": "editing",
+        "values": [
+          true,
+          false,
+          true
+        ]
+      }
+    }
+  ],
   "source": {
     "gir": {
       "file": "Gtk-4.0.gir",
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
-    "overrides": null,
+    "overrides": "overrides/gtk/EditableLabel.yaml",
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"
