@@ -6,12 +6,22 @@
 // or add `/// <reference types="@svelters/renderer/types" />` to an ambient .d.ts file.
 import type { GtkElements } from './gtk';
 import type { QtElementDescriptors } from './qt';
+import type { BindableProps } from './bindings';
 
 export type { GtkElements, QtElementDescriptors };
+export type { BindableProps } from './bindings';
+export type { NativeElement, StaleHandleError } from './native';
+
+// `bind:<name>` attributes per tag, from the binding metadata (bindings.d.ts).
+type WithBindings<E> = {
+  [K in keyof E]: K extends keyof BindableProps
+    ? E[K] & { [N in keyof BindableProps[K] as `bind:${N & string}`]?: BindableProps[K][N] }
+    : E[K];
+};
 
 declare global {
   namespace svelteHTML {
     // GTK's property tables are the superset; Qt apps check against `QtElementDescriptors`.
-    interface IntrinsicElements extends GtkElements {}
+    interface IntrinsicElements extends WithBindings<GtkElements> {}
   }
 }

@@ -4,6 +4,21 @@ elements:
     props:
       - { js: text, native: text, suppress_signals: true }
       - { js: placeholder, native: placeholderText }
+    bindings:
+      # Binding metadata (schema extension `bindings`, docs/notes/fork-bindings.md section 6).
+      - name: text
+        direction: two_way
+        property: text
+        type: { ref: string, nullable: false }
+        change: { signal: changed, role: any_change }
+        write: { natively_normalizes: false }    # a validator or inputMask would make this true
+        echo:
+          strategy: host_suppressed              # `suppress_signals` on the text prop: a per-handle flag, never QSignalBlocker
+          compare_before_set: true               # an unchanged setText does not emit textChanged (probe)
+          read_back: false
+          sync_signals_on_set: ["textChanged(QString)"]
+        lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
+        provenance: "docs/notes/signals-and-slots-semantics.md 1.6 (qt_sync_probe.py: textEdited never fires for setText, textChanged does)"
     signals:
       - js: changed
         native: textChanged
