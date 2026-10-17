@@ -943,7 +943,7 @@ impl Inner {
             return None;
         }
         if !sig.outs.is_empty() {
-            return typed_result(sig, vals, sync_result.as_ref());
+            return Some(typed_result(sig, vals, sync_result.as_ref()).unwrap_or_else(|| if sig.result == "bool" { false.to_value() } else { 0i32.to_value() }));
         }
         match sig.result {
             "bool" => {

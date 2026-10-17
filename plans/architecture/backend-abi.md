@@ -292,6 +292,19 @@ void (*frame)(void *self);           /* a requested frame is due; runs requestAn
 - A throwing handler yields `0` with a `null` result and an error in the host's error list.
 - The result comes from the event object (`e.result`, `e.preventDefault()`, `e.stopPropagation()`), never from the handler's return value.
 
+### ABI v2.4 additive (X8: typed sync results, event families, canvas)
+
+No vtable change.
+
+**Typed sync results.** A `call_sync` result (`out`) may be a `MAP` (from a JS object) or a `LIST` (from an array) of primitives, besides null, bool, number and string. The handler sets it as `e.result = {ret?, <out>: v}`; it is still never read from the return value. Signals with out-parameters declare them in metadata (`out_params: [{index, name, type}]`, GTK `SignalInfo.outs`): the `gpointer` parameters GTK passes to the handler (`GtkSpinButton::input` has `gdouble *new_value`). The backend does not pass those to JS (the listener gets `(event)` only) and writes them from the result:
+
+- `{ret?, name: n}`: `name` is the out-parameter's name; `ret` is the signal's own return value (bool or int), default 1 ("handled") when an out-parameter was written, else 0.
+- a bare number is shorthand for `{ret: 1, <first out>: n}`.
+- `null` (or anything else): no decision; the toolkit default runs and nothing is written.
+- Busy (-2) and failed (-1) replies behave as `null`.
+
+`GtkSpinButton::input`: `ret` 1 = converted, 0 = not handled (GTK parses the text), -1 = GTK_INPUT_ERROR; out `newValue`. `output` is `bool_stop`: the handler displays the value with `text` and calls `e.preventDefault()`.
+
 ### Model-view protocol (M5)
 
 No vtable change. A backend may provide the portable composite widget kind `virtuallist` (an "extra" kind resolved by name, like `gio-file`). It wraps the toolkit's native model-view widget and speaks one protocol. The model lives in JS: the native side holds only an integer *row id* per item.
