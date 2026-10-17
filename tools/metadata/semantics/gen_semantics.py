@@ -8,7 +8,10 @@ Inputs (nothing else; output is byte-identical on rerun):
        tools/metadata/qt/gen_cpp.py's Model (only annotated elements exist at runtime);
   both: metadata/semantics/rules/{gtk,qt}.yaml (hand-written facts, each with a provenance) and
         metadata/style/{gtk,qt}.yaml (the style property table, tools/metadata/style/style_table.py).
-Outputs: metadata/semantics/{gtk,qt}.json.
+  AppKit: metadata/appkit/*.json + metadata/overrides/appkit/*.yaml through tools/metadata/appkit/gen_backend.py's Model;
+  WinUI: metadata/winui/*.json + metadata/overrides/winui/*.yaml through tools/metadata/winui/gen_backend.py's Model;
+  all: `text_prop` and `bindings` from the overrides; metadata/style/<toolkit>.yaml.
+Outputs: metadata/semantics/{gtk,qt,appkit,winui}.json.
 
   python3 tools/metadata/semantics/gen_semantics.py           # write
   python3 tools/metadata/semantics/gen_semantics.py --check   # fail if the outputs are stale
@@ -27,6 +30,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 TOOLS = ROOT / "tools/metadata"
 RULES = ROOT / "metadata/semantics/rules"
+OVERRIDES = ROOT / "metadata/overrides"
 OUT = ROOT / "metadata/semantics"
 GTK_TABLES = ROOT / "crates/svelters-gtk/src/generated/tables.rs"
 SCHEMA = "svelters-semantics/v0"
@@ -45,6 +49,8 @@ def _load(name: str, path: Path):
 gen_backend = _load("svelters_gen_backend", TOOLS / "gtk/gen_backend.py")
 gen_cpp = _load("svelters_gen_cpp", TOOLS / "qt/gen_cpp.py")
 style_table = _load("svelters_style_table", TOOLS / "style/style_table.py")
+appkit_gen = _load("svelters_appkit_gen", TOOLS / "appkit/gen_backend.py")
+winui_gen = _load("svelters_winui_gen", TOOLS / "winui/gen_backend.py")
 
 
 class SpecError(Exception):
@@ -425,6 +431,22 @@ def gtk_spec() -> dict:
         for f in ("lifetime", "present", "text_content"):
             if f in r:
                 kinds[k]["provenance"][f] = prov
+    # text_prop: metadata/overrides/gtk/<Kind>.yaml (not merged into metadata/gtk); inherited like the rules
+    for path in sorted(OVERRIDES.joinpath("gtk").glob("*.yaml")):
+        tp = svmeta.load_yaml(path).get("text_prop")
+        if not tp:
+            continue
+        k = f"Gtk.{path.stem}"
+        w = f"metadata/overrides/gtk/{path.name} text_prop"
+        if k not in kinds:
+            fail(f"{w}: no such kind")
+        if "text_content" in krules.get(k, {}):
+            fail(f"{w}: also set in the rules")
+        p = find_prop(k, tp["name"])
+        if p is None or not p["writable"] or p["type"] != "string":
+            fail(f"{w}: {tp['name']!r} must be a writable string property")
+        krules.setdefault(k, {})["text_content"] = p["js"]
+        kinds[k]["provenance"]["text_content"] = need_prov(w, tp)
     for k in kinds:
         for f, default in (("lifetime", "owned"), ("present", None), ("text_content", None)):
             src = next((c for c in chains[k] if c in krules and f in krules[c]), None)
@@ -590,6 +612,17 @@ def qt_spec() -> dict:
         if sigs:
             kinds[tag]["provenance"]["signals.disconnect_on_drop"] = sd["provenance"]
 
+    # text_prop: `elements[].text_prop` in metadata/overrides/qt (native or JS name of an annotated prop)
+    for el in m.elements:
+        tp = el.get("text_prop")
+        if not tp:
+            continue
+        kd = kinds[el["tag"]]
+        p = next((p for p in kd["props"].values() if tp in (p["js"], p["native"])), None)
+        if p is None or not p["writable"] or p["type"] != "string":
+            fail(f"qt <{el['tag']}> text_prop {tp!r} must be an annotated writable string property")
+        kd["text_content"] = p["js"]
+        kd["provenance"]["text_content"] = f"metadata/overrides/qt text_prop ({p['native']})"
     for k, r in sorted((rules.get("kinds") or {}).items()):
         w = f"qt rules kinds.{k}"
         if k not in kinds:
@@ -658,13 +691,273 @@ def qt_spec() -> dict:
                        "rules": "metadata/semantics/rules/qt.yaml", "style": "metadata/style/qt.yaml"}}
 
 
+# ---- AppKit ----------------------------------------------------------------------------------
+
+APPKIT_RECORDS = {"rect": "Rect", "size": "Size", "point": "Point", "insets": "Insets", "range": "Range"}
+
+
+def appkit_spec() -> dict:
+    """Kinds are the ingested AppKit classes (NSView, NSControl, NSButton, ...): an element's chain
+    is its class and its ingested superclasses, so inherited props/signals/slots resolve as in
+    crates/svelters-appkit (lookup.rs). Props are every ingested property the backend's tables
+    carry (gen_backend.build's type filter) plus the override `setters`; signals, slots and methods
+    are the override annotations (the backend's dynamic dev mode is not a compile-time fact)."""
+    m = appkit_gen.Model()
+    enums = {n: [js for js, _ in e["members"]] for n, e in m.enums.items()}
+    flags = {n for n, e in m.enums.items() if e["flags"]}
+    prop_enums = {}
+    for cls in m.classes:
+        for e in m.ov.get(cls, {}).get("enums", []):
+            prop_enums[(cls, e["prop"])] = sorted(e["members"], key=lambda k: e["members"][k])
+
+    def prop_rec(cls: str, p: dict, setter: bool = False) -> dict | None:
+        ref = p["type"]["ref"]
+        r = {"js": p["js_name"], "native": p.get("name") or p["js_name"], "type": None, "nullable": False,
+             "readable": not setter, "writable": True if setter else bool(p["access"]["write"]),
+             "construct_only": False, "default": None}
+        if (cls, p["js_name"]) in prop_enums:
+            r.update(type="enum", enum=f"{cls}.{p['js_name']}", values=prop_enums[(cls, p["js_name"])], ref=f"enum<{cls}.{p['js_name']}>")
+        elif ref in ("bool", "string") or ref in appkit_gen.INTEGER or ref in appkit_gen.FLOAT:
+            r["type"] = ptype(ref)
+            r["nullable"] = ref == "string"  # null is "" (backend)
+        elif ref in APPKIT_RECORDS:
+            r.update(type="record", of=APPKIT_RECORDS[ref], ref=ref)
+        elif ref.startswith(("enum<", "flags<")):
+            n = inner(ref)
+            if n not in enums:
+                return None
+            t = "flags" if n in flags else "enum"
+            r.update(type=t, enum=n, values=enums[n], ref=ref)
+        elif ref == "object" or ref.startswith("object<"):
+            r.update(type="object", nullable=True, ref=ref, of=inner(ref) if "<" in ref else "NSObject")
+        elif ref == "list":
+            r.update(type="list", of="other", ref=ref)
+        else:
+            return None
+        return r
+
+    kinds: dict[str, dict] = {}
+    tags: dict[str, str] = {}
+    for cls in m.classes:
+        ov = m.ov.get(cls, {})
+        el = ov.get("element") or {}
+        props = {}
+        for p in m.meta[cls]["properties"]:
+            r = prop_rec(cls, p)
+            if r is not None:
+                props[r["js"]] = r
+        for s in ov.get("setters", []):
+            r = prop_rec(cls, {"js_name": s["name"], "name": s["selector"], "type": {"ref": s["type"]}}, setter=True)
+            if r is None:
+                fail(f"appkit {cls}: setter {s['name']} has no spec type ({s['type']})")
+            props[r["js"]] = r
+        kinds[cls] = {"native": cls, "abstract": not el, "interface": False, "chain": m.chain(cls),
+                      "lifetime": el.get("lifetime", "owned"), "present": None, "text_content": None,
+                      "props": dict(sorted(props.items())), "signals": {}, "bindings": {}, "children": None,
+                      "methods": {}, "provenance": {}}
+        if el:
+            tags[el["tag"]] = cls
+
+    def find_prop(cls: str, name: str) -> dict | None:
+        for c in kinds[cls]["chain"]:
+            for p in kinds[c]["props"].values():
+                if name in (p["js"], p["native"]):
+                    return p
+        return None
+
+    def find_sig(cls: str, name: str) -> dict | None:
+        for c in kinds[cls]["chain"]:
+            if name in kinds[c]["signals"]:
+                return kinds[c]["signals"][name]
+        return None
+
+    for cls in m.classes:
+        ov, kd = m.ov.get(cls, {}), kinds[cls]
+        for s in sorted(ov.get("signals", []), key=lambda s: s["name"]):
+            args = []
+            for a in s.get("args", []):
+                p = find_prop(cls, a)
+                if p is None:
+                    fail(f"appkit {cls}: signal {s['name']}: unknown arg prop {a}")
+                args.append({"name": a, "type": p["type"]})
+            sync = s.get("result", "none") != "none"
+            kd["signals"][s["name"]] = phases_rec({
+                "name": s["name"], "js_event": s["name"], "args": args,
+                "handler_result": "bool_stop" if s.get("result") == "veto_bool" else "none",
+                "sync_required": sync, "disconnect_on_drop": True}, [])
+        for me in sorted(ov.get("methods", []), key=lambda me: me["name"]):
+            kd["methods"][me["name"]] = {"dispatch": "generated", "native": me["selector"]}
+        slots = ov.get("slots", [])
+        if slots:
+            kd["children"] = {"policy": "slots", "default_slot": next((s["name"] for s in slots if s.get("default")), None), "slots": {
+                s["name"]: {"many": s["cardinality"] == "many", "accepts": ["NSView"], "route_by_kind": False,
+                            "order": ("native_index" if s["ops"].get("insert_at") else "before_sibling" if s["ops"].get("insert_relative")
+                                      else "append_only") if s["cardinality"] == "many" else "none", "attrs": {}}
+                for s in sorted(slots, key=lambda s: s["name"])}}
+    for cls in m.classes:
+        el = (m.ov.get(cls, {}).get("element") or {})
+        kd = kinds[cls]
+        if el.get("lifetime") == "toplevel":
+            # The renderer's TOPLEVELS show method (gen_bindings.py appkit_toplevels).
+            if not any("make-key-and-order-front" in kinds[c]["methods"] for c in kd["chain"]):
+                fail(f"appkit {cls}: toplevel without an annotated make-key-and-order-front")
+            kd["present"] = "make-key-and-order-front"
+            kd["provenance"]["present"] = "NSWindow makeKeyAndOrderFront: (MAC1: the renderer's TOPLEVELS open method)"
+        if el.get("text_prop"):
+            p = find_prop(cls, el["text_prop"])
+            if p is None or not p["writable"] or p["type"] != "string":
+                fail(f"appkit {cls}: text_prop {el['text_prop']!r} must be a writable string property")
+            kd["text_content"] = p["js"]
+            kd["provenance"]["text_content"] = "metadata/overrides/appkit text_prop"
+        for b in sorted(m.ov.get(cls, {}).get("bindings", []), key=lambda b: b["name"]):
+            if b["name"] != b["property"]:
+                fail(f"appkit {cls} bind:{b['name']}: binding names are the native prop name ({b['property']})")
+            kd["bindings"][b["name"]] = binding_from_metadata(
+                f"appkit {cls}", b, lambda n, c=cls: find_prop(c, n), lambda n, c=cls: find_sig(c, n))
+    for kd in kinds.values():
+        if not kd["provenance"]:
+            del kd["provenance"]
+    style = style_table.build("appkit", style_table.load("appkit"), tags, kinds)
+    return {"schema": SCHEMA, "backend": "appkit", "framework": "AppKit (svelters-appkit, objc2)", "event_aliases": {},
+            "tags": dict(sorted(tags.items())), "kinds": kinds, "style": style,
+            # dev mode resolves unannotated props/methods at run time; the spec holds the tables' facts
+            "method_lookup": "annotated",
+            "source": {"metadata": "metadata/appkit/*.json + metadata/overrides/appkit/*.yaml", "style": "metadata/style/appkit.yaml"}}
+
+
+# ---- WinUI -----------------------------------------------------------------------------------
+
+def winui_spec() -> dict:
+    """Kinds are the short class names of every class in an element's chain (Button, ButtonBase,
+    ContentControl, Control, FrameworkElement, UIElement, ...); members are the override
+    annotations, which are all the backend exposes (crates/svelters-winui/src/generated/names.rs)."""
+    m = winui_gen.Model()
+    short = winui_gen.short
+    kebab = winui_gen.kebab
+
+    def wtype(where: str, ty: dict) -> dict:
+        t = ty["t"]
+        if t in ("Bool", "I32", "F64", "Str"):
+            return {"type": {"Bool": "bool", "I32": "i32", "F64": "f64", "Str": "string"}[t], "nullable": t == "Str"}
+        if t == "NullableBool":
+            return {"type": "bool", "nullable": True}
+        if t in ("ObjectString", "Custom"):
+            return {"type": "string", "nullable": True}
+        if t == "Thickness":
+            return {"type": "record", "nullable": False, "of": "Insets", "ref": "value<Microsoft.UI.Xaml.Thickness>", "string_form": True}
+        if t == "Enum":
+            tt = m.types.get(ty["enum"])
+            if not tt or tt["category"] != "enum":
+                fail(f"{where}: enum {ty['enum']} missing from metadata/winui/_types.json")
+            return {"type": "enum", "nullable": False, "enum": ty["enum"], "values": [kebab(n) for n, _ in tt["members"]],
+                    "ref": f"enum<{ty['enum']}>"}
+        fail(f"{where}: wire type {t} has no spec type")
+
+    kinds: dict[str, dict] = {}
+    for c in m.class_names:
+        kinds[short(c)] = {"native": c, "abstract": True, "interface": False,
+                           "chain": [short(x) for x in [c] + m.classes[c]["bases"] if x in m.class_index],
+                           "lifetime": "owned", "present": None, "text_content": None, "props": {}, "signals": {},
+                           "bindings": {}, "children": None, "methods": {}, "provenance": {}}
+    tags = {}
+    for k in m.kinds:
+        kd = kinds[short(k["class"])]
+        kd["abstract"] = False
+        tags[k["tag"]] = short(k["class"])
+        if k["el"].get("lifetime") == "toplevel":
+            kd["lifetime"] = "toplevel"
+        tc = m.kind_text_content(k)
+        if tc:
+            kd["text_content"] = tc
+            kd["provenance"]["text_content"] = "metadata/overrides/winui text_prop"
+    for p in m.props:
+        r = {"js": p["name"], "native": p["native"], **wtype(f"{p['file']} prop {p['native']}", p["ty"]),
+             "readable": bool(p["read"]), "writable": bool(p["write"]), "construct_only": False, "default": None}
+        kinds[short(p["class"])]["props"][p["name"]] = {k: r[k] for k in sorted(r)}
+    for e in m.events:
+        o = e["o"]
+        args = [{"name": x["name"], "type": ptype(x["ref"].replace("nullable<bool>", "bool"))} for x in e["payload"]]
+        kinds[short(e["class"])]["signals"][e["name"]] = phases_rec({
+            "name": e["name"], "js_event": e["name"], "args": args,
+            # sync events hand `true` (preventDefault/result) to Cancel/Handled (WIN1 notes)
+            "handler_result": "bool_stop" if o.get("result") else "none", "sync_required": bool(o.get("sync")),
+            "disconnect_on_drop": True}, [])
+    for i, s in enumerate(m.slots):
+        kd = kinds[short(s["class"])]
+        ch = kd["children"] or {"policy": "slots", "default_slot": None, "slots": {}}
+        kd["children"] = ch
+        ch["slots"][s["name"]] = {"many": s["many"], "accepts": ["UIElement"], "route_by_kind": False,
+                                  "order": "native_index" if s["many"] else "none", "attrs": {}}
+        if s["default"]:
+            ch["default_slot"] = s["name"]
+    for a in m.attrs:
+        # an attached property of `class` (Grid.Row) is an attribute of the slot it names, on that
+        # class's kind: Grid gets its own copy of the inherited Panel `children` slot with the attrs
+        slot = m.slots[a["slot"]]
+        kd = kinds[short(a["class"])]
+        ch = kd["children"] or {"policy": "slots", "default_slot": None, "slots": {}}
+        kd["children"] = ch
+        sl = ch["slots"].setdefault(slot["name"], {"many": slot["many"], "accepts": ["UIElement"], "route_by_kind": False,
+                                                   "order": "native_index" if slot["many"] else "none", "attrs": {}})
+        if slot["default"] and ch["default_slot"] is None:
+            ch["default_slot"] = slot["name"]
+        sl["attrs"][a["name"]] = {"type": "i32", "default": a["default"]}
+    for mt in m.methods:
+        kinds[short(mt["class"])]["methods"][mt["name"]] = {
+            "dispatch": "generated", "native": mt["native"],
+            "params": [{"name": kebab(p["name"]), **{k: v for k, v in wtype(f"method {mt['native']}", p["ty"]).items() if k in ("type", "nullable")}}
+                       for p in mt["params"]],
+            "returns": {k: v for k, v in wtype(f"method {mt['native']}", mt["ret"]).items() if k in ("type", "nullable")}
+            if mt["ret"] else {"type": "void", "nullable": False}}
+
+    def find_prop(kid: str, name: str) -> dict | None:
+        for c in kinds[kid]["chain"]:
+            for p in kinds[c]["props"].values():
+                if name in (p["js"], p["native"]):
+                    return p
+        return None
+
+    def find_sig(kid: str, name: str) -> dict | None:
+        for c in kinds[kid]["chain"]:
+            if name in kinds[c]["signals"]:
+                return kinds[c]["signals"][name]
+        return None
+
+    for k in m.kinds:
+        kid = short(k["class"])
+        kd = kinds[kid]
+        if kd["lifetime"] == "toplevel":
+            if not any("activate" in kinds[c]["methods"] for c in kd["chain"]):
+                fail(f"winui {kid}: toplevel without an annotated Activate")
+            kd["present"] = "activate"
+            kd["provenance"]["present"] = "Window.Activate (WIN1: the renderer's TOPLEVELS open method)"
+    for cls, o in sorted(m.ovr.items()):
+        for b in sorted(o.get("bindings", []), key=lambda b: b["name"]):
+            kid = short(cls)
+            if b["name"] != b["property"]:
+                fail(f"winui {kid} bind:{b['name']}: binding names are the native prop name ({b['property']})")
+            kinds[kid]["bindings"][b["name"]] = binding_from_metadata(
+                f"winui {kid}", b, lambda n, c=kid: find_prop(c, n), lambda n, c=kid: find_sig(c, n))
+    for kd in kinds.values():
+        kd["props"] = dict(sorted(kd["props"].items()))
+        kd["signals"] = dict(sorted(kd["signals"].items()))
+        kd["methods"] = dict(sorted(kd["methods"].items()))
+        if not kd["provenance"]:
+            del kd["provenance"]
+    style = style_table.build("winui", style_table.load("winui"), tags, kinds)
+    return {"schema": SCHEMA, "backend": "winui", "framework": "WinUI 3 (svelters-winui, windows-rs)", "event_aliases": {},
+            "tags": dict(sorted(tags.items())), "kinds": kinds, "style": style, "method_lookup": "annotated",
+            "source": {"metadata": "metadata/winui/*.json + metadata/overrides/winui/*.yaml", "style": "metadata/style/winui.yaml"}}
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--check", action="store_true", help="exit 1 if a checked-in output is stale")
     a = ap.parse_args()
     try:
-        outs = {"gtk.json": render(gtk_spec()), "qt.json": render(qt_spec())}
-    except (SpecError, gen_cpp.GenError, style_table.StyleError) as ex:
+        outs = {"gtk.json": render(gtk_spec()), "qt.json": render(qt_spec()), "appkit.json": render(appkit_spec()),
+                "winui.json": render(winui_spec())}
+    except (SpecError, gen_cpp.GenError, style_table.StyleError, appkit_gen.GenError, winui_gen.GenError) as ex:
         print(f"gen_semantics: {ex}", file=sys.stderr)
         return 1
     stale = []

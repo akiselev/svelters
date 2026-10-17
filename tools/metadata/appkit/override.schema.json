@@ -9,7 +9,23 @@
   "$defs": {
     "provenance": {"type": "string", "minLength": 3},
     "selector": {"type": "string", "pattern": "^[a-zA-Z_][a-zA-Z0-9_:]*$"},
-    "sample": {"description": "A JS value: string, number, bool, list of strings (flags) or an object (struct fields)"}
+    "sample": {"description": "A JS value: string, number, bool, list of strings (flags) or an object (struct fields)"},
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "direction", "property", "type", "change", "echo", "lifetime", "provenance"],
+      "properties": {
+        "name": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+        "direction": {"enum": ["two_way", "read_only"]},
+        "property": {"type": "string"},
+        "type": {"type": "object", "additionalProperties": false, "required": ["ref"], "properties": {"ref": {"type": "string"}, "nullable": {"type": "boolean"}}},
+        "change": {"type": "object", "additionalProperties": false, "required": ["signal"], "properties": {"signal": {"type": "string"}, "role": {"enum": ["any_change", "user_edit"]}, "value": {"enum": ["arg0", "prop"]}}},
+        "write": {"type": "object"},
+        "echo": {"type": "object", "additionalProperties": false, "required": ["strategy"], "properties": {"strategy": {"enum": ["host_suppressed", "compare", "none"]}, "compare_before_set": {"type": "boolean"}, "read_back": {"type": "boolean"}, "sync_signals_on_set": {"type": "array", "items": {"type": "string"}}}},
+        "lifetime": {"type": "object"},
+        "provenance": {"$ref": "#/$defs/provenance"}
+      }
+    }
   },
   "properties": {
     "class": {"type": "string", "pattern": "^NS[A-Za-z]+$"},
@@ -31,6 +47,7 @@
             "style_mask": {"type": "array", "items": {"type": "string"}}
           }
         },
+        "text_prop": {"type": "string", "description": "Prop (kebab-case native name) that Text children of the element set (`<button>Save</button>` sets `title`); the compiler and the renderer fold static and {expr} text into it"},
         "provenance": {"$ref": "#/$defs/provenance"}
       }
     },
@@ -145,18 +162,9 @@
       }
     },
     "bindings": {
+      "description": "`bind:<name>` targets in the GTK/Qt binding format (docs/notes/fork-bindings.md section 6), read by tools/metadata/common/gen_bindings.py and tools/metadata/semantics/gen_semantics.py. The name is the native prop name in kebab-case.",
       "type": "array",
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["name", "property", "signal", "provenance"],
-        "properties": {
-          "name": {"type": "string"},
-          "property": {"type": "string"},
-          "signal": {"type": "string"},
-          "provenance": {"$ref": "#/$defs/provenance"}
-        }
-      }
+      "items": {"$ref": "#/$defs/binding"}
     }
   }
 }

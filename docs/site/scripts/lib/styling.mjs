@@ -2,7 +2,7 @@
 // table (packages/style/src/props.generated.js, generated from metadata/style/<toolkit>.yaml).
 import { STYLE_TABLES, TAG_SETS } from '../../../../packages/style/src/props.generated.js';
 
-const NAMES = { gtk: 'GTK 4', qt: 'Qt 6' };
+const NAMES = { gtk: 'GTK 4', qt: 'Qt 6', appkit: 'AppKit', winui: 'WinUI 3' };
 const DIALECT = { css: 'GTK CSS', qss: 'QSS (Qt stylesheets)', none: 'none (setters only)' };
 const TYPE = {
   length: 'length (unitless or px)',

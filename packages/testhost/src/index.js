@@ -6,6 +6,7 @@ import fs from 'node:fs';
 const readSchema = (file) => JSON.parse(fs.readFileSync(new URL(file, import.meta.url), 'utf8'));
 /** Coarse prop types per toolkit vocabulary: `gtk` (the default) and `qt` (Qt-vocabulary fixtures). */
 export const schemas = { gtk: readSchema('./schema.json'), qt: readSchema('./schema.qt.json') };
+const defaultSchema = schemas.gtk;
 
 /**
  * `schema` maps element tags to `{ prop: coarse type }` (`integer`, `number`, `boolean`, `string`,
@@ -14,8 +15,46 @@ export const schemas = { gtk: readSchema('./schema.json'), qt: readSchema('./sch
  * generated from the GTK metadata (`tools/metadata/gtk/gen_backend.py`); `toolkit: 'qt'` picks the one
  * generated from the Qt metadata (`tools/metadata/qt/gen_cpp.py --schema`).
  */
-export function createTestHost({ toolkit = 'gtk', schema = schemas[toolkit] } = {}) {
-  if (!schema) throw new Error(`createTestHost: unknown toolkit ${toolkit}`);
+const COARSE = { i32: 'integer', u32: 'integer', i64: 'integer', f64: 'number', bool: 'boolean', string: 'string', enum: 'enum', flags: 'flags', record: 'record' };
+
+/**
+ * A toolkit's member tables from its semantic spec (metadata/semantics/<toolkit>.json): per tag,
+ * the props, signals and methods of the kind chain, plus the coarse prop types (`schema`).
+ */
+export function toolkitTables(toolkit) {
+  const spec = JSON.parse(fs.readFileSync(new URL(`../../../metadata/semantics/${toolkit}.json`, import.meta.url), 'utf8'));
+  const tags = {};
+  const schema = {};
+  for (const [tag, kid] of Object.entries(spec.tags)) {
+    const t = (tags[tag] = { props: new Set(), signals: new Set(), methods: new Set() });
+    const types = (schema[tag] = {});
+    for (const c of spec.kinds[kid].chain) {
+      const k = spec.kinds[c];
+      if (!k) continue;
+      for (const p of Object.values(k.props)) {
+        for (const n of [p.js, p.native]) {
+          t.props.add(n);
+          if (COARSE[p.type] && !(n in types)) types[n] = COARSE[p.type];
+        }
+      }
+      for (const sg of Object.values(k.signals)) t.signals.add(sg.name).add(sg.js_event);
+      for (const m of Object.keys(k.methods ?? {})) t.methods.add(m);
+    }
+  }
+  return { tags, schema };
+}
+
+/**
+ * `toolkit` (`gtk`, `qt`, `appkit`, `winui`): resolve names like that toolkit's backend does
+ * (toolkitTables): `propId`/`signalId`/`methodId` answer null for a name the kind does not have,
+ * so the renderer picks the toolkit's own candidates (text props, binding variants, `click` vs
+ * `clicked`). Without it every name resolves (the GTK-shaped default).
+ */
+export function createTestHost({ schema: schemaOpt, toolkit } = {}) {
+  const tables = toolkit ? toolkitTables(toolkit) : null;
+  const schema = schemaOpt ?? tables?.schema ?? defaultSchema;
+  // A kind the toolkit's spec does not know (synthetic: virtual-list, canvas, GTK menus) resolves any name.
+  const knows = (kid, set, name) => !tables || !tables.tags[kindNames[kid]] || tables.tags[kindNames[kid]][set].has(name);
   const lines = [];
   // Ids exist only to exercise the renderer's id path; the log always prints names.
   const kindNames = [null];
@@ -49,10 +88,7 @@ export function createTestHost({ toolkit = 'gtk', schema = schemas[toolkit] } = 
       return kindIds.get(tag);
     },
     propId(kid, name) {
-      // A kind the schema knows has exactly its listed props, like a real backend; unknown kinds
-      // (synthetic ones such as virtual-list) resolve any name.
-      const known = schema[kindNames[kid]];
-      if (known && !Object.hasOwn(known, name)) return null;
+      if (!knows(kid, 'props', name)) return null;
       const key = `${kid}:${name}`;
       if (!propIdOf.has(key)) {
         const id = propIdOf.size + 1;
@@ -62,6 +98,7 @@ export function createTestHost({ toolkit = 'gtk', schema = schemas[toolkit] } = 
       return propIdOf.get(key);
     },
     methodId(kid, name) {
+      if (!knows(kid, 'methods', name)) return null;
       const key = `${kid}:${name}`;
       if (!methodIdOf.has(key)) {
         const id = methodIdOf.size + 1;
@@ -70,6 +107,8 @@ export function createTestHost({ toolkit = 'gtk', schema = schemas[toolkit] } = 
       }
       return methodIdOf.get(key);
     },
+    // Only with a toolkit: signals have no ids, so this answers whether the kind has `name`.
+    ...(tables ? { signalId: (kid, name) => (knows(kid, 'signals', name) ? name : null) } : {}),
     propType(kid, pid) {
       return schema[kindNames[kid]]?.[nameOf(propNames, kid, pid)] ?? null;
     },
@@ -280,7 +319,7 @@ const MAX_TIMER_FIRINGS = 10_000;
  *                                 fire the earliest one (advancing virtual time); else stop }.
  * The bundle is evaluated before step 1, with no implicit checkpoint.
  */
-export async function runBundle({ bundlePath, script, toolkit = 'gtk', styleDialect = toolkit === 'qt' ? 'qss' : 'css' }) {
+export async function runBundle({ bundlePath, script, toolkit, styleDialect = toolkit === 'qt' ? 'qss' : 'css' }) {
   const th = createTestHost({ toolkit });
   if (styleDialect === 'qss') {
     // answer the Qt dialect (style target 2), so the bundle applies the Qt style table

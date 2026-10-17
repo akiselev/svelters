@@ -212,9 +212,12 @@ fn replay_all_fixtures() {
     assert!(!names.is_empty(), "no fixtures found");
     for e in names {
         let log = std::fs::read_to_string(e.path().join("expected.oplog")).unwrap();
-        if e.file_name().to_string_lossy().ends_with("-mac") {
-            // AppKit fixtures use AppKit tags (stack-view, text-field); examples/counter-mac runs them.
-            eprintln!("{}: skipped (AppKit fixture)", e.file_name().to_string_lossy());
+        let pkg = std::fs::read_to_string(e.path().join("package.json")).unwrap_or_default();
+        let toolkit = serde_json::from_str::<serde_json::Value>(&pkg).ok().and_then(|v| v["svelters"]["toolkit"].as_str().map(str::to_string));
+        if let Some(tk) = toolkit.filter(|tk| tk != "gtk") {
+            // AppKit / WinUI fixtures use their own tags (stack-view, text-block); examples/counter-mac
+            // and examples/counter-win run them.
+            eprintln!("{}: skipped ({tk} fixture)", e.file_name().to_string_lossy());
             continue;
         }
         if e.file_name().to_string_lossy().ends_with("-qt") {

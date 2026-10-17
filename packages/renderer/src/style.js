@@ -311,7 +311,7 @@ function applySetters(el, sc, classes, id) {
     if (want.has(key)) continue;
     // no rule sets it any more: back to the native value read before the first override
     if (cur.entry.via === 'setter') {
-      if (!hooks.hasProp(el, cur.entry.prop, cur.entry.native)) hooks.writeProp(el, cur.entry.prop, cur.orig);
+      if (!hooks.hasProp(el, cur.entry.prop, cur.entry.native)) (hooks.restoreProp ?? hooks.writeProp)(el, cur.entry.prop, cur.orig);
     } else if (!hooks.hasChildAttr(el, cur.entry.attr)) hooks.writeChildAttr(el, cur.entry.attr, null);
   }
   const next = new Map();

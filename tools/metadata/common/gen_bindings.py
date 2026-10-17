@@ -4,14 +4,17 @@
 Inputs (only these):
   gtk: metadata/gtk/*.json   (`bindings` list on a kind with an `element.tag`; merged from metadata/overrides/gtk/*.yaml by ingest.py)
   qt:  metadata/overrides/qt/*.yaml   (`bindings` list on an `elements[]` entry)
+  appkit: metadata/overrides/appkit/*.yaml + metadata/appkit/*.json   (`bindings` list on a class; applies to the element classes deriving from it)
+  winui:  metadata/overrides/winui/*.yaml + metadata/winui/*.json     (same; property and signal are kebab-case JS names)
 Outputs (checked in, byte-identical on rerun):
   packages/renderer/src/bindings.generated.js   table used by renderer.bind(el, name, get, set)
   packages/renderer/types/bindings.d.ts         `bind:<name>` types per tag
 
 The schema extension is documented in docs/notes/fork-bindings.md section 6. Each binding is checked
 against the facts it refers to (property exists and is writable, the change signal exists, the echo
-strategy is backed by the backend's own suppression annotation), and the two toolkits must agree on
-everything the renderer sees.
+strategy is backed by the backend's own suppression annotation). Toolkits that define the same
+`bind:<name>` on a tag but differ in what the renderer sees (prop, signal, ...) become candidate
+variants: BINDINGS[tag][name] is then an array and the renderer picks the first the host resolves.
 
 Usage: python3 tools/metadata/common/gen_bindings.py [--check]
 """
@@ -19,6 +22,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -39,7 +43,9 @@ TYPES = {"string": ("string", "string"), "bool": ("bool", "boolean"), "i32": ("n
          "i64": ("number", "number"), "f32": ("number", "number"), "f64": ("number", "number"),
          # structured values pass through the renderer; the host converts them by descriptor
          "date": ("value", "{ year: number; month: number; day: number }"), "time": ("value", "{ hour: number; minute: number; second: number; ms: number }"),
-         "datetime": ("value", "Date"), "record": ("value", "Record<string, unknown>")}
+         "datetime": ("value", "Date"), "record": ("value", "Record<string, unknown>"),
+         # enums travel by member name (the backend converts both ways)
+         "enum": ("string", "string")}
 DIRECTIONS = {"two_way", "read_only"}
 STRATEGIES = {"host_suppressed", "compare", "none"}
 
@@ -57,6 +63,8 @@ def common_fields(where: str, b: dict) -> dict:
     if b.get("direction") not in DIRECTIONS:
         raise GenError(f"{where}: direction must be one of {sorted(DIRECTIONS)}")
     ref = (b.get("type") or {}).get("ref")
+    if isinstance(ref, str) and re.fullmatch(r"enum<.+>", ref):
+        ref = "enum"
     if ref not in TYPES:
         raise GenError(f"{where}: type {ref!r} is not supported by the renderer ({sorted(TYPES)})")
     echo = b.get("echo") or {}
@@ -173,6 +181,97 @@ def qt_bindings() -> dict[str, dict[str, dict]]:
                 out[tag][b["name"]] = fields
     return out
 
+APPKIT_META = ROOT / "metadata/appkit"
+WINUI_META = ROOT / "metadata/winui"
+
+
+kebab = naming.kebab  # the shared rule (tools/metadata/common/naming.py): IsChecked -> is-checked
+
+
+def _add_binding(out: dict, tag: str, b: dict, tk: str, props: dict, signals: dict) -> None:
+    """Validate binding `b` of `<tag>` against `props` (name -> writable) and `signals` (name -> payload length)."""
+    where = f"{tk} <{tag}>"
+    fields = common_fields(where, b)
+    name = b["name"]
+    if b["property"] not in props:
+        raise GenError(f"{where} bind:{name}: unknown property {b['property']}")
+    if b["direction"] == "two_way" and not props[b["property"]]:
+        raise GenError(f"{where} bind:{name}: property {b['property']} is not writable")
+    sig = fields["signal"]
+    if sig and sig not in signals:
+        raise GenError(f"{where} bind:{name}: unknown signal {sig}")
+    if sig and fields["valueFrom"] == "arg0" and signals[sig] < 1:
+        raise GenError(f"{where} bind:{name}: value is arg0, but signal {sig} carries no arguments")
+    if b["name"] in out.setdefault(tag, {}):
+        raise GenError(f"{where}: duplicate bind:{name}")
+    out[tag][name] = fields
+
+
+def appkit_bindings() -> dict[str, dict[str, dict]]:
+    """AppKit bindings: tag from `element.tag`; one on a class without an element applies to the element
+    classes whose chain includes it."""
+    ov = {p.stem: svmeta.load_yaml(p) for p in sorted(APPKIT_OVERRIDES.glob("*.yaml"))}
+    meta = {p.stem: svmeta.load_json(p) for p in sorted(APPKIT_META.glob("NS*.json"))}
+    chain = lambda cls: [cls] + [c for c in meta[cls]["bases"] if c in meta]  # noqa: E731
+    elements = {c: o["element"]["tag"] for c, o in ov.items() if (o.get("element") or {}).get("tag")}
+    out: dict[str, dict[str, dict]] = {}
+    for el_cls, tag in sorted(elements.items(), key=lambda kv: kv[1]):
+        props: dict[str, bool] = {}
+        signals: dict[str, int] = {}
+        for c in chain(el_cls):
+            for p in meta[c]["properties"]:
+                props.setdefault(p["js_name"], bool(p["access"]["write"]))
+            for p in ov.get(c, {}).get("props", []):
+                props.setdefault(p["name"], True)
+            for s in ov.get(c, {}).get("signals", []):
+                signals.setdefault(s["name"], len(s.get("args", [])))
+        for c in chain(el_cls):
+            for b in ov.get(c, {}).get("bindings", []):
+                _add_binding(out, tag, b, "appkit", props, signals)
+    return out
+
+
+def winui_elements() -> dict[str, str]:
+    """class (full name) -> tag for every WinUI element kind (`element` present in the override)."""
+    out = {}
+    for path in sorted(WINUI_OVERRIDES.glob("*.yaml")):
+        data = svmeta.load_yaml(path)
+        el = data.get("element")
+        if el is None:
+            continue
+        short = data["class"].rsplit(".", 1)[1]
+        out[data["class"]] = el.get("tag") or kebab(short)
+    return out
+
+
+def winui_bindings() -> dict[str, dict[str, dict]]:
+    """WinUI bindings; `property` and `change.signal` are kebab-case JS names. Bindings on a base class apply
+    to the element kinds whose chain includes it."""
+    ov = {}
+    for path in sorted(WINUI_OVERRIDES.glob("*.yaml")):
+        data = svmeta.load_yaml(path)
+        ov[data["class"]] = data
+    meta = {}
+    for path in sorted(WINUI_META.glob("*.json")):
+        if not path.name.startswith("_"):
+            k = svmeta.load_json(path)
+            meta[k["native"]["name"]] = k
+    out: dict[str, dict[str, dict]] = {}
+    for cls, tag in sorted(winui_elements().items(), key=lambda kv: kv[1]):
+        props: dict[str, bool] = {}
+        signals: dict[str, int] = {}
+        chain = [cls] + meta[cls]["bases"]
+        for c in chain:
+            writable = {p["name"]: bool(p["access"]["write"]) for p in meta[c]["properties"]} if c in meta else {}
+            for p in ov.get(c, {}).get("props", []):
+                props.setdefault(kebab(p["name"]), writable.get(p["name"], True))
+            for e in ov.get(c, {}).get("events", []):
+                signals.setdefault(kebab(e["name"]), len(e.get("payload", [])))
+        for c in chain:
+            for b in ov.get(c, {}).get("bindings", []):
+                _add_binding(out, tag, b, "winui", props, signals)
+    return out
+
 
 def gtk_toplevels() -> dict[str, dict]:
     """tag -> how a toplevel of this kind is shown (lifetime class `toplevel` in the merged metadata)."""
@@ -265,6 +364,35 @@ def merge_toplevels(gtk: dict, qt: dict, appkit: dict | None = None, winui: dict
     return out
 
 
+SEMANTICS = ROOT / "metadata/semantics"
+
+
+def text_props() -> dict[str, list[str]]:
+    """tag -> candidate JS prop names Text children are folded into (`kinds.<id>.text_content` of each toolkit's
+    semantics file that exists), in toolkit order gtk, qt, appkit, winui."""
+    out: dict[str, list[str]] = {}
+    for tk in ("gtk", "qt", "appkit", "winui"):
+        path = SEMANTICS / f"{tk}.json"
+        if not path.exists():
+            continue
+        spec = svmeta.load_json(path)
+        for tag, kid in spec["tags"].items():
+            name = (spec["kinds"].get(kid) or {}).get("text_content")
+            if name and name not in out.setdefault(tag, []):
+                out[tag].append(name)
+    return {t: out[t] for t in sorted(out)}
+
+
+def js_text_props(tp: dict[str, list[str]]) -> str:
+    o = ["\n// Tags whose Text children are folded into a prop, with candidate prop names (union over the toolkits, in order);\n",
+         "// the first one the host resolves wins. From `kinds.<id>.text_content` of metadata/semantics/<toolkit>.json.\n",
+         "export const TEXT_PROPS = {\n"]
+    for tag, names in tp.items():
+        o.append(f"  {key(tag)}: {json.dumps(names)},\n")
+    o.append("};\n")
+    return "".join(o)
+
+
 GTK_EXTRAS = ROOT / "metadata/extras"
 
 
@@ -287,20 +415,31 @@ def gtk_extra_bindings() -> dict[str, dict[str, dict]]:
     return out
 
 
-def merge(gtk: dict, qt: dict) -> dict[str, dict[str, dict]]:
-    """Union by tag and name. A binding both toolkits define must agree on what the renderer sees."""
-    out: dict[str, dict[str, dict]] = {}
-    for tk, table in (("gtk", gtk), ("qt", qt)):
+def merge(gtk: dict, qt: dict, appkit: dict | None = None, winui: dict | None = None) -> dict[str, dict[str, dict | list[dict]]]:
+    """Union by tag and name, in toolkit order gtk, qt, appkit, winui. Toolkits whose binding looks the same to the
+    renderer share one descriptor (`toolkits` lists them); where they differ the entry is a list of descriptors,
+    first-seen first, and the renderer picks the first one the host resolves."""
+    variants: dict[str, dict[str, list[dict]]] = {}
+    for tk, table in (("gtk", gtk), ("qt", qt), ("appkit", appkit or {}), ("winui", winui or {})):
         for tag, names in table.items():
             for name, f in names.items():
-                cur = out.setdefault(tag, {}).get(name)
-                if cur is None:
-                    out[tag][name] = {**f, "toolkits": [tk]}
+                vs = variants.setdefault(tag, {}).setdefault(name, [])
+                for v in vs:
+                    if {k: x for k, x in v.items() if k != "toolkits"} == f:
+                        v["toolkits"].append(tk)
+                        break
                 else:
-                    if {k: v for k, v in cur.items() if k != "toolkits"} != f:
-                        raise GenError(f"<{tag}> bind:{name}: gtk and qt disagree: {cur} vs {f}")
-                    cur["toolkits"].append(tk)
-    return out
+                    vs.append({**f, "toolkits": [tk]})
+    return {tag: {n: (vs[0] if len(vs) == 1 else vs) for n, vs in names.items()} for tag, names in variants.items()}
+
+
+def key(name: str) -> str:
+    """An object-literal key: bare when it is an identifier, quoted otherwise (tags and props are kebab-case)."""
+    return name if re.fullmatch(r"[A-Za-z_$][\w$]*", name) else json.dumps(name)
+
+
+def variants(entry: dict | list[dict]) -> list[dict]:
+    return entry if isinstance(entry, list) else [entry]
 
 
 def js_toplevels(top: dict) -> str:
@@ -315,65 +454,34 @@ def js_toplevels(top: dict) -> str:
     return "".join(o)
 
 
-def key(name: str) -> str:
-    """A JS/TS object key: bare when it is an identifier, else quoted (`"check-box"`)."""
-    return name if name.isidentifier() else json.dumps(name)
-
-
-SEMANTICS = ROOT / "metadata/semantics"
-
-
-def text_props() -> dict[str, list[str]]:
-    """tag -> candidate props that Text children fold into (`text_content`): GTK and Qt from the semantic
-    specs (metadata/semantics/{gtk,qt}.json), WinUI from its overrides. Candidates in toolkit order; the
-    first one the host resolves wins, so a tag several toolkits share (`label`: GTK `label`, Qt `text`) works."""
-    out: dict[str, list[str]] = {}
-    for tk in ("gtk", "qt"):
-        spec = json.loads((SEMANTICS / f"{tk}.json").read_text())
-        for tag, kid in sorted(spec["tags"].items()):
-            tc = spec["kinds"][kid].get("text_content")
-            if tc and tc not in out.setdefault(tag, []):
-                out[tag].append(tc)
-    for path in sorted(WINUI_OVERRIDES.glob("*.yaml")):
-        data = svmeta.load_yaml(path)
-        el = data.get("element") or {}
-        if el.get("text_content"):
-            tag = el.get("tag") or naming.tag_for("winui", data["class"])
-            tc = naming.kebab(el["text_content"])
-            if tc not in out.setdefault(tag, []):
-                out[tag].append(tc)
-    return {t: v for t, v in sorted(out.items()) if v}
-
-
 def row_outlets() -> list[str]:
     """Candidate tags of the per-row outlet of virtualized lists (`row_outlet` of each semantic spec)."""
     out = []
-    for tk in ("gtk", "qt"):
-        t = json.loads((SEMANTICS / f"{tk}.json").read_text()).get("row_outlet")
+    for tk in ("gtk", "qt", "appkit", "winui"):
+        path = SEMANTICS / f"{tk}.json"
+        t = svmeta.load_json(path).get("row_outlet") if path.exists() else None
         if t and t not in out:
             out.append(t)
     return out
 
 
-def js_text(tp: dict, outlets: list[str]) -> str:
-    o = ["\n// Tags whose Text children fold into a prop: candidate prop names, the first one the host resolves wins.\n",
-         "export const TEXT_PROPS = {\n"]
-    o += [f"  {key(t)}: {json.dumps(v)},\n" for t, v in tp.items()]
-    o.append("};\n")
-    o.append("\n// Candidate tags of the container a virtualized list renders each row into (the first the host resolves).\n")
-    o.append(f"export const ROW_OUTLETS = {json.dumps(outlets)};\n")
-    return "".join(o)
+def js_row_outlets(outlets: list[str]) -> str:
+    return ("\n// Candidate tags of the container a virtualized list renders each row into (the first the host resolves).\n"
+            f"export const ROW_OUTLETS = {json.dumps(outlets)};\n")
 
 
 def js(table: dict) -> str:
-    o = [HEADER, "// tag -> bind:<name> -> descriptor. `signal` is the JS event name of the change signal.\n"]
+    o = [HEADER, "// tag -> bind:<name> -> descriptor, or an array of candidate descriptors when the toolkits differ (the first one\n",
+         "// the host resolves wins). `signal` is the JS event name of the change signal.\n"]
     o.append("export const BINDINGS = {\n")
     for tag in sorted(table):
         o.append(f"  {key(tag)}: {{\n")
         for name in sorted(table[tag]):
-            f = table[tag][name]
-            fields = ", ".join(f"{k}: {json.dumps(f[k])}" for k in ("prop", "signal", "type", "direction", "compare", "readBack", "valueFrom", "toolkits"))
-            o.append(f"    {key(name)}: {{ {fields} }},\n")
+            descs = []
+            for f in variants(table[tag][name]):
+                fields = ", ".join(f"{k}: {json.dumps(f[k])}" for k in ("prop", "signal", "type", "direction", "compare", "readBack", "valueFrom", "toolkits"))
+                descs.append(f"{{ {fields} }}")
+            o.append(f"    {key(name)}: {descs[0] if len(descs) == 1 else '[' + ', '.join(descs) + ']'},\n")
         o.append("  },\n")
     o.append("};\n")
     return "".join(o)
@@ -385,9 +493,11 @@ def dts(table: dict, top: dict) -> str:
     for tag in sorted(table):
         o.append(f"  {key(tag)}: {{\n")
         for name in sorted(table[tag]):
-            f = table[tag][name]
-            ro = "readonly " if f["direction"] == "read_only" else ""
-            o.append(f"    {ro}{key(name)}: {f['tsType']}; // {'/'.join(f['toolkits'])}\n")
+            vs = variants(table[tag][name])
+            ro = "readonly " if all(f["direction"] == "read_only" for f in vs) else ""
+            ts = " | ".join(dict.fromkeys(f["tsType"] for f in vs))
+            tks = "/".join(dict.fromkeys(t for f in vs for t in f["toolkits"]))
+            o.append(f"    {ro}{key(name)}: {ts}; // {tks}\n")
         o.append("  };\n")
     o.append("}\n")
     o.append("\n// Toplevel kinds (windows and dialogs) may be declared anywhere in a component; `show` is their JS-only policy.\n")
@@ -405,12 +515,12 @@ def main() -> int:
         gtk = gtk_bindings()
         for tag, names in gtk_extra_bindings().items():
             gtk.setdefault(tag, {}).update(names)
-        table = merge(gtk, qt_bindings())
+        table = merge(gtk, qt_bindings(), appkit_bindings(), winui_bindings())
         top = merge_toplevels(gtk_toplevels(), qt_toplevels(), appkit_toplevels(), winui_toplevels())
     except GenError as e:
         print(f"gen_bindings: {e}", file=sys.stderr)
         return 1
-    outs = {OUT_JS: js(table) + js_toplevels(top) + js_text(text_props(), row_outlets()), OUT_DTS: dts(table, top)}
+    outs = {OUT_JS: js(table) + js_text_props(text_props()) + js_toplevels(top) + js_row_outlets(row_outlets()), OUT_DTS: dts(table, top)}
     stale = [p for p, text in outs.items() if not p.exists() or p.read_text() != text]
     if args.check:
         for p in stale:

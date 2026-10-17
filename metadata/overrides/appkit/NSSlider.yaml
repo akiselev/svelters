@@ -27,6 +27,11 @@ props:
     provenance: "NSSlider.vertical (BOOL, getter isVertical, 10.12+)"
 bindings:
   - name: double-value
+    direction: two_way
     property: double-value
-    signal: action
-    provenance: "two-way bind:double-value; continuous sliders send the action while dragging; programmatic sets never send it"
+    type: { ref: f64, nullable: false }
+    change: { signal: action, role: user_edit, value: prop }
+    write: { natively_normalizes: false }
+    echo: { strategy: none, compare_before_set: true, read_back: false }
+    lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
+    provenance: "two-way bind:double-value; continuous sliders send the action while dragging (no value: read back); programmatic sets never send it"

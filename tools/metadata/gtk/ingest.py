@@ -407,6 +407,8 @@ def apply_override(doc: dict, ov: dict, errors: list[str]) -> dict:
             clean[key] = [{**r, "id": f"{doc['id']}:binding:{r['name']}", "origin": "manual"} for r in val]
         elif key == "lifetime":
             clean[key] = {**val, "id": f"{doc['id']}:lifetime", "origin": "manual"}
+        elif key == "text_prop":
+            continue  # read from the override by tools/metadata/semantics/gen_semantics.py, not merged
         elif key == "unexposed":
             clean[key] = {**val, "origin": "manual"}
         else:

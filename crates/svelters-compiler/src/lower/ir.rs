@@ -69,6 +69,8 @@ pub struct Element<'a> {
     /// `class={expr}` (or an interpolated `class`): the element's runtime class set, declared as
     /// `const c<id> = $.derived(() => $n.classes(expr))` and read by style conditions.
     pub class_expr: Option<Dynamic<'a>>,
+    /// A dynamic `id`: matched at runtime against the rules' `#id` conditions (`i<id>`).
+    pub id_expr: Option<Dynamic<'a>>,
     pub ops: Vec<Op<'a>>,
     pub children: Fragment<'a>,
 }
@@ -101,7 +103,12 @@ pub enum Op<'a> {
     Token { prop: String, token: String, cond: Cond<'a>, span: Span },
     /// Style-driven prop (or child attribute, `child_attr`) with conditional candidates, highest
     /// precedence first; the first whose condition holds wins, else `fallback`.
-    StyleProp { prop: String, child_attr: bool, candidates: Vec<(Cond<'a>, Json)>, fallback: Fallback, span: Span },
+    /// `guarded`: the element has a dynamic `style={...}`, which wins over rules at runtime
+    /// (`$n.rule_set` / `$n.rule_attr`).
+    StyleProp { prop: String, child_attr: bool, candidates: Vec<(Cond<'a>, Json)>, fallback: Fallback, guarded: bool, span: Span },
+    /// The explicit props and `parent:` attributes of an element with a dynamic `style={...}`:
+    /// they win over its setter declarations at runtime (`$n.explicit`).
+    Explicit { props: Vec<String>, attrs: Vec<String> },
     /// The classes the X6 styling sees (`$n.attr(node, "class", ...)` -> `host.style(CLASSES)`):
     /// `base` (static classes and the component's CSS scope class), then the dynamic class set of
     /// element `dynamic` (`c<id>`), then the `class:` toggles.
@@ -112,9 +119,11 @@ pub enum Op<'a> {
     /// declarations of `style=`, or its dynamic value, then the `style:` directives of CSS
     /// properties (a nullish value drops the declaration).
     InlineStyle { base: String, dynamic: Option<Dynamic<'a>>, directives: Vec<(String, AttrValue<'a>)>, span: Span },
-    /// `style:<setter>={value}`: `$n.set(node, target, $n.setter_value(backend, name, value))`
-    /// (`$n.child_attr` for a child attribute); the value is parsed at runtime like `style=`.
-    StyleSetter { name: String, target: String, child_attr: bool, backend: String, value: Dynamic<'a>, span: Span },
+    /// `style:<setter>={value}`: `$n.set(node, target, $n.setter_value(backend, name, value) ?? <fallback>)`
+    /// (`$n.child_attr` for a child attribute); the value is parsed at runtime like `style=`. A
+    /// nullish (or bad) value falls back to the static inline value or the matching rules
+    /// (`fallback.0`, highest precedence first), then to `fallback.1`.
+    StyleSetter { name: String, target: String, child_attr: bool, backend: String, value: Dynamic<'a>, fallback: (Vec<(Cond<'a>, Json)>, Fallback), span: Span },
 }
 
 /// An event handler: an expression, or a property of a spread object (`{...events}`), read when
@@ -140,6 +149,8 @@ pub enum CondAtom<'a> {
     Expr(&'a Expression),
     /// Element `element`'s dynamic class set contains `class` (`$.get(c<id>).has(class)`).
     Class { element: usize, class: String },
+    /// Element `element`'s dynamic `id` is `id` (`$.get(i<id>) === id`).
+    Id { element: usize, id: String },
 }
 
 #[derive(Debug, Clone, PartialEq)]

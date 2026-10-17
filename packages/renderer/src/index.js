@@ -555,13 +555,20 @@ const nativeOut = {
   value: (v) => v,
 };
 
+// Several toolkits can bind the same name differently (slider `value`: Qt `valueChanged`, WinUI `value-changed`).
+// The first variant whose prop and signal the host resolves wins; the first one when none does (hosts without ids).
+function pickVariant(tag, variants) {
+  return variants.find((v) => resolves(tag, 'propId', v.prop) && (!v.signal || resolves(tag, 'signalId', v.signal))) ?? variants[0];
+}
+
 // `bind:<name>` on a native element (the fork's renderer.bind hook). The descriptor comes from the
 // binding metadata. The backend already blocks the change signal during a programmatic set, so
 // the echo is handled natively; the renderer only compares before setting (`el.props` mirrors the
 // native value, also for natively made edits) and, if the descriptor says the native side
 // normalizes, reads the value back and reports it.
 function bind(el, name, get, set) {
-  const spec = BINDINGS[el.tag]?.[name];
+  const entry = BINDINGS[el.tag]?.[name];
+  const spec = Array.isArray(entry) ? pickVariant(el.tag, entry) : entry;
   if (!spec) {
     const known = Object.keys(BINDINGS[el.tag] ?? {});
     throw new Error(`bind:${name} is not supported on <${el.tag}>${known.length ? ` (bindable: ${known.join(', ')})` : ' (it has no bindable properties)'}`);

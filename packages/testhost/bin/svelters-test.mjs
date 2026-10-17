@@ -33,7 +33,8 @@ for (const [re, what] of forbidden) {
 
 const script = JSON.parse(fs.readFileSync(path.join(dir, 'script.json'), 'utf8'));
 const pkgPath = path.join(dir, 'package.json');
-const toolkit = (fs.existsSync(pkgPath) && JSON.parse(fs.readFileSync(pkgPath, 'utf8')).svelters?.toolkit) || 'gtk';
+// `"svelters": { "toolkit": "qt" }` in the fixture's package.json: resolve names like that toolkit
+const toolkit = (fs.existsSync(pkgPath) && JSON.parse(fs.readFileSync(pkgPath, 'utf8')).svelters?.toolkit) || undefined;
 const actual = await runBundle({ bundlePath, script, toolkit });
 
 if (update) {

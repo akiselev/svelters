@@ -16,12 +16,7 @@ kinds:
     lifetime: toplevel
     present: present
     provenance: "backend-abi.md ABI v2 'As implemented': GTK toplevel is GtkWindow; present is the zero-arg method in METHODS"
-  Gtk.Label:
-    text_content: label
-    provenance: "@svelters/renderer TEXT_PROPS: text children fold into the label property"
-  Gtk.Button:
-    text_content: label
-    provenance: "@svelters/renderer TEXT_PROPS"
+  # Text children (`text_content`) come from `text_prop` in metadata/overrides/gtk (Label, Button).
   Gtk.Editable:
     signals:
       changed:

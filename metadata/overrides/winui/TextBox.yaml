@@ -23,3 +23,13 @@ events:
 methods:
   - { name: SelectAll, provenance: "TextBox.SelectAll() (winmd ITextBox)" }
   - { name: Select, provenance: "TextBox.Select(start: i32, length: i32) (winmd ITextBox)" }
+bindings:
+  - name: text
+    direction: two_way
+    property: text
+    type: { ref: string, nullable: false }
+    change: { signal: text-changed, role: user_edit, value: arg0 }
+    write: { natively_normalizes: false }
+    echo: { strategy: compare, compare_before_set: true, read_back: false }
+    lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
+    provenance: "TextBox.TextChanged carries the sender's Text (payload arg0); it is raised asynchronously, also after programmatic sets: compared before setting so the echo is a no-op"

@@ -4,11 +4,15 @@ export interface BindableProps {
   action: {
     checked: boolean; // gtk/qt
   };
+  button: {
+    state: string; // appkit
+  };
   calendar: {
     day: number; // gtk
   };
   "check-box": {
     checked: boolean; // qt
+    "is-checked": boolean; // winui
   };
   "check-button": {
     active: boolean; // gtk
@@ -73,8 +77,12 @@ export interface BindableProps {
   "search-entry": {
     text: string; // gtk
   };
+  "secure-text-field": {
+    "string-value": string; // appkit
+  };
   slider: {
-    value: number; // qt
+    "double-value": number; // appkit
+    value: number; // qt/winui
   };
   "spin-box": {
     value: number; // qt
@@ -100,8 +108,14 @@ export interface BindableProps {
   text: {
     text: string; // gtk
   };
+  "text-box": {
+    text: string; // winui
+  };
   "text-edit": {
     "plain-text": string; // qt
+  };
+  "text-field": {
+    "string-value": string; // appkit
   };
   "text-view": {
     text: string; // gtk

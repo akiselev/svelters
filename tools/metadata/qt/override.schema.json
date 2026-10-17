@@ -210,6 +210,10 @@
             "$ref": "#/$defs/binding"
           }
         },
+        "text_prop": {
+          "type": "string",
+          "description": "Prop that Text children of the element set (`<button>Save</button>`): the native Q_PROPERTY name (or the JS name) of an annotated writable string prop. The compiler and the renderer fold static and {expr} text into it."
+        },
         "provenance": {
           "$ref": "#/$defs/provenance"
         }

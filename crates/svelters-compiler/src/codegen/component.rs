@@ -176,6 +176,12 @@ impl Codegen<'_, '_> {
             self.dynamic(c);
             self.w.write("));");
         }
+        if let Some(i) = &e.id_expr {
+            self.line();
+            self.w.write(&format!("const i{} = $.derived(() => String(", e.id + 1));
+            self.dynamic(i);
+            self.w.write(" ?? \"\"));");
+        }
         for op in &e.ops {
             if !(DEFER_TEMPLATE_EFFECTS && self.is_deferred(op)) {
                 self.op(&n, op);
@@ -368,12 +374,25 @@ impl Codegen<'_, '_> {
                 }
                 self.w.write("])));");
             }
-            Op::StyleSetter { name, target, child_attr, backend, value, span } => {
+            Op::StyleSetter { name, target, child_attr, backend, value, fallback: (candidates, fallback), span } => {
                 self.w.map(span.start);
                 let f = if *child_attr { "child_attr" } else { "set" };
+                if *fallback == Fallback::Restore {
+                    self.w.write(&format!("$n.capture({n}, {});", js_str(target)));
+                    self.line();
+                }
                 self.w.write(&format!("$.template_effect(() => $n.{f}({n}, {}, $n.setter_value({}, {}, ", js_str(target), js_str(backend), js_str(name)));
                 self.dynamic(value);
-                self.w.write(")));");
+                self.w.write(")");
+                if !candidates.is_empty() || *fallback != Fallback::Default(Json::Null) {
+                    self.w.write(" ?? ");
+                    self.candidates(candidates, fallback);
+                }
+                self.w.write("));");
+            }
+            Op::Explicit { props, attrs } => {
+                let list = |v: &[String]| v.iter().map(|x| js_str(x)).collect::<Vec<_>>().join(", ");
+                self.w.write(&format!("$n.explicit({n}, [{}], [{}]);", list(props), list(attrs)));
             }
             Op::ChildAttr { name, value, span } => {
                 self.w.map(span.start);
@@ -442,9 +461,14 @@ impl Codegen<'_, '_> {
                     self.w.write("));");
                 }
             }
-            Op::StyleProp { prop, child_attr, candidates, fallback, span } => {
+            Op::StyleProp { prop, child_attr, candidates, fallback, guarded, span } => {
                 self.w.map(span.start);
-                let f = if *child_attr { "child_attr" } else { "set" };
+                let f = match (*child_attr, *guarded) {
+                    (true, false) => "child_attr",
+                    (false, false) => "set",
+                    (true, true) => "rule_attr",
+                    (false, true) => "rule_set",
+                };
                 match fallback {
                     Fallback::Restore => self.w.write(&format!("$n.capture({n}, {});", js_str(prop))),
                     // the widget starts at the spec's native default: don't write it redundantly
@@ -476,6 +500,27 @@ impl Codegen<'_, '_> {
     }
 
 
+    /// `c1 ? v1 : c2 ? v2 : fallback` (an unconditional candidate ends the chain), parenthesized.
+    fn candidates(&mut self, candidates: &[(Cond, Json)], fallback: &Fallback) {
+        self.w.write("(");
+        for (c, v) in candidates {
+            if c.is_empty() {
+                self.json(v);
+                self.w.write(")");
+                return;
+            }
+            self.cond(c);
+            self.w.write(" ? ");
+            self.json(v);
+            self.w.write(" : ");
+        }
+        match fallback {
+            Fallback::Default(d) => self.json(d),
+            Fallback::Restore => self.w.write("$n.RESTORE"),
+        }
+        self.w.write(")");
+    }
+
     fn cond(&mut self, c: &Cond) {
         for (i, a) in c.iter().enumerate() {
             if i > 0 {
@@ -487,6 +532,7 @@ impl Codegen<'_, '_> {
                     self.paren_expr(e, Mode::Read);
                 }
                 CondAtom::Class { element, class } => self.w.write(&format!("$.get(c{}).has({})", element + 1, js_str(class))),
+                CondAtom::Id { element, id } => self.w.write(&format!("$.get(i{}) === {}", element + 1, js_str(id))),
             }
         }
     }
