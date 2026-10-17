@@ -105,7 +105,7 @@ unsafe extern "C" fn h_checkpoint(p: *mut c_void) {
 unsafe extern "C" fn h_call_sync(_: *mut c_void, _: svl_handle, _: svl_id, _: *const svl_value, _: usize, _: *mut svl_value) -> std::ffi::c_int {
     -1
 }
-unsafe extern "C" fn h_destroyed(p: *mut c_void, h: svl_handle) {
+unsafe extern "C" fn h_destroyed(p: *mut c_void, h: svl_handle, _reason: u32) {
     let r = unsafe { &*(p as *const Recorder) };
     r.destroyed.borrow_mut().push(h);
 }

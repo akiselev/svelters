@@ -70,6 +70,12 @@ impl Backend for Recorder {
     fn listen(&self, _: svl_handle, _: svl_id, _: bool) -> Result<(), String> {
         Err("no signals".into())
     }
+    fn handle_info(&self, h: svl_handle) -> Result<svl_handle_info, String> {
+        Ok(svl_handle_info { kind: h as u32, lifetime: SVL_LIFE_OWNED, flags: 0 })
+    }
+    fn schedule_wake(&self, ms: i64) {
+        self.calls.borrow_mut().push(format!("schedule_wake {ms}"));
+    }
     fn run(&self, host: &HostRef<'_>) -> Result<(), String> {
         host.post_event(42, 5, &[Value::Str("x".into())]);
         host.checkpoint();
@@ -106,6 +112,8 @@ fn trait_backend_through_vtable() {
     assert_eq!(b.listen(1, 1, true).unwrap_err().message, "no signals");
     // A panic in the backend becomes an error, not an unwind across the C boundary.
     assert_eq!(b.remove(1, 2).unwrap_err().message, "panic in backend");
+    assert_eq!(b.handle_info(7).unwrap(), svl_handle_info { kind: 7, lifetime: SVL_LIFE_OWNED, flags: 0 });
+    b.schedule_wake(25);
     b.wake_handle().wake();
     b.quit();
     b.destroy(1);
@@ -126,7 +134,7 @@ impl HostCallbacks for Rc2 {
     fn call_sync(&self, _: svl_handle, _: svl_id, _: &[Value]) -> Result<Value, String> {
         Ok(Value::Bool(true))
     }
-    fn on_destroyed(&self, _: svl_handle) {}
+    fn on_destroyed(&self, _: svl_handle, _: u32) {}
 }
 
 struct Rc2(std::rc::Rc<Host>);

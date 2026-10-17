@@ -14,7 +14,9 @@ use std::fmt::Write as _;
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::{Arc, Condvar, Mutex, MutexGuard};
 use std::time::Duration;
-use svelters_abi::{Backend, BackendVtable, HostRef, NameKind, Value, Waker, svl_handle, svl_id};
+use svelters_abi::{
+    Backend, BackendVtable, HostRef, NameKind, SVL_LIFE_OWNED, Value, Waker, svl_handle, svl_handle_info, svl_id,
+};
 
 /// One scripted interaction step.
 #[derive(Clone, Debug, PartialEq)]
@@ -417,6 +419,17 @@ impl Backend for LogBackend {
         );
         Ok(())
     }
+
+    fn handle_info(&self, h: svl_handle) -> Result<svl_handle_info, String> {
+        let kind = self.check_live(h)?;
+        Ok(svl_handle_info {
+            kind,
+            lifetime: SVL_LIFE_OWNED,
+            flags: 0,
+        })
+    }
+
+    fn schedule_wake(&self, _ms: i64) {}
 
     fn run(&self, host: &HostRef<'_>) -> Result<(), String> {
         let steps = std::mem::take(&mut self.shared.lock().script);

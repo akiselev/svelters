@@ -125,7 +125,7 @@ void native_destroyed(svl_handle h) {
   if (it == g.table.end()) return;
   g.table.erase(it);
   drop_listeners(h);
-  if (g.host && g.host->on_destroyed) g.host->on_destroyed(g.host->self, h);
+  if (g.host && g.host->on_destroyed) g.host->on_destroyed(g.host->self, h, SVL_GONE_UNKNOWN);
 }
 
 void post(svl_handle h, svl_id sig, const svl_value *args, size_t n) {
@@ -328,6 +328,18 @@ int b_listen(void *, svl_handle h, svl_id sig, bool on) {
   return gen_listen(h, *e, sig, on);
 }
 
+int b_handle_info(void *, svl_handle h, svl_handle_info *out) {
+  Entry *e = find(h);
+  if (!e) return fail("handle_info: stale or unknown handle");
+  out->kind = e->kind;
+  out->lifetime = SVL_LIFE_OWNED;
+  out->flags = 0;
+  return 0;
+}
+
+// Placeholder until native timers land: the host still drives its own timer thread.
+void b_schedule_wake(void *, int64_t) {}
+
 int b_run(void *, const svl_host *host) {
   g.host = host;
   ensure_app();
@@ -360,7 +372,8 @@ void b_quit(void *) {
 const char *b_last_error(void *) { return g.err.c_str(); }
 
 const svl_backend kBackend = {SVL_ABI_VERSION, &g, b_resolve, b_create, b_insert, b_remove, b_destroy,
-                              b_set_prop, b_get_prop, b_call, b_listen, b_run, b_wake, b_quit, b_last_error};
+                              b_set_prop, b_get_prop, b_call, b_listen, b_handle_info, b_run, b_wake, b_schedule_wake, b_quit,
+                              b_last_error};
 
 }  // namespace
 
