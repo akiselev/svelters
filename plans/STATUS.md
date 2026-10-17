@@ -34,3 +34,4 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | JS ↔ native serdes | js-native-serdes.md | in progress |
 | Ownership and lifetimes | ownership-and-lifetimes.md | in progress |
 | Svelte feature survey (lists, snippets, bindings) | svelte-feature-survey.md | in progress |
+| Styling: GTK CSS and Qt QSS | styling-gtk-css-qss.md | in progress |
