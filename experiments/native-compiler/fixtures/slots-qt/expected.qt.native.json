@@ -1,0 +1,22 @@
+[
+ {
+  "class": "QMainWindow",
+  "d": 0,
+  "text": "Main window"
+ },
+ {
+  "class": "QWidget",
+  "d": 1,
+  "text": ""
+ },
+ {
+  "class": "QLabel",
+  "d": 2,
+  "text": "Clicked 1 times"
+ },
+ {
+  "class": "QPushButton",
+  "d": 2,
+  "text": "Click"
+ }
+]
