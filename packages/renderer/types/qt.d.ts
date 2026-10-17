@@ -106,6 +106,7 @@ export interface QtElementDescriptors {
       open(options?: { signal?: AbortSignal }): Promise<number>;
       accept(): void;
       reject(): void;
+      done(r: number): void;
       show(): void;
       hide(): void;
       setFocus(): void;
@@ -330,6 +331,7 @@ export interface QtElementDescriptors {
       open(): void;
       accept(): void;
       reject(): void;
+      done(r: number): void;
       show(): void;
       hide(): void;
       setFocus(): void;
@@ -365,7 +367,9 @@ export interface QtElementDescriptors {
     methods: {
       setDirectory(directory: string): void;
       open(): void;
+      accept(): void;
       reject(): void;
+      done(r: number): void;
       show(): void;
       hide(): void;
       setFocus(): void;
@@ -400,6 +404,7 @@ export interface QtElementDescriptors {
       open(): void;
       accept(): void;
       reject(): void;
+      done(r: number): void;
       show(): void;
       hide(): void;
       setFocus(): void;
@@ -983,6 +988,7 @@ export interface QtElementDescriptors {
       open(): void;
       accept(): void;
       reject(): void;
+      done(r: number): void;
       show(): void;
       hide(): void;
       setFocus(): void;
