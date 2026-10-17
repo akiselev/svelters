@@ -1,0 +1,2082 @@
+{
+  "abstract": false,
+  "bases": [
+    "NSResponder",
+    "NSObject"
+  ],
+  "id": "svelters-api:v1:type:appkit:AppKit:NSView",
+  "kind": "object",
+  "methods": [
+    {
+      "name": "add-subview",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "view",
+          "type": {
+            "native": "NSView *",
+            "ref": "object<NSView>"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "addSubview:"
+    },
+    {
+      "name": "add-subview-positioned-relative-to",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "view",
+          "type": {
+            "native": "NSView *",
+            "ref": "object<NSView>"
+          }
+        },
+        {
+          "name": "place",
+          "type": {
+            "native": "NSWindowOrderingMode",
+            "ref": "enum<NSWindowOrderingMode>"
+          }
+        },
+        {
+          "name": "otherView",
+          "type": {
+            "native": "NSView *",
+            "nullable": true,
+            "ref": "object<NSView>"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "addSubview:positioned:relativeTo:"
+    },
+    {
+      "name": "remove-from-superview",
+      "origin": "sdk",
+      "params": [],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "removeFromSuperview"
+    }
+  ],
+  "native": {
+    "framework": "AppKit",
+    "header": "NSView.h",
+    "name": "NSView"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "additionalSafeAreaInsets",
+        "set": "setAdditionalSafeAreaInsets:"
+      },
+      "availability": {
+        "since": "11.0"
+      },
+      "js_name": "additional-safe-area-insets",
+      "memory": "assign",
+      "name": "additionalSafeAreaInsets",
+      "origin": "sdk",
+      "type": {
+        "native": "NSEdgeInsets",
+        "ref": "insets"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "alignmentRectInsets"
+      },
+      "availability": {
+        "since": "10.7"
+      },
+      "js_name": "alignment-rect-insets",
+      "memory": "assign",
+      "name": "alignmentRectInsets",
+      "origin": "sdk",
+      "type": {
+        "native": "NSEdgeInsets",
+        "ref": "insets"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "allowedTouchTypes",
+        "set": "setAllowedTouchTypes:"
+      },
+      "availability": {
+        "since": "10.12.2"
+      },
+      "js_name": "allowed-touch-types",
+      "memory": "assign",
+      "name": "allowedTouchTypes",
+      "origin": "sdk",
+      "type": {
+        "native": "NSTouchTypeMask",
+        "ref": "flags<NSTouchTypeMask>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "allowsVibrancy"
+      },
+      "availability": {
+        "since": "10.10"
+      },
+      "js_name": "allows-vibrancy",
+      "memory": "assign",
+      "name": "allowsVibrancy",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "alphaValue",
+        "set": "setAlphaValue:"
+      },
+      "availability": {
+        "since": "10.5"
+      },
+      "js_name": "alpha-value",
+      "memory": "assign",
+      "name": "alphaValue",
+      "origin": "sdk",
+      "type": {
+        "native": "CGFloat",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "autoresizesSubviews",
+        "set": "setAutoresizesSubviews:"
+      },
+      "js_name": "autoresizes-subviews",
+      "memory": "assign",
+      "name": "autoresizesSubviews",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "autoresizingMask",
+        "set": "setAutoresizingMask:"
+      },
+      "js_name": "autoresizing-mask",
+      "memory": "assign",
+      "name": "autoresizingMask",
+      "origin": "sdk",
+      "type": {
+        "native": "NSAutoresizingMaskOptions",
+        "ref": "flags<NSAutoresizingMaskOptions>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "backgroundFilters",
+        "set": "setBackgroundFilters:"
+      },
+      "availability": {
+        "since": "10.5"
+      },
+      "js_name": "background-filters",
+      "memory": "copy",
+      "name": "backgroundFilters",
+      "origin": "sdk",
+      "type": {
+        "native": "NSArray< CIFilter *> *",
+        "ref": "list"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "baselineOffsetFromBottom"
+      },
+      "availability": {
+        "since": "10.7"
+      },
+      "js_name": "baseline-offset-from-bottom",
+      "memory": "assign",
+      "name": "baselineOffsetFromBottom",
+      "origin": "sdk",
+      "type": {
+        "native": "CGFloat",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "bottomAnchor"
+      },
+      "availability": {
+        "since": "10.11"
+      },
+      "js_name": "bottom-anchor",
+      "memory": "strong",
+      "name": "bottomAnchor",
+      "origin": "sdk",
+      "type": {
+        "native": "NSLayoutYAxisAnchor *",
+        "ref": "object<NSLayoutYAxisAnchor>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "bounds",
+        "set": "setBounds:"
+      },
+      "js_name": "bounds",
+      "memory": "assign",
+      "name": "bounds",
+      "origin": "sdk",
+      "type": {
+        "native": "NSRect",
+        "ref": "rect"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "boundsRotation",
+        "set": "setBoundsRotation:"
+      },
+      "js_name": "bounds-rotation",
+      "memory": "assign",
+      "name": "boundsRotation",
+      "origin": "sdk",
+      "type": {
+        "native": "CGFloat",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "canBecomeKeyView"
+      },
+      "js_name": "can-become-key-view",
+      "memory": "assign",
+      "name": "canBecomeKeyView",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "canDrawConcurrently",
+        "set": "setCanDrawConcurrently:"
+      },
+      "availability": {
+        "since": "10.6"
+      },
+      "js_name": "can-draw-concurrently",
+      "memory": "assign",
+      "name": "canDrawConcurrently",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "canDrawSubviewsIntoLayer",
+        "set": "setCanDrawSubviewsIntoLayer:"
+      },
+      "availability": {
+        "since": "10.9"
+      },
+      "js_name": "can-draw-subviews-into-layer",
+      "memory": "assign",
+      "name": "canDrawSubviewsIntoLayer",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "candidateListTouchBarItem"
+      },
+      "availability": {
+        "since": "10.12.2"
+      },
+      "js_name": "candidate-list-touch-bar-item",
+      "memory": "strong",
+      "name": "candidateListTouchBarItem",
+      "origin": "sdk",
+      "type": {
+        "native": "NSCandidateListTouchBarItem *",
+        "nullable": true,
+        "ref": "object<NSCandidateListTouchBarItem>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "centerXAnchor"
+      },
+      "availability": {
+        "since": "10.11"
+      },
+      "js_name": "center-x-anchor",
+      "memory": "strong",
+      "name": "centerXAnchor",
+      "origin": "sdk",
+      "type": {
+        "native": "NSLayoutXAxisAnchor *",
+        "ref": "object<NSLayoutXAxisAnchor>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "centerYAnchor"
+      },
+      "availability": {
+        "since": "10.11"
+      },
+      "js_name": "center-y-anchor",
+      "memory": "strong",
+      "name": "centerYAnchor",
+      "origin": "sdk",
+      "type": {
+        "native": "NSLayoutYAxisAnchor *",
+        "ref": "object<NSLayoutYAxisAnchor>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "clipsToBounds",
+        "set": "setClipsToBounds:"
+      },
+      "availability": {
+        "since": "10.9"
+      },
+      "js_name": "clips-to-bounds",
+      "memory": "assign",
+      "name": "clipsToBounds",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "compositingFilter",
+        "set": "setCompositingFilter:"
+      },
+      "availability": {
+        "since": "10.5"
+      },
+      "js_name": "compositing-filter",
+      "memory": "strong",
+      "name": "compositingFilter",
+      "origin": "sdk",
+      "type": {
+        "native": "CIFilter *",
+        "nullable": true,
+        "ref": "unsupported"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "constraints"
+      },
+      "availability": {
+        "since": "10.7"
+      },
+      "js_name": "constraints",
+      "memory": "copy",
+      "name": "constraints",
+      "origin": "sdk",
+      "type": {
+        "native": "NSArray<NSLayoutConstraint *> *",
+        "ref": "list"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "contentFilters",
+        "set": "setContentFilters:"
+      },
+      "availability": {
+        "since": "10.5"
+      },
+      "js_name": "content-filters",
+      "memory": "copy",
+      "name": "contentFilters",
+      "origin": "sdk",
+      "type": {
+        "native": "NSArray< CIFilter *> *",
+        "ref": "list"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "isDrawingFindIndicator"
+      },
+      "availability": {
+        "since": "10.7"
+      },
+      "js_name": "drawing-find-indicator",
+      "memory": "assign",
+      "name": "drawingFindIndicator",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "enclosingMenuItem"
+      },
+      "availability": {
+        "since": "10.5"
+      },
+      "js_name": "enclosing-menu-item",
+      "memory": "strong",
+      "name": "enclosingMenuItem",
+      "origin": "sdk",
+      "type": {
+        "native": "NSMenuItem *",
+        "nullable": true,
+        "ref": "object<NSMenuItem>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "enclosingScrollView"
+      },
+      "js_name": "enclosing-scroll-view",
+      "memory": "strong",
+      "name": "enclosingScrollView",
+      "origin": "sdk",
+      "type": {
+        "native": "NSScrollView *",
+        "nullable": true,
+        "ref": "object<NSScrollView>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "firstBaselineAnchor"
+      },
+      "availability": {
+        "since": "10.11"
+      },
+      "js_name": "first-baseline-anchor",
+      "memory": "strong",
+      "name": "firstBaselineAnchor",
+      "origin": "sdk",
+      "type": {
+        "native": "NSLayoutYAxisAnchor *",
+        "ref": "object<NSLayoutYAxisAnchor>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "firstBaselineOffsetFromTop"
+      },
+      "availability": {
+        "since": "10.11"
+      },
+      "js_name": "first-baseline-offset-from-top",
+      "memory": "assign",
+      "name": "firstBaselineOffsetFromTop",
+      "origin": "sdk",
+      "type": {
+        "native": "CGFloat",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "fittingSize"
+      },
+      "availability": {
+        "since": "10.7"
+      },
+      "js_name": "fitting-size",
+      "memory": "assign",
+      "name": "fittingSize",
+      "origin": "sdk",
+      "type": {
+        "native": "NSSize",
+        "ref": "size"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "isFlipped"
+      },
+      "js_name": "flipped",
+      "memory": "assign",
+      "name": "flipped",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "focusRingMaskBounds"
+      },
+      "availability": {
+        "since": "10.7"
+      },
+      "js_name": "focus-ring-mask-bounds",
+      "memory": "assign",
+      "name": "focusRingMaskBounds",
+      "origin": "sdk",
+      "type": {
+        "native": "NSRect",
+        "ref": "rect"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "focusRingType",
+        "set": "setFocusRingType:"
+      },
+      "js_name": "focus-ring-type",
+      "memory": "assign",
+      "name": "focusRingType",
+      "origin": "sdk",
+      "type": {
+        "native": "NSFocusRingType",
+        "ref": "enum<NSFocusRingType>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "frame",
+        "set": "setFrame:"
+      },
+      "js_name": "frame",
+      "memory": "assign",
+      "name": "frame",
+      "origin": "sdk",
+      "type": {
+        "native": "NSRect",
+        "ref": "rect"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "frameCenterRotation",
+        "set": "setFrameCenterRotation:"
+      },
+      "availability": {
+        "since": "10.5"
+      },
+      "js_name": "frame-center-rotation",
+      "memory": "assign",
+      "name": "frameCenterRotation",
+      "origin": "sdk",
+      "type": {
+        "native": "CGFloat",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "frameRotation",
+        "set": "setFrameRotation:"
+      },
+      "js_name": "frame-rotation",
+      "memory": "assign",
+      "name": "frameRotation",
+      "origin": "sdk",
+      "type": {
+        "native": "CGFloat",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "gestureRecognizers",
+        "set": "setGestureRecognizers:"
+      },
+      "availability": {
+        "since": "10.10"
+      },
+      "js_name": "gesture-recognizers",
+      "memory": "copy",
+      "name": "gestureRecognizers",
+      "origin": "sdk",
+      "type": {
+        "native": "NSArray< NSGestureRecognizer *> *",
+        "ref": "list"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "hasAmbiguousLayout"
+      },
+      "availability": {
+        "since": "10.7"
+      },
+      "js_name": "has-ambiguous-layout",
+      "memory": "assign",
+      "name": "hasAmbiguousLayout",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "heightAdjustLimit"
+      },
+      "js_name": "height-adjust-limit",
+      "memory": "assign",
+      "name": "heightAdjustLimit",
+      "origin": "sdk",
+      "type": {
+        "native": "CGFloat",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "heightAnchor"
+      },
+      "availability": {
+        "since": "10.11"
+      },
+      "js_name": "height-anchor",
+      "memory": "strong",
+      "name": "heightAnchor",
+      "origin": "sdk",
+      "type": {
+        "native": "NSLayoutDimension *",
+        "ref": "object<NSLayoutDimension>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isHidden",
+        "set": "setHidden:"
+      },
+      "js_name": "hidden",
+      "memory": "assign",
+      "name": "hidden",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "isHiddenOrHasHiddenAncestor"
+      },
+      "js_name": "hidden-or-has-hidden-ancestor",
+      "memory": "assign",
+      "name": "hiddenOrHasHiddenAncestor",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isHorizontalContentSizeConstraintActive",
+        "set": "setHorizontalContentSizeConstraintActive:"
+      },
+      "availability": {
+        "since": "10.15"
+      },
+      "js_name": "horizontal-content-size-constraint-active",
+      "memory": "assign",
+      "name": "horizontalContentSizeConstraintActive",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "isInFullScreenMode"
+      },
+      "availability": {
+        "since": "10.5"
+      },
+      "js_name": "in-full-screen-mode",
+      "memory": "assign",
+      "name": "inFullScreenMode",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "inLiveResize"
+      },
+      "js_name": "in-live-resize",
+      "memory": "assign",
+      "name": "inLiveResize",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "inputContext"
+      },
+      "availability": {
+        "since": "10.6"
+      },
+      "js_name": "input-context",
+      "memory": "strong",
+      "name": "inputContext",
+      "origin": "sdk",
+      "type": {
+        "native": "NSTextInputContext *",
+        "nullable": true,
+        "ref": "object<NSTextInputContext>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "intrinsicContentSize"
+      },
+      "availability": {
+        "since": "10.7"
+      },
+      "js_name": "intrinsic-content-size",
+      "memory": "assign",
+      "name": "intrinsicContentSize",
+      "origin": "sdk",
+      "type": {
+        "native": "NSSize",
+        "ref": "size"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "lastBaselineAnchor"
+      },
+      "availability": {
+        "since": "10.11"
+      },
+      "js_name": "last-baseline-anchor",
+      "memory": "strong",
+      "name": "lastBaselineAnchor",
+      "origin": "sdk",
+      "type": {
+        "native": "NSLayoutYAxisAnchor *",
+        "ref": "object<NSLayoutYAxisAnchor>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "lastBaselineOffsetFromBottom"
+      },
+      "availability": {
+        "since": "10.11"
+      },
+      "js_name": "last-baseline-offset-from-bottom",
+      "memory": "assign",
+      "name": "lastBaselineOffsetFromBottom",
+      "origin": "sdk",
+      "type": {
+        "native": "CGFloat",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "layer",
+        "set": "setLayer:"
+      },
+      "availability": {
+        "since": "10.5"
+      },
+      "js_name": "layer",
+      "memory": "strong",
+      "name": "layer",
+      "origin": "sdk",
+      "type": {
+        "native": "CALayer *",
+        "nullable": true,
+        "ref": "object<CALayer>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "layerContentsPlacement",
+        "set": "setLayerContentsPlacement:"
+      },
+      "availability": {
+        "since": "10.6"
+      },
+      "js_name": "layer-contents-placement",
+      "memory": "assign",
+      "name": "layerContentsPlacement",
+      "origin": "sdk",
+      "type": {
+        "native": "NSViewLayerContentsPlacement",
+        "ref": "enum<NSViewLayerContentsPlacement>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "layerContentsRedrawPolicy",
+        "set": "setLayerContentsRedrawPolicy:"
+      },
+      "availability": {
+        "since": "10.6"
+      },
+      "js_name": "layer-contents-redraw-policy",
+      "memory": "assign",
+      "name": "layerContentsRedrawPolicy",
+      "origin": "sdk",
+      "type": {
+        "native": "NSViewLayerContentsRedrawPolicy",
+        "ref": "enum<NSViewLayerContentsRedrawPolicy>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "layerUsesCoreImageFilters",
+        "set": "setLayerUsesCoreImageFilters:"
+      },
+      "availability": {
+        "since": "10.9"
+      },
+      "js_name": "layer-uses-core-image-filters",
+      "memory": "assign",
+      "name": "layerUsesCoreImageFilters",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "layoutGuides"
+      },
+      "availability": {
+        "since": "10.11"
+      },
+      "js_name": "layout-guides",
+      "memory": "copy",
+      "name": "layoutGuides",
+      "origin": "sdk",
+      "type": {
+        "native": "NSArray<NSLayoutGuide *> *",
+        "ref": "list"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "layoutMarginsGuide"
+      },
+      "availability": {
+        "since": "11.0"
+      },
+      "js_name": "layout-margins-guide",
+      "memory": "strong",
+      "name": "layoutMarginsGuide",
+      "origin": "sdk",
+      "type": {
+        "native": "NSLayoutGuide *",
+        "ref": "object<NSLayoutGuide>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "leadingAnchor"
+      },
+      "availability": {
+        "since": "10.11"
+      },
+      "js_name": "leading-anchor",
+      "memory": "strong",
+      "name": "leadingAnchor",
+      "origin": "sdk",
+      "type": {
+        "native": "NSLayoutXAxisAnchor *",
+        "ref": "object<NSLayoutXAxisAnchor>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "leftAnchor"
+      },
+      "availability": {
+        "since": "10.11"
+      },
+      "js_name": "left-anchor",
+      "memory": "strong",
+      "name": "leftAnchor",
+      "origin": "sdk",
+      "type": {
+        "native": "NSLayoutXAxisAnchor *",
+        "ref": "object<NSLayoutXAxisAnchor>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "mouseDownCanMoveWindow"
+      },
+      "js_name": "mouse-down-can-move-window",
+      "memory": "assign",
+      "name": "mouseDownCanMoveWindow",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "needsDisplay",
+        "set": "setNeedsDisplay:"
+      },
+      "js_name": "needs-display",
+      "memory": "assign",
+      "name": "needsDisplay",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "needsLayout",
+        "set": "setNeedsLayout:"
+      },
+      "availability": {
+        "since": "10.7"
+      },
+      "js_name": "needs-layout",
+      "memory": "assign",
+      "name": "needsLayout",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "needsPanelToBecomeKey"
+      },
+      "js_name": "needs-panel-to-become-key",
+      "memory": "assign",
+      "name": "needsPanelToBecomeKey",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "needsUpdateConstraints",
+        "set": "setNeedsUpdateConstraints:"
+      },
+      "availability": {
+        "since": "10.7"
+      },
+      "js_name": "needs-update-constraints",
+      "memory": "assign",
+      "name": "needsUpdateConstraints",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "nextKeyView",
+        "set": "setNextKeyView:"
+      },
+      "js_name": "next-key-view",
+      "memory": "assign",
+      "name": "nextKeyView",
+      "origin": "sdk",
+      "type": {
+        "native": "NSView *",
+        "nullable": true,
+        "ref": "object<NSView>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "nextValidKeyView"
+      },
+      "js_name": "next-valid-key-view",
+      "memory": "assign",
+      "name": "nextValidKeyView",
+      "origin": "sdk",
+      "type": {
+        "native": "NSView *",
+        "nullable": true,
+        "ref": "object<NSView>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "isOpaque"
+      },
+      "js_name": "opaque",
+      "memory": "assign",
+      "name": "opaque",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "opaqueAncestor"
+      },
+      "js_name": "opaque-ancestor",
+      "memory": "assign",
+      "name": "opaqueAncestor",
+      "origin": "sdk",
+      "type": {
+        "native": "NSView *",
+        "nullable": true,
+        "ref": "object<NSView>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "pageFooter"
+      },
+      "js_name": "page-footer",
+      "memory": "copy",
+      "name": "pageFooter",
+      "origin": "sdk",
+      "type": {
+        "native": "NSAttributedString *",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "pageHeader"
+      },
+      "js_name": "page-header",
+      "memory": "copy",
+      "name": "pageHeader",
+      "origin": "sdk",
+      "type": {
+        "native": "NSAttributedString *",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "postsBoundsChangedNotifications",
+        "set": "setPostsBoundsChangedNotifications:"
+      },
+      "js_name": "posts-bounds-changed-notifications",
+      "memory": "assign",
+      "name": "postsBoundsChangedNotifications",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "postsFrameChangedNotifications",
+        "set": "setPostsFrameChangedNotifications:"
+      },
+      "js_name": "posts-frame-changed-notifications",
+      "memory": "assign",
+      "name": "postsFrameChangedNotifications",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "prefersCompactControlSizeMetrics",
+        "set": "setPrefersCompactControlSizeMetrics:"
+      },
+      "availability": {
+        "since": "26.0"
+      },
+      "js_name": "prefers-compact-control-size-metrics",
+      "memory": "assign",
+      "name": "prefersCompactControlSizeMetrics",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "preparedContentRect",
+        "set": "setPreparedContentRect:"
+      },
+      "availability": {
+        "since": "10.9"
+      },
+      "js_name": "prepared-content-rect",
+      "memory": "assign",
+      "name": "preparedContentRect",
+      "origin": "sdk",
+      "type": {
+        "native": "NSRect",
+        "ref": "rect"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "preservesContentDuringLiveResize"
+      },
+      "js_name": "preserves-content-during-live-resize",
+      "memory": "assign",
+      "name": "preservesContentDuringLiveResize",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "pressureConfiguration",
+        "set": "setPressureConfiguration:"
+      },
+      "availability": {
+        "since": "10.11"
+      },
+      "js_name": "pressure-configuration",
+      "memory": "strong",
+      "name": "pressureConfiguration",
+      "origin": "sdk",
+      "type": {
+        "native": "NSPressureConfiguration *",
+        "nullable": true,
+        "ref": "object<NSPressureConfiguration>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "previousKeyView"
+      },
+      "js_name": "previous-key-view",
+      "memory": "assign",
+      "name": "previousKeyView",
+      "origin": "sdk",
+      "type": {
+        "native": "NSView *",
+        "nullable": true,
+        "ref": "object<NSView>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "previousValidKeyView"
+      },
+      "js_name": "previous-valid-key-view",
+      "memory": "assign",
+      "name": "previousValidKeyView",
+      "origin": "sdk",
+      "type": {
+        "native": "NSView *",
+        "nullable": true,
+        "ref": "object<NSView>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "printJobTitle"
+      },
+      "js_name": "print-job-title",
+      "memory": "copy",
+      "name": "printJobTitle",
+      "origin": "sdk",
+      "type": {
+        "native": "NSString *",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "rectPreservedDuringLiveResize"
+      },
+      "js_name": "rect-preserved-during-live-resize",
+      "memory": "assign",
+      "name": "rectPreservedDuringLiveResize",
+      "origin": "sdk",
+      "type": {
+        "native": "NSRect",
+        "ref": "rect"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "registeredDraggedTypes"
+      },
+      "js_name": "registered-dragged-types",
+      "memory": "copy",
+      "name": "registeredDraggedTypes",
+      "origin": "sdk",
+      "type": {
+        "native": "NSArray<NSPasteboardType> *",
+        "ref": "list"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "rightAnchor"
+      },
+      "availability": {
+        "since": "10.11"
+      },
+      "js_name": "right-anchor",
+      "memory": "strong",
+      "name": "rightAnchor",
+      "origin": "sdk",
+      "type": {
+        "native": "NSLayoutXAxisAnchor *",
+        "ref": "object<NSLayoutXAxisAnchor>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "isRotatedFromBase"
+      },
+      "js_name": "rotated-from-base",
+      "memory": "assign",
+      "name": "rotatedFromBase",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "isRotatedOrScaledFromBase"
+      },
+      "js_name": "rotated-or-scaled-from-base",
+      "memory": "assign",
+      "name": "rotatedOrScaledFromBase",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "safeAreaInsets"
+      },
+      "availability": {
+        "since": "11.0"
+      },
+      "js_name": "safe-area-insets",
+      "memory": "assign",
+      "name": "safeAreaInsets",
+      "origin": "sdk",
+      "type": {
+        "native": "NSEdgeInsets",
+        "ref": "insets"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "safeAreaLayoutGuide"
+      },
+      "availability": {
+        "since": "11.0"
+      },
+      "js_name": "safe-area-layout-guide",
+      "memory": "strong",
+      "name": "safeAreaLayoutGuide",
+      "origin": "sdk",
+      "type": {
+        "native": "NSLayoutGuide *",
+        "ref": "object<NSLayoutGuide>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "safeAreaRect"
+      },
+      "availability": {
+        "since": "11.0"
+      },
+      "js_name": "safe-area-rect",
+      "memory": "assign",
+      "name": "safeAreaRect",
+      "origin": "sdk",
+      "type": {
+        "native": "NSRect",
+        "ref": "rect"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "shadow",
+        "set": "setShadow:"
+      },
+      "availability": {
+        "since": "10.5"
+      },
+      "js_name": "shadow",
+      "memory": "copy",
+      "name": "shadow",
+      "origin": "sdk",
+      "type": {
+        "native": "NSShadow *",
+        "nullable": true,
+        "ref": "object<NSShadow>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "subviews",
+        "set": "setSubviews:"
+      },
+      "js_name": "subviews",
+      "memory": "copy",
+      "name": "subviews",
+      "origin": "sdk",
+      "type": {
+        "native": "NSArray< NSView *> *",
+        "ref": "list"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "superview"
+      },
+      "js_name": "superview",
+      "memory": "assign",
+      "name": "superview",
+      "origin": "sdk",
+      "type": {
+        "native": "NSView *",
+        "nullable": true,
+        "ref": "object<NSView>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "tag"
+      },
+      "js_name": "tag",
+      "memory": "assign",
+      "name": "tag",
+      "origin": "sdk",
+      "type": {
+        "native": "NSInteger",
+        "ref": "i64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "toolTip",
+        "set": "setToolTip:"
+      },
+      "js_name": "tool-tip",
+      "memory": "copy",
+      "name": "toolTip",
+      "origin": "sdk",
+      "type": {
+        "native": "NSString *",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "topAnchor"
+      },
+      "availability": {
+        "since": "10.11"
+      },
+      "js_name": "top-anchor",
+      "memory": "strong",
+      "name": "topAnchor",
+      "origin": "sdk",
+      "type": {
+        "native": "NSLayoutYAxisAnchor *",
+        "ref": "object<NSLayoutYAxisAnchor>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "trackingAreas"
+      },
+      "availability": {
+        "since": "10.5"
+      },
+      "js_name": "tracking-areas",
+      "memory": "copy",
+      "name": "trackingAreas",
+      "origin": "sdk",
+      "type": {
+        "native": "NSArray<NSTrackingArea *> *",
+        "ref": "list"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "trailingAnchor"
+      },
+      "availability": {
+        "since": "10.11"
+      },
+      "js_name": "trailing-anchor",
+      "memory": "strong",
+      "name": "trailingAnchor",
+      "origin": "sdk",
+      "type": {
+        "native": "NSLayoutXAxisAnchor *",
+        "ref": "object<NSLayoutXAxisAnchor>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "translatesAutoresizingMaskIntoConstraints",
+        "set": "setTranslatesAutoresizingMaskIntoConstraints:"
+      },
+      "availability": {
+        "since": "10.7"
+      },
+      "js_name": "translates-autoresizing-mask-into-constraints",
+      "memory": "assign",
+      "name": "translatesAutoresizingMaskIntoConstraints",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "userInterfaceLayoutDirection",
+        "set": "setUserInterfaceLayoutDirection:"
+      },
+      "availability": {
+        "since": "10.8"
+      },
+      "js_name": "user-interface-layout-direction",
+      "memory": "assign",
+      "name": "userInterfaceLayoutDirection",
+      "origin": "sdk",
+      "type": {
+        "native": "NSUserInterfaceLayoutDirection",
+        "ref": "enum<NSUserInterfaceLayoutDirection>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isVerticalContentSizeConstraintActive",
+        "set": "setVerticalContentSizeConstraintActive:"
+      },
+      "availability": {
+        "since": "10.15"
+      },
+      "js_name": "vertical-content-size-constraint-active",
+      "memory": "assign",
+      "name": "verticalContentSizeConstraintActive",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "visibleRect"
+      },
+      "js_name": "visible-rect",
+      "memory": "assign",
+      "name": "visibleRect",
+      "origin": "sdk",
+      "type": {
+        "native": "NSRect",
+        "ref": "rect"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "wantsDefaultClipping"
+      },
+      "js_name": "wants-default-clipping",
+      "memory": "assign",
+      "name": "wantsDefaultClipping",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "wantsLayer",
+        "set": "setWantsLayer:"
+      },
+      "availability": {
+        "since": "10.5"
+      },
+      "js_name": "wants-layer",
+      "memory": "assign",
+      "name": "wantsLayer",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "wantsRestingTouches",
+        "set": "setWantsRestingTouches:"
+      },
+      "availability": {
+        "since": "10.6"
+      },
+      "js_name": "wants-resting-touches",
+      "memory": "assign",
+      "name": "wantsRestingTouches",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "wantsUpdateLayer"
+      },
+      "availability": {
+        "since": "10.8"
+      },
+      "js_name": "wants-update-layer",
+      "memory": "assign",
+      "name": "wantsUpdateLayer",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "widthAdjustLimit"
+      },
+      "js_name": "width-adjust-limit",
+      "memory": "assign",
+      "name": "widthAdjustLimit",
+      "origin": "sdk",
+      "type": {
+        "native": "CGFloat",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "widthAnchor"
+      },
+      "availability": {
+        "since": "10.11"
+      },
+      "js_name": "width-anchor",
+      "memory": "strong",
+      "name": "widthAnchor",
+      "origin": "sdk",
+      "type": {
+        "native": "NSLayoutDimension *",
+        "ref": "object<NSLayoutDimension>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "window"
+      },
+      "js_name": "window",
+      "memory": "assign",
+      "name": "window",
+      "origin": "sdk",
+      "type": {
+        "native": "NSWindow *",
+        "nullable": true,
+        "ref": "object<NSWindow>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "writingToolsCoordinator",
+        "set": "setWritingToolsCoordinator:"
+      },
+      "js_name": "writing-tools-coordinator",
+      "memory": "assign",
+      "name": "writingToolsCoordinator",
+      "origin": "sdk",
+      "type": {
+        "native": "NSWritingToolsCoordinator *",
+        "nullable": true,
+        "ref": "object<NSWritingToolsCoordinator>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "docs": "https://developer.apple.com/documentation/appkit/nsview?language=objc",
+    "sdk": "MacOSX26.1",
+    "target": "arm64-apple-macos14"
+  },
+  "toolkit": "appkit"
+}

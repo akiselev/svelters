@@ -1,0 +1,25 @@
+class: NSBox
+element:
+  tag: box
+  lifetime: owned
+  construct: new
+  provenance: "NSBox.h: a titled group box; its content view is a builtin view until replaced"
+props:
+  - name: title
+    sample: "Group"
+    provenance: "NSBox.title (NSString, copy)"
+  - name: box-type
+    sample: custom
+    provenance: "NSBox.boxType (NSBoxType)"
+  - name: title-position
+    sample: no-title
+    provenance: "NSBox.titlePosition (NSTitlePosition)"
+slots:
+  - name: content-view
+    default: true
+    cardinality: one
+    ops:
+      set: "setContentView:"
+      get: contentView
+      clear: empty_view
+    provenance: "NSBox.contentView (strong, nullable): replacing it releases the old view; clearing installs a fresh NSView like the box's own default"

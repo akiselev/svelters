@@ -1,0 +1,162 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "svelters:override:appkit/v1",
+  "title": "AppKit override file (metadata/overrides/appkit/<Class>.yaml)",
+  "description": "Facts about one AppKit class that the SDK headers do not encode: whether it is an element and how it is made, test samples for its properties, setter-only props, extra enum names, signals (target-action, notification, delegate), child slots and exposed methods. Every fact is checked against metadata/appkit/<Class>.json and its bases by tools/metadata/appkit/gen_backend.py. Names follow the AppKit naming rules: the tag is the class without `NS` in kebab-case, props/methods/signals are native names in kebab-case. Unknown keys are errors.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["class"],
+  "$defs": {
+    "provenance": {"type": "string", "minLength": 3},
+    "selector": {"type": "string", "pattern": "^[a-zA-Z_][a-zA-Z0-9_:]*$"},
+    "sample": {"description": "A JS value: string, number, bool, list of strings (flags) or an object (struct fields)"}
+  },
+  "properties": {
+    "class": {"type": "string", "pattern": "^NS[A-Za-z]+$"},
+    "element": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tag", "lifetime", "construct", "provenance"],
+      "properties": {
+        "tag": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+        "lifetime": {"enum": ["owned", "toplevel"]},
+        "construct": {"enum": ["new", "window"]},
+        "window": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["width", "height", "style_mask"],
+          "properties": {
+            "width": {"type": "number"},
+            "height": {"type": "number"},
+            "style_mask": {"type": "array", "items": {"type": "string"}}
+          }
+        },
+        "provenance": {"$ref": "#/$defs/provenance"}
+      }
+    },
+    "props": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "provenance"],
+        "properties": {
+          "name": {"type": "string"},
+          "sample": {"$ref": "#/$defs/sample"},
+          "expect": {"$ref": "#/$defs/sample"},
+          "provenance": {"$ref": "#/$defs/provenance"}
+        }
+      }
+    },
+    "setters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "selector", "type", "provenance"],
+        "properties": {
+          "name": {"type": "string"},
+          "selector": {"$ref": "#/$defs/selector"},
+          "type": {"type": "string"},
+          "sample": {"$ref": "#/$defs/sample"},
+          "provenance": {"$ref": "#/$defs/provenance"}
+        }
+      }
+    },
+    "enums": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["prop", "members", "provenance"],
+        "properties": {
+          "prop": {"type": "string"},
+          "members": {"type": "object", "additionalProperties": {"type": "integer"}},
+          "provenance": {"$ref": "#/$defs/provenance"}
+        }
+      }
+    },
+    "signals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "via", "provenance"],
+        "properties": {
+          "name": {"type": "string"},
+          "via": {"enum": ["target_action", "notification", "delegate"]},
+          "notification": {"type": "string"},
+          "selector": {"$ref": "#/$defs/selector"},
+          "delivery": {"enum": ["posted", "sync"]},
+          "result": {"enum": ["none", "veto_bool"]},
+          "args": {"type": "array", "items": {"type": "string"}},
+          "verify": {"enum": ["send_action", "perform_click", "post", "none"]},
+          "provenance": {"$ref": "#/$defs/provenance"}
+        }
+      }
+    },
+    "slots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "cardinality", "ops", "provenance"],
+        "properties": {
+          "name": {"type": "string"},
+          "default": {"type": "boolean"},
+          "cardinality": {"enum": ["one", "many"]},
+          "ops": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "set": {"$ref": "#/$defs/selector"},
+              "get": {"type": "string"},
+              "clear": {"enum": ["nil", "empty_view"]},
+              "append": {"$ref": "#/$defs/selector"},
+              "insert_at": {"$ref": "#/$defs/selector"},
+              "insert_relative": {"$ref": "#/$defs/selector"},
+              "list": {"type": "string"},
+              "remove": {"type": "array", "items": {"$ref": "#/$defs/selector"}},
+              "detach": {"type": "array", "items": {"$ref": "#/$defs/selector"}}
+            }
+          },
+          "provenance": {"$ref": "#/$defs/provenance"}
+        }
+      }
+    },
+    "methods": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "selector", "provenance"],
+        "properties": {
+          "name": {"type": "string"},
+          "selector": {"$ref": "#/$defs/selector"},
+          "expect": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["get", "value"],
+            "properties": {"get": {"type": "string"}, "value": {"$ref": "#/$defs/sample"}}
+          },
+          "test": {"type": "boolean"},
+          "provenance": {"$ref": "#/$defs/provenance"}
+        }
+      }
+    },
+    "bindings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "property", "signal", "provenance"],
+        "properties": {
+          "name": {"type": "string"},
+          "property": {"type": "string"},
+          "signal": {"type": "string"},
+          "provenance": {"$ref": "#/$defs/provenance"}
+        }
+      }
+    }
+  }
+}

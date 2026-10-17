@@ -1,0 +1,28 @@
+class: NSProgressIndicator
+element:
+  tag: progress-indicator
+  lifetime: owned
+  construct: new
+  provenance: "NSProgressIndicator.h: -init gives an indeterminate bar"
+props:
+  - name: indeterminate
+    sample: false
+    provenance: "NSProgressIndicator.indeterminate (BOOL, getter isIndeterminate)"
+  - name: double-value
+    sample: 40
+    expect: 40.0
+    provenance: "NSProgressIndicator.doubleValue (double)"
+  - name: max-value
+    sample: 200
+    expect: 200.0
+    provenance: "NSProgressIndicator.maxValue (double)"
+  - name: style
+    sample: spinning
+    provenance: "NSProgressIndicator.style (NSProgressIndicatorStyle)"
+methods:
+  - name: start-animation
+    selector: "startAnimation:"
+    provenance: "NSProgressIndicator.h; `sender` is nil"
+  - name: stop-animation
+    selector: "stopAnimation:"
+    provenance: "NSProgressIndicator.h; `sender` is nil"

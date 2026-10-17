@@ -1,0 +1,257 @@
+{
+  "abstract": false,
+  "bases": [
+    "NSControl",
+    "NSView",
+    "NSResponder",
+    "NSObject"
+  ],
+  "id": "svelters-api:v1:type:appkit:AppKit:NSSlider",
+  "kind": "object",
+  "methods": [],
+  "native": {
+    "framework": "AppKit",
+    "header": "NSSlider.h",
+    "name": "NSSlider"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "allowsTickMarkValuesOnly",
+        "set": "setAllowsTickMarkValuesOnly:"
+      },
+      "js_name": "allows-tick-mark-values-only",
+      "memory": "assign",
+      "name": "allowsTickMarkValuesOnly",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "altIncrementValue",
+        "set": "setAltIncrementValue:"
+      },
+      "js_name": "alt-increment-value",
+      "memory": "assign",
+      "name": "altIncrementValue",
+      "origin": "sdk",
+      "type": {
+        "native": "double",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "knobThickness"
+      },
+      "js_name": "knob-thickness",
+      "memory": "assign",
+      "name": "knobThickness",
+      "origin": "sdk",
+      "type": {
+        "native": "CGFloat",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "maxValue",
+        "set": "setMaxValue:"
+      },
+      "js_name": "max-value",
+      "memory": "assign",
+      "name": "maxValue",
+      "origin": "sdk",
+      "type": {
+        "native": "double",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "minValue",
+        "set": "setMinValue:"
+      },
+      "js_name": "min-value",
+      "memory": "assign",
+      "name": "minValue",
+      "origin": "sdk",
+      "type": {
+        "native": "double",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "neutralValue",
+        "set": "setNeutralValue:"
+      },
+      "availability": {
+        "since": "26.0"
+      },
+      "js_name": "neutral-value",
+      "memory": "assign",
+      "name": "neutralValue",
+      "origin": "sdk",
+      "type": {
+        "native": "double",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "numberOfTickMarks",
+        "set": "setNumberOfTickMarks:"
+      },
+      "js_name": "number-of-tick-marks",
+      "memory": "assign",
+      "name": "numberOfTickMarks",
+      "origin": "sdk",
+      "type": {
+        "native": "NSInteger",
+        "ref": "i64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "sliderType",
+        "set": "setSliderType:"
+      },
+      "availability": {
+        "since": "10.10"
+      },
+      "js_name": "slider-type",
+      "memory": "assign",
+      "name": "sliderType",
+      "origin": "sdk",
+      "type": {
+        "native": "NSSliderType",
+        "ref": "enum<NSSliderType>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "tickMarkPosition",
+        "set": "setTickMarkPosition:"
+      },
+      "js_name": "tick-mark-position",
+      "memory": "assign",
+      "name": "tickMarkPosition",
+      "origin": "sdk",
+      "type": {
+        "native": "NSTickMarkPosition",
+        "ref": "enum<NSTickMarkPosition>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "tintProminence",
+        "set": "setTintProminence:"
+      },
+      "availability": {
+        "since": "26.0"
+      },
+      "js_name": "tint-prominence",
+      "memory": "assign",
+      "name": "tintProminence",
+      "origin": "sdk",
+      "type": {
+        "native": "NSTintProminence",
+        "ref": "enum<NSTintProminence>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "trackFillColor",
+        "set": "setTrackFillColor:"
+      },
+      "availability": {
+        "since": "10.12.2"
+      },
+      "js_name": "track-fill-color",
+      "memory": "copy",
+      "name": "trackFillColor",
+      "origin": "sdk",
+      "type": {
+        "native": "NSColor *",
+        "nullable": true,
+        "ref": "object<NSColor>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isVertical",
+        "set": "setVertical:"
+      },
+      "availability": {
+        "since": "10.12"
+      },
+      "js_name": "vertical",
+      "memory": "assign",
+      "name": "vertical",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "docs": "https://developer.apple.com/documentation/appkit/nsslider?language=objc",
+    "sdk": "MacOSX26.1",
+    "target": "arm64-apple-macos14"
+  },
+  "toolkit": "appkit"
+}

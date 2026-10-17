@@ -1,0 +1,29 @@
+class: NSView
+element:
+  tag: view
+  lifetime: owned
+  construct: new
+  provenance: "NSView.h: -init is -initWithFrame:NSZeroRect"
+props:
+  - name: hidden
+    sample: true
+    provenance: "NSView.hidden (BOOL, getter isHidden)"
+  - name: alpha-value
+    sample: 0.5
+    provenance: "NSView.alphaValue (CGFloat)"
+  - name: tool-tip
+    sample: "tip"
+    provenance: "NSView.toolTip (NSString, copy)"
+  - name: frame
+    sample: {x: 0, y: 0, width: 120, height: 40}
+    provenance: "NSView.frame (NSRect); KVC boxes it as NSValue"
+slots:
+  - name: subviews
+    default: true
+    cardinality: many
+    ops:
+      append: "addSubview:"
+      insert_relative: "addSubview:positioned:relativeTo:"
+      list: subviews
+      detach: ["removeFromSuperview"]
+    provenance: "NSView.h: addSubview:, addSubview:positioned:relativeTo: (NSWindowBelow puts the view below `relativeTo`), removeFromSuperview; the superview retains its subviews"

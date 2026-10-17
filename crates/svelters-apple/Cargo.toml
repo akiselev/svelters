@@ -1,0 +1,21 @@
+[package]
+name = "svelters-apple"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "Shared Apple-platform mechanics for the AppKit (and later UIKit) backends: run loop, handles, dynamic ObjC bridge"
+
+[features]
+# Catch Objective-C exceptions in KVC and NSInvocation calls and turn them into ABI errors. Pulls in
+# objc2's exception helper, a small C file compiled with `cc` (so checking it needs an Apple SDK).
+exceptions = ["objc2/exception"]
+
+[dependencies]
+svelters-abi.workspace = true
+
+# Everything that touches the Objective-C runtime is compiled only for Apple targets; on Linux this
+# crate is the pure helpers (names, encodings, handle table, test runner) and their unit tests.
+[target.'cfg(target_vendor = "apple")'.dependencies]
+objc2 = "0.6.5"
+objc2-foundation = { version = "0.3.2", default-features = false, features = ["std", "NSString", "NSValue", "NSObject", "NSNotification"] }

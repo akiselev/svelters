@@ -1,0 +1,14 @@
+class: NSControl
+# Not an element: NSControl is the base of the controls and carries their target-action signal.
+props:
+  - name: enabled
+    sample: false
+    provenance: "NSControl.enabled (BOOL, getter isEnabled)"
+  - name: continuous
+    sample: true
+    provenance: "NSControl.continuous: whether the action is sent continuously while tracking"
+signals:
+  - name: action
+    via: target_action
+    verify: send_action
+    provenance: "NSControl.h: target (weak) + action (SEL); one action per control. The backend owns both while JS listens. When it fires is per class (NSButton: on click; NSTextField: on Return or end of editing; NSSlider: continuous or on mouse-up)."

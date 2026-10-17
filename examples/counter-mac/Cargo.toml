@@ -1,0 +1,35 @@
+[package]
+name = "counter-mac"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "Runs a fixture bundle (fixtures/counter-mac/dist/app.js) in the host on the AppKit backend (macOS)"
+
+# Everything AppKit is macOS-only. On other platforms the binary prints a message and the test
+# binaries are empty suites, so the Linux workspace gate builds and "runs" them without an SDK.
+[dependencies]
+svelters-apple.workspace = true
+
+[target.'cfg(target_os = "macos")'.dependencies]
+svelters-abi.workspace = true
+svelters-host.workspace = true
+svelters-appkit = { workspace = true, features = ["exceptions"] }
+serde_json.workspace = true
+objc2 = "0.6.5"
+objc2-foundation = { version = "0.3.2", default-features = false, features = ["std", "NSString"] }
+
+# AppKit must run on the process's first thread, so no libtest harness (it runs tests on worker
+# threads); svelters_apple::testing::run_cases speaks enough of the libtest CLI for cargo test and
+# cargo nextest.
+[[test]]
+name = "generated"
+harness = false
+
+[[test]]
+name = "counter"
+harness = false
+
+[[test]]
+name = "backend"
+harness = false

@@ -1,0 +1,2240 @@
+{
+  "abstract": false,
+  "bases": [
+    "NSResponder",
+    "NSObject"
+  ],
+  "id": "svelters-api:v1:type:appkit:AppKit:NSWindow",
+  "kind": "object",
+  "methods": [
+    {
+      "name": "center",
+      "origin": "sdk",
+      "params": [],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "center"
+    },
+    {
+      "name": "make-key-and-order-front",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "sender",
+          "type": {
+            "native": "id",
+            "nullable": true,
+            "ref": "object"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "makeKeyAndOrderFront:"
+    },
+    {
+      "name": "order-out",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "sender",
+          "type": {
+            "native": "id",
+            "nullable": true,
+            "ref": "object"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "orderOut:"
+    },
+    {
+      "name": "perform-close",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "sender",
+          "type": {
+            "native": "id",
+            "nullable": true,
+            "ref": "object"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "performClose:"
+    },
+    {
+      "name": "set-content-size",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "size",
+          "type": {
+            "native": "NSSize",
+            "ref": "size"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "setContentSize:"
+    },
+    {
+      "name": "set-content-view",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "contentView",
+          "type": {
+            "native": "NSView *",
+            "nullable": true,
+            "ref": "object<NSView>"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "setContentView:"
+    }
+  ],
+  "native": {
+    "framework": "AppKit",
+    "header": "NSWindow.h",
+    "name": "NSWindow"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "acceptsMouseMovedEvents",
+        "set": "setAcceptsMouseMovedEvents:"
+      },
+      "js_name": "accepts-mouse-moved-events",
+      "memory": "assign",
+      "name": "acceptsMouseMovedEvents",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "allowsConcurrentViewDrawing",
+        "set": "setAllowsConcurrentViewDrawing:"
+      },
+      "availability": {
+        "since": "10.6"
+      },
+      "js_name": "allows-concurrent-view-drawing",
+      "memory": "assign",
+      "name": "allowsConcurrentViewDrawing",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "allowsToolTipsWhenApplicationIsInactive",
+        "set": "setAllowsToolTipsWhenApplicationIsInactive:"
+      },
+      "js_name": "allows-tool-tips-when-application-is-inactive",
+      "memory": "assign",
+      "name": "allowsToolTipsWhenApplicationIsInactive",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "alphaValue",
+        "set": "setAlphaValue:"
+      },
+      "js_name": "alpha-value",
+      "memory": "assign",
+      "name": "alphaValue",
+      "origin": "sdk",
+      "type": {
+        "native": "CGFloat",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "animationBehavior",
+        "set": "setAnimationBehavior:"
+      },
+      "availability": {
+        "since": "10.7"
+      },
+      "js_name": "animation-behavior",
+      "memory": "assign",
+      "name": "animationBehavior",
+      "origin": "sdk",
+      "type": {
+        "native": "NSWindowAnimationBehavior",
+        "ref": "enum<NSWindowAnimationBehavior>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "appearanceSource",
+        "set": "setAppearanceSource:"
+      },
+      "availability": {
+        "since": "10.14"
+      },
+      "js_name": "appearance-source",
+      "memory": "weak",
+      "name": "appearanceSource",
+      "origin": "sdk",
+      "type": {
+        "native": "NSObject<NSAppearanceCustomization> *",
+        "ref": "object<NSObject>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "areCursorRectsEnabled"
+      },
+      "js_name": "are-cursor-rects-enabled",
+      "memory": "assign",
+      "name": "areCursorRectsEnabled",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "aspectRatio",
+        "set": "setAspectRatio:"
+      },
+      "js_name": "aspect-ratio",
+      "memory": "assign",
+      "name": "aspectRatio",
+      "origin": "sdk",
+      "type": {
+        "native": "NSSize",
+        "ref": "size"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "attachedSheet"
+      },
+      "js_name": "attached-sheet",
+      "memory": "strong",
+      "name": "attachedSheet",
+      "origin": "sdk",
+      "type": {
+        "native": "NSWindow *",
+        "nullable": true,
+        "ref": "object<NSWindow>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "autorecalculatesKeyViewLoop",
+        "set": "setAutorecalculatesKeyViewLoop:"
+      },
+      "js_name": "autorecalculates-key-view-loop",
+      "memory": "assign",
+      "name": "autorecalculatesKeyViewLoop",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "backgroundColor",
+        "set": "setBackgroundColor:"
+      },
+      "js_name": "background-color",
+      "memory": "copy",
+      "name": "backgroundColor",
+      "origin": "sdk",
+      "type": {
+        "native": "NSColor *",
+        "ref": "object<NSColor>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "backingScaleFactor"
+      },
+      "availability": {
+        "since": "10.7"
+      },
+      "js_name": "backing-scale-factor",
+      "memory": "assign",
+      "name": "backingScaleFactor",
+      "origin": "sdk",
+      "type": {
+        "native": "CGFloat",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "backingType",
+        "set": "setBackingType:"
+      },
+      "js_name": "backing-type",
+      "memory": "assign",
+      "name": "backingType",
+      "origin": "sdk",
+      "type": {
+        "native": "NSBackingStoreType",
+        "ref": "enum<NSBackingStoreType>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "canBecomeKeyWindow"
+      },
+      "js_name": "can-become-key-window",
+      "memory": "assign",
+      "name": "canBecomeKeyWindow",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "canBecomeMainWindow"
+      },
+      "js_name": "can-become-main-window",
+      "memory": "assign",
+      "name": "canBecomeMainWindow",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "canBecomeVisibleWithoutLogin",
+        "set": "setCanBecomeVisibleWithoutLogin:"
+      },
+      "availability": {
+        "since": "10.5"
+      },
+      "js_name": "can-become-visible-without-login",
+      "memory": "assign",
+      "name": "canBecomeVisibleWithoutLogin",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "canHide",
+        "set": "setCanHide:"
+      },
+      "js_name": "can-hide",
+      "memory": "assign",
+      "name": "canHide",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "cascadingReferenceFrame"
+      },
+      "availability": {
+        "since": "15.0"
+      },
+      "js_name": "cascading-reference-frame",
+      "memory": "assign",
+      "name": "cascadingReferenceFrame",
+      "origin": "sdk",
+      "type": {
+        "native": "NSRect",
+        "ref": "rect"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "childWindows"
+      },
+      "js_name": "child-windows",
+      "memory": "copy",
+      "name": "childWindows",
+      "origin": "sdk",
+      "type": {
+        "native": "NSArray< NSWindow *> *",
+        "nullable": true,
+        "ref": "list"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "collectionBehavior",
+        "set": "setCollectionBehavior:"
+      },
+      "availability": {
+        "since": "10.5"
+      },
+      "js_name": "collection-behavior",
+      "memory": "assign",
+      "name": "collectionBehavior",
+      "origin": "sdk",
+      "type": {
+        "native": "NSWindowCollectionBehavior",
+        "ref": "flags<NSWindowCollectionBehavior>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "colorSpace",
+        "set": "setColorSpace:"
+      },
+      "availability": {
+        "since": "10.6"
+      },
+      "js_name": "color-space",
+      "memory": "strong",
+      "name": "colorSpace",
+      "origin": "sdk",
+      "type": {
+        "native": "NSColorSpace *",
+        "nullable": true,
+        "ref": "object<NSColorSpace>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "contentAspectRatio",
+        "set": "setContentAspectRatio:"
+      },
+      "js_name": "content-aspect-ratio",
+      "memory": "assign",
+      "name": "contentAspectRatio",
+      "origin": "sdk",
+      "type": {
+        "native": "NSSize",
+        "ref": "size"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "contentLayoutGuide"
+      },
+      "availability": {
+        "since": "10.10"
+      },
+      "js_name": "content-layout-guide",
+      "memory": "assign",
+      "name": "contentLayoutGuide",
+      "origin": "sdk",
+      "type": {
+        "native": "id",
+        "nullable": true,
+        "ref": "object"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "contentLayoutRect"
+      },
+      "availability": {
+        "since": "10.10"
+      },
+      "js_name": "content-layout-rect",
+      "memory": "assign",
+      "name": "contentLayoutRect",
+      "origin": "sdk",
+      "type": {
+        "native": "NSRect",
+        "ref": "rect"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "contentMaxSize",
+        "set": "setContentMaxSize:"
+      },
+      "js_name": "content-max-size",
+      "memory": "assign",
+      "name": "contentMaxSize",
+      "origin": "sdk",
+      "type": {
+        "native": "NSSize",
+        "ref": "size"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "contentMinSize",
+        "set": "setContentMinSize:"
+      },
+      "js_name": "content-min-size",
+      "memory": "assign",
+      "name": "contentMinSize",
+      "origin": "sdk",
+      "type": {
+        "native": "NSSize",
+        "ref": "size"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "contentResizeIncrements",
+        "set": "setContentResizeIncrements:"
+      },
+      "js_name": "content-resize-increments",
+      "memory": "assign",
+      "name": "contentResizeIncrements",
+      "origin": "sdk",
+      "type": {
+        "native": "NSSize",
+        "ref": "size"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "contentView",
+        "set": "setContentView:"
+      },
+      "js_name": "content-view",
+      "memory": "strong",
+      "name": "contentView",
+      "origin": "sdk",
+      "type": {
+        "native": "NSView *",
+        "nullable": true,
+        "ref": "object<NSView>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "contentViewController",
+        "set": "setContentViewController:"
+      },
+      "availability": {
+        "since": "10.10"
+      },
+      "js_name": "content-view-controller",
+      "memory": "strong",
+      "name": "contentViewController",
+      "origin": "sdk",
+      "type": {
+        "native": "NSViewController *",
+        "nullable": true,
+        "ref": "object<NSViewController>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "currentEvent"
+      },
+      "js_name": "current-event",
+      "memory": "strong",
+      "name": "currentEvent",
+      "origin": "sdk",
+      "type": {
+        "native": "NSEvent *",
+        "nullable": true,
+        "ref": "object<NSEvent>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "deepestScreen"
+      },
+      "js_name": "deepest-screen",
+      "memory": "strong",
+      "name": "deepestScreen",
+      "origin": "sdk",
+      "type": {
+        "native": "NSScreen *",
+        "nullable": true,
+        "ref": "object<NSScreen>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "defaultButtonCell",
+        "set": "setDefaultButtonCell:"
+      },
+      "js_name": "default-button-cell",
+      "memory": "strong",
+      "name": "defaultButtonCell",
+      "origin": "sdk",
+      "type": {
+        "native": "NSButtonCell *",
+        "nullable": true,
+        "ref": "object<NSButtonCell>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "delegate",
+        "set": "setDelegate:"
+      },
+      "js_name": "delegate",
+      "memory": "weak",
+      "name": "delegate",
+      "origin": "sdk",
+      "type": {
+        "native": "id<NSWindowDelegate>",
+        "nullable": true,
+        "ref": "object"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "depthLimit",
+        "set": "setDepthLimit:"
+      },
+      "js_name": "depth-limit",
+      "memory": "assign",
+      "name": "depthLimit",
+      "origin": "sdk",
+      "type": {
+        "native": "NSWindowDepth",
+        "ref": "enum<NSWindowDepth>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "deviceDescription"
+      },
+      "js_name": "device-description",
+      "memory": "copy",
+      "name": "deviceDescription",
+      "origin": "sdk",
+      "type": {
+        "native": "NSDictionary<NSDeviceDescriptionKey,id> *",
+        "ref": "map"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "displaysWhenScreenProfileChanges",
+        "set": "setDisplaysWhenScreenProfileChanges:"
+      },
+      "js_name": "displays-when-screen-profile-changes",
+      "memory": "assign",
+      "name": "displaysWhenScreenProfileChanges",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "dockTile"
+      },
+      "availability": {
+        "since": "10.5"
+      },
+      "js_name": "dock-tile",
+      "memory": "strong",
+      "name": "dockTile",
+      "origin": "sdk",
+      "type": {
+        "native": "NSDockTile *",
+        "ref": "object<NSDockTile>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isDocumentEdited",
+        "set": "setDocumentEdited:"
+      },
+      "js_name": "document-edited",
+      "memory": "assign",
+      "name": "documentEdited",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "drawers"
+      },
+      "js_name": "drawers",
+      "memory": "copy",
+      "name": "drawers",
+      "origin": "sdk",
+      "type": {
+        "native": "NSArray<NSDrawer *> *",
+        "nullable": true,
+        "ref": "list"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isExcludedFromWindowsMenu",
+        "set": "setExcludedFromWindowsMenu:"
+      },
+      "js_name": "excluded-from-windows-menu",
+      "memory": "assign",
+      "name": "excludedFromWindowsMenu",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "firstResponder"
+      },
+      "js_name": "first-responder",
+      "memory": "weak",
+      "name": "firstResponder",
+      "origin": "sdk",
+      "type": {
+        "native": "NSResponder *",
+        "nullable": true,
+        "ref": "object<NSResponder>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "isFloatingPanel"
+      },
+      "js_name": "floating-panel",
+      "memory": "assign",
+      "name": "floatingPanel",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "frame"
+      },
+      "js_name": "frame",
+      "memory": "assign",
+      "name": "frame",
+      "origin": "sdk",
+      "type": {
+        "native": "NSRect",
+        "ref": "rect"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "frameAutosaveName"
+      },
+      "js_name": "frame-autosave-name",
+      "memory": "copy",
+      "name": "frameAutosaveName",
+      "origin": "sdk",
+      "type": {
+        "native": "NSWindowFrameAutosaveName",
+        "ref": "unsupported"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "hasActiveWindowSharingSession"
+      },
+      "availability": {
+        "since": "13.3"
+      },
+      "js_name": "has-active-window-sharing-session",
+      "memory": "assign",
+      "name": "hasActiveWindowSharingSession",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "hasCloseBox"
+      },
+      "js_name": "has-close-box",
+      "memory": "assign",
+      "name": "hasCloseBox",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "hasDynamicDepthLimit"
+      },
+      "js_name": "has-dynamic-depth-limit",
+      "memory": "assign",
+      "name": "hasDynamicDepthLimit",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "hasShadow",
+        "set": "setHasShadow:"
+      },
+      "js_name": "has-shadow",
+      "memory": "assign",
+      "name": "hasShadow",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "hasTitleBar"
+      },
+      "js_name": "has-title-bar",
+      "memory": "assign",
+      "name": "hasTitleBar",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "hidesOnDeactivate",
+        "set": "setHidesOnDeactivate:"
+      },
+      "js_name": "hides-on-deactivate",
+      "memory": "assign",
+      "name": "hidesOnDeactivate",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "ignoresMouseEvents",
+        "set": "setIgnoresMouseEvents:"
+      },
+      "js_name": "ignores-mouse-events",
+      "memory": "assign",
+      "name": "ignoresMouseEvents",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "inLiveResize"
+      },
+      "availability": {
+        "since": "10.6"
+      },
+      "js_name": "in-live-resize",
+      "memory": "assign",
+      "name": "inLiveResize",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "initialFirstResponder",
+        "set": "setInitialFirstResponder:"
+      },
+      "js_name": "initial-first-responder",
+      "memory": "weak",
+      "name": "initialFirstResponder",
+      "origin": "sdk",
+      "type": {
+        "native": "NSView *",
+        "nullable": true,
+        "ref": "object<NSView>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "keyViewSelectionDirection"
+      },
+      "js_name": "key-view-selection-direction",
+      "memory": "assign",
+      "name": "keyViewSelectionDirection",
+      "origin": "sdk",
+      "type": {
+        "native": "NSSelectionDirection",
+        "ref": "enum<NSSelectionDirection>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "isKeyWindow"
+      },
+      "js_name": "key-window",
+      "memory": "assign",
+      "name": "keyWindow",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "level",
+        "set": "setLevel:"
+      },
+      "js_name": "level",
+      "memory": "assign",
+      "name": "level",
+      "origin": "sdk",
+      "type": {
+        "native": "NSWindowLevel",
+        "ref": "i64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "isMainWindow"
+      },
+      "js_name": "main-window",
+      "memory": "assign",
+      "name": "mainWindow",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "maxFullScreenContentSize",
+        "set": "setMaxFullScreenContentSize:"
+      },
+      "availability": {
+        "since": "10.11"
+      },
+      "js_name": "max-full-screen-content-size",
+      "memory": "assign",
+      "name": "maxFullScreenContentSize",
+      "origin": "sdk",
+      "type": {
+        "native": "NSSize",
+        "ref": "size"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "maxSize",
+        "set": "setMaxSize:"
+      },
+      "js_name": "max-size",
+      "memory": "assign",
+      "name": "maxSize",
+      "origin": "sdk",
+      "type": {
+        "native": "NSSize",
+        "ref": "size"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "minFullScreenContentSize",
+        "set": "setMinFullScreenContentSize:"
+      },
+      "availability": {
+        "since": "10.11"
+      },
+      "js_name": "min-full-screen-content-size",
+      "memory": "assign",
+      "name": "minFullScreenContentSize",
+      "origin": "sdk",
+      "type": {
+        "native": "NSSize",
+        "ref": "size"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "minSize",
+        "set": "setMinSize:"
+      },
+      "js_name": "min-size",
+      "memory": "assign",
+      "name": "minSize",
+      "origin": "sdk",
+      "type": {
+        "native": "NSSize",
+        "ref": "size"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "isMiniaturizable"
+      },
+      "js_name": "miniaturizable",
+      "memory": "assign",
+      "name": "miniaturizable",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "isMiniaturized"
+      },
+      "js_name": "miniaturized",
+      "memory": "assign",
+      "name": "miniaturized",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "miniwindowImage",
+        "set": "setMiniwindowImage:"
+      },
+      "js_name": "miniwindow-image",
+      "memory": "strong",
+      "name": "miniwindowImage",
+      "origin": "sdk",
+      "type": {
+        "native": "NSImage *",
+        "nullable": true,
+        "ref": "object<NSImage>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "miniwindowTitle",
+        "set": "setMiniwindowTitle:"
+      },
+      "js_name": "miniwindow-title",
+      "memory": "copy",
+      "name": "miniwindowTitle",
+      "origin": "sdk",
+      "type": {
+        "native": "NSString *",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "isModalPanel"
+      },
+      "js_name": "modal-panel",
+      "memory": "assign",
+      "name": "modalPanel",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "mouseLocationOutsideOfEventStream"
+      },
+      "js_name": "mouse-location-outside-of-event-stream",
+      "memory": "assign",
+      "name": "mouseLocationOutsideOfEventStream",
+      "origin": "sdk",
+      "type": {
+        "native": "NSPoint",
+        "ref": "point"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isMovable",
+        "set": "setMovable:"
+      },
+      "availability": {
+        "since": "10.6"
+      },
+      "js_name": "movable",
+      "memory": "assign",
+      "name": "movable",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isMovableByWindowBackground",
+        "set": "setMovableByWindowBackground:"
+      },
+      "js_name": "movable-by-window-background",
+      "memory": "assign",
+      "name": "movableByWindowBackground",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "occlusionState"
+      },
+      "availability": {
+        "since": "10.9"
+      },
+      "js_name": "occlusion-state",
+      "memory": "assign",
+      "name": "occlusionState",
+      "origin": "sdk",
+      "type": {
+        "native": "NSWindowOcclusionState",
+        "ref": "flags<NSWindowOcclusionState>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "isOnActiveSpace"
+      },
+      "availability": {
+        "since": "10.6"
+      },
+      "js_name": "on-active-space",
+      "memory": "assign",
+      "name": "onActiveSpace",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isOpaque",
+        "set": "setOpaque:"
+      },
+      "js_name": "opaque",
+      "memory": "assign",
+      "name": "opaque",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "orderedIndex",
+        "set": "setOrderedIndex:"
+      },
+      "js_name": "ordered-index",
+      "memory": "assign",
+      "name": "orderedIndex",
+      "origin": "sdk",
+      "type": {
+        "native": "NSInteger",
+        "ref": "i64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "parentWindow",
+        "set": "setParentWindow:"
+      },
+      "js_name": "parent-window",
+      "memory": "weak",
+      "name": "parentWindow",
+      "origin": "sdk",
+      "type": {
+        "native": "NSWindow *",
+        "nullable": true,
+        "ref": "object<NSWindow>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "preservesContentDuringLiveResize",
+        "set": "setPreservesContentDuringLiveResize:"
+      },
+      "js_name": "preserves-content-during-live-resize",
+      "memory": "assign",
+      "name": "preservesContentDuringLiveResize",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "preventsApplicationTerminationWhenModal",
+        "set": "setPreventsApplicationTerminationWhenModal:"
+      },
+      "availability": {
+        "since": "10.6"
+      },
+      "js_name": "prevents-application-termination-when-modal",
+      "memory": "assign",
+      "name": "preventsApplicationTerminationWhenModal",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isReleasedWhenClosed",
+        "set": "setReleasedWhenClosed:"
+      },
+      "js_name": "released-when-closed",
+      "memory": "assign",
+      "name": "releasedWhenClosed",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "representedFilename",
+        "set": "setRepresentedFilename:"
+      },
+      "js_name": "represented-filename",
+      "memory": "copy",
+      "name": "representedFilename",
+      "origin": "sdk",
+      "type": {
+        "native": "NSString *",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "representedURL",
+        "set": "setRepresentedURL:"
+      },
+      "availability": {
+        "since": "10.5"
+      },
+      "js_name": "represented-url",
+      "memory": "copy",
+      "name": "representedURL",
+      "origin": "sdk",
+      "type": {
+        "native": "NSURL *",
+        "nullable": true,
+        "ref": "object<NSURL>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "isResizable"
+      },
+      "js_name": "resizable",
+      "memory": "assign",
+      "name": "resizable",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "resizeFlags"
+      },
+      "js_name": "resize-flags",
+      "memory": "assign",
+      "name": "resizeFlags",
+      "origin": "sdk",
+      "type": {
+        "native": "NSEventModifierFlags",
+        "ref": "flags<NSEventModifierFlags>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "resizeIncrements",
+        "set": "setResizeIncrements:"
+      },
+      "js_name": "resize-increments",
+      "memory": "assign",
+      "name": "resizeIncrements",
+      "origin": "sdk",
+      "type": {
+        "native": "NSSize",
+        "ref": "size"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isRestorable",
+        "set": "setRestorable:"
+      },
+      "availability": {
+        "since": "10.7"
+      },
+      "js_name": "restorable",
+      "memory": "assign",
+      "name": "restorable",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "restorationClass",
+        "set": "setRestorationClass:"
+      },
+      "availability": {
+        "since": "10.7"
+      },
+      "js_name": "restoration-class",
+      "memory": "assign",
+      "name": "restorationClass",
+      "origin": "sdk",
+      "type": {
+        "native": "Class<NSWindowRestoration>",
+        "nullable": true,
+        "ref": "unsupported"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "screen"
+      },
+      "js_name": "screen",
+      "memory": "strong",
+      "name": "screen",
+      "origin": "sdk",
+      "type": {
+        "native": "NSScreen *",
+        "nullable": true,
+        "ref": "object<NSScreen>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "sharingType",
+        "set": "setSharingType:"
+      },
+      "availability": {
+        "since": "10.5"
+      },
+      "js_name": "sharing-type",
+      "memory": "assign",
+      "name": "sharingType",
+      "origin": "sdk",
+      "type": {
+        "native": "NSWindowSharingType",
+        "ref": "enum<NSWindowSharingType>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "isSheet"
+      },
+      "js_name": "sheet",
+      "memory": "assign",
+      "name": "sheet",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "sheetParent"
+      },
+      "availability": {
+        "since": "10.9"
+      },
+      "js_name": "sheet-parent",
+      "memory": "strong",
+      "name": "sheetParent",
+      "origin": "sdk",
+      "type": {
+        "native": "NSWindow *",
+        "nullable": true,
+        "ref": "object<NSWindow>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "sheets"
+      },
+      "availability": {
+        "since": "10.9"
+      },
+      "js_name": "sheets",
+      "memory": "copy",
+      "name": "sheets",
+      "origin": "sdk",
+      "type": {
+        "native": "NSArray< NSWindow *> *",
+        "ref": "list"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "stringWithSavedFrame"
+      },
+      "js_name": "string-with-saved-frame",
+      "memory": "copy",
+      "name": "stringWithSavedFrame",
+      "origin": "sdk",
+      "type": {
+        "native": "NSWindowPersistableFrameDescriptor",
+        "ref": "unsupported"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "styleMask",
+        "set": "setStyleMask:"
+      },
+      "js_name": "style-mask",
+      "memory": "assign",
+      "name": "styleMask",
+      "origin": "sdk",
+      "type": {
+        "native": "NSWindowStyleMask",
+        "ref": "flags<NSWindowStyleMask>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "subtitle",
+        "set": "setSubtitle:"
+      },
+      "availability": {
+        "since": "11.0"
+      },
+      "js_name": "subtitle",
+      "memory": "copy",
+      "name": "subtitle",
+      "origin": "sdk",
+      "type": {
+        "native": "NSString *",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "tab"
+      },
+      "availability": {
+        "since": "10.13"
+      },
+      "js_name": "tab",
+      "memory": "strong",
+      "name": "tab",
+      "origin": "sdk",
+      "type": {
+        "native": "NSWindowTab *",
+        "ref": "object<NSWindowTab>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "tabGroup"
+      },
+      "availability": {
+        "since": "10.13"
+      },
+      "js_name": "tab-group",
+      "memory": "weak",
+      "name": "tabGroup",
+      "origin": "sdk",
+      "type": {
+        "native": "NSWindowTabGroup *",
+        "nullable": true,
+        "ref": "object<NSWindowTabGroup>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "tabbedWindows"
+      },
+      "availability": {
+        "since": "10.12"
+      },
+      "js_name": "tabbed-windows",
+      "memory": "copy",
+      "name": "tabbedWindows",
+      "origin": "sdk",
+      "type": {
+        "native": "NSArray<NSWindow *> *",
+        "nullable": true,
+        "ref": "list"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "tabbingIdentifier",
+        "set": "setTabbingIdentifier:"
+      },
+      "availability": {
+        "since": "10.12"
+      },
+      "js_name": "tabbing-identifier",
+      "memory": "copy",
+      "name": "tabbingIdentifier",
+      "origin": "sdk",
+      "type": {
+        "native": "NSWindowTabbingIdentifier",
+        "ref": "unsupported"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "tabbingMode",
+        "set": "setTabbingMode:"
+      },
+      "availability": {
+        "since": "10.12"
+      },
+      "js_name": "tabbing-mode",
+      "memory": "assign",
+      "name": "tabbingMode",
+      "origin": "sdk",
+      "type": {
+        "native": "NSWindowTabbingMode",
+        "ref": "enum<NSWindowTabbingMode>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "title",
+        "set": "setTitle:"
+      },
+      "js_name": "title",
+      "memory": "copy",
+      "name": "title",
+      "origin": "sdk",
+      "type": {
+        "native": "NSString *",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "titleVisibility",
+        "set": "setTitleVisibility:"
+      },
+      "availability": {
+        "since": "10.10"
+      },
+      "js_name": "title-visibility",
+      "memory": "assign",
+      "name": "titleVisibility",
+      "origin": "sdk",
+      "type": {
+        "native": "NSWindowTitleVisibility",
+        "ref": "enum<NSWindowTitleVisibility>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "titlebarAccessoryViewControllers",
+        "set": "setTitlebarAccessoryViewControllers:"
+      },
+      "availability": {
+        "since": "10.10"
+      },
+      "js_name": "titlebar-accessory-view-controllers",
+      "memory": "copy",
+      "name": "titlebarAccessoryViewControllers",
+      "origin": "sdk",
+      "type": {
+        "native": "NSArray< NSTitlebarAccessoryViewController *> *",
+        "ref": "list"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "titlebarAppearsTransparent",
+        "set": "setTitlebarAppearsTransparent:"
+      },
+      "availability": {
+        "since": "10.10"
+      },
+      "js_name": "titlebar-appears-transparent",
+      "memory": "assign",
+      "name": "titlebarAppearsTransparent",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "titlebarSeparatorStyle",
+        "set": "setTitlebarSeparatorStyle:"
+      },
+      "availability": {
+        "since": "11.0"
+      },
+      "js_name": "titlebar-separator-style",
+      "memory": "assign",
+      "name": "titlebarSeparatorStyle",
+      "origin": "sdk",
+      "type": {
+        "native": "NSTitlebarSeparatorStyle",
+        "ref": "enum<NSTitlebarSeparatorStyle>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "toolbar",
+        "set": "setToolbar:"
+      },
+      "js_name": "toolbar",
+      "memory": "strong",
+      "name": "toolbar",
+      "origin": "sdk",
+      "type": {
+        "native": "NSToolbar *",
+        "nullable": true,
+        "ref": "object<NSToolbar>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "toolbarStyle",
+        "set": "setToolbarStyle:"
+      },
+      "availability": {
+        "since": "11.0"
+      },
+      "js_name": "toolbar-style",
+      "memory": "assign",
+      "name": "toolbarStyle",
+      "origin": "sdk",
+      "type": {
+        "native": "NSWindowToolbarStyle",
+        "ref": "enum<NSWindowToolbarStyle>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "viewsNeedDisplay",
+        "set": "setViewsNeedDisplay:"
+      },
+      "js_name": "views-need-display",
+      "memory": "assign",
+      "name": "viewsNeedDisplay",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "isVisible"
+      },
+      "js_name": "visible",
+      "memory": "assign",
+      "name": "visible",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "windowController",
+        "set": "setWindowController:"
+      },
+      "js_name": "window-controller",
+      "memory": "weak",
+      "name": "windowController",
+      "origin": "sdk",
+      "type": {
+        "native": "NSWindowController *",
+        "nullable": true,
+        "ref": "object<NSWindowController>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "windowNumber"
+      },
+      "js_name": "window-number",
+      "memory": "assign",
+      "name": "windowNumber",
+      "origin": "sdk",
+      "type": {
+        "native": "NSInteger",
+        "ref": "i64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "windowTitlebarLayoutDirection"
+      },
+      "availability": {
+        "since": "10.12"
+      },
+      "js_name": "window-titlebar-layout-direction",
+      "memory": "assign",
+      "name": "windowTitlebarLayoutDirection",
+      "origin": "sdk",
+      "type": {
+        "native": "NSUserInterfaceLayoutDirection",
+        "ref": "enum<NSUserInterfaceLayoutDirection>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "worksWhenModal"
+      },
+      "js_name": "works-when-modal",
+      "memory": "assign",
+      "name": "worksWhenModal",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "isZoomable"
+      },
+      "js_name": "zoomable",
+      "memory": "assign",
+      "name": "zoomable",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "isZoomed"
+      },
+      "js_name": "zoomed",
+      "memory": "assign",
+      "name": "zoomed",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "docs": "https://developer.apple.com/documentation/appkit/nswindow?language=objc",
+    "sdk": "MacOSX26.1",
+    "target": "arm64-apple-macos14"
+  },
+  "toolkit": "appkit"
+}

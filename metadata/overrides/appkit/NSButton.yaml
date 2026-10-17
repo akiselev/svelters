@@ -1,0 +1,47 @@
+class: NSButton
+element:
+  tag: button
+  lifetime: owned
+  construct: new
+  provenance: "NSButton.h: -init gives a push button (NSButtonTypeMomentaryPushIn, NSBezelStyleRounded on current macOS). A checkbox is button-type switch, a radio button is button-type radio."
+props:
+  - name: title
+    sample: "Increment"
+    provenance: "NSButton.title (NSString, copy)"
+  - name: state
+    sample: "on"
+    provenance: "NSButton.state (NSControlStateValue: an NSInteger typedef with constants, not an NS_ENUM)"
+  - name: allows-mixed-state
+    sample: true
+    provenance: "NSButton.allowsMixedState (BOOL)"
+  - name: bezel-style
+    sample: circular
+    provenance: "NSButton.bezelStyle (NSBezelStyle)"
+  - name: bordered
+    sample: false
+    provenance: "NSButton.bordered (BOOL, getter isBordered)"
+enums:
+  - prop: state
+    members: {"off": 0, "on": 1, "mixed": -1}
+    provenance: "NSCell.h: NSControlStateValueMixed = -1, Off = 0, On = 1"
+setters:
+  - name: button-type
+    selector: "setButtonType:"
+    type: enum<NSButtonType>
+    sample: switch
+    provenance: "NSButton.h: -setButtonType: only (no getter)"
+signals:
+  - name: action
+    via: target_action
+    verify: perform_click
+    provenance: "NSButton sends its action on click (performClick: simulates one); inherited from NSControl"
+methods:
+  - name: perform-click
+    selector: "performClick:"
+    test: false
+    provenance: "NSButton.h / NSControl.h: simulates a click, sending the action"
+bindings:
+  - name: state
+    property: state
+    signal: action
+    provenance: "two-way bind:state for checkboxes: the action fires after a user click toggled the state; setting state never sends the action"

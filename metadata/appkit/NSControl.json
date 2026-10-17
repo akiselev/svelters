@@ -1,0 +1,499 @@
+{
+  "abstract": false,
+  "bases": [
+    "NSView",
+    "NSResponder",
+    "NSObject"
+  ],
+  "id": "svelters-api:v1:type:appkit:AppKit:NSControl",
+  "kind": "object",
+  "methods": [
+    {
+      "name": "perform-click",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "sender",
+          "type": {
+            "native": "id",
+            "nullable": true,
+            "ref": "object"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "performClick:"
+    }
+  ],
+  "native": {
+    "framework": "AppKit",
+    "header": "NSControl.h",
+    "name": "NSControl"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "action",
+        "set": "setAction:"
+      },
+      "js_name": "action",
+      "memory": "assign",
+      "name": "action",
+      "origin": "sdk",
+      "type": {
+        "native": "SEL",
+        "nullable": true,
+        "ref": "selector"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "alignment",
+        "set": "setAlignment:"
+      },
+      "js_name": "alignment",
+      "memory": "assign",
+      "name": "alignment",
+      "origin": "sdk",
+      "type": {
+        "native": "NSTextAlignment",
+        "ref": "enum<NSTextAlignment>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "allowsExpansionToolTips",
+        "set": "setAllowsExpansionToolTips:"
+      },
+      "availability": {
+        "since": "10.8"
+      },
+      "js_name": "allows-expansion-tool-tips",
+      "memory": "assign",
+      "name": "allowsExpansionToolTips",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "attributedStringValue",
+        "set": "setAttributedStringValue:"
+      },
+      "js_name": "attributed-string-value",
+      "memory": "copy",
+      "name": "attributedStringValue",
+      "origin": "sdk",
+      "type": {
+        "native": "NSAttributedString *",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "baseWritingDirection",
+        "set": "setBaseWritingDirection:"
+      },
+      "js_name": "base-writing-direction",
+      "memory": "assign",
+      "name": "baseWritingDirection",
+      "origin": "sdk",
+      "type": {
+        "native": "NSWritingDirection",
+        "ref": "enum<NSWritingDirection>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "cell",
+        "set": "setCell:"
+      },
+      "js_name": "cell",
+      "memory": "strong",
+      "name": "cell",
+      "origin": "sdk",
+      "type": {
+        "native": "NSCell *",
+        "nullable": true,
+        "ref": "object<NSCell>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isContinuous",
+        "set": "setContinuous:"
+      },
+      "js_name": "continuous",
+      "memory": "assign",
+      "name": "continuous",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "controlSize",
+        "set": "setControlSize:"
+      },
+      "availability": {
+        "since": "10.10"
+      },
+      "js_name": "control-size",
+      "memory": "assign",
+      "name": "controlSize",
+      "origin": "sdk",
+      "type": {
+        "native": "NSControlSize",
+        "ref": "enum<NSControlSize>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "doubleValue",
+        "set": "setDoubleValue:"
+      },
+      "js_name": "double-value",
+      "memory": "assign",
+      "name": "doubleValue",
+      "origin": "sdk",
+      "type": {
+        "native": "double",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isEnabled",
+        "set": "setEnabled:"
+      },
+      "js_name": "enabled",
+      "memory": "assign",
+      "name": "enabled",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "floatValue",
+        "set": "setFloatValue:"
+      },
+      "js_name": "float-value",
+      "memory": "assign",
+      "name": "floatValue",
+      "origin": "sdk",
+      "type": {
+        "native": "float",
+        "ref": "f32"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "font",
+        "set": "setFont:"
+      },
+      "js_name": "font",
+      "memory": "copy",
+      "name": "font",
+      "origin": "sdk",
+      "type": {
+        "native": "NSFont *",
+        "nullable": true,
+        "ref": "object<NSFont>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "formatter",
+        "set": "setFormatter:"
+      },
+      "js_name": "formatter",
+      "memory": "strong",
+      "name": "formatter",
+      "origin": "sdk",
+      "type": {
+        "native": "NSFormatter *",
+        "nullable": true,
+        "ref": "object<NSFormatter>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isHighlighted",
+        "set": "setHighlighted:"
+      },
+      "availability": {
+        "since": "10.10"
+      },
+      "js_name": "highlighted",
+      "memory": "assign",
+      "name": "highlighted",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "ignoresMultiClick",
+        "set": "setIgnoresMultiClick:"
+      },
+      "js_name": "ignores-multi-click",
+      "memory": "assign",
+      "name": "ignoresMultiClick",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "intValue",
+        "set": "setIntValue:"
+      },
+      "js_name": "int-value",
+      "memory": "assign",
+      "name": "intValue",
+      "origin": "sdk",
+      "type": {
+        "native": "int",
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "integerValue",
+        "set": "setIntegerValue:"
+      },
+      "js_name": "integer-value",
+      "memory": "assign",
+      "name": "integerValue",
+      "origin": "sdk",
+      "type": {
+        "native": "NSInteger",
+        "ref": "i64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "lineBreakMode",
+        "set": "setLineBreakMode:"
+      },
+      "availability": {
+        "since": "10.10"
+      },
+      "js_name": "line-break-mode",
+      "memory": "assign",
+      "name": "lineBreakMode",
+      "origin": "sdk",
+      "type": {
+        "native": "NSLineBreakMode",
+        "ref": "enum<NSLineBreakMode>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "objectValue",
+        "set": "setObjectValue:"
+      },
+      "js_name": "object-value",
+      "memory": "copy",
+      "name": "objectValue",
+      "origin": "sdk",
+      "type": {
+        "native": "id",
+        "nullable": true,
+        "ref": "object"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "refusesFirstResponder",
+        "set": "setRefusesFirstResponder:"
+      },
+      "js_name": "refuses-first-responder",
+      "memory": "assign",
+      "name": "refusesFirstResponder",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "stringValue",
+        "set": "setStringValue:"
+      },
+      "js_name": "string-value",
+      "memory": "copy",
+      "name": "stringValue",
+      "origin": "sdk",
+      "type": {
+        "native": "NSString *",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "tag",
+        "set": "setTag:"
+      },
+      "js_name": "tag",
+      "memory": "assign",
+      "name": "tag",
+      "origin": "sdk",
+      "type": {
+        "native": "NSInteger",
+        "ref": "i64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "target",
+        "set": "setTarget:"
+      },
+      "js_name": "target",
+      "memory": "weak",
+      "name": "target",
+      "origin": "sdk",
+      "type": {
+        "native": "id",
+        "nullable": true,
+        "ref": "object"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "usesSingleLineMode",
+        "set": "setUsesSingleLineMode:"
+      },
+      "availability": {
+        "since": "10.10"
+      },
+      "js_name": "uses-single-line-mode",
+      "memory": "assign",
+      "name": "usesSingleLineMode",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "docs": "https://developer.apple.com/documentation/appkit/nscontrol?language=objc",
+    "sdk": "MacOSX26.1",
+    "target": "arm64-apple-macos14"
+  },
+  "toolkit": "appkit"
+}

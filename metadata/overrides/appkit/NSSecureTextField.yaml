@@ -1,0 +1,10 @@
+class: NSSecureTextField
+element:
+  tag: secure-text-field
+  lifetime: owned
+  construct: new
+  provenance: "NSSecureTextField.h: an NSTextField subclass that hides its text"
+props:
+  - name: string-value
+    sample: "secret"
+    provenance: "NSControl.stringValue"

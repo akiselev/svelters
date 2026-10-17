@@ -6,9 +6,12 @@ members = [
     "crates/svelters-backend-log",
     "crates/svelters-gtk",
     "crates/svelters-qt-build",
+    "crates/svelters-apple",
+    "crates/svelters-appkit",
     "crates/svelters-compiler",
     "examples/counter",
     "examples/counter-qt",
+    "examples/counter-mac",
 ]
 
 [workspace.package]
@@ -23,6 +26,8 @@ svelters-host = { path = "crates/svelters-host" }
 svelters-backend-log = { path = "crates/svelters-backend-log" }
 svelters-gtk = { path = "crates/svelters-gtk" }
 svelters-qt-build = { path = "crates/svelters-qt-build" }
+svelters-apple = { path = "crates/svelters-apple" }
+svelters-appkit = { path = "crates/svelters-appkit" }
 gtk = { package = "gtk4", version = "0.11" }
 rquickjs = { version = "0.14.0", default-features = false, features = ["std", "loader"] }
 serde_json = "1"

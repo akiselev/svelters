@@ -1,0 +1,570 @@
+{
+  "abstract": false,
+  "bases": [
+    "NSControl",
+    "NSView",
+    "NSResponder",
+    "NSObject"
+  ],
+  "id": "svelters-api:v1:type:appkit:AppKit:NSButton",
+  "kind": "object",
+  "methods": [
+    {
+      "name": "set-button-type",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "type",
+          "type": {
+            "native": "NSButtonType",
+            "ref": "enum<NSButtonType>"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "setButtonType:"
+    }
+  ],
+  "native": {
+    "framework": "AppKit",
+    "header": "NSButton.h",
+    "name": "NSButton"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "activeCompressionOptions"
+      },
+      "availability": {
+        "since": "10.13"
+      },
+      "js_name": "active-compression-options",
+      "memory": "copy",
+      "name": "activeCompressionOptions",
+      "origin": "sdk",
+      "type": {
+        "native": "NSUserInterfaceCompressionOptions *",
+        "ref": "object<NSUserInterfaceCompressionOptions>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "allowsMixedState",
+        "set": "setAllowsMixedState:"
+      },
+      "js_name": "allows-mixed-state",
+      "memory": "assign",
+      "name": "allowsMixedState",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "alternateImage",
+        "set": "setAlternateImage:"
+      },
+      "js_name": "alternate-image",
+      "memory": "strong",
+      "name": "alternateImage",
+      "origin": "sdk",
+      "type": {
+        "native": "NSImage *",
+        "nullable": true,
+        "ref": "object<NSImage>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "alternateTitle",
+        "set": "setAlternateTitle:"
+      },
+      "js_name": "alternate-title",
+      "memory": "copy",
+      "name": "alternateTitle",
+      "origin": "sdk",
+      "type": {
+        "native": "NSString *",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "attributedAlternateTitle",
+        "set": "setAttributedAlternateTitle:"
+      },
+      "js_name": "attributed-alternate-title",
+      "memory": "copy",
+      "name": "attributedAlternateTitle",
+      "origin": "sdk",
+      "type": {
+        "native": "NSAttributedString *",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "attributedTitle",
+        "set": "setAttributedTitle:"
+      },
+      "js_name": "attributed-title",
+      "memory": "copy",
+      "name": "attributedTitle",
+      "origin": "sdk",
+      "type": {
+        "native": "NSAttributedString *",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "bezelColor",
+        "set": "setBezelColor:"
+      },
+      "availability": {
+        "since": "10.12.2"
+      },
+      "js_name": "bezel-color",
+      "memory": "copy",
+      "name": "bezelColor",
+      "origin": "sdk",
+      "type": {
+        "native": "NSColor *",
+        "nullable": true,
+        "ref": "object<NSColor>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "bezelStyle",
+        "set": "setBezelStyle:"
+      },
+      "js_name": "bezel-style",
+      "memory": "assign",
+      "name": "bezelStyle",
+      "origin": "sdk",
+      "type": {
+        "native": "NSBezelStyle",
+        "ref": "enum<NSBezelStyle>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "borderShape",
+        "set": "setBorderShape:"
+      },
+      "availability": {
+        "since": "26.0"
+      },
+      "js_name": "border-shape",
+      "memory": "assign",
+      "name": "borderShape",
+      "origin": "sdk",
+      "type": {
+        "native": "NSControlBorderShape",
+        "ref": "enum<NSControlBorderShape>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isBordered",
+        "set": "setBordered:"
+      },
+      "js_name": "bordered",
+      "memory": "assign",
+      "name": "bordered",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "contentTintColor",
+        "set": "setContentTintColor:"
+      },
+      "availability": {
+        "since": "10.14"
+      },
+      "js_name": "content-tint-color",
+      "memory": "copy",
+      "name": "contentTintColor",
+      "origin": "sdk",
+      "type": {
+        "native": "NSColor *",
+        "nullable": true,
+        "ref": "object<NSColor>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "hasDestructiveAction",
+        "set": "setHasDestructiveAction:"
+      },
+      "availability": {
+        "since": "11.0"
+      },
+      "js_name": "has-destructive-action",
+      "memory": "assign",
+      "name": "hasDestructiveAction",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "image",
+        "set": "setImage:"
+      },
+      "js_name": "image",
+      "memory": "strong",
+      "name": "image",
+      "origin": "sdk",
+      "type": {
+        "native": "NSImage *",
+        "nullable": true,
+        "ref": "object<NSImage>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "imageHugsTitle",
+        "set": "setImageHugsTitle:"
+      },
+      "availability": {
+        "since": "10.12"
+      },
+      "js_name": "image-hugs-title",
+      "memory": "assign",
+      "name": "imageHugsTitle",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "imagePosition",
+        "set": "setImagePosition:"
+      },
+      "js_name": "image-position",
+      "memory": "assign",
+      "name": "imagePosition",
+      "origin": "sdk",
+      "type": {
+        "native": "NSCellImagePosition",
+        "ref": "enum<NSCellImagePosition>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "imageScaling",
+        "set": "setImageScaling:"
+      },
+      "availability": {
+        "since": "10.5"
+      },
+      "js_name": "image-scaling",
+      "memory": "assign",
+      "name": "imageScaling",
+      "origin": "sdk",
+      "type": {
+        "native": "NSImageScaling",
+        "ref": "enum<NSImageScaling>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "keyEquivalent",
+        "set": "setKeyEquivalent:"
+      },
+      "js_name": "key-equivalent",
+      "memory": "copy",
+      "name": "keyEquivalent",
+      "origin": "sdk",
+      "type": {
+        "native": "NSString *",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "keyEquivalentModifierMask",
+        "set": "setKeyEquivalentModifierMask:"
+      },
+      "js_name": "key-equivalent-modifier-mask",
+      "memory": "assign",
+      "name": "keyEquivalentModifierMask",
+      "origin": "sdk",
+      "type": {
+        "native": "NSEventModifierFlags",
+        "ref": "flags<NSEventModifierFlags>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "maxAcceleratorLevel",
+        "set": "setMaxAcceleratorLevel:"
+      },
+      "availability": {
+        "since": "10.10.3"
+      },
+      "js_name": "max-accelerator-level",
+      "memory": "assign",
+      "name": "maxAcceleratorLevel",
+      "origin": "sdk",
+      "type": {
+        "native": "NSInteger",
+        "ref": "i64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "showsBorderOnlyWhileMouseInside",
+        "set": "setShowsBorderOnlyWhileMouseInside:"
+      },
+      "js_name": "shows-border-only-while-mouse-inside",
+      "memory": "assign",
+      "name": "showsBorderOnlyWhileMouseInside",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "sound",
+        "set": "setSound:"
+      },
+      "js_name": "sound",
+      "memory": "strong",
+      "name": "sound",
+      "origin": "sdk",
+      "type": {
+        "native": "NSSound *",
+        "nullable": true,
+        "ref": "object<NSSound>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isSpringLoaded",
+        "set": "setSpringLoaded:"
+      },
+      "availability": {
+        "since": "10.10.3"
+      },
+      "js_name": "spring-loaded",
+      "memory": "assign",
+      "name": "springLoaded",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "state",
+        "set": "setState:"
+      },
+      "js_name": "state",
+      "memory": "assign",
+      "name": "state",
+      "origin": "sdk",
+      "type": {
+        "native": "NSControlStateValue",
+        "ref": "i64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "symbolConfiguration",
+        "set": "setSymbolConfiguration:"
+      },
+      "availability": {
+        "since": "11.0"
+      },
+      "js_name": "symbol-configuration",
+      "memory": "copy",
+      "name": "symbolConfiguration",
+      "origin": "sdk",
+      "type": {
+        "native": "NSImageSymbolConfiguration *",
+        "nullable": true,
+        "ref": "object<NSImageSymbolConfiguration>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "tintProminence",
+        "set": "setTintProminence:"
+      },
+      "availability": {
+        "since": "26.0"
+      },
+      "js_name": "tint-prominence",
+      "memory": "assign",
+      "name": "tintProminence",
+      "origin": "sdk",
+      "type": {
+        "native": "NSTintProminence",
+        "ref": "enum<NSTintProminence>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "title",
+        "set": "setTitle:"
+      },
+      "js_name": "title",
+      "memory": "copy",
+      "name": "title",
+      "origin": "sdk",
+      "type": {
+        "native": "NSString *",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isTransparent",
+        "set": "setTransparent:"
+      },
+      "js_name": "transparent",
+      "memory": "assign",
+      "name": "transparent",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "docs": "https://developer.apple.com/documentation/appkit/nsbutton?language=objc",
+    "sdk": "MacOSX26.1",
+    "target": "arm64-apple-macos14"
+  },
+  "toolkit": "appkit"
+}
