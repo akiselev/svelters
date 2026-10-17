@@ -12,8 +12,8 @@ some blocked facts are not worth exposing anyway.
 | Id | Gap | Blocked facts (approx.) | Batches |
 | --- | --- | --- | --- |
 | G1 | Child attributes (`set_child_attr`) | ~40 slot/attr facts | gtk-containers-b, qt-containers-b, qt-mainwindow |
-| G2 | GTK method calls with arguments or return values | GTK: 669 methods with args, 396 zero-arg getters | every GTK batch (methods column) |
-| G3 | Object-returning getters (borrowed handles) | GTK: 154 methods; Qt: ~60 | gtk-text-b, qt-text-b, qt-selection |
+| G2 | GTK method calls with arguments or return values: **closed by X1 (master 865482d)** except out/in-out params, arrays and callbacks (S2) | out params, arrays | - |
+| G3 | Object-returning getters (borrowed handles): **closed by X1** (GTK: any GI getter; Qt: ~110 generated getters) | Qt methods with required args on unannotated classes, list returns | - |
 | G4 | Boxed/value types: **mostly closed by S1 (ABI v3, master 8071bb2)**; open: out params, GTK time-only/date-only records, model data | re-check per kind | gtk-display, qt-display |
 | G5 | Sync signal handlers: **bool results closed by X2 (master ba5bb65)**; open: typed `value` results, listen phases, Qt `key_release`/generic events | GTK: `handler_result: value` signals; Qt event families | gtk-ranges (SpinButton input/output), qt-text |
 | G6 | Model-backed views (GListModel, QAbstractItemModel) | 12 GTK kinds, 11 Qt kinds | gtk-lists-b, qt-lists-b (M5) |
@@ -39,6 +39,11 @@ QMainWindow toolbar and dock areas, splitter stretch factors. ABI v2 has no `set
 
 ## G2: GTK method calls with arguments or return values
 
+**Status 2026-10-17: closed by lane X1** (`docs/notes/x1-borrowed-gi.md`): dynamic GIRepository
+calls with scalars, strings, enums/flags, objects, GStrv and boxed values. A1 annotates useful
+methods with `dispatch: dynamic` (generated test through `Harness::call_args`). Still open (S2):
+out/in-out parameters, arrays other than GStrv, callbacks, static functions. The original text follows.
+
 The GTK backend dispatches only `dispatch: zero_arg` methods returning void, through generated
 gtk4-rs calls (`crates/svelters-gtk/src/generated/slots.rs::call_method`). PLAN M3 lists "GTK
 dynamic GI method invocation"; it is not implemented.
@@ -51,6 +56,10 @@ dynamic GI method invocation"; it is not implemented.
 - Qt is not affected: `gen_cpp.py` generates typed thunks for annotated methods with i32/bool/f64/string params and returns.
 
 ## G3: object-returning getters (borrowed handles)
+
+**Status 2026-10-17: closed by lane X1**: GTK getters mint borrowed handles (weak-ref tracked,
+`owner`/`parent` death reasons); Qt has about 110 generated getters (`gen_getter`). Still open: Qt
+methods with required arguments on classes without an override, list returns. The original text follows.
 
 ABI v2 defines the BORROWED lifetime class but no `get_prop`/`call` mints a borrowed handle yet
 (backend-abi.md "As implemented": "Only owned and toplevel are minted today").

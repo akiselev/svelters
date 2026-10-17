@@ -200,6 +200,16 @@
    "tests": [
     "generated::verify::method_window_present"
    ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Window:method:set_default_size",
+   "fingerprint": "c9de176c84bdc057",
+   "kind": "Window",
+   "name": "set_default_size",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_window_set_default_size"
+   ]
   }
  ],
  "toolkit": "gtk",

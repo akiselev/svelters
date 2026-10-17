@@ -78,6 +78,12 @@
         "from": "svelters-api:v1:type:gtk:Gtk:Window",
         "name": "present",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Window:method:set_default_size",
+        "from": "svelters-api:v1:type:gtk:Gtk:Window",
+        "name": "set_default_size",
+        "origin": "manual"
       }
     ],
     "properties": [

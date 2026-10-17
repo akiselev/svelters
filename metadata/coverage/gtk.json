@@ -4,7 +4,7 @@
   "bindings": 0,
   "element": "aboutdialog",
   "gallery": null,
-  "inherited": 4,
+  "inherited": 5,
   "kind": "AboutDialog",
   "lifetime": "toplevel",
   "methods": [
@@ -164,7 +164,7 @@
   "bindings": 0,
   "element": "appchooserdialog",
   "gallery": null,
-  "inherited": 4,
+  "inherited": 5,
   "kind": "AppChooserDialog",
   "lifetime": "toplevel",
   "methods": [
@@ -228,7 +228,7 @@
   "bindings": 0,
   "element": "window",
   "gallery": null,
-  "inherited": 4,
+  "inherited": 5,
   "kind": "ApplicationWindow",
   "lifetime": "toplevel",
   "methods": [
@@ -292,7 +292,7 @@
   "bindings": 0,
   "element": "assistant",
   "gallery": null,
-  "inherited": 4,
+  "inherited": 5,
   "kind": "Assistant",
   "lifetime": "toplevel",
   "methods": [
@@ -612,7 +612,7 @@
   "bindings": 0,
   "element": "colorchooserdialog",
   "gallery": null,
-  "inherited": 4,
+  "inherited": 5,
   "kind": "ColorChooserDialog",
   "lifetime": "toplevel",
   "methods": [
@@ -804,7 +804,7 @@
   "bindings": 0,
   "element": "dialog",
   "gallery": null,
-  "inherited": 4,
+  "inherited": 5,
   "kind": "Dialog",
   "lifetime": "toplevel",
   "methods": [
@@ -1124,7 +1124,7 @@
   "bindings": 0,
   "element": "filechooserdialog",
   "gallery": null,
-  "inherited": 4,
+  "inherited": 5,
   "kind": "FileChooserDialog",
   "lifetime": "toplevel",
   "methods": [
@@ -1348,7 +1348,7 @@
   "bindings": 0,
   "element": "fontchooserdialog",
   "gallery": null,
-  "inherited": 4,
+  "inherited": 5,
   "kind": "FontChooserDialog",
   "lifetime": "toplevel",
   "methods": [
@@ -2084,7 +2084,7 @@
   "bindings": 0,
   "element": "messagedialog",
   "gallery": null,
-  "inherited": 4,
+  "inherited": 5,
   "kind": "MessageDialog",
   "lifetime": "toplevel",
   "methods": [
@@ -2212,7 +2212,7 @@
   "bindings": 0,
   "element": "pagesetupunixdialog",
   "gallery": null,
-  "inherited": 4,
+  "inherited": 5,
   "kind": "PageSetupUnixDialog",
   "lifetime": "toplevel",
   "methods": [
@@ -2468,7 +2468,7 @@
   "bindings": 0,
   "element": "printunixdialog",
   "gallery": null,
-  "inherited": 4,
+  "inherited": 5,
   "kind": "PrintUnixDialog",
   "lifetime": "toplevel",
   "methods": [
@@ -2980,7 +2980,7 @@
   "bindings": 0,
   "element": "shortcutswindow",
   "gallery": null,
-  "inherited": 4,
+  "inherited": 5,
   "kind": "ShortcutsWindow",
   "lifetime": "toplevel",
   "methods": [
@@ -3528,7 +3528,7 @@
   "kind": "Window",
   "lifetime": "toplevel",
   "methods": [
-   1,
+   2,
    57
   ],
   "native": "GtkWindow",
@@ -3547,8 +3547,8 @@
   "slots_own": 2,
   "unexposed": null,
   "verified": [
-   4,
-   4
+   5,
+   5
   ]
  },
  {

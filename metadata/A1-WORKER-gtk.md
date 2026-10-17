@@ -53,11 +53,16 @@ in generated files take either side and rerun the generator commands of section 
 
 How GTK exposure works: every property and signal of every widget is already reachable by
 reflection (dynamic GObject). Annotations add (a) JS names, (b) child slots, (c) signal semantics
-(results, sync), (d) two-way bindings, (e) methods (zero-arg only, see G2), and (f) a generated test
+(results, sync), (d) two-way bindings, (e) methods, and (f) a generated test
 per fact. Annotations on a base class or interface apply to subclasses (`inherited` in the merged
 JSON); test them once on the base through `verify_subject`.
 
 ## 3. Annotation format and the loop
+
+Methods: every GTK method is already callable from JS through GIRepository (X1,
+`docs/notes/x1-borrowed-gi.md`: scalars, strings, enums/flags, objects, GStrv, boxed; no out
+params, callbacks or arrays). Annotate the useful ones with `dispatch: dynamic` so they get a
+verified test; object-returning getters mint borrowed handles.
 
 Every record needs `provenance` (a string, or a list of `{origin, ref}` with origin
 `gir|runtime|manual|probe|docs|source`). Records under `properties`, `signals`, `methods` must
@@ -102,11 +107,16 @@ bindings:
     lifetime: {on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect}
     provenance: "set_active emits toggled and notify::active only on change (Gtk 4 docs)"
 methods:
-  - name: popup                      # zero-arg, void only (G2 blocks the rest)
+  - name: popup                      # zero_arg: generated gtk4-rs call, void, no args
     js_name: popup
     dispatch: zero_arg
     expect: 'h.get(o, "active") == V::Bool(true)'   # Rust bool expression checked after the call (h, o, w: gtk::Widget)
     provenance: "gtk_menu_button_popup (Gtk 4 docs)"
+  - name: set_default_size           # dynamic: GIRepository call (X1); any args/returns the GI layer supports
+    dispatch: dynamic
+    args: [600, 400]                 # JSON scalars/strings/lists passed by the test
+    expect: 'h.get(o, "default-width") == V::I64(600)'   # `r` (the returned testing::V) is also in scope
+    provenance: "gtk_window_set_default_size (Gtk 4 docs)"
 ```
 
 Signal triggers: `{property: <name>, values: [...]}` (sets the GObject property natively, typed
