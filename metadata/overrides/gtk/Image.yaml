@@ -1,4 +1,11 @@
 properties:
+  - name: file
+    sample: "../../docs/site/public/favicon.svg"
+    provenance: "GtkImage:file, string path; the image must load for GTK to keep it (Gtk 4 docs)"
+  - name: gicon
+    provenance: "GtkImage:gicon, GIcon string form (ABI v3); round trip"
+  - name: paintable
+    provenance: "GtkImage:paintable, object reference; round trip"
   - name: icon-name
     js_name: iconName
     sample: "dialog-information"

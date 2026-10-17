@@ -13,6 +13,12 @@ export interface BindableProps {
   combobox: {
     currentIndex: number; // qt
   };
+  dateedit: {
+    date: { year: number; month: number; day: number }; // qt
+  };
+  datetimeedit: {
+    dateTime: Date; // qt
+  };
   dial: {
     value: number; // qt
   };
@@ -27,6 +33,9 @@ export interface BindableProps {
   };
   expander: {
     expanded: boolean; // gtk
+  };
+  groupbox: {
+    checked: boolean; // qt
   };
   levelbar: {
     value: number; // gtk
@@ -73,13 +82,22 @@ export interface BindableProps {
   tabbar: {
     currentIndex: number; // qt
   };
+  tabwidget: {
+    currentIndex: number; // qt
+  };
   text: {
     text: string; // gtk
   };
   textedit: {
     plainText: string; // qt
   };
+  timeedit: {
+    time: { hour: number; minute: number; second: number; ms: number }; // qt
+  };
   togglebutton: {
     active: boolean; // gtk
+  };
+  toolbox: {
+    currentIndex: number; // qt
   };
 }

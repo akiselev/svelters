@@ -25,6 +25,16 @@ pub fn direct_child_index(parent: &gtk::Widget, w: &gtk::Widget) -> Option<u32> 
     Some(n)
 }
 
+/// The direct child of `parent` that is `w` or contains it (the wrapper row of a GtkListBox child).
+#[allow(dead_code)]
+pub fn direct_child(parent: &gtk::Widget, w: &gtk::Widget) -> Option<gtk::Widget> {
+    let mut cur = w.clone();
+    while cur.parent().as_ref() != Some(parent) {
+        cur = cur.parent()?;
+    }
+    Some(cur)
+}
+
 /// Normalises the index types gtk4-rs returns (`i32` with -1, `u32`, `Option<u32>`).
 #[allow(dead_code)]
 pub trait Idx {

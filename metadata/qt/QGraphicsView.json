@@ -4579,7 +4579,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "CacheMode",
+        "native": "QGraphicsView::CacheMode",
         "nullable": false,
         "origin": "qdoc",
         "ref": "flags<QGraphicsView::CacheModeFlag>"
@@ -4622,7 +4622,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "DragMode",
+        "native": "QGraphicsView::DragMode",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QGraphicsView::DragMode>"
@@ -4750,7 +4750,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "OptimizationFlags",
+        "native": "QGraphicsView::OptimizationFlags",
         "nullable": false,
         "origin": "qdoc",
         "ref": "flags<QGraphicsView::OptimizationFlag>"
@@ -4835,7 +4835,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "ViewportAnchor",
+        "native": "QGraphicsView::ViewportAnchor",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QGraphicsView::ViewportAnchor>"
@@ -4963,7 +4963,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "ViewportAnchor",
+        "native": "QGraphicsView::ViewportAnchor",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QGraphicsView::ViewportAnchor>"
@@ -5006,7 +5006,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "ViewportUpdateMode",
+        "native": "QGraphicsView::ViewportUpdateMode",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QGraphicsView::ViewportUpdateMode>"

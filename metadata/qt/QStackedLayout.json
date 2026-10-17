@@ -849,7 +849,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "StackingMode",
+        "native": "QStackedLayout::StackingMode",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QStackedLayout::StackingMode>"

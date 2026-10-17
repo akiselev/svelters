@@ -517,7 +517,7 @@ def main() -> int:
         if name in overrides:
             doc = apply_override(doc, overrides[name], errors)
             kinds[name] = doc
-        refs = sorted({r for p in doc.get("properties", []) for r in [p["type"]["ref"]] if r.startswith(("enum<", "flags<"))})
+        refs = sorted({r for p in doc.get("properties", []) for r in [(p.get("type") or {}).get("ref", "")] if r.startswith(("enum<", "flags<"))})
         doc["enums"] = [r[r.index("<") + 1:-1] for r in refs]
         errs = svmeta.validate(doc)
         errors += [f"{name}: {e}" for e in errs]

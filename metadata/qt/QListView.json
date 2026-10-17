@@ -2577,7 +2577,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "Flow",
+        "native": "QListView::Flow",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QListView::Flow>"
@@ -2748,7 +2748,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "LayoutMode",
+        "native": "QListView::LayoutMode",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QListView::LayoutMode>"
@@ -2834,7 +2834,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "Movement",
+        "native": "QListView::Movement",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QListView::Movement>"
@@ -2877,7 +2877,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "ResizeMode",
+        "native": "QListView::ResizeMode",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QListView::ResizeMode>"
@@ -3049,7 +3049,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "ViewMode",
+        "native": "QListView::ViewMode",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QListView::ViewMode>"

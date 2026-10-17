@@ -256,7 +256,9 @@ def native_parse(m: Model, native: str) -> tuple[str, str, dict]:
 
 ARG_EXPR = {"child": "child", "prev_sibling": "prev.as_ref()", "before": "before", "null": "None::<&gtk::Widget>",
             "index": "crate::util::idx_i32(bidx)", "index_opt": "bidx",
-            "child_index": "crate::util::idx_i32(cidx)", "child_index_opt": "cidx"}
+            "child_index": "crate::util::idx_i32(cidx)", "child_index_opt": "cidx",
+            # the direct child of the parent that wraps `child` (GtkListBox::remove wants the GtkListBoxRow)
+            "wrapper": "&crate::util::direct_child(parent, child).ok_or(\"child is not in this container\")?"}
 
 
 def child_tag(m: "Model", slot: dict) -> str:
@@ -904,7 +906,7 @@ def prop_tests(m: Model, d: dict, p: dict) -> list[tuple[str, str]]:
         {setup}
         let before = h.get_value(o, {js});
         h.set_value(o, {js}, &before).unwrap();
-        assert_eq!(format!("{{:?}}", h.get_value(o, {js})), format!("{{:?}}", before));
+        assert_eq!(crate::testing::shape(&h.get_value(o, {js})), crate::testing::shape(&before));
 """)]
     setc, expect = smp
     extra = ""

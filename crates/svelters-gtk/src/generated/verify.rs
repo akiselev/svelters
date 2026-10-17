@@ -436,6 +436,33 @@ fn slot_headerbar_title() {
     });
 }
 
+/// slot ListBox.children: gir: gtk_list_box_insert; gir: gtk_list_box_remove; manual: non-row children are wrapped in a GtkListBoxRow (Gtk 4 docs)
+#[test]
+fn slot_listbox_children() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("listbox");
+        let a = h.create("label");
+        let b = h.create("label");
+        let c = h.create("label");
+        h.insert(parent, a, None, Some("children")).unwrap();
+        assert!((h.widget(a).ancestor(h.widget(parent).type_()).as_ref() == Some(&h.widget(parent))), "a in children");
+        let pw = h.widget(parent);
+        let idx = |c: u64| -> Option<u32> { let parent = &pw; let w = h.widget(c); crate::util::direct_child_index(parent, &w) };
+        h.insert(parent, b, Some(a), Some("children")).unwrap();
+        h.insert(parent, c, None, None).unwrap();
+        assert!(idx(b) < idx(a) && idx(a) < idx(c), "order b a c: {:?}", (idx(b), idx(a), idx(c)));
+        h.remove(parent, a).unwrap();
+        assert!(!(h.widget(a).ancestor(h.widget(parent).type_()).as_ref() == Some(&h.widget(parent))), "a in children");
+        assert!(h.widget(a).parent().is_none());
+        h.insert(parent, a, Some(c), Some("children")).unwrap();
+        assert!(idx(b) < idx(a) && idx(a) < idx(c), "order b a c after re-insert");
+        for x in [a, b, c] { h.remove(parent, x).unwrap(); }
+        assert!(!(h.widget(a).ancestor(h.widget(parent).type_()).as_ref() == Some(&h.widget(parent))), "a in children");
+        assert!(!(h.widget(b).ancestor(h.widget(parent).type_()).as_ref() == Some(&h.widget(parent))), "b in children");
+    });
+}
+
 /// slot MenuButton.popover: gir: gtk_menu_button_set_popover; manual: the popover is parented to the button (Gtk 4 docs)
 #[test]
 fn slot_menubutton_popover() {
@@ -1715,6 +1742,130 @@ fn signal_calendar_day_selected() {
     });
 }
 
+/// signal Calendar.next-month: GtkCalendar::next-month, run-first, action signal (Gtk 4 docs)
+#[test]
+fn signal_calendar_next_month() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("calendar");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            o.emit_by_name::<()>("next-month", &[]);
+        };
+        assert_ne!(h.resolve_signal("calendar", "next-month"), 0);
+        assert_eq!(h.resolve_signal("calendar", "next-month"), h.resolve_signal("calendar", "next-month"));
+        h.listen(e, "next-month", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "next-month".to_string())), "delivered: {ev:?}");
+        h.listen(e, "next-month", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "next-month", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "next-month", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal Calendar.next-year: GtkCalendar::next-year, run-first, action signal (Gtk 4 docs)
+#[test]
+fn signal_calendar_next_year() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("calendar");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            o.emit_by_name::<()>("next-year", &[]);
+        };
+        assert_ne!(h.resolve_signal("calendar", "next-year"), 0);
+        assert_eq!(h.resolve_signal("calendar", "next-year"), h.resolve_signal("calendar", "next-year"));
+        h.listen(e, "next-year", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "next-year".to_string())), "delivered: {ev:?}");
+        h.listen(e, "next-year", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "next-year", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "next-year", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal Calendar.prev-month: GtkCalendar::prev-month, run-first, action signal (Gtk 4 docs)
+#[test]
+fn signal_calendar_prev_month() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("calendar");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            o.emit_by_name::<()>("prev-month", &[]);
+        };
+        assert_ne!(h.resolve_signal("calendar", "prev-month"), 0);
+        assert_eq!(h.resolve_signal("calendar", "prev-month"), h.resolve_signal("calendar", "prev-month"));
+        h.listen(e, "prev-month", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "prev-month".to_string())), "delivered: {ev:?}");
+        h.listen(e, "prev-month", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "prev-month", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "prev-month", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal Calendar.prev-year: GtkCalendar::prev-year, run-first, action signal (Gtk 4 docs)
+#[test]
+fn signal_calendar_prev_year() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("calendar");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            o.emit_by_name::<()>("prev-year", &[]);
+        };
+        assert_ne!(h.resolve_signal("calendar", "prev-year"), 0);
+        assert_eq!(h.resolve_signal("calendar", "prev-year"), h.resolve_signal("calendar", "prev-year"));
+        h.listen(e, "prev-year", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "prev-year".to_string())), "delivered: {ev:?}");
+        h.listen(e, "prev-year", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "prev-year", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "prev-year", true).is_err(), "stale handle is an error");
+    });
+}
+
 /// signal Calendar.notify::day: GObject::notify for GtkCalendar:day
 #[test]
 fn signal_calendar_notify_day() {
@@ -1761,7 +1912,7 @@ fn prop_calendar_date() {
         
         let before = h.get_value(o, "date");
         h.set_value(o, "date", &before).unwrap();
-        assert_eq!(format!("{:?}", h.get_value(o, "date")), format!("{:?}", before));
+        assert_eq!(crate::testing::shape(&h.get_value(o, "date")), crate::testing::shape(&before));
     });
 }
 
@@ -1886,6 +2037,34 @@ fn prop_calendar_year() {
         assert_eq!(id, h.resolve_prop("calendar", "year"));
         h.set_i64(o, "year", 2030).unwrap();
         assert_eq!(h.get(o, "year"), V::I64(2030));
+    });
+}
+
+/// method Calendar.clear_marks (dynamic GI call): gtk_calendar_clear_marks (Gtk 4 docs)
+#[test]
+fn method_calendar_clear_marks() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("calendar");
+        
+        let r = h.call_args(o, "clearMarks", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::Null, "postcondition: r == V::Null");
+    });
+}
+
+/// method Calendar.mark_day (dynamic GI call): gtk_calendar_mark_day (Gtk 4 docs)
+#[test]
+fn method_calendar_mark_day() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("calendar");
+        
+        let r = h.call_args(o, "markDay", &[V::I64(5)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::Null, "postcondition: r == V::Null");
     });
 }
 
@@ -2178,6 +2357,19 @@ fn binding_checkbutton_active() {
         let ev = h.take_events_with_args();
         assert!(!ev.is_empty(), "native change is delivered");
         assert_ne!(h.get(o, "active"), V::Null, "the property reads the new value");
+    });
+}
+
+/// property ColorDialogButton.rgba (JS rgba, round trip): GtkColorDialogButton:rgba, GdkRGBA boxed round-trip (S1 value model; Gtk 4 docs)
+#[test]
+fn prop_colordialogbutton_rgba() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("colordialogbutton");
+        
+        let before = h.get_value(o, "rgba");
+        h.set_value(o, "rgba", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "rgba")), crate::testing::shape(&before));
     });
 }
 
@@ -3162,6 +3354,64 @@ fn prop_flowbox_selection_mode() {
     });
 }
 
+/// property FontDialogButton.font-desc (JS fontDesc, round trip): GtkFontDialogButton:font-desc, PangoFontDescription (Gtk 4 docs); boxed round trip (handle ids blanked)
+#[test]
+fn prop_fontdialogbutton_font_desc() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("fontdialogbutton");
+        
+        let before = h.get_value(o, "fontDesc");
+        h.set_value(o, "fontDesc", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "fontDesc")), crate::testing::shape(&before));
+    });
+}
+
+/// property FontDialogButton.level (JS level): GtkFontDialogButton:level, GtkFontLevel enum (Gtk 4 docs)
+#[test]
+fn prop_fontdialogbutton_level() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("fontdialogbutton");
+        
+        let id = h.resolve_prop("fontdialogbutton", "level");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("fontdialogbutton", "level"));
+        h.set_str(o, "level", "family").unwrap();
+        assert_eq!(h.get(o, "level"), V::Str("family".into()));
+    });
+}
+
+/// property FontDialogButton.use-font (JS useFont): GtkFontDialogButton:use-font (Gtk 4 docs)
+#[test]
+fn prop_fontdialogbutton_use_font() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("fontdialogbutton");
+        
+        let id = h.resolve_prop("fontdialogbutton", "useFont");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("fontdialogbutton", "use-font"));
+        h.set_bool(o, "useFont", true).unwrap();
+        assert_eq!(h.get(o, "useFont"), V::Bool(true));
+    });
+}
+
+/// property FontDialogButton.use-size (JS useSize): GtkFontDialogButton:use-size (Gtk 4 docs)
+#[test]
+fn prop_fontdialogbutton_use_size() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("fontdialogbutton");
+        
+        let id = h.resolve_prop("fontdialogbutton", "useSize");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("fontdialogbutton", "use-size"));
+        h.set_bool(o, "useSize", true).unwrap();
+        assert_eq!(h.get(o, "useSize"), V::Bool(true));
+    });
+}
+
 /// property Frame.label (JS label): GtkFrame:label (Gtk 4 docs); P prop
 #[test]
 fn prop_frame_label() {
@@ -3344,6 +3594,34 @@ fn prop_headerbar_use_native_controls() {
     });
 }
 
+/// property Image.file (JS file): GtkImage:file, string path; the image must load for GTK to keep it (Gtk 4 docs)
+#[test]
+fn prop_image_file() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("image");
+        
+        let id = h.resolve_prop("image", "file");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("image", "file"));
+        h.set_str(o, "file", "../../docs/site/public/favicon.svg").unwrap();
+        assert_eq!(h.get(o, "file"), V::Str("../../docs/site/public/favicon.svg".into()));
+    });
+}
+
+/// property Image.gicon (JS gicon, round trip): GtkImage:gicon, GIcon string form (ABI v3); round trip
+#[test]
+fn prop_image_gicon() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("image");
+        
+        let before = h.get_value(o, "gicon");
+        h.set_value(o, "gicon", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "gicon")), crate::testing::shape(&before));
+    });
+}
+
 /// property Image.icon-name (JS iconName): GtkImage:icon-name (Gtk 4 docs)
 #[test]
 fn prop_image_icon_name() {
@@ -3371,6 +3649,19 @@ fn prop_image_icon_size() {
         assert_eq!(id, h.resolve_prop("image", "icon-size"));
         h.set_str(o, "iconSize", "normal").unwrap();
         assert_eq!(h.get(o, "iconSize"), V::Str("normal".into()));
+    });
+}
+
+/// property Image.paintable (JS paintable, round trip): GtkImage:paintable, object reference; round trip
+#[test]
+fn prop_image_paintable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("image");
+        
+        let before = h.get_value(o, "paintable");
+        h.set_value(o, "paintable", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "paintable")), crate::testing::shape(&before));
     });
 }
 
@@ -4128,6 +4419,19 @@ fn prop_listbox_show_separators() {
     });
 }
 
+/// property LockButton.permission (JS permission, round trip): GtkLockButton:permission, object reference; round trip
+#[test]
+fn prop_lockbutton_permission() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("lockbutton");
+        
+        let before = h.get_value(o, "permission");
+        h.set_value(o, "permission", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "permission")), crate::testing::shape(&before));
+    });
+}
+
 /// property LockButton.text-lock (JS textLock): GtkLockButton:text-lock (Gtk 4 docs)
 #[test]
 fn prop_lockbutton_text_lock() {
@@ -4857,6 +5161,19 @@ fn prop_picture_content_fit() {
     });
 }
 
+/// property Picture.file (JS file, round trip): GtkPicture:file, GFile string form (ABI v3); round trip
+#[test]
+fn prop_picture_file() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("picture");
+        
+        let before = h.get_value(o, "file");
+        h.set_value(o, "file", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "file")), crate::testing::shape(&before));
+    });
+}
+
 /// property Picture.keep-aspect-ratio (JS keepAspectRatio): GtkPicture:keep-aspect-ratio (Gtk 4 docs)
 #[test]
 fn prop_picture_keep_aspect_ratio() {
@@ -4869,6 +5186,19 @@ fn prop_picture_keep_aspect_ratio() {
         assert_eq!(id, h.resolve_prop("picture", "keep-aspect-ratio"));
         h.set_bool(o, "keepAspectRatio", false).unwrap();
         assert_eq!(h.get(o, "keepAspectRatio"), V::Bool(false));
+    });
+}
+
+/// property Picture.paintable (JS paintable, round trip): GtkPicture:paintable, object reference; round trip
+#[test]
+fn prop_picture_paintable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("picture");
+        
+        let before = h.get_value(o, "paintable");
+        h.set_value(o, "paintable", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "paintable")), crate::testing::shape(&before));
     });
 }
 
@@ -5424,6 +5754,19 @@ fn prop_scalebutton_has_frame() {
     });
 }
 
+/// property ScaleButton.icons (JS icons, round trip): GtkScaleButton:icons, string list (ABI v3); round trip
+#[test]
+fn prop_scalebutton_icons() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scalebutton");
+        
+        let before = h.get_value(o, "icons");
+        h.set_value(o, "icons", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "icons")), crate::testing::shape(&before));
+    });
+}
+
 /// property ScaleButton.value (JS value): GtkScaleButton:value (Gtk 4 docs); needs a non-empty adjustment range
 #[test]
 fn prop_scalebutton_value() {
@@ -5448,7 +5791,7 @@ fn prop_scrollbar_adjustment() {
         
         let before = h.get_value(o, "adjustment");
         h.set_value(o, "adjustment", &before).unwrap();
-        assert_eq!(format!("{:?}", h.get_value(o, "adjustment")), format!("{:?}", before));
+        assert_eq!(crate::testing::shape(&h.get_value(o, "adjustment")), crate::testing::shape(&before));
     });
 }
 
@@ -6377,7 +6720,7 @@ fn prop_stack_visible_child() {
         
         let before = h.get_value(o, "visibleChild");
         h.set_value(o, "visibleChild", &before).unwrap();
-        assert_eq!(format!("{:?}", h.get_value(o, "visibleChild")), format!("{:?}", before));
+        assert_eq!(crate::testing::shape(&h.get_value(o, "visibleChild")), crate::testing::shape(&before));
     });
 }
 
@@ -6390,7 +6733,7 @@ fn prop_stacksidebar_stack() {
         
         let before = h.get_value(o, "stack");
         h.set_value(o, "stack", &before).unwrap();
-        assert_eq!(format!("{:?}", h.get_value(o, "stack")), format!("{:?}", before));
+        assert_eq!(crate::testing::shape(&h.get_value(o, "stack")), crate::testing::shape(&before));
     });
 }
 
@@ -6403,7 +6746,7 @@ fn prop_stackswitcher_stack() {
         
         let before = h.get_value(o, "stack");
         h.set_value(o, "stack", &before).unwrap();
-        assert_eq!(format!("{:?}", h.get_value(o, "stack")), format!("{:?}", before));
+        assert_eq!(crate::testing::shape(&h.get_value(o, "stack")), crate::testing::shape(&before));
     });
 }
 
@@ -7143,7 +7486,7 @@ fn prop_widget_css_classes() {
         
         let before = h.get_value(o, "cssClasses");
         h.set_value(o, "cssClasses", &before).unwrap();
-        assert_eq!(format!("{:?}", h.get_value(o, "cssClasses")), format!("{:?}", before));
+        assert_eq!(crate::testing::shape(&h.get_value(o, "cssClasses")), crate::testing::shape(&before));
     });
 }
 

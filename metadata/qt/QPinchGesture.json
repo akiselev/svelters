@@ -844,7 +844,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "ChangeFlags",
+        "native": "QPinchGesture::ChangeFlags",
         "nullable": false,
         "origin": "qdoc",
         "ref": "flags<QPinchGesture::ChangeFlag>"
@@ -1143,7 +1143,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "ChangeFlags",
+        "native": "QPinchGesture::ChangeFlags",
         "nullable": false,
         "origin": "qdoc",
         "ref": "flags<QPinchGesture::ChangeFlag>"

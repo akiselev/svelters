@@ -2,9 +2,25 @@ elements:
   - tag: datetimeedit
     construct: { class: QDateTimeEdit }
     props:
-      - { js: dateTime, native: dateTime, provenance: "QDateTimeEdit::dateTime (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: dateTime, native: dateTime, suppress_signals: true, provenance: "QDateTimeEdit::dateTime (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: displayFormat, native: displayFormat, sample: "yyyy-MM-dd HH:mm", provenance: "QDateTimeEdit::displayFormat (qdoc); typed by the S1 value model (ABI v3)" }
       - { js: calendarPopup, native: calendarPopup, provenance: "QDateTimeEdit::calendarPopup (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: minimumDate, native: minimumDate, provenance: "QDateTimeEdit::minimumDate (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: maximumDate, native: maximumDate, provenance: "QDateTimeEdit::maximumDate (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: minimumTime, native: minimumTime, provenance: "QDateTimeEdit::minimumTime (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: maximumTime, native: maximumTime, provenance: "QDateTimeEdit::maximumTime (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: minimumDateTime, native: minimumDateTime, provenance: "QDateTimeEdit::minimumDateTime (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: maximumDateTime, native: maximumDateTime, provenance: "QDateTimeEdit::maximumDateTime (qdoc); typed by the S1 value model (ABI v3)" }
+    bindings:
+      - name: dateTime
+        direction: two_way
+        property: dateTime
+        type: { ref: datetime, nullable: false }
+        change: { signal: date-time-changed, role: any_change, value: arg0 }
+        write: { natively_normalizes: true }    # clamped to the minimum..maximum range
+        echo: { strategy: host_suppressed, compare_before_set: false, read_back: false, sync_signals_on_set: ["dateTimeChanged(QDateTime)"] }
+        lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
+        provenance: "QDateTimeEdit::setDateTime emits dateTimeChanged only on change (qdoc); no-echo test for non-scalar props (A1-GAPS G16)"
     signals:
       - js: date-time-changed
         native: dateTimeChanged

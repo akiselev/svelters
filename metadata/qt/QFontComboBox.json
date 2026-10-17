@@ -687,7 +687,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "FontFilters",
+        "native": "QFontComboBox::FontFilters",
         "nullable": false,
         "origin": "qdoc",
         "ref": "flags<QFontComboBox::FontFilter>"

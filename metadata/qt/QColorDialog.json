@@ -880,7 +880,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "ColorDialogOptions",
+        "native": "QColorDialog::ColorDialogOptions",
         "nullable": false,
         "origin": "qdoc",
         "ref": "flags<QColorDialog::ColorDialogOption>"

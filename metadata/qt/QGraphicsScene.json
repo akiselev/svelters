@@ -4736,7 +4736,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "ItemIndexMethod",
+        "native": "QGraphicsScene::ItemIndexMethod",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QGraphicsScene::ItemIndexMethod>"

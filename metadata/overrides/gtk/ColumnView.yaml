@@ -1,0 +1,2 @@
+unexposed:
+  reason: "GtkColumnView is a GListModel table; flat lists map to virtuallist (X5); columns, sorters and factories are open under gap G6 (ColumnView columns)"

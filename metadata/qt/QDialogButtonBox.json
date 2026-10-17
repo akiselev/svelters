@@ -1126,7 +1126,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "StandardButtons",
+        "native": "QDialogButtonBox::StandardButtons",
         "nullable": false,
         "origin": "qdoc",
         "ref": "flags<QDialogButtonBox::StandardButton>"

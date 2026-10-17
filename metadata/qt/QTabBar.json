@@ -3455,7 +3455,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "SelectionBehavior",
+        "native": "QTabBar::SelectionBehavior",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QTabBar::SelectionBehavior>"
@@ -3498,7 +3498,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "Shape",
+        "native": "QTabBar::Shape",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QTabBar::Shape>"

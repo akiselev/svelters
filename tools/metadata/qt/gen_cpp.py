@@ -587,6 +587,10 @@ class Model:
             ops["append"] = self._op(where + ".insert", host_cls, ins)
             if s["append_only"]:
                 ops["remove"] = self._op(where + ".remove", host_cls, raw["remove"])
+                if s.get("id_of"):
+                    _, lm, _ = self.parse_native(where + ".id_of.list", s["id_of"]["list"])
+                    _, im, _ = self.parse_native(where + ".id_of.item", s["id_of"]["item"])
+                    s["id_of"] = {**s["id_of"], "list_method": lm, "item_method": im}
                 rc = raw["remove"].get("effects", {}).get("child")
                 s["remove_effect"] = {"unparented": "released"}.get(rc)
                 if s["remove_effect"] is None:
@@ -1072,6 +1076,8 @@ def op_call(host: str, op: dict, child: str | None = None, extra: dict | None = 
                 args.append("nullptr")
             elif a == "index":
                 args.append((extra or {})["index"])
+            elif a == "id":
+                args.append((extra or {})["id"])
             elif isinstance(a, str) and a.startswith("const:"):
                 args.append(a[6:])
             else:
@@ -1098,8 +1104,11 @@ def emit_insert(m: Model) -> str:
             out.append(f"          if (!ch) return fail(\"slot {s['name']} of <{e['tag']}> does not accept this child\");")
             out.append(f"          auto *h = {host_expr(e, s['host'])};")
             if s["cardinality"] == "one":
-                if s["replace"] == "releases_old" and "take" in ops:
-                    out.append(f"          if (auto *old = {op_call('h', ops['get'])}; old && old != ch) {op_call('h', ops['take'])};")
+                # Release the old child first when the setter would not (takeCentralWidget, or a clearing
+                # remove with `then` steps such as QDockWidget::setWidget(nullptr) + setParent(nullptr)).
+                rm = ops.get("take") or (ops["clear"] if ops.get("clear", {}).get("then") else None)
+                if s["replace"] == "releases_old" and rm:
+                    out.append(f"          if (auto *old = {op_call('h', ops['get'])}; old && old != ch) {{ {op_call('h', rm, 'old')}; }}")
                 out.append(f"          {op_call('h', ops['set'], 'ch')};")
             elif s.get("append_only"):
                 out.append(f"          if (before) return fail(\"slot {s['name']} of <{e['tag']}> is append-only (no insert-before)\");")
@@ -1143,13 +1152,18 @@ def emit_remove(m: Model) -> str:
             if s["cardinality"] == "one":
                 out.append(f"        if (static_cast<QWidget *>(o)->isAncestorOf(ch) && {op_call('h', ops['get'])} == ch) {{")
                 if "take" in ops:
-                    out.append(f"          {op_call('h', ops['take'])};")
+                    out.append(f"          {op_call('h', ops['take'], 'ch')};")
                 else:
-                    out.append(f"          {op_call('h', ops['clear'])};")
+                    out.append(f"          {op_call('h', ops['clear'], 'ch')};")
                 out.append("          return 0;\n        }")
             elif s.get("append_only"):
                 out.append(f"        if (static_cast<QWidget *>(o)->isAncestorOf(ch)) {{")
-                out.append(f"          {op_call('h', ops['remove'], 'ch')};")
+                if s.get("id_of"):
+                    # Removal by an id the child does not carry (QWizard::removePage): find it (A1-GAPS G18).
+                    lst, item = s["id_of"]["list_method"], s["id_of"]["item_method"]
+                    out.append(f"          int id = -1; for (int k : h->{lst}()) if (h->{item}(k) == ch) id = k;")
+                    out.append("          if (id < 0) return fail(\"remove: child has no id in this slot\");")
+                out.append(f"          {op_call('h', ops['remove'], 'ch', {'id': 'id'})};")
                 out.append("          return 0;\n        }")
             else:
                 out.append(f"        if (int i = {op_call('h', ops['index_of'], 'ch')}; i >= 0) {{")
@@ -1654,6 +1668,22 @@ class Tests:
             sigs = [sg for sg in e.get("signals", []) if not sg.get("synthetic")]
             if not sigs or not sigs[0].get("trigger"):
                 raise GenError(f"{pn}: suppress_signals needs a signal with a trigger on the element")
+            if cat not in SCALAR:
+                # Non-scalar values (dates, records): no literal sample. Read the value, change it natively
+                # with nothing listening (no backend output is produced, so `out` stays valid), then write the
+                # first value back through the backend while listening: nothing may be posted (A1-GAPS G16).
+                trig = lambda i: sigs[0]["trigger"].replace("$w", f"static_cast<{e['cls']} *>(O(h))").replace("$i", str(i))
+                lines = [f'  svl_handle h = mk("{t}");', f"  {trig(0)};", "  svl_value out{};",
+                         f"  CHECK(B->get_prop(B->self, h, {P_}, &out) == 0);", f"  {trig(1)};"]
+                for sg in sigs:
+                    lines.append(f'  CHECK(B->listen(B->self, h, G("{t}", "{sg["js"]}"), true) == 0);')
+                lines += [f"  CHECK(B->set_prop(B->self, h, {P_}, &out) == 0);",
+                          "  CHECK(rec.events.empty());  // no echo for programmatic sets",
+                          f"  {trig(2)};",
+                          "  CHECK(!rec.events.empty());  // native changes are still delivered",
+                          "  B->destroy(B->self, h);"]
+                self.add(f"signal/{t}.{pn}/no_echo_on_set_prop", "\n".join(lines))
+                return
             decl, _, _ = self.sample(p)
             lines = [f'  svl_handle h = mk("{t}");', f"  {decl}"]
             for sg in sigs:

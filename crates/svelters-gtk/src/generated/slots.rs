@@ -103,77 +103,83 @@ pub fn slot_insert(slot: u32, parent: &gtk::Widget, child: &gtk::Widget, before:
             Ok(())
         }
         19 => {
+            let p = parent.downcast_ref::<gtk::ListBox>().ok_or("parent is not a gtk::ListBox")?;
+            let bidx: Option<u32> = before.and_then(|b| crate::util::direct_child_index(parent, b));
+            p.insert(child, crate::util::idx_i32(bidx));
+            Ok(())
+        }
+        20 => {
             let p = parent.downcast_ref::<gtk::MenuButton>().ok_or("parent is not a gtk::MenuButton")?;
             p.set_popover(Some(child.downcast_ref::<gtk::Popover>().ok_or("child is not a gtk::Popover")?));
             Ok(())
         }
-        20 => {
+        21 => {
             let p = parent.downcast_ref::<gtk::Notebook>().ok_or("parent is not a gtk::Notebook")?;
             let bidx: Option<u32> = before.and_then(|b| crate::util::Idx::idx(parent.downcast_ref::<gtk::Notebook>().unwrap().page_num(b)));
             p.insert_page(child, None::<&gtk::Widget>, bidx);
             Ok(())
         }
-        21 => {
+        22 => {
             let p = parent.downcast_ref::<gtk::Overlay>().ok_or("parent is not a gtk::Overlay")?;
             p.set_child(Some(child));
             Ok(())
         }
-        22 => {
+        23 => {
             let p = parent.downcast_ref::<gtk::Overlay>().ok_or("parent is not a gtk::Overlay")?;
             p.add_overlay(child);
             Ok(())
         }
-        23 => {
+        24 => {
             let p = parent.downcast_ref::<gtk::Paned>().ok_or("parent is not a gtk::Paned")?;
             p.set_end_child(Some(child));
             Ok(())
         }
-        24 => {
+        25 => {
             let p = parent.downcast_ref::<gtk::Paned>().ok_or("parent is not a gtk::Paned")?;
             p.set_start_child(Some(child));
             Ok(())
         }
-        25 => {
+        26 => {
             let p = parent.downcast_ref::<gtk::Popover>().ok_or("parent is not a gtk::Popover")?;
             p.set_child(Some(child));
             Ok(())
         }
-        26 => {
+        27 => {
             let p = parent.downcast_ref::<gtk::Revealer>().ok_or("parent is not a gtk::Revealer")?;
             p.set_child(Some(child));
             Ok(())
         }
-        27 => {
+        28 => {
             let p = parent.downcast_ref::<gtk::ScrolledWindow>().ok_or("parent is not a gtk::ScrolledWindow")?;
             p.set_child(Some(child));
             Ok(())
         }
-        28 => {
+        29 => {
             let p = parent.downcast_ref::<gtk::SearchBar>().ok_or("parent is not a gtk::SearchBar")?;
             p.set_child(Some(child));
             Ok(())
         }
-        29 => {
+        30 => {
             let p = parent.downcast_ref::<gtk::Stack>().ok_or("parent is not a gtk::Stack")?;
             p.add_child(child);
             Ok(())
         }
-        30 => {
-            let p = parent.downcast_ref::<gtk::Viewport>().ok_or("parent is not a gtk::Viewport")?;
-            p.set_child(Some(child));
-            Ok(())
-        }
         31 => {
-            let p = parent.downcast_ref::<gtk::Window>().ok_or("parent is not a gtk::Window")?;
+            let p = parent.downcast_ref::<gtk::Viewport>().ok_or("parent is not a gtk::Viewport")?;
             p.set_child(Some(child));
             Ok(())
         }
         32 => {
             let p = parent.downcast_ref::<gtk::Window>().ok_or("parent is not a gtk::Window")?;
-            p.set_titlebar(Some(child));
+            p.set_child(Some(child));
             Ok(())
         }
         33 => {
+            let p = parent.downcast_ref::<gtk::Window>().ok_or("parent is not a gtk::Window")?;
+            p.set_titlebar(Some(child));
+            Ok(())
+        }
+        34 => {
             let p = parent.downcast_ref::<gtk::WindowHandle>().ok_or("parent is not a gtk::WindowHandle")?;
             p.set_child(Some(child));
             Ok(())
@@ -317,6 +323,11 @@ pub fn slot_remove(slot: u32, parent: &gtk::Widget, child: &gtk::Widget) -> Resu
             Ok(())
         }
         19 => {
+            let p = parent.downcast_ref::<gtk::ListBox>().ok_or("parent is not a gtk::ListBox")?;
+            p.remove(&crate::util::direct_child(parent, child).ok_or("child is not in this container")?);
+            Ok(())
+        }
+        20 => {
             let p = parent.downcast_ref::<gtk::MenuButton>().ok_or("parent is not a gtk::MenuButton")?;
             let cur = p.popover().map(|x| x.upcast::<gtk::Widget>());
             if cur.as_ref() != Some(child) && !cur.as_ref().is_some_and(|g| child.is_ancestor(g)) {
@@ -325,14 +336,14 @@ pub fn slot_remove(slot: u32, parent: &gtk::Widget, child: &gtk::Widget) -> Resu
             p.set_popover(None::<&gtk::Popover>);
             Ok(())
         }
-        20 => {
+        21 => {
             let p = parent.downcast_ref::<gtk::Notebook>().ok_or("parent is not a gtk::Notebook")?;
             let cidx: Option<u32> = crate::util::Idx::idx(parent.downcast_ref::<gtk::Notebook>().unwrap().page_num(child));
             if cidx.is_none() { return Err("child is not in slot pages".into()); }
             p.remove_page(cidx);
             Ok(())
         }
-        21 => {
+        22 => {
             let p = parent.downcast_ref::<gtk::Overlay>().ok_or("parent is not a gtk::Overlay")?;
             let cur = p.child().map(|x| x.upcast::<gtk::Widget>());
             if cur.as_ref() != Some(child) && !cur.as_ref().is_some_and(|g| child.is_ancestor(g)) {
@@ -341,12 +352,12 @@ pub fn slot_remove(slot: u32, parent: &gtk::Widget, child: &gtk::Widget) -> Resu
             p.set_child(None::<&gtk::Widget>);
             Ok(())
         }
-        22 => {
+        23 => {
             let p = parent.downcast_ref::<gtk::Overlay>().ok_or("parent is not a gtk::Overlay")?;
             p.remove_overlay(child);
             Ok(())
         }
-        23 => {
+        24 => {
             let p = parent.downcast_ref::<gtk::Paned>().ok_or("parent is not a gtk::Paned")?;
             let cur = p.end_child().map(|x| x.upcast::<gtk::Widget>());
             if cur.as_ref() != Some(child) && !cur.as_ref().is_some_and(|g| child.is_ancestor(g)) {
@@ -355,7 +366,7 @@ pub fn slot_remove(slot: u32, parent: &gtk::Widget, child: &gtk::Widget) -> Resu
             p.set_end_child(None::<&gtk::Widget>);
             Ok(())
         }
-        24 => {
+        25 => {
             let p = parent.downcast_ref::<gtk::Paned>().ok_or("parent is not a gtk::Paned")?;
             let cur = p.start_child().map(|x| x.upcast::<gtk::Widget>());
             if cur.as_ref() != Some(child) && !cur.as_ref().is_some_and(|g| child.is_ancestor(g)) {
@@ -364,7 +375,7 @@ pub fn slot_remove(slot: u32, parent: &gtk::Widget, child: &gtk::Widget) -> Resu
             p.set_start_child(None::<&gtk::Widget>);
             Ok(())
         }
-        25 => {
+        26 => {
             let p = parent.downcast_ref::<gtk::Popover>().ok_or("parent is not a gtk::Popover")?;
             let cur = p.child().map(|x| x.upcast::<gtk::Widget>());
             if cur.as_ref() != Some(child) && !cur.as_ref().is_some_and(|g| child.is_ancestor(g)) {
@@ -373,7 +384,7 @@ pub fn slot_remove(slot: u32, parent: &gtk::Widget, child: &gtk::Widget) -> Resu
             p.set_child(None::<&gtk::Widget>);
             Ok(())
         }
-        26 => {
+        27 => {
             let p = parent.downcast_ref::<gtk::Revealer>().ok_or("parent is not a gtk::Revealer")?;
             let cur = p.child().map(|x| x.upcast::<gtk::Widget>());
             if cur.as_ref() != Some(child) && !cur.as_ref().is_some_and(|g| child.is_ancestor(g)) {
@@ -382,7 +393,7 @@ pub fn slot_remove(slot: u32, parent: &gtk::Widget, child: &gtk::Widget) -> Resu
             p.set_child(None::<&gtk::Widget>);
             Ok(())
         }
-        27 => {
+        28 => {
             let p = parent.downcast_ref::<gtk::ScrolledWindow>().ok_or("parent is not a gtk::ScrolledWindow")?;
             let cur = p.child().map(|x| x.upcast::<gtk::Widget>());
             if cur.as_ref() != Some(child) && !cur.as_ref().is_some_and(|g| child.is_ancestor(g)) {
@@ -391,7 +402,7 @@ pub fn slot_remove(slot: u32, parent: &gtk::Widget, child: &gtk::Widget) -> Resu
             p.set_child(None::<&gtk::Widget>);
             Ok(())
         }
-        28 => {
+        29 => {
             let p = parent.downcast_ref::<gtk::SearchBar>().ok_or("parent is not a gtk::SearchBar")?;
             let cur = p.child().map(|x| x.upcast::<gtk::Widget>());
             if cur.as_ref() != Some(child) && !cur.as_ref().is_some_and(|g| child.is_ancestor(g)) {
@@ -400,22 +411,13 @@ pub fn slot_remove(slot: u32, parent: &gtk::Widget, child: &gtk::Widget) -> Resu
             p.set_child(None::<&gtk::Widget>);
             Ok(())
         }
-        29 => {
+        30 => {
             let p = parent.downcast_ref::<gtk::Stack>().ok_or("parent is not a gtk::Stack")?;
             p.remove(child);
             Ok(())
         }
-        30 => {
-            let p = parent.downcast_ref::<gtk::Viewport>().ok_or("parent is not a gtk::Viewport")?;
-            let cur = p.child().map(|x| x.upcast::<gtk::Widget>());
-            if cur.as_ref() != Some(child) && !cur.as_ref().is_some_and(|g| child.is_ancestor(g)) {
-                return Err("child is not in slot child".into());
-            }
-            p.set_child(None::<&gtk::Widget>);
-            Ok(())
-        }
         31 => {
-            let p = parent.downcast_ref::<gtk::Window>().ok_or("parent is not a gtk::Window")?;
+            let p = parent.downcast_ref::<gtk::Viewport>().ok_or("parent is not a gtk::Viewport")?;
             let cur = p.child().map(|x| x.upcast::<gtk::Widget>());
             if cur.as_ref() != Some(child) && !cur.as_ref().is_some_and(|g| child.is_ancestor(g)) {
                 return Err("child is not in slot child".into());
@@ -425,6 +427,15 @@ pub fn slot_remove(slot: u32, parent: &gtk::Widget, child: &gtk::Widget) -> Resu
         }
         32 => {
             let p = parent.downcast_ref::<gtk::Window>().ok_or("parent is not a gtk::Window")?;
+            let cur = p.child().map(|x| x.upcast::<gtk::Widget>());
+            if cur.as_ref() != Some(child) && !cur.as_ref().is_some_and(|g| child.is_ancestor(g)) {
+                return Err("child is not in slot child".into());
+            }
+            p.set_child(None::<&gtk::Widget>);
+            Ok(())
+        }
+        33 => {
+            let p = parent.downcast_ref::<gtk::Window>().ok_or("parent is not a gtk::Window")?;
             let cur = p.titlebar().map(|x| x.upcast::<gtk::Widget>());
             if cur.as_ref() != Some(child) && !cur.as_ref().is_some_and(|g| child.is_ancestor(g)) {
                 return Err("child is not in slot titlebar".into());
@@ -432,7 +443,7 @@ pub fn slot_remove(slot: u32, parent: &gtk::Widget, child: &gtk::Widget) -> Resu
             p.set_titlebar(None::<&gtk::Widget>);
             Ok(())
         }
-        33 => {
+        34 => {
             let p = parent.downcast_ref::<gtk::WindowHandle>().ok_or("parent is not a gtk::WindowHandle")?;
             let cur = p.child().map(|x| x.upcast::<gtk::Widget>());
             if cur.as_ref() != Some(child) && !cur.as_ref().is_some_and(|g| child.is_ancestor(g)) {
@@ -488,51 +499,51 @@ pub fn slot_get(slot: u32, parent: &gtk::Widget) -> Result<Option<gtk::Widget>, 
             let p = parent.downcast_ref::<gtk::HeaderBar>().ok_or("parent is not a gtk::HeaderBar")?;
             Ok(p.title_widget().map(|x| x.upcast::<gtk::Widget>()))
         }
-        19 => {
+        20 => {
             let p = parent.downcast_ref::<gtk::MenuButton>().ok_or("parent is not a gtk::MenuButton")?;
             Ok(p.popover().map(|x| x.upcast::<gtk::Widget>()))
         }
-        21 => {
+        22 => {
             let p = parent.downcast_ref::<gtk::Overlay>().ok_or("parent is not a gtk::Overlay")?;
             Ok(p.child().map(|x| x.upcast::<gtk::Widget>()))
         }
-        23 => {
+        24 => {
             let p = parent.downcast_ref::<gtk::Paned>().ok_or("parent is not a gtk::Paned")?;
             Ok(p.end_child().map(|x| x.upcast::<gtk::Widget>()))
         }
-        24 => {
+        25 => {
             let p = parent.downcast_ref::<gtk::Paned>().ok_or("parent is not a gtk::Paned")?;
             Ok(p.start_child().map(|x| x.upcast::<gtk::Widget>()))
         }
-        25 => {
+        26 => {
             let p = parent.downcast_ref::<gtk::Popover>().ok_or("parent is not a gtk::Popover")?;
             Ok(p.child().map(|x| x.upcast::<gtk::Widget>()))
         }
-        26 => {
+        27 => {
             let p = parent.downcast_ref::<gtk::Revealer>().ok_or("parent is not a gtk::Revealer")?;
             Ok(p.child().map(|x| x.upcast::<gtk::Widget>()))
         }
-        27 => {
+        28 => {
             let p = parent.downcast_ref::<gtk::ScrolledWindow>().ok_or("parent is not a gtk::ScrolledWindow")?;
             Ok(p.child().map(|x| x.upcast::<gtk::Widget>()))
         }
-        28 => {
+        29 => {
             let p = parent.downcast_ref::<gtk::SearchBar>().ok_or("parent is not a gtk::SearchBar")?;
             Ok(p.child().map(|x| x.upcast::<gtk::Widget>()))
         }
-        30 => {
-            let p = parent.downcast_ref::<gtk::Viewport>().ok_or("parent is not a gtk::Viewport")?;
-            Ok(p.child().map(|x| x.upcast::<gtk::Widget>()))
-        }
         31 => {
-            let p = parent.downcast_ref::<gtk::Window>().ok_or("parent is not a gtk::Window")?;
+            let p = parent.downcast_ref::<gtk::Viewport>().ok_or("parent is not a gtk::Viewport")?;
             Ok(p.child().map(|x| x.upcast::<gtk::Widget>()))
         }
         32 => {
             let p = parent.downcast_ref::<gtk::Window>().ok_or("parent is not a gtk::Window")?;
-            Ok(p.titlebar().map(|x| x.upcast::<gtk::Widget>()))
+            Ok(p.child().map(|x| x.upcast::<gtk::Widget>()))
         }
         33 => {
+            let p = parent.downcast_ref::<gtk::Window>().ok_or("parent is not a gtk::Window")?;
+            Ok(p.titlebar().map(|x| x.upcast::<gtk::Widget>()))
+        }
+        34 => {
             let p = parent.downcast_ref::<gtk::WindowHandle>().ok_or("parent is not a gtk::WindowHandle")?;
             Ok(p.child().map(|x| x.upcast::<gtk::Widget>()))
         }
@@ -607,10 +618,10 @@ pub fn attr_set_native(attr: u32, parent: &gtk::Widget, child: &gtk::Widget, v: 
     match attr {
         1 => attr_set_attr_11_x(parent, child, v),
         2 => attr_set_attr_11_y(parent, child, v),
-        7 => attr_set_attr_20_tablabel(parent, child, v),
-        8 => attr_set_attr_20_menulabel(parent, child, v),
-        13 => attr_set_attr_22_measure(parent, child, v),
-        14 => attr_set_attr_22_clip(parent, child, v),
+        7 => attr_set_attr_21_tablabel(parent, child, v),
+        8 => attr_set_attr_21_menulabel(parent, child, v),
+        13 => attr_set_attr_23_measure(parent, child, v),
+        14 => attr_set_attr_23_clip(parent, child, v),
         _ => Err(format!("attribute {attr} has no native setter")),
     }
 }
@@ -621,10 +632,10 @@ pub fn attr_get_native(attr: u32, parent: &gtk::Widget, child: &gtk::Widget) -> 
     match attr {
         1 => attr_get_attr_11_x(parent, child),
         2 => attr_get_attr_11_y(parent, child),
-        7 => attr_get_attr_20_tablabel(parent, child),
-        8 => attr_get_attr_20_menulabel(parent, child),
-        13 => attr_get_attr_22_measure(parent, child),
-        14 => attr_get_attr_22_clip(parent, child),
+        7 => attr_get_attr_21_tablabel(parent, child),
+        8 => attr_get_attr_21_menulabel(parent, child),
+        13 => attr_get_attr_23_measure(parent, child),
+        14 => attr_get_attr_23_clip(parent, child),
         _ => Err(format!("attribute {attr} has no native getter")),
     }
 }
@@ -655,52 +666,52 @@ fn attr_get_attr_11_y(parent: &gtk::Widget, child: &gtk::Widget) -> Result<AttrV
     Ok(AttrV::Float(r))
 }
 
-fn attr_set_attr_20_tablabel(parent: &gtk::Widget, child: &gtk::Widget, v: &AttrV) -> Result<(), String> {
+fn attr_set_attr_21_tablabel(parent: &gtk::Widget, child: &gtk::Widget, v: &AttrV) -> Result<(), String> {
     let p = parent.downcast_ref::<gtk::Notebook>().ok_or("parent is not a gtk::Notebook")?;
     p.set_tab_label_text(child, v.as_str()?);
     Ok(())
 }
 
-fn attr_get_attr_20_tablabel(parent: &gtk::Widget, child: &gtk::Widget) -> Result<AttrV, String> {
+fn attr_get_attr_21_tablabel(parent: &gtk::Widget, child: &gtk::Widget) -> Result<AttrV, String> {
     let p = parent.downcast_ref::<gtk::Notebook>().ok_or("parent is not a gtk::Notebook")?;
     let _ = child;
     let r = p.tab_label_text(child);
     Ok(AttrV::Str(r.map(|x| x.to_string()).unwrap_or_default()))
 }
 
-fn attr_set_attr_20_menulabel(parent: &gtk::Widget, child: &gtk::Widget, v: &AttrV) -> Result<(), String> {
+fn attr_set_attr_21_menulabel(parent: &gtk::Widget, child: &gtk::Widget, v: &AttrV) -> Result<(), String> {
     let p = parent.downcast_ref::<gtk::Notebook>().ok_or("parent is not a gtk::Notebook")?;
     p.set_menu_label_text(child, v.as_str()?);
     Ok(())
 }
 
-fn attr_get_attr_20_menulabel(parent: &gtk::Widget, child: &gtk::Widget) -> Result<AttrV, String> {
+fn attr_get_attr_21_menulabel(parent: &gtk::Widget, child: &gtk::Widget) -> Result<AttrV, String> {
     let p = parent.downcast_ref::<gtk::Notebook>().ok_or("parent is not a gtk::Notebook")?;
     let _ = child;
     let r = p.menu_label_text(child);
     Ok(AttrV::Str(r.map(|x| x.to_string()).unwrap_or_default()))
 }
 
-fn attr_set_attr_22_measure(parent: &gtk::Widget, child: &gtk::Widget, v: &AttrV) -> Result<(), String> {
+fn attr_set_attr_23_measure(parent: &gtk::Widget, child: &gtk::Widget, v: &AttrV) -> Result<(), String> {
     let p = parent.downcast_ref::<gtk::Overlay>().ok_or("parent is not a gtk::Overlay")?;
     p.set_measure_overlay(child, v.as_bool()?);
     Ok(())
 }
 
-fn attr_get_attr_22_measure(parent: &gtk::Widget, child: &gtk::Widget) -> Result<AttrV, String> {
+fn attr_get_attr_23_measure(parent: &gtk::Widget, child: &gtk::Widget) -> Result<AttrV, String> {
     let p = parent.downcast_ref::<gtk::Overlay>().ok_or("parent is not a gtk::Overlay")?;
     let _ = child;
     let r = p.is_measure_overlay(child);
     Ok(AttrV::Bool(r))
 }
 
-fn attr_set_attr_22_clip(parent: &gtk::Widget, child: &gtk::Widget, v: &AttrV) -> Result<(), String> {
+fn attr_set_attr_23_clip(parent: &gtk::Widget, child: &gtk::Widget, v: &AttrV) -> Result<(), String> {
     let p = parent.downcast_ref::<gtk::Overlay>().ok_or("parent is not a gtk::Overlay")?;
     p.set_clip_overlay(child, v.as_bool()?);
     Ok(())
 }
 
-fn attr_get_attr_22_clip(parent: &gtk::Widget, child: &gtk::Widget) -> Result<AttrV, String> {
+fn attr_get_attr_23_clip(parent: &gtk::Widget, child: &gtk::Widget) -> Result<AttrV, String> {
     let p = parent.downcast_ref::<gtk::Overlay>().ok_or("parent is not a gtk::Overlay")?;
     let _ = child;
     let r = p.is_clip_overlay(child);

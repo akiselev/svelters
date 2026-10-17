@@ -3619,7 +3619,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "LineWrapMode",
+        "native": "QPlainTextEdit::LineWrapMode",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QPlainTextEdit::LineWrapMode>"

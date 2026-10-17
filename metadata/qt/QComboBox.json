@@ -3586,7 +3586,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "InsertPolicy",
+        "native": "QComboBox::InsertPolicy",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QComboBox::InsertPolicy>"
@@ -3629,7 +3629,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "LabelDrawingMode",
+        "native": "QComboBox::LabelDrawingMode",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QComboBox::LabelDrawingMode>"
@@ -3887,7 +3887,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "SizeAdjustPolicy",
+        "native": "QComboBox::SizeAdjustPolicy",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QComboBox::SizeAdjustPolicy>"

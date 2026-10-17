@@ -1,0 +1,2 @@
+unexposed:
+  reason: "GtkGridView is a GListModel view; model view: served by the portable virtuallist kind (X5, gap G6 closed that way; packages/lists ListView)"

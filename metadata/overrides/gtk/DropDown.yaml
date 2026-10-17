@@ -1,0 +1,2 @@
+unexposed:
+  reason: "GtkDropDown needs a GListModel and a list item factory; model-backed selection is open under gap G6 (DropDown/ComboBox models); until then use a button with a popover or a virtuallist"

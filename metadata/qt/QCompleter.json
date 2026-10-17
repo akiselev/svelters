@@ -1463,7 +1463,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "CompletionMode",
+        "native": "QCompleter::CompletionMode",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QCompleter::CompletionMode>"
@@ -1678,7 +1678,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "ModelSorting",
+        "native": "QCompleter::ModelSorting",
         "nullable": false,
         "origin": "qdoc",
         "ref": "enum<QCompleter::ModelSorting>"

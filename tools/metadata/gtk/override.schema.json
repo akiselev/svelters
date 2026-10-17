@@ -413,6 +413,7 @@
                   "index_opt",
                   "child_index",
                   "child_index_opt",
+                  "wrapper",
                   null
                 ]
               },

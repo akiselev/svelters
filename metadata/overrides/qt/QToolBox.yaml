@@ -1,11 +1,54 @@
 elements:
   - tag: toolbox
     construct: { class: QToolBox }
+    props:
+      - { js: currentIndex, native: currentIndex, sample: 1, setup: "$w->addItem(new QWidget(), QString()); $w->addItem(new QWidget(), QString())", suppress_signals: true, provenance: "QToolBox::currentIndex (qdoc); the test adds two pages first" }
+    bindings:
+      - name: currentIndex
+        direction: two_way
+        property: currentIndex
+        type: { ref: i32, nullable: false }
+        change: { signal: changed, role: any_change, value: arg0 }
+        write: { natively_normalizes: false }
+        echo: { strategy: host_suppressed, compare_before_set: true, read_back: false, sync_signals_on_set: ["currentChanged(int)"] }
+        lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
+        provenance: "QToolBox::setCurrentIndex emits currentChanged only on change (qdoc)"
     signals:
       - js: changed
         native: currentChanged
         connect: "currentChanged(int)"
         args: [{ name: index, type: i32 }]
-        trigger: 'if ($i == 2) $w->setCurrentIndex(1); else $w->addItem(new QWidget(), QString())'
+        trigger: '$w->addItem(new QWidget(), QString()); $w->setCurrentIndex($w->count() - 1)'
         expect_args: ["0"]
         provenance: "QToolBox::currentChanged(int) (qdoc)"
+    children:
+      policy: named_slots
+      default_slot: pages
+      slots:
+        - name: pages
+          content: widget
+          accepts: [QWidget]
+          cardinality: many
+          order: native_index
+          nested: true
+          host: self
+          default: { kind: none }
+          on_remove: empty
+          ops:
+            insert:
+              native: "QToolBox::addItem(QWidget*, const QString&)"
+              args: [child, "const:QString()"]
+              variants:
+                - when: "before != null"
+                  native: "QToolBox::insertItem(int, QWidget*, const QString&)"
+                  args: [index, child, "const:QString()"]
+              effects: { child: parented }
+            remove:
+              native: "QToolBox::removeItem(int)"
+              args: [index]
+              then:
+                - { native: "QWidget::setParent(QWidget*)", receiver: child, args: [null] }
+              effects: { child: unparented }
+            index_of: { native: "QToolBox::indexOf(const QWidget*) const", args: [child] }
+            list: { native: "QToolBox::count() const", item: "QToolBox::widget(int) const" }
+          provenance: [{ origin: qdoc, ref: "QToolBox::insertItem, removeItem" }, { origin: probe, ref: "pages live in a scroll area inside the toolbox" }]

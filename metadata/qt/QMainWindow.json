@@ -2284,7 +2284,7 @@
       "range": null,
       "role": "value",
       "type": {
-        "native": "DockOptions",
+        "native": "QMainWindow::DockOptions",
         "nullable": false,
         "origin": "qdoc",
         "ref": "flags<QMainWindow::DockOption>"
