@@ -755,6 +755,25 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, cbs: Rc<QjsCallbacks>, base: I
             )?,
         )?;
         let w = core.clone();
+        host.set(
+            "style",
+            Function::new(
+                ctx.clone(),
+                move |ctx: Ctx<'js>, opcode: u32, h: f64, text: Value<'js>| -> Res<i32> {
+                    let c = core_of(&ctx, &w)?;
+                    let h = if h == 0.0 { 0 } else { handle_of(&ctx, h)? };
+                    let text = if text.is_string() {
+                        Some(text.get::<String>()?)
+                    } else if text.is_null() || text.is_undefined() {
+                        None
+                    } else {
+                        return Err(Exception::throw_type(&ctx, "style: the payload must be a string or null"));
+                    };
+                    op(&ctx, c.op_style(opcode, h, text.as_deref()))
+                },
+            )?,
+        )?;
+        let w = core.clone();
         let cb = cbs.clone();
         host.set(
             "setChildAttr",
