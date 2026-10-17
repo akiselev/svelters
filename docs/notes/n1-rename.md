@@ -61,3 +61,23 @@ Lane N1, branched from master at ff0fcb4. Full old -> new map: `docs/notes/n1-re
   Qt-vocabulary fixtures on the Node TestHost).
 - **Qt docs IR**: the IR already held all 54 annotated Qt element classes (55 tags) when built from this
   tree; the docs test now asserts that every override element tag is in the IR, one entity per class.
+
+## Merge with FX1 and gates (final)
+
+- FX1's `text_prop`-based TEXT_PROPS replaced N1's copy (WinUI `Content` -> `content` via the shared
+  kebab); FX1's local kebab in gen_bindings now calls naming.kebab. TestHost: FX1's per-toolkit tables,
+  with kinds a spec does not know (synthetic) resolving any name. Both lanes had added
+  `fixture_toolkit` to svelters-host testing.rs; merged (GTK and Qt fixtures run, AppKit/WinUI skipped).
+- Hung Qt watch test: it ran the GTK-vocabulary counter on Qt, the bundle never loaded, and
+  `counter --watch` had no timeout. `--reload-exit` runs now end at `--timeout`; the test uses
+  fixtures/counter-qt; GUI tests are killed after 6 min (.config/nextest.toml).
+- Gates green on the merged tree: pnpm -r build, workspace nextest (929 passed, 7 skipped, no retries),
+  pnpm test (incl. ledger check gtk 489 / qt 595 facts, 0 failing), pnpm docs:test, mac/win cross checks.
+
+## Open issues
+
+- Shared fixtures are GTK vocabulary; Qt runs use twins (fixtures/<name>-qt) that must be kept in step.
+- Methods were not renamed (GTK snake GIR names, Qt camelCase).
+- GTK `<stack bind:visible-child-name>` has no binding annotation (bind_no_plan); pre-existing gap.
+- Style translator reports a dropped compound twice for `box#main, box-layout#main` (cosmetic).
+- No `--check` gate for packages/testhost/src/schema.qt.json (regenerate with gen_cpp.py --schema).
