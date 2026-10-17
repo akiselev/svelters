@@ -263,6 +263,7 @@ class SvCanvas : public QWidget {
   QString json;
   QJsonArray ops;
   int cw = 0, ch = 0;
+  SvCanvas() { setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed); }  // like GtkDrawingArea: no expansion unless asked
   QSize sizeHint() const override { return QSize(cw, ch); }
  protected:
   void paintEvent(QPaintEvent *) override {
@@ -334,9 +335,8 @@ int cv_set_prop(Entry &e, svl_id prop, const svl_value *val) {
         on = qs.isEmpty() || qs == QLatin1String("true");
       } else return fail("hexpand/vexpand: expected a boolean");
       QSizePolicy sp = c->sizePolicy();
-      const QSizePolicy::Policy pol = on ? QSizePolicy::Expanding : QSizePolicy::Preferred;
-      if (prop == CV_P_HEXPAND) sp.setHorizontalPolicy(pol);
-      else sp.setVerticalPolicy(pol);
+      if (prop == CV_P_HEXPAND) sp.setHorizontalPolicy(on ? QSizePolicy::Expanding : QSizePolicy::Preferred);
+      else sp.setVerticalPolicy(on ? QSizePolicy::Expanding : QSizePolicy::Fixed);
       c->setSizePolicy(sp);
       return 0;
     }
