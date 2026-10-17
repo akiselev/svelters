@@ -1,0 +1,2 @@
+unexposed:
+  reason: "Internal selection-rectangle helper that applications position by hand; no declarative use."

@@ -201,33 +201,33 @@
   "abstract": false,
   "bindings": 0,
   "defaults": 8,
-  "element": null,
-  "gallery": null,
+  "element": "calendar",
+  "gallery": "10-display",
   "inherited": 0,
   "kind": "QCalendarWidget",
   "lifetime": "owned",
   "methods": [
-   0,
+   7,
    52
   ],
   "native": "QCalendarWidget",
   "ownership": false,
   "props": [
-   0,
+   9,
    11
   ],
-  "props_annotated": 0,
+  "props_annotated": 9,
   "signal_results": 0,
   "signals": [
-   0,
+   4,
    4
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   20,
+   20
   ]
  },
  {
@@ -323,7 +323,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "Item views are covered by the portable virtuallist element (X5, gap G6 closed that way); the model/view API is not exposed.",
   "verified": [
    0,
    0
@@ -400,7 +400,7 @@
   "bindings": 0,
   "defaults": 0,
   "element": "dateedit",
-  "gallery": null,
+  "gallery": "10-display",
   "inherited": 0,
   "kind": "QDateEdit",
   "lifetime": "owned",
@@ -424,8 +424,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   1,
-   1
+   4,
+   4
   ]
  },
  {
@@ -433,7 +433,7 @@
   "bindings": 0,
   "defaults": 7,
   "element": "datetimeedit",
-  "gallery": null,
+  "gallery": "10-display",
   "inherited": 0,
   "kind": "QDateTimeEdit",
   "lifetime": "owned",
@@ -444,21 +444,21 @@
   "native": "QDateTimeEdit",
   "ownership": false,
   "props": [
-   2,
+   3,
    17
   ],
-  "props_annotated": 2,
+  "props_annotated": 3,
   "signal_results": 0,
   "signals": [
-   0,
+   1,
    3
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   2,
-   2
+   4,
+   4
   ]
  },
  {
@@ -719,7 +719,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "Internal focus-rectangle helper attached to another widget by pointer.",
   "verified": [
    0,
    0
@@ -884,7 +884,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "Needs a QGraphicsScene of non-widget items (gap G7); no widget surface of its own worth exposing.",
   "verified": [
    0,
    0
@@ -1016,7 +1016,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "Item views are covered by the portable virtuallist element (X5, gap G6 closed that way); headers belong to a view.",
   "verified": [
    0,
    0
@@ -1247,7 +1247,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "Item views are covered by the portable virtuallist element (X5, gap G6 closed that way); the model/view API is not exposed.",
   "verified": [
    0,
    0
@@ -1676,7 +1676,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "GPU rendering surface driven by QRhi commands; no declarative surface.",
   "verified": [
    0,
    0
@@ -1709,7 +1709,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "Internal selection-rectangle helper that applications position by hand; no declarative use.",
   "verified": [
    0,
    0
@@ -1808,7 +1808,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "Internal resize handle created by QStatusBar/QMainWindow.",
   "verified": [
    0,
    0
@@ -1907,7 +1907,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "Startup-only top-level window shown before the main window exists; not part of an app page.",
   "verified": [
    0,
    0
@@ -1973,7 +1973,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "Internal widget created and owned by QSplitter.",
   "verified": [
    0,
    0
@@ -2171,7 +2171,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "Item views are covered by the portable virtuallist element (X5, gap G6 closed that way); the model/view API is not exposed.",
   "verified": [
    0,
    0
@@ -2281,7 +2281,7 @@
   "bindings": 0,
   "defaults": 0,
   "element": "timeedit",
-  "gallery": null,
+  "gallery": "10-display",
   "inherited": 0,
   "kind": "QTimeEdit",
   "lifetime": "owned",
@@ -2305,8 +2305,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   1,
-   1
+   3,
+   3
   ]
  },
  {
@@ -2435,7 +2435,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "Item views are covered by the portable virtuallist element (X5, gap G6 closed that way); the model/view API is not exposed.",
   "verified": [
    0,
    0
@@ -2501,7 +2501,7 @@
   ],
   "slots": 0,
   "slots_own": 0,
-  "unexposed": null,
+  "unexposed": "Item views are covered by the portable virtuallist element (X5, gap G6 closed that way); needs a QUndoStack object.",
   "verified": [
    0,
    0

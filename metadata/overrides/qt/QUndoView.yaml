@@ -1,0 +1,2 @@
+unexposed:
+  reason: "Item views are covered by the portable virtuallist element (X5, gap G6 closed that way); needs a QUndoStack object."
