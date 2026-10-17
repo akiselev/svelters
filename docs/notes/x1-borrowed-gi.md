@@ -34,6 +34,14 @@ Plan: `plans/milestones/X1-borrowed-gi.md`. ABI behaviour: `plans/architecture/b
 
 Rejected with a message that names the feature (recorded as follow-ups): callbacks (and their user_data/destroy), out/inout parameters, arrays, GList/GSList/GHashTable, GError values, GType, gunichar, structs/unions/boxed (ABI v3, lane S1), untyped `void*` parameters, static functions and constructors. Varargs functions are not in the typelib at all, so they resolve as unknown methods. A `throws` method raises its GError as an exception.
 
+### ABI v3 integration (merge of S1, 62e1ee1)
+
+- Dynamic methods publish member descriptors (`DynMethod::describe`, through `types::slot_for`), so the host encodes arguments and decodes results with the value model: enums and flags by member name (the GType descriptors come from `types::type_desc`), `GStrv` as a string list, boxed values and records through `convert::to_value`/`from_value` like properties, nullable flags from the typelib, `throws` as `SVL_M_THROWS`. Every in-argument of a plan goes through the same converters as `set_prop`, with `Env` as the backend context.
+- A `GError` from `gi_function_info_invoke` crosses as an `ERROR` value (`CallErr::Gerror`), same as the hand-written `gio-file` service.
+- Objects: widgets and types that have a generated kind travel as handles (ours owned, the rest borrowed, kind = nearest ancestor with a kind); other objects (`PangoLayout`, `GIcon`) stay opaque `BOXED` values as in S1's model. `Env::borrow_object` is the hook; the default (no handle) keeps the boxed path, so the converter unit tests are unchanged.
+- Host: `JsWriter::handle` wraps results in renderer nodes when `__svelters_node` exists; `JsReader::node_handle` lets encode accept nodes (`svlHandle`) for `HANDLE` slots and for untyped slots; `adopt_handles` runs in `decode_result`.
+- Supported matrix additions over the first version: GStrv in/out, boxed types with a GType (records such as `GdkRGBA`/`graphene_*`/`GtkBorder` via the property converters, opaque boxed), flags by name set. Still rejected: callbacks, out/inout (waiting for S2's generic out-parameter plumbing, `docs/notes/s2-abi-v3-rest.md`), other arrays, lists/hash tables, unions, GType, gunichar, structs without a boxed GType, static functions.
+
 ### Follow-ups
 
 - Out parameters (needs an ABI shape for multiple returns; likely a list or record in v3).

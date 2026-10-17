@@ -1,0 +1,9 @@
+elements:
+  - tag: combobox
+    construct: { class: QComboBox }
+    props:
+      - { js: count, native: count }              # read-only
+      - { js: currentData, native: currentData }  # a QVariant, read-only
+    methods:
+      - { js: addItem, native: addItem, params: [string, variant] }
+      - { js: itemData, native: itemData, params: [i32, i32] }   # (index, role); Qt::UserRole is 256

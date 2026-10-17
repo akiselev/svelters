@@ -55,7 +55,7 @@
             "native": "const QIcon &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QIcon>"
           }
         },
         {
@@ -283,7 +283,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -469,7 +469,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize minimumSizeHint() const override",
       "since": null,
@@ -743,7 +743,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,

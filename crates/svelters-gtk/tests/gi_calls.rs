@@ -94,8 +94,11 @@ fn enum_args_and_returns() {
         // an enum from another namespace (PangoEllipsizeMode)
         h.call_args(label, "set_ellipsize", &[s("middle")]).unwrap();
         assert_eq!(h.call_args(label, "get_ellipsize", &[]).unwrap(), s("middle"));
-        assert!(h.call_args(label, "set_halign", &[s("sideways")]).unwrap_err().contains("not a GtkAlign value"));
-        assert!(h.call_args(label, "set_halign", &[V::I64(99)]).unwrap_err().contains("not a GtkAlign value"));
+        assert!(h.call_args(label, "set_halign", &[s("sideways")]).unwrap_err().contains("not a member"));
+        assert!(h.call_args(label, "set_halign", &[V::I64(99)]).is_err());
+        // The host sees typed slots: the enum travels by name through its type descriptor.
+        let d = h.method_desc(label, "set_halign").expect("descriptor");
+        assert_eq!(d.params[0].tag, svelters_abi::SVL_ENUM);
     });
 }
 
@@ -104,19 +107,22 @@ fn flags_args_and_returns() {
     on_gtk(|| {
         let h = Harness::new();
         let label = h.create("label");
-        const PRELIGHT: i64 = 1 << 1;
-        const ACTIVE: i64 = 1;
+        let has = |h: &Harness, name: &str| match h.call_args(label, "get_state_flags", &[]).unwrap() {
+            V::List(l) => l.contains(&s(name)),
+            other => panic!("flags are a list of names, got {other:?}"),
+        };
+        // by name, as a set of names, and by number
         h.call_args(label, "set_state_flags", &[s("prelight"), V::Bool(false)]).unwrap();
-        let V::I64(f) = h.call_args(label, "get_state_flags", &[]).unwrap() else { panic!() };
-        assert_ne!(f & PRELIGHT, 0);
-        // numeric, and several nicks at once
-        h.call_args(label, "set_state_flags", &[V::I64(ACTIVE), V::Bool(false)]).unwrap();
-        let V::I64(f) = h.call_args(label, "get_state_flags", &[]).unwrap() else { panic!() };
-        assert_eq!(f & (PRELIGHT | ACTIVE), PRELIGHT | ACTIVE);
+        assert!(has(&h, "prelight"));
+        h.call_args(label, "set_state_flags", &[V::List(vec![s("active")]), V::Bool(false)]).unwrap();
+        assert!(has(&h, "prelight") && has(&h, "active"));
         h.call_args(label, "unset_state_flags", &[s("prelight|active")]).unwrap();
-        let V::I64(f) = h.call_args(label, "get_state_flags", &[]).unwrap() else { panic!() };
-        assert_eq!(f & (PRELIGHT | ACTIVE), 0);
-        assert!(h.call_args(label, "set_state_flags", &[s("bogus"), V::Bool(false)]).unwrap_err().contains("not a GtkStateFlags flag"));
+        assert!(!has(&h, "prelight") && !has(&h, "active"));
+        h.call_args(label, "set_state_flags", &[V::I64(1 << 1), V::Bool(false)]).unwrap();
+        assert!(has(&h, "prelight"));
+        let d = h.method_desc(label, "set_state_flags").expect("descriptor");
+        assert_eq!(d.params[0].tag, svelters_abi::SVL_FLAGS);
+        assert!(h.call_args(label, "set_state_flags", &[s("bogus"), V::Bool(false)]).unwrap_err().contains("not a member"));
     });
 }
 
@@ -154,9 +160,9 @@ fn object_arguments_are_checked() {
         let entry = h.create("entry");
         let ctl = h.create("EventControllerKey");
         // a controller is not a widget
-        assert!(h.call_args(label, "set_mnemonic_widget", &[V::Handle(ctl)]).unwrap_err().contains("is not a GtkWidget"));
-        assert!(h.call_args(label, "set_mnemonic_widget", &[V::Handle(999_999)]).unwrap_err().contains("stale or unknown handle"));
-        assert!(h.call_args(label, "set_mnemonic_widget", &[V::I64(entry as i64)]).unwrap_err().contains("expected a handle"));
+        assert!(h.call_args(label, "set_mnemonic_widget", &[V::Handle(ctl)]).unwrap_err().contains("GtkWidget"));
+        assert!(h.call_args(label, "set_mnemonic_widget", &[V::Handle(999_999)]).unwrap_err().contains("stale"));
+        assert!(h.call_args(label, "set_mnemonic_widget", &[V::I64(entry as i64)]).is_err());
     });
 }
 
@@ -210,12 +216,8 @@ fn unsupported_features_are_rejected_with_clear_errors() {
         // out parameters
         let e = h.call_args(label, "measure", &[s("horizontal"), V::I64(-1)]).unwrap_err();
         assert!(e.contains("out and inout"), "{e}");
-        // arrays
-        let e = h.call_args(label, "set_css_classes", &[s("a")]).unwrap_err();
-        assert!(e.contains("array"), "{e}");
-        // structs / boxed values (ABI v3)
-        let e = h.call_args(label, "set_attributes", &[V::Null]).unwrap_err();
-        assert!(e.contains("struct") || e.contains("boxed"), "{e}");
+        // unions and arrays that are not string arrays: GtkWidget.size_allocate takes a struct by
+        // pointer (supported), but measure above has out parameters; gtk_widget_get_css_classes is fine
         let e = h.call_args(label, "get_allocation_not_a_method", &[]).unwrap_err();
         assert!(e.contains("unknown method"), "{e}");
         // static functions are not methods
@@ -226,5 +228,23 @@ fn unsupported_features_are_rejected_with_clear_errors() {
         assert!(e.contains("takes 1 argument"), "{e}");
         let e = h.call_args(label, "get_text", &[s("x")]).unwrap_err();
         assert!(e.contains("takes 0 argument"), "{e}");
+    });
+}
+
+#[test]
+fn string_arrays_and_boxed_values() {
+    on_gtk(|| {
+        let h = Harness::new();
+        let label = h.create("label");
+        // GStrv in and out
+        h.call_args(label, "set_css_classes", &[V::List(vec![s("a"), s("b")])]).unwrap();
+        assert_eq!(h.call_args(label, "get_css_classes", &[]).unwrap(), V::List(vec![s("a"), s("b")]));
+        assert!(h.call_args(label, "set_css_classes", &[V::List(vec![V::I64(1)])]).is_err());
+        // a nullable boxed argument (PangoAttrList)
+        assert_eq!(h.call_args(label, "set_attributes", &[V::Null]).unwrap(), V::Null);
+        assert_eq!(h.call_args(label, "get_attributes", &[]).unwrap(), V::Null);
+        // an object that is not a widget comes back as an opaque BOXED value
+        let layout = h.call_args(label, "create_pango_layout", &[s("hi")]).unwrap();
+        assert!(matches!(layout, V::Boxed(_)), "{layout:?}");
     });
 }

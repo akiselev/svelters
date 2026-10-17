@@ -41,7 +41,7 @@
             "native": "Qt::WindowFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::WindowType>"
           }
         }
       ],
@@ -85,7 +85,7 @@
             "native": "Qt::WindowFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::WindowType>"
           }
         }
       ],
@@ -119,7 +119,7 @@
         "native": "Qt::Alignment",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::AlignmentFlag>"
       },
       "signature": "Qt::Alignment alignment() const",
       "since": null,
@@ -597,7 +597,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize minimumSizeHint() const override",
       "since": null,
@@ -823,7 +823,7 @@
         "native": "QPicture",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPicture>"
       },
       "signature": "QPicture picture() const",
       "since": "6.0",
@@ -852,7 +852,7 @@
             "native": "Qt::ReturnByValueConstant",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ReturnByValueConstant>"
           }
         }
       ],
@@ -860,7 +860,7 @@
         "native": "QPicture",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPicture>"
       },
       "signature": "QPicture picture(Qt::ReturnByValueConstant) const",
       "since": null,
@@ -886,7 +886,7 @@
         "native": "QPixmap",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPixmap>"
       },
       "signature": "QPixmap pixmap() const",
       "since": null,
@@ -915,7 +915,7 @@
             "native": "Qt::ReturnByValueConstant",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::ReturnByValueConstant>"
           }
         }
       ],
@@ -923,7 +923,7 @@
         "native": "QPixmap",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPixmap>"
       },
       "signature": "QPixmap pixmap(Qt::ReturnByValueConstant) const",
       "since": null,
@@ -1030,7 +1030,7 @@
             "native": "Qt::Alignment",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::AlignmentFlag>"
           }
         }
       ],
@@ -1326,7 +1326,7 @@
             "native": "const QPicture &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPicture>"
           }
         }
       ],
@@ -1363,7 +1363,7 @@
             "native": "const QPixmap &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QPixmap>"
           }
         }
       ],
@@ -1558,7 +1558,7 @@
             "native": "Qt::TextFormat",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::TextFormat>"
           }
         }
       ],
@@ -1595,7 +1595,7 @@
             "native": "Qt::TextInteractionFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::TextInteractionFlag>"
           }
         }
       ],
@@ -1666,7 +1666,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,
@@ -1718,7 +1718,7 @@
         "native": "Qt::TextFormat",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::TextFormat>"
       },
       "signature": "Qt::TextFormat textFormat() const",
       "since": null,
@@ -1744,7 +1744,7 @@
         "native": "Qt::TextInteractionFlags",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::TextInteractionFlag>"
       },
       "signature": "Qt::TextInteractionFlags textInteractionFlags() const",
       "since": null,
@@ -1852,7 +1852,7 @@
         "native": "Qt::Alignment",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::AlignmentFlag>"
       }
     },
     {
@@ -2052,7 +2052,7 @@
         "native": "QPixmap",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QPixmap>"
       }
     },
     {
@@ -2212,7 +2212,7 @@
         "native": "Qt::TextFormat",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::TextFormat>"
       }
     },
     {
@@ -2252,7 +2252,7 @@
         "native": "Qt::TextInteractionFlags",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::TextInteractionFlag>"
       }
     },
     {

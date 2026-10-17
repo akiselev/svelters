@@ -42,70 +42,91 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QTabBar::ButtonPosition",
       "members": [
         {
+          "cpp": "QTabBar::LeftSide",
           "name": "LeftSide",
           "value": "0"
         },
         {
+          "cpp": "QTabBar::RightSide",
           "name": "RightSide",
           "value": "1"
         }
       ],
       "metaobject": null,
       "name": "ButtonPosition",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QTabBar::SelectionBehavior",
       "members": [
         {
+          "cpp": "QTabBar::SelectLeftTab",
           "name": "SelectLeftTab",
           "value": "0"
         },
         {
+          "cpp": "QTabBar::SelectRightTab",
           "name": "SelectRightTab",
           "value": "1"
         },
         {
+          "cpp": "QTabBar::SelectPreviousTab",
           "name": "SelectPreviousTab",
           "value": "2"
         }
       ],
       "metaobject": null,
       "name": "SelectionBehavior",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QTabBar::Shape",
       "members": [
         {
+          "cpp": "QTabBar::RoundedNorth",
           "name": "RoundedNorth",
           "value": "0"
         },
         {
+          "cpp": "QTabBar::RoundedSouth",
           "name": "RoundedSouth",
           "value": "1"
         },
         {
+          "cpp": "QTabBar::RoundedWest",
           "name": "RoundedWest",
           "value": "2"
         },
         {
+          "cpp": "QTabBar::RoundedEast",
           "name": "RoundedEast",
           "value": "3"
         },
         {
+          "cpp": "QTabBar::TriangularNorth",
           "name": "TriangularNorth",
           "value": "4"
         },
         {
+          "cpp": "QTabBar::TriangularSouth",
           "name": "TriangularSouth",
           "value": "5"
         },
         {
+          "cpp": "QTabBar::TriangularWest",
           "name": "TriangularWest",
           "value": "6"
         },
         {
+          "cpp": "QTabBar::TriangularEast",
           "name": "TriangularEast",
           "value": "7"
         }
@@ -125,7 +146,8 @@
         "scoped": false
       },
       "name": "Shape",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QTabBar",
@@ -191,7 +213,7 @@
             "native": "const QIcon &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QIcon>"
           }
         },
         {
@@ -465,7 +487,7 @@
         "native": "Qt::TextElideMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::TextElideMode>"
       },
       "signature": "Qt::TextElideMode elideMode() const",
       "since": null,
@@ -591,7 +613,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize iconSize() const",
       "since": null,
@@ -677,7 +699,7 @@
             "native": "const QIcon &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QIcon>"
           }
         },
         {
@@ -905,7 +927,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize minimumSizeHint() const override",
       "since": null,
@@ -942,7 +964,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize minimumTabSizeHint(int index) const",
       "since": null,
@@ -1274,7 +1296,7 @@
         "native": "QTabBar::SelectionBehavior",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QTabBar::SelectionBehavior>"
       },
       "signature": "QTabBar::SelectionBehavior selectionBehaviorOnRemove() const",
       "since": null,
@@ -1535,7 +1557,7 @@
             "native": "Qt::TextElideMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::TextElideMode>"
           }
         }
       ],
@@ -1609,7 +1631,7 @@
             "native": "const QSize &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Size>"
           }
         }
       ],
@@ -1683,7 +1705,7 @@
             "native": "QTabBar::SelectionBehavior",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QTabBar::SelectionBehavior>"
           }
         }
       ],
@@ -1720,7 +1742,7 @@
             "native": "QTabBar::Shape",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QTabBar::Shape>"
           }
         }
       ],
@@ -1767,7 +1789,7 @@
             "native": "QTabBar::ButtonPosition",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QTabBar::ButtonPosition>"
           }
         },
         {
@@ -1918,7 +1940,7 @@
             "native": "const QIcon &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QIcon>"
           }
         }
       ],
@@ -2012,7 +2034,7 @@
             "native": "const QColor &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Color>"
           }
         }
       ],
@@ -2261,7 +2283,7 @@
         "native": "QTabBar::Shape",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QTabBar::Shape>"
       },
       "signature": "QTabBar::Shape shape() const",
       "since": null,
@@ -2324,7 +2346,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,
@@ -2353,7 +2375,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -2400,7 +2422,7 @@
             "native": "QTabBar::ButtonPosition",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QTabBar::ButtonPosition>"
           }
         }
       ],
@@ -2482,7 +2504,7 @@
         "native": "QIcon",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QIcon>"
       },
       "signature": "QIcon tabIcon(int index) const",
       "since": null,
@@ -2582,7 +2604,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRect tabRect(int index) const",
       "since": null,
@@ -2656,7 +2678,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize tabSizeHint(int index) const",
       "since": null,
@@ -2730,7 +2752,7 @@
         "native": "QColor",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Color>"
       },
       "signature": "QColor tabTextColor(int index) const",
       "since": null,
@@ -3235,7 +3257,7 @@
         "native": "Qt::TextElideMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::TextElideMode>"
       }
     },
     {
@@ -3315,7 +3337,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       }
     },
     {
@@ -3395,7 +3417,7 @@
         "native": "SelectionBehavior",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<SelectionBehavior>"
+        "ref": "enum<QTabBar::SelectionBehavior>"
       }
     },
     {
@@ -3435,7 +3457,7 @@
         "native": "Shape",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<Shape>"
+        "ref": "enum<QTabBar::Shape>"
       }
     },
     {

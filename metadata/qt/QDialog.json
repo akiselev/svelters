@@ -40,7 +40,7 @@
             "native": "Qt::WindowFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::WindowType>"
           }
         }
       ],
@@ -52,12 +52,16 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QDialog::DialogCode",
       "members": [
         {
+          "cpp": "QDialog::Rejected",
           "name": "Rejected",
           "value": "0"
         },
         {
+          "cpp": "QDialog::Accepted",
           "name": "Accepted",
           "value": "1"
         }
@@ -71,7 +75,8 @@
         "scoped": false
       },
       "name": "DialogCode",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QDialog",
@@ -370,7 +375,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize minimumSizeHint() const override",
       "since": null,
@@ -696,7 +701,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,

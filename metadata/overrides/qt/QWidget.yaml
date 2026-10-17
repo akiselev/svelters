@@ -17,6 +17,21 @@ elements:
           horizontal: QBoxLayout::LeftToRight
           vertical: QBoxLayout::TopToBottom
       - { js: spacing, target: layout, native: spacing }
+      # Typed props (value model, ABI v3): records, enums, strings and flags share one converter set.
+      - { js: geometry, native: geometry }
+      - { js: minimumSize, native: minimumSize }
+      - { js: maximumSize, native: maximumSize }
+      - { js: sizeIncrement, native: sizeIncrement }
+      - { js: pos, native: pos }          # read-only: no setter
+      - { js: size, native: size }        # read-only: use resizeTo()
+      - { js: contentsMargins, target: layout, native: contentsMargins }
+      - { js: focusPolicy, native: focusPolicy }
+      - { js: toolTip, native: toolTip }
+      - { js: enabled, native: enabled }
+    methods:
+      - { js: saveGeometry, native: saveGeometry }
+      - { js: restoreGeometry, native: restoreGeometry, params: [bytes] }
+      - { js: resizeTo, native: resize, params: ["record<Size>"] }
     children:
       policy: layout_managed
       default_slot: children

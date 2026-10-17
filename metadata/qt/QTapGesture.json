@@ -38,7 +38,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF position() const",
       "since": null,
@@ -67,7 +67,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -128,7 +128,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       }
     }
   ],

@@ -22,5 +22,9 @@ name = "counter"
 harness = false
 
 [[test]]
+name = "serdes"
+harness = false
+
+[[test]]
 name = "borrowed"
 harness = false

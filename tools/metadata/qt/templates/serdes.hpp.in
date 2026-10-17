@@ -1,0 +1,883 @@
+// ---- value model (ABI v3): converters ---------------------------------------------------------
+//
+// One `Conv<T>` per C++ type, shared by properties, method arguments/returns and signal
+// arguments. A converter has
+//   static bool in(const svl_value *v, T &out, std::string &err);   // svl_value -> T
+//   static void out(const T &x, svl_value *o);                       // T -> svl_value (arena-backed)
+//   static svl_slot_desc slot(const char *name);                     // descriptor for generated describe()
+// The primary template is undefined: using an unmapped type is a compile error, and C++ only
+// instantiates the converters the generated dispatch code uses.
+
+// Storage for everything a returned svl_value points at; valid until the next ABI call that
+// produces output (get_prop, call), as the ABI promises.
+struct OutArena {
+  std::deque<std::string> strs;
+  std::deque<QByteArray> bytes;
+  std::deque<std::vector<svl_value>> lists;
+  void clear() {
+    strs.clear();
+    bytes.clear();
+    lists.clear();
+  }
+};
+OutArena g_out;
+
+// Strings and byte ranges that a converted argument points into, alive for one ABI call
+// (`const char *` parameters: the backend must not keep them).
+std::deque<std::string> g_in;
+
+inline svl_value mkv(uint16_t tag, svl_id type = 0) {
+  svl_value v;
+  v.tag = tag;
+  v.flags = 0;
+  v.type = type;
+  v.u.i = 0;
+  return v;
+}
+
+inline svl_slot_desc slot_desc(const char *name, uint16_t tag, uint16_t flags = 0, svl_id type = 0,
+                               double mn = std::numeric_limits<double>::quiet_NaN(),
+                               double mx = std::numeric_limits<double>::quiet_NaN()) {
+  svl_slot_desc d;
+  d.name = name;
+  d.tag = tag;
+  d.flags = flags;
+  d.type = type;
+  d.min = mn;
+  d.max = mx;
+  return d;
+}
+
+// ---- type registry: descriptors built on first use, owned for the process lifetime ----
+
+struct TypeEntry {
+  std::string name;
+  std::deque<std::string> strs;
+  std::vector<svl_enum_member> members;
+  std::vector<svl_slot_desc> fields;
+  svl_type_desc desc;
+};
+std::map<svl_id, std::unique_ptr<TypeEntry>> g_types;
+svl_id g_next_type = SVL_T_FIRST_BACKEND + 0x100;
+
+const char *intern(TypeEntry &t, const std::string &s) {
+  t.strs.push_back(s);
+  return t.strs.back().c_str();
+}
+
+// Registers a type descriptor. `fixed` != 0 pins the id (the well-known value types).
+svl_id new_type(svl_id fixed, const std::string &name, uint16_t kind,
+                const std::vector<std::pair<std::string, int64_t>> &members,
+                const std::vector<std::pair<std::string, svl_slot_desc>> &fields) {
+  svl_id id = fixed ? fixed : g_next_type++;
+  auto e = std::make_unique<TypeEntry>();
+  e->name = name;
+  for (auto &m : members) {
+    svl_enum_member em;
+    em.name = intern(*e, m.first);
+    em.value = m.second;
+    e->members.push_back(em);
+  }
+  for (auto &f : fields) {
+    svl_slot_desc d = f.second;
+    d.name = f.first.empty() ? nullptr : intern(*e, f.first);
+    e->fields.push_back(d);
+  }
+  e->desc.name = e->name.c_str();
+  e->desc.kind = kind;
+  e->desc.scope = 0;
+  e->desc.members = e->members.data();
+  e->desc.n_members = static_cast<uint32_t>(e->members.size());
+  e->desc.fields = e->fields.data();
+  e->desc.n_fields = static_cast<uint32_t>(e->fields.size());
+  e->desc.ret = slot_desc(nullptr, SVL_NULL);
+  g_types[id] = std::move(e);
+  return id;
+}
+
+const svl_type_desc *type_desc_for(svl_id id) {
+  auto it = g_types.find(id);
+  return it == g_types.end() ? nullptr : &it->second->desc;
+}
+
+// ---- scalars ----
+
+template <class T, class = void>
+struct Conv;
+
+template <>
+struct Conv<bool> {
+  static bool in(const svl_value *v, bool &o, std::string &e) {
+    if (v->tag == SVL_BOOL) { o = v->u.b; return true; }
+    if (v->tag == SVL_I64) { o = v->u.i != 0; return true; }
+    e = "expected boolean";
+    return false;
+  }
+  static void out(bool b, svl_value *o) { *o = mkv(SVL_BOOL); o->u.b = b; }
+  static svl_slot_desc slot(const char *n) { return slot_desc(n, SVL_BOOL); }
+};
+
+template <class T>
+struct Conv<T, std::enable_if_t<std::is_integral_v<T> && !std::is_same_v<T, bool>>> {
+  static bool in(const svl_value *v, T &o, std::string &e) {
+    if (v->tag == SVL_I64) {
+      if (v->flags & SVL_F_UNSIGNED) {
+        if (v->u.u > static_cast<uint64_t>(std::numeric_limits<T>::max())) { e = "integer out of range"; return false; }
+        o = static_cast<T>(v->u.u);
+        return true;
+      }
+      int64_t x = v->u.i;
+      if (x < 0 && std::is_unsigned_v<T>) { e = "integer out of range"; return false; }
+      if (x >= 0 && sizeof(T) <= 8 && static_cast<uint64_t>(x) > static_cast<uint64_t>(std::numeric_limits<T>::max())) { e = "integer out of range"; return false; }
+      if (x < 0 && x < static_cast<int64_t>(std::numeric_limits<T>::min())) { e = "integer out of range"; return false; }
+      o = static_cast<T>(x);
+      return true;
+    }
+    if (v->tag == SVL_F64 && std::floor(v->u.f) == v->u.f && std::fabs(v->u.f) < 9e15) {
+      int64_t x = static_cast<int64_t>(v->u.f);
+      if (x < static_cast<int64_t>(std::numeric_limits<T>::min()) || (x > 0 && static_cast<uint64_t>(x) > static_cast<uint64_t>(std::numeric_limits<T>::max()))) { e = "integer out of range"; return false; }
+      o = static_cast<T>(x);
+      return true;
+    }
+    e = "expected integer";
+    return false;
+  }
+  static void out(T x, svl_value *o) {
+    *o = mkv(SVL_I64);
+    if (std::is_unsigned_v<T> && sizeof(T) == 8) { o->u.u = static_cast<uint64_t>(x); o->flags |= SVL_F_UNSIGNED; }
+    else o->u.i = static_cast<int64_t>(x);
+  }
+  static svl_slot_desc slot(const char *n) {
+    uint16_t fl = (std::is_unsigned_v<T> && sizeof(T) == 8) ? SVL_D_UNSIGNED : 0;
+    return slot_desc(n, SVL_I64, fl, 0, sizeof(T) == 8 ? (std::is_unsigned_v<T> ? 0.0 : std::numeric_limits<double>::quiet_NaN()) : static_cast<double>(std::numeric_limits<T>::min()),
+                     sizeof(T) == 8 ? std::numeric_limits<double>::quiet_NaN() : static_cast<double>(std::numeric_limits<T>::max()));
+  }
+};
+
+template <class T>
+struct Conv<T, std::enable_if_t<std::is_floating_point_v<T>>> {
+  static bool in(const svl_value *v, T &o, std::string &e) {
+    if (v->tag == SVL_F64) { o = static_cast<T>(v->u.f); return true; }
+    if (v->tag == SVL_I64) { o = static_cast<T>(v->u.i); return true; }
+    e = "expected number";
+    return false;
+  }
+  static void out(T x, svl_value *o) { *o = mkv(SVL_F64); o->u.f = static_cast<double>(x); }
+  static svl_slot_desc slot(const char *n) { return slot_desc(n, SVL_F64); }
+};
+
+// ---- strings ----
+
+template <>
+struct Conv<QString> {
+  static bool in(const svl_value *v, QString &o, std::string &e) {
+    if (v->tag == SVL_NULL) { o.clear(); return true; }
+    if (v->tag != SVL_STR) { e = "expected string"; return false; }
+    if (v->flags & SVL_F_UTF16)
+      o = QString::fromUtf16(static_cast<const char16_t *>(v->u.s.ptr), static_cast<qsizetype>(v->u.s.len));
+    else
+      o = QString::fromUtf8(static_cast<const char *>(v->u.s.ptr), static_cast<qsizetype>(v->u.s.len));
+    return true;
+  }
+  static void out(const QString &s, svl_value *o) {
+    QByteArray u = s.toUtf8();
+    g_out.strs.emplace_back(u.constData(), static_cast<size_t>(u.size()));
+    *o = mkv(SVL_STR);
+    o->u.s.ptr = g_out.strs.back().data();
+    o->u.s.len = g_out.strs.back().size();
+  }
+  static svl_slot_desc slot(const char *n) { return slot_desc(n, SVL_STR, SVL_D_NULLABLE); }
+};
+
+// A `const char *` parameter: the argument text, NUL terminated, valid for the call.
+template <>
+struct Conv<const char *> {
+  static bool in(const svl_value *v, const char *&o, std::string &e) {
+    if (v->tag == SVL_NULL) { o = nullptr; return true; }
+    if (v->tag != SVL_STR) { e = "expected string"; return false; }
+    QString s;
+    if (!Conv<QString>::in(v, s, e)) return false;
+    g_in.push_back(s.toStdString());
+    o = g_in.back().c_str();
+    return true;
+  }
+  static void out(const char *s, svl_value *o) {
+    if (!s) { *o = mkv(SVL_NULL); return; }
+    Conv<QString>::out(QString::fromUtf8(s), o);
+  }
+  static svl_slot_desc slot(const char *n) { return slot_desc(n, SVL_STR, SVL_D_NULLABLE); }
+};
+
+// ---- lists ----
+
+template <class T>
+svl_id list_tid() {
+  static svl_id id = new_type(0, "list", SVL_LIST, {}, {{"", Conv<T>::slot(nullptr)}});
+  return id;
+}
+
+template <class T>
+struct Conv<QList<T>> {
+  static bool in(const svl_value *v, QList<T> &o, std::string &e) {
+    o.clear();
+    if (v->tag == SVL_NULL) return true;
+    if (v->tag != SVL_LIST) { e = "expected list"; return false; }
+    for (size_t i = 0; i < v->u.l.len; ++i) {
+      T x{};
+      if (!Conv<T>::in(&v->u.l.ptr[i], x, e)) { e = "[" + std::to_string(i) + "]: " + e; return false; }
+      o.push_back(std::move(x));
+    }
+    return true;
+  }
+  static void out(const QList<T> &l, svl_value *o) {
+    g_out.lists.emplace_back(static_cast<size_t>(l.size()), mkv(SVL_NULL));
+    auto &vec = g_out.lists.back();
+    for (qsizetype i = 0; i < l.size(); ++i) Conv<T>::out(l[i], &vec[static_cast<size_t>(i)]);
+    *o = mkv(SVL_LIST);
+    o->u.l.ptr = vec.data();
+    o->u.l.len = vec.size();
+  }
+  static svl_slot_desc slot(const char *n) { return slot_desc(n, SVL_LIST, SVL_D_NULLABLE, list_tid<T>()); }
+};
+
+// ---- enums and flags ----
+//
+// The generator specializes EnumInfo<E> for every enum a slot mentions: the descriptor name and
+// the member table (JS names with their native values).
+template <class E>
+struct EnumInfo;
+
+template <class E>
+svl_id enum_tid() {
+  static svl_id id = new_type(0, EnumInfo<E>::name(), SVL_ENUM, EnumInfo<E>::members(), {});
+  return id;
+}
+
+template <class E>
+svl_id flags_tid() {
+  static svl_id id = new_type(0, std::string(EnumInfo<E>::name()) + " flags", SVL_FLAGS, EnumInfo<E>::members(), {});
+  return id;
+}
+
+template <class E>
+bool enum_known(int64_t x) {
+  static const std::set<int64_t> vals = [] {
+    std::set<int64_t> s;
+    for (auto &m : EnumInfo<E>::members()) s.insert(m.second);
+    return s;
+  }();
+  return vals.count(x) != 0;
+}
+
+template <class E>
+struct Conv<E, std::enable_if_t<std::is_enum_v<E>>> {
+  static bool in(const svl_value *v, E &o, std::string &e) {
+    int64_t x;
+    if (v->tag == SVL_ENUM || v->tag == SVL_I64) {
+      x = v->u.i;
+    } else if (v->tag == SVL_STR) {
+      std::string s(static_cast<const char *>(v->u.s.ptr), v->u.s.len);
+      for (auto &m : EnumInfo<E>::members())
+        if (m.first == s) { o = static_cast<E>(m.second); return true; }
+      e = "unknown " + std::string(EnumInfo<E>::name()) + " name '" + s + "'";
+      return false;
+    } else {
+      e = "expected " + std::string(EnumInfo<E>::name());
+      return false;
+    }
+    if (!enum_known<E>(x)) { e = std::to_string(x) + " is not a " + EnumInfo<E>::name() + " value"; return false; }
+    o = static_cast<E>(x);
+    return true;
+  }
+  static void out(E x, svl_value *o) { *o = mkv(SVL_ENUM, enum_tid<E>()); o->u.i = static_cast<int64_t>(x); }
+  static svl_slot_desc slot(const char *n) { return slot_desc(n, SVL_ENUM, 0, enum_tid<E>()); }
+};
+
+template <class E>
+struct Conv<QFlags<E>> {
+  static bool in(const svl_value *v, QFlags<E> &o, std::string &e) {
+    uint64_t all = 0;
+    for (auto &m : EnumInfo<E>::members()) all |= static_cast<uint64_t>(m.second);
+    uint64_t mask;
+    if (v->tag == SVL_FLAGS) mask = v->u.u;
+    else if (v->tag == SVL_I64 && v->u.i >= 0) mask = static_cast<uint64_t>(v->u.i);
+    else { e = "expected flags"; return false; }
+    if (mask & ~all) { e = "unknown bits in " + std::string(EnumInfo<E>::name()) + " flags"; return false; }
+    o = QFlags<E>::fromInt(static_cast<typename QFlags<E>::Int>(mask));
+    return true;
+  }
+  static void out(QFlags<E> f, svl_value *o) { *o = mkv(SVL_FLAGS, flags_tid<E>()); o->u.u = static_cast<uint64_t>(static_cast<typename QFlags<E>::Int>(f)); }
+  static svl_slot_desc slot(const char *n) { return slot_desc(n, SVL_FLAGS, 0, flags_tid<E>()); }
+};
+
+// ---- records ----
+
+inline bool rec_num(const svl_value *v, double &x) {
+  if (v->tag == SVL_F64) { x = v->u.f; return true; }
+  if (v->tag == SVL_I64) { x = static_cast<double>(v->u.i); return true; }
+  return false;
+}
+
+inline bool rec_int(const svl_value *v, int &x, std::string &e) {
+  double d;
+  if (!rec_num(v, d) || std::floor(d) != d) { e = "expected integer"; return false; }
+  if (d < std::numeric_limits<int>::min() || d > std::numeric_limits<int>::max()) { e = "integer out of range"; return false; }
+  x = static_cast<int>(d);
+  return true;
+}
+
+// Reads the n numeric fields of a RECORD value.
+inline bool rec_fields(const svl_value *v, size_t n, const char *what, double *f, std::string &e) {
+  if (v->tag != SVL_RECORD) { e = std::string("expected a ") + what + " record"; return false; }
+  if (v->u.l.len != n) { e = std::string(what) + " needs " + std::to_string(n) + " fields"; return false; }
+  for (size_t i = 0; i < n; ++i)
+    if (!rec_num(&v->u.l.ptr[i], f[i])) { e = std::string("expected numbers in ") + what; return false; }
+  return true;
+}
+
+inline void rec_out(svl_id tid, std::initializer_list<double> fs, bool integral, svl_value *o) {
+  g_out.lists.emplace_back();
+  auto &vec = g_out.lists.back();
+  for (double d : fs) {
+    svl_value x;
+    if (integral) { x = mkv(SVL_I64); x.u.i = static_cast<int64_t>(d); }
+    else { x = mkv(SVL_F64); x.u.f = d; }
+    vec.push_back(x);
+  }
+  *o = mkv(SVL_RECORD, tid);
+  o->u.l.ptr = vec.data();
+  o->u.l.len = vec.size();
+}
+
+inline std::vector<std::pair<std::string, svl_slot_desc>> rec_slots(std::initializer_list<const char *> names, bool integral) {
+  std::vector<std::pair<std::string, svl_slot_desc>> out;
+  for (auto n : names)
+    out.push_back({n, integral ? slot_desc(nullptr, SVL_I64, 0, 0, std::numeric_limits<int>::min(), std::numeric_limits<int>::max())
+                                : slot_desc(nullptr, SVL_F64)});
+  return out;
+}
+
+constexpr svl_id T_RECT_I = SVL_T_FIRST_BACKEND + 1, T_SIZE_I = SVL_T_FIRST_BACKEND + 2, T_POINT_I = SVL_T_FIRST_BACKEND + 3,
+                 T_INSETS_I = SVL_T_FIRST_BACKEND + 4;
+
+// Value classes as records: portable field names, shared by every toolkit. The integer classes
+// (QRect, QSize, QPoint, QMargins) reject fractional fields instead of rounding.
+template <class T>
+struct RecTraits;
+
+template <>
+struct RecTraits<QRectF> {
+  static constexpr svl_id id = SVL_T_RECT;
+  static constexpr const char *name = "Rect";
+  static constexpr bool integral = false;
+  static constexpr size_t N = 4;
+  static constexpr const char *fields[4] = {"x", "y", "width", "height"};
+  static QRectF make(const double *f) { return QRectF(f[0], f[1], f[2], f[3]); }
+  static void get(const QRectF &x, double *f) { f[0] = x.x(); f[1] = x.y(); f[2] = x.width(); f[3] = x.height(); }
+};
+template <>
+struct RecTraits<QRect> {
+  static constexpr svl_id id = T_RECT_I;
+  static constexpr const char *name = "Rect";
+  static constexpr bool integral = true;
+  static constexpr size_t N = 4;
+  static constexpr const char *fields[4] = {"x", "y", "width", "height"};
+  static QRect make(const double *f) { return QRect(int(f[0]), int(f[1]), int(f[2]), int(f[3])); }
+  static void get(const QRect &x, double *f) { f[0] = x.x(); f[1] = x.y(); f[2] = x.width(); f[3] = x.height(); }
+};
+template <>
+struct RecTraits<QSizeF> {
+  static constexpr svl_id id = SVL_T_SIZE;
+  static constexpr const char *name = "Size";
+  static constexpr bool integral = false;
+  static constexpr size_t N = 2;
+  static constexpr const char *fields[2] = {"width", "height"};
+  static QSizeF make(const double *f) { return QSizeF(f[0], f[1]); }
+  static void get(const QSizeF &x, double *f) { f[0] = x.width(); f[1] = x.height(); }
+};
+template <>
+struct RecTraits<QSize> {
+  static constexpr svl_id id = T_SIZE_I;
+  static constexpr const char *name = "Size";
+  static constexpr bool integral = true;
+  static constexpr size_t N = 2;
+  static constexpr const char *fields[2] = {"width", "height"};
+  static QSize make(const double *f) { return QSize(int(f[0]), int(f[1])); }
+  static void get(const QSize &x, double *f) { f[0] = x.width(); f[1] = x.height(); }
+};
+template <>
+struct RecTraits<QPointF> {
+  static constexpr svl_id id = SVL_T_POINT;
+  static constexpr const char *name = "Point";
+  static constexpr bool integral = false;
+  static constexpr size_t N = 2;
+  static constexpr const char *fields[2] = {"x", "y"};
+  static QPointF make(const double *f) { return QPointF(f[0], f[1]); }
+  static void get(const QPointF &x, double *f) { f[0] = x.x(); f[1] = x.y(); }
+};
+template <>
+struct RecTraits<QPoint> {
+  static constexpr svl_id id = T_POINT_I;
+  static constexpr const char *name = "Point";
+  static constexpr bool integral = true;
+  static constexpr size_t N = 2;
+  static constexpr const char *fields[2] = {"x", "y"};
+  static QPoint make(const double *f) { return QPoint(int(f[0]), int(f[1])); }
+  static void get(const QPoint &x, double *f) { f[0] = x.x(); f[1] = x.y(); }
+};
+template <>
+struct RecTraits<QMarginsF> {
+  static constexpr svl_id id = SVL_T_INSETS;
+  static constexpr const char *name = "Insets";
+  static constexpr bool integral = false;
+  static constexpr size_t N = 4;
+  static constexpr const char *fields[4] = {"top", "right", "bottom", "left"};
+  static QMarginsF make(const double *f) { return QMarginsF(f[3], f[0], f[1], f[2]); }
+  static void get(const QMarginsF &x, double *f) { f[0] = x.top(); f[1] = x.right(); f[2] = x.bottom(); f[3] = x.left(); }
+};
+template <>
+struct RecTraits<QMargins> {
+  static constexpr svl_id id = T_INSETS_I;
+  static constexpr const char *name = "Insets";
+  static constexpr bool integral = true;
+  static constexpr size_t N = 4;
+  static constexpr const char *fields[4] = {"top", "right", "bottom", "left"};
+  static QMargins make(const double *f) { return QMargins(int(f[3]), int(f[0]), int(f[1]), int(f[2])); }
+  static void get(const QMargins &x, double *f) { f[0] = x.top(); f[1] = x.right(); f[2] = x.bottom(); f[3] = x.left(); }
+};
+
+template <class T>
+struct RecConv {
+  using Tr = RecTraits<T>;
+  static svl_id tid() {
+    static svl_id id = [] {
+      std::vector<std::pair<std::string, svl_slot_desc>> fs;
+      for (size_t i = 0; i < Tr::N; ++i)
+        fs.push_back({Tr::fields[i], Tr::integral ? slot_desc(nullptr, SVL_I64, 0, 0, std::numeric_limits<int>::min(), std::numeric_limits<int>::max())
+                                                   : slot_desc(nullptr, SVL_F64)});
+      return new_type(Tr::id, Tr::name, SVL_RECORD, {}, fs);
+    }();
+    return id;
+  }
+  static bool in(const svl_value *v, T &o, std::string &e) {
+    double f[Tr::N];
+    if (!rec_fields(v, Tr::N, Tr::name, f, e)) return false;
+    if (Tr::integral)
+      for (size_t i = 0; i < Tr::N; ++i) {
+        int tmp;
+        svl_value one = mkv(SVL_F64);
+        one.u.f = f[i];
+        if (!rec_int(&one, tmp, e)) { e = std::string(Tr::fields[i]) + ": " + e; return false; }
+      }
+    o = Tr::make(f);
+    return true;
+  }
+  static void out(const T &x, svl_value *o) {
+    double f[Tr::N];
+    Tr::get(x, f);
+    g_out.lists.emplace_back();
+    auto &vec = g_out.lists.back();
+    for (size_t i = 0; i < Tr::N; ++i) {
+      svl_value r;
+      if (Tr::integral) { r = mkv(SVL_I64); r.u.i = static_cast<int64_t>(f[i]); }
+      else { r = mkv(SVL_F64); r.u.f = f[i]; }
+      vec.push_back(r);
+    }
+    *o = mkv(SVL_RECORD, tid());
+    o->u.l.ptr = vec.data();
+    o->u.l.len = vec.size();
+  }
+  static svl_slot_desc slot(const char *n) { return slot_desc(n, SVL_RECORD, 0, tid()); }
+};
+
+template <> struct Conv<QRectF> : RecConv<QRectF> {};
+template <> struct Conv<QRect> : RecConv<QRect> {};
+template <> struct Conv<QSizeF> : RecConv<QSizeF> {};
+template <> struct Conv<QSize> : RecConv<QSize> {};
+template <> struct Conv<QPointF> : RecConv<QPointF> {};
+template <> struct Conv<QPoint> : RecConv<QPoint> {};
+template <> struct Conv<QMarginsF> : RecConv<QMarginsF> {};
+template <> struct Conv<QMargins> : RecConv<QMargins> {};
+
+// QColor: {red, green, blue, alpha} in 0..1; a string is a CSS-ish color name (QColor::fromString).
+template <>
+struct Conv<QColor> {
+  static svl_id tid() {
+    static svl_id id = new_type(SVL_T_COLOR, "Color", SVL_RECORD, {}, rec_slots({"red", "green", "blue", "alpha"}, false));
+    return id;
+  }
+  static bool in(const svl_value *v, QColor &o, std::string &e) {
+    if (v->tag == SVL_STR) {
+      QString s;
+      if (!Conv<QString>::in(v, s, e)) return false;
+      QColor c = QColor::fromString(s);
+      if (!c.isValid()) { e = "cannot parse color '" + s.toStdString() + "'"; return false; }
+      o = c;
+      return true;
+    }
+    double f[4];
+    if (!rec_fields(v, 4, "Color", f, e)) return false;
+    for (double d : f)
+      if (!(d >= 0.0 && d <= 1.0)) { e = "color components must be in 0..1"; return false; }
+    o = QColor::fromRgbF(f[0], f[1], f[2], f[3]);
+    return true;
+  }
+  static void out(const QColor &c, svl_value *o) {
+    float r, gr, b, a;
+    c.getRgbF(&r, &gr, &b, &a);
+    rec_out(tid(), {double(r), double(gr), double(b), double(a)}, false, o);
+  }
+  static svl_slot_desc slot(const char *n) { return slot_desc(n, SVL_RECORD, SVL_D_STRING_FORM, tid()); }
+};
+
+// ---- bytes ----
+
+template <>
+struct Conv<QByteArray> {
+  static bool in(const svl_value *v, QByteArray &o, std::string &e) {
+    if (v->tag == SVL_NULL) { o.clear(); return true; }
+    if (v->tag != SVL_BYTES) { e = "expected bytes"; return false; }
+    // The buffer is borrowed for the call: copy.
+    o = QByteArray(reinterpret_cast<const char *>(v->u.bytes.ptr), static_cast<qsizetype>(v->u.bytes.len));
+    return true;
+  }
+  static void out(const QByteArray &b, svl_value *o) {
+    g_out.bytes.push_back(b);
+    *o = mkv(SVL_BYTES);
+    o->u.bytes.ptr = reinterpret_cast<const uint8_t *>(g_out.bytes.back().constData());
+    o->u.bytes.len = static_cast<size_t>(g_out.bytes.back().size());
+  }
+  static svl_slot_desc slot(const char *n) { return slot_desc(n, SVL_BYTES, SVL_D_NULLABLE); }
+};
+
+// ---- QObject handles ----
+
+template <class T>
+struct Conv<T *, std::enable_if_t<std::is_base_of_v<QObject, T>>> {
+  static bool in(const svl_value *v, T *&o, std::string &e) {
+    if (v->tag == SVL_NULL) { o = nullptr; return true; }
+    if (v->tag != SVL_HANDLE) { e = "expected handle"; return false; }
+    Entry *en = find(v->u.h);
+    if (!en) { e = "stale or unknown handle"; return false; }
+    o = qobject_cast<T *>(en->obj.data());
+    if (!o) { e = "handle is not a " + std::string(T::staticMetaObject.className()); return false; }
+    return true;
+  }
+  // An object we created keeps its handle; one a getter returned gets a BORROWED handle (`intern`).
+  static void out(T *p, svl_value *o) {
+    svl_handle h = intern(const_cast<QObject *>(static_cast<const QObject *>(p)), g_owner);
+    if (!h) { *o = mkv(SVL_NULL); return; }
+    *o = mkv(SVL_HANDLE);
+    o->u.h = h;
+  }
+  static svl_slot_desc slot(const char *n) { return slot_desc(n, SVL_HANDLE, SVL_D_NULLABLE); }
+};
+
+// ---- boxed values: implicitly shared value classes held in a handle table ----
+//
+// JS owns one handle per boxed value (QVariant copy: a refcount bump for QIcon/QFont/QPixmap).
+// `destroy(h)` releases it; the host queues GC releases for a checkpoint.
+
+template <class T>
+bool boxed_from_string(const QString &, T &, std::string &e) {
+  e = "no string form";
+  return false;
+}
+template <class T>
+constexpr bool boxed_has_string_form() { return false; }
+
+template <>
+inline bool boxed_from_string<QIcon>(const QString &s, QIcon &o, std::string &) { o = QIcon::fromTheme(s); return true; }
+template <>
+constexpr bool boxed_has_string_form<QIcon>() { return true; }
+template <>
+inline bool boxed_from_string<QKeySequence>(const QString &s, QKeySequence &o, std::string &) { o = QKeySequence(s); return true; }
+template <>
+constexpr bool boxed_has_string_form<QKeySequence>() { return true; }
+template <>
+inline bool boxed_from_string<QUrl>(const QString &s, QUrl &o, std::string &e) {
+  o = QUrl(s, QUrl::StrictMode);
+  if (!o.isValid()) { e = "invalid URL"; return false; }
+  return true;
+}
+template <>
+constexpr bool boxed_has_string_form<QUrl>() { return true; }
+// "Family 12", "Family 12 bold italic": a point size and style words, the rest is the family.
+template <>
+inline bool boxed_from_string<QFont>(const QString &s, QFont &o, std::string &e) {
+  QStringList words = s.split(' ', Qt::SkipEmptyParts);
+  QFont f;
+  QStringList family;
+  bool sized = false;
+  for (const QString &w : words) {
+    bool ok = false;
+    double pt = w.toDouble(&ok);
+    if (ok && !sized) { f.setPointSizeF(pt); sized = true; }
+    else if (w.compare("bold", Qt::CaseInsensitive) == 0) f.setBold(true);
+    else if (w.compare("italic", Qt::CaseInsensitive) == 0) f.setItalic(true);
+    else family << w;
+  }
+  if (family.isEmpty() && !sized) { e = "cannot parse font '" + s.toStdString() + "'"; return false; }
+  if (!family.isEmpty()) f.setFamily(family.join(' '));
+  o = f;
+  return true;
+}
+template <>
+constexpr bool boxed_has_string_form<QFont>() { return true; }
+
+template <class T>
+struct BoxedConv {
+  static svl_id tid() {
+    static svl_id id = new_type(0, QMetaType::fromType<T>().name(), SVL_BOXED, {}, {});
+    return id;
+  }
+  static bool in(const svl_value *v, T &o, std::string &e) {
+    if (v->tag == SVL_NULL) { o = T(); return true; }
+    if (v->tag == SVL_STR) {
+      QString s;
+      if (!Conv<QString>::in(v, s, e)) return false;
+      return boxed_from_string<T>(s, o, e);
+    }
+    if (v->tag != SVL_BOXED) { e = "expected a boxed " + std::string(QMetaType::fromType<T>().name()); return false; }
+    auto it = g.boxed.find(v->u.h);
+    if (it == g.boxed.end()) { e = "stale boxed handle"; return false; }
+    if (it->second.metaType() != QMetaType::fromType<T>()) { e = "boxed handle is not a " + std::string(QMetaType::fromType<T>().name()); return false; }
+    o = qvariant_cast<T>(it->second);
+    return true;
+  }
+  static void out(const T &x, svl_value *o) {
+    svl_handle h = g.next++;
+    g.boxed.emplace(h, QVariant::fromValue(x));
+    *o = mkv(SVL_BOXED, tid());
+    o->u.h = h;
+  }
+  static svl_slot_desc slot(const char *n) {
+    return slot_desc(n, SVL_BOXED, static_cast<uint16_t>(SVL_D_NULLABLE | (boxed_has_string_form<T>() ? SVL_D_STRING_FORM : 0)), tid());
+  }
+};
+
+// ---- dates and times ----
+
+template <>
+struct Conv<QDate> {
+  static svl_id tid() {
+    static svl_id id = new_type(SVL_T_DATE, "DateParts", SVL_RECORD, {},
+                                {{"year", slot_desc(nullptr, SVL_I64)}, {"month", slot_desc(nullptr, SVL_I64, 0, 0, 1, 12)}, {"day", slot_desc(nullptr, SVL_I64, 0, 0, 1, 31)}});
+    return id;
+  }
+  static bool in(const svl_value *v, QDate &o, std::string &e) {
+    double f[3];
+    if (!rec_fields(v, 3, "DateParts", f, e)) return false;
+    QDate d = QDate(static_cast<int>(f[0]), static_cast<int>(f[1]), static_cast<int>(f[2]));
+    if (!d.isValid()) { e = "invalid date"; return false; }
+    o = d;
+    return true;
+  }
+  static void out(const QDate &d, svl_value *o) { rec_out(tid(), {double(d.year()), double(d.month()), double(d.day())}, true, o); }
+  static svl_slot_desc slot(const char *n) { return slot_desc(n, SVL_RECORD, 0, tid()); }
+};
+
+template <>
+struct Conv<QTime> {
+  static svl_id tid() {
+    static svl_id id = new_type(SVL_T_TIME, "TimeParts", SVL_RECORD, {},
+                                {{"hour", slot_desc(nullptr, SVL_I64, 0, 0, 0, 23)}, {"minute", slot_desc(nullptr, SVL_I64, 0, 0, 0, 59)},
+                                 {"second", slot_desc(nullptr, SVL_I64, 0, 0, 0, 59)}, {"ms", slot_desc(nullptr, SVL_I64, 0, 0, 0, 999)}});
+    return id;
+  }
+  static bool in(const svl_value *v, QTime &o, std::string &e) {
+    double f[4];
+    if (!rec_fields(v, 4, "TimeParts", f, e)) return false;
+    QTime t = QTime(static_cast<int>(f[0]), static_cast<int>(f[1]), static_cast<int>(f[2]), static_cast<int>(f[3]));
+    if (!t.isValid()) { e = "invalid time"; return false; }
+    o = t;
+    return true;
+  }
+  static void out(const QTime &t, svl_value *o) { rec_out(tid(), {double(t.hour()), double(t.minute()), double(t.second()), double(t.msec())}, true, o); }
+  static svl_slot_desc slot(const char *n) { return slot_desc(n, SVL_RECORD, 0, tid()); }
+};
+
+// A datetime is epoch milliseconds (F64) with type SVL_T_DATETIME: JS `Date`.
+template <>
+struct Conv<QDateTime> {
+  static bool in(const svl_value *v, QDateTime &o, std::string &e) {
+    double ms;
+    if (!rec_num(v, ms) || !std::isfinite(ms)) { e = "expected a Date"; return false; }
+    o = QDateTime::fromMSecsSinceEpoch(static_cast<qint64>(ms));
+    return true;
+  }
+  static void out(const QDateTime &d, svl_value *o) { *o = mkv(SVL_F64, SVL_T_DATETIME); o->u.f = static_cast<double>(d.toMSecsSinceEpoch()); }
+  static svl_slot_desc slot(const char *n) { return slot_desc(n, SVL_F64, 0, SVL_T_DATETIME); }
+};
+
+// ---- QVariant: any JSON-like tree ----
+//
+// null, bool, integer (qlonglong), float, string, bytes, a Date (F64 typed DATETIME), a list
+// (QVariantList), a map (QVariantMap, string keys). Going out, the QVariant's own type decides;
+// types without a JS shape become null.
+
+template <>
+struct Conv<QVariant> {
+  static bool in(const svl_value *v, QVariant &o, std::string &e) {
+    switch (v->tag) {
+      case SVL_NULL: o = QVariant(); return true;
+      case SVL_BOOL: o = QVariant(v->u.b); return true;
+      case SVL_I64:
+        if (v->flags & SVL_F_UNSIGNED) o = QVariant(static_cast<qulonglong>(v->u.u));
+        else o = QVariant(static_cast<qlonglong>(v->u.i));
+        return true;
+      case SVL_F64:
+        if (v->type == SVL_T_DATETIME) { o = QVariant(QDateTime::fromMSecsSinceEpoch(static_cast<qint64>(v->u.f))); return true; }
+        o = QVariant(v->u.f);
+        return true;
+      case SVL_STR: { QString s; if (!Conv<QString>::in(v, s, e)) return false; o = QVariant(s); return true; }
+      case SVL_BYTES: { QByteArray b; if (!Conv<QByteArray>::in(v, b, e)) return false; o = QVariant(b); return true; }
+      case SVL_LIST: {
+        QVariantList l;
+        for (size_t i = 0; i < v->u.l.len; ++i) {
+          QVariant x;
+          if (!in(&v->u.l.ptr[i], x, e)) { e = "[" + std::to_string(i) + "]: " + e; return false; }
+          l.push_back(x);
+        }
+        o = QVariant(l);
+        return true;
+      }
+      case SVL_MAP: {
+        QVariantMap m;
+        if (v->u.l.len % 2) { e = "malformed map"; return false; }
+        for (size_t i = 0; i + 1 < v->u.l.len; i += 2) {
+          QString k;
+          if (v->u.l.ptr[i].tag != SVL_STR || !Conv<QString>::in(&v->u.l.ptr[i], k, e)) { e = "map keys must be strings"; return false; }
+          QVariant x;
+          if (!in(&v->u.l.ptr[i + 1], x, e)) { e = "." + k.toStdString() + ": " + e; return false; }
+          m.insert(k, x);
+        }
+        o = QVariant(m);
+        return true;
+      }
+      default: e = "this value cannot be held in a variant"; return false;
+    }
+  }
+  static void out(const QVariant &v, svl_value *o) {
+    switch (v.typeId()) {
+      case QMetaType::UnknownType: *o = mkv(SVL_NULL); return;
+      case QMetaType::Bool: Conv<bool>::out(v.toBool(), o); return;
+      case QMetaType::Char: case QMetaType::Short: case QMetaType::Int: case QMetaType::Long: case QMetaType::LongLong:
+      case QMetaType::UChar: case QMetaType::UShort: case QMetaType::UInt:
+        Conv<qlonglong>::out(v.toLongLong(), o); return;
+      case QMetaType::ULong: case QMetaType::ULongLong: Conv<qulonglong>::out(v.toULongLong(), o); return;
+      case QMetaType::Float: case QMetaType::Double: Conv<double>::out(v.toDouble(), o); return;
+      case QMetaType::QString: Conv<QString>::out(v.toString(), o); return;
+      case QMetaType::QByteArray: Conv<QByteArray>::out(v.toByteArray(), o); return;
+      case QMetaType::QDateTime: Conv<QDateTime>::out(v.toDateTime(), o); return;
+      case QMetaType::QDate: Conv<QDate>::out(v.toDate(), o); return;
+      case QMetaType::QTime: Conv<QTime>::out(v.toTime(), o); return;
+      case QMetaType::QColor: Conv<QColor>::out(qvariant_cast<QColor>(v), o); return;
+      case QMetaType::QRect: Conv<QRect>::out(v.toRect(), o); return;
+      case QMetaType::QRectF: Conv<QRectF>::out(v.toRectF(), o); return;
+      case QMetaType::QSize: Conv<QSize>::out(v.toSize(), o); return;
+      case QMetaType::QSizeF: Conv<QSizeF>::out(v.toSizeF(), o); return;
+      case QMetaType::QPoint: Conv<QPoint>::out(v.toPoint(), o); return;
+      case QMetaType::QPointF: Conv<QPointF>::out(v.toPointF(), o); return;
+      case QMetaType::QStringList: {
+        QStringList sl = v.toStringList();
+        g_out.lists.emplace_back(static_cast<size_t>(sl.size()), mkv(SVL_NULL));
+        auto &vec = g_out.lists.back();
+        for (qsizetype i = 0; i < sl.size(); ++i) Conv<QString>::out(sl[i], &vec[static_cast<size_t>(i)]);
+        *o = mkv(SVL_LIST);
+        o->u.l.ptr = vec.data();
+        o->u.l.len = vec.size();
+        return;
+      }
+      case QMetaType::QVariantList: {
+        QVariantList l = v.toList();
+        g_out.lists.emplace_back(static_cast<size_t>(l.size()), mkv(SVL_NULL));
+        auto &vec = g_out.lists.back();
+        for (qsizetype i = 0; i < l.size(); ++i) out(l[i], &vec[static_cast<size_t>(i)]);
+        *o = mkv(SVL_LIST);
+        o->u.l.ptr = vec.data();
+        o->u.l.len = vec.size();
+        return;
+      }
+      case QMetaType::QVariantMap: {
+        QVariantMap m = v.toMap();
+        g_out.lists.emplace_back(static_cast<size_t>(m.size()) * 2, mkv(SVL_NULL));
+        auto &vec = g_out.lists.back();
+        size_t i = 0;
+        for (auto it = m.cbegin(); it != m.cend(); ++it) {
+          Conv<QString>::out(it.key(), &vec[i++]);
+          out(it.value(), &vec[i++]);
+        }
+        *o = mkv(SVL_MAP);
+        o->u.l.ptr = vec.data();
+        o->u.l.len = vec.size();
+        return;
+      }
+      default: *o = mkv(SVL_NULL); return;
+    }
+  }
+  static svl_slot_desc slot(const char *n) { return slot_desc(n, SVL_NULL, SVL_D_NULLABLE, SVL_T_VARIANT); }
+};
+
+// ---- helpers used by the generated dispatch ----
+
+template <class T>
+using Plain = std::remove_cv_t<std::remove_reference_t<T>>;
+
+// Converts args[i] into `x` or fails the ABI call with "<what>: <reason>".
+template <class T>
+inline bool conv_in(const svl_value *v, T &x, const char *what, std::string &err) {
+  std::string e;
+  if (Conv<T>::in(v, x, e)) return true;
+  err = std::string(what) + ": " + e;
+  return false;
+}
+
+// A failure as an SVL_ERROR out value: [domain, code, message]. Qt has no error domains of its own:
+// C++ exceptions caught at the ABI boundary use domain "c++" and a null code.
+inline void out_error(svl_value *out, const char *domain, const std::string &message) {
+  if (!out) return;
+  g_out.strs.emplace_back(domain);
+  const std::string &d = g_out.strs.back();
+  g_out.strs.emplace_back(message);
+  const std::string &m = g_out.strs.back();
+  g_out.lists.emplace_back(3, mkv(SVL_NULL));
+  auto &vec = g_out.lists.back();
+  vec[0] = mkv(SVL_STR);
+  vec[0].u.s.ptr = d.data();
+  vec[0].u.s.len = d.size();
+  vec[2] = mkv(SVL_STR);
+  vec[2].u.s.ptr = m.data();
+  vec[2].u.s.len = m.size();
+  *out = mkv(SVL_ERROR);
+  out->u.l.ptr = vec.data();
+  out->u.l.len = vec.size();
+}
+
+inline void out_null(svl_value *out) {
+  if (out) *out = mkv(SVL_NULL);
+}
+
+// Legacy helpers kept for the dispatch code that predates Conv<T>.
+[[maybe_unused]] inline bool to_qstring(const svl_value *v, QString &o) { std::string e; return Conv<QString>::in(v, o, e); }
+[[maybe_unused]] inline bool to_bool(const svl_value *v, bool &o) { std::string e; return Conv<bool>::in(v, o, e); }
+[[maybe_unused]] inline bool to_i32(const svl_value *v, int &o) { std::string e; return Conv<int>::in(v, o, e); }
+[[maybe_unused]] inline bool to_f64(const svl_value *v, double &o) { std::string e; return Conv<double>::in(v, o, e); }
+[[maybe_unused]] inline void out_bool(svl_value *out, bool b) { if (out) Conv<bool>::out(b, out); }
+[[maybe_unused]] inline void out_i64(svl_value *out, qint64 i) { if (out) Conv<qint64>::out(i, out); }
+[[maybe_unused]] inline void out_f64(svl_value *out, double f) { if (out) Conv<double>::out(f, out); }
+[[maybe_unused]] inline void out_str(svl_value *out, const QString &s) { if (out) Conv<QString>::out(s, out); }
+
+// The QMetaProperty fallback (properties without direct accessors) goes through QVariant.
+[[maybe_unused]] inline QVariant to_variant(const svl_value *v) {
+  QVariant x;
+  std::string e;
+  Conv<QVariant>::in(v, x, e);
+  return x;
+}
+[[maybe_unused]] inline void out_variant(svl_value *out, const QVariant &v) {
+  if (out) Conv<QVariant>::out(v, out);
+}
+inline int bad_type(const char *what, const char *want) {
+  return fail(std::string(what) + ": expected " + want);
+}

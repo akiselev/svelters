@@ -80,7 +80,7 @@
             "native": "const QStringList &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<string>"
           }
         },
         {
@@ -202,7 +202,7 @@
             "native": "const QStringList &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<string>"
           }
         },
         {
@@ -270,7 +270,7 @@
             "native": "const QStringList &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<string>"
           }
         },
         {
@@ -316,38 +316,49 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QTreeWidgetItem::ChildIndicatorPolicy",
       "members": [
         {
+          "cpp": "QTreeWidgetItem::ShowIndicator",
           "name": "ShowIndicator",
           "value": "0"
         },
         {
+          "cpp": "QTreeWidgetItem::DontShowIndicator",
           "name": "DontShowIndicator",
           "value": "1"
         },
         {
+          "cpp": "QTreeWidgetItem::DontShowIndicatorWhenChildless",
           "name": "DontShowIndicatorWhenChildless",
           "value": "2"
         }
       ],
       "metaobject": null,
       "name": "ChildIndicatorPolicy",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QTreeWidgetItem::ItemType",
       "members": [
         {
+          "cpp": "QTreeWidgetItem::Type",
           "name": "Type",
           "value": "0"
         },
         {
+          "cpp": "QTreeWidgetItem::UserType",
           "name": "UserType",
           "value": "1000"
         }
       ],
       "metaobject": null,
       "name": "ItemType",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QTreeWidgetItem",
@@ -458,7 +469,7 @@
         "native": "QBrush",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QBrush>"
       },
       "signature": "QBrush background(int column) const",
       "since": null,
@@ -495,7 +506,7 @@
         "native": "Qt::CheckState",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<Qt::CheckState>"
       },
       "signature": "Qt::CheckState checkState(int column) const",
       "since": null,
@@ -584,7 +595,7 @@
         "native": "QTreeWidgetItem::ChildIndicatorPolicy",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QTreeWidgetItem::ChildIndicatorPolicy>"
       },
       "signature": "QTreeWidgetItem::ChildIndicatorPolicy childIndicatorPolicy() const",
       "since": null,
@@ -735,7 +746,7 @@
         "native": "Qt::ItemFlags",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::ItemFlag>"
       },
       "signature": "Qt::ItemFlags flags() const",
       "since": null,
@@ -772,7 +783,7 @@
         "native": "QFont",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QFont>"
       },
       "signature": "QFont font(int column) const",
       "since": null,
@@ -809,7 +820,7 @@
         "native": "QBrush",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QBrush>"
       },
       "signature": "QBrush foreground(int column) const",
       "since": null,
@@ -846,7 +857,7 @@
         "native": "QIcon",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QIcon>"
       },
       "signature": "QIcon icon(int column) const",
       "since": null,
@@ -1377,7 +1388,7 @@
             "native": "const QBrush &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QBrush>"
           }
         }
       ],
@@ -1424,7 +1435,7 @@
             "native": "Qt::CheckState",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::CheckState>"
           }
         }
       ],
@@ -1461,7 +1472,7 @@
             "native": "QTreeWidgetItem::ChildIndicatorPolicy",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QTreeWidgetItem::ChildIndicatorPolicy>"
           }
         }
       ],
@@ -1666,7 +1677,7 @@
             "native": "Qt::ItemFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::ItemFlag>"
           }
         }
       ],
@@ -1713,7 +1724,7 @@
             "native": "const QFont &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QFont>"
           }
         }
       ],
@@ -1760,7 +1771,7 @@
             "native": "const QBrush &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QBrush>"
           }
         }
       ],
@@ -1844,7 +1855,7 @@
             "native": "const QIcon &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QIcon>"
           }
         }
       ],
@@ -1928,7 +1939,7 @@
             "native": "const QSize &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Size>"
           }
         }
       ],
@@ -2069,7 +2080,7 @@
             "native": "Qt::Alignment",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::AlignmentFlag>"
           }
         }
       ],
@@ -2255,7 +2266,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint(int column) const",
       "since": null,
@@ -2294,7 +2305,7 @@
             "native": "Qt::SortOrder",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<Qt::SortOrder>"
           }
         }
       ],

@@ -1,0 +1,9 @@
+elements:
+  - tag: spinbox
+    construct: { class: QSpinBox }
+    props:
+      - { js: value, native: value }
+      - { js: minimum, native: minimum }
+      - { js: maximum, native: maximum }
+      - { js: singleStep, native: singleStep }
+      - { js: prefix, native: prefix }

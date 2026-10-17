@@ -16,16 +16,21 @@
   "constructors": [],
   "enums": [
     {
+      "flags_alias": "QPinchGesture::ChangeFlags",
+      "fullname": "QPinchGesture::ChangeFlag",
       "members": [
         {
+          "cpp": "QPinchGesture::ScaleFactorChanged",
           "name": "ScaleFactorChanged",
           "value": "0x1"
         },
         {
+          "cpp": "QPinchGesture::RotationAngleChanged",
           "name": "RotationAngleChanged",
           "value": "0x2"
         },
         {
+          "cpp": "QPinchGesture::CenterPointChanged",
           "name": "CenterPointChanged",
           "value": "0x4"
         }
@@ -40,7 +45,8 @@
         "scoped": false
       },
       "name": "ChangeFlag",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QPinchGesture",
@@ -66,7 +72,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF centerPoint() const",
       "since": null,
@@ -92,7 +98,7 @@
         "native": "QPinchGesture::ChangeFlags",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QPinchGesture::ChangeFlag>"
       },
       "signature": "QPinchGesture::ChangeFlags changeFlags() const",
       "since": null,
@@ -118,7 +124,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF lastCenterPoint() const",
       "since": null,
@@ -251,7 +257,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -288,7 +294,7 @@
             "native": "QPinchGesture::ChangeFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QPinchGesture::ChangeFlag>"
           }
         }
       ],
@@ -325,7 +331,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -510,7 +516,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -547,7 +553,7 @@
             "native": "QPinchGesture::ChangeFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QPinchGesture::ChangeFlag>"
           }
         }
       ],
@@ -655,7 +661,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF startCenterPoint() const",
       "since": null,
@@ -681,7 +687,7 @@
         "native": "QPinchGesture::ChangeFlags",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QPinchGesture::ChangeFlag>"
       },
       "signature": "QPinchGesture::ChangeFlags totalChangeFlags() const",
       "since": null,
@@ -786,7 +792,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       }
     },
     {
@@ -826,7 +832,7 @@
         "native": "ChangeFlags",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QPinchGesture::ChangeFlag>"
       }
     },
     {
@@ -866,7 +872,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       }
     },
     {
@@ -1066,7 +1072,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       }
     },
     {
@@ -1106,7 +1112,7 @@
         "native": "ChangeFlags",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QPinchGesture::ChangeFlag>"
       }
     },
     {

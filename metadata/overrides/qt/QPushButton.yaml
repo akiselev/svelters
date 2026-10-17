@@ -3,6 +3,10 @@ elements:
     construct: { class: QPushButton }
     props:
       - { js: label, native: text }
+      - { js: icon, native: icon }
+      - { js: iconSize, native: iconSize }
+      - { js: shortcut, native: shortcut }
+      - { js: checkable, native: checkable }
     methods:
       - { js: click, native: click }
     signals:

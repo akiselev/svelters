@@ -45,12 +45,16 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QListView::Flow",
       "members": [
         {
+          "cpp": "QListView::LeftToRight",
           "name": "LeftToRight",
           "value": "0"
         },
         {
+          "cpp": "QListView::TopToBottom",
           "name": "TopToBottom",
           "value": "1"
         }
@@ -64,15 +68,20 @@
         "scoped": false
       },
       "name": "Flow",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QListView::LayoutMode",
       "members": [
         {
+          "cpp": "QListView::SinglePass",
           "name": "SinglePass",
           "value": "0"
         },
         {
+          "cpp": "QListView::Batched",
           "name": "Batched",
           "value": "1"
         }
@@ -86,19 +95,25 @@
         "scoped": false
       },
       "name": "LayoutMode",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QListView::Movement",
       "members": [
         {
+          "cpp": "QListView::Static",
           "name": "Static",
           "value": "0"
         },
         {
+          "cpp": "QListView::Free",
           "name": "Free",
           "value": "1"
         },
         {
+          "cpp": "QListView::Snap",
           "name": "Snap",
           "value": "2"
         }
@@ -113,15 +128,20 @@
         "scoped": false
       },
       "name": "Movement",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QListView::ResizeMode",
       "members": [
         {
+          "cpp": "QListView::Fixed",
           "name": "Fixed",
           "value": "0"
         },
         {
+          "cpp": "QListView::Adjust",
           "name": "Adjust",
           "value": "1"
         }
@@ -135,15 +155,20 @@
         "scoped": false
       },
       "name": "ResizeMode",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     },
     {
+      "flags_alias": null,
+      "fullname": "QListView::ViewMode",
       "members": [
         {
+          "cpp": "QListView::ListMode",
           "name": "ListMode",
           "value": "0"
         },
         {
+          "cpp": "QListView::IconMode",
           "name": "IconMode",
           "value": "1"
         }
@@ -157,7 +182,8 @@
         "scoped": false
       },
       "name": "ViewMode",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QListView",
@@ -305,7 +331,7 @@
             "native": "const QList<int> &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<i32>"
           }
         }
       ],
@@ -487,7 +513,7 @@
         "native": "QListView::Flow",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QListView::Flow>"
       },
       "signature": "QListView::Flow flow() const",
       "since": null,
@@ -513,7 +539,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize gridSize() const",
       "since": null,
@@ -568,7 +594,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -765,7 +791,7 @@
         "native": "Qt::Alignment",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::AlignmentFlag>"
       },
       "signature": "Qt::Alignment itemAlignment() const",
       "since": null,
@@ -791,7 +817,7 @@
         "native": "QListView::LayoutMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QListView::LayoutMode>"
       },
       "signature": "QListView::LayoutMode layoutMode() const",
       "since": null,
@@ -920,7 +946,7 @@
             "native": "QAbstractItemView::CursorAction",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QAbstractItemView::CursorAction>"
           }
         },
         {
@@ -930,7 +956,7 @@
             "native": "Qt::KeyboardModifiers",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::KeyboardModifier>"
           }
         }
       ],
@@ -964,7 +990,7 @@
         "native": "QListView::Movement",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QListView::Movement>"
       },
       "signature": "QListView::Movement movement() const",
       "since": null,
@@ -1038,7 +1064,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRect rectForIndex(const QModelIndex &index) const",
       "since": null,
@@ -1101,7 +1127,7 @@
         "native": "QListView::ResizeMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QListView::ResizeMode>"
       },
       "signature": "QListView::ResizeMode resizeMode() const",
       "since": null,
@@ -1301,7 +1327,7 @@
             "native": "QAbstractItemView::ScrollHint",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QAbstractItemView::ScrollHint>"
           }
         }
       ],
@@ -1448,7 +1474,7 @@
             "native": "QListView::Flow",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QListView::Flow>"
           }
         }
       ],
@@ -1485,7 +1511,7 @@
             "native": "const QSize &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Size>"
           }
         }
       ],
@@ -1522,7 +1548,7 @@
             "native": "Qt::Alignment",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::AlignmentFlag>"
           }
         }
       ],
@@ -1559,7 +1585,7 @@
             "native": "QListView::LayoutMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QListView::LayoutMode>"
           }
         }
       ],
@@ -1633,7 +1659,7 @@
             "native": "QListView::Movement",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QListView::Movement>"
           }
         }
       ],
@@ -1670,7 +1696,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         },
         {
@@ -1717,7 +1743,7 @@
             "native": "QListView::ResizeMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QListView::ResizeMode>"
           }
         }
       ],
@@ -1838,7 +1864,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         },
         {
@@ -1848,7 +1874,7 @@
             "native": "QItemSelectionModel::SelectionFlags",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<QItemSelectionModel::SelectionFlag>"
           }
         }
       ],
@@ -1996,7 +2022,7 @@
             "native": "QListView::ViewMode",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QListView::ViewMode>"
           }
         }
       ],
@@ -2133,7 +2159,7 @@
             "native": "Qt::DropActions",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::DropAction>"
           }
         }
       ],
@@ -2282,7 +2308,7 @@
         "native": "QListView::ViewMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QListView::ViewMode>"
       },
       "signature": "QListView::ViewMode viewMode() const",
       "since": null,
@@ -2308,7 +2334,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize viewportSizeHint() const override",
       "since": null,
@@ -2345,7 +2371,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRect visualRect(const QModelIndex &index) const override",
       "since": null,
@@ -2382,7 +2408,7 @@
         "native": "QRegion",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QRegion>"
       },
       "signature": "QRegion visualRegionForSelection(const QItemSelection &selection) const override",
       "since": null,
@@ -2538,7 +2564,7 @@
         "native": "Flow",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<Flow>"
+        "ref": "enum<QListView::Flow>"
       }
     },
     {
@@ -2578,7 +2604,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       }
     },
     {
@@ -2658,7 +2684,7 @@
         "native": "Qt::Alignment",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::AlignmentFlag>"
       }
     },
     {
@@ -2698,7 +2724,7 @@
         "native": "LayoutMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<LayoutMode>"
+        "ref": "enum<QListView::LayoutMode>"
       }
     },
     {
@@ -2778,7 +2804,7 @@
         "native": "Movement",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<Movement>"
+        "ref": "enum<QListView::Movement>"
       }
     },
     {
@@ -2818,7 +2844,7 @@
         "native": "ResizeMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<ResizeMode>"
+        "ref": "enum<QListView::ResizeMode>"
       }
     },
     {
@@ -2978,7 +3004,7 @@
         "native": "ViewMode",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<ViewMode>"
+        "ref": "enum<QListView::ViewMode>"
       }
     },
     {

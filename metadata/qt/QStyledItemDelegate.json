@@ -133,7 +133,7 @@
             "native": "const QLocale &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QLocale>"
           }
         }
       ],
@@ -573,7 +573,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override",
       "since": null,

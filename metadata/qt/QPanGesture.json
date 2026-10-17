@@ -64,7 +64,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF delta() const",
       "since": null,
@@ -90,7 +90,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF lastOffset() const",
       "since": null,
@@ -116,7 +116,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       },
       "signature": "QPointF offset() const",
       "since": null,
@@ -182,7 +182,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -219,7 +219,7 @@
             "native": "const QPointF &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -320,7 +320,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       }
     },
     {
@@ -360,7 +360,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       }
     },
     {
@@ -400,7 +400,7 @@
         "native": "QPointF",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Point>"
       }
     }
   ],

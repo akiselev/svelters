@@ -20,13 +20,22 @@ use crate::sourcemap::SourceMaps;
 use std::cell::{Cell, RefCell};
 use std::cmp::Reverse;
 use std::collections::{BinaryHeap, HashMap, HashSet, VecDeque};
+use std::rc::Rc;
 use std::sync::atomic::AtomicBool;
 use std::sync::Arc;
 use std::time::{Duration, Instant};
+use crate::convert::TypeInfo;
 use svelters_abi::{
-    BackendRef, NameKind, SVL_GONE_CLOSED, SVL_GONE_OWNER, SVL_GONE_PARENT, SVL_GONE_REPLACED,
-    SVL_GONE_SHUTDOWN, SVL_LIFE_TOPLEVEL, Value, gone_name, svl_handle, svl_id,
+    BackendRef, MemberDesc, NameKind, SVL_CB_ASYNC, SVL_CB_CALL, SVL_CB_FOREVER, SVL_CB_NOTIFIED, SVL_GONE_CLOSED,
+    SVL_GONE_OWNER, SVL_GONE_PARENT, SVL_GONE_REPLACED, SVL_GONE_SHUTDOWN, SVL_LIFE_TOPLEVEL, Value, gone_name, svl_handle,
+    svl_id,
 };
+
+mod asyncs;
+mod callbacks;
+mod ops;
+pub(crate) use callbacks::{CallbackEngine, CallbackRegistry, CbTable};
+pub(crate) use ops::{Name, OpError, OpKind};
 
 #[derive(Clone, Debug)]
 pub struct HostConfig {
@@ -241,7 +250,17 @@ struct CoreState {
     /// is a root (a toplevel, or not attached yet). Used by reload teardown.
     tree: HashMap<svl_handle, svl_handle>,
     kinds: HashMap<String, svl_id>,
-    names: HashMap<(u32, svl_id, String), svl_id>,
+    /// kind id → name, for error messages
+    kind_names: HashMap<svl_id, String>,
+    /// (name kind, scope kind) → name → id
+    names: HashMap<(u32, svl_id), HashMap<Box<str>, svl_id>>,
+    /// Descriptor caches: `None` records that the backend has no descriptor.
+    members: HashMap<(u32, svl_id, svl_id), Option<Rc<MemberDesc>>>,
+    types: HashMap<svl_id, Option<Rc<TypeInfo>>>,
+    /// Live boxed-value handles, and ones the JS side dropped (released at the next checkpoint).
+    boxed: HashSet<svl_handle>,
+    release_queue: Vec<svl_handle>,
+    callbacks: CbTable,
     /// (kind id, signal id) → name, filled by `listen`
     signal_names: HashMap<(svl_id, svl_id), String>,
     events: VecDeque<Event>,
@@ -263,6 +282,9 @@ pub(crate) struct Core {
     vnow: Cell<Duration>,
     timing: Cell<Timing>,
     checkpoints: Cell<u64>,
+    cb_engine: RefCell<Option<Rc<dyn CallbackEngine>>>,
+    /// Depth of native-callback invocations in progress (see `callbacks.rs`).
+    cb_depth: Cell<u32>,
     maps: RefCell<SourceMaps>,
 }
 
@@ -298,6 +320,8 @@ impl Core {
             vnow: Cell::new(Duration::ZERO),
             timing: Cell::new(Timing::default()),
             checkpoints: Cell::new(0),
+            cb_engine: RefCell::new(None),
+            cb_depth: Cell::new(0),
             maps: RefCell::default(),
         }
     }
@@ -393,238 +417,6 @@ impl Core {
         std::mem::take(&mut self.st.borrow_mut().console)
     }
 
-    // ---- name resolution ----
-
-    fn resolve(&self, what: NameKind, kind: svl_id, name: &str) -> Result<svl_id, String> {
-        let key = (what as u32, kind, name.to_string());
-        if let Some(id) = self.st.borrow().names.get(&key) {
-            return Ok(*id);
-        }
-        let id = self.backend.resolve(what, kind, name);
-        if id == 0 {
-            return Err(format!("unknown {what:?} '{name}'"));
-        }
-        self.st.borrow_mut().names.insert(key, id);
-        Ok(id)
-    }
-
-    /// The kind of a live handle; an error that says why for a dead one.
-    fn kind_of(&self, h: svl_handle) -> Result<svl_id, String> {
-        let st = self.st.borrow();
-        if let Some(k) = st.handles.get(&h) {
-            return Ok(*k);
-        }
-        Err(match st.dead.why.get(&h) {
-            Some(d) => format!("handle #{h} was destroyed ({})", d.describe()),
-            None => format!("stale or foreign handle {h}"),
-        })
-    }
-
-    /// `Some(kind)` for a live handle, `None` for one that is known to be dead (teardown-shaped
-    /// ops treat that as a no-op), an error for a handle the host never issued.
-    fn live_kind(&self, h: svl_handle) -> Result<Option<svl_id>, String> {
-        let st = self.st.borrow();
-        if let Some(k) = st.handles.get(&h) {
-            return Ok(Some(*k));
-        }
-        if st.dead.why.contains_key(&h) {
-            return Ok(None);
-        }
-        Err(format!("stale or foreign handle {h}"))
-    }
-
-    // ---- JS host ops (called by the engine's `__svelters_host`) ----
-
-    pub(crate) fn op_create(&self, kind: &str) -> Result<svl_handle, String> {
-        self.timed(|| self.op_create_raw(kind))
-    }
-
-    pub(crate) fn op_insert(
-        &self,
-        parent: svl_handle,
-        child: svl_handle,
-        before: Option<svl_handle>,
-        slot: Option<&str>,
-    ) -> Result<(), String> {
-        self.timed(|| self.op_insert_raw(parent, child, before, slot))
-    }
-
-    pub(crate) fn op_remove(&self, parent: svl_handle, child: svl_handle) -> Result<(), String> {
-        self.timed(|| self.op_remove_raw(parent, child))
-    }
-
-    pub(crate) fn op_destroy(&self, h: svl_handle) -> Result<(), String> {
-        self.timed(|| self.op_destroy_raw(h))
-    }
-
-    pub(crate) fn op_set_prop(&self, h: svl_handle, prop: &str, v: &Value) -> Result<(), String> {
-        self.timed(|| self.op_set_prop_raw(h, prop, v))
-    }
-
-    pub(crate) fn op_get_prop(&self, h: svl_handle, prop: &str) -> Result<Value, String> {
-        self.timed(|| self.op_get_prop_raw(h, prop))
-    }
-
-    pub(crate) fn op_call(
-        &self,
-        h: svl_handle,
-        method: &str,
-        args: &[Value],
-    ) -> Result<Value, String> {
-        self.timed(|| self.op_call_raw(h, method, args))
-    }
-
-    pub(crate) fn op_listen(&self, h: svl_handle, signal: &str, on: bool) -> Result<(), String> {
-        self.timed(|| self.op_listen_raw(h, signal, on))
-    }
-
-
-    fn op_create_raw(&self, kind: &str) -> Result<svl_handle, String> {
-        let cached = self.st.borrow().kinds.get(kind).copied();
-        let kid = match cached {
-            Some(k) => k,
-            None => {
-                let k = self.backend.resolve(NameKind::Kind, 0, kind);
-                if k == 0 {
-                    return Err(format!("unknown kind '{kind}'"));
-                }
-                self.st.borrow_mut().kinds.insert(kind.to_string(), k);
-                k
-            }
-        };
-        let h = self.backend.create(kid).map_err(|e| e.message)?;
-        if h >= MAX_HANDLE {
-            self.backend.destroy(h);
-            return Err(format!("backend issued handle {h}, which JS cannot represent exactly"));
-        }
-        let top = self
-            .backend
-            .handle_info(h)
-            .is_ok_and(|i| i.lifetime == SVL_LIFE_TOPLEVEL);
-        let mut st = self.st.borrow_mut();
-        st.handles.insert(h, kid);
-        if top {
-            st.toplevels.insert(h);
-            st.top_seen = true;
-        }
-        Ok(h)
-    }
-
-    fn op_insert_raw(
-        &self,
-        parent: svl_handle,
-        child: svl_handle,
-        before: Option<svl_handle>,
-        slot: Option<&str>,
-    ) -> Result<(), String> {
-        let pk = self.kind_of(parent)?;
-        self.kind_of(child)?;
-        if let Some(b) = before {
-            self.kind_of(b)?;
-        }
-        let slot = match slot {
-            Some(s) => self.resolve(NameKind::Slot, pk, s)?,
-            None => 0,
-        };
-        self.backend
-            .insert(parent, child, before, slot)
-            .map_err(|e| e.message)?;
-        self.st.borrow_mut().tree.insert(child, parent);
-        Ok(())
-    }
-
-    fn op_remove_raw(&self, parent: svl_handle, child: svl_handle) -> Result<(), String> {
-        // A dead parent or child has nothing left to remove.
-        if self.live_kind(parent)?.is_none() || self.live_kind(child)?.is_none() {
-            return Ok(());
-        }
-        self.backend.remove(parent, child).map_err(|e| e.message)?;
-        self.st.borrow_mut().tree.remove(&child);
-        Ok(())
-    }
-
-    fn op_destroy_raw(&self, h: svl_handle) -> Result<(), String> {
-        // Idempotent: destroying a dead handle (already destroyed, or died natively) is a no-op.
-        if self.live_kind(h)?.is_none() {
-            return Ok(());
-        }
-        {
-            let mut st = self.st.borrow_mut();
-            st.handles.remove(&h);
-            st.toplevels.remove(&h);
-            st.tree.remove(&h);
-            st.dead.push(h, Death::Destroyed);
-        }
-        self.backend.destroy(h);
-        Ok(())
-    }
-
-    fn op_set_prop_raw(&self, h: svl_handle, prop: &str, v: &Value) -> Result<(), String> {
-        let Some(k) = self.live_kind(h)? else {
-            return Ok(());
-        };
-        let p = self.resolve(NameKind::Prop, k, prop)?;
-        self.backend.set_prop(h, p, v).map_err(|e| e.message)
-    }
-
-    fn op_get_prop_raw(&self, h: svl_handle, prop: &str) -> Result<Value, String> {
-        let k = self.kind_of(h)?;
-        let p = self.resolve(NameKind::Prop, k, prop)?;
-        let v = self.backend.get_prop(h, p).map_err(|e| e.message)?;
-        self.adopt_handles(&v);
-        Ok(v)
-    }
-
-    /// Handles that come back inside a result and are new to the host (the backend minted them
-    /// for native objects it did not create) join the handle table with the kind and lifetime
-    /// class the backend reports. Known handles (an object we created) are left alone.
-    fn adopt_handles(&self, v: &Value) {
-        match v {
-            Value::Handle(h) => {
-                if self.st.borrow().handles.contains_key(h) || *h >= MAX_HANDLE {
-                    return;
-                }
-                if let Ok(info) = self.backend.handle_info(*h) {
-                    let mut st = self.st.borrow_mut();
-                    st.handles.insert(*h, info.kind);
-                    if info.lifetime == SVL_LIFE_TOPLEVEL {
-                        st.toplevels.insert(*h);
-                        st.top_seen = true;
-                    }
-                }
-            }
-            Value::List(items) => items.iter().for_each(|i| self.adopt_handles(i)),
-            _ => {}
-        }
-    }
-
-    fn op_call_raw(
-        &self,
-        h: svl_handle,
-        method: &str,
-        args: &[Value],
-    ) -> Result<Value, String> {
-        let k = self.kind_of(h)?;
-        let m = self.resolve(NameKind::Method, k, method)?;
-        let v = self.backend.call(h, m, args).map_err(|e| e.message)?;
-        self.adopt_handles(&v);
-        Ok(v)
-    }
-
-    fn op_listen_raw(&self, h: svl_handle, signal: &str, on: bool) -> Result<(), String> {
-        let k = match self.live_kind(h)? {
-            Some(k) => k,
-            None if !on => return Ok(()),
-            None => return Err(self.kind_of(h).unwrap_err()),
-        };
-        let s = self.resolve(NameKind::Signal, k, signal)?;
-        self.st
-            .borrow_mut()
-            .signal_names
-            .insert((k, s), signal.to_string());
-        self.backend.listen(h, s, on).map_err(|e| e.message)
-    }
-
     // ---- events ----
 
     pub(crate) fn push_event(&self, handle: svl_handle, signal: svl_id, args: Vec<Value>) {
@@ -690,14 +482,18 @@ impl Core {
     /// notification for the next checkpoint; never runs JS. At most once per handle: a handle
     /// the app already destroyed, or one reported before, is ignored.
     pub(crate) fn native_gone(&self, h: svl_handle, reason: u32) {
-        let mut st = self.st.borrow_mut();
-        if st.handles.remove(&h).is_none() {
-            return;
+        {
+            let mut st = self.st.borrow_mut();
+            if st.handles.remove(&h).is_none() {
+                return;
+            }
+            st.toplevels.remove(&h);
+            st.tree.remove(&h);
+            st.dead.push(h, Death::Gone(reason));
+            st.events.push_back(Event::Gone { handle: h, reason });
         }
-        st.toplevels.remove(&h);
-        st.tree.remove(&h);
-        st.dead.push(h, Death::Gone(reason));
-        st.events.push_back(Event::Gone { handle: h, reason });
+        // Only marks the owner's callbacks dead; their JS functions are dropped at the next checkpoint.
+        self.cb_release_owner(h);
     }
 
     /// Asks the backend to quit once, when the last toplevel is gone.
@@ -817,6 +613,7 @@ pub(crate) fn checkpoint(core: &Core, engine: &RefCell<Box<dyn JsEngine>>) {
     let mut eng = engine.borrow_mut();
     if core.cfg.scripted {
         checkpoint_scripted(core, &mut eng);
+        core.process_releases();
         return;
     }
     let mut budget = core.cfg.max_jobs_per_checkpoint;
@@ -850,6 +647,9 @@ pub(crate) fn checkpoint(core: &Core, engine: &RefCell<Box<dyn JsEngine>>) {
     pending |= drain(&mut eng, &mut budget);
     drop(eng);
 
+    // GC'd boxed values were only queued by the finalization callbacks: release them here,
+    // outside any entry into JS.
+    core.process_releases();
     core.sync_sched();
     if pending || core.has_events() {
         core.backend.wake();
@@ -1002,7 +802,7 @@ impl Core {
         collect(&children, root, &mut order);
         for h in order {
             if self.st.borrow().handles.contains_key(&h) {
-                let _ = self.op_destroy_raw(h);
+                let _ = self.op_destroy(h);
             }
         }
     }

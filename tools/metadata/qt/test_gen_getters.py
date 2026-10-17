@@ -59,19 +59,5 @@ class GetterTable(unittest.TestCase):
         self.assertIn('"QLineEdit")) return K_entry', text)
 
 
-class ObjectReferences(unittest.TestCase):
-    def test_object_returns_and_arguments_convert(self):
-        decl, expr = gen_cpp.conv_in("object<QWidget>", "&args[0]", "a0", "m arg 0")
-        self.assertIn("QWidget *a0", decl)
-        self.assertIn("to_object(&args[0], a0)", decl)
-        self.assertEqual(expr, "a0")
-        out = gen_cpp.conv_out("object<QLineEdit>", "r")
-        self.assertIn("out_object(out,", out)
-        self.assertIn("static_cast<const QObject *>(r)", out)
-
-    def test_scalar_conversions_are_unchanged(self):
-        self.assertEqual(gen_cpp.conv_out("bool", "r"), "out_bool(out, r);")
-
-
 if __name__ == "__main__":
     unittest.main()

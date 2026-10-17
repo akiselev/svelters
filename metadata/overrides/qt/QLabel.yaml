@@ -3,3 +3,10 @@ elements:
     construct: { class: QLabel }
     props:
       - { js: label, native: text }
+      - { js: alignment, native: alignment }
+      - { js: textFormat, native: textFormat }
+      - { js: pixmap, native: pixmap }
+      - { js: indent, native: indent }
+    methods:
+      - { js: setBuddy, native: setBuddy, params: ["object<QWidget>"] }
+      - { js: buddy, native: buddy }

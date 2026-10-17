@@ -7,7 +7,8 @@
 //!
 //! The release path (M6) replaces this with generated thunks that follow the same plan shape.
 
-use crate::convert::as_str;
+use crate::convert::{as_str, to_value, Env};
+use crate::types::{self, TypeTable};
 use gtk::glib::{self, gobject_ffi, translate::*, Type};
 use gtk::prelude::*;
 use std::cell::RefCell;
@@ -15,6 +16,7 @@ use std::collections::HashMap;
 use std::ffi::{c_char, c_int, c_uint, c_void, CStr, CString};
 use std::rc::Rc;
 use svelters_abi::*;
+use gtk::glib::translate::ToGlibPtrMut;
 
 type Info = *mut c_void;
 
@@ -84,6 +86,9 @@ unsafe extern "C" {
     fn gi_arg_info_get_type_info(info: Info) -> Info;
     fn gi_type_info_get_tag(info: Info) -> c_int;
     fn gi_type_info_get_interface(info: Info) -> Info;
+    fn gi_type_info_get_array_type(info: Info) -> c_int;
+    fn gi_type_info_is_zero_terminated(info: Info) -> c_int;
+    fn gi_type_info_get_param_type(info: Info, n: c_uint) -> Info;
     fn gi_base_info_unref(info: Info);
     fn gi_base_info_get_name(info: Info) -> *const c_char;
     fn gi_base_info_get_container(info: Info) -> Info;
@@ -133,6 +138,10 @@ enum Ty {
     Enum(Type),
     Flags(Type),
     Object(Type),
+    /// A boxed type with a GType (records such as GdkRGBA, opaque boxed values).
+    Boxed(Type),
+    /// A NULL-terminated array of UTF-8 strings.
+    Strv,
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -164,9 +173,28 @@ pub enum Ret {
     Int(i64),
     Float(f64),
     Str(String),
-    /// An enum value as its nick.
-    Nick(String),
+    /// An enum, flags or boxed value as a `GValue`, converted like a property of that type.
+    Value(glib::Value),
+    Strv(Vec<String>),
     Object(glib::Object, bool),
+}
+
+/// A failed invocation: a message, or the `GError` the native function raised.
+pub enum GiErr {
+    Plain(String),
+    Gerror(glib::Error),
+}
+
+impl From<String> for GiErr {
+    fn from(s: String) -> GiErr {
+        GiErr::Plain(s)
+    }
+}
+
+impl From<&str> for GiErr {
+    fn from(s: &str) -> GiErr {
+        GiErr::Plain(s.to_string())
+    }
 }
 
 pub struct Gi {
@@ -193,7 +221,15 @@ fn type_info_ty(ti: Info, what: &str) -> Result<Ty, String> {
         TAG_UTF8 | TAG_FILENAME => Ty::Str,
         TAG_GTYPE => return Err(format!("{what}: GType values are not supported")),
         TAG_UNICHAR => return Err(format!("{what}: gunichar values are not supported")),
-        TAG_ARRAY => return Err(format!("{what}: array values are not supported")),
+        TAG_ARRAY => {
+            // Only NULL-terminated arrays of strings (GStrv) are supported.
+            let plain_c = unsafe { gi_type_info_get_array_type(ti) } == 0 && unsafe { gi_type_info_is_zero_terminated(ti) } != 0;
+            let elem = Owned::new(unsafe { gi_type_info_get_param_type(ti, 0) });
+            match elem {
+                Some(e) if plain_c && matches!(unsafe { gi_type_info_get_tag(e.0) }, TAG_UTF8 | TAG_FILENAME) => Ty::Strv,
+                _ => return Err(format!("{what}: arrays other than NULL-terminated string arrays are not supported")),
+            }
+        }
         TAG_GLIST | TAG_GSLIST => return Err(format!("{what}: list values are not supported")),
         TAG_GHASH => return Err(format!("{what}: hash table values are not supported")),
         TAG_ERROR => return Err(format!("{what}: GError values are not supported")),
@@ -202,7 +238,15 @@ fn type_info_ty(ti: Info, what: &str) -> Result<Ty, String> {
             let tname = unsafe { CStr::from_ptr(gobject_ffi::g_type_name_from_instance(iface.0 as *mut gobject_ffi::GTypeInstance)) }.to_string_lossy().into_owned();
             match tname.as_str() {
                 "GICallbackInfo" => return Err(format!("{what}: callbacks are not supported")),
-                "GIStructInfo" | "GIUnionInfo" => return Err(format!("{what}: structs, unions and boxed values are not supported (ABI v3)")),
+                "GIUnionInfo" => return Err(format!("{what}: unions are not supported")),
+                "GIStructInfo" => {
+                    let t: Type = unsafe { from_glib(gi_registered_type_info_get_g_type(iface.0)) };
+                    if t.is_a(Type::BOXED) {
+                        Ty::Boxed(t)
+                    } else {
+                        return Err(format!("{what}: structs without a boxed GType are not supported"));
+                    }
+                }
                 "GIObjectInfo" | "GIInterfaceInfo" | "GIEnumInfo" | "GIFlagsInfo" => {
                     let gt = unsafe { gi_registered_type_info_get_g_type(iface.0) };
                     let t: Type = unsafe { from_glib(gt) };
@@ -376,46 +420,88 @@ fn ranged<T: TryFrom<i64>>(x: i64, what: &str) -> Result<T, String> {
 struct Keep {
     strings: Vec<CString>,
     objects: Vec<glib::Object>,
+    values: Vec<glib::Value>,
+    /// NULL-terminated `char *` arrays handed to the callee.
+    strvs: Vec<Vec<*const c_char>>,
 }
 
 impl DynMethod {
-    pub fn call(&self, obj: &glib::Object, args: &[svl_value], obj_of: &dyn Fn(u64) -> Option<glib::Object>) -> Result<Ret, String> {
+    /// The member descriptor for the host: typed slots so that enums travel as names, flags as
+    /// name sets, records and objects as their value types. `None` when the plan has an error.
+    pub fn describe(&self, table: &mut TypeTable) -> Option<MemberDesc> {
+        let plan = self.plan.as_ref().ok()?;
+        let mut slot = |s: &Slot, name: Option<&str>| {
+            let t = match s.ty {
+                Ty::Void => return SlotDesc::new(SVL_NULL),
+                Ty::Bool => Type::BOOL,
+                Ty::I8 => Type::I8,
+                Ty::U8 => Type::U8,
+                Ty::I16 | Ty::I32 => Type::I32,
+                Ty::U16 | Ty::U32 => Type::U32,
+                Ty::I64 => Type::I64,
+                Ty::U64 => Type::U64,
+                Ty::F32 => Type::F32,
+                Ty::F64 => Type::F64,
+                Ty::Str => Type::STRING,
+                Ty::Strv => crate::convert::strv(),
+                Ty::Enum(t) | Ty::Flags(t) | Ty::Object(t) | Ty::Boxed(t) => t,
+            };
+            let mut d = types::slot_for(table, t, None);
+            if matches!(s.ty, Ty::I16) {
+                d = d.range(i16::MIN as f64, i16::MAX as f64);
+            } else if matches!(s.ty, Ty::U16) {
+                d = d.range(0.0, u16::MAX as f64);
+            }
+            if s.nullable {
+                d.flags |= SVL_D_NULLABLE;
+            } else {
+                d.flags &= !SVL_D_NULLABLE;
+            }
+            match name {
+                Some(n) => d.named(n),
+                None => d,
+            }
+        };
+        Some(MemberDesc {
+            name: self.name.clone(),
+            params: plan.args.iter().map(|(n, s)| slot(s, Some(n))).collect(),
+            ret: slot(&plan.ret, None),
+            flags: if plan.throws { SVL_M_THROWS } else { 0 },
+        })
+    }
+
+    pub fn call(&self, obj: &glib::Object, args: &[svl_value], env: &dyn Env) -> Result<Ret, GiErr> {
         let plan = self.plan.as_ref().map_err(|e| e.clone())?;
         if !obj.type_().is_a(self.declaring) {
-            return Err(format!("{} is not a {}", obj.type_().name(), self.declaring.name()));
+            return Err(format!("{} is not a {}", obj.type_().name(), self.declaring.name()).into());
         }
         if args.len() != plan.args.len() {
             let want: Vec<&str> = plan.args.iter().map(|(n, _)| n.as_str()).collect();
-            return Err(format!("{} takes {} argument(s) ({}), got {}", self.name, plan.args.len(), want.join(", "), args.len()));
+            return Err(format!("{} takes {} argument(s) ({}), got {}", self.name, plan.args.len(), want.join(", "), args.len()).into());
         }
-        let mut keep = Keep { strings: Vec::new(), objects: Vec::new() };
+        let mut keep = Keep { strings: Vec::new(), objects: Vec::new(), values: Vec::new(), strvs: Vec::new() };
         let mut ins: Vec<GIArgument> = Vec::with_capacity(args.len() + 1);
         ins.push(GIArgument { v_pointer: obj.as_ptr() as *mut c_void });
         for ((aname, slot), v) in plan.args.iter().zip(args) {
             let what = format!("{} argument '{}'", self.name, aname);
-            ins.push(to_arg(*slot, v, &what, &mut keep, obj_of)?);
+            ins.push(to_arg(*slot, v, &what, &mut keep, env)?);
         }
         let mut ret = GIArgument { v_uint64: 0 };
         let mut err: *mut glib::ffi::GError = std::ptr::null_mut();
         let ok = unsafe { gi_function_info_invoke(self.info.0, ins.as_ptr(), ins.len(), std::ptr::null(), 0, &mut ret, &mut err) };
         // Objects taken by the callee (transfer full) were ref'd for it; our temporaries go now.
         drop(keep);
-        if ok == 0 || !err.is_null() {
-            let msg = if err.is_null() {
-                format!("{}: invocation failed", self.name)
-            } else {
-                let m = unsafe { CStr::from_ptr((*err).message) }.to_string_lossy().into_owned();
-                unsafe { glib::ffi::g_error_free(err) };
-                format!("{}: {m}", self.name)
-            };
-            return Err(msg);
+        if !err.is_null() {
+            return Err(GiErr::Gerror(unsafe { from_glib_full(err) }));
         }
-        let _ = plan.throws;
-        from_ret(plan.ret, ret, &self.name)
+        if ok == 0 {
+            return Err(format!("{}: invocation failed", self.name).into());
+        }
+        Ok(from_ret(plan.ret, ret, &self.name)?)
     }
 }
 
-fn to_arg(slot: Slot, v: &svl_value, what: &str, keep: &mut Keep, obj_of: &dyn Fn(u64) -> Option<glib::Object>) -> Result<GIArgument, String> {
+fn to_arg(slot: Slot, v: &svl_value, what: &str, keep: &mut Keep, env: &dyn Env) -> Result<GIArgument, String> {
     let mut a = GIArgument { v_uint64: 0 };
     match slot.ty {
         Ty::Void => {}
@@ -450,65 +536,77 @@ fn to_arg(slot: Slot, v: &svl_value, what: &str, keep: &mut Keep, obj_of: &dyn F
                 a.v_pointer = std::ptr::null_mut();
             } else {
                 let s = unsafe { as_str(v) }.ok_or_else(|| format!("{what}: expected a string"))?;
-                let c = CString::new(s).map_err(|_| format!("{what}: string contains a NUL byte"))?;
+                let c = CString::new(s.as_ref()).map_err(|_| format!("{what}: string contains a NUL byte"))?;
                 a.v_pointer = if slot.full { unsafe { glib::ffi::g_strdup(c.as_ptr()) as *mut c_void } } else { c.as_ptr() as *mut c_void };
                 keep.strings.push(c);
             }
         }
-        Ty::Enum(t) => {
-            let class = glib::EnumClass::with_type(t).ok_or_else(|| format!("{what}: {} is not an enum", t.name()))?;
-            a.v_int32 = match v.tag {
-                SVL_STR => {
-                    let nick = unsafe { as_str(v) }.ok_or_else(|| format!("{what}: expected a string"))?;
-                    class.value_by_nick(nick).ok_or_else(|| format!("{what}: '{nick}' is not a {} value", t.name()))?.value()
-                }
-                _ => {
-                    let n: i32 = ranged(int_arg(v, what)?, what)?;
-                    class.value(n).ok_or_else(|| format!("{what}: {n} is not a {} value", t.name()))?;
-                    n
-                }
-            };
-        }
-        Ty::Flags(t) => {
-            let class = glib::FlagsClass::with_type(t).ok_or_else(|| format!("{what}: {} is not a flags type", t.name()))?;
-            a.v_uint32 = match v.tag {
-                SVL_STR => {
-                    let text = unsafe { as_str(v) }.ok_or_else(|| format!("{what}: expected a string"))?;
-                    let mut bits = 0u32;
-                    for nick in text.split(['|', ',']).map(str::trim).filter(|s| !s.is_empty()) {
-                        bits |= class.value_by_nick(nick).ok_or_else(|| format!("{what}: '{nick}' is not a {} flag", t.name()))?.value();
-                    }
-                    bits
-                }
-                _ => ranged(int_arg(v, what)?, what)?,
-            };
-        }
-        Ty::Object(t) => match v.tag {
-            SVL_NULL => {
+        Ty::Strv => {
+            if v.tag == SVL_NULL {
                 if !slot.nullable {
                     return Err(format!("{what}: null is not allowed"));
                 }
                 a.v_pointer = std::ptr::null_mut();
-            }
-            SVL_HANDLE => {
-                let o = obj_of(unsafe { v.u.h }).ok_or_else(|| format!("{what}: stale or unknown handle"))?;
-                if !o.type_().is_a(t) {
-                    return Err(format!("{what}: {} is not a {}", o.type_().name(), t.name()));
+            } else {
+                let gv = unsafe { to_value(crate::convert::strv(), v, env) }.map_err(|e| format!("{what}: {e}"))?;
+                let strs = gv.get::<Vec<String>>().map_err(|e| format!("{what}: {e}"))?;
+                let mut cs = Vec::with_capacity(strs.len());
+                for s in &strs {
+                    cs.push(CString::new(s.as_str()).map_err(|_| format!("{what}: string contains a NUL byte"))?);
                 }
+                let mut ptrs: Vec<*const c_char> = cs.iter().map(|c| c.as_ptr()).collect();
+                ptrs.push(std::ptr::null());
+                if slot.full {
+                    a.v_pointer = unsafe { glib::ffi::g_strdupv(ptrs.as_ptr() as *mut *mut c_char) } as *mut c_void;
+                } else {
+                    a.v_pointer = ptrs.as_ptr() as *mut c_void;
+                }
+                keep.strings.extend(cs);
+                keep.strvs.push(ptrs);
+            }
+        }
+        Ty::Enum(t) | Ty::Flags(t) => {
+            if v.tag == SVL_NULL {
+                return Err(format!("{what}: null is not allowed"));
+            }
+            let gv = unsafe { to_value(t, v, env) }.map_err(|e| format!("{what}: {e}"))?;
+            if matches!(slot.ty, Ty::Enum(_)) {
+                a.v_int32 = unsafe { glib::gobject_ffi::g_value_get_enum(gv.to_glib_none().0) };
+            } else {
+                a.v_uint32 = unsafe { glib::gobject_ffi::g_value_get_flags(gv.to_glib_none().0) };
+            }
+        }
+        Ty::Object(t) | Ty::Boxed(t) => {
+            if v.tag == SVL_NULL {
+                if !slot.nullable {
+                    return Err(format!("{what}: null is not allowed"));
+                }
+                a.v_pointer = std::ptr::null_mut();
+                return Ok(a);
+            }
+            let gv = unsafe { to_value(t, v, env) }.map_err(|e| format!("{what}: {e}"))?;
+            if matches!(slot.ty, Ty::Object(_)) {
+                let o = gv.get::<Option<glib::Object>>().map_err(|e| format!("{what}: {e}"))?.ok_or_else(|| format!("{what}: null is not allowed"))?;
                 if slot.full {
                     // The callee consumes one reference; give it its own.
                     unsafe { gobject_ffi::g_object_ref(o.as_ptr() as *mut _) };
                 }
                 a.v_pointer = o.as_ptr() as *mut c_void;
                 keep.objects.push(o);
+            } else {
+                let p = unsafe { gobject_ffi::g_value_get_boxed(gv.to_glib_none().0) };
+                if p.is_null() {
+                    return Err(format!("{what}: null is not allowed"));
+                }
+                a.v_pointer = if slot.full { unsafe { gobject_ffi::g_boxed_copy(t.into_glib(), p) } } else { p };
+                keep.values.push(gv);
             }
-            tag => return Err(format!("{what}: expected a handle, got tag {tag}")),
-        },
+        }
     }
     Ok(a)
 }
 
-fn from_ret(slot: Slot, r: GIArgument, name: &str) -> Result<Ret, String> {
+fn from_ret(slot: Slot, r: GIArgument, _name: &str) -> Result<Ret, String> {
     unsafe {
         Ok(match slot.ty {
             Ty::Void => Ret::Null,
@@ -536,13 +634,46 @@ fn from_ret(slot: Slot, r: GIArgument, name: &str) -> Result<Ret, String> {
                 }
             }
             Ty::Enum(t) => {
-                let class = glib::EnumClass::with_type(t).ok_or_else(|| format!("{name}: {} is not an enum", t.name()))?;
-                match class.value(r.v_int32) {
-                    Some(ev) => Ret::Nick(ev.nick().to_string()),
-                    None => Ret::Int(r.v_int32 as i64),
+                let mut gv = glib::Value::from_type(t);
+                gobject_ffi::g_value_set_enum(gv.to_glib_none_mut().0, r.v_int32);
+                Ret::Value(gv)
+            }
+            Ty::Flags(t) => {
+                let mut gv = glib::Value::from_type(t);
+                gobject_ffi::g_value_set_flags(gv.to_glib_none_mut().0, r.v_uint32);
+                Ret::Value(gv)
+            }
+            Ty::Boxed(t) => {
+                let p = r.v_pointer;
+                if p.is_null() {
+                    Ret::Null
+                } else {
+                    let mut gv = glib::Value::from_type(t);
+                    if slot.full {
+                        gobject_ffi::g_value_take_boxed(gv.to_glib_none_mut().0, p);
+                    } else {
+                        gobject_ffi::g_value_set_boxed(gv.to_glib_none_mut().0, p);
+                    }
+                    Ret::Value(gv)
                 }
             }
-            Ty::Flags(_) => Ret::Int(r.v_uint32 as i64),
+            Ty::Strv => {
+                let p = r.v_pointer as *mut *mut c_char;
+                if p.is_null() {
+                    Ret::Null
+                } else {
+                    let mut out = Vec::new();
+                    let mut i = 0;
+                    while !(*p.add(i)).is_null() {
+                        out.push(CStr::from_ptr(*p.add(i)).to_string_lossy().into_owned());
+                        i += 1;
+                    }
+                    if slot.full {
+                        glib::ffi::g_strfreev(p);
+                    }
+                    Ret::Strv(out)
+                }
+            }
             Ty::Object(_) => {
                 let p = r.v_pointer as *mut gobject_ffi::GObject;
                 if p.is_null() {
@@ -569,12 +700,31 @@ mod tests {
     }
 
     fn int(i: i64) -> svl_value {
-        svl_value { tag: SVL_I64, u: svl_value_u { i } }
+        svl_value::new(SVL_I64, svl_value_u { i })
+    }
+
+    struct NoEnv;
+    impl Env for NoEnv {
+        fn object(&self, _: u64) -> Option<glib::Object> {
+            None
+        }
+        fn boxed(&self, _: u64) -> Option<glib::Value> {
+            None
+        }
+        fn handle_of(&self, _: &glib::Object) -> u64 {
+            0
+        }
+        fn mint_boxed(&self, _: glib::Value) -> u64 {
+            0
+        }
+        fn type_id(&self, _: Type) -> svl_id {
+            0
+        }
     }
 
     fn arg(ty: Ty, v: &svl_value) -> Result<GIArgument, String> {
-        let mut keep = Keep { strings: Vec::new(), objects: Vec::new() };
-        to_arg(slot(ty), v, "t", &mut keep, &|_| None)
+        let mut keep = Keep { strings: Vec::new(), objects: Vec::new(), values: Vec::new(), strvs: Vec::new() };
+        to_arg(slot(ty), v, "t", &mut keep, &NoEnv)
     }
 
     #[test]
@@ -596,7 +746,7 @@ mod tests {
             assert_eq!(arg(Ty::U64, &int(1 << 53)).unwrap().v_uint64, 1 << 53);
             assert!(arg(Ty::U64, &int(-1)).is_err());
             assert_eq!(arg(Ty::F32, &int(2)).unwrap().v_float, 2.0);
-            assert_eq!(arg(Ty::F64, &svl_value { tag: SVL_F64, u: svl_value_u { f: 1.5 } }).unwrap().v_double, 1.5);
+            assert_eq!(arg(Ty::F64, &svl_value::new(SVL_F64, svl_value_u { f: 1.5 })).unwrap().v_double, 1.5);
 
             let mut r = GIArgument { v_uint64: 0 };
             r.v_int8 = -5;

@@ -41,28 +41,36 @@
   ],
   "enums": [
     {
+      "flags_alias": null,
+      "fullname": "QLayout::SizeConstraint",
       "members": [
         {
+          "cpp": "QLayout::SetDefaultConstraint",
           "name": "SetDefaultConstraint",
           "value": "0"
         },
         {
+          "cpp": "QLayout::SetNoConstraint",
           "name": "SetNoConstraint",
           "value": "1"
         },
         {
+          "cpp": "QLayout::SetMinimumSize",
           "name": "SetMinimumSize",
           "value": "2"
         },
         {
+          "cpp": "QLayout::SetFixedSize",
           "name": "SetFixedSize",
           "value": "3"
         },
         {
+          "cpp": "QLayout::SetMaximumSize",
           "name": "SetMaximumSize",
           "value": "4"
         },
         {
+          "cpp": "QLayout::SetMinAndMaxSize",
           "name": "SetMinAndMaxSize",
           "value": "5"
         }
@@ -80,7 +88,8 @@
         "scoped": false
       },
       "name": "SizeConstraint",
-      "origin": "qdoc"
+      "origin": "qdoc",
+      "scoped": false
     }
   ],
   "id": "svelters-api:v1:type:qt:QtWidgets:QLayout",
@@ -283,7 +292,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -291,7 +300,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRect alignmentRect(const QRect &r) const",
       "since": null,
@@ -367,7 +376,7 @@
             "native": "const QSize &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Size>"
           }
         }
       ],
@@ -375,7 +384,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize closestAcceptableSize(const QWidget *widget, const QSize &size)",
       "since": null,
@@ -401,7 +410,7 @@
         "native": "QMargins",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Insets>"
       },
       "signature": "QMargins contentsMargins() const",
       "since": null,
@@ -427,7 +436,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRect contentsRect() const",
       "since": null,
@@ -453,7 +462,7 @@
         "native": "QSizePolicy::ControlTypes",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QSizePolicy::ControlType>"
       },
       "signature": "QSizePolicy::ControlTypes controlTypes() const override",
       "since": null,
@@ -505,7 +514,7 @@
         "native": "Qt::Orientations",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::Orientation>"
       },
       "signature": "Qt::Orientations expandingDirections() const override",
       "since": null,
@@ -531,7 +540,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRect geometry() const override",
       "since": null,
@@ -624,7 +633,7 @@
         "native": "QLayout::SizeConstraint",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QLayout::SizeConstraint>"
       },
       "signature": "QLayout::SizeConstraint horizontalSizeConstraint() const",
       "since": null,
@@ -865,7 +874,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize maximumSize() const override",
       "since": null,
@@ -917,7 +926,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize minimumSize() const override",
       "since": null,
@@ -1066,7 +1075,7 @@
             "native": "Qt::FindChildOptions",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::FindChildOption>"
           }
         }
       ],
@@ -1113,7 +1122,7 @@
             "native": "Qt::Alignment",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::AlignmentFlag>"
           }
         }
       ],
@@ -1160,7 +1169,7 @@
             "native": "Qt::Alignment",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "flags<Qt::AlignmentFlag>"
           }
         }
       ],
@@ -1197,7 +1206,7 @@
             "native": "const QMargins &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Insets>"
           }
         }
       ],
@@ -1338,7 +1347,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -1375,7 +1384,7 @@
             "native": "QLayout::SizeConstraint",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QLayout::SizeConstraint>"
           }
         }
       ],
@@ -1449,7 +1458,7 @@
             "native": "QLayout::SizeConstraint",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QLayout::SizeConstraint>"
           }
         }
       ],
@@ -1486,7 +1495,7 @@
             "native": "QLayout::SizeConstraint",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QLayout::SizeConstraint>"
           }
         },
         {
@@ -1496,7 +1505,7 @@
             "native": "QLayout::SizeConstraint",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QLayout::SizeConstraint>"
           }
         }
       ],
@@ -1570,7 +1579,7 @@
             "native": "QLayout::SizeConstraint",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "enum<QLayout::SizeConstraint>"
           }
         }
       ],
@@ -1604,7 +1613,7 @@
         "native": "QLayout::SizeConstraint",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QLayout::SizeConstraint>"
       },
       "signature": "QLayout::SizeConstraint sizeConstraint() const",
       "since": null,
@@ -1745,7 +1754,7 @@
         "native": "QLayout::SizeConstraint",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "enum<QLayout::SizeConstraint>"
       },
       "signature": "QLayout::SizeConstraint verticalSizeConstraint() const",
       "since": null,
@@ -1907,7 +1916,7 @@
         "native": "QMargins",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Insets>"
       }
     },
     {
@@ -1947,7 +1956,7 @@
         "native": "SizeConstraint",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<SizeConstraint>"
+        "ref": "enum<QLayout::SizeConstraint>"
       }
     },
     {
@@ -1987,7 +1996,7 @@
         "native": "SizeConstraint",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<SizeConstraint>"
+        "ref": "enum<QLayout::SizeConstraint>"
       }
     },
     {
@@ -2067,7 +2076,7 @@
         "native": "SizeConstraint",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "enum<SizeConstraint>"
+        "ref": "enum<QLayout::SizeConstraint>"
       }
     }
   ],

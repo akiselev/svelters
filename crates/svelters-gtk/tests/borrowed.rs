@@ -148,19 +148,39 @@ fn minting_does_not_keep_objects_alive() {
 }
 
 #[test]
-fn transfer_full_returns_mint_an_owned_handle() {
+fn objects_that_are_not_widgets_travel_as_boxed_values() {
     on_gtk(|| {
         let h = Harness::new();
         let (_win, _bx, entry) = tree(&h);
-        // gtk_widget_create_pango_layout returns a new PangoLayout (transfer full).
-        let layout = handle(h.call_args(entry, "create_pango_layout", &[V::Str("hello".into())]).unwrap());
-        assert_eq!(h.handle_info(layout).unwrap().lifetime, SVL_LIFE_OWNED);
-        let weak = h.obj(layout).downgrade();
-        pump(50);
-        assert!(weak.upgrade().is_some(), "the table owns the only reference");
+        // gtk_widget_create_pango_layout returns a new PangoLayout (transfer full): an opaque BOXED
+        // value, released with `destroy`.
+        let V::Boxed(layout) = h.call_args(entry, "create_pango_layout", &[V::Str("hello".into())]).unwrap() else { panic!("boxed") };
+        assert!(h.handle_info(layout).is_err(), "boxed values have no handle_info");
         h.destroy(layout);
-        pump(100);
-        assert!(weak.upgrade().is_none(), "destroy releases it");
+        h.destroy(layout);
         assert!(h.take_gone().is_empty());
+    });
+}
+
+/// A1 gap G3/G2 repro: `textview.getProp('buffer')` is a borrowed handle that takes method calls
+/// with arguments and dies with its owner.
+#[test]
+fn text_buffer_is_a_borrowed_handle_with_working_methods() {
+    on_gtk(|| {
+        let h = Harness::new();
+        let win = h.create("window");
+        let tv = h.create("textview");
+        h.insert(win, tv, None, None).unwrap();
+        let buf = handle(h.get(tv, "buffer"));
+        assert_eq!(h.handle_info(buf).unwrap().lifetime, SVL_LIFE_BORROWED);
+        assert_eq!(handle(h.get(tv, "buffer")), buf, "stable identity");
+        h.call_args(buf, "set_text", &[V::Str("hello".into()), V::I64(-1)]).unwrap();
+        assert_eq!(h.call_args(buf, "get_char_count", &[]).unwrap(), V::I64(5));
+        h.call_args(buf, "insert_at_cursor", &[V::Str("!!".into()), V::I64(-1)]).unwrap();
+        assert_eq!(h.call_args(buf, "get_char_count", &[]).unwrap(), V::I64(7));
+        h.remove(win, tv).unwrap();
+        h.destroy(tv);
+        pump(200);
+        assert_eq!(h.take_gone(), vec![(buf, SVL_GONE_OWNER)]);
     });
 }

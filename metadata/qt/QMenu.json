@@ -101,7 +101,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -183,7 +183,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRect actionGeometry(QAction *act) const",
       "since": null,
@@ -238,7 +238,7 @@
             "native": "const QIcon &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QIcon>"
           }
         },
         {
@@ -268,7 +268,7 @@
             "native": "const QKeySequence &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QKeySequence>"
           }
         }
       ],
@@ -305,7 +305,7 @@
             "native": "const QIcon &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QIcon>"
           }
         },
         {
@@ -345,7 +345,7 @@
             "native": "const QKeySequence &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QKeySequence>"
           }
         }
       ],
@@ -382,7 +382,7 @@
             "native": "const QIcon &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QIcon>"
           }
         },
         {
@@ -410,9 +410,9 @@
           "name": "member",
           "type": {
             "native": "const char *",
-            "nullable": true,
+            "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "cstring"
           }
         },
         {
@@ -422,7 +422,7 @@
             "native": "const QKeySequence &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QKeySequence>"
           }
         }
       ],
@@ -479,7 +479,7 @@
             "native": "const QKeySequence &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QKeySequence>"
           }
         }
       ],
@@ -546,7 +546,7 @@
             "native": "const QKeySequence &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QKeySequence>"
           }
         }
       ],
@@ -601,9 +601,9 @@
           "name": "member",
           "type": {
             "native": "const char *",
-            "nullable": true,
+            "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "cstring"
           }
         },
         {
@@ -613,7 +613,7 @@
             "native": "const QKeySequence &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QKeySequence>"
           }
         }
       ],
@@ -687,7 +687,7 @@
             "native": "const QIcon &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QIcon>"
           }
         },
         {
@@ -771,7 +771,7 @@
             "native": "const QIcon &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QIcon>"
           }
         },
         {
@@ -1096,7 +1096,7 @@
             "native": "const QList<QAction *> &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "list"
+            "ref": "list<object<QAction>>"
           }
         },
         {
@@ -1106,7 +1106,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         },
         {
@@ -1163,7 +1163,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         },
         {
@@ -1307,7 +1307,7 @@
         "native": "QIcon",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QIcon>"
       },
       "signature": "QIcon icon() const",
       "since": null,
@@ -1440,7 +1440,7 @@
             "native": "const QIcon &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QIcon>"
           }
         },
         {
@@ -1934,7 +1934,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         },
         {
@@ -2107,7 +2107,7 @@
             "native": "const QIcon &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "boxed<QIcon>"
           }
         }
       ],
@@ -2318,7 +2318,7 @@
             "native": "const QPoint &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Point>"
           }
         }
       ],
@@ -2352,7 +2352,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,
@@ -2650,7 +2650,7 @@
         "native": "QIcon",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "boxed<QIcon>"
       }
     },
     {

@@ -62,7 +62,7 @@
         "native": "QSizePolicy::ControlTypes",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<QSizePolicy::ControlType>"
       },
       "signature": "QSizePolicy::ControlTypes controlTypes() const override",
       "since": null,
@@ -88,7 +88,7 @@
         "native": "Qt::Orientations",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "flags<Qt::Orientation>"
       },
       "signature": "Qt::Orientations expandingDirections() const override",
       "since": null,
@@ -114,7 +114,7 @@
         "native": "QRect",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Rect>"
       },
       "signature": "QRect geometry() const override",
       "since": null,
@@ -229,7 +229,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize maximumSize() const override",
       "since": null,
@@ -255,7 +255,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize minimumSize() const override",
       "since": null,
@@ -284,7 +284,7 @@
             "native": "const QRect &",
             "nullable": false,
             "origin": "qdoc",
-            "ref": "opaque"
+            "ref": "record<Rect>"
           }
         }
       ],
@@ -318,7 +318,7 @@
         "native": "QSize",
         "nullable": false,
         "origin": "qdoc",
-        "ref": "opaque"
+        "ref": "record<Size>"
       },
       "signature": "QSize sizeHint() const override",
       "since": null,

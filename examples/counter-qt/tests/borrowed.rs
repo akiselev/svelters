@@ -72,7 +72,7 @@ fn getter(h: svl_handle, name: &str) -> Result<Option<svl_handle>, String> {
     if m == 0 {
         return Err(format!("unknown method {name}"));
     }
-    let mut out = svl_value { tag: SVL_NULL, u: svl_value_u { i: 0 } };
+    let mut out = svl_value::null();
     if unsafe { (be().call)(be().self_, h, m, std::ptr::null(), 0, &mut out) } != 0 {
         return Err(err());
     }
@@ -95,13 +95,17 @@ unsafe extern "C" fn call_sync(_: *mut c_void, _: svl_handle, _: svl_id, _: *con
     -1
 }
 unsafe extern "C" fn checkpoint(_: *mut c_void) {}
+unsafe extern "C" fn invoke_callback(_: *mut c_void, _: u64, _: *const svl_value, _: usize, _: *mut svl_value) -> i32 {
+    -1
+}
+unsafe extern "C" fn release_callback(_: *mut c_void, _: u64) {}
 
 type Step = Box<dyn FnOnce()>;
 
 /// Runs `steps` inside the Qt loop, one per loop turn (50 ms apart), then quits. A panic in a
 /// step fails the process.
 fn run_steps(steps: Vec<Step>) {
-    let host = Box::leak(Box::new(svl_host { self_: std::ptr::null_mut(), post_event, checkpoint, call_sync, on_destroyed }));
+    let host = Box::leak(Box::new(svl_host { self_: std::ptr::null_mut(), post_event, checkpoint, call_sync, on_destroyed, invoke_callback, release_callback }));
     unsafe { counter_qt::set_host(host) };
 
     fn next(mut steps: Vec<Step>) {
