@@ -1,0 +1,7 @@
+class: Microsoft.UI.Xaml.Controls.Primitives.ToggleButton
+props:
+  - { name: IsChecked, test: true, provenance: "ToggleButton.IsChecked: IReference<bool> (winmd); null = indeterminate" }
+  - { name: IsThreeState, test: true, provenance: "ToggleButton.IsThreeState DP (winmd)" }
+events:
+  - { name: Checked, trigger: "set:IsChecked=true", provenance: "ToggleButton.Checked: RoutedEventHandler (winmd); raised when IsChecked becomes true, also when set from code" }
+  - { name: Unchecked, trigger: "set:IsChecked=false", provenance: "ToggleButton.Unchecked: RoutedEventHandler (winmd)" }

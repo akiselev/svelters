@@ -1,0 +1,6 @@
+class: Microsoft.UI.Xaml.Controls.Panel
+slots:
+  - name: children
+    prop: Children
+    default: true
+    provenance: "[ContentProperty(Name=\"Children\")] on Panel (winmd); UIElementCollection : IVector<UIElement> (InsertAt/RemoveAt/IndexOf)"

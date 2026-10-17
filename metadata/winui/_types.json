@@ -1,0 +1,2987 @@
+{
+  "schema": "svelters-winui-types/v0",
+  "types": {
+    "Microsoft.UI.Input.HoldingState": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Started",
+          0
+        ],
+        [
+          "Completed",
+          1
+        ],
+        [
+          "Canceled",
+          2
+        ]
+      ],
+      "name": "Microsoft.UI.Input.HoldingState"
+    },
+    "Microsoft.UI.Input.ManipulationDelta": {
+      "category": "struct",
+      "fields": [
+        {
+          "name": "Translation",
+          "type": "Windows.Foundation.Point"
+        },
+        {
+          "name": "Scale",
+          "type": "f32"
+        },
+        {
+          "name": "Rotation",
+          "type": "f32"
+        },
+        {
+          "name": "Expansion",
+          "type": "f32"
+        }
+      ],
+      "name": "Microsoft.UI.Input.ManipulationDelta"
+    },
+    "Microsoft.UI.Input.ManipulationVelocities": {
+      "category": "struct",
+      "fields": [
+        {
+          "name": "Linear",
+          "type": "Windows.Foundation.Point"
+        },
+        {
+          "name": "Angular",
+          "type": "f32"
+        },
+        {
+          "name": "Expansion",
+          "type": "f32"
+        }
+      ],
+      "name": "Microsoft.UI.Input.ManipulationVelocities"
+    },
+    "Microsoft.UI.Input.PointerDeviceType": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Touch",
+          0
+        ],
+        [
+          "Pen",
+          1
+        ],
+        [
+          "Mouse",
+          2
+        ],
+        [
+          "Touchpad",
+          3
+        ]
+      ],
+      "name": "Microsoft.UI.Input.PointerDeviceType"
+    },
+    "Microsoft.UI.Xaml.BringIntoViewRequestedEventArgs": {
+      "category": "class",
+      "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "methods": [],
+      "props": [
+        {
+          "name": "AnimationDesired",
+          "settable": true,
+          "type": "bool"
+        },
+        {
+          "name": "Handled",
+          "settable": true,
+          "type": "bool"
+        },
+        {
+          "name": "HorizontalAlignmentRatio",
+          "settable": false,
+          "type": "f64"
+        },
+        {
+          "name": "HorizontalOffset",
+          "settable": true,
+          "type": "f64"
+        },
+        {
+          "name": "TargetElement",
+          "settable": true,
+          "type": "Microsoft.UI.Xaml.UIElement"
+        },
+        {
+          "name": "TargetRect",
+          "settable": true,
+          "type": "Windows.Foundation.Rect"
+        },
+        {
+          "name": "VerticalAlignmentRatio",
+          "settable": false,
+          "type": "f64"
+        },
+        {
+          "name": "VerticalOffset",
+          "settable": true,
+          "type": "f64"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.BackgroundSizing": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "InnerBorderEdge",
+          0
+        ],
+        [
+          "OuterBorderEdge",
+          1
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.BackgroundSizing"
+    },
+    "Microsoft.UI.Xaml.Controls.CandidateWindowAlignment": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Default",
+          0
+        ],
+        [
+          "BottomEdge",
+          1
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.CandidateWindowAlignment"
+    },
+    "Microsoft.UI.Xaml.Controls.CandidateWindowBoundsChangedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "Bounds",
+          "settable": false,
+          "type": "Windows.Foundation.Rect"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.CharacterCasing": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Normal",
+          0
+        ],
+        [
+          "Lower",
+          1
+        ],
+        [
+          "Upper",
+          2
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.CharacterCasing"
+    },
+    "Microsoft.UI.Xaml.Controls.ClickMode": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Release",
+          0
+        ],
+        [
+          "Press",
+          1
+        ],
+        [
+          "Hover",
+          2
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.ClickMode"
+    },
+    "Microsoft.UI.Xaml.Controls.ContextMenuEventArgs": {
+      "category": "class",
+      "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "methods": [],
+      "props": [
+        {
+          "name": "CursorLeft",
+          "settable": false,
+          "type": "f64"
+        },
+        {
+          "name": "CursorTop",
+          "settable": false,
+          "type": "f64"
+        },
+        {
+          "name": "Handled",
+          "settable": true,
+          "type": "bool"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.FocusDisengagedEventArgs": {
+      "category": "class",
+      "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "methods": [],
+      "props": []
+    },
+    "Microsoft.UI.Xaml.Controls.FocusEngagedEventArgs": {
+      "category": "class",
+      "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "methods": [],
+      "props": [
+        {
+          "name": "Handled",
+          "settable": true,
+          "type": "bool"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.IsTextTrimmedChangedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": []
+    },
+    "Microsoft.UI.Xaml.Controls.Orientation": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Vertical",
+          0
+        ],
+        [
+          "Horizontal",
+          1
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.Orientation"
+    },
+    "Microsoft.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs": {
+      "category": "class",
+      "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "methods": [],
+      "props": [
+        {
+          "name": "NewValue",
+          "settable": false,
+          "type": "f64"
+        },
+        {
+          "name": "OldValue",
+          "settable": false,
+          "type": "f64"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.Primitives.SliderSnapsTo": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "StepValues",
+          0
+        ],
+        [
+          "Ticks",
+          1
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.Primitives.SliderSnapsTo"
+    },
+    "Microsoft.UI.Xaml.Controls.Primitives.TickPlacement": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "None",
+          0
+        ],
+        [
+          "TopLeft",
+          1
+        ],
+        [
+          "BottomRight",
+          2
+        ],
+        [
+          "Outside",
+          3
+        ],
+        [
+          "Inline",
+          4
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.Primitives.TickPlacement"
+    },
+    "Microsoft.UI.Xaml.Controls.RequiresPointer": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Never",
+          0
+        ],
+        [
+          "WhenEngaged",
+          1
+        ],
+        [
+          "WhenFocused",
+          2
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.RequiresPointer"
+    },
+    "Microsoft.UI.Xaml.Controls.TextBoxBeforeTextChangingEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "Cancel",
+          "settable": true,
+          "type": "bool"
+        },
+        {
+          "name": "NewText",
+          "settable": false,
+          "type": "string"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.TextBoxSelectionChangingEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "Cancel",
+          "settable": true,
+          "type": "bool"
+        },
+        {
+          "name": "SelectionLength",
+          "settable": false,
+          "type": "i32"
+        },
+        {
+          "name": "SelectionStart",
+          "settable": false,
+          "type": "i32"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.TextBoxTextChangingEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "IsContentChanging",
+          "settable": false,
+          "type": "bool"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.TextChangedEventArgs": {
+      "category": "class",
+      "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "methods": [],
+      "props": []
+    },
+    "Microsoft.UI.Xaml.Controls.TextCompositionChangedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "Length",
+          "settable": false,
+          "type": "i32"
+        },
+        {
+          "name": "StartIndex",
+          "settable": false,
+          "type": "i32"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.TextCompositionEndedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "Length",
+          "settable": false,
+          "type": "i32"
+        },
+        {
+          "name": "StartIndex",
+          "settable": false,
+          "type": "i32"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.TextCompositionStartedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "Length",
+          "settable": false,
+          "type": "i32"
+        },
+        {
+          "name": "StartIndex",
+          "settable": false,
+          "type": "i32"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.TextControlCopyingToClipboardEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "Handled",
+          "settable": true,
+          "type": "bool"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.TextControlCuttingToClipboardEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "Handled",
+          "settable": true,
+          "type": "bool"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.TextControlPasteEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "Handled",
+          "settable": true,
+          "type": "bool"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.CornerRadius": {
+      "category": "struct",
+      "fields": [
+        {
+          "name": "TopLeft",
+          "type": "f64"
+        },
+        {
+          "name": "TopRight",
+          "type": "f64"
+        },
+        {
+          "name": "BottomRight",
+          "type": "f64"
+        },
+        {
+          "name": "BottomLeft",
+          "type": "f64"
+        }
+      ],
+      "name": "Microsoft.UI.Xaml.CornerRadius"
+    },
+    "Microsoft.UI.Xaml.DataContextChangedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "Handled",
+          "settable": true,
+          "type": "bool"
+        },
+        {
+          "name": "NewValue",
+          "settable": false,
+          "type": "object"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.DependencyPropertyChangedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "NewValue",
+          "settable": false,
+          "type": "object"
+        },
+        {
+          "name": "OldValue",
+          "settable": false,
+          "type": "object"
+        },
+        {
+          "name": "Property",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.DependencyProperty"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.DragEventArgs": {
+      "category": "class",
+      "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "methods": [
+        "GetDeferral",
+        "GetPosition"
+      ],
+      "props": [
+        {
+          "name": "AcceptedOperation",
+          "settable": true,
+          "type": "Windows.ApplicationModel.DataTransfer.DataPackageOperation"
+        },
+        {
+          "name": "AllowedOperations",
+          "settable": false,
+          "type": "Windows.ApplicationModel.DataTransfer.DataPackageOperation"
+        },
+        {
+          "name": "Data",
+          "settable": true,
+          "type": "Windows.ApplicationModel.DataTransfer.DataPackage"
+        },
+        {
+          "name": "DataView",
+          "settable": false,
+          "type": "Windows.ApplicationModel.DataTransfer.DataPackageView"
+        },
+        {
+          "name": "DragUIOverride",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.DragUIOverride"
+        },
+        {
+          "name": "Handled",
+          "settable": true,
+          "type": "bool"
+        },
+        {
+          "name": "Modifiers",
+          "settable": false,
+          "type": "Windows.ApplicationModel.DataTransfer.DragDrop.DragDropModifiers"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.DragStartingEventArgs": {
+      "category": "class",
+      "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "methods": [
+        "GetDeferral",
+        "GetPosition"
+      ],
+      "props": [
+        {
+          "name": "AllowedOperations",
+          "settable": true,
+          "type": "Windows.ApplicationModel.DataTransfer.DataPackageOperation"
+        },
+        {
+          "name": "Cancel",
+          "settable": true,
+          "type": "bool"
+        },
+        {
+          "name": "Data",
+          "settable": false,
+          "type": "Windows.ApplicationModel.DataTransfer.DataPackage"
+        },
+        {
+          "name": "DragUI",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.DragUI"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.DropCompletedEventArgs": {
+      "category": "class",
+      "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "methods": [],
+      "props": [
+        {
+          "name": "DropResult",
+          "settable": false,
+          "type": "Windows.ApplicationModel.DataTransfer.DataPackageOperation"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.EffectiveViewportChangedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "BringIntoViewDistanceX",
+          "settable": false,
+          "type": "f64"
+        },
+        {
+          "name": "BringIntoViewDistanceY",
+          "settable": false,
+          "type": "f64"
+        },
+        {
+          "name": "EffectiveViewport",
+          "settable": false,
+          "type": "Windows.Foundation.Rect"
+        },
+        {
+          "name": "MaxViewport",
+          "settable": false,
+          "type": "Windows.Foundation.Rect"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.ElementHighContrastAdjustment": {
+      "category": "enum",
+      "flags": true,
+      "members": [
+        [
+          "None",
+          0
+        ],
+        [
+          "Application",
+          2147483648
+        ],
+        [
+          "Auto",
+          4294967295
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.ElementHighContrastAdjustment"
+    },
+    "Microsoft.UI.Xaml.ElementSoundMode": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Default",
+          0
+        ],
+        [
+          "FocusOnly",
+          1
+        ],
+        [
+          "Off",
+          2
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.ElementSoundMode"
+    },
+    "Microsoft.UI.Xaml.ElementTheme": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Default",
+          0
+        ],
+        [
+          "Light",
+          1
+        ],
+        [
+          "Dark",
+          2
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.ElementTheme"
+    },
+    "Microsoft.UI.Xaml.FlowDirection": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "LeftToRight",
+          0
+        ],
+        [
+          "RightToLeft",
+          1
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.FlowDirection"
+    },
+    "Microsoft.UI.Xaml.FocusState": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Unfocused",
+          0
+        ],
+        [
+          "Pointer",
+          1
+        ],
+        [
+          "Keyboard",
+          2
+        ],
+        [
+          "Programmatic",
+          3
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.FocusState"
+    },
+    "Microsoft.UI.Xaml.HorizontalAlignment": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Left",
+          0
+        ],
+        [
+          "Center",
+          1
+        ],
+        [
+          "Right",
+          2
+        ],
+        [
+          "Stretch",
+          3
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.HorizontalAlignment"
+    },
+    "Microsoft.UI.Xaml.Input.AccessKeyDisplayDismissedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": []
+    },
+    "Microsoft.UI.Xaml.Input.AccessKeyDisplayRequestedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "PressedKeys",
+          "settable": false,
+          "type": "string"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Input.AccessKeyInvokedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "Handled",
+          "settable": true,
+          "type": "bool"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Input.CharacterReceivedRoutedEventArgs": {
+      "category": "class",
+      "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "methods": [],
+      "props": [
+        {
+          "name": "Character",
+          "settable": false,
+          "type": "char16"
+        },
+        {
+          "name": "Handled",
+          "settable": true,
+          "type": "bool"
+        },
+        {
+          "name": "KeyStatus",
+          "settable": false,
+          "type": "Windows.UI.Core.CorePhysicalKeyStatus"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Input.ContextRequestedEventArgs": {
+      "category": "class",
+      "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "methods": [
+        "TryGetPosition"
+      ],
+      "props": [
+        {
+          "name": "Handled",
+          "settable": true,
+          "type": "bool"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs": {
+      "category": "class",
+      "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "methods": [
+        "GetPosition"
+      ],
+      "props": [
+        {
+          "name": "Handled",
+          "settable": true,
+          "type": "bool"
+        },
+        {
+          "name": "PointerDeviceType",
+          "settable": false,
+          "type": "Microsoft.UI.Input.PointerDeviceType"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Input.FocusInputDeviceKind": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "None",
+          0
+        ],
+        [
+          "Mouse",
+          1
+        ],
+        [
+          "Touch",
+          2
+        ],
+        [
+          "Pen",
+          3
+        ],
+        [
+          "Keyboard",
+          4
+        ],
+        [
+          "GameController",
+          5
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Input.FocusInputDeviceKind"
+    },
+    "Microsoft.UI.Xaml.Input.FocusNavigationDirection": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Next",
+          0
+        ],
+        [
+          "Previous",
+          1
+        ],
+        [
+          "Up",
+          2
+        ],
+        [
+          "Down",
+          3
+        ],
+        [
+          "Left",
+          4
+        ],
+        [
+          "Right",
+          5
+        ],
+        [
+          "None",
+          6
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Input.FocusNavigationDirection"
+    },
+    "Microsoft.UI.Xaml.Input.GettingFocusEventArgs": {
+      "category": "class",
+      "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "methods": [
+        "TryCancel",
+        "TrySetNewFocusedElement"
+      ],
+      "props": [
+        {
+          "name": "Cancel",
+          "settable": true,
+          "type": "bool"
+        },
+        {
+          "name": "CorrelationId",
+          "settable": false,
+          "type": "System.Guid"
+        },
+        {
+          "name": "Direction",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.Input.FocusNavigationDirection"
+        },
+        {
+          "name": "FocusState",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.FocusState"
+        },
+        {
+          "name": "Handled",
+          "settable": true,
+          "type": "bool"
+        },
+        {
+          "name": "InputDevice",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.Input.FocusInputDeviceKind"
+        },
+        {
+          "name": "NewFocusedElement",
+          "settable": true,
+          "type": "Microsoft.UI.Xaml.DependencyObject"
+        },
+        {
+          "name": "OldFocusedElement",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.DependencyObject"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Input.HoldingRoutedEventArgs": {
+      "category": "class",
+      "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "methods": [
+        "GetPosition"
+      ],
+      "props": [
+        {
+          "name": "Handled",
+          "settable": true,
+          "type": "bool"
+        },
+        {
+          "name": "HoldingState",
+          "settable": false,
+          "type": "Microsoft.UI.Input.HoldingState"
+        },
+        {
+          "name": "PointerDeviceType",
+          "settable": false,
+          "type": "Microsoft.UI.Input.PointerDeviceType"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Input.KeyRoutedEventArgs": {
+      "category": "class",
+      "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "methods": [],
+      "props": [
+        {
+          "name": "DeviceId",
+          "settable": false,
+          "type": "string"
+        },
+        {
+          "name": "Handled",
+          "settable": true,
+          "type": "bool"
+        },
+        {
+          "name": "Key",
+          "settable": false,
+          "type": "Windows.System.VirtualKey"
+        },
+        {
+          "name": "KeyStatus",
+          "settable": false,
+          "type": "Windows.UI.Core.CorePhysicalKeyStatus"
+        },
+        {
+          "name": "OriginalKey",
+          "settable": false,
+          "type": "Windows.System.VirtualKey"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Input.KeyTipPlacementMode": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Auto",
+          0
+        ],
+        [
+          "Bottom",
+          1
+        ],
+        [
+          "Top",
+          2
+        ],
+        [
+          "Left",
+          3
+        ],
+        [
+          "Right",
+          4
+        ],
+        [
+          "Center",
+          5
+        ],
+        [
+          "Hidden",
+          6
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Input.KeyTipPlacementMode"
+    },
+    "Microsoft.UI.Xaml.Input.KeyboardAcceleratorPlacementMode": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Auto",
+          0
+        ],
+        [
+          "Hidden",
+          1
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Input.KeyboardAcceleratorPlacementMode"
+    },
+    "Microsoft.UI.Xaml.Input.KeyboardNavigationMode": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Local",
+          0
+        ],
+        [
+          "Cycle",
+          1
+        ],
+        [
+          "Once",
+          2
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Input.KeyboardNavigationMode"
+    },
+    "Microsoft.UI.Xaml.Input.LosingFocusEventArgs": {
+      "category": "class",
+      "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "methods": [
+        "TryCancel",
+        "TrySetNewFocusedElement"
+      ],
+      "props": [
+        {
+          "name": "Cancel",
+          "settable": true,
+          "type": "bool"
+        },
+        {
+          "name": "CorrelationId",
+          "settable": false,
+          "type": "System.Guid"
+        },
+        {
+          "name": "Direction",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.Input.FocusNavigationDirection"
+        },
+        {
+          "name": "FocusState",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.FocusState"
+        },
+        {
+          "name": "Handled",
+          "settable": true,
+          "type": "bool"
+        },
+        {
+          "name": "InputDevice",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.Input.FocusInputDeviceKind"
+        },
+        {
+          "name": "NewFocusedElement",
+          "settable": true,
+          "type": "Microsoft.UI.Xaml.DependencyObject"
+        },
+        {
+          "name": "OldFocusedElement",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.DependencyObject"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Input.ManipulationCompletedRoutedEventArgs": {
+      "category": "class",
+      "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "methods": [],
+      "props": [
+        {
+          "name": "Container",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.UIElement"
+        },
+        {
+          "name": "Cumulative",
+          "settable": false,
+          "type": "Microsoft.UI.Input.ManipulationDelta"
+        },
+        {
+          "name": "Handled",
+          "settable": true,
+          "type": "bool"
+        },
+        {
+          "name": "IsInertial",
+          "settable": false,
+          "type": "bool"
+        },
+        {
+          "name": "PointerDeviceType",
+          "settable": false,
+          "type": "Microsoft.UI.Input.PointerDeviceType"
+        },
+        {
+          "name": "Position",
+          "settable": false,
+          "type": "Windows.Foundation.Point"
+        },
+        {
+          "name": "Velocities",
+          "settable": false,
+          "type": "Microsoft.UI.Input.ManipulationVelocities"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Input.ManipulationDeltaRoutedEventArgs": {
+      "category": "class",
+      "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "methods": [
+        "Complete"
+      ],
+      "props": [
+        {
+          "name": "Container",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.UIElement"
+        },
+        {
+          "name": "Cumulative",
+          "settable": false,
+          "type": "Microsoft.UI.Input.ManipulationDelta"
+        },
+        {
+          "name": "Delta",
+          "settable": false,
+          "type": "Microsoft.UI.Input.ManipulationDelta"
+        },
+        {
+          "name": "Handled",
+          "settable": true,
+          "type": "bool"
+        },
+        {
+          "name": "IsInertial",
+          "settable": false,
+          "type": "bool"
+        },
+        {
+          "name": "PointerDeviceType",
+          "settable": false,
+          "type": "Microsoft.UI.Input.PointerDeviceType"
+        },
+        {
+          "name": "Position",
+          "settable": false,
+          "type": "Windows.Foundation.Point"
+        },
+        {
+          "name": "Velocities",
+          "settable": false,
+          "type": "Microsoft.UI.Input.ManipulationVelocities"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Input.ManipulationInertiaStartingRoutedEventArgs": {
+      "category": "class",
+      "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "methods": [],
+      "props": [
+        {
+          "name": "Container",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.UIElement"
+        },
+        {
+          "name": "Cumulative",
+          "settable": false,
+          "type": "Microsoft.UI.Input.ManipulationDelta"
+        },
+        {
+          "name": "Delta",
+          "settable": false,
+          "type": "Microsoft.UI.Input.ManipulationDelta"
+        },
+        {
+          "name": "ExpansionBehavior",
+          "settable": true,
+          "type": "Microsoft.UI.Xaml.Input.InertiaExpansionBehavior"
+        },
+        {
+          "name": "Handled",
+          "settable": true,
+          "type": "bool"
+        },
+        {
+          "name": "PointerDeviceType",
+          "settable": false,
+          "type": "Microsoft.UI.Input.PointerDeviceType"
+        },
+        {
+          "name": "RotationBehavior",
+          "settable": true,
+          "type": "Microsoft.UI.Xaml.Input.InertiaRotationBehavior"
+        },
+        {
+          "name": "TranslationBehavior",
+          "settable": true,
+          "type": "Microsoft.UI.Xaml.Input.InertiaTranslationBehavior"
+        },
+        {
+          "name": "Velocities",
+          "settable": false,
+          "type": "Microsoft.UI.Input.ManipulationVelocities"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Input.ManipulationModes": {
+      "category": "enum",
+      "flags": true,
+      "members": [
+        [
+          "None",
+          0
+        ],
+        [
+          "TranslateX",
+          1
+        ],
+        [
+          "TranslateY",
+          2
+        ],
+        [
+          "TranslateRailsX",
+          4
+        ],
+        [
+          "TranslateRailsY",
+          8
+        ],
+        [
+          "Rotate",
+          16
+        ],
+        [
+          "Scale",
+          32
+        ],
+        [
+          "TranslateInertia",
+          64
+        ],
+        [
+          "RotateInertia",
+          128
+        ],
+        [
+          "ScaleInertia",
+          256
+        ],
+        [
+          "All",
+          65535
+        ],
+        [
+          "System",
+          65536
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Input.ManipulationModes"
+    },
+    "Microsoft.UI.Xaml.Input.ManipulationStartedRoutedEventArgs": {
+      "category": "class",
+      "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "methods": [
+        "Complete"
+      ],
+      "props": [
+        {
+          "name": "Container",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.UIElement"
+        },
+        {
+          "name": "Cumulative",
+          "settable": false,
+          "type": "Microsoft.UI.Input.ManipulationDelta"
+        },
+        {
+          "name": "Handled",
+          "settable": true,
+          "type": "bool"
+        },
+        {
+          "name": "PointerDeviceType",
+          "settable": false,
+          "type": "Microsoft.UI.Input.PointerDeviceType"
+        },
+        {
+          "name": "Position",
+          "settable": false,
+          "type": "Windows.Foundation.Point"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Input.ManipulationStartingRoutedEventArgs": {
+      "category": "class",
+      "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "methods": [],
+      "props": [
+        {
+          "name": "Container",
+          "settable": true,
+          "type": "Microsoft.UI.Xaml.UIElement"
+        },
+        {
+          "name": "Handled",
+          "settable": true,
+          "type": "bool"
+        },
+        {
+          "name": "Mode",
+          "settable": true,
+          "type": "Microsoft.UI.Xaml.Input.ManipulationModes"
+        },
+        {
+          "name": "Pivot",
+          "settable": true,
+          "type": "Microsoft.UI.Xaml.Input.ManipulationPivot"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Input.NoFocusCandidateFoundEventArgs": {
+      "category": "class",
+      "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "methods": [],
+      "props": [
+        {
+          "name": "Direction",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.Input.FocusNavigationDirection"
+        },
+        {
+          "name": "Handled",
+          "settable": true,
+          "type": "bool"
+        },
+        {
+          "name": "InputDevice",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.Input.FocusInputDeviceKind"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs": {
+      "category": "class",
+      "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "methods": [
+        "GetCurrentPoint",
+        "GetIntermediatePoints"
+      ],
+      "props": [
+        {
+          "name": "Handled",
+          "settable": true,
+          "type": "bool"
+        },
+        {
+          "name": "IsGenerated",
+          "settable": false,
+          "type": "bool"
+        },
+        {
+          "name": "KeyModifiers",
+          "settable": false,
+          "type": "Windows.System.VirtualKeyModifiers"
+        },
+        {
+          "name": "Pointer",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.Input.Pointer"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Input.ProcessKeyboardAcceleratorEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "Handled",
+          "settable": true,
+          "type": "bool"
+        },
+        {
+          "name": "Key",
+          "settable": false,
+          "type": "Windows.System.VirtualKey"
+        },
+        {
+          "name": "Modifiers",
+          "settable": false,
+          "type": "Windows.System.VirtualKeyModifiers"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Input.RightTappedRoutedEventArgs": {
+      "category": "class",
+      "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "methods": [
+        "GetPosition"
+      ],
+      "props": [
+        {
+          "name": "Handled",
+          "settable": true,
+          "type": "bool"
+        },
+        {
+          "name": "PointerDeviceType",
+          "settable": false,
+          "type": "Microsoft.UI.Input.PointerDeviceType"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Input.TappedRoutedEventArgs": {
+      "category": "class",
+      "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "methods": [
+        "GetPosition"
+      ],
+      "props": [
+        {
+          "name": "Handled",
+          "settable": true,
+          "type": "bool"
+        },
+        {
+          "name": "PointerDeviceType",
+          "settable": false,
+          "type": "Microsoft.UI.Input.PointerDeviceType"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Input.XYFocusKeyboardNavigationMode": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Auto",
+          0
+        ],
+        [
+          "Enabled",
+          1
+        ],
+        [
+          "Disabled",
+          2
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Input.XYFocusKeyboardNavigationMode"
+    },
+    "Microsoft.UI.Xaml.Input.XYFocusNavigationStrategy": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Auto",
+          0
+        ],
+        [
+          "Projection",
+          1
+        ],
+        [
+          "NavigationDirectionDistance",
+          2
+        ],
+        [
+          "RectilinearDistance",
+          3
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Input.XYFocusNavigationStrategy"
+    },
+    "Microsoft.UI.Xaml.LineStackingStrategy": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "MaxHeight",
+          0
+        ],
+        [
+          "BlockLineHeight",
+          1
+        ],
+        [
+          "BaselineToBaseline",
+          2
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.LineStackingStrategy"
+    },
+    "Microsoft.UI.Xaml.Media.ElementCompositeMode": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Inherit",
+          0
+        ],
+        [
+          "SourceOver",
+          1
+        ],
+        [
+          "MinBlend",
+          2
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Media.ElementCompositeMode"
+    },
+    "Microsoft.UI.Xaml.OpticalMarginAlignment": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "None",
+          0
+        ],
+        [
+          "TrimSideBearings",
+          1
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.OpticalMarginAlignment"
+    },
+    "Microsoft.UI.Xaml.RoutedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "OriginalSource",
+          "settable": false,
+          "type": "object"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.SizeChangedEventArgs": {
+      "category": "class",
+      "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "methods": [],
+      "props": [
+        {
+          "name": "NewSize",
+          "settable": false,
+          "type": "Windows.Foundation.Size"
+        },
+        {
+          "name": "PreviousSize",
+          "settable": false,
+          "type": "Windows.Foundation.Size"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.TextAlignment": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Center",
+          0
+        ],
+        [
+          "Left",
+          1
+        ],
+        [
+          "Start",
+          1
+        ],
+        [
+          "Right",
+          2
+        ],
+        [
+          "End",
+          2
+        ],
+        [
+          "Justify",
+          3
+        ],
+        [
+          "DetectFromContent",
+          4
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.TextAlignment"
+    },
+    "Microsoft.UI.Xaml.TextLineBounds": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Full",
+          0
+        ],
+        [
+          "TrimToCapHeight",
+          1
+        ],
+        [
+          "TrimToBaseline",
+          2
+        ],
+        [
+          "Tight",
+          3
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.TextLineBounds"
+    },
+    "Microsoft.UI.Xaml.TextReadingOrder": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Default",
+          0
+        ],
+        [
+          "UseFlowDirection",
+          0
+        ],
+        [
+          "DetectFromContent",
+          1
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.TextReadingOrder"
+    },
+    "Microsoft.UI.Xaml.TextTrimming": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "None",
+          0
+        ],
+        [
+          "CharacterEllipsis",
+          1
+        ],
+        [
+          "WordEllipsis",
+          2
+        ],
+        [
+          "Clip",
+          3
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.TextTrimming"
+    },
+    "Microsoft.UI.Xaml.TextWrapping": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "NoWrap",
+          1
+        ],
+        [
+          "Wrap",
+          2
+        ],
+        [
+          "WrapWholeWords",
+          3
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.TextWrapping"
+    },
+    "Microsoft.UI.Xaml.Thickness": {
+      "category": "struct",
+      "fields": [
+        {
+          "name": "Left",
+          "type": "f64"
+        },
+        {
+          "name": "Top",
+          "type": "f64"
+        },
+        {
+          "name": "Right",
+          "type": "f64"
+        },
+        {
+          "name": "Bottom",
+          "type": "f64"
+        }
+      ],
+      "name": "Microsoft.UI.Xaml.Thickness"
+    },
+    "Microsoft.UI.Xaml.VerticalAlignment": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Top",
+          0
+        ],
+        [
+          "Center",
+          1
+        ],
+        [
+          "Bottom",
+          2
+        ],
+        [
+          "Stretch",
+          3
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.VerticalAlignment"
+    },
+    "Microsoft.UI.Xaml.Visibility": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Visible",
+          0
+        ],
+        [
+          "Collapsed",
+          1
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Visibility"
+    },
+    "Microsoft.UI.Xaml.WindowActivatedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "Handled",
+          "settable": true,
+          "type": "bool"
+        },
+        {
+          "name": "WindowActivationState",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.WindowActivationState"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.WindowActivationState": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "CodeActivated",
+          0
+        ],
+        [
+          "Deactivated",
+          1
+        ],
+        [
+          "PointerActivated",
+          2
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.WindowActivationState"
+    },
+    "Microsoft.UI.Xaml.WindowEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "Handled",
+          "settable": true,
+          "type": "bool"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.WindowSizeChangedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "Handled",
+          "settable": true,
+          "type": "bool"
+        },
+        {
+          "name": "Size",
+          "settable": false,
+          "type": "Windows.Foundation.Size"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.WindowVisibilityChangedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "Handled",
+          "settable": true,
+          "type": "bool"
+        },
+        {
+          "name": "Visible",
+          "settable": false,
+          "type": "bool"
+        }
+      ]
+    },
+    "Windows.ApplicationModel.DataTransfer.DataPackageOperation": {
+      "category": "enum",
+      "flags": true,
+      "members": [
+        [
+          "None",
+          0
+        ],
+        [
+          "Copy",
+          1
+        ],
+        [
+          "Move",
+          2
+        ],
+        [
+          "Link",
+          4
+        ],
+        [
+          "NewTarget",
+          1073741824
+        ],
+        [
+          "BackgroundTarget",
+          536870912
+        ]
+      ],
+      "name": "Windows.ApplicationModel.DataTransfer.DataPackageOperation"
+    },
+    "Windows.ApplicationModel.DataTransfer.DragDrop.DragDropModifiers": {
+      "category": "enum",
+      "flags": true,
+      "members": [
+        [
+          "None",
+          0
+        ],
+        [
+          "Shift",
+          1
+        ],
+        [
+          "Control",
+          2
+        ],
+        [
+          "Alt",
+          4
+        ],
+        [
+          "LeftButton",
+          8
+        ],
+        [
+          "MiddleButton",
+          16
+        ],
+        [
+          "RightButton",
+          32
+        ]
+      ],
+      "name": "Windows.ApplicationModel.DataTransfer.DragDrop.DragDropModifiers"
+    },
+    "Windows.Foundation.Numerics.Matrix4x4": {
+      "category": "struct",
+      "fields": [
+        {
+          "name": "M11",
+          "type": "f32"
+        },
+        {
+          "name": "M12",
+          "type": "f32"
+        },
+        {
+          "name": "M13",
+          "type": "f32"
+        },
+        {
+          "name": "M14",
+          "type": "f32"
+        },
+        {
+          "name": "M21",
+          "type": "f32"
+        },
+        {
+          "name": "M22",
+          "type": "f32"
+        },
+        {
+          "name": "M23",
+          "type": "f32"
+        },
+        {
+          "name": "M24",
+          "type": "f32"
+        },
+        {
+          "name": "M31",
+          "type": "f32"
+        },
+        {
+          "name": "M32",
+          "type": "f32"
+        },
+        {
+          "name": "M33",
+          "type": "f32"
+        },
+        {
+          "name": "M34",
+          "type": "f32"
+        },
+        {
+          "name": "M41",
+          "type": "f32"
+        },
+        {
+          "name": "M42",
+          "type": "f32"
+        },
+        {
+          "name": "M43",
+          "type": "f32"
+        },
+        {
+          "name": "M44",
+          "type": "f32"
+        }
+      ],
+      "name": "Windows.Foundation.Numerics.Matrix4x4"
+    },
+    "Windows.Foundation.Numerics.Vector2": {
+      "category": "struct",
+      "fields": [
+        {
+          "name": "X",
+          "type": "f32"
+        },
+        {
+          "name": "Y",
+          "type": "f32"
+        }
+      ],
+      "name": "Windows.Foundation.Numerics.Vector2"
+    },
+    "Windows.Foundation.Numerics.Vector3": {
+      "category": "struct",
+      "fields": [
+        {
+          "name": "X",
+          "type": "f32"
+        },
+        {
+          "name": "Y",
+          "type": "f32"
+        },
+        {
+          "name": "Z",
+          "type": "f32"
+        }
+      ],
+      "name": "Windows.Foundation.Numerics.Vector3"
+    },
+    "Windows.Foundation.Point": {
+      "category": "struct",
+      "fields": [
+        {
+          "name": "X",
+          "type": "f32"
+        },
+        {
+          "name": "Y",
+          "type": "f32"
+        }
+      ],
+      "name": "Windows.Foundation.Point"
+    },
+    "Windows.Foundation.Rect": {
+      "category": "struct",
+      "fields": [
+        {
+          "name": "X",
+          "type": "f32"
+        },
+        {
+          "name": "Y",
+          "type": "f32"
+        },
+        {
+          "name": "Width",
+          "type": "f32"
+        },
+        {
+          "name": "Height",
+          "type": "f32"
+        }
+      ],
+      "name": "Windows.Foundation.Rect"
+    },
+    "Windows.Foundation.Size": {
+      "category": "struct",
+      "fields": [
+        {
+          "name": "Width",
+          "type": "f32"
+        },
+        {
+          "name": "Height",
+          "type": "f32"
+        }
+      ],
+      "name": "Windows.Foundation.Size"
+    },
+    "Windows.System.VirtualKey": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "None",
+          0
+        ],
+        [
+          "LeftButton",
+          1
+        ],
+        [
+          "RightButton",
+          2
+        ],
+        [
+          "Cancel",
+          3
+        ],
+        [
+          "MiddleButton",
+          4
+        ],
+        [
+          "XButton1",
+          5
+        ],
+        [
+          "XButton2",
+          6
+        ],
+        [
+          "Back",
+          8
+        ],
+        [
+          "Tab",
+          9
+        ],
+        [
+          "Clear",
+          12
+        ],
+        [
+          "Enter",
+          13
+        ],
+        [
+          "Shift",
+          16
+        ],
+        [
+          "Control",
+          17
+        ],
+        [
+          "Menu",
+          18
+        ],
+        [
+          "Pause",
+          19
+        ],
+        [
+          "CapitalLock",
+          20
+        ],
+        [
+          "Kana",
+          21
+        ],
+        [
+          "Hangul",
+          21
+        ],
+        [
+          "ImeOn",
+          22
+        ],
+        [
+          "Junja",
+          23
+        ],
+        [
+          "Final",
+          24
+        ],
+        [
+          "Hanja",
+          25
+        ],
+        [
+          "Kanji",
+          25
+        ],
+        [
+          "ImeOff",
+          26
+        ],
+        [
+          "Escape",
+          27
+        ],
+        [
+          "Convert",
+          28
+        ],
+        [
+          "NonConvert",
+          29
+        ],
+        [
+          "Accept",
+          30
+        ],
+        [
+          "ModeChange",
+          31
+        ],
+        [
+          "Space",
+          32
+        ],
+        [
+          "PageUp",
+          33
+        ],
+        [
+          "PageDown",
+          34
+        ],
+        [
+          "End",
+          35
+        ],
+        [
+          "Home",
+          36
+        ],
+        [
+          "Left",
+          37
+        ],
+        [
+          "Up",
+          38
+        ],
+        [
+          "Right",
+          39
+        ],
+        [
+          "Down",
+          40
+        ],
+        [
+          "Select",
+          41
+        ],
+        [
+          "Print",
+          42
+        ],
+        [
+          "Execute",
+          43
+        ],
+        [
+          "Snapshot",
+          44
+        ],
+        [
+          "Insert",
+          45
+        ],
+        [
+          "Delete",
+          46
+        ],
+        [
+          "Help",
+          47
+        ],
+        [
+          "Number0",
+          48
+        ],
+        [
+          "Number1",
+          49
+        ],
+        [
+          "Number2",
+          50
+        ],
+        [
+          "Number3",
+          51
+        ],
+        [
+          "Number4",
+          52
+        ],
+        [
+          "Number5",
+          53
+        ],
+        [
+          "Number6",
+          54
+        ],
+        [
+          "Number7",
+          55
+        ],
+        [
+          "Number8",
+          56
+        ],
+        [
+          "Number9",
+          57
+        ],
+        [
+          "A",
+          65
+        ],
+        [
+          "B",
+          66
+        ],
+        [
+          "C",
+          67
+        ],
+        [
+          "D",
+          68
+        ],
+        [
+          "E",
+          69
+        ],
+        [
+          "F",
+          70
+        ],
+        [
+          "G",
+          71
+        ],
+        [
+          "H",
+          72
+        ],
+        [
+          "I",
+          73
+        ],
+        [
+          "J",
+          74
+        ],
+        [
+          "K",
+          75
+        ],
+        [
+          "L",
+          76
+        ],
+        [
+          "M",
+          77
+        ],
+        [
+          "N",
+          78
+        ],
+        [
+          "O",
+          79
+        ],
+        [
+          "P",
+          80
+        ],
+        [
+          "Q",
+          81
+        ],
+        [
+          "R",
+          82
+        ],
+        [
+          "S",
+          83
+        ],
+        [
+          "T",
+          84
+        ],
+        [
+          "U",
+          85
+        ],
+        [
+          "V",
+          86
+        ],
+        [
+          "W",
+          87
+        ],
+        [
+          "X",
+          88
+        ],
+        [
+          "Y",
+          89
+        ],
+        [
+          "Z",
+          90
+        ],
+        [
+          "LeftWindows",
+          91
+        ],
+        [
+          "RightWindows",
+          92
+        ],
+        [
+          "Application",
+          93
+        ],
+        [
+          "Sleep",
+          95
+        ],
+        [
+          "NumberPad0",
+          96
+        ],
+        [
+          "NumberPad1",
+          97
+        ],
+        [
+          "NumberPad2",
+          98
+        ],
+        [
+          "NumberPad3",
+          99
+        ],
+        [
+          "NumberPad4",
+          100
+        ],
+        [
+          "NumberPad5",
+          101
+        ],
+        [
+          "NumberPad6",
+          102
+        ],
+        [
+          "NumberPad7",
+          103
+        ],
+        [
+          "NumberPad8",
+          104
+        ],
+        [
+          "NumberPad9",
+          105
+        ],
+        [
+          "Multiply",
+          106
+        ],
+        [
+          "Add",
+          107
+        ],
+        [
+          "Separator",
+          108
+        ],
+        [
+          "Subtract",
+          109
+        ],
+        [
+          "Decimal",
+          110
+        ],
+        [
+          "Divide",
+          111
+        ],
+        [
+          "F1",
+          112
+        ],
+        [
+          "F2",
+          113
+        ],
+        [
+          "F3",
+          114
+        ],
+        [
+          "F4",
+          115
+        ],
+        [
+          "F5",
+          116
+        ],
+        [
+          "F6",
+          117
+        ],
+        [
+          "F7",
+          118
+        ],
+        [
+          "F8",
+          119
+        ],
+        [
+          "F9",
+          120
+        ],
+        [
+          "F10",
+          121
+        ],
+        [
+          "F11",
+          122
+        ],
+        [
+          "F12",
+          123
+        ],
+        [
+          "F13",
+          124
+        ],
+        [
+          "F14",
+          125
+        ],
+        [
+          "F15",
+          126
+        ],
+        [
+          "F16",
+          127
+        ],
+        [
+          "F17",
+          128
+        ],
+        [
+          "F18",
+          129
+        ],
+        [
+          "F19",
+          130
+        ],
+        [
+          "F20",
+          131
+        ],
+        [
+          "F21",
+          132
+        ],
+        [
+          "F22",
+          133
+        ],
+        [
+          "F23",
+          134
+        ],
+        [
+          "F24",
+          135
+        ],
+        [
+          "NavigationView",
+          136
+        ],
+        [
+          "NavigationMenu",
+          137
+        ],
+        [
+          "NavigationUp",
+          138
+        ],
+        [
+          "NavigationDown",
+          139
+        ],
+        [
+          "NavigationLeft",
+          140
+        ],
+        [
+          "NavigationRight",
+          141
+        ],
+        [
+          "NavigationAccept",
+          142
+        ],
+        [
+          "NavigationCancel",
+          143
+        ],
+        [
+          "NumberKeyLock",
+          144
+        ],
+        [
+          "Scroll",
+          145
+        ],
+        [
+          "LeftShift",
+          160
+        ],
+        [
+          "RightShift",
+          161
+        ],
+        [
+          "LeftControl",
+          162
+        ],
+        [
+          "RightControl",
+          163
+        ],
+        [
+          "LeftMenu",
+          164
+        ],
+        [
+          "RightMenu",
+          165
+        ],
+        [
+          "GoBack",
+          166
+        ],
+        [
+          "GoForward",
+          167
+        ],
+        [
+          "Refresh",
+          168
+        ],
+        [
+          "Stop",
+          169
+        ],
+        [
+          "Search",
+          170
+        ],
+        [
+          "Favorites",
+          171
+        ],
+        [
+          "GoHome",
+          172
+        ],
+        [
+          "GamepadA",
+          195
+        ],
+        [
+          "GamepadB",
+          196
+        ],
+        [
+          "GamepadX",
+          197
+        ],
+        [
+          "GamepadY",
+          198
+        ],
+        [
+          "GamepadRightShoulder",
+          199
+        ],
+        [
+          "GamepadLeftShoulder",
+          200
+        ],
+        [
+          "GamepadLeftTrigger",
+          201
+        ],
+        [
+          "GamepadRightTrigger",
+          202
+        ],
+        [
+          "GamepadDPadUp",
+          203
+        ],
+        [
+          "GamepadDPadDown",
+          204
+        ],
+        [
+          "GamepadDPadLeft",
+          205
+        ],
+        [
+          "GamepadDPadRight",
+          206
+        ],
+        [
+          "GamepadMenu",
+          207
+        ],
+        [
+          "GamepadView",
+          208
+        ],
+        [
+          "GamepadLeftThumbstickButton",
+          209
+        ],
+        [
+          "GamepadRightThumbstickButton",
+          210
+        ],
+        [
+          "GamepadLeftThumbstickUp",
+          211
+        ],
+        [
+          "GamepadLeftThumbstickDown",
+          212
+        ],
+        [
+          "GamepadLeftThumbstickRight",
+          213
+        ],
+        [
+          "GamepadLeftThumbstickLeft",
+          214
+        ],
+        [
+          "GamepadRightThumbstickUp",
+          215
+        ],
+        [
+          "GamepadRightThumbstickDown",
+          216
+        ],
+        [
+          "GamepadRightThumbstickRight",
+          217
+        ],
+        [
+          "GamepadRightThumbstickLeft",
+          218
+        ]
+      ],
+      "name": "Windows.System.VirtualKey"
+    },
+    "Windows.System.VirtualKeyModifiers": {
+      "category": "enum",
+      "flags": true,
+      "members": [
+        [
+          "None",
+          0
+        ],
+        [
+          "Control",
+          1
+        ],
+        [
+          "Menu",
+          2
+        ],
+        [
+          "Shift",
+          4
+        ],
+        [
+          "Windows",
+          8
+        ]
+      ],
+      "name": "Windows.System.VirtualKeyModifiers"
+    },
+    "Windows.UI.Core.CorePhysicalKeyStatus": {
+      "category": "struct",
+      "fields": [
+        {
+          "name": "RepeatCount",
+          "type": "u32"
+        },
+        {
+          "name": "ScanCode",
+          "type": "u32"
+        },
+        {
+          "name": "IsExtendedKey",
+          "type": "bool"
+        },
+        {
+          "name": "IsMenuKeyDown",
+          "type": "bool"
+        },
+        {
+          "name": "WasKeyDown",
+          "type": "bool"
+        },
+        {
+          "name": "IsKeyReleased",
+          "type": "bool"
+        }
+      ],
+      "name": "Windows.UI.Core.CorePhysicalKeyStatus"
+    },
+    "Windows.UI.Text.FontStretch": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Undefined",
+          0
+        ],
+        [
+          "UltraCondensed",
+          1
+        ],
+        [
+          "ExtraCondensed",
+          2
+        ],
+        [
+          "Condensed",
+          3
+        ],
+        [
+          "SemiCondensed",
+          4
+        ],
+        [
+          "Normal",
+          5
+        ],
+        [
+          "SemiExpanded",
+          6
+        ],
+        [
+          "Expanded",
+          7
+        ],
+        [
+          "ExtraExpanded",
+          8
+        ],
+        [
+          "UltraExpanded",
+          9
+        ]
+      ],
+      "name": "Windows.UI.Text.FontStretch"
+    },
+    "Windows.UI.Text.FontStyle": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Normal",
+          0
+        ],
+        [
+          "Oblique",
+          1
+        ],
+        [
+          "Italic",
+          2
+        ]
+      ],
+      "name": "Windows.UI.Text.FontStyle"
+    },
+    "Windows.UI.Text.FontWeight": {
+      "category": "struct",
+      "fields": [
+        {
+          "name": "Weight",
+          "type": "u16"
+        }
+      ],
+      "name": "Windows.UI.Text.FontWeight"
+    },
+    "Windows.UI.Text.TextDecorations": {
+      "category": "enum",
+      "flags": true,
+      "members": [
+        [
+          "None",
+          0
+        ],
+        [
+          "Underline",
+          1
+        ],
+        [
+          "Strikethrough",
+          2
+        ]
+      ],
+      "name": "Windows.UI.Text.TextDecorations"
+    }
+  }
+}

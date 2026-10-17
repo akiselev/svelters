@@ -1,0 +1,152 @@
+{
+  "abstract": true,
+  "attached": [],
+  "availability": {
+    "contract": "Microsoft.UI.Xaml.WinUIContract",
+    "version": 65536
+  },
+  "bases": [
+    "Microsoft.UI.Xaml.Controls.Control",
+    "Microsoft.UI.Xaml.FrameworkElement",
+    "Microsoft.UI.Xaml.UIElement",
+    "Microsoft.UI.Xaml.DependencyObject"
+  ],
+  "constructors": [],
+  "content_property": null,
+  "content_property_declared": null,
+  "dependency_properties": [
+    "LargeChangeProperty",
+    "MaximumProperty",
+    "MinimumProperty",
+    "SmallChangeProperty",
+    "ValueProperty"
+  ],
+  "id": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:RangeBase",
+  "kind": "object",
+  "marshaling": "MarshalingType.2",
+  "methods": [],
+  "native": {
+    "name": "Microsoft.UI.Xaml.Controls.Primitives.RangeBase",
+    "namespace": "Microsoft.UI.Xaml.Controls.Primitives",
+    "short": "RangeBase"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.IRangeBase",
+      "name": "LargeChange",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.IRangeBase",
+      "name": "Maximum",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.IRangeBase",
+      "name": "Minimum",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.IRangeBase",
+      "name": "SmallChange",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.IRangeBase",
+      "name": "Value",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "args": "Microsoft.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs",
+          "name": "NewValue",
+          "settable": false,
+          "type": {
+            "native": "f64",
+            "ref": "f64"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs",
+          "name": "OldValue",
+          "settable": false,
+          "type": {
+            "native": "f64",
+            "ref": "f64"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventHandler",
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.IRangeBase",
+      "name": "ValueChanged",
+      "origin": "winmd",
+      "sender": "object"
+    }
+  ],
+  "source": {
+    "package": "microsoft.windowsappsdk.winui 2.3.9",
+    "winmd": "Microsoft.UI.Xaml.winmd"
+  },
+  "threading": "ThreadingModel.3",
+  "toolkit": "winui"
+}

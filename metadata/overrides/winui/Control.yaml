@@ -1,0 +1,5 @@
+class: Microsoft.UI.Xaml.Controls.Control
+props:
+  - { name: IsEnabled, test: false, provenance: "Control.IsEnabled DP (winmd IControl)" }
+  - { name: FontSize, test: 20.0, provenance: "Control.FontSize DP (winmd IControl)" }
+  - { name: Padding, test: "4", provenance: "Control.Padding DP: Thickness (winmd IControl)" }

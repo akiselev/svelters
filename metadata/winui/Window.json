@@ -1,0 +1,339 @@
+{
+  "abstract": false,
+  "attached": [],
+  "availability": {
+    "contract": "Microsoft.UI.Xaml.WinUIContract",
+    "version": 65536
+  },
+  "bases": [],
+  "constructors": [
+    {
+      "id": "ctor:composable",
+      "native": "Microsoft.UI.Xaml.IWindowFactory.CreateInstance",
+      "origin": "winmd"
+    }
+  ],
+  "content_property": "Content",
+  "content_property_declared": "Content",
+  "dependency_properties": [],
+  "id": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:Window",
+  "kind": "object",
+  "marshaling": "MarshalingType.2",
+  "methods": [
+    {
+      "interface": "Microsoft.UI.Xaml.IWindow",
+      "name": "Activate",
+      "origin": "winmd",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.IWindow",
+      "name": "Close",
+      "origin": "winmd",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.IWindow",
+      "name": "SetTitleBar",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "titleBar",
+          "type": {
+            "native": "Microsoft.UI.Xaml.UIElement",
+            "ref": "object<Microsoft.UI.Xaml.UIElement>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    }
+  ],
+  "native": {
+    "name": "Microsoft.UI.Xaml.Window",
+    "namespace": "Microsoft.UI.Xaml",
+    "short": "Window"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.IWindow2",
+      "name": "AppWindow",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Windowing.AppWindow",
+        "ref": "object<Microsoft.UI.Windowing.AppWindow>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.IWindow",
+      "name": "Bounds",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Foundation.Rect",
+        "ref": "value<Windows.Foundation.Rect>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.IWindow",
+      "name": "Compositor",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Composition.Compositor",
+        "ref": "object<Microsoft.UI.Composition.Compositor>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.IWindow",
+      "name": "Content",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.UIElement",
+        "ref": "object<Microsoft.UI.Xaml.UIElement>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.IWindow",
+      "name": "CoreWindow",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.UI.Core.CoreWindow",
+        "ref": "object<Windows.UI.Core.CoreWindow>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.IWindow",
+      "name": "Dispatcher",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.UI.Core.CoreDispatcher",
+        "ref": "object<Windows.UI.Core.CoreDispatcher>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.IWindow",
+      "name": "DispatcherQueue",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Dispatching.DispatcherQueue",
+        "ref": "object<Microsoft.UI.Dispatching.DispatcherQueue>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.IWindow",
+      "name": "ExtendsContentIntoTitleBar",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.IWindow2",
+      "name": "SystemBackdrop",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Media.SystemBackdrop",
+        "ref": "object<Microsoft.UI.Xaml.Media.SystemBackdrop>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.IWindow",
+      "name": "Title",
+      "origin": "winmd",
+      "type": {
+        "native": "string",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.IWindow",
+      "name": "Visible",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "args": "Microsoft.UI.Xaml.WindowActivatedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.WindowActivatedEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.WindowActivatedEventArgs",
+          "name": "WindowActivationState",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.WindowActivationState",
+            "ref": "enum<Microsoft.UI.Xaml.WindowActivationState>"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<object, Microsoft.UI.Xaml.WindowActivatedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.IWindow",
+      "name": "Activated",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.WindowEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.WindowEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<object, Microsoft.UI.Xaml.WindowEventArgs>",
+      "interface": "Microsoft.UI.Xaml.IWindow",
+      "name": "Closed",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.WindowSizeChangedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.WindowSizeChangedEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.WindowSizeChangedEventArgs",
+          "name": "Size",
+          "settable": false,
+          "type": {
+            "native": "Windows.Foundation.Size",
+            "ref": "value<Windows.Foundation.Size>"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<object, Microsoft.UI.Xaml.WindowSizeChangedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.IWindow",
+      "name": "SizeChanged",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.WindowVisibilityChangedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.WindowVisibilityChangedEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.WindowVisibilityChangedEventArgs",
+          "name": "Visible",
+          "settable": false,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<object, Microsoft.UI.Xaml.WindowVisibilityChangedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.IWindow",
+      "name": "VisibilityChanged",
+      "origin": "winmd",
+      "sender": "object"
+    }
+  ],
+  "source": {
+    "package": "microsoft.windowsappsdk.winui 2.3.9",
+    "winmd": "Microsoft.UI.Xaml.winmd"
+  },
+  "threading": "ThreadingModel.3",
+  "toolkit": "winui"
+}

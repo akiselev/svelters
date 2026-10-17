@@ -127,6 +127,6 @@ export const TOPLEVELS = {
   inputdialog: { open: ["open", "present"], modeless: ["present"], modalProp: true, dialog: true, toolkits: ["qt"] },
   messagebox: { open: ["open", "present"], modeless: ["present"], modalProp: true, dialog: true, toolkits: ["qt"] },
   progressdialog: { open: ["open", "present"], modeless: ["present"], modalProp: true, dialog: true, toolkits: ["qt"] },
-  window: { open: ["make-key-and-order-front", "present"], modeless: ["present", "make-key-and-order-front"], modalProp: false, dialog: false, toolkits: ["gtk", "qt", "appkit"] },
+  window: { open: ["present", "make-key-and-order-front", "activate"], modeless: ["present", "make-key-and-order-front", "activate"], modalProp: false, dialog: false, toolkits: ["gtk", "qt", "appkit", "winui"] },
   wizard: { open: ["open", "present"], modeless: ["present"], modalProp: true, dialog: true, toolkits: ["qt"] },
 };

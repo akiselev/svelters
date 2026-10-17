@@ -1,0 +1,12 @@
+class: Microsoft.UI.Xaml.Controls.Primitives.RangeBase
+props:
+  - { name: Minimum, test: 5.0, provenance: "RangeBase.Minimum DP (winmd)" }
+  - { name: Maximum, test: 50.0, provenance: "RangeBase.Maximum DP (winmd)" }
+  - { name: Value, test: 7.0, provenance: "RangeBase.Value DP (winmd); coerced into [Minimum, Maximum]" }
+  - { name: SmallChange, test: 2.0, provenance: "RangeBase.SmallChange DP (winmd)" }
+  - { name: LargeChange, test: 20.0, provenance: "RangeBase.LargeChange DP (winmd)" }
+events:
+  - name: ValueChanged
+    payload: [{ from: args, prop: NewValue, name: newValue }, { from: args, prop: OldValue, name: oldValue }]
+    trigger: "set:Value=42"
+    provenance: "RangeBase.ValueChanged: RangeBaseValueChangedEventHandler(sender, RangeBaseValueChangedEventArgs{NewValue, OldValue}) (winmd); raised for programmatic changes too"

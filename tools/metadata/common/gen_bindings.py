@@ -220,21 +220,45 @@ def appkit_toplevels() -> dict[str, dict]:
     return out
 
 
-def merge_toplevels(gtk: dict, qt: dict, appkit: dict | None = None) -> dict[str, dict]:
-    """Union by tag; where both toolkits define a tag the renderer must be able to serve both:
+WINUI_OVERRIDES = ROOT / "metadata/overrides/winui"
+
+
+def winui_toplevels() -> dict[str, dict]:
+    """WinUI toplevels (element.lifetime toplevel in metadata/overrides/winui): shown with `activate`
+    (Window.Activate); no modal property."""
+    out: dict[str, dict] = {}
+    for path in sorted(WINUI_OVERRIDES.glob("*.yaml")):
+        data = svmeta.load_yaml(path)
+        el = data.get("element") or {}
+        if el.get("lifetime") != "toplevel":
+            continue
+        short = data["class"].rsplit(".", 1)[1]
+        tag = el.get("tag") or "".join(("-" + c.lower()) if c.isupper() and i else c.lower() for i, c in enumerate(short))
+        out[tag] = {"open": ["activate"], "modeless": ["activate"], "modalProp": False, "dialog": False}
+    return out
+
+
+# Candidate order: `open` (Qt dialogs), then `present` (GTK, Qt), then the rest (WinUI `activate`), so a
+# toolkit that also resolves a later name (GTK widgets have an `activate` method) keeps its own.
+METHOD_RANK = {"open": 0, "present": 1}
+
+
+def merge_toplevels(gtk: dict, qt: dict, appkit: dict | None = None, winui: dict | None = None) -> dict[str, dict]:
+    """Union by tag; where several toolkits define a tag the renderer must be able to serve all:
     candidate method lists are merged (first resolvable wins at run time)."""
     out: dict[str, dict] = {}
-    for tk, table in (("gtk", gtk), ("qt", qt), ("appkit", appkit or {})):
+    for tk, table in (("gtk", gtk), ("qt", qt), ("appkit", appkit or {}), ("winui", winui or {})):
         for tag, f in table.items():
             cur = out.get(tag)
             if cur is None:
                 out[tag] = {**f, "toolkits": [tk]}
                 continue
             if cur["dialog"] != f["dialog"]:
-                raise GenError(f"toplevel <{tag}>: gtk and qt disagree on dialog-ness")
+                raise GenError(f"toplevel <{tag}>: toolkits disagree on dialog-ness")
             for k in ("open", "modeless"):
                 cur[k] = cur[k] + [x for x in f[k] if x not in cur[k]]
-            cur["open"].sort(key=lambda x: x == "present")  # `open` before `present`
+            for k in ("open", "modeless"):
+                cur[k].sort(key=lambda x: METHOD_RANK.get(x, 2))
             cur["modalProp"] = cur["modalProp"] and f["modalProp"]
             cur["toolkits"].append(tk)
     return out
@@ -331,7 +355,7 @@ def main() -> int:
         for tag, names in gtk_extra_bindings().items():
             gtk.setdefault(tag, {}).update(names)
         table = merge(gtk, qt_bindings())
-        top = merge_toplevels(gtk_toplevels(), qt_toplevels(), appkit_toplevels())
+        top = merge_toplevels(gtk_toplevels(), qt_toplevels(), appkit_toplevels(), winui_toplevels())
     except GenError as e:
         print(f"gen_bindings: {e}", file=sys.stderr)
         return 1

@@ -1,0 +1,23 @@
+[package]
+name = "counter-win"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "Runs a fixture bundle (default fixtures/counter-win) in the host on the WinUI 3 backend (Windows only)"
+
+[dependencies]
+svelters-abi.workspace = true
+serde_json.workspace = true
+
+[target.'cfg(windows)'.dependencies]
+svelters-host.workspace = true
+svelters-winui.workspace = true
+
+[dev-dependencies]
+serde_json.workspace = true
+
+# Spawns the binary with --selftest (WinUI needs its own STA main thread): no libtest harness.
+[[test]]
+name = "counter"
+harness = false

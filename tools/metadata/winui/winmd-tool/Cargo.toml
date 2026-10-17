@@ -1,0 +1,17 @@
+[package]
+name = "winmd-tool"
+version = "0.1.0"
+edition = "2024"
+publish = false
+description = "WinUI metadata: dump winmd classes as JSON (ingestion) and run windows-bindgen (bindings)"
+
+# Standalone maintainer tool, not a workspace member: it runs offline (tools/metadata/winui/regen.sh)
+# and its outputs are checked in, so the main workspace never builds windows-bindgen.
+[workspace]
+
+[dependencies]
+windows-metadata = "=0.100.0"
+windows-bindgen = "=0.100.0"
+# The Windows SDK WinRT metadata (Windows.winmd) that windows-bindgen bundles as its `default` input.
+windows-default = "=0.100.0"
+serde_json = "1"

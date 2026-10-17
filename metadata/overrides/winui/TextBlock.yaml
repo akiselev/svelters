@@ -1,0 +1,9 @@
+class: Microsoft.UI.Xaml.Controls.TextBlock
+element:
+  text_content: Text
+props:
+  - { name: Text, test: "Count: 1", provenance: "TextBlock.Text DP (winmd ITextBlock)" }
+  - { name: FontSize, test: 18.0, provenance: "TextBlock.FontSize DP (winmd)" }
+  - { name: TextWrapping, test: Wrap, provenance: "TextBlock.TextWrapping DP: enum Microsoft.UI.Xaml.TextWrapping (winmd)" }
+  - { name: IsTextSelectionEnabled, test: true, provenance: "TextBlock.IsTextSelectionEnabled DP (winmd)" }
+  - { name: MaxLines, test: 2, provenance: "TextBlock.MaxLines DP: i32 (winmd)" }

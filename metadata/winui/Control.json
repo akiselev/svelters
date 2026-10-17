@@ -1,0 +1,544 @@
+{
+  "abstract": true,
+  "attached": [
+    {
+      "accessors": {
+        "get": "GetIsTemplateFocusTarget",
+        "set": "SetIsTemplateFocusTarget"
+      },
+      "dependency_property": true,
+      "name": "IsTemplateFocusTarget",
+      "origin": "winmd",
+      "target": {
+        "native": "Microsoft.UI.Xaml.FrameworkElement",
+        "ref": "object<Microsoft.UI.Xaml.FrameworkElement>"
+      },
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "accessors": {
+        "get": "GetIsTemplateKeyTipTarget",
+        "set": "SetIsTemplateKeyTipTarget"
+      },
+      "dependency_property": true,
+      "name": "IsTemplateKeyTipTarget",
+      "origin": "winmd",
+      "target": {
+        "native": "Microsoft.UI.Xaml.DependencyObject",
+        "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+      },
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    }
+  ],
+  "availability": {
+    "contract": "Microsoft.UI.Xaml.WinUIContract",
+    "version": 65536
+  },
+  "bases": [
+    "Microsoft.UI.Xaml.FrameworkElement",
+    "Microsoft.UI.Xaml.UIElement",
+    "Microsoft.UI.Xaml.DependencyObject"
+  ],
+  "constructors": [],
+  "content_property": null,
+  "content_property_declared": null,
+  "dependency_properties": [
+    "BackgroundProperty",
+    "BackgroundSizingProperty",
+    "BorderBrushProperty",
+    "BorderThicknessProperty",
+    "CharacterSpacingProperty",
+    "CornerRadiusProperty",
+    "DefaultStyleKeyProperty",
+    "DefaultStyleResourceUriProperty",
+    "ElementSoundModeProperty",
+    "FontFamilyProperty",
+    "FontSizeProperty",
+    "FontStretchProperty",
+    "FontStyleProperty",
+    "FontWeightProperty",
+    "ForegroundProperty",
+    "HorizontalContentAlignmentProperty",
+    "IsEnabledProperty",
+    "IsFocusEngagedProperty",
+    "IsFocusEngagementEnabledProperty",
+    "IsTemplateFocusTargetProperty",
+    "IsTemplateKeyTipTargetProperty",
+    "IsTextScaleFactorEnabledProperty",
+    "PaddingProperty",
+    "RequiresPointerProperty",
+    "TabNavigationProperty",
+    "TemplateProperty",
+    "VerticalContentAlignmentProperty"
+  ],
+  "id": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control",
+  "kind": "object",
+  "marshaling": "MarshalingType.2",
+  "methods": [
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.IControl",
+      "name": "RemoveFocusEngagement",
+      "origin": "winmd",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.IControl",
+      "name": "ApplyTemplate",
+      "origin": "winmd",
+      "params": [],
+      "returns": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    }
+  ],
+  "native": {
+    "name": "Microsoft.UI.Xaml.Controls.Control",
+    "namespace": "Microsoft.UI.Xaml.Controls",
+    "short": "Control"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IControl",
+      "name": "Background",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Media.Brush",
+        "ref": "object<Microsoft.UI.Xaml.Media.Brush>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IControl",
+      "name": "BackgroundSizing",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.BackgroundSizing",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.BackgroundSizing>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IControl",
+      "name": "BorderBrush",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Media.Brush",
+        "ref": "object<Microsoft.UI.Xaml.Media.Brush>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IControl",
+      "name": "BorderThickness",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Thickness",
+        "ref": "value<Microsoft.UI.Xaml.Thickness>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IControl",
+      "name": "CharacterSpacing",
+      "origin": "winmd",
+      "type": {
+        "native": "i32",
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IControl",
+      "name": "CornerRadius",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.CornerRadius",
+        "ref": "value<Microsoft.UI.Xaml.CornerRadius>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IControl",
+      "name": "DefaultStyleResourceUri",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Foundation.Uri",
+        "ref": "object<Windows.Foundation.Uri>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IControl",
+      "name": "ElementSoundMode",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.ElementSoundMode",
+        "ref": "enum<Microsoft.UI.Xaml.ElementSoundMode>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IControl",
+      "name": "FontFamily",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Media.FontFamily",
+        "ref": "object<Microsoft.UI.Xaml.Media.FontFamily>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IControl",
+      "name": "FontSize",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IControl",
+      "name": "FontStretch",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.UI.Text.FontStretch",
+        "ref": "enum<Windows.UI.Text.FontStretch>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IControl",
+      "name": "FontStyle",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.UI.Text.FontStyle",
+        "ref": "enum<Windows.UI.Text.FontStyle>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IControl",
+      "name": "FontWeight",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.UI.Text.FontWeight",
+        "ref": "value<Windows.UI.Text.FontWeight>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IControl",
+      "name": "Foreground",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Media.Brush",
+        "ref": "object<Microsoft.UI.Xaml.Media.Brush>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IControl",
+      "name": "HorizontalContentAlignment",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.HorizontalAlignment",
+        "ref": "enum<Microsoft.UI.Xaml.HorizontalAlignment>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IControl",
+      "name": "IsEnabled",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IControl",
+      "name": "IsFocusEngaged",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IControl",
+      "name": "IsFocusEngagementEnabled",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IControl",
+      "name": "IsTextScaleFactorEnabled",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IControl",
+      "name": "Padding",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Thickness",
+        "ref": "value<Microsoft.UI.Xaml.Thickness>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IControl",
+      "name": "RequiresPointer",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.RequiresPointer",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.RequiresPointer>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IControl",
+      "name": "TabNavigation",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Input.KeyboardNavigationMode",
+        "ref": "enum<Microsoft.UI.Xaml.Input.KeyboardNavigationMode>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IControl",
+      "name": "Template",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.ControlTemplate",
+        "ref": "object<Microsoft.UI.Xaml.Controls.ControlTemplate>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IControl",
+      "name": "VerticalContentAlignment",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.VerticalAlignment",
+        "ref": "enum<Microsoft.UI.Xaml.VerticalAlignment>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "args": "Microsoft.UI.Xaml.Controls.FocusDisengagedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.Control, Microsoft.UI.Xaml.Controls.FocusDisengagedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.IControl",
+      "name": "FocusDisengaged",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.Control"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.FocusEngagedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.FocusEngagedEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.Control, Microsoft.UI.Xaml.Controls.FocusEngagedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.IControl",
+      "name": "FocusEngaged",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.Control"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.DependencyPropertyChangedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.DependencyPropertyChangedEventArgs",
+          "name": "NewValue",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DependencyPropertyChangedEventArgs",
+          "name": "OldValue",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DependencyPropertyChangedEventArgs",
+          "name": "Property",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.DependencyProperty",
+            "ref": "object<Microsoft.UI.Xaml.DependencyProperty>"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.DependencyPropertyChangedEventHandler",
+      "interface": "Microsoft.UI.Xaml.Controls.IControl",
+      "name": "IsEnabledChanged",
+      "origin": "winmd",
+      "sender": "object"
+    }
+  ],
+  "source": {
+    "package": "microsoft.windowsappsdk.winui 2.3.9",
+    "winmd": "Microsoft.UI.Xaml.winmd"
+  },
+  "threading": "ThreadingModel.3",
+  "toolkit": "winui"
+}

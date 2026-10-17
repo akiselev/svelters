@@ -1,0 +1,17 @@
+class: Microsoft.UI.Xaml.Window
+element:
+  lifetime: toplevel
+props:
+  - { name: Title, test: "Counter", provenance: "Window.Title (winmd IWindow)" }
+slots:
+  - name: content
+    prop: Content
+    default: true
+    provenance: "[ContentProperty(Name=\"Content\")] on Window (winmd); Content: UIElement, single child"
+events:
+  - name: Closed
+    close: true
+    provenance: "Window.Closed: TypedEventHandler<object, WindowEventArgs{Handled rw}> (winmd). Setting Handled cancels the close; used for the ABI v2 close rule (veto + post while JS listens)"
+methods:
+  - { name: Activate, provenance: "Window.Activate() (winmd IWindow): shows and focuses the window" }
+  - { name: Close, provenance: "Window.Close() (winmd IWindow): raises Closed" }

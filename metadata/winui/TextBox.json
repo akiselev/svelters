@@ -1,0 +1,964 @@
+{
+  "abstract": false,
+  "attached": [],
+  "availability": {
+    "contract": "Microsoft.UI.Xaml.WinUIContract",
+    "version": 65536
+  },
+  "bases": [
+    "Microsoft.UI.Xaml.Controls.Control",
+    "Microsoft.UI.Xaml.FrameworkElement",
+    "Microsoft.UI.Xaml.UIElement",
+    "Microsoft.UI.Xaml.DependencyObject"
+  ],
+  "constructors": [
+    {
+      "id": "ctor:composable",
+      "native": "Microsoft.UI.Xaml.Controls.ITextBoxFactory.CreateInstance",
+      "origin": "winmd"
+    }
+  ],
+  "content_property": null,
+  "content_property_declared": null,
+  "dependency_properties": [
+    "AcceptsReturnProperty",
+    "CanPasteClipboardContentProperty",
+    "CanRedoProperty",
+    "CanUndoProperty",
+    "CharacterCasingProperty",
+    "DescriptionProperty",
+    "DesiredCandidateWindowAlignmentProperty",
+    "HeaderProperty",
+    "HeaderTemplateProperty",
+    "HorizontalTextAlignmentProperty",
+    "InputScopeProperty",
+    "IsColorFontEnabledProperty",
+    "IsReadOnlyProperty",
+    "IsSpellCheckEnabledProperty",
+    "IsTextPredictionEnabledProperty",
+    "MaxLengthProperty",
+    "PlaceholderForegroundProperty",
+    "PlaceholderTextProperty",
+    "PreventKeyboardDisplayOnProgrammaticFocusProperty",
+    "ProofingMenuFlyoutProperty",
+    "SelectionFlyoutProperty",
+    "SelectionHighlightColorProperty",
+    "SelectionHighlightColorWhenNotFocusedProperty",
+    "TextAlignmentProperty",
+    "TextProperty",
+    "TextReadingOrderProperty",
+    "TextWrappingProperty"
+  ],
+  "id": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox",
+  "kind": "object",
+  "marshaling": "MarshalingType.2",
+  "methods": [
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "Select",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "start",
+          "type": {
+            "native": "i32",
+            "ref": "i32"
+          }
+        },
+        {
+          "name": "length",
+          "type": {
+            "native": "i32",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "SelectAll",
+      "origin": "winmd",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "GetRectFromCharacterIndex",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "charIndex",
+          "type": {
+            "native": "i32",
+            "ref": "i32"
+          }
+        },
+        {
+          "name": "trailingEdge",
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        }
+      ],
+      "returns": {
+        "native": "Windows.Foundation.Rect",
+        "ref": "value<Windows.Foundation.Rect>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "GetLinguisticAlternativesAsync",
+      "origin": "winmd",
+      "params": [],
+      "returns": {
+        "native": "Windows.Foundation.IAsyncOperation<Windows.Foundation.Collections.IVectorView<string>>",
+        "ref": "object<Windows.Foundation.IAsyncOperation>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "Undo",
+      "origin": "winmd",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "Redo",
+      "origin": "winmd",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "PasteFromClipboard",
+      "origin": "winmd",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "CopySelectionToClipboard",
+      "origin": "winmd",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "CutSelectionToClipboard",
+      "origin": "winmd",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "ClearUndoRedoHistory",
+      "origin": "winmd",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    }
+  ],
+  "native": {
+    "name": "Microsoft.UI.Xaml.Controls.TextBox",
+    "namespace": "Microsoft.UI.Xaml.Controls",
+    "short": "TextBox"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "AcceptsReturn",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "CanPasteClipboardContent",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "CanRedo",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "CanUndo",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "CharacterCasing",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.CharacterCasing",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.CharacterCasing>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "Description",
+      "origin": "winmd",
+      "type": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "DesiredCandidateWindowAlignment",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.CandidateWindowAlignment",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.CandidateWindowAlignment>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "Header",
+      "origin": "winmd",
+      "type": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "HeaderTemplate",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.DataTemplate",
+        "ref": "object<Microsoft.UI.Xaml.DataTemplate>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "HorizontalTextAlignment",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.TextAlignment",
+        "ref": "enum<Microsoft.UI.Xaml.TextAlignment>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "InputScope",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Input.InputScope",
+        "ref": "object<Microsoft.UI.Xaml.Input.InputScope>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "IsColorFontEnabled",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "IsReadOnly",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "IsSpellCheckEnabled",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "IsTextPredictionEnabled",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "MaxLength",
+      "origin": "winmd",
+      "type": {
+        "native": "i32",
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "PlaceholderForeground",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Media.Brush",
+        "ref": "object<Microsoft.UI.Xaml.Media.Brush>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "PlaceholderText",
+      "origin": "winmd",
+      "type": {
+        "native": "string",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "PreventKeyboardDisplayOnProgrammaticFocus",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "ProofingMenuFlyout",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase",
+        "ref": "object<Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "SelectedText",
+      "origin": "winmd",
+      "type": {
+        "native": "string",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "SelectionFlyout",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase",
+        "ref": "object<Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "SelectionHighlightColor",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Media.SolidColorBrush",
+        "ref": "object<Microsoft.UI.Xaml.Media.SolidColorBrush>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "SelectionHighlightColorWhenNotFocused",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Media.SolidColorBrush",
+        "ref": "object<Microsoft.UI.Xaml.Media.SolidColorBrush>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "SelectionLength",
+      "origin": "winmd",
+      "type": {
+        "native": "i32",
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "SelectionStart",
+      "origin": "winmd",
+      "type": {
+        "native": "i32",
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "Text",
+      "origin": "winmd",
+      "type": {
+        "native": "string",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "TextAlignment",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.TextAlignment",
+        "ref": "enum<Microsoft.UI.Xaml.TextAlignment>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "TextReadingOrder",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.TextReadingOrder",
+        "ref": "enum<Microsoft.UI.Xaml.TextReadingOrder>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "TextWrapping",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.TextWrapping",
+        "ref": "enum<Microsoft.UI.Xaml.TextWrapping>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "args": "Microsoft.UI.Xaml.Controls.TextBoxBeforeTextChangingEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TextBoxBeforeTextChangingEventArgs",
+          "name": "Cancel",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TextBoxBeforeTextChangingEventArgs",
+          "name": "NewText",
+          "settable": false,
+          "type": {
+            "native": "string",
+            "ref": "string"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TextBox, Microsoft.UI.Xaml.Controls.TextBoxBeforeTextChangingEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "BeforeTextChanging",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.TextBox"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.CandidateWindowBoundsChangedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.CandidateWindowBoundsChangedEventArgs",
+          "name": "Bounds",
+          "settable": false,
+          "type": {
+            "native": "Windows.Foundation.Rect",
+            "ref": "value<Windows.Foundation.Rect>"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TextBox, Microsoft.UI.Xaml.Controls.CandidateWindowBoundsChangedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "CandidateWindowBoundsChanged",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.TextBox"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.ContextMenuEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.ContextMenuEventArgs",
+          "name": "CursorLeft",
+          "settable": false,
+          "type": {
+            "native": "f64",
+            "ref": "f64"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.ContextMenuEventArgs",
+          "name": "CursorTop",
+          "settable": false,
+          "type": {
+            "native": "f64",
+            "ref": "f64"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.ContextMenuEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.Controls.ContextMenuOpeningEventHandler",
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "ContextMenuOpening",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.TextControlCopyingToClipboardEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TextControlCopyingToClipboardEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TextBox, Microsoft.UI.Xaml.Controls.TextControlCopyingToClipboardEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "CopyingToClipboard",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.TextBox"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.TextControlCuttingToClipboardEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TextControlCuttingToClipboardEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TextBox, Microsoft.UI.Xaml.Controls.TextControlCuttingToClipboardEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "CuttingToClipboard",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.TextBox"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.TextControlPasteEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TextControlPasteEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.Controls.TextControlPasteEventHandler",
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "Paste",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.RoutedEventHandler",
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "SelectionChanged",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.TextBoxSelectionChangingEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TextBoxSelectionChangingEventArgs",
+          "name": "Cancel",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TextBoxSelectionChangingEventArgs",
+          "name": "SelectionLength",
+          "settable": false,
+          "type": {
+            "native": "i32",
+            "ref": "i32"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TextBoxSelectionChangingEventArgs",
+          "name": "SelectionStart",
+          "settable": false,
+          "type": {
+            "native": "i32",
+            "ref": "i32"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TextBox, Microsoft.UI.Xaml.Controls.TextBoxSelectionChangingEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "SelectionChanging",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.TextBox"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.TextChangedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.Controls.TextChangedEventHandler",
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "TextChanged",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.TextBoxTextChangingEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TextBoxTextChangingEventArgs",
+          "name": "IsContentChanging",
+          "settable": false,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TextBox, Microsoft.UI.Xaml.Controls.TextBoxTextChangingEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "TextChanging",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.TextBox"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.TextCompositionChangedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TextCompositionChangedEventArgs",
+          "name": "Length",
+          "settable": false,
+          "type": {
+            "native": "i32",
+            "ref": "i32"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TextCompositionChangedEventArgs",
+          "name": "StartIndex",
+          "settable": false,
+          "type": {
+            "native": "i32",
+            "ref": "i32"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TextBox, Microsoft.UI.Xaml.Controls.TextCompositionChangedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "TextCompositionChanged",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.TextBox"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.TextCompositionEndedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TextCompositionEndedEventArgs",
+          "name": "Length",
+          "settable": false,
+          "type": {
+            "native": "i32",
+            "ref": "i32"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TextCompositionEndedEventArgs",
+          "name": "StartIndex",
+          "settable": false,
+          "type": {
+            "native": "i32",
+            "ref": "i32"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TextBox, Microsoft.UI.Xaml.Controls.TextCompositionEndedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "TextCompositionEnded",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.TextBox"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.TextCompositionStartedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TextCompositionStartedEventArgs",
+          "name": "Length",
+          "settable": false,
+          "type": {
+            "native": "i32",
+            "ref": "i32"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TextCompositionStartedEventArgs",
+          "name": "StartIndex",
+          "settable": false,
+          "type": {
+            "native": "i32",
+            "ref": "i32"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TextBox, Microsoft.UI.Xaml.Controls.TextCompositionStartedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+      "name": "TextCompositionStarted",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.TextBox"
+    }
+  ],
+  "source": {
+    "package": "microsoft.windowsappsdk.winui 2.3.9",
+    "winmd": "Microsoft.UI.Xaml.winmd"
+  },
+  "threading": "ThreadingModel.3",
+  "toolkit": "winui"
+}
