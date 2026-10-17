@@ -26,7 +26,7 @@ use crate::diag::Diagnostics;
 use crate::estree::*;
 use crate::svelte::ast::Root;
 use crate::svelte::scope::analyze::ComponentScopeAnalysis;
-use crate::svelte::scope::walk::{NodeKey, NodeRef, Visitor, Walker, expr_ref, stmt_ref};
+use crate::svelte::scope::walk::{NodeKey, NodeRef, Visitor, Walker, expr_ref};
 use crate::svelte::scope::{BindingId, BindingKind, DeclarationKind, Initial, ScopeArena, ScopeId};
 use std::cell::{Cell, RefCell};
 use std::collections::{HashMap, HashSet};
@@ -55,6 +55,11 @@ pub(crate) enum T {
     Store(String),
     /// each-block item / index: a runtime source of the native each block (plain in the key fn).
     Each,
+    /// `{@const x}` (a derived) and `{:then v}` / `{:catch e}` (sources): read `$.get(x)`, not
+    /// assignable.
+    ReadOnly,
+    /// Snippet parameter: a thunk, read `x()`, not assignable.
+    Thunk,
 }
 
 /// Everything the visitors share: the analysis, options, diagnostics and generated names.
@@ -157,6 +162,8 @@ impl<'r, 'a> Ctx<'r, 'a> {
             BindingKind::StoreSub => T::Store(self.store_text(&x.node.name()[1..])),
             BindingKind::Each => T::Each,
             BindingKind::Template | BindingKind::Static if matches!(x.initial, Some(Initial::EachBlock(_))) => T::Each,
+            BindingKind::Template => T::ReadOnly,
+            BindingKind::Snippet => T::Thunk,
             _ => T::None,
         }
     }
@@ -175,8 +182,8 @@ impl<'r, 'a> Ctx<'r, 'a> {
 /// The read of `name` under transform `t`, as text.
 pub(crate) fn read_text(t: &T, name: &str) -> String {
     match t {
-        T::Source { .. } | T::Each => format!("$.get({name})"),
-        T::PropSource | T::Store(_) => format!("{name}()"),
+        T::Source { .. } | T::Each | T::ReadOnly => format!("$.get({name})"),
+        T::PropSource | T::Store(_) | T::Thunk => format!("{name}()"),
         T::PropDirect(m) => m.clone(),
         T::None => name.to_string(),
     }
@@ -410,6 +417,10 @@ impl Rewriter for ScopeRewriter<'_> {
                         self.cx.error("bind_invalid_value", id.span(), "Can only bind to state or props");
                         "void 0".to_string()
                     }
+                    T::ReadOnly | T::Thunk => {
+                        self.cx.error("bind_invalid_target", id.span(), format!("cannot bind to `{}`: it is not assignable", id.name));
+                        "void 0".to_string()
+                    }
                     T::None => format!("{} = {value}", id.name),
                 }
             }
@@ -546,9 +557,4 @@ pub fn transform_module(src: &str, program: &Program, an: &crate::svelte::scope:
     let base = filename.rsplit('/').next().unwrap_or(filename);
     let (code, map) = w.finish(filename, src, base);
     (code, map, cx.diags.into_inner())
-}
-
-#[allow(dead_code)]
-fn stmt_node(s: &Statement) -> NodeRef<'_> {
-    stmt_ref(s)
 }

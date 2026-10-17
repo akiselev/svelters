@@ -8,7 +8,7 @@ use super::{Ctx, T, is_identifier_name, read_text};
 use crate::codegen::component::{Mode, js_str};
 use crate::codegen::edit::Edits;
 use crate::estree::*;
-use crate::svelte::scope::walk::{NodeRef, Visitor, Walker, array_element_ref, expr_ref, pattern_ref, stmt_ref};
+use crate::svelte::scope::walk::{NodeRef, Visitor, Walker, array_element_ref, expr_ref, stmt_ref};
 use crate::svelte::scope::{BindingKind, DeclarationKind, Initial, ScopeId, get_rune_of_call, should_proxy};
 use std::collections::HashSet;
 use std::rc::Rc;
@@ -488,6 +488,10 @@ impl<'c, 'r, 'a> Rw<'c, 'r, 'a> {
             self.cx.error("snippet_parameter_assignment", span, "Cannot reassign or bind to snippet parameter");
             return;
         }
+        if x.kind == BindingKind::Template {
+            self.cx.error("constant_assignment", span, "Cannot assign to constant");
+            return;
+        }
         if x.declaration_kind == DeclarationKind::Import || (x.declaration_kind == DeclarationKind::Const && x.kind != BindingKind::Each) {
             let thing = if x.declaration_kind == DeclarationKind::Import { "import" } else { "constant" };
             self.cx.error("constant_assignment", span, format!("Cannot assign to {thing}"));
@@ -548,7 +552,7 @@ impl<'c, 'r, 'a> Rw<'c, 'r, 'a> {
                         },
                         if bin.is_some() { "))" } else { ")" }.to_string(),
                     ),
-                    T::Each | T::PropDirect(_) | T::None => return false,
+                    T::Each | T::PropDirect(_) | T::ReadOnly | T::Thunk | T::None => return false,
                 };
                 self.edits.overwrite(a.start, a.right.span().start, format!("{prefix}{after}"));
                 self.edits.close(a.end, suffix);
@@ -992,7 +996,7 @@ impl<'c, 'r, 'a> Rw<'c, 'r, 'a> {
         }
         match t {
             T::PropDirect(m) => self.edits.overwrite(id.start, id.end, m),
-            T::PropSource | T::Store(_) => self.edits.wrap(id.start, id.end, "", "()"),
+            T::PropSource | T::Store(_) | T::Thunk => self.edits.wrap(id.start, id.end, "", "()"),
             _ => self.edits.wrap(id.start, id.end, "$.get(", ")"),
         }
     }
@@ -1149,9 +1153,4 @@ impl<'n> Visitor<'n> for Rw<'_, '_, '_> {
         }
         w.next(self, node, &scope);
     }
-}
-
-#[allow(dead_code)]
-fn _pattern(p: &Pattern) -> NodeRef<'_> {
-    pattern_ref(p)
 }

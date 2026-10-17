@@ -403,6 +403,131 @@ export function each_block(container, collection, key, render, fallback = null) 
   });
 }
 
+/** Replaces the region's current branch: the new one is built first, then the old one goes. */
+function swap(r, owner, old, fn, ...args) {
+  const b = fn ? open(r, owner, fn, newRegion(r), ...args) : null;
+  if (old) close(old);
+  return b;
+}
+
+/**
+ * `{#key expr}`: a branch rebuilt (new natives, then the old ones removed + destroyed) whenever
+ * `getKey()` changes. Keys compare like Svelte's (SameValueZero: NaN equals NaN, objects by
+ * identity).
+ */
+export function key_block(container, getKey, render) {
+  const r = newRegion(container);
+  const owner = scope;
+  let current = null;
+  let key;
+  block(() => {
+    const k = getKey();
+    if (current && (k === key || (k !== k && key !== key))) return;
+    key = k;
+    current = swap(r, owner, current, render);
+  });
+}
+
+/**
+ * `{@render f(...)}` where `f` can change (a snippet prop): `getSnippet()` is tracked; a different
+ * function replaces the branch, a nullish one renders nothing. `args` are thunks.
+ */
+export function snippet(container, getSnippet, ...args) {
+  const r = newRegion(container);
+  const owner = scope;
+  let current = null;
+  let fn;
+  let first = true;
+  block(() => {
+    const s = getSnippet() ?? null;
+    if (!first && s === fn) return;
+    first = false;
+    fn = s;
+    current = swap(r, owner, current, s && ((anchor) => s(anchor, ...args)));
+  });
+}
+
+const PENDING = 0;
+const THEN = 1;
+const CATCH = 2;
+
+const is_promise = (v) => v != null && typeof v.then === 'function';
+
+/**
+ * `{#await}` with Svelte 5's resolution order (svelte/src/internal/client/dom/blocks/await.js):
+ * a non-promise shows `then` immediately; a promise shows nothing synchronously, `pending` from a
+ * microtask unless it has settled by then (an already-resolved promise never shows `pending`),
+ * then `then`/`catch` when it settles, unless a newer input (or teardown) superseded it. Settling
+ * into the branch already shown only updates its value source. A rejection without `catch` is
+ * rethrown (an unhandled rejection, as in Svelte). The branch switch happens in a second block
+ * effect that reads the status, so new branches are always built inside the effect tree.
+ */
+export function await_block(container, getInput, pending, then, catch_) {
+  const r = newRegion(container);
+  const owner = scope;
+  const value = $.state(undefined);
+  const error = $.state(undefined);
+  const status = $.state(-1);
+  let token = 0;
+  block(() => {
+    const input = getInput();
+    const t = ++token;
+    if (is_promise(input)) {
+      let settled = false;
+      const settle = (fn) => {
+        if (t !== token) return;
+        settled = true;
+        try {
+          fn();
+        } finally {
+          $.flush();
+        }
+      };
+      input.then(
+        (v) =>
+          settle(() => {
+            $.set(value, v);
+            $.set(status, THEN);
+          }),
+        (e) =>
+          settle(() => {
+            $.set(error, e);
+            $.set(status, CATCH);
+            if (!catch_) throw e;
+          }),
+      );
+      Promise.resolve().then(() => {
+        if (!settled && t === token) {
+          $.set(status, PENDING);
+          $.flush();
+        }
+      });
+    } else {
+      $.untrack(() => {
+        $.set(value, input);
+        $.set(status, THEN);
+      });
+    }
+    return () => {
+      token++;
+    };
+  });
+  let shown = -1;
+  let current = null;
+  block(() => {
+    const s = $.get(status);
+    if (s === shown) return;
+    shown = s;
+    const fn = s === PENDING ? pending : s === THEN ? then : s === CATCH ? catch_ : null;
+    current = swap(r, owner, current, fn, s === THEN ? value : error);
+  });
+}
+
+/** The class set of a dynamic `class` value (Svelte's clsx: strings, arrays, objects). */
+export function classes(value) {
+  return new Set($.clsx(value).split(/\s+/).filter(Boolean));
+}
+
 function openItem(r, owner, render, b, value, index) {
   b.item = $.state(value);
   b.index = $.state(index);

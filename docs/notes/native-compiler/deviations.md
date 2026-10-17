@@ -81,3 +81,56 @@ None change behaviour (90,940 / 90,940 verdicts agree with acorn 8.19.0, message
 - `extract_paths` returns only `node`, `is_rest`, `has_default_value`.
 - `Evaluation` of a cyclic expression returns the initial in-progress state; cases where upstream throws inside JS (BigInt arithmetic, `in`/`instanceof` on primitives, out-of-range `fromCodePoint`) evaluate to UNKNOWN; lone surrogates become U+FFFD; `Math.*` may differ from V8 in the last ulp.
 - `analyze.rs` omits warnings and the legacy-mode binding kinds set by other analysis visitors (`export let` props).
+
+## Native lowering of template blocks (`lower`, `codegen/component.rs`, agent T)
+
+Semantics are specified in `runtime-contract.md` "Template blocks"; departures from Svelte 5:
+
+- **`{#await}` pending in a microtask**: Svelte batches it through `queue_micro_task`; the runtime
+  uses one promise job per input. Same order relative to the promise's own reactions (registered
+  first), so an already-settled promise never shows `pending` in both.
+- **Snippet params, `{@const}`, `{:then}`/`{:catch}`**: plain identifiers only (Svelte supports
+  destructuring and parameter defaults via `$.derived`/`$.fallback`): `unsupported_feature`.
+- **Top-level snippets** are declared in the component body after the instance script (Svelte
+  hoists them so the script can reference them during initialisation; here only lazily, e.g. in
+  functions or `$derived`).
+- **`{@render}` dynamic test**: `$n.snippet` is used when the callee reads reactive state
+  (codegen's `is_reactive`); Svelte uses `node.metadata.dynamic` (callee not a non-reassigned
+  snippet declaration). Imported or plain-variable snippet functions are called directly here.
+- **`<sv-slot name>`** is not Svelte: a slot proxy for native slots (a custom-element-like tag the
+  upstream parser accepts). Spread attributes on native elements are rejected.
+- **Style matching through snippets**: a snippet body is matched with the ancestors of its
+  declaration site (Svelte's CSS pruning considers render sites).
+- **Text-content `{#if}`**: only `{#if}` (no `{#each}`/`{#key}`) folds into a text prop; branch
+  edges are trimmed.
+- `transform.rs` hook: `BindingKind::Template` reads as `$.get(x)` (read-only), `BindingKind::Snippet`
+  as a thunk `x()` (`constant_assignment` on writes).
+
+## Rune transform (`transform/*`, `compile_module`; agent R2)
+
+Follows Svelte 5.57.2's client transform (`phases/3-transform/client`) and emits the same
+runtime calls (checked by hand against `svelte/compiler` for every `tests/runes` case), but as
+span edits over the user's source instead of an AST reprint.
+
+1. **Text, not AST**: output keeps the user's formatting; generated members (class accessors,
+   destructuring declarators, `$$exports`) are written on one line. Destructuring and `$inspect`
+   output inside an edited expression is assembled as text (no finer source mapping).
+2. **Generated names** (`tmp`, `$$array`, `$$d`, `rest_excludes`) are unique per compilation
+   rather than per scope (`scope.generate`), so suffixes can differ from upstream.
+3. **`return [a, b] = x`**: upstream treats any `*Statement` parent as standalone and drops the
+   value (returns `undefined`); we only treat an `ExpressionStatement` as standalone.
+4. **`dev`** keeps `$inspect` / `$inspect().with` / `$inspect.trace` and adds `$.tag` /
+   `$.tag_proxy` labels; the other dev-only instrumentation is not emitted (`$.push(.., App)`,
+   `$.legacy_api()`, `$.check_target`, `App[$.FILENAME]`, `$.log_if_contains_state`,
+   `$.track_reactivity_loss`, `$.assign` mutation warnings, ownership validation).
+   `$inspect.trace`'s location label is `file:line:column` (1-based line, 0-based column).
+5. **Not supported** (diagnostics): async `$derived` (`await` inside, `unsupported_feature`),
+   `$host()` (`host_invalid_placement`: no custom elements), re-exports from the instance
+   script, destructuring assignments through store/prop member paths (assigned plainly).
+6. `$.push($$props, true)` is always emitted (upstream omits it when no context is needed).
+7. `$props.id()` is evaluated in place, not hoisted above `$.push` (only matters for hydration).
+8. Validation is the subset listed in `language-subset.md`, reported as diagnostics; analysis
+   errors from the scope port still abort at the first error, transform errors accumulate.
+9. Template reactivity (`is_reactive`) approximates upstream's `has_state`: any identifier bound
+   to something other than a function, a never-reassigned literal or an each index counts as
+   stateful (so `{obj.field}` with class state fields or imported proxies updates).

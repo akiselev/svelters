@@ -91,14 +91,37 @@ impl Codegen<'_, '_> {
         self.w.write(&v.to_string());
     }
 
+
+    /// `{@const}` and snippet declarations of a fragment (before its items).
+    fn decls(&mut self, f: &Fragment) {
+        for c in &f.consts {
+            self.line();
+            self.w.map(c.span.start);
+            self.w.write(&format!("const {} = $.derived(() => ", c.name));
+            self.paren_expr(c.init, Mode::Read);
+            self.w.write(");");
+        }
+        for s in &f.snippets {
+            self.snippet(s);
+        }
+    }
+
     fn fragment(&mut self, f: &Fragment, container: &str) {
+        self.decls(f);
         for item in &f.items {
-            match item {
-                Item::Element(e) => self.element(e, container),
-                Item::If(b) => self.if_block(b, container),
-                Item::Each(b) => self.each_block(b, container),
-                Item::Component(c) => self.component(c, container),
-            }
+            self.item(item, container);
+        }
+    }
+
+    fn item(&mut self, item: &Item, container: &str) {
+        match item {
+            Item::Element(e) => self.element(e, container),
+            Item::If(b) => self.if_block(b, container),
+            Item::Each(b) => self.each_block(b, container),
+            Item::Key(b) => self.key_block(b, container),
+            Item::Await(b) => self.await_block(b, container),
+            Item::Render(r) => self.render(r, container),
+            Item::Component(c) => self.component(c, container),
         }
     }
 
@@ -109,6 +132,12 @@ impl Codegen<'_, '_> {
         match &e.present {
             Some(p) => self.w.write(&format!("const {n} = $n.element({}, {});", js_str(&e.kind), js_str(p))),
             None => self.w.write(&format!("const {n} = $n.element({});", js_str(&e.kind))),
+        }
+        if let Some(c) = &e.class_expr {
+            self.line();
+            self.w.write(&format!("const c{} = $.derived(() => $n.classes(", e.id + 1));
+            self.dynamic(c);
+            self.w.write("));");
         }
         for op in &e.ops {
             self.op(&n, op);
@@ -121,20 +150,22 @@ impl Codegen<'_, '_> {
     }
 
     fn fragment_children(&mut self, f: &Fragment, parent: &str) {
+        // snippets declared among an element's children get their own JS block scope
+        let scoped = !f.snippets.is_empty() || !f.consts.is_empty();
+        if scoped {
+            self.line();
+            self.w.write("{");
+            self.w.indent();
+        }
+        self.decls(f);
         for item in &f.items {
-            let slot = match item {
-                Item::Element(e) => &e.slot,
-                Item::If(b) => &b.slot,
-                Item::Each(b) => &b.slot,
-                Item::Component(c) => &c.slot,
-            };
-            let c = format!("$n.slot({parent}, {})", slot.as_deref().map_or("null".to_string(), js_str));
-            match item {
-                Item::Element(e) => self.element(e, &c),
-                Item::If(b) => self.if_block(b, &c),
-                Item::Each(b) => self.each_block(b, &c),
-                Item::Component(cc) => self.component(cc, &c),
-            }
+            let c = format!("$n.slot({parent}, {})", item.slot().as_deref().map_or("null".to_string(), js_str));
+            self.item(item, &c);
+        }
+        if scoped {
+            self.w.dedent();
+            self.line();
+            self.w.write("}");
         }
     }
 
@@ -226,41 +257,66 @@ impl Codegen<'_, '_> {
         }
     }
 
+
     fn cond(&mut self, c: &Cond) {
-        for (i, e) in c.iter().enumerate() {
+        for (i, a) in c.iter().enumerate() {
             if i > 0 {
                 self.w.write(" && ");
             }
-            self.w.write("!!");
-            self.paren_expr(e, Mode::Read);
+            match a {
+                CondAtom::Expr(e) => {
+                    self.w.write("!!");
+                    self.paren_expr(e, Mode::Read);
+                }
+                CondAtom::Class { element, class } => self.w.write(&format!("$.get(c{}).has({})", element + 1, js_str(class))),
+            }
         }
+    }
+
+    fn parts_reactive(&self, parts: &[TemplatePart]) -> bool {
+        parts.iter().any(|p| match p {
+            TemplatePart::Text(_) => false,
+            TemplatePart::Expr(e) => self.rw.is_reactive(e),
+            TemplatePart::If { test, consequent, alternate } => self.rw.is_reactive(test) || self.parts_reactive(consequent) || self.parts_reactive(alternate),
+        })
     }
 
     fn dynamic_reactive(&self, d: &Dynamic) -> bool {
         match d {
             Dynamic::Expr(e) => self.rw.is_reactive(e),
-            Dynamic::Template(parts) => parts.iter().any(|p| matches!(p, TemplatePart::Expr(e) if self.rw.is_reactive(e))),
+            Dynamic::Template(parts) => self.parts_reactive(parts),
         }
     }
 
     fn dynamic(&mut self, d: &Dynamic) {
         match d {
             Dynamic::Expr(e) => self.expr_text(e, Mode::Read),
-            Dynamic::Template(parts) => {
-                self.w.write("`");
-                for p in parts {
-                    match p {
-                        TemplatePart::Text(t) => self.w.write(&escape_template(t)),
-                        TemplatePart::Expr(e) => {
-                            self.w.write("${");
-                            self.paren_expr(e, Mode::Read);
-                            self.w.write(" ?? ''}");
-                        }
-                    }
+            Dynamic::Template(parts) => self.template(parts),
+        }
+    }
+
+    fn template(&mut self, parts: &[TemplatePart]) {
+        self.w.write("`");
+        for p in parts {
+            match p {
+                TemplatePart::Text(t) => self.w.write(&escape_template(t)),
+                TemplatePart::Expr(e) => {
+                    self.w.write("${");
+                    self.paren_expr(e, Mode::Read);
+                    self.w.write(" ?? ''}");
                 }
-                self.w.write("`");
+                TemplatePart::If { test, consequent, alternate } => {
+                    self.w.write("${(");
+                    self.expr_text(test, Mode::Read);
+                    self.w.write(") ? ");
+                    self.template(consequent);
+                    self.w.write(" : ");
+                    self.template(alternate);
+                    self.w.write("}");
+                }
             }
         }
+        self.w.write("`");
     }
 
     fn handler(&mut self, h: &Expression) {
@@ -338,15 +394,130 @@ impl Codegen<'_, '_> {
         }
     }
 
+
+    /// `($$anchor, extra) => { body }`, or `null`.
+    fn branch_fn(&mut self, f: Option<&Fragment>, extra: Option<&str>) {
+        let Some(f) = f else {
+            self.w.write("null");
+            return;
+        };
+        match extra {
+            Some(x) => self.w.write(&format!("($$anchor, {x}) => {{")),
+            None => self.w.write("($$anchor) => {"),
+        }
+        self.w.indent();
+        self.fragment(f, "$$anchor");
+        self.w.dedent();
+        self.line();
+        self.w.write("}");
+    }
+
+    fn key_block(&mut self, b: &KeyBlock, container: &str) {
+        self.line();
+        self.w.map(b.span.start);
+        self.w.write(&format!("$n.key_block({container}, () => "));
+        self.paren_expr(b.key, Mode::Read);
+        self.w.write(", ");
+        self.branch_fn(Some(&b.body), None);
+        self.w.write(");");
+    }
+
+    fn await_block(&mut self, b: &AwaitBlock, container: &str) {
+        self.line();
+        self.w.map(b.span.start);
+        self.w.write(&format!("$n.await_block({container}, () => "));
+        self.paren_expr(b.expression, Mode::Read);
+        self.w.write(", ");
+        self.branch_fn(b.pending.as_ref(), None);
+        self.w.write(", ");
+        self.branch_fn(b.then.as_ref(), Some(b.value.as_deref().unwrap_or("$$value")));
+        self.w.write(", ");
+        self.branch_fn(b.catch.as_ref(), Some(b.error.as_deref().unwrap_or("$$error")));
+        self.w.write(");");
+    }
+
+    /// `const name = ($$anchor, a = $.noop) => { body };` (Svelte's snippet shape).
+    fn snippet(&mut self, s: &Snippet) {
+        self.line();
+        self.w.map(s.span.start);
+        let params: String = s.params.iter().map(|p| format!(", {p} = $.noop")).collect();
+        self.w.write(&format!("const {} = ($$anchor{params}) => {{", s.name));
+        self.w.indent();
+        self.fragment(&s.body, "$$anchor");
+        self.w.dedent();
+        self.line();
+        self.w.write("};");
+    }
+
+    fn render(&mut self, r: &RenderCall, container: &str) {
+        self.line();
+        self.w.map(r.span.start);
+        if self.rw.is_reactive(r.callee) {
+            // the snippet function itself can change (a prop): re-render when it does
+            self.w.write(&format!("$n.snippet({container}, () => "));
+            if r.optional {
+                self.paren_expr(r.callee, Mode::Read);
+                self.w.write(" ?? $.noop");
+            } else {
+                self.expr_text(r.callee, Mode::Read);
+            }
+        } else {
+            self.paren_expr(r.callee, Mode::Read);
+            self.w.write(if r.optional { "?.(" } else { "(" });
+            self.w.write(&format!("$n.region({container})"));
+        }
+        for a in &r.args {
+            self.w.write(", () => ");
+            self.paren_expr(a, Mode::Read);
+        }
+        self.w.write(");");
+    }
+
     fn component(&mut self, c: &ComponentCall, container: &str) {
+        let scoped = !c.snippets.is_empty() || !c.consts.is_empty();
+        if scoped {
+            self.line();
+            self.w.write("{");
+            self.w.indent();
+            for k in &c.consts {
+                self.line();
+                self.w.map(k.span.start);
+                self.w.write(&format!("const {} = $.derived(() => ", k.name));
+                self.paren_expr(k.init, Mode::Read);
+                self.w.write(");");
+            }
+            for s in &c.snippets {
+                self.snippet(s);
+            }
+        }
         self.line();
         self.w.map(c.span.start);
-        self.w.write(&format!("{}($n.region({container}), {{", c.name));
-        for (i, p) in c.props.iter().enumerate() {
-            if i > 0 {
-                self.w.write(",");
+        self.w.write(&format!("{}($n.region({container}), ", c.name));
+        let spread = c.props.iter().any(|p| matches!(p, ComponentProp::Spread(_)));
+        if spread {
+            self.w.write("$.spread_props(");
+        }
+        // `$.spread_props(obj, () => spread, obj, ...)` / a single object literal
+        let mut st = PropsState { open: false, first_arg: true, first_entry: true };
+        for p in &c.props {
+            if let ComponentProp::Spread(e) = p {
+                if st.open {
+                    self.w.write(" }");
+                    st.open = false;
+                }
+                if !st.first_arg {
+                    self.w.write(", ");
+                }
+                st.first_arg = false;
+                if self.rw.is_reactive(e) {
+                    self.w.write("() => ");
+                    self.paren_expr(e, Mode::Read);
+                } else {
+                    self.expr_text(e, Mode::Read);
+                }
+                continue;
             }
-            self.w.write(" ");
+            self.prop_entry(&mut st);
             match p {
                 ComponentProp::Static { name, value } => {
                     self.w.write(&format!("{}: ", js_key(name)));
@@ -363,11 +534,70 @@ impl Codegen<'_, '_> {
                     let set = self.rw.assign(target, "$$value");
                     self.w.write(&format!("; }}, set {}($$value) {{ {set}; }}", js_key(name)));
                 }
+                ComponentProp::Spread(_) => unreachable!(),
             }
         }
-        self.w.write(" });");
+        let mut slots = Vec::new();
+        for s in &c.snippets {
+            self.prop_entry(&mut st);
+            self.w.write(&format!("{}: {}", js_key(&s.name), s.name));
+            slots.push(if s.name == "children" { "default".to_string() } else { s.name.clone() });
+        }
+        if let Some(ch) = &c.children {
+            self.prop_entry(&mut st);
+            self.w.write("children: ($$anchor, $$slotProps) => {");
+            self.w.indent();
+            self.fragment(ch, "$$anchor");
+            self.w.dedent();
+            self.line();
+            self.w.write("}");
+            slots.push("default".to_string());
+        }
+        if !slots.is_empty() {
+            self.prop_entry(&mut st);
+            let s: Vec<String> = slots.iter().map(|s| format!("{}: true", js_key(s))).collect();
+            self.w.write(&format!("$$slots: {{ {} }}", s.join(", ")));
+        }
+        if st.open {
+            self.w.write(" }");
+        } else if st.first_arg {
+            self.w.write("{}");
+        }
+        if spread {
+            self.w.write(")");
+        }
+        self.w.write(");");
+        if scoped {
+            self.w.dedent();
+            self.line();
+            self.w.write("}");
+        }
+    }
+
+    fn prop_entry(&mut self, st: &mut PropsState) {
+        if !st.open {
+            if !st.first_arg {
+                self.w.write(", ");
+            }
+            self.w.write("{");
+            st.open = true;
+            st.first_arg = false;
+            st.first_entry = true;
+        }
+        if !st.first_entry {
+            self.w.write(",");
+        }
+        self.w.write(" ");
+        st.first_entry = false;
     }
 }
+
+struct PropsState {
+    open: bool,
+    first_arg: bool,
+    first_entry: bool,
+}
+
 
 pub fn js_str(s: &str) -> String {
     serde_json::to_string(s).expect("string serializes")
