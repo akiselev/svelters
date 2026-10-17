@@ -294,7 +294,31 @@ impl BackendSemantics for SpecBackend {
             .suggest(closest(stripped, names).into_iter().map(|s| format!("on{s}")).collect()))
     }
 
-    fn plan_binding(&self, el: &ElementRef, prop: &str) -> Result<BindingPlan, Unresolved> {
+    fn plan_binding(&self, el: &ElementRef, name: &str) -> Result<BindingPlan, Unresolved> {
+        let chain = self.chain(el);
+        let found = chain
+            .iter()
+            .find_map(|(_, k)| k.bindings.get(name))
+            .or_else(|| {
+                let js = self.find_prop(el, name).map(|p| p.js.as_str())?;
+                chain.iter().flat_map(|(_, k)| k.bindings.values()).find(|b| b.property == js)
+            });
+        if let Some(b) = found {
+            let p = self.find_prop(el, &b.property).expect("binding property is in the chain (generator-checked)");
+            return Ok(BindingPlan {
+                prop: p.js.clone(),
+                prop_type: p.ty,
+                signal: b.event.clone(),
+                value: b.value,
+                echo: b.echo,
+                direction: b.direction,
+                compare_before_set: b.compare_before_set,
+                read_back: b.read_back,
+                natively_normalizes: b.natively_normalizes,
+                sync_signals_on_set: b.sync_signals_on_set.clone(),
+            });
+        }
+        let prop = name;
         let p = self.property(el, prop)?;
         if !p.writable || !p.readable {
             return Err(Unresolved::new(
@@ -302,12 +326,9 @@ impl BackendSemantics for SpecBackend {
                 format!("bind:{prop}: `{}` of <{}> is not readable and writable", p.js, el.tag),
             ));
         }
-        if let Some(b) = self.chain(el).into_iter().find_map(|(_, k)| k.bindings.get(&p.js)) {
-            return Ok(BindingPlan { prop: p.js.clone(), prop_type: p.ty, signal: b.event.clone(), value: b.value, echo: b.echo });
-        }
         let why = match &p.notify {
             Some(n) if self.find_signal(el, n).is_some() => format!(
-                "`{n}` exists, but the spec declares no binding for `{}` (add a `bindings` rule in metadata/semantics/rules/{}.yaml)",
+                "`{n}` exists, but no binding is declared for `{}` (add a `bindings` annotation in metadata/overrides/{})",
                 p.js, self.spec.backend
             ),
             Some(n) => format!(
@@ -456,7 +477,9 @@ impl BackendSemantics for SpecBackend {
                 Ok(StaticValue::Float(f))
             }
             PropType::String => Ok(StaticValue::Str(s.to_string())),
-            PropType::List if prop.of.as_deref() == Some("string") => Ok(StaticValue::Str(s.to_string())),
+            PropType::List if prop.of.as_deref() == Some("string") => {
+                Ok(StaticValue::StrList(s.split_ascii_whitespace().map(str::to_string).collect()))
+            }
             PropType::Enum => match &prop.values {
                 Some(vals) if vals.iter().any(|v| v == s) => Ok(StaticValue::Enum(s.to_string())),
                 Some(vals) => {
@@ -467,25 +490,26 @@ impl BackendSemantics for SpecBackend {
                 None => Ok(StaticValue::Enum(s.to_string())),
             },
             PropType::Flags => {
-                let bits = prop.bits.as_ref();
+                let Some(values) = &prop.values else {
+                    return Err(format!("`{name}`: flags of {} cannot be named statically", prop.enum_type.as_deref().unwrap_or("?")));
+                };
                 let mut nicks = Vec::new();
-                let mut total = 0u64;
+                let mut total = prop.bits.as_ref().map(|_| 0u64);
                 for n in s.split(|c: char| c == '|' || c.is_ascii_whitespace()).filter(|n| !n.is_empty()) {
-                    match bits.map(|b| b.get(n)) {
-                        Some(Some(v)) => total |= v,
-                        Some(None) => {
-                            let names = bits.unwrap().keys().map(|k| k.as_str());
-                            return Err(format!("`{name}`: {n:?} is not a flag (did you mean {:?}?)", closest(n, names)));
-                        }
-                        None => return Err(format!("`{name}`: flags of {} cannot be named statically", prop.enum_type.as_deref().unwrap_or("?"))),
+                    if !values.iter().any(|v| v == n) {
+                        return Err(format!("`{name}`: {n:?} is not a flag (did you mean {:?}?)", closest(n, values.iter().map(|v| v.as_str()))));
+                    }
+                    if let (Some(t), Some(b)) = (total.as_mut(), prop.bits.as_ref().and_then(|b| b.get(n))) {
+                        *t |= b;
                     }
                     nicks.push(n.to_string());
                 }
                 Ok(StaticValue::Flags { nicks, bits: total })
             }
-            PropType::Object | PropType::List | PropType::Other => {
-                Err(format!("`{name}` takes {} and cannot be set from a string attribute", prop.of.as_deref().unwrap_or("a native value")))
-            }
+            PropType::Object | PropType::List | PropType::Record | PropType::Boxed | PropType::Other => Err(format!(
+                "`{name}` takes {} and cannot be set from a string attribute; pass an expression",
+                prop.type_ref.as_deref().or(prop.of.as_deref()).unwrap_or("a native value")
+            )),
         }
     }
 }

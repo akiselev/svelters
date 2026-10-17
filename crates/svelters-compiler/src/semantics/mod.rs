@@ -11,7 +11,7 @@ pub mod spec;
 
 pub use backend::SpecBackend;
 pub use spec::{
-    BindingValue, Contract, Echo, HandlerResult, Lifetime, PropType, PropertySpec, SignalSpec, SlotOrder, Spec,
+    BindingDirection, BindingValue, Contract, Echo, HandlerResult, Lifetime, PropType, PropertySpec, SignalSpec, SlotOrder, Spec,
     ValueKind,
 };
 
@@ -125,11 +125,17 @@ pub struct EventSpec {
 /// Two-way binding plan (`$n.bind(node, prop, signal, arg, get, set)`).
 #[derive(Debug, Clone, PartialEq)]
 pub struct BindingPlan {
+    /// JS name of the bound property (what `$n.bind` writes).
     pub prop: String,
     pub prop_type: PropType,
     pub signal: String,
     pub value: BindingValue,
     pub echo: Echo,
+    pub direction: BindingDirection,
+    pub compare_before_set: bool,
+    pub read_back: bool,
+    pub natively_normalizes: bool,
+    pub sync_signals_on_set: Vec<String>,
 }
 
 impl BindingPlan {
@@ -174,8 +180,11 @@ pub enum StaticValue {
     Str(String),
     /// Enum nick (both backends take enums as names).
     Enum(String),
-    /// Flags nicks and their combined bit value (the host takes the number).
-    Flags { nicks: Vec<String>, bits: u64 },
+    /// Flags names, plus their combined bit value when the spec knows it (GTK). The host takes the
+    /// name array (ABI v3), so `bits` is informational.
+    Flags { nicks: Vec<String>, bits: Option<u64> },
+    /// A list of strings (GTK `css-classes`; ABI v3 passes it as an array).
+    StrList(Vec<String>),
 }
 
 impl StaticValue {
@@ -188,7 +197,8 @@ impl StaticValue {
             StaticValue::Int(i) => J::from(*i),
             StaticValue::Float(f) => serde_json::Number::from_f64(*f).map_or(J::Null, J::Number),
             StaticValue::Str(s) | StaticValue::Enum(s) => J::String(s.clone()),
-            StaticValue::Flags { bits, .. } => J::from(*bits),
+            StaticValue::Flags { nicks, .. } => J::Array(nicks.iter().cloned().map(J::String).collect()),
+            StaticValue::StrList(l) => J::Array(l.iter().cloned().map(J::String).collect()),
         }
     }
 }
@@ -198,7 +208,7 @@ impl StaticValue {
 pub enum StyleLowering {
     /// `$n.set(node, prop, value)`.
     SetProp { prop: String, value: StaticValue },
-    /// `$n.token(node, prop, token, true)` on a space-separated token list prop.
+    /// `$n.token(node, prop, token, true)` on a token list prop (`list<string>`, e.g. GTK `cssClasses`).
     AddToken { prop: String, token: String },
     /// A `native_intent` declaration: the backend's convention for `intent`; `actions` are
     /// `SetProp`/`AddToken` (empty: leave the native default).
@@ -231,7 +241,7 @@ pub trait BackendSemantics {
     }
     /// An event attribute: `onclick`, `click`, `onclose-request`, a signal or `js_event` name.
     fn event(&self, el: &ElementRef, attr: &str) -> Result<EventSpec, Unresolved>;
-    /// `bind:prop` — only where the spec declares a binding.
+    /// `bind:<name>` — only where the spec declares a binding (by binding name or property).
     fn plan_binding(&self, el: &ElementRef, prop: &str) -> Result<BindingPlan, Unresolved>;
     /// Routing order: explicit slot -> kind routing -> default slot.
     fn place_child(&self, parent: &ElementRef, child: &ElementRef, requested_slot: Option<&str>) -> Result<SlotPlan, Unresolved>;

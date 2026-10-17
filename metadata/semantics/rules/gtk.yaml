@@ -28,12 +28,7 @@ kinds:
       changed:
         args: [{ name: text, type: string }]
         provenance: "svelters-gtk backend contract (P5 fix 2): `changed` delivers [text], matching Qt"
-    bindings:
-      text:
-        event: changed
-        value: { arg: 0 }
-        echo: backend_blocks
-        provenance: "Editable:text echo_suppress [changed, notify::text] in metadata; GtkEntry re-notifies identical sets (signals-and-slots §1.6), so the runtime also compares"
+    # bind:text comes from the `bindings` annotation in metadata/overrides/gtk/Entry.yaml.
 
 # GTK defaults come from GParamSpec (metadata/gtk/*.json); entries here override or fill gaps.
 defaults: {}

@@ -69,6 +69,11 @@ pub enum PropType {
     Flags,
     Object,
     List,
+    /// ABI v3 record (`Rect`, `Size`, `Color`, ...); `of` names it.
+    Record,
+    /// ABI v3 boxed value (`QIcon`, `QKeySequence`, a GTK boxed type); `of` names it.
+    Boxed,
+    /// No static form (date, time, variant, pointer, ...): only dynamic values.
     Other,
 }
 
@@ -109,9 +114,12 @@ pub struct PropertySpec {
     /// Enum/flags type id.
     #[serde(default, rename = "enum")]
     pub enum_type: Option<String>,
-    /// Object: kind id; list: item type.
+    /// Object: kind id; list: item type; record/boxed: type name.
     #[serde(default)]
     pub of: Option<String>,
+    /// The neutral type ref (`record<Rect>`, `list<string>`, `date`, ...) for non-scalar types.
+    #[serde(default, rename = "ref")]
+    pub type_ref: Option<String>,
     #[serde(default)]
     pub range: Option<Range>,
     #[serde(default, rename = "virtual")]
@@ -190,11 +198,33 @@ impl<'de> Deserialize<'de> for BindingValue {
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum BindingDirection {
+    TwoWay,
+    ReadOnly,
+}
+
+/// A `bind:<name>` binding, from the `bindings` annotations (docs/notes/fork-bindings.md section 6).
 #[derive(Debug, Clone, Deserialize)]
 pub struct BindingSpec {
+    /// JS name of the bound property.
+    pub property: String,
+    pub direction: BindingDirection,
+    /// The change signal the binding listens to (host name).
     pub event: String,
     pub value: BindingValue,
     pub echo: Echo,
+    /// Compare with the last value before writing (GtkEntry re-notifies identical text).
+    pub compare_before_set: bool,
+    /// Read the property back after a write and converge state to it.
+    pub read_back: bool,
+    /// The native side clamps/validates writes.
+    pub natively_normalizes: bool,
+    /// Signals a programmatic set emits synchronously (the echo guard covers them).
+    pub sync_signals_on_set: Vec<String>,
+    /// `on_native_death`, `on_stale_update`, `on_destroy`.
+    pub lifetime: BTreeMap<String, String>,
     #[serde(default)]
     pub provenance: String,
 }

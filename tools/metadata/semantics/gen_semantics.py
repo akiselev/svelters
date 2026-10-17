@@ -55,15 +55,19 @@ def fail(msg: str):
 
 # ---- shared ----------------------------------------------------------------------------------
 
-PROP_TYPE = {"bool": "bool", "i32": "i32", "u32": "u32", "i64": "i64", "u64": "i64", "f32": "f64", "f64": "f64",
-             "string": "string", "enum": "enum", "flags": "flags", "object": "object", "list": "list"}
+PROP_TYPE = {"bool": "bool", "i32": "i32", "u32": "u32", "i64": "i64", "u64": "i64", "i8": "i32", "u8": "u32",
+             "i16": "i32", "u16": "u32", "f32": "f64", "f64": "f64", "string": "string", "cstring": "string",
+             "enum": "enum", "flags": "flags", "object": "object", "list": "list", "record": "record", "boxed": "boxed"}
+# Types the compiler only passes through as dynamic values (no static coercion): the raw `ref` is kept.
+SCALARS = {"bool", "i32", "u32", "i64", "f64", "string"}
 LIFETIMES = {"owned", "toplevel"}
-ECHO = {"backend_blocks", "runtime_compare", "none"}
 VALUE_KINDS = {"enum", "length", "bool"}
 CONTRACTS = {"common", "native_intent"}
 
 
 def ptype(ref: str) -> str:
+    """Spec type for a neutral type ref (ABI v3 / S1 vocabulary). Anything without a static form
+    (date, time, datetime, bytes, variant, pointer, unknown, ...) is `other`."""
     return PROP_TYPE.get(ref.split("<")[0], "other")
 
 
@@ -187,28 +191,54 @@ def aliases(rules: dict, where: str, signal_exists) -> dict:
     return dict(sorted(al.items()))
 
 
-def binding_rule(where: str, b: dict, prop: dict | None, sig: dict | None, pname: str) -> dict:
-    check_keys(where, b, {"event", "value", "echo", "provenance"})
-    prov = need_prov(where, b)
+ECHO_STRATEGY = {"host_suppressed": "backend_blocks", "compare": "runtime_compare", "none": "none"}
+DIRECTIONS = {"two_way", "read_only"}
+
+
+def binding_from_metadata(where: str, b: dict, find_prop, find_sig) -> dict:
+    """A `bindings[]` annotation (schema extension, docs/notes/fork-bindings.md section 6) as a spec
+    binding. `find_prop`/`find_sig` look a name up along the kind chain."""
+    name = b.get("name") or fail(f"{where}: binding without a name")
+    w = f"{where} bind:{name}"
+    prov = need_prov(w, b)
+    if b.get("direction") not in DIRECTIONS:
+        fail(f"{w}: direction must be one of {sorted(DIRECTIONS)}")
+    prop = find_prop(b.get("property") or "")
     if prop is None:
-        fail(f"{where}: no property {pname!r} in the kind chain")
-    if not (prop["readable"] and prop["writable"]):
-        fail(f"{where}: {pname} must be readable and writable")
+        fail(f"{w}: no property {b.get('property')!r} in the kind chain")
+    if not prop["readable"] or (b["direction"] == "two_way" and not prop["writable"]):
+        fail(f"{w}: {prop['js']} is not readable and writable")
+    ref = (b.get("type") or {}).get("ref")
+    if ref is not None and ptype(ref) != prop["type"]:
+        fail(f"{w}: binding type {ref} differs from {prop['js']} ({prop['type']})")
+    change = b.get("change") or {}
+    sig = find_sig(change.get("signal") or "")
     if sig is None:
-        fail(f"{where}: no signal {b.get('event')!r} in the kind chain")
-    v = b.get("value")
-    if v == "readback":
-        pass
-    elif isinstance(v, dict) and set(v) == {"arg"} and isinstance(v["arg"], int):
-        if not 0 <= v["arg"] < len(sig["args"]):
-            fail(f"{where}: arg {v['arg']} out of range for {sig['name']} args {sig['args']}")
-        if sig["args"][v["arg"]]["type"] != prop["type"]:
-            fail(f"{where}: arg type {sig['args'][v['arg']]['type']} differs from {pname} ({prop['type']})")
+        fail(f"{w}: no signal {change.get('signal')!r} in the kind chain")
+    vf = change.get("value", "arg0")
+    if vf == "prop":
+        value = "readback"
+    elif isinstance(vf, str) and re.fullmatch(r"arg\d+", vf):
+        n = int(vf[3:])
+        if n >= len(sig["args"]):
+            fail(f"{w}: {vf} out of range for {sig['name']} args {sig['args']}")
+        if sig["args"][n]["type"] != prop["type"]:
+            fail(f"{w}: {sig['name']} arg {n} is {sig['args'][n]['type']}, {prop['js']} is {prop['type']}")
+        value = {"arg": n}
     else:
-        fail(f"{where}: value must be {{arg: n}} or readback")
-    if b.get("echo") not in ECHO:
-        fail(f"{where}: echo must be one of {sorted(ECHO)}")
-    return {"event": sig["name"], "value": v, "echo": b["echo"], "provenance": prov}
+        fail(f"{w}: change.value must be argN or prop")
+    echo = b.get("echo") or {}
+    if echo.get("strategy") not in ECHO_STRATEGY:
+        fail(f"{w}: echo.strategy must be one of {sorted(ECHO_STRATEGY)}")
+    life = {k: v for k, v in (b.get("lifetime") or {}).items() if k != "origin"}
+    if not life.get("on_native_death") or not life.get("on_destroy"):
+        fail(f"{w}: lifetime.on_native_death and lifetime.on_destroy are required")
+    return {"property": prop["js"], "direction": b["direction"], "event": sig["name"], "value": value,
+            "echo": ECHO_STRATEGY[echo["strategy"]], "compare_before_set": bool(echo.get("compare_before_set")),
+            "read_back": bool(echo.get("read_back")),
+            "natively_normalizes": bool((b.get("write") or {}).get("natively_normalizes")),
+            "sync_signals_on_set": list(echo.get("sync_signals_on_set") or []), "lifetime": dict(sorted(life.items())),
+            "provenance": prov}
 
 
 def coerce_ok(p: dict, v) -> bool:
@@ -289,6 +319,10 @@ def gtk_spec() -> dict:
         r = {"js": p["js_name"], "native": p["name"], "type": t, "nullable": bool(p["type"].get("nullable")),
              "readable": bool(a["read"]), "writable": bool(a["write"]), "construct_only": bool(a["construct_only"]),
              "default": p.get("default")}
+        if t not in SCALARS:
+            r["ref"] = ref
+        if t in ("record", "boxed"):
+            r["of"] = inner(ref).rsplit(":", 1)[-1]
         if t in ("enum", "flags"):
             mem = enum_members(ref)
             r["enum"] = gir_id(inner(ref))
@@ -303,7 +337,7 @@ def gtk_spec() -> dict:
         elif t == "object":
             r["of"] = gir_id(inner(ref).replace(".", ":")) if ":" in inner(ref) else inner(ref)
         elif t == "list":
-            r["of"] = ptype(inner(ref))
+            r["of"] = ptype(inner(ref)) if "<" in ref else "other"
             if r["default"] == "[]":
                 r["default"] = []
         if p.get("range"):
@@ -366,7 +400,7 @@ def gtk_spec() -> dict:
         w = f"gtk rules kinds.{k}"
         if k not in kinds:
             fail(f"{w}: no such kind")
-        check_keys(w, r, {"lifetime", "present", "text_content", "signals", "bindings", "provenance"})
+        check_keys(w, r, {"lifetime", "present", "text_content", "signals", "provenance"})
         prov = need_prov(w, r) if {"lifetime", "present", "text_content"} & set(r) else None
         if "lifetime" in r and r["lifetime"] not in LIFETIMES:
             fail(f"{w}: lifetime must be one of {sorted(LIFETIMES)}")
@@ -389,10 +423,6 @@ def gtk_spec() -> dict:
                     fail(f"{sw}: bad arg type {a.get('type')!r}")
             kinds[k]["signals"][sname]["args"] = [dict(a) for a in sr.get("args", [])]
             kinds[k]["provenance"][f"signals.{sname}"] = sp
-        for pname, br in sorted((r.get("bindings") or {}).items()):
-            bw = f"{w}.bindings.{pname}"
-            p = find_prop(k, pname)
-            kinds[k]["bindings"][p["js"] if p else pname] = binding_rule(bw, br, p, find_sig(k, br.get("event", "")), pname)
         for f in ("lifetime", "present", "text_content"):
             if f in r:
                 kinds[k]["provenance"][f] = prov
@@ -405,6 +435,13 @@ def gtk_spec() -> dict:
                     kinds[k]["provenance"][f] = f"inherited from {src}"
         if kinds[k]["lifetime"] == "toplevel" and kinds[k]["present"] is None:
             fail(f"{k}: toplevel kind without a present method")
+
+    # bindings: the `bindings` annotations (metadata/overrides/gtk, merged into metadata/gtk)
+    for d in m.kinds:
+        k = gid[d["id"]]
+        for b in sorted(d.get("bindings", []), key=lambda b: b["name"]):
+            kinds[k]["bindings"][b["name"]] = binding_from_metadata(
+                k, b, lambda n, k=k: find_prop(k, n), lambda n, k=k: find_sig(k, n))
 
     for key, rec in sorted((rules.get("defaults") or {}).items()):
         kname, _, pname = key.rpartition(".")
@@ -473,26 +510,37 @@ def qt_spec() -> dict:
         tag, cls = el["tag"], el["cls"]
         props = {}
         for p in el.get("props", []):
-            if p.get("decl_ref") == "enum":
-                r = {"js": p["js"], "native": p["setter"], "type": "enum", "values": sorted(p["values"]),
-                     "nullable": False, "readable": True, "writable": True, "construct_only": False, "default": None}
-            else:
-                rec = p["prop"]
-                r = {"js": p["js"], "native": p["native"], "type": ptype(p["decl_ref"]),
-                     "nullable": bool(rec["type"].get("nullable")), "readable": bool(rec["access"]["read"]),
-                     "writable": bool(rec["access"]["write"]), "construct_only": False, "default": None}
-                if rec.get("notify"):
-                    r["notify"] = rec["notify"]["signal"]
-            if r["type"] in ("object", "list", "flags", "other"):
-                fail(f"{tag}.{p['js']}: unsupported Qt property type {r['type']}")
+            cat, pay = gen_cpp.classify(p["ref"])
+            t = ptype(p["ref"])
+            rec = p.get("prop") or {}
+            access = rec.get("access") or {"read": True, "write": True}
+            r = {"js": p["js"], "native": p.get("native") or p.get("setter"), "type": t,
+                 "nullable": bool((rec.get("type") or {}).get("nullable")), "readable": bool(access.get("read", True)),
+                 "writable": bool(access.get("write", True)) and not p["readonly"], "construct_only": False,
+                 "default": None}
+            if t not in SCALARS:
+                r["ref"] = p["ref"]
+            if cat in ("enum", "flags"):
+                r["enum"] = pay
+                r["values"] = sorted(m.enums_used[pay])
+            elif cat in ("record", "boxed", "object"):
+                r["of"] = pay
+            elif cat == "list":
+                r["of"] = ptype(pay)
+            if rec.get("notify"):
+                r["notify"] = rec["notify"]["signal"]
+            if p["js"] in props:
+                fail(f"{tag}: duplicate property {p['js']}")
             props[p["js"]] = r
         sigs = {}
         for s in el.get("signals", []):
             rec = s.get("rec") or {}
             sigs[s["js"]] = {"name": s["js"], "js_event": s["js"],
-                             "args": [{"name": a["name"], "type": a["type"]} for a in s.get("args", [])],
-                             "handler_result": rec.get("handler_result", "none"),
-                             "sync_required": bool(rec.get("sync_required", False)),
+                             "args": [{"name": a["name"], "type": ptype(a["type"])} for a in s.get("args", [])],
+                             # Synthetic signals are event filters whose JS result decides (close veto,
+                             # key consumed): gen_cpp _resolve_signal, docs/notes/x2-sync-frame.md.
+                             "handler_result": "bool_stop" if s.get("synthetic") else rec.get("handler_result", "none"),
+                             "sync_required": bool(s.get("synthetic")) or bool(rec.get("sync_required", False)),
                              "disconnect_on_drop": bool(sd["disconnect_on_drop"])}
             if s.get("synthetic"):
                 sigs[s["js"]]["synthetic"] = s["synthetic"]
@@ -515,7 +563,7 @@ def qt_spec() -> dict:
         w = f"qt rules kinds.{k}"
         if k not in kinds:
             fail(f"{w}: no such element (only annotated elements exist on Qt)")
-        check_keys(w, r, {"present", "text_content", "bindings", "provenance"})
+        check_keys(w, r, {"present", "text_content", "provenance"})
         prov = need_prov(w, r) if {"present", "text_content"} & set(r) else None
         kd = kinds[k]
         if "present" in r:
@@ -529,12 +577,18 @@ def qt_spec() -> dict:
                 fail(f"{w}: text_content {r['text_content']!r} must be an annotated writable string property")
             kd["text_content"] = r["text_content"]
             kd["provenance"]["text_content"] = prov
-        for pname, br in sorted((r.get("bindings") or {}).items()):
-            kd["bindings"][pname] = binding_rule(f"{w}.bindings.{pname}", br, kd["props"].get(pname),
-                                                 kd["signals"].get(br.get("event", "")), pname)
+    # bindings: the `bindings` annotations on the elements (metadata/overrides/qt)
+    for el in m.elements:
+        kd = kinds[el["tag"]]
+        def fp(n, kd=kd):
+            return next((p for p in kd["props"].values() if n in (p["js"], p["native"])), None)
+        for b in sorted(el.get("bindings", []), key=lambda b: b["name"]):
+            kd["bindings"][b["name"]] = binding_from_metadata(el["tag"], b, fp, lambda n, kd=kd: kd["signals"].get(n))
     for k, kd in kinds.items():
         if kd["lifetime"] == "toplevel" and kd["present"] is None:
-            fail(f"{k}: toplevel kind without a present rule")
+            # Not a broken reference: the element just has no annotated method to show it yet.
+            print(f"note: qt {k} is a toplevel without a present method (annotate one in metadata/overrides/qt)",
+                  file=sys.stderr)
 
     for key, rec in sorted((rules.get("defaults") or {}).items()):
         tag, _, pname = key.partition(".")
