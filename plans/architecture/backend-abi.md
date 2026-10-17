@@ -236,3 +236,19 @@ Later ABI additions, not part of v2:
 - `request_frame`;
 - the foreign-runtime hooks;
 - the value-model changes from the serdes research.
+
+## Planned ABI v3: value model (M3)
+
+From `docs/notes/js-native-serdes.md` §5.1, which has the exact C proposal.
+
+- Keep the nested, borrowed `svl_value` and extend it in place. It stays 24 bytes, with the tag word split into tag / flags / type id.
+- New tags: `ENUM`, `FLAGS`, `RECORD`, `BYTES`, `BOXED`, `CALLBACK`, `MAP`, `ERROR`. Flags mark UTF-16 vs UTF-8 strings and NUL termination.
+- Backends publish generated type descriptors (`describe` / `describe_type`), and the host gains `invoke_callback` / `release_callback`.
+- No BigInt and no binary op buffer at this ABI. A packed buffer belongs only in the future N-API/Deno-FFI fronts.
+
+Things to do now, with no ABI change:
+
+- JS passes cached IDs, not names (1430 → 770 ns per `setProp`).
+- Strings are borrowed.
+- Descriptor-driven prop coercion replaces the renderer's hand-written `INT_PROPS`.
+- Enums go out as names on both toolkits.

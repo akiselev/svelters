@@ -1,0 +1,16 @@
+[package]
+name = "serdes-bench"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+[workspace]
+
+[dependencies]
+svelters-abi = { path = "/projects/svelters/crates/svelters-abi" }
+svelters-host = { path = "/projects/svelters/crates/svelters-host" }
+rquickjs = { version = "0.14.0", default-features = false, features = ["std", "loader"] }
+
+[profile.release]
+debug = false
+opt-level = 3

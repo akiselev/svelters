@@ -32,7 +32,7 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | QuickJS JIT (quickjs-jit, Cranelift) | quickjs-jit-cranelift.md | done: no JIT for now; V8 if perf demands |
 | Windows GUI backend (Win32 / WinUI 3) | windows-gui-backend.md | done: WinUI 3 via windows-rs; Win32 fallback |
 | Apple GUI backends (AppKit / UIKit / SwiftUI) + JavaScriptCore | apple-gui-backend.md | done: AppKit+UIKit via objc2; JSC optional engine |
-| JS ↔ native serdes | js-native-serdes.md | in progress |
+| JS ↔ native serdes | js-native-serdes.md | done: extend svl_value in place (ABI v3, M3) |
 | Ownership and lifetimes | ownership-and-lifetimes.md | done: explicit tree-driven lifetime, 4 lifetime classes, ABI v2 proposal |
 | Svelte feature survey (lists, snippets, bindings, modifiers) | svelte-feature-survey.md | done |
 | Styling: GTK CSS and Qt QSS | styling-gtk-css-qss.md | in progress |
