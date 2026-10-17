@@ -31,6 +31,8 @@ concurrency:
 env:
   CARGO_TERM_COLOR: always
   RUST_BACKTRACE: "1"
+  # Print each WinUI init step (crates/svelters-winui/src/app.rs).
+  SVELTERS_WINUI_TRACE: "1"
   WINAPPRT_VERSION: "2.5.1"
 
 jobs:
@@ -88,13 +90,20 @@ jobs:
       - name: svelters-winui generated
         if: ${{ !cancelled() }}
         timeout-minutes: 15
-        run: cargo test -p svelters-winui --test generated
+        run: |
+          New-Item -ItemType Directory -Force logs | Out-Null
+          cmd /c "cargo test -p svelters-winui --test generated > logs\generated.log 2>&1"
+          $code = $LASTEXITCODE
+          Get-Content logs\generated.log
+          exit $code
       - name: counter-win selftest
         if: ${{ !cancelled() }}
         timeout-minutes: 10
         run: |
-          cargo run -p counter-win -- --selftest --report report.json
+          New-Item -ItemType Directory -Force logs | Out-Null
+          cmd /c "cargo run -p counter-win -- --selftest --report report.json > logs\selftest.log 2>&1"
           $code = $LASTEXITCODE
+          Get-Content logs\selftest.log
           if (Test-Path report.json) { Get-Content report.json }
           exit $code
       - name: counter-win test
@@ -116,4 +125,5 @@ jobs:
           if-no-files-found: ignore
           path: |
             report.json
+            logs/
             target/*.png

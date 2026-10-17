@@ -10,9 +10,13 @@
 //!    - `packaged`: the package graph already has the framework; nothing to do.
 //! 3. `DispatcherQueueController::CreateOnCurrentThread`: our Win32 loop pumps it.
 //! 4. An `Application` composed with an `IXamlMetadataProvider` (delegating to
-//!    `XamlControlsXamlMetaDataProvider`) and `XamlControlsResources` merged into its resources,
-//!    as unpackaged C++ apps without markup do. Without the resources controls have no template.
-//! 5. `WindowsXamlManager::InitializeForCurrentThread` (skipped with `SVELTERS_WINUI_XAML_MANAGER=0`).
+//!    `XamlControlsXamlMetaDataProvider`).
+//! 5. `WindowsXamlManager::InitializeForCurrentThread`: creates the XAML core on this thread.
+//! 6. `XamlControlsResources` merged into the Application's resources (needs step 5). Without
+//!    them controls have no template.
+//!
+//! No `Application.Start`: the host creates widgets before `run()`, so this is the islands model
+//! (docs/notes/fw1-winui-ci.md).
 //!
 //! The bootstrap and `ContentPreTranslateMessage` (Microsoft.UI.Windowing.Core.dll) are loaded
 //! with `LoadLibraryW`, not linked: they live in the framework package, which is only on the DLL
@@ -24,6 +28,7 @@ use crate::bindings::Microsoft::UI::Xaml::Hosting::WindowsXamlManager;
 use crate::bindings::Microsoft::UI::Xaml::Markup::{IXamlMetadataProvider, IXamlMetadataProvider_Impl, IXamlType, XmlnsDefinition};
 use crate::bindings::Microsoft::UI::Xaml::ResourceDictionary;
 use crate::bindings::Microsoft::UI::Xaml::XamlTypeInfo::XamlControlsXamlMetaDataProvider;
+use crate::bindings::Windows::Foundation::IClosable;
 use crate::bindings::Windows::UI::Xaml::Interop::TypeName;
 use crate::bindings::Windows::Win32::{GetModuleFileNameW, GetProcAddress, LoadLibraryW, MSG, RO_INIT_SINGLETHREADED, RoInitialize};
 use std::path::PathBuf;
@@ -135,27 +140,74 @@ fn start_runtime() -> Result<(), String> {
     }
 }
 
+thread_local! {
+    /// Set by the first [`Xaml::init`] on a thread, success or not. WinUI keeps per-thread state
+    /// (the XAML core, `Application.Current`) that a failed init does not undo, and a second
+    /// composed `Application` on the same thread over-released our outer object in CI1
+    /// (`weak_ref_count.rs` subtract with overflow inside `Application::compose`). So: once.
+    static ATTEMPTED: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+}
+
+/// `SVELTERS_WINUI_TRACE=1`: print each init step to stderr (CI diagnostics).
+fn trace(step: &str) {
+    if std::env::var_os("SVELTERS_WINUI_TRACE").is_some_and(|v| v != "0") {
+        eprintln!("[svelters-winui] init: {step}");
+    }
+}
+
 impl Xaml {
-    /// Initializes WinUI on the calling thread. Call once per thread.
+    /// Initializes WinUI on the calling thread, which becomes the UI thread. Once per thread.
+    ///
+    /// The order is the Windows App SDK islands pattern (WindowsAppSDK-Samples
+    /// `Samples/Islands/cs-winforms-unpackaged`, `Program.cs` + `XamlApp.cs`): dispatcher queue,
+    /// then the `Application` (composed with our metadata provider), then
+    /// `WindowsXamlManager::InitializeForCurrentThread`, which creates the XAML core for this
+    /// thread. Only after that can XAML objects be made: `XamlControlsResources` before it fails
+    /// with RPC_E_WRONG_THREAD (0x8001010E), XAML's "no core on this thread" error (CI1).
     pub fn init() -> Result<Xaml, String> {
+        if ATTEMPTED.with(|a| a.replace(true)) {
+            return Err("WinUI was already initialized (or failed to) on this thread; it is set up once per thread".into());
+        }
+        trace(&format!("thread {:?}", std::thread::current().id()));
         // S_FALSE (already initialized) is fine; a different apartment is not.
         unsafe { RoInitialize(RO_INIT_SINGLETHREADED) }.ok().map_err(|e| format!("RoInitialize(single-threaded): {}", crate::conv::err(e)))?;
+        trace("RoInitialize(single-threaded) ok");
         start_runtime()?;
+        trace("Windows App SDK runtime ok");
         let e = |what: &'static str| move |err: windows_core::Error| format!("{what}: {}", crate::conv::err(err));
         let controller = DispatcherQueueController::CreateOnCurrentThread().map_err(e("DispatcherQueueController::CreateOnCurrentThread"))?;
         let queue = controller.DispatcherQueue().map_err(e("DispatcherQueueController.DispatcherQueue"))?;
+        trace("DispatcherQueueController ok");
         let provider = XamlControlsXamlMetaDataProvider::new().map_err(e("XamlControlsXamlMetaDataProvider"))?;
         let app = Application::compose(App { provider }).map_err(e("Application (composed with IXamlMetadataProvider)"))?;
-        let resources: ResourceDictionary = XamlControlsResources::new().map_err(e("XamlControlsResources"))?.cast().map_err(e("XamlControlsResources as ResourceDictionary"))?;
-        app.Resources()
-            .and_then(|r| r.MergedDictionaries())
-            .and_then(|m| m.Append(&resources))
-            .map_err(e("Application.Resources.MergedDictionaries.Append(XamlControlsResources)"))?;
-        let manager = if std::env::var("SVELTERS_WINUI_XAML_MANAGER").as_deref() == Ok("0") {
-            None
-        } else {
-            Some(WindowsXamlManager::InitializeForCurrentThread().map_err(e("WindowsXamlManager::InitializeForCurrentThread"))?)
+        trace("Application composed");
+        // From here on a failure leaks `app` (and the manager): tearing down a composed
+        // Application whose XAML side is half set up is the path that over-released in CI1, and
+        // the thread cannot be initialized again anyway.
+        let manager = match WindowsXamlManager::InitializeForCurrentThread() {
+            Ok(m) => m,
+            Err(err) => {
+                std::mem::forget(app);
+                return Err(e("WindowsXamlManager::InitializeForCurrentThread")(err));
+            }
         };
+        trace("WindowsXamlManager::InitializeForCurrentThread ok");
+        let merged = XamlControlsResources::new()
+            .map_err(e("XamlControlsResources"))
+            .and_then(|r| r.cast::<ResourceDictionary>().map_err(e("XamlControlsResources as ResourceDictionary")))
+            .and_then(|r| {
+                app.Resources()
+                    .and_then(|d| d.MergedDictionaries())
+                    .and_then(|m| m.Append(&r))
+                    .map_err(e("Application.Resources.MergedDictionaries.Append(XamlControlsResources)"))
+            });
+        if let Err(err) = merged {
+            std::mem::forget(app);
+            std::mem::forget(manager);
+            return Err(err);
+        }
+        trace("XamlControlsResources merged");
+        let manager = Some(manager);
         let pretranslate = load("Microsoft.UI.Windowing.Core.dll")
             .ok()
             .and_then(|m| proc(m, b"ContentPreTranslateMessage\0"))
@@ -169,6 +221,11 @@ impl Xaml {
 
 impl Drop for Xaml {
     fn drop(&mut self) {
+        // The islands samples' shutdown: close the Application (it holds XAML resources), then
+        // the XAML manager, then shut the dispatcher queue down.
+        if let Ok(c) = self.app.cast::<IClosable>() {
+            let _ = c.Close();
+        }
         if let Some(m) = self.manager.take() {
             let _ = m.Close();
         }

@@ -106,6 +106,10 @@ mod win {
             Ok(b) => b,
             Err(e) => {
                 eprintln!("[counter-win] WinUI init failed: {e}");
+                if let Some(p) = &args.report {
+                    let rep = json!({ "backend": "winui", "ok": false, "failures": [format!("WinUI init: {e}")] });
+                    let _ = std::fs::write(p, serde_json::to_string_pretty(&rep).unwrap());
+                }
                 return 3;
             }
         };
