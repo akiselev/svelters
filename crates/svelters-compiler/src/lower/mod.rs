@@ -966,7 +966,7 @@ impl<'a> Lower<'a, '_, '_> {
             );
         }
         let children = (!frag.items.is_empty()).then_some(frag);
-        Some(ComponentCall { span: el.span(), slot, name: el.name.clone(), props, consts, snippets, children })
+        Some(ComponentCall { span: el.span(), node: el, slot, name: el.name.clone(), props, consts, snippets, children })
     }
 }
 

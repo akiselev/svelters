@@ -29,6 +29,17 @@ pub trait Rewriter {
     fn assign(&self, target: &Expression, value: &str) -> String;
     /// Emits the instance script: (hoisted import text, component-body text), both mapped.
     fn script(&self, w: &mut Writer, hoist: bool);
+    /// Whether the top-level snippet starting at `start` references nothing of the component
+    /// instance, so it is hoisted to module level (Svelte's module_level_snippets).
+    fn hoist_snippet(&self, _start: u32) -> bool {
+        false
+    }
+    /// For a component tag whose name is dynamic (Svelte's `Component.metadata.dynamic`: a
+    /// non-normal binding such as `$state`/prop/each item, or a member expression), the JS that
+    /// reads the current component function; None for a static name.
+    fn dynamic_component(&self, _node: &crate::svelte::ast::Element) -> Option<String> {
+        None
+    }
     /// Ends the component body (`$.pop()`; store cleanup / `return $.pop($$exports)`).
     fn epilogue(&self, w: &mut Writer) {
         w.write("$.pop();");
@@ -40,19 +51,32 @@ pub struct Codegen<'a, 's> {
     pub rw: &'s dyn Rewriter,
     pub w: Writer<'s>,
     tmp: usize,
+    /// The next `fragment` is the component root, whose snippets `generate` already emitted.
+    root_fragment: bool,
     _p: std::marker::PhantomData<&'a ()>,
 }
 
 /// Generates the whole module. `name` is the component function name.
 pub fn generate(src: &str, comp: &Component, rw: &dyn Rewriter, name: &str, filename: &str) -> (String, String) {
-    let mut g = Codegen { src, rw, w: Writer::new(src), tmp: 0, _p: std::marker::PhantomData };
+    let mut g = Codegen { src, rw, w: Writer::new(src), tmp: 0, root_fragment: false, _p: std::marker::PhantomData };
     g.w.write("import * as $ from 'svelte/internal/client';\nimport * as $n from '@svelters/native-runtime';\n");
     rw.script(&mut g.w, true);
+    let (hoisted, instance): (Vec<_>, Vec<_>) = comp.root.snippets.iter().partition(|s| rw.hoist_snippet(s.span.start));
+    for s in hoisted {
+        g.snippet(s);
+        g.w.newline();
+    }
     g.w.write(&format!("\nexport default function {name}($$anchor, $$props) {{"));
     g.w.indent();
     g.w.newline();
     g.w.write("$.push($$props, true);");
+    // Top-level snippets come before the instance script, so it can reference them (Svelte's
+    // instance_level_snippets)
+    for s in instance {
+        g.snippet(s);
+    }
     rw.script(&mut g.w, false);
+    g.root_fragment = true;
     g.fragment(&comp.root, "$$anchor");
     g.w.newline();
     rw.epilogue(&mut g.w);
@@ -107,9 +131,22 @@ impl Codegen<'_, '_> {
     }
 
     fn fragment(&mut self, f: &Fragment, container: &str) {
-        self.decls(f);
+        if std::mem::take(&mut self.root_fragment) {
+            for c in &f.consts {
+                self.line();
+                self.w.map(c.span.start);
+                self.w.write(&format!("const {} = $.derived(() => ", c.name));
+                self.paren_expr(c.init, Mode::Read);
+                self.w.write(");");
+            }
+        } else {
+            self.decls(f);
+        }
         for item in &f.items {
             self.item(item, container);
+        }
+        if DEFER_TEMPLATE_EFFECTS {
+            self.deferred_ops(f);
         }
     }
 
@@ -140,7 +177,9 @@ impl Codegen<'_, '_> {
             self.w.write("));");
         }
         for op in &e.ops {
-            self.op(&n, op);
+            if !(DEFER_TEMPLATE_EFFECTS && self.is_deferred(op)) {
+                self.op(&n, op);
+            }
         }
         // children grouped per slot container
         self.fragment_children(&e.children, &n);
@@ -149,9 +188,39 @@ impl Codegen<'_, '_> {
         self.w.write(&format!("$n.append({container}, {n});"));
     }
 
+    /// Render effects of a fragment's elements are created after its blocks and components, as
+    /// Svelte's single `$.template_effect` at the end of each fragment (so a parent's template
+    /// expressions are evaluated after its children's components initialised).
+    fn is_deferred(&self, op: &Op) -> bool {
+        match op {
+            Op::SetDynamic { value, .. } => self.dynamic_reactive(value),
+            Op::Token { cond, .. } => !cond.is_empty(),
+            Op::StyleProp { .. } => true,
+            _ => false,
+        }
+    }
+
+    /// The deferred ops of the elements of `f` (and of their children, except children in their
+    /// own JS block, which flush their own).
+    fn deferred_ops(&mut self, f: &Fragment) {
+        for item in &f.items {
+            if let Item::Element(e) = item {
+                let n = format!("$$n{}", e.id + 1);
+                for op in &e.ops {
+                    if self.is_deferred(op) {
+                        self.op(&n, op);
+                    }
+                }
+                if !scoped(&e.children) {
+                    self.deferred_ops(&e.children);
+                }
+            }
+        }
+    }
+
     fn fragment_children(&mut self, f: &Fragment, parent: &str) {
         // snippets declared among an element's children get their own JS block scope
-        let scoped = !f.snippets.is_empty() || !f.consts.is_empty();
+        let scoped = scoped(f);
         if scoped {
             self.line();
             self.w.write("{");
@@ -161,6 +230,9 @@ impl Codegen<'_, '_> {
         for item in &f.items {
             let c = format!("$n.slot({parent}, {})", item.slot().as_deref().map_or("null".to_string(), js_str));
             self.item(item, &c);
+        }
+        if scoped && DEFER_TEMPLATE_EFFECTS {
+            self.deferred_ops(f);
         }
         if scoped {
             self.w.dedent();
@@ -538,7 +610,19 @@ impl Codegen<'_, '_> {
         }
         self.line();
         self.w.map(c.span.start);
-        self.w.write(&format!("{}($n.region({container}), ", c.name));
+        // `bind:this` on a component binds its exports (Svelte: `$.bind_this(Child(...), set, get)`)
+        let this_bind = c.props.iter().find_map(|p| match p {
+            ComponentProp::Bind { name, target } if name == "this" => Some(*target),
+            _ => None,
+        });
+        if this_bind.is_some() {
+            self.w.write("$.bind_this(");
+        }
+        match self.rw.dynamic_component(c.node) {
+            // re-created when the component function changes (Svelte's `$.component`)
+            Some(get) => self.w.write(&format!("$n.snippet({container}, () => {get}, ")),
+            None => self.w.write(&format!("{}($n.region({container}), ", c.name)),
+        }
         let spread = c.props.iter().any(|p| matches!(p, ComponentProp::Spread(_)));
         if spread {
             self.w.write("$.spread_props(");
@@ -546,6 +630,9 @@ impl Codegen<'_, '_> {
         // `$.spread_props(obj, () => spread, obj, ...)` / a single object literal
         let mut st = PropsState { open: false, first_arg: true, first_entry: true };
         for (i, p) in c.props.iter().enumerate() {
+            if matches!(p, ComponentProp::Bind { name, .. } if name == "this") {
+                continue;
+            }
             if let ComponentProp::Spread(e) = p {
                 if st.open {
                     self.w.write(" }");
@@ -623,7 +710,24 @@ impl Codegen<'_, '_> {
         if spread {
             self.w.write(")");
         }
-        self.w.write(");");
+        self.w.write(")");
+        if let Some(target) = this_bind {
+            match function_binding(target) {
+                Some((get, set)) => {
+                    self.w.write(", ");
+                    self.paren_expr(set, Mode::Read);
+                    self.w.write(", ");
+                    self.paren_expr(get, Mode::Read);
+                }
+                None => {
+                    let set = self.rw.assign(target, "$$value");
+                    self.w.write(&format!(", ($$value) => {{ {set}; }}, () => "));
+                    self.expr_text(target, Mode::Read);
+                }
+            }
+            self.w.write(")");
+        }
+        self.w.write(";");
         if scoped {
             self.w.dedent();
             self.line();
@@ -647,6 +751,20 @@ impl Codegen<'_, '_> {
         self.w.write(" ");
         st.first_entry = false;
     }
+}
+
+/// Svelte creates a fragment's render effects after its blocks and components (one
+/// `$.template_effect` at the end of the fragment), so a parent's template expressions run after
+/// its children's components initialised (Svelte's `lifecycle-render-order-for-children*`).
+/// Off: deferring moves every reactive prop write after the element's insertion, which changes
+/// the GTK/Qt op logs (`experiments/native-compiler/compiled` expected logs and hand-written
+/// references); enabling it is a decision for the op-log owners (deviations.md).
+const DEFER_TEMPLATE_EFFECTS: bool = false;
+
+/// Whether an element's children are emitted in their own JS block (they declare snippets or
+/// `{@const}`s).
+fn scoped(f: &Fragment) -> bool {
+    !f.snippets.is_empty() || !f.consts.is_empty()
 }
 
 /// `bind:x={get, set}`: the getter and setter of a function binding.

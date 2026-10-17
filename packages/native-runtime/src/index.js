@@ -619,17 +619,23 @@ export function mount(Component, { props = {}, target } = {}) {
   const prev = scope;
   scope = s;
   let destroy;
+  let exports;
   try {
     // In a branch, as Svelte's mount does (through its boundary): user effects created during the
     // root component's init are then deferred to its $.pop(), i.e. run after its children's.
     destroy = component_root(() => {
-      branch(() => Component(root, props));
+      branch(() => {
+        exports = Component(root, props);
+      });
     });
   } finally {
     scope = prev;
   }
-  return function unmount() {
+  function unmount() {
     destroy();
     dispose(s, root);
-  };
+  }
+  // what Svelte's mount returns: the component's exports (`export function ...`)
+  unmount.exports = exports ?? {};
+  return unmount;
 }

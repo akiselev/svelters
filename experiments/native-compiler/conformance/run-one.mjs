@@ -147,7 +147,7 @@ try {
         assert: { ...assert, htmlEqual: assert_html_equal, htmlEqualWithOptions: assert_html_equal_with_options },
         variant: 'dom',
         component: props,
-        instance: undefined,
+        instance: unmount.exports,
         mod,
         ok: (v) => {
           if (!v) throw new Error(`Expected truthy value, got ${v}`);

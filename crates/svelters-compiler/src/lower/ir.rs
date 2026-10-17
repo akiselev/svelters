@@ -207,6 +207,8 @@ pub struct AwaitBlock<'a> {
 #[derive(Debug)]
 pub struct ComponentCall<'a> {
     pub span: Span,
+    /// The component tag (codegen asks the script analysis whether its name is dynamic).
+    pub node: &'a crate::svelte::ast::Element,
     pub slot: Slot,
     pub name: String,
     pub props: Vec<ComponentProp<'a>>,
