@@ -56,7 +56,43 @@
             }
           ]
         },
-        "attrs": [],
+        "attrs": [
+          {
+            "default": "",
+            "expect": "w.ancestor(gtk::ListBoxRow::static_type()).and_downcast::<gtk::ListBoxRow>().unwrap().header().is_some()",
+            "get": {
+              "class": "ListBox",
+              "expr": "crate::util::row_header(child)",
+              "origin": "manual"
+            },
+            "name": "header",
+            "origin": "manual",
+            "provenance": [
+              {
+                "origin": "gir",
+                "ref": "gtk_list_box_row_set_header"
+              },
+              {
+                "origin": "gir",
+                "ref": "gtk_list_box_row_get_header"
+              },
+              {
+                "origin": "manual",
+                "ref": "X8: header_func replaced by an attribute the app sets on the first row of each group"
+              }
+            ],
+            "samples": [
+              "Fruit",
+              "Vegetables"
+            ],
+            "set": {
+              "class": "ListBox",
+              "expr": "crate::util::set_row_header(p, child, v.as_str()?)?;",
+              "origin": "manual"
+            },
+            "type": "string"
+          }
+        ],
         "cardinality": "many",
         "content": "widget",
         "default": {

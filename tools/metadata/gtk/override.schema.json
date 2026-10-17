@@ -775,11 +775,19 @@
         "set": {
           "type": "object",
           "additionalProperties": false,
-          "required": [
-            "native",
-            "args"
+          "anyOf": [
+            {"required": ["native", "args"]},
+            {"required": ["class", "expr"]}
           ],
           "properties": {
+            "class": {
+              "type": "string",
+              "description": "With `expr`: the parent's class (the typed `p` in the expression)."
+            },
+            "expr": {
+              "type": "string",
+              "description": "Rust statements over `p` (the typed parent), `child` and `v` (AttrV), instead of a native call."
+            },
             "native": {
               "type": "string"
             },

@@ -2001,6 +2001,7 @@ export interface GtkWidgetProps extends GtkAccessibleProps, GtkBuildableProps, G
   'parent:column'?: number;
   'parent:columnSpan'?: number;
   'parent:detachable'?: boolean;
+  'parent:header'?: string;
   'parent:iconName'?: string;
   'parent:measure'?: boolean;
   'parent:menuLabel'?: string;

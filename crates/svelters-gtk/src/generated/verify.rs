@@ -999,6 +999,35 @@ fn attr_grid_cells_rowspan() {
     });
 }
 
+/// attribute ListBox.children.header: gir: gtk_list_box_row_set_header; gir: gtk_list_box_row_get_header; manual: X8: header_func replaced by an attribute the app sets on the first row of each group
+#[test]
+fn attr_listbox_children_header() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("listbox");
+        let c = h.create("label");
+        let stray = h.create("label");
+        h.insert(parent, c, None, Some("children")).unwrap();
+        assert!(h.set_child_attr(parent, stray, "header", &V::Str("Fruit".into())).is_err(), "a child that is not inserted has no attributes");
+        h.set_child_attr(parent, c, "header", &V::Str("Fruit".into())).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "header"), V::Str("Fruit".into()), "set header");
+        h.set_child_attr(parent, c, "header", &V::Str("Vegetables".into())).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "header"), V::Str("Vegetables".into()), "change header");
+        h.set_child_attr(parent, c, "header", &V::Str("Fruit".into())).unwrap();
+        let w = h.widget(c);
+        let pw = h.widget(parent);
+        let _ = (&w, &pw);
+        assert!(w.ancestor(gtk::ListBoxRow::static_type()).and_downcast::<gtk::ListBoxRow>().unwrap().header().is_some(), "postcondition: w.ancestor(gtk::ListBoxRow::static_type()).and_downcast::<gtk::ListBoxRow>().unwrap().header().is_some()");
+        h.set_child_attr(parent, c, "header", &V::Null).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "header"), V::Str("".into()), "null resets header");
+        h.set_child_attr(parent, c, "header", &V::Str("Fruit".into())).unwrap();
+        h.remove(parent, c).unwrap();
+        assert!(h.set_child_attr(parent, c, "header", &V::Str("Fruit".into())).is_err(), "a removed child has no attributes");
+        h.insert(parent, c, None, Some("children")).unwrap();
+        assert_eq!(h.get_child_attr(parent, c, "header"), V::Str("".into()), "header is back to its default after remove + insert");
+    });
+}
+
 /// attribute Notebook.pages.tabLabel: gir: gtk_notebook_set_tab_label_text; runtime: the GtkNotebookPage:tab-label property only stores a string; it does not create the visible tab label (GTK 4.22)
 #[test]
 fn attr_notebook_pages_tablabel() {

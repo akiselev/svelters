@@ -36,7 +36,22 @@ children:
       order: native_index
       default: {kind: none}
       on_remove: empty
-      attrs: []
+      # G8 (X8): GtkListBox sort/filter/header funcs are not exposed. JS sorts and filters (render the rows in the
+      # order and subset you want, keyed) and decides which rows start a group: that row gets `parent:header`, the
+      # text of its section header (the row's own header widget, a heading label). `null` or "" removes it.
+      attrs:
+        - name: header
+          type: string
+          default: ""
+          samples: ["Fruit", "Vegetables"]
+          set:
+            class: ListBox
+            expr: 'crate::util::set_row_header(p, child, v.as_str()?)?;'
+          get:
+            class: ListBox
+            expr: 'crate::util::row_header(child)'
+          expect: 'w.ancestor(gtk::ListBoxRow::static_type()).and_downcast::<gtk::ListBoxRow>().unwrap().header().is_some()'
+          provenance: [{origin: gir, ref: "gtk_list_box_row_set_header"}, {origin: gir, ref: "gtk_list_box_row_get_header"}, {origin: manual, ref: "X8: header_func replaced by an attribute the app sets on the first row of each group"}]
       requires: []
       ops:
         get:    {contains: ancestor}

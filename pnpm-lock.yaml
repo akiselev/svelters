@@ -156,6 +156,9 @@ importers:
       '@svelters/canvas':
         specifier: workspace:*
         version: link:../../packages/canvas
+      '@svelters/lists':
+        specifier: workspace:*
+        version: link:../../packages/lists
       svelte:
         specifier: file:../../vendor/svelte/svelte-5.57.2-27b7dfb.tgz
         version: file:vendor/svelte/svelte-5.57.2-27b7dfb.tgz

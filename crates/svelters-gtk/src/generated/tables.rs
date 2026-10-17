@@ -2118,13 +2118,14 @@ pub static SLOTS: [SlotInfo; 34] = [
     SlotInfo { kind: 298, name: "child", many: false, ordered: false, unordered: false },
 ];
 
-pub static ATTRS: [AttrInfo; 19] = [
+pub static ATTRS: [AttrInfo; 20] = [
     AttrInfo { kind: 113, slot: 11, name: "x", prop: "", default: AttrDef::Float(0.0) },
     AttrInfo { kind: 113, slot: 11, name: "y", prop: "", default: AttrDef::Float(0.0) },
     AttrInfo { kind: 138, slot: 15, name: "column", prop: "column", default: AttrDef::Int(0) },
     AttrInfo { kind: 138, slot: 15, name: "row", prop: "row", default: AttrDef::Int(0) },
     AttrInfo { kind: 138, slot: 15, name: "columnSpan", prop: "column-span", default: AttrDef::Int(1) },
     AttrInfo { kind: 138, slot: 15, name: "rowSpan", prop: "row-span", default: AttrDef::Int(1) },
+    AttrInfo { kind: 159, slot: 19, name: "header", prop: "", default: AttrDef::Str("") },
     AttrInfo { kind: 184, slot: 21, name: "tabLabel", prop: "", default: AttrDef::Str("") },
     AttrInfo { kind: 184, slot: 21, name: "menuLabel", prop: "", default: AttrDef::Str("") },
     AttrInfo { kind: 184, slot: 21, name: "reorderable", prop: "reorderable", default: AttrDef::Bool(false) },

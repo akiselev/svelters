@@ -160,6 +160,7 @@ gallery_page!(gtk_11_styling_dark, "gtk", "11-styling-dark", ["GtkBox", "GtkLabe
 // X8: event controllers as elements; the recording canvas (the screenshot holds the three colours it draws).
 gallery_page!(gtk_12_events, "gtk", "12-events", ["GtkEntry", "GtkLabel", "GtkBox"]);
 gallery_page!(gtk_13_canvas, "gtk", "13-canvas", ["GtkDrawingArea", "GtkButton", "GtkLabel"], [("e01b24", 0.006), ("3584e4", 0.003), ("33d17a", 0.001)]);
+gallery_page!(gtk_14_arrange, "gtk", "14-arrange", ["GtkListBox", "GtkFlowBox", "GtkListBoxRow", "GtkLabel"]);
 
 gallery_page!(gtk_04_ranges, "gtk", "04-ranges", ["GtkProgressBar", "GtkLevelBar", "GtkScale", "GtkSpinButton", "GtkScrollbar"]);
 

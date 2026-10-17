@@ -606,8 +606,12 @@ def gen_attrs(m: Model):
         if "set" not in a or "get" not in a:
             raise ValueError(f"attribute {a['name']}: needs `property` + `via`, or both `set` and `get`")
         so, go = a["set"], a["get"]
-        scls, smeth, srec = native_parse(m, so["native"])
-        sargs = attr_native_args(m, sid, srec, so)
+        if "expr" in so:
+            # A setter written as Rust statements over `p` (the typed parent `so["class"]`), `child` and `v` (AttrV).
+            scls, smeth, sargs = so["class"], None, []
+        else:
+            scls, smeth, srec = native_parse(m, so["native"])
+            sargs = attr_native_args(m, sid, srec, so)
         if "expr" in go:
             # A getter written as a Rust expression over `p` (the typed parent) and `child`.
             gcls, call = go["class"], go["expr"]
@@ -619,6 +623,7 @@ def gen_attrs(m: Model):
             call = f"p.{RUST_KW.get(gmeth, gmeth)}({', '.join(gargs)})"
             conv = None
         smeth = so.get("rust", smeth)
+        set_body = so["expr"] if "expr" in so else f"p.{RUST_KW.get(smeth, smeth)}({', '.join(sargs)});"
         rtype = a["type"]
         if conv is not None:
             pass
@@ -634,7 +639,7 @@ def gen_attrs(m: Model):
         fns.append(f"""
 fn attr_set_{fid}(parent: &gtk::Widget, child: &gtk::Widget, v: &AttrV) -> Result<(), String> {{
     let p = parent.downcast_ref::<gtk::{scls}>().ok_or("parent is not a gtk::{scls}")?;
-    p.{RUST_KW.get(smeth, smeth)}({', '.join(sargs)});
+    {set_body}
     Ok(())
 }}
 

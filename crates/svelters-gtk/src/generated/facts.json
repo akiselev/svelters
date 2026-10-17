@@ -401,6 +401,16 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:ListBox:slot:children:attr:header",
+   "fingerprint": "e60b625a7aa44a9d",
+   "kind": "ListBox",
+   "name": "children.header",
+   "section": "attrs",
+   "tests": [
+    "generated::verify::attr_listbox_children_header"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Notebook:slot:pages:attr:tabLabel",
    "fingerprint": "4b2732ddaa71ac92",
    "kind": "Notebook",
