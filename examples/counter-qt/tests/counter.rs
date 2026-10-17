@@ -82,6 +82,8 @@ unsafe extern "C" fn invoke_callback(_: *mut c_void, _: u64, _: *const svl_value
 unsafe extern "C" fn release_callback(_: *mut c_void, _: u64) {}
 unsafe extern "C" fn on_destroyed(_: *mut c_void, _: svl_handle, _: u32) {}
 
+unsafe extern "C" fn frame(_: *mut c_void) {}
+
 unsafe extern "C" fn call_sync(_: *mut c_void, _: svl_handle, _: svl_id, _: *const svl_value, _: usize, _: *mut svl_value) -> i32 {
     -1
 }
@@ -127,7 +129,7 @@ fn main() {
 
 fn demo() {
     let b = be();
-    let host = svl_host { self_: std::ptr::null_mut(), post_event, checkpoint, call_sync, on_destroyed, invoke_callback, release_callback };
+    let host = svl_host { self_: std::ptr::null_mut(), post_event, checkpoint, call_sync, on_destroyed, invoke_callback, release_callback, frame };
 
     let kind = |name: &str| id(SVL_KIND, 0, name);
     let (k_window, k_box, k_label, k_button) = (kind("window"), kind("box"), kind("label"), kind("button"));

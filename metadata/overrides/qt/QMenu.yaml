@@ -10,3 +10,4 @@ elements:
         params: [string, callback, "boxed<QKeySequence>"]
         callbacks:
           - { param: functor, scope: notified, args: [{ name: checked, cpp: bool, ref: bool }] }
+        provenance: "QMenu::addAction(const QString &, Functor, const QKeySequence &) (qdoc); callbacks, S2 ABI v3"

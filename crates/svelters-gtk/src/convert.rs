@@ -22,6 +22,11 @@ pub trait Env {
     fn handle_of(&self, o: &glib::Object) -> u64;
     fn mint_boxed(&self, v: glib::Value) -> u64;
     fn type_id(&self, t: Type) -> svl_id;
+    /// A BORROWED handle for an object we did not create (0: none; the object travels as a
+    /// `BOXED` wrapper instead).
+    fn borrow_object(&self, _o: &glib::Object) -> u64 {
+        0
+    }
 }
 
 fn units16<'a>(v: &'a svl_value) -> &'a [u16] {
@@ -746,6 +751,7 @@ pub fn from_value(v: &glib::Value, env: &dyn Env, buf: &mut StrBuf) -> svl_value
     if t.is_a(Type::OBJECT) || is_iface(t) {
         return match v.get::<Option<glib::Object>>() {
             Ok(Some(o)) => match env.handle_of(&o) {
+                0 if env.borrow_object(&o) != 0 => svl_value::new(SVL_HANDLE, svl_value_u { h: env.borrow_object(&o) }),
                 0 => {
                     let ty = env.type_id(o.type_());
                     let h = env.mint_boxed(o.to_value());

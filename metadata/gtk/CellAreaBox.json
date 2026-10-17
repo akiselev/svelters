@@ -47,12 +47,32 @@
   ],
   "enums": [],
   "id": "svelters-api:v1:type:gtk:Gtk:CellAreaBox",
+  "inherited": {
+    "properties": [
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Orientable:prop:orientation",
+        "from": "svelters-api:v1:type:gtk:Gtk:Orientable",
+        "name": "orientation",
+        "origin": "manual"
+      }
+    ]
+  },
   "interfaces": [
     "Gtk.Buildable",
     "Gtk.CellLayout",
     "Gtk.Orientable"
   ],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "unref"
+    },
+    "id": "svelters-api:v1:type:gtk:Gtk:CellAreaBox:lifetime",
+    "native_refcount": "gobject_floating",
+    "origin": "derived",
+    "provenance": "derived: GObject"
+  },
   "methods": [
     {
       "deprecated": true,

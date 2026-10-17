@@ -489,10 +489,11 @@ struct Recorder {
 impl HostCallbacks for Recorder {
     fn post_event(&self, _: svl_handle, _: svl_id, _: &[Value]) {}
     fn checkpoint(&self) {}
-    fn call_sync(&self, _: svl_handle, _: svl_id, _: &[Value]) -> StrResult<Value> {
-        Err("no sync handlers".into())
+    fn call_sync(&self, _: svl_handle, _: svl_id, _: &[Value]) -> Result<Value, SyncError> {
+        Err(SyncError::Failed("no sync handlers".into()))
     }
     fn on_destroyed(&self, _: svl_handle, _: u32) {}
+    fn frame(&self) {}
     fn invoke_callback(&self, callback: u64, args: &[Value]) -> StrResult<Value> {
         self.calls.borrow_mut().push((callback, args.to_vec()));
         self.answer.borrow().clone()

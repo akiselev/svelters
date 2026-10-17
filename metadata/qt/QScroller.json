@@ -112,6 +112,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QScroller",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QScroller:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -1070,6 +1080,7 @@
         "set": "setScrollerProperties"
       },
       "brief": "Scroller properties of this scroller. The properties are used by the QScroller to determine its scrolling behavior",
+      "default": null,
       "js_name": "scrollerProperties",
       "metaobject": {
         "constant": false,
@@ -1093,6 +1104,7 @@
         "signal": "scrollerPropertiesChanged(QScrollerProperties)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QScrollerProperties",
@@ -1113,6 +1125,7 @@
         "set": null
       },
       "brief": "The state of the scroller",
+      "default": null,
       "js_name": "state",
       "metaobject": {
         "constant": false,
@@ -1136,6 +1149,7 @@
         "signal": "stateChanged(QScroller::State)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "State",

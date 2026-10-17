@@ -262,7 +262,13 @@ impl JsEngine for QjsEngine {
         })
     }
 
-    fn dispatch(&mut self, handle: u64, signal: &str, args: &[AV]) -> Result<(), JsError> {
+    fn dispatch(
+        &mut self,
+        handle: u64,
+        signal: &str,
+        args: &[AV],
+        deferred: bool,
+    ) -> Result<(), JsError> {
         let core = self.core.clone();
         self.call_guarded(|ctx| {
             let f: Value = ctx.globals().get("__svelters_dispatch")?;
@@ -275,8 +281,54 @@ impl JsEngine for QjsEngine {
             let conv = QjsConv::new(ctx.clone(), core, None);
             let list = convert::decode(&conv, &AV::List(args.to_vec()), &*conv.core)
                 .map_err(|m| Exception::throw_message(ctx, &m))?;
-            f.call::<_, Value>((handle as f64, signal, list))
+            f.call::<_, Value>((handle as f64, signal, list, deferred))
                 .map(|_| ())
+        })
+    }
+
+    fn dispatch_sync(&mut self, handle: u64, signal: &str, args: &[AV]) -> Result<AV, JsError> {
+        let core = self.core.clone();
+        self.call_guarded(|ctx| {
+            let f: Value = ctx.globals().get("__svelters_dispatch_sync")?;
+            let Some(f) = f.as_function() else {
+                return Err(Exception::throw_message(
+                    ctx,
+                    "globalThis.__svelters_dispatch_sync is not registered",
+                ));
+            };
+            let conv = QjsConv::new(ctx.clone(), core, None);
+            let list = convert::decode(&conv, &AV::List(args.to_vec()), &*conv.core)
+                .map_err(|m| Exception::throw_message(ctx, &m))?;
+            let res: Value = f.call((handle as f64, signal, list))?;
+            // A sync result is a primitive: no decision (null/undefined), a flag, a number or a string.
+            Ok(match res.type_of() {
+                rquickjs::Type::Null | rquickjs::Type::Undefined | rquickjs::Type::Uninitialized => AV::Null,
+                rquickjs::Type::Bool => AV::Bool(res.as_bool().unwrap_or(false)),
+                rquickjs::Type::Int => AV::I64(res.as_int().unwrap_or(0) as i64),
+                rquickjs::Type::Float => {
+                    let x = res.as_float().unwrap_or(0.0);
+                    if x.is_finite() && x.fract() == 0.0 && x.abs() < 9_007_199_254_740_992.0 {
+                        AV::I64(x as i64)
+                    } else {
+                        AV::F64(x)
+                    }
+                }
+                rquickjs::Type::String => AV::Str(res.as_string().map(|s| s.to_string()).transpose()?.unwrap_or_default()),
+                other => {
+                    return Err(Exception::throw_type(
+                        ctx,
+                        &format!("unsupported value type '{}' in a sync handler result", other.as_str()),
+                    ));
+                }
+            })
+        })
+    }
+
+    fn run_frame(&mut self) -> Result<(), JsError> {
+        self.call_guarded(|ctx| {
+            let internal: Object = ctx.globals().get("__svelters_internal")?;
+            let frame: Function = internal.get("frame")?;
+            frame.call::<_, ()>(())
         })
     }
 
@@ -464,6 +516,13 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, cbs: Rc<QjsCallbacks>, base: I
                 if let Some(c) = w.upgrade() {
                     c.timer_clear(id);
                 }
+            })?,
+        )?;
+        let w = core.clone();
+        native.set(
+            "frame_request",
+            Function::new(ctx.clone(), move || -> bool {
+                w.upgrade().is_some_and(|c| c.frame_request())
             })?,
         )?;
         native.set(

@@ -21,6 +21,13 @@
   "id": "svelters-api:v1:type:gtk:Gtk:LayoutManager",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "borrowed_only",
+    "id": "svelters-api:v1:type:gtk:Gtk:LayoutManager:lifetime",
+    "native_refcount": "gobject",
+    "origin": "derived",
+    "provenance": "derived: abstract type, JS cannot create it"
+  },
   "methods": [
     {
       "id": "svelters-api:v1:type:gtk:Gtk:LayoutManager:method:allocate",

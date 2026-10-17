@@ -48,6 +48,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QListWidget",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QListWidget:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -1809,6 +1819,8 @@
         "set": null
       },
       "brief": "The number of items in the list including any hidden items",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "count",
       "metaobject": {
         "constant": false,
@@ -1829,6 +1841,7 @@
       "name": "count",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -1849,6 +1862,8 @@
         "set": "setCurrentRow"
       },
       "brief": "The row of the current item",
+      "default": -1,
+      "default_origin": "runtime",
       "js_name": "currentRow",
       "metaobject": {
         "constant": false,
@@ -1872,6 +1887,7 @@
         "signal": "currentRowChanged(int)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -1892,6 +1908,8 @@
         "set": "setSortingEnabled"
       },
       "brief": "Whether sorting is enabled",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "sortingEnabled",
       "metaobject": {
         "constant": false,
@@ -1912,6 +1930,7 @@
       "name": "sortingEnabled",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1932,6 +1951,8 @@
         "set": "setSupportedDragActions"
       },
       "brief": "The drag actions supported by this view",
+      "default": "CopyAction|MoveAction",
+      "default_origin": "runtime",
       "js_name": "supportedDragActions",
       "metaobject": {
         "constant": false,
@@ -1952,6 +1973,7 @@
       "name": "supportedDragActions",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::DropActions",

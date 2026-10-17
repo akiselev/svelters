@@ -22,10 +22,27 @@ fn gtk_thread() -> &'static Mutex<Sender<Job>> {
     static TX: OnceLock<Mutex<Sender<Job>>> = OnceLock::new();
     TX.get_or_init(|| {
         let (tx, rx) = channel::<Job>();
+        // GDK's Vulkan path under Xvfb (lavapipe) asserts in gdk_vulkan_context_surface_detach
+        // when windows close mid-present; tests default to cairo. An explicit GSK_RENDERER wins.
+        if std::env::var_os("GSK_RENDERER").is_none() {
+            // SAFETY: runs once, before the GTK thread exists; test code never reads the
+            // environment concurrently with this.
+            unsafe { std::env::set_var("GSK_RENDERER", "cairo") };
+        }
         std::thread::Builder::new()
             .name("gtk-main".into())
             .spawn(move || {
-                if let Err(e) = gtk::init() {
+                // Opening the display can fail transiently when many test processes hit one
+                // Xvfb at once; retry briefly before giving up.
+                let mut init = gtk::init();
+                for _ in 0..4 {
+                    if init.is_ok() {
+                        break;
+                    }
+                    std::thread::sleep(std::time::Duration::from_millis(250));
+                    init = gtk::init();
+                }
+                if let Err(e) = init {
                     eprintln!("gtk::init failed (run under xvfb-run): {e}");
                     return; // dropping rx makes every on_gtk fail loudly
                 }
@@ -79,11 +96,27 @@ pub enum V {
     Boxed(u64),
 }
 
+/// What the harness host answers to `call_sync`.
+#[derive(Debug, Clone, PartialEq, Default)]
+pub enum SyncReply {
+    /// Busy: the call is recorded as an ordinary event (what a real host does with a deferred one).
+    #[default]
+    Busy,
+    /// Failed (`-1`): the backend uses the default.
+    Failed,
+    /// Ok with this handler result.
+    Value(Value),
+}
+
 #[derive(Default)]
 struct Recorder {
+    reply: RefCell<SyncReply>,
+    /// `call_sync` calls that were answered with a value or failure, with their arguments.
+    sync_calls: RefCell<Vec<(u64, u32, Vec<Value>)>>,
     events: RefCell<Vec<(u64, u32, Vec<Value>)>>,
     destroyed: RefCell<Vec<(u64, u32)>>,
     checkpoints: std::cell::Cell<u32>,
+    frames: std::cell::Cell<u32>,
 }
 
 unsafe extern "C" fn h_post(p: *mut c_void, h: svl_handle, sig: svl_id, args: *const svl_value, n: usize) {
@@ -95,8 +128,29 @@ unsafe extern "C" fn h_checkpoint(p: *mut c_void) {
     let r = unsafe { &*(p as *const Recorder) };
     r.checkpoints.set(r.checkpoints.get() + 1);
 }
-unsafe extern "C" fn h_call_sync(_: *mut c_void, _: svl_handle, _: svl_id, _: *const svl_value, _: usize, _: *mut svl_value) -> std::ffi::c_int {
-    -1
+unsafe extern "C" fn h_call_sync(p: *mut c_void, h: svl_handle, sig: svl_id, args: *const svl_value, n: usize, out: *mut svl_value) -> std::ffi::c_int {
+    let r = unsafe { &*(p as *const Recorder) };
+    let args = unsafe { Value::vec_from_raw(args, n) };
+    let reply = r.reply.borrow().clone();
+    match reply {
+        SyncReply::Busy => {
+            r.events.borrow_mut().push((h, sig, args));
+            SVL_SYNC_BUSY
+        }
+        SyncReply::Failed => {
+            r.sync_calls.borrow_mut().push((h, sig, args));
+            SVL_SYNC_FAILED
+        }
+        SyncReply::Value(v) => {
+            r.sync_calls.borrow_mut().push((h, sig, args));
+            v.with_raw(|raw| unsafe { *out = *raw });
+            SVL_SYNC_OK
+        }
+    }
+}
+unsafe extern "C" fn h_frame(p: *mut c_void) {
+    let r = unsafe { &*(p as *const Recorder) };
+    r.frames.set(r.frames.get() + 1);
 }
 unsafe extern "C" fn h_destroyed(p: *mut c_void, h: svl_handle, reason: u32) {
     let r = unsafe { &*(p as *const Recorder) };
@@ -131,6 +185,7 @@ impl Harness {
             on_destroyed: h_destroyed,
             invoke_callback: h_invoke,
             release_callback: h_release,
+            frame: h_frame,
         });
         unsafe { backend.attach_host(&*host) };
         Harness { backend, rec, _host: host, kinds: RefCell::new(HashMap::new()) }
@@ -186,7 +241,11 @@ impl Harness {
     }
 
     fn kind_of(&self, h: u64) -> u32 {
-        self.kinds.borrow().get(&h).copied().unwrap_or(0)
+        match self.kinds.borrow().get(&h) {
+            Some(k) => *k,
+            // Borrowed handles are minted by the backend: ask it.
+            None => self.handle_info(h).map(|i| i.kind).unwrap_or(0),
+        }
     }
 
     pub fn insert(&self, parent: u64, child: u64, before: Option<u64>, slot: Option<&str>) -> Result<(), String> {
@@ -262,6 +321,9 @@ impl Harness {
     pub fn set_i64(&self, h: u64, prop: &str, i: i64) -> Result<(), String> {
         self.set_value(h, prop, &Value::I64(i))
     }
+    pub fn set_f64(&self, h: u64, prop: &str, f: f64) -> Result<(), String> {
+        self.set_value(h, prop, &Value::F64(f))
+    }
     pub fn set_bool(&self, h: u64, prop: &str, b: bool) -> Result<(), String> {
         self.set_value(h, prop, &Value::Bool(b))
     }
@@ -320,6 +382,66 @@ impl Harness {
         let mut out = svl_value::null();
         self.check(unsafe { (vt.call)(vt.self_, h, id, std::ptr::null(), 0, &mut out) })
     }
+    /// Encodes `v` for a descriptor slot the way the host does: enum and flags members by name.
+    fn encode_arg(&self, slot: &SlotDesc, v: &V) -> Result<Value, String> {
+        let members = |names: Vec<&str>| -> Result<i64, String> {
+            let t = self.type_desc(slot.ty).ok_or("no type descriptor")?;
+            let mut bits = 0i64;
+            for n in names {
+                bits |= t.members.iter().find(|m| m.name == n).ok_or_else(|| format!("'{n}' is not a member of {}", t.name))?.value;
+            }
+            Ok(bits)
+        };
+        Ok(match (slot.tag, v) {
+            (SVL_ENUM, V::Str(n)) => Value::Enum { ty: slot.ty, value: members(vec![n.as_str()])? },
+            (SVL_ENUM, V::I64(i)) => Value::Enum { ty: slot.ty, value: *i },
+            (SVL_FLAGS, V::Str(n)) => Value::Flags { ty: slot.ty, mask: members(n.split('|').collect())? as u64 },
+            (SVL_FLAGS, V::List(l)) => {
+                let names = l.iter().map(|x| if let V::Str(s) = x { Ok(s.as_str()) } else { Err("flag names are strings".to_string()) }).collect::<Result<Vec<_>, _>>()?;
+                Value::Flags { ty: slot.ty, mask: members(names)? as u64 }
+            }
+            (SVL_FLAGS, V::I64(i)) => Value::Flags { ty: slot.ty, mask: *i as u64 },
+            (_, V::Null) => Value::Null,
+            (_, V::Bool(b)) => Value::Bool(*b),
+            (_, V::I64(i)) => Value::I64(*i),
+            (_, V::F64(f)) => Value::F64(*f),
+            (_, V::Str(s)) => Value::Str(s.clone()),
+            (_, V::Handle(h)) => Value::Handle(*h),
+            (_, V::Boxed(h)) => Value::Boxed { ty: slot.ty, handle: *h },
+            (_, V::List(l)) => Value::List(l.iter().map(|x| self.encode_arg(&SlotDesc::new(SVL_NULL), x)).collect::<Result<_, _>>()?),
+            (_, V::Record(_)) => return Err("records are not supported by call_args".into()),
+        })
+    }
+
+    /// Call a method (generated or typelib) with arguments and return its result. Arguments are
+    /// encoded with the method's descriptor, like the host does (enum and flags by name).
+    pub fn call_args(&self, h: u64, method: &str, args: &[V]) -> Result<V, String> {
+        let k = self.kind_of(h);
+        let id = self.resolve(SVL_METHOD, k, method);
+        if id == 0 {
+            return Err(format!("unknown method {method}"));
+        }
+        let desc = self.backend_ref().describe(NameKind::Method, k, id);
+        let mut vals = Vec::new();
+        for (i, a) in args.iter().enumerate() {
+            let slot = desc.as_ref().and_then(|d| d.params.get(i).cloned()).unwrap_or_else(|| SlotDesc::new(SVL_NULL));
+            vals.push(self.encode_arg(&slot, a)?);
+        }
+        match self.backend_ref().call(h, id, &vals) {
+            Ok(v) => Ok(self.name_value(&v)),
+            Err(e) => Err(e.message),
+        }
+    }
+    /// The descriptor of a method as the host would see it.
+    pub fn method_desc(&self, h: u64, method: &str) -> Option<MemberDesc> {
+        let k = self.kind_of(h);
+        let id = self.resolve(SVL_METHOD, k, method);
+        self.backend_ref().describe(NameKind::Method, k, id)
+    }
+    /// The id `resolve(SVL_METHOD)` gives `method` on `h`'s kind (0: unknown).
+    pub fn resolve_method(&self, h: u64, method: &str) -> u32 {
+        self.resolve(SVL_METHOD, self.kind_of(h), method)
+    }
     pub fn listen(&self, h: u64, signal: &str, on: bool) -> Result<(), String> {
         let id = self.resolve(SVL_SIGNAL, self.kind_of(h), signal);
         if id == 0 {
@@ -327,6 +449,28 @@ impl Harness {
         }
         let vt = self.vt();
         self.check(unsafe { (vt.listen)(vt.self_, h, id, on) })
+    }
+
+    /// Chooses what the harness host answers to `call_sync` (default: busy).
+    pub fn set_sync_reply(&self, r: SyncReply) {
+        *self.rec.reply.borrow_mut() = r;
+    }
+
+    /// `call_sync` calls answered with a value or a failure since the last take.
+    pub fn take_sync_calls(&self) -> Vec<(u64, String, Vec<Value>)> {
+        let calls: Vec<_> = self.rec.sync_calls.borrow_mut().drain(..).collect();
+        calls.into_iter().map(|(h, sig, a)| (h, crate::generated::tables::SIGNALS[sig as usize - 1].name.to_string(), a)).collect()
+    }
+
+    /// `host.frame` calls received since the last take.
+    pub fn take_frames(&self) -> u32 {
+        self.rec.frames.replace(0)
+    }
+
+    /// Asks the backend for a frame (`request_frame`).
+    pub fn request_frame(&self) {
+        let vt = self.vt();
+        unsafe { (vt.request_frame)(vt.self_) }
     }
 
     /// Events posted since the last call: (handle, signal name).

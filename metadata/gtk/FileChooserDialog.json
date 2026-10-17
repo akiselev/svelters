@@ -89,6 +89,38 @@
   },
   "enums": [],
   "id": "svelters-api:v1:type:gtk:Gtk:FileChooserDialog",
+  "inherited": {
+    "methods": [
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Window:method:present",
+        "from": "svelters-api:v1:type:gtk:Gtk:Window",
+        "name": "present",
+        "origin": "manual"
+      }
+    ],
+    "properties": [
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Window:prop:title",
+        "from": "svelters-api:v1:type:gtk:Gtk:Window",
+        "name": "title",
+        "origin": "manual"
+      }
+    ],
+    "slots": [
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Window:slot:child",
+        "from": "svelters-api:v1:type:gtk:Gtk:Window",
+        "name": "child",
+        "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Window:slot:titlebar",
+        "from": "svelters-api:v1:type:gtk:Gtk:Window",
+        "name": "titlebar",
+        "origin": "manual"
+      }
+    ]
+  },
   "interfaces": [
     "Gtk.Accessible",
     "Gtk.Buildable",
@@ -99,6 +131,21 @@
     "Gtk.ShortcutManager"
   ],
   "kind": "object",
+  "lifetime": {
+    "class": "toplevel",
+    "close": {
+      "default": "destroy",
+      "request_signal": "close-request",
+      "veto": "return_stop"
+    },
+    "destroy": {
+      "native": "gtk_window_destroy"
+    },
+    "id": "svelters-api:v1:type:gtk:Gtk:FileChooserDialog:lifetime",
+    "native_refcount": "gobject_floating",
+    "origin": "derived",
+    "provenance": "derived: GtkWindow subclass; ABI v2 toplevel class (plans/architecture/backend-abi.md)"
+  },
   "methods": [],
   "native": {
     "c_type": "GtkFileChooserDialog",

@@ -189,6 +189,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QListView",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QListView:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -2499,6 +2509,8 @@
         "set": "setBatchSize"
       },
       "brief": "The number of items laid out in each batch if layoutMode is set to Batched",
+      "default": 100,
+      "default_origin": "runtime",
       "js_name": "batchSize",
       "metaobject": {
         "constant": false,
@@ -2519,6 +2531,7 @@
       "name": "batchSize",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -2539,6 +2552,8 @@
         "set": "setFlow"
       },
       "brief": "Which direction the items layout should flow",
+      "default": "TopToBottom",
+      "default_origin": "runtime",
       "js_name": "flow",
       "metaobject": {
         "constant": false,
@@ -2559,6 +2574,7 @@
       "name": "flow",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Flow",
@@ -2579,6 +2595,7 @@
         "set": "setGridSize"
       },
       "brief": "The size of the layout grid",
+      "default": null,
       "js_name": "gridSize",
       "metaobject": {
         "constant": false,
@@ -2599,6 +2616,7 @@
       "name": "gridSize",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QSize",
@@ -2619,6 +2637,8 @@
         "set": "setWrapping"
       },
       "brief": "Whether the items layout should wrap",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "isWrapping",
       "metaobject": {
         "constant": false,
@@ -2639,6 +2659,7 @@
       "name": "isWrapping",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2659,6 +2680,8 @@
         "set": "setItemAlignment"
       },
       "brief": "The alignment of each item in its cell",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "itemAlignment",
       "metaobject": {
         "constant": false,
@@ -2679,6 +2702,7 @@
       "name": "itemAlignment",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::Alignment",
@@ -2699,6 +2723,8 @@
         "set": "setLayoutMode"
       },
       "brief": "Determines whether the layout of items should happen immediately or be delayed",
+      "default": "SinglePass",
+      "default_origin": "runtime",
       "js_name": "layoutMode",
       "metaobject": {
         "constant": false,
@@ -2719,6 +2745,7 @@
       "name": "layoutMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "LayoutMode",
@@ -2739,6 +2766,8 @@
         "set": "setModelColumn"
       },
       "brief": "The column in the model that is visible",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "modelColumn",
       "metaobject": {
         "constant": false,
@@ -2759,6 +2788,7 @@
       "name": "modelColumn",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -2779,6 +2809,8 @@
         "set": "setMovement"
       },
       "brief": "Whether the items can be moved freely, are snapped to a grid, or cannot be moved at all",
+      "default": "Static",
+      "default_origin": "runtime",
       "js_name": "movement",
       "metaobject": {
         "constant": false,
@@ -2799,6 +2831,7 @@
       "name": "movement",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Movement",
@@ -2819,6 +2852,8 @@
         "set": "setResizeMode"
       },
       "brief": "Whether the items are laid out again when the view is resized",
+      "default": "Fixed",
+      "default_origin": "runtime",
       "js_name": "resizeMode",
       "metaobject": {
         "constant": false,
@@ -2839,6 +2874,7 @@
       "name": "resizeMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "ResizeMode",
@@ -2859,6 +2895,8 @@
         "set": "setSelectionRectVisible"
       },
       "brief": "If the selection rectangle should be visible",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "selectionRectVisible",
       "metaobject": {
         "constant": false,
@@ -2879,6 +2917,7 @@
       "name": "selectionRectVisible",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2899,6 +2938,8 @@
         "set": "setSpacing"
       },
       "brief": "The space around the items in the layout",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "spacing",
       "metaobject": {
         "constant": false,
@@ -2919,6 +2960,7 @@
       "name": "spacing",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -2939,6 +2981,8 @@
         "set": "setUniformItemSizes"
       },
       "brief": "Whether all items in the listview have the same size",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "uniformItemSizes",
       "metaobject": {
         "constant": false,
@@ -2959,6 +3003,7 @@
       "name": "uniformItemSizes",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2979,6 +3024,8 @@
         "set": "setViewMode"
       },
       "brief": "The view mode of the QListView",
+      "default": "ListMode",
+      "default_origin": "runtime",
       "js_name": "viewMode",
       "metaobject": {
         "constant": false,
@@ -2999,6 +3046,7 @@
       "name": "viewMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "ViewMode",
@@ -3019,6 +3067,8 @@
         "set": "setWordWrap"
       },
       "brief": "The item text word-wrapping policy",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "wordWrap",
       "metaobject": {
         "constant": false,
@@ -3039,6 +3089,7 @@
       "name": "wordWrap",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",

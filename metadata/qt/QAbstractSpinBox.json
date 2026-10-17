@@ -157,6 +157,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QAbstractSpinBox:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -1992,6 +2002,8 @@
         "set": "setAccelerated"
       },
       "brief": "Whether the spin box will accelerate the frequency of the steps when pressing the step Up/Down buttons",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "accelerated",
       "metaobject": {
         "constant": false,
@@ -2012,6 +2024,7 @@
       "name": "accelerated",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2032,6 +2045,8 @@
         "set": null
       },
       "brief": "Whether the input satisfies the current validation",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "acceptableInput",
       "metaobject": {
         "constant": false,
@@ -2052,6 +2067,7 @@
       "name": "acceptableInput",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2072,6 +2088,7 @@
         "set": "setAlignment"
       },
       "brief": "The alignment of the spin box",
+      "default": null,
       "js_name": "alignment",
       "metaobject": {
         "constant": false,
@@ -2092,6 +2109,7 @@
       "name": "alignment",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::Alignment",
@@ -2112,6 +2130,8 @@
         "set": "setButtonSymbols"
       },
       "brief": "The current button symbol mode",
+      "default": "UpDownArrows",
+      "default_origin": "runtime",
       "js_name": "buttonSymbols",
       "metaobject": {
         "constant": false,
@@ -2132,6 +2152,7 @@
       "name": "buttonSymbols",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "ButtonSymbols",
@@ -2152,6 +2173,8 @@
         "set": "setCorrectionMode"
       },
       "brief": "The mode to correct an Intermediate value if editing finishes",
+      "default": "CorrectToPreviousValue",
+      "default_origin": "runtime",
       "js_name": "correctionMode",
       "metaobject": {
         "constant": false,
@@ -2172,6 +2195,7 @@
       "name": "correctionMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "CorrectionMode",
@@ -2192,6 +2216,8 @@
         "set": "setFrame"
       },
       "brief": "Whether the spin box draws itself with a frame",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "frame",
       "metaobject": {
         "constant": false,
@@ -2212,6 +2238,7 @@
       "name": "frame",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2232,6 +2259,8 @@
         "set": "setKeyboardTracking"
       },
       "brief": "Whether keyboard tracking is enabled for the spinbox",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "keyboardTracking",
       "metaobject": {
         "constant": false,
@@ -2252,6 +2281,7 @@
       "name": "keyboardTracking",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2272,6 +2302,8 @@
         "set": "setReadOnly"
       },
       "brief": "Whether the spin box is read only",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "readOnly",
       "metaobject": {
         "constant": false,
@@ -2292,6 +2324,7 @@
       "name": "readOnly",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2312,6 +2345,8 @@
         "set": "setGroupSeparatorShown"
       },
       "brief": "Whether a thousands separator is enabled. By default this property is false",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "showGroupSeparator",
       "metaobject": {
         "constant": false,
@@ -2332,6 +2367,7 @@
       "name": "showGroupSeparator",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -2352,6 +2388,8 @@
         "set": "setSpecialValueText"
       },
       "brief": "The special-value text",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "specialValueText",
       "metaobject": {
         "constant": false,
@@ -2372,6 +2410,7 @@
       "name": "specialValueText",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -2392,6 +2431,8 @@
         "set": null
       },
       "brief": "The spin box's text, including any prefix and suffix",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "text",
       "metaobject": {
         "constant": false,
@@ -2412,6 +2453,7 @@
       "name": "text",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -2432,6 +2474,8 @@
         "set": "setWrapping"
       },
       "brief": "Whether the spin box is circular",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "wrapping",
       "metaobject": {
         "constant": false,
@@ -2452,6 +2496,7 @@
       "name": "wrapping",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",

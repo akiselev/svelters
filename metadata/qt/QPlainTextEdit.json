@@ -108,6 +108,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QPlainTextEdit",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QPlainTextEdit:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -3369,6 +3379,8 @@
         "set": "setBackgroundVisible"
       },
       "brief": "Whether the palette background is visible outside the document area",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "backgroundVisible",
       "metaobject": {
         "constant": false,
@@ -3389,6 +3401,7 @@
       "name": "backgroundVisible",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -3409,6 +3422,8 @@
         "set": null
       },
       "brief": "The number of text blocks in the document",
+      "default": 1,
+      "default_origin": "runtime",
       "js_name": "blockCount",
       "metaobject": {
         "constant": false,
@@ -3429,6 +3444,7 @@
       "name": "blockCount",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -3449,6 +3465,8 @@
         "set": "setCenterOnScroll"
       },
       "brief": "Whether the cursor should be centered on screen",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "centerOnScroll",
       "metaobject": {
         "constant": false,
@@ -3469,6 +3487,7 @@
       "name": "centerOnScroll",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -3489,6 +3508,8 @@
         "set": "setCursorWidth"
       },
       "brief": null,
+      "default": 1,
+      "default_origin": "runtime",
       "js_name": "cursorWidth",
       "metaobject": {
         "constant": false,
@@ -3509,6 +3530,7 @@
       "name": "cursorWidth",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -3529,6 +3551,8 @@
         "set": "setDocumentTitle"
       },
       "brief": "The title of the document parsed from the text",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "documentTitle",
       "metaobject": {
         "constant": false,
@@ -3549,6 +3573,7 @@
       "name": "documentTitle",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -3569,6 +3594,8 @@
         "set": "setLineWrapMode"
       },
       "brief": "The line wrap mode",
+      "default": "WidgetWidth",
+      "default_origin": "runtime",
       "js_name": "lineWrapMode",
       "metaobject": {
         "constant": false,
@@ -3589,6 +3616,7 @@
       "name": "lineWrapMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "LineWrapMode",
@@ -3609,6 +3637,8 @@
         "set": "setMaximumBlockCount"
       },
       "brief": "The limit for blocks in the document",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "maximumBlockCount",
       "metaobject": {
         "constant": false,
@@ -3629,6 +3659,7 @@
       "name": "maximumBlockCount",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -3649,6 +3680,8 @@
         "set": "setOverwriteMode"
       },
       "brief": "Whether text entered by the user will overwrite existing text",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "overwriteMode",
       "metaobject": {
         "constant": false,
@@ -3669,6 +3702,7 @@
       "name": "overwriteMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -3689,6 +3723,8 @@
         "set": "setPlaceholderText"
       },
       "brief": "The editor placeholder text",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "placeholderText",
       "metaobject": {
         "constant": false,
@@ -3709,6 +3745,7 @@
       "name": "placeholderText",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -3729,6 +3766,8 @@
         "set": "setPlainText"
       },
       "brief": null,
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "plainText",
       "metaobject": {
         "constant": false,
@@ -3752,6 +3791,7 @@
         "signal": "textChanged()"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -3772,6 +3812,8 @@
         "set": "setReadOnly"
       },
       "brief": "Whether the text edit is read-only",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "readOnly",
       "metaobject": {
         "constant": false,
@@ -3792,6 +3834,7 @@
       "name": "readOnly",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -3812,6 +3855,8 @@
         "set": "setTabChangesFocus"
       },
       "brief": "Whether Tab changes focus or is accepted as input",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "tabChangesFocus",
       "metaobject": {
         "constant": false,
@@ -3832,6 +3877,7 @@
       "name": "tabChangesFocus",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -3852,6 +3898,8 @@
         "set": "setTabStopDistance"
       },
       "brief": "The tab stop distance in pixels",
+      "default": 80.0,
+      "default_origin": "runtime",
       "js_name": "tabStopDistance",
       "metaobject": {
         "constant": false,
@@ -3872,6 +3920,7 @@
       "name": "tabStopDistance",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "qreal",
@@ -3892,6 +3941,8 @@
         "set": "setTextInteractionFlags"
       },
       "brief": null,
+      "default": "TextEditorInteraction",
+      "default_origin": "runtime",
       "js_name": "textInteractionFlags",
       "metaobject": {
         "constant": false,
@@ -3912,6 +3963,7 @@
       "name": "textInteractionFlags",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::TextInteractionFlags",
@@ -3932,6 +3984,8 @@
         "set": "setUndoRedoEnabled"
       },
       "brief": "Whether undo and redo are enabled",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "undoRedoEnabled",
       "metaobject": {
         "constant": false,
@@ -3952,6 +4006,7 @@
       "name": "undoRedoEnabled",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -3972,9 +4027,11 @@
         "set": "setWordWrapMode"
       },
       "brief": "The mode QPlainTextEdit will use when wrapping text by words",
+      "default": null,
       "js_name": "wordWrapMode",
       "name": "wordWrapMode",
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QTextOption::WrapMode",

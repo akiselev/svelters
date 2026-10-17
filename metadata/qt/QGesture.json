@@ -63,6 +63,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QGesture",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QGesture:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -315,6 +325,7 @@
         "set": "setGestureCancelPolicy"
       },
       "brief": "The policy for deciding what happens on accepting a gesture",
+      "default": null,
       "js_name": "gestureCancelPolicy",
       "metaobject": {
         "constant": false,
@@ -335,6 +346,7 @@
       "name": "gestureCancelPolicy",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QGesture::GestureCancelPolicy",
@@ -355,6 +367,8 @@
         "set": null
       },
       "brief": "The type of the gesture",
+      "default": "CustomGesture",
+      "default_origin": "runtime",
       "js_name": "gestureType",
       "metaobject": {
         "constant": false,
@@ -375,6 +389,7 @@
       "name": "gestureType",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::GestureType",
@@ -395,6 +410,8 @@
         "set": null
       },
       "brief": "Whether the gesture has a hot-spot",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "hasHotSpot",
       "metaobject": {
         "constant": false,
@@ -415,6 +432,7 @@
       "name": "hasHotSpot",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -435,6 +453,7 @@
         "set": "setHotSpot"
       },
       "brief": "Point that is used to find the receiver for the gesture event",
+      "default": null,
       "js_name": "hotSpot",
       "metaobject": {
         "constant": false,
@@ -455,6 +474,7 @@
       "name": "hotSpot",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QPointF",
@@ -475,6 +495,8 @@
         "set": null
       },
       "brief": "The current state of the gesture",
+      "default": "NoGesture",
+      "default_origin": "runtime",
       "js_name": "state",
       "metaobject": {
         "constant": false,
@@ -495,6 +517,7 @@
       "name": "state",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::GestureState",

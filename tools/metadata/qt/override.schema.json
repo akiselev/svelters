@@ -1,0 +1,172 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "svelters:override:qt/v1",
+  "title": "Qt override file (metadata/overrides/qt/<Class>.yaml)",
+  "description": "Declares svelters elements built on a QtWidgets class (`elements:`) and facts every element deriving from the class inherits (`inherit:`). Every fact is resolved against metadata/qt/<Class>.json (and its bases) by tools/metadata/qt/gen_cpp.py; unresolvable facts are errors. Every record carries `provenance`. Unknown keys are errors. See metadata/A1-WORKER-qt.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "unexposed": {
+      "description": "This class is deliberately not exposed as an element; the reason is shown in the coverage report.",
+      "type": "object", "additionalProperties": false, "required": ["reason"],
+      "properties": {"reason": {"type": "string", "minLength": 3}}
+    },
+    "inherit": {
+      "description": "Facts that apply to every element whose class derives from this file's class, unless the element declares the same JS name.",
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "props": {"type": "array", "items": {"$ref": "#/$defs/prop"}},
+        "signals": {"type": "array", "items": {"$ref": "#/$defs/signal"}},
+        "methods": {"type": "array", "items": {"$ref": "#/$defs/method"}}
+      }
+    },
+    "elements": {"type": "array", "items": {"$ref": "#/$defs/element"}}
+  },
+  "$defs": {
+    "provenance": {
+      "oneOf": [
+        {"type": "string", "minLength": 3},
+        {"type": "array", "minItems": 1, "items": {
+          "type": "object", "additionalProperties": false, "required": ["origin", "ref"],
+          "properties": {"origin": {"enum": ["qdoc", "metaobject", "typesystem", "uic", "probe", "manual", "docs", "source"]}, "ref": {"type": "string"}}
+        }}
+      ]
+    },
+    "element": {
+      "type": "object", "additionalProperties": false, "required": ["tag", "construct"],
+      "properties": {
+        "tag": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+        "construct": {
+          "type": "object", "additionalProperties": false, "required": ["class"],
+          "properties": {
+            "class": {"type": "string"},
+            "init": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["method"],
+                                                 "properties": {"method": {"type": "string"}, "args": {"type": "array"}}}},
+            "composite": {"type": "object"}
+          }
+        },
+        "exclude": {"description": "Inherited JS names this element does not get.", "type": "array", "items": {"type": "string"}},
+        "props": {"type": "array", "items": {"$ref": "#/$defs/prop"}},
+        "methods": {"type": "array", "items": {"$ref": "#/$defs/method"}},
+        "signals": {"type": "array", "items": {"$ref": "#/$defs/signal"}},
+        "children": {
+          "type": "object", "additionalProperties": false, "required": ["policy", "default_slot", "slots"],
+          "properties": {
+            "policy": {"enum": ["none", "single_child", "ordered", "named_slots", "layout_managed", "pages", "model_driven", "custom"]},
+            "default_slot": {"type": ["string", "null"]},
+            "slots": {"type": "array", "items": {"$ref": "#/$defs/slot"}}
+          }
+        },
+        "bindings": {"type": "array", "items": {"$ref": "#/$defs/binding"}},
+        "provenance": {"$ref": "#/$defs/provenance"}
+      }
+    },
+    "prop": {
+      "type": "object", "additionalProperties": false, "required": ["js", "provenance"],
+      "properties": {
+        "js": {"type": "string"},
+        "native": {"type": "string", "description": "Q_PROPERTY / qdoc property name."},
+        "suppress_signals": {"type": "boolean", "description": "Programmatic sets from JS do not post this handle's signals (echo suppression; per-handle flag, never QSignalBlocker)."},
+        "target": {"enum": ["self", "layout"]},
+        "type": {"enum": ["enum"]},
+        "getter": {"type": "string"},
+        "setter": {"type": "string"},
+        "values": {"type": "object", "additionalProperties": {"type": "string"}},
+        "sample": {"type": ["string", "number", "boolean"], "description": "Value the generated test writes and reads back."},
+        "provenance": {"$ref": "#/$defs/provenance"}
+      }
+    },
+    "method": {
+      "type": "object", "additionalProperties": false, "required": ["js", "native", "provenance"],
+      "properties": {
+        "js": {"type": "string"},
+        "native": {"type": "string"},
+        "params": {"type": "array", "items": {"type": "string"}, "description": "Neutral type refs of the overload (i32, f64, bool, string, record<Size>, object<QWidget>, ...)."},
+        "args": {"type": "array", "description": "Arguments the generated test passes (default 10, 11, ...)."},
+        "expect": {"type": "string", "description": "C++ bool expression checked after the call; `$w` is the widget, cast to the element class."},
+        "target": {"enum": ["layout"], "description": "Call the method on the element's layout instead of the widget."},
+        "out": {"type": "array", "items": {"type": "string"}, "description": "C++ parameters (`T *` / `T &`) the call fills in. JS does not pass them; the result is {ret?, <name>...}."},
+        "inout": {"type": "array", "items": {"type": "string"}, "description": "C++ parameters (`T &`) JS passes in and gets back updated in the result object."},
+        "discard_return": {"type": "boolean", "description": "Hide the C++ return value (void in JS)."},
+        "callbacks": {"type": "array", "description": "Functor / std::function parameters that become JS functions (CALLBACK values).",
+                      "items": {"type": "object", "additionalProperties": false, "required": ["param", "scope"],
+                                "properties": {"param": {"type": "string"}, "scope": {"enum": ["call", "notified"]},
+                                               "args": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["name", "cpp", "ref"],
+                                                                                   "properties": {"name": {"type": "string"}, "cpp": {"type": "string"}, "ref": {"type": "string"}}}},
+                                               "returns": {"type": "object", "additionalProperties": false, "required": ["cpp", "ref"],
+                                                           "properties": {"cpp": {"type": "string"}, "ref": {"type": "string"}}}}}},
+        "async": {"type": "object", "additionalProperties": false, "required": ["signal", "connect"],
+                  "description": "The method starts an operation that ends with a signal: JS gets a Promise of the named signal argument.",
+                  "properties": {"signal": {"type": "string"}, "connect": {"type": "string"}, "result": {"type": "string"}, "cancel": {"type": "string"}}},
+        "provenance": {"$ref": "#/$defs/provenance"}
+      }
+    },
+    "signal": {
+      "type": "object", "additionalProperties": false, "required": ["js", "provenance"],
+      "properties": {
+        "js": {"type": "string"},
+        "native": {"type": "string"},
+        "collapses": {"type": "array", "items": {"type": "string"}},
+        "connect": {"type": "string"},
+        "args": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["name", "type"],
+                                             "properties": {"name": {"type": "string"}, "type": {"type": "string"}}}},
+        "trigger": {"type": "string", "description": "C++ statement that makes Qt emit the signal; `$w` is the widget, `$i` the iteration (0, 1, 2)."},
+        "expect_args": {"type": "array", "items": {"type": "string"}},
+        "synthetic": {"enum": ["close_request", "key_press"]},
+        "provenance": {"$ref": "#/$defs/provenance"}
+      }
+    },
+    "op": {
+      "type": "object", "additionalProperties": false, "required": ["native"],
+      "properties": {
+        "native": {"type": "string"},
+        "args": {"type": "array"},
+        "effects": {"type": "object"},
+        "variants": {"type": "array"},
+        "then": {"type": "array"},
+        "receiver": {"enum": ["child"]},
+        "item": {"type": "string"}
+      }
+    },
+    "slot": {
+      "type": "object", "additionalProperties": false, "required": ["name", "cardinality", "accepts", "host", "ops", "provenance"],
+      "properties": {
+        "name": {"type": "string"},
+        "content": {"enum": ["widget"]},
+        "accepts": {"type": "array", "items": {"type": "string"}},
+        "route_by_kind": {"type": "boolean"},
+        "cardinality": {"enum": ["one", "many"]},
+        "order": {"enum": ["none", "append_only", "native_index"]},
+        "host": {"enum": ["self", "layout"]},
+        "default": {"type": "object"},
+        "on_remove": {"enum": ["empty", "restore_default", "destroys_child"]},
+        "requires": {"type": "array"},
+        "ops": {
+          "type": "object", "additionalProperties": false,
+          "properties": {"get": {"$ref": "#/$defs/op"}, "set": {"$ref": "#/$defs/op"}, "insert": {"$ref": "#/$defs/op"}, "remove": {"$ref": "#/$defs/op"},
+                         "index_of": {"$ref": "#/$defs/op"}, "list": {"$ref": "#/$defs/op"}}
+        },
+        "provenance": {"$ref": "#/$defs/provenance"}
+      }
+    },
+    "binding": {
+      "type": "object", "additionalProperties": false, "required": ["name", "direction", "property", "type", "change", "echo", "lifetime", "provenance"],
+      "properties": {
+        "name": {"type": "string"},
+        "direction": {"enum": ["two_way", "read_only"]},
+        "property": {"type": "string"},
+        "target": {},
+        "type": {"type": "object"},
+        "change": {"type": "object", "additionalProperties": false, "required": ["signal"],
+                   "properties": {"signal": {"type": "string"}, "role": {"enum": ["any_change", "user_edit"]}, "value": {"enum": ["arg0", "prop"]}}},
+        "write": {"type": "object"},
+        "echo": {"type": "object", "additionalProperties": false, "required": ["strategy"],
+                 "properties": {"strategy": {"enum": ["host_suppressed", "compare", "none"]}, "compare_before_set": {"type": "boolean"},
+                                "read_back": {"type": "boolean"}, "sync_signals_on_set": {"type": "array", "items": {"type": "string"}}}},
+        "lifetime": {"type": "object"},
+        "unsupported_for": {"type": ["string", "null"]},
+        "provenance": {"$ref": "#/$defs/provenance"}
+      }
+    }
+  }
+}

@@ -27,7 +27,7 @@ use std::time::{Duration, Instant};
 use crate::convert::TypeInfo;
 use svelters_abi::{
     BackendRef, MemberDesc, NameKind, SVL_CB_ASYNC, SVL_CB_CALL, SVL_CB_FOREVER, SVL_CB_NOTIFIED, SVL_GONE_CLOSED,
-    SVL_GONE_OWNER, SVL_GONE_PARENT, SVL_GONE_REPLACED, SVL_GONE_SHUTDOWN, SVL_LIFE_TOPLEVEL, Value, gone_name, svl_handle,
+    SVL_GONE_OWNER, SVL_GONE_PARENT, SVL_GONE_REPLACED, SVL_GONE_SHUTDOWN, SVL_LIFE_TOPLEVEL, SyncError, Value, gone_name, svl_handle,
     svl_id,
 };
 
@@ -108,6 +108,9 @@ enum Event {
         handle: svl_handle,
         signal: svl_id,
         args: Vec<Value>,
+        /// A sync signal that found JS running (`call_sync` answered busy): delivered late, so
+        /// its handlers get an event object whose result is ignored.
+        deferred: bool,
     },
     /// The native object behind `handle` died (`reason` is an `SVL_GONE_*` code).
     Gone { handle: svl_handle, reason: u32 },
@@ -120,6 +123,7 @@ pub(crate) enum DispatchEvent {
         handle: svl_handle,
         signal: String,
         args: Vec<Value>,
+        deferred: bool,
     },
     Gone {
         handle: svl_handle,
@@ -277,6 +281,8 @@ pub(crate) struct Core {
     deferred: Cell<bool>,
     /// The deadline last passed to `backend.schedule_wake` (None: cancelled or never armed).
     armed: Cell<Option<Instant>>,
+    /// `backend.request_frame` was called and `host.frame` has not arrived yet.
+    frame_requested: Cell<bool>,
     pub(crate) interrupt: Arc<AtomicBool>,
     epoch: Instant,
     vnow: Cell<Duration>,
@@ -315,6 +321,7 @@ impl Core {
             busy: Cell::new(0),
             deferred: Cell::new(false),
             armed: Cell::new(None),
+            frame_requested: Cell::new(false),
             interrupt: Arc::new(AtomicBool::new(false)),
             epoch: Instant::now(),
             vnow: Cell::new(Duration::ZERO),
@@ -424,7 +431,17 @@ impl Core {
             handle,
             signal,
             args,
+            deferred: false,
         });
+    }
+
+    /// The name of `signal` on `h` if `h` is live and a listener was registered for it.
+    fn listened_signal(&self, h: svl_handle, signal: svl_id) -> Option<String> {
+        let st = self.st.borrow();
+        st.handles
+            .get(&h)
+            .and_then(|k| st.signal_names.get(&(*k, signal)))
+            .cloned()
     }
 
     pub(crate) fn has_events(&self) -> bool {
@@ -437,7 +454,7 @@ impl Core {
         let events: Vec<Event> = self.st.borrow_mut().events.drain(..).collect();
         let mut out = Vec::new();
         for e in events {
-            let (handle, signal, args) = match e {
+            let (handle, signal, args, deferred) = match e {
                 Event::Gone { handle, reason } => {
                     out.push(DispatchEvent::Gone {
                         handle,
@@ -449,7 +466,8 @@ impl Core {
                     handle,
                     signal,
                     args,
-                } => (handle, signal, args),
+                    deferred,
+                } => (handle, signal, args, deferred),
             };
             let name = {
                 let st = self.st.borrow();
@@ -466,6 +484,7 @@ impl Core {
                     handle,
                     signal,
                     args,
+                    deferred,
                 }),
                 None => self.report(JsError::new(
                     ErrorKind::Host,
@@ -657,13 +676,108 @@ pub(crate) fn checkpoint(core: &Core, engine: &RefCell<Box<dyn JsEngine>>) {
     core.quit_if_last_window_gone();
 }
 
+impl Core {
+    /// `requestAnimationFrame` needs a frame: asks the backend for one unless a request is
+    /// already pending. Returns false in scripted mode, where JS uses a virtual timer instead.
+    pub(crate) fn frame_request(&self) -> bool {
+        if self.cfg.scripted {
+            return false;
+        }
+        if !self.frame_requested.replace(true) {
+            self.backend.request_frame();
+        }
+        true
+    }
+}
+
+/// `host.frame`: the backend's frame clock fired. Runs the animation-frame callbacks and then
+/// the jobs they queued (same budget as a checkpoint). Callbacks that request another frame ask
+/// the backend again, so the next frame comes from the clock, not from this call. A frame that
+/// arrives while JS is running is requested again.
+pub(crate) fn frame(core: &Core, engine: &RefCell<Box<dyn JsEngine>>) {
+    core.frame_requested.set(false);
+    let Some(_guard) = core.enter() else {
+        core.frame_request();
+        return;
+    };
+    let Ok(mut eng) = engine.try_borrow_mut() else {
+        core.frame_request();
+        return;
+    };
+    if let Err(e) = eng.run_frame() {
+        core.report(e);
+    }
+    let st = eng.run_jobs(core.cfg.max_jobs_per_checkpoint);
+    core.report_all(eng.take_errors());
+    drop(eng);
+    core.sync_sched();
+    if st.pending || core.has_events() {
+        core.backend.wake();
+    }
+    core.quit_if_last_window_gone();
+}
+
+/// `host.call_sync`: runs the JS listeners of `signal` on `h` now and returns the handler
+/// result (`Null` = no decision). See "ABI v2.1" in `backend-abi.md`.
+///
+/// - JS already running: the event is queued for async delivery and the answer is
+///   [`SyncError::Busy`]; the backend uses the signal's deferred result.
+/// - The call holds the JS guard, so a checkpoint requested meanwhile (a nested loop) is
+///   deferred, and the turn budget applies. No jobs run here; if some are pending afterwards
+///   the host wakes the backend so the next checkpoint runs them.
+/// - A throwing handler reports the error and answers `Null`.
+pub(crate) fn call_sync(
+    core: &Core,
+    engine: &RefCell<Box<dyn JsEngine>>,
+    h: svl_handle,
+    signal: svl_id,
+    args: &[Value],
+) -> Result<Value, SyncError> {
+    let Some(name) = core.listened_signal(h, signal) else {
+        return Err(SyncError::Failed(format!(
+            "call_sync: no listener for signal id {signal} on handle {h}"
+        )));
+    };
+    if core.js_running() || engine.try_borrow_mut().is_err() {
+        core.st.borrow_mut().events.push_back(Event::Signal {
+            handle: h,
+            signal,
+            args: args.to_vec(),
+            deferred: true,
+        });
+        if !core.cfg.scripted {
+            core.backend.wake();
+        }
+        return Err(SyncError::Busy);
+    }
+    let Some(_guard) = core.enter() else {
+        return Err(SyncError::Busy);
+    };
+    let mut eng = engine.borrow_mut();
+    let result = match eng.dispatch_sync(h, &name, args) {
+        Ok(v) => v,
+        Err(e) => {
+            core.report(e);
+            Value::Null
+        }
+    };
+    core.report_all(eng.take_errors());
+    let pending = eng.run_jobs(0).pending;
+    drop(eng);
+    if pending && !core.cfg.scripted {
+        core.backend.wake();
+    }
+    Ok(result)
+}
+
 fn deliver(eng: &mut Box<dyn JsEngine>, ev: DispatchEvent) -> Result<(), JsError> {
     match ev {
         DispatchEvent::Signal {
             handle,
             signal,
             args,
-        } => eng.dispatch(handle, &signal, &args),
+            deferred,
+        } => eng.dispatch(handle, &signal, &args, deferred),
         DispatchEvent::Gone { handle, reason } => eng.dispatch_gone(handle, reason),
     }
 }

@@ -27,6 +27,7 @@ import gir as G  # noqa: E402
 
 META_DIR = ROOT / "metadata/gtk"
 OVERRIDE_DIR = ROOT / "metadata/overrides/gtk"
+SCHEMA_PATH = Path(__file__).resolve().parent / "override.schema.json"
 CHILD_RE = re.compile(r"^(append|prepend|insert.*|remove|pack_.*|add_.*|set_.*_widget|set_child|reorder.*|put|attach.*)$")
 
 LIVE_PRIM = {
@@ -356,17 +357,29 @@ def split_provenance(rec: dict) -> tuple[dict, dict]:
     return rec, {"origin": "manual", "provenance": prov, "fields": sorted(k for k in rec if k != "name")}
 
 
+EXPLICIT_NEW = ("new", "virtual", "derived_from")  # markers that let an override add a record GTK does not have
+
+
 def apply_override(doc: dict, ov: dict, errors: list[str]) -> dict:
+    """Strict merge: every property/signal/method record must match an ingested record by name,
+    unless it is explicitly new (`new: true`, `virtual: {...}`, `derived_from: {...}`). Slots,
+    bindings and the lifetime block are annotation-only and always new."""
     ov = dict(ov)
     marks: list[tuple[list, str, dict]] = []  # (path, record name, annotation)
     clean: dict = {}
     for key, val in ov.items():
         if key in ("properties", "signals", "methods"):
+            have = {r["name"] for r in doc.get(key, [])}
             recs = []
             for r in val:
                 r2, ann = split_provenance(r)
                 if not ann["provenance"]:
                     errors.append(f"{doc['id']}: {key} {r.get('name')} lacks provenance")
+                if r["name"] not in have and not any(m in r for m in EXPLICIT_NEW):
+                    errors.append(f"{doc['id']}: {key} {r['name']!r} matches no ingested record "
+                                  f"(typo? mark it `new: true` if it really is additional)")
+                if r["name"] in have and r.get("new"):
+                    errors.append(f"{doc['id']}: {key} {r['name']!r} is marked new but exists upstream")
                 recs.append(r2)
                 marks.append(([key], r["name"], ann))
             clean[key] = recs
@@ -377,12 +390,21 @@ def apply_override(doc: dict, ov: dict, errors: list[str]) -> dict:
                 r2, ann = split_provenance(r)
                 if not ann["provenance"]:
                     errors.append(f"{doc['id']}: slot {r.get('name')} lacks provenance")
+                r2["id"] = f"{doc['id']}:slot:{r['name']}"
                 recs.append(r2)
                 marks.append((["children", "slots"], r["name"], ann))
             ch["slots"] = recs
             clean[key] = ch
+        elif key == "bindings":
+            clean[key] = [{**r, "id": f"{doc['id']}:binding:{r['name']}", "origin": "manual"} for r in val]
+        elif key == "lifetime":
+            clean[key] = {**val, "id": f"{doc['id']}:lifetime", "origin": "manual"}
+        elif key == "unexposed":
+            clean[key] = {**val, "origin": "manual"}
         else:
             clean[key] = val
+    if "lifetime" in clean:
+        doc = {k: v for k, v in doc.items() if k != "lifetime"}  # replaced, not merged
     merged = svmeta.merge(doc, clean)
     for path, name, ann in marks:
         lst = merged
@@ -394,9 +416,70 @@ def apply_override(doc: dict, ov: dict, errors: list[str]) -> dict:
                 rec["origin"] = rec.get("origin") or "manual"
     if "element" in ov:
         merged["element"]["origin"] = "manual"
+    if "unexposed" in ov:
+        merged.pop("element", None)
     if "verify_subject" in ov:
         merged["verify_subject"] = ov["verify_subject"]
     return merged
+
+
+def derived_lifetime(doc: dict) -> dict | None:
+    """Per-kind lifetime block (docs/notes/ownership-and-lifetimes.md 2.3), derived from the type
+    hierarchy; an override's `lifetime:` replaces it."""
+    if doc["kind"] != "object":
+        return None
+    chain = ["Gtk." + doc["id"].rsplit(":", 1)[-1]] + doc["bases"]
+    floating = "GObject.InitiallyUnowned" in chain
+    out = {"id": f"{doc['id']}:lifetime", "origin": "derived",
+           "native_refcount": "gobject_floating" if floating else "gobject"}
+    if doc["abstract"]:
+        out.update({"class": "borrowed_only", "provenance": "derived: abstract type, JS cannot create it"})
+    elif "Gtk.Window" in chain:
+        out.update({"class": "toplevel", "destroy": {"native": "gtk_window_destroy"},
+                    "close": {"request_signal": "close-request", "veto": "return_stop", "default": "destroy"},
+                    "provenance": "derived: GtkWindow subclass; ABI v2 toplevel class (plans/architecture/backend-abi.md)"})
+    elif "Gtk.Widget" in chain:
+        out.update({"class": "owned", "destroy": {"native": "unref"},
+                    "provenance": "derived: GtkWidget (floating ref sunk by the handle table; the parent holds a ref while inserted)"})
+    else:
+        out.update({"class": "owned", "destroy": {"native": "unref"}, "provenance": "derived: GObject"})
+    return out
+
+
+INHERIT_SECTIONS = ("properties", "signals", "methods", "bindings")
+
+
+def inherited_facts(kinds: dict[str, dict]) -> None:
+    """Annotations on base classes and interfaces apply to subclasses unless the subclass annotates
+    the same name. Records where each inherited fact comes from (`inherited.<section>[]`)."""
+    by_gir = {f"Gtk.{n}": d for n, d in kinds.items()}
+
+    def annotated(d: dict, sec: str) -> list:
+        if sec == "slots":
+            return d.get("children", {}).get("slots", [])
+        return [r for r in d.get(sec, []) if "annotated" in r or sec == "bindings"]
+
+    for doc in kinds.values():
+        if doc.get("kind") not in ("object", "interface"):
+            continue
+        sections = INHERIT_SECTIONS + ("slots",)
+        own = {sec: {r["name"] for r in annotated(doc, sec)} for sec in sections}
+        inh: dict[str, list] = {}
+        for src_name in doc.get("bases", []) + doc.get("interfaces", []):
+            src = by_gir.get(src_name)
+            if src is None:
+                continue
+            for sec in sections:
+                if sec == "slots" and src_name not in doc.get("bases", []):
+                    continue
+                for r in annotated(src, sec):
+                    if r["name"] in own[sec] or any(x["name"] == r["name"] for x in inh.get(sec, [])):
+                        continue
+                    inh.setdefault(sec, []).append({"name": r["name"], "from": src["id"], "fact": r.get("id"), "origin": "manual"})
+        if inh:
+            doc["inherited"] = {k: sorted(v, key=lambda r: r["name"]) for k, v in sorted(inh.items())}
+        else:
+            doc.pop("inherited", None)
 
 
 def main() -> int:
@@ -405,8 +488,10 @@ def main() -> int:
     args = ap.parse_args()
     ing = Ingest(args.girdir)
     overrides = load_overrides()
-    kinds = ing.all_kinds(overrides)
     errors: list[str] = []
+    for p in sorted(OVERRIDE_DIR.glob("*.yaml")):
+        errors += svmeta.check_override(p, SCHEMA_PATH)
+    kinds = ing.all_kinds(overrides)
     for name in overrides:
         if name not in kinds:
             errors.append(f"override for unknown kind {name}")
@@ -419,6 +504,9 @@ def main() -> int:
 
     for name, doc in sorted(kinds.items()):
         doc["source"] = ing.source(name, name in overrides)
+        life = derived_lifetime(doc)
+        if life:
+            doc["lifetime"] = life
         if name in overrides:
             doc = apply_override(doc, overrides[name], errors)
             kinds[name] = doc
@@ -426,6 +514,7 @@ def main() -> int:
         doc["enums"] = [r[r.index("<") + 1:-1] for r in refs]
         errs = svmeta.validate(doc)
         errors += [f"{name}: {e}" for e in errs]
+    inherited_facts(kinds)
     tags: dict[str, str] = {}
     for name, doc in kinds.items():
         if "element" in doc:

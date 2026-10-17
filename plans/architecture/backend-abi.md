@@ -74,7 +74,7 @@ typedef struct svl_host {
   void (*post_event)(void *self, svl_handle h, svl_id signal, const svl_value *args, size_t n);
   /* run queued events + JS jobs + flush; the backend calls this from its loop after wake() */
   void (*checkpoint)(void *self);
-  /* synchronous handler call for return-value signals/virtuals (M4; see open questions) */
+  /* synchronous handler call for return-value signals/virtuals; see "ABI v2.1 additive" */
   int  (*call_sync)(void *self, svl_handle h, svl_id signal, const svl_value *args, size_t n, svl_value *out);
   /* native object went away underneath us (parent destroyed it, window closed) */
   void (*on_destroyed)(void *self, svl_handle h, uint32_t reason /* svl_gone */);
@@ -136,7 +136,7 @@ my-app-qt/                  (leaf crate: no project deps, nothing depends on it 
 
 ## Open questions
 
-- **`call_sync` re-entrancy rules.** Can JS mutate the tree during a sync handler? What happens on a returned Promise, or on a timeout? See `docs/notes/signals-and-slots-semantics.md`.
+- **`call_sync` re-entrancy rules.** Answered in "ABI v2.1 additive" (X2). JS may issue host ops during a sync handler and they apply at once; a nested sync signal is deferred; a returned Promise is ignored (the renderer warns); the turn budget is the timeout.
 - **Slot routing:** answered by `docs/notes/signals-and-slots-semantics.md`.
   - `insert(…, slot)` is enough for placement.
   - Per-child attributes (grid cell, tab title, dock area) need a new `set_child_attr(parent, child, attr_id, value)` op, planned for M4.
@@ -157,10 +157,14 @@ set #<h> <prop> <json>
 call #<h> <method> <json-args-array>
 listen #<h> <signal> on|off
 event #<h> <signal> <json-args-array>        # an injected native event, logged when delivered
+sync #<h> <signal> <json-args-array>         # an injected sync signal, logged before its handlers run
+result #<h> <json>|busy|error                # what call_sync returned, logged after the handlers' own ops
 gone #<h> <reason>                           # the native object died (ABI v2), logged when it happens
 ```
 
-Kinds, props, signals and slots appear by their JS-facing names, never by IDs. A fixture's scripted interaction is a JSON array of `{"event": [<handle-number>, <signal>, <args>]}`, `{"gone": [<handle-number>, <reason>]}` and `{"checkpoint": true}` steps.
+Kinds, props, signals and slots appear by their JS-facing names, never by IDs. A fixture's scripted interaction is a JSON array of `{"event": [<handle-number>, <signal>, <args>]}`, `{"sync": [<handle-number>, <signal>, <args>]}`, `{"gone": [<handle-number>, <reason>]}` and `{"checkpoint": true}` steps.
+
+A `sync` step calls `__svelters_dispatch_sync(h, signal, args)` (Node) or `host.call_sync` (log backend) directly and does not checkpoint. The `result` line is the handler result as JSON (`null` = no decision, `true` = stop) or `busy`/`error` when the host refused. Ops the handler issues appear between the two lines; microtasks it queued run at the next `checkpoint` step. Toolkit replays skip fixtures with `sync` lines, because a result changes what the toolkit does next.
 
 `gone` is a native death. `<reason>` is the lower-case `svl_gone` name: `unknown`, `closed`, `parent`, `owner`, `replaced`, `shutdown`. A scripted `gone` step kills the handle with the given reason, and the log gets one `gone` line for it followed by one line per descendant (pre-order, reason `parent`). The Node TestHost and the log backend both do the cascade themselves. On a real toolkit the replay produces the first death natively (closing the window) and checks the rest against what the backend reports. Ops the host swallows for dead handles (`setProp`, `listen off`, `remove`, `destroy`) are not logged.
 
@@ -245,16 +249,53 @@ Rules:
 - **Destroy.** The host's `destroy` is idempotent and silent (no `on_destroyed` for the app's own destroy). `setProp`, `listen(off)`, `remove` and `destroy` on a dead handle are no-ops; `getProp`, `call`, `insert` and `listen(on)` throw.
 - **Native death.** `on_destroyed(h, reason)` only records the death and queues a `gone` event; the next checkpoint calls `globalThis.__svelters_gone(h, reasonName)` (installed by `@svelters/renderer`). The renderer drops the handle from its tables and sends nothing more for that node. Signals queued for a handle that died are dropped silently.
 - **Cascade.** GTK reports the window (`closed`) first, then every handle inserted below it (`parent`), from its slot records, because GTK has already unparented the children when `destroy` is emitted. Qt does the same eagerly in the close filter while the object tree is intact.
-- **Classes.** The four lifetime classes exist in the ABI. Only `owned` and `toplevel` are minted today; no `get_prop`/`call` returns a borrowed or value handle yet (M4/M5). A toplevel is a window or dialog kind (GTK: `GtkWindow`; Qt: derived from `QMainWindow`/`QDialog`, decided by the generator).
+- **Classes.** The four lifetime classes exist in the ABI. `owned` and `toplevel` are minted by `create` and `borrowed` by getters and calls (X1, below); no `value` handle is minted yet (ABI v3). A toplevel is a window or dialog kind (GTK: `GtkWindow`; Qt: derived from `QMainWindow`/`QDialog`, decided by the generator).
+
+### Borrowed handles and dynamic methods (X1)
+
+No ABI change: the behaviour below is what a conforming backend does with the existing `SVL_HANDLE` tag, `handle_info` and `on_destroyed`.
+
+- **Minting.** A `get_prop` or `call` result of `SVL_HANDLE` may name a handle the host has not seen. The host then asks `handle_info` for its kind and lifetime class and adds it to its handle table (a borrowed handle is never a toplevel for the quit decision). A result that names an object the app created carries that object's existing handle.
+- **Identity.** One live handle per native object, found from the object itself, never by an address map that can outlive it (GTK: GObject qdata; Qt: a side table erased from `destroyed`). Handles are never reused, so asking again after the app forgot a handle returns a new number for the same object.
+- **Weak.** A borrowed handle holds its object weakly (GTK: `GWeakRef` and a weak notify; Qt: `QPointer`). It never keeps the object alive and never deletes it.
+- **`destroy` on a borrowed handle** only forgets it (silent, idempotent). The renderer calls it when the node for a borrowed handle is garbage-collected.
+- **Death.** The owner deleting the object reports `SVL_GONE_OWNER`. When a toplevel closes natively, borrowed handles reachable below it (the QObject parent chain on Qt; the handle whose getter minted them on GTK) are reported as `SVL_GONE_PARENT` in the same cascade, after the window and its inserted children. Each handle is reported at most once.
+- **Tree.** `insert` and `remove` fail with "borrowed" for a borrowed parent or child. `set_prop`, `get_prop`, `call` and `listen` work on them.
+- **Kind.** The nearest ancestor type that has a generated kind, or 0 when none has. Property and signal lookups use the kind, so a borrowed `GtkText` supports the properties of `Text`/`Editable`/`Widget` and a borrowed plain `QWidget` (kind 0) supports only the universal getters.
+- **JS.** Results are renderer nodes (`globalThis.__svelters_node(h)` is installed by `@svelters/renderer`; without a renderer the host returns the number). An object we created resolves to its own bound node, a native-made one to a single `borrowed` node per handle. Nodes passed as `call`/`setProp` arguments (anything with a numeric `svlHandle`) are converted back to handles.
+- **Method ids** are not limited to the generated tables. A backend may mint more ids from `resolve(SVL_METHOD, kind, name)`:
+  - GTK: ids past `METHODS.len()` are typelib methods, resolved through girepository-2.0 and invoked with `gi_function_info_invoke` (libffi). `snake_case` and `camelCase` names both work. Supported types: bool, 8..64-bit integers, float/double, UTF-8 strings, enums (nick or number in, nick out), flags (number, nick or `a|b` in, number out), objects and interfaces (handle or null in; existing or borrowed handle out; `transfer full` in gets its own reference, `transfer full` out becomes an owned handle). Callbacks, out/inout parameters, arrays, lists, hash tables, GType, structs/boxed values and static functions are rejected with an error that names the feature. The matrix and follow-ups are in `docs/notes/x1-borrowed-gi.md`.
+  - Qt: ids from `1 << 20` are universal object getters generated from the qdoc metadata of every QObject-derived class (`parent`, `parentWidget`, `window`, `centralWidget`, `viewport`, `lineEdit`, ...); they apply to any kind and fail with "does not apply" on a receiver of the wrong class. The annotated-method generator also accepts `object<T>` parameters and results.
 - **Deferred deletion.** Qt `destroy` hides a toplevel and calls `deleteLater`. GTK `destroy` hides a toplevel, then destroys it and drops the table's reference from idles.
 - **Window close.** JS listens with `onclose` (the DOM alias of `close-request`). GTK's `close-request` handler returns `Stop` while listened. Qt has no such signal, so `close-request` is a synthetic signal declared in the `window` override (`synthetic: close_request`); the backend's event filter vetoes the `QCloseEvent` and posts it. Without a listener the window is closed for good and reported as `SVL_GONE_CLOSED`.
 - **Quit.** `HostConfig::quit_on_last_window` (default true) makes the host call `backend.quit()` at the end of the checkpoint after the last toplevel handle is gone, once at least one existed. Not applied in scripted mode. GTK's `run` holds the application and Qt sets `setQuitOnLastWindowClosed(false)`.
+
+### ABI v2.1 additive (X2: sync handlers and the frame clock)
+
+Two tail members and one semantics definition, additive on top of v3. `SVL_ABI_VERSION` is whatever the value model set (3); `request_frame` is the last member of `svl_backend` (after the v3 `cancel`) and `frame` the last of `svl_host` (after `release_callback`). In the Rust `Backend` trait `request_frame` has a no-op default. All backends are in-tree and rebuilt together.
+
+```c
+/* backend, appended after last_error */
+void (*request_frame)(void *self);   /* one host->frame on the toolkit's next frame; idempotent while pending */
+/* host, appended after on_destroyed */
+void (*frame)(void *self);           /* a requested frame is due; runs requestAnimationFrame callbacks */
+```
+
+**Frame clock.** The host calls `request_frame` when JS calls `requestAnimationFrame` and no request is pending, and the backend answers with exactly one `host->frame` from its frame clock: GTK `add_tick_callback` on a mapped toplevel, Qt `QWindow::requestUpdate` (the `UpdateRequest` event), the log backend a virtual frame on its next loop turn. A backend without a window to tick on falls back to a 16 ms timer. The host stamps callbacks with its own `performance.now()` clock, so the callback argument is comparable with `performance.now()`. A frame that arrives while JS is running is re-requested. Scripted mode (fixtures) never calls `request_frame`; `requestAnimationFrame` there is a virtual 16 ms timer.
+
+**`call_sync`** (previously a stub). Return codes: `0` ok, `-1` failed (use the default), `-2` busy.
+
+- The backend calls it from inside a toolkit signal emission or event filter, only for signals it connected because JS listens.
+- On `0`, `out` is the handler result: `null` means no decision (toolkit default), a bool is the stop/handled flag of a `bool_stop` signal, other values are for `value` signals.
+- `-2`: JS was already running (a host op that emits a sync signal synchronously, or a sync handler that triggers another sync signal). The host cannot re-enter JS, so it queued the event for ordinary async delivery. The backend returns the signal's deferred result: not-stop, except `close-request`, which vetoes (the ABI v2 behaviour).
+- While a sync call runs the host holds its JS guard: a `checkpoint` that arrives (nested loop) is deferred; the turn budget applies; jobs are not drained. If jobs remain pending afterwards the host calls `wake`.
+- A throwing handler yields `0` with a `null` result and an error in the host's error list.
+- The result comes from the event object (`e.result`, `e.preventDefault()`, `e.stopPropagation()`), never from the handler's return value.
 
 Later ABI additions, not part of v2:
 
 - `set_child_attr` (M4);
 - `listen` flags for phase, once, after and sync (pending the feature survey);
-- `request_frame`;
 - the foreign-runtime hooks;
 - the value-model changes from the serdes research.
 

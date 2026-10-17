@@ -48,6 +48,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QTreeWidget",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QTreeWidget:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -2140,6 +2150,8 @@
         "set": "setColumnCount"
       },
       "brief": "The number of columns displayed in the tree widget",
+      "default": 1,
+      "default_origin": "runtime",
       "js_name": "columnCount",
       "metaobject": {
         "constant": false,
@@ -2160,6 +2172,7 @@
       "name": "columnCount",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -2180,6 +2193,8 @@
         "set": "setSupportedDragActions"
       },
       "brief": "The drag actions supported by this view",
+      "default": "CopyAction|MoveAction",
+      "default_origin": "runtime",
       "js_name": "supportedDragActions",
       "metaobject": {
         "constant": false,
@@ -2200,6 +2215,7 @@
       "name": "supportedDragActions",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::DropActions",
@@ -2220,6 +2236,8 @@
         "set": null
       },
       "brief": "The number of top-level items",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "topLevelItemCount",
       "metaobject": {
         "constant": false,
@@ -2240,6 +2258,7 @@
       "name": "topLevelItemCount",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",

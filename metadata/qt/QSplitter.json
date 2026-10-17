@@ -79,6 +79,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QSplitter",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QSplitter:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -1342,6 +1352,8 @@
         "set": "setChildrenCollapsible"
       },
       "brief": "Whether child widgets can be resized down to size 0 by the user",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "childrenCollapsible",
       "metaobject": {
         "constant": false,
@@ -1362,6 +1374,7 @@
       "name": "childrenCollapsible",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1382,6 +1395,8 @@
         "set": "setHandleWidth"
       },
       "brief": "The width of the splitter handles",
+      "default": 4,
+      "default_origin": "runtime",
       "js_name": "handleWidth",
       "metaobject": {
         "constant": false,
@@ -1402,6 +1417,7 @@
       "name": "handleWidth",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -1422,6 +1438,8 @@
         "set": "setOpaqueResize"
       },
       "brief": null,
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "opaqueResize",
       "metaobject": {
         "constant": false,
@@ -1442,6 +1460,7 @@
       "name": "opaqueResize",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1462,6 +1481,8 @@
         "set": "setOrientation"
       },
       "brief": "The orientation of the splitter",
+      "default": "Horizontal",
+      "default_origin": "runtime",
       "js_name": "orientation",
       "metaobject": {
         "constant": false,
@@ -1482,6 +1503,7 @@
       "name": "orientation",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::Orientation",

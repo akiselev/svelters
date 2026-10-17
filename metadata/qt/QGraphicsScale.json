@@ -43,6 +43,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsScale",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsScale:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -354,6 +364,7 @@
         "set": "setOrigin"
       },
       "brief": "The origin of the scale in 3D space",
+      "default": null,
       "js_name": "origin",
       "metaobject": {
         "constant": false,
@@ -377,6 +388,7 @@
         "signal": "originChanged()"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QVector3D",
@@ -397,6 +409,8 @@
         "set": "setXScale"
       },
       "brief": "The horizontal scale factor",
+      "default": 1.0,
+      "default_origin": "runtime",
       "js_name": "xScale",
       "metaobject": {
         "constant": false,
@@ -420,6 +434,7 @@
         "signal": "xScaleChanged()"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "qreal",
@@ -440,6 +455,8 @@
         "set": "setYScale"
       },
       "brief": "The vertical scale factor",
+      "default": 1.0,
+      "default_origin": "runtime",
       "js_name": "yScale",
       "metaobject": {
         "constant": false,
@@ -463,6 +480,7 @@
         "signal": "yScaleChanged()"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "qreal",
@@ -483,6 +501,8 @@
         "set": "setZScale"
       },
       "brief": "The depth scale factor",
+      "default": 1.0,
+      "default_origin": "runtime",
       "js_name": "zScale",
       "metaobject": {
         "constant": false,
@@ -506,6 +526,7 @@
         "signal": "zScaleChanged()"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "qreal",

@@ -152,6 +152,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QLCDNumber",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QLCDNumber:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -867,6 +877,8 @@
         "set": "setDigitCount"
       },
       "brief": "The current number of digits displayed",
+      "default": 5,
+      "default_origin": "runtime",
       "js_name": "digitCount",
       "metaobject": {
         "constant": false,
@@ -887,6 +899,7 @@
       "name": "digitCount",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -907,6 +920,8 @@
         "set": null
       },
       "brief": "The displayed value rounded to the nearest integer",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "intValue",
       "metaobject": {
         "constant": false,
@@ -927,6 +942,7 @@
       "name": "intValue",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -947,6 +963,8 @@
         "set": "setMode"
       },
       "brief": "The current display mode (number base)",
+      "default": "Dec",
+      "default_origin": "runtime",
       "js_name": "mode",
       "metaobject": {
         "constant": false,
@@ -967,6 +985,7 @@
       "name": "mode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Mode",
@@ -987,6 +1006,8 @@
         "set": "setSegmentStyle"
       },
       "brief": "The style of the LCDNumber",
+      "default": "Filled",
+      "default_origin": "runtime",
       "js_name": "segmentStyle",
       "metaobject": {
         "constant": false,
@@ -1007,6 +1028,7 @@
       "name": "segmentStyle",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "SegmentStyle",
@@ -1027,6 +1049,8 @@
         "set": "setSmallDecimalPoint"
       },
       "brief": "The style of the decimal point",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "smallDecimalPoint",
       "metaobject": {
         "constant": false,
@@ -1047,6 +1071,7 @@
       "name": "smallDecimalPoint",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1067,6 +1092,8 @@
         "set": null
       },
       "brief": "The displayed value",
+      "default": 0.0,
+      "default_origin": "runtime",
       "js_name": "value",
       "metaobject": {
         "constant": false,
@@ -1087,6 +1114,7 @@
       "name": "value",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "double",

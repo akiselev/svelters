@@ -145,6 +145,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QLineEdit",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QLineEdit:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -3054,6 +3064,8 @@
         "set": null
       },
       "brief": "Whether the input satisfies the inputMask and the validator",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "acceptableInput",
       "metaobject": {
         "constant": false,
@@ -3074,6 +3086,7 @@
       "name": "acceptableInput",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -3094,6 +3107,8 @@
         "set": "setAlignment"
       },
       "brief": "Of the line edit",
+      "default": "AlignLeading|AlignVCenter",
+      "default_origin": "runtime",
       "js_name": "alignment",
       "metaobject": {
         "constant": false,
@@ -3114,6 +3129,7 @@
       "name": "alignment",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::Alignment",
@@ -3134,6 +3150,8 @@
         "set": "setClearButtonEnabled"
       },
       "brief": "Whether the line edit displays a clear button when it is not empty",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "clearButtonEnabled",
       "metaobject": {
         "constant": false,
@@ -3154,6 +3172,7 @@
       "name": "clearButtonEnabled",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -3174,6 +3193,8 @@
         "set": "setCursorMoveStyle"
       },
       "brief": "Movement style of the cursor in this line edit",
+      "default": "LogicalMoveStyle",
+      "default_origin": "runtime",
       "js_name": "cursorMoveStyle",
       "metaobject": {
         "constant": false,
@@ -3194,6 +3215,7 @@
       "name": "cursorMoveStyle",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::CursorMoveStyle",
@@ -3214,6 +3236,8 @@
         "set": "setCursorPosition"
       },
       "brief": "Current cursor position for this line edit",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "cursorPosition",
       "metaobject": {
         "constant": false,
@@ -3234,6 +3258,7 @@
       "name": "cursorPosition",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -3254,6 +3279,8 @@
         "set": null
       },
       "brief": "Displayed text",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "displayText",
       "metaobject": {
         "constant": false,
@@ -3274,6 +3301,7 @@
       "name": "displayText",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -3294,6 +3322,8 @@
         "set": "setDragEnabled"
       },
       "brief": "Whether the line edit starts a drag if the user presses and moves the mouse on some selected text",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "dragEnabled",
       "metaobject": {
         "constant": false,
@@ -3314,6 +3344,7 @@
       "name": "dragEnabled",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -3334,6 +3365,8 @@
         "set": "setEchoMode"
       },
       "brief": "Line edit's echo mode",
+      "default": "Normal",
+      "default_origin": "runtime",
       "js_name": "echoMode",
       "metaobject": {
         "constant": false,
@@ -3354,6 +3387,7 @@
       "name": "echoMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "EchoMode",
@@ -3374,6 +3408,8 @@
         "set": "setFrame"
       },
       "brief": "Whether the line edit draws itself with a frame",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "frame",
       "metaobject": {
         "constant": false,
@@ -3394,6 +3430,7 @@
       "name": "frame",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -3414,6 +3451,8 @@
         "set": null
       },
       "brief": "Whether there is any text selected",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "hasSelectedText",
       "metaobject": {
         "constant": false,
@@ -3434,6 +3473,7 @@
       "name": "hasSelectedText",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -3454,6 +3494,8 @@
         "set": "setInputMask"
       },
       "brief": "Validation input mask",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "inputMask",
       "metaobject": {
         "constant": false,
@@ -3474,6 +3516,7 @@
       "name": "inputMask",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -3494,6 +3537,8 @@
         "set": "setMaxLength"
       },
       "brief": "Maximum permitted length of the text",
+      "default": 32767,
+      "default_origin": "runtime",
       "js_name": "maxLength",
       "metaobject": {
         "constant": false,
@@ -3514,6 +3559,7 @@
       "name": "maxLength",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -3534,6 +3580,8 @@
         "set": "setModified"
       },
       "brief": "Whether the line edit's contents has been modified by the user",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "modified",
       "metaobject": {
         "constant": false,
@@ -3554,6 +3602,7 @@
       "name": "modified",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -3574,6 +3623,8 @@
         "set": "setPlaceholderText"
       },
       "brief": "Line edit's placeholder text",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "placeholderText",
       "metaobject": {
         "constant": false,
@@ -3594,6 +3645,7 @@
       "name": "placeholderText",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -3614,6 +3666,8 @@
         "set": "setReadOnly"
       },
       "brief": "Whether the line edit is read-only",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "readOnly",
       "metaobject": {
         "constant": false,
@@ -3634,6 +3688,7 @@
       "name": "readOnly",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -3654,6 +3709,8 @@
         "set": null
       },
       "brief": "Whether redo is available",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "redoAvailable",
       "metaobject": {
         "constant": false,
@@ -3674,6 +3731,7 @@
       "name": "redoAvailable",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -3694,6 +3752,8 @@
         "set": null
       },
       "brief": "Selected text",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "selectedText",
       "metaobject": {
         "constant": false,
@@ -3714,6 +3774,7 @@
       "name": "selectedText",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -3734,6 +3795,8 @@
         "set": "setText"
       },
       "brief": "Line edit's text",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "text",
       "metaobject": {
         "constant": false,
@@ -3757,6 +3820,7 @@
         "signal": "textChanged(QString)"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -3777,6 +3841,8 @@
         "set": null
       },
       "brief": "Whether undo is available",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "undoAvailable",
       "metaobject": {
         "constant": false,
@@ -3797,6 +3863,7 @@
       "name": "undoAvailable",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",

@@ -2,4 +2,4 @@ elements:
   - tag: timeedit
     construct: { class: QTimeEdit }
     props:
-      - { js: time, native: time }
+      - { js: time, native: time, provenance: "QTimeEdit::time (qdoc); typed by the S1 value model (ABI v3)" }

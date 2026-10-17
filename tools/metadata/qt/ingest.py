@@ -190,9 +190,52 @@ def parse_typesystem(path: Path):
     return facts
 
 
+# Classes that are not instantiated for defaults (application singletons, or constructors that
+# need arguments PySide cannot default).
+NO_INSTANCE = {"QApplication", "QWidgetItem", "QSpacerItem", "QWidgetItemV2", "QAccessibleWidget", "QGraphicsProxyWidget"}
+
+
+def instance_defaults(cls, mo, QtCore) -> dict:
+    """Typed defaults of the class's own properties, read from a default-constructed instance
+    (offscreen). Only scalars and enum keys; anything else is left out."""
+    name = cls.__name__
+    if name in NO_INSTANCE:
+        return {}
+    try:
+        obj = cls()
+    except Exception:  # noqa: BLE001 - abstract or needs constructor arguments
+        return {}
+    out = {}
+    for i in range(mo.propertyOffset(), mo.propertyCount()):
+        p = mo.property(i)
+        try:
+            v = p.read(obj)
+        except Exception:  # noqa: BLE001
+            continue
+        if p.isEnumType() or p.isFlagType():
+            e = p.enumerator()
+            iv = v.value if hasattr(v, "value") else v
+            try:
+                iv = int(iv)
+            except Exception:  # noqa: BLE001
+                continue
+            key = e.valueToKeys(iv) if p.isFlagType() else e.valueToKey(iv)
+            key = bytes(key).decode() if isinstance(key, (bytes, bytearray, QtCore.QByteArray)) else key
+            out[p.name()] = key if key else iv
+        elif isinstance(v, bool) or (isinstance(v, (int, float)) and abs(v) < 2**53) or isinstance(v, str):
+            out[p.name()] = v
+    try:
+        obj.deleteLater()
+    except Exception:  # noqa: BLE001
+        pass
+    return out
+
+
 def metaobject_dump(names):
     os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
     from PySide6 import QtCore, QtWidgets, __version__ as pyside
+
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841 - widgets need one
 
     mt = QtCore.QMetaMethod.MethodType
 
@@ -222,12 +265,33 @@ def metaobject_dump(names):
             sig = b(m.methodSignature())
             d[kind].setdefault(sig.split("(")[0], []).append(
                 {"sig": sig, "return": m.typeName(), "params": [b(x) for x in m.parameterNames()]})
+        defaults = instance_defaults(cls, mo, QtCore)
+        for pname, dv in defaults.items():
+            d["properties"][pname]["default"] = dv
         for i in range(mo.enumeratorOffset(), mo.enumeratorCount()):
             e = mo.enumerator(i)
             d["enums"][e.name()] = {"flag": e.isFlag(), "scoped": e.isScoped(),
                                     "keys": {e.key(k): e.value(k) for k in range(e.keyCount())}}
         dumps[n] = d
     return dumps, {"pyside6": pyside, "qt": QtCore.qVersion()}
+
+
+def qt_lifetime(name, classes, qobject, abstract, prefix) -> dict:
+    """Per-kind lifetime block (docs/notes/ownership-and-lifetimes.md 2.3), derived from the class
+    hierarchy the same way the generator decides `gen_is_toplevel`."""
+    chain = [name] + base_chain(name, classes)
+    out = {"id": f"{prefix}:{name}:lifetime", "origin": "derived"}
+    if not qobject or abstract:
+        out.update({"class": "borrowed_only", "native_refcount": "qobject_tree" if qobject else "none",
+                    "provenance": "derived: abstract or not a QObject; JS cannot create it"})
+    elif "QMainWindow" in chain or "QDialog" in chain:
+        out.update({"class": "toplevel", "native_refcount": "qobject_tree", "destroy": {"native": "QObject::deleteLater()"},
+                    "close": {"request_signal": "close-request", "veto": "event_ignore", "default": "destroy"},
+                    "provenance": "derived: QMainWindow/QDialog subclass; ABI v2 toplevel class (plans/architecture/backend-abi.md)"})
+    else:
+        out.update({"class": "owned", "native_refcount": "qobject_tree", "destroy": {"native": "QObject::deleteLater()"},
+                    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"})
+    return out
 
 
 def build_kind(name, c, classes, qobjects, enums, meta, tsys, src):
@@ -278,11 +342,22 @@ def build_kind(name, c, classes, qobjects, enums, meta, tsys, src):
                "accessors": {"get": getter, "set": setter, "reset": reset, "origin": "qdoc"},
                "brief": p.get("brief"), "role": "value", "origin": "qdoc"}
         mp = (md or {}).get("properties", {}).get(pn)
+        rec["default"], rec["range"] = None, None
         if mp:
+            mp = dict(mp)
+            if "default" in mp:
+                rec["default"] = mp.pop("default")
+                rec["default_origin"] = "runtime"  # read from a default-constructed instance (PySide6, offscreen)
             rec["metaobject"] = {**mp, "origin": "metaobject"}
             rec["notify"] = {"signal": mp["notify"], "origin": "metaobject"} if mp["notify"] else None
             rec["access"]["write"] = mp["writable"]
         props.append(rec)
+    # Numeric value properties bounded by sibling minimum/maximum properties: their default range.
+    byname = {r["name"]: r for r in props}
+    for vn in ("value", "sliderPosition"):
+        lo, hi = byname.get("minimum"), byname.get("maximum")
+        if vn in byname and lo and hi and isinstance(lo["default"], (int, float)) and isinstance(hi["default"], (int, float)):
+            byname[vn]["range"] = {"min": lo["default"], "max": hi["default"], "follows": ["minimum", "maximum"], "origin": "runtime"}
     msigs = (md or {}).get("signals", {})
     for s in signals:
         s["id"] = f"{prefix}:{name}:signal:{s['signature']}"
@@ -322,6 +397,7 @@ def build_kind(name, c, classes, qobjects, enums, meta, tsys, src):
         "signals": sorted(signals, key=order), "methods": sorted(methods, key=order),
         "enums": sorted(enum_recs, key=order),
         "ownership": tsys.get(name, []),
+        "lifetime": qt_lifetime(name, classes, md is not None, any(f.get("virtual") == "pure" for f in c.findall("function")), prefix),
         "children": {"policy": "none", "default_slot": None, "slots": []},
         "source": src["source"],
     }

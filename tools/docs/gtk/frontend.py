@@ -11,6 +11,7 @@ floating-reference lifetime model. Emits only the neutral IR (plus an `extension
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import sys
 from pathlib import Path
@@ -19,7 +20,8 @@ ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "tools/docs/ir"))
 sys.path.insert(0, str(ROOT / "tools/metadata/common"))
 import irlib  # noqa: E402
-import svmeta  # noqa: E402
+import svmeta
+LIFE = {"owned": "owned", "toplevel": "toplevel", "value": "value", "borrowed_only": "unknown"}  # noqa: E402
 
 TK = "gtk"
 LICENSE = {
@@ -117,6 +119,13 @@ class Frontend:
             self.docs[f.stem] = svmeta.load_json(dp) if dp.exists() else {}
         self.by_id = {m["id"]: stem for stem, m in self.meta.items()}
         self.overrides = {p.stem: p for p in sorted((root / "metadata/overrides/gtk").glob("*.yaml"))}
+        # The verified ledger (A1): a fact is tested when every generated test of it passed.
+        sys.path.insert(0, str(root / "tools/metadata"))
+        import ledger  # noqa: E402
+
+        self.verified = ledger.verified_facts("gtk")
+        facts = root / "crates/svelters-gtk/src/generated/facts.json"
+        self.facts = [f["fact"] for f in json.loads(facts.read_text())["facts"]] if facts.exists() else []
 
     # ----- types -----
     def name_of(self, tid: str) -> tuple[str, str | None]:
@@ -174,6 +183,7 @@ class Frontend:
                 "role": p.get("role", "value"),
                 "accessors": {k: v for k, v in (p.get("accessors") or {}).items() if v},
                 "annotated": "annotated" in p,
+                **({"verified": True} if p.get("id") in self.verified else {}),
                 "native_id": p["id"],
                 "extensions": {TK: {"gtype": (p.get("runtime") or {}).get("gtype", ""), "param_flags": (p.get("runtime") or {}).get("flags", [])}},
             }
@@ -208,6 +218,7 @@ class Frontend:
                 "origin": s["origin"],
                 "origins": sorted({s["origin"], "runtime"} | ({"manual"} if "annotated" in s else set())),
                 "annotated": "annotated" in s,
+                **({"verified": True} if s.get("id") in self.verified else {}),
                 "native_id": s.get("id", m["id"] + ":signal:" + s["name"]),
                 "extensions": {TK: {"when": s.get("phase") or "", "signal_flags": s.get("flags", [])}},
             }
@@ -359,7 +370,9 @@ class Frontend:
             "tags": [tag] if tag else [],
             "status": {
                 "tier": "annotated" if annotated else "ingested",
-                "tested": annotated,
+                "tested": any(f.startswith(m["id"] + ":") and f in self.verified for f in self.facts),
+                "verified_facts": [sum(1 for f in self.facts if f.startswith(m["id"] + ":") and f in self.verified),
+                                   sum(1 for f in self.facts if f.startswith(m["id"] + ":"))],
                 "metadata_file": f"metadata/gtk/{stem}.json",
                 "note": "" if annotated else "Raw: GTK properties and signals of this kind are reachable through the generated tables (dynamic GObject access), but its child slots, ownership and signal semantics are neither annotated nor tested.",
             },
@@ -376,7 +389,7 @@ class Frontend:
         }
         if annotated:
             e["status"]["annotation_files"] = [f"metadata/overrides/gtk/{stem}.yaml"]
-            e["status"]["test_note"] = "Annotated facts have generated verification tests (crates/svelters-gtk, run under Xvfb by P3)."
+            e["status"]["test_note"] = "Annotated facts have generated verification tests (crates/svelters-gtk); results are in metadata/verified/gtk.json."
         if doc and doc.get("brief"):
             e["summary"] = self.text(doc, md=doc["brief"], url=page)
         if description and description["md"]:
@@ -384,7 +397,12 @@ class Frontend:
         av = self.avail(doc)
         if av:
             e["availability"] = av
-        if m["kind"] == "object":
+        if m.get("lifetime"):
+            lt = m["lifetime"]
+            prov = lt.get("provenance")
+            note = prov if isinstance(prov, str) else "; ".join(f"{x['origin']}: {x['ref']}" for x in prov or [])
+            e["lifetime"] = {"class": LIFE.get(lt["class"], "unknown"), "origin": "manual" if lt.get("origin") == "manual" else "derived", "note": note}
+        elif m["kind"] == "object":
             top = "Gtk.Window" in m.get("bases", []) or name == "Window"
             if m.get("abstract") or not m["native"].get("get_type"):
                 e["lifetime"] = {"class": "unknown", "origin": "derived", "note": "Abstract or not instantiable from JS."}

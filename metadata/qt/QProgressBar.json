@@ -72,6 +72,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QProgressBar",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QProgressBar:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -949,6 +959,8 @@
         "set": "setAlignment"
       },
       "brief": "The alignment of the progress bar",
+      "default": "AlignLeft|AlignLeading",
+      "default_origin": "runtime",
       "js_name": "alignment",
       "metaobject": {
         "constant": false,
@@ -969,6 +981,7 @@
       "name": "alignment",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::Alignment",
@@ -989,6 +1002,8 @@
         "set": "setFormat"
       },
       "brief": "The string used to generate the current text",
+      "default": "%p%",
+      "default_origin": "runtime",
       "js_name": "format",
       "metaobject": {
         "constant": false,
@@ -1009,6 +1024,7 @@
       "name": "format",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -1029,6 +1045,8 @@
         "set": "setInvertedAppearance"
       },
       "brief": "Whether or not a progress bar shows its progress inverted",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "invertedAppearance",
       "metaobject": {
         "constant": false,
@@ -1049,6 +1067,7 @@
       "name": "invertedAppearance",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1069,6 +1088,8 @@
         "set": "setMaximum"
       },
       "brief": "The progress bar's maximum value",
+      "default": 100,
+      "default_origin": "runtime",
       "js_name": "maximum",
       "metaobject": {
         "constant": false,
@@ -1089,6 +1110,7 @@
       "name": "maximum",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -1109,6 +1131,8 @@
         "set": "setMinimum"
       },
       "brief": "The progress bar's minimum value",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "minimum",
       "metaobject": {
         "constant": false,
@@ -1129,6 +1153,7 @@
       "name": "minimum",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -1149,6 +1174,8 @@
         "set": "setOrientation"
       },
       "brief": "The orientation of the progress bar",
+      "default": "Horizontal",
+      "default_origin": "runtime",
       "js_name": "orientation",
       "metaobject": {
         "constant": false,
@@ -1169,6 +1196,7 @@
       "name": "orientation",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::Orientation",
@@ -1189,6 +1217,8 @@
         "set": null
       },
       "brief": "The descriptive text shown with the progress bar",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "text",
       "metaobject": {
         "constant": false,
@@ -1209,6 +1239,7 @@
       "name": "text",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
@@ -1229,6 +1260,8 @@
         "set": "setTextDirection"
       },
       "brief": "The reading direction of the text for vertical progress bars",
+      "default": "TopToBottom",
+      "default_origin": "runtime",
       "js_name": "textDirection",
       "metaobject": {
         "constant": false,
@@ -1249,6 +1282,7 @@
       "name": "textDirection",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Direction",
@@ -1269,6 +1303,8 @@
         "set": "setTextVisible"
       },
       "brief": "Whether the current completed percentage should be displayed",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "textVisible",
       "metaobject": {
         "constant": false,
@@ -1289,6 +1325,7 @@
       "name": "textVisible",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1309,6 +1346,8 @@
         "set": "setValue"
       },
       "brief": "The progress bar's current value",
+      "default": -1,
+      "default_origin": "runtime",
       "js_name": "value",
       "metaobject": {
         "constant": false,
@@ -1332,6 +1371,15 @@
         "signal": "valueChanged(int)"
       },
       "origin": "qdoc",
+      "range": {
+        "follows": [
+          "minimum",
+          "maximum"
+        ],
+        "max": 100,
+        "min": 0,
+        "origin": "runtime"
+      },
       "role": "value",
       "type": {
         "native": "int",

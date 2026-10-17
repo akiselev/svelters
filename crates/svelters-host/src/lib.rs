@@ -35,7 +35,9 @@ use std::path::Path;
 use std::rc::Rc;
 use std::sync::Arc;
 use std::sync::atomic::AtomicBool;
-use svelters_abi::{AbiError, BackendRef, HostCallbacks, HostVtable, Value, svl_handle, svl_id};
+use svelters_abi::{
+    AbiError, BackendRef, HostCallbacks, HostVtable, SyncError, Value, svl_handle, svl_id,
+};
 
 type SharedEngine = Rc<RefCell<Box<dyn JsEngine>>>;
 
@@ -64,8 +66,12 @@ impl HostCallbacks for Callbacks {
         core::checkpoint(&self.core, &self.engine);
     }
 
-    fn call_sync(&self, _h: svl_handle, _signal: svl_id, _args: &[Value]) -> Result<Value, String> {
-        Err("call_sync is not supported yet (M4)".into())
+    fn call_sync(&self, h: svl_handle, signal: svl_id, args: &[Value]) -> Result<Value, SyncError> {
+        core::call_sync(&self.core, &self.engine, h, signal, args)
+    }
+
+    fn frame(&self) {
+        core::frame(&self.core, &self.engine);
     }
 
     fn invoke_callback(&self, callback: u64, args: &[Value]) -> Result<Value, String> {

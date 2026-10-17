@@ -122,6 +122,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QMdiArea",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QMdiArea:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -1557,6 +1567,8 @@
         "set": "setActivationOrder"
       },
       "brief": "The ordering criteria for subwindow lists",
+      "default": "CreationOrder",
+      "default_origin": "runtime",
       "js_name": "activationOrder",
       "metaobject": {
         "constant": false,
@@ -1577,6 +1589,7 @@
       "name": "activationOrder",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "WindowOrder",
@@ -1597,6 +1610,7 @@
         "set": "setBackground"
       },
       "brief": "The background brush for the workspace",
+      "default": null,
       "js_name": "background",
       "metaobject": {
         "constant": false,
@@ -1617,6 +1631,7 @@
       "name": "background",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QBrush",
@@ -1637,6 +1652,8 @@
         "set": "setDocumentMode"
       },
       "brief": "Whether the tab bar is set to document mode in tabbed view mode",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "documentMode",
       "metaobject": {
         "constant": false,
@@ -1657,6 +1674,7 @@
       "name": "documentMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1677,6 +1695,7 @@
         "set": "setTabPosition"
       },
       "brief": "The position of the tabs in tabbed view mode",
+      "default": null,
       "js_name": "tabPosition",
       "metaobject": {
         "constant": false,
@@ -1697,6 +1716,7 @@
       "name": "tabPosition",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QTabWidget::TabPosition",
@@ -1717,6 +1737,7 @@
         "set": "setTabShape"
       },
       "brief": "The shape of the tabs in tabbed view mode",
+      "default": null,
       "js_name": "tabShape",
       "metaobject": {
         "constant": false,
@@ -1737,6 +1758,7 @@
       "name": "tabShape",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QTabWidget::TabShape",
@@ -1757,6 +1779,8 @@
         "set": "setTabsClosable"
       },
       "brief": "Whether the tab bar should place close buttons on each tab in tabbed view mode",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "tabsClosable",
       "metaobject": {
         "constant": false,
@@ -1777,6 +1801,7 @@
       "name": "tabsClosable",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1797,6 +1822,8 @@
         "set": "setTabsMovable"
       },
       "brief": "Whether the user can move the tabs within the tabbar area in tabbed view mode",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "tabsMovable",
       "metaobject": {
         "constant": false,
@@ -1817,6 +1844,7 @@
       "name": "tabsMovable",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -1837,6 +1865,8 @@
         "set": "setViewMode"
       },
       "brief": "The way sub-windows are displayed in the QMdiArea",
+      "default": "SubWindowView",
+      "default_origin": "runtime",
       "js_name": "viewMode",
       "metaobject": {
         "constant": false,
@@ -1857,6 +1887,7 @@
       "name": "viewMode",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "ViewMode",

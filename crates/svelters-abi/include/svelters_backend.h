@@ -1,4 +1,4 @@
-/* svelters backend ABI, version 3 (draft). Source of truth: plans/architecture/backend-abi.md
+/* svelters backend ABI, version 3 (draft; 2.1 additive tail members: request_frame, frame). Source of truth: plans/architecture/backend-abi.md
  *
  * v3 = the value model from docs/notes/js-native-serdes.md section 5.1 on top of v2 (timers, handle
  * lifetime). */
@@ -209,7 +209,17 @@ typedef struct svl_host {
   int (*invoke_callback)(void *self, uint64_t callback, const svl_value *args, size_t n, svl_value *out);
   /* v3: the native side dropped a callback (GDestroyNotify, scope end, async done). Idempotent. */
   void (*release_callback)(void *self, uint64_t callback);
+  /* ABI v2.1: a frame requested with backend->request_frame is due. Main thread, from the
+     toolkit's frame clock. The host runs requestAnimationFrame callbacks. */
+  void (*frame)(void *self);
 } svl_host;
+
+/* call_sync return codes (ABI v2.1 semantics). `out` holds the handler result when 0:
+   null = no decision (use the toolkit default), true/false = stop/continue for bool_stop signals. */
+#define SVL_SYNC_OK 0
+#define SVL_SYNC_FAILED (-1) /* nothing ran or the host failed: use the default */
+#define SVL_SYNC_BUSY (-2)   /* JS is running: the host queued the event for async delivery */
+
 
 /* ---- backend ------------------------------------------------------------------------------------ */
 
@@ -249,6 +259,10 @@ typedef struct svl_backend {
   const svl_type_desc *(*describe_type)(void *self, svl_id type);
   /* async: cancel the operation completing `callback` (g_cancellable_cancel); 0 if already done. */
   int (*cancel)(void *self, uint64_t callback);
+
+  /* ABI v2.1: ask for one host->frame callback on the toolkit's next frame (vsync). Idempotent
+     while a request is pending. Main thread only. */
+  void (*request_frame)(void *self);
 } svl_backend;
 
 /* Values written to `out` by a backend stay valid until the backend's next call. A backend returning an

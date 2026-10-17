@@ -95,6 +95,13 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QLayout",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "borrowed_only",
+    "id": "svelters-api:v1:type:qt:QtWidgets:QLayout:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: abstract or not a QObject; JS cannot create it"
+  },
   "methods": [
     {
       "access": "public",
@@ -1891,6 +1898,7 @@
         "set": "setContentsMargins"
       },
       "brief": "The margins used around the layout",
+      "default": null,
       "js_name": "contentsMargins",
       "metaobject": {
         "constant": false,
@@ -1911,6 +1919,7 @@
       "name": "contentsMargins",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QMargins",
@@ -1931,6 +1940,7 @@
         "set": "setHorizontalSizeConstraint"
       },
       "brief": "Horizontal size constraint",
+      "default": null,
       "js_name": "horizontalSizeConstraint",
       "metaobject": {
         "constant": false,
@@ -1951,6 +1961,7 @@
       "name": "horizontalSizeConstraint",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "SizeConstraint",
@@ -1971,6 +1982,7 @@
         "set": "setSizeConstraint"
       },
       "brief": "The resize mode of the layout. Setting the size constraint for the dialog. Setting a vertical or horizontal size constraint will override this",
+      "default": null,
       "js_name": "sizeConstraint",
       "metaobject": {
         "constant": false,
@@ -1991,6 +2003,7 @@
       "name": "sizeConstraint",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "SizeConstraint",
@@ -2011,6 +2024,7 @@
         "set": "setSpacing"
       },
       "brief": "The spacing between widgets inside the layout",
+      "default": null,
       "js_name": "spacing",
       "metaobject": {
         "constant": false,
@@ -2031,6 +2045,7 @@
       "name": "spacing",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -2051,6 +2066,7 @@
         "set": "setVerticalSizeConstraint"
       },
       "brief": "Vertical size constraint",
+      "default": null,
       "js_name": "verticalSizeConstraint",
       "metaobject": {
         "constant": false,
@@ -2071,6 +2087,7 @@
       "name": "verticalSizeConstraint",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "SizeConstraint",

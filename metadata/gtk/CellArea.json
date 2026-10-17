@@ -25,6 +25,13 @@
     "Gtk.CellLayout"
   ],
   "kind": "object",
+  "lifetime": {
+    "class": "borrowed_only",
+    "id": "svelters-api:v1:type:gtk:Gtk:CellArea:lifetime",
+    "native_refcount": "gobject_floating",
+    "origin": "derived",
+    "provenance": "derived: abstract type, JS cannot create it"
+  },
   "methods": [
     {
       "deprecated": true,

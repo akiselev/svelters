@@ -52,9 +52,46 @@
   global.setInterval = (cb, delay, ...args) => add(cb, delay, args, true);
   global.clearTimeout = clear;
   global.clearInterval = clear;
-  // Animation-frame stub: a ~60 Hz timer. Real frame clocks come with the backends.
-  global.requestAnimationFrame = (cb) => add(() => cb(native.now()), 16, [], false);
-  global.cancelAnimationFrame = clear;
+  // Animation frames run on the toolkit's frame clock: the first request asks the host for a
+  // frame and every callback requested before it fires runs in that frame, in request order,
+  // with the frame's performance.now() timestamp. Scripted hosts have no frame clock
+  // (`frame_request` answers false) and use a virtual 16 ms timer.
+  const frames = new Map();
+  let frameId = 1;
+  let frameArmed = false;
+  const runFrame = () => {
+    frameArmed = false;
+    const batch = [...frames.values()];
+    frames.clear();
+    const ts = native.now();
+    let failed = false;
+    let first;
+    for (const cb of batch) {
+      try {
+        cb(ts);
+      } catch (e) {
+        if (failed) global.console.error(e);
+        else {
+          failed = true;
+          first = e;
+        }
+      }
+    }
+    if (failed) throw first;
+  };
+  global.requestAnimationFrame = (cb) => {
+    if (typeof cb !== 'function') throw new TypeError('requestAnimationFrame: callback must be a function');
+    const id = frameId++;
+    frames.set(id, cb);
+    if (!frameArmed) {
+      frameArmed = true;
+      if (!native.frame_request()) add(runFrame, 16, [], false);
+    }
+    return id;
+  };
+  global.cancelAnimationFrame = (id) => {
+    frames.delete(id);
+  };
 
   const fire = (id) => {
     const t = timers.get(id);
@@ -209,7 +246,7 @@
   const makeDate = (ms) => new Date(ms);
 
   Object.defineProperty(global, '__svelters_internal', {
-    value: { fire, makeBoxed, makeNativeError, isView, dateMs, makeDate, makeCompletion, watchAbort },
+    value: { fire, frame: runFrame, makeBoxed, makeNativeError, isView, dateMs, makeDate, makeCompletion, watchAbort },
     enumerable: false,
   });
 })

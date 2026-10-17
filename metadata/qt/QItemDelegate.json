@@ -43,6 +43,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QItemDelegate",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QItemDelegate:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -957,6 +967,8 @@
         "set": "setClipping"
       },
       "brief": "If the delegate should clip the paint events",
+      "default": true,
+      "default_origin": "runtime",
       "js_name": "clipping",
       "metaobject": {
         "constant": false,
@@ -977,6 +989,7 @@
       "name": "clipping",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",

@@ -112,6 +112,7 @@ export interface QtElementDescriptors {
       maxLength?: number;
     };
     events: {
+      "key-press": () => void;
       changed: (text: string) => void;
     };
     methods: {

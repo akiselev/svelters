@@ -92,6 +92,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QTableWidget",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QTableWidget:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -2545,6 +2555,8 @@
         "set": "setColumnCount"
       },
       "brief": "The number of columns in the table",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "columnCount",
       "metaobject": {
         "constant": false,
@@ -2565,6 +2577,7 @@
       "name": "columnCount",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -2585,6 +2598,8 @@
         "set": "setRowCount"
       },
       "brief": "The number of rows in the table",
+      "default": 0,
+      "default_origin": "runtime",
       "js_name": "rowCount",
       "metaobject": {
         "constant": false,
@@ -2605,6 +2620,7 @@
       "name": "rowCount",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "int",
@@ -2625,6 +2641,8 @@
         "set": "setSupportedDragActions"
       },
       "brief": "The drag actions supported by this view",
+      "default": "CopyAction|MoveAction",
+      "default_origin": "runtime",
       "js_name": "supportedDragActions",
       "metaobject": {
         "constant": false,
@@ -2645,6 +2663,7 @@
       "name": "supportedDragActions",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::DropActions",

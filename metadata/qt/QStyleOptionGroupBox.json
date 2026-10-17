@@ -63,6 +63,13 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOptionGroupBox",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "borrowed_only",
+    "id": "svelters-api:v1:type:qt:QtWidgets:QStyleOptionGroupBox:lifetime",
+    "native_refcount": "none",
+    "origin": "derived",
+    "provenance": "derived: abstract or not a QObject; JS cannot create it"
+  },
   "methods": [],
   "native": {
     "brief": "Describes the parameters for drawing a group box",

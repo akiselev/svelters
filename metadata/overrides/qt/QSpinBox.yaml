@@ -2,12 +2,12 @@ elements:
   - tag: spinbox
     construct: { class: QSpinBox }
     props:
-      - { js: value, native: value }
-      - { js: minimum, native: minimum }
-      - { js: maximum, native: maximum }
-      - { js: singleStep, native: singleStep }
-      - { js: prefix, native: prefix }
+      - { js: value, native: value, provenance: "QSpinBox::value (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: minimum, native: minimum, provenance: "QSpinBox::minimum (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: maximum, native: maximum, provenance: "QSpinBox::maximum (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: singleStep, native: singleStep, provenance: "QSpinBox::singleStep (qdoc); typed by the S1 value model (ABI v3)" }
+      - { js: prefix, native: prefix, provenance: "QSpinBox::prefix (qdoc); typed by the S1 value model (ABI v3)" }
     methods:
       # In-out parameters: JS passes (input, pos) and gets {ret, input, pos}.
-      - { js: validate, native: validate, inout: [input, pos] }
-      - { js: fixup, native: fixup, inout: [input] }
+      - { js: validate, native: validate, inout: [input, pos], provenance: "QAbstractSpinBox::validate(QString &, int &) (qdoc); in-out parameters, S2 ABI v3" }
+      - { js: fixup, native: fixup, inout: [input], provenance: "QAbstractSpinBox::fixup(QString &) (qdoc); in-out parameter, S2 ABI v3" }

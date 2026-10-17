@@ -71,6 +71,16 @@
   "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsWidget",
   "interfaces": [],
   "kind": "object",
+  "lifetime": {
+    "class": "owned",
+    "destroy": {
+      "native": "QObject::deleteLater()"
+    },
+    "id": "svelters-api:v1:type:qt:QtWidgets:QGraphicsWidget:lifetime",
+    "native_refcount": "qobject_tree",
+    "origin": "derived",
+    "provenance": "derived: QObject; deleted with its parent or by destroy (deleteLater)"
+  },
   "methods": [
     {
       "access": "public",
@@ -3134,6 +3144,8 @@
         "set": "setAutoFillBackground"
       },
       "brief": "Whether the widget background is filled automatically",
+      "default": false,
+      "default_origin": "runtime",
       "js_name": "autoFillBackground",
       "metaobject": {
         "constant": false,
@@ -3154,6 +3166,7 @@
       "name": "autoFillBackground",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "bool",
@@ -3174,6 +3187,8 @@
         "set": "setFocusPolicy"
       },
       "brief": "The way the widget accepts keyboard focus",
+      "default": "NoFocus",
+      "default_origin": "runtime",
       "js_name": "focusPolicy",
       "metaobject": {
         "constant": false,
@@ -3194,6 +3209,7 @@
       "name": "focusPolicy",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::FocusPolicy",
@@ -3214,6 +3230,7 @@
         "set": "setFont"
       },
       "brief": "The widgets' font",
+      "default": null,
       "js_name": "font",
       "metaobject": {
         "constant": false,
@@ -3234,6 +3251,7 @@
       "name": "font",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QFont",
@@ -3254,6 +3272,7 @@
         "set": "setGeometry"
       },
       "brief": "The geometry of the widget",
+      "default": null,
       "js_name": "geometry",
       "metaobject": {
         "constant": false,
@@ -3277,6 +3296,7 @@
         "signal": "geometryChanged()"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QRectF",
@@ -3297,6 +3317,7 @@
         "set": "setLayout"
       },
       "brief": "Of the widget",
+      "default": null,
       "js_name": "layout",
       "metaobject": {
         "constant": false,
@@ -3320,6 +3341,7 @@
         "signal": "layoutChanged()"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QGraphicsLayout*",
@@ -3340,6 +3362,8 @@
         "set": "setLayoutDirection"
       },
       "brief": "The layout direction for this widget",
+      "default": "LeftToRight",
+      "default_origin": "runtime",
       "js_name": "layoutDirection",
       "metaobject": {
         "constant": false,
@@ -3360,6 +3384,7 @@
       "name": "layoutDirection",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::LayoutDirection",
@@ -3380,6 +3405,7 @@
         "set": null
       },
       "brief": "The maximum size of the widget",
+      "default": null,
       "js_name": "maximumSize",
       "metaobject": {
         "constant": false,
@@ -3400,6 +3426,7 @@
       "name": "maximumSize",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QSizeF",
@@ -3420,6 +3447,7 @@
         "set": null
       },
       "brief": "The minimum size of the widget",
+      "default": null,
       "js_name": "minimumSize",
       "metaobject": {
         "constant": false,
@@ -3440,6 +3468,7 @@
       "name": "minimumSize",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QSizeF",
@@ -3460,6 +3489,7 @@
         "set": "setPalette"
       },
       "brief": "The widget's palette",
+      "default": null,
       "js_name": "palette",
       "metaobject": {
         "constant": false,
@@ -3480,6 +3510,7 @@
       "name": "palette",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QPalette",
@@ -3500,6 +3531,7 @@
         "set": null
       },
       "brief": "The preferred size of the widget",
+      "default": null,
       "js_name": "preferredSize",
       "metaobject": {
         "constant": false,
@@ -3520,6 +3552,7 @@
       "name": "preferredSize",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QSizeF",
@@ -3540,6 +3573,7 @@
         "set": null
       },
       "brief": "The size of the widget",
+      "default": null,
       "js_name": "size",
       "metaobject": {
         "constant": false,
@@ -3563,6 +3597,7 @@
         "signal": "geometryChanged()"
       },
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QSizeF",
@@ -3583,6 +3618,7 @@
         "set": null
       },
       "brief": "The size policy for the widget",
+      "default": null,
       "js_name": "sizePolicy",
       "metaobject": {
         "constant": false,
@@ -3603,6 +3639,7 @@
       "name": "sizePolicy",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QSizePolicy",
@@ -3623,6 +3660,8 @@
         "set": "setWindowFlags"
       },
       "brief": "The widget's window flags",
+      "default": "Widget",
+      "default_origin": "runtime",
       "js_name": "windowFlags",
       "metaobject": {
         "constant": false,
@@ -3643,6 +3682,7 @@
       "name": "windowFlags",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "Qt::WindowFlags",
@@ -3663,6 +3703,8 @@
         "set": "setWindowTitle"
       },
       "brief": "This property holds the window title (caption)",
+      "default": "",
+      "default_origin": "runtime",
       "js_name": "windowTitle",
       "metaobject": {
         "constant": false,
@@ -3683,6 +3725,7 @@
       "name": "windowTitle",
       "notify": null,
       "origin": "qdoc",
+      "range": null,
       "role": "value",
       "type": {
         "native": "QString",
