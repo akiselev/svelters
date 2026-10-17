@@ -178,7 +178,11 @@ impl Harness {
     }
 
     fn kind_of(&self, h: u64) -> u32 {
-        self.kinds.borrow().get(&h).copied().unwrap_or(0)
+        match self.kinds.borrow().get(&h) {
+            Some(k) => *k,
+            // Borrowed handles are minted by the backend: ask it.
+            None => self.handle_info(h).map(|i| i.kind).unwrap_or(0),
+        }
     }
 
     pub fn insert(&self, parent: u64, child: u64, before: Option<u64>, slot: Option<&str>) -> Result<(), String> {
@@ -240,6 +244,32 @@ impl Harness {
         let vt = self.vt();
         let mut out = svl_value { tag: SVL_NULL, u: svl_value_u { i: 0 } };
         self.check(unsafe { (vt.call)(vt.self_, h, id, std::ptr::null(), 0, &mut out) })
+    }
+    /// Call a method (generated or typelib) with arguments and return its result.
+    pub fn call_args(&self, h: u64, method: &str, args: &[V]) -> Result<V, String> {
+        let id = self.resolve(SVL_METHOD, self.kind_of(h), method);
+        if id == 0 {
+            return Err(format!("unknown method {method}"));
+        }
+        let raw: Vec<svl_value> = args
+            .iter()
+            .map(|a| match a {
+                V::Null => svl_value { tag: SVL_NULL, u: svl_value_u { i: 0 } },
+                V::Bool(b) => svl_value { tag: SVL_BOOL, u: svl_value_u { b: *b } },
+                V::I64(i) => svl_value { tag: SVL_I64, u: svl_value_u { i: *i } },
+                V::F64(f) => svl_value { tag: SVL_F64, u: svl_value_u { f: *f } },
+                V::Str(s) => svl_value { tag: SVL_STR, u: svl_value_u { s: svl_str { ptr: s.as_ptr() as *const _, len: s.len() } } },
+                V::Handle(h) => svl_value { tag: SVL_HANDLE, u: svl_value_u { h: *h } },
+            })
+            .collect();
+        let vt = self.vt();
+        let mut out = svl_value { tag: SVL_NULL, u: svl_value_u { i: 0 } };
+        self.check(unsafe { (vt.call)(vt.self_, h, id, raw.as_ptr(), raw.len(), &mut out) })?;
+        Ok(unsafe { to_v(&out) })
+    }
+    /// The id `resolve(SVL_METHOD)` gives `method` on `h`'s kind (0: unknown).
+    pub fn resolve_method(&self, h: u64, method: &str) -> u32 {
+        self.resolve(SVL_METHOD, self.kind_of(h), method)
     }
     pub fn listen(&self, h: u64, signal: &str, on: bool) -> Result<(), String> {
         let id = self.resolve(SVL_SIGNAL, self.kind_of(h), signal);
