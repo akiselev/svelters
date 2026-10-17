@@ -1,0 +1,6 @@
+//! Verbatim port of Svelte's compiler front end (Svelte 5.57.2 @ f3de3f2).
+
+pub mod ast;
+pub mod errors;
+pub mod parse;
+pub mod scope;
