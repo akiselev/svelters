@@ -1,28 +1,13 @@
 name: windows-winui
 
-# Windows minutes cost 2x on a private repo: only run when something the WinUI build uses changed.
 on:
   push:
     branches: [master, 'ci/**']
-    paths: &paths
-      - 'crates/svelters-abi/**'
-      - 'crates/svelters-host/**'
-      - 'crates/svelters-backend-log/**'
-      - 'crates/svelters-winui/**'
-      - 'examples/counter-win/**'
-      - 'fixtures/counter-win/**'
-      - 'packages/**'
-      - 'vendor/**'
-      - 'tools/metadata/winui/fetch.py'
-      - 'Cargo.toml'
-      - 'Cargo.lock'
-      - 'rust-toolchain.toml'
-      - 'pnpm-lock.yaml'
-      - '.github/workflows/windows-winui.yml'
-      - '.github/actions/**'
   pull_request:
-    paths: *paths
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
