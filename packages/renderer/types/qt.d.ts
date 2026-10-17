@@ -261,6 +261,66 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
+  frame: {
+    props: {
+      orientation?: "horizontal" | "vertical";
+      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      frameShadow?: "plain" | "raised" | "sunken";
+      lineWidth?: number;
+      midLineWidth?: number;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+    };
+    methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: "children";
+  };
+  groupbox: {
+    props: {
+      orientation?: "horizontal" | "vertical";
+      title?: string;
+      checkable?: boolean;
+      flat?: boolean;
+      alignment?: Array<"absolute" | "baseline" | "bottom" | "center" | "hcenter" | "horizontal-mask" | "justify" | "leading" | "left" | "right" | "top" | "trailing" | "vcenter" | "vertical-mask">;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      toggled: (on: boolean) => void;
+      clicked: (checked: boolean) => void;
+    };
+    methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: "children";
+  };
   label: {
     props: {
       label?: string;
@@ -322,6 +382,9 @@ export interface QtElementDescriptors {
   };
   scrolledwindow: {
     props: {
+      widgetResizable?: boolean;
+      horizontalScrollBarPolicy?: "always-off" | "always-on" | "as-needed";
+      verticalScrollBarPolicy?: "always-off" | "always-on" | "as-needed";
       frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
       frameShadow?: "plain" | "raised" | "sunken";
       lineWidth?: number;
@@ -384,6 +447,69 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
+  splitter: {
+    props: {
+      orientation?: "horizontal" | "vertical";
+      childrenCollapsible?: boolean;
+      handleWidth?: number;
+      opaqueResize?: boolean;
+      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      frameShadow?: "plain" | "raised" | "sunken";
+      lineWidth?: number;
+      midLineWidth?: number;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      "splitter-moved": (pos: number, index: number) => void;
+    };
+    methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: "children";
+  };
+  stackedwidget: {
+    props: {
+      currentIndex?: number;
+      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      frameShadow?: "plain" | "raised" | "sunken";
+      lineWidth?: number;
+      midLineWidth?: number;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      changed: (index: number) => void;
+    };
+    methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: "pages";
+  };
   statusbar: {
     props: {
       enabled?: boolean;
@@ -398,6 +524,39 @@ export interface QtElementDescriptors {
       accessibleName?: string;
     };
     events: {
+    };
+    methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  tabwidget: {
+    props: {
+      tabPosition?: "east" | "north" | "south" | "west";
+      tabShape?: "rounded" | "triangular";
+      tabsClosable?: boolean;
+      movable?: boolean;
+      documentMode?: boolean;
+      usesScrollButtons?: boolean;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      changed: (index: number) => void;
+      "tab-close-requested": (index: number) => void;
+      "tab-bar-clicked": (index: number) => void;
     };
     methods: {
       show(): void;
@@ -430,6 +589,35 @@ export interface QtElementDescriptors {
     };
     events: {
       editingFinished: () => void;
+    };
+    methods: {
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  toolbox: {
+    props: {
+      frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
+      frameShadow?: "plain" | "raised" | "sunken";
+      lineWidth?: number;
+      midLineWidth?: number;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      changed: (index: number) => void;
     };
     methods: {
       show(): void;

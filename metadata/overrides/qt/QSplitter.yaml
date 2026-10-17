@@ -1,0 +1,47 @@
+elements:
+  - tag: splitter
+    construct: { class: QSplitter }
+    props:
+      - js: orientation
+        native: orientation
+        provenance: "QSplitter::orientation (qdoc); typed by the S1 value model (ABI v3)"
+      - { js: childrenCollapsible, native: childrenCollapsible, provenance: "QSplitter::childrenCollapsible (qdoc)" }
+      - { js: handleWidth, native: handleWidth, provenance: "QSplitter::handleWidth (qdoc)" }
+      - { js: opaqueResize, native: opaqueResize, provenance: "QSplitter::opaqueResize (qdoc)" }
+    signals:
+      - js: splitter-moved
+        native: splitterMoved
+        connect: "splitterMoved(int,int)"
+        args: [{ name: pos, type: i32 }, { name: index, type: i32 }]
+        trigger: '$w->splitterMoved(7 + $i, 1)'
+        expect_args: ["7", "1"]
+        provenance: "QSplitter::splitterMoved(int, int) (qdoc); emitted directly (a drag needs a shown widget)"
+    children:
+      policy: named_slots
+      default_slot: children
+      slots:
+        - name: children
+          content: widget
+          accepts: [QWidget]
+          cardinality: many
+          order: native_index
+          host: self
+          default: { kind: none }
+          on_remove: empty
+          ops:
+            insert:
+              native: "QSplitter::addWidget(QWidget*)"
+              args: [child]
+              variants:
+                - when: "before != null"
+                  native: "QSplitter::insertWidget(int, QWidget*)"
+                  args: [index, child]
+              effects: { child: parented }
+            remove:
+              native: "QWidget::setParent(QWidget*)"
+              receiver: child
+              args: [null]
+              effects: { child: unparented }
+            index_of: { native: "QSplitter::indexOf(QWidget*) const", args: [child] }
+            list: { native: "QSplitter::count() const", item: "QSplitter::widget(int) const" }
+          provenance: [{ origin: typesystem, ref: addownership-1 }, { origin: probe, ref: qt_slot_ownership_probe.py }]
