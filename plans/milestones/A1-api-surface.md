@@ -8,7 +8,7 @@ Goal: as much of the GTK4 and QtWidgets API surface as possible works from Svelt
 
 | Phase | Who | Output |
 | --- | --- | --- |
-| 1. Tooling + inventory | 1 lead agent (Opus) | override format unified, strict merge, verified ledger, coverage report, `metadata/A1-TODO.md` |
+| 1. Tooling + inventory | 1 lead agent (Opus) | per-toolkit override schemas, strict merge, verified ledger, coverage report, `metadata/A1-TODO.md` |
 | 2. Annotation batches | Sonnet workers, dispatched by the coordinator from the TODO list | per-family override YAML + passing generated tests + a gallery page |
 | 3. Integration | coordinator (inline) | merged batches, galleries complete, coverage report, completion record |
 
@@ -16,9 +16,14 @@ Agent budget: 1 lead plus at most 6 Sonnet workers, about 7 in all. At most 4 wo
 
 ## Phase 1: tooling and inventory (lead)
 
-1. **Unify the override format.** GTK overrides patch the ingested kind (`properties:`, `children:`), while Qt overrides use an `elements: - tag: … construct: … props:` list. Make both patch the kind. Exposure to JS goes in its own `element:` section: the tag, the constructor, and which props, methods and signals are exposed, under what JS names. Migrate the existing 18 files and keep generated output byte-identical, or explain every diff.
+1. **Override formats stay per toolkit.** Each toolkit's override format follows that toolkit's semantics, and the formats are not unified: GTK patches the ingested kind, Qt uses `elements:` entries, and WinUI/Apple will get their own. The only shared conventions are:
+   - every fact has a stable fact id (for the ledger);
+   - `origin`/`provenance` on every fact;
+   - strict matching (step 2).
+
+   Tooling that spans toolkits (the ledger, the coverage report) reads each toolkit through a small per-toolkit adapter.
 2. **Strict merge + override schema.**
-   - A JSON Schema for override files.
+   - A JSON Schema per toolkit for its override files.
    - `svmeta.merge` errors when an override record doesn't match an ingested record, unless it is explicitly marked `virtual: …` or `new: true`.
    - Unknown keys are errors.
 3. **Inheritance.** Annotations on base classes and interfaces (`GtkWidget`, `GtkEditable`, `GtkOrientable`, `QWidget`, `QAbstractButton`, `QAbstractSlider`, …) apply to subclasses unless overridden. The merged output records where each inherited fact came from.
@@ -45,7 +50,7 @@ Agent budget: 1 lead plus at most 6 Sonnet workers, about 7 in all. At most 4 wo
    10. everything left over
 
    Mark kinds that aren't worth exposing, and say why.
-8. **Worker brief.** Write `metadata/A1-WORKER.md`: a self-contained prompt template that a Sonnet worker follows for one batch. It gives the file locations, the annotation format with examples, how to write and run the generated tests, the gallery page conventions, the gates, and the rule that it edits only its batch's files plus its gallery page.
+8. **Worker briefs.** Write `metadata/A1-WORKER-gtk.md` and `metadata/A1-WORKER-qt.md`: self-contained prompt templates that a Sonnet worker follows for one batch. It gives the file locations, the annotation format with examples, how to write and run the generated tests, the gallery page conventions, the gates, and the rule that it edits only its batch's files plus its gallery page.
 
 Phase 1 ends with all gates green and the TODO list committed.
 
@@ -54,7 +59,7 @@ Phase 1 ends with all gates green and the TODO list committed.
 The coordinator (the main session) dispatches batches from `metadata/A1-TODO.md`:
 - one worktree per worker;
 - Sonnet model;
-- the prompt is `A1-WORKER.md` plus the batch.
+- the prompt is the toolkit's `A1-WORKER-<toolkit>.md` plus the batch.
 
 A worker:
 1. drafts the annotations, with provenance on every fact;
