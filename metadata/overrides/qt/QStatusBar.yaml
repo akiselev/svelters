@@ -1,4 +1,19 @@
-# Minimal element so that the window `statusbar` slot can be exercised.
+# Element `statusbar`. The window `statusbar` slot is in QMainWindow.yaml.
+# The `widgets`/`permanent` many-slots are NOT annotated: QStatusBar has no indexOf/count/itemAt
+# (the generator's many-slot contract needs index_of and list ops), see docs/notes/a1-qt-bars.md.
 elements:
   - tag: statusbar
     construct: { class: QStatusBar }
+    props:
+      - { js: sizeGripEnabled, native: sizeGripEnabled, provenance: "QStatusBar::sizeGripEnabled (qdoc)" }
+    signals:
+      - js: messageChanged
+        native: messageChanged
+        connect: "messageChanged(QString)"
+        args: [{ name: message, type: string }]
+        trigger: '$w->showMessage(QStringLiteral("m%1").arg($i))'
+        expect_args: ["m0"]
+        provenance: "QStatusBar::messageChanged(const QString &) (qdoc)"
+    methods:
+      - { js: showMessage, native: showMessage, params: [string, i32], args: ["x", 0], expect: '$w->currentMessage() == QStringLiteral("x")', provenance: "QStatusBar::showMessage(const QString &, int) slot (qdoc); timeout 0 keeps the message" }
+      - { js: clearMessage, native: clearMessage, expect: '$w->currentMessage().isEmpty()', provenance: "QStatusBar::clearMessage() slot (qdoc)" }

@@ -31,6 +31,9 @@ export interface BindableProps {
   switch: {
     active: boolean; // gtk
   };
+  tabbar: {
+    currentIndex: number; // qt
+  };
   text: {
     text: string; // gtk
   };

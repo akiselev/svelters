@@ -241,6 +241,37 @@ export interface QtElementDescriptors {
     };
     slots: "children";
   };
+  dialogbuttonbox: {
+    props: {
+      orientation?: "horizontal" | "vertical";
+      centerButtons?: boolean;
+      standardButtons?: Array<"abort" | "apply" | "cancel" | "close" | "discard" | "first-button" | "help" | "ignore" | "last-button" | "no" | "no-button" | "no-to-all" | "ok" | "open" | "reset" | "restore-defaults" | "retry" | "save" | "save-all" | "yes" | "yes-to-all">;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      accepted: () => void;
+      rejected: () => void;
+      "help-requested": () => void;
+    };
+    methods: {
+      clear(): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
   doublespinbox: {
     props: {
       value?: number;
@@ -573,6 +604,7 @@ export interface QtElementDescriptors {
   };
   menubar: {
     props: {
+      defaultUp?: boolean;
       enabled?: boolean;
       toolTip?: string;
       statusTip?: string;
@@ -587,6 +619,7 @@ export interface QtElementDescriptors {
     events: {
     };
     methods: {
+      clear(): void;
       show(): void;
       hide(): void;
       setFocus(): void;
@@ -811,6 +844,7 @@ export interface QtElementDescriptors {
   };
   statusbar: {
     props: {
+      sizeGripEnabled?: boolean;
       enabled?: boolean;
       toolTip?: string;
       statusTip?: string;
@@ -823,8 +857,55 @@ export interface QtElementDescriptors {
       accessibleName?: string;
     };
     events: {
+      messageChanged: (message: string) => void;
     };
     methods: {
+      showMessage(message: string, timeout: number): void;
+      clearMessage(): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
+  tabbar: {
+    props: {
+      currentIndex?: number;
+      readonly count?: number;
+      tabsClosable?: boolean;
+      movable?: boolean;
+      shape?: "rounded-east" | "rounded-north" | "rounded-south" | "rounded-west" | "triangular-east" | "triangular-north" | "triangular-south" | "triangular-west";
+      expanding?: boolean;
+      drawBase?: boolean;
+      documentMode?: boolean;
+      usesScrollButtons?: boolean;
+      autoHide?: boolean;
+      elideMode?: "left" | "middle" | "none" | "right";
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      changed: (index: number) => void;
+      "tab-close-requested": (index: number) => void;
+      "tab-bar-clicked": (index: number) => void;
+      "tab-bar-double-clicked": (index: number) => void;
+      "tab-moved": (from: number, to: number) => void;
+    };
+    methods: {
+      addTab(text: string): number;
+      insertTab(index: number, text: string): number;
+      removeTab(index: number): void;
+      moveTab(from: number, to: number): void;
       show(): void;
       hide(): void;
       setFocus(): void;
@@ -898,6 +979,38 @@ export interface QtElementDescriptors {
     };
     slots: never;
   };
+  toolbar: {
+    props: {
+      movable?: boolean;
+      floatable?: boolean;
+      orientation?: "horizontal" | "vertical";
+      toolButtonStyle?: "follow-style" | "icon-only" | "text-beside-icon" | "text-only" | "text-under-icon";
+      iconSize?: Size;
+      enabled?: boolean;
+      toolTip?: string;
+      statusTip?: string;
+      whatsThis?: string;
+      minimumWidth?: number;
+      minimumHeight?: number;
+      maximumWidth?: number;
+      maximumHeight?: number;
+      styleSheet?: string;
+      accessibleName?: string;
+    };
+    events: {
+      "movable-changed": (movable: boolean) => void;
+      "orientation-changed": (orientation: "horizontal" | "vertical") => void;
+    };
+    methods: {
+      clear(): void;
+      show(): void;
+      hide(): void;
+      setFocus(): void;
+      update(): void;
+      adjustSize(): void;
+    };
+    slots: never;
+  };
   toolbox: {
     props: {
       frameShape?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
@@ -930,6 +1043,11 @@ export interface QtElementDescriptors {
   window: {
     props: {
       title?: string;
+      documentMode?: boolean;
+      animated?: boolean;
+      dockNestingEnabled?: boolean;
+      tabShape?: "rounded" | "triangular";
+      toolButtonStyle?: "follow-style" | "icon-only" | "text-beside-icon" | "text-only" | "text-under-icon";
       enabled?: boolean;
       toolTip?: string;
       statusTip?: string;

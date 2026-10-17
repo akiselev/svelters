@@ -1,0 +1,28 @@
+# Actions (addAction/addSeparator/addWidget) need QAction children (gap G7); only plain facts here.
+# The window has no toolbar slot yet (gap G1: addToolBar(area, toolbar)), so the element is not mountable
+# under <window>; the generated tests still exercise it standalone.
+elements:
+  - tag: toolbar
+    construct: { class: QToolBar }
+    props:
+      - { js: movable, native: movable, provenance: "QToolBar::movable (qdoc)" }
+      - { js: floatable, native: floatable, provenance: "QToolBar::floatable (qdoc)" }
+      - { js: orientation, native: orientation, provenance: "QToolBar::orientation (qdoc); enum typed by the S1 value model (ABI v3)" }
+      - { js: toolButtonStyle, native: toolButtonStyle, provenance: "QToolBar::toolButtonStyle (qdoc); enum typed by the S1 value model (ABI v3)" }
+      - { js: iconSize, native: iconSize, provenance: "QToolBar::iconSize (qdoc); typed by the S1 value model (ABI v3)" }
+    signals:
+      - js: movable-changed
+        native: movableChanged
+        connect: "movableChanged(bool)"
+        args: [{ name: movable, type: bool }]
+        trigger: '$w->setMovable(!$w->isMovable())'
+        expect_args: ["false"]
+        provenance: "QToolBar::movableChanged(bool) (qdoc)"
+      - js: orientation-changed
+        native: orientationChanged
+        connect: "orientationChanged(Qt::Orientation)"
+        args: [{ name: orientation, type: "enum<Qt::Orientation>" }]
+        trigger: '$w->setOrientation(($i % 2) == 0 ? Qt::Vertical : Qt::Horizontal)'
+        provenance: "QToolBar::orientationChanged(Qt::Orientation) (qdoc)"
+    methods:
+      - { js: clear, native: clear, provenance: "QToolBar::clear() (qdoc)" }

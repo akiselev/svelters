@@ -347,7 +347,7 @@ otherwise the lower-case Qt class name without the Q (`checkbox`, `slider`, `spi
 - B: QTabBar `bind:currentIndex`.
 - Blocked: QToolBar, QMenuBar items, QMenu (G7), QMainWindow toolbars/docks (G1).
 - Gallery: `08-bars.svelte`.
-- Status: todo
+- Status: done (props: window 5, statusbar 1, menubar 1, tabbar 11+binding, dialogbuttonbox 3, toolbar 5; signals: statusbar 1, tabbar 5, dialogbuttonbox 3, toolbar 2; methods: statusbar 2, tabbar 4, dialogbuttonbox 1, menubar 1, toolbar 1; dropped: QMenuBar.nativeMenuBar (cannot be enabled on xcb); blocked: QStatusBar widgets/permanent slots (new gap: no indexOf/count/itemAt), gap:G7 for QMenuBar menus, QToolBar actions, QMenu in menubar; gap:G1 for QMainWindow toolbars/docks and QToolBar mounting; QSizeGrip not annotated)
 
 ### qt-dialogs: non-blocking dialogs
 
