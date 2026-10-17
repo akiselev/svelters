@@ -7,6 +7,9 @@ export interface BindableProps {
   checkbutton: {
     active: boolean; // gtk
   };
+  combobox: {
+    currentIndex: number; // qt
+  };
   editablelabel: {
     editing: boolean; // gtk
   };
@@ -15,6 +18,9 @@ export interface BindableProps {
   };
   expander: {
     expanded: boolean; // gtk
+  };
+  listwidget: {
+    currentRow: number; // qt
   };
   notebook: {
     page: number; // gtk
@@ -33,6 +39,9 @@ export interface BindableProps {
   };
   switch: {
     active: boolean; // gtk
+  };
+  tabbar: {
+    currentIndex: number; // qt
   };
   text: {
     text: string; // gtk

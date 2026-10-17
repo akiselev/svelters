@@ -7,6 +7,9 @@ export const BINDINGS = {
   checkbutton: {
     active: { prop: "active", signal: "toggled", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
   },
+  combobox: {
+    currentIndex: { prop: "currentIndex", signal: "changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
+  },
   editablelabel: {
     editing: { prop: "editing", signal: "notify::editing", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
   },
@@ -15,6 +18,9 @@ export const BINDINGS = {
   },
   expander: {
     expanded: { prop: "expanded", signal: "notify::expanded", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
+  },
+  listwidget: {
+    currentRow: { prop: "currentRow", signal: "row-changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
   notebook: {
     page: { prop: "page", signal: "notify::page", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
@@ -33,6 +39,9 @@ export const BINDINGS = {
   },
   switch: {
     active: { prop: "active", signal: "notify::active", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
+  },
+  tabbar: {
+    currentIndex: { prop: "currentIndex", signal: "changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
   text: {
     text: { prop: "text", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["gtk"] },

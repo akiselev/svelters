@@ -31,7 +31,7 @@ export function createTestHost({ schema = defaultSchema } = {}) {
   };
   const json = (v) => {
     if (v === undefined) throw new TypeError('undefined is not a valid op value');
-    return JSON.stringify(v);
+    return JSON.stringify(v, (_k, x) => (x !== null && typeof x === 'object' && typeof x.svlHandle === 'number' ? x.svlHandle : x));
   };
 
   const nameOf = (names, kid, ref) => (typeof ref === 'number' ? names.get(`${kid}:${ref}`) : ref);

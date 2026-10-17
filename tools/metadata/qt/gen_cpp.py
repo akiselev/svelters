@@ -1201,6 +1201,7 @@ def gen_backend(m: Model, digest: str, tmpl: str) -> str:
         "TOPLEVEL": emit_toplevel(m), "GETTERS": emit_getters(m),
     }
     parts["SERDES"] = (HERE / "templates" / "serdes.hpp.in").read_text()
+    parts["VLIST"] = (HERE / "templates" / "vlist.hpp.in").read_text()
     for k, v in parts.items():
         tmpl = tmpl.replace(f"@@{k}@@" if k == "DIGEST" else f"//@@{k}@@", v)
     return tmpl
@@ -1698,7 +1699,7 @@ def main() -> int:
     try:
         m = Model(res(cfg["input"]["metadata"]), res(cfg["input"]["overrides"]), cfg.get("elements", {}).get("tags", []))
         templ = HERE / "templates"
-        digest = m.digest([HERE / "gen_cpp.py", templ / "backend.cpp.in", templ / "verify.cpp.in", templ / "serdes.hpp.in"])
+        digest = m.digest([HERE / "gen_cpp.py", templ / "backend.cpp.in", templ / "verify.cpp.in", templ / "serdes.hpp.in", templ / "vlist.hpp.in"])
         o = cfg["output"]
         write_text(out / o["backend"], gen_backend(m, digest, (templ / "backend.cpp.in").read_text()))
         verify, facts = gen_verify(m, digest, (templ / "verify.cpp.in").read_text())

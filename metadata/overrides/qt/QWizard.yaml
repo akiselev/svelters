@@ -1,7 +1,6 @@
 elements:
   - tag: wizard
     construct: { class: QWizard }
-    exclude: [done]   # protected in QWizard; generated thunks call it on the subclass
     props:
       - { js: wizardStyle, native: wizardStyle, provenance: "QWizard::wizardStyle (qdoc); enum by name (ABI v3)" }
       - { js: options, native: options, provenance: "QWizard::options (qdoc); flags (ABI v3)" }

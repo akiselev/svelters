@@ -35,7 +35,7 @@
   "abstract": false,
   "bindings": 0,
   "element": "actionbar",
-  "gallery": null,
+  "gallery": "06-layout",
   "inherited": 24,
   "kind": "ActionBar",
   "lifetime": "owned",
@@ -44,23 +44,23 @@
    7
   ],
   "native": "GtkActionBar",
-  "ownership": false,
+  "ownership": true,
   "props": [
    1,
    1
   ],
-  "props_annotated": 0,
+  "props_annotated": 1,
   "signal_results": 0,
   "signals": [
    0,
    0
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 3,
+  "slots_own": 3,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   4,
+   4
   ]
  },
  {
@@ -1187,7 +1187,7 @@
   "abstract": false,
   "bindings": 0,
   "element": "fixed",
-  "gallery": null,
+  "gallery": "06-layout",
   "inherited": 24,
   "kind": "Fixed",
   "lifetime": "owned",
@@ -1219,7 +1219,7 @@
   "abstract": false,
   "bindings": 0,
   "element": "flowbox",
-  "gallery": null,
+  "gallery": "06-layout",
   "inherited": 25,
   "kind": "FlowBox",
   "lifetime": "owned",
@@ -1228,30 +1228,30 @@
    34
   ],
   "native": "GtkFlowBox",
-  "ownership": false,
+  "ownership": true,
   "props": [
    8,
    8
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 6,
+  "signal_results": 2,
   "signals": [
    7,
    7
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   9,
+   9
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "element": "flowboxchild",
-  "gallery": null,
+  "gallery": "06-layout",
   "inherited": 24,
   "kind": "FlowBoxChild",
   "lifetime": "owned",
@@ -1539,7 +1539,7 @@
   "abstract": false,
   "bindings": 0,
   "element": "grid",
-  "gallery": null,
+  "gallery": "06-layout",
   "inherited": 25,
   "kind": "Grid",
   "lifetime": "owned",
@@ -1553,7 +1553,7 @@
    5,
    5
   ],
-  "props_annotated": 0,
+  "props_annotated": 4,
   "signal_results": 0,
   "signals": [
    0,
@@ -1563,8 +1563,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   4,
+   4
   ]
  },
  {
@@ -1891,7 +1891,7 @@
   "abstract": false,
   "bindings": 0,
   "element": "listbox",
-  "gallery": null,
+  "gallery": "06-layout",
   "inherited": 24,
   "kind": "ListBox",
   "lifetime": "owned",
@@ -1905,8 +1905,8 @@
    5,
    5
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 3,
+  "signal_results": 2,
   "signals": [
    8,
    8
@@ -1915,8 +1915,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   5,
+   5
   ]
  },
  {
@@ -2113,9 +2113,9 @@
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 1,
   "element": "notebook",
-  "gallery": null,
+  "gallery": "06-layout",
   "inherited": 24,
   "kind": "Notebook",
   "lifetime": "owned",
@@ -2124,23 +2124,23 @@
    44
   ],
   "native": "GtkNotebook",
-  "ownership": false,
+  "ownership": true,
   "props": [
    8,
    8
   ],
-  "props_annotated": 0,
-  "signal_results": 0,
+  "props_annotated": 5,
+  "signal_results": 2,
   "signals": [
-   10,
-   10
+   11,
+   11
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   9,
+   9
   ]
  },
  {
@@ -3075,7 +3075,7 @@
   "abstract": false,
   "bindings": 0,
   "element": "stack",
-  "gallery": null,
+  "gallery": "06-layout",
   "inherited": 24,
   "kind": "Stack",
   "lifetime": "owned",
@@ -3084,30 +3084,30 @@
    23
   ],
   "native": "GtkStack",
-  "ownership": false,
+  "ownership": true,
   "props": [
    9,
    9
   ],
-  "props_annotated": 0,
+  "props_annotated": 6,
   "signal_results": 0,
   "signals": [
    0,
    0
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   7,
+   7
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "element": "stacksidebar",
-  "gallery": null,
+  "gallery": "06-layout",
   "inherited": 24,
   "kind": "StackSidebar",
   "lifetime": "owned",
@@ -3121,7 +3121,7 @@
    1,
    1
   ],
-  "props_annotated": 0,
+  "props_annotated": 1,
   "signal_results": 0,
   "signals": [
    0,
@@ -3131,15 +3131,15 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   1,
+   1
   ]
  },
  {
   "abstract": false,
   "bindings": 0,
   "element": "stackswitcher",
-  "gallery": null,
+  "gallery": "06-layout",
   "inherited": 25,
   "kind": "StackSwitcher",
   "lifetime": "owned",
@@ -3153,7 +3153,7 @@
    1,
    1
   ],
-  "props_annotated": 0,
+  "props_annotated": 1,
   "signal_results": 0,
   "signals": [
    0,
@@ -3163,8 +3163,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   1,
+   1
   ]
  },
  {
