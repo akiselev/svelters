@@ -24,6 +24,7 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | Svelte 5 custom renderer + DOM surface | svelte5-custom-renderer.md | done |
 | 2021 GTK version archaeology | gtk-v1-archaeology.md | done |
 | GIR / Qt metadata ingestion | widget-metadata-ingestion.md | done |
-| Signals, return values, child slots | signals-and-slots-semantics.md | in progress |
-| Custom renderer PR hands-on trial | custom-renderer-trial.md | in progress |
+| Signals, return values, child slots | signals-and-slots-semantics.md | done |
+| Custom renderer PR hands-on trial | custom-renderer-trial.md | done |
 | Node / Deno runtime integration | node-deno-integration.md | done |
+| QuickJS JIT (quickjs-jit, Cranelift) | quickjs-jit-cranelift.md | in progress |

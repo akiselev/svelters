@@ -137,7 +137,10 @@ my-app-qt/                  (leaf crate: no project deps, nothing depends on it 
 ## Open questions
 
 - **`call_sync` re-entrancy rules.** Can JS mutate the tree during a sync handler? What happens on a returned Promise, or on a timeout? See `docs/notes/signals-and-slots-semantics.md`.
-- **Slot routing.** How does a slot get chosen: attribute, wrapper element kind, or snippet? This determines whether `insert`'s `slot` argument is enough or per-child attributes need their own op.
+- **Slot routing:** answered by `docs/notes/signals-and-slots-semantics.md`.
+  - `insert(…, slot)` is enough for placement.
+  - Per-child attributes (grid cell, tab title, dock area) need a new `set_child_attr(parent, child, attr_id, value)` op, planned for M4.
+  - The shim routes a child to a slot in this order: the proxy elements `sv-slot`/`sv-item`, then the `slot` attribute, then the child's kind, then the default slot.
 - **Ownership.** What happens when the native side destroys a child the host still references? `on_destroyed` covers notification; the annotation pipeline covers which operations transfer ownership.
 - **Batching.** Should mutations be batched per checkpoint or applied one at a time? Decide by measurement after P5.
 
