@@ -1,6 +1,6 @@
 ---
 title: Gtk.FileDialog
-description: Gtk.FileDialog from svelters:gtk/gtk: a shared object class generated from the GIR.
+description: "Gtk.FileDialog from svelters:gtk/gtk, a shared object class generated from the GIR."
 ---
 
 ```js

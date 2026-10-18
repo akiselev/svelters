@@ -1,6 +1,6 @@
 ---
 title: Pango.FontDescription
-description: Pango.FontDescription from svelters:gtk/pango: a value class generated from the GIR.
+description: "Pango.FontDescription from svelters:gtk/pango, a value class generated from the GIR."
 ---
 
 ```js

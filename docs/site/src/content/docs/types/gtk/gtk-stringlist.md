@@ -1,6 +1,6 @@
 ---
 title: Gtk.StringList
-description: Gtk.StringList from svelters:gtk/gtk: a shared object class generated from the GIR.
+description: "Gtk.StringList from svelters:gtk/gtk, a shared object class generated from the GIR."
 ---
 
 ```js

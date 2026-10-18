@@ -1,6 +1,6 @@
 ---
 title: Non-UI types (GTK)
-description: Gio, GLib, Gdk, Gsk, Pango and Gtk classes as ES module named exports (svelters:gtk/gio, ...).
+description: "Gio, GLib, Gdk, Gsk, Pango and Gtk classes as ES module named exports (svelters:gtk/gio, ...)."
 ---
 
 Every non-UI GTK type is a named export of a `svelters:gtk/<namespace>` module. Elements stay tags; objects, models and values are imported:

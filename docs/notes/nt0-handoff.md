@@ -43,3 +43,14 @@ Branch `worktree-agent-ab68746002833b005`, worktree `/projects/svelters/.claude/
 - Dropped wrappers are released by the engine's GC (renderer node finalizer -> `destroy`): op logs are only comparable across hosts while the app keeps what it made (see `fixtures/gtk-types/src/App.svelte`). `tests/gtk-types-gc` proves release on the real host (not an op-log fixture).
 - Tooling traps: rolldown removes `void [a,b]`; the sandbox refuses some heredoc shell commands, so edit via scripts; `types_facts.py --write` must not delete `facts.json` (excluded).
 - Facts depend on the installed GIR (4.22); do not run `types_facts.py --check` in CI (pytest does so only with `SVELTERS_CHECK_GIR=1`).
+
+## NT0b update (wrap-up, quota)
+
+Done since e0e1ac41: master merge was a no-op (already contained); 4.14 `since` guard in `gen_types_extra.py` (+ `Harness::has_prop/has_signal`), tests regenerated; docs sidebar entry fixed for Starlight 0.42 (`items: [{ autogenerate }]`) and generated frontmatter descriptions quoted; `pnpm -r build` passes (after `python3 tools/docs/build_ir.py`); `ingest.py --namespace` not done (reason in nt0-types-pilot.md).
+
+Not run: ledger refresh (killed mid-run; `ledger.py check` still fails with "not in the ledger"), cargo nextest workspace, `pnpm test`, `pnpm docs:test`, CI push. A `cargo check -p svelters-gtk --tests` was queued but its result is unverified.
+
+Next steps:
+1. `tools/dev/cargo-slot cargo check -p svelters-gtk --tests`; then `python3 tools/metadata/ledger.py refresh --toolkit gtk` (slow under load; runs lib verify tests + test bins), commit `metadata/verified/gtk.json`.
+2. `tools/dev/cargo-slot xvfb-run -a cargo nextest run --workspace --no-fail-fast`; `pnpm test`; `pnpm docs:test`.
+3. Push as `ci/nt0-types`; check linux-gtk (4.14), linux-qt, macos, windows; known flakes listed in the task.

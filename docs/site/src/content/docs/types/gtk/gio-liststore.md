@@ -1,6 +1,6 @@
 ---
 title: Gio.ListStore
-description: Gio.ListStore from svelters:gtk/gio: a shared object class generated from the GIR.
+description: "Gio.ListStore from svelters:gtk/gio, a shared object class generated from the GIR."
 ---
 
 ```js

@@ -1,6 +1,6 @@
 ---
 title: Gdk.Clipboard
-description: Gdk.Clipboard from svelters:gtk/gdk: a shared object class generated from the GIR.
+description: "Gdk.Clipboard from svelters:gtk/gdk, a shared object class generated from the GIR."
 ---
 
 ```js

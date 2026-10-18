@@ -1,6 +1,6 @@
 ---
 title: Gtk.TextBuffer
-description: Gtk.TextBuffer from svelters:gtk/gtk: a shared object class generated from the GIR.
+description: "Gtk.TextBuffer from svelters:gtk/gtk, a shared object class generated from the GIR."
 ---
 
 ```js

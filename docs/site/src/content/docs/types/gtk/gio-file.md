@@ -1,6 +1,6 @@
 ---
 title: Gio.File
-description: Gio.File from svelters:gtk/gio: a shared object class generated from the GIR.
+description: "Gio.File from svelters:gtk/gio, a shared object class generated from the GIR."
 ---
 
 ```js

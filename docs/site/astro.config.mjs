@@ -56,7 +56,7 @@ export default defineConfig({
             guide('coverage', 'Coverage dashboard'),
           ],
         },
-        { label: 'Non-UI types (GTK)', autogenerate: { directory: 'types/gtk' } },
+        { label: 'Non-UI types (GTK)', items: [{ autogenerate: { directory: 'types/gtk' } }] },
         { label: 'Project', items: [guide('about/licensing', 'Licensing of documentation text')] },
       ],
     }),

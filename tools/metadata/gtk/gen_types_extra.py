@@ -93,6 +93,20 @@ def zero_arg(m: dict) -> bool:
     return not [p for p in m["params"] if not p.get("hidden") and p.get("dir") != "out"] and not m.get("throws")
 
 
+def since_guard(member: dict, present: str, body: list[str]) -> list[str]:
+    """Statements for one member. A member introduced in a release (`since`) may be absent from an older
+    installed library (the Ubuntu GTK 4.14 job), so it is skipped at run time when it does not resolve;
+    members without `since` stay strict."""
+    if not member.get("since"):
+        return ["        " + b for b in body]
+    name = member["name"]
+    return (
+        [f"        if {present} {{"]
+        + ["            " + b for b in body]
+        + ["        } else {", f"            eprintln!(\"SKIP {name}: not in the running library (since {member['since']})\");", "        }"]
+    )
+
+
 def gen_tests(g, ov: dict) -> tuple[str, list[dict]]:
     curated = [q for q in sorted(g.classes) if g.types[q]["curated"]]
     subjects = ov.get("verify_subject") or {}
@@ -160,18 +174,19 @@ def gen_tests(g, ov: dict) -> tuple[str, list[dict]]:
         for p in eff["properties"]:
             if p["name"] in skip or not p["readable"]:
                 continue
-            lines.append(f"        let _ = h.get(s, {rust_str(p['name'])}); // {p['type']['k']}")
+            body_ = [f"let _ = h.get(s, {rust_str(p['name'])}); // {p['type']['k']}"]
             if p["writable"] and not p["construct_only"] and p["type"]["k"] in ("bool", "int", "float", "str", "enum"):
-                lines.append(f"        let cur = h.get_value(s, {rust_str(p['name'])});")
-                lines.append(f"        h.set_value(s, {rust_str(p['name'])}, &cur).unwrap();")
-                lines.append(f"        assert_eq!(h.get_value(s, {rust_str(p['name'])}), cur, {rust_str('write-back of ' + p['name'])});")
+                body_.append(f"let cur = h.get_value(s, {rust_str(p['name'])});")
+                body_.append(f"h.set_value(s, {rust_str(p['name'])}, &cur).unwrap();")
+                body_.append(f"assert_eq!(h.get_value(s, {rust_str(p['name'])}), cur, {rust_str('write-back of ' + p['name'])});")
+            lines += since_guard(p, f"h.has_prop(s, {rust_str(p['name'])})", body_)
         out += ["#[test]", f"fn {x}_props() {{", "    on_gtk(|| {", "        let h = Harness::new();", f"        let s = subject_{x}(&h);"] + (lines or ["        let _ = &s;"]) + ["    });", "}", ""]
         # methods
         ml = []
         for m in eff["methods"]:
             if m["name"] in skip or not READER.match(m["name"]) or not zero_arg(m):
                 continue
-            ml.append(f"        h.call_args(s, {rust_str(m['name'])}, &[]).unwrap_or_else(|e| panic!(\"{m['name']}: {{e}}\"));")
+            ml += since_guard(m, f"h.resolve_method(s, {rust_str(m['name'])}) != 0", [f"h.call_args(s, {rust_str(m['name'])}, &[]).unwrap_or_else(|e| panic!(\"{m['name']}: {{e}}\"));"])
         out += ["#[test]", f"fn {x}_methods() {{", "    on_gtk(|| {", "        let h = Harness::new();", f"        let s = subject_{x}(&h);"] + (ml or ["        let _ = &s;"]) + ["    });", "}", ""]
         # signals
         sl = []
@@ -179,8 +194,10 @@ def gen_tests(g, ov: dict) -> tuple[str, list[dict]]:
             for s_ in eff["signals"]:
                 if s_["name"] in skip:
                     continue
-                sl.append(f"        h.listen(s, {rust_str(s_['name'])}, true).unwrap_or_else(|e| panic!(\"{s_['name']}: {{e}}\"));")
-                sl.append(f"        h.listen(s, {rust_str(s_['name'])}, false).unwrap();")
+                sl += since_guard(s_, f"h.has_signal(s, {rust_str(s_['name'])})", [
+                    f"h.listen(s, {rust_str(s_['name'])}, true).unwrap_or_else(|e| panic!(\"{s_['name']}: {{e}}\"));",
+                    f"h.listen(s, {rust_str(s_['name'])}, false).unwrap();",
+                ])
         out += ["#[test]", f"fn {x}_signals() {{", "    on_gtk(|| {", "        let h = Harness::new();", f"        let s = subject_{x}(&h);"] + (sl or ["        let _ = &s;"]) + ["    });", "}", ""]
         # lifetime
         if value:
@@ -223,7 +240,7 @@ def md_type(g, q: str) -> str:
     value = rec["category"] == "value"
     ns = rec["ns"]
     imp = f"import {{ {rec['name']} }} from 'svelters:gtk/{ns.lower()}';"
-    out = ["---", f"title: {ns}.{rec['name']}", f"description: {ns}.{rec['name']} from svelters:gtk/{ns.lower()}: a {'value' if value else 'shared object'} class generated from the GIR.", "---", ""]
+    out = ["---", f"title: {ns}.{rec['name']}", f"description: \"{ns}.{rec['name']} from svelters:gtk/{ns.lower()}, a {'value' if value else 'shared object'} class generated from the GIR.\"", "---", ""]
     out += [f"```js\n{imp}\n```", ""]
     life = ("a **VALUE** handle: an immutable snapshot with no identity. Its mutating methods are not exposed. "
             "`dispose()` releases it now, otherwise the garbage collector does.") if value else (
@@ -272,7 +289,7 @@ def md_type(g, q: str) -> str:
 
 
 def md_index(g) -> str:
-    out = ["---", "title: Non-UI types (GTK)", "description: Gio, GLib, Gdk, Gsk, Pango and Gtk classes as ES module named exports (svelters:gtk/gio, ...).", "---", "",
+    out = ["---", "title: Non-UI types (GTK)", "description: \"Gio, GLib, Gdk, Gsk, Pango and Gtk classes as ES module named exports (svelters:gtk/gio, ...).\"", "---", "",
            "Every non-UI GTK type is a named export of a `svelters:gtk/<namespace>` module. Elements stay tags; objects, models and values are imported:", "",
            "```svelte", "<script>", "  import { TextBuffer } from 'svelters:gtk/gtk';", "  const buffer = new TextBuffer({ text: 'Hello' });", "</script>", "<text-view {buffer} />", "```", "",
            "- **Objects** (`Gio.File`, `Gtk.StringList`) are SHARED handles: one JS object per native object, `===` works, the object lives while the wrapper or anything else holds it.",

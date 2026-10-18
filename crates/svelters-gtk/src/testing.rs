@@ -555,6 +555,14 @@ impl Harness {
         let id = self.resolve(SVL_METHOD, k, method);
         self.backend_ref().describe(NameKind::Method, k, id)
     }
+    /// Whether `h`'s kind has property `prop` in the running library.
+    pub fn has_prop(&self, h: u64, prop: &str) -> bool {
+        self.resolve(SVL_PROP, self.kind_of(h), prop) != 0
+    }
+    /// Whether `h`'s kind has signal `signal` in the running library.
+    pub fn has_signal(&self, h: u64, signal: &str) -> bool {
+        self.resolve(SVL_SIGNAL, self.kind_of(h), signal) != 0
+    }
     /// The id `resolve(SVL_METHOD)` gives `method` on `h`'s kind (0: unknown).
     pub fn resolve_method(&self, h: u64, method: &str) -> u32 {
         self.resolve(SVL_METHOD, self.kind_of(h), method)

@@ -1,6 +1,6 @@
 ---
 title: Pango.AttrList
-description: Pango.AttrList from svelters:gtk/pango: a value class generated from the GIR.
+description: "Pango.AttrList from svelters:gtk/pango, a value class generated from the GIR."
 ---
 
 ```js

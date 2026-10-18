@@ -1,6 +1,6 @@
 ---
 title: Gdk.Texture
-description: Gdk.Texture from svelters:gtk/gdk: a shared object class generated from the GIR.
+description: "Gdk.Texture from svelters:gtk/gdk, a shared object class generated from the GIR."
 ---
 
 ```js

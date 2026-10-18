@@ -122,8 +122,16 @@ fn gdk_texture_methods() {
     on_gtk(|| {
         let h = Harness::new();
         let s = subject_gdk_texture(&h);
-        h.call_args(s, "get_color_state", &[]).unwrap_or_else(|e| panic!("get_color_state: {e}"));
-        h.call_args(s, "get_format", &[]).unwrap_or_else(|e| panic!("get_format: {e}"));
+        if h.resolve_method(s, "get_color_state") != 0 {
+            h.call_args(s, "get_color_state", &[]).unwrap_or_else(|e| panic!("get_color_state: {e}"));
+        } else {
+            eprintln!("SKIP get_color_state: not in the running library (since 4.16)");
+        }
+        if h.resolve_method(s, "get_format") != 0 {
+            h.call_args(s, "get_format", &[]).unwrap_or_else(|e| panic!("get_format: {e}"));
+        } else {
+            eprintln!("SKIP get_format: not in the running library (since 4.10)");
+        }
         h.call_args(s, "get_height", &[]).unwrap_or_else(|e| panic!("get_height: {e}"));
         h.call_args(s, "get_width", &[]).unwrap_or_else(|e| panic!("get_width: {e}"));
         h.call_args(s, "get_current_image", &[]).unwrap_or_else(|e| panic!("get_current_image: {e}"));
@@ -132,7 +140,11 @@ fn gdk_texture_methods() {
         h.call_args(s, "get_intrinsic_height", &[]).unwrap_or_else(|e| panic!("get_intrinsic_height: {e}"));
         h.call_args(s, "get_intrinsic_width", &[]).unwrap_or_else(|e| panic!("get_intrinsic_width: {e}"));
         h.call_args(s, "hash", &[]).unwrap_or_else(|e| panic!("hash: {e}"));
-        h.call_args(s, "to_string", &[]).unwrap_or_else(|e| panic!("to_string: {e}"));
+        if h.resolve_method(s, "to_string") != 0 {
+            h.call_args(s, "to_string", &[]).unwrap_or_else(|e| panic!("to_string: {e}"));
+        } else {
+            eprintln!("SKIP to_string: not in the running library (since 2.20)");
+        }
     });
 }
 
@@ -202,8 +214,16 @@ fn gio_file_methods() {
         h.call_args(s, "get_uri_scheme", &[]).unwrap_or_else(|e| panic!("get_uri_scheme: {e}"));
         h.call_args(s, "hash", &[]).unwrap_or_else(|e| panic!("hash: {e}"));
         h.call_args(s, "is_native", &[]).unwrap_or_else(|e| panic!("is_native: {e}"));
-        h.call_args(s, "peek_path", &[]).unwrap_or_else(|e| panic!("peek_path: {e}"));
-        h.call_args(s, "supports_thread_contexts", &[]).unwrap_or_else(|e| panic!("supports_thread_contexts: {e}"));
+        if h.resolve_method(s, "peek_path") != 0 {
+            h.call_args(s, "peek_path", &[]).unwrap_or_else(|e| panic!("peek_path: {e}"));
+        } else {
+            eprintln!("SKIP peek_path: not in the running library (since 2.56)");
+        }
+        if h.resolve_method(s, "supports_thread_contexts") != 0 {
+            h.call_args(s, "supports_thread_contexts", &[]).unwrap_or_else(|e| panic!("supports_thread_contexts: {e}"));
+        } else {
+            eprintln!("SKIP supports_thread_contexts: not in the running library (since 2.22)");
+        }
     });
 }
 
@@ -252,8 +272,16 @@ fn gio_liststore_props() {
     on_gtk(|| {
         let h = Harness::new();
         let s = subject_gio_liststore(&h);
-        let _ = h.get(s, "item-type"); // gtype
-        let _ = h.get(s, "n-items"); // int
+        if h.has_prop(s, "item-type") {
+            let _ = h.get(s, "item-type"); // gtype
+        } else {
+            eprintln!("SKIP item-type: not in the running library (since 2.44)");
+        }
+        if h.has_prop(s, "n-items") {
+            let _ = h.get(s, "n-items"); // int
+        } else {
+            eprintln!("SKIP n-items: not in the running library (since 2.74)");
+        }
     });
 }
 
@@ -262,8 +290,16 @@ fn gio_liststore_methods() {
     on_gtk(|| {
         let h = Harness::new();
         let s = subject_gio_liststore(&h);
-        h.call_args(s, "get_item_type", &[]).unwrap_or_else(|e| panic!("get_item_type: {e}"));
-        h.call_args(s, "get_n_items", &[]).unwrap_or_else(|e| panic!("get_n_items: {e}"));
+        if h.resolve_method(s, "get_item_type") != 0 {
+            h.call_args(s, "get_item_type", &[]).unwrap_or_else(|e| panic!("get_item_type: {e}"));
+        } else {
+            eprintln!("SKIP get_item_type: not in the running library (since 2.44)");
+        }
+        if h.resolve_method(s, "get_n_items") != 0 {
+            h.call_args(s, "get_n_items", &[]).unwrap_or_else(|e| panic!("get_n_items: {e}"));
+        } else {
+            eprintln!("SKIP get_n_items: not in the running library (since 2.44)");
+        }
     });
 }
 
@@ -272,8 +308,12 @@ fn gio_liststore_signals() {
     on_gtk(|| {
         let h = Harness::new();
         let s = subject_gio_liststore(&h);
-        h.listen(s, "items-changed", true).unwrap_or_else(|e| panic!("items-changed: {e}"));
-        h.listen(s, "items-changed", false).unwrap();
+        if h.has_signal(s, "items-changed") {
+            h.listen(s, "items-changed", true).unwrap_or_else(|e| panic!("items-changed: {e}"));
+            h.listen(s, "items-changed", false).unwrap();
+        } else {
+            eprintln!("SKIP items-changed: not in the running library (since 2.44)");
+        }
     });
 }
 
@@ -322,13 +362,21 @@ fn gtk_directorylist_props() {
         let cur = h.get_value(s, "io-priority");
         h.set_value(s, "io-priority", &cur).unwrap();
         assert_eq!(h.get_value(s, "io-priority"), cur, "write-back of io-priority");
-        let _ = h.get(s, "item-type"); // gtype
+        if h.has_prop(s, "item-type") {
+            let _ = h.get(s, "item-type"); // gtype
+        } else {
+            eprintln!("SKIP item-type: not in the running library (since 4.8)");
+        }
         let _ = h.get(s, "loading"); // bool
         let _ = h.get(s, "monitored"); // bool
         let cur = h.get_value(s, "monitored");
         h.set_value(s, "monitored", &cur).unwrap();
         assert_eq!(h.get_value(s, "monitored"), cur, "write-back of monitored");
-        let _ = h.get(s, "n-items"); // int
+        if h.has_prop(s, "n-items") {
+            let _ = h.get(s, "n-items"); // int
+        } else {
+            eprintln!("SKIP n-items: not in the running library (since 4.8)");
+        }
     });
 }
 
@@ -342,8 +390,16 @@ fn gtk_directorylist_methods() {
         h.call_args(s, "get_io_priority", &[]).unwrap_or_else(|e| panic!("get_io_priority: {e}"));
         h.call_args(s, "get_monitored", &[]).unwrap_or_else(|e| panic!("get_monitored: {e}"));
         h.call_args(s, "is_loading", &[]).unwrap_or_else(|e| panic!("is_loading: {e}"));
-        h.call_args(s, "get_item_type", &[]).unwrap_or_else(|e| panic!("get_item_type: {e}"));
-        h.call_args(s, "get_n_items", &[]).unwrap_or_else(|e| panic!("get_n_items: {e}"));
+        if h.resolve_method(s, "get_item_type") != 0 {
+            h.call_args(s, "get_item_type", &[]).unwrap_or_else(|e| panic!("get_item_type: {e}"));
+        } else {
+            eprintln!("SKIP get_item_type: not in the running library (since 2.44)");
+        }
+        if h.resolve_method(s, "get_n_items") != 0 {
+            h.call_args(s, "get_n_items", &[]).unwrap_or_else(|e| panic!("get_n_items: {e}"));
+        } else {
+            eprintln!("SKIP get_n_items: not in the running library (since 2.44)");
+        }
     });
 }
 
@@ -352,8 +408,12 @@ fn gtk_directorylist_signals() {
     on_gtk(|| {
         let h = Harness::new();
         let s = subject_gtk_directorylist(&h);
-        h.listen(s, "items-changed", true).unwrap_or_else(|e| panic!("items-changed: {e}"));
-        h.listen(s, "items-changed", false).unwrap();
+        if h.has_signal(s, "items-changed") {
+            h.listen(s, "items-changed", true).unwrap_or_else(|e| panic!("items-changed: {e}"));
+            h.listen(s, "items-changed", false).unwrap();
+        } else {
+            eprintln!("SKIP items-changed: not in the running library (since 2.44)");
+        }
     });
 }
 
@@ -393,26 +453,58 @@ fn gtk_filedialog_props() {
     on_gtk(|| {
         let h = Harness::new();
         let s = subject_gtk_filedialog(&h);
-        let _ = h.get(s, "accept-label"); // str
-        let cur = h.get_value(s, "accept-label");
-        h.set_value(s, "accept-label", &cur).unwrap();
-        assert_eq!(h.get_value(s, "accept-label"), cur, "write-back of accept-label");
-        let _ = h.get(s, "default-filter"); // object
-        let _ = h.get(s, "filters"); // object
-        let _ = h.get(s, "initial-file"); // object
-        let _ = h.get(s, "initial-folder"); // object
-        let _ = h.get(s, "initial-name"); // str
-        let cur = h.get_value(s, "initial-name");
-        h.set_value(s, "initial-name", &cur).unwrap();
-        assert_eq!(h.get_value(s, "initial-name"), cur, "write-back of initial-name");
-        let _ = h.get(s, "modal"); // bool
-        let cur = h.get_value(s, "modal");
-        h.set_value(s, "modal", &cur).unwrap();
-        assert_eq!(h.get_value(s, "modal"), cur, "write-back of modal");
-        let _ = h.get(s, "title"); // str
-        let cur = h.get_value(s, "title");
-        h.set_value(s, "title", &cur).unwrap();
-        assert_eq!(h.get_value(s, "title"), cur, "write-back of title");
+        if h.has_prop(s, "accept-label") {
+            let _ = h.get(s, "accept-label"); // str
+            let cur = h.get_value(s, "accept-label");
+            h.set_value(s, "accept-label", &cur).unwrap();
+            assert_eq!(h.get_value(s, "accept-label"), cur, "write-back of accept-label");
+        } else {
+            eprintln!("SKIP accept-label: not in the running library (since 4.10)");
+        }
+        if h.has_prop(s, "default-filter") {
+            let _ = h.get(s, "default-filter"); // object
+        } else {
+            eprintln!("SKIP default-filter: not in the running library (since 4.10)");
+        }
+        if h.has_prop(s, "filters") {
+            let _ = h.get(s, "filters"); // object
+        } else {
+            eprintln!("SKIP filters: not in the running library (since 4.10)");
+        }
+        if h.has_prop(s, "initial-file") {
+            let _ = h.get(s, "initial-file"); // object
+        } else {
+            eprintln!("SKIP initial-file: not in the running library (since 4.10)");
+        }
+        if h.has_prop(s, "initial-folder") {
+            let _ = h.get(s, "initial-folder"); // object
+        } else {
+            eprintln!("SKIP initial-folder: not in the running library (since 4.10)");
+        }
+        if h.has_prop(s, "initial-name") {
+            let _ = h.get(s, "initial-name"); // str
+            let cur = h.get_value(s, "initial-name");
+            h.set_value(s, "initial-name", &cur).unwrap();
+            assert_eq!(h.get_value(s, "initial-name"), cur, "write-back of initial-name");
+        } else {
+            eprintln!("SKIP initial-name: not in the running library (since 4.10)");
+        }
+        if h.has_prop(s, "modal") {
+            let _ = h.get(s, "modal"); // bool
+            let cur = h.get_value(s, "modal");
+            h.set_value(s, "modal", &cur).unwrap();
+            assert_eq!(h.get_value(s, "modal"), cur, "write-back of modal");
+        } else {
+            eprintln!("SKIP modal: not in the running library (since 4.10)");
+        }
+        if h.has_prop(s, "title") {
+            let _ = h.get(s, "title"); // str
+            let cur = h.get_value(s, "title");
+            h.set_value(s, "title", &cur).unwrap();
+            assert_eq!(h.get_value(s, "title"), cur, "write-back of title");
+        } else {
+            eprintln!("SKIP title: not in the running library (since 4.10)");
+        }
     });
 }
 
@@ -421,14 +513,46 @@ fn gtk_filedialog_methods() {
     on_gtk(|| {
         let h = Harness::new();
         let s = subject_gtk_filedialog(&h);
-        h.call_args(s, "get_accept_label", &[]).unwrap_or_else(|e| panic!("get_accept_label: {e}"));
-        h.call_args(s, "get_default_filter", &[]).unwrap_or_else(|e| panic!("get_default_filter: {e}"));
-        h.call_args(s, "get_filters", &[]).unwrap_or_else(|e| panic!("get_filters: {e}"));
-        h.call_args(s, "get_initial_file", &[]).unwrap_or_else(|e| panic!("get_initial_file: {e}"));
-        h.call_args(s, "get_initial_folder", &[]).unwrap_or_else(|e| panic!("get_initial_folder: {e}"));
-        h.call_args(s, "get_initial_name", &[]).unwrap_or_else(|e| panic!("get_initial_name: {e}"));
-        h.call_args(s, "get_modal", &[]).unwrap_or_else(|e| panic!("get_modal: {e}"));
-        h.call_args(s, "get_title", &[]).unwrap_or_else(|e| panic!("get_title: {e}"));
+        if h.resolve_method(s, "get_accept_label") != 0 {
+            h.call_args(s, "get_accept_label", &[]).unwrap_or_else(|e| panic!("get_accept_label: {e}"));
+        } else {
+            eprintln!("SKIP get_accept_label: not in the running library (since 4.10)");
+        }
+        if h.resolve_method(s, "get_default_filter") != 0 {
+            h.call_args(s, "get_default_filter", &[]).unwrap_or_else(|e| panic!("get_default_filter: {e}"));
+        } else {
+            eprintln!("SKIP get_default_filter: not in the running library (since 4.10)");
+        }
+        if h.resolve_method(s, "get_filters") != 0 {
+            h.call_args(s, "get_filters", &[]).unwrap_or_else(|e| panic!("get_filters: {e}"));
+        } else {
+            eprintln!("SKIP get_filters: not in the running library (since 4.10)");
+        }
+        if h.resolve_method(s, "get_initial_file") != 0 {
+            h.call_args(s, "get_initial_file", &[]).unwrap_or_else(|e| panic!("get_initial_file: {e}"));
+        } else {
+            eprintln!("SKIP get_initial_file: not in the running library (since 4.10)");
+        }
+        if h.resolve_method(s, "get_initial_folder") != 0 {
+            h.call_args(s, "get_initial_folder", &[]).unwrap_or_else(|e| panic!("get_initial_folder: {e}"));
+        } else {
+            eprintln!("SKIP get_initial_folder: not in the running library (since 4.10)");
+        }
+        if h.resolve_method(s, "get_initial_name") != 0 {
+            h.call_args(s, "get_initial_name", &[]).unwrap_or_else(|e| panic!("get_initial_name: {e}"));
+        } else {
+            eprintln!("SKIP get_initial_name: not in the running library (since 4.10)");
+        }
+        if h.resolve_method(s, "get_modal") != 0 {
+            h.call_args(s, "get_modal", &[]).unwrap_or_else(|e| panic!("get_modal: {e}"));
+        } else {
+            eprintln!("SKIP get_modal: not in the running library (since 4.10)");
+        }
+        if h.resolve_method(s, "get_title") != 0 {
+            h.call_args(s, "get_title", &[]).unwrap_or_else(|e| panic!("get_title: {e}"));
+        } else {
+            eprintln!("SKIP get_title: not in the running library (since 4.10)");
+        }
     });
 }
 
@@ -477,8 +601,16 @@ fn gtk_stringlist_props() {
     on_gtk(|| {
         let h = Harness::new();
         let s = subject_gtk_stringlist(&h);
-        let _ = h.get(s, "item-type"); // gtype
-        let _ = h.get(s, "n-items"); // int
+        if h.has_prop(s, "item-type") {
+            let _ = h.get(s, "item-type"); // gtype
+        } else {
+            eprintln!("SKIP item-type: not in the running library (since 4.14)");
+        }
+        if h.has_prop(s, "n-items") {
+            let _ = h.get(s, "n-items"); // int
+        } else {
+            eprintln!("SKIP n-items: not in the running library (since 4.14)");
+        }
     });
 }
 
@@ -487,8 +619,16 @@ fn gtk_stringlist_methods() {
     on_gtk(|| {
         let h = Harness::new();
         let s = subject_gtk_stringlist(&h);
-        h.call_args(s, "get_item_type", &[]).unwrap_or_else(|e| panic!("get_item_type: {e}"));
-        h.call_args(s, "get_n_items", &[]).unwrap_or_else(|e| panic!("get_n_items: {e}"));
+        if h.resolve_method(s, "get_item_type") != 0 {
+            h.call_args(s, "get_item_type", &[]).unwrap_or_else(|e| panic!("get_item_type: {e}"));
+        } else {
+            eprintln!("SKIP get_item_type: not in the running library (since 2.44)");
+        }
+        if h.resolve_method(s, "get_n_items") != 0 {
+            h.call_args(s, "get_n_items", &[]).unwrap_or_else(|e| panic!("get_n_items: {e}"));
+        } else {
+            eprintln!("SKIP get_n_items: not in the running library (since 2.44)");
+        }
         h.call_args(s, "get_buildable_id", &[]).unwrap_or_else(|e| panic!("get_buildable_id: {e}"));
     });
 }
@@ -498,8 +638,12 @@ fn gtk_stringlist_signals() {
     on_gtk(|| {
         let h = Harness::new();
         let s = subject_gtk_stringlist(&h);
-        h.listen(s, "items-changed", true).unwrap_or_else(|e| panic!("items-changed: {e}"));
-        h.listen(s, "items-changed", false).unwrap();
+        if h.has_signal(s, "items-changed") {
+            h.listen(s, "items-changed", true).unwrap_or_else(|e| panic!("items-changed: {e}"));
+            h.listen(s, "items-changed", false).unwrap();
+        } else {
+            eprintln!("SKIP items-changed: not in the running library (since 2.44)");
+        }
     });
 }
 
@@ -648,9 +792,17 @@ fn pango_attrlist_methods() {
     on_gtk(|| {
         let h = Harness::new();
         let s = subject_pango_attrlist(&h);
-        h.call_args(s, "get_attributes", &[]).unwrap_or_else(|e| panic!("get_attributes: {e}"));
+        if h.resolve_method(s, "get_attributes") != 0 {
+            h.call_args(s, "get_attributes", &[]).unwrap_or_else(|e| panic!("get_attributes: {e}"));
+        } else {
+            eprintln!("SKIP get_attributes: not in the running library (since 1.44)");
+        }
         h.call_args(s, "get_iterator", &[]).unwrap_or_else(|e| panic!("get_iterator: {e}"));
-        h.call_args(s, "to_string", &[]).unwrap_or_else(|e| panic!("to_string: {e}"));
+        if h.resolve_method(s, "to_string") != 0 {
+            h.call_args(s, "to_string", &[]).unwrap_or_else(|e| panic!("to_string: {e}"));
+        } else {
+            eprintln!("SKIP to_string: not in the running library (since 1.50)");
+        }
     });
 }
 
@@ -705,17 +857,37 @@ fn pango_fontdescription_methods() {
     on_gtk(|| {
         let h = Harness::new();
         let s = subject_pango_fontdescription(&h);
-        h.call_args(s, "get_color", &[]).unwrap_or_else(|e| panic!("get_color: {e}"));
+        if h.resolve_method(s, "get_color") != 0 {
+            h.call_args(s, "get_color", &[]).unwrap_or_else(|e| panic!("get_color: {e}"));
+        } else {
+            eprintln!("SKIP get_color: not in the running library (since 1.57)");
+        }
         h.call_args(s, "get_family", &[]).unwrap_or_else(|e| panic!("get_family: {e}"));
-        h.call_args(s, "get_features", &[]).unwrap_or_else(|e| panic!("get_features: {e}"));
-        h.call_args(s, "get_gravity", &[]).unwrap_or_else(|e| panic!("get_gravity: {e}"));
+        if h.resolve_method(s, "get_features") != 0 {
+            h.call_args(s, "get_features", &[]).unwrap_or_else(|e| panic!("get_features: {e}"));
+        } else {
+            eprintln!("SKIP get_features: not in the running library (since 1.56)");
+        }
+        if h.resolve_method(s, "get_gravity") != 0 {
+            h.call_args(s, "get_gravity", &[]).unwrap_or_else(|e| panic!("get_gravity: {e}"));
+        } else {
+            eprintln!("SKIP get_gravity: not in the running library (since 1.16)");
+        }
         h.call_args(s, "get_set_fields", &[]).unwrap_or_else(|e| panic!("get_set_fields: {e}"));
         h.call_args(s, "get_size", &[]).unwrap_or_else(|e| panic!("get_size: {e}"));
-        h.call_args(s, "get_size_is_absolute", &[]).unwrap_or_else(|e| panic!("get_size_is_absolute: {e}"));
+        if h.resolve_method(s, "get_size_is_absolute") != 0 {
+            h.call_args(s, "get_size_is_absolute", &[]).unwrap_or_else(|e| panic!("get_size_is_absolute: {e}"));
+        } else {
+            eprintln!("SKIP get_size_is_absolute: not in the running library (since 1.8)");
+        }
         h.call_args(s, "get_stretch", &[]).unwrap_or_else(|e| panic!("get_stretch: {e}"));
         h.call_args(s, "get_style", &[]).unwrap_or_else(|e| panic!("get_style: {e}"));
         h.call_args(s, "get_variant", &[]).unwrap_or_else(|e| panic!("get_variant: {e}"));
-        h.call_args(s, "get_variations", &[]).unwrap_or_else(|e| panic!("get_variations: {e}"));
+        if h.resolve_method(s, "get_variations") != 0 {
+            h.call_args(s, "get_variations", &[]).unwrap_or_else(|e| panic!("get_variations: {e}"));
+        } else {
+            eprintln!("SKIP get_variations: not in the running library (since 1.42)");
+        }
         h.call_args(s, "get_weight", &[]).unwrap_or_else(|e| panic!("get_weight: {e}"));
         h.call_args(s, "hash", &[]).unwrap_or_else(|e| panic!("hash: {e}"));
         h.call_args(s, "to_filename", &[]).unwrap_or_else(|e| panic!("to_filename: {e}"));
