@@ -44,6 +44,17 @@ function parseLine(line) {
     }
     case 'destroy':
       return { op, h: h(sp(line, 2)[1]) };
+    case 'construct': {
+      // ABI v2.5: `construct #h Kind {props}`
+      const [, n, kind, json] = sp(line, 4);
+      return { op, h: h(n), kind, props: JSON.parse(json) };
+    }
+    case 'static': {
+      // ABI v2.5: `static Kind.method [args] [#h]`; a constructor-shaped name ends with the new handle
+      const m = /^static (\S+) (\[.*\])(?: #(\d+))?$/.exec(line);
+      if (!m) throw new Error(`bad static op: ${line}`);
+      return { op, call: m[1], args: JSON.parse(m[2]), h: m[3] ? Number(m[3]) : null };
+    }
     case 'set': {
       const [, n, prop, json] = sp(line, 4);
       return { op, h: h(n), prop, value: JSON.parse(json) };
@@ -131,11 +142,13 @@ export function replay(text, { defaults = {}, camelProps = false } = {}) {
       return node;
     });
     if (results.length) out.push({ h: 'results', results });
+    if (statics.length) out.push({ h: 'statics', statics });
     return JSON.stringify(out);
   };
 
   const boundaries = [];
   const results = []; // sync results, in order
+  const statics = []; // static calls (ABI v2.5), in order
   const lines = text.split('\n').filter(Boolean);
   for (const line of lines) {
     const o = parseLine(line);
@@ -172,6 +185,24 @@ export function replay(text, { defaults = {}, camelProps = false } = {}) {
         break;
       case 'set':
         get(o.h, line).props.set(camelProps ? camel(o.prop) : o.prop, o.value);
+        break;
+      case 'construct':
+        if (nodes.has(o.h)) throw new Error(`handle reused: ${line}`);
+        nodes.set(o.h, {
+          kind: o.kind,
+          props: new Map(Object.entries(o.props).map(([k, v]) => [camelProps ? camel(k) : k, v])),
+          parent: null,
+          slots: new Map(),
+          listening: new Set(),
+          calls: [],
+          attrs: new Map(),
+        });
+        break;
+      case 'static':
+        statics.push(`${o.call} ${JSON.stringify(o.args)}`);
+        if (o.h !== null) {
+          nodes.set(o.h, { kind: o.call.slice(0, o.call.lastIndexOf('.')), props: new Map(), parent: null, slots: new Map(), listening: new Set(), calls: [], attrs: new Map() });
+        }
         break;
       case 'call':
         get(o.h, line).calls.push(`${o.method} ${JSON.stringify(o.args)}`);

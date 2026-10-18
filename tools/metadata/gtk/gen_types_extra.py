@@ -123,7 +123,7 @@ def gen_tests(g, ov: dict) -> tuple[str, list[dict]]:
         "    let path = std::env::temp_dir().join(format!(\"svl-types-verify-{}.png\", std::process::id()));",
         "    if !path.exists() {",
         "        let pixel = gtk::glib::Bytes::from(&[0u8, 0, 0, 255][..]);",
-        "        gtk::gdk::MemoryTexture::new(1, 1, gtk::gdk::MemoryFormat::R8g8b8a8, &pixel, 4).save_to_png(&path);",
+        "        let _ = gtk::gdk::MemoryTexture::new(1, 1, gtk::gdk::MemoryFormat::R8g8b8a8, &pixel, 4).save_to_png(&path);",
         "    }",
         "    path.to_string_lossy().into_owned()",
         "}",

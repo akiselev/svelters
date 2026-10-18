@@ -304,4 +304,16 @@ Things done now without an ABI change: JS passes cached IDs rather than names (1
 
 One optional member, `int (*style)(void *self, uint32_t op, svl_handle h, const svl_value *v)`, appended after `listen_ex`. `v` is a string or null. The ops are `TARGET` (which dialect the backend renders: CSS or QSS), `CLASSES`, `NAME`, `INLINE`, `OPACITY`, `SHEET` (install, replace, remove or clear a component sheet, `@tokens` being the token layer) and `SCHEME` (colour scheme plus palette pairs). The renderer asks `TARGET` first and then renders only that dialect. Payload formats and the per-toolkit behaviour are in `plans/architecture/backend-abi.md#abi-v23-additive-x6-styling`; the user-facing side is the [styling guide](/guides/styling/).
 
+## ABI v2.5: shared handles, construct and call_static (NT0)
+
+Additive members for non-UI types (`Gio.File`, `Gtk.TextBuffer`, `Pango.FontDescription`), all optional on a backend:
+
+- **`SVL_LIFE_SHARED = 5`:** a strong reference to a refcounted object outside the widget tree, one handle per object. `destroy` drops only our reference; the host may call it when the JS wrapper is garbage collected. Every GObject now crosses as a handle (widgets stay `owned` / `borrowed`, everything else is `shared`); `BOXED` is for boxed structs only, and those `value` handles have a kind and take read-only calls.
+- **`construct(kind, props, values, n, out)`:** an instance with construct-time properties (GTK: `g_object_new_with_properties`, so construct-only properties work). `create(kind)` is `construct` with no properties.
+- **`call_static(kind, method, args, n, out)`:** static functions and constructor functions. Member flags `SVL_M_STATIC` and `SVL_M_CTOR` mark them in the descriptor.
+- **`SVL_T_TYPE = 11`:** a string slot that carries a native type name, for GType-valued properties and parameters.
+- **`describe(SVL_KIND, 0, kind)`:** the qualified name of a kind and its nearest bound ancestor, for `host.typeChain(h)`.
+
+The JS side is the generated `svelters:gtk/<namespace>` modules, one named export per class; see [Non-UI types](/types/gtk/). The full text, including the op-log lines `construct` and `static`, is in `plans/architecture/backend-abi.md`.
+
 Sources: `plans/architecture/backend-abi.md`, `crates/svelters-abi/include/svelters_backend.h`, `docs/notes/ownership-and-lifetimes.md`, `docs/notes/p2-host-lane.md`, `docs/notes/p5-integration.md`, `docs/notes/js-native-serdes.md`.

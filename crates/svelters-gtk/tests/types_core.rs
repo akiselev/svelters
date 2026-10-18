@@ -234,7 +234,7 @@ fn textures_clipboards_and_displays_are_objects() {
         let h = Harness::new();
         let path = std::env::temp_dir().join(format!("svl-nt0-{}.png", std::process::id()));
         let pixel = glib::Bytes::from(&[0u8, 0, 0, 255][..]);
-        gtk::gdk::MemoryTexture::new(1, 1, gtk::gdk::MemoryFormat::R8g8b8a8, &pixel, 4).save_to_png(&path);
+        let _ = gtk::gdk::MemoryTexture::new(1, 1, gtk::gdk::MemoryFormat::R8g8b8a8, &pixel, 4).save_to_png(&path);
         let tex = handle(h.call_static("Gdk.Texture", "new_from_filename", &[s(path.to_str().unwrap())]).unwrap());
         assert_eq!(h.call_args(tex, "get_width", &[]).unwrap(), V::I64(1));
         assert_eq!(h.get(tex, "height"), V::I64(1));

@@ -72,7 +72,6 @@ const TAG_UNICHAR: c_int = 21;
 const DIR_IN: c_int = 0;
 const DIR_OUT: c_int = 1;
 const DIR_INOUT: c_int = 2;
-const TRANSFER_NOTHING: c_int = 0;
 const TRANSFER_CONTAINER: c_int = 1;
 const TRANSFER_EVERYTHING: c_int = 2;
 const FN_IS_CONSTRUCTOR: c_int = 1 << 1;

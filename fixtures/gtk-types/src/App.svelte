@@ -12,7 +12,12 @@
   names.append('three');
 
   // An icon from a path: strings keep meaning a theme name, files are explicit.
-  const icon = new FileIcon({ file: File.newForPath('/usr/share/pixmaps/svelters.svg') });
+  const file = File.newForPath('/usr/share/pixmaps/svelters.svg');
+  const icon = new FileIcon({ file });
+
+  // Dropped wrappers release their handle when the engine collects them, which the Node and QuickJS
+  // hosts do at different moments: the op log stays comparable only while the app holds what it made.
+  globalThis.__fixtureKeep = [names, file];
 </script>
 
 <window title="Types">

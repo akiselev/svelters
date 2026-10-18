@@ -95,7 +95,7 @@ fn the_gtk_types_fixture_runs_on_the_real_host() {
 /// dropped in a loop leave only what the app still holds.
 #[test]
 fn dropped_wrappers_release_their_shared_handles() {
-    let bundle = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../fixtures/gtk-types-gc/dist/app.js");
+    let bundle = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../tests/gtk-types-gc/dist/app.js");
     if !bundle.exists() {
         eprintln!("skipped: {} is not built", bundle.display());
         return;
