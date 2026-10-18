@@ -558,15 +558,18 @@ These links weren't re-fetched in this session; the descriptions come from the p
 - **Q7 — objc2's generated sources are the primary Apple ingest** ("we are Rust anyway"). MAC1's SDK libclang pass supplements them on a Mac, for nullability and availability that objc2 doesn't carry as data.
 - **Q8 — WinUI threading was investigated (§4.1).** The winmd Threading/MarshalingBehavior attributes say Both/Agile for everything, including UIElement, so they can't be used. Thread class comes from the structural `DispatcherQueue` signal. Every runtime class is SHARED, the backend runs one UI thread, there is a `HasThreadAccess` check at minting (and on every call in debug builds), and completions hop to the UI thread before conversion.
 
-Still open, under discussion with the user: Q2 (reactive getters), Q4 (Qt overloads), Q5 (module granularity), Q6 (rich-text runs).
+- **Q2 — reactive getters need more research before deciding.** The model must work across GTK (`notify::`), Qt (NOTIFY), AppKit (KVO) and WinUI (DependencyProperty callbacks / INotifyPropertyChanged). The subscription contract (subscribe/unsubscribe per object+prop, which props are observable, delivery timing relative to the scheduler) is to be designed as part of the ABI, not bolted onto N3.
+- **Q4 — Qt overloads use runtime dispatch** (PySide-style): one JS name, the generated thunk picks the first overload whose arity and JS types match, in a fixed metadata-derived order, with a small rename list for the truly ambiguous ones (measured in N2).
+- **Q5 — one module per native namespace** (`svelters:gtk/gio`, `svelters:gtk/pango`, `svelters:qt/core`, `svelters:qt/gui`, ...).
+- **Q6 — rich-text runs are deferred.** Markup strings through the text props (Pango markup, Qt HTML, HTML into NSAttributedString) cover it for now.
 
 ## 11. Open questions
 
 1. *(Decided: SHARED, §10.)*
-2. **Should getters be reactive by default (N3), or opt in?**
+2. **Reactive property observation across toolkits** (GTK notify, Qt NOTIFY, AppKit KVO, WinUI DP callbacks): research and specify as part of the ABI (§10).
 3. *(Decided: hide mutators, §3.6 and §10.)*
-4. **Qt overloads:** split them by metadata or dispatch at runtime? This needs a measurement on the N2 allowlist; PySide's runtime dispatch is the prior art.
-5. **Module granularity:** per namespace (proposed, for M6 tree-shaking) or per toolkit?
-6. **Rich-text runs:** PangoAttrList, QTextCharFormat ranges and NSAttributedString each need an input form. They should be native-shaped records per toolkit, since no portability layer is allowed.
+4. *(Decided: runtime dispatch, §10.)*
+5. *(Decided: per namespace, §10.)*
+6. *(Deferred: markup strings for now, §10.)*
 7. *(Decided: objc2 primary, §10.)*
 8. *(Decided after investigation: §4.1 and §10.)*
