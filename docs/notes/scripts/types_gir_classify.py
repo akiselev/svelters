@@ -33,6 +33,7 @@ import xml.etree.ElementTree as ET
 
 C = "{http://www.gtk.org/introspection/core/1.0}"
 GL = "{http://www.gtk.org/introspection/glib/1.0}"
+CNS = "{http://www.gtk.org/introspection/c/1.0}"
 FILES = ["GLib-2.0", "GObject-2.0", "Gio-2.0", "Gdk-4.0", "Gsk-4.0", "Pango-1.0", "Graphene-1.0",
          "GdkPixbuf-2.0", "cairo-1.0", "Gtk-4.0"]
 TARGET = ["GLib", "GObject", "Gio", "Gdk", "Gsk", "Pango", "Graphene", "Gtk"]
@@ -100,7 +101,7 @@ def plain_record(g, el, ns, seen=()):
         tag, sub, sns = g.t.get(n, ("?", None, None))
         if tag in ("enumeration", "bitfield"):
             continue
-        if tag == "record" and n not in seen and plain_record(g, sub, sns, seen + (n,)) and t.get("c:type", "").find("*") < 0:
+        if tag == "record" and n not in seen and plain_record(g, sub, sns, seen + (n,)) and t.get(CNS + "type", "").find("*") < 0:
             continue
         return False
     return True
@@ -392,7 +393,7 @@ def main():
         selfs = [m.find(C + "parameters/" + C + "instance-parameter") for m in el.findall(C + "method") if not skip(m)
                  and (m.get("name") or "") not in CORE_NAMES]
         selfs = [x for x in selfs if x is not None]
-        consts = [("const" in ((x.find(C + "type").get("c:type") or "") if x.find(C + "type") is not None else "")) for x in selfs]
+        consts = [("const" in ((x.find(C + "type").get(CNS + "type") or "") if x.find(C + "type") is not None else "")) for x in selfs]
         (imm if all(consts) else mut).append(f)
     print(f"\n== value types: {len(imm)} take `const self` everywhere, {len(mut)} do not (C const-ness is NOT a reliable mutability signal: GBytes, GskRenderNode are immutable yet non-const)")
     print("   in scope with mutators:", " ".join(sorted(x for x in mut if x in closure or x.startswith("Gtk."))))

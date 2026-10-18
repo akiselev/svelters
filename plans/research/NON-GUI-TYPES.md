@@ -63,6 +63,7 @@ Status: research proposal, 2026-10-17. It was revised the same day to put metada
   - `SVL_M_STATIC`/`SVL_M_CTOR` member flags;
   - VALUE handles gain kinds and methods;
   - every native object crosses as a handle.
+- **User decisions, 2026-10-17** (§10): non-widget returns are SHARED; VALUE mutators are hidden by a metadata-derived list (residual: 22 GTK methods); objc2 is the primary Apple ingest; WinUI thread affinity comes from the `DispatcherQueue` signal, not the winmd threading attributes (§4.1).
 - **Pilot: GTK.** The core is about 70% written already (`convert.rs`, `gi.rs`). The generated layer there is data plus JS, with no per-type native code at all.
 
 ## 1. Inventory: what the widget APIs need today
@@ -204,7 +205,7 @@ The member-level coverage is in §3.3: GTK 96%, Qt 92%, Apple 82%. Everything no
 
 Rules that can't be automated:
 
-- **Mutability.** C doesn't spell it reliably: 140 of 182 GTK value types take a non-const `self` somewhere, including GBytes and GskRenderNode, which are immutable. So VALUE handles expose every generated method, and "snapshot" semantics come only from `transfer` (copy-boxed types copy; refcounted boxed types share). Docs flag the known traps (PangoAttrList shared with a label) from an override note.
+- **Mutability.** C doesn't spell it on its own: 103 of 182 GTK value types take a non-const `self` somewhere, including GBytes and GskRenderNode, which are immutable. Combined with naming patterns, GIR `transfer` on `self`, and the C++/ObjC signals, it is enough to derive the hide list for VALUE mutators that the user decided on. §3.6 gives the rules and measures the residual hand list.
 - **Record shapes.** These are a JS design decision, not a fact: which value structs become the shared `Rect`/`Size`/`Point`/`Insets`/`Color` shapes. Other plain structs become records with their native field names, camelCased.
 
 ### 3.2 Sources
@@ -217,7 +218,7 @@ Rules that can't be automated:
 | Qt | moc metatypes JSON (`/usr/lib/qt6/metatypes/qt6*_metatypes.json`) | 2764 Q_OBJECT / 590 Q_GADGET with props, signals, slots, invokables | new; also covers app/pack classes through `moc --output-json` (CUSTOM-WIDGETS) |
 | Qt | PyQt6 sip (`PyQt6/bindings`) | `/Transfer/` 239, `/TransferThis/` 304, `/TransferBack/` 45, `/Factory/` 69, `/KeepReference/` 71, `/In/` 26, `/Out/` 21. Its default rule (a non-const `T*` of a basic type is an out param) settles the 121 out-pointer blockers | new; cross-checks PySide |
 | Qt | libclang over `/usr/include/qt6` (python-clang 21 is installed) | public-field nested structs qdoc doesn't model (QFont::Tag, QTextOption::Tab, QCalendar::YearMonthDay, QTextLayout::FormatRange), typedef resolution | new; shares its setup with MAC1's libclang pass |
-| Apple | objc2 header-translator output (`objc2-foundation`, `objc2-app-kit` crates: generated Rust, MIT/Apache, readable on Linux), plus its `translation-config.toml` | super chains, `MainThreadOnly`, Send/Sync, NSCopying, property setters, objc2-safe methods (a reviewed whitelist), block params, structs, skip lists | new (`types_objc2_classify.py`); MAC1's `tools/metadata/appkit/ingest.py` stays the source for nullability/availability on a Mac |
+| Apple | objc2 header-translator output (`objc2-foundation`, `objc2-app-kit` crates: generated Rust, MIT/Apache, readable on Linux), plus its `translation-config.toml` | super chains, `MainThreadOnly`, Send/Sync, NSCopying, property setters, objc2-safe methods (a reviewed whitelist), block params, structs, skip lists | **primary ingest (decision Q7)**; prototype `types_objc2_classify.py`. MAC1's `tools/metadata/appkit/ingest.py` supplements it with nullability and availability on a Mac |
 | WinUI | winmd: Windows App SDK packages (`fetch.py`) + `Windows.winmd` (the `windows-default` crate) | every type and its attributes (activatable, statics, composable, exclusiveto, default interface, deprecated) | `winmd-tool dump` covers WinUI classes; extend it to Windows.Foundation and the Microsoft.UI non-XAML namespaces |
 
 ### 3.3 Measured: what the prototypes classify
@@ -319,12 +320,27 @@ ingest (per toolkit, deterministic, checked in)              classify (rules, §
   - **Release:** the M6 binding linker narrows it to what the app imports. The module granularity (`svelters:gtk/gio`) gives the linker static roots.
 - **Upstream updates** (new GTK/Qt/SDK): re-ingest, re-classify, then diff the classification report. New members in already-classified types need no human. New types either follow the rules or appear as needs-override in the report.
 
+### 3.6 Hiding VALUE mutators (decision Q3)
+
+VALUE handles expose only non-mutating members. The hide list is derived from metadata by `types_value_mutators.py`; anything the rules can't decide goes to a residual hand list.
+
+| Toolkit | Keep | Hide | Residual hand list (in the bound scope) |
+|---|---|---|---|
+| GTK (GIR) | 598: `const T *self`; a reading name (`get_`, `is_`, `has_`, `to_`, `equal`, `hash`, `compare`, `contains`, `lookup`, `format`, `matches`, `index_to_`, ...); or `self` with `transfer full` (it consumes self and returns a new value, as GskTransform chaining does, so the core refs first) | 209: a mutating name (`set_`, `append`, `insert`, `remove`, `add`, `clear`, `reset`, `merge`, `splice`, `take`, `steal`, `push`, `pop`, `update`, `init`, `unset`, `replace`, `filter`, `scale`, `translate`, `rotate`, ...) | **22 methods in 12 types**: GLib.String `ascii_down`/`ascii_up`/`overwrite*`, Graphene.Matrix `skew_*`, GLib.Variant `byteswap`/`store`, GObject.Closure `invalidate`/`invoke`, DBusInterfaceInfo `cache_*`, Pango.AttrIterator `next`/`destroy`, Bitset `shift_*`, TimeZone `adjust_time`, VariantDict `end`, Pango.Attribute `destroy`, Expression `watch`/ExpressionWatch `unwatch` |
+| Qt (qdoc) | 2345: `const` member functions and statics | 978: non-const member functions (C++ const-correctness); 30 non-const twins of const accessors dropped as duplicates | **0 entries.** 27 non-const methods with reading-looking names are flagged for review (QImage/QPixmap/QPicture `load*`, QTextBoundaryFinder `to*`, QCborMap `asKeyValueRange`). All of them do mutate, so the rule holds |
+| Apple (objc2) | 2018: everything on the immutable half of an `NSMutable*` pair (12 classes), plus the non-setter methods of other value classes | 34: property setters (objc2's "Setter for" marker) and `set*`/`add*`/`remove*`/`insert*`/`replace*`/`append*` selectors on value classes without a mutable twin | **0 member entries.** Apple's cost is class-level: correcting misclassified classes (§3.3) |
+| WinUI | — | — | n/a. WinRT has no value classes; Uri and the other immutable runtime classes have no setters and are SHARED objects |
+
+- **Builders** (`*Builder`: GskPathBuilder, GVariantBuilder, GStrvBuilder) exist to be mutated. Each one is a local OWNED object whose mutators are kept, and whose result comes from `to_*`/`end`.
+- **PySide/sip markers turned out not to be needed.** Qt's `const` is decisive on its own; PySide's removed-member list (281 entries) is still applied as exclusions.
+- **Over time:** the GTK residual sits in the override file as `hide:`/`keep:` member lists. It grows only when a new upstream method has a name the patterns don't cover, and the classification report lists those.
+
 ## 4. Taxonomy: JS representation
 
 | Category | JS form | Construction | Identity | Lifetime / GC | Equality | Mutation | Wire |
 |---|---|---|---|---|---|---|---|
 | record | plain object (`values.d.ts` shapes or native field names) | object literal | none | JS GC | structural | snapshot; set the prop again | `RECORD` (exists) |
-| value | generated class instance; methods, getters, `toString()` where a string form exists | `new QUrl(s)`, statics (`QIcon.fromTheme`), or the string form in a slot (`SVL_D_STRING_FORM`) | none: a new handle per crossing | VALUE: copy or ref; GC → checkpoint release; `dispose()` | `a.equals(b)` (core: `QMetaType::equals`, GIR `*_equal`, `isEqual:`, `Equals`) | all generated methods exposed; transfer decides copy vs share | `BOXED` + kind |
+| value | generated class instance; non-mutating methods, getters, `toString()` where a string form exists | `new QUrl(s)`, statics (`QIcon.fromTheme`), or the string form in a slot (`SVL_D_STRING_FORM`) | none: a new handle per crossing | VALUE: copy or ref; GC → checkpoint release; `dispose()` | `a.equals(b)` (core: `QMetaType::equals`, GIR `*_equal`, `isEqual:`, `Equals`) | immutable in JS: mutators hidden (§3.6); builders excepted | `BOXED` + kind |
 | object (refcounted) | generated class; prop accessors, methods, `on(signal, fn)` | `new Gtk.TextBuffer({text})` → `construct`; `Gio.File.newForPath(p)` → `call_static` + CTOR | one JS object per native object | SHARED: strong ref; GC or `dispose()` drops our ref only | `===` | live | `HANDLE` |
 | object (QObject), unique | same | `new QTimer({interval: 500})` | one per object | OWNED: dies with its component scope or `dispose()`, never by GC | `===` | live | `HANDLE` |
 | returned object | same | — | one per object | BORROWED (X1): weak, `gone` on owner death | `===` | live | `HANDLE` |
@@ -340,7 +356,46 @@ Rules carried over from the first draft:
 - **Every native object is a `HANDLE`,** never a `BOXED` value. The kind is the generated kind, else a reflected kind (GTK, Apple), else the nearest known ancestor.
 - **SHARED is a strong ref,** so a pointer-keyed identity map is safe, which matters for COM where there is no qdata. GC releasing a SHARED handle only drops our ref, so it has no visible effect.
 - **Listeners live in the component scope.** That keeps listened objects reachable without toggle refs, and native code never holds JS values. In dev, wrappers are non-extensible.
-- **All handles are main-thread.** The core marshals completions (WinRT, NSURLSession, GTask) to the UI loop before `invoke_callback`. JS workers never see handles.
+- **All handles are main-thread.** The core marshals completions (WinRT, NSURLSession, GTask) to the UI loop before `invoke_callback`. JS workers never see handles. WinUI specifics are in §4.1.
+
+### 4.1 WinUI thread affinity (decision Q8: investigated)
+
+**What the metadata says, and why it isn't enough.**
+
+- `winrt_threading_probe` (`docs/notes/scripts/winrt_threading_probe/`, built with `windows-metadata`) read every runtime class in Microsoft.UI.Xaml, Microsoft.UI.* and Windows.Foundation.
+- **Every attributed class is `Threading(Both)` + `MarshalingBehavior(Agile)`.** That includes UIElement (185 classes) and the non-visual DependencyObjects (365 classes: SolidColorBrush, LinearGradientBrush, BitmapImage, EntranceThemeTransition, Run). The other 218 classes carry only `MarshalingBehavior(Agile)`.
+- So the two attributes describe COM marshaling, not XAML's own rule. Microsoft's DependencyObject reference states that rule:
+  - all DependencyObject instances must be created on the UI thread associated with the current Window;
+  - every API except `DependencyObject.DispatcherQueue` throws when called from another thread.
+
+  The same pattern holds for Composition: `CompositionObject` is also Both/Agile and also exposes a `DispatcherQueue`.
+
+**The usable signal is structural.**
+
+- **Dispatcher-affine:** the class or a base exposes a `DispatcherQueue` property. The probe finds 696 such classes:
+  - all DependencyObjects, visual or not;
+  - Composition objects and the Compositor;
+  - `Microsoft.UI.Xaml.Window`;
+  - AppWindow;
+  - Microsoft.UI.Input sources.
+- **Free-threaded in practice:** all 23 Windows.Foundation classes (Uri, PropertySet, StringMap, MemoryBuffer, Deferral, WwwFormUrlDecoder) and static helpers (Microsoft.UI.Colors).
+- **In between:** XAML types that are neither DependencyObjects nor dispatcher-bearing, such as FontFamily, TransitionCollection, FocusManager and the routed event args.
+
+The rule is generated from this signal. It is not a hand list.
+
+**Proposed rules:**
+
+1. **Every WinRT runtime class is SHARED.** COM is refcounted, and SHARED identity keys on the default interface's `IUnknown*`. The thread class goes into the facts as `thread: dispatcher | ui | any`:
+   - `dispatcher`: has a `DispatcherQueue`;
+   - `ui`: the rest of `Microsoft.UI.Xaml.*`, conservatively;
+   - `any`: everything else.
+2. **One UI thread.** The backend creates every XAML and Composition object on its single UI thread. It never uses WinUI 3's thread-per-window option, because each window's objects would then be bound to a different thread. With this rule, `dispatcher` and `ui` reduce to "UI thread", which is where all host ops run anyway.
+3. **Check once, at minting.** The core checks `DispatcherQueue().HasThreadAccess()` when it mints a handle for a `dispatcher` object, and in debug builds on every call. A failure is a clean error ("object belongs to another UI thread"), never a crash. Per-call checks in release are not needed, because handles never leave the UI thread.
+4. **Completions hop to the UI thread first.** `IAsyncOperation`/`IAsyncAction` completions, and any delegate that may fire on a thread-pool thread, are re-posted through the UI `DispatcherQueue` before any conversion. This applies even when the result is `any`, because converting it may mint handles or touch dispatcher-affine arguments.
+5. **Releases run on the UI thread.** They already happen there, at checkpoints. At shutdown the JS runtime is dropped before the DispatcherQueue and the XAML framework shut down, as `ownership-and-lifetimes.md` already requires.
+6. **`IClosable` is not release.** `Close()` on Composition objects and similar types is an explicit generated method with `dispose()` semantics. Dropping our ref stays a plain `Release`.
+
+Nothing stricter than SHARED plus UI-thread rules is needed: the strictness comes from rule 2, not from a new lifetime class. One open item remains: whether anything other than JS ever needs `any`-class objects off the UI thread. A worker runtime (QUICKJS-RUNTIME #9) would, and it gets values, not handles, by design.
 
 ## 5. ABI draft (additive on v3; "v2.6" in the doc's additive series)
 
@@ -496,13 +551,22 @@ These links weren't re-fetched in this session; the descriptions come from the p
 | N3 models and reactivity | — | `@svelters/lists` takes native models; optional reactive accessors (`notify::`/NOTIFY via `createSubscriber`) | 10k-item DirectoryList scroll; the TextBuffer example needs no `$state` mirror |
 | N4 Apple / WinUI | objc2-based or ObjC++ core; C++/WinRT core | objc2 and winmd ingest + classify; build `winmd-tool` for Windows.Foundation/Microsoft.UI | when those backends grow past the P set |
 
-## 10. Open questions
+## 10. Decisions (user, 2026-10-17)
 
-1. **SHARED for every transfer-none non-widget GObject return?** The proposal says yes, except where metadata says `lifetime: borrowed`. Native resources (a GdkSurface) could otherwise outlive the UI that used them.
+- **Q1 — transfer-none returns of non-widget objects are SHARED** (strong references), for now. The `lifetime: borrowed` override stays available for exceptions.
+- **Q3 — VALUE mutators are hidden**, using a hide list derived from metadata (§3.6). The residual hand list in the bound scope is 22 methods in 12 GTK types, and 0 entries for Qt, Apple and WinUI. Builders stay mutable.
+- **Q7 — objc2's generated sources are the primary Apple ingest** ("we are Rust anyway"). MAC1's SDK libclang pass supplements them on a Mac, for nullability and availability that objc2 doesn't carry as data.
+- **Q8 — WinUI threading was investigated (§4.1).** The winmd Threading/MarshalingBehavior attributes say Both/Agile for everything, including UIElement, so they can't be used. Thread class comes from the structural `DispatcherQueue` signal. Every runtime class is SHARED, the backend runs one UI thread, there is a `HasThreadAccess` check at minting (and on every call in debug builds), and completions hop to the UI thread before conversion.
+
+Still open, under discussion with the user: Q2 (reactive getters), Q4 (Qt overloads), Q5 (module granularity), Q6 (rich-text runs).
+
+## 11. Open questions
+
+1. *(Decided: SHARED, §10.)*
 2. **Should getters be reactive by default (N3), or opt in?**
-3. **VALUE mutators.** The proposal exposes them all, because mutability can't be derived from C (§3.1), and documents the traps. The alternative is an override list of mutating methods to hide, which is not small.
+3. *(Decided: hide mutators, §3.6 and §10.)*
 4. **Qt overloads:** split them by metadata or dispatch at runtime? This needs a measurement on the N2 allowlist; PySide's runtime dispatch is the prior art.
 5. **Module granularity:** per namespace (proposed, for M6 tree-shaking) or per toolkit?
 6. **Rich-text runs:** PangoAttrList, QTextCharFormat ranges and NSAttributedString each need an input form. They should be native-shaped records per toolkit, since no portability layer is allowed.
-7. **Should the Apple classifier use objc2's generated sources as the primary ingest** (licence-clean on Linux, reviewed), with the SDK libclang pass as the authority on a Mac? Or the reverse?
-8. **Can WinUI's DependencyObject-derived non-visual types** (Brush, Transition, FontFamily) be SHARED, or do they need XAML-thread rules beyond `HasThreadAccess`?
+7. *(Decided: objc2 primary, §10.)*
+8. *(Decided after investigation: §4.1 and §10.)*

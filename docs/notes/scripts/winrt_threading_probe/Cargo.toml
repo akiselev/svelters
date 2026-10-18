@@ -1,0 +1,12 @@
+[package]
+name = "winrt-threading-probe"
+version = "0.1.0"
+edition = "2024"
+publish = false
+description = "Non-GUI types research: ThreadingAttribute / MarshalingBehaviorAttribute of WinRT runtime classes (docs/notes/types-research.md section 7)"
+
+# Standalone probe, not a workspace member.
+[workspace]
+
+[dependencies]
+windows-metadata = "=0.100.0"

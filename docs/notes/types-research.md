@@ -153,3 +153,25 @@ Existing core-like code: GTK `convert.rs` 944 + `gi.rs` 778 + identity/lifetime 
 
 ### 6.4 Status
 Proposal rewritten around the core/generated boundary and the metadata pipeline: `plans/research/NON-GUI-TYPES.md` (§2 core API per toolkit with sizes, §3 sources/rules/measured coverage/override counts/pipeline). Classifier prototypes: `types_gir_classify.py`, `types_qt_classify.py`, `types_objc2_classify.py`.
+
+## 7. User decisions (2026-10-17) and follow-up measurements
+
+Decisions: Q1 SHARED for transfer-none non-widget returns; Q3 hide VALUE mutators (metadata-derived list); Q7 objc2 generated sources are the primary Apple ingest; Q8 investigate WinUI threading. Q2/Q4/Q5/Q6 still open. Recorded in the proposal §10.
+
+### 7.1 Correction
+
+`types_gir_classify.py` read `c:type` without the XML namespace, so every instance parameter looked non-const. Fixed (`CNS`). Corrected count: 79 GTK value types take `const self` everywhere, 103 do not (earlier note said 42/140).
+
+### 7.2 Mutator hide list (`scripts/types_value_mutators.py`)
+
+- GTK, bound scope (Gtk + closure): keep 598 (const self, reading names, `self` transfer full = consuming chain), hide 209 (mutating names), residual **22 methods in 12 types**; 1 builder (`*Builder`) kept mutable. Whole stack before scoping: residual 140 methods in 46 types, mostly GLib utilities that are out of scope anyway.
+- Qt: keep 2345 const/static, hide 978 non-const, 30 non-const twins dropped; 27 non-const methods with reading-like names flagged (QImage `load*` etc.) and all genuinely mutate: **0 hand entries**.
+- Apple: keep 2018, hide 34 (property setters, set/add/remove/insert/replace/append selectors); 12 value classes are immutable halves of NSMutable pairs: **0 member entries**.
+
+### 7.3 WinUI threading (`scripts/winrt_threading_probe/`, Rust, windows-metadata 0.100)
+
+- Built through cargo-slot (standalone crate, own `[workspace]`). Inputs: Microsoft.UI.Xaml.winmd (WinUI 2.3.9), Microsoft.UI.winmd + Microsoft.Foundation.winmd (interactiveexperiences 2.1.9), Windows.winmd (windows-default 0.100).
+- Every attributed class in Microsoft.UI.*, Windows.Foundation is `Threading(Both)` + `MarshalingBehavior(Agile)`; 218 classes carry only `MarshalingBehavior(Agile)`. That includes UIElement (185) and non-visual DependencyObjects (365). The attributes describe COM marshaling only.
+- Microsoft docs (DependencyObject class reference, fetched 2026-10-17): all DependencyObject instances must be created on the UI thread of the current Window; every API except `DispatcherQueue` throws from other threads. CompositionObject (also Both/Agile) exposes `DispatcherQueue` too. The Windows App SDK threading migration guide: standard STA (not ASTA), `DispatcherQueue.HasThreadAccess` / `TryEnqueue`.
+- Structural rule: a class with `DispatcherQueue` in its chain is dispatcher-affine — 696 classes (DependencyObjects, Composition, Window, AppWindow, input sources). Windows.Foundation (23 classes) and static helpers are free-threaded. Non-DO XAML types (FontFamily, TransitionCollection, event args) treated as UI-thread conservatively.
+- Proposal §4.1: everything SHARED; single UI thread (no thread-per-window); HasThreadAccess at minting (all calls in debug); completions hop to UI before conversion; releases at checkpoints on UI; IClosable.Close as an explicit method.
