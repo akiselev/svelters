@@ -8,7 +8,8 @@
 //!   borrowed handle; per-handle helper objects (action target, window delegate) live in the entry
 //!   because AppKit holds them weakly.
 //! - The loop is `[NSApp run]` with the wake source and timers of `svelters_apple::objc::runloop`
-//!   in common modes; frames come from `CADisplayLink` (macOS 14+) or a 16 ms timer.
+//!   in common modes; frames come from `CADisplayLink` (macOS 14+) with a timer watchdog behind it
+//!   (a link does not tick off screen or on a headless display), or a 16 ms timer.
 //! - Natives are released from the run loop's top level (a graveyard drained after each
 //!   checkpoint), never inside a native callout.
 
@@ -108,6 +109,8 @@ pub(crate) struct Inner {
     dyn_methods: RefCell<Vec<(u32, String, Sel)>>,
     graveyard: RefCell<Vec<Box<dyn std::any::Any>>>,
     frame_pending: Cell<bool>,
+    /// Frames delivered by (display-link tick, timer), for tests.
+    frame_sources: Cell<(u32, u32)>,
     /// (window handle, CADisplayLink)
     display_link: RefCell<Option<(u64, Retained<AnyObject>)>>,
     frame_target: Retained<SveltersTarget>,
@@ -177,9 +180,28 @@ impl LoopEvents for Events {
     }
     fn frame(&self) {
         if let Some(i) = self.0.upgrade() {
-            i.deliver_frame();
+            i.deliver_frame("timer");
             i.drain();
         }
+    }
+}
+
+#[link(name = "Foundation", kind = "framework")]
+unsafe extern "C" {
+    static NSRunLoopCommonModes: &'static NSString;
+}
+
+/// How long a requested frame waits for a display-link tick before the timer delivers it
+/// (about four frames at 60 Hz, two at the slowest common refresh rates).
+const FRAME_WATCHDOG_MS: u64 = 64;
+
+/// `SVELTERS_APPKIT_TRACE_FRAMES=1` prints the frame path to stderr (CI diagnostics).
+fn trace_frames(msg: impl FnOnce() -> String) {
+    thread_local! {
+        static ON: bool = std::env::var_os("SVELTERS_APPKIT_TRACE_FRAMES").is_some_and(|v| v != "0");
+    }
+    if ON.with(|o| *o) {
+        eprintln!("[appkit frames] {}", msg());
     }
 }
 
@@ -207,6 +229,7 @@ impl AppKitBackend {
             dyn_methods: RefCell::new(Vec::new()),
             graveyard: RefCell::new(Vec::new()),
             frame_pending: Cell::new(false),
+            frame_sources: Cell::new((0, 0)),
             display_link: RefCell::new(None),
             frame_target: SveltersTarget::new(mtm, 0),
             cur_owner: Cell::new(0),
@@ -248,6 +271,16 @@ impl AppKitBackend {
     /// Live handles (leak checks in tests).
     pub fn live_handles(&self) -> usize {
         self.inner.table.borrow().len()
+    }
+
+    /// Frames delivered so far by (display-link tick, timer) (tests: the link must really tick).
+    pub fn frame_sources(&self) -> (u32, u32) {
+        self.inner.frame_sources.get()
+    }
+
+    /// Every live handle (test cleanup).
+    pub fn handles(&self) -> Vec<u64> {
+        self.inner.table.borrow().iter().map(|(h, _)| h).collect()
     }
 
     /// The handles of live windows created by `create`.
@@ -365,9 +398,23 @@ impl Inner {
         })
     }
 
+    /// Validates everything about a write before any value is converted or any native is touched:
+    /// the prop must apply to the kind, be writable, and not be child storage owned by a slot.
     fn set_prop(&self, h: u64, prop: u32, v: &Value) -> Result<(), String> {
         let (kind, _) = self.entry_kind(h)?;
         let spec = self.prop_spec(kind, prop)?;
+        if spec.setter.is_empty() {
+            if let Some(slot) = lookup::slot_owning_key(kind, &spec.key) {
+                return Err(format!(
+                    "{} is read-only: children are managed through the {} slot (insert/remove)",
+                    names_of(&spec.key),
+                    slot.name
+                ));
+            }
+            if !spec.writable {
+                return Err(format!("{} is read-only", names_of(&spec.key)));
+            }
+        }
         let obj = self.live(h)?;
         if !spec.setter.is_empty() {
             let arg = match (&spec.ty, v) {
@@ -380,9 +427,6 @@ impl Inner {
             };
             bridge::invoke(&obj, bridge::sel(spec.setter), &[arg], self)?;
             return Ok(());
-        }
-        if !spec.writable {
-            return Err(format!("{} is read-only", names_of(&spec.key)));
         }
         let v = if spec.string { stringify(v) } else { v.clone() };
         let boxed = bridge::box_value(&v, &spec.ty, spec.members, spec.flags, self)?;
@@ -465,13 +509,25 @@ impl Inner {
         }
         // One-child slots replace: the old child is released by the parent, not destroyed.
         let replaced = if info.many { None } else { self.table.borrow().children_in_slot(parent, sid).first().copied() };
+        // The old child is unlinked only so `link` can validate the new one; any failure puts it
+        // back, so a refused insert never leaves the table disagreeing with the native tree.
         if let Some(old) = replaced {
             self.table.borrow_mut().unlink(parent, old)?;
         }
-        self.table.borrow_mut().link(parent, child, sid, before)?;
+        let restore = |this: &Self| {
+            if let Some(old) = replaced {
+                let _ = this.table.borrow_mut().link(parent, old, sid, None);
+            }
+        };
+        let linked = self.table.borrow_mut().link(parent, child, sid, before);
+        if let Err(e) = linked {
+            restore(self);
+            return Err(e);
+        }
         let r = self.native_insert(&p, &c, before.and_then(|b| self.object(b)).as_deref(), info);
         if r.is_err() {
             let _ = self.table.borrow_mut().unlink(parent, child);
+            restore(self);
         }
         r
     }
@@ -717,12 +773,7 @@ impl Inner {
                     self.post(token, sig, &args);
                 }
             }
-            TargetEvent::Tick { .. } => {
-                if let Some((_, link)) = self.display_link.borrow().as_ref() {
-                    let _: () = unsafe { msg_send![&**link, setPaused: true] };
-                }
-                self.deliver_frame();
-            }
+            TargetEvent::Tick { .. } => self.deliver_frame("link tick"),
         }
     }
 
@@ -777,6 +828,10 @@ impl Inner {
 
     // ---- frames ----
 
+    /// One frame per request. With a `CADisplayLink` the frame comes from the next vsync tick, but
+    /// a link only ticks while its view is on a screen that is compositing (not hidden, minimised,
+    /// fully occluded, or on a headless VM display), so the fallback timer is armed as a watchdog
+    /// every time: whichever fires first delivers, the other finds nothing pending.
     fn request_frame(&self) {
         if self.frame_pending.replace(true) {
             return;
@@ -787,8 +842,13 @@ impl Inner {
         match self.display_link.borrow().as_ref() {
             Some((_, link)) => {
                 let _: () = unsafe { msg_send![&**link, setPaused: false] };
+                trace_frames(|| "request: link unpaused, watchdog armed".into());
+                self.rl.frame_fallback(FRAME_WATCHDOG_MS);
             }
-            None => self.rl.frame_fallback(),
+            None => {
+                trace_frames(|| "request: no link, 16 ms timer".into());
+                self.rl.frame_fallback(16);
+            }
         }
     }
 
@@ -805,14 +865,25 @@ impl Inner {
             let view: Option<Retained<AnyObject>> = unsafe { msg_send![&*w, contentView] };
             let Some(view) = view else { continue };
             if !bridge::responds(&view, sel!(displayLinkWithTarget:selector:)) {
+                trace_frames(|| "no -displayLinkWithTarget:selector: (macOS < 14)".into());
                 return; // macOS < 14: the 16 ms timer
             }
             let link: Option<Retained<AnyObject>> = unsafe { msg_send![&*view, displayLinkWithTarget: self.frame_target.as_any(), selector: sel!(tick:)] };
+            trace_frames(|| {
+                let (visible, occl, screen): (bool, usize, Option<Retained<AnyObject>>) =
+                    unsafe { (msg_send![&*w, isVisible], msg_send![&*w, occlusionState], msg_send![&*w, screen]) };
+                format!(
+                    "link for window {h}: {} (visible={visible} occlusion={occl:#x} screen={})",
+                    link.as_deref().map_or("nil".into(), bridge::class_name_of),
+                    screen.is_some()
+                )
+            });
             if let Some(link) = link {
                 unsafe {
                     let rl: Retained<AnyObject> = msg_send![class!(NSRunLoop), mainRunLoop];
-                    let mode = NSString::from_str("kCFRunLoopCommonModes");
-                    let _: () = msg_send![&*link, addToRunLoop: &*rl, forMode: &*mode];
+                    // The real constant: CADisplayLink does not treat an equal string as the
+                    // common-modes pseudo-mode (an NSString "kCFRunLoopCommonModes" never ticks).
+                    let _: () = msg_send![&*link, addToRunLoop: &*rl, forMode: NSRunLoopCommonModes];
                     let _: () = msg_send![&*link, setPaused: true];
                 }
                 *self.display_link.borrow_mut() = Some((h, link));
@@ -821,10 +892,19 @@ impl Inner {
         }
     }
 
-    fn deliver_frame(&self) {
-        if !self.frame_pending.replace(false) {
+    /// Delivers the pending frame (from a link tick or the timer) and pauses the link, so it does
+    /// not keep ticking after a timer-delivered frame.
+    fn deliver_frame(&self, from: &str) {
+        let pending = self.frame_pending.replace(false);
+        trace_frames(|| format!("{from}: pending={pending}"));
+        if !pending {
             return;
         }
+        if let Some((_, link)) = self.display_link.borrow().as_ref() {
+            let _: () = unsafe { msg_send![&**link, setPaused: true] };
+        }
+        let (link, timer) = self.frame_sources.get();
+        self.frame_sources.set(if from == "link tick" { (link + 1, timer) } else { (link, timer + 1) });
         if let Some(h) = self.host() {
             unsafe { (h.frame)(h.self_) };
         }

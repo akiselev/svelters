@@ -1,6 +1,6 @@
 # Apple GUI backends: AppKit, UIKit, SwiftUI (research notes)
 
-Status: research complete (desk research from Linux, 2026-10-16/17). Experiments ran against the macOS 26.1 SDK from a GitHub mirror (research aid only, see §3.5), objc2 HEAD (Xcode 27.1 bindings), and WebKitGTK's JavaScriptCore. Items marked *unverified* or *estimate* were not confirmed.
+Status: research complete (desk research from Linux, 2026-10-16/17). Update (FA1): the committed `metadata/appkit` now comes from Xcode's SDK on Apple hardware (`xcrun`, CI job `appkit-metadata`); the mirror mentioned below was a research aid only and is not used by any script. Experiments ran against the macOS 26.1 SDK from a GitHub mirror (research aid only, see §3.5), objc2 HEAD (Xcode 27.1 bindings), and WebKitGTK's JavaScriptCore. Items marked *unverified* or *estimate* were not confirmed.
 
 ## 0. Summary
 

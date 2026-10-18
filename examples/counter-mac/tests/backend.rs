@@ -15,23 +15,38 @@ mod mac {
     use svelters_abi::*;
     use svelters_appkit::testing::Harness;
 
-    pub static CASES: &[(&str, fn())] = &[
-        ("handles_are_never_reused", handles_are_never_reused),
-        ("unknown_names_resolve_to_zero", unknown_names_resolve_to_zero),
-        ("stale_handle_is_an_error", stale_handle_is_an_error),
-        ("borrowed_handle_from_getter", borrowed_handle_from_getter),
-        ("dynamic_prop_and_method", dynamic_prop_and_method),
-        ("string_props_take_numbers", string_props_take_numbers),
-        ("read_only_prop_is_refused", read_only_prop_is_refused),
-        ("enum_names_round_trip", enum_names_round_trip),
-        ("destroy_window_reports_nothing", destroy_window_reports_nothing),
-        ("close_cascades_to_children", close_cascades_to_children),
-        ("busy_host_vetoes_close", busy_host_vetoes_close),
-        ("schedule_wake_runs_a_checkpoint", schedule_wake_runs_a_checkpoint),
-        ("wake_from_another_thread", wake_from_another_thread),
-        ("request_frame_delivers_one_frame", request_frame_delivers_one_frame),
-        ("run_returns_after_quit", run_returns_after_quit),
-        ("no_leaked_handles", no_leaked_handles),
+    /// Each case runs under `Harness::case_guard`: a case that panics has its handles destroyed,
+    /// so it cannot also fail `no_leaked_handles`.
+    macro_rules! guarded {
+        ($($name:ident),* $(,)?) => {
+            pub static CASES: &[(&str, fn())] = &[$((stringify!($name), {
+                fn guarded() {
+                    let _g = Harness::shared().case_guard();
+                    $name()
+                }
+                guarded
+            })),*];
+        };
+    }
+
+    guarded![
+        handles_are_never_reused,
+        unknown_names_resolve_to_zero,
+        stale_handle_is_an_error,
+        borrowed_handle_from_getter,
+        dynamic_prop_and_method,
+        string_props_take_numbers,
+        read_only_prop_is_refused,
+        refused_replace_keeps_the_old_child,
+        enum_names_round_trip,
+        destroy_window_reports_nothing,
+        close_cascades_to_children,
+        busy_host_vetoes_close,
+        schedule_wake_runs_a_checkpoint,
+        wake_from_another_thread,
+        request_frame_delivers_one_frame,
+        run_returns_after_quit,
+        no_leaked_handles,
     ];
 
     fn handles_are_never_reused() {
@@ -109,9 +124,45 @@ mod mac {
     fn read_only_prop_is_refused() {
         let h = Harness::shared();
         let v = h.create("view");
-        let e = h.set(v, "subviews", V::List(vec![])).unwrap_err();
+        let c = h.create("button");
+        h.insert(v, c, None, None).unwrap();
+        // NSView declares `subviews` readwrite, but it is the subviews slot's storage: refused
+        // before the value is looked at, whatever its type.
+        for val in [V::List(vec![]), V::Null, V::Handle(c)] {
+            let e = h.set(v, "subviews", val).unwrap_err();
+            assert!(e.contains("read-only") && e.contains("slot"), "{e}");
+        }
+        assert_eq!(h.native_list(v, "subviews"), vec![h.obj(c)], "children untouched");
+        let s = h.create("stack-view");
+        let e = h.set(s, "arranged-subviews", V::Str("x".into())).unwrap_err();
         assert!(e.contains("read-only"), "{e}");
+        let w = h.create("window");
+        let e = h.set(w, "content-view", V::Handle(c)).unwrap_err();
+        assert!(e.contains("read-only") && e.contains("content-view"), "{e}");
+        // A plain read-only prop: the check comes before conversion too.
+        let e = h.set(v, "constraints", V::Str("not a list".into())).unwrap_err();
+        assert!(e.contains("read-only"), "{e}");
+        h.destroy(w);
+        h.destroy(s);
+        h.destroy(c);
         h.destroy(v);
+    }
+
+    fn refused_replace_keeps_the_old_child() {
+        let h = Harness::shared();
+        let w = h.create("window");
+        let a = h.create("stack-view");
+        let other = h.create("stack-view");
+        let b = h.create("button");
+        h.insert(w, a, None, None).unwrap();
+        h.insert(other, b, None, None).unwrap();
+        // `b` already has a parent: the replace is refused and `a` stays the content view.
+        assert!(h.insert(w, b, None, None).is_err());
+        assert_eq!(h.native_get(w, "contentView"), Some(h.obj(a)));
+        h.remove(w, a).expect("a is still linked as the window's child");
+        for x in [b, other, a, w] {
+            h.destroy(x);
+        }
     }
 
     fn enum_names_round_trip() {
@@ -192,19 +243,39 @@ mod mac {
         assert_eq!(h.checkpoints(), before + 1);
     }
 
+    /// Pumps until `frames` reaches `want` or 1 s passes (CI runners fire CF timers tens of ms
+    /// late), then a little longer to catch a second, unwanted frame.
+    fn pump_frames(h: &Harness, want: u32) -> u32 {
+        let t = std::time::Instant::now();
+        while h.frames() < want && t.elapsed() < std::time::Duration::from_secs(1) {
+            h.pump(5);
+        }
+        h.pump(120);
+        h.frames()
+    }
+
     fn request_frame_delivers_one_frame() {
         let h = Harness::shared();
         let w = h.create("window");
         h.call(w, "make-key-and-order-front", vec![]).unwrap();
         let before = h.frames();
+        let (link0, _) = h.backend.frame_sources();
         h.backend_trait().request_frame();
         h.backend_trait().request_frame(); // idempotent while pending
-        h.pump(150);
-        assert_eq!(h.frames(), before + 1);
+        assert_eq!(pump_frames(h, before + 1), before + 1);
         h.backend_trait().request_frame();
-        h.pump(150);
-        assert_eq!(h.frames(), before + 2);
+        assert_eq!(pump_frames(h, before + 2), before + 2);
+        // A visible window's display link really ticks (it was added to the run loop with a
+        // look-alike mode string once, and never fired).
+        assert_eq!(h.backend.frame_sources().0, link0 + 2, "both frames came from CADisplayLink");
+        // Off screen the link does not tick: the watchdog timer still delivers exactly one.
+        h.call(w, "order-out", vec![V::Null]).unwrap();
+        h.backend_trait().request_frame();
+        assert_eq!(pump_frames(h, before + 3), before + 3);
         h.destroy(w);
+        // No window at all: the plain timer.
+        h.backend_trait().request_frame();
+        assert_eq!(pump_frames(h, before + 4), before + 4);
     }
 
     fn run_returns_after_quit() {

@@ -28,7 +28,7 @@ npm and Cargo dependencies are not bundled in this repository. Each one is insta
 
 - **GTK** documentation text from GIR comments is LGPL-2.1-or-later. The generated docs site reproduces it with attribution; see the site page `/about/licensing/` (`docs/site/src/content/docs/about/licensing.md`).
 - **Qt** documentation text is GFDL-1.3. The docs site reproduces only short briefs, with attribution and links to doc.qt.io. Qt's BSD-licensed snippets are not used.
-- **`metadata/appkit/`** holds facts derived from the macOS SDK headers: class, property and method names, types, enum values and availability versions. It contains no header text or documentation comments, and the SDK itself is not redistributed.
+- **`metadata/appkit/`** holds facts derived from the macOS SDK headers: class, property and method names, types, enum values and availability versions. It is generated with Xcode on macOS (Apple hardware, GitHub's macOS runner; currently Xcode 26.1.1, macOS 26.1 SDK) by `tools/metadata/appkit/ingest.py`, and CI regenerates and checks it. It contains no header text or documentation comments, and the SDK itself is not redistributed.
 - **`metadata/winui/`** holds facts derived from the Windows App SDK `Microsoft.UI.Xaml.winmd`: names, types and attributes. The SDK packages are downloaded by `tools/metadata/winui/fetch.py` and are not redistributed.
 
 ---

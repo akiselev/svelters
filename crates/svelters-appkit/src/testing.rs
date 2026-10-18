@@ -58,6 +58,26 @@ impl HostCallbacks for TestHost {
     }
 }
 
+pub struct CaseGuard {
+    h: &'static Harness,
+    before: Vec<u64>,
+}
+
+impl Drop for CaseGuard {
+    fn drop(&mut self) {
+        if !std::thread::panicking() {
+            return;
+        }
+        let new: Vec<u64> = self.h.backend.handles().into_iter().filter(|x| !self.before.contains(x)).collect();
+        // Newest first (children are usually created after their parents).
+        for x in new.into_iter().rev() {
+            self.h.destroy(x);
+        }
+        self.h.pump(20);
+        self.h.take_gone();
+    }
+}
+
 pub struct Harness {
     pub backend: AppKitBackend,
     rec: Rc<Rec>,
@@ -82,6 +102,13 @@ impl Harness {
         let host: &'static HostVtable = Box::leak(Box::new(HostVtable::new(TestHost(rec.clone()))));
         backend.attach_host(host.as_raw());
         Box::leak(Box::new(Harness { backend, rec, host }))
+    }
+
+    /// A guard for one test case: if the case panics, dropping the guard destroys every handle it
+    /// created, so a failing case cannot fail the leak check of the cases after it. A case that
+    /// passes is left alone, so its own leaks still show up in the leak check.
+    pub fn case_guard(&'static self) -> CaseGuard {
+        CaseGuard { h: self, before: self.backend.handles() }
     }
 
     /// The process-wide harness (one backend, one recording host).
