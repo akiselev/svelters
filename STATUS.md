@@ -52,7 +52,7 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 **Resume order:**
 1. **NT0** (`ci/nt0-types`, worktree `agent-ab68746002833b005`): follow `docs/notes/nt0-handoff.md`.
    - `cargo check -p svelters-gtk --tests`.
-   - `python3 tools/metadata/common/ledger.py refresh --toolkit gtk`, then commit `metadata/verified/gtk.json`.
+   - `python3 tools/metadata/ledger.py refresh --toolkit gtk`, then commit `metadata/verified/gtk.json`.
    - Full gates: `pnpm -r build`; `tools/dev/cargo-slot xvfb-run -a cargo nextest run --workspace --no-fail-fast`; `pnpm test`; `pnpm docs:test`.
    - Check the CI results on `ci/nt0-types`, in particular the GTK 4.14 job and the Qt build with the new nullable ABI members.
    - Merge.
