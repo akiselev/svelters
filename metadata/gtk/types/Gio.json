@@ -6548,7 +6548,7 @@
      }
     }
    ],
-   "curated": true,
+   "curated": false,
    "gtype": "GFileIcon",
    "hidden": [],
    "interfaces": [
@@ -8111,7 +8111,7 @@
    "builder": false,
    "category": "object",
    "constructors": [],
-   "curated": true,
+   "curated": false,
    "gtype": "GIcon",
    "hidden": [],
    "interfaces": [],
@@ -12735,7 +12735,7 @@
      }
     }
    ],
-   "curated": true,
+   "curated": false,
    "gtype": "GThemedIcon",
    "hidden": [],
    "interfaces": [

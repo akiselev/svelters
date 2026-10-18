@@ -7,10 +7,10 @@ declare module 'svelters:gtk/gdk' {
 
   /** `Gdk.AppLaunchContext`, object */
   export class AppLaunchContext extends Gio_AppLaunchContext {
-    static readonly native: 'Gdk.AppLaunchContext';
+    static readonly native: string;
     constructor(props?: { display?: Display | null });
-      /** `get_display` */
-      getDisplay(): Display;
+    /** `get_display`; overrides an ancestor member with another signature */
+      getDisplay(...args: any[]): any;
       /** `set_desktop` */
       setDesktop(desktop: number): void;
       /** `set_icon` */
@@ -24,12 +24,12 @@ declare module 'svelters:gtk/gdk' {
 
   /** `Gdk.CairoContext`, object */
   export abstract class CairoContext extends DrawContext {
-    static readonly native: 'Gdk.CairoContext';
+    static readonly native: string;
   }
 
   /** `Gdk.CicpParams`, object, since 4.16 */
   export class CicpParams extends Object {
-    static readonly native: 'Gdk.CicpParams';
+    static readonly native: string;
     constructor(props?: { colorPrimaries?: number | null, matrixCoefficients?: number | null, range?: string | null, transferFunction?: number | null });
       /** `new`, since 4.16 */
       static new(): CicpParams;
@@ -59,7 +59,7 @@ declare module 'svelters:gtk/gdk' {
 
   /** `Gdk.Clipboard`, object */
   export class Clipboard extends Object {
-    static readonly native: 'Gdk.Clipboard';
+    static readonly native: string;
     constructor(props?: { display?: Display | null });
       /** `get_content` */
       getContent(): ContentProvider | null;
@@ -80,7 +80,7 @@ declare module 'svelters:gtk/gdk' {
 
   /** `Gdk.ColorState`, value, since 4.16 */
   export class ColorState extends NativeValue {
-    static readonly native: 'Gdk.ColorState';
+    static readonly native: string;
       /** `get_oklab`, since 4.18 */
       static getOklab(): ColorState;
       /** `get_oklch`, since 4.18 */
@@ -103,7 +103,7 @@ declare module 'svelters:gtk/gdk' {
 
   /** `Gdk.ContentFormats`, value */
   export class ContentFormats extends NativeValue {
-    static readonly native: 'Gdk.ContentFormats';
+    static readonly native: string;
     constructor(mimeTypes: string[] | null);
       /** `new` */
       static new(mimeTypes?: string[] | null): ContentFormats;
@@ -143,7 +143,7 @@ declare module 'svelters:gtk/gdk' {
 
   /** `Gdk.ContentProvider`, object */
   export class ContentProvider extends Object {
-    static readonly native: 'Gdk.ContentProvider';
+    static readonly native: string;
     constructor(props?: {  });
       /** `new_for_bytes` */
       static newForBytes(mimeType: string, bytes: Bytes): ContentProvider;
@@ -161,7 +161,7 @@ declare module 'svelters:gtk/gdk' {
 
   /** `Gdk.Cursor`, object */
   export class Cursor extends Object {
-    static readonly native: 'Gdk.Cursor';
+    static readonly native: string;
     constructor(props?: { fallback?: Cursor | null, hotspotX?: number | null, hotspotY?: number | null, name?: string | null, texture?: Texture | null });
       /** `new_from_name` */
       static newFromName(name: string, fallback?: Cursor | null): Cursor | null;
@@ -186,7 +186,7 @@ declare module 'svelters:gtk/gdk' {
 
   /** `Gdk.Device`, object */
   export abstract class Device extends Object {
-    static readonly native: 'Gdk.Device';
+    static readonly native: string;
       /** `get_active_layout_index`, since 4.18 */
       getActiveLayoutIndex(): number;
       /** `get_caps_lock_state` */
@@ -249,7 +249,7 @@ declare module 'svelters:gtk/gdk' {
 
   /** `Gdk.DeviceTool`, object */
   export class DeviceTool extends Object {
-    static readonly native: 'Gdk.DeviceTool';
+    static readonly native: string;
     constructor(props?: { axes?: string | string[] | number | null, hardwareId?: number | null, serial?: number | null, toolType?: string | null });
       /** `get_axes` */
       getAxes(): string | string[] | number;
@@ -267,7 +267,7 @@ declare module 'svelters:gtk/gdk' {
 
   /** `Gdk.Display`, object */
   export class Display extends Object {
-    static readonly native: 'Gdk.Display';
+    static readonly native: string;
     constructor(props?: {  });
       /** `get_default` */
       static getDefault(): Display | null;
@@ -331,7 +331,7 @@ declare module 'svelters:gtk/gdk' {
 
   /** `Gdk.DmabufFormats`, value, since 4.14 */
   export class DmabufFormats extends NativeValue {
-    static readonly native: 'Gdk.DmabufFormats';
+    static readonly native: string;
       /** `contains`, since 4.14 */
       contains(fourcc: number, modifier: number): boolean;
       /** `equal`, since 4.14 */
@@ -344,7 +344,7 @@ declare module 'svelters:gtk/gdk' {
 
   /** `Gdk.Drag`, object */
   export abstract class Drag extends Object {
-    static readonly native: 'Gdk.Drag';
+    static readonly native: string;
       /** `begin` */
       static begin(surface: Surface, device: Device, content: ContentProvider, actions: string | string[] | number, dx: number, dy: number): Drag | null;
       /** `drop_done` */
@@ -381,7 +381,7 @@ declare module 'svelters:gtk/gdk' {
 
   /** `Gdk.DrawContext`, object */
   export abstract class DrawContext extends Object {
-    static readonly native: 'Gdk.DrawContext';
+    static readonly native: string;
       /** `get_display` */
       getDisplay(): Display | null;
       /** `get_surface` */
@@ -392,7 +392,7 @@ declare module 'svelters:gtk/gdk' {
 
   /** `Gdk.Drop`, object */
   export abstract class Drop extends Object {
-    static readonly native: 'Gdk.Drop';
+    static readonly native: string;
       /** `finish` */
       finish(action: string | string[] | number): void;
       /** `get_actions` */
@@ -418,12 +418,12 @@ declare module 'svelters:gtk/gdk' {
 
   /** `Gdk.EventSequence`, value */
   export class EventSequence extends NativeValue {
-    static readonly native: 'Gdk.EventSequence';
+    static readonly native: string;
   }
 
   /** `Gdk.FrameClock`, object */
   export abstract class FrameClock extends Object {
-    static readonly native: 'Gdk.FrameClock';
+    static readonly native: string;
       /** `begin_updating` */
       beginUpdating(): void;
       /** `end_updating` */
@@ -456,7 +456,7 @@ declare module 'svelters:gtk/gdk' {
 
   /** `Gdk.FrameTimings`, value */
   export class FrameTimings extends NativeValue {
-    static readonly native: 'Gdk.FrameTimings';
+    static readonly native: string;
       /** `get_complete` */
       getComplete(): boolean;
       /** `get_frame_counter` */
@@ -473,7 +473,7 @@ declare module 'svelters:gtk/gdk' {
 
   /** `Gdk.GLContext`, object */
   export abstract class GLContext extends DrawContext {
-    static readonly native: 'Gdk.GLContext';
+    static readonly native: string;
       /** `clear_current` */
       static clearCurrent(): void;
       /** `get_current` */
@@ -520,7 +520,7 @@ declare module 'svelters:gtk/gdk' {
 
   /** `Gdk.Monitor`, object */
   export class Monitor extends Object {
-    static readonly native: 'Gdk.Monitor';
+    static readonly native: string;
     constructor(props?: { display?: Display | null });
       /** `get_connector` */
       getConnector(): string | null;
@@ -566,7 +566,7 @@ declare module 'svelters:gtk/gdk' {
 
   /** `Gdk.Paintable`, object */
   export abstract class Paintable extends NativeObject {
-    static readonly native: 'Gdk.Paintable';
+    static readonly native: string;
       /** `new_empty` */
       static newEmpty(intrinsicWidth: number, intrinsicHeight: number): Paintable;
       /** `compute_concrete_size` */
@@ -594,7 +594,7 @@ declare module 'svelters:gtk/gdk' {
 
   /** `Gdk.Seat`, object */
   export abstract class Seat extends Object {
-    static readonly native: 'Gdk.Seat';
+    static readonly native: string;
       /** `get_capabilities` */
       getCapabilities(): string | string[] | number;
       /** `get_devices` */
@@ -617,12 +617,12 @@ declare module 'svelters:gtk/gdk' {
 
   /** `Gdk.Snapshot`, object */
   export abstract class Snapshot extends Object {
-    static readonly native: 'Gdk.Snapshot';
+    static readonly native: string;
   }
 
   /** `Gdk.Surface`, object */
   export abstract class Surface extends Object {
-    static readonly native: 'Gdk.Surface';
+    static readonly native: string;
       /** `new_popup` */
       static newPopup(parent: Surface, autohide: boolean): Surface;
       /** `new_toplevel` */
@@ -683,7 +683,7 @@ declare module 'svelters:gtk/gdk' {
 
   /** `Gdk.Texture`, object */
   export abstract class Texture extends Object {
-    static readonly native: 'Gdk.Texture';
+    static readonly native: string;
       /** `new_from_bytes`, since 4.6, throws */
       static newFromBytes(bytes: Bytes): Texture;
       /** `new_from_file`, throws */

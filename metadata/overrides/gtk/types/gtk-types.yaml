@@ -66,3 +66,24 @@ hide:
 keep:
   GLib.Tree: [nnodes]
   Gio.SettingsSchema: [list_children, list_keys]
+
+# How the generated tests get an instance of each curated type (`static`: a constructor function,
+# `construct`: construct-time properties, `chain`: steps where later `call`s run on the previous result).
+# The string "$png" stands for the path of a 1x1 PNG the test file writes.
+verify_subject:
+  Gio.File: {static: [Gio.File, new_for_path, ["/usr/share"]]}
+  Gio.ListStore: {construct: {item-type: "Gio.File"}}
+  Gtk.TextBuffer: {construct: {text: "hello"}}
+  Gtk.StringList: {construct: {strings: ["a", "b"]}}
+  Gtk.DirectoryList: {construct: {attributes: "standard::display-name"}}
+  Gtk.FileDialog: {construct: {title: "Open", modal: true}}
+  Gdk.Texture: {static: [Gdk.Texture, new_from_filename, ["$png"]]}
+  Gdk.Clipboard:
+    chain:
+      - {static: [Gdk.Display, get_default, []]}
+      - {call: [get_clipboard]}
+  Pango.AttrList: {static: [Pango.AttrList, from_string, ["0 5 weight bold"]]}
+  Pango.FontDescription: {static: [Pango.FontDescription, from_string, ["Sans Bold 12"]]}
+
+# Members the generated tests must not call: each needs a state or an argument the generic test cannot give.
+verify_skip: {}

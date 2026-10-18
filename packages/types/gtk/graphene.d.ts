@@ -4,7 +4,7 @@ declare module 'svelters:gtk/graphene' {
 
   /** `Graphene.Box`, value, since 1.2 */
   export class Box extends NativeValue {
-    static readonly native: 'Graphene.Box';
+    static readonly native: string;
       /** `alloc`, since 1.2 */
       static alloc(): Box;
       /** `empty`, since 1.2 */
@@ -55,7 +55,7 @@ declare module 'svelters:gtk/graphene' {
 
   /** `Graphene.Euler`, value, since 1.2 */
   export class Euler extends NativeValue {
-    static readonly native: 'Graphene.Euler';
+    static readonly native: string;
       /** `alloc`, since 1.2 */
       static alloc(): Euler;
       /** `equal`, since 1.2 */
@@ -86,7 +86,7 @@ declare module 'svelters:gtk/graphene' {
 
   /** `Graphene.Matrix`, value */
   export class Matrix extends NativeValue {
-    static readonly native: 'Graphene.Matrix';
+    static readonly native: string;
       /** `alloc`, since 1.0 */
       static alloc(): Matrix;
       /** `decompose` */
@@ -175,7 +175,7 @@ declare module 'svelters:gtk/graphene' {
 
   /** `Graphene.Plane`, value, since 1.2 */
   export class Plane extends NativeValue {
-    static readonly native: 'Graphene.Plane';
+    static readonly native: string;
       /** `alloc`, since 1.2 */
       static alloc(): Plane;
       /** `distance`, since 1.2 */
@@ -196,7 +196,7 @@ declare module 'svelters:gtk/graphene' {
 
   /** `Graphene.Point3D`, value, since 1.0 */
   export class Point3D extends NativeValue {
-    static readonly native: 'Graphene.Point3D';
+    static readonly native: string;
       /** `alloc`, since 1.0 */
       static alloc(): Point3D;
       /** `zero`, since 1.0 */
@@ -227,7 +227,7 @@ declare module 'svelters:gtk/graphene' {
 
   /** `Graphene.Quad`, value, since 1.0 */
   export class Quad extends NativeValue {
-    static readonly native: 'Graphene.Quad';
+    static readonly native: string;
       /** `alloc`, since 1.0 */
       static alloc(): Quad;
       /** `bounds`, since 1.0 */
@@ -240,7 +240,7 @@ declare module 'svelters:gtk/graphene' {
 
   /** `Graphene.Quaternion`, value, since 1.0 */
   export class Quaternion extends NativeValue {
-    static readonly native: 'Graphene.Quaternion';
+    static readonly native: string;
       /** `alloc`, since 1.0 */
       static alloc(): Quaternion;
       /** `add`, since 1.10 */
@@ -273,7 +273,7 @@ declare module 'svelters:gtk/graphene' {
 
   /** `Graphene.Ray`, value, since 1.4 */
   export class Ray extends NativeValue {
-    static readonly native: 'Graphene.Ray';
+    static readonly native: string;
       /** `alloc`, since 1.4 */
       static alloc(): Ray;
       /** `equal`, since 1.4 */
@@ -306,7 +306,7 @@ declare module 'svelters:gtk/graphene' {
 
   /** `Graphene.Sphere`, value, since 1.2 */
   export class Sphere extends NativeValue {
-    static readonly native: 'Graphene.Sphere';
+    static readonly native: string;
       /** `alloc`, since 1.2 */
       static alloc(): Sphere;
       /** `contains_point`, since 1.2 */
@@ -329,7 +329,7 @@ declare module 'svelters:gtk/graphene' {
 
   /** `Graphene.Triangle`, value, since 1.2 */
   export class Triangle extends NativeValue {
-    static readonly native: 'Graphene.Triangle';
+    static readonly native: string;
       /** `alloc`, since 1.2 */
       static alloc(): Triangle;
       /** `contains_point`, since 1.2 */
@@ -358,7 +358,7 @@ declare module 'svelters:gtk/graphene' {
 
   /** `Graphene.Vec2`, value */
   export class Vec2 extends NativeValue {
-    static readonly native: 'Graphene.Vec2';
+    static readonly native: string;
       /** `alloc`, since 1.0 */
       static alloc(): Vec2;
       /** `one`, since 1.0 */
@@ -407,7 +407,7 @@ declare module 'svelters:gtk/graphene' {
 
   /** `Graphene.Vec3`, value */
   export class Vec3 extends NativeValue {
-    static readonly native: 'Graphene.Vec3';
+    static readonly native: string;
       /** `alloc`, since 1.0 */
       static alloc(): Vec3;
       /** `one`, since 1.0 */
@@ -472,7 +472,7 @@ declare module 'svelters:gtk/graphene' {
 
   /** `Graphene.Vec4`, value */
   export class Vec4 extends NativeValue {
-    static readonly native: 'Graphene.Vec4';
+    static readonly native: string;
       /** `alloc`, since 1.0 */
       static alloc(): Vec4;
       /** `one`, since 1.0 */

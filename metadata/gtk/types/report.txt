@@ -38,10 +38,7 @@ total             6       108       327        24         2         7        82 
   Gdk.Clipboard            object  bound    9 blocked   7 hidden   0
   Gdk.Texture              object  bound   14 blocked   2 hidden   0
   Gio.File                 object  bound   63 blocked  36 hidden   0
-  Gio.FileIcon             object  bound    3 blocked   0 hidden   0
-  Gio.Icon                 object  bound    4 blocked   2 hidden   0
   Gio.ListStore            model   bound    9 blocked   4 hidden   0
-  Gio.ThemedIcon           object  bound    9 blocked   0 hidden   0
   Gtk.DirectoryList        model   bound   17 blocked   2 hidden   0
   Gtk.FileDialog           object  bound   25 blocked   8 hidden   0
   Gtk.StringList           model   bound   10 blocked   0 hidden   0

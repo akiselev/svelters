@@ -90,3 +90,44 @@ fn the_gtk_types_fixture_runs_on_the_real_host() {
         assert_eq!(seen[5], "label2=Some(\"19 characters\")", "{seen:?}");
     });
 }
+
+/// SHARED handles are released when the JS engine collects their wrappers: 80 objects created and
+/// dropped in a loop leave only what the app still holds.
+#[test]
+fn dropped_wrappers_release_their_shared_handles() {
+    let bundle = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../fixtures/gtk-types-gc/dist/app.js");
+    if !bundle.exists() {
+        eprintln!("skipped: {} is not built", bundle.display());
+        return;
+    }
+    on_gtk(move || {
+        let backend = Rc::new(GtkBackend::new().expect("gtk"));
+        let raw = unsafe { BackendRef::from_raw(backend.as_raw()) }.unwrap();
+        let cfg = HostConfig { echo_console: false, echo_errors: false, ..HostConfig::default() };
+        let host = Host::new(raw, cfg).unwrap();
+        unsafe { backend.attach_host(host.host_callbacks()) };
+        host.load_bundle(bundle).unwrap();
+        host.checkpoint();
+        let baseline = backend.live_handles();
+        // "make" fills a pool with 40 lists and 40 files, "drop" empties it.
+        let buttons: Vec<gtk::Button> = all_widgets().into_iter().filter_map(|w| w.downcast::<gtk::Button>().ok()).collect();
+        let (make, drop_pool) = (&buttons[0], &buttons[1]);
+        make.emit_clicked();
+        host.checkpoint();
+        let before = backend.live_handles();
+        assert!(before >= baseline + 80, "the handler minted handles: {baseline} -> {before}");
+        drop_pool.emit_clicked();
+        host.checkpoint();
+        for _ in 0..5 {
+            host.collect_garbage();
+            host.drain_jobs();
+            host.checkpoint();
+            svelters_gtk::testing::pump(50);
+        }
+        let after = backend.live_handles();
+        assert!(after <= baseline + 5, "garbage collection released the dropped wrappers: {baseline} -> {before} -> {after}");
+        assert!(after >= baseline, "the kept list and the window are still alive: {after}");
+        let errs: Vec<String> = host.take_errors().into_iter().map(|e| e.message).collect();
+        assert!(errs.is_empty(), "{errs:?}");
+    });
+}

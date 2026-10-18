@@ -326,8 +326,9 @@ fn tag_ty(tag: c_int, what: &str) -> Option<Ty> {
 }
 
 /// The element type of a list or array, which must be held by pointer or be a number.
-fn elem_ty(ti: Info, what: &str) -> Result<Ty, String> {
-    let ty = type_info_ty(ti, what)?;
+fn elem_ty(ti: Info, what: &str, list: bool) -> Result<Ty, String> {
+    // The elements of a GList/GSList are always pointers, whatever the element type info says.
+    let ty = type_info_ty_ref(ti, what, list)?;
     match ty {
         Ty::Str | Ty::Object(_) | Ty::Boxed(_) | Ty::Enum(_) | Ty::Flags(_) => Ok(ty),
         Ty::Bool | Ty::I8 | Ty::U8 | Ty::I16 | Ty::U16 | Ty::I32 | Ty::U32 | Ty::I64 | Ty::U64 | Ty::F32 | Ty::F64 => Ok(ty),
@@ -353,7 +354,7 @@ fn type_info_ty_ref(ti: Info, what: &str, by_ref: bool) -> Result<Ty, String> {
                 return Err(format!("{what}: GArray, GPtrArray and GByteArray values are not supported"));
             }
             let elem = Owned::new(unsafe { gi_type_info_get_param_type(ti, 0) }).ok_or_else(|| format!("{what}: array without an element type"))?;
-            let et = elem_ty(elem.0, what)?;
+            let et = elem_ty(elem.0, what, false)?;
             let mut idx: c_uint = 0;
             let mut fixed: usize = 0;
             if unsafe { gi_type_info_get_array_length_index(ti, &mut idx) } != 0 {
@@ -368,7 +369,7 @@ fn type_info_ty_ref(ti: Info, what: &str, by_ref: bool) -> Result<Ty, String> {
         }
         TAG_GLIST | TAG_GSLIST => {
             let elem = Owned::new(unsafe { gi_type_info_get_param_type(ti, 0) }).ok_or_else(|| format!("{what}: untyped list"))?;
-            let et = elem_ty(elem.0, what)?;
+            let et = elem_ty(elem.0, what, true)?;
             Ty::List(Box::new(et), tag == TAG_GSLIST)
         }
         TAG_GHASH => return Err(format!("{what}: hash table values are not supported")),

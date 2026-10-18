@@ -6,7 +6,7 @@ declare module 'svelters:gtk/pango' {
 
   /** `Pango.AttrIterator`, value */
   export class AttrIterator extends NativeValue {
-    static readonly native: 'Pango.AttrIterator';
+    static readonly native: string;
       /** `get` */
       get(type: string): Attribute | null;
       /** `get_attrs`, since 1.2 */
@@ -19,7 +19,7 @@ declare module 'svelters:gtk/pango' {
 
   /** `Pango.AttrList`, value */
   export class AttrList extends NativeValue {
-    static readonly native: 'Pango.AttrList';
+    static readonly native: string;
     constructor();
       /** `new` */
       static new(): AttrList;
@@ -37,14 +37,14 @@ declare module 'svelters:gtk/pango' {
 
   /** `Pango.Attribute`, value */
   export class Attribute extends NativeValue {
-    static readonly native: 'Pango.Attribute';
+    static readonly native: string;
       /** `equal` */
       equal(attr2: Attribute): boolean;
   }
 
   /** `Pango.Context`, object */
   export class Context extends Object {
-    static readonly native: 'Pango.Context';
+    static readonly native: string;
     constructor(props?: {  });
       /** `new` */
       static new(): Context;
@@ -98,7 +98,7 @@ declare module 'svelters:gtk/pango' {
 
   /** `Pango.Coverage`, object */
   export class Coverage extends Object {
-    static readonly native: 'Pango.Coverage';
+    static readonly native: string;
     constructor(props?: {  });
       /** `new` */
       static new(): Coverage;
@@ -110,7 +110,7 @@ declare module 'svelters:gtk/pango' {
 
   /** `Pango.Font`, object */
   export abstract class Font extends Object {
-    static readonly native: 'Pango.Font';
+    static readonly native: string;
       /** `deserialize`, since 1.50, throws */
       static deserialize(context: Context, bytes: Bytes): Font | null;
       /** `describe` */
@@ -135,7 +135,7 @@ declare module 'svelters:gtk/pango' {
 
   /** `Pango.FontDescription`, value */
   export class FontDescription extends NativeValue {
-    static readonly native: 'Pango.FontDescription';
+    static readonly native: string;
     constructor();
       /** `new` */
       static new(): FontDescription;
@@ -181,7 +181,7 @@ declare module 'svelters:gtk/pango' {
 
   /** `Pango.FontFace`, object */
   export abstract class FontFace extends Object {
-    static readonly native: 'Pango.FontFace';
+    static readonly native: string;
       /** `describe` */
       describe(): FontDescription;
       /** `get_face_name` */
@@ -196,7 +196,7 @@ declare module 'svelters:gtk/pango' {
 
   /** `Pango.FontFamily`, model */
   export abstract class FontFamily extends Object {
-    static readonly native: 'Pango.FontFamily';
+    static readonly native: string;
       /** `get_face`, since 1.46 */
       getFace(name?: string | null): FontFace | null;
       /** `get_name` */
@@ -224,7 +224,7 @@ declare module 'svelters:gtk/pango' {
 
   /** `Pango.FontMap`, model */
   export abstract class FontMap extends Object {
-    static readonly native: 'Pango.FontMap';
+    static readonly native: string;
       /** `add_font_file`, since 1.56, throws */
       addFontFile(filename: string): boolean;
       /** `changed`, since 1.34 */
@@ -259,7 +259,7 @@ declare module 'svelters:gtk/pango' {
 
   /** `Pango.FontMetrics`, value */
   export class FontMetrics extends NativeValue {
-    static readonly native: 'Pango.FontMetrics';
+    static readonly native: string;
       /** `get_approximate_char_width` */
       getApproximateCharWidth(): number;
       /** `get_approximate_digit_width` */
@@ -282,7 +282,7 @@ declare module 'svelters:gtk/pango' {
 
   /** `Pango.Fontset`, object */
   export abstract class Fontset extends Object {
-    static readonly native: 'Pango.Fontset';
+    static readonly native: string;
       /** `get_font` */
       getFont(wc: number): Font;
       /** `get_metrics` */
@@ -291,7 +291,7 @@ declare module 'svelters:gtk/pango' {
 
   /** `Pango.Language`, value */
   export class Language extends NativeValue {
-    static readonly native: 'Pango.Language';
+    static readonly native: string;
       /** `from_string` */
       static fromString(language?: string | null): Language | null;
       /** `get_default`, since 1.16 */
@@ -312,7 +312,7 @@ declare module 'svelters:gtk/pango' {
 
   /** `Pango.Layout`, object */
   export class Layout extends Object {
-    static readonly native: 'Pango.Layout';
+    static readonly native: string;
     constructor(props?: {  });
       /** `new` */
       static new(context: Context): Layout;
@@ -432,7 +432,7 @@ declare module 'svelters:gtk/pango' {
 
   /** `Pango.LayoutLine`, value */
   export class LayoutLine extends NativeValue {
-    static readonly native: 'Pango.LayoutLine';
+    static readonly native: string;
       /** `get_height`, since 1.44 */
       getHeight(): { height: number | null };
       /** `get_length`, since 1.50 */
@@ -453,7 +453,7 @@ declare module 'svelters:gtk/pango' {
 
   /** `Pango.Matrix`, value, since 1.6 */
   export class Matrix extends NativeValue {
-    static readonly native: 'Pango.Matrix';
+    static readonly native: string;
       /** `get_font_scale_factor`, since 1.12 */
       getFontScaleFactor(): number;
       /** `get_font_scale_factors`, since 1.38 */
@@ -468,7 +468,7 @@ declare module 'svelters:gtk/pango' {
 
   /** `Pango.TabArray`, value */
   export class TabArray extends NativeValue {
-    static readonly native: 'Pango.TabArray';
+    static readonly native: string;
     constructor(initialSize: number, positionsInPixels: boolean);
       /** `new` */
       static new(initialSize: number, positionsInPixels: boolean): TabArray;

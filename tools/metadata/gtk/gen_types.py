@@ -524,6 +524,29 @@ class Gen:
         doc = f"  /** `{m['name']}`" + (f", since {m['since']}" if m.get("since") else "") + (", throws" if m.get("throws") else "") + " */\n"
         return f"{doc}  {'static ' if static else ''}{name}({sig}): {ret};"
 
+    @staticmethod
+    def sig_key(m: dict) -> str:
+        return json.dumps([m["ret"], [(p["type"], p.get("dir"), p.get("hidden")) for p in m["params"]]], sort_keys=True)
+
+    def ancestor_members(self, q: str) -> tuple[dict, dict]:
+        """Static and instance members the ancestors define, by JS name, as signature keys."""
+        st: dict[str, str] = {}
+        inst: dict[str, str] = {}
+        for a in reversed(self.ancestors(q)):
+            e = self.effective(a)
+            for c in e["constructors"] + e["statics"]:
+                st[static_name(c["js"])] = self.sig_key(c)
+            for m in e["methods"]:
+                inst[inst_name(m["js"])] = self.sig_key(m)
+        return st, inst
+
+    def loose(self, m: dict, static: bool) -> str:
+        """A member whose signature differs from an ancestor's (the same GIR name on unrelated APIs): TypeScript
+        needs the override to stay assignable, so it is typed loosely."""
+        name = static_name(m["js"]) if static else inst_name(m["js"])
+        self.warnings.append(f"typings: {name} overrides an ancestor member with another signature (typed loosely)")
+        return f"/** `{m['name']}`; overrides an ancestor member with another signature */\n  {'static ' if static else ''}{name}(...args: any[]): any;"
+
     def dts(self, ns: str) -> str:
         qs = sorted(q for q, r in self.classes.items() if r["ns"] == ns)
         refs: dict[str, str] = {}
@@ -558,7 +581,7 @@ class Gen:
             lines.append(f"  /** `{q}`, {rec['category']}" + (f", since {rec['since']}" if rec.get("since") else "") + " */")
             kw = "abstract class" if rec["abstract"] or rec["kind"] == "interface" else "class"
             lines.append(f"  export {kw} {rec['name']} extends {base} {{")
-            lines.append(f"    static readonly native: '{q}';")
+            lines.append('    static readonly native: string;')
             if rec["kind"] == "class" and not rec["abstract"] and not is_value:
                 ctor_props = ", ".join(f"{p['js']}?: {self.ts_type(q, p['type'], imports, True)}" for p in self.all_props(q)
                                        if p["writable"] or p["construct_only"] or p["construct"])
@@ -568,10 +591,17 @@ class Gen:
                 if ctor:
                     cps = ", ".join(f"{ident(p['js'])}: {self.ts_type(q, p['type'], imports, p.get('nullable', False))}" for p in ctor["params"] if not p.get("hidden") and p.get("dir") != "out")
                     lines.append(f"    constructor({cps});")
+            anc_static, anc_inst = self.ancestor_members(q)
             for c in eff["constructors"] + eff["statics"]:
-                lines.append("    " + self.ts_method(q, c, imports, True).replace("\n", "\n    "))
+                t = self.ts_method(q, c, imports, True)
+                if static_name(c["js"]) in anc_static and anc_static[static_name(c["js"])] != self.sig_key(c):
+                    t = self.loose(c, True)
+                lines.append("    " + t.replace("\n", "\n    "))
             for m in eff["methods"]:
-                lines.append("    " + self.ts_method(q, m, imports, False).replace("\n", "\n    "))
+                t = self.ts_method(q, m, imports, False)
+                if inst_name(m["js"]) in anc_inst and anc_inst[inst_name(m["js"])] != self.sig_key(m):
+                    t = self.loose(m, False)
+                lines.append("    " + t.replace("\n", "\n    "))
             for p in eff["properties"]:
                 n = inst_name(p["js"])
                 t = self.ts_type(q, p["type"], imports, True)
@@ -634,12 +664,12 @@ class Gen:
         base.update({"name": "@svelters/types", "version": "0.0.0", "license": "MIT", "private": True, "type": "module",
                      "description": "Native object model and generated non-UI types (svelters:gtk/gio, ...) for Svelters apps",
                      "sideEffects": False})
-        exports = {"./core": "./src/core.js", "./vite": "./vite.js", "./manifest": "./gtk/manifest.json"}
+        exports = {"./core": {"types": "./src/core.d.ts", "default": "./src/core.js"}, "./vite": "./vite.js", "./manifest": "./gtk/manifest.json"}
         for ns in namespaces:
-            exports[f"./gtk/{nsdir(ns)}"] = f"./gtk/{nsdir(ns)}/index.js"
+            exports[f"./gtk/{nsdir(ns)}"] = {"types": f"./gtk/{nsdir(ns)}.d.ts", "default": f"./gtk/{nsdir(ns)}/index.js"}
         base["exports"] = exports
-        base["scripts"] = {"test": "node --test test/*.test.mjs"}
-        base["devDependencies"] = {"vite": "8.3.4"}
+        base["scripts"] = {"test": "node --test test/*.test.mjs && tsc -p test/types/tsconfig.json"}
+        base["devDependencies"] = {"typescript": "~6.0.3", "vite": "8.3.4"}
         return json.dumps(base, indent=2) + "\n"
 
 

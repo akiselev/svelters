@@ -4,7 +4,7 @@ declare module 'svelters:gtk/glib' {
 
   /** `GLib.Bytes`, value, since 2.32 */
   export class Bytes extends NativeValue {
-    static readonly native: 'GLib.Bytes';
+    static readonly native: string;
     constructor(data: Uint8Array | null);
       /** `new`, since 2.32 */
       static new(data?: Uint8Array | null): Bytes;
@@ -22,7 +22,7 @@ declare module 'svelters:gtk/glib' {
 
   /** `GLib.DateTime`, value, since 2.26 */
   export class DateTime extends NativeValue {
-    static readonly native: 'GLib.DateTime';
+    static readonly native: string;
     constructor(tz: TimeZone, year: number, month: number, day: number, hour: number, minute: number, seconds: number);
       /** `new`, since 2.26 */
       static new(tz: TimeZone, year: number, month: number, day: number, hour: number, minute: number, seconds: number): DateTime | null;
@@ -102,19 +102,19 @@ declare module 'svelters:gtk/glib' {
 
   /** `GLib.Error`, value */
   export class Error extends NativeValue {
-    static readonly native: 'GLib.Error';
+    static readonly native: string;
       /** `matches` */
       matches(domain: number, code: number): boolean;
   }
 
   /** `GLib.HashTable`, value */
   export class HashTable extends NativeValue {
-    static readonly native: 'GLib.HashTable';
+    static readonly native: string;
   }
 
   /** `GLib.KeyFile`, value */
   export class KeyFile extends NativeValue {
-    static readonly native: 'GLib.KeyFile';
+    static readonly native: string;
     constructor();
       /** `new`, since 2.6 */
       static new(): KeyFile;
@@ -176,17 +176,17 @@ declare module 'svelters:gtk/glib' {
 
   /** `GLib.OptionGroup`, value */
   export class OptionGroup extends NativeValue {
-    static readonly native: 'GLib.OptionGroup';
+    static readonly native: string;
   }
 
   /** `GLib.PollFD`, value */
   export class PollFD extends NativeValue {
-    static readonly native: 'GLib.PollFD';
+    static readonly native: string;
   }
 
   /** `GLib.String`, value */
   export class String extends NativeValue {
-    static readonly native: 'GLib.String';
+    static readonly native: string;
     constructor(init: string | null);
       /** `new` */
       static new(init?: string | null): String;
@@ -208,7 +208,7 @@ declare module 'svelters:gtk/glib' {
 
   /** `GLib.TimeZone`, value, since 2.26 */
   export class TimeZone extends NativeValue {
-    static readonly native: 'GLib.TimeZone';
+    static readonly native: string;
       /** `new_identifier`, since 2.68 */
       static newIdentifier(identifier?: string | null): TimeZone | null;
       /** `new_local`, since 2.26 */
@@ -231,7 +231,7 @@ declare module 'svelters:gtk/glib' {
 
   /** `GLib.Tree`, value */
   export class Tree extends NativeValue {
-    static readonly native: 'GLib.Tree';
+    static readonly native: string;
       /** `height` */
       height(): number;
       /** `nnodes` */
@@ -240,7 +240,7 @@ declare module 'svelters:gtk/glib' {
 
   /** `GLib.Uri`, value, since 2.66 */
   export class Uri extends NativeValue {
-    static readonly native: 'GLib.Uri';
+    static readonly native: string;
       /** `build`, since 2.66 */
       static build(flags: string | string[] | number, scheme: string, userinfo: string | null, host: string | null, port: number, path: string, query?: string | null, fragment?: string | null): Uri;
       /** `build_with_user`, since 2.66 */
@@ -311,7 +311,7 @@ declare module 'svelters:gtk/glib' {
 
   /** `GLib.Variant`, value, since 2.24 */
   export class Variant extends NativeValue {
-    static readonly native: 'GLib.Variant';
+    static readonly native: string;
       /** `is_object_path`, since 2.24 */
       static isObjectPath(string: string): boolean;
       /** `is_signature`, since 2.24 */
@@ -382,21 +382,21 @@ declare module 'svelters:gtk/glib' {
 
   /** `GLib.VariantBuilder`, value */
   export class VariantBuilder extends NativeValue {
-    static readonly native: 'GLib.VariantBuilder';
+    static readonly native: string;
       /** `close`, since 2.24 */
       close(): void;
   }
 
   /** `GLib.VariantDict`, value, since 2.40 */
   export class VariantDict extends NativeValue {
-    static readonly native: 'GLib.VariantDict';
+    static readonly native: string;
       /** `contains`, since 2.40 */
       contains(key: string): boolean;
   }
 
   /** `GLib.VariantType`, value, since 2.24 */
   export class VariantType extends NativeValue {
-    static readonly native: 'GLib.VariantType';
+    static readonly native: string;
       /** `string_get_depth_` */
       static stringGetDepth(typeString: string): number;
       /** `string_is_valid` */

@@ -11,7 +11,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.ATContext`, object */
   export abstract class ATContext extends Object {
-    static readonly native: 'Gtk.ATContext';
+    static readonly native: string;
       /** `create` */
       static create(accessibleRole: string, accessible: Accessible, display: Display): ATContext | null;
       /** `get_accessible` */
@@ -28,7 +28,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.Accessible`, object */
   export abstract class Accessible extends NativeObject {
-    static readonly native: 'Gtk.Accessible';
+    static readonly native: string;
       /** `announce`, since 4.14 */
       announce(message: string, priority: string): void;
       /** `get_accessible_id`, since 4.22 */
@@ -64,7 +64,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.AccessibleHyperlink`, object, since 4.22 */
   export class AccessibleHyperlink extends Object {
-    static readonly native: 'Gtk.AccessibleHyperlink';
+    static readonly native: string;
     constructor(props?: { accessibleRole?: string | null });
       /** `set_platform_state`, since 4.22 */
       setPlatformState(state: string, enabled: boolean): void;
@@ -103,7 +103,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.AccessibleHypertext`, object, since 4.22 */
   export abstract class AccessibleHypertext extends NativeObject {
-    static readonly native: 'Gtk.AccessibleHypertext';
+    static readonly native: string;
       /** `announce`, since 4.14 */
       announce(message: string, priority: string): void;
       /** `get_accessible_id`, since 4.22 */
@@ -139,7 +139,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.AccessibleList`, value, since 4.14 */
   export class AccessibleList extends NativeValue {
-    static readonly native: 'Gtk.AccessibleList';
+    static readonly native: string;
       /** `new_from_array`, since 4.14 */
       static newFromArray(accessibles: Accessible[]): AccessibleList;
       /** `new_from_list`, since 4.14 */
@@ -150,7 +150,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.AccessibleRange`, object, since 4.10 */
   export abstract class AccessibleRange extends NativeObject {
-    static readonly native: 'Gtk.AccessibleRange';
+    static readonly native: string;
       /** `announce`, since 4.14 */
       announce(message: string, priority: string): void;
       /** `get_accessible_id`, since 4.22 */
@@ -186,7 +186,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.AccessibleText`, object, since 4.14 */
   export abstract class AccessibleText extends NativeObject {
-    static readonly native: 'Gtk.AccessibleText';
+    static readonly native: string;
       /** `update_caret_position`, since 4.14 */
       updateCaretPosition(): void;
       /** `update_contents`, since 4.14 */
@@ -228,7 +228,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.Actionable`, object */
   export abstract class Actionable extends NativeObject {
-    static readonly native: 'Gtk.Actionable';
+    static readonly native: string;
       /** `get_action_name` */
       getActionName(): string | null;
       /** `set_action_name` */
@@ -241,7 +241,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.ActivateAction`, object */
   export class ActivateAction extends ShortcutAction {
-    static readonly native: 'Gtk.ActivateAction';
+    static readonly native: string;
     constructor(props?: {  });
       /** `get` */
       static get(): ActivateAction;
@@ -249,7 +249,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.Adjustment`, object */
   export class Adjustment extends InitiallyUnowned {
-    static readonly native: 'Gtk.Adjustment';
+    static readonly native: string;
     constructor(props?: { lower?: number | null, pageIncrement?: number | null, pageSize?: number | null, stepIncrement?: number | null, upper?: number | null, value?: number | null });
       /** `new` */
       static new(value: number, lower: number, upper: number, stepIncrement: number, pageIncrement: number, pageSize: number): Adjustment;
@@ -296,7 +296,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.AlertDialog`, object, since 4.10 */
   export class AlertDialog extends Object {
-    static readonly native: 'Gtk.AlertDialog';
+    static readonly native: string;
     constructor(props?: { buttons?: string[] | null, cancelButton?: number | null, defaultButton?: number | null, detail?: string | null, message?: string | null, modal?: boolean | null });
       /** `get_buttons`, since 4.10 */
       getButtons(): string[] | null;
@@ -332,7 +332,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.AlternativeTrigger`, object */
   export class AlternativeTrigger extends ShortcutTrigger {
-    static readonly native: 'Gtk.AlternativeTrigger';
+    static readonly native: string;
     constructor(props?: { first?: ShortcutTrigger | null, second?: ShortcutTrigger | null });
       /** `new` */
       static new(first: ShortcutTrigger, second: ShortcutTrigger): ShortcutTrigger;
@@ -346,7 +346,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.AnyFilter`, model */
   export class AnyFilter extends MultiFilter {
-    static readonly native: 'Gtk.AnyFilter';
+    static readonly native: string;
     constructor(props?: {  });
       /** `new` */
       static new(): AnyFilter;
@@ -354,10 +354,10 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.Application`, object */
   export class Application extends Gio_Application {
-    static readonly native: 'Gtk.Application';
+    static readonly native: string;
     constructor(props?: { applicationId?: string | null, flags?: string | string[] | number | null, inactivityTimeout?: number | null, resourceBasePath?: string | null, version?: string | null, menubar?: MenuModel | null });
-      /** `new` */
-      static new(applicationId: string | null, flags: string | string[] | number): Application;
+    /** `new`; overrides an ancestor member with another signature */
+      static new(...args: any[]): any;
       /** `get_accels_for_action` */
       getAccelsForAction(detailedActionName: string): string[];
       /** `get_actions_for_accel` */
@@ -382,7 +382,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.BinLayout`, object */
   export class BinLayout extends LayoutManager {
-    static readonly native: 'Gtk.BinLayout';
+    static readonly native: string;
     constructor(props?: {  });
       /** `new` */
       static new(): LayoutManager;
@@ -390,7 +390,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.Bitset`, value */
   export class Bitset extends NativeValue {
-    static readonly native: 'Gtk.Bitset';
+    static readonly native: string;
       /** `new_empty` */
       static newEmpty(): Bitset;
       /** `new_range` */
@@ -417,7 +417,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.BookmarkList`, model */
   export class BookmarkList extends Object {
-    static readonly native: 'Gtk.BookmarkList';
+    static readonly native: string;
     constructor(props?: { attributes?: string | null, filename?: string | null, ioPriority?: number | null });
       /** `new` */
       static new(filename?: string | null, attributes?: string | null): BookmarkList;
@@ -453,7 +453,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.BoolFilter`, object */
   export class BoolFilter extends Filter {
-    static readonly native: 'Gtk.BoolFilter';
+    static readonly native: string;
     constructor(props?: { invert?: boolean | null });
       /** `get_invert` */
       getInvert(): boolean;
@@ -464,7 +464,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.BoxLayout`, object */
   export class BoxLayout extends LayoutManager {
-    static readonly native: 'Gtk.BoxLayout';
+    static readonly native: string;
     constructor(props?: { baselineChild?: number | null, baselinePosition?: string | null, homogeneous?: boolean | null, spacing?: number | null, orientation?: string | null });
       /** `new` */
       static new(orientation: string): LayoutManager;
@@ -497,14 +497,14 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.Buildable`, object */
   export abstract class Buildable extends NativeObject {
-    static readonly native: 'Gtk.Buildable';
+    static readonly native: string;
       /** `get_buildable_id` */
       getBuildableId(): string | null;
   }
 
   /** `Gtk.Builder`, object */
   export class Builder extends Object {
-    static readonly native: 'Gtk.Builder';
+    static readonly native: string;
     constructor(props?: { currentObject?: Object | null, scope?: BuilderScope | null, translationDomain?: string | null });
       /** `new` */
       static new(): Builder;
@@ -555,7 +555,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.BuilderCScope`, object */
   export class BuilderCScope extends Object {
-    static readonly native: 'Gtk.BuilderCScope';
+    static readonly native: string;
     constructor(props?: {  });
       /** `new` */
       static new(): BuilderCScope;
@@ -563,7 +563,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.BuilderListItemFactory`, object */
   export class BuilderListItemFactory extends ListItemFactory {
-    static readonly native: 'Gtk.BuilderListItemFactory';
+    static readonly native: string;
     constructor(props?: { resource?: string | null, scope?: BuilderScope | null });
       /** `new_from_bytes` */
       static newFromBytes(scope: BuilderScope | null, bytes: Bytes): ListItemFactory;
@@ -581,18 +581,18 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.BuilderScope`, object */
   export abstract class BuilderScope extends NativeObject {
-    static readonly native: 'Gtk.BuilderScope';
+    static readonly native: string;
   }
 
   /** `Gtk.CallbackAction`, object */
   export class CallbackAction extends ShortcutAction {
-    static readonly native: 'Gtk.CallbackAction';
+    static readonly native: string;
     constructor(props?: {  });
   }
 
   /** `Gtk.CenterLayout`, object */
   export class CenterLayout extends LayoutManager {
-    static readonly native: 'Gtk.CenterLayout';
+    static readonly native: string;
     constructor(props?: { shrinkCenterLast?: boolean | null });
       /** `new` */
       static new(): LayoutManager;
@@ -613,7 +613,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.ColorDialog`, object, since 4.10 */
   export class ColorDialog extends Object {
-    static readonly native: 'Gtk.ColorDialog';
+    static readonly native: string;
     constructor(props?: { modal?: boolean | null, title?: string | null, withAlpha?: boolean | null });
       /** `new`, since 4.10 */
       static new(): ColorDialog;
@@ -636,7 +636,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.ColumnViewCell`, object, since 4.12 */
   export class ColumnViewCell extends ListItem {
-    static readonly native: 'Gtk.ColumnViewCell';
+    static readonly native: string;
     constructor(props?: { accessibleDescription?: string | null, accessibleLabel?: string | null, activatable?: boolean | null, focusable?: boolean | null, selectable?: boolean | null });
       /** `get_focusable`, since 4.12 */
       getFocusable(): boolean;
@@ -656,7 +656,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.ColumnViewColumn`, object */
   export class ColumnViewColumn extends Object {
-    static readonly native: 'Gtk.ColumnViewColumn';
+    static readonly native: string;
     constructor(props?: { expand?: boolean | null, factory?: ListItemFactory | null, fixedWidth?: number | null, headerMenu?: MenuModel | null, id?: string | null, resizable?: boolean | null, sorter?: Sorter | null, title?: string | null, visible?: boolean | null });
       /** `new` */
       static new(title?: string | null, factory?: ListItemFactory | null): ColumnViewColumn;
@@ -709,7 +709,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.ColumnViewRow`, object, since 4.12 */
   export class ColumnViewRow extends Object {
-    static readonly native: 'Gtk.ColumnViewRow';
+    static readonly native: string;
     constructor(props?: { accessibleDescription?: string | null, accessibleLabel?: string | null, activatable?: boolean | null, focusable?: boolean | null, selectable?: boolean | null });
       /** `get_accessible_description`, since 4.12 */
       getAccessibleDescription(): string;
@@ -749,7 +749,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.ColumnViewSorter`, object, since 4.10 */
   export class ColumnViewSorter extends Sorter {
-    static readonly native: 'Gtk.ColumnViewSorter';
+    static readonly native: string;
     constructor(props?: {  });
       /** `get_n_sort_columns`, since 4.10 */
       getNSortColumns(): number;
@@ -765,7 +765,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.Constraint`, object */
   export class Constraint extends Object {
-    static readonly native: 'Gtk.Constraint';
+    static readonly native: string;
     constructor(props?: { constant?: number | null, multiplier?: number | null, relation?: string | null, source?: ConstraintTarget | null, sourceAttribute?: string | null, strength?: number | null, target?: ConstraintTarget | null, targetAttribute?: string | null });
       /** `new` */
       static new(target: ConstraintTarget | null, targetAttribute: string, relation: string, source: ConstraintTarget | null, sourceAttribute: string, multiplier: number, constant: number, strength: number): Constraint;
@@ -805,7 +805,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.ConstraintGuide`, object */
   export class ConstraintGuide extends Object {
-    static readonly native: 'Gtk.ConstraintGuide';
+    static readonly native: string;
     constructor(props?: { maxHeight?: number | null, maxWidth?: number | null, minHeight?: number | null, minWidth?: number | null, name?: string | null, natHeight?: number | null, natWidth?: number | null, strength?: string | null });
       /** `new` */
       static new(): ConstraintGuide;
@@ -841,7 +841,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.ConstraintLayout`, object */
   export class ConstraintLayout extends LayoutManager {
-    static readonly native: 'Gtk.ConstraintLayout';
+    static readonly native: string;
     constructor(props?: {  });
       /** `new` */
       static new(): LayoutManager;
@@ -865,18 +865,18 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.ConstraintLayoutChild`, object */
   export class ConstraintLayoutChild extends LayoutChild {
-    static readonly native: 'Gtk.ConstraintLayoutChild';
+    static readonly native: string;
     constructor(props?: { layoutManager?: LayoutManager | null });
   }
 
   /** `Gtk.ConstraintTarget`, object */
   export abstract class ConstraintTarget extends NativeObject {
-    static readonly native: 'Gtk.ConstraintTarget';
+    static readonly native: string;
   }
 
   /** `Gtk.CssProvider`, object */
   export class CssProvider extends Object {
-    static readonly native: 'Gtk.CssProvider';
+    static readonly native: string;
     constructor(props?: { prefersColorScheme?: string | null, prefersContrast?: string | null, prefersReducedMotion?: string | null });
       /** `new` */
       static new(): CssProvider;
@@ -901,7 +901,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.CssSection`, value */
   export class CssSection extends NativeValue {
-    static readonly native: 'Gtk.CssSection';
+    static readonly native: string;
       /** `get_bytes`, since 4.16 */
       getBytes(): Bytes | null;
       /** `get_file` */
@@ -916,25 +916,25 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.CustomFilter`, object */
   export class CustomFilter extends Filter {
-    static readonly native: 'Gtk.CustomFilter';
+    static readonly native: string;
     constructor(props?: {  });
   }
 
   /** `Gtk.CustomLayout`, object */
   export class CustomLayout extends LayoutManager {
-    static readonly native: 'Gtk.CustomLayout';
+    static readonly native: string;
     constructor(props?: {  });
   }
 
   /** `Gtk.CustomSorter`, object */
   export class CustomSorter extends Sorter {
-    static readonly native: 'Gtk.CustomSorter';
+    static readonly native: string;
     constructor(props?: {  });
   }
 
   /** `Gtk.DirectoryList`, model */
   export class DirectoryList extends Object {
-    static readonly native: 'Gtk.DirectoryList';
+    static readonly native: string;
     constructor(props?: { attributes?: string | null, file?: File | null, ioPriority?: number | null, monitored?: boolean | null });
       /** `new` */
       static new(attributes?: string | null, file?: File | null): DirectoryList;
@@ -977,7 +977,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.DragSource`, object */
   export class DragSource extends GestureSingle {
-    static readonly native: 'Gtk.DragSource';
+    static readonly native: string;
     constructor(props?: { name?: string | null, propagationLimit?: string | null, propagationPhase?: string | null, nPoints?: number | null, button?: number | null, exclusive?: boolean | null, touchOnly?: boolean | null, actions?: string | string[] | number | null, content?: ContentProvider | null });
       /** `new` */
       static new(): DragSource;
@@ -1006,7 +1006,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.DropControllerMotion`, object */
   export class DropControllerMotion extends EventController {
-    static readonly native: 'Gtk.DropControllerMotion';
+    static readonly native: string;
     constructor(props?: { name?: string | null, propagationLimit?: string | null, propagationPhase?: string | null });
       /** `new` */
       static new(): EventController;
@@ -1025,7 +1025,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.DropTarget`, object */
   export class DropTarget extends EventController {
-    static readonly native: 'Gtk.DropTarget';
+    static readonly native: string;
     constructor(props?: { name?: string | null, propagationLimit?: string | null, propagationPhase?: string | null, actions?: string | string[] | number | null, preload?: boolean | null });
       /** `new` */
       static new(type: string | { readonly native: string }, actions: string | string[] | number): DropTarget;
@@ -1056,7 +1056,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.DropTargetAsync`, object */
   export class DropTargetAsync extends EventController {
-    static readonly native: 'Gtk.DropTargetAsync';
+    static readonly native: string;
     constructor(props?: { name?: string | null, propagationLimit?: string | null, propagationPhase?: string | null, actions?: string | string[] | number | null });
       /** `new` */
       static new(formats: ContentFormats | null, actions: string | string[] | number): DropTargetAsync;
@@ -1081,7 +1081,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.Editable`, object */
   export abstract class Editable extends NativeObject {
-    static readonly native: 'Gtk.Editable';
+    static readonly native: string;
       /** `delegate_get_accessible_platform_state`, since 4.10 */
       delegateGetAccessiblePlatformState(state: string): boolean;
       /** `delete_selection` */
@@ -1146,7 +1146,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.EntryBuffer`, object */
   export class EntryBuffer extends Object {
-    static readonly native: 'Gtk.EntryBuffer';
+    static readonly native: string;
     constructor(props?: { maxLength?: number | null, text?: string | null });
       /** `new` */
       static new(initialChars: string | null, nInitialChars: number): EntryBuffer;
@@ -1180,7 +1180,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.EventController`, object */
   export abstract class EventController extends Object {
-    static readonly native: 'Gtk.EventController';
+    static readonly native: string;
       /** `get_current_event_device` */
       getCurrentEventDevice(): Device | null;
       /** `get_current_event_state` */
@@ -1210,7 +1210,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.EventControllerFocus`, object */
   export class EventControllerFocus extends EventController {
-    static readonly native: 'Gtk.EventControllerFocus';
+    static readonly native: string;
     constructor(props?: { name?: string | null, propagationLimit?: string | null, propagationPhase?: string | null });
       /** `new` */
       static new(): EventController;
@@ -1225,7 +1225,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.EventControllerKey`, object */
   export class EventControllerKey extends EventController {
-    static readonly native: 'Gtk.EventControllerKey';
+    static readonly native: string;
     constructor(props?: { name?: string | null, propagationLimit?: string | null, propagationPhase?: string | null });
       /** `new` */
       static new(): EventController;
@@ -1244,7 +1244,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.EventControllerLegacy`, object */
   export class EventControllerLegacy extends EventController {
-    static readonly native: 'Gtk.EventControllerLegacy';
+    static readonly native: string;
     constructor(props?: { name?: string | null, propagationLimit?: string | null, propagationPhase?: string | null });
       /** `new` */
       static new(): EventController;
@@ -1252,7 +1252,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.EventControllerMotion`, object */
   export class EventControllerMotion extends EventController {
-    static readonly native: 'Gtk.EventControllerMotion';
+    static readonly native: string;
     constructor(props?: { name?: string | null, propagationLimit?: string | null, propagationPhase?: string | null });
       /** `new` */
       static new(): EventController;
@@ -1268,7 +1268,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.EventControllerScroll`, object */
   export class EventControllerScroll extends EventController {
-    static readonly native: 'Gtk.EventControllerScroll';
+    static readonly native: string;
     constructor(props?: { name?: string | null, propagationLimit?: string | null, propagationPhase?: string | null, flags?: string | string[] | number | null });
       /** `new` */
       static new(flags: string | string[] | number): EventController;
@@ -1288,7 +1288,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.EveryFilter`, model */
   export class EveryFilter extends MultiFilter {
-    static readonly native: 'Gtk.EveryFilter';
+    static readonly native: string;
     constructor(props?: {  });
       /** `new` */
       static new(): EveryFilter;
@@ -1296,12 +1296,12 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.ExpressionWatch`, value */
   export class ExpressionWatch extends NativeValue {
-    static readonly native: 'Gtk.ExpressionWatch';
+    static readonly native: string;
   }
 
   /** `Gtk.FileDialog`, object, since 4.10 */
   export class FileDialog extends Object {
-    static readonly native: 'Gtk.FileDialog';
+    static readonly native: string;
     constructor(props?: { acceptLabel?: string | null, defaultFilter?: FileFilter | null, filters?: ListModel | null, initialFile?: File | null, initialFolder?: File | null, initialName?: string | null, modal?: boolean | null, title?: string | null });
       /** `new`, since 4.10 */
       static new(): FileDialog;
@@ -1349,7 +1349,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.FileFilter`, object */
   export class FileFilter extends Filter {
-    static readonly native: 'Gtk.FileFilter';
+    static readonly native: string;
     constructor(props?: { mimeTypes?: string[] | null, name?: string | null, patterns?: string[] | null, suffixes?: string[] | null });
       /** `new` */
       static new(): FileFilter;
@@ -1377,7 +1377,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.FileLauncher`, object, since 4.10 */
   export class FileLauncher extends Object {
-    static readonly native: 'Gtk.FileLauncher';
+    static readonly native: string;
     constructor(props?: { alwaysAsk?: boolean | null, file?: File | null, writable?: boolean | null });
       /** `new`, since 4.10 */
       static new(file?: File | null): FileLauncher;
@@ -1400,7 +1400,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.Filter`, object */
   export class Filter extends Object {
-    static readonly native: 'Gtk.Filter';
+    static readonly native: string;
     constructor(props?: {  });
       /** `changed` */
       changed(change: string): void;
@@ -1414,7 +1414,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.FilterListModel`, model */
   export class FilterListModel extends Object {
-    static readonly native: 'Gtk.FilterListModel';
+    static readonly native: string;
     constructor(props?: { filter?: Filter | null, incremental?: boolean | null, model?: ListModel | null, watchItems?: boolean | null });
       /** `new` */
       static new(model?: ListModel | null, filter?: Filter | null): FilterListModel;
@@ -1462,7 +1462,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.FixedLayout`, object */
   export class FixedLayout extends LayoutManager {
-    static readonly native: 'Gtk.FixedLayout';
+    static readonly native: string;
     constructor(props?: {  });
       /** `new` */
       static new(): LayoutManager;
@@ -1470,7 +1470,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.FixedLayoutChild`, object */
   export class FixedLayoutChild extends LayoutChild {
-    static readonly native: 'Gtk.FixedLayoutChild';
+    static readonly native: string;
     constructor(props?: { layoutManager?: LayoutManager | null });
       /** `get_transform` */
       getTransform(): Transform | null;
@@ -1480,7 +1480,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.FlattenListModel`, model */
   export class FlattenListModel extends Object {
-    static readonly native: 'Gtk.FlattenListModel';
+    static readonly native: string;
     constructor(props?: { model?: ListModel | null });
       /** `new` */
       static new(model?: ListModel | null): FlattenListModel;
@@ -1512,7 +1512,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.FontDialog`, object, since 4.10 */
   export class FontDialog extends Object {
-    static readonly native: 'Gtk.FontDialog';
+    static readonly native: string;
     constructor(props?: { filter?: Filter | null, fontMap?: FontMap | null, modal?: boolean | null, title?: string | null });
       /** `new`, since 4.10 */
       static new(): FontDialog;
@@ -1544,7 +1544,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.Gesture`, object */
   export abstract class Gesture extends EventController {
-    static readonly native: 'Gtk.Gesture';
+    static readonly native: string;
       /** `get_bounding_box` */
       getBoundingBox(): { ret: boolean; rect: Record<string, number> };
       /** `get_bounding_box_center` */
@@ -1580,7 +1580,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.GestureClick`, object */
   export class GestureClick extends GestureSingle {
-    static readonly native: 'Gtk.GestureClick';
+    static readonly native: string;
     constructor(props?: { name?: string | null, propagationLimit?: string | null, propagationPhase?: string | null, nPoints?: number | null, button?: number | null, exclusive?: boolean | null, touchOnly?: boolean | null });
       /** `new` */
       static new(): Gesture;
@@ -1592,7 +1592,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.GestureDrag`, object */
   export class GestureDrag extends GestureSingle {
-    static readonly native: 'Gtk.GestureDrag';
+    static readonly native: string;
     constructor(props?: { name?: string | null, propagationLimit?: string | null, propagationPhase?: string | null, nPoints?: number | null, button?: number | null, exclusive?: boolean | null, touchOnly?: boolean | null });
       /** `new` */
       static new(): Gesture;
@@ -1608,7 +1608,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.GestureLongPress`, object */
   export class GestureLongPress extends GestureSingle {
-    static readonly native: 'Gtk.GestureLongPress';
+    static readonly native: string;
     constructor(props?: { name?: string | null, propagationLimit?: string | null, propagationPhase?: string | null, nPoints?: number | null, button?: number | null, exclusive?: boolean | null, touchOnly?: boolean | null, delayFactor?: number | null });
       /** `new` */
       static new(): Gesture;
@@ -1624,10 +1624,10 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.GesturePan`, object */
   export class GesturePan extends GestureDrag {
-    static readonly native: 'Gtk.GesturePan';
+    static readonly native: string;
     constructor(props?: { name?: string | null, propagationLimit?: string | null, propagationPhase?: string | null, nPoints?: number | null, button?: number | null, exclusive?: boolean | null, touchOnly?: boolean | null, orientation?: string | null });
-      /** `new` */
-      static new(orientation: string): Gesture;
+    /** `new`; overrides an ancestor member with another signature */
+      static new(...args: any[]): any;
       /** `get_orientation` */
       getOrientation(): string;
       /** `set_orientation` */
@@ -1639,7 +1639,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.GestureRotate`, object */
   export class GestureRotate extends Gesture {
-    static readonly native: 'Gtk.GestureRotate';
+    static readonly native: string;
     constructor(props?: { name?: string | null, propagationLimit?: string | null, propagationPhase?: string | null, nPoints?: number | null });
       /** `new` */
       static new(): Gesture;
@@ -1651,7 +1651,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.GestureSingle`, object */
   export class GestureSingle extends Gesture {
-    static readonly native: 'Gtk.GestureSingle';
+    static readonly native: string;
     constructor(props?: { name?: string | null, propagationLimit?: string | null, propagationPhase?: string | null, nPoints?: number | null, button?: number | null, exclusive?: boolean | null, touchOnly?: boolean | null });
       /** `get_button` */
       getButton(): number;
@@ -1676,7 +1676,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.GestureStylus`, object */
   export class GestureStylus extends GestureSingle {
-    static readonly native: 'Gtk.GestureStylus';
+    static readonly native: string;
     constructor(props?: { name?: string | null, propagationLimit?: string | null, propagationPhase?: string | null, nPoints?: number | null, button?: number | null, exclusive?: boolean | null, touchOnly?: boolean | null, stylusOnly?: boolean | null });
       /** `new` */
       static new(): Gesture;
@@ -1698,7 +1698,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.GestureSwipe`, object */
   export class GestureSwipe extends GestureSingle {
-    static readonly native: 'Gtk.GestureSwipe';
+    static readonly native: string;
     constructor(props?: { name?: string | null, propagationLimit?: string | null, propagationPhase?: string | null, nPoints?: number | null, button?: number | null, exclusive?: boolean | null, touchOnly?: boolean | null });
       /** `new` */
       static new(): Gesture;
@@ -1710,7 +1710,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.GestureZoom`, object */
   export class GestureZoom extends Gesture {
-    static readonly native: 'Gtk.GestureZoom';
+    static readonly native: string;
     constructor(props?: { name?: string | null, propagationLimit?: string | null, propagationPhase?: string | null, nPoints?: number | null });
       /** `new` */
       static new(): Gesture;
@@ -1722,7 +1722,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.GridLayout`, object */
   export class GridLayout extends LayoutManager {
-    static readonly native: 'Gtk.GridLayout';
+    static readonly native: string;
     constructor(props?: { baselineRow?: number | null, columnHomogeneous?: boolean | null, columnSpacing?: number | null, rowHomogeneous?: boolean | null, rowSpacing?: number | null });
       /** `new` */
       static new(): LayoutManager;
@@ -1759,7 +1759,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.GridLayoutChild`, object */
   export class GridLayoutChild extends LayoutChild {
-    static readonly native: 'Gtk.GridLayoutChild';
+    static readonly native: string;
     constructor(props?: { layoutManager?: LayoutManager | null, column?: number | null, columnSpan?: number | null, row?: number | null, rowSpan?: number | null });
       /** `get_column` */
       getColumn(): number;
@@ -1785,7 +1785,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.IMContext`, object */
   export abstract class IMContext extends Object {
-    static readonly native: 'Gtk.IMContext';
+    static readonly native: string;
       /** `delete_surrounding` */
       deleteSurrounding(offset: number, nChars: number): boolean;
       /** `filter_key` */
@@ -1820,7 +1820,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.IMContextSimple`, object */
   export class IMContextSimple extends IMContext {
-    static readonly native: 'Gtk.IMContextSimple';
+    static readonly native: string;
     constructor(props?: { inputHints?: string | string[] | number | null, inputPurpose?: string | null });
       /** `new` */
       static new(): IMContext;
@@ -1830,7 +1830,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.IMMulticontext`, object */
   export class IMMulticontext extends IMContext {
-    static readonly native: 'Gtk.IMMulticontext';
+    static readonly native: string;
     constructor(props?: { inputHints?: string | string[] | number | null, inputPurpose?: string | null });
       /** `new` */
       static new(): IMContext;
@@ -1842,7 +1842,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.IconPaintable`, object */
   export class IconPaintable extends Object {
-    static readonly native: 'Gtk.IconPaintable';
+    static readonly native: string;
     constructor(props?: { file?: File | null, scale?: number | null, size?: number | null });
       /** `new_for_file` */
       static newForFile(file: File, size: number, scale: number): IconPaintable;
@@ -1876,7 +1876,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.IconTheme`, object */
   export class IconTheme extends Object {
-    static readonly native: 'Gtk.IconTheme';
+    static readonly native: string;
     constructor(props?: { display?: Display | null, resourcePath?: string[] | null, searchPath?: string[] | null, themeName?: string | null });
       /** `new` */
       static new(): IconTheme;
@@ -1923,7 +1923,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.KeyvalTrigger`, object */
   export class KeyvalTrigger extends ShortcutTrigger {
-    static readonly native: 'Gtk.KeyvalTrigger';
+    static readonly native: string;
     constructor(props?: { keyval?: number | null, modifiers?: string | string[] | number | null });
       /** `new` */
       static new(keyval: number, modifiers: string | string[] | number): ShortcutTrigger;
@@ -1937,7 +1937,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.LayoutChild`, object */
   export abstract class LayoutChild extends Object {
-    static readonly native: 'Gtk.LayoutChild';
+    static readonly native: string;
       /** `get_layout_manager` */
       getLayoutManager(): LayoutManager;
     readonly layoutManager: LayoutManager | null;
@@ -1945,7 +1945,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.LayoutManager`, object */
   export abstract class LayoutManager extends Object {
-    static readonly native: 'Gtk.LayoutManager';
+    static readonly native: string;
       /** `get_request_mode` */
       getRequestMode(): string;
       /** `layout_changed` */
@@ -1954,7 +1954,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.ListHeader`, object, since 4.12 */
   export class ListHeader extends Object {
-    static readonly native: 'Gtk.ListHeader';
+    static readonly native: string;
     constructor(props?: {  });
       /** `get_end`, since 4.12 */
       getEnd(): number;
@@ -1972,7 +1972,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.ListItem`, object */
   export class ListItem extends Object {
-    static readonly native: 'Gtk.ListItem';
+    static readonly native: string;
     constructor(props?: { accessibleDescription?: string | null, accessibleLabel?: string | null, activatable?: boolean | null, focusable?: boolean | null, selectable?: boolean | null });
       /** `get_accessible_description`, since 4.12 */
       getAccessibleDescription(): string;
@@ -2012,13 +2012,13 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.ListItemFactory`, object */
   export class ListItemFactory extends Object {
-    static readonly native: 'Gtk.ListItemFactory';
+    static readonly native: string;
     constructor(props?: {  });
   }
 
   /** `Gtk.MapListModel`, model */
   export class MapListModel extends Object {
-    static readonly native: 'Gtk.MapListModel';
+    static readonly native: string;
     constructor(props?: { model?: ListModel | null });
       /** `get_model` */
       getModel(): ListModel | null;
@@ -2048,7 +2048,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.MediaFile`, object */
   export abstract class MediaFile extends MediaStream {
-    static readonly native: 'Gtk.MediaFile';
+    static readonly native: string;
       /** `new` */
       static new(): MediaFile;
       /** `new_for_file` */
@@ -2079,7 +2079,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.MediaStream`, object */
   export abstract class MediaStream extends Object {
-    static readonly native: 'Gtk.MediaStream';
+    static readonly native: string;
       /** `get_duration` */
       getDuration(): number;
       /** `get_ended` */
@@ -2169,7 +2169,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.MnemonicAction`, object */
   export class MnemonicAction extends ShortcutAction {
-    static readonly native: 'Gtk.MnemonicAction';
+    static readonly native: string;
     constructor(props?: {  });
       /** `get` */
       static get(): MnemonicAction;
@@ -2177,7 +2177,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.MnemonicTrigger`, object */
   export class MnemonicTrigger extends ShortcutTrigger {
-    static readonly native: 'Gtk.MnemonicTrigger';
+    static readonly native: string;
     constructor(props?: { keyval?: number | null });
       /** `new` */
       static new(keyval: number): MnemonicTrigger;
@@ -2188,7 +2188,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.MountOperation`, object */
   export class MountOperation extends Gio_MountOperation {
-    static readonly native: 'Gtk.MountOperation';
+    static readonly native: string;
     constructor(props?: { anonymous?: boolean | null, choice?: number | null, domain?: string | null, isTcryptHiddenVolume?: boolean | null, isTcryptSystemVolume?: boolean | null, password?: string | null, passwordSave?: string | null, pim?: number | null, username?: string | null, display?: Display | null });
       /** `get_display` */
       getDisplay(): Display;
@@ -2201,7 +2201,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.MultiFilter`, model */
   export abstract class MultiFilter extends Filter {
-    static readonly native: 'Gtk.MultiFilter';
+    static readonly native: string;
       /** `append` */
       append(filter: Filter): void;
       /** `remove` */
@@ -2224,7 +2224,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.MultiSelection`, model */
   export class MultiSelection extends Object {
-    static readonly native: 'Gtk.MultiSelection';
+    static readonly native: string;
     constructor(props?: { model?: ListModel | null });
       /** `new` */
       static new(model?: ListModel | null): MultiSelection;
@@ -2277,7 +2277,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.MultiSorter`, model */
   export class MultiSorter extends Sorter {
-    static readonly native: 'Gtk.MultiSorter';
+    static readonly native: string;
     constructor(props?: {  });
       /** `new` */
       static new(): MultiSorter;
@@ -2303,7 +2303,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.NamedAction`, object */
   export class NamedAction extends ShortcutAction {
-    static readonly native: 'Gtk.NamedAction';
+    static readonly native: string;
     constructor(props?: { actionName?: string | null });
       /** `new` */
       static new(name: string): NamedAction;
@@ -2314,7 +2314,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.Native`, object */
   export abstract class Native extends NativeObject {
-    static readonly native: 'Gtk.Native';
+    static readonly native: string;
       /** `get_for_surface` */
       static getForSurface(surface: Surface): Native | null;
       /** `get_renderer` */
@@ -2331,7 +2331,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.NativeDialog`, object */
   export abstract class NativeDialog extends Object {
-    static readonly native: 'Gtk.NativeDialog';
+    static readonly native: string;
       /** `destroy` */
       destroy(): void;
       /** `get_modal` */
@@ -2357,7 +2357,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.NeverTrigger`, object */
   export class NeverTrigger extends ShortcutTrigger {
-    static readonly native: 'Gtk.NeverTrigger';
+    static readonly native: string;
     constructor(props?: {  });
       /** `get` */
       static get(): NeverTrigger;
@@ -2365,7 +2365,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.NoSelection`, model */
   export class NoSelection extends Object {
-    static readonly native: 'Gtk.NoSelection';
+    static readonly native: string;
     constructor(props?: { model?: ListModel | null });
       /** `new` */
       static new(model?: ListModel | null): NoSelection;
@@ -2418,7 +2418,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.NotebookPage`, object */
   export class NotebookPage extends Object {
-    static readonly native: 'Gtk.NotebookPage';
+    static readonly native: string;
     constructor(props?: { detachable?: boolean | null, menuLabel?: string | null, position?: number | null, reorderable?: boolean | null, tabExpand?: boolean | null, tabFill?: boolean | null, tabLabel?: string | null });
     detachable: boolean | null;
     menuLabel: string | null;
@@ -2431,7 +2431,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.NothingAction`, object */
   export class NothingAction extends ShortcutAction {
-    static readonly native: 'Gtk.NothingAction';
+    static readonly native: string;
     constructor(props?: {  });
       /** `get` */
       static get(): NothingAction;
@@ -2439,7 +2439,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.NumericSorter`, object */
   export class NumericSorter extends Sorter {
-    static readonly native: 'Gtk.NumericSorter';
+    static readonly native: string;
     constructor(props?: { sortOrder?: string | null });
       /** `get_sort_order` */
       getSortOrder(): string;
@@ -2450,7 +2450,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.Orientable`, object */
   export abstract class Orientable extends NativeObject {
-    static readonly native: 'Gtk.Orientable';
+    static readonly native: string;
       /** `get_orientation` */
       getOrientation(): string;
       /** `set_orientation` */
@@ -2460,7 +2460,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.OverlayLayout`, object */
   export class OverlayLayout extends LayoutManager {
-    static readonly native: 'Gtk.OverlayLayout';
+    static readonly native: string;
     constructor(props?: {  });
       /** `new` */
       static new(): LayoutManager;
@@ -2468,7 +2468,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.OverlayLayoutChild`, object */
   export class OverlayLayoutChild extends LayoutChild {
-    static readonly native: 'Gtk.OverlayLayoutChild';
+    static readonly native: string;
     constructor(props?: { layoutManager?: LayoutManager | null, clipOverlay?: boolean | null, measure?: boolean | null });
       /** `get_clip_overlay` */
       getClipOverlay(): boolean;
@@ -2484,7 +2484,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.PadController`, object */
   export class PadController extends EventController {
-    static readonly native: 'Gtk.PadController';
+    static readonly native: string;
     constructor(props?: { name?: string | null, propagationLimit?: string | null, propagationPhase?: string | null, actionGroup?: ActionGroup | null, pad?: Device | null });
       /** `new` */
       static new(group: ActionGroup, pad?: Device | null): PadController;
@@ -2496,7 +2496,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.PageSetup`, object */
   export class PageSetup extends Object {
-    static readonly native: 'Gtk.PageSetup';
+    static readonly native: string;
     constructor(props?: {  });
       /** `new` */
       static new(): PageSetup;
@@ -2550,7 +2550,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.PaperSize`, value */
   export class PaperSize extends NativeValue {
-    static readonly native: 'Gtk.PaperSize';
+    static readonly native: string;
     constructor(name: string | null);
       /** `new` */
       static new(name?: string | null): PaperSize;
@@ -2596,15 +2596,15 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.PasswordEntryBuffer`, object, since 4.4 */
   export class PasswordEntryBuffer extends EntryBuffer {
-    static readonly native: 'Gtk.PasswordEntryBuffer';
+    static readonly native: string;
     constructor(props?: { maxLength?: number | null, text?: string | null });
-      /** `new` */
-      static new(): EntryBuffer;
+    /** `new`; overrides an ancestor member with another signature */
+      static new(...args: any[]): any;
   }
 
   /** `Gtk.PrintContext`, object */
   export class PrintContext extends Object {
-    static readonly native: 'Gtk.PrintContext';
+    static readonly native: string;
     constructor(props?: {  });
       /** `create_pango_context` */
       createPangoContext(): Context;
@@ -2628,7 +2628,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.PrintDialog`, object, since 4.14 */
   export class PrintDialog extends Object {
-    static readonly native: 'Gtk.PrintDialog';
+    static readonly native: string;
     constructor(props?: { acceptLabel?: string | null, modal?: boolean | null, pageSetup?: PageSetup | null, printSettings?: PrintSettings | null, title?: string | null });
       /** `new`, since 4.14 */
       static new(): PrintDialog;
@@ -2661,7 +2661,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.PrintJob`, object */
   export class PrintJob extends Object {
-    static readonly native: 'Gtk.PrintJob';
+    static readonly native: string;
     constructor(props?: { pageSetup?: PageSetup | null, printer?: Printer | null, settings?: PrintSettings | null, title?: string | null, trackPrintStatus?: boolean | null });
       /** `new` */
       static new(title: string, printer: Printer, settings: PrintSettings, pageSetup: PageSetup): PrintJob;
@@ -2728,7 +2728,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.PrintOperation`, object */
   export class PrintOperation extends Object {
-    static readonly native: 'Gtk.PrintOperation';
+    static readonly native: string;
     constructor(props?: { allowAsync?: boolean | null, currentPage?: number | null, customTabLabel?: string | null, defaultPageSetup?: PageSetup | null, embedPageSetup?: boolean | null, exportFilename?: string | null, hasSelection?: boolean | null, jobName?: string | null, nPages?: number | null, printSettings?: PrintSettings | null, showProgress?: boolean | null, supportSelection?: boolean | null, trackPrintStatus?: boolean | null, unit?: string | null, useFullPage?: boolean | null });
       /** `new` */
       static new(): PrintOperation;
@@ -2825,7 +2825,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.PrintOperationPreview`, object */
   export abstract class PrintOperationPreview extends NativeObject {
-    static readonly native: 'Gtk.PrintOperationPreview';
+    static readonly native: string;
       /** `end_preview` */
       endPreview(): void;
       /** `is_selected` */
@@ -2839,7 +2839,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.PrintSettings`, object */
   export class PrintSettings extends Object {
-    static readonly native: 'Gtk.PrintSettings';
+    static readonly native: string;
     constructor(props?: {  });
       /** `new` */
       static new(): PrintSettings;
@@ -2985,7 +2985,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.PrintSetup`, value, since 4.14 */
   export class PrintSetup extends NativeValue {
-    static readonly native: 'Gtk.PrintSetup';
+    static readonly native: string;
       /** `get_page_setup`, since 4.14 */
       getPageSetup(): PageSetup;
       /** `get_print_settings`, since 4.14 */
@@ -2994,7 +2994,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.Printer`, object */
   export class Printer extends Object {
-    static readonly native: 'Gtk.Printer';
+    static readonly native: string;
     constructor(props?: { acceptsPdf?: boolean | null, acceptsPs?: boolean | null, isVirtual?: boolean | null, name?: string | null });
       /** `accepts_pdf` */
       acceptsPdf(): boolean;
@@ -3051,7 +3051,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.RecentInfo`, value */
   export class RecentInfo extends NativeValue {
-    static readonly native: 'Gtk.RecentInfo';
+    static readonly native: string;
       /** `create_app_info`, throws */
       createAppInfo(appName?: string | null): AppInfo | null;
       /** `exists` */
@@ -3100,7 +3100,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.RecentManager`, object */
   export class RecentManager extends Object {
-    static readonly native: 'Gtk.RecentManager';
+    static readonly native: string;
     constructor(props?: { filename?: string | null });
       /** `new` */
       static new(): RecentManager;
@@ -3128,7 +3128,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.Requisition`, value */
   export class Requisition extends NativeValue {
-    static readonly native: 'Gtk.Requisition';
+    static readonly native: string;
     constructor();
       /** `new` */
       static new(): Requisition;
@@ -3136,7 +3136,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.Root`, object */
   export abstract class Root extends NativeObject {
-    static readonly native: 'Gtk.Root';
+    static readonly native: string;
       /** `get_display` */
       getDisplay(): Display;
       /** `get_renderer` */
@@ -3153,7 +3153,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.ScrollInfo`, value, since 4.12 */
   export class ScrollInfo extends NativeValue {
-    static readonly native: 'Gtk.ScrollInfo';
+    static readonly native: string;
     constructor();
       /** `new`, since 4.12 */
       static new(): ScrollInfo;
@@ -3165,7 +3165,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.Scrollable`, object */
   export abstract class Scrollable extends NativeObject {
-    static readonly native: 'Gtk.Scrollable';
+    static readonly native: string;
       /** `get_border` */
       getBorder(): { ret: boolean; border: Record<string, number> };
       /** `get_hadjustment` */
@@ -3192,7 +3192,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.SectionModel`, model, since 4.12 */
   export abstract class SectionModel extends NativeObject {
-    static readonly native: 'Gtk.SectionModel';
+    static readonly native: string;
       /** `get_section`, since 4.12 */
       getSection(position: number): { outStart: number; outEnd: number };
       /** `sections_changed`, since 4.12 */
@@ -3212,7 +3212,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.SelectionFilterModel`, model */
   export class SelectionFilterModel extends Object {
-    static readonly native: 'Gtk.SelectionFilterModel';
+    static readonly native: string;
     constructor(props?: { model?: SelectionModel | null });
       /** `new` */
       static new(model?: SelectionModel | null): SelectionFilterModel;
@@ -3237,7 +3237,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.SelectionModel`, model */
   export abstract class SelectionModel extends NativeObject {
-    static readonly native: 'Gtk.SelectionModel';
+    static readonly native: string;
       /** `get_selection` */
       getSelection(): Bitset;
       /** `get_selection_in_range` */
@@ -3275,7 +3275,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.Settings`, object */
   export class Settings extends Object {
-    static readonly native: 'Gtk.Settings';
+    static readonly native: string;
     constructor(props?: { gtkAlternativeButtonOrder?: boolean | null, gtkAlternativeSortArrows?: boolean | null, gtkCursorAspectRatio?: number | null, gtkCursorBlink?: boolean | null, gtkCursorBlinkTime?: number | null, gtkCursorBlinkTimeout?: number | null, gtkCursorThemeName?: string | null, gtkCursorThemeSize?: number | null, gtkDecorationLayout?: string | null, gtkDialogsUseHeader?: boolean | null, gtkDndDragThreshold?: number | null, gtkDoubleClickDistance?: number | null, gtkDoubleClickTime?: number | null, gtkEnableAccels?: boolean | null, gtkEnableAnimations?: boolean | null, gtkEnableEventSounds?: boolean | null, gtkEnableInputFeedbackSounds?: boolean | null, gtkEnablePrimaryPaste?: boolean | null, gtkEntryPasswordHintTimeout?: number | null, gtkEntrySelectOnFocus?: boolean | null, gtkErrorBell?: boolean | null, gtkFontName?: string | null, gtkFontRendering?: string | null, gtkFontconfigTimestamp?: number | null, gtkHintFontMetrics?: boolean | null, gtkIconThemeName?: string | null, gtkImModule?: string | null, gtkInterfaceColorScheme?: string | null, gtkInterfaceContrast?: string | null, gtkInterfaceReducedMotion?: string | null, gtkKeynavUseCaret?: boolean | null, gtkLabelSelectOnFocus?: boolean | null, gtkLongPressTime?: number | null, gtkOverlayScrolling?: boolean | null, gtkPrimaryButtonWarpsSlider?: boolean | null, gtkPrintBackends?: string | null, gtkPrintPreviewCommand?: string | null, gtkRecentFilesEnabled?: boolean | null, gtkRecentFilesMaxAge?: number | null, gtkShowStatusShapes?: boolean | null, gtkSoundThemeName?: string | null, gtkSplitCursor?: boolean | null, gtkThemeName?: string | null, gtkTitlebarDoubleClick?: string | null, gtkTitlebarMiddleClick?: string | null, gtkTitlebarRightClick?: string | null, gtkXftAntialias?: number | null, gtkXftDpi?: number | null, gtkXftHinting?: number | null, gtkXftHintstyle?: string | null, gtkXftRgba?: string | null });
       /** `get_default` */
       static getDefault(): Settings | null;
@@ -3340,7 +3340,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.Shortcut`, object */
   export class Shortcut extends Object {
-    static readonly native: 'Gtk.Shortcut';
+    static readonly native: string;
     constructor(props?: { action?: ShortcutAction | null, arguments?: unknown, trigger?: ShortcutTrigger | null });
       /** `new` */
       static new(trigger?: ShortcutTrigger | null, action?: ShortcutAction | null): Shortcut;
@@ -3359,7 +3359,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.ShortcutAction`, object */
   export abstract class ShortcutAction extends Object {
-    static readonly native: 'Gtk.ShortcutAction';
+    static readonly native: string;
       /** `parse_string` */
       static parseString(string: string): ShortcutAction | null;
       /** `print` */
@@ -3370,7 +3370,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.ShortcutController`, model */
   export class ShortcutController extends EventController {
-    static readonly native: 'Gtk.ShortcutController';
+    static readonly native: string;
     constructor(props?: { name?: string | null, propagationLimit?: string | null, propagationPhase?: string | null, mnemonicModifiers?: string | string[] | number | null, model?: ListModel | null, scope?: string | null });
       /** `new` */
       static new(): EventController;
@@ -3409,12 +3409,12 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.ShortcutManager`, object */
   export abstract class ShortcutManager extends NativeObject {
-    static readonly native: 'Gtk.ShortcutManager';
+    static readonly native: string;
   }
 
   /** `Gtk.ShortcutTrigger`, object */
   export abstract class ShortcutTrigger extends Object {
-    static readonly native: 'Gtk.ShortcutTrigger';
+    static readonly native: string;
       /** `parse_string` */
       static parseString(string: string): ShortcutTrigger | null;
       /** `compare` */
@@ -3435,7 +3435,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.SignalAction`, object */
   export class SignalAction extends ShortcutAction {
-    static readonly native: 'Gtk.SignalAction';
+    static readonly native: string;
     constructor(props?: { signalName?: string | null });
       /** `new` */
       static new(signalName: string): SignalAction;
@@ -3446,7 +3446,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.SignalListItemFactory`, object */
   export class SignalListItemFactory extends ListItemFactory {
-    static readonly native: 'Gtk.SignalListItemFactory';
+    static readonly native: string;
     constructor(props?: {  });
       /** `new` */
       static new(): ListItemFactory;
@@ -3459,7 +3459,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.SingleSelection`, model */
   export class SingleSelection extends Object {
-    static readonly native: 'Gtk.SingleSelection';
+    static readonly native: string;
     constructor(props?: { autoselect?: boolean | null, canUnselect?: boolean | null, model?: ListModel | null, selected?: number | null });
       /** `new` */
       static new(model?: ListModel | null): SingleSelection;
@@ -3530,7 +3530,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.SizeGroup`, object */
   export class SizeGroup extends Object {
-    static readonly native: 'Gtk.SizeGroup';
+    static readonly native: string;
     constructor(props?: { mode?: string | null });
       /** `new` */
       static new(mode: string): SizeGroup;
@@ -3545,7 +3545,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.SliceListModel`, model */
   export class SliceListModel extends Object {
-    static readonly native: 'Gtk.SliceListModel';
+    static readonly native: string;
     constructor(props?: { model?: ListModel | null, offset?: number | null, size?: number | null });
       /** `new` */
       static new(model: ListModel | null, offset: number, size: number): SliceListModel;
@@ -3585,7 +3585,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.Snapshot`, object */
   export class Snapshot extends Gdk_Snapshot {
-    static readonly native: 'Gtk.Snapshot';
+    static readonly native: string;
     constructor(props?: {  });
       /** `new` */
       static new(): Snapshot;
@@ -3661,7 +3661,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.SortListModel`, model */
   export class SortListModel extends Object {
-    static readonly native: 'Gtk.SortListModel';
+    static readonly native: string;
     constructor(props?: { incremental?: boolean | null, model?: ListModel | null, sectionSorter?: Sorter | null, sorter?: Sorter | null });
       /** `new` */
       static new(model?: ListModel | null, sorter?: Sorter | null): SortListModel;
@@ -3709,7 +3709,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.Sorter`, object */
   export class Sorter extends Object {
-    static readonly native: 'Gtk.Sorter';
+    static readonly native: string;
     constructor(props?: {  });
       /** `changed` */
       changed(change: string): void;
@@ -3723,7 +3723,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.StackPage`, object */
   export class StackPage extends Object {
-    static readonly native: 'Gtk.StackPage';
+    static readonly native: string;
     constructor(props?: { iconName?: string | null, name?: string | null, needsAttention?: boolean | null, title?: string | null, useUnderline?: boolean | null, visible?: boolean | null, accessibleRole?: string | null });
       /** `get_icon_name` */
       getIconName(): string | null;
@@ -3790,7 +3790,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.StringFilter`, object */
   export class StringFilter extends Filter {
-    static readonly native: 'Gtk.StringFilter';
+    static readonly native: string;
     constructor(props?: { ignoreCase?: boolean | null, matchMode?: string | null, search?: string | null });
       /** `get_ignore_case` */
       getIgnoreCase(): boolean;
@@ -3811,7 +3811,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.StringList`, model */
   export class StringList extends Object {
-    static readonly native: 'Gtk.StringList';
+    static readonly native: string;
     constructor(props?: { strings?: string[] | null });
       /** `new` */
       static new(strings?: string[] | null): StringList;
@@ -3846,7 +3846,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.StringObject`, object */
   export class StringObject extends Object {
-    static readonly native: 'Gtk.StringObject';
+    static readonly native: string;
     constructor(props?: {  });
       /** `new` */
       static new(string: string): StringObject;
@@ -3857,7 +3857,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.StringSorter`, object */
   export class StringSorter extends Sorter {
-    static readonly native: 'Gtk.StringSorter';
+    static readonly native: string;
     constructor(props?: { collation?: string | null, ignoreCase?: boolean | null });
       /** `get_collation`, since 4.10 */
       getCollation(): string;
@@ -3873,14 +3873,14 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.StyleProvider`, object */
   export abstract class StyleProvider extends NativeObject {
-    static readonly native: 'Gtk.StyleProvider';
+    static readonly native: string;
     on(signal: string, fn: (...args: any[]) => void): () => void;
     on(signal: 'gtk-private-changed', fn: () => void): () => void;
   }
 
   /** `Gtk.Svg`, object, since 4.22 */
   export class Svg extends Object {
-    static readonly native: 'Gtk.Svg';
+    static readonly native: string;
     constructor(props?: { features?: string | string[] | number | null, playing?: boolean | null, resource?: string | null, state?: number | null, weight?: number | null });
       /** `new`, since 4.22 */
       static new(): Svg;
@@ -3946,7 +3946,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.SymbolicPaintable`, object, since 4.6 */
   export abstract class SymbolicPaintable extends NativeObject {
-    static readonly native: 'Gtk.SymbolicPaintable';
+    static readonly native: string;
       /** `compute_concrete_size` */
       computeConcreteSize(specifiedWidth: number, specifiedHeight: number, defaultWidth: number, defaultHeight: number): { concreteWidth: number; concreteHeight: number };
       /** `get_current_image` */
@@ -3972,7 +3972,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.TextBuffer`, object */
   export class TextBuffer extends Object {
-    static readonly native: 'Gtk.TextBuffer';
+    static readonly native: string;
     constructor(props?: { enableUndo?: boolean | null, tagTable?: TextTagTable | null, text?: string | null });
       /** `new` */
       static new(table?: TextTagTable | null): TextBuffer;
@@ -4132,7 +4132,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.TextChildAnchor`, object */
   export class TextChildAnchor extends Object {
-    static readonly native: 'Gtk.TextChildAnchor';
+    static readonly native: string;
     constructor(props?: {  });
       /** `new` */
       static new(): TextChildAnchor;
@@ -4144,7 +4144,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.TextIter`, value */
   export class TextIter extends NativeValue {
-    static readonly native: 'Gtk.TextIter';
+    static readonly native: string;
       /** `backward_search` */
       backwardSearch(str: string, flags: string | string[] | number, limit?: TextIter | null): { ret: boolean; matchStart: TextIter | null; matchEnd: TextIter | null };
       /** `can_insert` */
@@ -4233,7 +4233,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.TextMark`, object */
   export class TextMark extends Object {
-    static readonly native: 'Gtk.TextMark';
+    static readonly native: string;
     constructor(props?: { leftGravity?: boolean | null, name?: string | null });
       /** `new` */
       static new(name: string | null, leftGravity: boolean): TextMark;
@@ -4255,7 +4255,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.TextTag`, object */
   export class TextTag extends Object {
-    static readonly native: 'Gtk.TextTag';
+    static readonly native: string;
     constructor(props?: { accumulativeMargin?: boolean | null, allowBreaks?: boolean | null, allowBreaksSet?: boolean | null, background?: string | null, backgroundFullHeight?: boolean | null, backgroundFullHeightSet?: boolean | null, backgroundSet?: boolean | null, direction?: string | null, editable?: boolean | null, editableSet?: boolean | null, fallback?: boolean | null, fallbackSet?: boolean | null, family?: string | null, familySet?: boolean | null, font?: string | null, fontFeatures?: string | null, fontFeaturesSet?: boolean | null, foreground?: string | null, foregroundSet?: boolean | null, indent?: number | null, indentSet?: boolean | null, insertHyphens?: boolean | null, insertHyphensSet?: boolean | null, invisible?: boolean | null, invisibleSet?: boolean | null, justification?: string | null, justificationSet?: boolean | null, language?: string | null, languageSet?: boolean | null, leftMargin?: number | null, leftMarginSet?: boolean | null, letterSpacing?: number | null, letterSpacingSet?: boolean | null, lineHeight?: number | null, lineHeightSet?: boolean | null, name?: string | null, overline?: string | null, overlineRgbaSet?: boolean | null, overlineSet?: boolean | null, paragraphBackground?: string | null, paragraphBackgroundSet?: boolean | null, pixelsAboveLines?: number | null, pixelsAboveLinesSet?: boolean | null, pixelsBelowLines?: number | null, pixelsBelowLinesSet?: boolean | null, pixelsInsideWrap?: number | null, pixelsInsideWrapSet?: boolean | null, rightMargin?: number | null, rightMarginSet?: boolean | null, rise?: number | null, riseSet?: boolean | null, scale?: number | null, scaleSet?: boolean | null, sentence?: boolean | null, sentenceSet?: boolean | null, showSpaces?: string | string[] | number | null, showSpacesSet?: boolean | null, size?: number | null, sizePoints?: number | null, sizeSet?: boolean | null, stretch?: string | null, stretchSet?: boolean | null, strikethrough?: boolean | null, strikethroughRgbaSet?: boolean | null, strikethroughSet?: boolean | null, style?: string | null, styleSet?: boolean | null, tabsSet?: boolean | null, textTransform?: string | null, textTransformSet?: boolean | null, underline?: string | null, underlineRgbaSet?: boolean | null, underlineSet?: boolean | null, variant?: string | null, variantSet?: boolean | null, weight?: number | null, weightSet?: boolean | null, word?: boolean | null, wordSet?: boolean | null, wrapMode?: string | null, wrapModeSet?: boolean | null });
       /** `new` */
       static new(name?: string | null): TextTag;
@@ -4350,7 +4350,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.TextTagTable`, object */
   export class TextTagTable extends Object {
-    static readonly native: 'Gtk.TextTagTable';
+    static readonly native: string;
     constructor(props?: {  });
       /** `new` */
       static new(): TextTagTable;
@@ -4372,7 +4372,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.Tooltip`, object */
   export class Tooltip extends Object {
-    static readonly native: 'Gtk.Tooltip';
+    static readonly native: string;
     constructor(props?: {  });
       /** `set_icon` */
       setIcon(paintable?: Paintable | null): void;
@@ -4390,7 +4390,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.TreeListModel`, model */
   export class TreeListModel extends Object {
-    static readonly native: 'Gtk.TreeListModel';
+    static readonly native: string;
     constructor(props?: { autoexpand?: boolean | null, passthrough?: boolean | null });
       /** `get_autoexpand` */
       getAutoexpand(): boolean;
@@ -4423,7 +4423,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.TreeListRow`, object */
   export class TreeListRow extends Object {
-    static readonly native: 'Gtk.TreeListRow';
+    static readonly native: string;
     constructor(props?: { expanded?: boolean | null });
       /** `get_child_row` */
       getChildRow(position: number): TreeListRow | null;
@@ -4452,7 +4452,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.TreeListRowSorter`, object */
   export class TreeListRowSorter extends Sorter {
-    static readonly native: 'Gtk.TreeListRowSorter';
+    static readonly native: string;
     constructor(props?: { sorter?: Sorter | null });
       /** `new` */
       static new(sorter?: Sorter | null): TreeListRowSorter;
@@ -4465,7 +4465,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.UriLauncher`, object, since 4.10 */
   export class UriLauncher extends Object {
-    static readonly native: 'Gtk.UriLauncher';
+    static readonly native: string;
     constructor(props?: { uri?: string | null });
       /** `new`, since 4.10 */
       static new(uri?: string | null): UriLauncher;
@@ -4478,7 +4478,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.WidgetPaintable`, object */
   export class WidgetPaintable extends Object {
-    static readonly native: 'Gtk.WidgetPaintable';
+    static readonly native: string;
     constructor(props?: {  });
       /** `compute_concrete_size` */
       computeConcreteSize(specifiedWidth: number, specifiedHeight: number, defaultWidth: number, defaultHeight: number): { concreteWidth: number; concreteHeight: number };
@@ -4505,7 +4505,7 @@ declare module 'svelters:gtk/gtk' {
 
   /** `Gtk.WindowGroup`, object */
   export class WindowGroup extends Object {
-    static readonly native: 'Gtk.WindowGroup';
+    static readonly native: string;
     constructor(props?: {  });
       /** `new` */
       static new(): WindowGroup;

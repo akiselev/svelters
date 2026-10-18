@@ -6,7 +6,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.Action`, object */
   export abstract class Action extends NativeObject {
-    static readonly native: 'Gio.Action';
+    static readonly native: string;
       /** `name_is_valid`, since 2.38 */
       static nameIsValid(actionName: string): boolean;
       /** `get_enabled`, since 2.28 */
@@ -22,7 +22,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.ActionGroup`, object */
   export abstract class ActionGroup extends NativeObject {
-    static readonly native: 'Gio.ActionGroup';
+    static readonly native: string;
       /** `action_added`, since 2.28 */
       actionAdded(actionName: string): void;
       /** `action_enabled_changed`, since 2.28 */
@@ -43,7 +43,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.ActionMap`, object, since 2.32 */
   export abstract class ActionMap extends NativeObject {
-    static readonly native: 'Gio.ActionMap';
+    static readonly native: string;
       /** `add_action`, since 2.32 */
       addAction(action: Action): void;
       /** `lookup_action`, since 2.32 */
@@ -54,7 +54,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.AppInfo`, object */
   export abstract class AppInfo extends NativeObject {
-    static readonly native: 'Gio.AppInfo';
+    static readonly native: string;
       /** `create_from_commandline`, throws */
       static createFromCommandline(commandline: string, applicationName: string | null, flags: string | string[] | number): AppInfo;
       /** `get_all` */
@@ -123,7 +123,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.AppLaunchContext`, object */
   export class AppLaunchContext extends Object {
-    static readonly native: 'Gio.AppLaunchContext';
+    static readonly native: string;
     constructor(props?: {  });
       /** `new` */
       static new(): AppLaunchContext;
@@ -145,7 +145,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.Application`, object, since 2.28 */
   export class Application extends Object {
-    static readonly native: 'Gio.Application';
+    static readonly native: string;
     constructor(props?: { applicationId?: string | null, flags?: string | string[] | number | null, inactivityTimeout?: number | null, resourceBasePath?: string | null, version?: string | null });
       /** `new` */
       static new(applicationId: string | null, flags: string | string[] | number): Application;
@@ -261,7 +261,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.ApplicationCommandLine`, object */
   export class ApplicationCommandLine extends Object {
-    static readonly native: 'Gio.ApplicationCommandLine';
+    static readonly native: string;
     constructor(props?: { arguments?: unknown, options?: unknown, platformData?: unknown });
       /** `create_file_for_arg`, since 2.36 */
       createFileForArg(arg: string): File;
@@ -297,12 +297,12 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.AsyncInitable`, object, since 2.22 */
   export abstract class AsyncInitable extends NativeObject {
-    static readonly native: 'Gio.AsyncInitable';
+    static readonly native: string;
   }
 
   /** `Gio.Cancellable`, object */
   export class Cancellable extends Object {
-    static readonly native: 'Gio.Cancellable';
+    static readonly native: string;
     constructor(props?: {  });
       /** `new` */
       static new(): Cancellable;
@@ -332,7 +332,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.Credentials`, object, since 2.26 */
   export class Credentials extends Object {
-    static readonly native: 'Gio.Credentials';
+    static readonly native: string;
     constructor(props?: {  });
       /** `new`, since 2.26 */
       static new(): Credentials;
@@ -344,19 +344,19 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.DBusAnnotationInfo`, value, since 2.26 */
   export class DBusAnnotationInfo extends NativeValue {
-    static readonly native: 'Gio.DBusAnnotationInfo';
+    static readonly native: string;
       /** `lookup`, since 2.26 */
       static lookup(annotations: DBusAnnotationInfo[] | null, name: string): string | null;
   }
 
   /** `Gio.DBusArgInfo`, value, since 2.26 */
   export class DBusArgInfo extends NativeValue {
-    static readonly native: 'Gio.DBusArgInfo';
+    static readonly native: string;
   }
 
   /** `Gio.DBusAuthObserver`, object, since 2.26 */
   export class DBusAuthObserver extends Object {
-    static readonly native: 'Gio.DBusAuthObserver';
+    static readonly native: string;
     constructor(props?: {  });
       /** `new`, since 2.26 */
       static new(): DBusAuthObserver;
@@ -371,7 +371,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.DBusConnection`, object, since 2.26 */
   export class DBusConnection extends Object {
-    static readonly native: 'Gio.DBusConnection';
+    static readonly native: string;
     constructor(props?: { address?: string | null, authenticationObserver?: DBusAuthObserver | null, exitOnClose?: boolean | null, flags?: string | string[] | number | null, guid?: string | null, stream?: IOStream | null });
       /** `new_for_address_sync`, since 2.26, throws */
       static newForAddressSync(address: string, flags: string | string[] | number, observer?: DBusAuthObserver | null, cancellable?: Cancellable | null): DBusConnection;
@@ -438,7 +438,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.DBusInterfaceInfo`, value, since 2.26 */
   export class DBusInterfaceInfo extends NativeValue {
-    static readonly native: 'Gio.DBusInterfaceInfo';
+    static readonly native: string;
       /** `generate_xml`, since 2.26 */
       generateXml(indent: number, stringBuilder: String): void;
       /** `lookup_method`, since 2.26 */
@@ -451,7 +451,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.DBusMessage`, object, since 2.26 */
   export class DBusMessage extends Object {
-    static readonly native: 'Gio.DBusMessage';
+    static readonly native: string;
     constructor(props?: {  });
       /** `new`, since 2.26 */
       static new(): DBusMessage;
@@ -544,22 +544,22 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.DBusMethodInfo`, value, since 2.26 */
   export class DBusMethodInfo extends NativeValue {
-    static readonly native: 'Gio.DBusMethodInfo';
+    static readonly native: string;
   }
 
   /** `Gio.DBusPropertyInfo`, value, since 2.26 */
   export class DBusPropertyInfo extends NativeValue {
-    static readonly native: 'Gio.DBusPropertyInfo';
+    static readonly native: string;
   }
 
   /** `Gio.DBusSignalInfo`, value, since 2.26 */
   export class DBusSignalInfo extends NativeValue {
-    static readonly native: 'Gio.DBusSignalInfo';
+    static readonly native: string;
   }
 
   /** `Gio.Drive`, object */
   export abstract class Drive extends NativeObject {
-    static readonly native: 'Gio.Drive';
+    static readonly native: string;
       /** `can_eject` */
       canEject(): boolean;
       /** `can_poll_for_media` */
@@ -605,7 +605,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.File`, object */
   export abstract class File extends NativeObject {
-    static readonly native: 'Gio.File';
+    static readonly native: string;
       /** `new_build_filenamev`, since 2.78 */
       static newBuildFilenamev(args: string[]): File;
       /** `new_for_commandline_arg` */
@@ -736,7 +736,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.FileAttributeInfoList`, value */
   export class FileAttributeInfoList extends NativeValue {
-    static readonly native: 'Gio.FileAttributeInfoList';
+    static readonly native: string;
     constructor();
       /** `new` */
       static new(): FileAttributeInfoList;
@@ -746,7 +746,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.FileAttributeMatcher`, value */
   export class FileAttributeMatcher extends NativeValue {
-    static readonly native: 'Gio.FileAttributeMatcher';
+    static readonly native: string;
     constructor(attributes: string);
       /** `new` */
       static new(attributes: string): FileAttributeMatcher;
@@ -764,7 +764,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.FileEnumerator`, object */
   export class FileEnumerator extends Object {
-    static readonly native: 'Gio.FileEnumerator';
+    static readonly native: string;
     constructor(props?: { container?: File | null });
       /** `close`, throws */
       close(cancellable?: Cancellable | null): boolean;
@@ -787,7 +787,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.FileIOStream`, object, since 2.22 */
   export class FileIOStream extends IOStream {
-    static readonly native: 'Gio.FileIOStream';
+    static readonly native: string;
     constructor(props?: {  });
       /** `get_etag`, since 2.22 */
       getEtag(): string | null;
@@ -807,7 +807,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.FileIcon`, object */
   export class FileIcon extends Object {
-    static readonly native: 'Gio.FileIcon';
+    static readonly native: string;
     constructor(props?: { file?: File | null });
       /** `new` */
       static new(file: File): FileIcon;
@@ -826,7 +826,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.FileInfo`, object */
   export class FileInfo extends Object {
-    static readonly native: 'Gio.FileInfo';
+    static readonly native: string;
     constructor(props?: {  });
       /** `new` */
       static new(): FileInfo;
@@ -966,7 +966,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.FileInputStream`, object */
   export class FileInputStream extends InputStream {
-    static readonly native: 'Gio.FileInputStream';
+    static readonly native: string;
     constructor(props?: {  });
       /** `query_info`, throws */
       queryInfo(attributes: string, cancellable?: Cancellable | null): FileInfo;
@@ -984,7 +984,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.FileMonitor`, object */
   export abstract class FileMonitor extends Object {
-    static readonly native: 'Gio.FileMonitor';
+    static readonly native: string;
       /** `cancel` */
       cancel(): boolean;
       /** `emit_event` */
@@ -1001,7 +1001,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.FileOutputStream`, object */
   export class FileOutputStream extends OutputStream {
-    static readonly native: 'Gio.FileOutputStream';
+    static readonly native: string;
     constructor(props?: {  });
       /** `get_etag` */
       getEtag(): string | null;
@@ -1021,7 +1021,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.IOStream`, object, since 2.22 */
   export abstract class IOStream extends Object {
-    static readonly native: 'Gio.IOStream';
+    static readonly native: string;
       /** `clear_pending`, since 2.22 */
       clearPending(): void;
       /** `close`, since 2.22, throws */
@@ -1043,7 +1043,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.Icon`, object */
   export abstract class Icon extends NativeObject {
-    static readonly native: 'Gio.Icon';
+    static readonly native: string;
       /** `new_for_string`, since 2.20, throws */
       static newForString(str: string): Icon;
       /** `equal` */
@@ -1056,14 +1056,14 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.Initable`, object, since 2.22 */
   export abstract class Initable extends NativeObject {
-    static readonly native: 'Gio.Initable';
+    static readonly native: string;
       /** `init`, since 2.22, throws */
       init(cancellable?: Cancellable | null): boolean;
   }
 
   /** `Gio.InputStream`, object */
   export abstract class InputStream extends Object {
-    static readonly native: 'Gio.InputStream';
+    static readonly native: string;
       /** `clear_pending` */
       clearPending(): void;
       /** `close`, throws */
@@ -1086,7 +1086,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.ListModel`, model */
   export abstract class ListModel extends NativeObject {
-    static readonly native: 'Gio.ListModel';
+    static readonly native: string;
       /** `get_item_type`, since 2.44 */
       getItemType(): string | { readonly native: string };
       /** `get_n_items`, since 2.44 */
@@ -1101,7 +1101,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.ListStore`, model */
   export class ListStore extends Object {
-    static readonly native: 'Gio.ListStore';
+    static readonly native: string;
     constructor(props?: { itemType?: string | { readonly native: string } | null });
       /** `new`, since 2.44 */
       static new(itemType: string | { readonly native: string }): ListStore;
@@ -1133,7 +1133,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.LoadableIcon`, object */
   export abstract class LoadableIcon extends NativeObject {
-    static readonly native: 'Gio.LoadableIcon';
+    static readonly native: string;
       /** `load`, throws */
       load(size: number, cancellable?: Cancellable | null): { ret: InputStream; type: string | null };
       /** `equal` */
@@ -1146,7 +1146,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.Menu`, object, since 2.32 */
   export class Menu extends MenuModel {
-    static readonly native: 'Gio.Menu';
+    static readonly native: string;
     constructor(props?: {  });
       /** `new`, since 2.32 */
       static new(): Menu;
@@ -1184,7 +1184,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.MenuAttributeIter`, object, since 2.32 */
   export abstract class MenuAttributeIter extends Object {
-    static readonly native: 'Gio.MenuAttributeIter';
+    static readonly native: string;
       /** `get_name`, since 2.32 */
       getName(): string;
       /** `next`, since 2.32 */
@@ -1193,7 +1193,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.MenuItem`, object, since 2.32 */
   export class MenuItem extends Object {
-    static readonly native: 'Gio.MenuItem';
+    static readonly native: string;
     constructor(props?: {  });
       /** `new`, since 2.32 */
       static new(label?: string | null, detailedAction?: string | null): MenuItem;
@@ -1221,7 +1221,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.MenuLinkIter`, object, since 2.32 */
   export abstract class MenuLinkIter extends Object {
-    static readonly native: 'Gio.MenuLinkIter';
+    static readonly native: string;
       /** `get_name`, since 2.32 */
       getName(): string;
       /** `get_next`, since 2.32 */
@@ -1234,7 +1234,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.MenuModel`, object, since 2.32 */
   export abstract class MenuModel extends Object {
-    static readonly native: 'Gio.MenuModel';
+    static readonly native: string;
       /** `get_item_link`, since 2.32 */
       getItemLink(itemIndex: number, link: string): MenuModel | null;
       /** `get_n_items`, since 2.32 */
@@ -1253,7 +1253,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.Mount`, object */
   export abstract class Mount extends NativeObject {
-    static readonly native: 'Gio.Mount';
+    static readonly native: string;
       /** `can_eject` */
       canEject(): boolean;
       /** `can_unmount` */
@@ -1292,7 +1292,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.MountOperation`, object */
   export class MountOperation extends Object {
-    static readonly native: 'Gio.MountOperation';
+    static readonly native: string;
     constructor(props?: { anonymous?: boolean | null, choice?: number | null, domain?: string | null, isTcryptHiddenVolume?: boolean | null, isTcryptSystemVolume?: boolean | null, password?: string | null, passwordSave?: string | null, pim?: number | null, username?: string | null });
       /** `new` */
       static new(): MountOperation;
@@ -1353,7 +1353,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.Notification`, object, since 2.40 */
   export class Notification extends Object {
-    static readonly native: 'Gio.Notification';
+    static readonly native: string;
     constructor(props?: {  });
       /** `new`, since 2.40 */
       static new(title: string): Notification;
@@ -1375,7 +1375,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.OutputStream`, object */
   export abstract class OutputStream extends Object {
-    static readonly native: 'Gio.OutputStream';
+    static readonly native: string;
       /** `clear_pending` */
       clearPending(): void;
       /** `close`, throws */
@@ -1402,7 +1402,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.Permission`, object */
   export abstract class Permission extends Object {
-    static readonly native: 'Gio.Permission';
+    static readonly native: string;
       /** `acquire`, since 2.26, throws */
       acquire(cancellable?: Cancellable | null): boolean;
       /** `get_allowed`, since 2.26 */
@@ -1422,7 +1422,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.Seekable`, object */
   export abstract class Seekable extends NativeObject {
-    static readonly native: 'Gio.Seekable';
+    static readonly native: string;
       /** `can_seek` */
       canSeek(): boolean;
       /** `can_truncate` */
@@ -1437,7 +1437,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.Settings`, object */
   export class Settings extends Object {
-    static readonly native: 'Gio.Settings';
+    static readonly native: string;
     constructor(props?: { backend?: SettingsBackend | null, path?: string | null, schemaId?: string | null });
       /** `new`, since 2.26 */
       static new(schemaId: string): Settings;
@@ -1529,7 +1529,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.SettingsBackend`, object */
   export abstract class SettingsBackend extends Object {
-    static readonly native: 'Gio.SettingsBackend';
+    static readonly native: string;
       /** `get_default`, since 2.28 */
       static getDefault(): SettingsBackend;
       /** `path_writable_changed`, since 2.26 */
@@ -1540,7 +1540,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.SettingsSchema`, value, since 2.32 */
   export class SettingsSchema extends NativeValue {
-    static readonly native: 'Gio.SettingsSchema';
+    static readonly native: string;
       /** `get_id` */
       getId(): string;
       /** `get_key`, since 2.40 */
@@ -1557,7 +1557,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.SettingsSchemaKey`, value */
   export class SettingsSchemaKey extends NativeValue {
-    static readonly native: 'Gio.SettingsSchemaKey';
+    static readonly native: string;
       /** `get_description`, since 2.34 */
       getDescription(): string | null;
       /** `get_name`, since 2.44 */
@@ -1568,7 +1568,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.SimpleAction`, object */
   export class SimpleAction extends Object {
-    static readonly native: 'Gio.SimpleAction';
+    static readonly native: string;
     constructor(props?: {  });
       /** `set_enabled`, since 2.28 */
       setEnabled(enabled: boolean): void;
@@ -1585,7 +1585,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.SimpleActionGroup`, object, since 2.28 */
   export class SimpleActionGroup extends Object {
-    static readonly native: 'Gio.SimpleActionGroup';
+    static readonly native: string;
     constructor(props?: {  });
       /** `new`, since 2.28 */
       static new(): SimpleActionGroup;
@@ -1615,7 +1615,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.ThemedIcon`, object */
   export class ThemedIcon extends Object {
-    static readonly native: 'Gio.ThemedIcon';
+    static readonly native: string;
     constructor(props?: { name?: string | null, names?: string[] | null, useDefaultFallbacks?: boolean | null });
       /** `new` */
       static new(iconname: string): ThemedIcon;
@@ -1642,7 +1642,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.UnixFDList`, object */
   export class UnixFDList extends Object {
-    static readonly native: 'Gio.UnixFDList';
+    static readonly native: string;
     constructor(props?: {  });
       /** `new`, since 2.24 */
       static new(): UnixFDList;
@@ -1662,7 +1662,7 @@ declare module 'svelters:gtk/gio' {
 
   /** `Gio.Volume`, object */
   export abstract class Volume extends NativeObject {
-    static readonly native: 'Gio.Volume';
+    static readonly native: string;
       /** `can_eject` */
       canEject(): boolean;
       /** `can_mount` */

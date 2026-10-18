@@ -4,19 +4,19 @@ declare module 'svelters:gtk/gobject' {
 
   /** `GObject.InitiallyUnowned`, object */
   export class InitiallyUnowned extends Object {
-    static readonly native: 'GObject.InitiallyUnowned';
+    static readonly native: string;
     constructor(props?: {  });
   }
 
   /** `GObject.Object`, object */
   export class Object extends NativeObject {
-    static readonly native: 'GObject.Object';
+    static readonly native: string;
     constructor(props?: {  });
   }
 
   /** `GObject.Value`, value */
   export class Value extends NativeValue {
-    static readonly native: 'GObject.Value';
+    static readonly native: string;
       /** `type_compatible` */
       static typeCompatible(srcType: string | { readonly native: string }, destType: string | { readonly native: string }): boolean;
       /** `type_transformable` */

@@ -8,7 +8,7 @@ declare module 'svelters:gtk/gsk' {
 
   /** `Gsk.ComponentTransfer`, value, since 4.20 */
   export class ComponentTransfer extends NativeValue {
-    static readonly native: 'Gsk.ComponentTransfer';
+    static readonly native: string;
       /** `new_discrete`, since 4.20 */
       static newDiscrete(values: number[]): ComponentTransfer;
       /** `new_gamma`, since 4.20 */
@@ -25,7 +25,7 @@ declare module 'svelters:gtk/gsk' {
 
   /** `Gsk.Path`, value, since 4.14 */
   export class Path extends NativeValue {
-    static readonly native: 'Gsk.Path';
+    static readonly native: string;
       /** `parse`, since 4.14 */
       static parse(string: string): Path | null;
       /** `equal`, since 4.22 */
@@ -60,7 +60,7 @@ declare module 'svelters:gtk/gsk' {
 
   /** `Gsk.PathMeasure`, value, since 4.14 */
   export class PathMeasure extends NativeValue {
-    static readonly native: 'Gsk.PathMeasure';
+    static readonly native: string;
     constructor(path: Path);
       /** `new`, since 4.14 */
       static new(path: Path): PathMeasure;
@@ -78,7 +78,7 @@ declare module 'svelters:gtk/gsk' {
 
   /** `Gsk.PathPoint`, value, since 4.14 */
   export class PathPoint extends NativeValue {
-    static readonly native: 'Gsk.PathPoint';
+    static readonly native: string;
       /** `compare`, since 4.14 */
       compare(point2: PathPoint): number;
       /** `equal`, since 4.14 */
@@ -97,7 +97,7 @@ declare module 'svelters:gtk/gsk' {
 
   /** `Gsk.Renderer`, object */
   export abstract class Renderer extends Object {
-    static readonly native: 'Gsk.Renderer';
+    static readonly native: string;
       /** `new_for_surface` */
       static newForSurface(surface: Surface): Renderer | null;
       /** `get_surface` */
@@ -116,7 +116,7 @@ declare module 'svelters:gtk/gsk' {
 
   /** `Gsk.Stroke`, value, since 4.14 */
   export class Stroke extends NativeValue {
-    static readonly native: 'Gsk.Stroke';
+    static readonly native: string;
     constructor(lineWidth: number);
       /** `new`, since 4.14 */
       static new(lineWidth: number): Stroke;
@@ -136,7 +136,7 @@ declare module 'svelters:gtk/gsk' {
 
   /** `Gsk.Transform`, value */
   export class Transform extends NativeValue {
-    static readonly native: 'Gsk.Transform';
+    static readonly native: string;
     constructor();
       /** `new` */
       static new(): Transform;

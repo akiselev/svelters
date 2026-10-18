@@ -7,22 +7,50 @@
   "description": "Native object model and generated non-UI types (svelters:gtk/gio, ...) for Svelters apps",
   "sideEffects": false,
   "exports": {
-    "./core": "./src/core.js",
+    "./core": {
+      "types": "./src/core.d.ts",
+      "default": "./src/core.js"
+    },
     "./vite": "./vite.js",
     "./manifest": "./gtk/manifest.json",
-    "./gtk/glib": "./gtk/glib/index.js",
-    "./gtk/gobject": "./gtk/gobject/index.js",
-    "./gtk/gdk": "./gtk/gdk/index.js",
-    "./gtk/gio": "./gtk/gio/index.js",
-    "./gtk/graphene": "./gtk/graphene/index.js",
-    "./gtk/gsk": "./gtk/gsk/index.js",
-    "./gtk/gtk": "./gtk/gtk/index.js",
-    "./gtk/pango": "./gtk/pango/index.js"
+    "./gtk/glib": {
+      "types": "./gtk/glib.d.ts",
+      "default": "./gtk/glib/index.js"
+    },
+    "./gtk/gobject": {
+      "types": "./gtk/gobject.d.ts",
+      "default": "./gtk/gobject/index.js"
+    },
+    "./gtk/gdk": {
+      "types": "./gtk/gdk.d.ts",
+      "default": "./gtk/gdk/index.js"
+    },
+    "./gtk/gio": {
+      "types": "./gtk/gio.d.ts",
+      "default": "./gtk/gio/index.js"
+    },
+    "./gtk/graphene": {
+      "types": "./gtk/graphene.d.ts",
+      "default": "./gtk/graphene/index.js"
+    },
+    "./gtk/gsk": {
+      "types": "./gtk/gsk.d.ts",
+      "default": "./gtk/gsk/index.js"
+    },
+    "./gtk/gtk": {
+      "types": "./gtk/gtk.d.ts",
+      "default": "./gtk/gtk/index.js"
+    },
+    "./gtk/pango": {
+      "types": "./gtk/pango.d.ts",
+      "default": "./gtk/pango/index.js"
+    }
   },
   "scripts": {
-    "test": "node --test test/*.test.mjs"
+    "test": "node --test test/*.test.mjs && tsc -p test/types/tsconfig.json"
   },
   "devDependencies": {
+    "typescript": "~6.0.3",
     "vite": "8.3.4"
   }
 }

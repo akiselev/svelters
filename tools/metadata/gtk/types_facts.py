@@ -613,7 +613,7 @@ def write(data: dict) -> int:
     for ns, d in files.items():
         (FACTS_DIR / f"{ns}.json").write_text(serialise(d))
     for old in FACTS_DIR.glob("*.json"):
-        if old.stem not in files and old.stem != "report":
+        if old.stem not in files and old.stem not in ("report", "facts"):
             old.unlink()
     (FACTS_DIR / "report.txt").write_text(report(data))
     return len(files)
