@@ -479,3 +479,15 @@ This document does not cover non-widget kinds beyond using them as samples.
 7. **Sanitizer runs.** Kinds with cross-op corruption (`Adw.Carousel`) need ASan or valgrind
    builds of the toolkit, or at least `MALLOC_CHECK_=3`. Is that worth setting up, or are such
    kinds simply left manual?
+
+## 11. Decisions (user, 2026-10-17)
+
+All seven open questions follow the recommendations:
+
+1. **Generic bindings:** every prop with a notify is `bind:`-able, through one generated echo test per prop. Curation only picks the primary name.
+2. **Delivery-only signals** count as verified, reported separately as `verified: delivery`.
+3. **Qt test volume:** table-driven tests (one function per kind iterating a fact table), or a separate test binary.
+4. **Parked/unverified props** appear in typings marked `@unverified`.
+5. **Probe in CI:** maintainers run the probe, like ingestion. CI checks that the checked-in probe matches the toolkit version in the ledger.
+6. **Exposure defaults:** deny-by-pattern on GTK (GI reaches everything anyway), accept-by-pattern on Qt (keeps the generated backend small).
+7. **Sanitizer runs:** none for now. Kinds with cross-op corruption stay manual.
