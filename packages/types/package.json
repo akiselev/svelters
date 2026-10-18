@@ -1,0 +1,28 @@
+{
+  "name": "@svelters/types",
+  "version": "0.0.0",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "description": "Native object model and generated non-UI types (svelters:gtk/gio, ...) for Svelters apps",
+  "sideEffects": false,
+  "exports": {
+    "./core": "./src/core.js",
+    "./vite": "./vite.js",
+    "./manifest": "./gtk/manifest.json",
+    "./gtk/glib": "./gtk/glib/index.js",
+    "./gtk/gobject": "./gtk/gobject/index.js",
+    "./gtk/gdk": "./gtk/gdk/index.js",
+    "./gtk/gio": "./gtk/gio/index.js",
+    "./gtk/graphene": "./gtk/graphene/index.js",
+    "./gtk/gsk": "./gtk/gsk/index.js",
+    "./gtk/gtk": "./gtk/gtk/index.js",
+    "./gtk/pango": "./gtk/pango/index.js"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "devDependencies": {
+    "vite": "8.3.4"
+  }
+}

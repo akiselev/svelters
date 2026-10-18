@@ -510,6 +510,14 @@ impl Harness {
         }
     }
 
+    /// The wire tag a property of the native kind `kind` expects (from its descriptor).
+    pub fn prop_slot_tag(&self, kind: &str, prop: &str) -> Option<u16> {
+        let k = self.kind_id(kind);
+        let id = self.resolve(SVL_PROP, k, prop);
+        let d = self.backend_ref().describe(NameKind::Prop, k, id)?;
+        Some(d.params.first().unwrap_or(&d.ret).tag)
+    }
+
     /// ABI v2.5 `call_static` by native kind name and method name.
     pub fn call_static(&self, kind: &str, method: &str, args: &[V]) -> Result<V, String> {
         let k = self.kind_id(kind);

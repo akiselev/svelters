@@ -105,6 +105,8 @@ export const call = (self, method, args) => host().call(handleFor(self), method,
 export const getProp = (self, name) => host().getProp(live(self), name);
 /** `host.setProp` on an object. */
 export const setProp = (self, name, value) => host().setProp(live(self), name, value);
+/** `host.construct`: a new instance of the native type with construct-time properties. */
+export const construct = (native, props) => host().construct(native, props);
 /** `host.callStatic`: a static function or constructor function of the native type `native`. */
 export const callStatic = (native, method, args) => host().callStatic(native, method, args);
 
@@ -190,11 +192,9 @@ export class NativeObject {
     const raw = make.call(this.constructor, a);
     const h = handleOf(raw);
     if (h === null) throw new Error(`${this.constructor.native}: the host returned no object`);
-    const have = wrappers.get(h)?.deref();
     this[NODE] = raw;
     wrappers.set(h, typeof WeakRef === 'function' ? new WeakRef(this) : { deref: () => this });
     swept?.register(this, h);
-    void have;
   }
 
   /** What the host converts an object argument to; null once disposed. */

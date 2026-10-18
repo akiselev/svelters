@@ -1,0 +1,3 @@
+[{"checkpoint":true},
+ {"event":[1,"changed",["Hello, world"]]},
+ {"checkpoint":true}]

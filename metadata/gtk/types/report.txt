@@ -13,18 +13,18 @@ total             6       108       327        24         2         7        82 
 == bound scope (types with a JS class or shape), by namespace and category
   GLib        15  value 15
   GObject      3  object 2, value 1
-  Gio         55  model 2, object 43, value 10
+  Gio         57  model 2, object 45, value 10
   Gdk         27  object 20, record 2, value 5
   Gsk          7  object 1, value 6
   Pango       17  model 2, object 6, value 9
   Graphene    16  record 3, value 13
   Gtk        165  model 20, object 134, record 1, value 10
-  total      305
+  total      307
 
 == members of bound types: bound / blocked
   GLib      members   282  bound   174 ( 61%)  blocked  108
   GObject   members    45  bound    21 ( 46%)  blocked   24
-  Gio       members   828  bound   664 ( 80%)  blocked  164
+  Gio       members   840  bound   676 ( 80%)  blocked  164
   Gdk       members   374  bound   345 ( 92%)  blocked   29
   Gsk       members    80  bound    72 ( 90%)  blocked    8
   Pango     members   217  bound   190 ( 87%)  blocked   27
@@ -38,7 +38,10 @@ total             6       108       327        24         2         7        82 
   Gdk.Clipboard            object  bound    9 blocked   7 hidden   0
   Gdk.Texture              object  bound   14 blocked   2 hidden   0
   Gio.File                 object  bound   63 blocked  36 hidden   0
+  Gio.FileIcon             object  bound    3 blocked   0 hidden   0
+  Gio.Icon                 object  bound    4 blocked   2 hidden   0
   Gio.ListStore            model   bound    9 blocked   4 hidden   0
+  Gio.ThemedIcon           object  bound    9 blocked   0 hidden   0
   Gtk.DirectoryList        model   bound   17 blocked   2 hidden   0
   Gtk.FileDialog           object  bound   25 blocked   8 hidden   0
   Gtk.StringList           model   bound   10 blocked   0 hidden   0

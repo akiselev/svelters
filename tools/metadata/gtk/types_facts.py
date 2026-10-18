@@ -411,6 +411,8 @@ def callables(g: Gir, full: str, cats: dict[str, str], cv: Conv, ov: dict) -> di
                 blocked[nm] = sig["blocked"]
                 continue
             rec = {"name": nm, "js": camel(nm), **sig}
+            if m.get("shadows"):
+                rec["aliases"] = [camel(m.get("shadows"))]
             if m.get("version"):
                 rec["since"] = m.get("version")
             if kind == "method":

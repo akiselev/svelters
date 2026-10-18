@@ -6523,6 +6523,79 @@
    "statics": [],
    "undecided": []
   },
+  "FileIcon": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "object",
+   "constructors": [
+    {
+     "js": "new",
+     "name": "new",
+     "params": [
+      {
+       "js": "file",
+       "name": "file",
+       "type": {
+        "k": "object",
+        "t": "Gio.File"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gio.FileIcon"
+     }
+    }
+   ],
+   "curated": true,
+   "gtype": "GFileIcon",
+   "hidden": [],
+   "interfaces": [
+    "Gio.Icon",
+    "Gio.LoadableIcon"
+   ],
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": [
+    {
+     "js": "getFile",
+     "name": "get_file",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gio.File"
+     }
+    }
+   ],
+   "name": "FileIcon",
+   "ns": "Gio",
+   "parent": "GObject.Object",
+   "prerequisites": [],
+   "properties": [
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "file",
+     "name": "file",
+     "readable": true,
+     "type": {
+      "k": "object",
+      "t": "Gio.File"
+     },
+     "writable": true
+    }
+   ],
+   "qualified": "Gio.FileIcon",
+   "refs": [
+    "Gio.File"
+   ],
+   "scope": "root",
+   "signals": [],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
   "FileInfo": {
    "abstract": false,
    "blocked": {
@@ -8038,7 +8111,7 @@
    "builder": false,
    "category": "object",
    "constructors": [],
-   "curated": false,
+   "curated": true,
    "gtype": "GIcon",
    "hidden": [],
    "interfaces": [],
@@ -8090,7 +8163,7 @@
    "properties": [],
    "qualified": "Gio.Icon",
    "refs": [],
-   "scope": "closure",
+   "scope": "root",
    "signals": [],
    "since": null,
    "statics": [
@@ -8435,6 +8508,9 @@
      "since": "2.44"
     },
     {
+     "aliases": [
+      "getItem"
+     ],
      "js": "getObject",
      "name": "get_object",
      "params": [
@@ -12585,6 +12661,175 @@
    "scope": "root",
    "signals": [],
    "since": "2.28",
+   "statics": [],
+   "undecided": []
+  },
+  "ThemedIcon": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "object",
+   "constructors": [
+    {
+     "js": "new",
+     "name": "new",
+     "params": [
+      {
+       "js": "iconname",
+       "name": "iconname",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gio.ThemedIcon"
+     }
+    },
+    {
+     "js": "newFromNames",
+     "name": "new_from_names",
+     "params": [
+      {
+       "js": "iconnames",
+       "name": "iconnames",
+       "type": {
+        "elem": {
+         "k": "str"
+        },
+        "k": "array",
+        "len": 1
+       }
+      },
+      {
+       "hidden": true,
+       "js": "len",
+       "name": "len",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gio.ThemedIcon"
+     }
+    },
+    {
+     "js": "newWithDefaultFallbacks",
+     "name": "new_with_default_fallbacks",
+     "params": [
+      {
+       "js": "iconname",
+       "name": "iconname",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gio.ThemedIcon"
+     }
+    }
+   ],
+   "curated": true,
+   "gtype": "GThemedIcon",
+   "hidden": [],
+   "interfaces": [
+    "Gio.Icon"
+   ],
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": [
+    {
+     "js": "appendName",
+     "name": "append_name",
+     "params": [
+      {
+       "js": "iconname",
+       "name": "iconname",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "getNames",
+     "name": "get_names",
+     "params": [],
+     "ret": {
+      "k": "strv"
+     }
+    },
+    {
+     "js": "prependName",
+     "name": "prepend_name",
+     "params": [
+      {
+       "js": "iconname",
+       "name": "iconname",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "2.18"
+    }
+   ],
+   "name": "ThemedIcon",
+   "ns": "Gio",
+   "parent": "GObject.Object",
+   "prerequisites": [],
+   "properties": [
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "name",
+     "name": "name",
+     "readable": false,
+     "type": {
+      "k": "str"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "names",
+     "name": "names",
+     "readable": true,
+     "type": {
+      "k": "strv"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "useDefaultFallbacks",
+     "name": "use-default-fallbacks",
+     "readable": true,
+     "type": {
+      "k": "bool"
+     },
+     "writable": true
+    }
+   ],
+   "qualified": "Gio.ThemedIcon",
+   "refs": [],
+   "scope": "root",
+   "signals": [],
+   "since": null,
    "statics": [],
    "undecided": []
   },

@@ -45,6 +45,21 @@ fn parse_val(s: &str) -> Val {
     }
 }
 
+/// A JSON value of an op-log line as a harness value. A bare number where a handle is expected is
+/// resolved through `handles` (the log prints handles as plain numbers).
+fn json_v(v: &serde_json::Value, handle: &dyn Fn(i64) -> u64, as_handle: bool) -> V {
+    use serde_json::Value as J;
+    match v {
+        J::Null => V::Null,
+        J::Bool(b) => V::Bool(*b),
+        J::Number(n) if as_handle => V::Handle(handle(n.as_i64().expect("handle number"))),
+        J::Number(n) => n.as_i64().map(V::I64).unwrap_or_else(|| V::F64(n.as_f64().unwrap())),
+        J::String(s) => V::Str(s.clone()),
+        J::Array(a) => V::List(a.iter().map(|x| json_v(x, handle, false)).collect()),
+        J::Object(_) => panic!("objects are not replayed"),
+    }
+}
+
 fn replay(name: &str, log: String) {
     let name = name.to_string();
     on_gtk(move || {
@@ -77,13 +92,53 @@ fn replay(name: &str, log: String) {
                 "destroy" => h.destroy(hd(parts[1])),
                 "set" => {
                     let (o, prop) = (hd(parts[1]), parts[2]);
+                    let is_handle = h.prop_desc(o, prop).and_then(|d| d.params.first().map(|p| p.tag)) == Some(svelters_abi::SVL_HANDLE);
                     let r = match parse_val(parts[3]) {
+                        Val::Int(i) if is_handle => h.set_handle(o, prop, hd(&format!("#{i}"))),
                         Val::Str(s) => h.set_str(o, prop, &s),
                         Val::Int(i) => h.set_i64(o, prop, i),
                         Val::Bool(b) => h.set_bool(o, prop, b),
                         Val::Float(_) | Val::Null => panic!("{ctx}: unsupported value"),
                     };
                     r.unwrap_or_else(|e| panic!("{ctx}: {e}"));
+                }
+                // ABI v2.5: `construct #h Kind {props}` and `static Kind.method [args] [#h]`.
+                "construct" => {
+                    let props: serde_json::Value = serde_json::from_str(parts[3]).unwrap_or_else(|e| panic!("{ctx}: {e}"));
+                    let by_num = |n: i64| *map.get(&format!("#{n}")).unwrap_or_else(|| panic!("{ctx}: unknown handle #{n}"));
+                    let props: Vec<(String, V)> = props
+                        .as_object()
+                        .unwrap()
+                        .iter()
+                        .map(|(k, v)| {
+                            let is_handle = h.prop_slot_tag(parts[2], k) == Some(svelters_abi::SVL_HANDLE);
+                            (k.clone(), json_v(v, &by_num, is_handle))
+                        })
+                        .collect();
+                    let refs: Vec<(&str, V)> = props.iter().map(|(k, v)| (k.as_str(), v.clone())).collect();
+                    let id = h.construct(parts[2], &refs).unwrap_or_else(|e| panic!("{ctx}: {e}"));
+                    map.insert(parts[1].to_string(), id);
+                }
+                "static" => {
+                    let (call, args) = line["static ".len()..].split_once(' ').unwrap();
+                    let (kind, method) = call.rsplit_once('.').unwrap();
+                    let (json, result) = match args.rsplit_once(" #") {
+                        Some((j, n)) => (j, Some(format!("#{n}"))),
+                        None => (args, None),
+                    };
+                    let args: serde_json::Value = serde_json::from_str(json).unwrap_or_else(|e| panic!("{ctx}: {e}"));
+                    let by_num = |n: i64| *map.get(&format!("#{n}")).unwrap_or_else(|| panic!("{ctx}: unknown handle #{n}"));
+                    let args: Vec<V> = args.as_array().unwrap().iter().map(|v| json_v(v, &by_num, false)).collect();
+                    let r = h.call_static(kind, method, &args).unwrap_or_else(|e| panic!("{ctx}: {e}"));
+                    if let (Some(name), V::Handle(id)) = (result, r) {
+                        map.insert(name, id);
+                    }
+                }
+                "call" if parts[3] != "[]" => {
+                    let args: serde_json::Value = serde_json::from_str(parts[3]).unwrap_or_else(|e| panic!("{ctx}: {e}"));
+                    let by_num = |n: i64| *map.get(&format!("#{n}")).unwrap_or_else(|| panic!("{ctx}: unknown handle #{n}"));
+                    let args: Vec<V> = args.as_array().unwrap().iter().map(|v| json_v(v, &by_num, false)).collect();
+                    h.call_args(hd(parts[1]), parts[2], &args).unwrap_or_else(|e| panic!("{ctx}: {e}"));
                 }
                 "call" => h.call(hd(parts[1]), parts[2]).unwrap_or_else(|e| panic!("{ctx}: {e}")),
                 "listen" => {
@@ -189,7 +244,11 @@ fn replay(name: &str, log: String) {
                         "clicked" => h.widget(o).downcast::<gtk::Button>().unwrap().emit_clicked(),
                         "changed" => {
                             let Val::Str(s) = parse_val(parts[3].trim_start_matches('[').trim_end_matches(']')) else { panic!() };
-                            h.widget(o).dynamic_cast::<gtk::Editable>().unwrap().set_text(&s);
+                            match h.obj(o).downcast::<gtk::TextBuffer>() {
+                                // A text buffer (ABI v2.5 construct): its text changes natively.
+                                Ok(buf) => buf.set_text(&s),
+                                Err(_) => h.widget(o).dynamic_cast::<gtk::Editable>().unwrap().set_text(&s),
+                            }
                         }
                         other => panic!("{ctx}: cannot produce {other}"),
                     }

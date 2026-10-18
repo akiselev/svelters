@@ -20,6 +20,9 @@ roots:
   - Gio.File
   - Gio.FileInfo
   - Gio.ListStore
+  - Gio.Icon
+  - Gio.FileIcon
+  - Gio.ThemedIcon
   - Gio.Menu
   - Gio.MenuItem
   - Gio.SimpleAction

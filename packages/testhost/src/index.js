@@ -77,6 +77,8 @@ export function createTestHost({ schema: schemaOpt, toolkit } = {}) {
     return JSON.stringify(v, (_k, x) => (x !== null && typeof x === 'object' && typeof x.svlHandle === 'number' ? x.svlHandle : x));
   };
 
+  let nodeFor = null;
+  const asNode = (h) => (nodeFor ? nodeFor(h) : h);
   const nameOf = (names, kid, ref) => (typeof ref === 'number' ? names.get(`${kid}:${ref}`) : ref);
 
   const host = {
@@ -118,6 +120,32 @@ export function createTestHost({ schema: schemaOpt, toolkit } = {}) {
       widgets.set(h, { kind, kid: typeof kindRef === 'number' ? kindRef : null, parent: null, children: [], props: new Map() });
       lines.push(`create ${kind} #${h}`);
       return h;
+    },
+    // ABI v2.5: construct and call_static. A handle is returned as the renderer's node when the bundle
+    // installed one (like the QuickJS host), else as the bare number.
+    construct(kindRef, props) {
+      const kind = typeof kindRef === 'number' ? kindNames[kindRef] : kindRef;
+      const h = next++;
+      widgets.set(h, { kind, kid: null, parent: null, children: [], props: new Map(Object.entries(props ?? {})) });
+      lines.push(`construct #${h} ${kind} ${json(props ?? {})}`);
+      return asNode(h);
+    },
+    callStatic(kindRef, methodRef, args) {
+      const kind = typeof kindRef === 'number' ? kindNames[kindRef] : kindRef;
+      const method = typeof methodRef === 'number' ? `#${methodRef}` : methodRef;
+      const line = `static ${kind}.${method} ${json(args)}`;
+      // A constructor-shaped name answers a fresh handle (the log backend does the same); the rest null.
+      if (method === 'new' || method.startsWith('new_') || method.startsWith('from_')) {
+        const h = next++;
+        widgets.set(h, { kind, kid: null, parent: null, children: [], props: new Map() });
+        lines.push(`${line} #${h}`);
+        return asNode(h);
+      }
+      lines.push(line);
+      return null;
+    },
+    typeChain() {
+      return [];
     },
     insert(parent, child, before, slot) {
       const p = w(parent);
@@ -245,7 +273,15 @@ export function createTestHost({ schema: schemaOpt, toolkit } = {}) {
     return out;
   }
 
-  return { host, lines, text: () => lines.map((l) => l + '\n').join(''), widgets, killNative };
+  return {
+    host,
+    lines,
+    text: () => lines.map((l) => l + '\n').join(''),
+    widgets,
+    killNative,
+    /** Hands results that are handles to `fn` (the vm context's `__svelters_node`). */
+    setNodeFor: (fn) => void (nodeFor = fn),
+  };
 }
 
 const FLAG_WORDS = { after: 1, capture: 2 };
@@ -340,6 +376,7 @@ export async function runBundle({ bundlePath, script, toolkit, styleDialect = to
     clearInterval: timers.clearInterval,
     __svelters_host: th.host,
   });
+  th.setNodeFor((h) => (typeof ctx.__svelters_node === 'function' ? ctx.__svelters_node(h) : h));
 
   const drain = () => new Promise((r) => setImmediate(r));
   const fail = () => {
