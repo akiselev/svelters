@@ -1,0 +1,328 @@
+properties:
+- name: show-day-names
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: show-heading
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: show-week-numbers
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: day-selected
+  handler_result: none
+  sync_required: false
+  trigger:
+    rust: o.emit_by_name::<()>("day-selected", &[]);
+    values:
+    - a
+    - b
+    - c
+  delivery_only: true
+  provenance:
+  - origin: runtime
+    ref: returns void, run-first
+  - origin: probe
+    ref: emitted synthetically with sampled arguments; delivery only, no native trigger
+- name: next-month
+  handler_result: none
+  sync_required: false
+  trigger:
+    rust: o.emit_by_name::<()>("next-month", &[]);
+    values:
+    - a
+    - b
+    - c
+  delivery_only: true
+  provenance:
+  - origin: runtime
+    ref: returns void, run-first
+  - origin: probe
+    ref: emitted synthetically with sampled arguments; delivery only, no native trigger
+- name: next-year
+  handler_result: none
+  sync_required: false
+  trigger:
+    rust: o.emit_by_name::<()>("next-year", &[]);
+    values:
+    - a
+    - b
+    - c
+  delivery_only: true
+  provenance:
+  - origin: runtime
+    ref: returns void, run-first
+  - origin: probe
+    ref: emitted synthetically with sampled arguments; delivery only, no native trigger
+- name: prev-month
+  handler_result: none
+  sync_required: false
+  trigger:
+    rust: o.emit_by_name::<()>("prev-month", &[]);
+    values:
+    - a
+    - b
+    - c
+  delivery_only: true
+  provenance:
+  - origin: runtime
+    ref: returns void, run-first
+  - origin: probe
+    ref: emitted synthetically with sampled arguments; delivery only, no native trigger
+- name: prev-year
+  handler_result: none
+  sync_required: false
+  trigger:
+    rust: o.emit_by_name::<()>("prev-year", &[]);
+    values:
+    - a
+    - b
+    - c
+  delivery_only: true
+  provenance:
+  - origin: runtime
+    ref: returns void, run-first
+  - origin: probe
+    ref: emitted synthetically with sampled arguments; delivery only, no native trigger
+- name: notify::show-day-names
+  derived_from:
+    property: show-day-names
+  js_event: notify::show-day-names
+  trigger:
+    property: show-day-names
+    values:
+    - false
+    - true
+    - false
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkCalendar:show-day-names
+- name: notify::show-heading
+  derived_from:
+    property: show-heading
+  js_event: notify::show-heading
+  trigger:
+    property: show-heading
+    values:
+    - false
+    - true
+    - false
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkCalendar:show-heading
+- name: notify::show-week-numbers
+  derived_from:
+    property: show-week-numbers
+  js_event: notify::show-week-numbers
+  trigger:
+    property: show-week-numbers
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkCalendar:show-week-numbers
+methods:
+- name: get_day
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "day")
+  provenance:
+  - origin: probe
+    ref: equals property day
+- name: get_month
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "month")
+  provenance:
+  - origin: probe
+    ref: equals property month
+- name: get_show_day_names
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "show-day-names")
+  provenance:
+  - origin: probe
+    ref: equals property show-day-names
+- name: get_show_heading
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "show-heading")
+  provenance:
+  - origin: probe
+    ref: equals property show-heading
+- name: get_show_week_numbers
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "show-week-numbers")
+  provenance:
+  - origin: probe
+    ref: equals property show-week-numbers
+- name: get_year
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "year")
+  provenance:
+  - origin: probe
+    ref: equals property year
+- name: set_day
+  dispatch: dynamic
+  args:
+  - 18
+  expect: h.get(o, "day") == V::I64(18)
+  provenance:
+  - origin: probe
+    ref: 'set then read property day: exact'
+- name: set_month
+  dispatch: dynamic
+  args:
+  - 10
+  expect: h.get(o, "month") == V::I64(10)
+  provenance:
+  - origin: probe
+    ref: 'set then read property month: exact'
+- name: set_show_day_names
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "show-day-names") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property show-day-names: exact'
+- name: set_show_heading
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "show-heading") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property show-heading: exact'
+- name: set_show_week_numbers
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "show-week-numbers") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property show-week-numbers: exact'
+- name: set_year
+  dispatch: dynamic
+  args:
+  - 2027
+  expect: h.get(o, "year") == V::I64(2027)
+  provenance:
+  - origin: probe
+    ref: 'set then read property year: exact'
+bindings:
+- name: show-day-names
+  direction: two_way
+  property: show-day-names
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::show-day-names
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkCalendar:show-day-names is writable, scalar and notifies; the renderer compares before set'
+- name: show-heading
+  direction: two_way
+  property: show-heading
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::show-heading
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkCalendar:show-heading is writable, scalar and notifies; the renderer compares before set'
+- name: show-week-numbers
+  direction: two_way
+  property: show-week-numbers
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::show-week-numbers
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkCalendar:show-week-numbers is writable, scalar and notifies; the renderer compares before set'

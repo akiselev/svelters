@@ -1,0 +1,1059 @@
+properties:
+- name: activates-default
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: buffer
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: enable-emoji-completion
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: extra-menu
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: has-frame
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: im-module
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: input-purpose
+  sample: alpha
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: invisible-char-set
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: max-length
+  sample: 1
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: menu-entry-icon-primary-text
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: menu-entry-icon-secondary-text
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: overwrite-mode
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: placeholder-text
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: primary-icon-activatable
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: primary-icon-name
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: primary-icon-sensitive
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: primary-icon-tooltip-markup
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: primary-icon-tooltip-text
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: progress-fraction
+  sample: 1.0
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: progress-pulse-step
+  sample: 1.0
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: secondary-icon-activatable
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: secondary-icon-name
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: secondary-icon-sensitive
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: secondary-icon-tooltip-markup
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: secondary-icon-tooltip-text
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: show-emoji-icon
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: truncate-multiline
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: visibility
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: notify::activates-default
+  derived_from:
+    property: activates-default
+  js_event: notify::activates-default
+  trigger:
+    property: activates-default
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkEntry:activates-default
+- name: notify::enable-emoji-completion
+  derived_from:
+    property: enable-emoji-completion
+  js_event: notify::enable-emoji-completion
+  trigger:
+    property: enable-emoji-completion
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkEntry:enable-emoji-completion
+- name: notify::has-frame
+  derived_from:
+    property: has-frame
+  js_event: notify::has-frame
+  trigger:
+    property: has-frame
+    values:
+    - false
+    - true
+    - false
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkEntry:has-frame
+- name: notify::input-purpose
+  derived_from:
+    property: input-purpose
+  js_event: notify::input-purpose
+  trigger:
+    property: input-purpose
+    values:
+    - alpha
+    - free-form
+    - alpha
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkEntry:input-purpose
+- name: notify::invisible-char-set
+  derived_from:
+    property: invisible-char-set
+  js_event: notify::invisible-char-set
+  trigger:
+    property: invisible-char-set
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkEntry:invisible-char-set
+- name: notify::max-length
+  derived_from:
+    property: max-length
+  js_event: notify::max-length
+  trigger:
+    property: max-length
+    values:
+    - 1
+    - 0
+    - 1
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkEntry:max-length
+- name: notify::overwrite-mode
+  derived_from:
+    property: overwrite-mode
+  js_event: notify::overwrite-mode
+  trigger:
+    property: overwrite-mode
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkEntry:overwrite-mode
+- name: notify::primary-icon-activatable
+  derived_from:
+    property: primary-icon-activatable
+  js_event: notify::primary-icon-activatable
+  trigger:
+    property: primary-icon-activatable
+    values:
+    - false
+    - true
+    - false
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkEntry:primary-icon-activatable
+- name: notify::primary-icon-sensitive
+  derived_from:
+    property: primary-icon-sensitive
+  js_event: notify::primary-icon-sensitive
+  trigger:
+    property: primary-icon-sensitive
+    values:
+    - false
+    - true
+    - false
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkEntry:primary-icon-sensitive
+- name: notify::progress-fraction
+  derived_from:
+    property: progress-fraction
+  js_event: notify::progress-fraction
+  trigger:
+    property: progress-fraction
+    values:
+    - 1.0
+    - 0.0
+    - 1.0
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkEntry:progress-fraction
+- name: notify::progress-pulse-step
+  derived_from:
+    property: progress-pulse-step
+  js_event: notify::progress-pulse-step
+  trigger:
+    property: progress-pulse-step
+    values:
+    - 1.0
+    - 0.0
+    - 1.0
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkEntry:progress-pulse-step
+- name: notify::secondary-icon-activatable
+  derived_from:
+    property: secondary-icon-activatable
+  js_event: notify::secondary-icon-activatable
+  trigger:
+    property: secondary-icon-activatable
+    values:
+    - false
+    - true
+    - false
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkEntry:secondary-icon-activatable
+- name: notify::secondary-icon-sensitive
+  derived_from:
+    property: secondary-icon-sensitive
+  js_event: notify::secondary-icon-sensitive
+  trigger:
+    property: secondary-icon-sensitive
+    values:
+    - false
+    - true
+    - false
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkEntry:secondary-icon-sensitive
+- name: notify::show-emoji-icon
+  derived_from:
+    property: show-emoji-icon
+  js_event: notify::show-emoji-icon
+  trigger:
+    property: show-emoji-icon
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkEntry:show-emoji-icon
+- name: notify::truncate-multiline
+  derived_from:
+    property: truncate-multiline
+  js_event: notify::truncate-multiline
+  trigger:
+    property: truncate-multiline
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkEntry:truncate-multiline
+- name: notify::visibility
+  derived_from:
+    property: visibility
+  js_event: notify::visibility
+  trigger:
+    property: visibility
+    values:
+    - false
+    - true
+    - false
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkEntry:visibility
+methods:
+- name: get_activates_default
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "activates-default")
+  provenance:
+  - origin: probe
+    ref: equals property activates-default
+- name: get_current_icon_drag_source
+  dispatch: dynamic
+  args: []
+  expect: r == V::I64(-1)
+  provenance:
+  - origin: probe
+    ref: called on a new instance, returned -1
+- name: get_has_frame
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "has-frame")
+  provenance:
+  - origin: probe
+    ref: equals property has-frame
+- name: get_input_purpose
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "input-purpose")
+  provenance:
+  - origin: probe
+    ref: equals property input-purpose
+- name: get_max_length
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "max-length")
+  provenance:
+  - origin: probe
+    ref: equals property max-length
+- name: get_overwrite_mode
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "overwrite-mode")
+  provenance:
+  - origin: probe
+    ref: equals property overwrite-mode
+- name: get_placeholder_text
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "placeholder-text")
+  provenance:
+  - origin: probe
+    ref: equals property placeholder-text
+- name: get_progress_fraction
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "progress-fraction")
+  provenance:
+  - origin: probe
+    ref: equals property progress-fraction
+- name: get_progress_pulse_step
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "progress-pulse-step")
+  provenance:
+  - origin: probe
+    ref: equals property progress-pulse-step
+- name: get_text_length
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "text-length")
+  provenance:
+  - origin: probe
+    ref: equals property text-length
+- name: get_visibility
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "visibility")
+  provenance:
+  - origin: probe
+    ref: equals property visibility
+- name: set_activates_default
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "activates-default") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property activates-default: exact'
+- name: set_has_frame
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "has-frame") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property has-frame: exact'
+- name: set_input_purpose
+  dispatch: dynamic
+  args:
+  - alpha
+  expect: h.get(o, "input-purpose") == V::Str("alpha".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property input-purpose: exact'
+- name: set_max_length
+  dispatch: dynamic
+  args:
+  - 1
+  expect: h.get(o, "max-length") == V::I64(1)
+  provenance:
+  - origin: probe
+    ref: 'set then read property max-length: exact'
+- name: set_overwrite_mode
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "overwrite-mode") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property overwrite-mode: exact'
+- name: set_placeholder_text
+  dispatch: dynamic
+  args:
+  - svl probe
+  expect: h.get(o, "placeholder-text") == V::Str("svl probe".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property placeholder-text: exact'
+- name: set_progress_fraction
+  dispatch: dynamic
+  args:
+  - 1.0
+  expect: h.get(o, "progress-fraction") == V::F64(1.0)
+  provenance:
+  - origin: probe
+    ref: 'set then read property progress-fraction: exact'
+- name: set_progress_pulse_step
+  dispatch: dynamic
+  args:
+  - 1.0
+  expect: h.get(o, "progress-pulse-step") == V::F64(1.0)
+  provenance:
+  - origin: probe
+    ref: 'set then read property progress-pulse-step: exact'
+- name: set_visibility
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "visibility") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property visibility: exact'
+bindings:
+- name: activates-default
+  direction: two_way
+  property: activates-default
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::activates-default
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkEntry:activates-default is writable, scalar and notifies; the renderer compares before set'
+- name: enable-emoji-completion
+  direction: two_way
+  property: enable-emoji-completion
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::enable-emoji-completion
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkEntry:enable-emoji-completion is writable, scalar and notifies; the renderer compares before set'
+- name: has-frame
+  direction: two_way
+  property: has-frame
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::has-frame
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkEntry:has-frame is writable, scalar and notifies; the renderer compares before set'
+- name: input-purpose
+  direction: two_way
+  property: input-purpose
+  type:
+    ref: enum<svelters-api:v1:type:gtk:Gtk:InputPurpose>
+    nullable: false
+  change:
+    signal: notify::input-purpose
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkEntry:input-purpose is writable, scalar and notifies; the renderer compares before set'
+- name: invisible-char-set
+  direction: two_way
+  property: invisible-char-set
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::invisible-char-set
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkEntry:invisible-char-set is writable, scalar and notifies; the renderer compares before set'
+- name: max-length
+  direction: two_way
+  property: max-length
+  type:
+    ref: i32
+    nullable: false
+  change:
+    signal: notify::max-length
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkEntry:max-length is writable, scalar and notifies; the renderer compares before set'
+- name: overwrite-mode
+  direction: two_way
+  property: overwrite-mode
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::overwrite-mode
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkEntry:overwrite-mode is writable, scalar and notifies; the renderer compares before set'
+- name: primary-icon-activatable
+  direction: two_way
+  property: primary-icon-activatable
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::primary-icon-activatable
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkEntry:primary-icon-activatable is writable, scalar and notifies; the renderer compares before set'
+- name: primary-icon-sensitive
+  direction: two_way
+  property: primary-icon-sensitive
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::primary-icon-sensitive
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkEntry:primary-icon-sensitive is writable, scalar and notifies; the renderer compares before set'
+- name: progress-fraction
+  direction: two_way
+  property: progress-fraction
+  type:
+    ref: f64
+    nullable: false
+  change:
+    signal: notify::progress-fraction
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkEntry:progress-fraction is writable, scalar and notifies; the renderer compares before set'
+- name: progress-pulse-step
+  direction: two_way
+  property: progress-pulse-step
+  type:
+    ref: f64
+    nullable: false
+  change:
+    signal: notify::progress-pulse-step
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkEntry:progress-pulse-step is writable, scalar and notifies; the renderer compares before set'
+- name: secondary-icon-activatable
+  direction: two_way
+  property: secondary-icon-activatable
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::secondary-icon-activatable
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkEntry:secondary-icon-activatable is writable, scalar and notifies; the renderer compares before set'
+- name: secondary-icon-sensitive
+  direction: two_way
+  property: secondary-icon-sensitive
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::secondary-icon-sensitive
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkEntry:secondary-icon-sensitive is writable, scalar and notifies; the renderer compares before set'
+- name: show-emoji-icon
+  direction: two_way
+  property: show-emoji-icon
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::show-emoji-icon
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkEntry:show-emoji-icon is writable, scalar and notifies; the renderer compares before set'
+- name: truncate-multiline
+  direction: two_way
+  property: truncate-multiline
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::truncate-multiline
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkEntry:truncate-multiline is writable, scalar and notifies; the renderer compares before set'
+- name: visibility
+  direction: two_way
+  property: visibility
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::visibility
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkEntry:visibility is writable, scalar and notifies; the renderer compares before set'

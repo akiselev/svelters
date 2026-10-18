@@ -1,0 +1,52 @@
+verify_subject:
+  tag: text-view
+properties:
+- name: hadjustment
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: hscroll-policy
+  sample: natural
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: vadjustment
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: vscroll-policy
+  sample: natural
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+methods:
+- name: get_hscroll_policy
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "hscroll-policy")
+  provenance:
+  - origin: probe
+    ref: equals property hscroll-policy
+- name: get_vscroll_policy
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "vscroll-policy")
+  provenance:
+  - origin: probe
+    ref: equals property vscroll-policy
+- name: set_hscroll_policy
+  dispatch: dynamic
+  args:
+  - natural
+  expect: h.get(o, "hscroll-policy") == V::Str("natural".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property hscroll-policy: exact'
+- name: set_vscroll_policy
+  dispatch: dynamic
+  args:
+  - natural
+  expect: h.get(o, "vscroll-policy") == V::Str("natural".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property vscroll-policy: exact'

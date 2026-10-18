@@ -607,6 +607,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.8",
       "unsupported_reason": null
     },
     {
@@ -785,6 +786,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "5cafcfbeb3b17818",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "called on a new instance, returned -1"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == V::I64(-1)",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_baseline",
       "invocation": {
         "dev": "introspected",
@@ -800,9 +819,28 @@
         "ownership": "borrowed",
         "type": "i32"
       },
+      "since": "4.12",
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "340265930c0ced10",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property can-focus"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"can-focus\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_can_focus",
       "invocation": {
         "dev": "introspected",
@@ -821,6 +859,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "49fb1fb68d5bf0a7",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property can-target"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"can-target\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_can_target",
       "invocation": {
         "dev": "introspected",
@@ -839,6 +895,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "ef04add29e764fc2",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "called on a new instance, returned True"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == V::Bool(true)",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_child_visible",
       "invocation": {
         "dev": "introspected",
@@ -898,6 +972,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.10",
       "unsupported_reason": null
     },
     {
@@ -919,6 +994,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "cb317b0c90102a71",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property css-name"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"css-name\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_css_name",
       "invocation": {
         "dev": "introspected",
@@ -955,6 +1048,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "97f513af588cfdda",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "called on a new instance, returned 'ltr'"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == V::Str(\"ltr\".into())",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_direction",
       "invocation": {
         "dev": "introspected",
@@ -1027,6 +1138,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "684d0d0686156b98",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property focus-on-click"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"focus-on-click\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_focus_on_click",
       "invocation": {
         "dev": "introspected",
@@ -1045,6 +1174,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "98f7f1b60bb8fd30",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property focusable"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"focusable\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_focusable",
       "invocation": {
         "dev": "introspected",
@@ -1118,6 +1265,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "f1bb0e9d75e50323",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property halign"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"halign\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_halign",
       "invocation": {
         "dev": "introspected",
@@ -1136,6 +1301,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "1a85f321c5c29534",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property has-tooltip"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"has-tooltip\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_has_tooltip",
       "invocation": {
         "dev": "introspected",
@@ -1154,6 +1337,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "59237f32ee3b4344",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "called on a new instance, returned 0"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == V::I64(0)",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_height",
       "invocation": {
         "dev": "introspected",
@@ -1172,6 +1373,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "a2ee4a8cc9596482",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property hexpand"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"hexpand\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_hexpand",
       "invocation": {
         "dev": "introspected",
@@ -1190,6 +1409,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "0f8fffcaf8ede0fc",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property hexpand-set"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"hexpand-set\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_hexpand_set",
       "invocation": {
         "dev": "introspected",
@@ -1244,6 +1481,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "7c4e2f0ba99c02e5",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property limit-events"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"limit-events\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_limit_events",
       "invocation": {
         "dev": "introspected",
@@ -1259,9 +1514,28 @@
         "ownership": "borrowed",
         "type": "bool"
       },
+      "since": "4.18",
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "02a51f5f2953deea",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "called on a new instance, returned False"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == V::Bool(false)",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_mapped",
       "invocation": {
         "dev": "introspected",
@@ -1280,6 +1554,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "984a3db88b237d91",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property margin-bottom"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"margin-bottom\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_margin_bottom",
       "invocation": {
         "dev": "introspected",
@@ -1298,6 +1590,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "f158a68b50d2fc5e",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property margin-end"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"margin-end\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_margin_end",
       "invocation": {
         "dev": "introspected",
@@ -1316,6 +1626,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "69dde407bd5d1b8a",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property margin-start"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"margin-start\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_margin_start",
       "invocation": {
         "dev": "introspected",
@@ -1334,6 +1662,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "cc88823ab579e5e4",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property margin-top"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"margin-top\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_margin_top",
       "invocation": {
         "dev": "introspected",
@@ -1406,6 +1752,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "02eff3c4583d9d32",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property opacity"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"opacity\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_opacity",
       "invocation": {
         "dev": "introspected",
@@ -1424,6 +1788,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "0e064a8e79d0cf45",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property overflow"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"overflow\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_overflow",
       "invocation": {
         "dev": "introspected",
@@ -1547,6 +1929,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "ee30fb6a2a50bd11",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "called on a new instance, returned False"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == V::Bool(false)",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_realized",
       "invocation": {
         "dev": "introspected",
@@ -1565,6 +1965,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "a7822ba60cbd31df",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property receives-default"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"receives-default\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_receives_default",
       "invocation": {
         "dev": "introspected",
@@ -1583,6 +2001,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "68b9cec901f593c0",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "called on a new instance, returned 'constant-size'"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == V::Str(\"constant-size\".into())",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_request_mode",
       "invocation": {
         "dev": "introspected",
@@ -1619,6 +2055,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "ff74228d9eb79c1d",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property scale-factor"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"scale-factor\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_scale_factor",
       "invocation": {
         "dev": "introspected",
@@ -1637,6 +2091,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "80ff8c79d167a1f1",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property sensitive"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"sensitive\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_sensitive",
       "invocation": {
         "dev": "introspected",
@@ -1802,6 +2274,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "64bf1d1f05d185be",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property tooltip-markup"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"tooltip-markup\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_tooltip_markup",
       "invocation": {
         "dev": "introspected",
@@ -1820,6 +2310,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "71f6d96bfcfd3648",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property tooltip-text"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"tooltip-text\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_tooltip_text",
       "invocation": {
         "dev": "introspected",
@@ -1838,6 +2346,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "cb65d88b32c1d8c8",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property valign"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"valign\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_valign",
       "invocation": {
         "dev": "introspected",
@@ -1856,6 +2382,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "e7ae494f3bdbcd29",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property vexpand"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"vexpand\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_vexpand",
       "invocation": {
         "dev": "introspected",
@@ -1874,6 +2418,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "32d4f649d00268cc",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property vexpand-set"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"vexpand-set\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_vexpand_set",
       "invocation": {
         "dev": "introspected",
@@ -1892,6 +2454,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "50a462aadca37770",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property visible"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"visible\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_visible",
       "invocation": {
         "dev": "introspected",
@@ -1910,6 +2490,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "c2977f55ad3e4c9e",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "called on a new instance, returned 0"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == V::I64(0)",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_width",
       "invocation": {
         "dev": "introspected",
@@ -1986,6 +2584,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "eeacc493278aff9f",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "called on a new instance, returned False"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == V::Bool(false)",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:has_default",
       "invocation": {
         "dev": "introspected",
@@ -2004,6 +2620,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "4f207ea662f359af",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "called on a new instance, returned False"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == V::Bool(false)",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:has_focus",
       "invocation": {
         "dev": "introspected",
@@ -2022,6 +2656,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "01205d47a1243ab7",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "called on a new instance, returned False"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == V::Bool(false)",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:has_visible_focus",
       "invocation": {
         "dev": "introspected",
@@ -2220,6 +2872,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "ee5a520cc359b282",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "called on a new instance, returned False"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == V::Bool(false)",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:is_drawable",
       "invocation": {
         "dev": "introspected",
@@ -2238,6 +2908,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "a4a8c2722aa594bb",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "called on a new instance, returned False"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == V::Bool(false)",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:is_focus",
       "invocation": {
         "dev": "introspected",
@@ -2256,6 +2944,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "c68b3bf7b54b81c0",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property sensitive"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"sensitive\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:is_sensitive",
       "invocation": {
         "dev": "introspected",
@@ -2274,6 +2980,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "c64435f4aa3d1b1c",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property visible"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"visible\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:is_visible",
       "invocation": {
         "dev": "introspected",
@@ -2717,6 +3441,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "1f65ca2782b6e60a",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property can-focus: exact"
+          }
+        ]
+      },
+      "args": [
+        false
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"can-focus\") == V::Bool(false)",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_can_focus",
       "invocation": {
         "dev": "introspected",
@@ -2743,6 +3487,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "1c646b39a32dfca2",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property can-target: exact"
+          }
+        ]
+      },
+      "args": [
+        false
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"can-target\") == V::Bool(false)",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_can_target",
       "invocation": {
         "dev": "introspected",
@@ -3030,6 +3794,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "ffc1b9be7f28c8a3",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property halign: exact"
+          }
+        ]
+      },
+      "args": [
+        "start"
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"halign\") == V::Str(\"start\".into())",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_halign",
       "invocation": {
         "dev": "introspected",
@@ -3056,6 +3840,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "b6a3f84a39ca5930",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property has-tooltip: exact"
+          }
+        ]
+      },
+      "args": [
+        true
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"has-tooltip\") == V::Bool(true)",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_has_tooltip",
       "invocation": {
         "dev": "introspected",
@@ -3082,6 +3886,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "49cf55c2ebe061c5",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property hexpand: exact"
+          }
+        ]
+      },
+      "args": [
+        true
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"hexpand\") == V::Bool(true)",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_hexpand",
       "invocation": {
         "dev": "introspected",
@@ -3108,6 +3932,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "f333fe2e9fd5d53a",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property hexpand-set: exact"
+          }
+        ]
+      },
+      "args": [
+        true
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"hexpand-set\") == V::Bool(true)",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_hexpand_set",
       "invocation": {
         "dev": "introspected",
@@ -3160,6 +4004,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "1e346d8293623e9d",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property limit-events: exact"
+          }
+        ]
+      },
+      "args": [
+        true
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"limit-events\") == V::Bool(true)",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_limit_events",
       "invocation": {
         "dev": "introspected",
@@ -3183,9 +4047,30 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.18",
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "114e3307605db2c8",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property margin-bottom: exact"
+          }
+        ]
+      },
+      "args": [
+        1
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"margin-bottom\") == V::I64(1)",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_margin_bottom",
       "invocation": {
         "dev": "introspected",
@@ -3212,6 +4097,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "34bb63a6ad92ffbf",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property margin-end: exact"
+          }
+        ]
+      },
+      "args": [
+        1
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"margin-end\") == V::I64(1)",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_margin_end",
       "invocation": {
         "dev": "introspected",
@@ -3238,6 +4143,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "15e3e903b5eaf0a3",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property margin-start: exact"
+          }
+        ]
+      },
+      "args": [
+        1
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"margin-start\") == V::I64(1)",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_margin_start",
       "invocation": {
         "dev": "introspected",
@@ -3264,6 +4189,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "da6e32b31972ca78",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property margin-top: exact"
+          }
+        ]
+      },
+      "args": [
+        1
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"margin-top\") == V::I64(1)",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_margin_top",
       "invocation": {
         "dev": "introspected",
@@ -3290,6 +4235,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "f69ddc997c1ab477",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property name: exact"
+          }
+        ]
+      },
+      "args": [
+        "svl probe"
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"name\") == V::Str(\"svl probe\".into())",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_name",
       "invocation": {
         "dev": "introspected",
@@ -3342,6 +4307,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "0d9dc5ef289a0b91",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property overflow: exact"
+          }
+        ]
+      },
+      "args": [
+        "hidden"
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"overflow\") == V::Str(\"hidden\".into())",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_overflow",
       "invocation": {
         "dev": "introspected",
@@ -3394,6 +4379,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "eb21d7b31339cc1d",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property receives-default: exact"
+          }
+        ]
+      },
+      "args": [
+        true
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"receives-default\") == V::Bool(true)",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_receives_default",
       "invocation": {
         "dev": "introspected",
@@ -3420,6 +4425,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "6a020016fbedaf1b",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property sensitive: exact"
+          }
+        ]
+      },
+      "args": [
+        false
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"sensitive\") == V::Bool(false)",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_sensitive",
       "invocation": {
         "dev": "introspected",
@@ -3512,6 +4537,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "e0dbdd2ebc7e514b",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property tooltip-markup: exact"
+          }
+        ]
+      },
+      "args": [
+        "svl probe"
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"tooltip-markup\") == V::Str(\"svl probe\".into())",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_tooltip_markup",
       "invocation": {
         "dev": "introspected",
@@ -3538,6 +4583,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "72bb14476442634d",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property tooltip-text: exact"
+          }
+        ]
+      },
+      "args": [
+        "svl probe"
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"tooltip-text\") == V::Str(\"svl probe\".into())",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_tooltip_text",
       "invocation": {
         "dev": "introspected",
@@ -3564,6 +4629,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "91c83f8a53da629e",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property valign: exact"
+          }
+        ]
+      },
+      "args": [
+        "start"
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"valign\") == V::Str(\"start\".into())",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_valign",
       "invocation": {
         "dev": "introspected",
@@ -3590,6 +4675,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "9c41031e44fabbda",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property vexpand: exact"
+          }
+        ]
+      },
+      "args": [
+        true
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"vexpand\") == V::Bool(true)",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_vexpand",
       "invocation": {
         "dev": "introspected",
@@ -3616,6 +4721,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "3d9001aef6cf9454",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property vexpand-set: exact"
+          }
+        ]
+      },
+      "args": [
+        true
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"vexpand-set\") == V::Bool(true)",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_vexpand_set",
       "invocation": {
         "dev": "introspected",
@@ -3642,6 +4767,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "a511dd4269e9b932",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property visible: exact"
+          }
+        ]
+      },
+      "args": [
+        false
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"visible\") == V::Bool(false)",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_visible",
       "invocation": {
         "dev": "introspected",
@@ -3970,6 +5115,7 @@
         "origin": "runtime",
         "owner": "GtkWidget"
       },
+      "sample": false,
       "type": {
         "gtype": "gboolean",
         "native": "gboolean",
@@ -3987,6 +5133,19 @@
       "accessors": {
         "get": "gtk_widget_get_can_target",
         "set": "gtk_widget_set_can_target"
+      },
+      "annotated": {
+        "fields": [
+          "sample"
+        ],
+        "fp": "5c26e6bdf1f87911",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip exact; notify fired"
+          }
+        ]
       },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:can-target",
@@ -4010,6 +5169,7 @@
         "origin": "runtime",
         "owner": "GtkWidget"
       },
+      "sample": false,
       "type": {
         "gtype": "gboolean",
         "native": "gboolean",
@@ -4157,6 +5317,19 @@
         "get": "gtk_widget_get_focus_on_click",
         "set": "gtk_widget_set_focus_on_click"
       },
+      "annotated": {
+        "fields": [
+          "sample"
+        ],
+        "fp": "8b70c1552f72c7f4",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip exact; notify fired"
+          }
+        ]
+      },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:focus-on-click",
       "invocation": "reflected",
@@ -4179,6 +5352,7 @@
         "origin": "runtime",
         "owner": "GtkWidget"
       },
+      "sample": false,
       "type": {
         "gtype": "gboolean",
         "native": "gboolean",
@@ -4224,6 +5398,7 @@
         "origin": "runtime",
         "owner": "GtkWidget"
       },
+      "sample": true,
       "type": {
         "gtype": "gboolean",
         "native": "gboolean",
@@ -4269,6 +5444,7 @@
         "origin": "runtime",
         "owner": "GtkWidget"
       },
+      "sample": "start",
       "type": {
         "gtype": "GtkAlign",
         "native": null,
@@ -4365,6 +5541,19 @@
         "get": "gtk_widget_get_has_tooltip",
         "set": "gtk_widget_set_has_tooltip"
       },
+      "annotated": {
+        "fields": [
+          "sample"
+        ],
+        "fp": "552da5cbb2acbf96",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip exact; notify fired"
+          }
+        ]
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:has-tooltip",
       "invocation": "reflected",
@@ -4387,6 +5576,7 @@
         "origin": "runtime",
         "owner": "GtkWidget"
       },
+      "sample": true,
       "type": {
         "gtype": "gboolean",
         "native": "gboolean",
@@ -4435,6 +5625,7 @@
         "origin": "runtime",
         "owner": "GtkWidget"
       },
+      "sample": 0,
       "type": {
         "gtype": "gint",
         "native": "gint",
@@ -4480,6 +5671,7 @@
         "origin": "runtime",
         "owner": "GtkWidget"
       },
+      "sample": true,
       "type": {
         "gtype": "gboolean",
         "native": "gboolean",
@@ -4497,6 +5689,19 @@
       "accessors": {
         "get": "gtk_widget_get_hexpand_set",
         "set": "gtk_widget_set_hexpand_set"
+      },
+      "annotated": {
+        "fields": [
+          "sample"
+        ],
+        "fp": "e47346eeda86746a",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip exact; notify fired"
+          }
+        ]
       },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:hexpand-set",
@@ -4520,6 +5725,7 @@
         "origin": "runtime",
         "owner": "GtkWidget"
       },
+      "sample": true,
       "type": {
         "gtype": "gboolean",
         "native": "gboolean",
@@ -4537,6 +5743,17 @@
       "accessors": {
         "get": "gtk_widget_get_layout_manager",
         "set": "gtk_widget_set_layout_manager"
+      },
+      "annotated": {
+        "fields": [],
+        "fp": "84a20d5467527259",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip exact; notify fired"
+          }
+        ]
       },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:layout-manager",
@@ -4578,6 +5795,19 @@
         "get": "gtk_widget_get_limit_events",
         "set": "gtk_widget_set_limit_events"
       },
+      "annotated": {
+        "fields": [
+          "sample"
+        ],
+        "fp": "e7ee2e4d0cb49877",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip exact; notify fired"
+          }
+        ]
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:limit-events",
       "invocation": "reflected",
@@ -4600,6 +5830,7 @@
         "origin": "runtime",
         "owner": "GtkWidget"
       },
+      "sample": true,
       "since": "4.18",
       "type": {
         "gtype": "gboolean",
@@ -4649,6 +5880,7 @@
         "origin": "runtime",
         "owner": "GtkWidget"
       },
+      "sample": 1,
       "type": {
         "gtype": "gint",
         "native": "gint",
@@ -4697,6 +5929,7 @@
         "origin": "runtime",
         "owner": "GtkWidget"
       },
+      "sample": 1,
       "type": {
         "gtype": "gint",
         "native": "gint",
@@ -4745,6 +5978,7 @@
         "origin": "runtime",
         "owner": "GtkWidget"
       },
+      "sample": 1,
       "type": {
         "gtype": "gint",
         "native": "gint",
@@ -4793,6 +6027,7 @@
         "origin": "runtime",
         "owner": "GtkWidget"
       },
+      "sample": 1,
       "type": {
         "gtype": "gint",
         "native": "gint",
@@ -4837,6 +6072,7 @@
         "origin": "runtime",
         "owner": "GtkWidget"
       },
+      "sample": "svl probe",
       "type": {
         "gtype": "gchararray",
         "native": "gchar*",
@@ -4906,6 +6142,19 @@
         "get": "gtk_widget_get_overflow",
         "set": "gtk_widget_set_overflow"
       },
+      "annotated": {
+        "fields": [
+          "sample"
+        ],
+        "fp": "f66765832f554162",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip exact; notify fired"
+          }
+        ]
+      },
       "default": "visible",
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:overflow",
       "invocation": "reflected",
@@ -4928,6 +6177,7 @@
         "origin": "runtime",
         "owner": "GtkWidget"
       },
+      "sample": "hidden",
       "type": {
         "gtype": "GtkOverflow",
         "native": null,
@@ -4985,6 +6235,19 @@
         "get": "gtk_widget_get_receives_default",
         "set": "gtk_widget_set_receives_default"
       },
+      "annotated": {
+        "fields": [
+          "sample"
+        ],
+        "fp": "c8157d4d1f9d557f",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip exact; notify fired"
+          }
+        ]
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:receives-default",
       "invocation": "reflected",
@@ -5007,6 +6270,7 @@
         "origin": "runtime",
         "owner": "GtkWidget"
       },
+      "sample": true,
       "type": {
         "gtype": "gboolean",
         "native": "gboolean",
@@ -5132,6 +6396,7 @@
         "origin": "runtime",
         "owner": "GtkWidget"
       },
+      "sample": false,
       "type": {
         "gtype": "gboolean",
         "native": "gboolean",
@@ -5177,6 +6442,7 @@
         "origin": "runtime",
         "owner": "GtkWidget"
       },
+      "sample": "svl probe",
       "type": {
         "gtype": "gchararray",
         "native": "gchar*",
@@ -5222,6 +6488,7 @@
         "origin": "runtime",
         "owner": "GtkWidget"
       },
+      "sample": "svl probe",
       "type": {
         "gtype": "gchararray",
         "native": "gchar*",
@@ -5267,6 +6534,7 @@
         "origin": "runtime",
         "owner": "GtkWidget"
       },
+      "sample": "start",
       "type": {
         "gtype": "GtkAlign",
         "native": null,
@@ -5312,6 +6580,7 @@
         "origin": "runtime",
         "owner": "GtkWidget"
       },
+      "sample": true,
       "type": {
         "gtype": "gboolean",
         "native": "gboolean",
@@ -5329,6 +6598,19 @@
       "accessors": {
         "get": "gtk_widget_get_vexpand_set",
         "set": "gtk_widget_set_vexpand_set"
+      },
+      "annotated": {
+        "fields": [
+          "sample"
+        ],
+        "fp": "dd099e30b8feaa76",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip exact; notify fired"
+          }
+        ]
       },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:vexpand-set",
@@ -5352,6 +6634,7 @@
         "origin": "runtime",
         "owner": "GtkWidget"
       },
+      "sample": true,
       "type": {
         "gtype": "gboolean",
         "native": "gboolean",
@@ -5397,6 +6680,7 @@
         "origin": "runtime",
         "owner": "GtkWidget"
       },
+      "sample": false,
       "type": {
         "gtype": "gboolean",
         "native": "gboolean",
@@ -5445,6 +6729,7 @@
         "origin": "runtime",
         "owner": "GtkWidget"
       },
+      "sample": 0,
       "type": {
         "gtype": "gint",
         "native": "gint",
@@ -5866,6 +7151,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
+    "inferred": "inferred/gtk/Widget.yaml",
     "overrides": "overrides/gtk/Widget.yaml",
     "runtime": {
       "gtk": "4.22.4",

@@ -1,0 +1,292 @@
+properties:
+- name: can-shrink
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: has-frame
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: icon-name
+  sample: edit-copy
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: label
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: use-underline
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: clicked
+  handler_result: none
+  sync_required: false
+  provenance:
+  - origin: runtime
+    ref: returns void, run-first
+  - origin: probe
+    ref: action signal, emitted and delivered
+- name: notify::can-shrink
+  derived_from:
+    property: can-shrink
+  js_event: notify::can-shrink
+  trigger:
+    property: can-shrink
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkButton:can-shrink
+- name: notify::has-frame
+  derived_from:
+    property: has-frame
+  js_event: notify::has-frame
+  trigger:
+    property: has-frame
+    values:
+    - false
+    - true
+    - false
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkButton:has-frame
+- name: notify::use-underline
+  derived_from:
+    property: use-underline
+  js_event: notify::use-underline
+  trigger:
+    property: use-underline
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkButton:use-underline
+methods:
+- name: get_can_shrink
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "can-shrink")
+  provenance:
+  - origin: probe
+    ref: equals property can-shrink
+- name: get_has_frame
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "has-frame")
+  provenance:
+  - origin: probe
+    ref: equals property has-frame
+- name: get_icon_name
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "icon-name")
+  provenance:
+  - origin: probe
+    ref: equals property icon-name
+- name: get_label
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "label")
+  provenance:
+  - origin: probe
+    ref: equals property label
+- name: get_use_underline
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "use-underline")
+  provenance:
+  - origin: probe
+    ref: equals property use-underline
+- name: set_can_shrink
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "can-shrink") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property can-shrink: exact'
+- name: set_has_frame
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "has-frame") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property has-frame: exact'
+- name: set_icon_name
+  dispatch: dynamic
+  args:
+  - edit-copy
+  expect: h.get(o, "icon-name") == V::Str("edit-copy".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property icon-name: exact'
+- name: set_label
+  dispatch: dynamic
+  args:
+  - svl probe
+  expect: h.get(o, "label") == V::Str("svl probe".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property label: exact'
+- name: set_use_underline
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "use-underline") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property use-underline: exact'
+children:
+  policy: single_child
+  default_slot: child
+  slots:
+  - name: child
+    content: widget
+    accepts:
+    - Gtk.Widget
+    route_by_kind: false
+    cardinality: one
+    order: none
+    default:
+      kind: none
+    on_remove: empty
+    attrs: []
+    requires: []
+    ops:
+      get:
+        native: GtkButton::get_child() const
+      set:
+        native: GtkButton::set_child(GtkWidget*)
+        args:
+        - child
+        effects:
+          child: parented
+          old: unparented
+      remove:
+        native: GtkButton::set_child(GtkWidget*)
+        args:
+        - null
+        effects:
+          child: unparented
+    verify: {}
+    provenance:
+    - origin: probe
+      ref: set parents the child (direct); old child finalized on replace; set(None) unparents
+bindings:
+- name: can-shrink
+  direction: two_way
+  property: can-shrink
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::can-shrink
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkButton:can-shrink is writable, scalar and notifies; the renderer compares before set'
+- name: has-frame
+  direction: two_way
+  property: has-frame
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::has-frame
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkButton:has-frame is writable, scalar and notifies; the renderer compares before set'
+- name: use-underline
+  direction: two_way
+  property: use-underline
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::use-underline
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkButton:use-underline is writable, scalar and notifies; the renderer compares before set'

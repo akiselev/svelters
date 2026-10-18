@@ -126,6 +126,30 @@ fn slot_box_children() {
     });
 }
 
+/// slot Button.child: probe: set parents the child (direct); old child finalized on replace; set(None) unparents
+#[test]
+fn slot_button_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("button");
+        let a = h.create("label");
+        let b = h.create("label");
+        h.insert(parent, a, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::Button>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
+        h.insert(parent, b, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::Button>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Button>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
+        assert!(h.widget(a).parent().is_none(), "replaced child is released");
+        h.remove(parent, b).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Button>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in child");
+        h.remove(parent, a).unwrap_err();
+        h.insert(parent, a, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::Button>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
+        h.remove(parent, a).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::Button>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
+    });
+}
+
 /// slot CenterBox.center: gir: gtk_center_box_set_center_widget
 #[test]
 fn slot_centerbox_center() {
@@ -296,6 +320,30 @@ fn slot_flowbox_children() {
     });
 }
 
+/// slot FlowBoxChild.child: probe: set parents the child (direct); old child finalized on replace; set(None) unparents
+#[test]
+fn slot_flowboxchild_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("flow-box-child");
+        let a = h.create("label");
+        let b = h.create("label");
+        h.insert(parent, a, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::FlowBoxChild>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
+        h.insert(parent, b, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::FlowBoxChild>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::FlowBoxChild>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
+        assert!(h.widget(a).parent().is_none(), "replaced child is released");
+        h.remove(parent, b).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::FlowBoxChild>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in child");
+        h.remove(parent, a).unwrap_err();
+        h.insert(parent, a, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::FlowBoxChild>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
+        h.remove(parent, a).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::FlowBoxChild>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
+    });
+}
+
 /// slot Frame.child: gir: gtk_frame_set_child
 #[test]
 fn slot_frame_child() {
@@ -461,6 +509,30 @@ fn slot_listbox_children() {
         for x in [a, b, c] { h.remove(parent, x).unwrap(); }
         assert!(!(h.widget(a).ancestor(h.widget(parent).type_()).as_ref() == Some(&h.widget(parent))), "a in children");
         assert!(!(h.widget(b).ancestor(h.widget(parent).type_()).as_ref() == Some(&h.widget(parent))), "b in children");
+    });
+}
+
+/// slot ListBoxRow.child: probe: set parents the child (direct); old child finalized on replace; set(None) unparents
+#[test]
+fn slot_listboxrow_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let parent = h.create("list-box-row");
+        let a = h.create("label");
+        let b = h.create("label");
+        h.insert(parent, a, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::ListBoxRow>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
+        h.insert(parent, b, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::ListBoxRow>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in child");
+        assert!(!(h.widget(parent).downcast_ref::<gtk::ListBoxRow>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
+        assert!(h.widget(a).parent().is_none(), "replaced child is released");
+        h.remove(parent, b).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::ListBoxRow>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(b))), "b in child");
+        h.remove(parent, a).unwrap_err();
+        h.insert(parent, a, None, Some("child")).unwrap();
+        assert!((h.widget(parent).downcast_ref::<gtk::ListBoxRow>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
+        h.remove(parent, a).unwrap();
+        assert!(!(h.widget(parent).downcast_ref::<gtk::ListBoxRow>().unwrap().child().map(|x| x.upcast::<gtk::Widget>()) == Some(h.widget(a))), "a in child");
     });
 }
 
@@ -1360,6 +1432,37 @@ fn attr_stack_pages_use_underline() {
     });
 }
 
+/// signal AboutDialog.activate-link: runtime: returns gboolean, run-last; probe: emitted synthetically with sampled arguments; delivery only, no native trigger
+#[test]
+fn signal_aboutdialog_activate_link() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("about-dialog");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = o.emit_by_name::<bool>("activate-link", &[&"x"]);
+        };
+        assert_ne!(h.resolve_signal("about-dialog", "activate-link"), 0);
+        assert_eq!(h.resolve_signal("about-dialog", "activate-link"), h.resolve_signal("about-dialog", "activate-link"));
+        h.listen(e, "activate-link", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "activate-link".to_string())), "delivered: {ev:?}");
+        h.listen(e, "activate-link", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "activate-link", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "activate-link", true).is_err(), "stale handle is an error");
+    });
+}
+
 /// property AboutDialog.comments (JS comments): GtkAboutDialog:comments (Gtk 4 docs)
 #[test]
 fn prop_aboutdialog_comments() {
@@ -1370,8 +1473,8 @@ fn prop_aboutdialog_comments() {
         let id = h.resolve_prop("about-dialog", "comments");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("about-dialog", "comments"));
-        h.set_str(o, "comments", "p3-sample").unwrap();
-        assert_eq!(h.get(o, "comments"), V::Str("p3-sample".into()));
+        h.set_str(o, "comments", "svl probe").unwrap();
+        assert_eq!(h.get(o, "comments"), V::Str("svl probe".into()));
     });
 }
 
@@ -1385,8 +1488,23 @@ fn prop_aboutdialog_copyright() {
         let id = h.resolve_prop("about-dialog", "copyright");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("about-dialog", "copyright"));
-        h.set_str(o, "copyright", "p3-sample").unwrap();
-        assert_eq!(h.get(o, "copyright"), V::Str("p3-sample".into()));
+        h.set_str(o, "copyright", "svl probe").unwrap();
+        assert_eq!(h.get(o, "copyright"), V::Str("svl probe".into()));
+    });
+}
+
+/// property AboutDialog.license (JS license): probe: round trip exact; notify fired
+#[test]
+fn prop_aboutdialog_license() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("about-dialog");
+        
+        let id = h.resolve_prop("about-dialog", "license");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("about-dialog", "license"));
+        h.set_str(o, "license", "svl probe").unwrap();
+        assert_eq!(h.get(o, "license"), V::Str("svl probe".into()));
     });
 }
 
@@ -1405,6 +1523,21 @@ fn prop_aboutdialog_license_type() {
     });
 }
 
+/// property AboutDialog.logo-icon-name (JS logo-icon-name): probe: round trip exact; notify fired
+#[test]
+fn prop_aboutdialog_logo_icon_name() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("about-dialog");
+        
+        let id = h.resolve_prop("about-dialog", "logo-icon-name");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("about-dialog", "logo-icon-name"));
+        h.set_str(o, "logo-icon-name", "svl probe").unwrap();
+        assert_eq!(h.get(o, "logo-icon-name"), V::Str("svl probe".into()));
+    });
+}
+
 /// property AboutDialog.program-name (JS program-name): GtkAboutDialog:program-name (Gtk 4 docs)
 #[test]
 fn prop_aboutdialog_program_name() {
@@ -1415,8 +1548,38 @@ fn prop_aboutdialog_program_name() {
         let id = h.resolve_prop("about-dialog", "program-name");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("about-dialog", "program-name"));
-        h.set_str(o, "program-name", "p3-sample").unwrap();
-        assert_eq!(h.get(o, "program-name"), V::Str("p3-sample".into()));
+        h.set_str(o, "program-name", "svl probe").unwrap();
+        assert_eq!(h.get(o, "program-name"), V::Str("svl probe".into()));
+    });
+}
+
+/// property AboutDialog.system-information (JS system-information): probe: round trip exact; notify fired
+#[test]
+fn prop_aboutdialog_system_information() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("about-dialog");
+        
+        let id = h.resolve_prop("about-dialog", "system-information");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("about-dialog", "system-information"));
+        h.set_str(o, "system-information", "svl probe").unwrap();
+        assert_eq!(h.get(o, "system-information"), V::Str("svl probe".into()));
+    });
+}
+
+/// property AboutDialog.translator-credits (JS translator-credits): probe: round trip exact; notify fired
+#[test]
+fn prop_aboutdialog_translator_credits() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("about-dialog");
+        
+        let id = h.resolve_prop("about-dialog", "translator-credits");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("about-dialog", "translator-credits"));
+        h.set_str(o, "translator-credits", "svl probe").unwrap();
+        assert_eq!(h.get(o, "translator-credits"), V::Str("svl probe".into()));
     });
 }
 
@@ -1430,8 +1593,8 @@ fn prop_aboutdialog_version() {
         let id = h.resolve_prop("about-dialog", "version");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("about-dialog", "version"));
-        h.set_str(o, "version", "p3-sample").unwrap();
-        assert_eq!(h.get(o, "version"), V::Str("p3-sample".into()));
+        h.set_str(o, "version", "svl probe").unwrap();
+        assert_eq!(h.get(o, "version"), V::Str("svl probe".into()));
     });
 }
 
@@ -1445,8 +1608,23 @@ fn prop_aboutdialog_website() {
         let id = h.resolve_prop("about-dialog", "website");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("about-dialog", "website"));
-        h.set_str(o, "website", "p3-sample").unwrap();
-        assert_eq!(h.get(o, "website"), V::Str("p3-sample".into()));
+        h.set_str(o, "website", "svl probe").unwrap();
+        assert_eq!(h.get(o, "website"), V::Str("svl probe".into()));
+    });
+}
+
+/// property AboutDialog.website-label (JS website-label): probe: round trip exact; notify fired
+#[test]
+fn prop_aboutdialog_website_label() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("about-dialog");
+        
+        let id = h.resolve_prop("about-dialog", "website-label");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("about-dialog", "website-label"));
+        h.set_str(o, "website-label", "svl probe").unwrap();
+        assert_eq!(h.get(o, "website-label"), V::Str("svl probe".into()));
     });
 }
 
@@ -1465,6 +1643,402 @@ fn prop_aboutdialog_wrap_license() {
     });
 }
 
+/// method AboutDialog.get_comments (dynamic GI call): probe: equals property comments
+#[test]
+fn method_aboutdialog_get_comments() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("about-dialog");
+        
+        let r = h.call_args(o, "get_comments", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "comments"), "postcondition: r == h.get(o, 'comments')");
+    });
+}
+
+/// method AboutDialog.get_copyright (dynamic GI call): probe: equals property copyright
+#[test]
+fn method_aboutdialog_get_copyright() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("about-dialog");
+        
+        let r = h.call_args(o, "get_copyright", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "copyright"), "postcondition: r == h.get(o, 'copyright')");
+    });
+}
+
+/// method AboutDialog.get_license (dynamic GI call): probe: equals property license
+#[test]
+fn method_aboutdialog_get_license() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("about-dialog");
+        
+        let r = h.call_args(o, "get_license", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "license"), "postcondition: r == h.get(o, 'license')");
+    });
+}
+
+/// method AboutDialog.get_license_type (dynamic GI call): probe: equals property license-type
+#[test]
+fn method_aboutdialog_get_license_type() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("about-dialog");
+        
+        let r = h.call_args(o, "get_license_type", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "license-type"), "postcondition: r == h.get(o, 'license-type')");
+    });
+}
+
+/// method AboutDialog.get_logo_icon_name (dynamic GI call): probe: equals property logo-icon-name
+#[test]
+fn method_aboutdialog_get_logo_icon_name() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("about-dialog");
+        
+        let r = h.call_args(o, "get_logo_icon_name", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "logo-icon-name"), "postcondition: r == h.get(o, 'logo-icon-name')");
+    });
+}
+
+/// method AboutDialog.get_program_name (dynamic GI call): probe: equals property program-name
+#[test]
+fn method_aboutdialog_get_program_name() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("about-dialog");
+        
+        let r = h.call_args(o, "get_program_name", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "program-name"), "postcondition: r == h.get(o, 'program-name')");
+    });
+}
+
+/// method AboutDialog.get_system_information (dynamic GI call): probe: equals property system-information
+#[test]
+fn method_aboutdialog_get_system_information() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("about-dialog");
+        
+        let r = h.call_args(o, "get_system_information", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "system-information"), "postcondition: r == h.get(o, 'system-information')");
+    });
+}
+
+/// method AboutDialog.get_translator_credits (dynamic GI call): probe: equals property translator-credits
+#[test]
+fn method_aboutdialog_get_translator_credits() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("about-dialog");
+        
+        let r = h.call_args(o, "get_translator_credits", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "translator-credits"), "postcondition: r == h.get(o, 'translator-credits')");
+    });
+}
+
+/// method AboutDialog.get_version (dynamic GI call): probe: equals property version
+#[test]
+fn method_aboutdialog_get_version() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("about-dialog");
+        
+        let r = h.call_args(o, "get_version", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "version"), "postcondition: r == h.get(o, 'version')");
+    });
+}
+
+/// method AboutDialog.get_website (dynamic GI call): probe: equals property website
+#[test]
+fn method_aboutdialog_get_website() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("about-dialog");
+        
+        let r = h.call_args(o, "get_website", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "website"), "postcondition: r == h.get(o, 'website')");
+    });
+}
+
+/// method AboutDialog.get_website_label (dynamic GI call): probe: equals property website-label
+#[test]
+fn method_aboutdialog_get_website_label() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("about-dialog");
+        
+        let r = h.call_args(o, "get_website_label", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "website-label"), "postcondition: r == h.get(o, 'website-label')");
+    });
+}
+
+/// method AboutDialog.get_wrap_license (dynamic GI call): probe: equals property wrap-license
+#[test]
+fn method_aboutdialog_get_wrap_license() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("about-dialog");
+        
+        let r = h.call_args(o, "get_wrap_license", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "wrap-license"), "postcondition: r == h.get(o, 'wrap-license')");
+    });
+}
+
+/// method AboutDialog.set_comments (dynamic GI call): probe: set then read property comments: exact
+#[test]
+fn method_aboutdialog_set_comments() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("about-dialog");
+        
+        let r = h.call_args(o, "set_comments", &[V::Str("svl probe".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "comments") == V::Str("svl probe".into()), "postcondition: h.get(o, 'comments') == V::Str('svl probe'.into())");
+    });
+}
+
+/// method AboutDialog.set_copyright (dynamic GI call): probe: set then read property copyright: exact
+#[test]
+fn method_aboutdialog_set_copyright() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("about-dialog");
+        
+        let r = h.call_args(o, "set_copyright", &[V::Str("svl probe".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "copyright") == V::Str("svl probe".into()), "postcondition: h.get(o, 'copyright') == V::Str('svl probe'.into())");
+    });
+}
+
+/// method AboutDialog.set_license (dynamic GI call): probe: set then read property license: exact
+#[test]
+fn method_aboutdialog_set_license() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("about-dialog");
+        
+        let r = h.call_args(o, "set_license", &[V::Str("svl probe".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "license") == V::Str("svl probe".into()), "postcondition: h.get(o, 'license') == V::Str('svl probe'.into())");
+    });
+}
+
+/// method AboutDialog.set_license_type (dynamic GI call): probe: set then read property license-type: exact
+#[test]
+fn method_aboutdialog_set_license_type() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("about-dialog");
+        
+        let r = h.call_args(o, "set_license_type", &[V::Str("custom".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "license-type") == V::Str("custom".into()), "postcondition: h.get(o, 'license-type') == V::Str('custom'.into())");
+    });
+}
+
+/// method AboutDialog.set_logo_icon_name (dynamic GI call): probe: set then read property logo-icon-name: exact
+#[test]
+fn method_aboutdialog_set_logo_icon_name() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("about-dialog");
+        
+        let r = h.call_args(o, "set_logo_icon_name", &[V::Str("svl probe".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "logo-icon-name") == V::Str("svl probe".into()), "postcondition: h.get(o, 'logo-icon-name') == V::Str('svl probe'.into())");
+    });
+}
+
+/// method AboutDialog.set_program_name (dynamic GI call): probe: set then read property program-name: exact
+#[test]
+fn method_aboutdialog_set_program_name() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("about-dialog");
+        
+        let r = h.call_args(o, "set_program_name", &[V::Str("svl probe".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "program-name") == V::Str("svl probe".into()), "postcondition: h.get(o, 'program-name') == V::Str('svl probe'.into())");
+    });
+}
+
+/// method AboutDialog.set_system_information (dynamic GI call): probe: set then read property system-information: exact
+#[test]
+fn method_aboutdialog_set_system_information() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("about-dialog");
+        
+        let r = h.call_args(o, "set_system_information", &[V::Str("svl probe".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "system-information") == V::Str("svl probe".into()), "postcondition: h.get(o, 'system-information') == V::Str('svl probe'.into())");
+    });
+}
+
+/// method AboutDialog.set_translator_credits (dynamic GI call): probe: set then read property translator-credits: exact
+#[test]
+fn method_aboutdialog_set_translator_credits() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("about-dialog");
+        
+        let r = h.call_args(o, "set_translator_credits", &[V::Str("svl probe".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "translator-credits") == V::Str("svl probe".into()), "postcondition: h.get(o, 'translator-credits') == V::Str('svl probe'.into())");
+    });
+}
+
+/// method AboutDialog.set_version (dynamic GI call): probe: set then read property version: exact
+#[test]
+fn method_aboutdialog_set_version() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("about-dialog");
+        
+        let r = h.call_args(o, "set_version", &[V::Str("svl probe".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "version") == V::Str("svl probe".into()), "postcondition: h.get(o, 'version') == V::Str('svl probe'.into())");
+    });
+}
+
+/// method AboutDialog.set_website (dynamic GI call): probe: set then read property website: exact
+#[test]
+fn method_aboutdialog_set_website() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("about-dialog");
+        
+        let r = h.call_args(o, "set_website", &[V::Str("svl probe".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "website") == V::Str("svl probe".into()), "postcondition: h.get(o, 'website') == V::Str('svl probe'.into())");
+    });
+}
+
+/// method AboutDialog.set_website_label (dynamic GI call): probe: set then read property website-label: exact
+#[test]
+fn method_aboutdialog_set_website_label() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("about-dialog");
+        
+        let r = h.call_args(o, "set_website_label", &[V::Str("svl probe".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "website-label") == V::Str("svl probe".into()), "postcondition: h.get(o, 'website-label') == V::Str('svl probe'.into())");
+    });
+}
+
+/// method AboutDialog.set_wrap_license (dynamic GI call): probe: set then read property wrap-license: exact
+#[test]
+fn method_aboutdialog_set_wrap_license() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("about-dialog");
+        
+        let r = h.call_args(o, "set_wrap_license", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "wrap-license") == V::Bool(true), "postcondition: h.get(o, 'wrap-license') == V::Bool(true)");
+    });
+}
+
+/// bind:license-type on AboutDialog: rule: B1: GtkAboutDialog:license-type is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_aboutdialog_license_type() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("about-dialog");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => { let pspec = o.find_property("license-type").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("license-type", &ev.to_value_by_nick("custom").unwrap()) },
+                1 => { let pspec = o.find_property("license-type").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("license-type", &ev.to_value_by_nick("unknown").unwrap()) },
+                2 => { let pspec = o.find_property("license-type").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("license-type", &ev.to_value_by_nick("custom").unwrap()) },
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::license-type", true).unwrap();
+        fire(&h.obj(o), "custom", 0);
+        fire(&h.obj(o), "unknown", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "license-type"), V::Str("unknown".into()), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_str(o, "license-type", "custom").unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "license-type"), V::Str("custom".into()), "the property reads the programmatic value");
+    });
+}
+
+/// bind:wrap-license on AboutDialog: rule: B1: GtkAboutDialog:wrap-license is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_aboutdialog_wrap_license() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("about-dialog");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("wrap-license", true),
+                1 => o.set_property("wrap-license", false),
+                2 => o.set_property("wrap-license", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::wrap-license", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "wrap-license"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "wrap-license", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "wrap-license"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
 /// property ActionBar.revealed (JS revealed): GtkActionBar:revealed (Gtk 4 docs); P prop
 #[test]
 fn prop_actionbar_revealed() {
@@ -1480,6 +2054,64 @@ fn prop_actionbar_revealed() {
     });
 }
 
+/// method ActionBar.get_revealed (dynamic GI call): probe: equals property revealed
+#[test]
+fn method_actionbar_get_revealed() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("action-bar");
+        
+        let r = h.call_args(o, "get_revealed", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "revealed"), "postcondition: r == h.get(o, 'revealed')");
+    });
+}
+
+/// method ActionBar.set_revealed (dynamic GI call): probe: set then read property revealed: exact
+#[test]
+fn method_actionbar_set_revealed() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("action-bar");
+        
+        let r = h.call_args(o, "set_revealed", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "revealed") == V::Bool(false), "postcondition: h.get(o, 'revealed') == V::Bool(false)");
+    });
+}
+
+/// bind:revealed on ActionBar: rule: B1: GtkActionBar:revealed is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_actionbar_revealed() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("action-bar");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("revealed", false),
+                1 => o.set_property("revealed", true),
+                2 => o.set_property("revealed", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::revealed", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "revealed"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "revealed", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "revealed"), V::Bool(false), "the property reads the programmatic value");
+    });
+}
+
 /// property Actionable.action-name (JS action-name): GtkActionable:action-name (Gtk 4 docs); P prop; interface-owned, tested through GtkButton
 #[test]
 fn prop_actionable_action_name() {
@@ -1490,8 +2122,36 @@ fn prop_actionable_action_name() {
         let id = h.resolve_prop("button", "action-name");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("button", "action-name"));
-        h.set_str(o, "action-name", "p3-sample").unwrap();
-        assert_eq!(h.get(o, "action-name"), V::Str("p3-sample".into()));
+        h.set_str(o, "action-name", "svl probe").unwrap();
+        assert_eq!(h.get(o, "action-name"), V::Str("svl probe".into()));
+    });
+}
+
+/// method Actionable.get_action_name (dynamic GI call): probe: equals property action-name
+#[test]
+fn method_actionable_get_action_name() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("button");
+        
+        let r = h.call_args(o, "get_action_name", &[]).unwrap();
+        let w = h.obj(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "action-name"), "postcondition: r == h.get(o, 'action-name')");
+    });
+}
+
+/// method Actionable.set_action_name (dynamic GI call): probe: set then read property action-name: exact
+#[test]
+fn method_actionable_set_action_name() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("button");
+        
+        let r = h.call_args(o, "set_action_name", &[V::Str("svl probe".into())]).unwrap();
+        let w = h.obj(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "action-name") == V::Str("svl probe".into()), "postcondition: h.get(o, 'action-name') == V::Str('svl probe'.into())");
     });
 }
 
@@ -1717,6 +2377,79 @@ fn method_adjustment_get_value() {
     });
 }
 
+/// property ApplicationWindow.show-menubar (JS show-menubar): probe: round trip exact; notify fired
+#[test]
+fn prop_applicationwindow_show_menubar() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("application-window");
+        
+        let id = h.resolve_prop("application-window", "show-menubar");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("application-window", "show-menubar"));
+        h.set_bool(o, "show-menubar", true).unwrap();
+        assert_eq!(h.get(o, "show-menubar"), V::Bool(true));
+    });
+}
+
+/// method ApplicationWindow.get_show_menubar (dynamic GI call): probe: equals property show-menubar
+#[test]
+fn method_applicationwindow_get_show_menubar() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("application-window");
+        
+        let r = h.call_args(o, "get_show_menubar", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "show-menubar"), "postcondition: r == h.get(o, 'show-menubar')");
+    });
+}
+
+/// method ApplicationWindow.set_show_menubar (dynamic GI call): probe: set then read property show-menubar: exact
+#[test]
+fn method_applicationwindow_set_show_menubar() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("application-window");
+        
+        let r = h.call_args(o, "set_show_menubar", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "show-menubar") == V::Bool(true), "postcondition: h.get(o, 'show-menubar') == V::Bool(true)");
+    });
+}
+
+/// bind:show-menubar on ApplicationWindow: rule: B1: GtkApplicationWindow:show-menubar is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_applicationwindow_show_menubar() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("application-window");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("show-menubar", true),
+                1 => o.set_property("show-menubar", false),
+                2 => o.set_property("show-menubar", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::show-menubar", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "show-menubar"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "show-menubar", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "show-menubar"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
 /// property AspectFrame.obey-child (JS obey-child): GtkAspectFrame:obey-child (Gtk 4 docs); P prop
 #[test]
 fn prop_aspectframe_obey_child() {
@@ -1742,8 +2475,8 @@ fn prop_aspectframe_ratio() {
         let id = h.resolve_prop("aspect-frame", "ratio");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("aspect-frame", "ratio"));
-        h.set_f64(o, "ratio", 0.5).unwrap();
-        assert_eq!(h.get(o, "ratio"), V::F64(0.5));
+        h.set_f64(o, "ratio", 2.0).unwrap();
+        assert_eq!(h.get(o, "ratio"), V::F64(2.0));
     });
 }
 
@@ -1777,6 +2510,195 @@ fn prop_aspectframe_yalign() {
     });
 }
 
+/// method AspectFrame.get_obey_child (dynamic GI call): probe: equals property obey-child
+#[test]
+fn method_aspectframe_get_obey_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("aspect-frame");
+        
+        let r = h.call_args(o, "get_obey_child", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "obey-child"), "postcondition: r == h.get(o, 'obey-child')");
+    });
+}
+
+/// method AspectFrame.get_ratio (dynamic GI call): probe: equals property ratio
+#[test]
+fn method_aspectframe_get_ratio() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("aspect-frame");
+        
+        let r = h.call_args(o, "get_ratio", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "ratio"), "postcondition: r == h.get(o, 'ratio')");
+    });
+}
+
+/// method AspectFrame.get_xalign (dynamic GI call): probe: equals property xalign
+#[test]
+fn method_aspectframe_get_xalign() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("aspect-frame");
+        
+        let r = h.call_args(o, "get_xalign", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "xalign"), "postcondition: r == h.get(o, 'xalign')");
+    });
+}
+
+/// method AspectFrame.get_yalign (dynamic GI call): probe: equals property yalign
+#[test]
+fn method_aspectframe_get_yalign() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("aspect-frame");
+        
+        let r = h.call_args(o, "get_yalign", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "yalign"), "postcondition: r == h.get(o, 'yalign')");
+    });
+}
+
+/// method AspectFrame.set_obey_child (dynamic GI call): probe: set then read property obey-child: exact
+#[test]
+fn method_aspectframe_set_obey_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("aspect-frame");
+        
+        let r = h.call_args(o, "set_obey_child", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "obey-child") == V::Bool(false), "postcondition: h.get(o, 'obey-child') == V::Bool(false)");
+    });
+}
+
+/// method AspectFrame.set_ratio (dynamic GI call): probe: set then read property ratio: exact
+#[test]
+fn method_aspectframe_set_ratio() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("aspect-frame");
+        
+        let r = h.call_args(o, "set_ratio", &[V::F64(2.0)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "ratio") == V::F64(2.0), "postcondition: h.get(o, 'ratio') == V::F64(2.0)");
+    });
+}
+
+/// bind:obey-child on AspectFrame: rule: B1: GtkAspectFrame:obey-child is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_aspectframe_obey_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("aspect-frame");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("obey-child", false),
+                1 => o.set_property("obey-child", true),
+                2 => o.set_property("obey-child", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::obey-child", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "obey-child"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "obey-child", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "obey-child"), V::Bool(false), "the property reads the programmatic value");
+    });
+}
+
+/// bind:ratio on AspectFrame: rule: B1: GtkAspectFrame:ratio is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_aspectframe_ratio() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("aspect-frame");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("ratio", 2.0f32),
+                1 => o.set_property("ratio", 1.0f32),
+                2 => o.set_property("ratio", 2.0f32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::ratio", true).unwrap();
+        fire(&h.obj(o), "2.0", 0);
+        fire(&h.obj(o), "1.0", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "ratio"), V::F64(1.0), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_f64(o, "ratio", 2.0).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "ratio"), V::F64(2.0), "the property reads the programmatic value");
+    });
+}
+
+/// property Box.baseline-child (JS baseline-child): probe: round trip exact; notify fired
+#[test]
+fn prop_box_baseline_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("box");
+        
+        let id = h.resolve_prop("box", "baseline-child");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("box", "baseline-child"));
+        h.set_i64(o, "baseline-child", 0).unwrap();
+        assert_eq!(h.get(o, "baseline-child"), V::I64(0));
+    });
+}
+
+/// property Box.baseline-position (JS baseline-position): probe: round trip exact; notify fired
+#[test]
+fn prop_box_baseline_position() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("box");
+        
+        let id = h.resolve_prop("box", "baseline-position");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("box", "baseline-position"));
+        h.set_str(o, "baseline-position", "top").unwrap();
+        assert_eq!(h.get(o, "baseline-position"), V::Str("top".into()));
+    });
+}
+
+/// property Box.homogeneous (JS homogeneous): probe: round trip exact; notify fired
+#[test]
+fn prop_box_homogeneous() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("box");
+        
+        let id = h.resolve_prop("box", "homogeneous");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("box", "homogeneous"));
+        h.set_bool(o, "homogeneous", true).unwrap();
+        assert_eq!(h.get(o, "homogeneous"), V::Bool(true));
+    });
+}
+
 /// property Box.spacing (JS spacing): GtkBox:spacing (Gtk 4 docs); P prop
 #[test]
 fn prop_box_spacing() {
@@ -1787,8 +2709,240 @@ fn prop_box_spacing() {
         let id = h.resolve_prop("box", "spacing");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("box", "spacing"));
-        h.set_i64(o, "spacing", 7).unwrap();
-        assert_eq!(h.get(o, "spacing"), V::I64(7));
+        h.set_i64(o, "spacing", 1).unwrap();
+        assert_eq!(h.get(o, "spacing"), V::I64(1));
+    });
+}
+
+/// method Box.get_baseline_child (dynamic GI call): probe: equals property baseline-child
+#[test]
+fn method_box_get_baseline_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("box");
+        
+        let r = h.call_args(o, "get_baseline_child", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "baseline-child"), "postcondition: r == h.get(o, 'baseline-child')");
+    });
+}
+
+/// method Box.get_baseline_position (dynamic GI call): probe: equals property baseline-position
+#[test]
+fn method_box_get_baseline_position() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("box");
+        
+        let r = h.call_args(o, "get_baseline_position", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "baseline-position"), "postcondition: r == h.get(o, 'baseline-position')");
+    });
+}
+
+/// method Box.get_homogeneous (dynamic GI call): probe: equals property homogeneous
+#[test]
+fn method_box_get_homogeneous() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("box");
+        
+        let r = h.call_args(o, "get_homogeneous", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "homogeneous"), "postcondition: r == h.get(o, 'homogeneous')");
+    });
+}
+
+/// method Box.get_spacing (dynamic GI call): probe: equals property spacing
+#[test]
+fn method_box_get_spacing() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("box");
+        
+        let r = h.call_args(o, "get_spacing", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "spacing"), "postcondition: r == h.get(o, 'spacing')");
+    });
+}
+
+/// method Box.set_baseline_child (dynamic GI call): probe: set then read property baseline-child: exact
+#[test]
+fn method_box_set_baseline_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("box");
+        
+        let r = h.call_args(o, "set_baseline_child", &[V::I64(0)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "baseline-child") == V::I64(0), "postcondition: h.get(o, 'baseline-child') == V::I64(0)");
+    });
+}
+
+/// method Box.set_baseline_position (dynamic GI call): probe: set then read property baseline-position: exact
+#[test]
+fn method_box_set_baseline_position() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("box");
+        
+        let r = h.call_args(o, "set_baseline_position", &[V::Str("top".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "baseline-position") == V::Str("top".into()), "postcondition: h.get(o, 'baseline-position') == V::Str('top'.into())");
+    });
+}
+
+/// method Box.set_homogeneous (dynamic GI call): probe: set then read property homogeneous: exact
+#[test]
+fn method_box_set_homogeneous() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("box");
+        
+        let r = h.call_args(o, "set_homogeneous", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "homogeneous") == V::Bool(true), "postcondition: h.get(o, 'homogeneous') == V::Bool(true)");
+    });
+}
+
+/// method Box.set_spacing (dynamic GI call): probe: set then read property spacing: exact
+#[test]
+fn method_box_set_spacing() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("box");
+        
+        let r = h.call_args(o, "set_spacing", &[V::I64(1)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "spacing") == V::I64(1), "postcondition: h.get(o, 'spacing') == V::I64(1)");
+    });
+}
+
+/// bind:baseline-child on Box: rule: B1: GtkBox:baseline-child is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_box_baseline_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("box");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("baseline-child", 0i32),
+                1 => o.set_property("baseline-child", -1i32),
+                2 => o.set_property("baseline-child", 0i32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::baseline-child", true).unwrap();
+        fire(&h.obj(o), "0", 0);
+        fire(&h.obj(o), "-1", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "baseline-child"), V::I64(-1), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "baseline-child", 0).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "baseline-child"), V::I64(0), "the property reads the programmatic value");
+    });
+}
+
+/// bind:baseline-position on Box: rule: B1: GtkBox:baseline-position is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_box_baseline_position() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("box");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => { let pspec = o.find_property("baseline-position").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("baseline-position", &ev.to_value_by_nick("top").unwrap()) },
+                1 => { let pspec = o.find_property("baseline-position").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("baseline-position", &ev.to_value_by_nick("center").unwrap()) },
+                2 => { let pspec = o.find_property("baseline-position").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("baseline-position", &ev.to_value_by_nick("top").unwrap()) },
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::baseline-position", true).unwrap();
+        fire(&h.obj(o), "top", 0);
+        fire(&h.obj(o), "center", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "baseline-position"), V::Str("center".into()), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_str(o, "baseline-position", "top").unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "baseline-position"), V::Str("top".into()), "the property reads the programmatic value");
+    });
+}
+
+/// bind:homogeneous on Box: rule: B1: GtkBox:homogeneous is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_box_homogeneous() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("box");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("homogeneous", true),
+                1 => o.set_property("homogeneous", false),
+                2 => o.set_property("homogeneous", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::homogeneous", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "homogeneous"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "homogeneous", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "homogeneous"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:spacing on Box: rule: B1: GtkBox:spacing is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_box_spacing() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("box");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("spacing", 1i32),
+                1 => o.set_property("spacing", 0i32),
+                2 => o.set_property("spacing", 1i32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::spacing", true).unwrap();
+        fire(&h.obj(o), "1", 0);
+        fire(&h.obj(o), "0", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "spacing"), V::I64(0), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "spacing", 1).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "spacing"), V::I64(1), "the property reads the programmatic value");
     });
 }
 
@@ -1894,8 +3048,8 @@ fn prop_button_icon_name() {
         let id = h.resolve_prop("button", "icon-name");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("button", "icon-name"));
-        h.set_str(o, "icon-name", "p3-sample").unwrap();
-        assert_eq!(h.get(o, "icon-name"), V::Str("p3-sample".into()));
+        h.set_str(o, "icon-name", "edit-copy").unwrap();
+        assert_eq!(h.get(o, "icon-name"), V::Str("edit-copy".into()));
     });
 }
 
@@ -1909,8 +3063,8 @@ fn prop_button_label() {
         let id = h.resolve_prop("button", "label");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("button", "label"));
-        h.set_str(o, "label", "p3-sample").unwrap();
-        assert_eq!(h.get(o, "label"), V::Str("p3-sample".into()));
+        h.set_str(o, "label", "svl probe").unwrap();
+        assert_eq!(h.get(o, "label"), V::Str("svl probe".into()));
     });
 }
 
@@ -1929,6 +3083,118 @@ fn prop_button_use_underline() {
     });
 }
 
+/// method Button.get_can_shrink (dynamic GI call): probe: equals property can-shrink
+#[test]
+fn method_button_get_can_shrink() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("button");
+        
+        let r = h.call_args(o, "get_can_shrink", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "can-shrink"), "postcondition: r == h.get(o, 'can-shrink')");
+    });
+}
+
+/// method Button.get_has_frame (dynamic GI call): probe: equals property has-frame
+#[test]
+fn method_button_get_has_frame() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("button");
+        
+        let r = h.call_args(o, "get_has_frame", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "has-frame"), "postcondition: r == h.get(o, 'has-frame')");
+    });
+}
+
+/// method Button.get_icon_name (dynamic GI call): probe: equals property icon-name
+#[test]
+fn method_button_get_icon_name() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("button");
+        
+        let r = h.call_args(o, "get_icon_name", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "icon-name"), "postcondition: r == h.get(o, 'icon-name')");
+    });
+}
+
+/// method Button.get_label (dynamic GI call): probe: equals property label
+#[test]
+fn method_button_get_label() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("button");
+        
+        let r = h.call_args(o, "get_label", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "label"), "postcondition: r == h.get(o, 'label')");
+    });
+}
+
+/// method Button.get_use_underline (dynamic GI call): probe: equals property use-underline
+#[test]
+fn method_button_get_use_underline() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("button");
+        
+        let r = h.call_args(o, "get_use_underline", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "use-underline"), "postcondition: r == h.get(o, 'use-underline')");
+    });
+}
+
+/// method Button.set_can_shrink (dynamic GI call): probe: set then read property can-shrink: exact
+#[test]
+fn method_button_set_can_shrink() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("button");
+        
+        let r = h.call_args(o, "set_can_shrink", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "can-shrink") == V::Bool(true), "postcondition: h.get(o, 'can-shrink') == V::Bool(true)");
+    });
+}
+
+/// method Button.set_has_frame (dynamic GI call): probe: set then read property has-frame: exact
+#[test]
+fn method_button_set_has_frame() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("button");
+        
+        let r = h.call_args(o, "set_has_frame", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "has-frame") == V::Bool(false), "postcondition: h.get(o, 'has-frame') == V::Bool(false)");
+    });
+}
+
+/// method Button.set_icon_name (dynamic GI call): probe: set then read property icon-name: exact
+#[test]
+fn method_button_set_icon_name() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("button");
+        
+        let r = h.call_args(o, "set_icon_name", &[V::Str("edit-copy".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "icon-name") == V::Str("edit-copy".into()), "postcondition: h.get(o, 'icon-name') == V::Str('edit-copy'.into())");
+    });
+}
+
 /// method Button.set_label (dynamic GI call): gtk_button_set_label (Gtk 4 docs); called through GIRepository (X1)
 #[test]
 fn method_button_set_label() {
@@ -1940,6 +3206,110 @@ fn method_button_set_label() {
         let w = h.widget(o);
         let _ = (&w, &r);
         assert!(h.get(o, "label") == V::Str("via method".into()), "postcondition: h.get(o, 'label') == V::Str('via method'.into())");
+    });
+}
+
+/// method Button.set_use_underline (dynamic GI call): probe: set then read property use-underline: exact
+#[test]
+fn method_button_set_use_underline() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("button");
+        
+        let r = h.call_args(o, "set_use_underline", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "use-underline") == V::Bool(true), "postcondition: h.get(o, 'use-underline') == V::Bool(true)");
+    });
+}
+
+/// bind:can-shrink on Button: rule: B1: GtkButton:can-shrink is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_button_can_shrink() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("button");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("can-shrink", true),
+                1 => o.set_property("can-shrink", false),
+                2 => o.set_property("can-shrink", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::can-shrink", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "can-shrink"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "can-shrink", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "can-shrink"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:has-frame on Button: rule: B1: GtkButton:has-frame is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_button_has_frame() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("button");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("has-frame", false),
+                1 => o.set_property("has-frame", true),
+                2 => o.set_property("has-frame", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::has-frame", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "has-frame"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "has-frame", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "has-frame"), V::Bool(false), "the property reads the programmatic value");
+    });
+}
+
+/// bind:use-underline on Button: rule: B1: GtkButton:use-underline is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_button_use_underline() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("button");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("use-underline", true),
+                1 => o.set_property("use-underline", false),
+                2 => o.set_property("use-underline", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::use-underline", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "use-underline"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "use-underline", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "use-underline"), V::Bool(true), "the property reads the programmatic value");
     });
 }
 
@@ -2295,6 +3665,90 @@ fn method_calendar_clear_marks() {
     });
 }
 
+/// method Calendar.get_day (dynamic GI call): probe: equals property day
+#[test]
+fn method_calendar_get_day() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("calendar");
+        
+        let r = h.call_args(o, "get_day", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "day"), "postcondition: r == h.get(o, 'day')");
+    });
+}
+
+/// method Calendar.get_month (dynamic GI call): probe: equals property month
+#[test]
+fn method_calendar_get_month() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("calendar");
+        
+        let r = h.call_args(o, "get_month", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "month"), "postcondition: r == h.get(o, 'month')");
+    });
+}
+
+/// method Calendar.get_show_day_names (dynamic GI call): probe: equals property show-day-names
+#[test]
+fn method_calendar_get_show_day_names() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("calendar");
+        
+        let r = h.call_args(o, "get_show_day_names", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "show-day-names"), "postcondition: r == h.get(o, 'show-day-names')");
+    });
+}
+
+/// method Calendar.get_show_heading (dynamic GI call): probe: equals property show-heading
+#[test]
+fn method_calendar_get_show_heading() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("calendar");
+        
+        let r = h.call_args(o, "get_show_heading", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "show-heading"), "postcondition: r == h.get(o, 'show-heading')");
+    });
+}
+
+/// method Calendar.get_show_week_numbers (dynamic GI call): probe: equals property show-week-numbers
+#[test]
+fn method_calendar_get_show_week_numbers() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("calendar");
+        
+        let r = h.call_args(o, "get_show_week_numbers", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "show-week-numbers"), "postcondition: r == h.get(o, 'show-week-numbers')");
+    });
+}
+
+/// method Calendar.get_year (dynamic GI call): probe: equals property year
+#[test]
+fn method_calendar_get_year() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("calendar");
+        
+        let r = h.call_args(o, "get_year", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "year"), "postcondition: r == h.get(o, 'year')");
+    });
+}
+
 /// method Calendar.mark_day (dynamic GI call): gtk_calendar_mark_day (Gtk 4 docs)
 #[test]
 fn method_calendar_mark_day() {
@@ -2320,6 +3774,180 @@ fn method_calendar_select_day() {
         let w = h.widget(o);
         let _ = (&w, &r);
         assert!(h.get(o, "day") == V::I64(20), "postcondition: h.get(o, 'day') == V::I64(20)");
+    });
+}
+
+/// method Calendar.set_day (dynamic GI call): probe: set then read property day: exact
+#[test]
+fn method_calendar_set_day() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("calendar");
+        
+        let r = h.call_args(o, "set_day", &[V::I64(18)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "day") == V::I64(18), "postcondition: h.get(o, 'day') == V::I64(18)");
+    });
+}
+
+/// method Calendar.set_month (dynamic GI call): probe: set then read property month: exact
+#[test]
+fn method_calendar_set_month() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("calendar");
+        
+        let r = h.call_args(o, "set_month", &[V::I64(10)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "month") == V::I64(10), "postcondition: h.get(o, 'month') == V::I64(10)");
+    });
+}
+
+/// method Calendar.set_show_day_names (dynamic GI call): probe: set then read property show-day-names: exact
+#[test]
+fn method_calendar_set_show_day_names() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("calendar");
+        
+        let r = h.call_args(o, "set_show_day_names", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "show-day-names") == V::Bool(false), "postcondition: h.get(o, 'show-day-names') == V::Bool(false)");
+    });
+}
+
+/// method Calendar.set_show_heading (dynamic GI call): probe: set then read property show-heading: exact
+#[test]
+fn method_calendar_set_show_heading() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("calendar");
+        
+        let r = h.call_args(o, "set_show_heading", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "show-heading") == V::Bool(false), "postcondition: h.get(o, 'show-heading') == V::Bool(false)");
+    });
+}
+
+/// method Calendar.set_show_week_numbers (dynamic GI call): probe: set then read property show-week-numbers: exact
+#[test]
+fn method_calendar_set_show_week_numbers() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("calendar");
+        
+        let r = h.call_args(o, "set_show_week_numbers", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "show-week-numbers") == V::Bool(true), "postcondition: h.get(o, 'show-week-numbers') == V::Bool(true)");
+    });
+}
+
+/// method Calendar.set_year (dynamic GI call): probe: set then read property year: exact
+#[test]
+fn method_calendar_set_year() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("calendar");
+        
+        let r = h.call_args(o, "set_year", &[V::I64(2027)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "year") == V::I64(2027), "postcondition: h.get(o, 'year') == V::I64(2027)");
+    });
+}
+
+/// bind:show-day-names on Calendar: rule: B1: GtkCalendar:show-day-names is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_calendar_show_day_names() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("calendar");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("show-day-names", false),
+                1 => o.set_property("show-day-names", true),
+                2 => o.set_property("show-day-names", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::show-day-names", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "show-day-names"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "show-day-names", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "show-day-names"), V::Bool(false), "the property reads the programmatic value");
+    });
+}
+
+/// bind:show-heading on Calendar: rule: B1: GtkCalendar:show-heading is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_calendar_show_heading() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("calendar");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("show-heading", false),
+                1 => o.set_property("show-heading", true),
+                2 => o.set_property("show-heading", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::show-heading", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "show-heading"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "show-heading", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "show-heading"), V::Bool(false), "the property reads the programmatic value");
+    });
+}
+
+/// bind:show-week-numbers on Calendar: rule: B1: GtkCalendar:show-week-numbers is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_calendar_show_week_numbers() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("calendar");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("show-week-numbers", true),
+                1 => o.set_property("show-week-numbers", false),
+                2 => o.set_property("show-week-numbers", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::show-week-numbers", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "show-week-numbers"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "show-week-numbers", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "show-week-numbers"), V::Bool(true), "the property reads the programmatic value");
     });
 }
 
@@ -2376,6 +4004,122 @@ fn prop_centerbox_shrink_center_last() {
         assert_eq!(id, h.resolve_prop("center-box", "shrink-center-last"));
         h.set_bool(o, "shrink-center-last", false).unwrap();
         assert_eq!(h.get(o, "shrink-center-last"), V::Bool(false));
+    });
+}
+
+/// method CenterBox.get_baseline_position (dynamic GI call): probe: equals property baseline-position
+#[test]
+fn method_centerbox_get_baseline_position() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("center-box");
+        
+        let r = h.call_args(o, "get_baseline_position", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "baseline-position"), "postcondition: r == h.get(o, 'baseline-position')");
+    });
+}
+
+/// method CenterBox.get_shrink_center_last (dynamic GI call): probe: equals property shrink-center-last
+#[test]
+fn method_centerbox_get_shrink_center_last() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("center-box");
+        
+        let r = h.call_args(o, "get_shrink_center_last", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "shrink-center-last"), "postcondition: r == h.get(o, 'shrink-center-last')");
+    });
+}
+
+/// method CenterBox.set_baseline_position (dynamic GI call): probe: set then read property baseline-position: exact
+#[test]
+fn method_centerbox_set_baseline_position() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("center-box");
+        
+        let r = h.call_args(o, "set_baseline_position", &[V::Str("top".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "baseline-position") == V::Str("top".into()), "postcondition: h.get(o, 'baseline-position') == V::Str('top'.into())");
+    });
+}
+
+/// method CenterBox.set_shrink_center_last (dynamic GI call): probe: set then read property shrink-center-last: exact
+#[test]
+fn method_centerbox_set_shrink_center_last() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("center-box");
+        
+        let r = h.call_args(o, "set_shrink_center_last", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "shrink-center-last") == V::Bool(false), "postcondition: h.get(o, 'shrink-center-last') == V::Bool(false)");
+    });
+}
+
+/// bind:baseline-position on CenterBox: rule: B1: GtkCenterBox:baseline-position is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_centerbox_baseline_position() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("center-box");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => { let pspec = o.find_property("baseline-position").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("baseline-position", &ev.to_value_by_nick("top").unwrap()) },
+                1 => { let pspec = o.find_property("baseline-position").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("baseline-position", &ev.to_value_by_nick("center").unwrap()) },
+                2 => { let pspec = o.find_property("baseline-position").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("baseline-position", &ev.to_value_by_nick("top").unwrap()) },
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::baseline-position", true).unwrap();
+        fire(&h.obj(o), "top", 0);
+        fire(&h.obj(o), "center", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "baseline-position"), V::Str("center".into()), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_str(o, "baseline-position", "top").unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "baseline-position"), V::Str("top".into()), "the property reads the programmatic value");
+    });
+}
+
+/// bind:shrink-center-last on CenterBox: rule: B1: GtkCenterBox:shrink-center-last is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_centerbox_shrink_center_last() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("center-box");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("shrink-center-last", false),
+                1 => o.set_property("shrink-center-last", true),
+                2 => o.set_property("shrink-center-last", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::shrink-center-last", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "shrink-center-last"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "shrink-center-last", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "shrink-center-last"), V::Bool(false), "the property reads the programmatic value");
     });
 }
 
@@ -2527,8 +4271,8 @@ fn prop_checkbutton_label() {
         let id = h.resolve_prop("check-button", "label");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("check-button", "label"));
-        h.set_str(o, "label", "p3-sample").unwrap();
-        assert_eq!(h.get(o, "label"), V::Str("p3-sample".into()));
+        h.set_str(o, "label", "svl probe").unwrap();
+        assert_eq!(h.get(o, "label"), V::Str("svl probe".into()));
     });
 }
 
@@ -2547,6 +4291,34 @@ fn prop_checkbutton_use_underline() {
     });
 }
 
+/// method CheckButton.get_active (dynamic GI call): probe: equals property active
+#[test]
+fn method_checkbutton_get_active() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("check-button");
+        
+        let r = h.call_args(o, "get_active", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "active"), "postcondition: r == h.get(o, 'active')");
+    });
+}
+
+/// method CheckButton.get_inconsistent (dynamic GI call): probe: equals property inconsistent
+#[test]
+fn method_checkbutton_get_inconsistent() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("check-button");
+        
+        let r = h.call_args(o, "get_inconsistent", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "inconsistent"), "postcondition: r == h.get(o, 'inconsistent')");
+    });
+}
+
 /// method CheckButton.get_label (dynamic GI call): gtk_check_button_get_label (Gtk 4 docs); string return through GIRepository (X1)
 #[test]
 fn method_checkbutton_get_label() {
@@ -2561,6 +4333,34 @@ fn method_checkbutton_get_label() {
     });
 }
 
+/// method CheckButton.get_use_underline (dynamic GI call): probe: equals property use-underline
+#[test]
+fn method_checkbutton_get_use_underline() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("check-button");
+        
+        let r = h.call_args(o, "get_use_underline", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "use-underline"), "postcondition: r == h.get(o, 'use-underline')");
+    });
+}
+
+/// method CheckButton.set_active (dynamic GI call): probe: set then read property active: exact
+#[test]
+fn method_checkbutton_set_active() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("check-button");
+        
+        let r = h.call_args(o, "set_active", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "active") == V::Bool(true), "postcondition: h.get(o, 'active') == V::Bool(true)");
+    });
+}
+
 /// method CheckButton.set_inconsistent (dynamic GI call): gtk_check_button_set_inconsistent (Gtk 4 docs); called through GIRepository (X1)
 #[test]
 fn method_checkbutton_set_inconsistent() {
@@ -2572,6 +4372,34 @@ fn method_checkbutton_set_inconsistent() {
         let w = h.widget(o);
         let _ = (&w, &r);
         assert!(h.get(o, "inconsistent") == V::Bool(true), "postcondition: h.get(o, 'inconsistent') == V::Bool(true)");
+    });
+}
+
+/// method CheckButton.set_label (dynamic GI call): probe: set then read property label: exact
+#[test]
+fn method_checkbutton_set_label() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("check-button");
+        
+        let r = h.call_args(o, "set_label", &[V::Str("svl probe".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "label") == V::Str("svl probe".into()), "postcondition: h.get(o, 'label') == V::Str('svl probe'.into())");
+    });
+}
+
+/// method CheckButton.set_use_underline (dynamic GI call): probe: set then read property use-underline: exact
+#[test]
+fn method_checkbutton_set_use_underline() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("check-button");
+        
+        let r = h.call_args(o, "set_use_underline", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "use-underline") == V::Bool(true), "postcondition: h.get(o, 'use-underline') == V::Bool(true)");
     });
 }
 
@@ -2598,6 +4426,79 @@ fn binding_checkbutton_active() {
         let ev = h.take_events_with_args();
         assert!(!ev.is_empty(), "native change is delivered");
         assert_ne!(h.get(o, "active"), V::Null, "the property reads the new value");
+    });
+}
+
+/// bind:inconsistent on CheckButton: rule: B1: GtkCheckButton:inconsistent is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_checkbutton_inconsistent() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("check-button");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("inconsistent", true),
+                1 => o.set_property("inconsistent", false),
+                2 => o.set_property("inconsistent", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::inconsistent", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "inconsistent"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "inconsistent", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "inconsistent"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:use-underline on CheckButton: rule: B1: GtkCheckButton:use-underline is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_checkbutton_use_underline() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("check-button");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("use-underline", true),
+                1 => o.set_property("use-underline", false),
+                2 => o.set_property("use-underline", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::use-underline", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "use-underline"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "use-underline", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "use-underline"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// property ColorDialogButton.dialog (JS dialog, round trip): probe: round trip exact; notify fired
+#[test]
+fn prop_colordialogbutton_dialog() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("color-dialog-button");
+        
+        let before = h.get_value(o, "dialog");
+        h.set_value(o, "dialog", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "dialog")), crate::testing::shape(&before));
     });
 }
 
@@ -2655,8 +4556,8 @@ fn prop_drawingarea_content_height() {
         let id = h.resolve_prop("drawing-area", "content-height");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("drawing-area", "content-height"));
-        h.set_i64(o, "content-height", 7).unwrap();
-        assert_eq!(h.get(o, "content-height"), V::I64(7));
+        h.set_i64(o, "content-height", 1).unwrap();
+        assert_eq!(h.get(o, "content-height"), V::I64(1));
     });
 }
 
@@ -2670,8 +4571,8 @@ fn prop_drawingarea_content_width() {
         let id = h.resolve_prop("drawing-area", "content-width");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("drawing-area", "content-width"));
-        h.set_i64(o, "content-width", 7).unwrap();
-        assert_eq!(h.get(o, "content-width"), V::I64(7));
+        h.set_i64(o, "content-width", 1).unwrap();
+        assert_eq!(h.get(o, "content-width"), V::I64(1));
     });
 }
 
@@ -2687,6 +4588,122 @@ fn prop_drawingarea_ops() {
         assert_eq!(id, h.resolve_prop("drawing-area", "ops"));
         h.set_str(o, "ops", "[[\"fillStyle\",\"#ff0000\"],[\"fillRect\",0,0,4,4]]").unwrap();
         assert_eq!(h.get(o, "ops"), V::Str("[[\"fillStyle\",\"#ff0000\"],[\"fillRect\",0,0,4,4]]".into()));
+    });
+}
+
+/// method DrawingArea.get_content_height (dynamic GI call): probe: equals property content-height
+#[test]
+fn method_drawingarea_get_content_height() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("drawing-area");
+        
+        let r = h.call_args(o, "get_content_height", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "content-height"), "postcondition: r == h.get(o, 'content-height')");
+    });
+}
+
+/// method DrawingArea.get_content_width (dynamic GI call): probe: equals property content-width
+#[test]
+fn method_drawingarea_get_content_width() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("drawing-area");
+        
+        let r = h.call_args(o, "get_content_width", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "content-width"), "postcondition: r == h.get(o, 'content-width')");
+    });
+}
+
+/// method DrawingArea.set_content_height (dynamic GI call): probe: set then read property content-height: exact
+#[test]
+fn method_drawingarea_set_content_height() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("drawing-area");
+        
+        let r = h.call_args(o, "set_content_height", &[V::I64(1)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "content-height") == V::I64(1), "postcondition: h.get(o, 'content-height') == V::I64(1)");
+    });
+}
+
+/// method DrawingArea.set_content_width (dynamic GI call): probe: set then read property content-width: exact
+#[test]
+fn method_drawingarea_set_content_width() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("drawing-area");
+        
+        let r = h.call_args(o, "set_content_width", &[V::I64(1)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "content-width") == V::I64(1), "postcondition: h.get(o, 'content-width') == V::I64(1)");
+    });
+}
+
+/// bind:content-height on DrawingArea: rule: B1: GtkDrawingArea:content-height is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_drawingarea_content_height() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("drawing-area");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("content-height", 1i32),
+                1 => o.set_property("content-height", 0i32),
+                2 => o.set_property("content-height", 1i32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::content-height", true).unwrap();
+        fire(&h.obj(o), "1", 0);
+        fire(&h.obj(o), "0", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "content-height"), V::I64(0), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "content-height", 1).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "content-height"), V::I64(1), "the property reads the programmatic value");
+    });
+}
+
+/// bind:content-width on DrawingArea: rule: B1: GtkDrawingArea:content-width is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_drawingarea_content_width() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("drawing-area");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("content-width", 1i32),
+                1 => o.set_property("content-width", 0i32),
+                2 => o.set_property("content-width", 1i32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::content-width", true).unwrap();
+        fire(&h.obj(o), "1", 0);
+        fire(&h.obj(o), "0", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "content-width"), V::I64(0), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "content-width", 1).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "content-width"), V::I64(1), "the property reads the programmatic value");
     });
 }
 
@@ -2854,8 +4871,8 @@ fn prop_editable_max_width_chars() {
         let id = h.resolve_prop("entry", "max-width-chars");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("entry", "max-width-chars"));
-        h.set_i64(o, "max-width-chars", 7).unwrap();
-        assert_eq!(h.get(o, "max-width-chars"), V::I64(7));
+        h.set_i64(o, "max-width-chars", 0).unwrap();
+        assert_eq!(h.get(o, "max-width-chars"), V::I64(0));
     });
 }
 
@@ -2869,8 +4886,8 @@ fn prop_editable_text() {
         let id = h.resolve_prop("entry", "text");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("entry", "text"));
-        h.set_str(o, "text", "p3-sample").unwrap();
-        assert_eq!(h.get(o, "text"), V::Str("p3-sample".into()));
+        h.set_str(o, "text", "svl probe").unwrap();
+        assert_eq!(h.get(o, "text"), V::Str("svl probe".into()));
     });
 }
 
@@ -2888,7 +4905,7 @@ fn echo_editable_text() {
         };
         h.listen(o, "changed", true).unwrap();
         h.listen(o, "notify::text", true).unwrap();
-        h.set_str(o, "text", "p3-sample").unwrap();
+        h.set_str(o, "text", "svl probe").unwrap();
         assert!(h.take_events().is_empty(), "programmatic set is suppressed");
         fire(&h.obj(o), "hello2", 1);
         let mut got: Vec<String> = h.take_events().into_iter().map(|(_, s)| s).collect();
@@ -2897,7 +4914,7 @@ fn echo_editable_text() {
         let mut want: Vec<String> = ["changed", "notify::text"].iter().map(|s| s.to_string()).collect();
         want.sort();
         assert_eq!(got, want, "native edit still delivers");
-        h.set_str(o, "text", "p3-sample").unwrap();
+        h.set_str(o, "text", "svl probe").unwrap();
         assert!(h.take_events().is_empty(), "handlers are unblocked after a programmatic set, and the next set is suppressed again");
     });
 }
@@ -2912,8 +4929,8 @@ fn prop_editable_width_chars() {
         let id = h.resolve_prop("entry", "width-chars");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("entry", "width-chars"));
-        h.set_i64(o, "width-chars", 7).unwrap();
-        assert_eq!(h.get(o, "width-chars"), V::I64(7));
+        h.set_i64(o, "width-chars", 0).unwrap();
+        assert_eq!(h.get(o, "width-chars"), V::I64(0));
     });
 }
 
@@ -2927,8 +4944,92 @@ fn prop_editable_xalign() {
         let id = h.resolve_prop("entry", "xalign");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("entry", "xalign"));
-        h.set_f64(o, "xalign", 0.5).unwrap();
-        assert_eq!(h.get(o, "xalign"), V::F64(0.5));
+        h.set_f64(o, "xalign", 1.0).unwrap();
+        assert_eq!(h.get(o, "xalign"), V::F64(1.0));
+    });
+}
+
+/// method Editable.get_editable (dynamic GI call): probe: equals property editable
+#[test]
+fn method_editable_get_editable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let r = h.call_args(o, "get_editable", &[]).unwrap();
+        let w = h.obj(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "editable"), "postcondition: r == h.get(o, 'editable')");
+    });
+}
+
+/// method Editable.get_enable_undo (dynamic GI call): probe: equals property enable-undo
+#[test]
+fn method_editable_get_enable_undo() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let r = h.call_args(o, "get_enable_undo", &[]).unwrap();
+        let w = h.obj(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "enable-undo"), "postcondition: r == h.get(o, 'enable-undo')");
+    });
+}
+
+/// method Editable.get_max_width_chars (dynamic GI call): probe: equals property max-width-chars
+#[test]
+fn method_editable_get_max_width_chars() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let r = h.call_args(o, "get_max_width_chars", &[]).unwrap();
+        let w = h.obj(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "max-width-chars"), "postcondition: r == h.get(o, 'max-width-chars')");
+    });
+}
+
+/// method Editable.get_position (dynamic GI call): probe: called on a new instance, returned 0
+#[test]
+fn method_editable_get_position() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let r = h.call_args(o, "get_position", &[]).unwrap();
+        let w = h.obj(o);
+        let _ = (&w, &r);
+        assert!(r == V::I64(0), "postcondition: r == V::I64(0)");
+    });
+}
+
+/// method Editable.get_text (dynamic GI call): probe: equals property text
+#[test]
+fn method_editable_get_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let r = h.call_args(o, "get_text", &[]).unwrap();
+        let w = h.obj(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "text"), "postcondition: r == h.get(o, 'text')");
+    });
+}
+
+/// method Editable.get_width_chars (dynamic GI call): probe: equals property width-chars
+#[test]
+fn method_editable_get_width_chars() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let r = h.call_args(o, "get_width_chars", &[]).unwrap();
+        let w = h.obj(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "width-chars"), "postcondition: r == h.get(o, 'width-chars')");
     });
 }
 
@@ -2943,6 +5044,76 @@ fn method_editable_select_region() {
         let w = h.obj(o);
         let _ = (&w, &r);
         assert!(h.get(o, "cursor-position") == V::I64(1) && h.get(o, "selection-bound") == V::I64(3), "postcondition: h.get(o, 'cursor-position') == V::I64(1) && h.get(o, 'selection-bound') == V::I64(3)");
+    });
+}
+
+/// method Editable.set_editable (dynamic GI call): probe: set then read property editable: exact
+#[test]
+fn method_editable_set_editable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let r = h.call_args(o, "set_editable", &[V::Bool(false)]).unwrap();
+        let w = h.obj(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "editable") == V::Bool(false), "postcondition: h.get(o, 'editable') == V::Bool(false)");
+    });
+}
+
+/// method Editable.set_enable_undo (dynamic GI call): probe: set then read property enable-undo: exact
+#[test]
+fn method_editable_set_enable_undo() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let r = h.call_args(o, "set_enable_undo", &[V::Bool(false)]).unwrap();
+        let w = h.obj(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "enable-undo") == V::Bool(false), "postcondition: h.get(o, 'enable-undo') == V::Bool(false)");
+    });
+}
+
+/// method Editable.set_max_width_chars (dynamic GI call): probe: set then read property max-width-chars: exact
+#[test]
+fn method_editable_set_max_width_chars() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let r = h.call_args(o, "set_max_width_chars", &[V::I64(0)]).unwrap();
+        let w = h.obj(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "max-width-chars") == V::I64(0), "postcondition: h.get(o, 'max-width-chars') == V::I64(0)");
+    });
+}
+
+/// method Editable.set_text (dynamic GI call): probe: set then read property text: exact
+#[test]
+fn method_editable_set_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let r = h.call_args(o, "set_text", &[V::Str("svl probe".into())]).unwrap();
+        let w = h.obj(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "text") == V::Str("svl probe".into()), "postcondition: h.get(o, 'text') == V::Str('svl probe'.into())");
+    });
+}
+
+/// method Editable.set_width_chars (dynamic GI call): probe: set then read property width-chars: exact
+#[test]
+fn method_editable_set_width_chars() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let r = h.call_args(o, "set_width_chars", &[V::I64(0)]).unwrap();
+        let w = h.obj(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "width-chars") == V::I64(0), "postcondition: h.get(o, 'width-chars') == V::I64(0)");
     });
 }
 
@@ -3028,6 +5199,20 @@ fn echo_editablelabel_editing() {
         assert_eq!(got, want, "native edit still delivers");
         h.set_bool(o, "editing", true).unwrap();
         assert!(h.take_events().is_empty(), "handlers are unblocked after a programmatic set, and the next set is suppressed again");
+    });
+}
+
+/// method EditableLabel.get_editing (dynamic GI call): probe: equals property editing
+#[test]
+fn method_editablelabel_get_editing() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("editable-label");
+        
+        let r = h.call_args(o, "get_editing", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "editing"), "postcondition: r == h.get(o, 'editing')");
     });
 }
 
@@ -3148,6 +5333,47 @@ fn prop_entry_activates_default() {
     });
 }
 
+/// property Entry.buffer (JS buffer, round trip): probe: round trip exact; notify fired
+#[test]
+fn prop_entry_buffer() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let before = h.get_value(o, "buffer");
+        h.set_value(o, "buffer", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "buffer")), crate::testing::shape(&before));
+    });
+}
+
+/// property Entry.enable-emoji-completion (JS enable-emoji-completion): probe: round trip exact; notify fired
+#[test]
+fn prop_entry_enable_emoji_completion() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let id = h.resolve_prop("entry", "enable-emoji-completion");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("entry", "enable-emoji-completion"));
+        h.set_bool(o, "enable-emoji-completion", true).unwrap();
+        assert_eq!(h.get(o, "enable-emoji-completion"), V::Bool(true));
+    });
+}
+
+/// property Entry.extra-menu (JS extra-menu, round trip): probe: round trip exact; notify fired
+#[test]
+fn prop_entry_extra_menu() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let before = h.get_value(o, "extra-menu");
+        h.set_value(o, "extra-menu", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "extra-menu")), crate::testing::shape(&before));
+    });
+}
+
 /// property Entry.has-frame (JS has-frame): GtkEntry:has-frame (Gtk 4 docs)
 #[test]
 fn prop_entry_has_frame() {
@@ -3160,6 +5386,21 @@ fn prop_entry_has_frame() {
         assert_eq!(id, h.resolve_prop("entry", "has-frame"));
         h.set_bool(o, "has-frame", false).unwrap();
         assert_eq!(h.get(o, "has-frame"), V::Bool(false));
+    });
+}
+
+/// property Entry.im-module (JS im-module): probe: round trip exact; notify fired
+#[test]
+fn prop_entry_im_module() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let id = h.resolve_prop("entry", "im-module");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("entry", "im-module"));
+        h.set_str(o, "im-module", "svl probe").unwrap();
+        assert_eq!(h.get(o, "im-module"), V::Str("svl probe".into()));
     });
 }
 
@@ -3178,6 +5419,21 @@ fn prop_entry_input_purpose() {
     });
 }
 
+/// property Entry.invisible-char-set (JS invisible-char-set): probe: round trip exact; notify fired
+#[test]
+fn prop_entry_invisible_char_set() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let id = h.resolve_prop("entry", "invisible-char-set");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("entry", "invisible-char-set"));
+        h.set_bool(o, "invisible-char-set", true).unwrap();
+        assert_eq!(h.get(o, "invisible-char-set"), V::Bool(true));
+    });
+}
+
 /// property Entry.max-length (JS max-length): GtkEntry:max-length (Gtk 4 docs)
 #[test]
 fn prop_entry_max_length() {
@@ -3188,8 +5444,44 @@ fn prop_entry_max_length() {
         let id = h.resolve_prop("entry", "max-length");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("entry", "max-length"));
-        h.set_i64(o, "max-length", 7).unwrap();
-        assert_eq!(h.get(o, "max-length"), V::I64(7));
+        h.set_i64(o, "max-length", 1).unwrap();
+        assert_eq!(h.get(o, "max-length"), V::I64(1));
+    });
+}
+
+/// property Entry.menu-entry-icon-primary-text (JS menu-entry-icon-primary-text): probe: round trip exact; notify fired
+#[test]
+fn prop_entry_menu_entry_icon_primary_text() {
+    if crate::testing::skip_below_gtk(4, 20) {
+        return;
+    }
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let id = h.resolve_prop("entry", "menu-entry-icon-primary-text");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("entry", "menu-entry-icon-primary-text"));
+        h.set_str(o, "menu-entry-icon-primary-text", "svl probe").unwrap();
+        assert_eq!(h.get(o, "menu-entry-icon-primary-text"), V::Str("svl probe".into()));
+    });
+}
+
+/// property Entry.menu-entry-icon-secondary-text (JS menu-entry-icon-secondary-text): probe: round trip exact; notify fired
+#[test]
+fn prop_entry_menu_entry_icon_secondary_text() {
+    if crate::testing::skip_below_gtk(4, 20) {
+        return;
+    }
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let id = h.resolve_prop("entry", "menu-entry-icon-secondary-text");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("entry", "menu-entry-icon-secondary-text"));
+        h.set_str(o, "menu-entry-icon-secondary-text", "svl probe").unwrap();
+        assert_eq!(h.get(o, "menu-entry-icon-secondary-text"), V::Str("svl probe".into()));
     });
 }
 
@@ -3218,8 +5510,218 @@ fn prop_entry_placeholder_text() {
         let id = h.resolve_prop("entry", "placeholder-text");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("entry", "placeholder-text"));
-        h.set_str(o, "placeholder-text", "p3-sample").unwrap();
-        assert_eq!(h.get(o, "placeholder-text"), V::Str("p3-sample".into()));
+        h.set_str(o, "placeholder-text", "svl probe").unwrap();
+        assert_eq!(h.get(o, "placeholder-text"), V::Str("svl probe".into()));
+    });
+}
+
+/// property Entry.primary-icon-activatable (JS primary-icon-activatable): probe: round trip exact; notify fired
+#[test]
+fn prop_entry_primary_icon_activatable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let id = h.resolve_prop("entry", "primary-icon-activatable");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("entry", "primary-icon-activatable"));
+        h.set_bool(o, "primary-icon-activatable", false).unwrap();
+        assert_eq!(h.get(o, "primary-icon-activatable"), V::Bool(false));
+    });
+}
+
+/// property Entry.primary-icon-name (JS primary-icon-name): probe: round trip exact; notify fired
+#[test]
+fn prop_entry_primary_icon_name() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let id = h.resolve_prop("entry", "primary-icon-name");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("entry", "primary-icon-name"));
+        h.set_str(o, "primary-icon-name", "svl probe").unwrap();
+        assert_eq!(h.get(o, "primary-icon-name"), V::Str("svl probe".into()));
+    });
+}
+
+/// property Entry.primary-icon-sensitive (JS primary-icon-sensitive): probe: round trip exact; notify fired
+#[test]
+fn prop_entry_primary_icon_sensitive() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let id = h.resolve_prop("entry", "primary-icon-sensitive");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("entry", "primary-icon-sensitive"));
+        h.set_bool(o, "primary-icon-sensitive", false).unwrap();
+        assert_eq!(h.get(o, "primary-icon-sensitive"), V::Bool(false));
+    });
+}
+
+/// property Entry.primary-icon-tooltip-markup (JS primary-icon-tooltip-markup): probe: round trip exact; notify fired
+#[test]
+fn prop_entry_primary_icon_tooltip_markup() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let id = h.resolve_prop("entry", "primary-icon-tooltip-markup");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("entry", "primary-icon-tooltip-markup"));
+        h.set_str(o, "primary-icon-tooltip-markup", "svl probe").unwrap();
+        assert_eq!(h.get(o, "primary-icon-tooltip-markup"), V::Str("svl probe".into()));
+    });
+}
+
+/// property Entry.primary-icon-tooltip-text (JS primary-icon-tooltip-text): probe: round trip exact; notify fired
+#[test]
+fn prop_entry_primary_icon_tooltip_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let id = h.resolve_prop("entry", "primary-icon-tooltip-text");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("entry", "primary-icon-tooltip-text"));
+        h.set_str(o, "primary-icon-tooltip-text", "svl probe").unwrap();
+        assert_eq!(h.get(o, "primary-icon-tooltip-text"), V::Str("svl probe".into()));
+    });
+}
+
+/// property Entry.progress-fraction (JS progress-fraction): probe: round trip exact; notify fired
+#[test]
+fn prop_entry_progress_fraction() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let id = h.resolve_prop("entry", "progress-fraction");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("entry", "progress-fraction"));
+        h.set_f64(o, "progress-fraction", 1.0).unwrap();
+        assert_eq!(h.get(o, "progress-fraction"), V::F64(1.0));
+    });
+}
+
+/// property Entry.progress-pulse-step (JS progress-pulse-step): probe: round trip exact; notify fired
+#[test]
+fn prop_entry_progress_pulse_step() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let id = h.resolve_prop("entry", "progress-pulse-step");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("entry", "progress-pulse-step"));
+        h.set_f64(o, "progress-pulse-step", 1.0).unwrap();
+        assert_eq!(h.get(o, "progress-pulse-step"), V::F64(1.0));
+    });
+}
+
+/// property Entry.secondary-icon-activatable (JS secondary-icon-activatable): probe: round trip exact; notify fired
+#[test]
+fn prop_entry_secondary_icon_activatable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let id = h.resolve_prop("entry", "secondary-icon-activatable");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("entry", "secondary-icon-activatable"));
+        h.set_bool(o, "secondary-icon-activatable", false).unwrap();
+        assert_eq!(h.get(o, "secondary-icon-activatable"), V::Bool(false));
+    });
+}
+
+/// property Entry.secondary-icon-name (JS secondary-icon-name): probe: round trip exact; notify fired
+#[test]
+fn prop_entry_secondary_icon_name() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let id = h.resolve_prop("entry", "secondary-icon-name");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("entry", "secondary-icon-name"));
+        h.set_str(o, "secondary-icon-name", "svl probe").unwrap();
+        assert_eq!(h.get(o, "secondary-icon-name"), V::Str("svl probe".into()));
+    });
+}
+
+/// property Entry.secondary-icon-sensitive (JS secondary-icon-sensitive): probe: round trip exact; notify fired
+#[test]
+fn prop_entry_secondary_icon_sensitive() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let id = h.resolve_prop("entry", "secondary-icon-sensitive");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("entry", "secondary-icon-sensitive"));
+        h.set_bool(o, "secondary-icon-sensitive", false).unwrap();
+        assert_eq!(h.get(o, "secondary-icon-sensitive"), V::Bool(false));
+    });
+}
+
+/// property Entry.secondary-icon-tooltip-markup (JS secondary-icon-tooltip-markup): probe: round trip exact; notify fired
+#[test]
+fn prop_entry_secondary_icon_tooltip_markup() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let id = h.resolve_prop("entry", "secondary-icon-tooltip-markup");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("entry", "secondary-icon-tooltip-markup"));
+        h.set_str(o, "secondary-icon-tooltip-markup", "svl probe").unwrap();
+        assert_eq!(h.get(o, "secondary-icon-tooltip-markup"), V::Str("svl probe".into()));
+    });
+}
+
+/// property Entry.secondary-icon-tooltip-text (JS secondary-icon-tooltip-text): probe: round trip exact; notify fired
+#[test]
+fn prop_entry_secondary_icon_tooltip_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let id = h.resolve_prop("entry", "secondary-icon-tooltip-text");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("entry", "secondary-icon-tooltip-text"));
+        h.set_str(o, "secondary-icon-tooltip-text", "svl probe").unwrap();
+        assert_eq!(h.get(o, "secondary-icon-tooltip-text"), V::Str("svl probe".into()));
+    });
+}
+
+/// property Entry.show-emoji-icon (JS show-emoji-icon): probe: round trip exact; notify fired
+#[test]
+fn prop_entry_show_emoji_icon() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let id = h.resolve_prop("entry", "show-emoji-icon");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("entry", "show-emoji-icon"));
+        h.set_bool(o, "show-emoji-icon", true).unwrap();
+        assert_eq!(h.get(o, "show-emoji-icon"), V::Bool(true));
+    });
+}
+
+/// property Entry.truncate-multiline (JS truncate-multiline): probe: round trip exact; notify fired
+#[test]
+fn prop_entry_truncate_multiline() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let id = h.resolve_prop("entry", "truncate-multiline");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("entry", "truncate-multiline"));
+        h.set_bool(o, "truncate-multiline", true).unwrap();
+        assert_eq!(h.get(o, "truncate-multiline"), V::Bool(true));
     });
 }
 
@@ -3238,6 +5740,132 @@ fn prop_entry_visibility() {
     });
 }
 
+/// method Entry.get_activates_default (dynamic GI call): probe: equals property activates-default
+#[test]
+fn method_entry_get_activates_default() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let r = h.call_args(o, "get_activates_default", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "activates-default"), "postcondition: r == h.get(o, 'activates-default')");
+    });
+}
+
+/// method Entry.get_current_icon_drag_source (dynamic GI call): probe: called on a new instance, returned -1
+#[test]
+fn method_entry_get_current_icon_drag_source() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let r = h.call_args(o, "get_current_icon_drag_source", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::I64(-1), "postcondition: r == V::I64(-1)");
+    });
+}
+
+/// method Entry.get_has_frame (dynamic GI call): probe: equals property has-frame
+#[test]
+fn method_entry_get_has_frame() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let r = h.call_args(o, "get_has_frame", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "has-frame"), "postcondition: r == h.get(o, 'has-frame')");
+    });
+}
+
+/// method Entry.get_input_purpose (dynamic GI call): probe: equals property input-purpose
+#[test]
+fn method_entry_get_input_purpose() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let r = h.call_args(o, "get_input_purpose", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "input-purpose"), "postcondition: r == h.get(o, 'input-purpose')");
+    });
+}
+
+/// method Entry.get_max_length (dynamic GI call): probe: equals property max-length
+#[test]
+fn method_entry_get_max_length() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let r = h.call_args(o, "get_max_length", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "max-length"), "postcondition: r == h.get(o, 'max-length')");
+    });
+}
+
+/// method Entry.get_overwrite_mode (dynamic GI call): probe: equals property overwrite-mode
+#[test]
+fn method_entry_get_overwrite_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let r = h.call_args(o, "get_overwrite_mode", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "overwrite-mode"), "postcondition: r == h.get(o, 'overwrite-mode')");
+    });
+}
+
+/// method Entry.get_placeholder_text (dynamic GI call): probe: equals property placeholder-text
+#[test]
+fn method_entry_get_placeholder_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let r = h.call_args(o, "get_placeholder_text", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "placeholder-text"), "postcondition: r == h.get(o, 'placeholder-text')");
+    });
+}
+
+/// method Entry.get_progress_fraction (dynamic GI call): probe: equals property progress-fraction
+#[test]
+fn method_entry_get_progress_fraction() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let r = h.call_args(o, "get_progress_fraction", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "progress-fraction"), "postcondition: r == h.get(o, 'progress-fraction')");
+    });
+}
+
+/// method Entry.get_progress_pulse_step (dynamic GI call): probe: equals property progress-pulse-step
+#[test]
+fn method_entry_get_progress_pulse_step() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let r = h.call_args(o, "get_progress_pulse_step", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "progress-pulse-step"), "postcondition: r == h.get(o, 'progress-pulse-step')");
+    });
+}
+
 /// method Entry.get_text_length (dynamic GI call): gtk_entry_get_text_length (Gtk 4 docs); called through GIRepository (X1)
 #[test]
 fn method_entry_get_text_length() {
@@ -3252,6 +5880,20 @@ fn method_entry_get_text_length() {
     });
 }
 
+/// method Entry.get_visibility (dynamic GI call): probe: equals property visibility
+#[test]
+fn method_entry_get_visibility() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let r = h.call_args(o, "get_visibility", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "visibility"), "postcondition: r == h.get(o, 'visibility')");
+    });
+}
+
 /// method Entry.progress_pulse (dynamic GI call): gtk_entry_progress_pulse (Gtk 4 docs); called through GIRepository (X1)
 #[test]
 fn method_entry_progress_pulse() {
@@ -3263,6 +5905,612 @@ fn method_entry_progress_pulse() {
         let w = h.widget(o);
         let _ = (&w, &r);
         assert!(r == V::Null, "postcondition: r == V::Null");
+    });
+}
+
+/// method Entry.set_activates_default (dynamic GI call): probe: set then read property activates-default: exact
+#[test]
+fn method_entry_set_activates_default() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let r = h.call_args(o, "set_activates_default", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "activates-default") == V::Bool(true), "postcondition: h.get(o, 'activates-default') == V::Bool(true)");
+    });
+}
+
+/// method Entry.set_has_frame (dynamic GI call): probe: set then read property has-frame: exact
+#[test]
+fn method_entry_set_has_frame() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let r = h.call_args(o, "set_has_frame", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "has-frame") == V::Bool(false), "postcondition: h.get(o, 'has-frame') == V::Bool(false)");
+    });
+}
+
+/// method Entry.set_input_purpose (dynamic GI call): probe: set then read property input-purpose: exact
+#[test]
+fn method_entry_set_input_purpose() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let r = h.call_args(o, "set_input_purpose", &[V::Str("alpha".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "input-purpose") == V::Str("alpha".into()), "postcondition: h.get(o, 'input-purpose') == V::Str('alpha'.into())");
+    });
+}
+
+/// method Entry.set_max_length (dynamic GI call): probe: set then read property max-length: exact
+#[test]
+fn method_entry_set_max_length() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let r = h.call_args(o, "set_max_length", &[V::I64(1)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "max-length") == V::I64(1), "postcondition: h.get(o, 'max-length') == V::I64(1)");
+    });
+}
+
+/// method Entry.set_overwrite_mode (dynamic GI call): probe: set then read property overwrite-mode: exact
+#[test]
+fn method_entry_set_overwrite_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let r = h.call_args(o, "set_overwrite_mode", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "overwrite-mode") == V::Bool(true), "postcondition: h.get(o, 'overwrite-mode') == V::Bool(true)");
+    });
+}
+
+/// method Entry.set_placeholder_text (dynamic GI call): probe: set then read property placeholder-text: exact
+#[test]
+fn method_entry_set_placeholder_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let r = h.call_args(o, "set_placeholder_text", &[V::Str("svl probe".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "placeholder-text") == V::Str("svl probe".into()), "postcondition: h.get(o, 'placeholder-text') == V::Str('svl probe'.into())");
+    });
+}
+
+/// method Entry.set_progress_fraction (dynamic GI call): probe: set then read property progress-fraction: exact
+#[test]
+fn method_entry_set_progress_fraction() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let r = h.call_args(o, "set_progress_fraction", &[V::F64(1.0)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "progress-fraction") == V::F64(1.0), "postcondition: h.get(o, 'progress-fraction') == V::F64(1.0)");
+    });
+}
+
+/// method Entry.set_progress_pulse_step (dynamic GI call): probe: set then read property progress-pulse-step: exact
+#[test]
+fn method_entry_set_progress_pulse_step() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let r = h.call_args(o, "set_progress_pulse_step", &[V::F64(1.0)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "progress-pulse-step") == V::F64(1.0), "postcondition: h.get(o, 'progress-pulse-step') == V::F64(1.0)");
+    });
+}
+
+/// method Entry.set_visibility (dynamic GI call): probe: set then read property visibility: exact
+#[test]
+fn method_entry_set_visibility() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let r = h.call_args(o, "set_visibility", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "visibility") == V::Bool(false), "postcondition: h.get(o, 'visibility') == V::Bool(false)");
+    });
+}
+
+/// bind:activates-default on Entry: rule: B1: GtkEntry:activates-default is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_entry_activates_default() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("activates-default", true),
+                1 => o.set_property("activates-default", false),
+                2 => o.set_property("activates-default", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::activates-default", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "activates-default"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "activates-default", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "activates-default"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:enable-emoji-completion on Entry: rule: B1: GtkEntry:enable-emoji-completion is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_entry_enable_emoji_completion() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("enable-emoji-completion", true),
+                1 => o.set_property("enable-emoji-completion", false),
+                2 => o.set_property("enable-emoji-completion", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::enable-emoji-completion", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "enable-emoji-completion"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "enable-emoji-completion", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "enable-emoji-completion"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:has-frame on Entry: rule: B1: GtkEntry:has-frame is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_entry_has_frame() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("has-frame", false),
+                1 => o.set_property("has-frame", true),
+                2 => o.set_property("has-frame", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::has-frame", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "has-frame"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "has-frame", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "has-frame"), V::Bool(false), "the property reads the programmatic value");
+    });
+}
+
+/// bind:input-purpose on Entry: rule: B1: GtkEntry:input-purpose is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_entry_input_purpose() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => { let pspec = o.find_property("input-purpose").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("input-purpose", &ev.to_value_by_nick("alpha").unwrap()) },
+                1 => { let pspec = o.find_property("input-purpose").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("input-purpose", &ev.to_value_by_nick("free-form").unwrap()) },
+                2 => { let pspec = o.find_property("input-purpose").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("input-purpose", &ev.to_value_by_nick("alpha").unwrap()) },
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::input-purpose", true).unwrap();
+        fire(&h.obj(o), "alpha", 0);
+        fire(&h.obj(o), "free-form", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "input-purpose"), V::Str("free-form".into()), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_str(o, "input-purpose", "alpha").unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "input-purpose"), V::Str("alpha".into()), "the property reads the programmatic value");
+    });
+}
+
+/// bind:invisible-char-set on Entry: rule: B1: GtkEntry:invisible-char-set is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_entry_invisible_char_set() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("invisible-char-set", true),
+                1 => o.set_property("invisible-char-set", false),
+                2 => o.set_property("invisible-char-set", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::invisible-char-set", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "invisible-char-set"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "invisible-char-set", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "invisible-char-set"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:max-length on Entry: rule: B1: GtkEntry:max-length is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_entry_max_length() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("max-length", 1i32),
+                1 => o.set_property("max-length", 0i32),
+                2 => o.set_property("max-length", 1i32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::max-length", true).unwrap();
+        fire(&h.obj(o), "1", 0);
+        fire(&h.obj(o), "0", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "max-length"), V::I64(0), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "max-length", 1).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "max-length"), V::I64(1), "the property reads the programmatic value");
+    });
+}
+
+/// bind:overwrite-mode on Entry: rule: B1: GtkEntry:overwrite-mode is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_entry_overwrite_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("overwrite-mode", true),
+                1 => o.set_property("overwrite-mode", false),
+                2 => o.set_property("overwrite-mode", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::overwrite-mode", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "overwrite-mode"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "overwrite-mode", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "overwrite-mode"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:primary-icon-activatable on Entry: rule: B1: GtkEntry:primary-icon-activatable is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_entry_primary_icon_activatable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("primary-icon-activatable", false),
+                1 => o.set_property("primary-icon-activatable", true),
+                2 => o.set_property("primary-icon-activatable", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::primary-icon-activatable", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "primary-icon-activatable"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "primary-icon-activatable", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "primary-icon-activatable"), V::Bool(false), "the property reads the programmatic value");
+    });
+}
+
+/// bind:primary-icon-sensitive on Entry: rule: B1: GtkEntry:primary-icon-sensitive is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_entry_primary_icon_sensitive() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("primary-icon-sensitive", false),
+                1 => o.set_property("primary-icon-sensitive", true),
+                2 => o.set_property("primary-icon-sensitive", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::primary-icon-sensitive", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "primary-icon-sensitive"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "primary-icon-sensitive", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "primary-icon-sensitive"), V::Bool(false), "the property reads the programmatic value");
+    });
+}
+
+/// bind:progress-fraction on Entry: rule: B1: GtkEntry:progress-fraction is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_entry_progress_fraction() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("progress-fraction", 1.0f64),
+                1 => o.set_property("progress-fraction", 0.0f64),
+                2 => o.set_property("progress-fraction", 1.0f64),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::progress-fraction", true).unwrap();
+        fire(&h.obj(o), "1.0", 0);
+        fire(&h.obj(o), "0.0", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "progress-fraction"), V::F64(0.0), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_f64(o, "progress-fraction", 1.0).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "progress-fraction"), V::F64(1.0), "the property reads the programmatic value");
+    });
+}
+
+/// bind:progress-pulse-step on Entry: rule: B1: GtkEntry:progress-pulse-step is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_entry_progress_pulse_step() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("progress-pulse-step", 1.0f64),
+                1 => o.set_property("progress-pulse-step", 0.0f64),
+                2 => o.set_property("progress-pulse-step", 1.0f64),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::progress-pulse-step", true).unwrap();
+        fire(&h.obj(o), "1.0", 0);
+        fire(&h.obj(o), "0.0", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "progress-pulse-step"), V::F64(0.0), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_f64(o, "progress-pulse-step", 1.0).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "progress-pulse-step"), V::F64(1.0), "the property reads the programmatic value");
+    });
+}
+
+/// bind:secondary-icon-activatable on Entry: rule: B1: GtkEntry:secondary-icon-activatable is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_entry_secondary_icon_activatable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("secondary-icon-activatable", false),
+                1 => o.set_property("secondary-icon-activatable", true),
+                2 => o.set_property("secondary-icon-activatable", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::secondary-icon-activatable", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "secondary-icon-activatable"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "secondary-icon-activatable", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "secondary-icon-activatable"), V::Bool(false), "the property reads the programmatic value");
+    });
+}
+
+/// bind:secondary-icon-sensitive on Entry: rule: B1: GtkEntry:secondary-icon-sensitive is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_entry_secondary_icon_sensitive() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("secondary-icon-sensitive", false),
+                1 => o.set_property("secondary-icon-sensitive", true),
+                2 => o.set_property("secondary-icon-sensitive", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::secondary-icon-sensitive", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "secondary-icon-sensitive"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "secondary-icon-sensitive", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "secondary-icon-sensitive"), V::Bool(false), "the property reads the programmatic value");
+    });
+}
+
+/// bind:show-emoji-icon on Entry: rule: B1: GtkEntry:show-emoji-icon is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_entry_show_emoji_icon() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("show-emoji-icon", true),
+                1 => o.set_property("show-emoji-icon", false),
+                2 => o.set_property("show-emoji-icon", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::show-emoji-icon", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "show-emoji-icon"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "show-emoji-icon", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "show-emoji-icon"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:truncate-multiline on Entry: rule: B1: GtkEntry:truncate-multiline is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_entry_truncate_multiline() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("truncate-multiline", true),
+                1 => o.set_property("truncate-multiline", false),
+                2 => o.set_property("truncate-multiline", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::truncate-multiline", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "truncate-multiline"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "truncate-multiline", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "truncate-multiline"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:visibility on Entry: rule: B1: GtkEntry:visibility is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_entry_visibility() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("visibility", false),
+                1 => o.set_property("visibility", true),
+                2 => o.set_property("visibility", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::visibility", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "visibility"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "visibility", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "visibility"), V::Bool(false), "the property reads the programmatic value");
     });
 }
 
@@ -3767,8 +7015,8 @@ fn prop_expander_label() {
         let id = h.resolve_prop("expander", "label");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("expander", "label"));
-        h.set_str(o, "label", "p3-sample").unwrap();
-        assert_eq!(h.get(o, "label"), V::Str("p3-sample".into()));
+        h.set_str(o, "label", "svl probe").unwrap();
+        assert_eq!(h.get(o, "label"), V::Str("svl probe".into()));
     });
 }
 
@@ -3817,6 +7065,146 @@ fn prop_expander_use_underline() {
     });
 }
 
+/// method Expander.get_expanded (dynamic GI call): probe: equals property expanded
+#[test]
+fn method_expander_get_expanded() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("expander");
+        
+        let r = h.call_args(o, "get_expanded", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "expanded"), "postcondition: r == h.get(o, 'expanded')");
+    });
+}
+
+/// method Expander.get_label (dynamic GI call): probe: equals property label
+#[test]
+fn method_expander_get_label() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("expander");
+        
+        let r = h.call_args(o, "get_label", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "label"), "postcondition: r == h.get(o, 'label')");
+    });
+}
+
+/// method Expander.get_resize_toplevel (dynamic GI call): probe: equals property resize-toplevel
+#[test]
+fn method_expander_get_resize_toplevel() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("expander");
+        
+        let r = h.call_args(o, "get_resize_toplevel", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "resize-toplevel"), "postcondition: r == h.get(o, 'resize-toplevel')");
+    });
+}
+
+/// method Expander.get_use_markup (dynamic GI call): probe: equals property use-markup
+#[test]
+fn method_expander_get_use_markup() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("expander");
+        
+        let r = h.call_args(o, "get_use_markup", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "use-markup"), "postcondition: r == h.get(o, 'use-markup')");
+    });
+}
+
+/// method Expander.get_use_underline (dynamic GI call): probe: equals property use-underline
+#[test]
+fn method_expander_get_use_underline() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("expander");
+        
+        let r = h.call_args(o, "get_use_underline", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "use-underline"), "postcondition: r == h.get(o, 'use-underline')");
+    });
+}
+
+/// method Expander.set_expanded (dynamic GI call): probe: set then read property expanded: exact
+#[test]
+fn method_expander_set_expanded() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("expander");
+        
+        let r = h.call_args(o, "set_expanded", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "expanded") == V::Bool(true), "postcondition: h.get(o, 'expanded') == V::Bool(true)");
+    });
+}
+
+/// method Expander.set_label (dynamic GI call): probe: set then read property label: exact
+#[test]
+fn method_expander_set_label() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("expander");
+        
+        let r = h.call_args(o, "set_label", &[V::Str("svl probe".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "label") == V::Str("svl probe".into()), "postcondition: h.get(o, 'label') == V::Str('svl probe'.into())");
+    });
+}
+
+/// method Expander.set_resize_toplevel (dynamic GI call): probe: set then read property resize-toplevel: exact
+#[test]
+fn method_expander_set_resize_toplevel() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("expander");
+        
+        let r = h.call_args(o, "set_resize_toplevel", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "resize-toplevel") == V::Bool(true), "postcondition: h.get(o, 'resize-toplevel') == V::Bool(true)");
+    });
+}
+
+/// method Expander.set_use_markup (dynamic GI call): probe: set then read property use-markup: exact
+#[test]
+fn method_expander_set_use_markup() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("expander");
+        
+        let r = h.call_args(o, "set_use_markup", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "use-markup") == V::Bool(true), "postcondition: h.get(o, 'use-markup') == V::Bool(true)");
+    });
+}
+
+/// method Expander.set_use_underline (dynamic GI call): probe: set then read property use-underline: exact
+#[test]
+fn method_expander_set_use_underline() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("expander");
+        
+        let r = h.call_args(o, "set_use_underline", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "use-underline") == V::Bool(true), "postcondition: h.get(o, 'use-underline') == V::Bool(true)");
+    });
+}
+
 /// bind:expanded on Expander: set_expanded notifies expanded only on change (Gtk 4 docs)
 #[test]
 fn binding_expander_expanded() {
@@ -3840,6 +7228,127 @@ fn binding_expander_expanded() {
         let ev = h.take_events_with_args();
         assert!(!ev.is_empty(), "native change is delivered");
         assert_ne!(h.get(o, "expanded"), V::Null, "the property reads the new value");
+    });
+}
+
+/// bind:resize-toplevel on Expander: rule: B1: GtkExpander:resize-toplevel is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_expander_resize_toplevel() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("expander");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("resize-toplevel", true),
+                1 => o.set_property("resize-toplevel", false),
+                2 => o.set_property("resize-toplevel", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::resize-toplevel", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "resize-toplevel"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "resize-toplevel", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "resize-toplevel"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:use-markup on Expander: rule: B1: GtkExpander:use-markup is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_expander_use_markup() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("expander");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("use-markup", true),
+                1 => o.set_property("use-markup", false),
+                2 => o.set_property("use-markup", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::use-markup", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "use-markup"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "use-markup", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "use-markup"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:use-underline on Expander: rule: B1: GtkExpander:use-underline is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_expander_use_underline() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("expander");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("use-underline", true),
+                1 => o.set_property("use-underline", false),
+                2 => o.set_property("use-underline", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::use-underline", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "use-underline"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "use-underline", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "use-underline"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// signal FlowBox.activate-cursor-child: runtime: returns void, run-last; probe: action signal, emitted and delivered
+#[test]
+fn signal_flowbox_activate_cursor_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("flow-box");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v; o.emit_by_name::<()>("activate-cursor-child", &[]);
+        };
+        assert_ne!(h.resolve_signal("flow-box", "activate-cursor-child"), 0);
+        assert_eq!(h.resolve_signal("flow-box", "activate-cursor-child"), h.resolve_signal("flow-box", "activate-cursor-child"));
+        h.listen(e, "activate-cursor-child", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "activate-cursor-child".to_string())), "delivered: {ev:?}");
+        h.listen(e, "activate-cursor-child", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "activate-cursor-child", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "activate-cursor-child", true).is_err(), "stale handle is an error");
     });
 }
 
@@ -3874,6 +7383,37 @@ fn signal_flowbox_child_activated() {
     });
 }
 
+/// signal FlowBox.select-all: runtime: returns void, run-last; probe: action signal, emitted and delivered
+#[test]
+fn signal_flowbox_select_all() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("flow-box");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v; o.emit_by_name::<()>("select-all", &[]);
+        };
+        assert_ne!(h.resolve_signal("flow-box", "select-all"), 0);
+        assert_eq!(h.resolve_signal("flow-box", "select-all"), h.resolve_signal("flow-box", "select-all"));
+        h.listen(e, "select-all", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "select-all".to_string())), "delivered: {ev:?}");
+        h.listen(e, "select-all", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "select-all", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "select-all", true).is_err(), "stale handle is an error");
+    });
+}
+
 /// signal FlowBox.selected-children-changed: GtkFlowBox::selected-children-changed, run-first, void (Gtk 4 docs)
 #[test]
 fn signal_flowbox_selected_children_changed() {
@@ -3905,6 +7445,98 @@ fn signal_flowbox_selected_children_changed() {
     });
 }
 
+/// signal FlowBox.toggle-cursor-child: runtime: returns void, run-last; probe: action signal, emitted and delivered
+#[test]
+fn signal_flowbox_toggle_cursor_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("flow-box");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v; o.emit_by_name::<()>("toggle-cursor-child", &[]);
+        };
+        assert_ne!(h.resolve_signal("flow-box", "toggle-cursor-child"), 0);
+        assert_eq!(h.resolve_signal("flow-box", "toggle-cursor-child"), h.resolve_signal("flow-box", "toggle-cursor-child"));
+        h.listen(e, "toggle-cursor-child", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "toggle-cursor-child".to_string())), "delivered: {ev:?}");
+        h.listen(e, "toggle-cursor-child", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "toggle-cursor-child", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "toggle-cursor-child", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal FlowBox.unselect-all: runtime: returns void, run-last; probe: action signal, emitted and delivered
+#[test]
+fn signal_flowbox_unselect_all() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("flow-box");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v; o.emit_by_name::<()>("unselect-all", &[]);
+        };
+        assert_ne!(h.resolve_signal("flow-box", "unselect-all"), 0);
+        assert_eq!(h.resolve_signal("flow-box", "unselect-all"), h.resolve_signal("flow-box", "unselect-all"));
+        h.listen(e, "unselect-all", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "unselect-all".to_string())), "delivered: {ev:?}");
+        h.listen(e, "unselect-all", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "unselect-all", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "unselect-all", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// property FlowBox.accept-unpaired-release (JS accept-unpaired-release): probe: round trip exact; notify fired
+#[test]
+fn prop_flowbox_accept_unpaired_release() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("flow-box");
+        
+        let id = h.resolve_prop("flow-box", "accept-unpaired-release");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("flow-box", "accept-unpaired-release"));
+        h.set_bool(o, "accept-unpaired-release", true).unwrap();
+        assert_eq!(h.get(o, "accept-unpaired-release"), V::Bool(true));
+    });
+}
+
+/// property FlowBox.activate-on-single-click (JS activate-on-single-click): probe: round trip exact; notify fired
+#[test]
+fn prop_flowbox_activate_on_single_click() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("flow-box");
+        
+        let id = h.resolve_prop("flow-box", "activate-on-single-click");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("flow-box", "activate-on-single-click"));
+        h.set_bool(o, "activate-on-single-click", false).unwrap();
+        assert_eq!(h.get(o, "activate-on-single-click"), V::Bool(false));
+    });
+}
+
 /// property FlowBox.column-spacing (JS column-spacing): GtkFlowBox:column-spacing (Gtk 4 docs); P prop
 #[test]
 fn prop_flowbox_column_spacing() {
@@ -3915,8 +7547,8 @@ fn prop_flowbox_column_spacing() {
         let id = h.resolve_prop("flow-box", "column-spacing");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("flow-box", "column-spacing"));
-        h.set_i64(o, "column-spacing", 7).unwrap();
-        assert_eq!(h.get(o, "column-spacing"), V::I64(7));
+        h.set_i64(o, "column-spacing", 1).unwrap();
+        assert_eq!(h.get(o, "column-spacing"), V::I64(1));
     });
 }
 
@@ -3945,8 +7577,8 @@ fn prop_flowbox_max_children_per_line() {
         let id = h.resolve_prop("flow-box", "max-children-per-line");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("flow-box", "max-children-per-line"));
-        h.set_i64(o, "max-children-per-line", 1).unwrap();
-        assert_eq!(h.get(o, "max-children-per-line"), V::I64(1));
+        h.set_i64(o, "max-children-per-line", 8).unwrap();
+        assert_eq!(h.get(o, "max-children-per-line"), V::I64(8));
     });
 }
 
@@ -3960,8 +7592,8 @@ fn prop_flowbox_min_children_per_line() {
         let id = h.resolve_prop("flow-box", "min-children-per-line");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("flow-box", "min-children-per-line"));
-        h.set_i64(o, "min-children-per-line", 7).unwrap();
-        assert_eq!(h.get(o, "min-children-per-line"), V::I64(7));
+        h.set_i64(o, "min-children-per-line", 1).unwrap();
+        assert_eq!(h.get(o, "min-children-per-line"), V::I64(1));
     });
 }
 
@@ -3975,8 +7607,8 @@ fn prop_flowbox_row_spacing() {
         let id = h.resolve_prop("flow-box", "row-spacing");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("flow-box", "row-spacing"));
-        h.set_i64(o, "row-spacing", 7).unwrap();
-        assert_eq!(h.get(o, "row-spacing"), V::I64(7));
+        h.set_i64(o, "row-spacing", 1).unwrap();
+        assert_eq!(h.get(o, "row-spacing"), V::I64(1));
     });
 }
 
@@ -3995,6 +7627,483 @@ fn prop_flowbox_selection_mode() {
     });
 }
 
+/// method FlowBox.get_activate_on_single_click (dynamic GI call): probe: equals property activate-on-single-click
+#[test]
+fn method_flowbox_get_activate_on_single_click() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("flow-box");
+        
+        let r = h.call_args(o, "get_activate_on_single_click", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "activate-on-single-click"), "postcondition: r == h.get(o, 'activate-on-single-click')");
+    });
+}
+
+/// method FlowBox.get_column_spacing (dynamic GI call): probe: equals property column-spacing
+#[test]
+fn method_flowbox_get_column_spacing() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("flow-box");
+        
+        let r = h.call_args(o, "get_column_spacing", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "column-spacing"), "postcondition: r == h.get(o, 'column-spacing')");
+    });
+}
+
+/// method FlowBox.get_homogeneous (dynamic GI call): probe: equals property homogeneous
+#[test]
+fn method_flowbox_get_homogeneous() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("flow-box");
+        
+        let r = h.call_args(o, "get_homogeneous", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "homogeneous"), "postcondition: r == h.get(o, 'homogeneous')");
+    });
+}
+
+/// method FlowBox.get_max_children_per_line (dynamic GI call): probe: equals property max-children-per-line
+#[test]
+fn method_flowbox_get_max_children_per_line() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("flow-box");
+        
+        let r = h.call_args(o, "get_max_children_per_line", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "max-children-per-line"), "postcondition: r == h.get(o, 'max-children-per-line')");
+    });
+}
+
+/// method FlowBox.get_min_children_per_line (dynamic GI call): probe: equals property min-children-per-line
+#[test]
+fn method_flowbox_get_min_children_per_line() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("flow-box");
+        
+        let r = h.call_args(o, "get_min_children_per_line", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "min-children-per-line"), "postcondition: r == h.get(o, 'min-children-per-line')");
+    });
+}
+
+/// method FlowBox.get_row_spacing (dynamic GI call): probe: equals property row-spacing
+#[test]
+fn method_flowbox_get_row_spacing() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("flow-box");
+        
+        let r = h.call_args(o, "get_row_spacing", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "row-spacing"), "postcondition: r == h.get(o, 'row-spacing')");
+    });
+}
+
+/// method FlowBox.get_selection_mode (dynamic GI call): probe: equals property selection-mode
+#[test]
+fn method_flowbox_get_selection_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("flow-box");
+        
+        let r = h.call_args(o, "get_selection_mode", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "selection-mode"), "postcondition: r == h.get(o, 'selection-mode')");
+    });
+}
+
+/// method FlowBox.set_activate_on_single_click (dynamic GI call): probe: set then read property activate-on-single-click: exact
+#[test]
+fn method_flowbox_set_activate_on_single_click() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("flow-box");
+        
+        let r = h.call_args(o, "set_activate_on_single_click", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "activate-on-single-click") == V::Bool(false), "postcondition: h.get(o, 'activate-on-single-click') == V::Bool(false)");
+    });
+}
+
+/// method FlowBox.set_column_spacing (dynamic GI call): probe: set then read property column-spacing: exact
+#[test]
+fn method_flowbox_set_column_spacing() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("flow-box");
+        
+        let r = h.call_args(o, "set_column_spacing", &[V::I64(1)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "column-spacing") == V::I64(1), "postcondition: h.get(o, 'column-spacing') == V::I64(1)");
+    });
+}
+
+/// method FlowBox.set_homogeneous (dynamic GI call): probe: set then read property homogeneous: exact
+#[test]
+fn method_flowbox_set_homogeneous() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("flow-box");
+        
+        let r = h.call_args(o, "set_homogeneous", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "homogeneous") == V::Bool(true), "postcondition: h.get(o, 'homogeneous') == V::Bool(true)");
+    });
+}
+
+/// method FlowBox.set_max_children_per_line (dynamic GI call): probe: set then read property max-children-per-line: exact
+#[test]
+fn method_flowbox_set_max_children_per_line() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("flow-box");
+        
+        let r = h.call_args(o, "set_max_children_per_line", &[V::I64(8)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "max-children-per-line") == V::I64(8), "postcondition: h.get(o, 'max-children-per-line') == V::I64(8)");
+    });
+}
+
+/// method FlowBox.set_min_children_per_line (dynamic GI call): probe: set then read property min-children-per-line: exact
+#[test]
+fn method_flowbox_set_min_children_per_line() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("flow-box");
+        
+        let r = h.call_args(o, "set_min_children_per_line", &[V::I64(1)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "min-children-per-line") == V::I64(1), "postcondition: h.get(o, 'min-children-per-line') == V::I64(1)");
+    });
+}
+
+/// method FlowBox.set_row_spacing (dynamic GI call): probe: set then read property row-spacing: exact
+#[test]
+fn method_flowbox_set_row_spacing() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("flow-box");
+        
+        let r = h.call_args(o, "set_row_spacing", &[V::I64(1)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "row-spacing") == V::I64(1), "postcondition: h.get(o, 'row-spacing') == V::I64(1)");
+    });
+}
+
+/// method FlowBox.set_selection_mode (dynamic GI call): probe: set then read property selection-mode: exact
+#[test]
+fn method_flowbox_set_selection_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("flow-box");
+        
+        let r = h.call_args(o, "set_selection_mode", &[V::Str("none".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "selection-mode") == V::Str("none".into()), "postcondition: h.get(o, 'selection-mode') == V::Str('none'.into())");
+    });
+}
+
+/// bind:accept-unpaired-release on FlowBox: rule: B1: GtkFlowBox:accept-unpaired-release is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_flowbox_accept_unpaired_release() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("flow-box");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("accept-unpaired-release", true),
+                1 => o.set_property("accept-unpaired-release", false),
+                2 => o.set_property("accept-unpaired-release", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::accept-unpaired-release", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "accept-unpaired-release"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "accept-unpaired-release", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "accept-unpaired-release"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:activate-on-single-click on FlowBox: rule: B1: GtkFlowBox:activate-on-single-click is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_flowbox_activate_on_single_click() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("flow-box");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("activate-on-single-click", false),
+                1 => o.set_property("activate-on-single-click", true),
+                2 => o.set_property("activate-on-single-click", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::activate-on-single-click", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "activate-on-single-click"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "activate-on-single-click", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "activate-on-single-click"), V::Bool(false), "the property reads the programmatic value");
+    });
+}
+
+/// bind:column-spacing on FlowBox: rule: B1: GtkFlowBox:column-spacing is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_flowbox_column_spacing() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("flow-box");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("column-spacing", 1u32),
+                1 => o.set_property("column-spacing", 0u32),
+                2 => o.set_property("column-spacing", 1u32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::column-spacing", true).unwrap();
+        fire(&h.obj(o), "1", 0);
+        fire(&h.obj(o), "0", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "column-spacing"), V::I64(0), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "column-spacing", 1).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "column-spacing"), V::I64(1), "the property reads the programmatic value");
+    });
+}
+
+/// bind:homogeneous on FlowBox: rule: B1: GtkFlowBox:homogeneous is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_flowbox_homogeneous() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("flow-box");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("homogeneous", true),
+                1 => o.set_property("homogeneous", false),
+                2 => o.set_property("homogeneous", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::homogeneous", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "homogeneous"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "homogeneous", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "homogeneous"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:max-children-per-line on FlowBox: rule: B1: GtkFlowBox:max-children-per-line is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_flowbox_max_children_per_line() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("flow-box");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("max-children-per-line", 8u32),
+                1 => o.set_property("max-children-per-line", 7u32),
+                2 => o.set_property("max-children-per-line", 8u32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::max-children-per-line", true).unwrap();
+        fire(&h.obj(o), "8", 0);
+        fire(&h.obj(o), "7", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "max-children-per-line"), V::I64(7), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "max-children-per-line", 8).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "max-children-per-line"), V::I64(8), "the property reads the programmatic value");
+    });
+}
+
+/// bind:min-children-per-line on FlowBox: rule: B1: GtkFlowBox:min-children-per-line is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_flowbox_min_children_per_line() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("flow-box");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("min-children-per-line", 1u32),
+                1 => o.set_property("min-children-per-line", 0u32),
+                2 => o.set_property("min-children-per-line", 1u32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::min-children-per-line", true).unwrap();
+        fire(&h.obj(o), "1", 0);
+        fire(&h.obj(o), "0", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "min-children-per-line"), V::I64(0), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "min-children-per-line", 1).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "min-children-per-line"), V::I64(1), "the property reads the programmatic value");
+    });
+}
+
+/// bind:row-spacing on FlowBox: rule: B1: GtkFlowBox:row-spacing is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_flowbox_row_spacing() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("flow-box");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("row-spacing", 1u32),
+                1 => o.set_property("row-spacing", 0u32),
+                2 => o.set_property("row-spacing", 1u32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::row-spacing", true).unwrap();
+        fire(&h.obj(o), "1", 0);
+        fire(&h.obj(o), "0", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "row-spacing"), V::I64(0), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "row-spacing", 1).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "row-spacing"), V::I64(1), "the property reads the programmatic value");
+    });
+}
+
+/// bind:selection-mode on FlowBox: rule: B1: GtkFlowBox:selection-mode is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_flowbox_selection_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("flow-box");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => { let pspec = o.find_property("selection-mode").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("selection-mode", &ev.to_value_by_nick("none").unwrap()) },
+                1 => { let pspec = o.find_property("selection-mode").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("selection-mode", &ev.to_value_by_nick("single").unwrap()) },
+                2 => { let pspec = o.find_property("selection-mode").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("selection-mode", &ev.to_value_by_nick("none").unwrap()) },
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::selection-mode", true).unwrap();
+        fire(&h.obj(o), "none", 0);
+        fire(&h.obj(o), "single", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "selection-mode"), V::Str("single".into()), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_str(o, "selection-mode", "none").unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "selection-mode"), V::Str("none".into()), "the property reads the programmatic value");
+    });
+}
+
+/// method FlowBoxChild.get_index (dynamic GI call): probe: called on a new instance, returned -1
+#[test]
+fn method_flowboxchild_get_index() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("flow-box-child");
+        
+        let r = h.call_args(o, "get_index", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::I64(-1), "postcondition: r == V::I64(-1)");
+    });
+}
+
+/// method FlowBoxChild.is_selected (dynamic GI call): probe: called on a new instance, returned False
+#[test]
+fn method_flowboxchild_is_selected() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("flow-box-child");
+        
+        let r = h.call_args(o, "is_selected", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::Bool(false), "postcondition: r == V::Bool(false)");
+    });
+}
+
+/// property FontDialogButton.dialog (JS dialog, round trip): probe: round trip exact; notify fired
+#[test]
+fn prop_fontdialogbutton_dialog() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("font-dialog-button");
+        
+        let before = h.get_value(o, "dialog");
+        h.set_value(o, "dialog", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "dialog")), crate::testing::shape(&before));
+    });
+}
+
 /// property FontDialogButton.font-desc (JS font-desc, round trip): GtkFontDialogButton:font-desc, PangoFontDescription (Gtk 4 docs); boxed round trip (handle ids blanked)
 #[test]
 fn prop_fontdialogbutton_font_desc() {
@@ -4005,6 +8114,21 @@ fn prop_fontdialogbutton_font_desc() {
         let before = h.get_value(o, "font-desc");
         h.set_value(o, "font-desc", &before).unwrap();
         assert_eq!(crate::testing::shape(&h.get_value(o, "font-desc")), crate::testing::shape(&before));
+    });
+}
+
+/// property FontDialogButton.font-features (JS font-features): probe: round trip exact; notify fired
+#[test]
+fn prop_fontdialogbutton_font_features() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("font-dialog-button");
+        
+        let id = h.resolve_prop("font-dialog-button", "font-features");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("font-dialog-button", "font-features"));
+        h.set_str(o, "font-features", "svl probe").unwrap();
+        assert_eq!(h.get(o, "font-features"), V::Str("svl probe".into()));
     });
 }
 
@@ -4053,6 +8177,208 @@ fn prop_fontdialogbutton_use_size() {
     });
 }
 
+/// method FontDialogButton.get_font_features (dynamic GI call): probe: equals property font-features
+#[test]
+fn method_fontdialogbutton_get_font_features() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("font-dialog-button");
+        
+        let r = h.call_args(o, "get_font_features", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "font-features"), "postcondition: r == h.get(o, 'font-features')");
+    });
+}
+
+/// method FontDialogButton.get_level (dynamic GI call): probe: equals property level
+#[test]
+fn method_fontdialogbutton_get_level() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("font-dialog-button");
+        
+        let r = h.call_args(o, "get_level", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "level"), "postcondition: r == h.get(o, 'level')");
+    });
+}
+
+/// method FontDialogButton.get_use_font (dynamic GI call): probe: equals property use-font
+#[test]
+fn method_fontdialogbutton_get_use_font() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("font-dialog-button");
+        
+        let r = h.call_args(o, "get_use_font", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "use-font"), "postcondition: r == h.get(o, 'use-font')");
+    });
+}
+
+/// method FontDialogButton.get_use_size (dynamic GI call): probe: equals property use-size
+#[test]
+fn method_fontdialogbutton_get_use_size() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("font-dialog-button");
+        
+        let r = h.call_args(o, "get_use_size", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "use-size"), "postcondition: r == h.get(o, 'use-size')");
+    });
+}
+
+/// method FontDialogButton.set_font_features (dynamic GI call): probe: set then read property font-features: exact
+#[test]
+fn method_fontdialogbutton_set_font_features() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("font-dialog-button");
+        
+        let r = h.call_args(o, "set_font_features", &[V::Str("svl probe".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "font-features") == V::Str("svl probe".into()), "postcondition: h.get(o, 'font-features') == V::Str('svl probe'.into())");
+    });
+}
+
+/// method FontDialogButton.set_level (dynamic GI call): probe: set then read property level: exact
+#[test]
+fn method_fontdialogbutton_set_level() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("font-dialog-button");
+        
+        let r = h.call_args(o, "set_level", &[V::Str("family".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "level") == V::Str("family".into()), "postcondition: h.get(o, 'level') == V::Str('family'.into())");
+    });
+}
+
+/// method FontDialogButton.set_use_font (dynamic GI call): probe: set then read property use-font: exact
+#[test]
+fn method_fontdialogbutton_set_use_font() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("font-dialog-button");
+        
+        let r = h.call_args(o, "set_use_font", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "use-font") == V::Bool(true), "postcondition: h.get(o, 'use-font') == V::Bool(true)");
+    });
+}
+
+/// method FontDialogButton.set_use_size (dynamic GI call): probe: set then read property use-size: exact
+#[test]
+fn method_fontdialogbutton_set_use_size() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("font-dialog-button");
+        
+        let r = h.call_args(o, "set_use_size", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "use-size") == V::Bool(true), "postcondition: h.get(o, 'use-size') == V::Bool(true)");
+    });
+}
+
+/// bind:level on FontDialogButton: rule: B1: GtkFontDialogButton:level is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_fontdialogbutton_level() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("font-dialog-button");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => { let pspec = o.find_property("level").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("level", &ev.to_value_by_nick("family").unwrap()) },
+                1 => { let pspec = o.find_property("level").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("level", &ev.to_value_by_nick("font").unwrap()) },
+                2 => { let pspec = o.find_property("level").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("level", &ev.to_value_by_nick("family").unwrap()) },
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::level", true).unwrap();
+        fire(&h.obj(o), "family", 0);
+        fire(&h.obj(o), "font", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "level"), V::Str("font".into()), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_str(o, "level", "family").unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "level"), V::Str("family".into()), "the property reads the programmatic value");
+    });
+}
+
+/// bind:use-font on FontDialogButton: rule: B1: GtkFontDialogButton:use-font is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_fontdialogbutton_use_font() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("font-dialog-button");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("use-font", true),
+                1 => o.set_property("use-font", false),
+                2 => o.set_property("use-font", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::use-font", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "use-font"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "use-font", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "use-font"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:use-size on FontDialogButton: rule: B1: GtkFontDialogButton:use-size is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_fontdialogbutton_use_size() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("font-dialog-button");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("use-size", true),
+                1 => o.set_property("use-size", false),
+                2 => o.set_property("use-size", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::use-size", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "use-size"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "use-size", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "use-size"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
 /// property Frame.label (JS label): GtkFrame:label (Gtk 4 docs); P prop
 #[test]
 fn prop_frame_label() {
@@ -4063,8 +8389,8 @@ fn prop_frame_label() {
         let id = h.resolve_prop("frame", "label");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("frame", "label"));
-        h.set_str(o, "label", "p3-sample").unwrap();
-        assert_eq!(h.get(o, "label"), V::Str("p3-sample".into()));
+        h.set_str(o, "label", "svl probe").unwrap();
+        assert_eq!(h.get(o, "label"), V::Str("svl probe".into()));
     });
 }
 
@@ -4078,8 +8404,66 @@ fn prop_frame_label_xalign() {
         let id = h.resolve_prop("frame", "label-xalign");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("frame", "label-xalign"));
-        h.set_f64(o, "label-xalign", 0.5).unwrap();
-        assert_eq!(h.get(o, "label-xalign"), V::F64(0.5));
+        h.set_f64(o, "label-xalign", 1.0).unwrap();
+        assert_eq!(h.get(o, "label-xalign"), V::F64(1.0));
+    });
+}
+
+/// method Frame.get_label (dynamic GI call): probe: equals property label
+#[test]
+fn method_frame_get_label() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("frame");
+        
+        let r = h.call_args(o, "get_label", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "label"), "postcondition: r == h.get(o, 'label')");
+    });
+}
+
+/// method Frame.set_label (dynamic GI call): probe: set then read property label: exact
+#[test]
+fn method_frame_set_label() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("frame");
+        
+        let r = h.call_args(o, "set_label", &[V::Str("svl probe".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "label") == V::Str("svl probe".into()), "postcondition: h.get(o, 'label') == V::Str('svl probe'.into())");
+    });
+}
+
+/// bind:label-xalign on Frame: rule: B1: GtkFrame:label-xalign is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_frame_label_xalign() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("frame");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("label-xalign", 1.0f32),
+                1 => o.set_property("label-xalign", 0.0f32),
+                2 => o.set_property("label-xalign", 1.0f32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::label-xalign", true).unwrap();
+        fire(&h.obj(o), "1.0", 0);
+        fire(&h.obj(o), "0.0", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "label-xalign"), V::F64(0.0), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_f64(o, "label-xalign", 1.0).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "label-xalign"), V::F64(1.0), "the property reads the programmatic value");
     });
 }
 
@@ -4209,6 +8593,143 @@ fn prop_graphicsoffload_enabled() {
     });
 }
 
+/// method GraphicsOffload.get_black_background (dynamic GI call): probe: equals property black-background
+#[test]
+fn method_graphicsoffload_get_black_background() {
+    if crate::testing::skip_below_gtk(4, 16) {
+        return;
+    }
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("graphics-offload");
+        
+        let r = h.call_args(o, "get_black_background", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "black-background"), "postcondition: r == h.get(o, 'black-background')");
+    });
+}
+
+/// method GraphicsOffload.get_enabled (dynamic GI call): probe: equals property enabled
+#[test]
+fn method_graphicsoffload_get_enabled() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("graphics-offload");
+        
+        let r = h.call_args(o, "get_enabled", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "enabled"), "postcondition: r == h.get(o, 'enabled')");
+    });
+}
+
+/// method GraphicsOffload.set_black_background (dynamic GI call): probe: set then read property black-background: exact
+#[test]
+fn method_graphicsoffload_set_black_background() {
+    if crate::testing::skip_below_gtk(4, 16) {
+        return;
+    }
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("graphics-offload");
+        
+        let r = h.call_args(o, "set_black_background", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "black-background") == V::Bool(true), "postcondition: h.get(o, 'black-background') == V::Bool(true)");
+    });
+}
+
+/// method GraphicsOffload.set_enabled (dynamic GI call): probe: set then read property enabled: exact
+#[test]
+fn method_graphicsoffload_set_enabled() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("graphics-offload");
+        
+        let r = h.call_args(o, "set_enabled", &[V::Str("disabled".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "enabled") == V::Str("disabled".into()), "postcondition: h.get(o, 'enabled') == V::Str('disabled'.into())");
+    });
+}
+
+/// bind:black-background on GraphicsOffload: rule: B1: GtkGraphicsOffload:black-background is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_graphicsoffload_black_background() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("graphics-offload");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("black-background", true),
+                1 => o.set_property("black-background", false),
+                2 => o.set_property("black-background", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::black-background", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "black-background"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "black-background", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "black-background"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:enabled on GraphicsOffload: rule: B1: GtkGraphicsOffload:enabled is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_graphicsoffload_enabled() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("graphics-offload");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => { let pspec = o.find_property("enabled").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("enabled", &ev.to_value_by_nick("disabled").unwrap()) },
+                1 => { let pspec = o.find_property("enabled").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("enabled", &ev.to_value_by_nick("enabled").unwrap()) },
+                2 => { let pspec = o.find_property("enabled").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("enabled", &ev.to_value_by_nick("disabled").unwrap()) },
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::enabled", true).unwrap();
+        fire(&h.obj(o), "disabled", 0);
+        fire(&h.obj(o), "enabled", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "enabled"), V::Str("enabled".into()), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_str(o, "enabled", "disabled").unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "enabled"), V::Str("disabled".into()), "the property reads the programmatic value");
+    });
+}
+
+/// property Grid.baseline-row (JS baseline-row): probe: round trip exact; notify fired
+#[test]
+fn prop_grid_baseline_row() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("grid");
+        
+        let id = h.resolve_prop("grid", "baseline-row");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("grid", "baseline-row"));
+        h.set_i64(o, "baseline-row", 1).unwrap();
+        assert_eq!(h.get(o, "baseline-row"), V::I64(1));
+    });
+}
+
 /// property Grid.column-homogeneous (JS column-homogeneous): GtkGrid:column-homogeneous (Gtk 4 docs); P prop
 #[test]
 fn prop_grid_column_homogeneous() {
@@ -4234,8 +8755,8 @@ fn prop_grid_column_spacing() {
         let id = h.resolve_prop("grid", "column-spacing");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("grid", "column-spacing"));
-        h.set_i64(o, "column-spacing", 7).unwrap();
-        assert_eq!(h.get(o, "column-spacing"), V::I64(7));
+        h.set_i64(o, "column-spacing", 1).unwrap();
+        assert_eq!(h.get(o, "column-spacing"), V::I64(1));
     });
 }
 
@@ -4264,8 +8785,242 @@ fn prop_grid_row_spacing() {
         let id = h.resolve_prop("grid", "row-spacing");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("grid", "row-spacing"));
-        h.set_i64(o, "row-spacing", 7).unwrap();
-        assert_eq!(h.get(o, "row-spacing"), V::I64(7));
+        h.set_i64(o, "row-spacing", 1).unwrap();
+        assert_eq!(h.get(o, "row-spacing"), V::I64(1));
+    });
+}
+
+/// method Grid.get_baseline_row (dynamic GI call): probe: equals property baseline-row
+#[test]
+fn method_grid_get_baseline_row() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("grid");
+        
+        let r = h.call_args(o, "get_baseline_row", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "baseline-row"), "postcondition: r == h.get(o, 'baseline-row')");
+    });
+}
+
+/// method Grid.get_column_homogeneous (dynamic GI call): probe: equals property column-homogeneous
+#[test]
+fn method_grid_get_column_homogeneous() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("grid");
+        
+        let r = h.call_args(o, "get_column_homogeneous", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "column-homogeneous"), "postcondition: r == h.get(o, 'column-homogeneous')");
+    });
+}
+
+/// method Grid.get_row_homogeneous (dynamic GI call): probe: equals property row-homogeneous
+#[test]
+fn method_grid_get_row_homogeneous() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("grid");
+        
+        let r = h.call_args(o, "get_row_homogeneous", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "row-homogeneous"), "postcondition: r == h.get(o, 'row-homogeneous')");
+    });
+}
+
+/// method Grid.set_baseline_row (dynamic GI call): probe: set then read property baseline-row: exact
+#[test]
+fn method_grid_set_baseline_row() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("grid");
+        
+        let r = h.call_args(o, "set_baseline_row", &[V::I64(1)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "baseline-row") == V::I64(1), "postcondition: h.get(o, 'baseline-row') == V::I64(1)");
+    });
+}
+
+/// method Grid.set_column_homogeneous (dynamic GI call): probe: set then read property column-homogeneous: exact
+#[test]
+fn method_grid_set_column_homogeneous() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("grid");
+        
+        let r = h.call_args(o, "set_column_homogeneous", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "column-homogeneous") == V::Bool(true), "postcondition: h.get(o, 'column-homogeneous') == V::Bool(true)");
+    });
+}
+
+/// method Grid.set_row_homogeneous (dynamic GI call): probe: set then read property row-homogeneous: exact
+#[test]
+fn method_grid_set_row_homogeneous() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("grid");
+        
+        let r = h.call_args(o, "set_row_homogeneous", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "row-homogeneous") == V::Bool(true), "postcondition: h.get(o, 'row-homogeneous') == V::Bool(true)");
+    });
+}
+
+/// bind:baseline-row on Grid: rule: B1: GtkGrid:baseline-row is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_grid_baseline_row() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("grid");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("baseline-row", 1i32),
+                1 => o.set_property("baseline-row", 0i32),
+                2 => o.set_property("baseline-row", 1i32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::baseline-row", true).unwrap();
+        fire(&h.obj(o), "1", 0);
+        fire(&h.obj(o), "0", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "baseline-row"), V::I64(0), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "baseline-row", 1).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "baseline-row"), V::I64(1), "the property reads the programmatic value");
+    });
+}
+
+/// bind:column-homogeneous on Grid: rule: B1: GtkGrid:column-homogeneous is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_grid_column_homogeneous() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("grid");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("column-homogeneous", true),
+                1 => o.set_property("column-homogeneous", false),
+                2 => o.set_property("column-homogeneous", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::column-homogeneous", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "column-homogeneous"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "column-homogeneous", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "column-homogeneous"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:column-spacing on Grid: rule: B1: GtkGrid:column-spacing is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_grid_column_spacing() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("grid");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("column-spacing", 1i32),
+                1 => o.set_property("column-spacing", 0i32),
+                2 => o.set_property("column-spacing", 1i32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::column-spacing", true).unwrap();
+        fire(&h.obj(o), "1", 0);
+        fire(&h.obj(o), "0", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "column-spacing"), V::I64(0), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "column-spacing", 1).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "column-spacing"), V::I64(1), "the property reads the programmatic value");
+    });
+}
+
+/// bind:row-homogeneous on Grid: rule: B1: GtkGrid:row-homogeneous is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_grid_row_homogeneous() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("grid");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("row-homogeneous", true),
+                1 => o.set_property("row-homogeneous", false),
+                2 => o.set_property("row-homogeneous", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::row-homogeneous", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "row-homogeneous"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "row-homogeneous", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "row-homogeneous"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:row-spacing on Grid: rule: B1: GtkGrid:row-spacing is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_grid_row_spacing() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("grid");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("row-spacing", 1i32),
+                1 => o.set_property("row-spacing", 0i32),
+                2 => o.set_property("row-spacing", 1i32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::row-spacing", true).unwrap();
+        fire(&h.obj(o), "1", 0);
+        fire(&h.obj(o), "0", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "row-spacing"), V::I64(0), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "row-spacing", 1).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "row-spacing"), V::I64(1), "the property reads the programmatic value");
     });
 }
 
@@ -4331,6 +9086,156 @@ fn prop_headerbar_use_native_controls() {
         assert_eq!(id, h.resolve_prop("header-bar", "use-native-controls"));
         h.set_bool(o, "use-native-controls", true).unwrap();
         assert_eq!(h.get(o, "use-native-controls"), V::Bool(true));
+    });
+}
+
+/// method HeaderBar.get_decoration_layout (dynamic GI call): probe: equals property decoration-layout
+#[test]
+fn method_headerbar_get_decoration_layout() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("header-bar");
+        
+        let r = h.call_args(o, "get_decoration_layout", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "decoration-layout"), "postcondition: r == h.get(o, 'decoration-layout')");
+    });
+}
+
+/// method HeaderBar.get_show_title_buttons (dynamic GI call): probe: equals property show-title-buttons
+#[test]
+fn method_headerbar_get_show_title_buttons() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("header-bar");
+        
+        let r = h.call_args(o, "get_show_title_buttons", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "show-title-buttons"), "postcondition: r == h.get(o, 'show-title-buttons')");
+    });
+}
+
+/// method HeaderBar.get_use_native_controls (dynamic GI call): probe: equals property use-native-controls
+#[test]
+fn method_headerbar_get_use_native_controls() {
+    if crate::testing::skip_below_gtk(4, 18) {
+        return;
+    }
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("header-bar");
+        
+        let r = h.call_args(o, "get_use_native_controls", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "use-native-controls"), "postcondition: r == h.get(o, 'use-native-controls')");
+    });
+}
+
+/// method HeaderBar.set_decoration_layout (dynamic GI call): probe: set then read property decoration-layout: exact
+#[test]
+fn method_headerbar_set_decoration_layout() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("header-bar");
+        
+        let r = h.call_args(o, "set_decoration_layout", &[V::Str("svl probe".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "decoration-layout") == V::Str("svl probe".into()), "postcondition: h.get(o, 'decoration-layout') == V::Str('svl probe'.into())");
+    });
+}
+
+/// method HeaderBar.set_show_title_buttons (dynamic GI call): probe: set then read property show-title-buttons: exact
+#[test]
+fn method_headerbar_set_show_title_buttons() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("header-bar");
+        
+        let r = h.call_args(o, "set_show_title_buttons", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "show-title-buttons") == V::Bool(false), "postcondition: h.get(o, 'show-title-buttons') == V::Bool(false)");
+    });
+}
+
+/// method HeaderBar.set_use_native_controls (dynamic GI call): probe: set then read property use-native-controls: exact
+#[test]
+fn method_headerbar_set_use_native_controls() {
+    if crate::testing::skip_below_gtk(4, 18) {
+        return;
+    }
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("header-bar");
+        
+        let r = h.call_args(o, "set_use_native_controls", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "use-native-controls") == V::Bool(true), "postcondition: h.get(o, 'use-native-controls') == V::Bool(true)");
+    });
+}
+
+/// bind:show-title-buttons on HeaderBar: rule: B1: GtkHeaderBar:show-title-buttons is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_headerbar_show_title_buttons() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("header-bar");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("show-title-buttons", false),
+                1 => o.set_property("show-title-buttons", true),
+                2 => o.set_property("show-title-buttons", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::show-title-buttons", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "show-title-buttons"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "show-title-buttons", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "show-title-buttons"), V::Bool(false), "the property reads the programmatic value");
+    });
+}
+
+/// bind:use-native-controls on HeaderBar: rule: B1: GtkHeaderBar:use-native-controls is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_headerbar_use_native_controls() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("header-bar");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("use-native-controls", true),
+                1 => o.set_property("use-native-controls", false),
+                2 => o.set_property("use-native-controls", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::use-native-controls", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "use-native-controls"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "use-native-controls", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "use-native-controls"), V::Bool(true), "the property reads the programmatic value");
     });
 }
 
@@ -4415,8 +9320,8 @@ fn prop_image_pixel_size() {
         let id = h.resolve_prop("image", "pixel-size");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("image", "pixel-size"));
-        h.set_i64(o, "pixel-size", 7).unwrap();
-        assert_eq!(h.get(o, "pixel-size"), V::I64(7));
+        h.set_i64(o, "pixel-size", 0).unwrap();
+        assert_eq!(h.get(o, "pixel-size"), V::I64(0));
     });
 }
 
@@ -4449,6 +9354,62 @@ fn method_image_clear() {
     });
 }
 
+/// method Image.get_icon_name (dynamic GI call): probe: equals property icon-name
+#[test]
+fn method_image_get_icon_name() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("image");
+        
+        let r = h.call_args(o, "get_icon_name", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "icon-name"), "postcondition: r == h.get(o, 'icon-name')");
+    });
+}
+
+/// method Image.get_icon_size (dynamic GI call): probe: equals property icon-size
+#[test]
+fn method_image_get_icon_size() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("image");
+        
+        let r = h.call_args(o, "get_icon_size", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "icon-size"), "postcondition: r == h.get(o, 'icon-size')");
+    });
+}
+
+/// method Image.get_pixel_size (dynamic GI call): probe: equals property pixel-size
+#[test]
+fn method_image_get_pixel_size() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("image");
+        
+        let r = h.call_args(o, "get_pixel_size", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "pixel-size"), "postcondition: r == h.get(o, 'pixel-size')");
+    });
+}
+
+/// method Image.get_storage_type (dynamic GI call): probe: equals property storage-type
+#[test]
+fn method_image_get_storage_type() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("image");
+        
+        let r = h.call_args(o, "get_storage_type", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "storage-type"), "postcondition: r == h.get(o, 'storage-type')");
+    });
+}
+
 /// method Image.set_from_icon_name (dynamic GI call): gtk_image_set_from_icon_name (Gtk 4 docs)
 #[test]
 fn method_image_set_from_icon_name() {
@@ -4463,6 +9424,139 @@ fn method_image_set_from_icon_name() {
     });
 }
 
+/// method Image.set_icon_size (dynamic GI call): probe: set then read property icon-size: exact
+#[test]
+fn method_image_set_icon_size() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("image");
+        
+        let r = h.call_args(o, "set_icon_size", &[V::Str("normal".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "icon-size") == V::Str("normal".into()), "postcondition: h.get(o, 'icon-size') == V::Str('normal'.into())");
+    });
+}
+
+/// method Image.set_pixel_size (dynamic GI call): probe: set then read property pixel-size: exact
+#[test]
+fn method_image_set_pixel_size() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("image");
+        
+        let r = h.call_args(o, "set_pixel_size", &[V::I64(0)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "pixel-size") == V::I64(0), "postcondition: h.get(o, 'pixel-size') == V::I64(0)");
+    });
+}
+
+/// bind:icon-size on Image: rule: B1: GtkImage:icon-size is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_image_icon_size() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("image");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => { let pspec = o.find_property("icon-size").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("icon-size", &ev.to_value_by_nick("normal").unwrap()) },
+                1 => { let pspec = o.find_property("icon-size").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("icon-size", &ev.to_value_by_nick("inherit").unwrap()) },
+                2 => { let pspec = o.find_property("icon-size").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("icon-size", &ev.to_value_by_nick("normal").unwrap()) },
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::icon-size", true).unwrap();
+        fire(&h.obj(o), "normal", 0);
+        fire(&h.obj(o), "inherit", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "icon-size"), V::Str("inherit".into()), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_str(o, "icon-size", "normal").unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "icon-size"), V::Str("normal".into()), "the property reads the programmatic value");
+    });
+}
+
+/// bind:pixel-size on Image: rule: B1: GtkImage:pixel-size is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_image_pixel_size() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("image");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("pixel-size", 0i32),
+                1 => o.set_property("pixel-size", -1i32),
+                2 => o.set_property("pixel-size", 0i32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::pixel-size", true).unwrap();
+        fire(&h.obj(o), "0", 0);
+        fire(&h.obj(o), "-1", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "pixel-size"), V::I64(-1), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "pixel-size", 0).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "pixel-size"), V::I64(0), "the property reads the programmatic value");
+    });
+}
+
+/// bind:use-fallback on Image: rule: B1: GtkImage:use-fallback is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_image_use_fallback() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("image");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("use-fallback", true),
+                1 => o.set_property("use-fallback", false),
+                2 => o.set_property("use-fallback", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::use-fallback", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "use-fallback"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "use-fallback", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "use-fallback"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// property Inscription.min-chars (JS min-chars): probe: round trip exact; notify fired
+#[test]
+fn prop_inscription_min_chars() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("inscription");
+        
+        let id = h.resolve_prop("inscription", "min-chars");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("inscription", "min-chars"));
+        h.set_i64(o, "min-chars", 4).unwrap();
+        assert_eq!(h.get(o, "min-chars"), V::I64(4));
+    });
+}
+
 /// property Inscription.min-lines (JS min-lines): GtkInscription:min-lines (Gtk 4 docs)
 #[test]
 fn prop_inscription_min_lines() {
@@ -4473,8 +9567,8 @@ fn prop_inscription_min_lines() {
         let id = h.resolve_prop("inscription", "min-lines");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("inscription", "min-lines"));
-        h.set_i64(o, "min-lines", 7).unwrap();
-        assert_eq!(h.get(o, "min-lines"), V::I64(7));
+        h.set_i64(o, "min-lines", 2).unwrap();
+        assert_eq!(h.get(o, "min-lines"), V::I64(2));
     });
 }
 
@@ -4488,8 +9582,23 @@ fn prop_inscription_nat_chars() {
         let id = h.resolve_prop("inscription", "nat-chars");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("inscription", "nat-chars"));
-        h.set_i64(o, "nat-chars", 7).unwrap();
-        assert_eq!(h.get(o, "nat-chars"), V::I64(7));
+        h.set_i64(o, "nat-chars", 1).unwrap();
+        assert_eq!(h.get(o, "nat-chars"), V::I64(1));
+    });
+}
+
+/// property Inscription.nat-lines (JS nat-lines): probe: round trip exact; notify fired
+#[test]
+fn prop_inscription_nat_lines() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("inscription");
+        
+        let id = h.resolve_prop("inscription", "nat-lines");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("inscription", "nat-lines"));
+        h.set_i64(o, "nat-lines", 1).unwrap();
+        assert_eq!(h.get(o, "nat-lines"), V::I64(1));
     });
 }
 
@@ -4503,8 +9612,109 @@ fn prop_inscription_text() {
         let id = h.resolve_prop("inscription", "text");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("inscription", "text"));
-        h.set_str(o, "text", "p3-sample").unwrap();
-        assert_eq!(h.get(o, "text"), V::Str("p3-sample".into()));
+        h.set_str(o, "text", "svl probe").unwrap();
+        assert_eq!(h.get(o, "text"), V::Str("svl probe".into()));
+    });
+}
+
+/// property Inscription.text-overflow (JS text-overflow): probe: round trip exact; notify fired
+#[test]
+fn prop_inscription_text_overflow() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("inscription");
+        
+        let id = h.resolve_prop("inscription", "text-overflow");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("inscription", "text-overflow"));
+        h.set_str(o, "text-overflow", "ellipsize-start").unwrap();
+        assert_eq!(h.get(o, "text-overflow"), V::Str("ellipsize-start".into()));
+    });
+}
+
+/// property Inscription.wrap-mode (JS wrap-mode): probe: round trip exact; notify fired
+#[test]
+fn prop_inscription_wrap_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("inscription");
+        
+        let id = h.resolve_prop("inscription", "wrap-mode");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("inscription", "wrap-mode"));
+        h.set_str(o, "wrap-mode", "word").unwrap();
+        assert_eq!(h.get(o, "wrap-mode"), V::Str("word".into()));
+    });
+}
+
+/// property Inscription.xalign (JS xalign): probe: round trip exact; notify fired
+#[test]
+fn prop_inscription_xalign() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("inscription");
+        
+        let id = h.resolve_prop("inscription", "xalign");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("inscription", "xalign"));
+        h.set_f64(o, "xalign", 1.0).unwrap();
+        assert_eq!(h.get(o, "xalign"), V::F64(1.0));
+    });
+}
+
+/// method Inscription.get_min_chars (dynamic GI call): probe: equals property min-chars
+#[test]
+fn method_inscription_get_min_chars() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("inscription");
+        
+        let r = h.call_args(o, "get_min_chars", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "min-chars"), "postcondition: r == h.get(o, 'min-chars')");
+    });
+}
+
+/// method Inscription.get_min_lines (dynamic GI call): probe: equals property min-lines
+#[test]
+fn method_inscription_get_min_lines() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("inscription");
+        
+        let r = h.call_args(o, "get_min_lines", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "min-lines"), "postcondition: r == h.get(o, 'min-lines')");
+    });
+}
+
+/// method Inscription.get_nat_chars (dynamic GI call): probe: equals property nat-chars
+#[test]
+fn method_inscription_get_nat_chars() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("inscription");
+        
+        let r = h.call_args(o, "get_nat_chars", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "nat-chars"), "postcondition: r == h.get(o, 'nat-chars')");
+    });
+}
+
+/// method Inscription.get_nat_lines (dynamic GI call): probe: equals property nat-lines
+#[test]
+fn method_inscription_get_nat_lines() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("inscription");
+        
+        let r = h.call_args(o, "get_nat_lines", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "nat-lines"), "postcondition: r == h.get(o, 'nat-lines')");
     });
 }
 
@@ -4519,6 +9729,415 @@ fn method_inscription_get_text() {
         let w = h.widget(o);
         let _ = (&w, &r);
         assert!(r == V::Str("ins".into()), "postcondition: r == V::Str('ins'.into())");
+    });
+}
+
+/// method Inscription.get_text_overflow (dynamic GI call): probe: equals property text-overflow
+#[test]
+fn method_inscription_get_text_overflow() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("inscription");
+        
+        let r = h.call_args(o, "get_text_overflow", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "text-overflow"), "postcondition: r == h.get(o, 'text-overflow')");
+    });
+}
+
+/// method Inscription.get_wrap_mode (dynamic GI call): probe: equals property wrap-mode
+#[test]
+fn method_inscription_get_wrap_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("inscription");
+        
+        let r = h.call_args(o, "get_wrap_mode", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "wrap-mode"), "postcondition: r == h.get(o, 'wrap-mode')");
+    });
+}
+
+/// method Inscription.get_xalign (dynamic GI call): probe: equals property xalign
+#[test]
+fn method_inscription_get_xalign() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("inscription");
+        
+        let r = h.call_args(o, "get_xalign", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "xalign"), "postcondition: r == h.get(o, 'xalign')");
+    });
+}
+
+/// method Inscription.get_yalign (dynamic GI call): probe: equals property yalign
+#[test]
+fn method_inscription_get_yalign() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("inscription");
+        
+        let r = h.call_args(o, "get_yalign", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "yalign"), "postcondition: r == h.get(o, 'yalign')");
+    });
+}
+
+/// method Inscription.set_min_chars (dynamic GI call): probe: set then read property min-chars: exact
+#[test]
+fn method_inscription_set_min_chars() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("inscription");
+        
+        let r = h.call_args(o, "set_min_chars", &[V::I64(4)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "min-chars") == V::I64(4), "postcondition: h.get(o, 'min-chars') == V::I64(4)");
+    });
+}
+
+/// method Inscription.set_min_lines (dynamic GI call): probe: set then read property min-lines: exact
+#[test]
+fn method_inscription_set_min_lines() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("inscription");
+        
+        let r = h.call_args(o, "set_min_lines", &[V::I64(2)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "min-lines") == V::I64(2), "postcondition: h.get(o, 'min-lines') == V::I64(2)");
+    });
+}
+
+/// method Inscription.set_nat_chars (dynamic GI call): probe: set then read property nat-chars: exact
+#[test]
+fn method_inscription_set_nat_chars() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("inscription");
+        
+        let r = h.call_args(o, "set_nat_chars", &[V::I64(1)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "nat-chars") == V::I64(1), "postcondition: h.get(o, 'nat-chars') == V::I64(1)");
+    });
+}
+
+/// method Inscription.set_nat_lines (dynamic GI call): probe: set then read property nat-lines: exact
+#[test]
+fn method_inscription_set_nat_lines() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("inscription");
+        
+        let r = h.call_args(o, "set_nat_lines", &[V::I64(1)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "nat-lines") == V::I64(1), "postcondition: h.get(o, 'nat-lines') == V::I64(1)");
+    });
+}
+
+/// method Inscription.set_text (dynamic GI call): probe: set then read property text: exact
+#[test]
+fn method_inscription_set_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("inscription");
+        
+        let r = h.call_args(o, "set_text", &[V::Str("svl probe".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "text") == V::Str("svl probe".into()), "postcondition: h.get(o, 'text') == V::Str('svl probe'.into())");
+    });
+}
+
+/// method Inscription.set_text_overflow (dynamic GI call): probe: set then read property text-overflow: exact
+#[test]
+fn method_inscription_set_text_overflow() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("inscription");
+        
+        let r = h.call_args(o, "set_text_overflow", &[V::Str("ellipsize-start".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "text-overflow") == V::Str("ellipsize-start".into()), "postcondition: h.get(o, 'text-overflow') == V::Str('ellipsize-start'.into())");
+    });
+}
+
+/// method Inscription.set_wrap_mode (dynamic GI call): probe: set then read property wrap-mode: exact
+#[test]
+fn method_inscription_set_wrap_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("inscription");
+        
+        let r = h.call_args(o, "set_wrap_mode", &[V::Str("word".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "wrap-mode") == V::Str("word".into()), "postcondition: h.get(o, 'wrap-mode') == V::Str('word'.into())");
+    });
+}
+
+/// method Inscription.set_xalign (dynamic GI call): probe: set then read property xalign: exact
+#[test]
+fn method_inscription_set_xalign() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("inscription");
+        
+        let r = h.call_args(o, "set_xalign", &[V::F64(1.0)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "xalign") == V::F64(1.0), "postcondition: h.get(o, 'xalign') == V::F64(1.0)");
+    });
+}
+
+/// bind:min-chars on Inscription: rule: B1: GtkInscription:min-chars is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_inscription_min_chars() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("inscription");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("min-chars", 4u32),
+                1 => o.set_property("min-chars", 3u32),
+                2 => o.set_property("min-chars", 4u32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::min-chars", true).unwrap();
+        fire(&h.obj(o), "4", 0);
+        fire(&h.obj(o), "3", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "min-chars"), V::I64(3), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "min-chars", 4).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "min-chars"), V::I64(4), "the property reads the programmatic value");
+    });
+}
+
+/// bind:min-lines on Inscription: rule: B1: GtkInscription:min-lines is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_inscription_min_lines() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("inscription");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("min-lines", 2u32),
+                1 => o.set_property("min-lines", 1u32),
+                2 => o.set_property("min-lines", 2u32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::min-lines", true).unwrap();
+        fire(&h.obj(o), "2", 0);
+        fire(&h.obj(o), "1", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "min-lines"), V::I64(1), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "min-lines", 2).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "min-lines"), V::I64(2), "the property reads the programmatic value");
+    });
+}
+
+/// bind:nat-chars on Inscription: rule: B1: GtkInscription:nat-chars is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_inscription_nat_chars() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("inscription");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("nat-chars", 1u32),
+                1 => o.set_property("nat-chars", 0u32),
+                2 => o.set_property("nat-chars", 1u32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::nat-chars", true).unwrap();
+        fire(&h.obj(o), "1", 0);
+        fire(&h.obj(o), "0", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "nat-chars"), V::I64(0), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "nat-chars", 1).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "nat-chars"), V::I64(1), "the property reads the programmatic value");
+    });
+}
+
+/// bind:nat-lines on Inscription: rule: B1: GtkInscription:nat-lines is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_inscription_nat_lines() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("inscription");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("nat-lines", 1u32),
+                1 => o.set_property("nat-lines", 0u32),
+                2 => o.set_property("nat-lines", 1u32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::nat-lines", true).unwrap();
+        fire(&h.obj(o), "1", 0);
+        fire(&h.obj(o), "0", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "nat-lines"), V::I64(0), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "nat-lines", 1).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "nat-lines"), V::I64(1), "the property reads the programmatic value");
+    });
+}
+
+/// bind:text-overflow on Inscription: rule: B1: GtkInscription:text-overflow is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_inscription_text_overflow() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("inscription");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => { let pspec = o.find_property("text-overflow").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("text-overflow", &ev.to_value_by_nick("ellipsize-start").unwrap()) },
+                1 => { let pspec = o.find_property("text-overflow").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("text-overflow", &ev.to_value_by_nick("clip").unwrap()) },
+                2 => { let pspec = o.find_property("text-overflow").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("text-overflow", &ev.to_value_by_nick("ellipsize-start").unwrap()) },
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::text-overflow", true).unwrap();
+        fire(&h.obj(o), "ellipsize-start", 0);
+        fire(&h.obj(o), "clip", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "text-overflow"), V::Str("clip".into()), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_str(o, "text-overflow", "ellipsize-start").unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "text-overflow"), V::Str("ellipsize-start".into()), "the property reads the programmatic value");
+    });
+}
+
+/// bind:wrap-mode on Inscription: rule: B1: GtkInscription:wrap-mode is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_inscription_wrap_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("inscription");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => { let pspec = o.find_property("wrap-mode").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("wrap-mode", &ev.to_value_by_nick("word").unwrap()) },
+                1 => { let pspec = o.find_property("wrap-mode").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("wrap-mode", &ev.to_value_by_nick("word-char").unwrap()) },
+                2 => { let pspec = o.find_property("wrap-mode").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("wrap-mode", &ev.to_value_by_nick("word").unwrap()) },
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::wrap-mode", true).unwrap();
+        fire(&h.obj(o), "word", 0);
+        fire(&h.obj(o), "word-char", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "wrap-mode"), V::Str("word-char".into()), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_str(o, "wrap-mode", "word").unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "wrap-mode"), V::Str("word".into()), "the property reads the programmatic value");
+    });
+}
+
+/// bind:xalign on Inscription: rule: B1: GtkInscription:xalign is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_inscription_xalign() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("inscription");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("xalign", 1.0f32),
+                1 => o.set_property("xalign", 0.0f32),
+                2 => o.set_property("xalign", 1.0f32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::xalign", true).unwrap();
+        fire(&h.obj(o), "1.0", 0);
+        fire(&h.obj(o), "0.0", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "xalign"), V::F64(0.0), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_f64(o, "xalign", 1.0).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "xalign"), V::F64(1.0), "the property reads the programmatic value");
+    });
+}
+
+/// signal Label.activate-current-link: runtime: returns void, run-last; probe: action signal, emitted and delivered
+#[test]
+fn signal_label_activate_current_link() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("label");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v; o.emit_by_name::<()>("activate-current-link", &[]);
+        };
+        assert_ne!(h.resolve_signal("label", "activate-current-link"), 0);
+        assert_eq!(h.resolve_signal("label", "activate-current-link"), h.resolve_signal("label", "activate-current-link"));
+        h.listen(e, "activate-current-link", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "activate-current-link".to_string())), "delivered: {ev:?}");
+        h.listen(e, "activate-current-link", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "activate-current-link", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "activate-current-link", true).is_err(), "stale handle is an error");
     });
 }
 
@@ -4553,6 +10172,37 @@ fn signal_label_activate_link() {
     });
 }
 
+/// signal Label.copy-clipboard: runtime: returns void, run-last; probe: action signal, emitted and delivered
+#[test]
+fn signal_label_copy_clipboard() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("label");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v; o.emit_by_name::<()>("copy-clipboard", &[]);
+        };
+        assert_ne!(h.resolve_signal("label", "copy-clipboard"), 0);
+        assert_eq!(h.resolve_signal("label", "copy-clipboard"), h.resolve_signal("label", "copy-clipboard"));
+        h.listen(e, "copy-clipboard", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "copy-clipboard".to_string())), "delivered: {ev:?}");
+        h.listen(e, "copy-clipboard", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "copy-clipboard", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "copy-clipboard", true).is_err(), "stale handle is an error");
+    });
+}
+
 /// property Label.ellipsize (JS ellipsize): GtkLabel:ellipsize, PangoEllipsizeMode (Gtk 4 docs); Pango nicks kept on the property (A1-GAPS G11)
 #[test]
 fn prop_label_ellipsize() {
@@ -4565,6 +10215,19 @@ fn prop_label_ellipsize() {
         assert_eq!(id, h.resolve_prop("label", "ellipsize"));
         h.set_str(o, "ellipsize", "start").unwrap();
         assert_eq!(h.get(o, "ellipsize"), V::Str("start".into()));
+    });
+}
+
+/// property Label.extra-menu (JS extra-menu, round trip): probe: round trip exact; notify fired
+#[test]
+fn prop_label_extra_menu() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let before = h.get_value(o, "extra-menu");
+        h.set_value(o, "extra-menu", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "extra-menu")), crate::testing::shape(&before));
     });
 }
 
@@ -4593,8 +10256,8 @@ fn prop_label_label() {
         let id = h.resolve_prop("label", "label");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("label", "label"));
-        h.set_str(o, "label", "p3-sample").unwrap();
-        assert_eq!(h.get(o, "label"), V::Str("p3-sample".into()));
+        h.set_str(o, "label", "svl probe").unwrap();
+        assert_eq!(h.get(o, "label"), V::Str("svl probe".into()));
     });
 }
 
@@ -4608,8 +10271,8 @@ fn prop_label_lines() {
         let id = h.resolve_prop("label", "lines");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("label", "lines"));
-        h.set_i64(o, "lines", 7).unwrap();
-        assert_eq!(h.get(o, "lines"), V::I64(7));
+        h.set_i64(o, "lines", 0).unwrap();
+        assert_eq!(h.get(o, "lines"), V::I64(0));
     });
 }
 
@@ -4623,8 +10286,23 @@ fn prop_label_max_width_chars() {
         let id = h.resolve_prop("label", "max-width-chars");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("label", "max-width-chars"));
-        h.set_i64(o, "max-width-chars", 7).unwrap();
-        assert_eq!(h.get(o, "max-width-chars"), V::I64(7));
+        h.set_i64(o, "max-width-chars", 0).unwrap();
+        assert_eq!(h.get(o, "max-width-chars"), V::I64(0));
+    });
+}
+
+/// property Label.natural-wrap-mode (JS natural-wrap-mode): probe: round trip exact; notify fired
+#[test]
+fn prop_label_natural_wrap_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let id = h.resolve_prop("label", "natural-wrap-mode");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("label", "natural-wrap-mode"));
+        h.set_str(o, "natural-wrap-mode", "none").unwrap();
+        assert_eq!(h.get(o, "natural-wrap-mode"), V::Str("none".into()));
     });
 }
 
@@ -4640,6 +10318,21 @@ fn prop_label_selectable() {
         assert_eq!(id, h.resolve_prop("label", "selectable"));
         h.set_bool(o, "selectable", true).unwrap();
         assert_eq!(h.get(o, "selectable"), V::Bool(true));
+    });
+}
+
+/// property Label.single-line-mode (JS single-line-mode): probe: round trip exact; notify fired
+#[test]
+fn prop_label_single_line_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let id = h.resolve_prop("label", "single-line-mode");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("label", "single-line-mode"));
+        h.set_bool(o, "single-line-mode", true).unwrap();
+        assert_eq!(h.get(o, "single-line-mode"), V::Bool(true));
     });
 }
 
@@ -4670,6 +10363,21 @@ fn prop_label_use_underline() {
         assert_eq!(id, h.resolve_prop("label", "use-underline"));
         h.set_bool(o, "use-underline", true).unwrap();
         assert_eq!(h.get(o, "use-underline"), V::Bool(true));
+    });
+}
+
+/// property Label.width-chars (JS width-chars): probe: round trip exact; notify fired
+#[test]
+fn prop_label_width_chars() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let id = h.resolve_prop("label", "width-chars");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("label", "width-chars"));
+        h.set_i64(o, "width-chars", 0).unwrap();
+        assert_eq!(h.get(o, "width-chars"), V::I64(0));
     });
 }
 
@@ -4733,6 +10441,132 @@ fn prop_label_yalign() {
     });
 }
 
+/// method Label.get_ellipsize (dynamic GI call): probe: equals property ellipsize
+#[test]
+fn method_label_get_ellipsize() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_ellipsize", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "ellipsize"), "postcondition: r == h.get(o, 'ellipsize')");
+    });
+}
+
+/// method Label.get_justify (dynamic GI call): probe: equals property justify
+#[test]
+fn method_label_get_justify() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_justify", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "justify"), "postcondition: r == h.get(o, 'justify')");
+    });
+}
+
+/// method Label.get_label (dynamic GI call): probe: equals property label
+#[test]
+fn method_label_get_label() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_label", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "label"), "postcondition: r == h.get(o, 'label')");
+    });
+}
+
+/// method Label.get_lines (dynamic GI call): probe: equals property lines
+#[test]
+fn method_label_get_lines() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_lines", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "lines"), "postcondition: r == h.get(o, 'lines')");
+    });
+}
+
+/// method Label.get_max_width_chars (dynamic GI call): probe: equals property max-width-chars
+#[test]
+fn method_label_get_max_width_chars() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_max_width_chars", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "max-width-chars"), "postcondition: r == h.get(o, 'max-width-chars')");
+    });
+}
+
+/// method Label.get_mnemonic_keyval (dynamic GI call): probe: equals property mnemonic-keyval
+#[test]
+fn method_label_get_mnemonic_keyval() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_mnemonic_keyval", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "mnemonic-keyval"), "postcondition: r == h.get(o, 'mnemonic-keyval')");
+    });
+}
+
+/// method Label.get_natural_wrap_mode (dynamic GI call): probe: equals property natural-wrap-mode
+#[test]
+fn method_label_get_natural_wrap_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_natural_wrap_mode", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "natural-wrap-mode"), "postcondition: r == h.get(o, 'natural-wrap-mode')");
+    });
+}
+
+/// method Label.get_selectable (dynamic GI call): probe: equals property selectable
+#[test]
+fn method_label_get_selectable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_selectable", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "selectable"), "postcondition: r == h.get(o, 'selectable')");
+    });
+}
+
+/// method Label.get_single_line_mode (dynamic GI call): probe: equals property single-line-mode
+#[test]
+fn method_label_get_single_line_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_single_line_mode", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "single-line-mode"), "postcondition: r == h.get(o, 'single-line-mode')");
+    });
+}
+
 /// method Label.get_text (dynamic GI call): gtk_label_get_text (Gtk 4 docs); called through GIRepository (X1)
 #[test]
 fn method_label_get_text() {
@@ -4744,6 +10578,104 @@ fn method_label_get_text() {
         let w = h.widget(o);
         let _ = (&w, &r);
         assert!(r == V::Str("shown".into()), "postcondition: r == V::Str('shown'.into())");
+    });
+}
+
+/// method Label.get_use_markup (dynamic GI call): probe: equals property use-markup
+#[test]
+fn method_label_get_use_markup() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_use_markup", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "use-markup"), "postcondition: r == h.get(o, 'use-markup')");
+    });
+}
+
+/// method Label.get_use_underline (dynamic GI call): probe: equals property use-underline
+#[test]
+fn method_label_get_use_underline() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_use_underline", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "use-underline"), "postcondition: r == h.get(o, 'use-underline')");
+    });
+}
+
+/// method Label.get_width_chars (dynamic GI call): probe: equals property width-chars
+#[test]
+fn method_label_get_width_chars() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_width_chars", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "width-chars"), "postcondition: r == h.get(o, 'width-chars')");
+    });
+}
+
+/// method Label.get_wrap (dynamic GI call): probe: equals property wrap
+#[test]
+fn method_label_get_wrap() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_wrap", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "wrap"), "postcondition: r == h.get(o, 'wrap')");
+    });
+}
+
+/// method Label.get_wrap_mode (dynamic GI call): probe: equals property wrap-mode
+#[test]
+fn method_label_get_wrap_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_wrap_mode", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "wrap-mode"), "postcondition: r == h.get(o, 'wrap-mode')");
+    });
+}
+
+/// method Label.get_xalign (dynamic GI call): probe: equals property xalign
+#[test]
+fn method_label_get_xalign() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_xalign", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "xalign"), "postcondition: r == h.get(o, 'xalign')");
+    });
+}
+
+/// method Label.get_yalign (dynamic GI call): probe: equals property yalign
+#[test]
+fn method_label_get_yalign() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_yalign", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "yalign"), "postcondition: r == h.get(o, 'yalign')");
     });
 }
 
@@ -4761,6 +10693,118 @@ fn method_label_select_region() {
     });
 }
 
+/// method Label.set_ellipsize (dynamic GI call): probe: set then read property ellipsize: exact
+#[test]
+fn method_label_set_ellipsize() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "set_ellipsize", &[V::Str("start".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "ellipsize") == V::Str("start".into()), "postcondition: h.get(o, 'ellipsize') == V::Str('start'.into())");
+    });
+}
+
+/// method Label.set_justify (dynamic GI call): probe: set then read property justify: exact
+#[test]
+fn method_label_set_justify() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "set_justify", &[V::Str("right".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "justify") == V::Str("right".into()), "postcondition: h.get(o, 'justify') == V::Str('right'.into())");
+    });
+}
+
+/// method Label.set_label (dynamic GI call): probe: set then read property label: exact
+#[test]
+fn method_label_set_label() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "set_label", &[V::Str("svl probe".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "label") == V::Str("svl probe".into()), "postcondition: h.get(o, 'label') == V::Str('svl probe'.into())");
+    });
+}
+
+/// method Label.set_lines (dynamic GI call): probe: set then read property lines: exact
+#[test]
+fn method_label_set_lines() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "set_lines", &[V::I64(0)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "lines") == V::I64(0), "postcondition: h.get(o, 'lines') == V::I64(0)");
+    });
+}
+
+/// method Label.set_max_width_chars (dynamic GI call): probe: set then read property max-width-chars: exact
+#[test]
+fn method_label_set_max_width_chars() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "set_max_width_chars", &[V::I64(0)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "max-width-chars") == V::I64(0), "postcondition: h.get(o, 'max-width-chars') == V::I64(0)");
+    });
+}
+
+/// method Label.set_natural_wrap_mode (dynamic GI call): probe: set then read property natural-wrap-mode: exact
+#[test]
+fn method_label_set_natural_wrap_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "set_natural_wrap_mode", &[V::Str("none".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "natural-wrap-mode") == V::Str("none".into()), "postcondition: h.get(o, 'natural-wrap-mode') == V::Str('none'.into())");
+    });
+}
+
+/// method Label.set_selectable (dynamic GI call): probe: set then read property selectable: exact
+#[test]
+fn method_label_set_selectable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "set_selectable", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "selectable") == V::Bool(true), "postcondition: h.get(o, 'selectable') == V::Bool(true)");
+    });
+}
+
+/// method Label.set_single_line_mode (dynamic GI call): probe: set then read property single-line-mode: exact
+#[test]
+fn method_label_set_single_line_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "set_single_line_mode", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "single-line-mode") == V::Bool(true), "postcondition: h.get(o, 'single-line-mode') == V::Bool(true)");
+    });
+}
+
 /// method Label.set_text (dynamic GI call): gtk_label_set_text (Gtk 4 docs); called through GIRepository (X1)
 #[test]
 fn method_label_set_text() {
@@ -4772,6 +10816,466 @@ fn method_label_set_text() {
         let w = h.widget(o);
         let _ = (&w, &r);
         assert!(h.get(o, "label") == V::Str("plain".into()), "postcondition: h.get(o, 'label') == V::Str('plain'.into())");
+    });
+}
+
+/// method Label.set_use_markup (dynamic GI call): probe: set then read property use-markup: exact
+#[test]
+fn method_label_set_use_markup() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "set_use_markup", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "use-markup") == V::Bool(true), "postcondition: h.get(o, 'use-markup') == V::Bool(true)");
+    });
+}
+
+/// method Label.set_use_underline (dynamic GI call): probe: set then read property use-underline: exact
+#[test]
+fn method_label_set_use_underline() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "set_use_underline", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "use-underline") == V::Bool(true), "postcondition: h.get(o, 'use-underline') == V::Bool(true)");
+    });
+}
+
+/// method Label.set_width_chars (dynamic GI call): probe: set then read property width-chars: exact
+#[test]
+fn method_label_set_width_chars() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "set_width_chars", &[V::I64(0)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "width-chars") == V::I64(0), "postcondition: h.get(o, 'width-chars') == V::I64(0)");
+    });
+}
+
+/// method Label.set_wrap (dynamic GI call): probe: set then read property wrap: exact
+#[test]
+fn method_label_set_wrap() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "set_wrap", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "wrap") == V::Bool(true), "postcondition: h.get(o, 'wrap') == V::Bool(true)");
+    });
+}
+
+/// method Label.set_wrap_mode (dynamic GI call): probe: set then read property wrap-mode: exact
+#[test]
+fn method_label_set_wrap_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "set_wrap_mode", &[V::Str("char".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "wrap-mode") == V::Str("char".into()), "postcondition: h.get(o, 'wrap-mode') == V::Str('char'.into())");
+    });
+}
+
+/// bind:ellipsize on Label: rule: B1: GtkLabel:ellipsize is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_label_ellipsize() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => { let pspec = o.find_property("ellipsize").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("ellipsize", &ev.to_value_by_nick("start").unwrap()) },
+                1 => { let pspec = o.find_property("ellipsize").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("ellipsize", &ev.to_value_by_nick("none").unwrap()) },
+                2 => { let pspec = o.find_property("ellipsize").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("ellipsize", &ev.to_value_by_nick("start").unwrap()) },
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::ellipsize", true).unwrap();
+        fire(&h.obj(o), "start", 0);
+        fire(&h.obj(o), "none", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "ellipsize"), V::Str("none".into()), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_str(o, "ellipsize", "start").unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "ellipsize"), V::Str("start".into()), "the property reads the programmatic value");
+    });
+}
+
+/// bind:justify on Label: rule: B1: GtkLabel:justify is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_label_justify() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => { let pspec = o.find_property("justify").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("justify", &ev.to_value_by_nick("right").unwrap()) },
+                1 => { let pspec = o.find_property("justify").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("justify", &ev.to_value_by_nick("left").unwrap()) },
+                2 => { let pspec = o.find_property("justify").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("justify", &ev.to_value_by_nick("right").unwrap()) },
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::justify", true).unwrap();
+        fire(&h.obj(o), "right", 0);
+        fire(&h.obj(o), "left", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "justify"), V::Str("left".into()), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_str(o, "justify", "right").unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "justify"), V::Str("right".into()), "the property reads the programmatic value");
+    });
+}
+
+/// bind:label on Label: rule: B1: GtkLabel:label is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_label_label() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("label", "svl probe"),
+                1 => o.set_property("label", ""),
+                2 => o.set_property("label", "svl probe"),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::label", true).unwrap();
+        fire(&h.obj(o), "svl probe", 0);
+        fire(&h.obj(o), "", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "label"), V::Str("".into()), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_str(o, "label", "svl probe").unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "label"), V::Str("svl probe".into()), "the property reads the programmatic value");
+    });
+}
+
+/// bind:lines on Label: rule: B1: GtkLabel:lines is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_label_lines() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("lines", 0i32),
+                1 => o.set_property("lines", -1i32),
+                2 => o.set_property("lines", 0i32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::lines", true).unwrap();
+        fire(&h.obj(o), "0", 0);
+        fire(&h.obj(o), "-1", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "lines"), V::I64(-1), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "lines", 0).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "lines"), V::I64(0), "the property reads the programmatic value");
+    });
+}
+
+/// bind:max-width-chars on Label: rule: B1: GtkLabel:max-width-chars is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_label_max_width_chars() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("max-width-chars", 0i32),
+                1 => o.set_property("max-width-chars", -1i32),
+                2 => o.set_property("max-width-chars", 0i32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::max-width-chars", true).unwrap();
+        fire(&h.obj(o), "0", 0);
+        fire(&h.obj(o), "-1", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "max-width-chars"), V::I64(-1), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "max-width-chars", 0).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "max-width-chars"), V::I64(0), "the property reads the programmatic value");
+    });
+}
+
+/// bind:natural-wrap-mode on Label: rule: B1: GtkLabel:natural-wrap-mode is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_label_natural_wrap_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => { let pspec = o.find_property("natural-wrap-mode").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("natural-wrap-mode", &ev.to_value_by_nick("none").unwrap()) },
+                1 => { let pspec = o.find_property("natural-wrap-mode").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("natural-wrap-mode", &ev.to_value_by_nick("inherit").unwrap()) },
+                2 => { let pspec = o.find_property("natural-wrap-mode").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("natural-wrap-mode", &ev.to_value_by_nick("none").unwrap()) },
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::natural-wrap-mode", true).unwrap();
+        fire(&h.obj(o), "none", 0);
+        fire(&h.obj(o), "inherit", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "natural-wrap-mode"), V::Str("inherit".into()), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_str(o, "natural-wrap-mode", "none").unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "natural-wrap-mode"), V::Str("none".into()), "the property reads the programmatic value");
+    });
+}
+
+/// bind:selectable on Label: rule: B1: GtkLabel:selectable is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_label_selectable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("selectable", true),
+                1 => o.set_property("selectable", false),
+                2 => o.set_property("selectable", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::selectable", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "selectable"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "selectable", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "selectable"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:single-line-mode on Label: rule: B1: GtkLabel:single-line-mode is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_label_single_line_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("single-line-mode", true),
+                1 => o.set_property("single-line-mode", false),
+                2 => o.set_property("single-line-mode", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::single-line-mode", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "single-line-mode"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "single-line-mode", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "single-line-mode"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:use-markup on Label: rule: B1: GtkLabel:use-markup is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_label_use_markup() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("use-markup", true),
+                1 => o.set_property("use-markup", false),
+                2 => o.set_property("use-markup", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::use-markup", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "use-markup"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "use-markup", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "use-markup"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:use-underline on Label: rule: B1: GtkLabel:use-underline is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_label_use_underline() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("use-underline", true),
+                1 => o.set_property("use-underline", false),
+                2 => o.set_property("use-underline", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::use-underline", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "use-underline"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "use-underline", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "use-underline"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:width-chars on Label: rule: B1: GtkLabel:width-chars is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_label_width_chars() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("width-chars", 0i32),
+                1 => o.set_property("width-chars", -1i32),
+                2 => o.set_property("width-chars", 0i32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::width-chars", true).unwrap();
+        fire(&h.obj(o), "0", 0);
+        fire(&h.obj(o), "-1", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "width-chars"), V::I64(-1), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "width-chars", 0).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "width-chars"), V::I64(0), "the property reads the programmatic value");
+    });
+}
+
+/// bind:wrap on Label: rule: B1: GtkLabel:wrap is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_label_wrap() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("wrap", true),
+                1 => o.set_property("wrap", false),
+                2 => o.set_property("wrap", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::wrap", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "wrap"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "wrap", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "wrap"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:wrap-mode on Label: rule: B1: GtkLabel:wrap-mode is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_label_wrap_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => { let pspec = o.find_property("wrap-mode").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("wrap-mode", &ev.to_value_by_nick("char").unwrap()) },
+                1 => { let pspec = o.find_property("wrap-mode").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("wrap-mode", &ev.to_value_by_nick("word").unwrap()) },
+                2 => { let pspec = o.find_property("wrap-mode").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("wrap-mode", &ev.to_value_by_nick("char").unwrap()) },
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::wrap-mode", true).unwrap();
+        fire(&h.obj(o), "char", 0);
+        fire(&h.obj(o), "word", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "wrap-mode"), V::Str("word".into()), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_str(o, "wrap-mode", "char").unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "wrap-mode"), V::Str("char".into()), "the property reads the programmatic value");
     });
 }
 
@@ -4868,8 +11372,8 @@ fn prop_levelbar_max_value() {
         let id = h.resolve_prop("level-bar", "max-value");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("level-bar", "max-value"));
-        h.set_f64(o, "max-value", 0.5).unwrap();
-        assert_eq!(h.get(o, "max-value"), V::F64(0.5));
+        h.set_f64(o, "max-value", 2.0).unwrap();
+        assert_eq!(h.get(o, "max-value"), V::F64(2.0));
     });
 }
 
@@ -4883,8 +11387,8 @@ fn prop_levelbar_min_value() {
         let id = h.resolve_prop("level-bar", "min-value");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("level-bar", "min-value"));
-        h.set_f64(o, "min-value", 0.5).unwrap();
-        assert_eq!(h.get(o, "min-value"), V::F64(0.5));
+        h.set_f64(o, "min-value", 1.0).unwrap();
+        assert_eq!(h.get(o, "min-value"), V::F64(1.0));
     });
 }
 
@@ -4913,8 +11417,8 @@ fn prop_levelbar_value() {
         let id = h.resolve_prop("level-bar", "value");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("level-bar", "value"));
-        h.set_f64(o, "value", 0.5).unwrap();
-        assert_eq!(h.get(o, "value"), V::F64(0.5));
+        h.set_f64(o, "value", 1.0).unwrap();
+        assert_eq!(h.get(o, "value"), V::F64(1.0));
     });
 }
 
@@ -4937,7 +11441,7 @@ fn echo_levelbar_value() {
             }
         };
         h.listen(o, "notify::value", true).unwrap();
-        h.set_f64(o, "value", 0.5).unwrap();
+        h.set_f64(o, "value", 1.0).unwrap();
         assert!(h.take_events().is_empty(), "programmatic set is suppressed");
         fire(&h.obj(o), "0.25", 1);
         let mut got: Vec<String> = h.take_events().into_iter().map(|(_, s)| s).collect();
@@ -4946,8 +11450,268 @@ fn echo_levelbar_value() {
         let mut want: Vec<String> = ["notify::value"].iter().map(|s| s.to_string()).collect();
         want.sort();
         assert_eq!(got, want, "native edit still delivers");
-        h.set_f64(o, "value", 0.5).unwrap();
+        h.set_f64(o, "value", 1.0).unwrap();
         assert!(h.take_events().is_empty(), "handlers are unblocked after a programmatic set, and the next set is suppressed again");
+    });
+}
+
+/// method LevelBar.get_inverted (dynamic GI call): probe: equals property inverted
+#[test]
+fn method_levelbar_get_inverted() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("level-bar");
+        
+        let r = h.call_args(o, "get_inverted", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "inverted"), "postcondition: r == h.get(o, 'inverted')");
+    });
+}
+
+/// method LevelBar.get_max_value (dynamic GI call): probe: equals property max-value
+#[test]
+fn method_levelbar_get_max_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("level-bar");
+        
+        let r = h.call_args(o, "get_max_value", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "max-value"), "postcondition: r == h.get(o, 'max-value')");
+    });
+}
+
+/// method LevelBar.get_min_value (dynamic GI call): probe: equals property min-value
+#[test]
+fn method_levelbar_get_min_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("level-bar");
+        
+        let r = h.call_args(o, "get_min_value", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "min-value"), "postcondition: r == h.get(o, 'min-value')");
+    });
+}
+
+/// method LevelBar.get_mode (dynamic GI call): probe: equals property mode
+#[test]
+fn method_levelbar_get_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("level-bar");
+        
+        let r = h.call_args(o, "get_mode", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "mode"), "postcondition: r == h.get(o, 'mode')");
+    });
+}
+
+/// method LevelBar.get_value (dynamic GI call): probe: equals property value
+#[test]
+fn method_levelbar_get_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("level-bar");
+        
+        let r = h.call_args(o, "get_value", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "value"), "postcondition: r == h.get(o, 'value')");
+    });
+}
+
+/// method LevelBar.set_inverted (dynamic GI call): probe: set then read property inverted: exact
+#[test]
+fn method_levelbar_set_inverted() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("level-bar");
+        
+        let r = h.call_args(o, "set_inverted", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "inverted") == V::Bool(true), "postcondition: h.get(o, 'inverted') == V::Bool(true)");
+    });
+}
+
+/// method LevelBar.set_max_value (dynamic GI call): probe: set then read property max-value: exact
+#[test]
+fn method_levelbar_set_max_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("level-bar");
+        
+        let r = h.call_args(o, "set_max_value", &[V::F64(2.0)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "max-value") == V::F64(2.0), "postcondition: h.get(o, 'max-value') == V::F64(2.0)");
+    });
+}
+
+/// method LevelBar.set_min_value (dynamic GI call): probe: set then read property min-value: exact
+#[test]
+fn method_levelbar_set_min_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("level-bar");
+        
+        let r = h.call_args(o, "set_min_value", &[V::F64(1.0)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "min-value") == V::F64(1.0), "postcondition: h.get(o, 'min-value') == V::F64(1.0)");
+    });
+}
+
+/// method LevelBar.set_mode (dynamic GI call): probe: set then read property mode: exact
+#[test]
+fn method_levelbar_set_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("level-bar");
+        
+        let r = h.call_args(o, "set_mode", &[V::Str("discrete".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "mode") == V::Str("discrete".into()), "postcondition: h.get(o, 'mode') == V::Str('discrete'.into())");
+    });
+}
+
+/// method LevelBar.set_value (dynamic GI call): probe: set then read property value: exact
+#[test]
+fn method_levelbar_set_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("level-bar");
+        
+        let r = h.call_args(o, "set_value", &[V::F64(1.0)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "value") == V::F64(1.0), "postcondition: h.get(o, 'value') == V::F64(1.0)");
+    });
+}
+
+/// bind:inverted on LevelBar: rule: B1: GtkLevelBar:inverted is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_levelbar_inverted() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("level-bar");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("inverted", true),
+                1 => o.set_property("inverted", false),
+                2 => o.set_property("inverted", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::inverted", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "inverted"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "inverted", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "inverted"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:max-value on LevelBar: rule: B1: GtkLevelBar:max-value is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_levelbar_max_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("level-bar");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("max-value", 2.0f64),
+                1 => o.set_property("max-value", 1.0f64),
+                2 => o.set_property("max-value", 2.0f64),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::max-value", true).unwrap();
+        fire(&h.obj(o), "2.0", 0);
+        fire(&h.obj(o), "1.0", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "max-value"), V::F64(1.0), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_f64(o, "max-value", 2.0).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "max-value"), V::F64(2.0), "the property reads the programmatic value");
+    });
+}
+
+/// bind:min-value on LevelBar: rule: B1: GtkLevelBar:min-value is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_levelbar_min_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("level-bar");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("min-value", 1.0f64),
+                1 => o.set_property("min-value", 0.0f64),
+                2 => o.set_property("min-value", 1.0f64),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::min-value", true).unwrap();
+        fire(&h.obj(o), "1.0", 0);
+        fire(&h.obj(o), "0.0", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "min-value"), V::F64(0.0), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_f64(o, "min-value", 1.0).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "min-value"), V::F64(1.0), "the property reads the programmatic value");
+    });
+}
+
+/// bind:mode on LevelBar: rule: B1: GtkLevelBar:mode is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_levelbar_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("level-bar");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => { let pspec = o.find_property("mode").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("mode", &ev.to_value_by_nick("discrete").unwrap()) },
+                1 => { let pspec = o.find_property("mode").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("mode", &ev.to_value_by_nick("continuous").unwrap()) },
+                2 => { let pspec = o.find_property("mode").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("mode", &ev.to_value_by_nick("discrete").unwrap()) },
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::mode", true).unwrap();
+        fire(&h.obj(o), "discrete", 0);
+        fire(&h.obj(o), "continuous", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "mode"), V::Str("continuous".into()), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_str(o, "mode", "discrete").unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "mode"), V::Str("discrete".into()), "the property reads the programmatic value");
     });
 }
 
@@ -5018,8 +11782,8 @@ fn prop_linkbutton_uri() {
         let id = h.resolve_prop("link-button", "uri");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("link-button", "uri"));
-        h.set_str(o, "uri", "p3-sample").unwrap();
-        assert_eq!(h.get(o, "uri"), V::Str("p3-sample".into()));
+        h.set_str(o, "uri", "https://example.org/").unwrap();
+        assert_eq!(h.get(o, "uri"), V::Str("https://example.org/".into()));
     });
 }
 
@@ -5038,6 +11802,48 @@ fn prop_linkbutton_visited() {
     });
 }
 
+/// method LinkButton.get_uri (dynamic GI call): probe: equals property uri
+#[test]
+fn method_linkbutton_get_uri() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("link-button");
+        
+        let r = h.call_args(o, "get_uri", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "uri"), "postcondition: r == h.get(o, 'uri')");
+    });
+}
+
+/// method LinkButton.get_visited (dynamic GI call): probe: equals property visited
+#[test]
+fn method_linkbutton_get_visited() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("link-button");
+        
+        let r = h.call_args(o, "get_visited", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "visited"), "postcondition: r == h.get(o, 'visited')");
+    });
+}
+
+/// method LinkButton.set_uri (dynamic GI call): probe: set then read property uri: exact
+#[test]
+fn method_linkbutton_set_uri() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("link-button");
+        
+        let r = h.call_args(o, "set_uri", &[V::Str("https://example.org/".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "uri") == V::Str("https://example.org/".into()), "postcondition: h.get(o, 'uri') == V::Str('https://example.org/'.into())");
+    });
+}
+
 /// method LinkButton.set_visited (dynamic GI call): gtk_link_button_set_visited (Gtk 4 docs); called through GIRepository (X1)
 #[test]
 fn method_linkbutton_set_visited() {
@@ -5049,6 +11855,67 @@ fn method_linkbutton_set_visited() {
         let w = h.widget(o);
         let _ = (&w, &r);
         assert!(h.get(o, "visited") == V::Bool(true), "postcondition: h.get(o, 'visited') == V::Bool(true)");
+    });
+}
+
+/// bind:visited on LinkButton: rule: B1: GtkLinkButton:visited is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_linkbutton_visited() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("link-button");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("visited", true),
+                1 => o.set_property("visited", false),
+                2 => o.set_property("visited", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::visited", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "visited"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "visited", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "visited"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// signal ListBox.activate-cursor-row: runtime: returns void, run-last; probe: action signal, emitted and delivered
+#[test]
+fn signal_listbox_activate_cursor_row() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("list-box");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v; o.emit_by_name::<()>("activate-cursor-row", &[]);
+        };
+        assert_ne!(h.resolve_signal("list-box", "activate-cursor-row"), 0);
+        assert_eq!(h.resolve_signal("list-box", "activate-cursor-row"), h.resolve_signal("list-box", "activate-cursor-row"));
+        h.listen(e, "activate-cursor-row", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "activate-cursor-row".to_string())), "delivered: {ev:?}");
+        h.listen(e, "activate-cursor-row", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "activate-cursor-row", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "activate-cursor-row", true).is_err(), "stale handle is an error");
     });
 }
 
@@ -5114,6 +11981,145 @@ fn signal_listbox_row_selected() {
     });
 }
 
+/// signal ListBox.select-all: runtime: returns void, run-last; probe: action signal, emitted and delivered
+#[test]
+fn signal_listbox_select_all() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("list-box");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v; o.emit_by_name::<()>("select-all", &[]);
+        };
+        assert_ne!(h.resolve_signal("list-box", "select-all"), 0);
+        assert_eq!(h.resolve_signal("list-box", "select-all"), h.resolve_signal("list-box", "select-all"));
+        h.listen(e, "select-all", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "select-all".to_string())), "delivered: {ev:?}");
+        h.listen(e, "select-all", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "select-all", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "select-all", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal ListBox.selected-rows-changed: runtime: returns void, run-first; probe: emitted synthetically with sampled arguments; delivery only, no native trigger
+#[test]
+fn signal_listbox_selected_rows_changed() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("list-box");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            o.emit_by_name::<()>("selected-rows-changed", &[]);
+        };
+        assert_ne!(h.resolve_signal("list-box", "selected-rows-changed"), 0);
+        assert_eq!(h.resolve_signal("list-box", "selected-rows-changed"), h.resolve_signal("list-box", "selected-rows-changed"));
+        h.listen(e, "selected-rows-changed", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "selected-rows-changed".to_string())), "delivered: {ev:?}");
+        h.listen(e, "selected-rows-changed", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "selected-rows-changed", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "selected-rows-changed", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal ListBox.toggle-cursor-row: runtime: returns void, run-last; probe: action signal, emitted and delivered
+#[test]
+fn signal_listbox_toggle_cursor_row() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("list-box");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v; o.emit_by_name::<()>("toggle-cursor-row", &[]);
+        };
+        assert_ne!(h.resolve_signal("list-box", "toggle-cursor-row"), 0);
+        assert_eq!(h.resolve_signal("list-box", "toggle-cursor-row"), h.resolve_signal("list-box", "toggle-cursor-row"));
+        h.listen(e, "toggle-cursor-row", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "toggle-cursor-row".to_string())), "delivered: {ev:?}");
+        h.listen(e, "toggle-cursor-row", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "toggle-cursor-row", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "toggle-cursor-row", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal ListBox.unselect-all: runtime: returns void, run-last; probe: action signal, emitted and delivered
+#[test]
+fn signal_listbox_unselect_all() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("list-box");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v; o.emit_by_name::<()>("unselect-all", &[]);
+        };
+        assert_ne!(h.resolve_signal("list-box", "unselect-all"), 0);
+        assert_eq!(h.resolve_signal("list-box", "unselect-all"), h.resolve_signal("list-box", "unselect-all"));
+        h.listen(e, "unselect-all", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "unselect-all".to_string())), "delivered: {ev:?}");
+        h.listen(e, "unselect-all", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "unselect-all", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "unselect-all", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// property ListBox.accept-unpaired-release (JS accept-unpaired-release): probe: round trip exact; notify fired
+#[test]
+fn prop_listbox_accept_unpaired_release() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("list-box");
+        
+        let id = h.resolve_prop("list-box", "accept-unpaired-release");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("list-box", "accept-unpaired-release"));
+        h.set_bool(o, "accept-unpaired-release", true).unwrap();
+        assert_eq!(h.get(o, "accept-unpaired-release"), V::Bool(true));
+    });
+}
+
 /// property ListBox.activate-on-single-click (JS activate-on-single-click): GtkListBox:activate-on-single-click (Gtk 4 docs); P prop
 #[test]
 fn prop_listbox_activate_on_single_click() {
@@ -5156,6 +12162,466 @@ fn prop_listbox_show_separators() {
         assert_eq!(id, h.resolve_prop("list-box", "show-separators"));
         h.set_bool(o, "show-separators", true).unwrap();
         assert_eq!(h.get(o, "show-separators"), V::Bool(true));
+    });
+}
+
+/// property ListBox.tab-behavior (JS tab-behavior): probe: round trip exact; notify fired
+#[test]
+fn prop_listbox_tab_behavior() {
+    if crate::testing::skip_below_gtk(4, 18) {
+        return;
+    }
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("list-box");
+        
+        let id = h.resolve_prop("list-box", "tab-behavior");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("list-box", "tab-behavior"));
+        h.set_str(o, "tab-behavior", "item").unwrap();
+        assert_eq!(h.get(o, "tab-behavior"), V::Str("item".into()));
+    });
+}
+
+/// method ListBox.get_activate_on_single_click (dynamic GI call): probe: equals property activate-on-single-click
+#[test]
+fn method_listbox_get_activate_on_single_click() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("list-box");
+        
+        let r = h.call_args(o, "get_activate_on_single_click", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "activate-on-single-click"), "postcondition: r == h.get(o, 'activate-on-single-click')");
+    });
+}
+
+/// method ListBox.get_selection_mode (dynamic GI call): probe: equals property selection-mode
+#[test]
+fn method_listbox_get_selection_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("list-box");
+        
+        let r = h.call_args(o, "get_selection_mode", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "selection-mode"), "postcondition: r == h.get(o, 'selection-mode')");
+    });
+}
+
+/// method ListBox.get_show_separators (dynamic GI call): probe: equals property show-separators
+#[test]
+fn method_listbox_get_show_separators() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("list-box");
+        
+        let r = h.call_args(o, "get_show_separators", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "show-separators"), "postcondition: r == h.get(o, 'show-separators')");
+    });
+}
+
+/// method ListBox.get_tab_behavior (dynamic GI call): probe: equals property tab-behavior
+#[test]
+fn method_listbox_get_tab_behavior() {
+    if crate::testing::skip_below_gtk(4, 18) {
+        return;
+    }
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("list-box");
+        
+        let r = h.call_args(o, "get_tab_behavior", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "tab-behavior"), "postcondition: r == h.get(o, 'tab-behavior')");
+    });
+}
+
+/// method ListBox.set_activate_on_single_click (dynamic GI call): probe: set then read property activate-on-single-click: exact
+#[test]
+fn method_listbox_set_activate_on_single_click() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("list-box");
+        
+        let r = h.call_args(o, "set_activate_on_single_click", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "activate-on-single-click") == V::Bool(false), "postcondition: h.get(o, 'activate-on-single-click') == V::Bool(false)");
+    });
+}
+
+/// method ListBox.set_selection_mode (dynamic GI call): probe: set then read property selection-mode: exact
+#[test]
+fn method_listbox_set_selection_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("list-box");
+        
+        let r = h.call_args(o, "set_selection_mode", &[V::Str("none".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "selection-mode") == V::Str("none".into()), "postcondition: h.get(o, 'selection-mode') == V::Str('none'.into())");
+    });
+}
+
+/// method ListBox.set_show_separators (dynamic GI call): probe: set then read property show-separators: exact
+#[test]
+fn method_listbox_set_show_separators() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("list-box");
+        
+        let r = h.call_args(o, "set_show_separators", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "show-separators") == V::Bool(true), "postcondition: h.get(o, 'show-separators') == V::Bool(true)");
+    });
+}
+
+/// method ListBox.set_tab_behavior (dynamic GI call): probe: set then read property tab-behavior: exact
+#[test]
+fn method_listbox_set_tab_behavior() {
+    if crate::testing::skip_below_gtk(4, 18) {
+        return;
+    }
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("list-box");
+        
+        let r = h.call_args(o, "set_tab_behavior", &[V::Str("item".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "tab-behavior") == V::Str("item".into()), "postcondition: h.get(o, 'tab-behavior') == V::Str('item'.into())");
+    });
+}
+
+/// bind:accept-unpaired-release on ListBox: rule: B1: GtkListBox:accept-unpaired-release is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_listbox_accept_unpaired_release() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("list-box");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("accept-unpaired-release", true),
+                1 => o.set_property("accept-unpaired-release", false),
+                2 => o.set_property("accept-unpaired-release", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::accept-unpaired-release", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "accept-unpaired-release"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "accept-unpaired-release", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "accept-unpaired-release"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:activate-on-single-click on ListBox: rule: B1: GtkListBox:activate-on-single-click is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_listbox_activate_on_single_click() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("list-box");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("activate-on-single-click", false),
+                1 => o.set_property("activate-on-single-click", true),
+                2 => o.set_property("activate-on-single-click", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::activate-on-single-click", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "activate-on-single-click"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "activate-on-single-click", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "activate-on-single-click"), V::Bool(false), "the property reads the programmatic value");
+    });
+}
+
+/// bind:selection-mode on ListBox: rule: B1: GtkListBox:selection-mode is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_listbox_selection_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("list-box");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => { let pspec = o.find_property("selection-mode").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("selection-mode", &ev.to_value_by_nick("none").unwrap()) },
+                1 => { let pspec = o.find_property("selection-mode").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("selection-mode", &ev.to_value_by_nick("single").unwrap()) },
+                2 => { let pspec = o.find_property("selection-mode").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("selection-mode", &ev.to_value_by_nick("none").unwrap()) },
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::selection-mode", true).unwrap();
+        fire(&h.obj(o), "none", 0);
+        fire(&h.obj(o), "single", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "selection-mode"), V::Str("single".into()), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_str(o, "selection-mode", "none").unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "selection-mode"), V::Str("none".into()), "the property reads the programmatic value");
+    });
+}
+
+/// bind:show-separators on ListBox: rule: B1: GtkListBox:show-separators is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_listbox_show_separators() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("list-box");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("show-separators", true),
+                1 => o.set_property("show-separators", false),
+                2 => o.set_property("show-separators", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::show-separators", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "show-separators"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "show-separators", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "show-separators"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:tab-behavior on ListBox: rule: B1: GtkListBox:tab-behavior is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_listbox_tab_behavior() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("list-box");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => { let pspec = o.find_property("tab-behavior").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("tab-behavior", &ev.to_value_by_nick("item").unwrap()) },
+                1 => { let pspec = o.find_property("tab-behavior").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("tab-behavior", &ev.to_value_by_nick("all").unwrap()) },
+                2 => { let pspec = o.find_property("tab-behavior").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("tab-behavior", &ev.to_value_by_nick("item").unwrap()) },
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::tab-behavior", true).unwrap();
+        fire(&h.obj(o), "item", 0);
+        fire(&h.obj(o), "all", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "tab-behavior"), V::Str("all".into()), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_str(o, "tab-behavior", "item").unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "tab-behavior"), V::Str("item".into()), "the property reads the programmatic value");
+    });
+}
+
+/// property ListBoxRow.activatable (JS activatable): probe: round trip exact; notify fired
+#[test]
+fn prop_listboxrow_activatable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("list-box-row");
+        
+        let id = h.resolve_prop("list-box-row", "activatable");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("list-box-row", "activatable"));
+        h.set_bool(o, "activatable", false).unwrap();
+        assert_eq!(h.get(o, "activatable"), V::Bool(false));
+    });
+}
+
+/// property ListBoxRow.selectable (JS selectable): probe: round trip exact; notify fired
+#[test]
+fn prop_listboxrow_selectable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("list-box-row");
+        
+        let id = h.resolve_prop("list-box-row", "selectable");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("list-box-row", "selectable"));
+        h.set_bool(o, "selectable", false).unwrap();
+        assert_eq!(h.get(o, "selectable"), V::Bool(false));
+    });
+}
+
+/// method ListBoxRow.get_activatable (dynamic GI call): probe: equals property activatable
+#[test]
+fn method_listboxrow_get_activatable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("list-box-row");
+        
+        let r = h.call_args(o, "get_activatable", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "activatable"), "postcondition: r == h.get(o, 'activatable')");
+    });
+}
+
+/// method ListBoxRow.get_index (dynamic GI call): probe: called on a new instance, returned -1
+#[test]
+fn method_listboxrow_get_index() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("list-box-row");
+        
+        let r = h.call_args(o, "get_index", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::I64(-1), "postcondition: r == V::I64(-1)");
+    });
+}
+
+/// method ListBoxRow.get_selectable (dynamic GI call): probe: equals property selectable
+#[test]
+fn method_listboxrow_get_selectable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("list-box-row");
+        
+        let r = h.call_args(o, "get_selectable", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "selectable"), "postcondition: r == h.get(o, 'selectable')");
+    });
+}
+
+/// method ListBoxRow.is_selected (dynamic GI call): probe: called on a new instance, returned False
+#[test]
+fn method_listboxrow_is_selected() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("list-box-row");
+        
+        let r = h.call_args(o, "is_selected", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::Bool(false), "postcondition: r == V::Bool(false)");
+    });
+}
+
+/// method ListBoxRow.set_activatable (dynamic GI call): probe: set then read property activatable: exact
+#[test]
+fn method_listboxrow_set_activatable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("list-box-row");
+        
+        let r = h.call_args(o, "set_activatable", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "activatable") == V::Bool(false), "postcondition: h.get(o, 'activatable') == V::Bool(false)");
+    });
+}
+
+/// method ListBoxRow.set_selectable (dynamic GI call): probe: set then read property selectable: exact
+#[test]
+fn method_listboxrow_set_selectable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("list-box-row");
+        
+        let r = h.call_args(o, "set_selectable", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "selectable") == V::Bool(false), "postcondition: h.get(o, 'selectable') == V::Bool(false)");
+    });
+}
+
+/// bind:activatable on ListBoxRow: rule: B1: GtkListBoxRow:activatable is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_listboxrow_activatable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("list-box-row");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("activatable", false),
+                1 => o.set_property("activatable", true),
+                2 => o.set_property("activatable", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::activatable", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "activatable"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "activatable", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "activatable"), V::Bool(false), "the property reads the programmatic value");
+    });
+}
+
+/// bind:selectable on ListBoxRow: rule: B1: GtkListBoxRow:selectable is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_listboxrow_selectable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("list-box-row");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("selectable", false),
+                1 => o.set_property("selectable", true),
+                2 => o.set_property("selectable", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::selectable", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "selectable"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "selectable", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "selectable"), V::Bool(false), "the property reads the programmatic value");
     });
 }
 
@@ -5278,6 +12744,21 @@ fn signal_menubutton_activate() {
     });
 }
 
+/// property MenuButton.active (JS active): probe: round trip exact; notify fired
+#[test]
+fn prop_menubutton_active() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("menu-button");
+        
+        let id = h.resolve_prop("menu-button", "active");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("menu-button", "active"));
+        h.set_bool(o, "active", true).unwrap();
+        assert_eq!(h.get(o, "active"), V::Bool(true));
+    });
+}
+
 /// property MenuButton.always-show-arrow (JS always-show-arrow): GtkMenuButton:always-show-arrow (Gtk 4 docs)
 #[test]
 fn prop_menubutton_always_show_arrow() {
@@ -5348,8 +12829,8 @@ fn prop_menubutton_icon_name() {
         let id = h.resolve_prop("menu-button", "icon-name");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("menu-button", "icon-name"));
-        h.set_str(o, "icon-name", "p3-sample").unwrap();
-        assert_eq!(h.get(o, "icon-name"), V::Str("p3-sample".into()));
+        h.set_str(o, "icon-name", "edit-copy").unwrap();
+        assert_eq!(h.get(o, "icon-name"), V::Str("edit-copy".into()));
     });
 }
 
@@ -5363,8 +12844,21 @@ fn prop_menubutton_label() {
         let id = h.resolve_prop("menu-button", "label");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("menu-button", "label"));
-        h.set_str(o, "label", "p3-sample").unwrap();
-        assert_eq!(h.get(o, "label"), V::Str("p3-sample".into()));
+        h.set_str(o, "label", "svl probe").unwrap();
+        assert_eq!(h.get(o, "label"), V::Str("svl probe".into()));
+    });
+}
+
+/// property MenuButton.menu-model (JS menu-model, round trip): probe: round trip exact; notify fired
+#[test]
+fn prop_menubutton_menu_model() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("menu-button");
+        
+        let before = h.get_value(o, "menu-model");
+        h.set_value(o, "menu-model", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "menu-model")), crate::testing::shape(&before));
     });
 }
 
@@ -5398,6 +12892,132 @@ fn prop_menubutton_use_underline() {
     });
 }
 
+/// method MenuButton.get_active (dynamic GI call): probe: equals property active
+#[test]
+fn method_menubutton_get_active() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("menu-button");
+        
+        let r = h.call_args(o, "get_active", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "active"), "postcondition: r == h.get(o, 'active')");
+    });
+}
+
+/// method MenuButton.get_always_show_arrow (dynamic GI call): probe: equals property always-show-arrow
+#[test]
+fn method_menubutton_get_always_show_arrow() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("menu-button");
+        
+        let r = h.call_args(o, "get_always_show_arrow", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "always-show-arrow"), "postcondition: r == h.get(o, 'always-show-arrow')");
+    });
+}
+
+/// method MenuButton.get_can_shrink (dynamic GI call): probe: equals property can-shrink
+#[test]
+fn method_menubutton_get_can_shrink() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("menu-button");
+        
+        let r = h.call_args(o, "get_can_shrink", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "can-shrink"), "postcondition: r == h.get(o, 'can-shrink')");
+    });
+}
+
+/// method MenuButton.get_direction (dynamic GI call): probe: equals property direction
+#[test]
+fn method_menubutton_get_direction() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("menu-button");
+        
+        let r = h.call_args(o, "get_direction", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "direction"), "postcondition: r == h.get(o, 'direction')");
+    });
+}
+
+/// method MenuButton.get_has_frame (dynamic GI call): probe: equals property has-frame
+#[test]
+fn method_menubutton_get_has_frame() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("menu-button");
+        
+        let r = h.call_args(o, "get_has_frame", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "has-frame"), "postcondition: r == h.get(o, 'has-frame')");
+    });
+}
+
+/// method MenuButton.get_icon_name (dynamic GI call): probe: equals property icon-name
+#[test]
+fn method_menubutton_get_icon_name() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("menu-button");
+        
+        let r = h.call_args(o, "get_icon_name", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "icon-name"), "postcondition: r == h.get(o, 'icon-name')");
+    });
+}
+
+/// method MenuButton.get_label (dynamic GI call): probe: equals property label
+#[test]
+fn method_menubutton_get_label() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("menu-button");
+        
+        let r = h.call_args(o, "get_label", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "label"), "postcondition: r == h.get(o, 'label')");
+    });
+}
+
+/// method MenuButton.get_primary (dynamic GI call): probe: equals property primary
+#[test]
+fn method_menubutton_get_primary() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("menu-button");
+        
+        let r = h.call_args(o, "get_primary", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "primary"), "postcondition: r == h.get(o, 'primary')");
+    });
+}
+
+/// method MenuButton.get_use_underline (dynamic GI call): probe: equals property use-underline
+#[test]
+fn method_menubutton_get_use_underline() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("menu-button");
+        
+        let r = h.call_args(o, "get_use_underline", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "use-underline"), "postcondition: r == h.get(o, 'use-underline')");
+    });
+}
+
 /// method MenuButton.popdown: gtk_menu_button_popdown (Gtk 4 docs)
 #[test]
 fn method_menubutton_popdown() {
@@ -5426,6 +13046,48 @@ fn method_menubutton_popup() {
     });
 }
 
+/// method MenuButton.set_active (dynamic GI call): probe: set then read property active: exact
+#[test]
+fn method_menubutton_set_active() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("menu-button");
+        
+        let r = h.call_args(o, "set_active", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "active") == V::Bool(true), "postcondition: h.get(o, 'active') == V::Bool(true)");
+    });
+}
+
+/// method MenuButton.set_always_show_arrow (dynamic GI call): probe: set then read property always-show-arrow: exact
+#[test]
+fn method_menubutton_set_always_show_arrow() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("menu-button");
+        
+        let r = h.call_args(o, "set_always_show_arrow", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "always-show-arrow") == V::Bool(true), "postcondition: h.get(o, 'always-show-arrow') == V::Bool(true)");
+    });
+}
+
+/// method MenuButton.set_can_shrink (dynamic GI call): probe: set then read property can-shrink: exact
+#[test]
+fn method_menubutton_set_can_shrink() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("menu-button");
+        
+        let r = h.call_args(o, "set_can_shrink", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "can-shrink") == V::Bool(true), "postcondition: h.get(o, 'can-shrink') == V::Bool(true)");
+    });
+}
+
 /// method MenuButton.set_direction (dynamic GI call): gtk_menu_button_set_direction (Gtk 4 docs); enum nick argument (S1)
 #[test]
 fn method_menubutton_set_direction() {
@@ -5437,6 +13099,348 @@ fn method_menubutton_set_direction() {
         let w = h.widget(o);
         let _ = (&w, &r);
         assert!(h.get(o, "direction") == V::Str("up".into()), "postcondition: h.get(o, 'direction') == V::Str('up'.into())");
+    });
+}
+
+/// method MenuButton.set_has_frame (dynamic GI call): probe: set then read property has-frame: exact
+#[test]
+fn method_menubutton_set_has_frame() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("menu-button");
+        
+        let r = h.call_args(o, "set_has_frame", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "has-frame") == V::Bool(false), "postcondition: h.get(o, 'has-frame') == V::Bool(false)");
+    });
+}
+
+/// method MenuButton.set_icon_name (dynamic GI call): probe: set then read property icon-name: exact
+#[test]
+fn method_menubutton_set_icon_name() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("menu-button");
+        
+        let r = h.call_args(o, "set_icon_name", &[V::Str("edit-copy".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "icon-name") == V::Str("edit-copy".into()), "postcondition: h.get(o, 'icon-name') == V::Str('edit-copy'.into())");
+    });
+}
+
+/// method MenuButton.set_label (dynamic GI call): probe: set then read property label: exact
+#[test]
+fn method_menubutton_set_label() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("menu-button");
+        
+        let r = h.call_args(o, "set_label", &[V::Str("svl probe".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "label") == V::Str("svl probe".into()), "postcondition: h.get(o, 'label') == V::Str('svl probe'.into())");
+    });
+}
+
+/// method MenuButton.set_primary (dynamic GI call): probe: set then read property primary: exact
+#[test]
+fn method_menubutton_set_primary() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("menu-button");
+        
+        let r = h.call_args(o, "set_primary", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "primary") == V::Bool(true), "postcondition: h.get(o, 'primary') == V::Bool(true)");
+    });
+}
+
+/// method MenuButton.set_use_underline (dynamic GI call): probe: set then read property use-underline: exact
+#[test]
+fn method_menubutton_set_use_underline() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("menu-button");
+        
+        let r = h.call_args(o, "set_use_underline", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "use-underline") == V::Bool(true), "postcondition: h.get(o, 'use-underline') == V::Bool(true)");
+    });
+}
+
+/// bind:active on MenuButton: rule: B1: GtkMenuButton:active is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_menubutton_active() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("menu-button");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("active", true),
+                1 => o.set_property("active", false),
+                2 => o.set_property("active", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::active", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "active"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "active", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "active"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:always-show-arrow on MenuButton: rule: B1: GtkMenuButton:always-show-arrow is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_menubutton_always_show_arrow() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("menu-button");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("always-show-arrow", true),
+                1 => o.set_property("always-show-arrow", false),
+                2 => o.set_property("always-show-arrow", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::always-show-arrow", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "always-show-arrow"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "always-show-arrow", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "always-show-arrow"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:can-shrink on MenuButton: rule: B1: GtkMenuButton:can-shrink is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_menubutton_can_shrink() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("menu-button");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("can-shrink", true),
+                1 => o.set_property("can-shrink", false),
+                2 => o.set_property("can-shrink", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::can-shrink", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "can-shrink"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "can-shrink", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "can-shrink"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:direction on MenuButton: rule: B1: GtkMenuButton:direction is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_menubutton_direction() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("menu-button");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => { let pspec = o.find_property("direction").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("direction", &ev.to_value_by_nick("up").unwrap()) },
+                1 => { let pspec = o.find_property("direction").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("direction", &ev.to_value_by_nick("down").unwrap()) },
+                2 => { let pspec = o.find_property("direction").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("direction", &ev.to_value_by_nick("up").unwrap()) },
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::direction", true).unwrap();
+        fire(&h.obj(o), "up", 0);
+        fire(&h.obj(o), "down", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "direction"), V::Str("down".into()), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_str(o, "direction", "up").unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "direction"), V::Str("up".into()), "the property reads the programmatic value");
+    });
+}
+
+/// bind:has-frame on MenuButton: rule: B1: GtkMenuButton:has-frame is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_menubutton_has_frame() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("menu-button");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("has-frame", false),
+                1 => o.set_property("has-frame", true),
+                2 => o.set_property("has-frame", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::has-frame", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "has-frame"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "has-frame", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "has-frame"), V::Bool(false), "the property reads the programmatic value");
+    });
+}
+
+/// bind:primary on MenuButton: rule: B1: GtkMenuButton:primary is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_menubutton_primary() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("menu-button");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("primary", true),
+                1 => o.set_property("primary", false),
+                2 => o.set_property("primary", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::primary", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "primary"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "primary", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "primary"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:use-underline on MenuButton: rule: B1: GtkMenuButton:use-underline is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_menubutton_use_underline() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("menu-button");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("use-underline", true),
+                1 => o.set_property("use-underline", false),
+                2 => o.set_property("use-underline", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::use-underline", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "use-underline"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "use-underline", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "use-underline"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// signal Notebook.change-current-page: runtime: returns gboolean, run-last; probe: emitted synthetically with sampled arguments; delivery only, no native trigger
+#[test]
+fn signal_notebook_change_current_page() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("notebook");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = o.emit_by_name::<bool>("change-current-page", &[&1i32]);
+        };
+        assert_ne!(h.resolve_signal("notebook", "change-current-page"), 0);
+        assert_eq!(h.resolve_signal("notebook", "change-current-page"), h.resolve_signal("notebook", "change-current-page"));
+        h.listen(e, "change-current-page", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "change-current-page".to_string())), "delivered: {ev:?}");
+        h.listen(e, "change-current-page", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "change-current-page", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "change-current-page", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal Notebook.select-page: runtime: returns gboolean, run-last; probe: emitted synthetically with sampled arguments; delivery only, no native trigger
+#[test]
+fn signal_notebook_select_page() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("notebook");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = o.emit_by_name::<bool>("select-page", &[&true]);
+        };
+        assert_ne!(h.resolve_signal("notebook", "select-page"), 0);
+        assert_eq!(h.resolve_signal("notebook", "select-page"), h.resolve_signal("notebook", "select-page"));
+        h.listen(e, "select-page", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "select-page".to_string())), "delivered: {ev:?}");
+        h.listen(e, "select-page", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "select-page", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "select-page", true).is_err(), "stale handle is an error");
     });
 }
 
@@ -5499,6 +13503,36 @@ fn signal_notebook_notify_page() {
         fire(&obj, "c", 2);
         assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
         assert!(h.listen(e, "notify::page", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// property Notebook.enable-popup (JS enable-popup): probe: round trip exact; notify fired
+#[test]
+fn prop_notebook_enable_popup() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("notebook");
+        
+        let id = h.resolve_prop("notebook", "enable-popup");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("notebook", "enable-popup"));
+        h.set_bool(o, "enable-popup", true).unwrap();
+        assert_eq!(h.get(o, "enable-popup"), V::Bool(true));
+    });
+}
+
+/// property Notebook.group-name (JS group-name): probe: round trip exact; notify fired
+#[test]
+fn prop_notebook_group_name() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("notebook");
+        
+        let id = h.resolve_prop("notebook", "group-name");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("notebook", "group-name"));
+        h.set_str(o, "group-name", "svl probe").unwrap();
+        assert_eq!(h.get(o, "group-name"), V::Str("svl probe".into()));
     });
 }
 
@@ -5605,12 +13639,331 @@ fn prop_notebook_tab_pos() {
     });
 }
 
+/// method Notebook.get_current_page (dynamic GI call): probe: called on a new instance, returned -1
+#[test]
+fn method_notebook_get_current_page() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("notebook");
+        
+        let r = h.call_args(o, "get_current_page", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::I64(-1), "postcondition: r == V::I64(-1)");
+    });
+}
+
+/// method Notebook.get_group_name (dynamic GI call): probe: equals property group-name
+#[test]
+fn method_notebook_get_group_name() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("notebook");
+        
+        let r = h.call_args(o, "get_group_name", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "group-name"), "postcondition: r == h.get(o, 'group-name')");
+    });
+}
+
+/// method Notebook.get_n_pages (dynamic GI call): probe: called on a new instance, returned 0
+#[test]
+fn method_notebook_get_n_pages() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("notebook");
+        
+        let r = h.call_args(o, "get_n_pages", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::I64(0), "postcondition: r == V::I64(0)");
+    });
+}
+
+/// method Notebook.get_scrollable (dynamic GI call): probe: equals property scrollable
+#[test]
+fn method_notebook_get_scrollable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("notebook");
+        
+        let r = h.call_args(o, "get_scrollable", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "scrollable"), "postcondition: r == h.get(o, 'scrollable')");
+    });
+}
+
+/// method Notebook.get_show_border (dynamic GI call): probe: equals property show-border
+#[test]
+fn method_notebook_get_show_border() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("notebook");
+        
+        let r = h.call_args(o, "get_show_border", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "show-border"), "postcondition: r == h.get(o, 'show-border')");
+    });
+}
+
+/// method Notebook.get_show_tabs (dynamic GI call): probe: equals property show-tabs
+#[test]
+fn method_notebook_get_show_tabs() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("notebook");
+        
+        let r = h.call_args(o, "get_show_tabs", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "show-tabs"), "postcondition: r == h.get(o, 'show-tabs')");
+    });
+}
+
+/// method Notebook.get_tab_pos (dynamic GI call): probe: equals property tab-pos
+#[test]
+fn method_notebook_get_tab_pos() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("notebook");
+        
+        let r = h.call_args(o, "get_tab_pos", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "tab-pos"), "postcondition: r == h.get(o, 'tab-pos')");
+    });
+}
+
+/// method Notebook.set_group_name (dynamic GI call): probe: set then read property group-name: exact
+#[test]
+fn method_notebook_set_group_name() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("notebook");
+        
+        let r = h.call_args(o, "set_group_name", &[V::Str("svl probe".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "group-name") == V::Str("svl probe".into()), "postcondition: h.get(o, 'group-name') == V::Str('svl probe'.into())");
+    });
+}
+
+/// method Notebook.set_scrollable (dynamic GI call): probe: set then read property scrollable: exact
+#[test]
+fn method_notebook_set_scrollable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("notebook");
+        
+        let r = h.call_args(o, "set_scrollable", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "scrollable") == V::Bool(true), "postcondition: h.get(o, 'scrollable') == V::Bool(true)");
+    });
+}
+
+/// method Notebook.set_show_border (dynamic GI call): probe: set then read property show-border: exact
+#[test]
+fn method_notebook_set_show_border() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("notebook");
+        
+        let r = h.call_args(o, "set_show_border", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "show-border") == V::Bool(false), "postcondition: h.get(o, 'show-border') == V::Bool(false)");
+    });
+}
+
+/// method Notebook.set_show_tabs (dynamic GI call): probe: set then read property show-tabs: exact
+#[test]
+fn method_notebook_set_show_tabs() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("notebook");
+        
+        let r = h.call_args(o, "set_show_tabs", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "show-tabs") == V::Bool(false), "postcondition: h.get(o, 'show-tabs') == V::Bool(false)");
+    });
+}
+
+/// method Notebook.set_tab_pos (dynamic GI call): probe: set then read property tab-pos: exact
+#[test]
+fn method_notebook_set_tab_pos() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("notebook");
+        
+        let r = h.call_args(o, "set_tab_pos", &[V::Str("left".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "tab-pos") == V::Str("left".into()), "postcondition: h.get(o, 'tab-pos') == V::Str('left'.into())");
+    });
+}
+
+/// bind:enable-popup on Notebook: rule: B1: GtkNotebook:enable-popup is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_notebook_enable_popup() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("notebook");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("enable-popup", true),
+                1 => o.set_property("enable-popup", false),
+                2 => o.set_property("enable-popup", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::enable-popup", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "enable-popup"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "enable-popup", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "enable-popup"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:scrollable on Notebook: rule: B1: GtkNotebook:scrollable is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_notebook_scrollable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("notebook");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("scrollable", true),
+                1 => o.set_property("scrollable", false),
+                2 => o.set_property("scrollable", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::scrollable", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "scrollable"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "scrollable", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "scrollable"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:show-border on Notebook: rule: B1: GtkNotebook:show-border is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_notebook_show_border() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("notebook");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("show-border", false),
+                1 => o.set_property("show-border", true),
+                2 => o.set_property("show-border", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::show-border", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "show-border"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "show-border", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "show-border"), V::Bool(false), "the property reads the programmatic value");
+    });
+}
+
+/// bind:show-tabs on Notebook: rule: B1: GtkNotebook:show-tabs is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_notebook_show_tabs() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("notebook");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("show-tabs", false),
+                1 => o.set_property("show-tabs", true),
+                2 => o.set_property("show-tabs", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::show-tabs", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "show-tabs"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "show-tabs", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "show-tabs"), V::Bool(false), "the property reads the programmatic value");
+    });
+}
+
+/// bind:tab-pos on Notebook: rule: B1: GtkNotebook:tab-pos is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_notebook_tab_pos() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("notebook");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => { let pspec = o.find_property("tab-pos").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("tab-pos", &ev.to_value_by_nick("left").unwrap()) },
+                1 => { let pspec = o.find_property("tab-pos").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("tab-pos", &ev.to_value_by_nick("top").unwrap()) },
+                2 => { let pspec = o.find_property("tab-pos").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("tab-pos", &ev.to_value_by_nick("left").unwrap()) },
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::tab-pos", true).unwrap();
+        fire(&h.obj(o), "left", 0);
+        fire(&h.obj(o), "top", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "tab-pos"), V::Str("top".into()), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_str(o, "tab-pos", "left").unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "tab-pos"), V::Str("left".into()), "the property reads the programmatic value");
+    });
+}
+
 /// bind:page on Notebook: set_current_page emits switch-page and notify::page only on change (Gtk 4 docs)
 #[test]
 fn binding_notebook_page() {
     on_gtk(|| {
         let mut h = Harness::new();
         let o = h.create("notebook");
+        let nb = h.obj(o).downcast::<gtk::Notebook>().unwrap(); for _ in 0..3 { nb.append_page(&gtk::Label::new(None), None::<&gtk::Widget>); } nb.set_current_page(Some(0));
         let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
             let o = ob;
             let _ = (v, i);
@@ -5640,6 +13993,158 @@ fn prop_orientable_orientation() {
     });
 }
 
+/// method Orientable.get_orientation (dynamic GI call): probe: equals property orientation
+#[test]
+fn method_orientable_get_orientation() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("box");
+        
+        let r = h.call_args(o, "get_orientation", &[]).unwrap();
+        let w = h.obj(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "orientation"), "postcondition: r == h.get(o, 'orientation')");
+    });
+}
+
+/// method Orientable.set_orientation (dynamic GI call): probe: set then read property orientation: exact
+#[test]
+fn method_orientable_set_orientation() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("box");
+        
+        let r = h.call_args(o, "set_orientation", &[V::Str("vertical".into())]).unwrap();
+        let w = h.obj(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "orientation") == V::Str("vertical".into()), "postcondition: h.get(o, 'orientation') == V::Str('vertical'.into())");
+    });
+}
+
+/// signal Paned.accept-position: runtime: returns gboolean, run-last; probe: emitted synthetically with sampled arguments; delivery only, no native trigger
+#[test]
+fn signal_paned_accept_position() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("paned");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = o.emit_by_name::<bool>("accept-position", &[]);
+        };
+        assert_ne!(h.resolve_signal("paned", "accept-position"), 0);
+        assert_eq!(h.resolve_signal("paned", "accept-position"), h.resolve_signal("paned", "accept-position"));
+        h.listen(e, "accept-position", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "accept-position".to_string())), "delivered: {ev:?}");
+        h.listen(e, "accept-position", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "accept-position", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "accept-position", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal Paned.cancel-position: runtime: returns gboolean, run-last; probe: emitted synthetically with sampled arguments; delivery only, no native trigger
+#[test]
+fn signal_paned_cancel_position() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("paned");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = o.emit_by_name::<bool>("cancel-position", &[]);
+        };
+        assert_ne!(h.resolve_signal("paned", "cancel-position"), 0);
+        assert_eq!(h.resolve_signal("paned", "cancel-position"), h.resolve_signal("paned", "cancel-position"));
+        h.listen(e, "cancel-position", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "cancel-position".to_string())), "delivered: {ev:?}");
+        h.listen(e, "cancel-position", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "cancel-position", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "cancel-position", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal Paned.cycle-child-focus: runtime: returns gboolean, run-last; probe: emitted synthetically with sampled arguments; delivery only, no native trigger
+#[test]
+fn signal_paned_cycle_child_focus() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("paned");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = o.emit_by_name::<bool>("cycle-child-focus", &[&true]);
+        };
+        assert_ne!(h.resolve_signal("paned", "cycle-child-focus"), 0);
+        assert_eq!(h.resolve_signal("paned", "cycle-child-focus"), h.resolve_signal("paned", "cycle-child-focus"));
+        h.listen(e, "cycle-child-focus", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "cycle-child-focus".to_string())), "delivered: {ev:?}");
+        h.listen(e, "cycle-child-focus", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "cycle-child-focus", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "cycle-child-focus", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal Paned.toggle-handle-focus: runtime: returns gboolean, run-last; probe: emitted synthetically with sampled arguments; delivery only, no native trigger
+#[test]
+fn signal_paned_toggle_handle_focus() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("paned");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = o.emit_by_name::<bool>("toggle-handle-focus", &[]);
+        };
+        assert_ne!(h.resolve_signal("paned", "toggle-handle-focus"), 0);
+        assert_eq!(h.resolve_signal("paned", "toggle-handle-focus"), h.resolve_signal("paned", "toggle-handle-focus"));
+        h.listen(e, "toggle-handle-focus", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "toggle-handle-focus".to_string())), "delivered: {ev:?}");
+        h.listen(e, "toggle-handle-focus", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "toggle-handle-focus", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "toggle-handle-focus", true).is_err(), "stale handle is an error");
+    });
+}
+
 /// property Paned.position (JS position): GtkPaned:position (Gtk 4 docs); P prop
 #[test]
 fn prop_paned_position() {
@@ -5650,8 +14155,8 @@ fn prop_paned_position() {
         let id = h.resolve_prop("paned", "position");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("paned", "position"));
-        h.set_i64(o, "position", 7).unwrap();
-        assert_eq!(h.get(o, "position"), V::I64(7));
+        h.set_i64(o, "position", 1).unwrap();
+        assert_eq!(h.get(o, "position"), V::I64(1));
     });
 }
 
@@ -5745,6 +14250,90 @@ fn prop_paned_wide_handle() {
     });
 }
 
+/// method Paned.get_position (dynamic GI call): probe: equals property position
+#[test]
+fn method_paned_get_position() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("paned");
+        
+        let r = h.call_args(o, "get_position", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "position"), "postcondition: r == h.get(o, 'position')");
+    });
+}
+
+/// method Paned.get_resize_end_child (dynamic GI call): probe: equals property resize-end-child
+#[test]
+fn method_paned_get_resize_end_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("paned");
+        
+        let r = h.call_args(o, "get_resize_end_child", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "resize-end-child"), "postcondition: r == h.get(o, 'resize-end-child')");
+    });
+}
+
+/// method Paned.get_resize_start_child (dynamic GI call): probe: equals property resize-start-child
+#[test]
+fn method_paned_get_resize_start_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("paned");
+        
+        let r = h.call_args(o, "get_resize_start_child", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "resize-start-child"), "postcondition: r == h.get(o, 'resize-start-child')");
+    });
+}
+
+/// method Paned.get_shrink_end_child (dynamic GI call): probe: equals property shrink-end-child
+#[test]
+fn method_paned_get_shrink_end_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("paned");
+        
+        let r = h.call_args(o, "get_shrink_end_child", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "shrink-end-child"), "postcondition: r == h.get(o, 'shrink-end-child')");
+    });
+}
+
+/// method Paned.get_shrink_start_child (dynamic GI call): probe: equals property shrink-start-child
+#[test]
+fn method_paned_get_shrink_start_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("paned");
+        
+        let r = h.call_args(o, "get_shrink_start_child", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "shrink-start-child"), "postcondition: r == h.get(o, 'shrink-start-child')");
+    });
+}
+
+/// method Paned.get_wide_handle (dynamic GI call): probe: equals property wide-handle
+#[test]
+fn method_paned_get_wide_handle() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("paned");
+        
+        let r = h.call_args(o, "get_wide_handle", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "wide-handle"), "postcondition: r == h.get(o, 'wide-handle')");
+    });
+}
+
 /// method Paned.set_position (dynamic GI call): gtk_paned_set_position (Gtk 4 docs)
 #[test]
 fn method_paned_set_position() {
@@ -5756,6 +14345,286 @@ fn method_paned_set_position() {
         let w = h.widget(o);
         let _ = (&w, &r);
         assert!(h.get(o, "position") == V::I64(40), "postcondition: h.get(o, 'position') == V::I64(40)");
+    });
+}
+
+/// method Paned.set_resize_end_child (dynamic GI call): probe: set then read property resize-end-child: exact
+#[test]
+fn method_paned_set_resize_end_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("paned");
+        
+        let r = h.call_args(o, "set_resize_end_child", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "resize-end-child") == V::Bool(false), "postcondition: h.get(o, 'resize-end-child') == V::Bool(false)");
+    });
+}
+
+/// method Paned.set_resize_start_child (dynamic GI call): probe: set then read property resize-start-child: exact
+#[test]
+fn method_paned_set_resize_start_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("paned");
+        
+        let r = h.call_args(o, "set_resize_start_child", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "resize-start-child") == V::Bool(false), "postcondition: h.get(o, 'resize-start-child') == V::Bool(false)");
+    });
+}
+
+/// method Paned.set_shrink_end_child (dynamic GI call): probe: set then read property shrink-end-child: exact
+#[test]
+fn method_paned_set_shrink_end_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("paned");
+        
+        let r = h.call_args(o, "set_shrink_end_child", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "shrink-end-child") == V::Bool(false), "postcondition: h.get(o, 'shrink-end-child') == V::Bool(false)");
+    });
+}
+
+/// method Paned.set_shrink_start_child (dynamic GI call): probe: set then read property shrink-start-child: exact
+#[test]
+fn method_paned_set_shrink_start_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("paned");
+        
+        let r = h.call_args(o, "set_shrink_start_child", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "shrink-start-child") == V::Bool(false), "postcondition: h.get(o, 'shrink-start-child') == V::Bool(false)");
+    });
+}
+
+/// method Paned.set_wide_handle (dynamic GI call): probe: set then read property wide-handle: exact
+#[test]
+fn method_paned_set_wide_handle() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("paned");
+        
+        let r = h.call_args(o, "set_wide_handle", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "wide-handle") == V::Bool(true), "postcondition: h.get(o, 'wide-handle') == V::Bool(true)");
+    });
+}
+
+/// bind:position on Paned: rule: B1: GtkPaned:position is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_paned_position() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("paned");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("position", 1i32),
+                1 => o.set_property("position", 0i32),
+                2 => o.set_property("position", 1i32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::position", true).unwrap();
+        fire(&h.obj(o), "1", 0);
+        fire(&h.obj(o), "0", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "position"), V::I64(0), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "position", 1).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "position"), V::I64(1), "the property reads the programmatic value");
+    });
+}
+
+/// bind:position-set on Paned: rule: B1: GtkPaned:position-set is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_paned_position_set() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("paned");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("position-set", true),
+                1 => o.set_property("position-set", false),
+                2 => o.set_property("position-set", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::position-set", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "position-set"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "position-set", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "position-set"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:resize-end-child on Paned: rule: B1: GtkPaned:resize-end-child is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_paned_resize_end_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("paned");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("resize-end-child", false),
+                1 => o.set_property("resize-end-child", true),
+                2 => o.set_property("resize-end-child", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::resize-end-child", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "resize-end-child"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "resize-end-child", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "resize-end-child"), V::Bool(false), "the property reads the programmatic value");
+    });
+}
+
+/// bind:resize-start-child on Paned: rule: B1: GtkPaned:resize-start-child is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_paned_resize_start_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("paned");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("resize-start-child", false),
+                1 => o.set_property("resize-start-child", true),
+                2 => o.set_property("resize-start-child", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::resize-start-child", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "resize-start-child"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "resize-start-child", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "resize-start-child"), V::Bool(false), "the property reads the programmatic value");
+    });
+}
+
+/// bind:shrink-end-child on Paned: rule: B1: GtkPaned:shrink-end-child is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_paned_shrink_end_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("paned");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("shrink-end-child", false),
+                1 => o.set_property("shrink-end-child", true),
+                2 => o.set_property("shrink-end-child", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::shrink-end-child", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "shrink-end-child"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "shrink-end-child", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "shrink-end-child"), V::Bool(false), "the property reads the programmatic value");
+    });
+}
+
+/// bind:shrink-start-child on Paned: rule: B1: GtkPaned:shrink-start-child is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_paned_shrink_start_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("paned");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("shrink-start-child", false),
+                1 => o.set_property("shrink-start-child", true),
+                2 => o.set_property("shrink-start-child", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::shrink-start-child", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "shrink-start-child"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "shrink-start-child", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "shrink-start-child"), V::Bool(false), "the property reads the programmatic value");
+    });
+}
+
+/// bind:wide-handle on Paned: rule: B1: GtkPaned:wide-handle is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_paned_wide_handle() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("paned");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("wide-handle", true),
+                1 => o.set_property("wide-handle", false),
+                2 => o.set_property("wide-handle", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::wide-handle", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "wide-handle"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "wide-handle", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "wide-handle"), V::Bool(true), "the property reads the programmatic value");
     });
 }
 
@@ -5815,8 +14684,8 @@ fn prop_passwordentry_placeholder_text() {
         let id = h.resolve_prop("password-entry", "placeholder-text");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("password-entry", "placeholder-text"));
-        h.set_str(o, "placeholder-text", "p3-sample").unwrap();
-        assert_eq!(h.get(o, "placeholder-text"), V::Str("p3-sample".into()));
+        h.set_str(o, "placeholder-text", "svl probe").unwrap();
+        assert_eq!(h.get(o, "placeholder-text"), V::Str("svl probe".into()));
     });
 }
 
@@ -5832,6 +14701,94 @@ fn prop_passwordentry_show_peek_icon() {
         assert_eq!(id, h.resolve_prop("password-entry", "show-peek-icon"));
         h.set_bool(o, "show-peek-icon", true).unwrap();
         assert_eq!(h.get(o, "show-peek-icon"), V::Bool(true));
+    });
+}
+
+/// method PasswordEntry.get_show_peek_icon (dynamic GI call): probe: equals property show-peek-icon
+#[test]
+fn method_passwordentry_get_show_peek_icon() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("password-entry");
+        
+        let r = h.call_args(o, "get_show_peek_icon", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "show-peek-icon"), "postcondition: r == h.get(o, 'show-peek-icon')");
+    });
+}
+
+/// method PasswordEntry.set_show_peek_icon (dynamic GI call): probe: set then read property show-peek-icon: exact
+#[test]
+fn method_passwordentry_set_show_peek_icon() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("password-entry");
+        
+        let r = h.call_args(o, "set_show_peek_icon", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "show-peek-icon") == V::Bool(true), "postcondition: h.get(o, 'show-peek-icon') == V::Bool(true)");
+    });
+}
+
+/// bind:activates-default on PasswordEntry: rule: B1: GtkPasswordEntry:activates-default is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_passwordentry_activates_default() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("password-entry");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("activates-default", true),
+                1 => o.set_property("activates-default", false),
+                2 => o.set_property("activates-default", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::activates-default", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "activates-default"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "activates-default", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "activates-default"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:show-peek-icon on PasswordEntry: rule: B1: GtkPasswordEntry:show-peek-icon is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_passwordentry_show_peek_icon() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("password-entry");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("show-peek-icon", true),
+                1 => o.set_property("show-peek-icon", false),
+                2 => o.set_property("show-peek-icon", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::show-peek-icon", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "show-peek-icon"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "show-peek-icon", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "show-peek-icon"), V::Bool(true), "the property reads the programmatic value");
     });
 }
 
@@ -5866,8 +14823,8 @@ fn prop_picture_alternative_text() {
         let id = h.resolve_prop("picture", "alternative-text");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("picture", "alternative-text"));
-        h.set_str(o, "alternative-text", "p3-sample").unwrap();
-        assert_eq!(h.get(o, "alternative-text"), V::Str("p3-sample".into()));
+        h.set_str(o, "alternative-text", "svl probe").unwrap();
+        assert_eq!(h.get(o, "alternative-text"), V::Str("svl probe".into()));
     });
 }
 
@@ -5914,6 +14871,24 @@ fn prop_picture_file() {
     });
 }
 
+/// property Picture.isolate-contents (JS isolate-contents): probe: round trip exact; notify fired
+#[test]
+fn prop_picture_isolate_contents() {
+    if crate::testing::skip_below_gtk(4, 22) {
+        return;
+    }
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("picture");
+        
+        let id = h.resolve_prop("picture", "isolate-contents");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("picture", "isolate-contents"));
+        h.set_bool(o, "isolate-contents", false).unwrap();
+        assert_eq!(h.get(o, "isolate-contents"), V::Bool(false));
+    });
+}
+
 /// property Picture.keep-aspect-ratio (JS keep-aspect-ratio): GtkPicture:keep-aspect-ratio (Gtk 4 docs)
 #[test]
 fn prop_picture_keep_aspect_ratio() {
@@ -5939,6 +14914,214 @@ fn prop_picture_paintable() {
         let before = h.get_value(o, "paintable");
         h.set_value(o, "paintable", &before).unwrap();
         assert_eq!(crate::testing::shape(&h.get_value(o, "paintable")), crate::testing::shape(&before));
+    });
+}
+
+/// method Picture.get_alternative_text (dynamic GI call): probe: equals property alternative-text
+#[test]
+fn method_picture_get_alternative_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("picture");
+        
+        let r = h.call_args(o, "get_alternative_text", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "alternative-text"), "postcondition: r == h.get(o, 'alternative-text')");
+    });
+}
+
+/// method Picture.get_can_shrink (dynamic GI call): probe: equals property can-shrink
+#[test]
+fn method_picture_get_can_shrink() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("picture");
+        
+        let r = h.call_args(o, "get_can_shrink", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "can-shrink"), "postcondition: r == h.get(o, 'can-shrink')");
+    });
+}
+
+/// method Picture.get_content_fit (dynamic GI call): probe: equals property content-fit
+#[test]
+fn method_picture_get_content_fit() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("picture");
+        
+        let r = h.call_args(o, "get_content_fit", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "content-fit"), "postcondition: r == h.get(o, 'content-fit')");
+    });
+}
+
+/// method Picture.get_isolate_contents (dynamic GI call): probe: equals property isolate-contents
+#[test]
+fn method_picture_get_isolate_contents() {
+    if crate::testing::skip_below_gtk(4, 22) {
+        return;
+    }
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("picture");
+        
+        let r = h.call_args(o, "get_isolate_contents", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "isolate-contents"), "postcondition: r == h.get(o, 'isolate-contents')");
+    });
+}
+
+/// method Picture.set_alternative_text (dynamic GI call): probe: set then read property alternative-text: exact
+#[test]
+fn method_picture_set_alternative_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("picture");
+        
+        let r = h.call_args(o, "set_alternative_text", &[V::Str("svl probe".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "alternative-text") == V::Str("svl probe".into()), "postcondition: h.get(o, 'alternative-text') == V::Str('svl probe'.into())");
+    });
+}
+
+/// method Picture.set_can_shrink (dynamic GI call): probe: set then read property can-shrink: exact
+#[test]
+fn method_picture_set_can_shrink() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("picture");
+        
+        let r = h.call_args(o, "set_can_shrink", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "can-shrink") == V::Bool(false), "postcondition: h.get(o, 'can-shrink') == V::Bool(false)");
+    });
+}
+
+/// method Picture.set_content_fit (dynamic GI call): probe: set then read property content-fit: exact
+#[test]
+fn method_picture_set_content_fit() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("picture");
+        
+        let r = h.call_args(o, "set_content_fit", &[V::Str("fill".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "content-fit") == V::Str("fill".into()), "postcondition: h.get(o, 'content-fit') == V::Str('fill'.into())");
+    });
+}
+
+/// method Picture.set_isolate_contents (dynamic GI call): probe: set then read property isolate-contents: exact
+#[test]
+fn method_picture_set_isolate_contents() {
+    if crate::testing::skip_below_gtk(4, 22) {
+        return;
+    }
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("picture");
+        
+        let r = h.call_args(o, "set_isolate_contents", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "isolate-contents") == V::Bool(false), "postcondition: h.get(o, 'isolate-contents') == V::Bool(false)");
+    });
+}
+
+/// bind:can-shrink on Picture: rule: B1: GtkPicture:can-shrink is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_picture_can_shrink() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("picture");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("can-shrink", false),
+                1 => o.set_property("can-shrink", true),
+                2 => o.set_property("can-shrink", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::can-shrink", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "can-shrink"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "can-shrink", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "can-shrink"), V::Bool(false), "the property reads the programmatic value");
+    });
+}
+
+/// bind:content-fit on Picture: rule: B1: GtkPicture:content-fit is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_picture_content_fit() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("picture");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => { let pspec = o.find_property("content-fit").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("content-fit", &ev.to_value_by_nick("fill").unwrap()) },
+                1 => { let pspec = o.find_property("content-fit").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("content-fit", &ev.to_value_by_nick("contain").unwrap()) },
+                2 => { let pspec = o.find_property("content-fit").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("content-fit", &ev.to_value_by_nick("fill").unwrap()) },
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::content-fit", true).unwrap();
+        fire(&h.obj(o), "fill", 0);
+        fire(&h.obj(o), "contain", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "content-fit"), V::Str("contain".into()), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_str(o, "content-fit", "fill").unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "content-fit"), V::Str("fill".into()), "the property reads the programmatic value");
+    });
+}
+
+/// bind:isolate-contents on Picture: rule: B1: GtkPicture:isolate-contents is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_picture_isolate_contents() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("picture");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("isolate-contents", false),
+                1 => o.set_property("isolate-contents", true),
+                2 => o.set_property("isolate-contents", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::isolate-contents", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "isolate-contents"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "isolate-contents", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "isolate-contents"), V::Bool(false), "the property reads the programmatic value");
     });
 }
 
@@ -6049,6 +15232,21 @@ fn prop_popover_has_arrow() {
     });
 }
 
+/// property Popover.mnemonics-visible (JS mnemonics-visible): probe: round trip exact; notify fired
+#[test]
+fn prop_popover_mnemonics_visible() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("popover");
+        
+        let id = h.resolve_prop("popover", "mnemonics-visible");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("popover", "mnemonics-visible"));
+        h.set_bool(o, "mnemonics-visible", true).unwrap();
+        assert_eq!(h.get(o, "mnemonics-visible"), V::Bool(true));
+    });
+}
+
 /// property Popover.position (JS position): GtkPopover:position (Gtk 4 docs); PositionType nick
 #[test]
 fn prop_popover_position() {
@@ -6061,6 +15259,76 @@ fn prop_popover_position() {
         assert_eq!(id, h.resolve_prop("popover", "position"));
         h.set_str(o, "position", "left").unwrap();
         assert_eq!(h.get(o, "position"), V::Str("left".into()));
+    });
+}
+
+/// method Popover.get_autohide (dynamic GI call): probe: equals property autohide
+#[test]
+fn method_popover_get_autohide() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("popover");
+        
+        let r = h.call_args(o, "get_autohide", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "autohide"), "postcondition: r == h.get(o, 'autohide')");
+    });
+}
+
+/// method Popover.get_cascade_popdown (dynamic GI call): probe: equals property cascade-popdown
+#[test]
+fn method_popover_get_cascade_popdown() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("popover");
+        
+        let r = h.call_args(o, "get_cascade_popdown", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "cascade-popdown"), "postcondition: r == h.get(o, 'cascade-popdown')");
+    });
+}
+
+/// method Popover.get_has_arrow (dynamic GI call): probe: equals property has-arrow
+#[test]
+fn method_popover_get_has_arrow() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("popover");
+        
+        let r = h.call_args(o, "get_has_arrow", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "has-arrow"), "postcondition: r == h.get(o, 'has-arrow')");
+    });
+}
+
+/// method Popover.get_mnemonics_visible (dynamic GI call): probe: equals property mnemonics-visible
+#[test]
+fn method_popover_get_mnemonics_visible() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("popover");
+        
+        let r = h.call_args(o, "get_mnemonics_visible", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "mnemonics-visible"), "postcondition: r == h.get(o, 'mnemonics-visible')");
+    });
+}
+
+/// method Popover.get_position (dynamic GI call): probe: equals property position
+#[test]
+fn method_popover_get_position() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("popover");
+        
+        let r = h.call_args(o, "get_position", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "position"), "postcondition: r == h.get(o, 'position')");
     });
 }
 
@@ -6092,6 +15360,252 @@ fn method_popover_popup() {
     });
 }
 
+/// method Popover.set_autohide (dynamic GI call): probe: set then read property autohide: exact
+#[test]
+fn method_popover_set_autohide() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("popover");
+        
+        let r = h.call_args(o, "set_autohide", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "autohide") == V::Bool(false), "postcondition: h.get(o, 'autohide') == V::Bool(false)");
+    });
+}
+
+/// method Popover.set_cascade_popdown (dynamic GI call): probe: set then read property cascade-popdown: exact
+#[test]
+fn method_popover_set_cascade_popdown() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("popover");
+        
+        let r = h.call_args(o, "set_cascade_popdown", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "cascade-popdown") == V::Bool(true), "postcondition: h.get(o, 'cascade-popdown') == V::Bool(true)");
+    });
+}
+
+/// method Popover.set_has_arrow (dynamic GI call): probe: set then read property has-arrow: exact
+#[test]
+fn method_popover_set_has_arrow() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("popover");
+        
+        let r = h.call_args(o, "set_has_arrow", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "has-arrow") == V::Bool(false), "postcondition: h.get(o, 'has-arrow') == V::Bool(false)");
+    });
+}
+
+/// method Popover.set_mnemonics_visible (dynamic GI call): probe: set then read property mnemonics-visible: exact
+#[test]
+fn method_popover_set_mnemonics_visible() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("popover");
+        
+        let r = h.call_args(o, "set_mnemonics_visible", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "mnemonics-visible") == V::Bool(true), "postcondition: h.get(o, 'mnemonics-visible') == V::Bool(true)");
+    });
+}
+
+/// method Popover.set_position (dynamic GI call): probe: set then read property position: exact
+#[test]
+fn method_popover_set_position() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("popover");
+        
+        let r = h.call_args(o, "set_position", &[V::Str("left".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "position") == V::Str("left".into()), "postcondition: h.get(o, 'position') == V::Str('left'.into())");
+    });
+}
+
+/// bind:autohide on Popover: rule: B1: GtkPopover:autohide is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_popover_autohide() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("popover");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("autohide", false),
+                1 => o.set_property("autohide", true),
+                2 => o.set_property("autohide", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::autohide", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "autohide"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "autohide", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "autohide"), V::Bool(false), "the property reads the programmatic value");
+    });
+}
+
+/// bind:cascade-popdown on Popover: rule: B1: GtkPopover:cascade-popdown is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_popover_cascade_popdown() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("popover");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("cascade-popdown", true),
+                1 => o.set_property("cascade-popdown", false),
+                2 => o.set_property("cascade-popdown", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::cascade-popdown", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "cascade-popdown"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "cascade-popdown", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "cascade-popdown"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:has-arrow on Popover: rule: B1: GtkPopover:has-arrow is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_popover_has_arrow() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("popover");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("has-arrow", false),
+                1 => o.set_property("has-arrow", true),
+                2 => o.set_property("has-arrow", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::has-arrow", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "has-arrow"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "has-arrow", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "has-arrow"), V::Bool(false), "the property reads the programmatic value");
+    });
+}
+
+/// bind:mnemonics-visible on Popover: rule: B1: GtkPopover:mnemonics-visible is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_popover_mnemonics_visible() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("popover");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("mnemonics-visible", true),
+                1 => o.set_property("mnemonics-visible", false),
+                2 => o.set_property("mnemonics-visible", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::mnemonics-visible", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "mnemonics-visible"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "mnemonics-visible", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "mnemonics-visible"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:position on Popover: rule: B1: GtkPopover:position is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_popover_position() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("popover");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => { let pspec = o.find_property("position").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("position", &ev.to_value_by_nick("left").unwrap()) },
+                1 => { let pspec = o.find_property("position").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("position", &ev.to_value_by_nick("bottom").unwrap()) },
+                2 => { let pspec = o.find_property("position").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("position", &ev.to_value_by_nick("left").unwrap()) },
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::position", true).unwrap();
+        fire(&h.obj(o), "left", 0);
+        fire(&h.obj(o), "bottom", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "position"), V::Str("bottom".into()), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_str(o, "position", "left").unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "position"), V::Str("left".into()), "the property reads the programmatic value");
+    });
+}
+
+/// property PopoverMenu.menu-model (JS menu-model, round trip): probe: round trip exact; notify fired
+#[test]
+fn prop_popovermenu_menu_model() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("popover-menu");
+        
+        let before = h.get_value(o, "menu-model");
+        h.set_value(o, "menu-model", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "menu-model")), crate::testing::shape(&before));
+    });
+}
+
+/// property PopoverMenuBar.menu-model (JS menu-model, round trip): probe: round trip exact; notify fired
+#[test]
+fn prop_popovermenubar_menu_model() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("popover-menu-bar");
+        
+        let before = h.get_value(o, "menu-model");
+        h.set_value(o, "menu-model", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "menu-model")), crate::testing::shape(&before));
+    });
+}
+
 /// property ProgressBar.ellipsize (JS ellipsize): GtkProgressBar:ellipsize, PangoEllipsizeMode (Gtk 4 docs)
 #[test]
 fn prop_progressbar_ellipsize() {
@@ -6117,8 +15631,8 @@ fn prop_progressbar_fraction() {
         let id = h.resolve_prop("progress-bar", "fraction");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("progress-bar", "fraction"));
-        h.set_f64(o, "fraction", 0.5).unwrap();
-        assert_eq!(h.get(o, "fraction"), V::F64(0.5));
+        h.set_f64(o, "fraction", 1.0).unwrap();
+        assert_eq!(h.get(o, "fraction"), V::F64(1.0));
     });
 }
 
@@ -6177,8 +15691,92 @@ fn prop_progressbar_text() {
         let id = h.resolve_prop("progress-bar", "text");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("progress-bar", "text"));
-        h.set_str(o, "text", "p3-sample").unwrap();
-        assert_eq!(h.get(o, "text"), V::Str("p3-sample".into()));
+        h.set_str(o, "text", "svl probe").unwrap();
+        assert_eq!(h.get(o, "text"), V::Str("svl probe".into()));
+    });
+}
+
+/// method ProgressBar.get_ellipsize (dynamic GI call): probe: equals property ellipsize
+#[test]
+fn method_progressbar_get_ellipsize() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("progress-bar");
+        
+        let r = h.call_args(o, "get_ellipsize", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "ellipsize"), "postcondition: r == h.get(o, 'ellipsize')");
+    });
+}
+
+/// method ProgressBar.get_fraction (dynamic GI call): probe: equals property fraction
+#[test]
+fn method_progressbar_get_fraction() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("progress-bar");
+        
+        let r = h.call_args(o, "get_fraction", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "fraction"), "postcondition: r == h.get(o, 'fraction')");
+    });
+}
+
+/// method ProgressBar.get_inverted (dynamic GI call): probe: equals property inverted
+#[test]
+fn method_progressbar_get_inverted() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("progress-bar");
+        
+        let r = h.call_args(o, "get_inverted", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "inverted"), "postcondition: r == h.get(o, 'inverted')");
+    });
+}
+
+/// method ProgressBar.get_pulse_step (dynamic GI call): probe: equals property pulse-step
+#[test]
+fn method_progressbar_get_pulse_step() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("progress-bar");
+        
+        let r = h.call_args(o, "get_pulse_step", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "pulse-step"), "postcondition: r == h.get(o, 'pulse-step')");
+    });
+}
+
+/// method ProgressBar.get_show_text (dynamic GI call): probe: equals property show-text
+#[test]
+fn method_progressbar_get_show_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("progress-bar");
+        
+        let r = h.call_args(o, "get_show_text", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "show-text"), "postcondition: r == h.get(o, 'show-text')");
+    });
+}
+
+/// method ProgressBar.get_text (dynamic GI call): probe: equals property text
+#[test]
+fn method_progressbar_get_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("progress-bar");
+        
+        let r = h.call_args(o, "get_text", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "text"), "postcondition: r == h.get(o, 'text')");
     });
 }
 
@@ -6193,6 +15791,271 @@ fn method_progressbar_pulse() {
         let w = h.widget(o);
         let _ = &w;
         assert!(true, "postcondition: true");
+    });
+}
+
+/// method ProgressBar.set_ellipsize (dynamic GI call): probe: set then read property ellipsize: exact
+#[test]
+fn method_progressbar_set_ellipsize() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("progress-bar");
+        
+        let r = h.call_args(o, "set_ellipsize", &[V::Str("start".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "ellipsize") == V::Str("start".into()), "postcondition: h.get(o, 'ellipsize') == V::Str('start'.into())");
+    });
+}
+
+/// method ProgressBar.set_fraction (dynamic GI call): probe: set then read property fraction: exact
+#[test]
+fn method_progressbar_set_fraction() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("progress-bar");
+        
+        let r = h.call_args(o, "set_fraction", &[V::F64(1.0)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "fraction") == V::F64(1.0), "postcondition: h.get(o, 'fraction') == V::F64(1.0)");
+    });
+}
+
+/// method ProgressBar.set_inverted (dynamic GI call): probe: set then read property inverted: exact
+#[test]
+fn method_progressbar_set_inverted() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("progress-bar");
+        
+        let r = h.call_args(o, "set_inverted", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "inverted") == V::Bool(true), "postcondition: h.get(o, 'inverted') == V::Bool(true)");
+    });
+}
+
+/// method ProgressBar.set_pulse_step (dynamic GI call): probe: set then read property pulse-step: exact
+#[test]
+fn method_progressbar_set_pulse_step() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("progress-bar");
+        
+        let r = h.call_args(o, "set_pulse_step", &[V::F64(0.5)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "pulse-step") == V::F64(0.5), "postcondition: h.get(o, 'pulse-step') == V::F64(0.5)");
+    });
+}
+
+/// method ProgressBar.set_show_text (dynamic GI call): probe: set then read property show-text: exact
+#[test]
+fn method_progressbar_set_show_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("progress-bar");
+        
+        let r = h.call_args(o, "set_show_text", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "show-text") == V::Bool(true), "postcondition: h.get(o, 'show-text') == V::Bool(true)");
+    });
+}
+
+/// method ProgressBar.set_text (dynamic GI call): probe: set then read property text: exact
+#[test]
+fn method_progressbar_set_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("progress-bar");
+        
+        let r = h.call_args(o, "set_text", &[V::Str("svl probe".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "text") == V::Str("svl probe".into()), "postcondition: h.get(o, 'text') == V::Str('svl probe'.into())");
+    });
+}
+
+/// bind:ellipsize on ProgressBar: rule: B1: GtkProgressBar:ellipsize is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_progressbar_ellipsize() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("progress-bar");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => { let pspec = o.find_property("ellipsize").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("ellipsize", &ev.to_value_by_nick("start").unwrap()) },
+                1 => { let pspec = o.find_property("ellipsize").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("ellipsize", &ev.to_value_by_nick("none").unwrap()) },
+                2 => { let pspec = o.find_property("ellipsize").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("ellipsize", &ev.to_value_by_nick("start").unwrap()) },
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::ellipsize", true).unwrap();
+        fire(&h.obj(o), "start", 0);
+        fire(&h.obj(o), "none", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "ellipsize"), V::Str("none".into()), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_str(o, "ellipsize", "start").unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "ellipsize"), V::Str("start".into()), "the property reads the programmatic value");
+    });
+}
+
+/// bind:fraction on ProgressBar: rule: B1: GtkProgressBar:fraction is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_progressbar_fraction() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("progress-bar");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("fraction", 1.0f64),
+                1 => o.set_property("fraction", 0.0f64),
+                2 => o.set_property("fraction", 1.0f64),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::fraction", true).unwrap();
+        fire(&h.obj(o), "1.0", 0);
+        fire(&h.obj(o), "0.0", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "fraction"), V::F64(0.0), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_f64(o, "fraction", 1.0).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "fraction"), V::F64(1.0), "the property reads the programmatic value");
+    });
+}
+
+/// bind:inverted on ProgressBar: rule: B1: GtkProgressBar:inverted is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_progressbar_inverted() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("progress-bar");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("inverted", true),
+                1 => o.set_property("inverted", false),
+                2 => o.set_property("inverted", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::inverted", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "inverted"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "inverted", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "inverted"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:pulse-step on ProgressBar: rule: B1: GtkProgressBar:pulse-step is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_progressbar_pulse_step() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("progress-bar");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("pulse-step", 0.5f64),
+                1 => o.set_property("pulse-step", 0.1f64),
+                2 => o.set_property("pulse-step", 0.5f64),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::pulse-step", true).unwrap();
+        fire(&h.obj(o), "0.5", 0);
+        fire(&h.obj(o), "0.1", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "pulse-step"), V::F64(0.1), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_f64(o, "pulse-step", 0.5).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "pulse-step"), V::F64(0.5), "the property reads the programmatic value");
+    });
+}
+
+/// bind:show-text on ProgressBar: rule: B1: GtkProgressBar:show-text is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_progressbar_show_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("progress-bar");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("show-text", true),
+                1 => o.set_property("show-text", false),
+                2 => o.set_property("show-text", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::show-text", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "show-text"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "show-text", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "show-text"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// signal Range.adjust-bounds: runtime: returns void, run-last; probe: emitted synthetically with sampled arguments; delivery only, no native trigger
+#[test]
+fn signal_range_adjust_bounds() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("range");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            o.emit_by_name::<()>("adjust-bounds", &[&1.5f64]);
+        };
+        assert_ne!(h.resolve_signal("range", "adjust-bounds"), 0);
+        assert_eq!(h.resolve_signal("range", "adjust-bounds"), h.resolve_signal("range", "adjust-bounds"));
+        h.listen(e, "adjust-bounds", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "adjust-bounds".to_string())), "delivered: {ev:?}");
+        h.listen(e, "adjust-bounds", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "adjust-bounds", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "adjust-bounds", true).is_err(), "stale handle is an error");
     });
 }
 
@@ -6224,6 +16087,19 @@ fn signal_range_value_changed() {
         fire(&obj, "c", 2);
         assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
         assert!(h.listen(e, "value-changed", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// property Range.adjustment (JS adjustment, round trip): probe: round trip exact; notify fired
+#[test]
+fn prop_range_adjustment() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        
+        let before = h.get_value(o, "adjustment");
+        h.set_value(o, "adjustment", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "adjustment")), crate::testing::shape(&before));
     });
 }
 
@@ -6323,6 +16199,21 @@ fn prop_range_restrict_to_fill_level() {
     });
 }
 
+/// property Range.round-digits (JS round-digits): probe: round trip exact; notify fired
+#[test]
+fn prop_range_round_digits() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        
+        let id = h.resolve_prop("range", "round-digits");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("range", "round-digits"));
+        h.set_i64(o, "round-digits", 0).unwrap();
+        assert_eq!(h.get(o, "round-digits"), V::I64(0));
+    });
+}
+
 /// property Range.show-fill-level (JS show-fill-level): GtkRange:show-fill-level (Gtk 4 docs)
 #[test]
 fn prop_range_show_fill_level() {
@@ -6416,6 +16307,104 @@ fn echo_range_value() {
     });
 }
 
+/// method Range.get_fill_level (dynamic GI call): probe: equals property fill-level
+#[test]
+fn method_range_get_fill_level() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        
+        let r = h.call_args(o, "get_fill_level", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "fill-level"), "postcondition: r == h.get(o, 'fill-level')");
+    });
+}
+
+/// method Range.get_flippable (dynamic GI call): probe: called on a new instance, returned False
+#[test]
+fn method_range_get_flippable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        
+        let r = h.call_args(o, "get_flippable", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::Bool(false), "postcondition: r == V::Bool(false)");
+    });
+}
+
+/// method Range.get_inverted (dynamic GI call): probe: equals property inverted
+#[test]
+fn method_range_get_inverted() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        
+        let r = h.call_args(o, "get_inverted", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "inverted"), "postcondition: r == h.get(o, 'inverted')");
+    });
+}
+
+/// method Range.get_restrict_to_fill_level (dynamic GI call): probe: equals property restrict-to-fill-level
+#[test]
+fn method_range_get_restrict_to_fill_level() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        
+        let r = h.call_args(o, "get_restrict_to_fill_level", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "restrict-to-fill-level"), "postcondition: r == h.get(o, 'restrict-to-fill-level')");
+    });
+}
+
+/// method Range.get_round_digits (dynamic GI call): probe: equals property round-digits
+#[test]
+fn method_range_get_round_digits() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        
+        let r = h.call_args(o, "get_round_digits", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "round-digits"), "postcondition: r == h.get(o, 'round-digits')");
+    });
+}
+
+/// method Range.get_show_fill_level (dynamic GI call): probe: equals property show-fill-level
+#[test]
+fn method_range_get_show_fill_level() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        
+        let r = h.call_args(o, "get_show_fill_level", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "show-fill-level"), "postcondition: r == h.get(o, 'show-fill-level')");
+    });
+}
+
+/// method Range.get_slider_size_fixed (dynamic GI call): probe: called on a new instance, returned False
+#[test]
+fn method_range_get_slider_size_fixed() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        
+        let r = h.call_args(o, "get_slider_size_fixed", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::Bool(false), "postcondition: r == V::Bool(false)");
+    });
+}
+
 /// method Range.get_value (dynamic GI call): gtk_range_get_value (Gtk 4 docs); f64 return through GIRepository (X1)
 #[test]
 fn method_range_get_value() {
@@ -6427,6 +16416,20 @@ fn method_range_get_value() {
         let w = h.widget(o);
         let _ = (&w, &r);
         assert!(r == V::F64(7.0), "postcondition: r == V::F64(7.0)");
+    });
+}
+
+/// method Range.set_fill_level (dynamic GI call): probe: set then read property fill-level: exact
+#[test]
+fn method_range_set_fill_level() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        
+        let r = h.call_args(o, "set_fill_level", &[V::F64(0.5)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "fill-level") == V::F64(0.5), "postcondition: h.get(o, 'fill-level') == V::F64(0.5)");
     });
 }
 
@@ -6444,6 +16447,20 @@ fn method_range_set_increments() {
     });
 }
 
+/// method Range.set_inverted (dynamic GI call): probe: set then read property inverted: exact
+#[test]
+fn method_range_set_inverted() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        
+        let r = h.call_args(o, "set_inverted", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "inverted") == V::Bool(true), "postcondition: h.get(o, 'inverted') == V::Bool(true)");
+    });
+}
+
 /// method Range.set_range (dynamic GI call): gtk_range_set_range clamps the value into the new range (Gtk 4 docs); called through GIRepository (X1)
 #[test]
 fn method_range_set_range() {
@@ -6458,6 +16475,48 @@ fn method_range_set_range() {
     });
 }
 
+/// method Range.set_restrict_to_fill_level (dynamic GI call): probe: set then read property restrict-to-fill-level: exact
+#[test]
+fn method_range_set_restrict_to_fill_level() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        
+        let r = h.call_args(o, "set_restrict_to_fill_level", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "restrict-to-fill-level") == V::Bool(false), "postcondition: h.get(o, 'restrict-to-fill-level') == V::Bool(false)");
+    });
+}
+
+/// method Range.set_round_digits (dynamic GI call): probe: set then read property round-digits: exact
+#[test]
+fn method_range_set_round_digits() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        
+        let r = h.call_args(o, "set_round_digits", &[V::I64(0)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "round-digits") == V::I64(0), "postcondition: h.get(o, 'round-digits') == V::I64(0)");
+    });
+}
+
+/// method Range.set_show_fill_level (dynamic GI call): probe: set then read property show-fill-level: exact
+#[test]
+fn method_range_set_show_fill_level() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        
+        let r = h.call_args(o, "set_show_fill_level", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "show-fill-level") == V::Bool(true), "postcondition: h.get(o, 'show-fill-level') == V::Bool(true)");
+    });
+}
+
 /// method Range.set_value (dynamic GI call): gtk_range_set_value (Gtk 4 docs); called through GIRepository (X1)
 #[test]
 fn method_range_set_value() {
@@ -6469,6 +16528,156 @@ fn method_range_set_value() {
         let w = h.widget(o);
         let _ = (&w, &r);
         assert!(h.call_args(o, "get_value", &[]).unwrap() == V::F64(42.0), "postcondition: h.call_args(o, 'get_value', &[]).unwrap() == V::F64(42.0)");
+    });
+}
+
+/// bind:fill-level on Range: rule: B1: GtkRange:fill-level is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_range_fill_level() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("fill-level", 0.5f64),
+                1 => o.set_property("fill-level", 1.7976931348623157e+308f64),
+                2 => o.set_property("fill-level", 0.5f64),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::fill-level", true).unwrap();
+        fire(&h.obj(o), "0.5", 0);
+        fire(&h.obj(o), "1.7976931348623157e+308", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "fill-level"), V::F64(1.7976931348623157e+308), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_f64(o, "fill-level", 50.0).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "fill-level"), V::F64(50.0), "the property reads the programmatic value");
+    });
+}
+
+/// bind:inverted on Range: rule: B1: GtkRange:inverted is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_range_inverted() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("inverted", true),
+                1 => o.set_property("inverted", false),
+                2 => o.set_property("inverted", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::inverted", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "inverted"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "inverted", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "inverted"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:restrict-to-fill-level on Range: rule: B1: GtkRange:restrict-to-fill-level is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_range_restrict_to_fill_level() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("restrict-to-fill-level", false),
+                1 => o.set_property("restrict-to-fill-level", true),
+                2 => o.set_property("restrict-to-fill-level", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::restrict-to-fill-level", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "restrict-to-fill-level"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "restrict-to-fill-level", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "restrict-to-fill-level"), V::Bool(false), "the property reads the programmatic value");
+    });
+}
+
+/// bind:round-digits on Range: rule: B1: GtkRange:round-digits is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_range_round_digits() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("round-digits", 0i32),
+                1 => o.set_property("round-digits", -1i32),
+                2 => o.set_property("round-digits", 0i32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::round-digits", true).unwrap();
+        fire(&h.obj(o), "0", 0);
+        fire(&h.obj(o), "-1", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "round-digits"), V::I64(-1), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "round-digits", 0).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "round-digits"), V::I64(0), "the property reads the programmatic value");
+    });
+}
+
+/// bind:show-fill-level on Range: rule: B1: GtkRange:show-fill-level is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_range_show_fill_level() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("range");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("show-fill-level", true),
+                1 => o.set_property("show-fill-level", false),
+                2 => o.set_property("show-fill-level", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::show-fill-level", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "show-fill-level"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "show-fill-level", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "show-fill-level"), V::Bool(true), "the property reads the programmatic value");
     });
 }
 
@@ -6517,8 +16726,8 @@ fn prop_revealer_transition_duration() {
         let id = h.resolve_prop("revealer", "transition-duration");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("revealer", "transition-duration"));
-        h.set_i64(o, "transition-duration", 7).unwrap();
-        assert_eq!(h.get(o, "transition-duration"), V::I64(7));
+        h.set_i64(o, "transition-duration", 251).unwrap();
+        assert_eq!(h.get(o, "transition-duration"), V::I64(251));
     });
 }
 
@@ -6537,6 +16746,194 @@ fn prop_revealer_transition_type() {
     });
 }
 
+/// method Revealer.get_child_revealed (dynamic GI call): probe: equals property child-revealed
+#[test]
+fn method_revealer_get_child_revealed() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("revealer");
+        
+        let r = h.call_args(o, "get_child_revealed", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "child-revealed"), "postcondition: r == h.get(o, 'child-revealed')");
+    });
+}
+
+/// method Revealer.get_reveal_child (dynamic GI call): probe: equals property reveal-child
+#[test]
+fn method_revealer_get_reveal_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("revealer");
+        
+        let r = h.call_args(o, "get_reveal_child", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "reveal-child"), "postcondition: r == h.get(o, 'reveal-child')");
+    });
+}
+
+/// method Revealer.get_transition_duration (dynamic GI call): probe: equals property transition-duration
+#[test]
+fn method_revealer_get_transition_duration() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("revealer");
+        
+        let r = h.call_args(o, "get_transition_duration", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "transition-duration"), "postcondition: r == h.get(o, 'transition-duration')");
+    });
+}
+
+/// method Revealer.get_transition_type (dynamic GI call): probe: equals property transition-type
+#[test]
+fn method_revealer_get_transition_type() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("revealer");
+        
+        let r = h.call_args(o, "get_transition_type", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "transition-type"), "postcondition: r == h.get(o, 'transition-type')");
+    });
+}
+
+/// method Revealer.set_reveal_child (dynamic GI call): probe: set then read property reveal-child: exact
+#[test]
+fn method_revealer_set_reveal_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("revealer");
+        
+        let r = h.call_args(o, "set_reveal_child", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "reveal-child") == V::Bool(true), "postcondition: h.get(o, 'reveal-child') == V::Bool(true)");
+    });
+}
+
+/// method Revealer.set_transition_duration (dynamic GI call): probe: set then read property transition-duration: exact
+#[test]
+fn method_revealer_set_transition_duration() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("revealer");
+        
+        let r = h.call_args(o, "set_transition_duration", &[V::I64(251)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "transition-duration") == V::I64(251), "postcondition: h.get(o, 'transition-duration') == V::I64(251)");
+    });
+}
+
+/// method Revealer.set_transition_type (dynamic GI call): probe: set then read property transition-type: exact
+#[test]
+fn method_revealer_set_transition_type() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("revealer");
+        
+        let r = h.call_args(o, "set_transition_type", &[V::Str("none".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "transition-type") == V::Str("none".into()), "postcondition: h.get(o, 'transition-type') == V::Str('none'.into())");
+    });
+}
+
+/// bind:reveal-child on Revealer: rule: B1: GtkRevealer:reveal-child is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_revealer_reveal_child() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("revealer");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("reveal-child", true),
+                1 => o.set_property("reveal-child", false),
+                2 => o.set_property("reveal-child", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::reveal-child", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "reveal-child"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "reveal-child", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "reveal-child"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:transition-duration on Revealer: rule: B1: GtkRevealer:transition-duration is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_revealer_transition_duration() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("revealer");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("transition-duration", 251u32),
+                1 => o.set_property("transition-duration", 250u32),
+                2 => o.set_property("transition-duration", 251u32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::transition-duration", true).unwrap();
+        fire(&h.obj(o), "251", 0);
+        fire(&h.obj(o), "250", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "transition-duration"), V::I64(250), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "transition-duration", 251).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "transition-duration"), V::I64(251), "the property reads the programmatic value");
+    });
+}
+
+/// bind:transition-type on Revealer: rule: B1: GtkRevealer:transition-type is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_revealer_transition_type() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("revealer");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => { let pspec = o.find_property("transition-type").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("transition-type", &ev.to_value_by_nick("none").unwrap()) },
+                1 => { let pspec = o.find_property("transition-type").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("transition-type", &ev.to_value_by_nick("slide-down").unwrap()) },
+                2 => { let pspec = o.find_property("transition-type").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("transition-type", &ev.to_value_by_nick("none").unwrap()) },
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::transition-type", true).unwrap();
+        fire(&h.obj(o), "none", 0);
+        fire(&h.obj(o), "slide-down", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "transition-type"), V::Str("slide-down".into()), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_str(o, "transition-type", "none").unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "transition-type"), V::Str("none".into()), "the property reads the programmatic value");
+    });
+}
+
 /// property Scale.digits (JS digits): GtkScale:digits, -1..64 (Gtk 4 docs)
 #[test]
 fn prop_scale_digits() {
@@ -6547,8 +16944,8 @@ fn prop_scale_digits() {
         let id = h.resolve_prop("scale", "digits");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("scale", "digits"));
-        h.set_i64(o, "digits", 7).unwrap();
-        assert_eq!(h.get(o, "digits"), V::I64(7));
+        h.set_i64(o, "digits", 2).unwrap();
+        assert_eq!(h.get(o, "digits"), V::I64(2));
     });
 }
 
@@ -6597,6 +16994,238 @@ fn prop_scale_value_pos() {
     });
 }
 
+/// method Scale.get_digits (dynamic GI call): probe: equals property digits
+#[test]
+fn method_scale_get_digits() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scale");
+        
+        let r = h.call_args(o, "get_digits", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "digits"), "postcondition: r == h.get(o, 'digits')");
+    });
+}
+
+/// method Scale.get_draw_value (dynamic GI call): probe: equals property draw-value
+#[test]
+fn method_scale_get_draw_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scale");
+        
+        let r = h.call_args(o, "get_draw_value", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "draw-value"), "postcondition: r == h.get(o, 'draw-value')");
+    });
+}
+
+/// method Scale.get_has_origin (dynamic GI call): probe: equals property has-origin
+#[test]
+fn method_scale_get_has_origin() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scale");
+        
+        let r = h.call_args(o, "get_has_origin", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "has-origin"), "postcondition: r == h.get(o, 'has-origin')");
+    });
+}
+
+/// method Scale.get_value_pos (dynamic GI call): probe: equals property value-pos
+#[test]
+fn method_scale_get_value_pos() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scale");
+        
+        let r = h.call_args(o, "get_value_pos", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "value-pos"), "postcondition: r == h.get(o, 'value-pos')");
+    });
+}
+
+/// method Scale.set_digits (dynamic GI call): probe: set then read property digits: exact
+#[test]
+fn method_scale_set_digits() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scale");
+        
+        let r = h.call_args(o, "set_digits", &[V::I64(2)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "digits") == V::I64(2), "postcondition: h.get(o, 'digits') == V::I64(2)");
+    });
+}
+
+/// method Scale.set_draw_value (dynamic GI call): probe: set then read property draw-value: exact
+#[test]
+fn method_scale_set_draw_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scale");
+        
+        let r = h.call_args(o, "set_draw_value", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "draw-value") == V::Bool(true), "postcondition: h.get(o, 'draw-value') == V::Bool(true)");
+    });
+}
+
+/// method Scale.set_has_origin (dynamic GI call): probe: set then read property has-origin: exact
+#[test]
+fn method_scale_set_has_origin() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scale");
+        
+        let r = h.call_args(o, "set_has_origin", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "has-origin") == V::Bool(false), "postcondition: h.get(o, 'has-origin') == V::Bool(false)");
+    });
+}
+
+/// method Scale.set_value_pos (dynamic GI call): probe: set then read property value-pos: exact
+#[test]
+fn method_scale_set_value_pos() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scale");
+        
+        let r = h.call_args(o, "set_value_pos", &[V::Str("left".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "value-pos") == V::Str("left".into()), "postcondition: h.get(o, 'value-pos') == V::Str('left'.into())");
+    });
+}
+
+/// bind:digits on Scale: rule: B1: GtkScale:digits is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_scale_digits() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scale");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("digits", 2i32),
+                1 => o.set_property("digits", 1i32),
+                2 => o.set_property("digits", 2i32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::digits", true).unwrap();
+        fire(&h.obj(o), "2", 0);
+        fire(&h.obj(o), "1", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "digits"), V::I64(1), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "digits", 2).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "digits"), V::I64(2), "the property reads the programmatic value");
+    });
+}
+
+/// bind:draw-value on Scale: rule: B1: GtkScale:draw-value is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_scale_draw_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scale");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("draw-value", true),
+                1 => o.set_property("draw-value", false),
+                2 => o.set_property("draw-value", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::draw-value", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "draw-value"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "draw-value", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "draw-value"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:has-origin on Scale: rule: B1: GtkScale:has-origin is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_scale_has_origin() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scale");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("has-origin", false),
+                1 => o.set_property("has-origin", true),
+                2 => o.set_property("has-origin", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::has-origin", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "has-origin"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "has-origin", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "has-origin"), V::Bool(false), "the property reads the programmatic value");
+    });
+}
+
+/// bind:value-pos on Scale: rule: B1: GtkScale:value-pos is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_scale_value_pos() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scale");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => { let pspec = o.find_property("value-pos").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("value-pos", &ev.to_value_by_nick("left").unwrap()) },
+                1 => { let pspec = o.find_property("value-pos").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("value-pos", &ev.to_value_by_nick("top").unwrap()) },
+                2 => { let pspec = o.find_property("value-pos").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("value-pos", &ev.to_value_by_nick("left").unwrap()) },
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::value-pos", true).unwrap();
+        fire(&h.obj(o), "left", 0);
+        fire(&h.obj(o), "top", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "value-pos"), V::Str("top".into()), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_str(o, "value-pos", "left").unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "value-pos"), V::Str("left".into()), "the property reads the programmatic value");
+    });
+}
+
 /// signal ScaleButton.value-changed: GtkScaleButton::value-changed, run-last, void (Gtk 4 docs)
 #[test]
 fn signal_scalebutton_value_changed() {
@@ -6625,6 +17254,19 @@ fn signal_scalebutton_value_changed() {
         fire(&obj, "c", 2);
         assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
         assert!(h.listen(e, "value-changed", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// property ScaleButton.adjustment (JS adjustment, round trip): probe: round trip exact; notify fired
+#[test]
+fn prop_scalebutton_adjustment() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scale-button");
+        
+        let before = h.get_value(o, "adjustment");
+        h.set_value(o, "adjustment", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "adjustment")), crate::testing::shape(&before));
     });
 }
 
@@ -6671,6 +17313,248 @@ fn prop_scalebutton_value() {
     });
 }
 
+/// method ScaleButton.get_active (dynamic GI call): probe: equals property active
+#[test]
+fn method_scalebutton_get_active() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scale-button");
+        
+        let r = h.call_args(o, "get_active", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "active"), "postcondition: r == h.get(o, 'active')");
+    });
+}
+
+/// method ScaleButton.get_has_frame (dynamic GI call): probe: equals property has-frame
+#[test]
+fn method_scalebutton_get_has_frame() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scale-button");
+        
+        let r = h.call_args(o, "get_has_frame", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "has-frame"), "postcondition: r == h.get(o, 'has-frame')");
+    });
+}
+
+/// method ScaleButton.get_value (dynamic GI call): probe: equals property value
+#[test]
+fn method_scalebutton_get_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scale-button");
+        
+        let r = h.call_args(o, "get_value", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "value"), "postcondition: r == h.get(o, 'value')");
+    });
+}
+
+/// method ScaleButton.set_has_frame (dynamic GI call): probe: set then read property has-frame: exact
+#[test]
+fn method_scalebutton_set_has_frame() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scale-button");
+        
+        let r = h.call_args(o, "set_has_frame", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "has-frame") == V::Bool(true), "postcondition: h.get(o, 'has-frame') == V::Bool(true)");
+    });
+}
+
+/// method ScaleButton.set_value (dynamic GI call): probe: set then read property value: exact
+#[test]
+fn method_scalebutton_set_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scale-button");
+        
+        let r = h.call_args(o, "set_value", &[V::F64(1.0)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "value") == V::F64(1.0), "postcondition: h.get(o, 'value') == V::F64(1.0)");
+    });
+}
+
+/// bind:has-frame on ScaleButton: rule: B1: GtkScaleButton:has-frame is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_scalebutton_has_frame() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scale-button");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("has-frame", true),
+                1 => o.set_property("has-frame", false),
+                2 => o.set_property("has-frame", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::has-frame", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "has-frame"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "has-frame", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "has-frame"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:value on ScaleButton: rule: B1: GtkScaleButton:value is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_scalebutton_value() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scale-button");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("value", 1.0f64),
+                1 => o.set_property("value", 0.0f64),
+                2 => o.set_property("value", 1.0f64),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::value", true).unwrap();
+        fire(&h.obj(o), "1.0", 0);
+        fire(&h.obj(o), "0.0", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "value"), V::F64(0.0), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_f64(o, "value", 42.5).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "value"), V::F64(42.5), "the property reads the programmatic value");
+    });
+}
+
+/// property Scrollable.hadjustment (JS hadjustment, round trip): probe: round trip exact; notify fired
+#[test]
+fn prop_scrollable_hadjustment() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let before = h.get_value(o, "hadjustment");
+        h.set_value(o, "hadjustment", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "hadjustment")), crate::testing::shape(&before));
+    });
+}
+
+/// property Scrollable.hscroll-policy (JS hscroll-policy): probe: round trip exact; notify fired
+#[test]
+fn prop_scrollable_hscroll_policy() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let id = h.resolve_prop("text-view", "hscroll-policy");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("text-view", "hscroll-policy"));
+        h.set_str(o, "hscroll-policy", "natural").unwrap();
+        assert_eq!(h.get(o, "hscroll-policy"), V::Str("natural".into()));
+    });
+}
+
+/// property Scrollable.vadjustment (JS vadjustment, round trip): probe: round trip exact; notify fired
+#[test]
+fn prop_scrollable_vadjustment() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let before = h.get_value(o, "vadjustment");
+        h.set_value(o, "vadjustment", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "vadjustment")), crate::testing::shape(&before));
+    });
+}
+
+/// property Scrollable.vscroll-policy (JS vscroll-policy): probe: round trip exact; notify fired
+#[test]
+fn prop_scrollable_vscroll_policy() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let id = h.resolve_prop("text-view", "vscroll-policy");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("text-view", "vscroll-policy"));
+        h.set_str(o, "vscroll-policy", "natural").unwrap();
+        assert_eq!(h.get(o, "vscroll-policy"), V::Str("natural".into()));
+    });
+}
+
+/// method Scrollable.get_hscroll_policy (dynamic GI call): probe: equals property hscroll-policy
+#[test]
+fn method_scrollable_get_hscroll_policy() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let r = h.call_args(o, "get_hscroll_policy", &[]).unwrap();
+        let w = h.obj(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "hscroll-policy"), "postcondition: r == h.get(o, 'hscroll-policy')");
+    });
+}
+
+/// method Scrollable.get_vscroll_policy (dynamic GI call): probe: equals property vscroll-policy
+#[test]
+fn method_scrollable_get_vscroll_policy() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let r = h.call_args(o, "get_vscroll_policy", &[]).unwrap();
+        let w = h.obj(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "vscroll-policy"), "postcondition: r == h.get(o, 'vscroll-policy')");
+    });
+}
+
+/// method Scrollable.set_hscroll_policy (dynamic GI call): probe: set then read property hscroll-policy: exact
+#[test]
+fn method_scrollable_set_hscroll_policy() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let r = h.call_args(o, "set_hscroll_policy", &[V::Str("natural".into())]).unwrap();
+        let w = h.obj(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "hscroll-policy") == V::Str("natural".into()), "postcondition: h.get(o, 'hscroll-policy') == V::Str('natural'.into())");
+    });
+}
+
+/// method Scrollable.set_vscroll_policy (dynamic GI call): probe: set then read property vscroll-policy: exact
+#[test]
+fn method_scrollable_set_vscroll_policy() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let r = h.call_args(o, "set_vscroll_policy", &[V::Str("natural".into())]).unwrap();
+        let w = h.obj(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "vscroll-policy") == V::Str("natural".into()), "postcondition: h.get(o, 'vscroll-policy') == V::Str('natural'.into())");
+    });
+}
+
 /// property Scrollbar.adjustment (JS adjustment, round trip): GtkScrollbar:adjustment (Gtk 4 docs); object property, handle round-trip
 #[test]
 fn prop_scrollbar_adjustment() {
@@ -6712,6 +17596,19 @@ fn signal_scrolledwindow_edge_reached() {
         fire(&obj, "c", 2);
         assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
         assert!(h.listen(e, "edge-reached", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// property ScrolledWindow.hadjustment (JS hadjustment, round trip): probe: round trip exact; notify fired
+#[test]
+fn prop_scrolledwindow_hadjustment() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolled-window");
+        
+        let before = h.get_value(o, "hadjustment");
+        h.set_value(o, "hadjustment", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "hadjustment")), crate::testing::shape(&before));
     });
 }
 
@@ -6770,8 +17667,8 @@ fn prop_scrolledwindow_max_content_height() {
         let id = h.resolve_prop("scrolled-window", "max-content-height");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("scrolled-window", "max-content-height"));
-        h.set_i64(o, "max-content-height", 7).unwrap();
-        assert_eq!(h.get(o, "max-content-height"), V::I64(7));
+        h.set_i64(o, "max-content-height", 0).unwrap();
+        assert_eq!(h.get(o, "max-content-height"), V::I64(0));
     });
 }
 
@@ -6785,8 +17682,8 @@ fn prop_scrolledwindow_max_content_width() {
         let id = h.resolve_prop("scrolled-window", "max-content-width");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("scrolled-window", "max-content-width"));
-        h.set_i64(o, "max-content-width", 7).unwrap();
-        assert_eq!(h.get(o, "max-content-width"), V::I64(7));
+        h.set_i64(o, "max-content-width", 0).unwrap();
+        assert_eq!(h.get(o, "max-content-width"), V::I64(0));
     });
 }
 
@@ -6800,8 +17697,8 @@ fn prop_scrolledwindow_min_content_height() {
         let id = h.resolve_prop("scrolled-window", "min-content-height");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("scrolled-window", "min-content-height"));
-        h.set_i64(o, "min-content-height", 7).unwrap();
-        assert_eq!(h.get(o, "min-content-height"), V::I64(7));
+        h.set_i64(o, "min-content-height", 0).unwrap();
+        assert_eq!(h.get(o, "min-content-height"), V::I64(0));
     });
 }
 
@@ -6815,8 +17712,8 @@ fn prop_scrolledwindow_min_content_width() {
         let id = h.resolve_prop("scrolled-window", "min-content-width");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("scrolled-window", "min-content-width"));
-        h.set_i64(o, "min-content-width", 7).unwrap();
-        assert_eq!(h.get(o, "min-content-width"), V::I64(7));
+        h.set_i64(o, "min-content-width", 0).unwrap();
+        assert_eq!(h.get(o, "min-content-width"), V::I64(0));
     });
 }
 
@@ -6865,6 +17762,19 @@ fn prop_scrolledwindow_propagate_natural_width() {
     });
 }
 
+/// property ScrolledWindow.vadjustment (JS vadjustment, round trip): probe: round trip exact; notify fired
+#[test]
+fn prop_scrolledwindow_vadjustment() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolled-window");
+        
+        let before = h.get_value(o, "vadjustment");
+        h.set_value(o, "vadjustment", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "vadjustment")), crate::testing::shape(&before));
+    });
+}
+
 /// property ScrolledWindow.vscrollbar-policy (JS vscrollbar-policy): GtkScrolledWindow:vscrollbar-policy (Gtk 4 docs); P prop
 #[test]
 fn prop_scrolledwindow_vscrollbar_policy() {
@@ -6877,6 +17787,647 @@ fn prop_scrolledwindow_vscrollbar_policy() {
         assert_eq!(id, h.resolve_prop("scrolled-window", "vscrollbar-policy"));
         h.set_str(o, "vscrollbar-policy", "always").unwrap();
         assert_eq!(h.get(o, "vscrollbar-policy"), V::Str("always".into()));
+    });
+}
+
+/// property ScrolledWindow.window-placement (JS window-placement): probe: round trip exact; notify fired
+#[test]
+fn prop_scrolledwindow_window_placement() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolled-window");
+        
+        let id = h.resolve_prop("scrolled-window", "window-placement");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("scrolled-window", "window-placement"));
+        h.set_str(o, "window-placement", "bottom-left").unwrap();
+        assert_eq!(h.get(o, "window-placement"), V::Str("bottom-left".into()));
+    });
+}
+
+/// method ScrolledWindow.get_has_frame (dynamic GI call): probe: equals property has-frame
+#[test]
+fn method_scrolledwindow_get_has_frame() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolled-window");
+        
+        let r = h.call_args(o, "get_has_frame", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "has-frame"), "postcondition: r == h.get(o, 'has-frame')");
+    });
+}
+
+/// method ScrolledWindow.get_kinetic_scrolling (dynamic GI call): probe: equals property kinetic-scrolling
+#[test]
+fn method_scrolledwindow_get_kinetic_scrolling() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolled-window");
+        
+        let r = h.call_args(o, "get_kinetic_scrolling", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "kinetic-scrolling"), "postcondition: r == h.get(o, 'kinetic-scrolling')");
+    });
+}
+
+/// method ScrolledWindow.get_max_content_height (dynamic GI call): probe: equals property max-content-height
+#[test]
+fn method_scrolledwindow_get_max_content_height() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolled-window");
+        
+        let r = h.call_args(o, "get_max_content_height", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "max-content-height"), "postcondition: r == h.get(o, 'max-content-height')");
+    });
+}
+
+/// method ScrolledWindow.get_max_content_width (dynamic GI call): probe: equals property max-content-width
+#[test]
+fn method_scrolledwindow_get_max_content_width() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolled-window");
+        
+        let r = h.call_args(o, "get_max_content_width", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "max-content-width"), "postcondition: r == h.get(o, 'max-content-width')");
+    });
+}
+
+/// method ScrolledWindow.get_min_content_height (dynamic GI call): probe: equals property min-content-height
+#[test]
+fn method_scrolledwindow_get_min_content_height() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolled-window");
+        
+        let r = h.call_args(o, "get_min_content_height", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "min-content-height"), "postcondition: r == h.get(o, 'min-content-height')");
+    });
+}
+
+/// method ScrolledWindow.get_min_content_width (dynamic GI call): probe: equals property min-content-width
+#[test]
+fn method_scrolledwindow_get_min_content_width() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolled-window");
+        
+        let r = h.call_args(o, "get_min_content_width", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "min-content-width"), "postcondition: r == h.get(o, 'min-content-width')");
+    });
+}
+
+/// method ScrolledWindow.get_overlay_scrolling (dynamic GI call): probe: equals property overlay-scrolling
+#[test]
+fn method_scrolledwindow_get_overlay_scrolling() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolled-window");
+        
+        let r = h.call_args(o, "get_overlay_scrolling", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "overlay-scrolling"), "postcondition: r == h.get(o, 'overlay-scrolling')");
+    });
+}
+
+/// method ScrolledWindow.get_placement (dynamic GI call): probe: called on a new instance, returned 'top-left'
+#[test]
+fn method_scrolledwindow_get_placement() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolled-window");
+        
+        let r = h.call_args(o, "get_placement", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::Str("top-left".into()), "postcondition: r == V::Str('top-left'.into())");
+    });
+}
+
+/// method ScrolledWindow.get_propagate_natural_height (dynamic GI call): probe: equals property propagate-natural-height
+#[test]
+fn method_scrolledwindow_get_propagate_natural_height() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolled-window");
+        
+        let r = h.call_args(o, "get_propagate_natural_height", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "propagate-natural-height"), "postcondition: r == h.get(o, 'propagate-natural-height')");
+    });
+}
+
+/// method ScrolledWindow.get_propagate_natural_width (dynamic GI call): probe: equals property propagate-natural-width
+#[test]
+fn method_scrolledwindow_get_propagate_natural_width() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolled-window");
+        
+        let r = h.call_args(o, "get_propagate_natural_width", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "propagate-natural-width"), "postcondition: r == h.get(o, 'propagate-natural-width')");
+    });
+}
+
+/// method ScrolledWindow.set_has_frame (dynamic GI call): probe: set then read property has-frame: exact
+#[test]
+fn method_scrolledwindow_set_has_frame() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolled-window");
+        
+        let r = h.call_args(o, "set_has_frame", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "has-frame") == V::Bool(true), "postcondition: h.get(o, 'has-frame') == V::Bool(true)");
+    });
+}
+
+/// method ScrolledWindow.set_kinetic_scrolling (dynamic GI call): probe: set then read property kinetic-scrolling: exact
+#[test]
+fn method_scrolledwindow_set_kinetic_scrolling() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolled-window");
+        
+        let r = h.call_args(o, "set_kinetic_scrolling", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "kinetic-scrolling") == V::Bool(false), "postcondition: h.get(o, 'kinetic-scrolling') == V::Bool(false)");
+    });
+}
+
+/// method ScrolledWindow.set_max_content_height (dynamic GI call): probe: set then read property max-content-height: exact
+#[test]
+fn method_scrolledwindow_set_max_content_height() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolled-window");
+        
+        let r = h.call_args(o, "set_max_content_height", &[V::I64(0)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "max-content-height") == V::I64(0), "postcondition: h.get(o, 'max-content-height') == V::I64(0)");
+    });
+}
+
+/// method ScrolledWindow.set_max_content_width (dynamic GI call): probe: set then read property max-content-width: exact
+#[test]
+fn method_scrolledwindow_set_max_content_width() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolled-window");
+        
+        let r = h.call_args(o, "set_max_content_width", &[V::I64(0)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "max-content-width") == V::I64(0), "postcondition: h.get(o, 'max-content-width') == V::I64(0)");
+    });
+}
+
+/// method ScrolledWindow.set_min_content_height (dynamic GI call): probe: set then read property min-content-height: exact
+#[test]
+fn method_scrolledwindow_set_min_content_height() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolled-window");
+        
+        let r = h.call_args(o, "set_min_content_height", &[V::I64(0)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "min-content-height") == V::I64(0), "postcondition: h.get(o, 'min-content-height') == V::I64(0)");
+    });
+}
+
+/// method ScrolledWindow.set_min_content_width (dynamic GI call): probe: set then read property min-content-width: exact
+#[test]
+fn method_scrolledwindow_set_min_content_width() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolled-window");
+        
+        let r = h.call_args(o, "set_min_content_width", &[V::I64(0)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "min-content-width") == V::I64(0), "postcondition: h.get(o, 'min-content-width') == V::I64(0)");
+    });
+}
+
+/// method ScrolledWindow.set_overlay_scrolling (dynamic GI call): probe: set then read property overlay-scrolling: exact
+#[test]
+fn method_scrolledwindow_set_overlay_scrolling() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolled-window");
+        
+        let r = h.call_args(o, "set_overlay_scrolling", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "overlay-scrolling") == V::Bool(false), "postcondition: h.get(o, 'overlay-scrolling') == V::Bool(false)");
+    });
+}
+
+/// method ScrolledWindow.set_propagate_natural_height (dynamic GI call): probe: set then read property propagate-natural-height: exact
+#[test]
+fn method_scrolledwindow_set_propagate_natural_height() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolled-window");
+        
+        let r = h.call_args(o, "set_propagate_natural_height", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "propagate-natural-height") == V::Bool(true), "postcondition: h.get(o, 'propagate-natural-height') == V::Bool(true)");
+    });
+}
+
+/// method ScrolledWindow.set_propagate_natural_width (dynamic GI call): probe: set then read property propagate-natural-width: exact
+#[test]
+fn method_scrolledwindow_set_propagate_natural_width() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolled-window");
+        
+        let r = h.call_args(o, "set_propagate_natural_width", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "propagate-natural-width") == V::Bool(true), "postcondition: h.get(o, 'propagate-natural-width') == V::Bool(true)");
+    });
+}
+
+/// bind:has-frame on ScrolledWindow: rule: B1: GtkScrolledWindow:has-frame is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_scrolledwindow_has_frame() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolled-window");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("has-frame", true),
+                1 => o.set_property("has-frame", false),
+                2 => o.set_property("has-frame", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::has-frame", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "has-frame"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "has-frame", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "has-frame"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:hscrollbar-policy on ScrolledWindow: rule: B1: GtkScrolledWindow:hscrollbar-policy is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_scrolledwindow_hscrollbar_policy() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolled-window");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => { let pspec = o.find_property("hscrollbar-policy").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("hscrollbar-policy", &ev.to_value_by_nick("always").unwrap()) },
+                1 => { let pspec = o.find_property("hscrollbar-policy").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("hscrollbar-policy", &ev.to_value_by_nick("automatic").unwrap()) },
+                2 => { let pspec = o.find_property("hscrollbar-policy").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("hscrollbar-policy", &ev.to_value_by_nick("always").unwrap()) },
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::hscrollbar-policy", true).unwrap();
+        fire(&h.obj(o), "always", 0);
+        fire(&h.obj(o), "automatic", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "hscrollbar-policy"), V::Str("automatic".into()), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_str(o, "hscrollbar-policy", "always").unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "hscrollbar-policy"), V::Str("always".into()), "the property reads the programmatic value");
+    });
+}
+
+/// bind:kinetic-scrolling on ScrolledWindow: rule: B1: GtkScrolledWindow:kinetic-scrolling is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_scrolledwindow_kinetic_scrolling() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolled-window");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("kinetic-scrolling", false),
+                1 => o.set_property("kinetic-scrolling", true),
+                2 => o.set_property("kinetic-scrolling", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::kinetic-scrolling", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "kinetic-scrolling"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "kinetic-scrolling", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "kinetic-scrolling"), V::Bool(false), "the property reads the programmatic value");
+    });
+}
+
+/// bind:max-content-height on ScrolledWindow: rule: B1: GtkScrolledWindow:max-content-height is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_scrolledwindow_max_content_height() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolled-window");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("max-content-height", 0i32),
+                1 => o.set_property("max-content-height", -1i32),
+                2 => o.set_property("max-content-height", 0i32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::max-content-height", true).unwrap();
+        fire(&h.obj(o), "0", 0);
+        fire(&h.obj(o), "-1", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "max-content-height"), V::I64(-1), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "max-content-height", 0).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "max-content-height"), V::I64(0), "the property reads the programmatic value");
+    });
+}
+
+/// bind:max-content-width on ScrolledWindow: rule: B1: GtkScrolledWindow:max-content-width is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_scrolledwindow_max_content_width() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolled-window");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("max-content-width", 0i32),
+                1 => o.set_property("max-content-width", -1i32),
+                2 => o.set_property("max-content-width", 0i32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::max-content-width", true).unwrap();
+        fire(&h.obj(o), "0", 0);
+        fire(&h.obj(o), "-1", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "max-content-width"), V::I64(-1), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "max-content-width", 0).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "max-content-width"), V::I64(0), "the property reads the programmatic value");
+    });
+}
+
+/// bind:min-content-height on ScrolledWindow: rule: B1: GtkScrolledWindow:min-content-height is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_scrolledwindow_min_content_height() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolled-window");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("min-content-height", 0i32),
+                1 => o.set_property("min-content-height", -1i32),
+                2 => o.set_property("min-content-height", 0i32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::min-content-height", true).unwrap();
+        fire(&h.obj(o), "0", 0);
+        fire(&h.obj(o), "-1", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "min-content-height"), V::I64(-1), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "min-content-height", 0).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "min-content-height"), V::I64(0), "the property reads the programmatic value");
+    });
+}
+
+/// bind:min-content-width on ScrolledWindow: rule: B1: GtkScrolledWindow:min-content-width is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_scrolledwindow_min_content_width() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolled-window");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("min-content-width", 0i32),
+                1 => o.set_property("min-content-width", -1i32),
+                2 => o.set_property("min-content-width", 0i32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::min-content-width", true).unwrap();
+        fire(&h.obj(o), "0", 0);
+        fire(&h.obj(o), "-1", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "min-content-width"), V::I64(-1), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "min-content-width", 0).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "min-content-width"), V::I64(0), "the property reads the programmatic value");
+    });
+}
+
+/// bind:overlay-scrolling on ScrolledWindow: rule: B1: GtkScrolledWindow:overlay-scrolling is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_scrolledwindow_overlay_scrolling() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolled-window");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("overlay-scrolling", false),
+                1 => o.set_property("overlay-scrolling", true),
+                2 => o.set_property("overlay-scrolling", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::overlay-scrolling", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "overlay-scrolling"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "overlay-scrolling", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "overlay-scrolling"), V::Bool(false), "the property reads the programmatic value");
+    });
+}
+
+/// bind:propagate-natural-height on ScrolledWindow: rule: B1: GtkScrolledWindow:propagate-natural-height is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_scrolledwindow_propagate_natural_height() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolled-window");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("propagate-natural-height", true),
+                1 => o.set_property("propagate-natural-height", false),
+                2 => o.set_property("propagate-natural-height", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::propagate-natural-height", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "propagate-natural-height"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "propagate-natural-height", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "propagate-natural-height"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:propagate-natural-width on ScrolledWindow: rule: B1: GtkScrolledWindow:propagate-natural-width is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_scrolledwindow_propagate_natural_width() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolled-window");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("propagate-natural-width", true),
+                1 => o.set_property("propagate-natural-width", false),
+                2 => o.set_property("propagate-natural-width", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::propagate-natural-width", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "propagate-natural-width"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "propagate-natural-width", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "propagate-natural-width"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:vscrollbar-policy on ScrolledWindow: rule: B1: GtkScrolledWindow:vscrollbar-policy is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_scrolledwindow_vscrollbar_policy() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolled-window");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => { let pspec = o.find_property("vscrollbar-policy").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("vscrollbar-policy", &ev.to_value_by_nick("always").unwrap()) },
+                1 => { let pspec = o.find_property("vscrollbar-policy").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("vscrollbar-policy", &ev.to_value_by_nick("automatic").unwrap()) },
+                2 => { let pspec = o.find_property("vscrollbar-policy").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("vscrollbar-policy", &ev.to_value_by_nick("always").unwrap()) },
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::vscrollbar-policy", true).unwrap();
+        fire(&h.obj(o), "always", 0);
+        fire(&h.obj(o), "automatic", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "vscrollbar-policy"), V::Str("automatic".into()), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_str(o, "vscrollbar-policy", "always").unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "vscrollbar-policy"), V::Str("always".into()), "the property reads the programmatic value");
+    });
+}
+
+/// bind:window-placement on ScrolledWindow: rule: B1: GtkScrolledWindow:window-placement is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_scrolledwindow_window_placement() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("scrolled-window");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => { let pspec = o.find_property("window-placement").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("window-placement", &ev.to_value_by_nick("bottom-left").unwrap()) },
+                1 => { let pspec = o.find_property("window-placement").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("window-placement", &ev.to_value_by_nick("top-left").unwrap()) },
+                2 => { let pspec = o.find_property("window-placement").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("window-placement", &ev.to_value_by_nick("bottom-left").unwrap()) },
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::window-placement", true).unwrap();
+        fire(&h.obj(o), "bottom-left", 0);
+        fire(&h.obj(o), "top-left", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "window-placement"), V::Str("top-left".into()), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_str(o, "window-placement", "bottom-left").unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "window-placement"), V::Str("bottom-left".into()), "the property reads the programmatic value");
     });
 }
 
@@ -6907,6 +18458,108 @@ fn prop_searchbar_show_close_button() {
         assert_eq!(id, h.resolve_prop("search-bar", "show-close-button"));
         h.set_bool(o, "show-close-button", true).unwrap();
         assert_eq!(h.get(o, "show-close-button"), V::Bool(true));
+    });
+}
+
+/// method SearchBar.get_search_mode (dynamic GI call): probe: called on a new instance, returned False
+#[test]
+fn method_searchbar_get_search_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("search-bar");
+        
+        let r = h.call_args(o, "get_search_mode", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::Bool(false), "postcondition: r == V::Bool(false)");
+    });
+}
+
+/// method SearchBar.get_show_close_button (dynamic GI call): probe: equals property show-close-button
+#[test]
+fn method_searchbar_get_show_close_button() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("search-bar");
+        
+        let r = h.call_args(o, "get_show_close_button", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "show-close-button"), "postcondition: r == h.get(o, 'show-close-button')");
+    });
+}
+
+/// method SearchBar.set_show_close_button (dynamic GI call): probe: set then read property show-close-button: exact
+#[test]
+fn method_searchbar_set_show_close_button() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("search-bar");
+        
+        let r = h.call_args(o, "set_show_close_button", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "show-close-button") == V::Bool(true), "postcondition: h.get(o, 'show-close-button') == V::Bool(true)");
+    });
+}
+
+/// bind:search-mode-enabled on SearchBar: rule: B1: GtkSearchBar:search-mode-enabled is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_searchbar_search_mode_enabled() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("search-bar");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("search-mode-enabled", true),
+                1 => o.set_property("search-mode-enabled", false),
+                2 => o.set_property("search-mode-enabled", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::search-mode-enabled", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "search-mode-enabled"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "search-mode-enabled", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "search-mode-enabled"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:show-close-button on SearchBar: rule: B1: GtkSearchBar:show-close-button is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_searchbar_show_close_button() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("search-bar");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("show-close-button", true),
+                1 => o.set_property("show-close-button", false),
+                2 => o.set_property("show-close-button", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::show-close-button", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "show-close-button"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "show-close-button", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "show-close-button"), V::Bool(true), "the property reads the programmatic value");
     });
 }
 
@@ -6941,6 +18594,68 @@ fn signal_searchentry_activate() {
     });
 }
 
+/// signal SearchEntry.next-match: runtime: returns void, run-last; probe: action signal, emitted and delivered
+#[test]
+fn signal_searchentry_next_match() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("search-entry");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v; o.emit_by_name::<()>("next-match", &[]);
+        };
+        assert_ne!(h.resolve_signal("search-entry", "next-match"), 0);
+        assert_eq!(h.resolve_signal("search-entry", "next-match"), h.resolve_signal("search-entry", "next-match"));
+        h.listen(e, "next-match", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "next-match".to_string())), "delivered: {ev:?}");
+        h.listen(e, "next-match", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "next-match", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "next-match", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal SearchEntry.previous-match: runtime: returns void, run-last; probe: action signal, emitted and delivered
+#[test]
+fn signal_searchentry_previous_match() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("search-entry");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v; o.emit_by_name::<()>("previous-match", &[]);
+        };
+        assert_ne!(h.resolve_signal("search-entry", "previous-match"), 0);
+        assert_eq!(h.resolve_signal("search-entry", "previous-match"), h.resolve_signal("search-entry", "previous-match"));
+        h.listen(e, "previous-match", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "previous-match".to_string())), "delivered: {ev:?}");
+        h.listen(e, "previous-match", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "previous-match", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "previous-match", true).is_err(), "stale handle is an error");
+    });
+}
+
 /// signal SearchEntry.search-changed: GtkSearchEntry::search-changed, run-last, void (Gtk 4 docs)
 #[test]
 fn signal_searchentry_search_changed() {
@@ -6969,6 +18684,37 @@ fn signal_searchentry_search_changed() {
         fire(&obj, "c", 2);
         assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
         assert!(h.listen(e, "search-changed", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal SearchEntry.search-started: runtime: returns void, run-last; probe: emitted synthetically with sampled arguments; delivery only, no native trigger
+#[test]
+fn signal_searchentry_search_started() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("search-entry");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            o.emit_by_name::<()>("search-started", &[]);
+        };
+        assert_ne!(h.resolve_signal("search-entry", "search-started"), 0);
+        assert_eq!(h.resolve_signal("search-entry", "search-started"), h.resolve_signal("search-entry", "search-started"));
+        h.listen(e, "search-started", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "search-started".to_string())), "delivered: {ev:?}");
+        h.listen(e, "search-started", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "search-started", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "search-started", true).is_err(), "stale handle is an error");
     });
 }
 
@@ -7018,6 +18764,21 @@ fn prop_searchentry_activates_default() {
     });
 }
 
+/// property SearchEntry.input-purpose (JS input-purpose): probe: round trip exact; notify fired
+#[test]
+fn prop_searchentry_input_purpose() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("search-entry");
+        
+        let id = h.resolve_prop("search-entry", "input-purpose");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("search-entry", "input-purpose"));
+        h.set_str(o, "input-purpose", "alpha").unwrap();
+        assert_eq!(h.get(o, "input-purpose"), V::Str("alpha".into()));
+    });
+}
+
 /// property SearchEntry.placeholder-text (JS placeholder-text): GtkSearchEntry:placeholder-text (Gtk 4 docs)
 #[test]
 fn prop_searchentry_placeholder_text() {
@@ -7028,8 +18789,8 @@ fn prop_searchentry_placeholder_text() {
         let id = h.resolve_prop("search-entry", "placeholder-text");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("search-entry", "placeholder-text"));
-        h.set_str(o, "placeholder-text", "p3-sample").unwrap();
-        assert_eq!(h.get(o, "placeholder-text"), V::Str("p3-sample".into()));
+        h.set_str(o, "placeholder-text", "svl probe").unwrap();
+        assert_eq!(h.get(o, "placeholder-text"), V::Str("svl probe".into()));
     });
 }
 
@@ -7043,8 +18804,182 @@ fn prop_searchentry_search_delay() {
         let id = h.resolve_prop("search-entry", "search-delay");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("search-entry", "search-delay"));
-        h.set_i64(o, "search-delay", 7).unwrap();
-        assert_eq!(h.get(o, "search-delay"), V::I64(7));
+        h.set_i64(o, "search-delay", 151).unwrap();
+        assert_eq!(h.get(o, "search-delay"), V::I64(151));
+    });
+}
+
+/// method SearchEntry.get_input_purpose (dynamic GI call): probe: equals property input-purpose
+#[test]
+fn method_searchentry_get_input_purpose() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("search-entry");
+        
+        let r = h.call_args(o, "get_input_purpose", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "input-purpose"), "postcondition: r == h.get(o, 'input-purpose')");
+    });
+}
+
+/// method SearchEntry.get_placeholder_text (dynamic GI call): probe: equals property placeholder-text
+#[test]
+fn method_searchentry_get_placeholder_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("search-entry");
+        
+        let r = h.call_args(o, "get_placeholder_text", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "placeholder-text"), "postcondition: r == h.get(o, 'placeholder-text')");
+    });
+}
+
+/// method SearchEntry.get_search_delay (dynamic GI call): probe: equals property search-delay
+#[test]
+fn method_searchentry_get_search_delay() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("search-entry");
+        
+        let r = h.call_args(o, "get_search_delay", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "search-delay"), "postcondition: r == h.get(o, 'search-delay')");
+    });
+}
+
+/// method SearchEntry.set_input_purpose (dynamic GI call): probe: set then read property input-purpose: exact
+#[test]
+fn method_searchentry_set_input_purpose() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("search-entry");
+        
+        let r = h.call_args(o, "set_input_purpose", &[V::Str("alpha".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "input-purpose") == V::Str("alpha".into()), "postcondition: h.get(o, 'input-purpose') == V::Str('alpha'.into())");
+    });
+}
+
+/// method SearchEntry.set_placeholder_text (dynamic GI call): probe: set then read property placeholder-text: exact
+#[test]
+fn method_searchentry_set_placeholder_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("search-entry");
+        
+        let r = h.call_args(o, "set_placeholder_text", &[V::Str("svl probe".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "placeholder-text") == V::Str("svl probe".into()), "postcondition: h.get(o, 'placeholder-text') == V::Str('svl probe'.into())");
+    });
+}
+
+/// method SearchEntry.set_search_delay (dynamic GI call): probe: set then read property search-delay: exact
+#[test]
+fn method_searchentry_set_search_delay() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("search-entry");
+        
+        let r = h.call_args(o, "set_search_delay", &[V::I64(151)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "search-delay") == V::I64(151), "postcondition: h.get(o, 'search-delay') == V::I64(151)");
+    });
+}
+
+/// bind:activates-default on SearchEntry: rule: B1: GtkSearchEntry:activates-default is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_searchentry_activates_default() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("search-entry");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("activates-default", true),
+                1 => o.set_property("activates-default", false),
+                2 => o.set_property("activates-default", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::activates-default", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "activates-default"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "activates-default", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "activates-default"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:input-purpose on SearchEntry: rule: B1: GtkSearchEntry:input-purpose is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_searchentry_input_purpose() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("search-entry");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => { let pspec = o.find_property("input-purpose").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("input-purpose", &ev.to_value_by_nick("alpha").unwrap()) },
+                1 => { let pspec = o.find_property("input-purpose").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("input-purpose", &ev.to_value_by_nick("free-form").unwrap()) },
+                2 => { let pspec = o.find_property("input-purpose").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("input-purpose", &ev.to_value_by_nick("alpha").unwrap()) },
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::input-purpose", true).unwrap();
+        fire(&h.obj(o), "alpha", 0);
+        fire(&h.obj(o), "free-form", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "input-purpose"), V::Str("free-form".into()), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_str(o, "input-purpose", "alpha").unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "input-purpose"), V::Str("alpha".into()), "the property reads the programmatic value");
+    });
+}
+
+/// bind:search-delay on SearchEntry: rule: B1: GtkSearchEntry:search-delay is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_searchentry_search_delay() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("search-entry");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("search-delay", 151u32),
+                1 => o.set_property("search-delay", 150u32),
+                2 => o.set_property("search-delay", 151u32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::search-delay", true).unwrap();
+        fire(&h.obj(o), "151", 0);
+        fire(&h.obj(o), "150", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "search-delay"), V::I64(150), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "search-delay", 151).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "search-delay"), V::I64(151), "the property reads the programmatic value");
     });
 }
 
@@ -7287,6 +19222,34 @@ fn signal_spinbutton_notify_value() {
     });
 }
 
+/// property SpinButton.activates-default (JS activates-default): probe: round trip exact; notify fired
+#[test]
+fn prop_spinbutton_activates_default() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spin-button");
+        
+        let id = h.resolve_prop("spin-button", "activates-default");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("spin-button", "activates-default"));
+        h.set_bool(o, "activates-default", true).unwrap();
+        assert_eq!(h.get(o, "activates-default"), V::Bool(true));
+    });
+}
+
+/// property SpinButton.adjustment (JS adjustment, round trip): probe: round trip exact; notify fired
+#[test]
+fn prop_spinbutton_adjustment() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spin-button");
+        
+        let before = h.get_value(o, "adjustment");
+        h.set_value(o, "adjustment", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "adjustment")), crate::testing::shape(&before));
+    });
+}
+
 /// property SpinButton.climb-rate (JS climb-rate): GtkSpinButton:climb-rate (Gtk 4 docs)
 #[test]
 fn prop_spinbutton_climb_rate() {
@@ -7297,8 +19260,8 @@ fn prop_spinbutton_climb_rate() {
         let id = h.resolve_prop("spin-button", "climb-rate");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("spin-button", "climb-rate"));
-        h.set_f64(o, "climb-rate", 0.5).unwrap();
-        assert_eq!(h.get(o, "climb-rate"), V::F64(0.5));
+        h.set_f64(o, "climb-rate", 1.0).unwrap();
+        assert_eq!(h.get(o, "climb-rate"), V::F64(1.0));
     });
 }
 
@@ -7312,8 +19275,8 @@ fn prop_spinbutton_digits() {
         let id = h.resolve_prop("spin-button", "digits");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("spin-button", "digits"));
-        h.set_i64(o, "digits", 7).unwrap();
-        assert_eq!(h.get(o, "digits"), V::I64(7));
+        h.set_i64(o, "digits", 1).unwrap();
+        assert_eq!(h.get(o, "digits"), V::I64(1));
     });
 }
 
@@ -7488,6 +19451,90 @@ fn prop_spinbutton_wrap() {
     });
 }
 
+/// method SpinButton.get_activates_default (dynamic GI call): probe: equals property activates-default
+#[test]
+fn method_spinbutton_get_activates_default() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spin-button");
+        
+        let r = h.call_args(o, "get_activates_default", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "activates-default"), "postcondition: r == h.get(o, 'activates-default')");
+    });
+}
+
+/// method SpinButton.get_climb_rate (dynamic GI call): probe: equals property climb-rate
+#[test]
+fn method_spinbutton_get_climb_rate() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spin-button");
+        
+        let r = h.call_args(o, "get_climb_rate", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "climb-rate"), "postcondition: r == h.get(o, 'climb-rate')");
+    });
+}
+
+/// method SpinButton.get_digits (dynamic GI call): probe: equals property digits
+#[test]
+fn method_spinbutton_get_digits() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spin-button");
+        
+        let r = h.call_args(o, "get_digits", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "digits"), "postcondition: r == h.get(o, 'digits')");
+    });
+}
+
+/// method SpinButton.get_numeric (dynamic GI call): probe: equals property numeric
+#[test]
+fn method_spinbutton_get_numeric() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spin-button");
+        
+        let r = h.call_args(o, "get_numeric", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "numeric"), "postcondition: r == h.get(o, 'numeric')");
+    });
+}
+
+/// method SpinButton.get_snap_to_ticks (dynamic GI call): probe: equals property snap-to-ticks
+#[test]
+fn method_spinbutton_get_snap_to_ticks() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spin-button");
+        
+        let r = h.call_args(o, "get_snap_to_ticks", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "snap-to-ticks"), "postcondition: r == h.get(o, 'snap-to-ticks')");
+    });
+}
+
+/// method SpinButton.get_update_policy (dynamic GI call): probe: equals property update-policy
+#[test]
+fn method_spinbutton_get_update_policy() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spin-button");
+        
+        let r = h.call_args(o, "get_update_policy", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "update-policy"), "postcondition: r == h.get(o, 'update-policy')");
+    });
+}
+
 /// method SpinButton.get_value (dynamic GI call): gtk_spin_button_get_value (Gtk 4 docs); f64 return through GIRepository (X1)
 #[test]
 fn method_spinbutton_get_value() {
@@ -7499,6 +19546,76 @@ fn method_spinbutton_get_value() {
         let w = h.widget(o);
         let _ = (&w, &r);
         assert!(r == V::F64(7.0), "postcondition: r == V::F64(7.0)");
+    });
+}
+
+/// method SpinButton.get_value_as_int (dynamic GI call): probe: called on a new instance, returned 0
+#[test]
+fn method_spinbutton_get_value_as_int() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spin-button");
+        
+        let r = h.call_args(o, "get_value_as_int", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::I64(0), "postcondition: r == V::I64(0)");
+    });
+}
+
+/// method SpinButton.get_wrap (dynamic GI call): probe: equals property wrap
+#[test]
+fn method_spinbutton_get_wrap() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spin-button");
+        
+        let r = h.call_args(o, "get_wrap", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "wrap"), "postcondition: r == h.get(o, 'wrap')");
+    });
+}
+
+/// method SpinButton.set_activates_default (dynamic GI call): probe: set then read property activates-default: exact
+#[test]
+fn method_spinbutton_set_activates_default() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spin-button");
+        
+        let r = h.call_args(o, "set_activates_default", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "activates-default") == V::Bool(true), "postcondition: h.get(o, 'activates-default') == V::Bool(true)");
+    });
+}
+
+/// method SpinButton.set_climb_rate (dynamic GI call): probe: set then read property climb-rate: exact
+#[test]
+fn method_spinbutton_set_climb_rate() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spin-button");
+        
+        let r = h.call_args(o, "set_climb_rate", &[V::F64(1.0)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "climb-rate") == V::F64(1.0), "postcondition: h.get(o, 'climb-rate') == V::F64(1.0)");
+    });
+}
+
+/// method SpinButton.set_digits (dynamic GI call): probe: set then read property digits: exact
+#[test]
+fn method_spinbutton_set_digits() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spin-button");
+        
+        let r = h.call_args(o, "set_digits", &[V::I64(1)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "digits") == V::I64(1), "postcondition: h.get(o, 'digits') == V::I64(1)");
     });
 }
 
@@ -7516,6 +19633,20 @@ fn method_spinbutton_set_increments() {
     });
 }
 
+/// method SpinButton.set_numeric (dynamic GI call): probe: set then read property numeric: exact
+#[test]
+fn method_spinbutton_set_numeric() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spin-button");
+        
+        let r = h.call_args(o, "set_numeric", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "numeric") == V::Bool(true), "postcondition: h.get(o, 'numeric') == V::Bool(true)");
+    });
+}
+
 /// method SpinButton.set_range (dynamic GI call): gtk_spin_button_set_range clamps the value into the new range (Gtk 4 docs); called through GIRepository (X1)
 #[test]
 fn method_spinbutton_set_range() {
@@ -7530,6 +19661,34 @@ fn method_spinbutton_set_range() {
     });
 }
 
+/// method SpinButton.set_snap_to_ticks (dynamic GI call): probe: set then read property snap-to-ticks: exact
+#[test]
+fn method_spinbutton_set_snap_to_ticks() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spin-button");
+        
+        let r = h.call_args(o, "set_snap_to_ticks", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "snap-to-ticks") == V::Bool(true), "postcondition: h.get(o, 'snap-to-ticks') == V::Bool(true)");
+    });
+}
+
+/// method SpinButton.set_update_policy (dynamic GI call): probe: set then read property update-policy: exact
+#[test]
+fn method_spinbutton_set_update_policy() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spin-button");
+        
+        let r = h.call_args(o, "set_update_policy", &[V::Str("if-valid".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "update-policy") == V::Str("if-valid".into()), "postcondition: h.get(o, 'update-policy') == V::Str('if-valid'.into())");
+    });
+}
+
 /// method SpinButton.set_value (dynamic GI call): gtk_spin_button_set_value (Gtk 4 docs); called through GIRepository (X1)
 #[test]
 fn method_spinbutton_set_value() {
@@ -7541,6 +19700,200 @@ fn method_spinbutton_set_value() {
         let w = h.widget(o);
         let _ = (&w, &r);
         assert!(h.get(o, "value") == V::F64(42.0), "postcondition: h.get(o, 'value') == V::F64(42.0)");
+    });
+}
+
+/// method SpinButton.set_wrap (dynamic GI call): probe: set then read property wrap: exact
+#[test]
+fn method_spinbutton_set_wrap() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spin-button");
+        
+        let r = h.call_args(o, "set_wrap", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "wrap") == V::Bool(true), "postcondition: h.get(o, 'wrap') == V::Bool(true)");
+    });
+}
+
+/// bind:activates-default on SpinButton: rule: B1: GtkSpinButton:activates-default is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_spinbutton_activates_default() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spin-button");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("activates-default", true),
+                1 => o.set_property("activates-default", false),
+                2 => o.set_property("activates-default", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::activates-default", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "activates-default"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "activates-default", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "activates-default"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:climb-rate on SpinButton: rule: B1: GtkSpinButton:climb-rate is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_spinbutton_climb_rate() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spin-button");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("climb-rate", 1.0f64),
+                1 => o.set_property("climb-rate", 0.0f64),
+                2 => o.set_property("climb-rate", 1.0f64),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::climb-rate", true).unwrap();
+        fire(&h.obj(o), "1.0", 0);
+        fire(&h.obj(o), "0.0", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "climb-rate"), V::F64(0.0), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_f64(o, "climb-rate", 1.0).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "climb-rate"), V::F64(1.0), "the property reads the programmatic value");
+    });
+}
+
+/// bind:digits on SpinButton: rule: B1: GtkSpinButton:digits is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_spinbutton_digits() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spin-button");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("digits", 1u32),
+                1 => o.set_property("digits", 0u32),
+                2 => o.set_property("digits", 1u32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::digits", true).unwrap();
+        fire(&h.obj(o), "1", 0);
+        fire(&h.obj(o), "0", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "digits"), V::I64(0), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "digits", 1).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "digits"), V::I64(1), "the property reads the programmatic value");
+    });
+}
+
+/// bind:numeric on SpinButton: rule: B1: GtkSpinButton:numeric is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_spinbutton_numeric() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spin-button");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("numeric", true),
+                1 => o.set_property("numeric", false),
+                2 => o.set_property("numeric", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::numeric", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "numeric"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "numeric", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "numeric"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:snap-to-ticks on SpinButton: rule: B1: GtkSpinButton:snap-to-ticks is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_spinbutton_snap_to_ticks() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spin-button");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("snap-to-ticks", true),
+                1 => o.set_property("snap-to-ticks", false),
+                2 => o.set_property("snap-to-ticks", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::snap-to-ticks", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "snap-to-ticks"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "snap-to-ticks", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "snap-to-ticks"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:update-policy on SpinButton: rule: B1: GtkSpinButton:update-policy is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_spinbutton_update_policy() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spin-button");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => { let pspec = o.find_property("update-policy").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("update-policy", &ev.to_value_by_nick("if-valid").unwrap()) },
+                1 => { let pspec = o.find_property("update-policy").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("update-policy", &ev.to_value_by_nick("always").unwrap()) },
+                2 => { let pspec = o.find_property("update-policy").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("update-policy", &ev.to_value_by_nick("if-valid").unwrap()) },
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::update-policy", true).unwrap();
+        fire(&h.obj(o), "if-valid", 0);
+        fire(&h.obj(o), "always", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "update-policy"), V::Str("always".into()), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_str(o, "update-policy", "if-valid").unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "update-policy"), V::Str("if-valid".into()), "the property reads the programmatic value");
     });
 }
 
@@ -7561,6 +19914,36 @@ fn binding_spinbutton_value() {
         let ev = h.take_events_with_args();
         assert!(!ev.is_empty(), "native change is delivered");
         assert_ne!(h.get(o, "value"), V::Null, "the property reads the new value");
+    });
+}
+
+/// bind:wrap on SpinButton: rule: B1: GtkSpinButton:wrap is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_spinbutton_wrap() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spin-button");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("wrap", true),
+                1 => o.set_property("wrap", false),
+                2 => o.set_property("wrap", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::wrap", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "wrap"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "wrap", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "wrap"), V::Bool(true), "the property reads the programmatic value");
     });
 }
 
@@ -7646,6 +20029,34 @@ fn echo_spinner_spinning() {
         assert_eq!(got, want, "native edit still delivers");
         h.set_bool(o, "spinning", true).unwrap();
         assert!(h.take_events().is_empty(), "handlers are unblocked after a programmatic set, and the next set is suppressed again");
+    });
+}
+
+/// method Spinner.get_spinning (dynamic GI call): probe: equals property spinning
+#[test]
+fn method_spinner_get_spinning() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spinner");
+        
+        let r = h.call_args(o, "get_spinning", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "spinning"), "postcondition: r == h.get(o, 'spinning')");
+    });
+}
+
+/// method Spinner.set_spinning (dynamic GI call): probe: set then read property spinning: exact
+#[test]
+fn method_spinner_set_spinning() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("spinner");
+        
+        let r = h.call_args(o, "set_spinning", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "spinning") == V::Bool(true), "postcondition: h.get(o, 'spinning') == V::Bool(true)");
     });
 }
 
@@ -7743,8 +20154,8 @@ fn prop_stack_transition_duration() {
         let id = h.resolve_prop("stack", "transition-duration");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("stack", "transition-duration"));
-        h.set_i64(o, "transition-duration", 7).unwrap();
-        assert_eq!(h.get(o, "transition-duration"), V::I64(7));
+        h.set_i64(o, "transition-duration", 201).unwrap();
+        assert_eq!(h.get(o, "transition-duration"), V::I64(201));
     });
 }
 
@@ -7788,6 +20199,324 @@ fn prop_stack_visible_child() {
         let before = h.get_value(o, "visible-child");
         h.set_value(o, "visible-child", &before).unwrap();
         assert_eq!(crate::testing::shape(&h.get_value(o, "visible-child")), crate::testing::shape(&before));
+    });
+}
+
+/// method Stack.get_hhomogeneous (dynamic GI call): probe: equals property hhomogeneous
+#[test]
+fn method_stack_get_hhomogeneous() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("stack");
+        
+        let r = h.call_args(o, "get_hhomogeneous", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "hhomogeneous"), "postcondition: r == h.get(o, 'hhomogeneous')");
+    });
+}
+
+/// method Stack.get_interpolate_size (dynamic GI call): probe: equals property interpolate-size
+#[test]
+fn method_stack_get_interpolate_size() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("stack");
+        
+        let r = h.call_args(o, "get_interpolate_size", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "interpolate-size"), "postcondition: r == h.get(o, 'interpolate-size')");
+    });
+}
+
+/// method Stack.get_transition_duration (dynamic GI call): probe: equals property transition-duration
+#[test]
+fn method_stack_get_transition_duration() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("stack");
+        
+        let r = h.call_args(o, "get_transition_duration", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "transition-duration"), "postcondition: r == h.get(o, 'transition-duration')");
+    });
+}
+
+/// method Stack.get_transition_running (dynamic GI call): probe: equals property transition-running
+#[test]
+fn method_stack_get_transition_running() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("stack");
+        
+        let r = h.call_args(o, "get_transition_running", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "transition-running"), "postcondition: r == h.get(o, 'transition-running')");
+    });
+}
+
+/// method Stack.get_transition_type (dynamic GI call): probe: equals property transition-type
+#[test]
+fn method_stack_get_transition_type() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("stack");
+        
+        let r = h.call_args(o, "get_transition_type", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "transition-type"), "postcondition: r == h.get(o, 'transition-type')");
+    });
+}
+
+/// method Stack.get_vhomogeneous (dynamic GI call): probe: equals property vhomogeneous
+#[test]
+fn method_stack_get_vhomogeneous() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("stack");
+        
+        let r = h.call_args(o, "get_vhomogeneous", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "vhomogeneous"), "postcondition: r == h.get(o, 'vhomogeneous')");
+    });
+}
+
+/// method Stack.get_visible_child_name (dynamic GI call): probe: equals property visible-child-name
+#[test]
+fn method_stack_get_visible_child_name() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("stack");
+        
+        let r = h.call_args(o, "get_visible_child_name", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "visible-child-name"), "postcondition: r == h.get(o, 'visible-child-name')");
+    });
+}
+
+/// method Stack.set_hhomogeneous (dynamic GI call): probe: set then read property hhomogeneous: exact
+#[test]
+fn method_stack_set_hhomogeneous() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("stack");
+        
+        let r = h.call_args(o, "set_hhomogeneous", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "hhomogeneous") == V::Bool(false), "postcondition: h.get(o, 'hhomogeneous') == V::Bool(false)");
+    });
+}
+
+/// method Stack.set_interpolate_size (dynamic GI call): probe: set then read property interpolate-size: exact
+#[test]
+fn method_stack_set_interpolate_size() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("stack");
+        
+        let r = h.call_args(o, "set_interpolate_size", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "interpolate-size") == V::Bool(true), "postcondition: h.get(o, 'interpolate-size') == V::Bool(true)");
+    });
+}
+
+/// method Stack.set_transition_duration (dynamic GI call): probe: set then read property transition-duration: exact
+#[test]
+fn method_stack_set_transition_duration() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("stack");
+        
+        let r = h.call_args(o, "set_transition_duration", &[V::I64(201)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "transition-duration") == V::I64(201), "postcondition: h.get(o, 'transition-duration') == V::I64(201)");
+    });
+}
+
+/// method Stack.set_transition_type (dynamic GI call): probe: set then read property transition-type: exact
+#[test]
+fn method_stack_set_transition_type() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("stack");
+        
+        let r = h.call_args(o, "set_transition_type", &[V::Str("crossfade".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "transition-type") == V::Str("crossfade".into()), "postcondition: h.get(o, 'transition-type') == V::Str('crossfade'.into())");
+    });
+}
+
+/// method Stack.set_vhomogeneous (dynamic GI call): probe: set then read property vhomogeneous: exact
+#[test]
+fn method_stack_set_vhomogeneous() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("stack");
+        
+        let r = h.call_args(o, "set_vhomogeneous", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "vhomogeneous") == V::Bool(false), "postcondition: h.get(o, 'vhomogeneous') == V::Bool(false)");
+    });
+}
+
+/// bind:hhomogeneous on Stack: rule: B1: GtkStack:hhomogeneous is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_stack_hhomogeneous() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("stack");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("hhomogeneous", false),
+                1 => o.set_property("hhomogeneous", true),
+                2 => o.set_property("hhomogeneous", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::hhomogeneous", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "hhomogeneous"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "hhomogeneous", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "hhomogeneous"), V::Bool(false), "the property reads the programmatic value");
+    });
+}
+
+/// bind:interpolate-size on Stack: rule: B1: GtkStack:interpolate-size is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_stack_interpolate_size() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("stack");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("interpolate-size", true),
+                1 => o.set_property("interpolate-size", false),
+                2 => o.set_property("interpolate-size", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::interpolate-size", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "interpolate-size"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "interpolate-size", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "interpolate-size"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:transition-duration on Stack: rule: B1: GtkStack:transition-duration is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_stack_transition_duration() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("stack");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("transition-duration", 201u32),
+                1 => o.set_property("transition-duration", 200u32),
+                2 => o.set_property("transition-duration", 201u32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::transition-duration", true).unwrap();
+        fire(&h.obj(o), "201", 0);
+        fire(&h.obj(o), "200", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "transition-duration"), V::I64(200), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "transition-duration", 201).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "transition-duration"), V::I64(201), "the property reads the programmatic value");
+    });
+}
+
+/// bind:transition-type on Stack: rule: B1: GtkStack:transition-type is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_stack_transition_type() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("stack");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => { let pspec = o.find_property("transition-type").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("transition-type", &ev.to_value_by_nick("crossfade").unwrap()) },
+                1 => { let pspec = o.find_property("transition-type").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("transition-type", &ev.to_value_by_nick("none").unwrap()) },
+                2 => { let pspec = o.find_property("transition-type").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("transition-type", &ev.to_value_by_nick("crossfade").unwrap()) },
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::transition-type", true).unwrap();
+        fire(&h.obj(o), "crossfade", 0);
+        fire(&h.obj(o), "none", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "transition-type"), V::Str("none".into()), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_str(o, "transition-type", "crossfade").unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "transition-type"), V::Str("crossfade".into()), "the property reads the programmatic value");
+    });
+}
+
+/// bind:vhomogeneous on Stack: rule: B1: GtkStack:vhomogeneous is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_stack_vhomogeneous() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("stack");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("vhomogeneous", false),
+                1 => o.set_property("vhomogeneous", true),
+                2 => o.set_property("vhomogeneous", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::vhomogeneous", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "vhomogeneous"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "vhomogeneous", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "vhomogeneous"), V::Bool(false), "the property reads the programmatic value");
     });
 }
 
@@ -7968,6 +20697,34 @@ fn method_switch_get_active() {
     });
 }
 
+/// method Switch.get_state (dynamic GI call): probe: equals property state
+#[test]
+fn method_switch_get_state() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("switch");
+        
+        let r = h.call_args(o, "get_state", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "state"), "postcondition: r == h.get(o, 'state')");
+    });
+}
+
+/// method Switch.set_active (dynamic GI call): probe: set then read property active: exact
+#[test]
+fn method_switch_set_active() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("switch");
+        
+        let r = h.call_args(o, "set_active", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "active") == V::Bool(true), "postcondition: h.get(o, 'active') == V::Bool(true)");
+    });
+}
+
 /// method Switch.set_state (dynamic GI call): gtk_switch_set_state (Gtk 4 docs); called through GIRepository (X1)
 #[test]
 fn method_switch_set_state() {
@@ -8008,6 +20765,36 @@ fn binding_switch_active() {
     });
 }
 
+/// bind:state on Switch: rule: B1: GtkSwitch:state is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_switch_state() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("switch");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("state", true),
+                1 => o.set_property("state", false),
+                2 => o.set_property("state", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::state", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "state"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "state", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "state"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
 /// signal Text.activate: GtkText::activate, action signal, void (Gtk 4 docs)
 #[test]
 fn signal_text_activate() {
@@ -8039,6 +20826,192 @@ fn signal_text_activate() {
     });
 }
 
+/// signal Text.backspace: runtime: returns void, run-last; probe: action signal, emitted and delivered
+#[test]
+fn signal_text_backspace() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("text");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v; o.emit_by_name::<()>("backspace", &[]);
+        };
+        assert_ne!(h.resolve_signal("text", "backspace"), 0);
+        assert_eq!(h.resolve_signal("text", "backspace"), h.resolve_signal("text", "backspace"));
+        h.listen(e, "backspace", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "backspace".to_string())), "delivered: {ev:?}");
+        h.listen(e, "backspace", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "backspace", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "backspace", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal Text.copy-clipboard: runtime: returns void, run-last; probe: action signal, emitted and delivered
+#[test]
+fn signal_text_copy_clipboard() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("text");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v; o.emit_by_name::<()>("copy-clipboard", &[]);
+        };
+        assert_ne!(h.resolve_signal("text", "copy-clipboard"), 0);
+        assert_eq!(h.resolve_signal("text", "copy-clipboard"), h.resolve_signal("text", "copy-clipboard"));
+        h.listen(e, "copy-clipboard", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "copy-clipboard".to_string())), "delivered: {ev:?}");
+        h.listen(e, "copy-clipboard", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "copy-clipboard", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "copy-clipboard", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal Text.cut-clipboard: runtime: returns void, run-last; probe: action signal, emitted and delivered
+#[test]
+fn signal_text_cut_clipboard() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("text");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v; o.emit_by_name::<()>("cut-clipboard", &[]);
+        };
+        assert_ne!(h.resolve_signal("text", "cut-clipboard"), 0);
+        assert_eq!(h.resolve_signal("text", "cut-clipboard"), h.resolve_signal("text", "cut-clipboard"));
+        h.listen(e, "cut-clipboard", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "cut-clipboard".to_string())), "delivered: {ev:?}");
+        h.listen(e, "cut-clipboard", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "cut-clipboard", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "cut-clipboard", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal Text.insert-at-cursor: runtime: returns void, run-last; probe: emitted synthetically with sampled arguments; delivery only, no native trigger
+#[test]
+fn signal_text_insert_at_cursor() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("text");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            o.emit_by_name::<()>("insert-at-cursor", &[&"x"]);
+        };
+        assert_ne!(h.resolve_signal("text", "insert-at-cursor"), 0);
+        assert_eq!(h.resolve_signal("text", "insert-at-cursor"), h.resolve_signal("text", "insert-at-cursor"));
+        h.listen(e, "insert-at-cursor", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "insert-at-cursor".to_string())), "delivered: {ev:?}");
+        h.listen(e, "insert-at-cursor", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "insert-at-cursor", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "insert-at-cursor", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal Text.paste-clipboard: runtime: returns void, run-last; probe: action signal, emitted and delivered
+#[test]
+fn signal_text_paste_clipboard() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("text");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v; o.emit_by_name::<()>("paste-clipboard", &[]);
+        };
+        assert_ne!(h.resolve_signal("text", "paste-clipboard"), 0);
+        assert_eq!(h.resolve_signal("text", "paste-clipboard"), h.resolve_signal("text", "paste-clipboard"));
+        h.listen(e, "paste-clipboard", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "paste-clipboard".to_string())), "delivered: {ev:?}");
+        h.listen(e, "paste-clipboard", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "paste-clipboard", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "paste-clipboard", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal Text.toggle-overwrite: runtime: returns void, run-last; probe: action signal, emitted and delivered
+#[test]
+fn signal_text_toggle_overwrite() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("text");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v; o.emit_by_name::<()>("toggle-overwrite", &[]);
+        };
+        assert_ne!(h.resolve_signal("text", "toggle-overwrite"), 0);
+        assert_eq!(h.resolve_signal("text", "toggle-overwrite"), h.resolve_signal("text", "toggle-overwrite"));
+        h.listen(e, "toggle-overwrite", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "toggle-overwrite".to_string())), "delivered: {ev:?}");
+        h.listen(e, "toggle-overwrite", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "toggle-overwrite", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "toggle-overwrite", true).is_err(), "stale handle is an error");
+    });
+}
+
 /// property Text.activates-default (JS activates-default): GtkText:activates-default (Gtk 4 docs)
 #[test]
 fn prop_text_activates_default() {
@@ -8054,6 +21027,92 @@ fn prop_text_activates_default() {
     });
 }
 
+/// property Text.buffer (JS buffer, round trip): probe: round trip exact; notify fired
+#[test]
+fn prop_text_buffer() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        
+        let before = h.get_value(o, "buffer");
+        h.set_value(o, "buffer", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "buffer")), crate::testing::shape(&before));
+    });
+}
+
+/// property Text.enable-emoji-completion (JS enable-emoji-completion): probe: round trip exact; notify fired
+#[test]
+fn prop_text_enable_emoji_completion() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        
+        let id = h.resolve_prop("text", "enable-emoji-completion");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("text", "enable-emoji-completion"));
+        h.set_bool(o, "enable-emoji-completion", true).unwrap();
+        assert_eq!(h.get(o, "enable-emoji-completion"), V::Bool(true));
+    });
+}
+
+/// property Text.extra-menu (JS extra-menu, round trip): probe: round trip exact; notify fired
+#[test]
+fn prop_text_extra_menu() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        
+        let before = h.get_value(o, "extra-menu");
+        h.set_value(o, "extra-menu", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "extra-menu")), crate::testing::shape(&before));
+    });
+}
+
+/// property Text.im-module (JS im-module): probe: round trip exact; notify fired
+#[test]
+fn prop_text_im_module() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        
+        let id = h.resolve_prop("text", "im-module");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("text", "im-module"));
+        h.set_str(o, "im-module", "svl probe").unwrap();
+        assert_eq!(h.get(o, "im-module"), V::Str("svl probe".into()));
+    });
+}
+
+/// property Text.input-purpose (JS input-purpose): probe: round trip exact; notify fired
+#[test]
+fn prop_text_input_purpose() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        
+        let id = h.resolve_prop("text", "input-purpose");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("text", "input-purpose"));
+        h.set_str(o, "input-purpose", "alpha").unwrap();
+        assert_eq!(h.get(o, "input-purpose"), V::Str("alpha".into()));
+    });
+}
+
+/// property Text.invisible-char-set (JS invisible-char-set): probe: round trip exact; notify fired
+#[test]
+fn prop_text_invisible_char_set() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        
+        let id = h.resolve_prop("text", "invisible-char-set");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("text", "invisible-char-set"));
+        h.set_bool(o, "invisible-char-set", true).unwrap();
+        assert_eq!(h.get(o, "invisible-char-set"), V::Bool(true));
+    });
+}
+
 /// property Text.max-length (JS max-length): GtkText:max-length (Gtk 4 docs)
 #[test]
 fn prop_text_max_length() {
@@ -8064,8 +21123,8 @@ fn prop_text_max_length() {
         let id = h.resolve_prop("text", "max-length");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("text", "max-length"));
-        h.set_i64(o, "max-length", 7).unwrap();
-        assert_eq!(h.get(o, "max-length"), V::I64(7));
+        h.set_i64(o, "max-length", 1).unwrap();
+        assert_eq!(h.get(o, "max-length"), V::I64(1));
     });
 }
 
@@ -8094,8 +21153,38 @@ fn prop_text_placeholder_text() {
         let id = h.resolve_prop("text", "placeholder-text");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("text", "placeholder-text"));
-        h.set_str(o, "placeholder-text", "p3-sample").unwrap();
-        assert_eq!(h.get(o, "placeholder-text"), V::Str("p3-sample".into()));
+        h.set_str(o, "placeholder-text", "svl probe").unwrap();
+        assert_eq!(h.get(o, "placeholder-text"), V::Str("svl probe".into()));
+    });
+}
+
+/// property Text.propagate-text-width (JS propagate-text-width): probe: round trip exact; notify fired
+#[test]
+fn prop_text_propagate_text_width() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        
+        let id = h.resolve_prop("text", "propagate-text-width");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("text", "propagate-text-width"));
+        h.set_bool(o, "propagate-text-width", true).unwrap();
+        assert_eq!(h.get(o, "propagate-text-width"), V::Bool(true));
+    });
+}
+
+/// property Text.truncate-multiline (JS truncate-multiline): probe: round trip exact; notify fired
+#[test]
+fn prop_text_truncate_multiline() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        
+        let id = h.resolve_prop("text", "truncate-multiline");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("text", "truncate-multiline"));
+        h.set_bool(o, "truncate-multiline", true).unwrap();
+        assert_eq!(h.get(o, "truncate-multiline"), V::Bool(true));
     });
 }
 
@@ -8111,6 +21200,542 @@ fn prop_text_visibility() {
         assert_eq!(id, h.resolve_prop("text", "visibility"));
         h.set_bool(o, "visibility", false).unwrap();
         assert_eq!(h.get(o, "visibility"), V::Bool(false));
+    });
+}
+
+/// method Text.get_activates_default (dynamic GI call): probe: equals property activates-default
+#[test]
+fn method_text_get_activates_default() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        
+        let r = h.call_args(o, "get_activates_default", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "activates-default"), "postcondition: r == h.get(o, 'activates-default')");
+    });
+}
+
+/// method Text.get_enable_emoji_completion (dynamic GI call): probe: equals property enable-emoji-completion
+#[test]
+fn method_text_get_enable_emoji_completion() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        
+        let r = h.call_args(o, "get_enable_emoji_completion", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "enable-emoji-completion"), "postcondition: r == h.get(o, 'enable-emoji-completion')");
+    });
+}
+
+/// method Text.get_input_purpose (dynamic GI call): probe: equals property input-purpose
+#[test]
+fn method_text_get_input_purpose() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        
+        let r = h.call_args(o, "get_input_purpose", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "input-purpose"), "postcondition: r == h.get(o, 'input-purpose')");
+    });
+}
+
+/// method Text.get_max_length (dynamic GI call): probe: equals property max-length
+#[test]
+fn method_text_get_max_length() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        
+        let r = h.call_args(o, "get_max_length", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "max-length"), "postcondition: r == h.get(o, 'max-length')");
+    });
+}
+
+/// method Text.get_overwrite_mode (dynamic GI call): probe: equals property overwrite-mode
+#[test]
+fn method_text_get_overwrite_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        
+        let r = h.call_args(o, "get_overwrite_mode", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "overwrite-mode"), "postcondition: r == h.get(o, 'overwrite-mode')");
+    });
+}
+
+/// method Text.get_placeholder_text (dynamic GI call): probe: equals property placeholder-text
+#[test]
+fn method_text_get_placeholder_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        
+        let r = h.call_args(o, "get_placeholder_text", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "placeholder-text"), "postcondition: r == h.get(o, 'placeholder-text')");
+    });
+}
+
+/// method Text.get_propagate_text_width (dynamic GI call): probe: equals property propagate-text-width
+#[test]
+fn method_text_get_propagate_text_width() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        
+        let r = h.call_args(o, "get_propagate_text_width", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "propagate-text-width"), "postcondition: r == h.get(o, 'propagate-text-width')");
+    });
+}
+
+/// method Text.get_text_length (dynamic GI call): probe: called on a new instance, returned 0
+#[test]
+fn method_text_get_text_length() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        
+        let r = h.call_args(o, "get_text_length", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::I64(0), "postcondition: r == V::I64(0)");
+    });
+}
+
+/// method Text.get_truncate_multiline (dynamic GI call): probe: equals property truncate-multiline
+#[test]
+fn method_text_get_truncate_multiline() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        
+        let r = h.call_args(o, "get_truncate_multiline", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "truncate-multiline"), "postcondition: r == h.get(o, 'truncate-multiline')");
+    });
+}
+
+/// method Text.get_visibility (dynamic GI call): probe: equals property visibility
+#[test]
+fn method_text_get_visibility() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        
+        let r = h.call_args(o, "get_visibility", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "visibility"), "postcondition: r == h.get(o, 'visibility')");
+    });
+}
+
+/// method Text.set_activates_default (dynamic GI call): probe: set then read property activates-default: exact
+#[test]
+fn method_text_set_activates_default() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        
+        let r = h.call_args(o, "set_activates_default", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "activates-default") == V::Bool(true), "postcondition: h.get(o, 'activates-default') == V::Bool(true)");
+    });
+}
+
+/// method Text.set_enable_emoji_completion (dynamic GI call): probe: set then read property enable-emoji-completion: exact
+#[test]
+fn method_text_set_enable_emoji_completion() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        
+        let r = h.call_args(o, "set_enable_emoji_completion", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "enable-emoji-completion") == V::Bool(true), "postcondition: h.get(o, 'enable-emoji-completion') == V::Bool(true)");
+    });
+}
+
+/// method Text.set_input_purpose (dynamic GI call): probe: set then read property input-purpose: exact
+#[test]
+fn method_text_set_input_purpose() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        
+        let r = h.call_args(o, "set_input_purpose", &[V::Str("alpha".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "input-purpose") == V::Str("alpha".into()), "postcondition: h.get(o, 'input-purpose') == V::Str('alpha'.into())");
+    });
+}
+
+/// method Text.set_max_length (dynamic GI call): probe: set then read property max-length: exact
+#[test]
+fn method_text_set_max_length() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        
+        let r = h.call_args(o, "set_max_length", &[V::I64(1)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "max-length") == V::I64(1), "postcondition: h.get(o, 'max-length') == V::I64(1)");
+    });
+}
+
+/// method Text.set_overwrite_mode (dynamic GI call): probe: set then read property overwrite-mode: exact
+#[test]
+fn method_text_set_overwrite_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        
+        let r = h.call_args(o, "set_overwrite_mode", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "overwrite-mode") == V::Bool(true), "postcondition: h.get(o, 'overwrite-mode') == V::Bool(true)");
+    });
+}
+
+/// method Text.set_placeholder_text (dynamic GI call): probe: set then read property placeholder-text: exact
+#[test]
+fn method_text_set_placeholder_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        
+        let r = h.call_args(o, "set_placeholder_text", &[V::Str("svl probe".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "placeholder-text") == V::Str("svl probe".into()), "postcondition: h.get(o, 'placeholder-text') == V::Str('svl probe'.into())");
+    });
+}
+
+/// method Text.set_propagate_text_width (dynamic GI call): probe: set then read property propagate-text-width: exact
+#[test]
+fn method_text_set_propagate_text_width() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        
+        let r = h.call_args(o, "set_propagate_text_width", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "propagate-text-width") == V::Bool(true), "postcondition: h.get(o, 'propagate-text-width') == V::Bool(true)");
+    });
+}
+
+/// method Text.set_truncate_multiline (dynamic GI call): probe: set then read property truncate-multiline: exact
+#[test]
+fn method_text_set_truncate_multiline() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        
+        let r = h.call_args(o, "set_truncate_multiline", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "truncate-multiline") == V::Bool(true), "postcondition: h.get(o, 'truncate-multiline') == V::Bool(true)");
+    });
+}
+
+/// method Text.set_visibility (dynamic GI call): probe: set then read property visibility: exact
+#[test]
+fn method_text_set_visibility() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        
+        let r = h.call_args(o, "set_visibility", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "visibility") == V::Bool(false), "postcondition: h.get(o, 'visibility') == V::Bool(false)");
+    });
+}
+
+/// bind:activates-default on Text: rule: B1: GtkText:activates-default is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_text_activates_default() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("activates-default", true),
+                1 => o.set_property("activates-default", false),
+                2 => o.set_property("activates-default", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::activates-default", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "activates-default"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "activates-default", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "activates-default"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:enable-emoji-completion on Text: rule: B1: GtkText:enable-emoji-completion is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_text_enable_emoji_completion() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("enable-emoji-completion", true),
+                1 => o.set_property("enable-emoji-completion", false),
+                2 => o.set_property("enable-emoji-completion", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::enable-emoji-completion", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "enable-emoji-completion"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "enable-emoji-completion", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "enable-emoji-completion"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:input-purpose on Text: rule: B1: GtkText:input-purpose is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_text_input_purpose() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => { let pspec = o.find_property("input-purpose").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("input-purpose", &ev.to_value_by_nick("alpha").unwrap()) },
+                1 => { let pspec = o.find_property("input-purpose").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("input-purpose", &ev.to_value_by_nick("free-form").unwrap()) },
+                2 => { let pspec = o.find_property("input-purpose").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("input-purpose", &ev.to_value_by_nick("alpha").unwrap()) },
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::input-purpose", true).unwrap();
+        fire(&h.obj(o), "alpha", 0);
+        fire(&h.obj(o), "free-form", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "input-purpose"), V::Str("free-form".into()), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_str(o, "input-purpose", "alpha").unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "input-purpose"), V::Str("alpha".into()), "the property reads the programmatic value");
+    });
+}
+
+/// bind:invisible-char-set on Text: rule: B1: GtkText:invisible-char-set is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_text_invisible_char_set() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("invisible-char-set", true),
+                1 => o.set_property("invisible-char-set", false),
+                2 => o.set_property("invisible-char-set", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::invisible-char-set", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "invisible-char-set"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "invisible-char-set", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "invisible-char-set"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:max-length on Text: rule: B1: GtkText:max-length is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_text_max_length() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("max-length", 1i32),
+                1 => o.set_property("max-length", 0i32),
+                2 => o.set_property("max-length", 1i32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::max-length", true).unwrap();
+        fire(&h.obj(o), "1", 0);
+        fire(&h.obj(o), "0", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "max-length"), V::I64(0), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "max-length", 1).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "max-length"), V::I64(1), "the property reads the programmatic value");
+    });
+}
+
+/// bind:overwrite-mode on Text: rule: B1: GtkText:overwrite-mode is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_text_overwrite_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("overwrite-mode", true),
+                1 => o.set_property("overwrite-mode", false),
+                2 => o.set_property("overwrite-mode", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::overwrite-mode", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "overwrite-mode"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "overwrite-mode", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "overwrite-mode"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:propagate-text-width on Text: rule: B1: GtkText:propagate-text-width is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_text_propagate_text_width() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("propagate-text-width", true),
+                1 => o.set_property("propagate-text-width", false),
+                2 => o.set_property("propagate-text-width", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::propagate-text-width", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "propagate-text-width"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "propagate-text-width", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "propagate-text-width"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:truncate-multiline on Text: rule: B1: GtkText:truncate-multiline is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_text_truncate_multiline() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("truncate-multiline", true),
+                1 => o.set_property("truncate-multiline", false),
+                2 => o.set_property("truncate-multiline", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::truncate-multiline", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "truncate-multiline"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "truncate-multiline", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "truncate-multiline"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:visibility on Text: rule: B1: GtkText:visibility is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_text_visibility() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("visibility", false),
+                1 => o.set_property("visibility", true),
+                2 => o.set_property("visibility", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::visibility", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "visibility"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "visibility", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "visibility"), V::Bool(false), "the property reads the programmatic value");
     });
 }
 
@@ -8359,6 +21984,285 @@ fn method_textbuffer_undo() {
     });
 }
 
+/// signal TextView.backspace: runtime: returns void, run-last; probe: action signal, emitted and delivered
+#[test]
+fn signal_textview_backspace() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("text-view");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v; o.emit_by_name::<()>("backspace", &[]);
+        };
+        assert_ne!(h.resolve_signal("text-view", "backspace"), 0);
+        assert_eq!(h.resolve_signal("text-view", "backspace"), h.resolve_signal("text-view", "backspace"));
+        h.listen(e, "backspace", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "backspace".to_string())), "delivered: {ev:?}");
+        h.listen(e, "backspace", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "backspace", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "backspace", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal TextView.copy-clipboard: runtime: returns void, run-last; probe: action signal, emitted and delivered
+#[test]
+fn signal_textview_copy_clipboard() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("text-view");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v; o.emit_by_name::<()>("copy-clipboard", &[]);
+        };
+        assert_ne!(h.resolve_signal("text-view", "copy-clipboard"), 0);
+        assert_eq!(h.resolve_signal("text-view", "copy-clipboard"), h.resolve_signal("text-view", "copy-clipboard"));
+        h.listen(e, "copy-clipboard", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "copy-clipboard".to_string())), "delivered: {ev:?}");
+        h.listen(e, "copy-clipboard", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "copy-clipboard", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "copy-clipboard", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal TextView.cut-clipboard: runtime: returns void, run-last; probe: action signal, emitted and delivered
+#[test]
+fn signal_textview_cut_clipboard() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("text-view");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v; o.emit_by_name::<()>("cut-clipboard", &[]);
+        };
+        assert_ne!(h.resolve_signal("text-view", "cut-clipboard"), 0);
+        assert_eq!(h.resolve_signal("text-view", "cut-clipboard"), h.resolve_signal("text-view", "cut-clipboard"));
+        h.listen(e, "cut-clipboard", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "cut-clipboard".to_string())), "delivered: {ev:?}");
+        h.listen(e, "cut-clipboard", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "cut-clipboard", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "cut-clipboard", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal TextView.insert-at-cursor: runtime: returns void, run-last; probe: emitted synthetically with sampled arguments; delivery only, no native trigger
+#[test]
+fn signal_textview_insert_at_cursor() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("text-view");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            o.emit_by_name::<()>("insert-at-cursor", &[&"x"]);
+        };
+        assert_ne!(h.resolve_signal("text-view", "insert-at-cursor"), 0);
+        assert_eq!(h.resolve_signal("text-view", "insert-at-cursor"), h.resolve_signal("text-view", "insert-at-cursor"));
+        h.listen(e, "insert-at-cursor", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "insert-at-cursor".to_string())), "delivered: {ev:?}");
+        h.listen(e, "insert-at-cursor", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "insert-at-cursor", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "insert-at-cursor", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal TextView.paste-clipboard: runtime: returns void, run-last; probe: action signal, emitted and delivered
+#[test]
+fn signal_textview_paste_clipboard() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("text-view");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v; o.emit_by_name::<()>("paste-clipboard", &[]);
+        };
+        assert_ne!(h.resolve_signal("text-view", "paste-clipboard"), 0);
+        assert_eq!(h.resolve_signal("text-view", "paste-clipboard"), h.resolve_signal("text-view", "paste-clipboard"));
+        h.listen(e, "paste-clipboard", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "paste-clipboard".to_string())), "delivered: {ev:?}");
+        h.listen(e, "paste-clipboard", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "paste-clipboard", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "paste-clipboard", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal TextView.select-all: runtime: returns void, run-last; probe: emitted synthetically with sampled arguments; delivery only, no native trigger
+#[test]
+fn signal_textview_select_all() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("text-view");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            o.emit_by_name::<()>("select-all", &[&true]);
+        };
+        assert_ne!(h.resolve_signal("text-view", "select-all"), 0);
+        assert_eq!(h.resolve_signal("text-view", "select-all"), h.resolve_signal("text-view", "select-all"));
+        h.listen(e, "select-all", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "select-all".to_string())), "delivered: {ev:?}");
+        h.listen(e, "select-all", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "select-all", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "select-all", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal TextView.set-anchor: runtime: returns void, run-last; probe: action signal, emitted and delivered
+#[test]
+fn signal_textview_set_anchor() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("text-view");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v; o.emit_by_name::<()>("set-anchor", &[]);
+        };
+        assert_ne!(h.resolve_signal("text-view", "set-anchor"), 0);
+        assert_eq!(h.resolve_signal("text-view", "set-anchor"), h.resolve_signal("text-view", "set-anchor"));
+        h.listen(e, "set-anchor", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "set-anchor".to_string())), "delivered: {ev:?}");
+        h.listen(e, "set-anchor", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "set-anchor", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "set-anchor", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal TextView.toggle-cursor-visible: runtime: returns void, run-last; probe: action signal, emitted and delivered
+#[test]
+fn signal_textview_toggle_cursor_visible() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("text-view");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v; o.emit_by_name::<()>("toggle-cursor-visible", &[]);
+        };
+        assert_ne!(h.resolve_signal("text-view", "toggle-cursor-visible"), 0);
+        assert_eq!(h.resolve_signal("text-view", "toggle-cursor-visible"), h.resolve_signal("text-view", "toggle-cursor-visible"));
+        h.listen(e, "toggle-cursor-visible", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "toggle-cursor-visible".to_string())), "delivered: {ev:?}");
+        h.listen(e, "toggle-cursor-visible", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "toggle-cursor-visible", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "toggle-cursor-visible", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal TextView.toggle-overwrite: runtime: returns void, run-last; probe: action signal, emitted and delivered
+#[test]
+fn signal_textview_toggle_overwrite() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("text-view");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v; o.emit_by_name::<()>("toggle-overwrite", &[]);
+        };
+        assert_ne!(h.resolve_signal("text-view", "toggle-overwrite"), 0);
+        assert_eq!(h.resolve_signal("text-view", "toggle-overwrite"), h.resolve_signal("text-view", "toggle-overwrite"));
+        h.listen(e, "toggle-overwrite", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "toggle-overwrite".to_string())), "delivered: {ev:?}");
+        h.listen(e, "toggle-overwrite", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "toggle-overwrite", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "toggle-overwrite", true).is_err(), "stale handle is an error");
+    });
+}
+
 /// signal TextView.changed: GtkTextBuffer::changed through GtkTextView:buffer (Gtk 4 docs); the text view has no such signal, the backend connects it on the buffer (X7, G12)
 #[test]
 fn signal_textview_changed() {
@@ -8387,6 +22291,49 @@ fn signal_textview_changed() {
         fire(&obj, "c", 2);
         assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
         assert!(h.listen(e, "changed", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// property TextView.accepts-tab (JS accepts-tab): probe: round trip exact; notify fired
+#[test]
+fn prop_textview_accepts_tab() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let id = h.resolve_prop("text-view", "accepts-tab");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("text-view", "accepts-tab"));
+        h.set_bool(o, "accepts-tab", false).unwrap();
+        assert_eq!(h.get(o, "accepts-tab"), V::Bool(false));
+    });
+}
+
+/// property TextView.bottom-margin (JS bottom-margin): probe: round trip exact; notify fired
+#[test]
+fn prop_textview_bottom_margin() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let id = h.resolve_prop("text-view", "bottom-margin");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("text-view", "bottom-margin"));
+        h.set_i64(o, "bottom-margin", 1).unwrap();
+        assert_eq!(h.get(o, "bottom-margin"), V::I64(1));
+    });
+}
+
+/// property TextView.buffer (JS buffer, round trip): probe: round trip exact; notify fired
+#[test]
+fn prop_textview_buffer() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let before = h.get_value(o, "buffer");
+        h.set_value(o, "buffer", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "buffer")), crate::testing::shape(&before));
     });
 }
 
@@ -8420,6 +22367,64 @@ fn prop_textview_editable() {
     });
 }
 
+/// property TextView.extra-menu (JS extra-menu, round trip): probe: round trip exact; notify fired
+#[test]
+fn prop_textview_extra_menu() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let before = h.get_value(o, "extra-menu");
+        h.set_value(o, "extra-menu", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "extra-menu")), crate::testing::shape(&before));
+    });
+}
+
+/// property TextView.im-module (JS im-module): probe: round trip exact; notify fired
+#[test]
+fn prop_textview_im_module() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let id = h.resolve_prop("text-view", "im-module");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("text-view", "im-module"));
+        h.set_str(o, "im-module", "svl probe").unwrap();
+        assert_eq!(h.get(o, "im-module"), V::Str("svl probe".into()));
+    });
+}
+
+/// property TextView.indent (JS indent): probe: round trip exact; notify fired
+#[test]
+fn prop_textview_indent() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let id = h.resolve_prop("text-view", "indent");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("text-view", "indent"));
+        h.set_i64(o, "indent", 1).unwrap();
+        assert_eq!(h.get(o, "indent"), V::I64(1));
+    });
+}
+
+/// property TextView.input-purpose (JS input-purpose): probe: round trip exact; notify fired
+#[test]
+fn prop_textview_input_purpose() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let id = h.resolve_prop("text-view", "input-purpose");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("text-view", "input-purpose"));
+        h.set_str(o, "input-purpose", "alpha").unwrap();
+        assert_eq!(h.get(o, "input-purpose"), V::Str("alpha".into()));
+    });
+}
+
 /// property TextView.justification (JS justification): GtkTextView:justification (Gtk 4 docs)
 #[test]
 fn prop_textview_justification() {
@@ -8445,8 +22450,8 @@ fn prop_textview_left_margin() {
         let id = h.resolve_prop("text-view", "left-margin");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("text-view", "left-margin"));
-        h.set_i64(o, "left-margin", 7).unwrap();
-        assert_eq!(h.get(o, "left-margin"), V::I64(7));
+        h.set_i64(o, "left-margin", 1).unwrap();
+        assert_eq!(h.get(o, "left-margin"), V::I64(1));
     });
 }
 
@@ -8462,6 +22467,81 @@ fn prop_textview_monospace() {
         assert_eq!(id, h.resolve_prop("text-view", "monospace"));
         h.set_bool(o, "monospace", true).unwrap();
         assert_eq!(h.get(o, "monospace"), V::Bool(true));
+    });
+}
+
+/// property TextView.overwrite (JS overwrite): probe: round trip exact; notify fired
+#[test]
+fn prop_textview_overwrite() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let id = h.resolve_prop("text-view", "overwrite");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("text-view", "overwrite"));
+        h.set_bool(o, "overwrite", true).unwrap();
+        assert_eq!(h.get(o, "overwrite"), V::Bool(true));
+    });
+}
+
+/// property TextView.pixels-above-lines (JS pixels-above-lines): probe: round trip exact; notify fired
+#[test]
+fn prop_textview_pixels_above_lines() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let id = h.resolve_prop("text-view", "pixels-above-lines");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("text-view", "pixels-above-lines"));
+        h.set_i64(o, "pixels-above-lines", 1).unwrap();
+        assert_eq!(h.get(o, "pixels-above-lines"), V::I64(1));
+    });
+}
+
+/// property TextView.pixels-below-lines (JS pixels-below-lines): probe: round trip exact; notify fired
+#[test]
+fn prop_textview_pixels_below_lines() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let id = h.resolve_prop("text-view", "pixels-below-lines");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("text-view", "pixels-below-lines"));
+        h.set_i64(o, "pixels-below-lines", 1).unwrap();
+        assert_eq!(h.get(o, "pixels-below-lines"), V::I64(1));
+    });
+}
+
+/// property TextView.pixels-inside-wrap (JS pixels-inside-wrap): probe: round trip exact; notify fired
+#[test]
+fn prop_textview_pixels_inside_wrap() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let id = h.resolve_prop("text-view", "pixels-inside-wrap");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("text-view", "pixels-inside-wrap"));
+        h.set_i64(o, "pixels-inside-wrap", 1).unwrap();
+        assert_eq!(h.get(o, "pixels-inside-wrap"), V::I64(1));
+    });
+}
+
+/// property TextView.right-margin (JS right-margin): probe: round trip exact; notify fired
+#[test]
+fn prop_textview_right_margin() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let id = h.resolve_prop("text-view", "right-margin");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("text-view", "right-margin"));
+        h.set_i64(o, "right-margin", 1).unwrap();
+        assert_eq!(h.get(o, "right-margin"), V::I64(1));
     });
 }
 
@@ -8519,8 +22599,8 @@ fn prop_textview_top_margin() {
         let id = h.resolve_prop("text-view", "top-margin");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("text-view", "top-margin"));
-        h.set_i64(o, "top-margin", 7).unwrap();
-        assert_eq!(h.get(o, "top-margin"), V::I64(7));
+        h.set_i64(o, "top-margin", 1).unwrap();
+        assert_eq!(h.get(o, "top-margin"), V::I64(1));
     });
 }
 
@@ -8539,6 +22619,34 @@ fn prop_textview_wrap_mode() {
     });
 }
 
+/// method TextView.get_accepts_tab (dynamic GI call): probe: equals property accepts-tab
+#[test]
+fn method_textview_get_accepts_tab() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let r = h.call_args(o, "get_accepts_tab", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "accepts-tab"), "postcondition: r == h.get(o, 'accepts-tab')");
+    });
+}
+
+/// method TextView.get_bottom_margin (dynamic GI call): probe: equals property bottom-margin
+#[test]
+fn method_textview_get_bottom_margin() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let r = h.call_args(o, "get_bottom_margin", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "bottom-margin"), "postcondition: r == h.get(o, 'bottom-margin')");
+    });
+}
+
 /// method TextView.get_buffer (dynamic GI call): gtk_text_view_get_buffer (Gtk 4 docs); called through GIRepository (X1)
 #[test]
 fn method_textview_get_buffer() {
@@ -8553,6 +22661,202 @@ fn method_textview_get_buffer() {
     });
 }
 
+/// method TextView.get_cursor_visible (dynamic GI call): probe: equals property cursor-visible
+#[test]
+fn method_textview_get_cursor_visible() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let r = h.call_args(o, "get_cursor_visible", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "cursor-visible"), "postcondition: r == h.get(o, 'cursor-visible')");
+    });
+}
+
+/// method TextView.get_editable (dynamic GI call): probe: equals property editable
+#[test]
+fn method_textview_get_editable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let r = h.call_args(o, "get_editable", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "editable"), "postcondition: r == h.get(o, 'editable')");
+    });
+}
+
+/// method TextView.get_indent (dynamic GI call): probe: equals property indent
+#[test]
+fn method_textview_get_indent() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let r = h.call_args(o, "get_indent", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "indent"), "postcondition: r == h.get(o, 'indent')");
+    });
+}
+
+/// method TextView.get_input_purpose (dynamic GI call): probe: equals property input-purpose
+#[test]
+fn method_textview_get_input_purpose() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let r = h.call_args(o, "get_input_purpose", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "input-purpose"), "postcondition: r == h.get(o, 'input-purpose')");
+    });
+}
+
+/// method TextView.get_justification (dynamic GI call): probe: equals property justification
+#[test]
+fn method_textview_get_justification() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let r = h.call_args(o, "get_justification", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "justification"), "postcondition: r == h.get(o, 'justification')");
+    });
+}
+
+/// method TextView.get_left_margin (dynamic GI call): probe: equals property left-margin
+#[test]
+fn method_textview_get_left_margin() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let r = h.call_args(o, "get_left_margin", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "left-margin"), "postcondition: r == h.get(o, 'left-margin')");
+    });
+}
+
+/// method TextView.get_monospace (dynamic GI call): probe: equals property monospace
+#[test]
+fn method_textview_get_monospace() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let r = h.call_args(o, "get_monospace", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "monospace"), "postcondition: r == h.get(o, 'monospace')");
+    });
+}
+
+/// method TextView.get_overwrite (dynamic GI call): probe: equals property overwrite
+#[test]
+fn method_textview_get_overwrite() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let r = h.call_args(o, "get_overwrite", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "overwrite"), "postcondition: r == h.get(o, 'overwrite')");
+    });
+}
+
+/// method TextView.get_pixels_above_lines (dynamic GI call): probe: equals property pixels-above-lines
+#[test]
+fn method_textview_get_pixels_above_lines() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let r = h.call_args(o, "get_pixels_above_lines", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "pixels-above-lines"), "postcondition: r == h.get(o, 'pixels-above-lines')");
+    });
+}
+
+/// method TextView.get_pixels_below_lines (dynamic GI call): probe: equals property pixels-below-lines
+#[test]
+fn method_textview_get_pixels_below_lines() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let r = h.call_args(o, "get_pixels_below_lines", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "pixels-below-lines"), "postcondition: r == h.get(o, 'pixels-below-lines')");
+    });
+}
+
+/// method TextView.get_pixels_inside_wrap (dynamic GI call): probe: equals property pixels-inside-wrap
+#[test]
+fn method_textview_get_pixels_inside_wrap() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let r = h.call_args(o, "get_pixels_inside_wrap", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "pixels-inside-wrap"), "postcondition: r == h.get(o, 'pixels-inside-wrap')");
+    });
+}
+
+/// method TextView.get_right_margin (dynamic GI call): probe: equals property right-margin
+#[test]
+fn method_textview_get_right_margin() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let r = h.call_args(o, "get_right_margin", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "right-margin"), "postcondition: r == h.get(o, 'right-margin')");
+    });
+}
+
+/// method TextView.get_top_margin (dynamic GI call): probe: equals property top-margin
+#[test]
+fn method_textview_get_top_margin() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let r = h.call_args(o, "get_top_margin", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "top-margin"), "postcondition: r == h.get(o, 'top-margin')");
+    });
+}
+
+/// method TextView.get_wrap_mode (dynamic GI call): probe: equals property wrap-mode
+#[test]
+fn method_textview_get_wrap_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let r = h.call_args(o, "get_wrap_mode", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "wrap-mode"), "postcondition: r == h.get(o, 'wrap-mode')");
+    });
+}
+
 /// method TextView.place_cursor_onscreen (dynamic GI call): gtk_text_view_place_cursor_onscreen (Gtk 4 docs); called through GIRepository (X1)
 #[test]
 fn method_textview_place_cursor_onscreen() {
@@ -8564,6 +22868,710 @@ fn method_textview_place_cursor_onscreen() {
         let w = h.widget(o);
         let _ = (&w, &r);
         assert!(matches!(r, V::Bool(_)), "postcondition: matches!(r, V::Bool(_))");
+    });
+}
+
+/// method TextView.set_accepts_tab (dynamic GI call): probe: set then read property accepts-tab: exact
+#[test]
+fn method_textview_set_accepts_tab() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let r = h.call_args(o, "set_accepts_tab", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "accepts-tab") == V::Bool(false), "postcondition: h.get(o, 'accepts-tab') == V::Bool(false)");
+    });
+}
+
+/// method TextView.set_bottom_margin (dynamic GI call): probe: set then read property bottom-margin: exact
+#[test]
+fn method_textview_set_bottom_margin() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let r = h.call_args(o, "set_bottom_margin", &[V::I64(1)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "bottom-margin") == V::I64(1), "postcondition: h.get(o, 'bottom-margin') == V::I64(1)");
+    });
+}
+
+/// method TextView.set_cursor_visible (dynamic GI call): probe: set then read property cursor-visible: exact
+#[test]
+fn method_textview_set_cursor_visible() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let r = h.call_args(o, "set_cursor_visible", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "cursor-visible") == V::Bool(false), "postcondition: h.get(o, 'cursor-visible') == V::Bool(false)");
+    });
+}
+
+/// method TextView.set_editable (dynamic GI call): probe: set then read property editable: exact
+#[test]
+fn method_textview_set_editable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let r = h.call_args(o, "set_editable", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "editable") == V::Bool(false), "postcondition: h.get(o, 'editable') == V::Bool(false)");
+    });
+}
+
+/// method TextView.set_indent (dynamic GI call): probe: set then read property indent: exact
+#[test]
+fn method_textview_set_indent() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let r = h.call_args(o, "set_indent", &[V::I64(1)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "indent") == V::I64(1), "postcondition: h.get(o, 'indent') == V::I64(1)");
+    });
+}
+
+/// method TextView.set_input_purpose (dynamic GI call): probe: set then read property input-purpose: exact
+#[test]
+fn method_textview_set_input_purpose() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let r = h.call_args(o, "set_input_purpose", &[V::Str("alpha".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "input-purpose") == V::Str("alpha".into()), "postcondition: h.get(o, 'input-purpose') == V::Str('alpha'.into())");
+    });
+}
+
+/// method TextView.set_justification (dynamic GI call): probe: set then read property justification: exact
+#[test]
+fn method_textview_set_justification() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let r = h.call_args(o, "set_justification", &[V::Str("right".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "justification") == V::Str("right".into()), "postcondition: h.get(o, 'justification') == V::Str('right'.into())");
+    });
+}
+
+/// method TextView.set_left_margin (dynamic GI call): probe: set then read property left-margin: exact
+#[test]
+fn method_textview_set_left_margin() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let r = h.call_args(o, "set_left_margin", &[V::I64(1)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "left-margin") == V::I64(1), "postcondition: h.get(o, 'left-margin') == V::I64(1)");
+    });
+}
+
+/// method TextView.set_monospace (dynamic GI call): probe: set then read property monospace: exact
+#[test]
+fn method_textview_set_monospace() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let r = h.call_args(o, "set_monospace", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "monospace") == V::Bool(true), "postcondition: h.get(o, 'monospace') == V::Bool(true)");
+    });
+}
+
+/// method TextView.set_overwrite (dynamic GI call): probe: set then read property overwrite: exact
+#[test]
+fn method_textview_set_overwrite() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let r = h.call_args(o, "set_overwrite", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "overwrite") == V::Bool(true), "postcondition: h.get(o, 'overwrite') == V::Bool(true)");
+    });
+}
+
+/// method TextView.set_pixels_above_lines (dynamic GI call): probe: set then read property pixels-above-lines: exact
+#[test]
+fn method_textview_set_pixels_above_lines() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let r = h.call_args(o, "set_pixels_above_lines", &[V::I64(1)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "pixels-above-lines") == V::I64(1), "postcondition: h.get(o, 'pixels-above-lines') == V::I64(1)");
+    });
+}
+
+/// method TextView.set_pixels_below_lines (dynamic GI call): probe: set then read property pixels-below-lines: exact
+#[test]
+fn method_textview_set_pixels_below_lines() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let r = h.call_args(o, "set_pixels_below_lines", &[V::I64(1)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "pixels-below-lines") == V::I64(1), "postcondition: h.get(o, 'pixels-below-lines') == V::I64(1)");
+    });
+}
+
+/// method TextView.set_pixels_inside_wrap (dynamic GI call): probe: set then read property pixels-inside-wrap: exact
+#[test]
+fn method_textview_set_pixels_inside_wrap() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let r = h.call_args(o, "set_pixels_inside_wrap", &[V::I64(1)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "pixels-inside-wrap") == V::I64(1), "postcondition: h.get(o, 'pixels-inside-wrap') == V::I64(1)");
+    });
+}
+
+/// method TextView.set_right_margin (dynamic GI call): probe: set then read property right-margin: exact
+#[test]
+fn method_textview_set_right_margin() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let r = h.call_args(o, "set_right_margin", &[V::I64(1)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "right-margin") == V::I64(1), "postcondition: h.get(o, 'right-margin') == V::I64(1)");
+    });
+}
+
+/// method TextView.set_top_margin (dynamic GI call): probe: set then read property top-margin: exact
+#[test]
+fn method_textview_set_top_margin() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let r = h.call_args(o, "set_top_margin", &[V::I64(1)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "top-margin") == V::I64(1), "postcondition: h.get(o, 'top-margin') == V::I64(1)");
+    });
+}
+
+/// method TextView.set_wrap_mode (dynamic GI call): probe: set then read property wrap-mode: exact
+#[test]
+fn method_textview_set_wrap_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let r = h.call_args(o, "set_wrap_mode", &[V::Str("char".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "wrap-mode") == V::Str("char".into()), "postcondition: h.get(o, 'wrap-mode') == V::Str('char'.into())");
+    });
+}
+
+/// bind:accepts-tab on TextView: rule: B1: GtkTextView:accepts-tab is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_textview_accepts_tab() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("accepts-tab", false),
+                1 => o.set_property("accepts-tab", true),
+                2 => o.set_property("accepts-tab", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::accepts-tab", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "accepts-tab"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "accepts-tab", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "accepts-tab"), V::Bool(false), "the property reads the programmatic value");
+    });
+}
+
+/// bind:bottom-margin on TextView: rule: B1: GtkTextView:bottom-margin is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_textview_bottom_margin() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("bottom-margin", 1i32),
+                1 => o.set_property("bottom-margin", 0i32),
+                2 => o.set_property("bottom-margin", 1i32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::bottom-margin", true).unwrap();
+        fire(&h.obj(o), "1", 0);
+        fire(&h.obj(o), "0", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "bottom-margin"), V::I64(0), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "bottom-margin", 1).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "bottom-margin"), V::I64(1), "the property reads the programmatic value");
+    });
+}
+
+/// bind:cursor-visible on TextView: rule: B1: GtkTextView:cursor-visible is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_textview_cursor_visible() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("cursor-visible", false),
+                1 => o.set_property("cursor-visible", true),
+                2 => o.set_property("cursor-visible", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::cursor-visible", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "cursor-visible"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "cursor-visible", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "cursor-visible"), V::Bool(false), "the property reads the programmatic value");
+    });
+}
+
+/// bind:editable on TextView: rule: B1: GtkTextView:editable is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_textview_editable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("editable", false),
+                1 => o.set_property("editable", true),
+                2 => o.set_property("editable", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::editable", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "editable"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "editable", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "editable"), V::Bool(false), "the property reads the programmatic value");
+    });
+}
+
+/// bind:indent on TextView: rule: B1: GtkTextView:indent is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_textview_indent() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("indent", 1i32),
+                1 => o.set_property("indent", 0i32),
+                2 => o.set_property("indent", 1i32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::indent", true).unwrap();
+        fire(&h.obj(o), "1", 0);
+        fire(&h.obj(o), "0", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "indent"), V::I64(0), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "indent", 1).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "indent"), V::I64(1), "the property reads the programmatic value");
+    });
+}
+
+/// bind:input-purpose on TextView: rule: B1: GtkTextView:input-purpose is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_textview_input_purpose() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => { let pspec = o.find_property("input-purpose").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("input-purpose", &ev.to_value_by_nick("alpha").unwrap()) },
+                1 => { let pspec = o.find_property("input-purpose").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("input-purpose", &ev.to_value_by_nick("free-form").unwrap()) },
+                2 => { let pspec = o.find_property("input-purpose").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("input-purpose", &ev.to_value_by_nick("alpha").unwrap()) },
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::input-purpose", true).unwrap();
+        fire(&h.obj(o), "alpha", 0);
+        fire(&h.obj(o), "free-form", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "input-purpose"), V::Str("free-form".into()), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_str(o, "input-purpose", "alpha").unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "input-purpose"), V::Str("alpha".into()), "the property reads the programmatic value");
+    });
+}
+
+/// bind:justification on TextView: rule: B1: GtkTextView:justification is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_textview_justification() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => { let pspec = o.find_property("justification").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("justification", &ev.to_value_by_nick("right").unwrap()) },
+                1 => { let pspec = o.find_property("justification").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("justification", &ev.to_value_by_nick("left").unwrap()) },
+                2 => { let pspec = o.find_property("justification").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("justification", &ev.to_value_by_nick("right").unwrap()) },
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::justification", true).unwrap();
+        fire(&h.obj(o), "right", 0);
+        fire(&h.obj(o), "left", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "justification"), V::Str("left".into()), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_str(o, "justification", "right").unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "justification"), V::Str("right".into()), "the property reads the programmatic value");
+    });
+}
+
+/// bind:left-margin on TextView: rule: B1: GtkTextView:left-margin is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_textview_left_margin() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("left-margin", 1i32),
+                1 => o.set_property("left-margin", 0i32),
+                2 => o.set_property("left-margin", 1i32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::left-margin", true).unwrap();
+        fire(&h.obj(o), "1", 0);
+        fire(&h.obj(o), "0", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "left-margin"), V::I64(0), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "left-margin", 1).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "left-margin"), V::I64(1), "the property reads the programmatic value");
+    });
+}
+
+/// bind:monospace on TextView: rule: B1: GtkTextView:monospace is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_textview_monospace() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("monospace", true),
+                1 => o.set_property("monospace", false),
+                2 => o.set_property("monospace", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::monospace", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "monospace"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "monospace", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "monospace"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:overwrite on TextView: rule: B1: GtkTextView:overwrite is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_textview_overwrite() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("overwrite", true),
+                1 => o.set_property("overwrite", false),
+                2 => o.set_property("overwrite", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::overwrite", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "overwrite"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "overwrite", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "overwrite"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:pixels-above-lines on TextView: rule: B1: GtkTextView:pixels-above-lines is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_textview_pixels_above_lines() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("pixels-above-lines", 1i32),
+                1 => o.set_property("pixels-above-lines", 0i32),
+                2 => o.set_property("pixels-above-lines", 1i32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::pixels-above-lines", true).unwrap();
+        fire(&h.obj(o), "1", 0);
+        fire(&h.obj(o), "0", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "pixels-above-lines"), V::I64(0), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "pixels-above-lines", 1).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "pixels-above-lines"), V::I64(1), "the property reads the programmatic value");
+    });
+}
+
+/// bind:pixels-below-lines on TextView: rule: B1: GtkTextView:pixels-below-lines is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_textview_pixels_below_lines() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("pixels-below-lines", 1i32),
+                1 => o.set_property("pixels-below-lines", 0i32),
+                2 => o.set_property("pixels-below-lines", 1i32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::pixels-below-lines", true).unwrap();
+        fire(&h.obj(o), "1", 0);
+        fire(&h.obj(o), "0", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "pixels-below-lines"), V::I64(0), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "pixels-below-lines", 1).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "pixels-below-lines"), V::I64(1), "the property reads the programmatic value");
+    });
+}
+
+/// bind:pixels-inside-wrap on TextView: rule: B1: GtkTextView:pixels-inside-wrap is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_textview_pixels_inside_wrap() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("pixels-inside-wrap", 1i32),
+                1 => o.set_property("pixels-inside-wrap", 0i32),
+                2 => o.set_property("pixels-inside-wrap", 1i32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::pixels-inside-wrap", true).unwrap();
+        fire(&h.obj(o), "1", 0);
+        fire(&h.obj(o), "0", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "pixels-inside-wrap"), V::I64(0), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "pixels-inside-wrap", 1).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "pixels-inside-wrap"), V::I64(1), "the property reads the programmatic value");
+    });
+}
+
+/// bind:right-margin on TextView: rule: B1: GtkTextView:right-margin is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_textview_right_margin() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("right-margin", 1i32),
+                1 => o.set_property("right-margin", 0i32),
+                2 => o.set_property("right-margin", 1i32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::right-margin", true).unwrap();
+        fire(&h.obj(o), "1", 0);
+        fire(&h.obj(o), "0", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "right-margin"), V::I64(0), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "right-margin", 1).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "right-margin"), V::I64(1), "the property reads the programmatic value");
+    });
+}
+
+/// bind:top-margin on TextView: rule: B1: GtkTextView:top-margin is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_textview_top_margin() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("top-margin", 1i32),
+                1 => o.set_property("top-margin", 0i32),
+                2 => o.set_property("top-margin", 1i32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::top-margin", true).unwrap();
+        fire(&h.obj(o), "1", 0);
+        fire(&h.obj(o), "0", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "top-margin"), V::I64(0), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "top-margin", 1).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "top-margin"), V::I64(1), "the property reads the programmatic value");
+    });
+}
+
+/// bind:wrap-mode on TextView: rule: B1: GtkTextView:wrap-mode is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_textview_wrap_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => { let pspec = o.find_property("wrap-mode").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("wrap-mode", &ev.to_value_by_nick("char").unwrap()) },
+                1 => { let pspec = o.find_property("wrap-mode").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("wrap-mode", &ev.to_value_by_nick("none").unwrap()) },
+                2 => { let pspec = o.find_property("wrap-mode").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("wrap-mode", &ev.to_value_by_nick("char").unwrap()) },
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::wrap-mode", true).unwrap();
+        fire(&h.obj(o), "char", 0);
+        fire(&h.obj(o), "none", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "wrap-mode"), V::Str("none".into()), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_str(o, "wrap-mode", "char").unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "wrap-mode"), V::Str("char".into()), "the property reads the programmatic value");
     });
 }
 
@@ -8711,6 +23719,20 @@ fn echo_togglebutton_active() {
     });
 }
 
+/// method ToggleButton.get_active (dynamic GI call): probe: equals property active
+#[test]
+fn method_togglebutton_get_active() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("toggle-button");
+        
+        let r = h.call_args(o, "get_active", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "active"), "postcondition: r == h.get(o, 'active')");
+    });
+}
+
 /// method ToggleButton.set_active (dynamic GI call): gtk_toggle_button_set_active (Gtk 4 docs); called through GIRepository (X1)
 #[test]
 fn method_togglebutton_set_active() {
@@ -8751,6 +23773,238 @@ fn binding_togglebutton_active() {
     });
 }
 
+/// property Video.autoplay (JS autoplay): probe: round trip exact; notify fired
+#[test]
+fn prop_video_autoplay() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("video");
+        
+        let id = h.resolve_prop("video", "autoplay");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("video", "autoplay"));
+        h.set_bool(o, "autoplay", true).unwrap();
+        assert_eq!(h.get(o, "autoplay"), V::Bool(true));
+    });
+}
+
+/// property Video.file (JS file, round trip): probe: round trip exact; notify fired
+#[test]
+fn prop_video_file() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("video");
+        
+        let before = h.get_value(o, "file");
+        h.set_value(o, "file", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "file")), crate::testing::shape(&before));
+    });
+}
+
+/// property Video.graphics-offload (JS graphics-offload): probe: round trip exact; notify fired
+#[test]
+fn prop_video_graphics_offload() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("video");
+        
+        let id = h.resolve_prop("video", "graphics-offload");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("video", "graphics-offload"));
+        h.set_str(o, "graphics-offload", "enabled").unwrap();
+        assert_eq!(h.get(o, "graphics-offload"), V::Str("enabled".into()));
+    });
+}
+
+/// property Video.loop (JS loop): probe: round trip exact; notify fired
+#[test]
+fn prop_video_loop() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("video");
+        
+        let id = h.resolve_prop("video", "loop");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("video", "loop"));
+        h.set_bool(o, "loop", true).unwrap();
+        assert_eq!(h.get(o, "loop"), V::Bool(true));
+    });
+}
+
+/// method Video.get_autoplay (dynamic GI call): probe: equals property autoplay
+#[test]
+fn method_video_get_autoplay() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("video");
+        
+        let r = h.call_args(o, "get_autoplay", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "autoplay"), "postcondition: r == h.get(o, 'autoplay')");
+    });
+}
+
+/// method Video.get_graphics_offload (dynamic GI call): probe: equals property graphics-offload
+#[test]
+fn method_video_get_graphics_offload() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("video");
+        
+        let r = h.call_args(o, "get_graphics_offload", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "graphics-offload"), "postcondition: r == h.get(o, 'graphics-offload')");
+    });
+}
+
+/// method Video.get_loop (dynamic GI call): probe: equals property loop
+#[test]
+fn method_video_get_loop() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("video");
+        
+        let r = h.call_args(o, "get_loop", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "loop"), "postcondition: r == h.get(o, 'loop')");
+    });
+}
+
+/// method Video.set_autoplay (dynamic GI call): probe: set then read property autoplay: exact
+#[test]
+fn method_video_set_autoplay() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("video");
+        
+        let r = h.call_args(o, "set_autoplay", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "autoplay") == V::Bool(true), "postcondition: h.get(o, 'autoplay') == V::Bool(true)");
+    });
+}
+
+/// method Video.set_graphics_offload (dynamic GI call): probe: set then read property graphics-offload: exact
+#[test]
+fn method_video_set_graphics_offload() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("video");
+        
+        let r = h.call_args(o, "set_graphics_offload", &[V::Str("enabled".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "graphics-offload") == V::Str("enabled".into()), "postcondition: h.get(o, 'graphics-offload') == V::Str('enabled'.into())");
+    });
+}
+
+/// method Video.set_loop (dynamic GI call): probe: set then read property loop: exact
+#[test]
+fn method_video_set_loop() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("video");
+        
+        let r = h.call_args(o, "set_loop", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "loop") == V::Bool(true), "postcondition: h.get(o, 'loop') == V::Bool(true)");
+    });
+}
+
+/// bind:autoplay on Video: rule: B1: GtkVideo:autoplay is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_video_autoplay() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("video");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("autoplay", true),
+                1 => o.set_property("autoplay", false),
+                2 => o.set_property("autoplay", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::autoplay", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "autoplay"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "autoplay", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "autoplay"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:graphics-offload on Video: rule: B1: GtkVideo:graphics-offload is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_video_graphics_offload() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("video");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => { let pspec = o.find_property("graphics-offload").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("graphics-offload", &ev.to_value_by_nick("enabled").unwrap()) },
+                1 => { let pspec = o.find_property("graphics-offload").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("graphics-offload", &ev.to_value_by_nick("disabled").unwrap()) },
+                2 => { let pspec = o.find_property("graphics-offload").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("graphics-offload", &ev.to_value_by_nick("enabled").unwrap()) },
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::graphics-offload", true).unwrap();
+        fire(&h.obj(o), "enabled", 0);
+        fire(&h.obj(o), "disabled", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "graphics-offload"), V::Str("disabled".into()), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_str(o, "graphics-offload", "enabled").unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "graphics-offload"), V::Str("enabled".into()), "the property reads the programmatic value");
+    });
+}
+
+/// bind:loop on Video: rule: B1: GtkVideo:loop is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_video_loop() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("video");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("loop", true),
+                1 => o.set_property("loop", false),
+                2 => o.set_property("loop", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::loop", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "loop"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "loop", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "loop"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
 /// property Viewport.scroll-to-focus (JS scroll-to-focus): GtkViewport:scroll-to-focus (Gtk 4 docs); P prop
 #[test]
 fn prop_viewport_scroll_to_focus() {
@@ -8763,6 +24017,64 @@ fn prop_viewport_scroll_to_focus() {
         assert_eq!(id, h.resolve_prop("viewport", "scroll-to-focus"));
         h.set_bool(o, "scroll-to-focus", false).unwrap();
         assert_eq!(h.get(o, "scroll-to-focus"), V::Bool(false));
+    });
+}
+
+/// method Viewport.get_scroll_to_focus (dynamic GI call): probe: equals property scroll-to-focus
+#[test]
+fn method_viewport_get_scroll_to_focus() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("viewport");
+        
+        let r = h.call_args(o, "get_scroll_to_focus", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "scroll-to-focus"), "postcondition: r == h.get(o, 'scroll-to-focus')");
+    });
+}
+
+/// method Viewport.set_scroll_to_focus (dynamic GI call): probe: set then read property scroll-to-focus: exact
+#[test]
+fn method_viewport_set_scroll_to_focus() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("viewport");
+        
+        let r = h.call_args(o, "set_scroll_to_focus", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "scroll-to-focus") == V::Bool(false), "postcondition: h.get(o, 'scroll-to-focus') == V::Bool(false)");
+    });
+}
+
+/// bind:scroll-to-focus on Viewport: rule: B1: GtkViewport:scroll-to-focus is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_viewport_scroll_to_focus() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("viewport");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("scroll-to-focus", false),
+                1 => o.set_property("scroll-to-focus", true),
+                2 => o.set_property("scroll-to-focus", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::scroll-to-focus", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "scroll-to-focus"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "scroll-to-focus", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "scroll-to-focus"), V::Bool(false), "the property reads the programmatic value");
     });
 }
 
@@ -8864,6 +24176,21 @@ fn prop_widget_can_focus() {
     });
 }
 
+/// property Widget.can-target (JS can-target): probe: round trip exact; notify fired
+#[test]
+fn prop_widget_can_target() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let id = h.resolve_prop("label", "can-target");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("label", "can-target"));
+        h.set_bool(o, "can-target", false).unwrap();
+        assert_eq!(h.get(o, "can-target"), V::Bool(false));
+    });
+}
+
 /// property Widget.css-classes (JS css-classes, round trip): GtkWidget:css-classes, GStrv (Gtk 4 docs); ABI v3 string list, round-trip test
 #[test]
 fn prop_widget_css_classes() {
@@ -8887,6 +24214,21 @@ fn prop_widget_cursor() {
         let before = h.get_value(o, "cursor");
         h.set_value(o, "cursor", &before).unwrap();
         assert_eq!(crate::testing::shape(&h.get_value(o, "cursor")), crate::testing::shape(&before));
+    });
+}
+
+/// property Widget.focus-on-click (JS focus-on-click): probe: round trip exact; notify fired
+#[test]
+fn prop_widget_focus_on_click() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let id = h.resolve_prop("label", "focus-on-click");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("label", "focus-on-click"));
+        h.set_bool(o, "focus-on-click", false).unwrap();
+        assert_eq!(h.get(o, "focus-on-click"), V::Bool(false));
     });
 }
 
@@ -8920,6 +24262,21 @@ fn prop_widget_halign() {
     });
 }
 
+/// property Widget.has-tooltip (JS has-tooltip): probe: round trip exact; notify fired
+#[test]
+fn prop_widget_has_tooltip() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let id = h.resolve_prop("label", "has-tooltip");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("label", "has-tooltip"));
+        h.set_bool(o, "has-tooltip", true).unwrap();
+        assert_eq!(h.get(o, "has-tooltip"), V::Bool(true));
+    });
+}
+
 /// property Widget.height-request (JS height-request): GtkWidget:height-request (Gtk 4 docs); P prop; inherited, tested through GtkLabel
 #[test]
 fn prop_widget_height_request() {
@@ -8930,8 +24287,8 @@ fn prop_widget_height_request() {
         let id = h.resolve_prop("label", "height-request");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("label", "height-request"));
-        h.set_i64(o, "height-request", 7).unwrap();
-        assert_eq!(h.get(o, "height-request"), V::I64(7));
+        h.set_i64(o, "height-request", 0).unwrap();
+        assert_eq!(h.get(o, "height-request"), V::I64(0));
     });
 }
 
@@ -8950,6 +24307,52 @@ fn prop_widget_hexpand() {
     });
 }
 
+/// property Widget.hexpand-set (JS hexpand-set): probe: round trip exact; notify fired
+#[test]
+fn prop_widget_hexpand_set() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let id = h.resolve_prop("label", "hexpand-set");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("label", "hexpand-set"));
+        h.set_bool(o, "hexpand-set", true).unwrap();
+        assert_eq!(h.get(o, "hexpand-set"), V::Bool(true));
+    });
+}
+
+/// property Widget.layout-manager (JS layout-manager, round trip): probe: round trip exact; notify fired
+#[test]
+fn prop_widget_layout_manager() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let before = h.get_value(o, "layout-manager");
+        h.set_value(o, "layout-manager", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "layout-manager")), crate::testing::shape(&before));
+    });
+}
+
+/// property Widget.limit-events (JS limit-events): probe: round trip exact; notify fired
+#[test]
+fn prop_widget_limit_events() {
+    if crate::testing::skip_below_gtk(4, 18) {
+        return;
+    }
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let id = h.resolve_prop("label", "limit-events");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("label", "limit-events"));
+        h.set_bool(o, "limit-events", true).unwrap();
+        assert_eq!(h.get(o, "limit-events"), V::Bool(true));
+    });
+}
+
 /// property Widget.margin-bottom (JS margin-bottom): GtkWidget:margin-bottom (Gtk 4 docs); P prop; inherited, tested through GtkLabel
 #[test]
 fn prop_widget_margin_bottom() {
@@ -8960,8 +24363,8 @@ fn prop_widget_margin_bottom() {
         let id = h.resolve_prop("label", "margin-bottom");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("label", "margin-bottom"));
-        h.set_i64(o, "margin-bottom", 7).unwrap();
-        assert_eq!(h.get(o, "margin-bottom"), V::I64(7));
+        h.set_i64(o, "margin-bottom", 1).unwrap();
+        assert_eq!(h.get(o, "margin-bottom"), V::I64(1));
     });
 }
 
@@ -8975,8 +24378,8 @@ fn prop_widget_margin_end() {
         let id = h.resolve_prop("label", "margin-end");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("label", "margin-end"));
-        h.set_i64(o, "margin-end", 7).unwrap();
-        assert_eq!(h.get(o, "margin-end"), V::I64(7));
+        h.set_i64(o, "margin-end", 1).unwrap();
+        assert_eq!(h.get(o, "margin-end"), V::I64(1));
     });
 }
 
@@ -8990,8 +24393,8 @@ fn prop_widget_margin_start() {
         let id = h.resolve_prop("label", "margin-start");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("label", "margin-start"));
-        h.set_i64(o, "margin-start", 7).unwrap();
-        assert_eq!(h.get(o, "margin-start"), V::I64(7));
+        h.set_i64(o, "margin-start", 1).unwrap();
+        assert_eq!(h.get(o, "margin-start"), V::I64(1));
     });
 }
 
@@ -9005,8 +24408,8 @@ fn prop_widget_margin_top() {
         let id = h.resolve_prop("label", "margin-top");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("label", "margin-top"));
-        h.set_i64(o, "margin-top", 7).unwrap();
-        assert_eq!(h.get(o, "margin-top"), V::I64(7));
+        h.set_i64(o, "margin-top", 1).unwrap();
+        assert_eq!(h.get(o, "margin-top"), V::I64(1));
     });
 }
 
@@ -9020,8 +24423,8 @@ fn prop_widget_name() {
         let id = h.resolve_prop("label", "name");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("label", "name"));
-        h.set_str(o, "name", "p3-sample").unwrap();
-        assert_eq!(h.get(o, "name"), V::Str("p3-sample".into()));
+        h.set_str(o, "name", "svl probe").unwrap();
+        assert_eq!(h.get(o, "name"), V::Str("svl probe".into()));
     });
 }
 
@@ -9037,6 +24440,36 @@ fn prop_widget_opacity() {
         assert_eq!(id, h.resolve_prop("label", "opacity"));
         h.set_f64(o, "opacity", 0.0).unwrap();
         assert_eq!(h.get(o, "opacity"), V::F64(0.0));
+    });
+}
+
+/// property Widget.overflow (JS overflow): probe: round trip exact; notify fired
+#[test]
+fn prop_widget_overflow() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let id = h.resolve_prop("label", "overflow");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("label", "overflow"));
+        h.set_str(o, "overflow", "hidden").unwrap();
+        assert_eq!(h.get(o, "overflow"), V::Str("hidden".into()));
+    });
+}
+
+/// property Widget.receives-default (JS receives-default): probe: round trip exact; notify fired
+#[test]
+fn prop_widget_receives_default() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let id = h.resolve_prop("label", "receives-default");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("label", "receives-default"));
+        h.set_bool(o, "receives-default", true).unwrap();
+        assert_eq!(h.get(o, "receives-default"), V::Bool(true));
     });
 }
 
@@ -9065,8 +24498,8 @@ fn prop_widget_tooltip_markup() {
         let id = h.resolve_prop("label", "tooltip-markup");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("label", "tooltip-markup"));
-        h.set_str(o, "tooltip-markup", "p3-sample").unwrap();
-        assert_eq!(h.get(o, "tooltip-markup"), V::Str("p3-sample".into()));
+        h.set_str(o, "tooltip-markup", "svl probe").unwrap();
+        assert_eq!(h.get(o, "tooltip-markup"), V::Str("svl probe".into()));
     });
 }
 
@@ -9080,8 +24513,8 @@ fn prop_widget_tooltip_text() {
         let id = h.resolve_prop("label", "tooltip-text");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("label", "tooltip-text"));
-        h.set_str(o, "tooltip-text", "p3-sample").unwrap();
-        assert_eq!(h.get(o, "tooltip-text"), V::Str("p3-sample".into()));
+        h.set_str(o, "tooltip-text", "svl probe").unwrap();
+        assert_eq!(h.get(o, "tooltip-text"), V::Str("svl probe".into()));
     });
 }
 
@@ -9115,6 +24548,21 @@ fn prop_widget_vexpand() {
     });
 }
 
+/// property Widget.vexpand-set (JS vexpand-set): probe: round trip exact; notify fired
+#[test]
+fn prop_widget_vexpand_set() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let id = h.resolve_prop("label", "vexpand-set");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("label", "vexpand-set"));
+        h.set_bool(o, "vexpand-set", true).unwrap();
+        assert_eq!(h.get(o, "vexpand-set"), V::Bool(true));
+    });
+}
+
 /// property Widget.visible (JS visible): GtkWidget:visible (Gtk 4 docs); P prop; inherited, tested through GtkLabel
 #[test]
 fn prop_widget_visible() {
@@ -9140,8 +24588,473 @@ fn prop_widget_width_request() {
         let id = h.resolve_prop("label", "width-request");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("label", "width-request"));
-        h.set_i64(o, "width-request", 7).unwrap();
-        assert_eq!(h.get(o, "width-request"), V::I64(7));
+        h.set_i64(o, "width-request", 0).unwrap();
+        assert_eq!(h.get(o, "width-request"), V::I64(0));
+    });
+}
+
+/// method Widget.get_baseline (dynamic GI call): probe: called on a new instance, returned -1
+#[test]
+fn method_widget_get_baseline() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_baseline", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::I64(-1), "postcondition: r == V::I64(-1)");
+    });
+}
+
+/// method Widget.get_can_focus (dynamic GI call): probe: equals property can-focus
+#[test]
+fn method_widget_get_can_focus() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_can_focus", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "can-focus"), "postcondition: r == h.get(o, 'can-focus')");
+    });
+}
+
+/// method Widget.get_can_target (dynamic GI call): probe: equals property can-target
+#[test]
+fn method_widget_get_can_target() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_can_target", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "can-target"), "postcondition: r == h.get(o, 'can-target')");
+    });
+}
+
+/// method Widget.get_child_visible (dynamic GI call): probe: called on a new instance, returned True
+#[test]
+fn method_widget_get_child_visible() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_child_visible", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::Bool(true), "postcondition: r == V::Bool(true)");
+    });
+}
+
+/// method Widget.get_css_name (dynamic GI call): probe: equals property css-name
+#[test]
+fn method_widget_get_css_name() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_css_name", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "css-name"), "postcondition: r == h.get(o, 'css-name')");
+    });
+}
+
+/// method Widget.get_direction (dynamic GI call): probe: called on a new instance, returned 'ltr'
+#[test]
+fn method_widget_get_direction() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_direction", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::Str("ltr".into()), "postcondition: r == V::Str('ltr'.into())");
+    });
+}
+
+/// method Widget.get_focus_on_click (dynamic GI call): probe: equals property focus-on-click
+#[test]
+fn method_widget_get_focus_on_click() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_focus_on_click", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "focus-on-click"), "postcondition: r == h.get(o, 'focus-on-click')");
+    });
+}
+
+/// method Widget.get_focusable (dynamic GI call): probe: equals property focusable
+#[test]
+fn method_widget_get_focusable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_focusable", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "focusable"), "postcondition: r == h.get(o, 'focusable')");
+    });
+}
+
+/// method Widget.get_halign (dynamic GI call): probe: equals property halign
+#[test]
+fn method_widget_get_halign() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_halign", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "halign"), "postcondition: r == h.get(o, 'halign')");
+    });
+}
+
+/// method Widget.get_has_tooltip (dynamic GI call): probe: equals property has-tooltip
+#[test]
+fn method_widget_get_has_tooltip() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_has_tooltip", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "has-tooltip"), "postcondition: r == h.get(o, 'has-tooltip')");
+    });
+}
+
+/// method Widget.get_height (dynamic GI call): probe: called on a new instance, returned 0
+#[test]
+fn method_widget_get_height() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_height", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::I64(0), "postcondition: r == V::I64(0)");
+    });
+}
+
+/// method Widget.get_hexpand (dynamic GI call): probe: equals property hexpand
+#[test]
+fn method_widget_get_hexpand() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_hexpand", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "hexpand"), "postcondition: r == h.get(o, 'hexpand')");
+    });
+}
+
+/// method Widget.get_hexpand_set (dynamic GI call): probe: equals property hexpand-set
+#[test]
+fn method_widget_get_hexpand_set() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_hexpand_set", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "hexpand-set"), "postcondition: r == h.get(o, 'hexpand-set')");
+    });
+}
+
+/// method Widget.get_limit_events (dynamic GI call): probe: equals property limit-events
+#[test]
+fn method_widget_get_limit_events() {
+    if crate::testing::skip_below_gtk(4, 18) {
+        return;
+    }
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_limit_events", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "limit-events"), "postcondition: r == h.get(o, 'limit-events')");
+    });
+}
+
+/// method Widget.get_mapped (dynamic GI call): probe: called on a new instance, returned False
+#[test]
+fn method_widget_get_mapped() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_mapped", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::Bool(false), "postcondition: r == V::Bool(false)");
+    });
+}
+
+/// method Widget.get_margin_bottom (dynamic GI call): probe: equals property margin-bottom
+#[test]
+fn method_widget_get_margin_bottom() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_margin_bottom", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "margin-bottom"), "postcondition: r == h.get(o, 'margin-bottom')");
+    });
+}
+
+/// method Widget.get_margin_end (dynamic GI call): probe: equals property margin-end
+#[test]
+fn method_widget_get_margin_end() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_margin_end", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "margin-end"), "postcondition: r == h.get(o, 'margin-end')");
+    });
+}
+
+/// method Widget.get_margin_start (dynamic GI call): probe: equals property margin-start
+#[test]
+fn method_widget_get_margin_start() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_margin_start", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "margin-start"), "postcondition: r == h.get(o, 'margin-start')");
+    });
+}
+
+/// method Widget.get_margin_top (dynamic GI call): probe: equals property margin-top
+#[test]
+fn method_widget_get_margin_top() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_margin_top", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "margin-top"), "postcondition: r == h.get(o, 'margin-top')");
+    });
+}
+
+/// method Widget.get_opacity (dynamic GI call): probe: equals property opacity
+#[test]
+fn method_widget_get_opacity() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_opacity", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "opacity"), "postcondition: r == h.get(o, 'opacity')");
+    });
+}
+
+/// method Widget.get_overflow (dynamic GI call): probe: equals property overflow
+#[test]
+fn method_widget_get_overflow() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_overflow", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "overflow"), "postcondition: r == h.get(o, 'overflow')");
+    });
+}
+
+/// method Widget.get_realized (dynamic GI call): probe: called on a new instance, returned False
+#[test]
+fn method_widget_get_realized() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_realized", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::Bool(false), "postcondition: r == V::Bool(false)");
+    });
+}
+
+/// method Widget.get_receives_default (dynamic GI call): probe: equals property receives-default
+#[test]
+fn method_widget_get_receives_default() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_receives_default", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "receives-default"), "postcondition: r == h.get(o, 'receives-default')");
+    });
+}
+
+/// method Widget.get_request_mode (dynamic GI call): probe: called on a new instance, returned 'constant-size'
+#[test]
+fn method_widget_get_request_mode() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_request_mode", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::Str("constant-size".into()), "postcondition: r == V::Str('constant-size'.into())");
+    });
+}
+
+/// method Widget.get_scale_factor (dynamic GI call): probe: equals property scale-factor
+#[test]
+fn method_widget_get_scale_factor() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_scale_factor", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "scale-factor"), "postcondition: r == h.get(o, 'scale-factor')");
+    });
+}
+
+/// method Widget.get_sensitive (dynamic GI call): probe: equals property sensitive
+#[test]
+fn method_widget_get_sensitive() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_sensitive", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "sensitive"), "postcondition: r == h.get(o, 'sensitive')");
+    });
+}
+
+/// method Widget.get_tooltip_markup (dynamic GI call): probe: equals property tooltip-markup
+#[test]
+fn method_widget_get_tooltip_markup() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_tooltip_markup", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "tooltip-markup"), "postcondition: r == h.get(o, 'tooltip-markup')");
+    });
+}
+
+/// method Widget.get_tooltip_text (dynamic GI call): probe: equals property tooltip-text
+#[test]
+fn method_widget_get_tooltip_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_tooltip_text", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "tooltip-text"), "postcondition: r == h.get(o, 'tooltip-text')");
+    });
+}
+
+/// method Widget.get_valign (dynamic GI call): probe: equals property valign
+#[test]
+fn method_widget_get_valign() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_valign", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "valign"), "postcondition: r == h.get(o, 'valign')");
+    });
+}
+
+/// method Widget.get_vexpand (dynamic GI call): probe: equals property vexpand
+#[test]
+fn method_widget_get_vexpand() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_vexpand", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "vexpand"), "postcondition: r == h.get(o, 'vexpand')");
+    });
+}
+
+/// method Widget.get_vexpand_set (dynamic GI call): probe: equals property vexpand-set
+#[test]
+fn method_widget_get_vexpand_set() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_vexpand_set", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "vexpand-set"), "postcondition: r == h.get(o, 'vexpand-set')");
+    });
+}
+
+/// method Widget.get_visible (dynamic GI call): probe: equals property visible
+#[test]
+fn method_widget_get_visible() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_visible", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "visible"), "postcondition: r == h.get(o, 'visible')");
+    });
+}
+
+/// method Widget.get_width (dynamic GI call): probe: called on a new instance, returned 0
+#[test]
+fn method_widget_get_width() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "get_width", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::I64(0), "postcondition: r == V::I64(0)");
     });
 }
 
@@ -9156,6 +25069,104 @@ fn method_widget_grab_focus() {
         let w = h.widget(o);
         let _ = (&w, &r);
         assert!(r == V::Bool(false), "postcondition: r == V::Bool(false)");
+    });
+}
+
+/// method Widget.has_default (dynamic GI call): probe: called on a new instance, returned False
+#[test]
+fn method_widget_has_default() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "has_default", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::Bool(false), "postcondition: r == V::Bool(false)");
+    });
+}
+
+/// method Widget.has_focus (dynamic GI call): probe: called on a new instance, returned False
+#[test]
+fn method_widget_has_focus() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "has_focus", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::Bool(false), "postcondition: r == V::Bool(false)");
+    });
+}
+
+/// method Widget.has_visible_focus (dynamic GI call): probe: called on a new instance, returned False
+#[test]
+fn method_widget_has_visible_focus() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "has_visible_focus", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::Bool(false), "postcondition: r == V::Bool(false)");
+    });
+}
+
+/// method Widget.is_drawable (dynamic GI call): probe: called on a new instance, returned False
+#[test]
+fn method_widget_is_drawable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "is_drawable", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::Bool(false), "postcondition: r == V::Bool(false)");
+    });
+}
+
+/// method Widget.is_focus (dynamic GI call): probe: called on a new instance, returned False
+#[test]
+fn method_widget_is_focus() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "is_focus", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::Bool(false), "postcondition: r == V::Bool(false)");
+    });
+}
+
+/// method Widget.is_sensitive (dynamic GI call): probe: equals property sensitive
+#[test]
+fn method_widget_is_sensitive() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "is_sensitive", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "sensitive"), "postcondition: r == h.get(o, 'sensitive')");
+    });
+}
+
+/// method Widget.is_visible (dynamic GI call): probe: equals property visible
+#[test]
+fn method_widget_is_visible() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "is_visible", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "visible"), "postcondition: r == h.get(o, 'visible')");
     });
 }
 
@@ -9184,6 +25195,396 @@ fn method_widget_queue_resize() {
         let w = h.widget(o);
         let _ = &w;
         assert!(w.is_visible(), "postcondition: w.is_visible()");
+    });
+}
+
+/// method Widget.set_can_focus (dynamic GI call): probe: set then read property can-focus: exact
+#[test]
+fn method_widget_set_can_focus() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "set_can_focus", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "can-focus") == V::Bool(false), "postcondition: h.get(o, 'can-focus') == V::Bool(false)");
+    });
+}
+
+/// method Widget.set_can_target (dynamic GI call): probe: set then read property can-target: exact
+#[test]
+fn method_widget_set_can_target() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "set_can_target", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "can-target") == V::Bool(false), "postcondition: h.get(o, 'can-target') == V::Bool(false)");
+    });
+}
+
+/// method Widget.set_halign (dynamic GI call): probe: set then read property halign: exact
+#[test]
+fn method_widget_set_halign() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "set_halign", &[V::Str("start".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "halign") == V::Str("start".into()), "postcondition: h.get(o, 'halign') == V::Str('start'.into())");
+    });
+}
+
+/// method Widget.set_has_tooltip (dynamic GI call): probe: set then read property has-tooltip: exact
+#[test]
+fn method_widget_set_has_tooltip() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "set_has_tooltip", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "has-tooltip") == V::Bool(true), "postcondition: h.get(o, 'has-tooltip') == V::Bool(true)");
+    });
+}
+
+/// method Widget.set_hexpand (dynamic GI call): probe: set then read property hexpand: exact
+#[test]
+fn method_widget_set_hexpand() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "set_hexpand", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "hexpand") == V::Bool(true), "postcondition: h.get(o, 'hexpand') == V::Bool(true)");
+    });
+}
+
+/// method Widget.set_hexpand_set (dynamic GI call): probe: set then read property hexpand-set: exact
+#[test]
+fn method_widget_set_hexpand_set() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "set_hexpand_set", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "hexpand-set") == V::Bool(true), "postcondition: h.get(o, 'hexpand-set') == V::Bool(true)");
+    });
+}
+
+/// method Widget.set_limit_events (dynamic GI call): probe: set then read property limit-events: exact
+#[test]
+fn method_widget_set_limit_events() {
+    if crate::testing::skip_below_gtk(4, 18) {
+        return;
+    }
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "set_limit_events", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "limit-events") == V::Bool(true), "postcondition: h.get(o, 'limit-events') == V::Bool(true)");
+    });
+}
+
+/// method Widget.set_margin_bottom (dynamic GI call): probe: set then read property margin-bottom: exact
+#[test]
+fn method_widget_set_margin_bottom() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "set_margin_bottom", &[V::I64(1)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "margin-bottom") == V::I64(1), "postcondition: h.get(o, 'margin-bottom') == V::I64(1)");
+    });
+}
+
+/// method Widget.set_margin_end (dynamic GI call): probe: set then read property margin-end: exact
+#[test]
+fn method_widget_set_margin_end() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "set_margin_end", &[V::I64(1)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "margin-end") == V::I64(1), "postcondition: h.get(o, 'margin-end') == V::I64(1)");
+    });
+}
+
+/// method Widget.set_margin_start (dynamic GI call): probe: set then read property margin-start: exact
+#[test]
+fn method_widget_set_margin_start() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "set_margin_start", &[V::I64(1)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "margin-start") == V::I64(1), "postcondition: h.get(o, 'margin-start') == V::I64(1)");
+    });
+}
+
+/// method Widget.set_margin_top (dynamic GI call): probe: set then read property margin-top: exact
+#[test]
+fn method_widget_set_margin_top() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "set_margin_top", &[V::I64(1)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "margin-top") == V::I64(1), "postcondition: h.get(o, 'margin-top') == V::I64(1)");
+    });
+}
+
+/// method Widget.set_name (dynamic GI call): probe: set then read property name: exact
+#[test]
+fn method_widget_set_name() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "set_name", &[V::Str("svl probe".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "name") == V::Str("svl probe".into()), "postcondition: h.get(o, 'name') == V::Str('svl probe'.into())");
+    });
+}
+
+/// method Widget.set_overflow (dynamic GI call): probe: set then read property overflow: exact
+#[test]
+fn method_widget_set_overflow() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "set_overflow", &[V::Str("hidden".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "overflow") == V::Str("hidden".into()), "postcondition: h.get(o, 'overflow') == V::Str('hidden'.into())");
+    });
+}
+
+/// method Widget.set_receives_default (dynamic GI call): probe: set then read property receives-default: exact
+#[test]
+fn method_widget_set_receives_default() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "set_receives_default", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "receives-default") == V::Bool(true), "postcondition: h.get(o, 'receives-default') == V::Bool(true)");
+    });
+}
+
+/// method Widget.set_sensitive (dynamic GI call): probe: set then read property sensitive: exact
+#[test]
+fn method_widget_set_sensitive() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "set_sensitive", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "sensitive") == V::Bool(false), "postcondition: h.get(o, 'sensitive') == V::Bool(false)");
+    });
+}
+
+/// method Widget.set_tooltip_markup (dynamic GI call): probe: set then read property tooltip-markup: exact
+#[test]
+fn method_widget_set_tooltip_markup() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "set_tooltip_markup", &[V::Str("svl probe".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "tooltip-markup") == V::Str("svl probe".into()), "postcondition: h.get(o, 'tooltip-markup') == V::Str('svl probe'.into())");
+    });
+}
+
+/// method Widget.set_tooltip_text (dynamic GI call): probe: set then read property tooltip-text: exact
+#[test]
+fn method_widget_set_tooltip_text() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "set_tooltip_text", &[V::Str("svl probe".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "tooltip-text") == V::Str("svl probe".into()), "postcondition: h.get(o, 'tooltip-text') == V::Str('svl probe'.into())");
+    });
+}
+
+/// method Widget.set_valign (dynamic GI call): probe: set then read property valign: exact
+#[test]
+fn method_widget_set_valign() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "set_valign", &[V::Str("start".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "valign") == V::Str("start".into()), "postcondition: h.get(o, 'valign') == V::Str('start'.into())");
+    });
+}
+
+/// method Widget.set_vexpand (dynamic GI call): probe: set then read property vexpand: exact
+#[test]
+fn method_widget_set_vexpand() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "set_vexpand", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "vexpand") == V::Bool(true), "postcondition: h.get(o, 'vexpand') == V::Bool(true)");
+    });
+}
+
+/// method Widget.set_vexpand_set (dynamic GI call): probe: set then read property vexpand-set: exact
+#[test]
+fn method_widget_set_vexpand_set() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "set_vexpand_set", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "vexpand-set") == V::Bool(true), "postcondition: h.get(o, 'vexpand-set') == V::Bool(true)");
+    });
+}
+
+/// method Widget.set_visible (dynamic GI call): probe: set then read property visible: exact
+#[test]
+fn method_widget_set_visible() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "set_visible", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "visible") == V::Bool(false), "postcondition: h.get(o, 'visible') == V::Bool(false)");
+    });
+}
+
+/// signal Window.activate-focus: runtime: returns void, run-last; probe: action signal, emitted and delivered
+#[test]
+fn signal_window_activate_focus() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("window");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = v; o.emit_by_name::<()>("activate-focus", &[]);
+        };
+        assert_ne!(h.resolve_signal("window", "activate-focus"), 0);
+        assert_eq!(h.resolve_signal("window", "activate-focus"), h.resolve_signal("window", "activate-focus"));
+        h.listen(e, "activate-focus", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "activate-focus".to_string())), "delivered: {ev:?}");
+        h.listen(e, "activate-focus", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "activate-focus", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "activate-focus", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal Window.enable-debugging: runtime: returns gboolean, run-last; probe: emitted synthetically with sampled arguments; delivery only, no native trigger
+#[test]
+fn signal_window_enable_debugging() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("window");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            let _ = o.emit_by_name::<bool>("enable-debugging", &[&true]);
+        };
+        assert_ne!(h.resolve_signal("window", "enable-debugging"), 0);
+        assert_eq!(h.resolve_signal("window", "enable-debugging"), h.resolve_signal("window", "enable-debugging"));
+        h.listen(e, "enable-debugging", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "enable-debugging".to_string())), "delivered: {ev:?}");
+        h.listen(e, "enable-debugging", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "enable-debugging", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "enable-debugging", true).is_err(), "stale handle is an error");
+    });
+}
+
+/// signal Window.keys-changed: runtime: returns void, run-first; probe: emitted synthetically with sampled arguments; delivery only, no native trigger
+#[test]
+fn signal_window_keys_changed() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("window");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            o.emit_by_name::<()>("keys-changed", &[]);
+        };
+        assert_ne!(h.resolve_signal("window", "keys-changed"), 0);
+        assert_eq!(h.resolve_signal("window", "keys-changed"), h.resolve_signal("window", "keys-changed"));
+        h.listen(e, "keys-changed", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "keys-changed".to_string())), "delivered: {ev:?}");
+        h.listen(e, "keys-changed", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "keys-changed", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "keys-changed", true).is_err(), "stale handle is an error");
     });
 }
 
@@ -9247,6 +25648,36 @@ fn prop_window_deletable() {
     });
 }
 
+/// property Window.destroy-with-parent (JS destroy-with-parent): probe: round trip exact; notify fired
+#[test]
+fn prop_window_destroy_with_parent() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        
+        let id = h.resolve_prop("window", "destroy-with-parent");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("window", "destroy-with-parent"));
+        h.set_bool(o, "destroy-with-parent", true).unwrap();
+        assert_eq!(h.get(o, "destroy-with-parent"), V::Bool(true));
+    });
+}
+
+/// property Window.focus-visible (JS focus-visible): probe: round trip exact; notify fired
+#[test]
+fn prop_window_focus_visible() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        
+        let id = h.resolve_prop("window", "focus-visible");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("window", "focus-visible"));
+        h.set_bool(o, "focus-visible", false).unwrap();
+        assert_eq!(h.get(o, "focus-visible"), V::Bool(false));
+    });
+}
+
 /// property Window.fullscreened (JS fullscreened): GtkWindow:fullscreened (Gtk 4 docs)
 #[test]
 fn prop_window_fullscreened() {
@@ -9259,6 +25690,39 @@ fn prop_window_fullscreened() {
         assert_eq!(id, h.resolve_prop("window", "fullscreened"));
         h.set_bool(o, "fullscreened", true).unwrap();
         assert_eq!(h.get(o, "fullscreened"), V::Bool(true));
+    });
+}
+
+/// property Window.gravity (JS gravity): probe: round trip exact; notify fired
+#[test]
+fn prop_window_gravity() {
+    if crate::testing::skip_below_gtk(4, 20) {
+        return;
+    }
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        
+        let id = h.resolve_prop("window", "gravity");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("window", "gravity"));
+        h.set_str(o, "gravity", "top-left").unwrap();
+        assert_eq!(h.get(o, "gravity"), V::Str("top-left".into()));
+    });
+}
+
+/// property Window.handle-menubar-accel (JS handle-menubar-accel): probe: round trip exact; notify fired
+#[test]
+fn prop_window_handle_menubar_accel() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        
+        let id = h.resolve_prop("window", "handle-menubar-accel");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("window", "handle-menubar-accel"));
+        h.set_bool(o, "handle-menubar-accel", false).unwrap();
+        assert_eq!(h.get(o, "handle-menubar-accel"), V::Bool(false));
     });
 }
 
@@ -9277,6 +25741,21 @@ fn prop_window_hide_on_close() {
     });
 }
 
+/// property Window.icon-name (JS icon-name): probe: round trip exact; notify fired
+#[test]
+fn prop_window_icon_name() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        
+        let id = h.resolve_prop("window", "icon-name");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("window", "icon-name"));
+        h.set_str(o, "icon-name", "edit-copy").unwrap();
+        assert_eq!(h.get(o, "icon-name"), V::Str("edit-copy".into()));
+    });
+}
+
 /// property Window.maximized (JS maximized): GtkWindow:maximized (Gtk 4 docs)
 #[test]
 fn prop_window_maximized() {
@@ -9289,6 +25768,21 @@ fn prop_window_maximized() {
         assert_eq!(id, h.resolve_prop("window", "maximized"));
         h.set_bool(o, "maximized", true).unwrap();
         assert_eq!(h.get(o, "maximized"), V::Bool(true));
+    });
+}
+
+/// property Window.mnemonics-visible (JS mnemonics-visible): probe: round trip exact; notify fired
+#[test]
+fn prop_window_mnemonics_visible() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        
+        let id = h.resolve_prop("window", "mnemonics-visible");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("window", "mnemonics-visible"));
+        h.set_bool(o, "mnemonics-visible", true).unwrap();
+        assert_eq!(h.get(o, "mnemonics-visible"), V::Bool(true));
     });
 }
 
@@ -9332,8 +25826,8 @@ fn prop_window_title() {
         let id = h.resolve_prop("window", "title");
         assert_ne!(id, 0);
         assert_eq!(id, h.resolve_prop("window", "title"));
-        h.set_str(o, "title", "p3-sample").unwrap();
-        assert_eq!(h.get(o, "title"), V::Str("p3-sample".into()));
+        h.set_str(o, "title", "svl probe").unwrap();
+        assert_eq!(h.get(o, "title"), V::Str("svl probe".into()));
     });
 }
 
@@ -9362,6 +25856,247 @@ fn method_window_fullscreen() {
         let w = h.widget(o);
         let _ = &w;
         assert!(true, "postcondition: true");
+    });
+}
+
+/// method Window.get_decorated (dynamic GI call): probe: equals property decorated
+#[test]
+fn method_window_get_decorated() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        
+        let r = h.call_args(o, "get_decorated", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "decorated"), "postcondition: r == h.get(o, 'decorated')");
+    });
+}
+
+/// method Window.get_deletable (dynamic GI call): probe: equals property deletable
+#[test]
+fn method_window_get_deletable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        
+        let r = h.call_args(o, "get_deletable", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "deletable"), "postcondition: r == h.get(o, 'deletable')");
+    });
+}
+
+/// method Window.get_destroy_with_parent (dynamic GI call): probe: equals property destroy-with-parent
+#[test]
+fn method_window_get_destroy_with_parent() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        
+        let r = h.call_args(o, "get_destroy_with_parent", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "destroy-with-parent"), "postcondition: r == h.get(o, 'destroy-with-parent')");
+    });
+}
+
+/// method Window.get_focus_visible (dynamic GI call): probe: equals property focus-visible
+#[test]
+fn method_window_get_focus_visible() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        
+        let r = h.call_args(o, "get_focus_visible", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "focus-visible"), "postcondition: r == h.get(o, 'focus-visible')");
+    });
+}
+
+/// method Window.get_gravity (dynamic GI call): probe: equals property gravity
+#[test]
+fn method_window_get_gravity() {
+    if crate::testing::skip_below_gtk(4, 20) {
+        return;
+    }
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        
+        let r = h.call_args(o, "get_gravity", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "gravity"), "postcondition: r == h.get(o, 'gravity')");
+    });
+}
+
+/// method Window.get_handle_menubar_accel (dynamic GI call): probe: equals property handle-menubar-accel
+#[test]
+fn method_window_get_handle_menubar_accel() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        
+        let r = h.call_args(o, "get_handle_menubar_accel", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "handle-menubar-accel"), "postcondition: r == h.get(o, 'handle-menubar-accel')");
+    });
+}
+
+/// method Window.get_hide_on_close (dynamic GI call): probe: equals property hide-on-close
+#[test]
+fn method_window_get_hide_on_close() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        
+        let r = h.call_args(o, "get_hide_on_close", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "hide-on-close"), "postcondition: r == h.get(o, 'hide-on-close')");
+    });
+}
+
+/// method Window.get_icon_name (dynamic GI call): probe: equals property icon-name
+#[test]
+fn method_window_get_icon_name() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        
+        let r = h.call_args(o, "get_icon_name", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "icon-name"), "postcondition: r == h.get(o, 'icon-name')");
+    });
+}
+
+/// method Window.get_mnemonics_visible (dynamic GI call): probe: equals property mnemonics-visible
+#[test]
+fn method_window_get_mnemonics_visible() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        
+        let r = h.call_args(o, "get_mnemonics_visible", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "mnemonics-visible"), "postcondition: r == h.get(o, 'mnemonics-visible')");
+    });
+}
+
+/// method Window.get_modal (dynamic GI call): probe: equals property modal
+#[test]
+fn method_window_get_modal() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        
+        let r = h.call_args(o, "get_modal", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "modal"), "postcondition: r == h.get(o, 'modal')");
+    });
+}
+
+/// method Window.get_resizable (dynamic GI call): probe: equals property resizable
+#[test]
+fn method_window_get_resizable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        
+        let r = h.call_args(o, "get_resizable", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "resizable"), "postcondition: r == h.get(o, 'resizable')");
+    });
+}
+
+/// method Window.get_title (dynamic GI call): probe: equals property title
+#[test]
+fn method_window_get_title() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        
+        let r = h.call_args(o, "get_title", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "title"), "postcondition: r == h.get(o, 'title')");
+    });
+}
+
+/// method Window.has_group (dynamic GI call): probe: called on a new instance, returned False
+#[test]
+fn method_window_has_group() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        
+        let r = h.call_args(o, "has_group", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::Bool(false), "postcondition: r == V::Bool(false)");
+    });
+}
+
+/// method Window.is_active (dynamic GI call): probe: called on a new instance, returned False
+#[test]
+fn method_window_is_active() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        
+        let r = h.call_args(o, "is_active", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::Bool(false), "postcondition: r == V::Bool(false)");
+    });
+}
+
+/// method Window.is_fullscreen (dynamic GI call): probe: called on a new instance, returned False
+#[test]
+fn method_window_is_fullscreen() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        
+        let r = h.call_args(o, "is_fullscreen", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == V::Bool(false), "postcondition: r == V::Bool(false)");
+    });
+}
+
+/// method Window.is_maximized (dynamic GI call): probe: equals property maximized
+#[test]
+fn method_window_is_maximized() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        
+        let r = h.call_args(o, "is_maximized", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "maximized"), "postcondition: r == h.get(o, 'maximized')");
+    });
+}
+
+/// method Window.is_suspended (dynamic GI call): probe: equals property suspended
+#[test]
+fn method_window_is_suspended() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        
+        let r = h.call_args(o, "is_suspended", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "suspended"), "postcondition: r == h.get(o, 'suspended')");
     });
 }
 
@@ -9407,6 +26142,20 @@ fn method_window_present() {
     });
 }
 
+/// method Window.set_decorated (dynamic GI call): probe: set then read property decorated: exact
+#[test]
+fn method_window_set_decorated() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        
+        let r = h.call_args(o, "set_decorated", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "decorated") == V::Bool(false), "postcondition: h.get(o, 'decorated') == V::Bool(false)");
+    });
+}
+
 /// method Window.set_default_size (dynamic GI call): gtk_window_set_default_size (Gtk 4 docs); called through GIRepository (X1)
 #[test]
 fn method_window_set_default_size() {
@@ -9418,6 +26167,149 @@ fn method_window_set_default_size() {
         let w = h.widget(o);
         let _ = (&w, &r);
         assert!(h.get(o, "default-width") == V::I64(600) && h.get(o, "default-height") == V::I64(400), "postcondition: h.get(o, 'default-width') == V::I64(600) && h.get(o, 'default-height') == V::I64(400)");
+    });
+}
+
+/// method Window.set_deletable (dynamic GI call): probe: set then read property deletable: exact
+#[test]
+fn method_window_set_deletable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        
+        let r = h.call_args(o, "set_deletable", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "deletable") == V::Bool(false), "postcondition: h.get(o, 'deletable') == V::Bool(false)");
+    });
+}
+
+/// method Window.set_destroy_with_parent (dynamic GI call): probe: set then read property destroy-with-parent: exact
+#[test]
+fn method_window_set_destroy_with_parent() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        
+        let r = h.call_args(o, "set_destroy_with_parent", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "destroy-with-parent") == V::Bool(true), "postcondition: h.get(o, 'destroy-with-parent') == V::Bool(true)");
+    });
+}
+
+/// method Window.set_gravity (dynamic GI call): probe: set then read property gravity: exact
+#[test]
+fn method_window_set_gravity() {
+    if crate::testing::skip_below_gtk(4, 20) {
+        return;
+    }
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        
+        let r = h.call_args(o, "set_gravity", &[V::Str("top-left".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "gravity") == V::Str("top-left".into()), "postcondition: h.get(o, 'gravity') == V::Str('top-left'.into())");
+    });
+}
+
+/// method Window.set_handle_menubar_accel (dynamic GI call): probe: set then read property handle-menubar-accel: exact
+#[test]
+fn method_window_set_handle_menubar_accel() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        
+        let r = h.call_args(o, "set_handle_menubar_accel", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "handle-menubar-accel") == V::Bool(false), "postcondition: h.get(o, 'handle-menubar-accel') == V::Bool(false)");
+    });
+}
+
+/// method Window.set_hide_on_close (dynamic GI call): probe: set then read property hide-on-close: exact
+#[test]
+fn method_window_set_hide_on_close() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        
+        let r = h.call_args(o, "set_hide_on_close", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "hide-on-close") == V::Bool(true), "postcondition: h.get(o, 'hide-on-close') == V::Bool(true)");
+    });
+}
+
+/// method Window.set_icon_name (dynamic GI call): probe: set then read property icon-name: exact
+#[test]
+fn method_window_set_icon_name() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        
+        let r = h.call_args(o, "set_icon_name", &[V::Str("edit-copy".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "icon-name") == V::Str("edit-copy".into()), "postcondition: h.get(o, 'icon-name') == V::Str('edit-copy'.into())");
+    });
+}
+
+/// method Window.set_mnemonics_visible (dynamic GI call): probe: set then read property mnemonics-visible: exact
+#[test]
+fn method_window_set_mnemonics_visible() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        
+        let r = h.call_args(o, "set_mnemonics_visible", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "mnemonics-visible") == V::Bool(true), "postcondition: h.get(o, 'mnemonics-visible') == V::Bool(true)");
+    });
+}
+
+/// method Window.set_modal (dynamic GI call): probe: set then read property modal: exact
+#[test]
+fn method_window_set_modal() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        
+        let r = h.call_args(o, "set_modal", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "modal") == V::Bool(true), "postcondition: h.get(o, 'modal') == V::Bool(true)");
+    });
+}
+
+/// method Window.set_resizable (dynamic GI call): probe: set then read property resizable: exact
+#[test]
+fn method_window_set_resizable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        
+        let r = h.call_args(o, "set_resizable", &[V::Bool(false)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "resizable") == V::Bool(false), "postcondition: h.get(o, 'resizable') == V::Bool(false)");
+    });
+}
+
+/// method Window.set_title (dynamic GI call): probe: set then read property title: exact
+#[test]
+fn method_window_set_title() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        
+        let r = h.call_args(o, "set_title", &[V::Str("svl probe".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "title") == V::Str("svl probe".into()), "postcondition: h.get(o, 'title') == V::Str('svl probe'.into())");
     });
 }
 
@@ -9460,6 +26352,426 @@ fn method_window_unminimize() {
         let w = h.widget(o);
         let _ = &w;
         assert!(true, "postcondition: true");
+    });
+}
+
+/// bind:decorated on Window: rule: B1: GtkWindow:decorated is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_window_decorated() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("decorated", false),
+                1 => o.set_property("decorated", true),
+                2 => o.set_property("decorated", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::decorated", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "decorated"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "decorated", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "decorated"), V::Bool(false), "the property reads the programmatic value");
+    });
+}
+
+/// bind:default-height on Window: rule: B1: GtkWindow:default-height is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_window_default_height() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("default-height", 1i32),
+                1 => o.set_property("default-height", 0i32),
+                2 => o.set_property("default-height", 1i32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::default-height", true).unwrap();
+        fire(&h.obj(o), "1", 0);
+        fire(&h.obj(o), "0", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "default-height"), V::I64(0), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "default-height", 300).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "default-height"), V::I64(300), "the property reads the programmatic value");
+    });
+}
+
+/// bind:default-width on Window: rule: B1: GtkWindow:default-width is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_window_default_width() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("default-width", 1i32),
+                1 => o.set_property("default-width", 0i32),
+                2 => o.set_property("default-width", 1i32),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::default-width", true).unwrap();
+        fire(&h.obj(o), "1", 0);
+        fire(&h.obj(o), "0", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "default-width"), V::I64(0), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_i64(o, "default-width", 500).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "default-width"), V::I64(500), "the property reads the programmatic value");
+    });
+}
+
+/// bind:deletable on Window: rule: B1: GtkWindow:deletable is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_window_deletable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("deletable", false),
+                1 => o.set_property("deletable", true),
+                2 => o.set_property("deletable", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::deletable", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "deletable"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "deletable", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "deletable"), V::Bool(false), "the property reads the programmatic value");
+    });
+}
+
+/// bind:destroy-with-parent on Window: rule: B1: GtkWindow:destroy-with-parent is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_window_destroy_with_parent() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("destroy-with-parent", true),
+                1 => o.set_property("destroy-with-parent", false),
+                2 => o.set_property("destroy-with-parent", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::destroy-with-parent", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "destroy-with-parent"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "destroy-with-parent", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "destroy-with-parent"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:focus-visible on Window: rule: B1: GtkWindow:focus-visible is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_window_focus_visible() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("focus-visible", false),
+                1 => o.set_property("focus-visible", true),
+                2 => o.set_property("focus-visible", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::focus-visible", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "focus-visible"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "focus-visible", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "focus-visible"), V::Bool(false), "the property reads the programmatic value");
+    });
+}
+
+/// bind:fullscreened on Window: rule: B1: GtkWindow:fullscreened is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_window_fullscreened() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("fullscreened", true),
+                1 => o.set_property("fullscreened", false),
+                2 => o.set_property("fullscreened", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::fullscreened", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "fullscreened"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "fullscreened", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "fullscreened"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:gravity on Window: rule: B1: GtkWindow:gravity is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_window_gravity() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => { let pspec = o.find_property("gravity").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("gravity", &ev.to_value_by_nick("top-left").unwrap()) },
+                1 => { let pspec = o.find_property("gravity").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("gravity", &ev.to_value_by_nick("top-start").unwrap()) },
+                2 => { let pspec = o.find_property("gravity").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("gravity", &ev.to_value_by_nick("top-left").unwrap()) },
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::gravity", true).unwrap();
+        fire(&h.obj(o), "top-left", 0);
+        fire(&h.obj(o), "top-start", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "gravity"), V::Str("top-start".into()), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_str(o, "gravity", "top-left").unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "gravity"), V::Str("top-left".into()), "the property reads the programmatic value");
+    });
+}
+
+/// bind:handle-menubar-accel on Window: rule: B1: GtkWindow:handle-menubar-accel is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_window_handle_menubar_accel() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("handle-menubar-accel", false),
+                1 => o.set_property("handle-menubar-accel", true),
+                2 => o.set_property("handle-menubar-accel", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::handle-menubar-accel", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "handle-menubar-accel"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "handle-menubar-accel", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "handle-menubar-accel"), V::Bool(false), "the property reads the programmatic value");
+    });
+}
+
+/// bind:hide-on-close on Window: rule: B1: GtkWindow:hide-on-close is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_window_hide_on_close() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("hide-on-close", true),
+                1 => o.set_property("hide-on-close", false),
+                2 => o.set_property("hide-on-close", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::hide-on-close", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "hide-on-close"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "hide-on-close", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "hide-on-close"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:maximized on Window: rule: B1: GtkWindow:maximized is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_window_maximized() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("maximized", true),
+                1 => o.set_property("maximized", false),
+                2 => o.set_property("maximized", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::maximized", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "maximized"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "maximized", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "maximized"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:mnemonics-visible on Window: rule: B1: GtkWindow:mnemonics-visible is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_window_mnemonics_visible() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("mnemonics-visible", true),
+                1 => o.set_property("mnemonics-visible", false),
+                2 => o.set_property("mnemonics-visible", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::mnemonics-visible", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "mnemonics-visible"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "mnemonics-visible", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "mnemonics-visible"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:modal on Window: rule: B1: GtkWindow:modal is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_window_modal() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("modal", true),
+                1 => o.set_property("modal", false),
+                2 => o.set_property("modal", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::modal", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "modal"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "modal", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "modal"), V::Bool(true), "the property reads the programmatic value");
+    });
+}
+
+/// bind:resizable on Window: rule: B1: GtkWindow:resizable is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_window_resizable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("resizable", false),
+                1 => o.set_property("resizable", true),
+                2 => o.set_property("resizable", false),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::resizable", true).unwrap();
+        fire(&h.obj(o), "False", 0);
+        fire(&h.obj(o), "True", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "resizable"), V::Bool(true), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "resizable", false).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "resizable"), V::Bool(false), "the property reads the programmatic value");
     });
 }
 
@@ -9508,5 +26820,169 @@ fn prop_windowcontrols_use_native_controls() {
         assert_eq!(id, h.resolve_prop("window-controls", "use-native-controls"));
         h.set_bool(o, "use-native-controls", true).unwrap();
         assert_eq!(h.get(o, "use-native-controls"), V::Bool(true));
+    });
+}
+
+/// method WindowControls.get_decoration_layout (dynamic GI call): probe: equals property decoration-layout
+#[test]
+fn method_windowcontrols_get_decoration_layout() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window-controls");
+        
+        let r = h.call_args(o, "get_decoration_layout", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "decoration-layout"), "postcondition: r == h.get(o, 'decoration-layout')");
+    });
+}
+
+/// method WindowControls.get_empty (dynamic GI call): probe: equals property empty
+#[test]
+fn method_windowcontrols_get_empty() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window-controls");
+        
+        let r = h.call_args(o, "get_empty", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "empty"), "postcondition: r == h.get(o, 'empty')");
+    });
+}
+
+/// method WindowControls.get_side (dynamic GI call): probe: equals property side
+#[test]
+fn method_windowcontrols_get_side() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window-controls");
+        
+        let r = h.call_args(o, "get_side", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "side"), "postcondition: r == h.get(o, 'side')");
+    });
+}
+
+/// method WindowControls.get_use_native_controls (dynamic GI call): probe: equals property use-native-controls
+#[test]
+fn method_windowcontrols_get_use_native_controls() {
+    if crate::testing::skip_below_gtk(4, 18) {
+        return;
+    }
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window-controls");
+        
+        let r = h.call_args(o, "get_use_native_controls", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(r == h.get(o, "use-native-controls"), "postcondition: r == h.get(o, 'use-native-controls')");
+    });
+}
+
+/// method WindowControls.set_decoration_layout (dynamic GI call): probe: set then read property decoration-layout: exact
+#[test]
+fn method_windowcontrols_set_decoration_layout() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window-controls");
+        
+        let r = h.call_args(o, "set_decoration_layout", &[V::Str("svl probe".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "decoration-layout") == V::Str("svl probe".into()), "postcondition: h.get(o, 'decoration-layout') == V::Str('svl probe'.into())");
+    });
+}
+
+/// method WindowControls.set_side (dynamic GI call): probe: set then read property side: exact
+#[test]
+fn method_windowcontrols_set_side() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window-controls");
+        
+        let r = h.call_args(o, "set_side", &[V::Str("end".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "side") == V::Str("end".into()), "postcondition: h.get(o, 'side') == V::Str('end'.into())");
+    });
+}
+
+/// method WindowControls.set_use_native_controls (dynamic GI call): probe: set then read property use-native-controls: exact
+#[test]
+fn method_windowcontrols_set_use_native_controls() {
+    if crate::testing::skip_below_gtk(4, 18) {
+        return;
+    }
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window-controls");
+        
+        let r = h.call_args(o, "set_use_native_controls", &[V::Bool(true)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "use-native-controls") == V::Bool(true), "postcondition: h.get(o, 'use-native-controls') == V::Bool(true)");
+    });
+}
+
+/// bind:side on WindowControls: rule: B1: GtkWindowControls:side is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_windowcontrols_side() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window-controls");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => { let pspec = o.find_property("side").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("side", &ev.to_value_by_nick("end").unwrap()) },
+                1 => { let pspec = o.find_property("side").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("side", &ev.to_value_by_nick("start").unwrap()) },
+                2 => { let pspec = o.find_property("side").unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); o.set_property_from_value("side", &ev.to_value_by_nick("end").unwrap()) },
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::side", true).unwrap();
+        fire(&h.obj(o), "end", 0);
+        fire(&h.obj(o), "start", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "side"), V::Str("start".into()), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_str(o, "side", "end").unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "side"), V::Str("end".into()), "the property reads the programmatic value");
+    });
+}
+
+/// bind:use-native-controls on WindowControls: rule: B1: GtkWindowControls:use-native-controls is writable, scalar and notifies; the renderer compares before set
+#[test]
+fn binding_windowcontrols_use_native_controls() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("window-controls");
+        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {
+            let o = ob;
+            let _ = (v, i);
+            let _ = v;
+            match i {
+                0 => o.set_property("use-native-controls", true),
+                1 => o.set_property("use-native-controls", false),
+                2 => o.set_property("use-native-controls", true),
+                _ => unreachable!(),
+            }
+        };
+        h.listen(o, "notify::use-native-controls", true).unwrap();
+        fire(&h.obj(o), "True", 0);
+        fire(&h.obj(o), "False", 1);
+        let ev = h.take_events_with_args();
+        assert!(!ev.is_empty(), "native change is delivered");
+        assert_eq!(h.get(o, "use-native-controls"), V::Bool(false), "the property reads the value the native change set");
+        h.take_events_with_args();
+        h.set_bool(o, "use-native-controls", true).unwrap();
+        assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
+        assert_eq!(h.get(o, "use-native-controls"), V::Bool(true), "the property reads the programmatic value");
     });
 }

@@ -1,0 +1,347 @@
+{
+ "bindings:position": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": 1
+  }
+ },
+ "bindings:position-set": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:resize-end-child": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": false
+  }
+ },
+ "bindings:resize-start-child": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": false
+  }
+ },
+ "bindings:shrink-end-child": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": false
+  }
+ },
+ "bindings:shrink-start-child": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": false
+  }
+ },
+ "bindings:wide-handle": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "methods:get_position": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "position",
+   "ret": 0
+  }
+ },
+ "methods:get_resize_end_child": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "resize-end-child",
+   "ret": true
+  }
+ },
+ "methods:get_resize_start_child": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "resize-start-child",
+   "ret": true
+  }
+ },
+ "methods:get_shrink_end_child": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "shrink-end-child",
+   "ret": true
+  }
+ },
+ "methods:get_shrink_start_child": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "shrink-start-child",
+   "ret": true
+  }
+ },
+ "methods:get_wide_handle": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "wide-handle",
+   "ret": false
+  }
+ },
+ "methods:set_position": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "position",
+   "recipe": null,
+   "sample": 1
+  }
+ },
+ "methods:set_resize_end_child": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "resize-end-child",
+   "recipe": null,
+   "sample": false
+  }
+ },
+ "methods:set_resize_start_child": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "resize-start-child",
+   "recipe": null,
+   "sample": false
+  }
+ },
+ "methods:set_shrink_end_child": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "shrink-end-child",
+   "recipe": null,
+   "sample": false
+  }
+ },
+ "methods:set_shrink_start_child": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "shrink-start-child",
+   "recipe": null,
+   "sample": false
+  }
+ },
+ "methods:set_wide_handle": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "wide-handle",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "properties:position": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 1,
+   "recipe": null,
+   "repeat": false,
+   "reset_log": [],
+   "sample": 1,
+   "signals": [
+    "notify::position-set"
+   ]
+  }
+ },
+ "properties:position-set": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:resize-end-child": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": false,
+   "signals": []
+  }
+ },
+ "properties:resize-start-child": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": false,
+   "signals": []
+  }
+ },
+ "properties:shrink-end-child": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": false,
+   "signals": []
+  }
+ },
+ "properties:shrink-start-child": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": false,
+   "signals": []
+  }
+ },
+ "properties:wide-handle": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "signals:accept-position": {
+  "confidence": 0.9,
+  "evidence": {
+   "action": true,
+   "handler_result": "bool_stop",
+   "n_params": 0,
+   "params": [],
+   "returns": "gboolean",
+   "run": "last",
+   "sync_required": true,
+   "synthetic": {
+    "args": [],
+    "emit": "delivered"
+   }
+  }
+ },
+ "signals:cancel-position": {
+  "confidence": 0.9,
+  "evidence": {
+   "action": true,
+   "handler_result": "bool_stop",
+   "n_params": 0,
+   "params": [],
+   "returns": "gboolean",
+   "run": "last",
+   "sync_required": true,
+   "synthetic": {
+    "args": [],
+    "emit": "delivered"
+   }
+  }
+ },
+ "signals:cycle-child-focus": {
+  "confidence": 0.9,
+  "evidence": {
+   "action": true,
+   "handler_result": "bool_stop",
+   "n_params": 1,
+   "params": [
+    "gboolean"
+   ],
+   "returns": "gboolean",
+   "run": "last",
+   "sync_required": true,
+   "synthetic": {
+    "args": [
+     true
+    ],
+    "emit": "delivered"
+   }
+  }
+ },
+ "signals:toggle-handle-focus": {
+  "confidence": 0.9,
+  "evidence": {
+   "action": true,
+   "handler_result": "bool_stop",
+   "n_params": 0,
+   "params": [],
+   "returns": "gboolean",
+   "run": "last",
+   "sync_required": true,
+   "synthetic": {
+    "args": [],
+    "emit": "delivered"
+   }
+  }
+ }
+}

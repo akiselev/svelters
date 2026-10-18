@@ -249,6 +249,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.14",
       "unsupported_reason": null
     },
     {
@@ -517,6 +518,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.22",
       "unsupported_reason": null
     },
     {
@@ -761,6 +763,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.10",
       "unsupported_reason": null
     },
     {
@@ -801,6 +804,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.14",
       "unsupported_reason": null
     },
     {
@@ -1099,6 +1103,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.20",
       "unsupported_reason": null
     },
     {
@@ -1125,6 +1130,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.22",
       "unsupported_reason": null
     },
     {
@@ -1143,6 +1149,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.22",
       "unsupported_reason": null
     },
     {
@@ -1235,6 +1242,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.14",
       "unsupported_reason": null
     },
     {
@@ -1302,6 +1310,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.22",
       "unsupported_reason": null
     },
     {
@@ -1328,6 +1337,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.10",
       "unsupported_reason": null
     },
     {
@@ -1479,6 +1489,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.14",
       "unsupported_reason": null
     },
     {

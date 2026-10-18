@@ -1,0 +1,267 @@
+properties:
+- name: activates-default
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: input-purpose
+  sample: alpha
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: placeholder-text
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: search-delay
+  sample: 151
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: next-match
+  handler_result: none
+  sync_required: false
+  provenance:
+  - origin: runtime
+    ref: returns void, run-last
+  - origin: probe
+    ref: action signal, emitted and delivered
+- name: previous-match
+  handler_result: none
+  sync_required: false
+  provenance:
+  - origin: runtime
+    ref: returns void, run-last
+  - origin: probe
+    ref: action signal, emitted and delivered
+- name: search-changed
+  handler_result: none
+  sync_required: false
+  trigger:
+    rust: o.emit_by_name::<()>("search-changed", &[]);
+    values:
+    - a
+    - b
+    - c
+  delivery_only: true
+  provenance:
+  - origin: runtime
+    ref: returns void, run-last
+  - origin: probe
+    ref: emitted synthetically with sampled arguments; delivery only, no native trigger
+- name: search-started
+  handler_result: none
+  sync_required: false
+  trigger:
+    rust: o.emit_by_name::<()>("search-started", &[]);
+    values:
+    - a
+    - b
+    - c
+  delivery_only: true
+  provenance:
+  - origin: runtime
+    ref: returns void, run-last
+  - origin: probe
+    ref: emitted synthetically with sampled arguments; delivery only, no native trigger
+- name: stop-search
+  handler_result: none
+  sync_required: false
+  provenance:
+  - origin: runtime
+    ref: returns void, run-last
+  - origin: probe
+    ref: action signal, emitted and delivered
+- name: notify::activates-default
+  derived_from:
+    property: activates-default
+  js_event: notify::activates-default
+  trigger:
+    property: activates-default
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkSearchEntry:activates-default
+- name: notify::input-purpose
+  derived_from:
+    property: input-purpose
+  js_event: notify::input-purpose
+  trigger:
+    property: input-purpose
+    values:
+    - alpha
+    - free-form
+    - alpha
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkSearchEntry:input-purpose
+- name: notify::search-delay
+  derived_from:
+    property: search-delay
+  js_event: notify::search-delay
+  trigger:
+    property: search-delay
+    values:
+    - 151
+    - 150
+    - 151
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkSearchEntry:search-delay
+methods:
+- name: get_input_purpose
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "input-purpose")
+  provenance:
+  - origin: probe
+    ref: equals property input-purpose
+- name: get_placeholder_text
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "placeholder-text")
+  provenance:
+  - origin: probe
+    ref: equals property placeholder-text
+- name: get_search_delay
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "search-delay")
+  provenance:
+  - origin: probe
+    ref: equals property search-delay
+- name: set_input_purpose
+  dispatch: dynamic
+  args:
+  - alpha
+  expect: h.get(o, "input-purpose") == V::Str("alpha".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property input-purpose: exact'
+- name: set_placeholder_text
+  dispatch: dynamic
+  args:
+  - svl probe
+  expect: h.get(o, "placeholder-text") == V::Str("svl probe".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property placeholder-text: exact'
+- name: set_search_delay
+  dispatch: dynamic
+  args:
+  - 151
+  expect: h.get(o, "search-delay") == V::I64(151)
+  provenance:
+  - origin: probe
+    ref: 'set then read property search-delay: exact'
+bindings:
+- name: activates-default
+  direction: two_way
+  property: activates-default
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::activates-default
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkSearchEntry:activates-default is writable, scalar and notifies; the renderer compares before set'
+- name: input-purpose
+  direction: two_way
+  property: input-purpose
+  type:
+    ref: enum<svelters-api:v1:type:gtk:Gtk:InputPurpose>
+    nullable: false
+  change:
+    signal: notify::input-purpose
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkSearchEntry:input-purpose is writable, scalar and notifies; the renderer compares before set'
+- name: search-delay
+  direction: two_way
+  property: search-delay
+  type:
+    ref: u32
+    nullable: false
+  change:
+    signal: notify::search-delay
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkSearchEntry:search-delay is writable, scalar and notifies; the renderer compares before set'

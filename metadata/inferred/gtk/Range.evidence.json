@@ -1,0 +1,283 @@
+{
+ "bindings:fill-level": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": 0.5
+  }
+ },
+ "bindings:inverted": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:restrict-to-fill-level": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": false
+  }
+ },
+ "bindings:round-digits": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": 0
+  }
+ },
+ "bindings:show-fill-level": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "methods:get_fill_level": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "fill-level",
+   "ret": 1.7976931348623157e+308
+  }
+ },
+ "methods:get_flippable": {
+  "confidence": 0.9,
+  "evidence": {
+   "class": "pure_getter",
+   "outcome": "ok",
+   "ret": false,
+   "stable": true
+  }
+ },
+ "methods:get_inverted": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "inverted",
+   "ret": false
+  }
+ },
+ "methods:get_restrict_to_fill_level": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "restrict-to-fill-level",
+   "ret": true
+  }
+ },
+ "methods:get_round_digits": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "round-digits",
+   "ret": -1
+  }
+ },
+ "methods:get_show_fill_level": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "show-fill-level",
+   "ret": false
+  }
+ },
+ "methods:get_slider_size_fixed": {
+  "confidence": 0.9,
+  "evidence": {
+   "class": "pure_getter",
+   "outcome": "ok",
+   "ret": false,
+   "stable": true
+  }
+ },
+ "methods:set_fill_level": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "fill-level",
+   "recipe": null,
+   "sample": 0.5
+  }
+ },
+ "methods:set_inverted": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "inverted",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "methods:set_restrict_to_fill_level": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "restrict-to-fill-level",
+   "recipe": null,
+   "sample": false
+  }
+ },
+ "methods:set_round_digits": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "round-digits",
+   "recipe": null,
+   "sample": 0
+  }
+ },
+ "methods:set_show_fill_level": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "show-fill-level",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "properties:adjustment": {
+  "confidence": 0.9,
+  "evidence": {
+   "default": "<Adjustment>",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "<Adjustment>",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "<Adjustment>",
+   "signals": [
+    "value-changed"
+   ]
+  }
+ },
+ "properties:fill-level": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 1.7976931348623157e+308,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 0.5,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 0.5,
+   "signals": []
+  }
+ },
+ "properties:inverted": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:restrict-to-fill-level": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": false,
+   "signals": []
+  }
+ },
+ "properties:round-digits": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": -1,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 0,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 0,
+   "signals": []
+  }
+ },
+ "properties:show-fill-level": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "signals:adjust-bounds": {
+  "confidence": 0.9,
+  "evidence": {
+   "action": false,
+   "handler_result": "none",
+   "n_params": 1,
+   "params": [
+    "gdouble"
+   ],
+   "returns": "void",
+   "run": "last",
+   "sync_required": false,
+   "synthetic": {
+    "args": [
+     1.5
+    ],
+    "emit": "delivered"
+   }
+  }
+ },
+ "signals:value-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "action": false,
+   "handler_result": "none",
+   "n_params": 0,
+   "params": [],
+   "returns": "void",
+   "run": "last",
+   "sync_required": false,
+   "synthetic": {
+    "args": [],
+    "emit": "delivered"
+   }
+  }
+ }
+}

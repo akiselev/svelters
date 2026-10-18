@@ -1,0 +1,104 @@
+{
+ "bindings:obey-child": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": false
+  }
+ },
+ "bindings:ratio": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": 2.0
+  }
+ },
+ "methods:get_obey_child": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "obey-child",
+   "ret": true
+  }
+ },
+ "methods:get_ratio": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "ratio",
+   "ret": 1.0
+  }
+ },
+ "methods:get_xalign": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "xalign",
+   "ret": 0.5
+  }
+ },
+ "methods:get_yalign": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "yalign",
+   "ret": 0.5
+  }
+ },
+ "methods:set_obey_child": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "obey-child",
+   "recipe": null,
+   "sample": false
+  }
+ },
+ "methods:set_ratio": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "ratio",
+   "recipe": null,
+   "sample": 2.0
+  }
+ },
+ "properties:obey-child": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": false,
+   "signals": []
+  }
+ },
+ "properties:ratio": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 1.0,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 2.0,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 2.0,
+   "signals": []
+  }
+ }
+}

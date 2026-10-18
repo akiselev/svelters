@@ -1,0 +1,541 @@
+{
+ "bindings:activates-default": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:enable-emoji-completion": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:input-purpose": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": "alpha"
+  }
+ },
+ "bindings:invisible-char-set": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:max-length": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": 1
+  }
+ },
+ "bindings:overwrite-mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:propagate-text-width": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:truncate-multiline": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:visibility": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": false
+  }
+ },
+ "methods:get_activates_default": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "activates-default",
+   "ret": false
+  }
+ },
+ "methods:get_enable_emoji_completion": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "enable-emoji-completion",
+   "ret": false
+  }
+ },
+ "methods:get_input_purpose": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "input-purpose",
+   "ret": "free-form"
+  }
+ },
+ "methods:get_max_length": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "max-length",
+   "ret": 0
+  }
+ },
+ "methods:get_overwrite_mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "overwrite-mode",
+   "ret": false
+  }
+ },
+ "methods:get_placeholder_text": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "placeholder-text",
+   "ret": null
+  }
+ },
+ "methods:get_propagate_text_width": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "propagate-text-width",
+   "ret": false
+  }
+ },
+ "methods:get_text_length": {
+  "confidence": 0.9,
+  "evidence": {
+   "class": "pure_getter",
+   "outcome": "ok",
+   "ret": 0,
+   "stable": true
+  }
+ },
+ "methods:get_truncate_multiline": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "truncate-multiline",
+   "ret": false
+  }
+ },
+ "methods:get_visibility": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "visibility",
+   "ret": true
+  }
+ },
+ "methods:set_activates_default": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "activates-default",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "methods:set_enable_emoji_completion": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "enable-emoji-completion",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "methods:set_input_purpose": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "input-purpose",
+   "recipe": null,
+   "sample": "alpha"
+  }
+ },
+ "methods:set_max_length": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "max-length",
+   "recipe": null,
+   "sample": 1
+  }
+ },
+ "methods:set_overwrite_mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "overwrite-mode",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "methods:set_placeholder_text": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "placeholder-text",
+   "recipe": null,
+   "sample": "svl probe"
+  }
+ },
+ "methods:set_propagate_text_width": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "propagate-text-width",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "methods:set_truncate_multiline": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "truncate-multiline",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "methods:set_visibility": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "visibility",
+   "recipe": null,
+   "sample": false
+  }
+ },
+ "properties:activates-default": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:buffer": {
+  "confidence": 0.9,
+  "evidence": {
+   "default": "<EntryBuffer>",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "<EntryBuffer>",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "<EntryBuffer>",
+   "signals": [
+    "notify::max-length"
+   ]
+  }
+ },
+ "properties:enable-emoji-completion": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:extra-menu": {
+  "confidence": 0.9,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "<Menu>",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "<Menu>",
+   "signals": []
+  }
+ },
+ "properties:im-module": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "repeat": false,
+   "reset_log": [],
+   "sample": "svl probe",
+   "signals": [
+    "notify::cursor",
+    "preedit-changed"
+   ]
+  }
+ },
+ "properties:input-purpose": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "free-form",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "alpha",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "alpha",
+   "signals": []
+  }
+ },
+ "properties:invisible-char-set": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": false,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:max-length": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 1,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 1,
+   "signals": []
+  }
+ },
+ "properties:overwrite-mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:placeholder-text": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "svl probe",
+   "signals": []
+  }
+ },
+ "properties:propagate-text-width": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:truncate-multiline": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:visibility": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "repeat": false,
+   "reset_log": [],
+   "sample": false,
+   "signals": [
+    "notify::invisible-char"
+   ]
+  }
+ },
+ "signals:backspace": {
+  "confidence": 0.95,
+  "evidence": {
+   "action": true,
+   "emit": "delivered",
+   "handler_result": "none",
+   "n_params": 0,
+   "params": [],
+   "returns": "void",
+   "run": "last",
+   "sync_required": false
+  }
+ },
+ "signals:copy-clipboard": {
+  "confidence": 0.95,
+  "evidence": {
+   "action": true,
+   "emit": "delivered",
+   "handler_result": "none",
+   "n_params": 0,
+   "params": [],
+   "returns": "void",
+   "run": "last",
+   "sync_required": false
+  }
+ },
+ "signals:cut-clipboard": {
+  "confidence": 0.95,
+  "evidence": {
+   "action": true,
+   "emit": "delivered",
+   "handler_result": "none",
+   "n_params": 0,
+   "params": [],
+   "returns": "void",
+   "run": "last",
+   "sync_required": false
+  }
+ },
+ "signals:insert-at-cursor": {
+  "confidence": 0.9,
+  "evidence": {
+   "action": true,
+   "handler_result": "none",
+   "n_params": 1,
+   "params": [
+    "gchararray"
+   ],
+   "returns": "void",
+   "run": "last",
+   "sync_required": false,
+   "synthetic": {
+    "args": [
+     "x"
+    ],
+    "emit": "delivered"
+   }
+  }
+ },
+ "signals:paste-clipboard": {
+  "confidence": 0.95,
+  "evidence": {
+   "action": true,
+   "emit": "delivered",
+   "handler_result": "none",
+   "n_params": 0,
+   "params": [],
+   "returns": "void",
+   "run": "last",
+   "sync_required": false
+  }
+ },
+ "signals:toggle-overwrite": {
+  "confidence": 0.95,
+  "evidence": {
+   "action": true,
+   "emit": "delivered",
+   "handler_result": "none",
+   "n_params": 0,
+   "params": [],
+   "returns": "void",
+   "run": "last",
+   "sync_required": false
+  }
+ }
+}

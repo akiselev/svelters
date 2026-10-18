@@ -1,0 +1,393 @@
+properties:
+- name: enable-popup
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: group-name
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: scrollable
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: show-border
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: show-tabs
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: tab-pos
+  sample: left
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: change-current-page
+  handler_result: bool_stop
+  sync_required: true
+  trigger:
+    rust: let _ = o.emit_by_name::<bool>("change-current-page", &[&1i32]);
+    values:
+    - a
+    - b
+    - c
+  delivery_only: true
+  provenance:
+  - origin: runtime
+    ref: returns gboolean, run-last
+  - origin: probe
+    ref: emitted synthetically with sampled arguments; delivery only, no native trigger
+- name: select-page
+  handler_result: bool_stop
+  sync_required: true
+  trigger:
+    rust: let _ = o.emit_by_name::<bool>("select-page", &[&true]);
+    values:
+    - a
+    - b
+    - c
+  delivery_only: true
+  provenance:
+  - origin: runtime
+    ref: returns gboolean, run-last
+  - origin: probe
+    ref: emitted synthetically with sampled arguments; delivery only, no native trigger
+- name: notify::enable-popup
+  derived_from:
+    property: enable-popup
+  js_event: notify::enable-popup
+  trigger:
+    property: enable-popup
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkNotebook:enable-popup
+- name: notify::scrollable
+  derived_from:
+    property: scrollable
+  js_event: notify::scrollable
+  trigger:
+    property: scrollable
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkNotebook:scrollable
+- name: notify::show-border
+  derived_from:
+    property: show-border
+  js_event: notify::show-border
+  trigger:
+    property: show-border
+    values:
+    - false
+    - true
+    - false
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkNotebook:show-border
+- name: notify::show-tabs
+  derived_from:
+    property: show-tabs
+  js_event: notify::show-tabs
+  trigger:
+    property: show-tabs
+    values:
+    - false
+    - true
+    - false
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkNotebook:show-tabs
+- name: notify::tab-pos
+  derived_from:
+    property: tab-pos
+  js_event: notify::tab-pos
+  trigger:
+    property: tab-pos
+    values:
+    - left
+    - top
+    - left
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkNotebook:tab-pos
+methods:
+- name: get_current_page
+  dispatch: dynamic
+  args: []
+  expect: r == V::I64(-1)
+  provenance:
+  - origin: probe
+    ref: called on a new instance, returned -1
+- name: get_group_name
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "group-name")
+  provenance:
+  - origin: probe
+    ref: equals property group-name
+- name: get_n_pages
+  dispatch: dynamic
+  args: []
+  expect: r == V::I64(0)
+  provenance:
+  - origin: probe
+    ref: called on a new instance, returned 0
+- name: get_scrollable
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "scrollable")
+  provenance:
+  - origin: probe
+    ref: equals property scrollable
+- name: get_show_border
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "show-border")
+  provenance:
+  - origin: probe
+    ref: equals property show-border
+- name: get_show_tabs
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "show-tabs")
+  provenance:
+  - origin: probe
+    ref: equals property show-tabs
+- name: get_tab_pos
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "tab-pos")
+  provenance:
+  - origin: probe
+    ref: equals property tab-pos
+- name: set_group_name
+  dispatch: dynamic
+  args:
+  - svl probe
+  expect: h.get(o, "group-name") == V::Str("svl probe".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property group-name: exact'
+- name: set_scrollable
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "scrollable") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property scrollable: exact'
+- name: set_show_border
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "show-border") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property show-border: exact'
+- name: set_show_tabs
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "show-tabs") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property show-tabs: exact'
+- name: set_tab_pos
+  dispatch: dynamic
+  args:
+  - left
+  expect: h.get(o, "tab-pos") == V::Str("left".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property tab-pos: exact'
+bindings:
+- name: enable-popup
+  direction: two_way
+  property: enable-popup
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::enable-popup
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkNotebook:enable-popup is writable, scalar and notifies; the renderer compares before set'
+- name: scrollable
+  direction: two_way
+  property: scrollable
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::scrollable
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkNotebook:scrollable is writable, scalar and notifies; the renderer compares before set'
+- name: show-border
+  direction: two_way
+  property: show-border
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::show-border
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkNotebook:show-border is writable, scalar and notifies; the renderer compares before set'
+- name: show-tabs
+  direction: two_way
+  property: show-tabs
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::show-tabs
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkNotebook:show-tabs is writable, scalar and notifies; the renderer compares before set'
+- name: tab-pos
+  direction: two_way
+  property: tab-pos
+  type:
+    ref: enum<svelters-api:v1:type:gtk:Gtk:PositionType>
+    nullable: false
+  change:
+    signal: notify::tab-pos
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkNotebook:tab-pos is writable, scalar and notifies; the renderer compares before set'

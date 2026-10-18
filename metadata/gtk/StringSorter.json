@@ -84,6 +84,7 @@
         "ownership": "borrowed",
         "type": "enum<svelters-api:v1:type:gtk:Gtk:Collation>"
       },
+      "since": "4.10",
       "unsupported_reason": null
     },
     {
@@ -146,6 +147,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.10",
       "unsupported_reason": null
     },
     {

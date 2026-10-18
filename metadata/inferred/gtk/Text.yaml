@@ -1,0 +1,696 @@
+properties:
+- name: activates-default
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: buffer
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: enable-emoji-completion
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: extra-menu
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: im-module
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: input-purpose
+  sample: alpha
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: invisible-char-set
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: max-length
+  sample: 1
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: overwrite-mode
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: placeholder-text
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: propagate-text-width
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: truncate-multiline
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: visibility
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: backspace
+  handler_result: none
+  sync_required: false
+  provenance:
+  - origin: runtime
+    ref: returns void, run-last
+  - origin: probe
+    ref: action signal, emitted and delivered
+- name: copy-clipboard
+  handler_result: none
+  sync_required: false
+  provenance:
+  - origin: runtime
+    ref: returns void, run-last
+  - origin: probe
+    ref: action signal, emitted and delivered
+- name: cut-clipboard
+  handler_result: none
+  sync_required: false
+  provenance:
+  - origin: runtime
+    ref: returns void, run-last
+  - origin: probe
+    ref: action signal, emitted and delivered
+- name: insert-at-cursor
+  handler_result: none
+  sync_required: false
+  trigger:
+    rust: o.emit_by_name::<()>("insert-at-cursor", &[&"x"]);
+    values:
+    - a
+    - b
+    - c
+  delivery_only: true
+  provenance:
+  - origin: runtime
+    ref: returns void, run-last
+  - origin: probe
+    ref: emitted synthetically with sampled arguments; delivery only, no native trigger
+- name: paste-clipboard
+  handler_result: none
+  sync_required: false
+  provenance:
+  - origin: runtime
+    ref: returns void, run-last
+  - origin: probe
+    ref: action signal, emitted and delivered
+- name: toggle-overwrite
+  handler_result: none
+  sync_required: false
+  provenance:
+  - origin: runtime
+    ref: returns void, run-last
+  - origin: probe
+    ref: action signal, emitted and delivered
+- name: notify::activates-default
+  derived_from:
+    property: activates-default
+  js_event: notify::activates-default
+  trigger:
+    property: activates-default
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkText:activates-default
+- name: notify::enable-emoji-completion
+  derived_from:
+    property: enable-emoji-completion
+  js_event: notify::enable-emoji-completion
+  trigger:
+    property: enable-emoji-completion
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkText:enable-emoji-completion
+- name: notify::input-purpose
+  derived_from:
+    property: input-purpose
+  js_event: notify::input-purpose
+  trigger:
+    property: input-purpose
+    values:
+    - alpha
+    - free-form
+    - alpha
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkText:input-purpose
+- name: notify::invisible-char-set
+  derived_from:
+    property: invisible-char-set
+  js_event: notify::invisible-char-set
+  trigger:
+    property: invisible-char-set
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkText:invisible-char-set
+- name: notify::max-length
+  derived_from:
+    property: max-length
+  js_event: notify::max-length
+  trigger:
+    property: max-length
+    values:
+    - 1
+    - 0
+    - 1
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkText:max-length
+- name: notify::overwrite-mode
+  derived_from:
+    property: overwrite-mode
+  js_event: notify::overwrite-mode
+  trigger:
+    property: overwrite-mode
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkText:overwrite-mode
+- name: notify::propagate-text-width
+  derived_from:
+    property: propagate-text-width
+  js_event: notify::propagate-text-width
+  trigger:
+    property: propagate-text-width
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkText:propagate-text-width
+- name: notify::truncate-multiline
+  derived_from:
+    property: truncate-multiline
+  js_event: notify::truncate-multiline
+  trigger:
+    property: truncate-multiline
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkText:truncate-multiline
+- name: notify::visibility
+  derived_from:
+    property: visibility
+  js_event: notify::visibility
+  trigger:
+    property: visibility
+    values:
+    - false
+    - true
+    - false
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkText:visibility
+methods:
+- name: get_activates_default
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "activates-default")
+  provenance:
+  - origin: probe
+    ref: equals property activates-default
+- name: get_enable_emoji_completion
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "enable-emoji-completion")
+  provenance:
+  - origin: probe
+    ref: equals property enable-emoji-completion
+- name: get_input_purpose
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "input-purpose")
+  provenance:
+  - origin: probe
+    ref: equals property input-purpose
+- name: get_max_length
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "max-length")
+  provenance:
+  - origin: probe
+    ref: equals property max-length
+- name: get_overwrite_mode
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "overwrite-mode")
+  provenance:
+  - origin: probe
+    ref: equals property overwrite-mode
+- name: get_placeholder_text
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "placeholder-text")
+  provenance:
+  - origin: probe
+    ref: equals property placeholder-text
+- name: get_propagate_text_width
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "propagate-text-width")
+  provenance:
+  - origin: probe
+    ref: equals property propagate-text-width
+- name: get_text_length
+  dispatch: dynamic
+  args: []
+  expect: r == V::I64(0)
+  provenance:
+  - origin: probe
+    ref: called on a new instance, returned 0
+- name: get_truncate_multiline
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "truncate-multiline")
+  provenance:
+  - origin: probe
+    ref: equals property truncate-multiline
+- name: get_visibility
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "visibility")
+  provenance:
+  - origin: probe
+    ref: equals property visibility
+- name: set_activates_default
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "activates-default") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property activates-default: exact'
+- name: set_enable_emoji_completion
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "enable-emoji-completion") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property enable-emoji-completion: exact'
+- name: set_input_purpose
+  dispatch: dynamic
+  args:
+  - alpha
+  expect: h.get(o, "input-purpose") == V::Str("alpha".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property input-purpose: exact'
+- name: set_max_length
+  dispatch: dynamic
+  args:
+  - 1
+  expect: h.get(o, "max-length") == V::I64(1)
+  provenance:
+  - origin: probe
+    ref: 'set then read property max-length: exact'
+- name: set_overwrite_mode
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "overwrite-mode") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property overwrite-mode: exact'
+- name: set_placeholder_text
+  dispatch: dynamic
+  args:
+  - svl probe
+  expect: h.get(o, "placeholder-text") == V::Str("svl probe".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property placeholder-text: exact'
+- name: set_propagate_text_width
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "propagate-text-width") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property propagate-text-width: exact'
+- name: set_truncate_multiline
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "truncate-multiline") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property truncate-multiline: exact'
+- name: set_visibility
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "visibility") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property visibility: exact'
+bindings:
+- name: activates-default
+  direction: two_way
+  property: activates-default
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::activates-default
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkText:activates-default is writable, scalar and notifies; the renderer compares before set'
+- name: enable-emoji-completion
+  direction: two_way
+  property: enable-emoji-completion
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::enable-emoji-completion
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkText:enable-emoji-completion is writable, scalar and notifies; the renderer compares before set'
+- name: input-purpose
+  direction: two_way
+  property: input-purpose
+  type:
+    ref: enum<svelters-api:v1:type:gtk:Gtk:InputPurpose>
+    nullable: false
+  change:
+    signal: notify::input-purpose
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkText:input-purpose is writable, scalar and notifies; the renderer compares before set'
+- name: invisible-char-set
+  direction: two_way
+  property: invisible-char-set
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::invisible-char-set
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkText:invisible-char-set is writable, scalar and notifies; the renderer compares before set'
+- name: max-length
+  direction: two_way
+  property: max-length
+  type:
+    ref: i32
+    nullable: false
+  change:
+    signal: notify::max-length
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkText:max-length is writable, scalar and notifies; the renderer compares before set'
+- name: overwrite-mode
+  direction: two_way
+  property: overwrite-mode
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::overwrite-mode
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkText:overwrite-mode is writable, scalar and notifies; the renderer compares before set'
+- name: propagate-text-width
+  direction: two_way
+  property: propagate-text-width
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::propagate-text-width
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkText:propagate-text-width is writable, scalar and notifies; the renderer compares before set'
+- name: truncate-multiline
+  direction: two_way
+  property: truncate-multiline
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::truncate-multiline
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkText:truncate-multiline is writable, scalar and notifies; the renderer compares before set'
+- name: visibility
+  direction: two_way
+  property: visibility
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::visibility
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkText:visibility is writable, scalar and notifies; the renderer compares before set'

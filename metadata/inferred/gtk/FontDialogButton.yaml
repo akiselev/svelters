@@ -1,0 +1,232 @@
+properties:
+- name: dialog
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: font-features
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: level
+  sample: family
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: use-font
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: use-size
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: notify::level
+  derived_from:
+    property: level
+  js_event: notify::level
+  trigger:
+    property: level
+    values:
+    - family
+    - font
+    - family
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkFontDialogButton:level
+- name: notify::use-font
+  derived_from:
+    property: use-font
+  js_event: notify::use-font
+  trigger:
+    property: use-font
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkFontDialogButton:use-font
+- name: notify::use-size
+  derived_from:
+    property: use-size
+  js_event: notify::use-size
+  trigger:
+    property: use-size
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkFontDialogButton:use-size
+methods:
+- name: get_font_features
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "font-features")
+  provenance:
+  - origin: probe
+    ref: equals property font-features
+- name: get_level
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "level")
+  provenance:
+  - origin: probe
+    ref: equals property level
+- name: get_use_font
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "use-font")
+  provenance:
+  - origin: probe
+    ref: equals property use-font
+- name: get_use_size
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "use-size")
+  provenance:
+  - origin: probe
+    ref: equals property use-size
+- name: set_font_features
+  dispatch: dynamic
+  args:
+  - svl probe
+  expect: h.get(o, "font-features") == V::Str("svl probe".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property font-features: exact'
+- name: set_level
+  dispatch: dynamic
+  args:
+  - family
+  expect: h.get(o, "level") == V::Str("family".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property level: exact'
+- name: set_use_font
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "use-font") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property use-font: exact'
+- name: set_use_size
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "use-size") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property use-size: exact'
+bindings:
+- name: level
+  direction: two_way
+  property: level
+  type:
+    ref: enum<svelters-api:v1:type:gtk:Gtk:FontLevel>
+    nullable: false
+  change:
+    signal: notify::level
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkFontDialogButton:level is writable, scalar and notifies; the renderer compares before set'
+- name: use-font
+  direction: two_way
+  property: use-font
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::use-font
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkFontDialogButton:use-font is writable, scalar and notifies; the renderer compares before set'
+- name: use-size
+  direction: two_way
+  property: use-size
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::use-size
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkFontDialogButton:use-size is writable, scalar and notifies; the renderer compares before set'

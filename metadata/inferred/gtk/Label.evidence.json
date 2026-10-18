@@ -1,0 +1,648 @@
+{
+ "bindings:ellipsize": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": "start"
+  }
+ },
+ "bindings:justify": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": "right"
+  }
+ },
+ "bindings:label": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": "svl probe"
+  }
+ },
+ "bindings:lines": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": 0
+  }
+ },
+ "bindings:max-width-chars": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": 0
+  }
+ },
+ "bindings:natural-wrap-mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": "none"
+  }
+ },
+ "bindings:selectable": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:single-line-mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:use-markup": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:use-underline": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:width-chars": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": 0
+  }
+ },
+ "bindings:wrap": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:wrap-mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": "char"
+  }
+ },
+ "methods:get_ellipsize": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "ellipsize",
+   "ret": "none"
+  }
+ },
+ "methods:get_justify": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "justify",
+   "ret": "left"
+  }
+ },
+ "methods:get_label": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "label",
+   "ret": ""
+  }
+ },
+ "methods:get_lines": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "lines",
+   "ret": -1
+  }
+ },
+ "methods:get_max_width_chars": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "max-width-chars",
+   "ret": -1
+  }
+ },
+ "methods:get_mnemonic_keyval": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "mnemonic-keyval",
+   "ret": 16777215
+  }
+ },
+ "methods:get_natural_wrap_mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "natural-wrap-mode",
+   "ret": "inherit"
+  }
+ },
+ "methods:get_selectable": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "selectable",
+   "ret": false
+  }
+ },
+ "methods:get_single_line_mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "single-line-mode",
+   "ret": false
+  }
+ },
+ "methods:get_text": {
+  "confidence": 0.9,
+  "evidence": {
+   "class": "pure_getter",
+   "outcome": "ok",
+   "ret": "",
+   "stable": true
+  }
+ },
+ "methods:get_use_markup": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "use-markup",
+   "ret": false
+  }
+ },
+ "methods:get_use_underline": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "use-underline",
+   "ret": false
+  }
+ },
+ "methods:get_width_chars": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "width-chars",
+   "ret": -1
+  }
+ },
+ "methods:get_wrap": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "wrap",
+   "ret": false
+  }
+ },
+ "methods:get_wrap_mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "wrap-mode",
+   "ret": "word"
+  }
+ },
+ "methods:get_xalign": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "xalign",
+   "ret": 0.5
+  }
+ },
+ "methods:get_yalign": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "yalign",
+   "ret": 0.5
+  }
+ },
+ "methods:set_ellipsize": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "ellipsize",
+   "recipe": null,
+   "sample": "start"
+  }
+ },
+ "methods:set_justify": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "justify",
+   "recipe": null,
+   "sample": "right"
+  }
+ },
+ "methods:set_label": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "label",
+   "recipe": null,
+   "sample": "svl probe"
+  }
+ },
+ "methods:set_lines": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "lines",
+   "recipe": null,
+   "sample": 0
+  }
+ },
+ "methods:set_max_width_chars": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "max-width-chars",
+   "recipe": null,
+   "sample": 0
+  }
+ },
+ "methods:set_natural_wrap_mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "natural-wrap-mode",
+   "recipe": null,
+   "sample": "none"
+  }
+ },
+ "methods:set_selectable": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "selectable",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "methods:set_single_line_mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "single-line-mode",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "methods:set_use_markup": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "use-markup",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "methods:set_use_underline": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "use-underline",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "methods:set_width_chars": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "width-chars",
+   "recipe": null,
+   "sample": 0
+  }
+ },
+ "methods:set_wrap": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "wrap",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "methods:set_wrap_mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "wrap-mode",
+   "recipe": null,
+   "sample": "char"
+  }
+ },
+ "properties:ellipsize": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "none",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "start",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "start",
+   "signals": []
+  }
+ },
+ "properties:extra-menu": {
+  "confidence": 0.9,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "<Menu>",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "<Menu>",
+   "signals": []
+  }
+ },
+ "properties:justify": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "left",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "right",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "right",
+   "signals": []
+  }
+ },
+ "properties:label": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "svl probe",
+   "signals": []
+  }
+ },
+ "properties:lines": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": -1,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 0,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 0,
+   "signals": []
+  }
+ },
+ "properties:max-width-chars": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": -1,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 0,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 0,
+   "signals": []
+  }
+ },
+ "properties:natural-wrap-mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "inherit",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "none",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "none",
+   "signals": []
+  }
+ },
+ "properties:selectable": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": [
+    "notify::cursor",
+    "notify::focusable"
+   ]
+  }
+ },
+ "properties:single-line-mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:use-markup": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:use-underline": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:width-chars": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": -1,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 0,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 0,
+   "signals": []
+  }
+ },
+ "properties:wrap": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:wrap-mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "word",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "char",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "char",
+   "signals": []
+  }
+ },
+ "signals:activate-current-link": {
+  "confidence": 0.95,
+  "evidence": {
+   "action": true,
+   "emit": "delivered",
+   "handler_result": "none",
+   "n_params": 0,
+   "params": [],
+   "returns": "void",
+   "run": "last",
+   "sync_required": false
+  }
+ },
+ "signals:activate-link": {
+  "confidence": 0.9,
+  "evidence": {
+   "action": false,
+   "handler_result": "bool_stop",
+   "n_params": 1,
+   "params": [
+    "gchararray"
+   ],
+   "returns": "gboolean",
+   "run": "last",
+   "sync_required": true,
+   "synthetic": {
+    "args": [
+     "x"
+    ],
+    "emit": "delivered"
+   }
+  }
+ },
+ "signals:copy-clipboard": {
+  "confidence": 0.95,
+  "evidence": {
+   "action": true,
+   "emit": "delivered",
+   "handler_result": "none",
+   "n_params": 0,
+   "params": [],
+   "returns": "void",
+   "run": "last",
+   "sync_required": false
+  }
+ }
+}

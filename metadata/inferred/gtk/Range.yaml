@@ -1,0 +1,392 @@
+properties:
+- name: adjustment
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: fill-level
+  sample: 0.5
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: inverted
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: restrict-to-fill-level
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: round-digits
+  sample: 0
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: show-fill-level
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: adjust-bounds
+  handler_result: none
+  sync_required: false
+  trigger:
+    rust: o.emit_by_name::<()>("adjust-bounds", &[&1.5f64]);
+    values:
+    - a
+    - b
+    - c
+  delivery_only: true
+  provenance:
+  - origin: runtime
+    ref: returns void, run-last
+  - origin: probe
+    ref: emitted synthetically with sampled arguments; delivery only, no native trigger
+- name: value-changed
+  handler_result: none
+  sync_required: false
+  trigger:
+    rust: o.emit_by_name::<()>("value-changed", &[]);
+    values:
+    - a
+    - b
+    - c
+  delivery_only: true
+  provenance:
+  - origin: runtime
+    ref: returns void, run-last
+  - origin: probe
+    ref: emitted synthetically with sampled arguments; delivery only, no native trigger
+- name: notify::fill-level
+  derived_from:
+    property: fill-level
+  js_event: notify::fill-level
+  trigger:
+    property: fill-level
+    values:
+    - 0.5
+    - 1.7976931348623157e+308
+    - 0.5
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkRange:fill-level
+- name: notify::inverted
+  derived_from:
+    property: inverted
+  js_event: notify::inverted
+  trigger:
+    property: inverted
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkRange:inverted
+- name: notify::restrict-to-fill-level
+  derived_from:
+    property: restrict-to-fill-level
+  js_event: notify::restrict-to-fill-level
+  trigger:
+    property: restrict-to-fill-level
+    values:
+    - false
+    - true
+    - false
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkRange:restrict-to-fill-level
+- name: notify::round-digits
+  derived_from:
+    property: round-digits
+  js_event: notify::round-digits
+  trigger:
+    property: round-digits
+    values:
+    - 0
+    - -1
+    - 0
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkRange:round-digits
+- name: notify::show-fill-level
+  derived_from:
+    property: show-fill-level
+  js_event: notify::show-fill-level
+  trigger:
+    property: show-fill-level
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkRange:show-fill-level
+methods:
+- name: get_fill_level
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "fill-level")
+  provenance:
+  - origin: probe
+    ref: equals property fill-level
+- name: get_flippable
+  dispatch: dynamic
+  args: []
+  expect: r == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: called on a new instance, returned False
+- name: get_inverted
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "inverted")
+  provenance:
+  - origin: probe
+    ref: equals property inverted
+- name: get_restrict_to_fill_level
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "restrict-to-fill-level")
+  provenance:
+  - origin: probe
+    ref: equals property restrict-to-fill-level
+- name: get_round_digits
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "round-digits")
+  provenance:
+  - origin: probe
+    ref: equals property round-digits
+- name: get_show_fill_level
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "show-fill-level")
+  provenance:
+  - origin: probe
+    ref: equals property show-fill-level
+- name: get_slider_size_fixed
+  dispatch: dynamic
+  args: []
+  expect: r == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: called on a new instance, returned False
+- name: set_fill_level
+  dispatch: dynamic
+  args:
+  - 0.5
+  expect: h.get(o, "fill-level") == V::F64(0.5)
+  provenance:
+  - origin: probe
+    ref: 'set then read property fill-level: exact'
+- name: set_inverted
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "inverted") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property inverted: exact'
+- name: set_restrict_to_fill_level
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "restrict-to-fill-level") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property restrict-to-fill-level: exact'
+- name: set_round_digits
+  dispatch: dynamic
+  args:
+  - 0
+  expect: h.get(o, "round-digits") == V::I64(0)
+  provenance:
+  - origin: probe
+    ref: 'set then read property round-digits: exact'
+- name: set_show_fill_level
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "show-fill-level") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property show-fill-level: exact'
+bindings:
+- name: fill-level
+  direction: two_way
+  property: fill-level
+  type:
+    ref: f64
+    nullable: false
+  change:
+    signal: notify::fill-level
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkRange:fill-level is writable, scalar and notifies; the renderer compares before set'
+- name: inverted
+  direction: two_way
+  property: inverted
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::inverted
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkRange:inverted is writable, scalar and notifies; the renderer compares before set'
+- name: restrict-to-fill-level
+  direction: two_way
+  property: restrict-to-fill-level
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::restrict-to-fill-level
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkRange:restrict-to-fill-level is writable, scalar and notifies; the renderer compares before set'
+- name: round-digits
+  direction: two_way
+  property: round-digits
+  type:
+    ref: i32
+    nullable: false
+  change:
+    signal: notify::round-digits
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkRange:round-digits is writable, scalar and notifies; the renderer compares before set'
+- name: show-fill-level
+  direction: two_way
+  property: show-fill-level
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::show-fill-level
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkRange:show-fill-level is writable, scalar and notifies; the renderer compares before set'

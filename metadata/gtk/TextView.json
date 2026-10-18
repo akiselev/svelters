@@ -12,6 +12,662 @@
   "bindings": [
     {
       "change": {
+        "origin": "inferred",
+        "role": "any_change",
+        "signal": "notify::accepts-tab",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "inferred",
+        "read_back": false,
+        "strategy": "none"
+      },
+      "fp": "c6f7d2e7a7160cc6",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextView:binding:accepts-tab",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "inferred"
+      },
+      "name": "accepts-tab",
+      "origin": "inferred",
+      "property": "accepts-tab",
+      "provenance": [
+        {
+          "origin": "rule",
+          "ref": "B1: GtkTextView:accepts-tab is writable, scalar and notifies; the renderer compares before set"
+        }
+      ],
+      "type": {
+        "nullable": false,
+        "origin": "inferred",
+        "ref": "bool"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "inferred"
+      }
+    },
+    {
+      "change": {
+        "origin": "inferred",
+        "role": "any_change",
+        "signal": "notify::bottom-margin",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "inferred",
+        "read_back": true,
+        "strategy": "none"
+      },
+      "fp": "ab509fcf2d1bd32b",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextView:binding:bottom-margin",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "inferred"
+      },
+      "name": "bottom-margin",
+      "origin": "inferred",
+      "property": "bottom-margin",
+      "provenance": [
+        {
+          "origin": "rule",
+          "ref": "B1: GtkTextView:bottom-margin is writable, scalar and notifies; the renderer compares before set"
+        }
+      ],
+      "type": {
+        "nullable": false,
+        "origin": "inferred",
+        "ref": "i32"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "inferred"
+      }
+    },
+    {
+      "change": {
+        "origin": "inferred",
+        "role": "any_change",
+        "signal": "notify::cursor-visible",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "inferred",
+        "read_back": false,
+        "strategy": "none"
+      },
+      "fp": "cac6657be107de60",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextView:binding:cursor-visible",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "inferred"
+      },
+      "name": "cursor-visible",
+      "origin": "inferred",
+      "property": "cursor-visible",
+      "provenance": [
+        {
+          "origin": "rule",
+          "ref": "B1: GtkTextView:cursor-visible is writable, scalar and notifies; the renderer compares before set"
+        }
+      ],
+      "type": {
+        "nullable": false,
+        "origin": "inferred",
+        "ref": "bool"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "inferred"
+      }
+    },
+    {
+      "change": {
+        "origin": "inferred",
+        "role": "any_change",
+        "signal": "notify::editable",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "inferred",
+        "read_back": false,
+        "strategy": "none"
+      },
+      "fp": "33f58e57216bc6b1",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextView:binding:editable",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "inferred"
+      },
+      "name": "editable",
+      "origin": "inferred",
+      "property": "editable",
+      "provenance": [
+        {
+          "origin": "rule",
+          "ref": "B1: GtkTextView:editable is writable, scalar and notifies; the renderer compares before set"
+        }
+      ],
+      "type": {
+        "nullable": false,
+        "origin": "inferred",
+        "ref": "bool"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "inferred"
+      }
+    },
+    {
+      "change": {
+        "origin": "inferred",
+        "role": "any_change",
+        "signal": "notify::indent",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "inferred",
+        "read_back": true,
+        "strategy": "none"
+      },
+      "fp": "3d320fe47fe7c5aa",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextView:binding:indent",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "inferred"
+      },
+      "name": "indent",
+      "origin": "inferred",
+      "property": "indent",
+      "provenance": [
+        {
+          "origin": "rule",
+          "ref": "B1: GtkTextView:indent is writable, scalar and notifies; the renderer compares before set"
+        }
+      ],
+      "type": {
+        "nullable": false,
+        "origin": "inferred",
+        "ref": "i32"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "inferred"
+      }
+    },
+    {
+      "change": {
+        "origin": "inferred",
+        "role": "any_change",
+        "signal": "notify::input-purpose",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "inferred",
+        "read_back": false,
+        "strategy": "none"
+      },
+      "fp": "96272128481add65",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextView:binding:input-purpose",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "inferred"
+      },
+      "name": "input-purpose",
+      "origin": "inferred",
+      "property": "input-purpose",
+      "provenance": [
+        {
+          "origin": "rule",
+          "ref": "B1: GtkTextView:input-purpose is writable, scalar and notifies; the renderer compares before set"
+        }
+      ],
+      "type": {
+        "nullable": false,
+        "origin": "inferred",
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:InputPurpose>"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "inferred"
+      }
+    },
+    {
+      "change": {
+        "origin": "inferred",
+        "role": "any_change",
+        "signal": "notify::justification",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "inferred",
+        "read_back": false,
+        "strategy": "none"
+      },
+      "fp": "8df5ab63a35f41f8",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextView:binding:justification",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "inferred"
+      },
+      "name": "justification",
+      "origin": "inferred",
+      "property": "justification",
+      "provenance": [
+        {
+          "origin": "rule",
+          "ref": "B1: GtkTextView:justification is writable, scalar and notifies; the renderer compares before set"
+        }
+      ],
+      "type": {
+        "nullable": false,
+        "origin": "inferred",
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:Justification>"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "inferred"
+      }
+    },
+    {
+      "change": {
+        "origin": "inferred",
+        "role": "any_change",
+        "signal": "notify::left-margin",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "inferred",
+        "read_back": true,
+        "strategy": "none"
+      },
+      "fp": "99c1ef2261f1bc90",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextView:binding:left-margin",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "inferred"
+      },
+      "name": "left-margin",
+      "origin": "inferred",
+      "property": "left-margin",
+      "provenance": [
+        {
+          "origin": "rule",
+          "ref": "B1: GtkTextView:left-margin is writable, scalar and notifies; the renderer compares before set"
+        }
+      ],
+      "type": {
+        "nullable": false,
+        "origin": "inferred",
+        "ref": "i32"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "inferred"
+      }
+    },
+    {
+      "change": {
+        "origin": "inferred",
+        "role": "any_change",
+        "signal": "notify::monospace",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "inferred",
+        "read_back": false,
+        "strategy": "none"
+      },
+      "fp": "04288d34d962f005",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextView:binding:monospace",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "inferred"
+      },
+      "name": "monospace",
+      "origin": "inferred",
+      "property": "monospace",
+      "provenance": [
+        {
+          "origin": "rule",
+          "ref": "B1: GtkTextView:monospace is writable, scalar and notifies; the renderer compares before set"
+        }
+      ],
+      "type": {
+        "nullable": false,
+        "origin": "inferred",
+        "ref": "bool"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "inferred"
+      }
+    },
+    {
+      "change": {
+        "origin": "inferred",
+        "role": "any_change",
+        "signal": "notify::overwrite",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "inferred",
+        "read_back": false,
+        "strategy": "none"
+      },
+      "fp": "569adf7f146a107d",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextView:binding:overwrite",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "inferred"
+      },
+      "name": "overwrite",
+      "origin": "inferred",
+      "property": "overwrite",
+      "provenance": [
+        {
+          "origin": "rule",
+          "ref": "B1: GtkTextView:overwrite is writable, scalar and notifies; the renderer compares before set"
+        }
+      ],
+      "type": {
+        "nullable": false,
+        "origin": "inferred",
+        "ref": "bool"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "inferred"
+      }
+    },
+    {
+      "change": {
+        "origin": "inferred",
+        "role": "any_change",
+        "signal": "notify::pixels-above-lines",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "inferred",
+        "read_back": true,
+        "strategy": "none"
+      },
+      "fp": "1e1cc77319a686ba",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextView:binding:pixels-above-lines",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "inferred"
+      },
+      "name": "pixels-above-lines",
+      "origin": "inferred",
+      "property": "pixels-above-lines",
+      "provenance": [
+        {
+          "origin": "rule",
+          "ref": "B1: GtkTextView:pixels-above-lines is writable, scalar and notifies; the renderer compares before set"
+        }
+      ],
+      "type": {
+        "nullable": false,
+        "origin": "inferred",
+        "ref": "i32"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "inferred"
+      }
+    },
+    {
+      "change": {
+        "origin": "inferred",
+        "role": "any_change",
+        "signal": "notify::pixels-below-lines",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "inferred",
+        "read_back": true,
+        "strategy": "none"
+      },
+      "fp": "74ef0182a4466776",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextView:binding:pixels-below-lines",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "inferred"
+      },
+      "name": "pixels-below-lines",
+      "origin": "inferred",
+      "property": "pixels-below-lines",
+      "provenance": [
+        {
+          "origin": "rule",
+          "ref": "B1: GtkTextView:pixels-below-lines is writable, scalar and notifies; the renderer compares before set"
+        }
+      ],
+      "type": {
+        "nullable": false,
+        "origin": "inferred",
+        "ref": "i32"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "inferred"
+      }
+    },
+    {
+      "change": {
+        "origin": "inferred",
+        "role": "any_change",
+        "signal": "notify::pixels-inside-wrap",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "inferred",
+        "read_back": true,
+        "strategy": "none"
+      },
+      "fp": "bfb3172a18e5c77c",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextView:binding:pixels-inside-wrap",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "inferred"
+      },
+      "name": "pixels-inside-wrap",
+      "origin": "inferred",
+      "property": "pixels-inside-wrap",
+      "provenance": [
+        {
+          "origin": "rule",
+          "ref": "B1: GtkTextView:pixels-inside-wrap is writable, scalar and notifies; the renderer compares before set"
+        }
+      ],
+      "type": {
+        "nullable": false,
+        "origin": "inferred",
+        "ref": "i32"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "inferred"
+      }
+    },
+    {
+      "change": {
+        "origin": "inferred",
+        "role": "any_change",
+        "signal": "notify::right-margin",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "inferred",
+        "read_back": true,
+        "strategy": "none"
+      },
+      "fp": "14b731df5150dd4a",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextView:binding:right-margin",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "inferred"
+      },
+      "name": "right-margin",
+      "origin": "inferred",
+      "property": "right-margin",
+      "provenance": [
+        {
+          "origin": "rule",
+          "ref": "B1: GtkTextView:right-margin is writable, scalar and notifies; the renderer compares before set"
+        }
+      ],
+      "type": {
+        "nullable": false,
+        "origin": "inferred",
+        "ref": "i32"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "inferred"
+      }
+    },
+    {
+      "change": {
+        "origin": "inferred",
+        "role": "any_change",
+        "signal": "notify::top-margin",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "inferred",
+        "read_back": true,
+        "strategy": "none"
+      },
+      "fp": "f1a8393e393f9e0b",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextView:binding:top-margin",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "inferred"
+      },
+      "name": "top-margin",
+      "origin": "inferred",
+      "property": "top-margin",
+      "provenance": [
+        {
+          "origin": "rule",
+          "ref": "B1: GtkTextView:top-margin is writable, scalar and notifies; the renderer compares before set"
+        }
+      ],
+      "type": {
+        "nullable": false,
+        "origin": "inferred",
+        "ref": "i32"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "inferred"
+      }
+    },
+    {
+      "change": {
+        "origin": "inferred",
+        "role": "any_change",
+        "signal": "notify::wrap-mode",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "inferred",
+        "read_back": false,
+        "strategy": "none"
+      },
+      "fp": "f72f468bd3f041c2",
+      "id": "svelters-api:v1:type:gtk:Gtk:TextView:binding:wrap-mode",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "inferred"
+      },
+      "name": "wrap-mode",
+      "origin": "inferred",
+      "property": "wrap-mode",
+      "provenance": [
+        {
+          "origin": "rule",
+          "ref": "B1: GtkTextView:wrap-mode is writable, scalar and notifies; the renderer compares before set"
+        }
+      ],
+      "type": {
+        "nullable": false,
+        "origin": "inferred",
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:WrapMode>"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "inferred"
+      }
+    },
+    {
+      "change": {
         "origin": "manual",
         "role": "any_change",
         "signal": "changed",
@@ -126,10 +782,262 @@
   "inherited": {
     "methods": [
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_baseline",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_baseline",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_can_focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_can_focus",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_can_target",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_can_target",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_child_visible",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_child_visible",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_css_name",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_css_name",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_direction",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_direction",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_focus_on_click",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_focus_on_click",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_focusable",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_focusable",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_halign",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_halign",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_has_tooltip",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_has_tooltip",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_height",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_height",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_hexpand",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_hexpand",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_hexpand_set",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_hexpand_set",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Scrollable:method:get_hscroll_policy",
+        "from": "svelters-api:v1:type:gtk:Gtk:Scrollable",
+        "name": "get_hscroll_policy",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_limit_events",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_limit_events",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_mapped",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_mapped",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_margin_bottom",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_margin_bottom",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_margin_end",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_margin_end",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_margin_start",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_margin_start",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_margin_top",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_margin_top",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_opacity",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_opacity",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_overflow",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_overflow",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_realized",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_realized",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_receives_default",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_receives_default",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_request_mode",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_request_mode",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_scale_factor",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_scale_factor",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_sensitive",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_sensitive",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_tooltip_markup",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_tooltip_markup",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_tooltip_text",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_tooltip_text",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_valign",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_valign",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_vexpand",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_vexpand",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_vexpand_set",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_vexpand_set",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_visible",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_visible",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Scrollable:method:get_vscroll_policy",
+        "from": "svelters-api:v1:type:gtk:Gtk:Scrollable",
+        "name": "get_vscroll_policy",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_width",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_width",
+        "origin": "inferred"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:grab_focus",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "grab_focus",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:has_default",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "has_default",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:has_focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "has_focus",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:has_visible_focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "has_visible_focus",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:is_drawable",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "is_drawable",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:is_focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "is_focus",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:is_sensitive",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "is_sensitive",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:is_visible",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "is_visible",
+        "origin": "inferred"
       },
       {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:queue_draw",
@@ -142,6 +1050,144 @@
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "queue_resize",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_can_focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_can_focus",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_can_target",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_can_target",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_halign",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_halign",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_has_tooltip",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_has_tooltip",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_hexpand",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_hexpand",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_hexpand_set",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_hexpand_set",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Scrollable:method:set_hscroll_policy",
+        "from": "svelters-api:v1:type:gtk:Gtk:Scrollable",
+        "name": "set_hscroll_policy",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_limit_events",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_limit_events",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_margin_bottom",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_margin_bottom",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_margin_end",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_margin_end",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_margin_start",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_margin_start",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_margin_top",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_margin_top",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_name",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_name",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_overflow",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_overflow",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_receives_default",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_receives_default",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_sensitive",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_sensitive",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_tooltip_markup",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_tooltip_markup",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_tooltip_text",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_tooltip_text",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_valign",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_valign",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_vexpand",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_vexpand",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_vexpand_set",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_vexpand_set",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_visible",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_visible",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Scrollable:method:set_vscroll_policy",
+        "from": "svelters-api:v1:type:gtk:Gtk:Scrollable",
+        "name": "set_vscroll_policy",
+        "origin": "inferred"
       }
     ],
     "properties": [
@@ -150,6 +1196,12 @@
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "can-focus",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:can-target",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "can-target",
+        "origin": "inferred"
       },
       {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:css-classes",
@@ -164,16 +1216,34 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:focus-on-click",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "focus-on-click",
+        "origin": "inferred"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:focusable",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "focusable",
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Scrollable:prop:hadjustment",
+        "from": "svelters-api:v1:type:gtk:Gtk:Scrollable",
+        "name": "hadjustment",
+        "origin": "inferred"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:halign",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "halign",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:has-tooltip",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "has-tooltip",
+        "origin": "inferred"
       },
       {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:height-request",
@@ -186,6 +1256,30 @@
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "hexpand",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:hexpand-set",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "hexpand-set",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Scrollable:prop:hscroll-policy",
+        "from": "svelters-api:v1:type:gtk:Gtk:Scrollable",
+        "name": "hscroll-policy",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:layout-manager",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "layout-manager",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:limit-events",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "limit-events",
+        "origin": "inferred"
       },
       {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-bottom",
@@ -224,6 +1318,18 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:overflow",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "overflow",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:receives-default",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "receives-default",
+        "origin": "inferred"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:sensitive",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "sensitive",
@@ -242,6 +1348,12 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Scrollable:prop:vadjustment",
+        "from": "svelters-api:v1:type:gtk:Gtk:Scrollable",
+        "name": "vadjustment",
+        "origin": "inferred"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:valign",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "valign",
@@ -254,10 +1366,22 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:vexpand-set",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "vexpand-set",
+        "origin": "inferred"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:visible",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "visible",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Scrollable:prop:vscroll-policy",
+        "from": "svelters-api:v1:type:gtk:Gtk:Scrollable",
+        "name": "vscroll-policy",
+        "origin": "inferred"
       },
       {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:width-request",
@@ -532,6 +1656,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "55858edb6c055e6c",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property accepts-tab"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"accepts-tab\")",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:method:get_accepts_tab",
       "invocation": {
         "dev": "introspected",
@@ -550,6 +1692,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "2b8040402639659a",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property bottom-margin"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"bottom-margin\")",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:method:get_bottom_margin",
       "invocation": {
         "dev": "introspected",
@@ -640,6 +1800,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "211fbc0b3326beca",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property cursor-visible"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"cursor-visible\")",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:method:get_cursor_visible",
       "invocation": {
         "dev": "introspected",
@@ -658,6 +1836,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "6d5c849648fdd164",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property editable"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"editable\")",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:method:get_editable",
       "invocation": {
         "dev": "introspected",
@@ -720,6 +1916,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "18614cadf1dc8e31",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property indent"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"indent\")",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:method:get_indent",
       "invocation": {
         "dev": "introspected",
@@ -756,6 +1970,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "512bd71c29c19768",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property input-purpose"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"input-purpose\")",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:method:get_input_purpose",
       "invocation": {
         "dev": "introspected",
@@ -894,6 +2126,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "16741446ae4ed62e",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property justification"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"justification\")",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:method:get_justification",
       "invocation": {
         "dev": "introspected",
@@ -912,6 +2162,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "27da3742282a01da",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property left-margin"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"left-margin\")",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:method:get_left_margin",
       "invocation": {
         "dev": "introspected",
@@ -1025,9 +2293,28 @@
         "ownership": "borrowed",
         "type": "object<svelters-api:v1:type:gtk:Pango:Context>"
       },
+      "since": "4.4",
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "f279046977b6fe72",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property monospace"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"monospace\")",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:method:get_monospace",
       "invocation": {
         "dev": "introspected",
@@ -1046,6 +2333,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "ca802970db3b6150",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property overwrite"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"overwrite\")",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:method:get_overwrite",
       "invocation": {
         "dev": "introspected",
@@ -1064,6 +2369,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "d5568d42ef2e6001",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property pixels-above-lines"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"pixels-above-lines\")",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:method:get_pixels_above_lines",
       "invocation": {
         "dev": "introspected",
@@ -1082,6 +2405,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "26d6b8299815a64f",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property pixels-below-lines"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"pixels-below-lines\")",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:method:get_pixels_below_lines",
       "invocation": {
         "dev": "introspected",
@@ -1100,6 +2441,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "fde9fc60454caf37",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property pixels-inside-wrap"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"pixels-inside-wrap\")",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:method:get_pixels_inside_wrap",
       "invocation": {
         "dev": "introspected",
@@ -1118,6 +2477,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "75cb3a8d4bd6f4e2",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property right-margin"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"right-margin\")",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:method:get_right_margin",
       "invocation": {
         "dev": "introspected",
@@ -1151,6 +2528,7 @@
         "ownership": "borrowed",
         "type": "object<svelters-api:v1:type:gtk:Pango:Context>"
       },
+      "since": "4.4",
       "unsupported_reason": null
     },
     {
@@ -1172,6 +2550,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "e5099e27f5546a40",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property top-margin"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"top-margin\")",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:method:get_top_margin",
       "invocation": {
         "dev": "introspected",
@@ -1220,6 +2616,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.18",
       "unsupported_reason": null
     },
     {
@@ -1249,6 +2646,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "c51339eba62fdd8d",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property wrap-mode"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"wrap-mode\")",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:method:get_wrap_mode",
       "invocation": {
         "dev": "introspected",
@@ -1620,6 +3035,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "bd381287a70a4b21",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property accepts-tab: exact"
+          }
+        ]
+      },
+      "args": [
+        false
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"accepts-tab\") == V::Bool(false)",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:method:set_accepts_tab",
       "invocation": {
         "dev": "introspected",
@@ -1646,6 +3081,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "c94eb5bed75b26e4",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property bottom-margin: exact"
+          }
+        ]
+      },
+      "args": [
+        1
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"bottom-margin\") == V::I64(1)",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:method:set_bottom_margin",
       "invocation": {
         "dev": "introspected",
@@ -1698,6 +3153,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "5bd896ce160d1832",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property cursor-visible: exact"
+          }
+        ]
+      },
+      "args": [
+        false
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"cursor-visible\") == V::Bool(false)",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:method:set_cursor_visible",
       "invocation": {
         "dev": "introspected",
@@ -1724,6 +3199,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "e40a907b41f21d35",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property editable: exact"
+          }
+        ]
+      },
+      "args": [
+        false
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"editable\") == V::Bool(false)",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:method:set_editable",
       "invocation": {
         "dev": "introspected",
@@ -1809,6 +3304,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "b451e40a3aa0aa3c",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property indent: exact"
+          }
+        ]
+      },
+      "args": [
+        1
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"indent\") == V::I64(1)",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:method:set_indent",
       "invocation": {
         "dev": "introspected",
@@ -1861,6 +3376,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "346a63e8cc363210",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property input-purpose: exact"
+          }
+        ]
+      },
+      "args": [
+        "alpha"
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"input-purpose\") == V::Str(\"alpha\".into())",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:method:set_input_purpose",
       "invocation": {
         "dev": "introspected",
@@ -1887,6 +3422,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "5b2229f96249b4e2",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property justification: exact"
+          }
+        ]
+      },
+      "args": [
+        "right"
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"justification\") == V::Str(\"right\".into())",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:method:set_justification",
       "invocation": {
         "dev": "introspected",
@@ -1913,6 +3468,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "8da7670f4997c51c",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property left-margin: exact"
+          }
+        ]
+      },
+      "args": [
+        1
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"left-margin\") == V::I64(1)",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:method:set_left_margin",
       "invocation": {
         "dev": "introspected",
@@ -1939,6 +3514,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "74699950e9d8412c",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property monospace: exact"
+          }
+        ]
+      },
+      "args": [
+        true
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"monospace\") == V::Bool(true)",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:method:set_monospace",
       "invocation": {
         "dev": "introspected",
@@ -1965,6 +3560,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "ca1ee7af0b743910",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property overwrite: exact"
+          }
+        ]
+      },
+      "args": [
+        true
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"overwrite\") == V::Bool(true)",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:method:set_overwrite",
       "invocation": {
         "dev": "introspected",
@@ -1991,6 +3606,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "73e53a9eb60fa1f0",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property pixels-above-lines: exact"
+          }
+        ]
+      },
+      "args": [
+        1
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"pixels-above-lines\") == V::I64(1)",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:method:set_pixels_above_lines",
       "invocation": {
         "dev": "introspected",
@@ -2017,6 +3652,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "9d9179cc3f5c29a3",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property pixels-below-lines: exact"
+          }
+        ]
+      },
+      "args": [
+        1
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"pixels-below-lines\") == V::I64(1)",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:method:set_pixels_below_lines",
       "invocation": {
         "dev": "introspected",
@@ -2043,6 +3698,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "c16dc14eb83ae148",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property pixels-inside-wrap: exact"
+          }
+        ]
+      },
+      "args": [
+        1
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"pixels-inside-wrap\") == V::I64(1)",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:method:set_pixels_inside_wrap",
       "invocation": {
         "dev": "introspected",
@@ -2069,6 +3744,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "bcdf2d15aa40d72e",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property right-margin: exact"
+          }
+        ]
+      },
+      "args": [
+        1
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"right-margin\") == V::I64(1)",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:method:set_right_margin",
       "invocation": {
         "dev": "introspected",
@@ -2121,6 +3816,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "360f33a023010520",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property top-margin: exact"
+          }
+        ]
+      },
+      "args": [
+        1
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"top-margin\") == V::I64(1)",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:method:set_top_margin",
       "invocation": {
         "dev": "introspected",
@@ -2147,6 +3862,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "dbdd1aa2201966d4",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property wrap-mode: exact"
+          }
+        ]
+      },
+      "args": [
+        "char"
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"wrap-mode\") == V::Str(\"char\".into())",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:method:set_wrap_mode",
       "invocation": {
         "dev": "introspected",
@@ -2272,6 +4007,19 @@
         "get": "gtk_text_view_get_accepts_tab",
         "set": "gtk_text_view_set_accepts_tab"
       },
+      "annotated": {
+        "fields": [
+          "sample"
+        ],
+        "fp": "4d13ce35c492e295",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip exact; notify fired"
+          }
+        ]
+      },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:prop:accepts-tab",
       "invocation": "reflected",
@@ -2294,6 +4042,7 @@
         "origin": "runtime",
         "owner": "GtkTextView"
       },
+      "sample": false,
       "type": {
         "gtype": "gboolean",
         "native": "gboolean",
@@ -2311,6 +4060,19 @@
       "accessors": {
         "get": "gtk_text_view_get_bottom_margin",
         "set": "gtk_text_view_set_bottom_margin"
+      },
+      "annotated": {
+        "fields": [
+          "sample"
+        ],
+        "fp": "7831a799a509ccf4",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip exact; notify fired"
+          }
+        ]
       },
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:prop:bottom-margin",
@@ -2337,6 +4099,7 @@
         "origin": "runtime",
         "owner": "GtkTextView"
       },
+      "sample": 1,
       "type": {
         "gtype": "gint",
         "native": "gint",
@@ -2354,6 +4117,17 @@
       "accessors": {
         "get": "gtk_text_view_get_buffer",
         "set": "gtk_text_view_set_buffer"
+      },
+      "annotated": {
+        "fields": [],
+        "fp": "c371473edfcc149e",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip exact; notify fired"
+          }
+        ]
       },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:prop:buffer",
@@ -2421,6 +4195,7 @@
         "origin": "runtime",
         "owner": "GtkTextView"
       },
+      "sample": false,
       "type": {
         "gtype": "gboolean",
         "native": "gboolean",
@@ -2466,6 +4241,7 @@
         "origin": "runtime",
         "owner": "GtkTextView"
       },
+      "sample": false,
       "type": {
         "gtype": "gboolean",
         "native": "gboolean",
@@ -2483,6 +4259,17 @@
       "accessors": {
         "get": "gtk_text_view_get_extra_menu",
         "set": "gtk_text_view_set_extra_menu"
+      },
+      "annotated": {
+        "fields": [],
+        "fp": "fbbe948856cde173",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip exact; notify fired"
+          }
+        ]
       },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:prop:extra-menu",
@@ -2524,6 +4311,19 @@
         "get": null,
         "set": null
       },
+      "annotated": {
+        "fields": [
+          "sample"
+        ],
+        "fp": "dd95eb9c1096a4f6",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip exact; notify fired"
+          }
+        ]
+      },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:prop:im-module",
       "invocation": "reflected",
@@ -2545,6 +4345,7 @@
         "origin": "runtime",
         "owner": "GtkTextView"
       },
+      "sample": "svl probe",
       "type": {
         "gtype": "gchararray",
         "native": "gchar*",
@@ -2562,6 +4363,19 @@
       "accessors": {
         "get": "gtk_text_view_get_indent",
         "set": "gtk_text_view_set_indent"
+      },
+      "annotated": {
+        "fields": [
+          "sample"
+        ],
+        "fp": "a6646d7ed925d9c9",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip exact; notify fired"
+          }
+        ]
       },
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:prop:indent",
@@ -2588,6 +4402,7 @@
         "origin": "runtime",
         "owner": "GtkTextView"
       },
+      "sample": 1,
       "type": {
         "gtype": "gint",
         "native": "gint",
@@ -2646,6 +4461,19 @@
         "get": "gtk_text_view_get_input_purpose",
         "set": "gtk_text_view_set_input_purpose"
       },
+      "annotated": {
+        "fields": [
+          "sample"
+        ],
+        "fp": "16e155a4c13d4e38",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip exact; notify fired"
+          }
+        ]
+      },
       "default": "free-form",
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:prop:input-purpose",
       "invocation": "reflected",
@@ -2668,6 +4496,7 @@
         "origin": "runtime",
         "owner": "GtkTextView"
       },
+      "sample": "alpha",
       "type": {
         "gtype": "GtkInputPurpose",
         "native": null,
@@ -2713,6 +4542,7 @@
         "origin": "runtime",
         "owner": "GtkTextView"
       },
+      "sample": "right",
       "type": {
         "gtype": "GtkJustification",
         "native": null,
@@ -2761,6 +4591,7 @@
         "origin": "runtime",
         "owner": "GtkTextView"
       },
+      "sample": 1,
       "type": {
         "gtype": "gint",
         "native": "gint",
@@ -2806,6 +4637,7 @@
         "origin": "runtime",
         "owner": "GtkTextView"
       },
+      "sample": true,
       "type": {
         "gtype": "gboolean",
         "native": "gboolean",
@@ -2823,6 +4655,19 @@
       "accessors": {
         "get": "gtk_text_view_get_overwrite",
         "set": "gtk_text_view_set_overwrite"
+      },
+      "annotated": {
+        "fields": [
+          "sample"
+        ],
+        "fp": "293237107c77dcb1",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip exact; notify fired"
+          }
+        ]
       },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:prop:overwrite",
@@ -2846,6 +4691,7 @@
         "origin": "runtime",
         "owner": "GtkTextView"
       },
+      "sample": true,
       "type": {
         "gtype": "gboolean",
         "native": "gboolean",
@@ -2863,6 +4709,19 @@
       "accessors": {
         "get": "gtk_text_view_get_pixels_above_lines",
         "set": "gtk_text_view_set_pixels_above_lines"
+      },
+      "annotated": {
+        "fields": [
+          "sample"
+        ],
+        "fp": "820da5911ba7d25f",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip exact; notify fired"
+          }
+        ]
       },
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:prop:pixels-above-lines",
@@ -2889,6 +4748,7 @@
         "origin": "runtime",
         "owner": "GtkTextView"
       },
+      "sample": 1,
       "type": {
         "gtype": "gint",
         "native": "gint",
@@ -2906,6 +4766,19 @@
       "accessors": {
         "get": "gtk_text_view_get_pixels_below_lines",
         "set": "gtk_text_view_set_pixels_below_lines"
+      },
+      "annotated": {
+        "fields": [
+          "sample"
+        ],
+        "fp": "e2b83a18e64525b7",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip exact; notify fired"
+          }
+        ]
       },
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:prop:pixels-below-lines",
@@ -2932,6 +4805,7 @@
         "origin": "runtime",
         "owner": "GtkTextView"
       },
+      "sample": 1,
       "type": {
         "gtype": "gint",
         "native": "gint",
@@ -2949,6 +4823,19 @@
       "accessors": {
         "get": "gtk_text_view_get_pixels_inside_wrap",
         "set": "gtk_text_view_set_pixels_inside_wrap"
+      },
+      "annotated": {
+        "fields": [
+          "sample"
+        ],
+        "fp": "ca0c55836959de47",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip exact; notify fired"
+          }
+        ]
       },
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:prop:pixels-inside-wrap",
@@ -2975,6 +4862,7 @@
         "origin": "runtime",
         "owner": "GtkTextView"
       },
+      "sample": 1,
       "type": {
         "gtype": "gint",
         "native": "gint",
@@ -2992,6 +4880,19 @@
       "accessors": {
         "get": "gtk_text_view_get_right_margin",
         "set": "gtk_text_view_set_right_margin"
+      },
+      "annotated": {
+        "fields": [
+          "sample"
+        ],
+        "fp": "0561d0f6190f0f92",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip exact; notify fired"
+          }
+        ]
       },
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:TextView:prop:right-margin",
@@ -3018,6 +4919,7 @@
         "origin": "runtime",
         "owner": "GtkTextView"
       },
+      "sample": 1,
       "type": {
         "gtype": "gint",
         "native": "gint",
@@ -3105,6 +5007,7 @@
         "origin": "runtime",
         "owner": "GtkTextView"
       },
+      "sample": 1,
       "type": {
         "gtype": "gint",
         "native": "gint",
@@ -3150,6 +5053,7 @@
         "origin": "runtime",
         "owner": "GtkTextView"
       },
+      "sample": "char",
       "type": {
         "gtype": "GtkWrapMode",
         "native": null,
@@ -3225,6 +5129,24 @@
   "schema": "svelters-element-kind/v0",
   "signals": [
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "sync_required"
+        ],
+        "fp": "1ba58287917d3cf6",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "runtime",
+            "ref": "returns void, run-last"
+          },
+          {
+            "origin": "probe",
+            "ref": "action signal, emitted and delivered"
+          }
+        ]
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -3251,6 +5173,24 @@
       "sync_required": false
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "sync_required"
+        ],
+        "fp": "70f264f2accfab1e",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "runtime",
+            "ref": "returns void, run-last"
+          },
+          {
+            "origin": "probe",
+            "ref": "action signal, emitted and delivered"
+          }
+        ]
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -3277,6 +5217,24 @@
       "sync_required": false
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "sync_required"
+        ],
+        "fp": "06c427873aa335d1",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "runtime",
+            "ref": "returns void, run-last"
+          },
+          {
+            "origin": "probe",
+            "ref": "action signal, emitted and delivered"
+          }
+        ]
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -3385,12 +5343,33 @@
       "sync_required": false
     },
     {
+      "annotated": {
+        "fields": [
+          "delivery_only",
+          "handler_result",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "4cc185dbb21671cc",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "runtime",
+            "ref": "returns void, run-last"
+          },
+          {
+            "origin": "probe",
+            "ref": "emitted synthetically with sampled arguments; delivery only, no native trigger"
+          }
+        ]
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
           "native_destroy"
         ]
       },
+      "delivery_only": true,
       "flags": [
         "action"
       ],
@@ -3414,7 +5393,16 @@
         "origin": "runtime",
         "return_gtype": "void"
       },
-      "sync_required": false
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "rust": "o.emit_by_name::<()>(\"insert-at-cursor\", &[&\"x\"]);",
+        "values": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
     },
     {
       "connection": {
@@ -3522,6 +5510,24 @@
       "sync_required": false
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "sync_required"
+        ],
+        "fp": "01efe454a2c91cf6",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "runtime",
+            "ref": "returns void, run-last"
+          },
+          {
+            "origin": "probe",
+            "ref": "action signal, emitted and delivered"
+          }
+        ]
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -3580,12 +5586,33 @@
       "sync_required": false
     },
     {
+      "annotated": {
+        "fields": [
+          "delivery_only",
+          "handler_result",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "3e7be13a1acde698",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "runtime",
+            "ref": "returns void, run-last"
+          },
+          {
+            "origin": "probe",
+            "ref": "emitted synthetically with sampled arguments; delivery only, no native trigger"
+          }
+        ]
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
           "native_destroy"
         ]
       },
+      "delivery_only": true,
       "flags": [
         "action"
       ],
@@ -3609,9 +5636,36 @@
         "origin": "runtime",
         "return_gtype": "void"
       },
-      "sync_required": false
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "rust": "o.emit_by_name::<()>(\"select-all\", &[&true]);",
+        "values": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "sync_required"
+        ],
+        "fp": "1a39ed9def7211df",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "runtime",
+            "ref": "returns void, run-last"
+          },
+          {
+            "origin": "probe",
+            "ref": "action signal, emitted and delivered"
+          }
+        ]
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -3638,6 +5692,24 @@
       "sync_required": false
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "sync_required"
+        ],
+        "fp": "dfda4f5d4378775c",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "runtime",
+            "ref": "returns void, run-last"
+          },
+          {
+            "origin": "probe",
+            "ref": "action signal, emitted and delivered"
+          }
+        ]
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -3664,6 +5736,24 @@
       "sync_required": false
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "sync_required"
+        ],
+        "fp": "1d383b6e3785b4ba",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "runtime",
+            "ref": "returns void, run-last"
+          },
+          {
+            "origin": "probe",
+            "ref": "action signal, emitted and delivered"
+          }
+        ]
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -3688,6 +5778,934 @@
         "return_gtype": "void"
       },
       "sync_required": false
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "5bcfe2ced3b13d0c",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "rule",
+            "ref": "GObject::notify for GtkTextView:accepts-tab"
+          }
+        ]
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "inferred"
+      },
+      "derived_from": {
+        "origin": "inferred",
+        "property": "accepts-tab"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::accepts-tab",
+      "name": "notify::accepts-tab",
+      "origin": "inferred",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "inferred",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "property": "accepts-tab",
+        "values": [
+          false,
+          true,
+          false
+        ]
+      }
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "5884067ebde02bbe",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "rule",
+            "ref": "GObject::notify for GtkTextView:bottom-margin"
+          }
+        ]
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "inferred"
+      },
+      "derived_from": {
+        "origin": "inferred",
+        "property": "bottom-margin"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::bottom-margin",
+      "name": "notify::bottom-margin",
+      "origin": "inferred",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "inferred",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "property": "bottom-margin",
+        "values": [
+          1,
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "842660964f502ddd",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "rule",
+            "ref": "GObject::notify for GtkTextView:cursor-visible"
+          }
+        ]
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "inferred"
+      },
+      "derived_from": {
+        "origin": "inferred",
+        "property": "cursor-visible"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::cursor-visible",
+      "name": "notify::cursor-visible",
+      "origin": "inferred",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "inferred",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "property": "cursor-visible",
+        "values": [
+          false,
+          true,
+          false
+        ]
+      }
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "a1929dbcee06ae6d",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "rule",
+            "ref": "GObject::notify for GtkTextView:editable"
+          }
+        ]
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "inferred"
+      },
+      "derived_from": {
+        "origin": "inferred",
+        "property": "editable"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::editable",
+      "name": "notify::editable",
+      "origin": "inferred",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "inferred",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "property": "editable",
+        "values": [
+          false,
+          true,
+          false
+        ]
+      }
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "bbcd85dffab98c05",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "rule",
+            "ref": "GObject::notify for GtkTextView:indent"
+          }
+        ]
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "inferred"
+      },
+      "derived_from": {
+        "origin": "inferred",
+        "property": "indent"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::indent",
+      "name": "notify::indent",
+      "origin": "inferred",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "inferred",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "property": "indent",
+        "values": [
+          1,
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "1b752ea137af152f",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "rule",
+            "ref": "GObject::notify for GtkTextView:input-purpose"
+          }
+        ]
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "inferred"
+      },
+      "derived_from": {
+        "origin": "inferred",
+        "property": "input-purpose"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::input-purpose",
+      "name": "notify::input-purpose",
+      "origin": "inferred",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "inferred",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "property": "input-purpose",
+        "values": [
+          "alpha",
+          "free-form",
+          "alpha"
+        ]
+      }
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "cf878af181170e40",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "rule",
+            "ref": "GObject::notify for GtkTextView:justification"
+          }
+        ]
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "inferred"
+      },
+      "derived_from": {
+        "origin": "inferred",
+        "property": "justification"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::justification",
+      "name": "notify::justification",
+      "origin": "inferred",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "inferred",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "property": "justification",
+        "values": [
+          "right",
+          "left",
+          "right"
+        ]
+      }
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "e1580291073921e4",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "rule",
+            "ref": "GObject::notify for GtkTextView:left-margin"
+          }
+        ]
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "inferred"
+      },
+      "derived_from": {
+        "origin": "inferred",
+        "property": "left-margin"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::left-margin",
+      "name": "notify::left-margin",
+      "origin": "inferred",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "inferred",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "property": "left-margin",
+        "values": [
+          1,
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "15881dd722cdf534",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "rule",
+            "ref": "GObject::notify for GtkTextView:monospace"
+          }
+        ]
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "inferred"
+      },
+      "derived_from": {
+        "origin": "inferred",
+        "property": "monospace"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::monospace",
+      "name": "notify::monospace",
+      "origin": "inferred",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "inferred",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "property": "monospace",
+        "values": [
+          true,
+          false,
+          true
+        ]
+      }
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "635024812b6e26c0",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "rule",
+            "ref": "GObject::notify for GtkTextView:overwrite"
+          }
+        ]
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "inferred"
+      },
+      "derived_from": {
+        "origin": "inferred",
+        "property": "overwrite"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::overwrite",
+      "name": "notify::overwrite",
+      "origin": "inferred",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "inferred",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "property": "overwrite",
+        "values": [
+          true,
+          false,
+          true
+        ]
+      }
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "686bf1e8cad03df4",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "rule",
+            "ref": "GObject::notify for GtkTextView:pixels-above-lines"
+          }
+        ]
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "inferred"
+      },
+      "derived_from": {
+        "origin": "inferred",
+        "property": "pixels-above-lines"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::pixels-above-lines",
+      "name": "notify::pixels-above-lines",
+      "origin": "inferred",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "inferred",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "property": "pixels-above-lines",
+        "values": [
+          1,
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "886852ff4b711850",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "rule",
+            "ref": "GObject::notify for GtkTextView:pixels-below-lines"
+          }
+        ]
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "inferred"
+      },
+      "derived_from": {
+        "origin": "inferred",
+        "property": "pixels-below-lines"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::pixels-below-lines",
+      "name": "notify::pixels-below-lines",
+      "origin": "inferred",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "inferred",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "property": "pixels-below-lines",
+        "values": [
+          1,
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "5f2a0e3c0deced68",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "rule",
+            "ref": "GObject::notify for GtkTextView:pixels-inside-wrap"
+          }
+        ]
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "inferred"
+      },
+      "derived_from": {
+        "origin": "inferred",
+        "property": "pixels-inside-wrap"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::pixels-inside-wrap",
+      "name": "notify::pixels-inside-wrap",
+      "origin": "inferred",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "inferred",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "property": "pixels-inside-wrap",
+        "values": [
+          1,
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "64eca2166b63a25b",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "rule",
+            "ref": "GObject::notify for GtkTextView:right-margin"
+          }
+        ]
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "inferred"
+      },
+      "derived_from": {
+        "origin": "inferred",
+        "property": "right-margin"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::right-margin",
+      "name": "notify::right-margin",
+      "origin": "inferred",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "inferred",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "property": "right-margin",
+        "values": [
+          1,
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "39780c9b07d867c1",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "rule",
+            "ref": "GObject::notify for GtkTextView:top-margin"
+          }
+        ]
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "inferred"
+      },
+      "derived_from": {
+        "origin": "inferred",
+        "property": "top-margin"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::top-margin",
+      "name": "notify::top-margin",
+      "origin": "inferred",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "inferred",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "property": "top-margin",
+        "values": [
+          1,
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "fca7b5839c0dcd01",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "rule",
+            "ref": "GObject::notify for GtkTextView:wrap-mode"
+          }
+        ]
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "inferred"
+      },
+      "derived_from": {
+        "origin": "inferred",
+        "property": "wrap-mode"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::wrap-mode",
+      "name": "notify::wrap-mode",
+      "origin": "inferred",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "inferred",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "property": "wrap-mode",
+        "values": [
+          "char",
+          "none",
+          "char"
+        ]
+      }
     },
     {
       "annotated": {
@@ -3745,6 +6763,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
+    "inferred": "inferred/gtk/TextView.yaml",
     "overrides": "overrides/gtk/TextView.yaml",
     "runtime": {
       "gtk": "4.22.4",

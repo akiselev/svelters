@@ -1,0 +1,154 @@
+properties:
+- name: active
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: state
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: state-set
+  handler_result: bool_stop
+  sync_required: true
+  trigger:
+    property: active
+    values:
+    - true
+    - false
+    - true
+  provenance:
+  - origin: runtime
+    ref: returns gboolean, run-last
+  - origin: probe
+    ref: emitted when active is set
+- name: notify::active
+  derived_from:
+    property: active
+  js_event: notify::active
+  trigger:
+    property: active
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkSwitch:active
+- name: notify::state
+  derived_from:
+    property: state
+  js_event: notify::state
+  trigger:
+    property: state
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkSwitch:state
+methods:
+- name: get_active
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "active")
+  provenance:
+  - origin: probe
+    ref: equals property active
+- name: get_state
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "state")
+  provenance:
+  - origin: probe
+    ref: equals property state
+- name: set_active
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "active") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property active: exact'
+- name: set_state
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "state") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property state: exact'
+bindings:
+- name: active
+  direction: two_way
+  property: active
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::active
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkSwitch:active is writable, scalar and notifies; the renderer compares before set'
+- name: state
+  direction: two_way
+  property: state
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::state
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkSwitch:state is writable, scalar and notifies; the renderer compares before set'

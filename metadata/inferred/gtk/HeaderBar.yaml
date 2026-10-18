@@ -1,0 +1,160 @@
+properties:
+- name: decoration-layout
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: show-title-buttons
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: use-native-controls
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: notify::show-title-buttons
+  derived_from:
+    property: show-title-buttons
+  js_event: notify::show-title-buttons
+  trigger:
+    property: show-title-buttons
+    values:
+    - false
+    - true
+    - false
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkHeaderBar:show-title-buttons
+- name: notify::use-native-controls
+  derived_from:
+    property: use-native-controls
+  js_event: notify::use-native-controls
+  trigger:
+    property: use-native-controls
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkHeaderBar:use-native-controls
+methods:
+- name: get_decoration_layout
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "decoration-layout")
+  provenance:
+  - origin: probe
+    ref: equals property decoration-layout
+- name: get_show_title_buttons
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "show-title-buttons")
+  provenance:
+  - origin: probe
+    ref: equals property show-title-buttons
+- name: get_use_native_controls
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "use-native-controls")
+  provenance:
+  - origin: probe
+    ref: equals property use-native-controls
+- name: set_decoration_layout
+  dispatch: dynamic
+  args:
+  - svl probe
+  expect: h.get(o, "decoration-layout") == V::Str("svl probe".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property decoration-layout: exact'
+- name: set_show_title_buttons
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "show-title-buttons") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property show-title-buttons: exact'
+- name: set_use_native_controls
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "use-native-controls") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property use-native-controls: exact'
+bindings:
+- name: show-title-buttons
+  direction: two_way
+  property: show-title-buttons
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::show-title-buttons
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkHeaderBar:show-title-buttons is writable, scalar and notifies; the renderer compares before set'
+- name: use-native-controls
+  direction: two_way
+  property: use-native-controls
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::use-native-controls
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkHeaderBar:use-native-controls is writable, scalar and notifies; the renderer compares before set'

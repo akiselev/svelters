@@ -39,6 +39,7 @@
         "ownership": "floating_sink",
         "type": "self"
       },
+      "since": "4.10",
       "unsupported_reason": null
     },
     {
@@ -81,6 +82,7 @@
         "ownership": "borrowed",
         "type": "bool"
       },
+      "since": "4.12",
       "unsupported_reason": null
     },
     {
@@ -99,6 +101,7 @@
         "ownership": "borrowed",
         "type": "object<svelters-api:v1:type:gtk:Gio:File>"
       },
+      "since": "4.10",
       "unsupported_reason": null
     },
     {
@@ -117,6 +120,7 @@
         "ownership": "borrowed",
         "type": "bool"
       },
+      "since": "4.14",
       "unsupported_reason": null
     },
     {
@@ -164,6 +168,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.10",
       "unsupported_reason": "callback_scope"
     },
     {
@@ -190,6 +195,7 @@
         "ownership": "borrowed",
         "type": "bool"
       },
+      "since": "4.10",
       "throws": true,
       "unsupported_reason": null
     },
@@ -238,6 +244,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.10",
       "unsupported_reason": "callback_scope"
     },
     {
@@ -264,6 +271,7 @@
         "ownership": "borrowed",
         "type": "bool"
       },
+      "since": "4.10",
       "throws": true,
       "unsupported_reason": null
     },
@@ -291,6 +299,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.12",
       "unsupported_reason": null
     },
     {
@@ -317,6 +326,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.10",
       "unsupported_reason": null
     },
     {
@@ -343,6 +353,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.14",
       "unsupported_reason": null
     }
   ],

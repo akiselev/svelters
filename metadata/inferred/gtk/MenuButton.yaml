@@ -1,0 +1,524 @@
+properties:
+- name: active
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: always-show-arrow
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: can-shrink
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: direction
+  sample: up
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: has-frame
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: icon-name
+  sample: edit-copy
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: label
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: menu-model
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: primary
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: use-underline
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: notify::active
+  derived_from:
+    property: active
+  js_event: notify::active
+  trigger:
+    property: active
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkMenuButton:active
+- name: notify::always-show-arrow
+  derived_from:
+    property: always-show-arrow
+  js_event: notify::always-show-arrow
+  trigger:
+    property: always-show-arrow
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkMenuButton:always-show-arrow
+- name: notify::can-shrink
+  derived_from:
+    property: can-shrink
+  js_event: notify::can-shrink
+  trigger:
+    property: can-shrink
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkMenuButton:can-shrink
+- name: notify::direction
+  derived_from:
+    property: direction
+  js_event: notify::direction
+  trigger:
+    property: direction
+    values:
+    - up
+    - down
+    - up
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkMenuButton:direction
+- name: notify::has-frame
+  derived_from:
+    property: has-frame
+  js_event: notify::has-frame
+  trigger:
+    property: has-frame
+    values:
+    - false
+    - true
+    - false
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkMenuButton:has-frame
+- name: notify::primary
+  derived_from:
+    property: primary
+  js_event: notify::primary
+  trigger:
+    property: primary
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkMenuButton:primary
+- name: notify::use-underline
+  derived_from:
+    property: use-underline
+  js_event: notify::use-underline
+  trigger:
+    property: use-underline
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkMenuButton:use-underline
+methods:
+- name: get_active
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "active")
+  provenance:
+  - origin: probe
+    ref: equals property active
+- name: get_always_show_arrow
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "always-show-arrow")
+  provenance:
+  - origin: probe
+    ref: equals property always-show-arrow
+- name: get_can_shrink
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "can-shrink")
+  provenance:
+  - origin: probe
+    ref: equals property can-shrink
+- name: get_direction
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "direction")
+  provenance:
+  - origin: probe
+    ref: equals property direction
+- name: get_has_frame
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "has-frame")
+  provenance:
+  - origin: probe
+    ref: equals property has-frame
+- name: get_icon_name
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "icon-name")
+  provenance:
+  - origin: probe
+    ref: equals property icon-name
+- name: get_label
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "label")
+  provenance:
+  - origin: probe
+    ref: equals property label
+- name: get_primary
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "primary")
+  provenance:
+  - origin: probe
+    ref: equals property primary
+- name: get_use_underline
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "use-underline")
+  provenance:
+  - origin: probe
+    ref: equals property use-underline
+- name: set_active
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "active") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property active: exact'
+- name: set_always_show_arrow
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "always-show-arrow") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property always-show-arrow: exact'
+- name: set_can_shrink
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "can-shrink") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property can-shrink: exact'
+- name: set_direction
+  dispatch: dynamic
+  args:
+  - up
+  expect: h.get(o, "direction") == V::Str("up".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property direction: exact'
+- name: set_has_frame
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "has-frame") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property has-frame: exact'
+- name: set_icon_name
+  dispatch: dynamic
+  args:
+  - edit-copy
+  expect: h.get(o, "icon-name") == V::Str("edit-copy".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property icon-name: exact'
+- name: set_label
+  dispatch: dynamic
+  args:
+  - svl probe
+  expect: h.get(o, "label") == V::Str("svl probe".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property label: exact'
+- name: set_primary
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "primary") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property primary: exact'
+- name: set_use_underline
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "use-underline") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property use-underline: exact'
+bindings:
+- name: active
+  direction: two_way
+  property: active
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::active
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkMenuButton:active is writable, scalar and notifies; the renderer compares before set'
+- name: always-show-arrow
+  direction: two_way
+  property: always-show-arrow
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::always-show-arrow
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkMenuButton:always-show-arrow is writable, scalar and notifies; the renderer compares before set'
+- name: can-shrink
+  direction: two_way
+  property: can-shrink
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::can-shrink
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkMenuButton:can-shrink is writable, scalar and notifies; the renderer compares before set'
+- name: direction
+  direction: two_way
+  property: direction
+  type:
+    ref: enum<svelters-api:v1:type:gtk:Gtk:ArrowType>
+    nullable: false
+  change:
+    signal: notify::direction
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkMenuButton:direction is writable, scalar and notifies; the renderer compares before set'
+- name: has-frame
+  direction: two_way
+  property: has-frame
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::has-frame
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkMenuButton:has-frame is writable, scalar and notifies; the renderer compares before set'
+- name: primary
+  direction: two_way
+  property: primary
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::primary
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkMenuButton:primary is writable, scalar and notifies; the renderer compares before set'
+- name: use-underline
+  direction: two_way
+  property: use-underline
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::use-underline
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkMenuButton:use-underline is writable, scalar and notifies; the renderer compares before set'

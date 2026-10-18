@@ -1,0 +1,296 @@
+properties:
+- name: expanded
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: label
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: resize-toplevel
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: use-markup
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: use-underline
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: notify::expanded
+  derived_from:
+    property: expanded
+  js_event: notify::expanded
+  trigger:
+    property: expanded
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkExpander:expanded
+- name: notify::resize-toplevel
+  derived_from:
+    property: resize-toplevel
+  js_event: notify::resize-toplevel
+  trigger:
+    property: resize-toplevel
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkExpander:resize-toplevel
+- name: notify::use-markup
+  derived_from:
+    property: use-markup
+  js_event: notify::use-markup
+  trigger:
+    property: use-markup
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkExpander:use-markup
+- name: notify::use-underline
+  derived_from:
+    property: use-underline
+  js_event: notify::use-underline
+  trigger:
+    property: use-underline
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkExpander:use-underline
+methods:
+- name: get_expanded
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "expanded")
+  provenance:
+  - origin: probe
+    ref: equals property expanded
+- name: get_label
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "label")
+  provenance:
+  - origin: probe
+    ref: equals property label
+- name: get_resize_toplevel
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "resize-toplevel")
+  provenance:
+  - origin: probe
+    ref: equals property resize-toplevel
+- name: get_use_markup
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "use-markup")
+  provenance:
+  - origin: probe
+    ref: equals property use-markup
+- name: get_use_underline
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "use-underline")
+  provenance:
+  - origin: probe
+    ref: equals property use-underline
+- name: set_expanded
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "expanded") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property expanded: exact'
+- name: set_label
+  dispatch: dynamic
+  args:
+  - svl probe
+  expect: h.get(o, "label") == V::Str("svl probe".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property label: exact'
+- name: set_resize_toplevel
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "resize-toplevel") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property resize-toplevel: exact'
+- name: set_use_markup
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "use-markup") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property use-markup: exact'
+- name: set_use_underline
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "use-underline") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property use-underline: exact'
+bindings:
+- name: expanded
+  direction: two_way
+  property: expanded
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::expanded
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkExpander:expanded is writable, scalar and notifies; the renderer compares before set'
+- name: resize-toplevel
+  direction: two_way
+  property: resize-toplevel
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::resize-toplevel
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkExpander:resize-toplevel is writable, scalar and notifies; the renderer compares before set'
+- name: use-markup
+  direction: two_way
+  property: use-markup
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::use-markup
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkExpander:use-markup is writable, scalar and notifies; the renderer compares before set'
+- name: use-underline
+  direction: two_way
+  property: use-underline
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::use-underline
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkExpander:use-underline is writable, scalar and notifies; the renderer compares before set'

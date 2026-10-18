@@ -1,0 +1,17 @@
+{
+ "parked": [
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:ApplicationWindow:method:get_id",
+   "kind": "ApplicationWindow",
+   "message": "postcondition: r == V::I64(0)",
+   "name": "get_id",
+   "record_fp": "f14c38ced2c18d2a",
+   "section": "methods",
+   "test": "generated::verify::method_applicationwindow_get_id",
+   "version": "4.22.4"
+  }
+ ],
+ "schema": "svelters-parked/v1",
+ "toolkit": "gtk",
+ "version": "4.22.4"
+}

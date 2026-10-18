@@ -1,0 +1,355 @@
+properties:
+- name: comments
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: copyright
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: license
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: license-type
+  sample: custom
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: logo-icon-name
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: program-name
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: system-information
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: translator-credits
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: version
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: website
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: website-label
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: wrap-license
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: activate-link
+  handler_result: bool_stop
+  sync_required: true
+  trigger:
+    rust: let _ = o.emit_by_name::<bool>("activate-link", &[&"x"]);
+    values:
+    - a
+    - b
+    - c
+  delivery_only: true
+  provenance:
+  - origin: runtime
+    ref: returns gboolean, run-last
+  - origin: probe
+    ref: emitted synthetically with sampled arguments; delivery only, no native trigger
+- name: notify::license-type
+  derived_from:
+    property: license-type
+  js_event: notify::license-type
+  trigger:
+    property: license-type
+    values:
+    - custom
+    - unknown
+    - custom
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkAboutDialog:license-type
+- name: notify::wrap-license
+  derived_from:
+    property: wrap-license
+  js_event: notify::wrap-license
+  trigger:
+    property: wrap-license
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkAboutDialog:wrap-license
+methods:
+- name: get_comments
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "comments")
+  provenance:
+  - origin: probe
+    ref: equals property comments
+- name: get_copyright
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "copyright")
+  provenance:
+  - origin: probe
+    ref: equals property copyright
+- name: get_license
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "license")
+  provenance:
+  - origin: probe
+    ref: equals property license
+- name: get_license_type
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "license-type")
+  provenance:
+  - origin: probe
+    ref: equals property license-type
+- name: get_logo_icon_name
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "logo-icon-name")
+  provenance:
+  - origin: probe
+    ref: equals property logo-icon-name
+- name: get_program_name
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "program-name")
+  provenance:
+  - origin: probe
+    ref: equals property program-name
+- name: get_system_information
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "system-information")
+  provenance:
+  - origin: probe
+    ref: equals property system-information
+- name: get_translator_credits
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "translator-credits")
+  provenance:
+  - origin: probe
+    ref: equals property translator-credits
+- name: get_version
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "version")
+  provenance:
+  - origin: probe
+    ref: equals property version
+- name: get_website
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "website")
+  provenance:
+  - origin: probe
+    ref: equals property website
+- name: get_website_label
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "website-label")
+  provenance:
+  - origin: probe
+    ref: equals property website-label
+- name: get_wrap_license
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "wrap-license")
+  provenance:
+  - origin: probe
+    ref: equals property wrap-license
+- name: set_comments
+  dispatch: dynamic
+  args:
+  - svl probe
+  expect: h.get(o, "comments") == V::Str("svl probe".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property comments: exact'
+- name: set_copyright
+  dispatch: dynamic
+  args:
+  - svl probe
+  expect: h.get(o, "copyright") == V::Str("svl probe".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property copyright: exact'
+- name: set_license
+  dispatch: dynamic
+  args:
+  - svl probe
+  expect: h.get(o, "license") == V::Str("svl probe".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property license: exact'
+- name: set_license_type
+  dispatch: dynamic
+  args:
+  - custom
+  expect: h.get(o, "license-type") == V::Str("custom".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property license-type: exact'
+- name: set_logo_icon_name
+  dispatch: dynamic
+  args:
+  - svl probe
+  expect: h.get(o, "logo-icon-name") == V::Str("svl probe".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property logo-icon-name: exact'
+- name: set_program_name
+  dispatch: dynamic
+  args:
+  - svl probe
+  expect: h.get(o, "program-name") == V::Str("svl probe".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property program-name: exact'
+- name: set_system_information
+  dispatch: dynamic
+  args:
+  - svl probe
+  expect: h.get(o, "system-information") == V::Str("svl probe".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property system-information: exact'
+- name: set_translator_credits
+  dispatch: dynamic
+  args:
+  - svl probe
+  expect: h.get(o, "translator-credits") == V::Str("svl probe".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property translator-credits: exact'
+- name: set_version
+  dispatch: dynamic
+  args:
+  - svl probe
+  expect: h.get(o, "version") == V::Str("svl probe".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property version: exact'
+- name: set_website
+  dispatch: dynamic
+  args:
+  - svl probe
+  expect: h.get(o, "website") == V::Str("svl probe".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property website: exact'
+- name: set_website_label
+  dispatch: dynamic
+  args:
+  - svl probe
+  expect: h.get(o, "website-label") == V::Str("svl probe".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property website-label: exact'
+- name: set_wrap_license
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "wrap-license") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property wrap-license: exact'
+bindings:
+- name: license-type
+  direction: two_way
+  property: license-type
+  type:
+    ref: enum<svelters-api:v1:type:gtk:Gtk:License>
+    nullable: false
+  change:
+    signal: notify::license-type
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkAboutDialog:license-type is writable, scalar and notifies; the renderer compares before set'
+- name: wrap-license
+  direction: two_way
+  property: wrap-license
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::wrap-license
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkAboutDialog:wrap-license is writable, scalar and notifies; the renderer compares before set'

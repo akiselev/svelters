@@ -1,0 +1,344 @@
+properties:
+- name: inverted
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: max-value
+  sample: 2.0
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: min-value
+  sample: 1.0
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: mode
+  sample: discrete
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: value
+  sample: 1.0
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: notify::inverted
+  derived_from:
+    property: inverted
+  js_event: notify::inverted
+  trigger:
+    property: inverted
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkLevelBar:inverted
+- name: notify::max-value
+  derived_from:
+    property: max-value
+  js_event: notify::max-value
+  trigger:
+    property: max-value
+    values:
+    - 2.0
+    - 1.0
+    - 2.0
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkLevelBar:max-value
+- name: notify::min-value
+  derived_from:
+    property: min-value
+  js_event: notify::min-value
+  trigger:
+    property: min-value
+    values:
+    - 1.0
+    - 0.0
+    - 1.0
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkLevelBar:min-value
+- name: notify::mode
+  derived_from:
+    property: mode
+  js_event: notify::mode
+  trigger:
+    property: mode
+    values:
+    - discrete
+    - continuous
+    - discrete
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkLevelBar:mode
+- name: notify::value
+  derived_from:
+    property: value
+  js_event: notify::value
+  trigger:
+    property: value
+    values:
+    - 1.0
+    - 0.0
+    - 1.0
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkLevelBar:value
+methods:
+- name: get_inverted
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "inverted")
+  provenance:
+  - origin: probe
+    ref: equals property inverted
+- name: get_max_value
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "max-value")
+  provenance:
+  - origin: probe
+    ref: equals property max-value
+- name: get_min_value
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "min-value")
+  provenance:
+  - origin: probe
+    ref: equals property min-value
+- name: get_mode
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "mode")
+  provenance:
+  - origin: probe
+    ref: equals property mode
+- name: get_value
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "value")
+  provenance:
+  - origin: probe
+    ref: equals property value
+- name: set_inverted
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "inverted") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property inverted: exact'
+- name: set_max_value
+  dispatch: dynamic
+  args:
+  - 2.0
+  expect: h.get(o, "max-value") == V::F64(2.0)
+  provenance:
+  - origin: probe
+    ref: 'set then read property max-value: exact'
+- name: set_min_value
+  dispatch: dynamic
+  args:
+  - 1.0
+  expect: h.get(o, "min-value") == V::F64(1.0)
+  provenance:
+  - origin: probe
+    ref: 'set then read property min-value: exact'
+- name: set_mode
+  dispatch: dynamic
+  args:
+  - discrete
+  expect: h.get(o, "mode") == V::Str("discrete".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property mode: exact'
+- name: set_value
+  dispatch: dynamic
+  args:
+  - 1.0
+  expect: h.get(o, "value") == V::F64(1.0)
+  provenance:
+  - origin: probe
+    ref: 'set then read property value: exact'
+bindings:
+- name: inverted
+  direction: two_way
+  property: inverted
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::inverted
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkLevelBar:inverted is writable, scalar and notifies; the renderer compares before set'
+- name: max-value
+  direction: two_way
+  property: max-value
+  type:
+    ref: f64
+    nullable: false
+  change:
+    signal: notify::max-value
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkLevelBar:max-value is writable, scalar and notifies; the renderer compares before set'
+- name: min-value
+  direction: two_way
+  property: min-value
+  type:
+    ref: f64
+    nullable: false
+  change:
+    signal: notify::min-value
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkLevelBar:min-value is writable, scalar and notifies; the renderer compares before set'
+- name: mode
+  direction: two_way
+  property: mode
+  type:
+    ref: enum<svelters-api:v1:type:gtk:Gtk:LevelBarMode>
+    nullable: false
+  change:
+    signal: notify::mode
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkLevelBar:mode is writable, scalar and notifies; the renderer compares before set'
+- name: value
+  direction: two_way
+  property: value
+  type:
+    ref: f64
+    nullable: false
+  change:
+    signal: notify::value
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkLevelBar:value is writable, scalar and notifies; the renderer compares before set'

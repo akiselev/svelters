@@ -1,0 +1,263 @@
+{
+ "bindings:accept-unpaired-release": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:activate-on-single-click": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": false
+  }
+ },
+ "bindings:selection-mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": "none"
+  }
+ },
+ "bindings:show-separators": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:tab-behavior": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": "item"
+  }
+ },
+ "methods:get_activate_on_single_click": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "activate-on-single-click",
+   "ret": true
+  }
+ },
+ "methods:get_selection_mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "selection-mode",
+   "ret": "single"
+  }
+ },
+ "methods:get_show_separators": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "show-separators",
+   "ret": false
+  }
+ },
+ "methods:get_tab_behavior": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "tab-behavior",
+   "ret": "all"
+  }
+ },
+ "methods:set_activate_on_single_click": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "activate-on-single-click",
+   "recipe": null,
+   "sample": false
+  }
+ },
+ "methods:set_selection_mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "selection-mode",
+   "recipe": null,
+   "sample": "none"
+  }
+ },
+ "methods:set_show_separators": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "show-separators",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "methods:set_tab_behavior": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "tab-behavior",
+   "recipe": null,
+   "sample": "item"
+  }
+ },
+ "properties:accept-unpaired-release": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:activate-on-single-click": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": false,
+   "signals": []
+  }
+ },
+ "properties:selection-mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "single",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "none",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "none",
+   "signals": []
+  }
+ },
+ "properties:show-separators": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": [
+    "notify::css-classes"
+   ]
+  }
+ },
+ "properties:tab-behavior": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "all",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "item",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "item",
+   "signals": []
+  }
+ },
+ "signals:activate-cursor-row": {
+  "confidence": 0.95,
+  "evidence": {
+   "action": true,
+   "emit": "delivered",
+   "handler_result": "none",
+   "n_params": 0,
+   "params": [],
+   "returns": "void",
+   "run": "last",
+   "sync_required": false
+  }
+ },
+ "signals:select-all": {
+  "confidence": 0.95,
+  "evidence": {
+   "action": true,
+   "emit": "delivered",
+   "handler_result": "none",
+   "n_params": 0,
+   "params": [],
+   "returns": "void",
+   "run": "last",
+   "sync_required": false
+  }
+ },
+ "signals:selected-rows-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "action": false,
+   "handler_result": "none",
+   "n_params": 0,
+   "params": [],
+   "returns": "void",
+   "run": "first",
+   "sync_required": false,
+   "synthetic": {
+    "args": [],
+    "emit": "delivered"
+   }
+  }
+ },
+ "signals:toggle-cursor-row": {
+  "confidence": 0.95,
+  "evidence": {
+   "action": true,
+   "emit": "delivered",
+   "handler_result": "none",
+   "n_params": 0,
+   "params": [],
+   "returns": "void",
+   "run": "last",
+   "sync_required": false
+  }
+ },
+ "signals:unselect-all": {
+  "confidence": 0.95,
+  "evidence": {
+   "action": true,
+   "emit": "delivered",
+   "handler_result": "none",
+   "n_params": 0,
+   "params": [],
+   "returns": "void",
+   "run": "last",
+   "sync_required": false
+  }
+ }
+}

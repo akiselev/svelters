@@ -1,0 +1,101 @@
+{
+ "bindings:visited": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "methods:get_uri": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "uri",
+   "ret": null
+  }
+ },
+ "methods:get_visited": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "visited",
+   "ret": false
+  }
+ },
+ "methods:set_uri": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "uri",
+   "recipe": null,
+   "sample": "https://example.org/"
+  }
+ },
+ "methods:set_visited": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "visited",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "properties:uri": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "https://example.org/",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [
+    "Gtk: gtk_link_button_set_uri: assertion 'uri != NULL' failed"
+   ],
+   "sample": "https://example.org/",
+   "signals": []
+  }
+ },
+ "properties:visited": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": [
+    "state-flags-changed"
+   ]
+  }
+ },
+ "signals:activate-link": {
+  "confidence": 0.9,
+  "evidence": {
+   "action": false,
+   "handler_result": "bool_stop",
+   "n_params": 0,
+   "params": [],
+   "returns": "gboolean",
+   "run": "last",
+   "sync_required": true,
+   "synthetic": {
+    "args": [],
+    "emit": "delivered",
+    "log": [
+     "GLib: g_uri_peek_scheme: assertion 'uri != NULL' failed"
+    ]
+   }
+  }
+ }
+}

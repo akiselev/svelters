@@ -296,6 +296,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.8",
       "unsupported_reason": null
     }
   ],

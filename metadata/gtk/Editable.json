@@ -44,6 +44,7 @@
         "ownership": "borrowed",
         "type": "bool"
       },
+      "since": "4.10",
       "unsupported_reason": null
     },
     {
@@ -185,6 +186,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "6d5c849648fdd164",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property editable"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"editable\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Editable:method:get_editable",
       "invocation": {
         "dev": "introspected",
@@ -203,6 +222,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "5bf2b48ba9238885",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property enable-undo"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"enable-undo\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Editable:method:get_enable_undo",
       "invocation": {
         "dev": "introspected",
@@ -221,6 +258,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "adc5801a1c186419",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property max-width-chars"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"max-width-chars\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Editable:method:get_max_width_chars",
       "invocation": {
         "dev": "introspected",
@@ -239,6 +294,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "c0c8dda694e3d57f",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "called on a new instance, returned 0"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == V::I64(0)",
       "id": "svelters-api:v1:type:gtk:Gtk:Editable:method:get_position",
       "invocation": {
         "dev": "introspected",
@@ -290,6 +363,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "86eefdce4842bb54",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property text"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"text\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Editable:method:get_text",
       "invocation": {
         "dev": "introspected",
@@ -308,6 +399,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "4107a909d2626fd3",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property width-chars"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"width-chars\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Editable:method:get_width_chars",
       "invocation": {
         "dev": "introspected",
@@ -462,6 +571,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "e40a907b41f21d35",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property editable: exact"
+          }
+        ]
+      },
+      "args": [
+        false
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"editable\") == V::Bool(false)",
       "id": "svelters-api:v1:type:gtk:Gtk:Editable:method:set_editable",
       "invocation": {
         "dev": "introspected",
@@ -488,6 +617,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "6654d960e790e18b",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property enable-undo: exact"
+          }
+        ]
+      },
+      "args": [
+        false
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"enable-undo\") == V::Bool(false)",
       "id": "svelters-api:v1:type:gtk:Gtk:Editable:method:set_enable_undo",
       "invocation": {
         "dev": "introspected",
@@ -514,6 +663,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "4a59ab7900a1af25",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property max-width-chars: exact"
+          }
+        ]
+      },
+      "args": [
+        0
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"max-width-chars\") == V::I64(0)",
       "id": "svelters-api:v1:type:gtk:Gtk:Editable:method:set_max_width_chars",
       "invocation": {
         "dev": "introspected",
@@ -566,6 +735,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "6555dc1fd291fb0d",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property text: exact"
+          }
+        ]
+      },
+      "args": [
+        "svl probe"
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"text\") == V::Str(\"svl probe\".into())",
       "id": "svelters-api:v1:type:gtk:Gtk:Editable:method:set_text",
       "invocation": {
         "dev": "introspected",
@@ -592,6 +781,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "00b627aa6f5dda1b",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property width-chars: exact"
+          }
+        ]
+      },
+      "args": [
+        0
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"width-chars\") == V::I64(0)",
       "id": "svelters-api:v1:type:gtk:Gtk:Editable:method:set_width_chars",
       "invocation": {
         "dev": "introspected",
@@ -705,6 +914,7 @@
         "origin": "runtime",
         "owner": "GtkEditable"
       },
+      "sample": false,
       "type": {
         "gtype": "gboolean",
         "native": "gboolean",
@@ -750,6 +960,7 @@
         "origin": "runtime",
         "owner": "GtkEditable"
       },
+      "sample": false,
       "type": {
         "gtype": "gboolean",
         "native": "gboolean",
@@ -798,6 +1009,7 @@
         "origin": "runtime",
         "owner": "GtkEditable"
       },
+      "sample": 0,
       "type": {
         "gtype": "gint",
         "native": "gint",
@@ -890,6 +1102,7 @@
         "origin": "runtime",
         "owner": "GtkEditable"
       },
+      "sample": "svl probe",
       "type": {
         "gtype": "gchararray",
         "native": "gchar*",
@@ -938,6 +1151,7 @@
         "origin": "runtime",
         "owner": "GtkEditable"
       },
+      "sample": 0,
       "type": {
         "gtype": "gint",
         "native": "gint",
@@ -986,6 +1200,7 @@
         "origin": "runtime",
         "owner": "GtkEditable"
       },
+      "sample": 1.0,
       "type": {
         "gtype": "gfloat",
         "native": "gfloat",
@@ -1207,6 +1422,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
+    "inferred": "inferred/gtk/Editable.yaml",
     "overrides": "overrides/gtk/Editable.yaml",
     "runtime": {
       "gtk": "4.22.4",

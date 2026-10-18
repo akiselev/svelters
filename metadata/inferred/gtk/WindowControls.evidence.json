@@ -1,0 +1,131 @@
+{
+ "bindings:side": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": "end"
+  }
+ },
+ "bindings:use-native-controls": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "methods:get_decoration_layout": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "decoration-layout",
+   "ret": null
+  }
+ },
+ "methods:get_empty": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "empty",
+   "ret": true
+  }
+ },
+ "methods:get_side": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "side",
+   "ret": "start"
+  }
+ },
+ "methods:get_use_native_controls": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "use-native-controls",
+   "ret": false
+  }
+ },
+ "methods:set_decoration_layout": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "decoration-layout",
+   "recipe": null,
+   "sample": "svl probe"
+  }
+ },
+ "methods:set_side": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "side",
+   "recipe": null,
+   "sample": "end"
+  }
+ },
+ "methods:set_use_native_controls": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "use-native-controls",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "properties:decoration-layout": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "svl probe",
+   "signals": []
+  }
+ },
+ "properties:side": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "start",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "end",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "end",
+   "signals": [
+    "notify::css-classes"
+   ]
+  }
+ },
+ "properties:use-native-controls": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ }
+}

@@ -1,0 +1,140 @@
+properties:
+- name: baseline-position
+  sample: top
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: shrink-center-last
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: notify::baseline-position
+  derived_from:
+    property: baseline-position
+  js_event: notify::baseline-position
+  trigger:
+    property: baseline-position
+    values:
+    - top
+    - center
+    - top
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkCenterBox:baseline-position
+- name: notify::shrink-center-last
+  derived_from:
+    property: shrink-center-last
+  js_event: notify::shrink-center-last
+  trigger:
+    property: shrink-center-last
+    values:
+    - false
+    - true
+    - false
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkCenterBox:shrink-center-last
+methods:
+- name: get_baseline_position
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "baseline-position")
+  provenance:
+  - origin: probe
+    ref: equals property baseline-position
+- name: get_shrink_center_last
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "shrink-center-last")
+  provenance:
+  - origin: probe
+    ref: equals property shrink-center-last
+- name: set_baseline_position
+  dispatch: dynamic
+  args:
+  - top
+  expect: h.get(o, "baseline-position") == V::Str("top".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property baseline-position: exact'
+- name: set_shrink_center_last
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "shrink-center-last") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property shrink-center-last: exact'
+bindings:
+- name: baseline-position
+  direction: two_way
+  property: baseline-position
+  type:
+    ref: enum<svelters-api:v1:type:gtk:Gtk:BaselinePosition>
+    nullable: false
+  change:
+    signal: notify::baseline-position
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkCenterBox:baseline-position is writable, scalar and notifies; the renderer compares before set'
+- name: shrink-center-last
+  direction: two_way
+  property: shrink-center-last
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::shrink-center-last
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkCenterBox:shrink-center-last is writable, scalar and notifies; the renderer compares before set'

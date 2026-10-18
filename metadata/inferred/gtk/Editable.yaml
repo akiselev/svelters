@@ -1,0 +1,116 @@
+verify_subject:
+  tag: entry
+properties:
+- name: editable
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: enable-undo
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: max-width-chars
+  sample: 0
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: text
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: width-chars
+  sample: 0
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: xalign
+  sample: 1.0
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+methods:
+- name: get_editable
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "editable")
+  provenance:
+  - origin: probe
+    ref: equals property editable
+- name: get_enable_undo
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "enable-undo")
+  provenance:
+  - origin: probe
+    ref: equals property enable-undo
+- name: get_max_width_chars
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "max-width-chars")
+  provenance:
+  - origin: probe
+    ref: equals property max-width-chars
+- name: get_position
+  dispatch: dynamic
+  args: []
+  expect: r == V::I64(0)
+  provenance:
+  - origin: probe
+    ref: called on a new instance, returned 0
+- name: get_text
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "text")
+  provenance:
+  - origin: probe
+    ref: equals property text
+- name: get_width_chars
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "width-chars")
+  provenance:
+  - origin: probe
+    ref: equals property width-chars
+- name: set_editable
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "editable") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property editable: exact'
+- name: set_enable_undo
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "enable-undo") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property enable-undo: exact'
+- name: set_max_width_chars
+  dispatch: dynamic
+  args:
+  - 0
+  expect: h.get(o, "max-width-chars") == V::I64(0)
+  provenance:
+  - origin: probe
+    ref: 'set then read property max-width-chars: exact'
+- name: set_text
+  dispatch: dynamic
+  args:
+  - svl probe
+  expect: h.get(o, "text") == V::Str("svl probe".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property text: exact'
+- name: set_width_chars
+  dispatch: dynamic
+  args:
+  - 0
+  expect: h.get(o, "width-chars") == V::I64(0)
+  provenance:
+  - origin: probe
+    ref: 'set then read property width-chars: exact'

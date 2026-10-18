@@ -1,0 +1,155 @@
+properties:
+- name: content-height
+  sample: 1
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: content-width
+  sample: 1
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: resize
+  handler_result: none
+  sync_required: false
+  trigger:
+    rust: o.emit_by_name::<()>("resize", &[&1i32, &1i32]);
+    values:
+    - a
+    - b
+    - c
+  delivery_only: true
+  provenance:
+  - origin: runtime
+    ref: returns void, run-last
+  - origin: probe
+    ref: emitted synthetically with sampled arguments; delivery only, no native trigger
+- name: notify::content-height
+  derived_from:
+    property: content-height
+  js_event: notify::content-height
+  trigger:
+    property: content-height
+    values:
+    - 1
+    - 0
+    - 1
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkDrawingArea:content-height
+- name: notify::content-width
+  derived_from:
+    property: content-width
+  js_event: notify::content-width
+  trigger:
+    property: content-width
+    values:
+    - 1
+    - 0
+    - 1
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkDrawingArea:content-width
+methods:
+- name: get_content_height
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "content-height")
+  provenance:
+  - origin: probe
+    ref: equals property content-height
+- name: get_content_width
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "content-width")
+  provenance:
+  - origin: probe
+    ref: equals property content-width
+- name: set_content_height
+  dispatch: dynamic
+  args:
+  - 1
+  expect: h.get(o, "content-height") == V::I64(1)
+  provenance:
+  - origin: probe
+    ref: 'set then read property content-height: exact'
+- name: set_content_width
+  dispatch: dynamic
+  args:
+  - 1
+  expect: h.get(o, "content-width") == V::I64(1)
+  provenance:
+  - origin: probe
+    ref: 'set then read property content-width: exact'
+bindings:
+- name: content-height
+  direction: two_way
+  property: content-height
+  type:
+    ref: i32
+    nullable: false
+  change:
+    signal: notify::content-height
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkDrawingArea:content-height is writable, scalar and notifies; the renderer compares before set'
+- name: content-width
+  direction: two_way
+  property: content-width
+  type:
+    ref: i32
+    nullable: false
+  change:
+    signal: notify::content-width
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkDrawingArea:content-width is writable, scalar and notifies; the renderer compares before set'

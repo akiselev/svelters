@@ -1,0 +1,145 @@
+{
+ "bindings:icon-size": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": "normal"
+  }
+ },
+ "bindings:pixel-size": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": 0
+  }
+ },
+ "bindings:use-fallback": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "methods:get_icon_name": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "icon-name",
+   "ret": null
+  }
+ },
+ "methods:get_icon_size": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "icon-size",
+   "ret": "inherit"
+  }
+ },
+ "methods:get_pixel_size": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "pixel-size",
+   "ret": -1
+  }
+ },
+ "methods:get_storage_type": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "storage-type",
+   "ret": "empty"
+  }
+ },
+ "methods:set_icon_size": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "icon-size",
+   "recipe": null,
+   "sample": "normal"
+  }
+ },
+ "methods:set_pixel_size": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "pixel-size",
+   "recipe": null,
+   "sample": 0
+  }
+ },
+ "properties:icon-name": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "edit-copy",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "edit-copy",
+   "signals": [
+    "notify::icon-size",
+    "notify::storage-type"
+   ]
+  }
+ },
+ "properties:icon-size": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "inherit",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "normal",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "normal",
+   "signals": []
+  }
+ },
+ "properties:pixel-size": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": -1,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 0,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 0,
+   "signals": []
+  }
+ },
+ "properties:use-fallback": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ }
+}

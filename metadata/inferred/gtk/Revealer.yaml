@@ -1,0 +1,215 @@
+properties:
+- name: reveal-child
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: transition-duration
+  sample: 251
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: transition-type
+  sample: none
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: notify::reveal-child
+  derived_from:
+    property: reveal-child
+  js_event: notify::reveal-child
+  trigger:
+    property: reveal-child
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkRevealer:reveal-child
+- name: notify::transition-duration
+  derived_from:
+    property: transition-duration
+  js_event: notify::transition-duration
+  trigger:
+    property: transition-duration
+    values:
+    - 251
+    - 250
+    - 251
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkRevealer:transition-duration
+- name: notify::transition-type
+  derived_from:
+    property: transition-type
+  js_event: notify::transition-type
+  trigger:
+    property: transition-type
+    values:
+    - none
+    - slide-down
+    - none
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkRevealer:transition-type
+methods:
+- name: get_child_revealed
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "child-revealed")
+  provenance:
+  - origin: probe
+    ref: equals property child-revealed
+- name: get_reveal_child
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "reveal-child")
+  provenance:
+  - origin: probe
+    ref: equals property reveal-child
+- name: get_transition_duration
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "transition-duration")
+  provenance:
+  - origin: probe
+    ref: equals property transition-duration
+- name: get_transition_type
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "transition-type")
+  provenance:
+  - origin: probe
+    ref: equals property transition-type
+- name: set_reveal_child
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "reveal-child") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property reveal-child: exact'
+- name: set_transition_duration
+  dispatch: dynamic
+  args:
+  - 251
+  expect: h.get(o, "transition-duration") == V::I64(251)
+  provenance:
+  - origin: probe
+    ref: 'set then read property transition-duration: exact'
+- name: set_transition_type
+  dispatch: dynamic
+  args:
+  - none
+  expect: h.get(o, "transition-type") == V::Str("none".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property transition-type: exact'
+bindings:
+- name: reveal-child
+  direction: two_way
+  property: reveal-child
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::reveal-child
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkRevealer:reveal-child is writable, scalar and notifies; the renderer compares before set'
+- name: transition-duration
+  direction: two_way
+  property: transition-duration
+  type:
+    ref: u32
+    nullable: false
+  change:
+    signal: notify::transition-duration
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkRevealer:transition-duration is writable, scalar and notifies; the renderer compares before set'
+- name: transition-type
+  direction: two_way
+  property: transition-type
+  type:
+    ref: enum<svelters-api:v1:type:gtk:Gtk:RevealerTransitionType>
+    nullable: false
+  change:
+    signal: notify::transition-type
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkRevealer:transition-type is writable, scalar and notifies; the renderer compares before set'

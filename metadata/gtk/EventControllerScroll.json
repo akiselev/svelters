@@ -106,6 +106,7 @@
         "ownership": "borrowed",
         "type": "enum<svelters-api:v1:type:gtk:Gdk:ScrollUnit>"
       },
+      "since": "4.8",
       "unsupported_reason": null
     },
     {

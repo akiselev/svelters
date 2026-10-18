@@ -110,6 +110,7 @@
         "ownership": "borrowed",
         "type": "u32"
       },
+      "since": "4.16",
       "unsupported_reason": "callback_scope"
     },
     {
@@ -2057,6 +2058,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.16",
       "unsupported_reason": null
     },
     {

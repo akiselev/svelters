@@ -1,0 +1,212 @@
+properties:
+- name: autoplay
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: file
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: graphics-offload
+  sample: enabled
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: loop
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: notify::autoplay
+  derived_from:
+    property: autoplay
+  js_event: notify::autoplay
+  trigger:
+    property: autoplay
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkVideo:autoplay
+- name: notify::graphics-offload
+  derived_from:
+    property: graphics-offload
+  js_event: notify::graphics-offload
+  trigger:
+    property: graphics-offload
+    values:
+    - enabled
+    - disabled
+    - enabled
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkVideo:graphics-offload
+- name: notify::loop
+  derived_from:
+    property: loop
+  js_event: notify::loop
+  trigger:
+    property: loop
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkVideo:loop
+methods:
+- name: get_autoplay
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "autoplay")
+  provenance:
+  - origin: probe
+    ref: equals property autoplay
+- name: get_graphics_offload
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "graphics-offload")
+  provenance:
+  - origin: probe
+    ref: equals property graphics-offload
+- name: get_loop
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "loop")
+  provenance:
+  - origin: probe
+    ref: equals property loop
+- name: set_autoplay
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "autoplay") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property autoplay: exact'
+- name: set_graphics_offload
+  dispatch: dynamic
+  args:
+  - enabled
+  expect: h.get(o, "graphics-offload") == V::Str("enabled".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property graphics-offload: exact'
+- name: set_loop
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "loop") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property loop: exact'
+bindings:
+- name: autoplay
+  direction: two_way
+  property: autoplay
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::autoplay
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkVideo:autoplay is writable, scalar and notifies; the renderer compares before set'
+- name: graphics-offload
+  direction: two_way
+  property: graphics-offload
+  type:
+    ref: enum<svelters-api:v1:type:gtk:Gtk:GraphicsOffloadEnabled>
+    nullable: false
+  change:
+    signal: notify::graphics-offload
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkVideo:graphics-offload is writable, scalar and notifies; the renderer compares before set'
+- name: loop
+  direction: two_way
+  property: loop
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::loop
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkVideo:loop is writable, scalar and notifies; the renderer compares before set'

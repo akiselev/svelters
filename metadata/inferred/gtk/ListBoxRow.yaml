@@ -1,0 +1,190 @@
+properties:
+- name: activatable
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: selectable
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: notify::activatable
+  derived_from:
+    property: activatable
+  js_event: notify::activatable
+  trigger:
+    property: activatable
+    values:
+    - false
+    - true
+    - false
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkListBoxRow:activatable
+- name: notify::selectable
+  derived_from:
+    property: selectable
+  js_event: notify::selectable
+  trigger:
+    property: selectable
+    values:
+    - false
+    - true
+    - false
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkListBoxRow:selectable
+methods:
+- name: get_activatable
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "activatable")
+  provenance:
+  - origin: probe
+    ref: equals property activatable
+- name: get_index
+  dispatch: dynamic
+  args: []
+  expect: r == V::I64(-1)
+  provenance:
+  - origin: probe
+    ref: called on a new instance, returned -1
+- name: get_selectable
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "selectable")
+  provenance:
+  - origin: probe
+    ref: equals property selectable
+- name: is_selected
+  dispatch: dynamic
+  args: []
+  expect: r == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: called on a new instance, returned False
+- name: set_activatable
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "activatable") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property activatable: exact'
+- name: set_selectable
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "selectable") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property selectable: exact'
+children:
+  policy: single_child
+  default_slot: child
+  slots:
+  - name: child
+    content: widget
+    accepts:
+    - Gtk.Widget
+    route_by_kind: false
+    cardinality: one
+    order: none
+    default:
+      kind: none
+    on_remove: empty
+    attrs: []
+    requires: []
+    ops:
+      get:
+        native: GtkListBoxRow::get_child() const
+      set:
+        native: GtkListBoxRow::set_child(GtkWidget*)
+        args:
+        - child
+        effects:
+          child: parented
+          old: unparented
+      remove:
+        native: GtkListBoxRow::set_child(GtkWidget*)
+        args:
+        - null
+        effects:
+          child: unparented
+    verify: {}
+    provenance:
+    - origin: probe
+      ref: set parents the child (direct); old child finalized on replace; set(None) unparents
+bindings:
+- name: activatable
+  direction: two_way
+  property: activatable
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::activatable
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkListBoxRow:activatable is writable, scalar and notifies; the renderer compares before set'
+- name: selectable
+  direction: two_way
+  property: selectable
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::selectable
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkListBoxRow:selectable is writable, scalar and notifies; the renderer compares before set'

@@ -1,0 +1,234 @@
+{
+ "bindings:can-shrink": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:has-frame": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": false
+  }
+ },
+ "bindings:use-underline": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "methods:get_can_shrink": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "can-shrink",
+   "ret": false
+  }
+ },
+ "methods:get_has_frame": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "has-frame",
+   "ret": true
+  }
+ },
+ "methods:get_icon_name": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "icon-name",
+   "ret": null
+  }
+ },
+ "methods:get_label": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "label",
+   "ret": null
+  }
+ },
+ "methods:get_use_underline": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "use-underline",
+   "ret": false
+  }
+ },
+ "methods:set_can_shrink": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "can-shrink",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "methods:set_has_frame": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "has-frame",
+   "recipe": null,
+   "sample": false
+  }
+ },
+ "methods:set_icon_name": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "icon-name",
+   "recipe": null,
+   "sample": "edit-copy"
+  }
+ },
+ "methods:set_label": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "label",
+   "recipe": null,
+   "sample": "svl probe"
+  }
+ },
+ "methods:set_use_underline": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "use-underline",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "properties:can-shrink": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:has-frame": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": false,
+   "signals": [
+    "notify::css-classes"
+   ]
+  }
+ },
+ "properties:icon-name": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "edit-copy",
+   "recipe": null,
+   "repeat": false,
+   "reset_log": [
+    "Gtk: gtk_button_set_icon_name: assertion 'icon_name != NULL' failed"
+   ],
+   "sample": "edit-copy",
+   "signals": [
+    "notify::child",
+    "notify::css-classes",
+    "notify::label"
+   ]
+  }
+ },
+ "properties:label": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "repeat": false,
+   "reset_log": [],
+   "sample": "svl probe",
+   "signals": [
+    "notify::child",
+    "notify::css-classes",
+    "notify::icon-name"
+   ]
+  }
+ },
+ "properties:use-underline": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "signals:clicked": {
+  "confidence": 0.95,
+  "evidence": {
+   "action": true,
+   "emit": "delivered",
+   "handler_result": "none",
+   "n_params": 0,
+   "params": [],
+   "returns": "void",
+   "run": "first",
+   "sync_required": false
+  }
+ },
+ "slots:child": {
+  "confidence": 0.95,
+  "evidence": {
+   "accepts": "GtkLabel",
+   "clear_unparents": true,
+   "log": [],
+   "old_on_replace": "finalized",
+   "parent": "direct",
+   "readback": true,
+   "revealed_by": null,
+   "role": "slot"
+  }
+ }
+}

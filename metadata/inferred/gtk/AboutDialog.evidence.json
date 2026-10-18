@@ -1,0 +1,452 @@
+{
+ "bindings:license-type": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": "custom"
+  }
+ },
+ "bindings:wrap-license": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "methods:get_comments": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "comments",
+   "ret": null
+  }
+ },
+ "methods:get_copyright": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "copyright",
+   "ret": null
+  }
+ },
+ "methods:get_license": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "license",
+   "ret": null
+  }
+ },
+ "methods:get_license_type": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "license-type",
+   "ret": "unknown"
+  }
+ },
+ "methods:get_logo_icon_name": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "logo-icon-name",
+   "ret": null
+  }
+ },
+ "methods:get_program_name": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "program-name",
+   "ret": null
+  }
+ },
+ "methods:get_system_information": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "system-information",
+   "ret": null
+  }
+ },
+ "methods:get_translator_credits": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "translator-credits",
+   "ret": null
+  }
+ },
+ "methods:get_version": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "version",
+   "ret": null
+  }
+ },
+ "methods:get_website": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "website",
+   "ret": null
+  }
+ },
+ "methods:get_website_label": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "website-label",
+   "ret": null
+  }
+ },
+ "methods:get_wrap_license": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "wrap-license",
+   "ret": false
+  }
+ },
+ "methods:set_comments": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "comments",
+   "recipe": null,
+   "sample": "svl probe"
+  }
+ },
+ "methods:set_copyright": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "copyright",
+   "recipe": null,
+   "sample": "svl probe"
+  }
+ },
+ "methods:set_license": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "license",
+   "recipe": null,
+   "sample": "svl probe"
+  }
+ },
+ "methods:set_license_type": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "license-type",
+   "recipe": null,
+   "sample": "custom"
+  }
+ },
+ "methods:set_logo_icon_name": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "logo-icon-name",
+   "recipe": null,
+   "sample": "svl probe"
+  }
+ },
+ "methods:set_program_name": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "program-name",
+   "recipe": null,
+   "sample": "svl probe"
+  }
+ },
+ "methods:set_system_information": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "system-information",
+   "recipe": null,
+   "sample": "svl probe"
+  }
+ },
+ "methods:set_translator_credits": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "translator-credits",
+   "recipe": null,
+   "sample": "svl probe"
+  }
+ },
+ "methods:set_version": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "version",
+   "recipe": null,
+   "sample": "svl probe"
+  }
+ },
+ "methods:set_website": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "website",
+   "recipe": null,
+   "sample": "svl probe"
+  }
+ },
+ "methods:set_website_label": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "website-label",
+   "recipe": null,
+   "sample": "svl probe"
+  }
+ },
+ "methods:set_wrap_license": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "wrap-license",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "properties:comments": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "svl probe",
+   "signals": []
+  }
+ },
+ "properties:copyright": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "svl probe",
+   "signals": []
+  }
+ },
+ "properties:license": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "svl probe",
+   "signals": [
+    "notify::license-type"
+   ]
+  }
+ },
+ "properties:license-type": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "unknown",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "custom",
+   "recipe": null,
+   "repeat": false,
+   "reset_log": [],
+   "sample": "custom",
+   "signals": []
+  }
+ },
+ "properties:logo-icon-name": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "svl probe",
+   "signals": []
+  }
+ },
+ "properties:program-name": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "svl probe",
+   "signals": [
+    "notify::title"
+   ]
+  }
+ },
+ "properties:system-information": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "svl probe",
+   "signals": []
+  }
+ },
+ "properties:translator-credits": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "svl probe",
+   "signals": []
+  }
+ },
+ "properties:version": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "svl probe",
+   "signals": [
+    "notify::title"
+   ]
+  }
+ },
+ "properties:website": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "svl probe",
+   "signals": []
+  }
+ },
+ "properties:website-label": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "svl probe",
+   "signals": []
+  }
+ },
+ "properties:wrap-license": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "signals:activate-link": {
+  "confidence": 0.9,
+  "evidence": {
+   "action": false,
+   "handler_result": "bool_stop",
+   "n_params": 1,
+   "params": [
+    "gchararray"
+   ],
+   "returns": "gboolean",
+   "run": "last",
+   "sync_required": true,
+   "synthetic": {
+    "args": [
+     "x"
+    ],
+    "emit": "delivered"
+   }
+  }
+ }
+}

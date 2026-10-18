@@ -1,0 +1,232 @@
+properties:
+- name: alternative-text
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: can-shrink
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: content-fit
+  sample: fill
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: file
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: isolate-contents
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: notify::can-shrink
+  derived_from:
+    property: can-shrink
+  js_event: notify::can-shrink
+  trigger:
+    property: can-shrink
+    values:
+    - false
+    - true
+    - false
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkPicture:can-shrink
+- name: notify::content-fit
+  derived_from:
+    property: content-fit
+  js_event: notify::content-fit
+  trigger:
+    property: content-fit
+    values:
+    - fill
+    - contain
+    - fill
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkPicture:content-fit
+- name: notify::isolate-contents
+  derived_from:
+    property: isolate-contents
+  js_event: notify::isolate-contents
+  trigger:
+    property: isolate-contents
+    values:
+    - false
+    - true
+    - false
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkPicture:isolate-contents
+methods:
+- name: get_alternative_text
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "alternative-text")
+  provenance:
+  - origin: probe
+    ref: equals property alternative-text
+- name: get_can_shrink
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "can-shrink")
+  provenance:
+  - origin: probe
+    ref: equals property can-shrink
+- name: get_content_fit
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "content-fit")
+  provenance:
+  - origin: probe
+    ref: equals property content-fit
+- name: get_isolate_contents
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "isolate-contents")
+  provenance:
+  - origin: probe
+    ref: equals property isolate-contents
+- name: set_alternative_text
+  dispatch: dynamic
+  args:
+  - svl probe
+  expect: h.get(o, "alternative-text") == V::Str("svl probe".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property alternative-text: exact'
+- name: set_can_shrink
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "can-shrink") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property can-shrink: exact'
+- name: set_content_fit
+  dispatch: dynamic
+  args:
+  - fill
+  expect: h.get(o, "content-fit") == V::Str("fill".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property content-fit: exact'
+- name: set_isolate_contents
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "isolate-contents") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property isolate-contents: exact'
+bindings:
+- name: can-shrink
+  direction: two_way
+  property: can-shrink
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::can-shrink
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkPicture:can-shrink is writable, scalar and notifies; the renderer compares before set'
+- name: content-fit
+  direction: two_way
+  property: content-fit
+  type:
+    ref: enum<svelters-api:v1:type:gtk:Gtk:ContentFit>
+    nullable: false
+  change:
+    signal: notify::content-fit
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkPicture:content-fit is writable, scalar and notifies; the renderer compares before set'
+- name: isolate-contents
+  direction: two_way
+  property: isolate-contents
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::isolate-contents
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkPicture:isolate-contents is writable, scalar and notifies; the renderer compares before set'

@@ -1,0 +1,5 @@
+properties:
+- name: menu-model
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired

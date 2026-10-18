@@ -21,6 +21,24 @@
   "kind": "interface",
   "methods": [
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "4d2e708d7c14be31",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property action-name"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"action-name\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Actionable:method:get_action_name",
       "invocation": {
         "dev": "introspected",
@@ -57,6 +75,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "009e6de66c16d5cc",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property action-name: exact"
+          }
+        ]
+      },
+      "args": [
+        "svl probe"
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"action-name\") == V::Str(\"svl probe\".into())",
       "id": "svelters-api:v1:type:gtk:Gtk:Actionable:method:set_action_name",
       "invocation": {
         "dev": "introspected",
@@ -229,6 +267,7 @@
         "origin": "runtime",
         "owner": "GtkActionable"
       },
+      "sample": "svl probe",
       "type": {
         "gtype": "gchararray",
         "native": "gchar*",
@@ -284,6 +323,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
+    "inferred": "inferred/gtk/Actionable.yaml",
     "overrides": "overrides/gtk/Actionable.yaml",
     "runtime": {
       "gtk": "4.22.4",

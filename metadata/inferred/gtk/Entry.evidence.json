@@ -1,0 +1,766 @@
+{
+ "bindings:activates-default": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:enable-emoji-completion": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:has-frame": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": false
+  }
+ },
+ "bindings:input-purpose": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": "alpha"
+  }
+ },
+ "bindings:invisible-char-set": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:max-length": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": 1
+  }
+ },
+ "bindings:overwrite-mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:primary-icon-activatable": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": false
+  }
+ },
+ "bindings:primary-icon-sensitive": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": false
+  }
+ },
+ "bindings:progress-fraction": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": 1.0
+  }
+ },
+ "bindings:progress-pulse-step": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": 1.0
+  }
+ },
+ "bindings:secondary-icon-activatable": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": false
+  }
+ },
+ "bindings:secondary-icon-sensitive": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": false
+  }
+ },
+ "bindings:show-emoji-icon": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:truncate-multiline": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:visibility": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": false
+  }
+ },
+ "methods:get_activates_default": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "activates-default",
+   "ret": false
+  }
+ },
+ "methods:get_current_icon_drag_source": {
+  "confidence": 0.9,
+  "evidence": {
+   "class": "pure_getter",
+   "outcome": "ok",
+   "ret": -1,
+   "stable": true
+  }
+ },
+ "methods:get_has_frame": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "has-frame",
+   "ret": true
+  }
+ },
+ "methods:get_input_purpose": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "input-purpose",
+   "ret": "free-form"
+  }
+ },
+ "methods:get_max_length": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "max-length",
+   "ret": 0
+  }
+ },
+ "methods:get_overwrite_mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "overwrite-mode",
+   "ret": false
+  }
+ },
+ "methods:get_placeholder_text": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "placeholder-text",
+   "ret": null
+  }
+ },
+ "methods:get_progress_fraction": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "progress-fraction",
+   "ret": 0.0
+  }
+ },
+ "methods:get_progress_pulse_step": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "progress-pulse-step",
+   "ret": 0.0
+  }
+ },
+ "methods:get_text_length": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "text-length",
+   "ret": 0
+  }
+ },
+ "methods:get_visibility": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "visibility",
+   "ret": true
+  }
+ },
+ "methods:set_activates_default": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "activates-default",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "methods:set_has_frame": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "has-frame",
+   "recipe": null,
+   "sample": false
+  }
+ },
+ "methods:set_input_purpose": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "input-purpose",
+   "recipe": null,
+   "sample": "alpha"
+  }
+ },
+ "methods:set_max_length": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "max-length",
+   "recipe": null,
+   "sample": 1
+  }
+ },
+ "methods:set_overwrite_mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "overwrite-mode",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "methods:set_placeholder_text": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "placeholder-text",
+   "recipe": null,
+   "sample": "svl probe"
+  }
+ },
+ "methods:set_progress_fraction": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "progress-fraction",
+   "recipe": null,
+   "sample": 1.0
+  }
+ },
+ "methods:set_progress_pulse_step": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "progress-pulse-step",
+   "recipe": null,
+   "sample": 1.0
+  }
+ },
+ "methods:set_visibility": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "visibility",
+   "recipe": null,
+   "sample": false
+  }
+ },
+ "properties:activates-default": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:buffer": {
+  "confidence": 0.9,
+  "evidence": {
+   "default": "<EntryBuffer>",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "<EntryBuffer>",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "<EntryBuffer>",
+   "signals": [
+    "notify::max-length"
+   ]
+  }
+ },
+ "properties:enable-emoji-completion": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:extra-menu": {
+  "confidence": 0.9,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "<Menu>",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [
+    "GLib-GObject: g_object_ref: assertion 'G_IS_OBJECT (object)' failed"
+   ],
+   "sample": "<Menu>",
+   "signals": []
+  }
+ },
+ "properties:has-frame": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": false,
+   "signals": [
+    "notify::css-classes"
+   ]
+  }
+ },
+ "properties:im-module": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "repeat": false,
+   "reset_log": [],
+   "sample": "svl probe",
+   "signals": [
+    "notify::cursor"
+   ]
+  }
+ },
+ "properties:input-purpose": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "free-form",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "alpha",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "alpha",
+   "signals": []
+  }
+ },
+ "properties:invisible-char-set": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": false,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:max-length": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 1,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 1,
+   "signals": []
+  }
+ },
+ "properties:menu-entry-icon-primary-text": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "svl probe",
+   "signals": []
+  }
+ },
+ "properties:menu-entry-icon-secondary-text": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "svl probe",
+   "signals": []
+  }
+ },
+ "properties:overwrite-mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:placeholder-text": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "svl probe",
+   "signals": []
+  }
+ },
+ "properties:primary-icon-activatable": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": false,
+   "signals": []
+  }
+ },
+ "properties:primary-icon-name": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "svl probe",
+   "signals": [
+    "notify::primary-icon-storage-type"
+   ]
+  }
+ },
+ "properties:primary-icon-sensitive": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": false,
+   "signals": []
+  }
+ },
+ "properties:primary-icon-tooltip-markup": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "svl probe",
+   "signals": [
+    "notify::has-tooltip"
+   ]
+  }
+ },
+ "properties:primary-icon-tooltip-text": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "svl probe",
+   "signals": [
+    "notify::has-tooltip"
+   ]
+  }
+ },
+ "properties:progress-fraction": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0.0,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 1.0,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 1.0,
+   "signals": []
+  }
+ },
+ "properties:progress-pulse-step": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0.0,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 1.0,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 1.0,
+   "signals": []
+  }
+ },
+ "properties:secondary-icon-activatable": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": false,
+   "signals": []
+  }
+ },
+ "properties:secondary-icon-name": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "svl probe",
+   "signals": [
+    "notify::secondary-icon-storage-type"
+   ]
+  }
+ },
+ "properties:secondary-icon-sensitive": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": false,
+   "signals": []
+  }
+ },
+ "properties:secondary-icon-tooltip-markup": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "svl probe",
+   "signals": [
+    "notify::has-tooltip"
+   ]
+  }
+ },
+ "properties:secondary-icon-tooltip-text": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "svl probe",
+   "signals": [
+    "notify::has-tooltip"
+   ]
+  }
+ },
+ "properties:show-emoji-icon": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": [
+    "notify::has-tooltip",
+    "notify::secondary-icon-name",
+    "notify::secondary-icon-storage-type",
+    "notify::secondary-icon-tooltip-text"
+   ]
+  }
+ },
+ "properties:truncate-multiline": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:visibility": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "repeat": false,
+   "reset_log": [],
+   "sample": false,
+   "signals": [
+    "notify::invisible-char"
+   ]
+  }
+ }
+}

@@ -23,6 +23,24 @@
   "kind": "interface",
   "methods": [
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "2c863c7a6824fa48",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property orientation"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"orientation\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Orientable:method:get_orientation",
       "invocation": {
         "dev": "introspected",
@@ -41,6 +59,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "4839b7788630da82",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property orientation: exact"
+          }
+        ]
+      },
+      "args": [
+        "vertical"
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"orientation\") == V::Str(\"vertical\".into())",
       "id": "svelters-api:v1:type:gtk:Gtk:Orientable:method:set_orientation",
       "invocation": {
         "dev": "introspected",
@@ -113,6 +151,7 @@
         "origin": "runtime",
         "owner": "GtkOrientable"
       },
+      "sample": "vertical",
       "type": {
         "gtype": "GtkOrientation",
         "native": null,
@@ -129,6 +168,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
+    "inferred": "inferred/gtk/Orientable.yaml",
     "overrides": "overrides/gtk/Orientable.yaml",
     "runtime": {
       "gtk": "4.22.4",

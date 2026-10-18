@@ -1,0 +1,435 @@
+{
+ "bindings:activates-default": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:climb-rate": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": 1.0
+  }
+ },
+ "bindings:digits": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": 1
+  }
+ },
+ "bindings:numeric": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:snap-to-ticks": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:update-policy": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": "if-valid"
+  }
+ },
+ "bindings:value": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": 1.0
+  }
+ },
+ "bindings:wrap": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "methods:get_activates_default": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "activates-default",
+   "ret": false
+  }
+ },
+ "methods:get_climb_rate": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "climb-rate",
+   "ret": 0.0
+  }
+ },
+ "methods:get_digits": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "digits",
+   "ret": 0
+  }
+ },
+ "methods:get_numeric": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "numeric",
+   "ret": false
+  }
+ },
+ "methods:get_snap_to_ticks": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "snap-to-ticks",
+   "ret": false
+  }
+ },
+ "methods:get_update_policy": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "update-policy",
+   "ret": "always"
+  }
+ },
+ "methods:get_value": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "value",
+   "ret": 0.0
+  }
+ },
+ "methods:get_value_as_int": {
+  "confidence": 0.9,
+  "evidence": {
+   "class": "pure_getter",
+   "outcome": "ok",
+   "ret": 0,
+   "stable": true
+  }
+ },
+ "methods:get_wrap": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "wrap",
+   "ret": false
+  }
+ },
+ "methods:set_activates_default": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "activates-default",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "methods:set_climb_rate": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "climb-rate",
+   "recipe": null,
+   "sample": 1.0
+  }
+ },
+ "methods:set_digits": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "digits",
+   "recipe": null,
+   "sample": 1
+  }
+ },
+ "methods:set_numeric": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "numeric",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "methods:set_snap_to_ticks": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "snap-to-ticks",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "methods:set_update_policy": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "update-policy",
+   "recipe": null,
+   "sample": "if-valid"
+  }
+ },
+ "methods:set_value": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "value",
+   "recipe": "range",
+   "sample": 1.0
+  }
+ },
+ "methods:set_wrap": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "wrap",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "properties:activates-default": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:adjustment": {
+  "confidence": 0.9,
+  "evidence": {
+   "default": "<Adjustment>",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "<Adjustment>",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "<Adjustment>",
+   "signals": [
+    "changed",
+    "notify::text",
+    "notify::value",
+    "notify::width-chars",
+    "output",
+    "value-changed"
+   ]
+  }
+ },
+ "properties:climb-rate": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0.0,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 1.0,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 1.0,
+   "signals": [
+    "notify::value",
+    "output",
+    "value-changed"
+   ]
+  }
+ },
+ "properties:digits": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 1,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 1,
+   "signals": [
+    "changed",
+    "notify::text",
+    "notify::value",
+    "notify::width-chars",
+    "output",
+    "value-changed"
+   ]
+  }
+ },
+ "properties:numeric": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:snap-to-ticks": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": false,
+   "reset_log": [],
+   "sample": true,
+   "signals": [
+    "output"
+   ]
+  }
+ },
+ "properties:update-policy": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "always",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "if-valid",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "if-valid",
+   "signals": []
+  }
+ },
+ "properties:value": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0.0,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 1.0,
+   "recipe": "range",
+   "repeat": true,
+   "reset_log": [],
+   "sample": 1.0,
+   "signals": [
+    "changed",
+    "notify::text",
+    "output",
+    "value-changed"
+   ]
+  }
+ },
+ "properties:wrap": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "signals:output": {
+  "confidence": 0.95,
+  "evidence": {
+   "action": false,
+   "handler_result": "bool_stop",
+   "n_params": 0,
+   "params": [],
+   "returns": "gboolean",
+   "run": "last",
+   "sync_required": true,
+   "synthetic": {
+    "args": [],
+    "emit": "delivered"
+   }
+  }
+ },
+ "signals:value-changed": {
+  "confidence": 0.95,
+  "evidence": {
+   "action": false,
+   "handler_result": "none",
+   "n_params": 0,
+   "params": [],
+   "returns": "void",
+   "run": "last",
+   "sync_required": false,
+   "synthetic": {
+    "args": [],
+    "emit": "delivered"
+   }
+  }
+ },
+ "signals:wrapped": {
+  "confidence": 0.9,
+  "evidence": {
+   "action": false,
+   "handler_result": "none",
+   "n_params": 0,
+   "params": [],
+   "returns": "void",
+   "run": "last",
+   "sync_required": false,
+   "synthetic": {
+    "args": [],
+    "emit": "delivered"
+   }
+  }
+ }
+}

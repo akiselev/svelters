@@ -1,0 +1,580 @@
+properties:
+- name: accept-unpaired-release
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: activate-on-single-click
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: column-spacing
+  sample: 1
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: homogeneous
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: max-children-per-line
+  sample: 8
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: min-children-per-line
+  sample: 1
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: row-spacing
+  sample: 1
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: selection-mode
+  sample: none
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: activate-cursor-child
+  handler_result: none
+  sync_required: false
+  provenance:
+  - origin: runtime
+    ref: returns void, run-last
+  - origin: probe
+    ref: action signal, emitted and delivered
+- name: select-all
+  handler_result: none
+  sync_required: false
+  provenance:
+  - origin: runtime
+    ref: returns void, run-last
+  - origin: probe
+    ref: action signal, emitted and delivered
+- name: selected-children-changed
+  handler_result: none
+  sync_required: false
+  trigger:
+    rust: o.emit_by_name::<()>("selected-children-changed", &[]);
+    values:
+    - a
+    - b
+    - c
+  delivery_only: true
+  provenance:
+  - origin: runtime
+    ref: returns void, run-first
+  - origin: probe
+    ref: emitted synthetically with sampled arguments; delivery only, no native trigger
+- name: toggle-cursor-child
+  handler_result: none
+  sync_required: false
+  provenance:
+  - origin: runtime
+    ref: returns void, run-last
+  - origin: probe
+    ref: action signal, emitted and delivered
+- name: unselect-all
+  handler_result: none
+  sync_required: false
+  provenance:
+  - origin: runtime
+    ref: returns void, run-last
+  - origin: probe
+    ref: action signal, emitted and delivered
+- name: notify::accept-unpaired-release
+  derived_from:
+    property: accept-unpaired-release
+  js_event: notify::accept-unpaired-release
+  trigger:
+    property: accept-unpaired-release
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkFlowBox:accept-unpaired-release
+- name: notify::activate-on-single-click
+  derived_from:
+    property: activate-on-single-click
+  js_event: notify::activate-on-single-click
+  trigger:
+    property: activate-on-single-click
+    values:
+    - false
+    - true
+    - false
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkFlowBox:activate-on-single-click
+- name: notify::column-spacing
+  derived_from:
+    property: column-spacing
+  js_event: notify::column-spacing
+  trigger:
+    property: column-spacing
+    values:
+    - 1
+    - 0
+    - 1
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkFlowBox:column-spacing
+- name: notify::homogeneous
+  derived_from:
+    property: homogeneous
+  js_event: notify::homogeneous
+  trigger:
+    property: homogeneous
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkFlowBox:homogeneous
+- name: notify::max-children-per-line
+  derived_from:
+    property: max-children-per-line
+  js_event: notify::max-children-per-line
+  trigger:
+    property: max-children-per-line
+    values:
+    - 8
+    - 7
+    - 8
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkFlowBox:max-children-per-line
+- name: notify::min-children-per-line
+  derived_from:
+    property: min-children-per-line
+  js_event: notify::min-children-per-line
+  trigger:
+    property: min-children-per-line
+    values:
+    - 1
+    - 0
+    - 1
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkFlowBox:min-children-per-line
+- name: notify::row-spacing
+  derived_from:
+    property: row-spacing
+  js_event: notify::row-spacing
+  trigger:
+    property: row-spacing
+    values:
+    - 1
+    - 0
+    - 1
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkFlowBox:row-spacing
+- name: notify::selection-mode
+  derived_from:
+    property: selection-mode
+  js_event: notify::selection-mode
+  trigger:
+    property: selection-mode
+    values:
+    - none
+    - single
+    - none
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkFlowBox:selection-mode
+methods:
+- name: get_activate_on_single_click
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "activate-on-single-click")
+  provenance:
+  - origin: probe
+    ref: equals property activate-on-single-click
+- name: get_column_spacing
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "column-spacing")
+  provenance:
+  - origin: probe
+    ref: equals property column-spacing
+- name: get_homogeneous
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "homogeneous")
+  provenance:
+  - origin: probe
+    ref: equals property homogeneous
+- name: get_max_children_per_line
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "max-children-per-line")
+  provenance:
+  - origin: probe
+    ref: equals property max-children-per-line
+- name: get_min_children_per_line
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "min-children-per-line")
+  provenance:
+  - origin: probe
+    ref: equals property min-children-per-line
+- name: get_row_spacing
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "row-spacing")
+  provenance:
+  - origin: probe
+    ref: equals property row-spacing
+- name: get_selection_mode
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "selection-mode")
+  provenance:
+  - origin: probe
+    ref: equals property selection-mode
+- name: set_activate_on_single_click
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "activate-on-single-click") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property activate-on-single-click: exact'
+- name: set_column_spacing
+  dispatch: dynamic
+  args:
+  - 1
+  expect: h.get(o, "column-spacing") == V::I64(1)
+  provenance:
+  - origin: probe
+    ref: 'set then read property column-spacing: exact'
+- name: set_homogeneous
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "homogeneous") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property homogeneous: exact'
+- name: set_max_children_per_line
+  dispatch: dynamic
+  args:
+  - 8
+  expect: h.get(o, "max-children-per-line") == V::I64(8)
+  provenance:
+  - origin: probe
+    ref: 'set then read property max-children-per-line: exact'
+- name: set_min_children_per_line
+  dispatch: dynamic
+  args:
+  - 1
+  expect: h.get(o, "min-children-per-line") == V::I64(1)
+  provenance:
+  - origin: probe
+    ref: 'set then read property min-children-per-line: exact'
+- name: set_row_spacing
+  dispatch: dynamic
+  args:
+  - 1
+  expect: h.get(o, "row-spacing") == V::I64(1)
+  provenance:
+  - origin: probe
+    ref: 'set then read property row-spacing: exact'
+- name: set_selection_mode
+  dispatch: dynamic
+  args:
+  - none
+  expect: h.get(o, "selection-mode") == V::Str("none".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property selection-mode: exact'
+bindings:
+- name: accept-unpaired-release
+  direction: two_way
+  property: accept-unpaired-release
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::accept-unpaired-release
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkFlowBox:accept-unpaired-release is writable, scalar and notifies; the renderer compares before set'
+- name: activate-on-single-click
+  direction: two_way
+  property: activate-on-single-click
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::activate-on-single-click
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkFlowBox:activate-on-single-click is writable, scalar and notifies; the renderer compares before set'
+- name: column-spacing
+  direction: two_way
+  property: column-spacing
+  type:
+    ref: u32
+    nullable: false
+  change:
+    signal: notify::column-spacing
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkFlowBox:column-spacing is writable, scalar and notifies; the renderer compares before set'
+- name: homogeneous
+  direction: two_way
+  property: homogeneous
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::homogeneous
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkFlowBox:homogeneous is writable, scalar and notifies; the renderer compares before set'
+- name: max-children-per-line
+  direction: two_way
+  property: max-children-per-line
+  type:
+    ref: u32
+    nullable: false
+  change:
+    signal: notify::max-children-per-line
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkFlowBox:max-children-per-line is writable, scalar and notifies; the renderer compares before set'
+- name: min-children-per-line
+  direction: two_way
+  property: min-children-per-line
+  type:
+    ref: u32
+    nullable: false
+  change:
+    signal: notify::min-children-per-line
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkFlowBox:min-children-per-line is writable, scalar and notifies; the renderer compares before set'
+- name: row-spacing
+  direction: two_way
+  property: row-spacing
+  type:
+    ref: u32
+    nullable: false
+  change:
+    signal: notify::row-spacing
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkFlowBox:row-spacing is writable, scalar and notifies; the renderer compares before set'
+- name: selection-mode
+  direction: two_way
+  property: selection-mode
+  type:
+    ref: enum<svelters-api:v1:type:gtk:Gtk:SelectionMode>
+    nullable: false
+  change:
+    signal: notify::selection-mode
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkFlowBox:selection-mode is writable, scalar and notifies; the renderer compares before set'

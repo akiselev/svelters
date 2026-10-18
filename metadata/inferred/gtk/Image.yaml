@@ -1,0 +1,212 @@
+properties:
+- name: icon-name
+  sample: edit-copy
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: icon-size
+  sample: normal
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: pixel-size
+  sample: 0
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: use-fallback
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: notify::icon-size
+  derived_from:
+    property: icon-size
+  js_event: notify::icon-size
+  trigger:
+    property: icon-size
+    values:
+    - normal
+    - inherit
+    - normal
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkImage:icon-size
+- name: notify::pixel-size
+  derived_from:
+    property: pixel-size
+  js_event: notify::pixel-size
+  trigger:
+    property: pixel-size
+    values:
+    - 0
+    - -1
+    - 0
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkImage:pixel-size
+- name: notify::use-fallback
+  derived_from:
+    property: use-fallback
+  js_event: notify::use-fallback
+  trigger:
+    property: use-fallback
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkImage:use-fallback
+methods:
+- name: get_icon_name
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "icon-name")
+  provenance:
+  - origin: probe
+    ref: equals property icon-name
+- name: get_icon_size
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "icon-size")
+  provenance:
+  - origin: probe
+    ref: equals property icon-size
+- name: get_pixel_size
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "pixel-size")
+  provenance:
+  - origin: probe
+    ref: equals property pixel-size
+- name: get_storage_type
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "storage-type")
+  provenance:
+  - origin: probe
+    ref: equals property storage-type
+- name: set_icon_size
+  dispatch: dynamic
+  args:
+  - normal
+  expect: h.get(o, "icon-size") == V::Str("normal".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property icon-size: exact'
+- name: set_pixel_size
+  dispatch: dynamic
+  args:
+  - 0
+  expect: h.get(o, "pixel-size") == V::I64(0)
+  provenance:
+  - origin: probe
+    ref: 'set then read property pixel-size: exact'
+bindings:
+- name: icon-size
+  direction: two_way
+  property: icon-size
+  type:
+    ref: enum<svelters-api:v1:type:gtk:Gtk:IconSize>
+    nullable: false
+  change:
+    signal: notify::icon-size
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkImage:icon-size is writable, scalar and notifies; the renderer compares before set'
+- name: pixel-size
+  direction: two_way
+  property: pixel-size
+  type:
+    ref: i32
+    nullable: false
+  change:
+    signal: notify::pixel-size
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkImage:pixel-size is writable, scalar and notifies; the renderer compares before set'
+- name: use-fallback
+  direction: two_way
+  property: use-fallback
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::use-fallback
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkImage:use-fallback is writable, scalar and notifies; the renderer compares before set'

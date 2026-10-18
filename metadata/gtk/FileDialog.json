@@ -31,6 +31,7 @@
         "ownership": "floating_sink",
         "type": "self"
       },
+      "since": "4.10",
       "unsupported_reason": null
     },
     {
@@ -73,6 +74,7 @@
         "ownership": "borrowed",
         "type": "string"
       },
+      "since": "4.10",
       "unsupported_reason": null
     },
     {
@@ -91,6 +93,7 @@
         "ownership": "borrowed",
         "type": "object<svelters-api:v1:type:gtk:Gtk:FileFilter>"
       },
+      "since": "4.10",
       "unsupported_reason": null
     },
     {
@@ -109,6 +112,7 @@
         "ownership": "borrowed",
         "type": "object<svelters-api:v1:type:gtk:Gio:ListModel>"
       },
+      "since": "4.10",
       "unsupported_reason": null
     },
     {
@@ -127,6 +131,7 @@
         "ownership": "borrowed",
         "type": "object<svelters-api:v1:type:gtk:Gio:File>"
       },
+      "since": "4.10",
       "unsupported_reason": null
     },
     {
@@ -145,6 +150,7 @@
         "ownership": "borrowed",
         "type": "object<svelters-api:v1:type:gtk:Gio:File>"
       },
+      "since": "4.10",
       "unsupported_reason": null
     },
     {
@@ -163,6 +169,7 @@
         "ownership": "borrowed",
         "type": "string"
       },
+      "since": "4.10",
       "unsupported_reason": null
     },
     {
@@ -181,6 +188,7 @@
         "ownership": "borrowed",
         "type": "bool"
       },
+      "since": "4.10",
       "unsupported_reason": null
     },
     {
@@ -199,6 +207,7 @@
         "ownership": "borrowed",
         "type": "string"
       },
+      "since": "4.10",
       "unsupported_reason": null
     },
     {
@@ -246,6 +255,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.10",
       "unsupported_reason": "callback_scope"
     },
     {
@@ -272,6 +282,7 @@
         "ownership": "owned",
         "type": "object<svelters-api:v1:type:gtk:Gio:File>"
       },
+      "since": "4.10",
       "throws": true,
       "unsupported_reason": null
     },
@@ -320,6 +331,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.10",
       "unsupported_reason": "callback_scope"
     },
     {
@@ -346,6 +358,7 @@
         "ownership": "owned",
         "type": "object<svelters-api:v1:type:gtk:Gio:ListModel>"
       },
+      "since": "4.10",
       "throws": true,
       "unsupported_reason": null
     },
@@ -394,6 +407,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.18",
       "unsupported_reason": "callback_scope"
     },
     {
@@ -427,6 +441,7 @@
         "ownership": "owned",
         "type": "object<svelters-api:v1:type:gtk:Gio:ListModel>"
       },
+      "since": "4.18",
       "throws": true,
       "unsupported_reason": null
     },
@@ -475,6 +490,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.18",
       "unsupported_reason": "callback_scope"
     },
     {
@@ -508,6 +524,7 @@
         "ownership": "owned",
         "type": "object<svelters-api:v1:type:gtk:Gio:File>"
       },
+      "since": "4.18",
       "throws": true,
       "unsupported_reason": null
     },
@@ -556,6 +573,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.10",
       "unsupported_reason": "callback_scope"
     },
     {
@@ -582,6 +600,7 @@
         "ownership": "owned",
         "type": "object<svelters-api:v1:type:gtk:Gio:File>"
       },
+      "since": "4.10",
       "throws": true,
       "unsupported_reason": null
     },
@@ -630,6 +649,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.18",
       "unsupported_reason": "callback_scope"
     },
     {
@@ -670,6 +690,7 @@
         "ownership": "owned",
         "type": "object<svelters-api:v1:type:gtk:Gio:File>"
       },
+      "since": "4.18",
       "throws": true,
       "unsupported_reason": null
     },
@@ -718,6 +739,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.10",
       "unsupported_reason": "callback_scope"
     },
     {
@@ -744,6 +766,7 @@
         "ownership": "owned",
         "type": "object<svelters-api:v1:type:gtk:Gio:File>"
       },
+      "since": "4.10",
       "throws": true,
       "unsupported_reason": null
     },
@@ -792,6 +815,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.10",
       "unsupported_reason": "callback_scope"
     },
     {
@@ -818,6 +842,7 @@
         "ownership": "owned",
         "type": "object<svelters-api:v1:type:gtk:Gio:ListModel>"
       },
+      "since": "4.10",
       "throws": true,
       "unsupported_reason": null
     },
@@ -845,6 +870,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.10",
       "unsupported_reason": null
     },
     {
@@ -871,6 +897,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.10",
       "unsupported_reason": null
     },
     {
@@ -897,6 +924,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.10",
       "unsupported_reason": null
     },
     {
@@ -923,6 +951,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.10",
       "unsupported_reason": null
     },
     {
@@ -949,6 +978,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.10",
       "unsupported_reason": null
     },
     {
@@ -975,6 +1005,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.10",
       "unsupported_reason": null
     },
     {
@@ -1001,6 +1032,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.10",
       "unsupported_reason": null
     },
     {
@@ -1027,6 +1059,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.10",
       "unsupported_reason": null
     }
   ],

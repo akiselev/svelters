@@ -1,0 +1,72 @@
+properties:
+- name: scroll-to-focus
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: notify::scroll-to-focus
+  derived_from:
+    property: scroll-to-focus
+  js_event: notify::scroll-to-focus
+  trigger:
+    property: scroll-to-focus
+    values:
+    - false
+    - true
+    - false
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkViewport:scroll-to-focus
+methods:
+- name: get_scroll_to_focus
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "scroll-to-focus")
+  provenance:
+  - origin: probe
+    ref: equals property scroll-to-focus
+- name: set_scroll_to_focus
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "scroll-to-focus") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property scroll-to-focus: exact'
+bindings:
+- name: scroll-to-focus
+  direction: two_way
+  property: scroll-to-focus
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::scroll-to-focus
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkViewport:scroll-to-focus is writable, scalar and notifies; the renderer compares before set'

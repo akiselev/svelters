@@ -109,6 +109,7 @@
         "ownership": "borrowed",
         "type": "object<svelters-api:v1:type:gtk:Gdk:Drop>"
       },
+      "since": "4.4",
       "unsupported_reason": null
     },
     {

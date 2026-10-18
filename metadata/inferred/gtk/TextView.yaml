@@ -1,0 +1,1191 @@
+properties:
+- name: accepts-tab
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: bottom-margin
+  sample: 1
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: buffer
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: cursor-visible
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: editable
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: extra-menu
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: im-module
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: indent
+  sample: 1
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: input-purpose
+  sample: alpha
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: justification
+  sample: right
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: left-margin
+  sample: 1
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: monospace
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: overwrite
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: pixels-above-lines
+  sample: 1
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: pixels-below-lines
+  sample: 1
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: pixels-inside-wrap
+  sample: 1
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: right-margin
+  sample: 1
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: top-margin
+  sample: 1
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: wrap-mode
+  sample: char
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: backspace
+  handler_result: none
+  sync_required: false
+  provenance:
+  - origin: runtime
+    ref: returns void, run-last
+  - origin: probe
+    ref: action signal, emitted and delivered
+- name: copy-clipboard
+  handler_result: none
+  sync_required: false
+  provenance:
+  - origin: runtime
+    ref: returns void, run-last
+  - origin: probe
+    ref: action signal, emitted and delivered
+- name: cut-clipboard
+  handler_result: none
+  sync_required: false
+  provenance:
+  - origin: runtime
+    ref: returns void, run-last
+  - origin: probe
+    ref: action signal, emitted and delivered
+- name: insert-at-cursor
+  handler_result: none
+  sync_required: false
+  trigger:
+    rust: o.emit_by_name::<()>("insert-at-cursor", &[&"x"]);
+    values:
+    - a
+    - b
+    - c
+  delivery_only: true
+  provenance:
+  - origin: runtime
+    ref: returns void, run-last
+  - origin: probe
+    ref: emitted synthetically with sampled arguments; delivery only, no native trigger
+- name: paste-clipboard
+  handler_result: none
+  sync_required: false
+  provenance:
+  - origin: runtime
+    ref: returns void, run-last
+  - origin: probe
+    ref: action signal, emitted and delivered
+- name: select-all
+  handler_result: none
+  sync_required: false
+  trigger:
+    rust: o.emit_by_name::<()>("select-all", &[&true]);
+    values:
+    - a
+    - b
+    - c
+  delivery_only: true
+  provenance:
+  - origin: runtime
+    ref: returns void, run-last
+  - origin: probe
+    ref: emitted synthetically with sampled arguments; delivery only, no native trigger
+- name: set-anchor
+  handler_result: none
+  sync_required: false
+  provenance:
+  - origin: runtime
+    ref: returns void, run-last
+  - origin: probe
+    ref: action signal, emitted and delivered
+- name: toggle-cursor-visible
+  handler_result: none
+  sync_required: false
+  provenance:
+  - origin: runtime
+    ref: returns void, run-last
+  - origin: probe
+    ref: action signal, emitted and delivered
+- name: toggle-overwrite
+  handler_result: none
+  sync_required: false
+  provenance:
+  - origin: runtime
+    ref: returns void, run-last
+  - origin: probe
+    ref: action signal, emitted and delivered
+- name: notify::accepts-tab
+  derived_from:
+    property: accepts-tab
+  js_event: notify::accepts-tab
+  trigger:
+    property: accepts-tab
+    values:
+    - false
+    - true
+    - false
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkTextView:accepts-tab
+- name: notify::bottom-margin
+  derived_from:
+    property: bottom-margin
+  js_event: notify::bottom-margin
+  trigger:
+    property: bottom-margin
+    values:
+    - 1
+    - 0
+    - 1
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkTextView:bottom-margin
+- name: notify::cursor-visible
+  derived_from:
+    property: cursor-visible
+  js_event: notify::cursor-visible
+  trigger:
+    property: cursor-visible
+    values:
+    - false
+    - true
+    - false
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkTextView:cursor-visible
+- name: notify::editable
+  derived_from:
+    property: editable
+  js_event: notify::editable
+  trigger:
+    property: editable
+    values:
+    - false
+    - true
+    - false
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkTextView:editable
+- name: notify::indent
+  derived_from:
+    property: indent
+  js_event: notify::indent
+  trigger:
+    property: indent
+    values:
+    - 1
+    - 0
+    - 1
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkTextView:indent
+- name: notify::input-purpose
+  derived_from:
+    property: input-purpose
+  js_event: notify::input-purpose
+  trigger:
+    property: input-purpose
+    values:
+    - alpha
+    - free-form
+    - alpha
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkTextView:input-purpose
+- name: notify::justification
+  derived_from:
+    property: justification
+  js_event: notify::justification
+  trigger:
+    property: justification
+    values:
+    - right
+    - left
+    - right
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkTextView:justification
+- name: notify::left-margin
+  derived_from:
+    property: left-margin
+  js_event: notify::left-margin
+  trigger:
+    property: left-margin
+    values:
+    - 1
+    - 0
+    - 1
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkTextView:left-margin
+- name: notify::monospace
+  derived_from:
+    property: monospace
+  js_event: notify::monospace
+  trigger:
+    property: monospace
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkTextView:monospace
+- name: notify::overwrite
+  derived_from:
+    property: overwrite
+  js_event: notify::overwrite
+  trigger:
+    property: overwrite
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkTextView:overwrite
+- name: notify::pixels-above-lines
+  derived_from:
+    property: pixels-above-lines
+  js_event: notify::pixels-above-lines
+  trigger:
+    property: pixels-above-lines
+    values:
+    - 1
+    - 0
+    - 1
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkTextView:pixels-above-lines
+- name: notify::pixels-below-lines
+  derived_from:
+    property: pixels-below-lines
+  js_event: notify::pixels-below-lines
+  trigger:
+    property: pixels-below-lines
+    values:
+    - 1
+    - 0
+    - 1
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkTextView:pixels-below-lines
+- name: notify::pixels-inside-wrap
+  derived_from:
+    property: pixels-inside-wrap
+  js_event: notify::pixels-inside-wrap
+  trigger:
+    property: pixels-inside-wrap
+    values:
+    - 1
+    - 0
+    - 1
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkTextView:pixels-inside-wrap
+- name: notify::right-margin
+  derived_from:
+    property: right-margin
+  js_event: notify::right-margin
+  trigger:
+    property: right-margin
+    values:
+    - 1
+    - 0
+    - 1
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkTextView:right-margin
+- name: notify::top-margin
+  derived_from:
+    property: top-margin
+  js_event: notify::top-margin
+  trigger:
+    property: top-margin
+    values:
+    - 1
+    - 0
+    - 1
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkTextView:top-margin
+- name: notify::wrap-mode
+  derived_from:
+    property: wrap-mode
+  js_event: notify::wrap-mode
+  trigger:
+    property: wrap-mode
+    values:
+    - char
+    - none
+    - char
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkTextView:wrap-mode
+methods:
+- name: get_accepts_tab
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "accepts-tab")
+  provenance:
+  - origin: probe
+    ref: equals property accepts-tab
+- name: get_bottom_margin
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "bottom-margin")
+  provenance:
+  - origin: probe
+    ref: equals property bottom-margin
+- name: get_cursor_visible
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "cursor-visible")
+  provenance:
+  - origin: probe
+    ref: equals property cursor-visible
+- name: get_editable
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "editable")
+  provenance:
+  - origin: probe
+    ref: equals property editable
+- name: get_indent
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "indent")
+  provenance:
+  - origin: probe
+    ref: equals property indent
+- name: get_input_purpose
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "input-purpose")
+  provenance:
+  - origin: probe
+    ref: equals property input-purpose
+- name: get_justification
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "justification")
+  provenance:
+  - origin: probe
+    ref: equals property justification
+- name: get_left_margin
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "left-margin")
+  provenance:
+  - origin: probe
+    ref: equals property left-margin
+- name: get_monospace
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "monospace")
+  provenance:
+  - origin: probe
+    ref: equals property monospace
+- name: get_overwrite
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "overwrite")
+  provenance:
+  - origin: probe
+    ref: equals property overwrite
+- name: get_pixels_above_lines
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "pixels-above-lines")
+  provenance:
+  - origin: probe
+    ref: equals property pixels-above-lines
+- name: get_pixels_below_lines
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "pixels-below-lines")
+  provenance:
+  - origin: probe
+    ref: equals property pixels-below-lines
+- name: get_pixels_inside_wrap
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "pixels-inside-wrap")
+  provenance:
+  - origin: probe
+    ref: equals property pixels-inside-wrap
+- name: get_right_margin
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "right-margin")
+  provenance:
+  - origin: probe
+    ref: equals property right-margin
+- name: get_top_margin
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "top-margin")
+  provenance:
+  - origin: probe
+    ref: equals property top-margin
+- name: get_wrap_mode
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "wrap-mode")
+  provenance:
+  - origin: probe
+    ref: equals property wrap-mode
+- name: set_accepts_tab
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "accepts-tab") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property accepts-tab: exact'
+- name: set_bottom_margin
+  dispatch: dynamic
+  args:
+  - 1
+  expect: h.get(o, "bottom-margin") == V::I64(1)
+  provenance:
+  - origin: probe
+    ref: 'set then read property bottom-margin: exact'
+- name: set_cursor_visible
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "cursor-visible") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property cursor-visible: exact'
+- name: set_editable
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "editable") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property editable: exact'
+- name: set_indent
+  dispatch: dynamic
+  args:
+  - 1
+  expect: h.get(o, "indent") == V::I64(1)
+  provenance:
+  - origin: probe
+    ref: 'set then read property indent: exact'
+- name: set_input_purpose
+  dispatch: dynamic
+  args:
+  - alpha
+  expect: h.get(o, "input-purpose") == V::Str("alpha".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property input-purpose: exact'
+- name: set_justification
+  dispatch: dynamic
+  args:
+  - right
+  expect: h.get(o, "justification") == V::Str("right".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property justification: exact'
+- name: set_left_margin
+  dispatch: dynamic
+  args:
+  - 1
+  expect: h.get(o, "left-margin") == V::I64(1)
+  provenance:
+  - origin: probe
+    ref: 'set then read property left-margin: exact'
+- name: set_monospace
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "monospace") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property monospace: exact'
+- name: set_overwrite
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "overwrite") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property overwrite: exact'
+- name: set_pixels_above_lines
+  dispatch: dynamic
+  args:
+  - 1
+  expect: h.get(o, "pixels-above-lines") == V::I64(1)
+  provenance:
+  - origin: probe
+    ref: 'set then read property pixels-above-lines: exact'
+- name: set_pixels_below_lines
+  dispatch: dynamic
+  args:
+  - 1
+  expect: h.get(o, "pixels-below-lines") == V::I64(1)
+  provenance:
+  - origin: probe
+    ref: 'set then read property pixels-below-lines: exact'
+- name: set_pixels_inside_wrap
+  dispatch: dynamic
+  args:
+  - 1
+  expect: h.get(o, "pixels-inside-wrap") == V::I64(1)
+  provenance:
+  - origin: probe
+    ref: 'set then read property pixels-inside-wrap: exact'
+- name: set_right_margin
+  dispatch: dynamic
+  args:
+  - 1
+  expect: h.get(o, "right-margin") == V::I64(1)
+  provenance:
+  - origin: probe
+    ref: 'set then read property right-margin: exact'
+- name: set_top_margin
+  dispatch: dynamic
+  args:
+  - 1
+  expect: h.get(o, "top-margin") == V::I64(1)
+  provenance:
+  - origin: probe
+    ref: 'set then read property top-margin: exact'
+- name: set_wrap_mode
+  dispatch: dynamic
+  args:
+  - char
+  expect: h.get(o, "wrap-mode") == V::Str("char".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property wrap-mode: exact'
+bindings:
+- name: accepts-tab
+  direction: two_way
+  property: accepts-tab
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::accepts-tab
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkTextView:accepts-tab is writable, scalar and notifies; the renderer compares before set'
+- name: bottom-margin
+  direction: two_way
+  property: bottom-margin
+  type:
+    ref: i32
+    nullable: false
+  change:
+    signal: notify::bottom-margin
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkTextView:bottom-margin is writable, scalar and notifies; the renderer compares before set'
+- name: cursor-visible
+  direction: two_way
+  property: cursor-visible
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::cursor-visible
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkTextView:cursor-visible is writable, scalar and notifies; the renderer compares before set'
+- name: editable
+  direction: two_way
+  property: editable
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::editable
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkTextView:editable is writable, scalar and notifies; the renderer compares before set'
+- name: indent
+  direction: two_way
+  property: indent
+  type:
+    ref: i32
+    nullable: false
+  change:
+    signal: notify::indent
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkTextView:indent is writable, scalar and notifies; the renderer compares before set'
+- name: input-purpose
+  direction: two_way
+  property: input-purpose
+  type:
+    ref: enum<svelters-api:v1:type:gtk:Gtk:InputPurpose>
+    nullable: false
+  change:
+    signal: notify::input-purpose
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkTextView:input-purpose is writable, scalar and notifies; the renderer compares before set'
+- name: justification
+  direction: two_way
+  property: justification
+  type:
+    ref: enum<svelters-api:v1:type:gtk:Gtk:Justification>
+    nullable: false
+  change:
+    signal: notify::justification
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkTextView:justification is writable, scalar and notifies; the renderer compares before set'
+- name: left-margin
+  direction: two_way
+  property: left-margin
+  type:
+    ref: i32
+    nullable: false
+  change:
+    signal: notify::left-margin
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkTextView:left-margin is writable, scalar and notifies; the renderer compares before set'
+- name: monospace
+  direction: two_way
+  property: monospace
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::monospace
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkTextView:monospace is writable, scalar and notifies; the renderer compares before set'
+- name: overwrite
+  direction: two_way
+  property: overwrite
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::overwrite
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkTextView:overwrite is writable, scalar and notifies; the renderer compares before set'
+- name: pixels-above-lines
+  direction: two_way
+  property: pixels-above-lines
+  type:
+    ref: i32
+    nullable: false
+  change:
+    signal: notify::pixels-above-lines
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkTextView:pixels-above-lines is writable, scalar and notifies; the renderer compares before set'
+- name: pixels-below-lines
+  direction: two_way
+  property: pixels-below-lines
+  type:
+    ref: i32
+    nullable: false
+  change:
+    signal: notify::pixels-below-lines
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkTextView:pixels-below-lines is writable, scalar and notifies; the renderer compares before set'
+- name: pixels-inside-wrap
+  direction: two_way
+  property: pixels-inside-wrap
+  type:
+    ref: i32
+    nullable: false
+  change:
+    signal: notify::pixels-inside-wrap
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkTextView:pixels-inside-wrap is writable, scalar and notifies; the renderer compares before set'
+- name: right-margin
+  direction: two_way
+  property: right-margin
+  type:
+    ref: i32
+    nullable: false
+  change:
+    signal: notify::right-margin
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkTextView:right-margin is writable, scalar and notifies; the renderer compares before set'
+- name: top-margin
+  direction: two_way
+  property: top-margin
+  type:
+    ref: i32
+    nullable: false
+  change:
+    signal: notify::top-margin
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkTextView:top-margin is writable, scalar and notifies; the renderer compares before set'
+- name: wrap-mode
+  direction: two_way
+  property: wrap-mode
+  type:
+    ref: enum<svelters-api:v1:type:gtk:Gtk:WrapMode>
+    nullable: false
+  change:
+    signal: notify::wrap-mode
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkTextView:wrap-mode is writable, scalar and notifies; the renderer compares before set'

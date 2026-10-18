@@ -1,0 +1,77 @@
+properties:
+- name: label
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: label-xalign
+  sample: 1.0
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: notify::label-xalign
+  derived_from:
+    property: label-xalign
+  js_event: notify::label-xalign
+  trigger:
+    property: label-xalign
+    values:
+    - 1.0
+    - 0.0
+    - 1.0
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkFrame:label-xalign
+methods:
+- name: get_label
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "label")
+  provenance:
+  - origin: probe
+    ref: equals property label
+- name: set_label
+  dispatch: dynamic
+  args:
+  - svl probe
+  expect: h.get(o, "label") == V::Str("svl probe".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property label: exact'
+bindings:
+- name: label-xalign
+  direction: two_way
+  property: label-xalign
+  type:
+    ref: f32
+    nullable: false
+  change:
+    signal: notify::label-xalign
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkFrame:label-xalign is writable, scalar and notifies; the renderer compares before set'

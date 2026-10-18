@@ -1,0 +1,276 @@
+properties:
+- name: baseline-child
+  sample: 0
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: baseline-position
+  sample: top
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: homogeneous
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: spacing
+  sample: 1
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: notify::baseline-child
+  derived_from:
+    property: baseline-child
+  js_event: notify::baseline-child
+  trigger:
+    property: baseline-child
+    values:
+    - 0
+    - -1
+    - 0
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkBox:baseline-child
+- name: notify::baseline-position
+  derived_from:
+    property: baseline-position
+  js_event: notify::baseline-position
+  trigger:
+    property: baseline-position
+    values:
+    - top
+    - center
+    - top
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkBox:baseline-position
+- name: notify::homogeneous
+  derived_from:
+    property: homogeneous
+  js_event: notify::homogeneous
+  trigger:
+    property: homogeneous
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkBox:homogeneous
+- name: notify::spacing
+  derived_from:
+    property: spacing
+  js_event: notify::spacing
+  trigger:
+    property: spacing
+    values:
+    - 1
+    - 0
+    - 1
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkBox:spacing
+methods:
+- name: get_baseline_child
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "baseline-child")
+  provenance:
+  - origin: probe
+    ref: equals property baseline-child
+- name: get_baseline_position
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "baseline-position")
+  provenance:
+  - origin: probe
+    ref: equals property baseline-position
+- name: get_homogeneous
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "homogeneous")
+  provenance:
+  - origin: probe
+    ref: equals property homogeneous
+- name: get_spacing
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "spacing")
+  provenance:
+  - origin: probe
+    ref: equals property spacing
+- name: set_baseline_child
+  dispatch: dynamic
+  args:
+  - 0
+  expect: h.get(o, "baseline-child") == V::I64(0)
+  provenance:
+  - origin: probe
+    ref: 'set then read property baseline-child: exact'
+- name: set_baseline_position
+  dispatch: dynamic
+  args:
+  - top
+  expect: h.get(o, "baseline-position") == V::Str("top".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property baseline-position: exact'
+- name: set_homogeneous
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "homogeneous") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property homogeneous: exact'
+- name: set_spacing
+  dispatch: dynamic
+  args:
+  - 1
+  expect: h.get(o, "spacing") == V::I64(1)
+  provenance:
+  - origin: probe
+    ref: 'set then read property spacing: exact'
+bindings:
+- name: baseline-child
+  direction: two_way
+  property: baseline-child
+  type:
+    ref: i32
+    nullable: false
+  change:
+    signal: notify::baseline-child
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkBox:baseline-child is writable, scalar and notifies; the renderer compares before set'
+- name: baseline-position
+  direction: two_way
+  property: baseline-position
+  type:
+    ref: enum<svelters-api:v1:type:gtk:Gtk:BaselinePosition>
+    nullable: false
+  change:
+    signal: notify::baseline-position
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkBox:baseline-position is writable, scalar and notifies; the renderer compares before set'
+- name: homogeneous
+  direction: two_way
+  property: homogeneous
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::homogeneous
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkBox:homogeneous is writable, scalar and notifies; the renderer compares before set'
+- name: spacing
+  direction: two_way
+  property: spacing
+  type:
+    ref: i32
+    nullable: false
+  change:
+    signal: notify::spacing
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkBox:spacing is writable, scalar and notifies; the renderer compares before set'

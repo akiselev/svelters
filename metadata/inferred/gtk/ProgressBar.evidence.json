@@ -1,0 +1,246 @@
+{
+ "bindings:ellipsize": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": "start"
+  }
+ },
+ "bindings:fraction": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": 1.0
+  }
+ },
+ "bindings:inverted": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:pulse-step": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": 0.5
+  }
+ },
+ "bindings:show-text": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "methods:get_ellipsize": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "ellipsize",
+   "ret": "none"
+  }
+ },
+ "methods:get_fraction": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "fraction",
+   "ret": 0.0
+  }
+ },
+ "methods:get_inverted": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "inverted",
+   "ret": false
+  }
+ },
+ "methods:get_pulse_step": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "pulse-step",
+   "ret": 0.1
+  }
+ },
+ "methods:get_show_text": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "show-text",
+   "ret": false
+  }
+ },
+ "methods:get_text": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "text",
+   "ret": null
+  }
+ },
+ "methods:set_ellipsize": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "ellipsize",
+   "recipe": null,
+   "sample": "start"
+  }
+ },
+ "methods:set_fraction": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "fraction",
+   "recipe": null,
+   "sample": 1.0
+  }
+ },
+ "methods:set_inverted": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "inverted",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "methods:set_pulse_step": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "pulse-step",
+   "recipe": null,
+   "sample": 0.5
+  }
+ },
+ "methods:set_show_text": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "show-text",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "methods:set_text": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "text",
+   "recipe": null,
+   "sample": "svl probe"
+  }
+ },
+ "properties:ellipsize": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "none",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "start",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "start",
+   "signals": []
+  }
+ },
+ "properties:fraction": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0.0,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 1.0,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 1.0,
+   "signals": []
+  }
+ },
+ "properties:inverted": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:pulse-step": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0.1,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 0.5,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 0.5,
+   "signals": []
+  }
+ },
+ "properties:show-text": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:text": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "svl probe",
+   "signals": []
+  }
+ }
+}

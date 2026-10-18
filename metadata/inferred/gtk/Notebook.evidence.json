@@ -1,0 +1,287 @@
+{
+ "bindings:enable-popup": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:scrollable": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:show-border": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": false
+  }
+ },
+ "bindings:show-tabs": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": false
+  }
+ },
+ "bindings:tab-pos": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": "left"
+  }
+ },
+ "methods:get_current_page": {
+  "confidence": 0.9,
+  "evidence": {
+   "class": "pure_getter",
+   "outcome": "ok",
+   "ret": -1,
+   "stable": true
+  }
+ },
+ "methods:get_group_name": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "group-name",
+   "ret": null
+  }
+ },
+ "methods:get_n_pages": {
+  "confidence": 0.9,
+  "evidence": {
+   "class": "pure_getter",
+   "outcome": "ok",
+   "ret": 0,
+   "stable": true
+  }
+ },
+ "methods:get_scrollable": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "scrollable",
+   "ret": false
+  }
+ },
+ "methods:get_show_border": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "show-border",
+   "ret": true
+  }
+ },
+ "methods:get_show_tabs": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "show-tabs",
+   "ret": true
+  }
+ },
+ "methods:get_tab_pos": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "tab-pos",
+   "ret": "top"
+  }
+ },
+ "methods:set_group_name": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "group-name",
+   "recipe": null,
+   "sample": "svl probe"
+  }
+ },
+ "methods:set_scrollable": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "scrollable",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "methods:set_show_border": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "show-border",
+   "recipe": null,
+   "sample": false
+  }
+ },
+ "methods:set_show_tabs": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "show-tabs",
+   "recipe": null,
+   "sample": false
+  }
+ },
+ "methods:set_tab_pos": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "tab-pos",
+   "recipe": null,
+   "sample": "left"
+  }
+ },
+ "properties:enable-popup": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:group-name": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "svl probe",
+   "signals": []
+  }
+ },
+ "properties:scrollable": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:show-border": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": false,
+   "signals": [
+    "notify::css-classes"
+   ]
+  }
+ },
+ "properties:show-tabs": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": false,
+   "signals": []
+  }
+ },
+ "properties:tab-pos": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "top",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "left",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "left",
+   "signals": []
+  }
+ },
+ "signals:change-current-page": {
+  "confidence": 0.9,
+  "evidence": {
+   "action": true,
+   "handler_result": "bool_stop",
+   "n_params": 1,
+   "params": [
+    "gint"
+   ],
+   "returns": "gboolean",
+   "run": "last",
+   "sync_required": true,
+   "synthetic": {
+    "args": [
+     1
+    ],
+    "emit": "delivered"
+   }
+  }
+ },
+ "signals:select-page": {
+  "confidence": 0.9,
+  "evidence": {
+   "action": true,
+   "handler_result": "bool_stop",
+   "n_params": 1,
+   "params": [
+    "gboolean"
+   ],
+   "returns": "gboolean",
+   "run": "last",
+   "sync_required": true,
+   "synthetic": {
+    "args": [
+     true
+    ],
+    "emit": "delivered"
+   }
+  }
+ }
+}

@@ -1,0 +1,359 @@
+properties:
+- name: autohide
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: cascade-popdown
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: has-arrow
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: mnemonics-visible
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: position
+  sample: left
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: closed
+  handler_result: none
+  sync_required: false
+  trigger:
+    rust: o.emit_by_name::<()>("closed", &[]);
+    values:
+    - a
+    - b
+    - c
+  delivery_only: true
+  provenance:
+  - origin: runtime
+    ref: returns void, run-last
+  - origin: probe
+    ref: emitted synthetically with sampled arguments; delivery only, no native trigger
+- name: notify::autohide
+  derived_from:
+    property: autohide
+  js_event: notify::autohide
+  trigger:
+    property: autohide
+    values:
+    - false
+    - true
+    - false
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkPopover:autohide
+- name: notify::cascade-popdown
+  derived_from:
+    property: cascade-popdown
+  js_event: notify::cascade-popdown
+  trigger:
+    property: cascade-popdown
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkPopover:cascade-popdown
+- name: notify::has-arrow
+  derived_from:
+    property: has-arrow
+  js_event: notify::has-arrow
+  trigger:
+    property: has-arrow
+    values:
+    - false
+    - true
+    - false
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkPopover:has-arrow
+- name: notify::mnemonics-visible
+  derived_from:
+    property: mnemonics-visible
+  js_event: notify::mnemonics-visible
+  trigger:
+    property: mnemonics-visible
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkPopover:mnemonics-visible
+- name: notify::position
+  derived_from:
+    property: position
+  js_event: notify::position
+  trigger:
+    property: position
+    values:
+    - left
+    - bottom
+    - left
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkPopover:position
+methods:
+- name: get_autohide
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "autohide")
+  provenance:
+  - origin: probe
+    ref: equals property autohide
+- name: get_cascade_popdown
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "cascade-popdown")
+  provenance:
+  - origin: probe
+    ref: equals property cascade-popdown
+- name: get_has_arrow
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "has-arrow")
+  provenance:
+  - origin: probe
+    ref: equals property has-arrow
+- name: get_mnemonics_visible
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "mnemonics-visible")
+  provenance:
+  - origin: probe
+    ref: equals property mnemonics-visible
+- name: get_position
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "position")
+  provenance:
+  - origin: probe
+    ref: equals property position
+- name: set_autohide
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "autohide") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property autohide: exact'
+- name: set_cascade_popdown
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "cascade-popdown") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property cascade-popdown: exact'
+- name: set_has_arrow
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "has-arrow") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property has-arrow: exact'
+- name: set_mnemonics_visible
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "mnemonics-visible") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property mnemonics-visible: exact'
+- name: set_position
+  dispatch: dynamic
+  args:
+  - left
+  expect: h.get(o, "position") == V::Str("left".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property position: exact'
+bindings:
+- name: autohide
+  direction: two_way
+  property: autohide
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::autohide
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkPopover:autohide is writable, scalar and notifies; the renderer compares before set'
+- name: cascade-popdown
+  direction: two_way
+  property: cascade-popdown
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::cascade-popdown
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkPopover:cascade-popdown is writable, scalar and notifies; the renderer compares before set'
+- name: has-arrow
+  direction: two_way
+  property: has-arrow
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::has-arrow
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkPopover:has-arrow is writable, scalar and notifies; the renderer compares before set'
+- name: mnemonics-visible
+  direction: two_way
+  property: mnemonics-visible
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::mnemonics-visible
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkPopover:mnemonics-visible is writable, scalar and notifies; the renderer compares before set'
+- name: position
+  direction: two_way
+  property: position
+  type:
+    ref: enum<svelters-api:v1:type:gtk:Gtk:PositionType>
+    nullable: false
+  change:
+    signal: notify::position
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkPopover:position is writable, scalar and notifies; the renderer compares before set'

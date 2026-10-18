@@ -1,17 +1,25 @@
 #!/usr/bin/env python3
 """Verified-facts ledger: metadata/verified/{gtk,qt}.json.
 
-Every manual (hand/agent-annotated) fact has generated tests. The generators write a fact
-manifest (fact id -> test names + a fingerprint over the fact record and its test source):
+Every annotated fact has generated tests: the manual facts (hand/agent annotations) and the inferred
+ones (metadata/inferred/<tk>, written by infer.py). The generators write a fact manifest (fact id ->
+origin, test names + a fingerprint over the fact record and its test source):
 
   gtk: crates/svelters-gtk/src/generated/facts.json   (written by tools/metadata/gtk/gen_backend.py)
   qt:  produced on the fly by tools/metadata/qt/gen_cpp.py --facts
 
-`refresh` runs the generated tests and records, per test: the fact id, the test id, the result,
-the fingerprint and the toolkit version. `check` fails when any manual fact lacks a passing
+`refresh` runs the generated tests and records, per test: the fact id, the origin, the test id, the
+result, the fingerprint and the toolkit version. `check` fails when any manual fact lacks a passing
 entry with the current fingerprint, so an annotation whose record, test or upstream source
 changed must be re-verified before it can merge (a toolkit upgrade changes the ingested record
 and therefore the fingerprint of every fact built on it).
+
+Inferred facts are promoted by passing: a passing entry makes the fact verified. A failing inferred
+fact is not a gate failure; `refresh` parks it in metadata/inferred/<tk>/_parked.json with the failure
+message (fact id, record fingerprint, test, message), regenerates without it and reruns what changed.
+A parked fact stays out until its record changes (a new probe or rule) or the toolkit version does.
+`check` also fails when the checked-in probe (metadata/probe/<tk>/<version>.json) is not for the
+toolkit version in the ledger: the probe is a maintainer step, CI only checks it is current.
 
   python3 tools/metadata/ledger.py refresh [--toolkit gtk|qt|all]   # needs a display or xvfb-run
   python3 tools/metadata/ledger.py check   [--toolkit gtk|qt|all]
@@ -108,25 +116,59 @@ def display_prefix() -> list[str]:
     return out
 
 
-def run_gtk() -> dict[str, str]:
-    cmd = display_prefix() + ["cargo", "nextest", "run", "-p", "svelters-gtk", "--lib", "--no-fail-fast",
-                              "-E", "test(/^generated::verify::/)"]
-    p = subprocess.run(cmd, cwd=ROOT, env=env(), capture_output=True, text=True)
+RESULT = re.compile(r"^\s*(?:TRY \d+ )?(PASS|FLAKY(?: \d+/\d+)?|FAIL|TIMEOUT|LEAK|SIG\w+)\b[^\n]*?\]\s+(?:\(\s*(?:\d+/\d+|\W+)\)\s+)?svelters-gtk\s+(\S+)\s*$", re.M)
+
+
+def results_of(text: str) -> dict[str, str]:
+    """test name -> pass|fail from a nextest report. The last line of a test is its final attempt (a retry prints
+    `TRY 2 FAIL`), and the failure replay at the end repeats it."""
     res = {}
+    for m in RESULT.finditer(text):
+        res[m.group(2)] = "pass" if m.group(1).startswith(("PASS", "FLAKY")) else "fail"
+    return res
+
+
+def failure_messages(text: str) -> dict[str, str]:
+    """test name -> the panic message of its last failed attempt, from the failure replay of a nextest report."""
+    out: dict[str, str] = {}
+    marks = list(RESULT.finditer(text))
+    for i, m in enumerate(marks):
+        if m.group(1).startswith(("PASS", "FLAKY")):
+            continue
+        body = text[m.end():marks[i + 1].start() if i + 1 < len(marks) else len(text)]
+        lines = body.splitlines()
+        for j, l in enumerate(lines):
+            if "panicked at" in l:
+                msg = " ".join(x.strip() for x in lines[j + 1:j + 3] if x.strip() and not x.strip().startswith("note:"))
+                out[m.group(2)] = (msg or l.strip())[:240]
+                break
+        else:
+            out.setdefault(m.group(2), "failed without a panic message")
+    return out
+
+
+def run_gtk(only: set[str] | None = None) -> tuple[dict[str, str], dict[str, str]]:
+    """(test -> pass|fail, test -> failure message). `only`: just these generated tests."""
+    expr = "test(/^generated::verify::/)" if not only else " | ".join(f"test(={t})" for t in sorted(only))
+    cmd = display_prefix() + ["cargo", "nextest", "run", "-p", "svelters-gtk", "--lib", "--no-fail-fast",
+                              "--failure-output", "final", "-E", expr]
+    p = subprocess.run(cmd, cwd=ROOT, env=env(), capture_output=True, text=True)
     text = p.stdout + p.stderr
-    for m in re.finditer(r"^\s*(PASS|FLAKY|FAIL|TIMEOUT|SIG\w+)\b.*?\]\s+(?:\(\s*\d+/\d+\)\s+)?svelters-gtk\s+(generated::verify::\S+)", text, re.M):
-        res[m.group(2)] = "pass" if m.group(1) in ("PASS", "FLAKY") else "fail"
+    res = {t: r for t, r in results_of(text).items() if t.startswith("generated::verify::")}
     if not res:
         sys.stderr.write(text[-6000:])
         raise SystemExit("ledger: no GTK test results (build failure?)")
+    msgs = failure_messages(text)
+    if only:
+        return res, msgs
     # Hand-written kinds: integration tests named `<binary>::<fn>`.
     bins = sorted({t.split("::")[0] for f in gtk_extra_facts() for t in f["tests"]})
     cmd = display_prefix() + ["cargo", "nextest", "run", "-p", "svelters-gtk", "--no-fail-fast"] + [a for b in bins for a in ("--test", b)]
     p = subprocess.run(cmd, cwd=ROOT, env=env(), capture_output=True, text=True)
     text = p.stdout + p.stderr
-    for m in re.finditer(r"^\s*(PASS|FLAKY|FAIL|TIMEOUT|SIG\w+)\b.*?\]\s+(?:\(\s*\d+/\d+\)\s+)?svelters-gtk::(\w+) (\w+)", text, re.M):
+    for m in re.finditer(r"^\s*(?:TRY \d+ )?(PASS|FLAKY|FAIL|TIMEOUT|LEAK|SIG\w+)\b[^\n]*?\]\s+(?:\(\s*(?:\d+/\d+|\W+)\)\s+)?svelters-gtk::(\w+) (\w+)\s*$", text, re.M):
         res[f"{m.group(2)}::{m.group(3)}"] = "pass" if m.group(1) in ("PASS", "FLAKY") else "fail"
-    return res
+    return res, msgs
 
 
 def run_qt() -> dict[str, str]:
@@ -144,28 +186,124 @@ def run_qt() -> dict[str, str]:
     return res
 
 
+PARKED = {"gtk": ROOT / "metadata/inferred/gtk/_parked.json"}
+# What turns the merged metadata into the generated backend, in order (a parked fact leaves all of them).
+REGEN = {"gtk": [["tools/metadata/gtk/ingest.py"], ["tools/metadata/gtk/gen_backend.py"], ["tools/metadata/common/gen_bindings.py"],
+                 ["tools/metadata/semantics/gen_semantics.py"]]}
+
+
+def load_parked(tk: str) -> list[dict]:
+    p = PARKED.get(tk)
+    return json.loads(p.read_text())["parked"] if p and p.exists() else []
+
+
+def save_parked(tk: str, version: str, parked: list[dict]) -> None:
+    parked = sorted(parked, key=lambda r: (r["kind"], r["section"], r["name"], r.get("test", "")))
+    PARKED[tk].parent.mkdir(parents=True, exist_ok=True)
+    PARKED[tk].write_text(json.dumps({"schema": "svelters-parked/v1", "toolkit": tk, "version": version, "parked": parked},
+                                     indent=1, sort_keys=True, ensure_ascii=False) + "\n")
+
+
+def regenerate(tk: str) -> None:
+    for step in REGEN[tk]:
+        subprocess.run([sys.executable, str(ROOT / step[0])] + step[1:], cwd=ROOT, check=True)
+
+
+def park(tk: str, man: dict, results: dict[str, str], msgs: dict[str, str]) -> bool:
+    """Park the inferred facts whose test failed (or that the generator could not test). True if the list changed."""
+    old = load_parked(tk)
+    keep = {(r["kind"], r["section"], r["name"]): r for r in old if r.get("version", man["version"]) == man["version"]}
+    new = dict(keep)
+    for f in man["facts"]:
+        if f.get("origin") != "inferred":
+            continue
+        bad = [t for t in f["tests"] if results.get(t, "missing") != "pass"]
+        if bad:
+            new[(f["kind"], f["section"], f["name"])] = {
+                "fact": f["fact"], "kind": f["kind"], "section": f["section"], "name": f["name"], "record_fp": f.get("record_fp"),
+                "test": bad[0], "message": msgs.get(bad[0]) or results.get(bad[0], "missing"), "version": man["version"]}
+    for u in man.get("untestable", []):
+        new[(u["kind"], u["section"], u["name"])] = {**u, "test": "(not generated)", "version": man["version"]}
+    if new == keep and len(old) == len(keep):
+        return False
+    save_parked(tk, man["version"], list(new.values()))
+    return True
+
+
 def refresh(tk: str) -> int:
     man = manifest(tk)
-    results = run_gtk() if tk == "gtk" else run_qt()
-    entries, bad = [], 0
+    if tk == "gtk":
+        results, msgs = run_gtk()
+        for _ in range(4):
+            if not park(tk, man, results, msgs):
+                break
+            regenerate(tk)
+            new = manifest(tk)
+            old_fp = {f["fact"]: f["fingerprint"] for f in man["facts"]}
+            redo = {t for f in new["facts"] if old_fp.get(f["fact"]) != f["fingerprint"] or any(t not in results for t in f["tests"])
+                    for t in f["tests"]}
+            man = new
+            if redo:
+                r2, m2 = run_gtk(redo)
+                results.update(r2)
+                msgs.update(m2)
+    else:
+        results = run_qt()
+    entries, bad, soft = [], 0, 0
     for f in man["facts"]:
         for t in f["tests"]:
             r = results.get(t, "missing")
-            bad += r != "pass"
-            entries.append({"fact": f["fact"], "test": t, "result": r, "fingerprint": f["fingerprint"], "version": man["version"]})
+            if r != "pass":
+                if f.get("origin") == "inferred":
+                    soft += 1
+                else:
+                    bad += 1
+            entries.append({"fact": f["fact"], "origin": f.get("origin", "manual"), "test": t, "result": r,
+                            "fingerprint": f["fingerprint"], "version": man["version"]})
     save(tk, man["version"], entries)
+    if tk == "gtk":
+        subprocess.run([sys.executable, str(ROOT / "tools/metadata/gtk/gen_backend.py")], cwd=ROOT, check=True)   # typings read the ledger
     n = sum(len(f["tests"]) for f in man["facts"])
-    print(f"ledger {tk}: {len(man['facts'])} facts, {n} tests, {bad} not passing")
+    parked = len(load_parked(tk))
+    print(f"ledger {tk}: {len(man['facts'])} facts, {n} tests, {bad} manual not passing, {soft} inferred not passing, {parked} parked")
     return 1 if bad else 0
+
+
+def probe_problems(tk: str, version: str) -> list[str]:
+    """The checked-in probe must be for the toolkit version the ledger was refreshed on."""
+    if tk != "gtk":
+        return []
+    p = ROOT / f"metadata/probe/{tk}/{version}.json"
+    if not p.exists():
+        have = sorted(x.stem for x in p.parent.glob("*.json"))
+        return [f"no probe for {tk} {version} (have {have or 'none'}): re-run tools/metadata/{tk}/probe.py on that toolkit, then infer.py"]
+    doc = json.loads(p.read_text())
+    if doc.get("version") != version:
+        return [f"{p.relative_to(ROOT)} says it probed {tk} {doc.get('version')}, not {version}"]
+    return []
 
 
 def check(tk: str) -> int:
     man = manifest(tk)
     led = {(e["fact"], e["test"]): e for e in load(tk)["entries"]}
-    problems = []
+    problems = probe_problems(tk, load(tk).get("version") or man["version"])
+    if load(tk).get("version") not in (None, man["version"]):
+        problems.append(f"the ledger was refreshed on {tk} {load(tk)['version']}, the metadata is {man['version']} (refresh)")
+    inferred = {"pass": 0, "pending": 0, "failing": 0}
     for f in man["facts"]:
         for t in f["tests"]:
             e = led.get((f["fact"], t))
+            if f.get("origin") == "inferred":
+                # Strict for manual facts only. A failing inferred fact is parked by `refresh`, so one that is still
+                # merged and fails with its current fingerprint means a refresh was skipped.
+                if e is None or e["fingerprint"] != f["fingerprint"]:
+                    inferred["pending"] += 1
+                elif e["result"] != "pass":
+                    inferred["failing"] += 1
+                    problems.append(f"{f['fact']}: {t}: inferred fact failed and is not parked (run `ledger.py refresh --toolkit {tk}`)")
+                else:
+                    inferred["pass"] += 1
+                continue
             if e is None:
                 problems.append(f"{f['fact']}: {t}: not in the ledger (run `ledger.py refresh --toolkit {tk}`)")
             elif e["fingerprint"] != f["fingerprint"]:
@@ -173,11 +311,13 @@ def check(tk: str) -> int:
             elif e["result"] != "pass":
                 problems.append(f"{f['fact']}: {t}: {e['result']}")
     if problems:
-        print(f"ledger {tk}: {len(problems)} unverified manual fact test(s):", file=sys.stderr)
+        print(f"ledger {tk}: {len(problems)} problem(s):", file=sys.stderr)
         for p in problems:
             print("  " + p, file=sys.stderr)
         return 1
-    print(f"ledger {tk}: {len(man['facts'])} manual facts verified")
+    manual = sum(1 for f in man["facts"] if f.get("origin") != "inferred")
+    extra = f"; inferred {inferred['pass']} verified, {inferred['pending']} pending, {len(load_parked(tk))} parked" if tk == "gtk" else ""
+    print(f"ledger {tk}: {manual} manual facts verified{extra}")
     return 0
 
 

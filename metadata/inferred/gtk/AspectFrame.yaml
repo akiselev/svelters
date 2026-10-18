@@ -1,0 +1,154 @@
+properties:
+- name: obey-child
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: ratio
+  sample: 2.0
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: notify::obey-child
+  derived_from:
+    property: obey-child
+  js_event: notify::obey-child
+  trigger:
+    property: obey-child
+    values:
+    - false
+    - true
+    - false
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkAspectFrame:obey-child
+- name: notify::ratio
+  derived_from:
+    property: ratio
+  js_event: notify::ratio
+  trigger:
+    property: ratio
+    values:
+    - 2.0
+    - 1.0
+    - 2.0
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkAspectFrame:ratio
+methods:
+- name: get_obey_child
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "obey-child")
+  provenance:
+  - origin: probe
+    ref: equals property obey-child
+- name: get_ratio
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "ratio")
+  provenance:
+  - origin: probe
+    ref: equals property ratio
+- name: get_xalign
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "xalign")
+  provenance:
+  - origin: probe
+    ref: equals property xalign
+- name: get_yalign
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "yalign")
+  provenance:
+  - origin: probe
+    ref: equals property yalign
+- name: set_obey_child
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "obey-child") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property obey-child: exact'
+- name: set_ratio
+  dispatch: dynamic
+  args:
+  - 2.0
+  expect: h.get(o, "ratio") == V::F64(2.0)
+  provenance:
+  - origin: probe
+    ref: 'set then read property ratio: exact'
+bindings:
+- name: obey-child
+  direction: two_way
+  property: obey-child
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::obey-child
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkAspectFrame:obey-child is writable, scalar and notifies; the renderer compares before set'
+- name: ratio
+  direction: two_way
+  property: ratio
+  type:
+    ref: f32
+    nullable: false
+  change:
+    signal: notify::ratio
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkAspectFrame:ratio is writable, scalar and notifies; the renderer compares before set'

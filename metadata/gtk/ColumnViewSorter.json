@@ -60,6 +60,7 @@
         "ownership": "borrowed",
         "type": "u32"
       },
+      "since": "4.10",
       "unsupported_reason": null
     },
     {
@@ -93,6 +94,7 @@
         "ownership": "borrowed",
         "type": "object<svelters-api:v1:type:gtk:Gtk:ColumnViewColumn>"
       },
+      "since": "4.10",
       "unsupported_reason": null
     },
     {
@@ -111,6 +113,7 @@
         "ownership": "borrowed",
         "type": "object<svelters-api:v1:type:gtk:Gtk:ColumnViewColumn>"
       },
+      "since": "4.10",
       "unsupported_reason": null
     },
     {
@@ -129,6 +132,7 @@
         "ownership": "borrowed",
         "type": "enum<svelters-api:v1:type:gtk:Gtk:SortType>"
       },
+      "since": "4.10",
       "unsupported_reason": null
     }
   ],

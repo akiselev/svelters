@@ -1,0 +1,79 @@
+properties:
+- name: show-menubar
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: notify::show-menubar
+  derived_from:
+    property: show-menubar
+  js_event: notify::show-menubar
+  trigger:
+    property: show-menubar
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkApplicationWindow:show-menubar
+methods:
+- name: get_id
+  dispatch: dynamic
+  args: []
+  expect: r == V::I64(0)
+  provenance:
+  - origin: probe
+    ref: called on a new instance, returned 0
+- name: get_show_menubar
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "show-menubar")
+  provenance:
+  - origin: probe
+    ref: equals property show-menubar
+- name: set_show_menubar
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "show-menubar") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property show-menubar: exact'
+bindings:
+- name: show-menubar
+  direction: two_way
+  property: show-menubar
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::show-menubar
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkApplicationWindow:show-menubar is writable, scalar and notifies; the renderer compares before set'
