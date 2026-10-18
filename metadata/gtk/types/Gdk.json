@@ -1,0 +1,5300 @@
+{
+ "namespace": "Gdk",
+ "schema": "svelters-types/v1",
+ "toolkit": "gtk",
+ "types": {
+  "AppLaunchContext": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "gtype": "GdkAppLaunchContext",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": [
+    {
+     "js": "getDisplay",
+     "name": "get_display",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Display"
+     }
+    },
+    {
+     "js": "setDesktop",
+     "name": "set_desktop",
+     "params": [
+      {
+       "js": "desktop",
+       "name": "desktop",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "setIcon",
+     "name": "set_icon",
+     "params": [
+      {
+       "js": "icon",
+       "name": "icon",
+       "nullable": true,
+       "type": {
+        "k": "object",
+        "t": "Gio.Icon"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "setIconName",
+     "name": "set_icon_name",
+     "params": [
+      {
+       "js": "iconName",
+       "name": "icon_name",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "setTimestamp",
+     "name": "set_timestamp",
+     "params": [
+      {
+       "js": "timestamp",
+       "name": "timestamp",
+       "type": {
+        "k": "int",
+        "t": "guint32"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    }
+   ],
+   "name": "AppLaunchContext",
+   "ns": "Gdk",
+   "parent": "Gio.AppLaunchContext",
+   "prerequisites": [],
+   "properties": [
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "display",
+     "name": "display",
+     "readable": true,
+     "type": {
+      "k": "object",
+      "t": "Gdk.Display"
+     },
+     "writable": true
+    }
+   ],
+   "qualified": "Gdk.AppLaunchContext",
+   "refs": [
+    "Gdk.Display",
+    "Gio.Icon"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "CairoContext": {
+   "abstract": true,
+   "blocked": {},
+   "builder": false,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "gtype": "GdkCairoContext",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": [],
+   "name": "CairoContext",
+   "ns": "Gdk",
+   "parent": "Gdk.DrawContext",
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Gdk.CairoContext",
+   "refs": [],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "CicpParams": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "object",
+   "constructors": [
+    {
+     "js": "new",
+     "name": "new",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.CicpParams"
+     },
+     "since": "4.16"
+    }
+   ],
+   "curated": false,
+   "gtype": "GdkCicpParams",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": [
+    {
+     "js": "buildColorState",
+     "name": "build_color_state",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Gdk.ColorState"
+     },
+     "since": "4.16",
+     "throws": true
+    },
+    {
+     "js": "getColorPrimaries",
+     "name": "get_color_primaries",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "guint"
+     },
+     "since": "4.16"
+    },
+    {
+     "js": "getMatrixCoefficients",
+     "name": "get_matrix_coefficients",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "guint"
+     },
+     "since": "4.16"
+    },
+    {
+     "js": "getRange",
+     "name": "get_range",
+     "params": [],
+     "ret": {
+      "k": "enum",
+      "t": "Gdk.CicpRange"
+     },
+     "since": "4.16"
+    },
+    {
+     "js": "getTransferFunction",
+     "name": "get_transfer_function",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "guint"
+     },
+     "since": "4.16"
+    },
+    {
+     "js": "setColorPrimaries",
+     "name": "set_color_primaries",
+     "params": [
+      {
+       "js": "colorPrimaries",
+       "name": "color_primaries",
+       "type": {
+        "k": "int",
+        "t": "guint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "4.16"
+    },
+    {
+     "js": "setMatrixCoefficients",
+     "name": "set_matrix_coefficients",
+     "params": [
+      {
+       "js": "matrixCoefficients",
+       "name": "matrix_coefficients",
+       "type": {
+        "k": "int",
+        "t": "guint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "4.16"
+    },
+    {
+     "js": "setRange",
+     "name": "set_range",
+     "params": [
+      {
+       "js": "range",
+       "name": "range",
+       "type": {
+        "k": "enum",
+        "t": "Gdk.CicpRange"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "4.16"
+    },
+    {
+     "js": "setTransferFunction",
+     "name": "set_transfer_function",
+     "params": [
+      {
+       "js": "transferFunction",
+       "name": "transfer_function",
+       "type": {
+        "k": "int",
+        "t": "guint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "4.16"
+    }
+   ],
+   "name": "CicpParams",
+   "ns": "Gdk",
+   "parent": "GObject.Object",
+   "prerequisites": [],
+   "properties": [
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "colorPrimaries",
+     "name": "color-primaries",
+     "readable": true,
+     "since": "4.16",
+     "type": {
+      "k": "int",
+      "t": "guint"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "matrixCoefficients",
+     "name": "matrix-coefficients",
+     "readable": true,
+     "since": "4.16",
+     "type": {
+      "k": "int",
+      "t": "guint"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "range",
+     "name": "range",
+     "readable": true,
+     "since": "4.16",
+     "type": {
+      "k": "enum",
+      "t": "Gdk.CicpRange"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "transferFunction",
+     "name": "transfer-function",
+     "readable": true,
+     "since": "4.16",
+     "type": {
+      "k": "int",
+      "t": "guint"
+     },
+     "writable": true
+    }
+   ],
+   "qualified": "Gdk.CicpParams",
+   "refs": [
+    "Gdk.CicpRange",
+    "Gdk.ColorState"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": "4.16",
+   "statics": [],
+   "undecided": []
+  },
+  "Clipboard": {
+   "abstract": false,
+   "blocked": {
+    "prop:formats": "struct by value",
+    "read_async": "async",
+    "read_text_async": "async",
+    "read_texture_async": "async",
+    "read_value_async": "async",
+    "set_value": "variant",
+    "store_async": "async"
+   },
+   "builder": false,
+   "category": "object",
+   "constructors": [],
+   "curated": true,
+   "gtype": "GdkClipboard",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": [
+    {
+     "js": "getContent",
+     "name": "get_content",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.ContentProvider"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "getDisplay",
+     "name": "get_display",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Display"
+     }
+    },
+    {
+     "js": "getFormats",
+     "name": "get_formats",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Gdk.ContentFormats"
+     }
+    },
+    {
+     "js": "isLocal",
+     "name": "is_local",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "setContent",
+     "name": "set_content",
+     "params": [
+      {
+       "js": "provider",
+       "name": "provider",
+       "nullable": true,
+       "type": {
+        "k": "object",
+        "t": "Gdk.ContentProvider"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     }
+    }
+   ],
+   "name": "Clipboard",
+   "ns": "Gdk",
+   "parent": "GObject.Object",
+   "prerequisites": [],
+   "properties": [
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "content",
+     "name": "content",
+     "readable": true,
+     "type": {
+      "k": "object",
+      "t": "Gdk.ContentProvider"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "display",
+     "name": "display",
+     "readable": true,
+     "type": {
+      "k": "object",
+      "t": "Gdk.Display"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "local",
+     "name": "local",
+     "readable": true,
+     "type": {
+      "k": "bool"
+     },
+     "writable": false
+    }
+   ],
+   "qualified": "Gdk.Clipboard",
+   "refs": [
+    "Gdk.ContentFormats",
+    "Gdk.ContentProvider",
+    "Gdk.Display"
+   ],
+   "scope": "closure",
+   "signals": [
+    {
+     "args": [],
+     "name": "changed"
+    }
+   ],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "ColorState": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "value",
+   "constructors": [],
+   "curated": false,
+   "gtype": "GdkColorState",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "createCicpParams",
+     "name": "create_cicp_params",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.CicpParams"
+     },
+     "ret_nullable": true,
+     "since": "4.16"
+    },
+    {
+     "js": "equal",
+     "name": "equal",
+     "params": [
+      {
+       "js": "other",
+       "name": "other",
+       "type": {
+        "k": "boxed",
+        "t": "Gdk.ColorState"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "4.16"
+    },
+    {
+     "js": "equivalent",
+     "name": "equivalent",
+     "params": [
+      {
+       "js": "other",
+       "name": "other",
+       "type": {
+        "k": "boxed",
+        "t": "Gdk.ColorState"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "4.20"
+    }
+   ],
+   "name": "ColorState",
+   "ns": "Gdk",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Gdk.ColorState",
+   "refs": [
+    "Gdk.CicpParams"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": "4.16",
+   "statics": [
+    {
+     "js": "getOklab",
+     "name": "get_oklab",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Gdk.ColorState"
+     },
+     "since": "4.18"
+    },
+    {
+     "js": "getOklch",
+     "name": "get_oklch",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Gdk.ColorState"
+     },
+     "since": "4.18"
+    },
+    {
+     "js": "getRec2100Linear",
+     "name": "get_rec2100_linear",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Gdk.ColorState"
+     },
+     "since": "4.16"
+    },
+    {
+     "js": "getRec2100Pq",
+     "name": "get_rec2100_pq",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Gdk.ColorState"
+     },
+     "since": "4.16"
+    },
+    {
+     "js": "getSrgb",
+     "name": "get_srgb",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Gdk.ColorState"
+     },
+     "since": "4.16"
+    },
+    {
+     "js": "getSrgbLinear",
+     "name": "get_srgb_linear",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Gdk.ColorState"
+     },
+     "since": "4.16"
+    }
+   ],
+   "undecided": []
+  },
+  "ContentFormats": {
+   "abstract": false,
+   "blocked": {
+    "get_gtypes": "list element gtype"
+   },
+   "builder": false,
+   "category": "value",
+   "constructors": [
+    {
+     "js": "new",
+     "name": "new",
+     "params": [
+      {
+       "js": "mimeTypes",
+       "name": "mime_types",
+       "nullable": true,
+       "type": {
+        "elem": {
+         "k": "str"
+        },
+        "k": "array",
+        "len": 1
+       }
+      },
+      {
+       "hidden": true,
+       "js": "nMimeTypes",
+       "name": "n_mime_types",
+       "type": {
+        "k": "int",
+        "t": "guint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "Gdk.ContentFormats"
+     }
+    },
+    {
+     "js": "newForGtype",
+     "name": "new_for_gtype",
+     "params": [
+      {
+       "js": "type",
+       "name": "type",
+       "type": {
+        "k": "gtype"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "Gdk.ContentFormats"
+     }
+    }
+   ],
+   "curated": false,
+   "gtype": "GdkContentFormats",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "containGtype",
+     "name": "contain_gtype",
+     "params": [
+      {
+       "js": "type",
+       "name": "type",
+       "type": {
+        "k": "gtype"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "containMimeType",
+     "name": "contain_mime_type",
+     "params": [
+      {
+       "js": "mimeType",
+       "name": "mime_type",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "getMimeTypes",
+     "name": "get_mime_types",
+     "params": [
+      {
+       "dir": "out",
+       "hidden": true,
+       "js": "nMimeTypes",
+       "name": "n_mime_types",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "gsize"
+       }
+      }
+     ],
+     "ret": {
+      "elem": {
+       "k": "str"
+      },
+      "k": "array",
+      "len": 0
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "isEmpty",
+     "name": "is_empty",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "4.18"
+    },
+    {
+     "js": "match",
+     "name": "match",
+     "params": [
+      {
+       "js": "second",
+       "name": "second",
+       "type": {
+        "k": "boxed",
+        "t": "Gdk.ContentFormats"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "matchGtype",
+     "name": "match_gtype",
+     "params": [
+      {
+       "js": "second",
+       "name": "second",
+       "type": {
+        "k": "boxed",
+        "t": "Gdk.ContentFormats"
+       }
+      }
+     ],
+     "ret": {
+      "k": "gtype"
+     }
+    },
+    {
+     "js": "matchMimeType",
+     "name": "match_mime_type",
+     "params": [
+      {
+       "js": "second",
+       "name": "second",
+       "type": {
+        "k": "boxed",
+        "t": "Gdk.ContentFormats"
+       }
+      }
+     ],
+     "ret": {
+      "k": "str"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "print",
+     "name": "print",
+     "params": [
+      {
+       "js": "string",
+       "name": "string",
+       "type": {
+        "k": "boxed",
+        "t": "GLib.String"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "toString",
+     "name": "to_string",
+     "params": [],
+     "ret": {
+      "k": "str"
+     }
+    },
+    {
+     "js": "union",
+     "name": "union",
+     "params": [
+      {
+       "js": "second",
+       "name": "second",
+       "type": {
+        "k": "boxed",
+        "t": "Gdk.ContentFormats"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "Gdk.ContentFormats"
+     }
+    },
+    {
+     "js": "unionDeserializeGtypes",
+     "name": "union_deserialize_gtypes",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Gdk.ContentFormats"
+     }
+    },
+    {
+     "js": "unionDeserializeMimeTypes",
+     "name": "union_deserialize_mime_types",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Gdk.ContentFormats"
+     }
+    },
+    {
+     "js": "unionSerializeGtypes",
+     "name": "union_serialize_gtypes",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Gdk.ContentFormats"
+     }
+    },
+    {
+     "js": "unionSerializeMimeTypes",
+     "name": "union_serialize_mime_types",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Gdk.ContentFormats"
+     }
+    }
+   ],
+   "name": "ContentFormats",
+   "ns": "Gdk",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Gdk.ContentFormats",
+   "refs": [
+    "GLib.String"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [
+    {
+     "js": "parse",
+     "name": "parse",
+     "params": [
+      {
+       "js": "string",
+       "name": "string",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "Gdk.ContentFormats"
+     },
+     "ret_nullable": true,
+     "since": "4.4"
+    }
+   ],
+   "undecided": []
+  },
+  "ContentProvider": {
+   "abstract": false,
+   "blocked": {
+    "get_value": "variant",
+    "new_for_value": "variant",
+    "prop:formats": "struct by value",
+    "prop:storable-formats": "struct by value",
+    "write_mime_type_async": "async"
+   },
+   "builder": false,
+   "category": "object",
+   "constructors": [
+    {
+     "js": "newForBytes",
+     "name": "new_for_bytes",
+     "params": [
+      {
+       "js": "mimeType",
+       "name": "mime_type",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "bytes",
+       "name": "bytes",
+       "type": {
+        "k": "boxed",
+        "t": "GLib.Bytes"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.ContentProvider"
+     }
+    },
+    {
+     "js": "newUnion",
+     "name": "new_union",
+     "params": [
+      {
+       "js": "providers",
+       "name": "providers",
+       "nullable": true,
+       "type": {
+        "elem": {
+         "k": "object",
+         "t": "Gdk.ContentProvider"
+        },
+        "k": "array",
+        "len": 1
+       }
+      },
+      {
+       "hidden": true,
+       "js": "nProviders",
+       "name": "n_providers",
+       "type": {
+        "k": "int",
+        "t": "gsize"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.ContentProvider"
+     }
+    }
+   ],
+   "curated": false,
+   "gtype": "GdkContentProvider",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": [
+    {
+     "js": "contentChanged",
+     "name": "content_changed",
+     "params": [],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "refFormats",
+     "name": "ref_formats",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Gdk.ContentFormats"
+     }
+    },
+    {
+     "js": "refStorableFormats",
+     "name": "ref_storable_formats",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Gdk.ContentFormats"
+     }
+    }
+   ],
+   "name": "ContentProvider",
+   "ns": "Gdk",
+   "parent": "GObject.Object",
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Gdk.ContentProvider",
+   "refs": [
+    "GLib.Bytes",
+    "Gdk.ContentFormats"
+   ],
+   "scope": "closure",
+   "signals": [
+    {
+     "args": [],
+     "name": "content-changed"
+    }
+   ],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "Cursor": {
+   "abstract": false,
+   "blocked": {
+    "new_from_callback": "callback"
+   },
+   "builder": false,
+   "category": "object",
+   "constructors": [
+    {
+     "js": "newFromName",
+     "name": "new_from_name",
+     "params": [
+      {
+       "js": "name",
+       "name": "name",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "fallback",
+       "name": "fallback",
+       "nullable": true,
+       "type": {
+        "k": "object",
+        "t": "Gdk.Cursor"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Cursor"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "newFromTexture",
+     "name": "new_from_texture",
+     "params": [
+      {
+       "js": "texture",
+       "name": "texture",
+       "type": {
+        "k": "object",
+        "t": "Gdk.Texture"
+       }
+      },
+      {
+       "js": "hotspotX",
+       "name": "hotspot_x",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "js": "hotspotY",
+       "name": "hotspot_y",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "js": "fallback",
+       "name": "fallback",
+       "nullable": true,
+       "type": {
+        "k": "object",
+        "t": "Gdk.Cursor"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Cursor"
+     }
+    }
+   ],
+   "curated": false,
+   "gtype": "GdkCursor",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": [
+    {
+     "js": "getFallback",
+     "name": "get_fallback",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Cursor"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "getHotspotX",
+     "name": "get_hotspot_x",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     }
+    },
+    {
+     "js": "getHotspotY",
+     "name": "get_hotspot_y",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     }
+    },
+    {
+     "js": "getName",
+     "name": "get_name",
+     "params": [],
+     "ret": {
+      "k": "str"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "getTexture",
+     "name": "get_texture",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Texture"
+     },
+     "ret_nullable": true
+    }
+   ],
+   "name": "Cursor",
+   "ns": "Gdk",
+   "parent": "GObject.Object",
+   "prerequisites": [],
+   "properties": [
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "fallback",
+     "name": "fallback",
+     "readable": true,
+     "type": {
+      "k": "object",
+      "t": "Gdk.Cursor"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "hotspotX",
+     "name": "hotspot-x",
+     "readable": true,
+     "type": {
+      "k": "int",
+      "t": "gint"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "hotspotY",
+     "name": "hotspot-y",
+     "readable": true,
+     "type": {
+      "k": "int",
+      "t": "gint"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "name",
+     "name": "name",
+     "readable": true,
+     "type": {
+      "k": "str"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "texture",
+     "name": "texture",
+     "readable": true,
+     "type": {
+      "k": "object",
+      "t": "Gdk.Texture"
+     },
+     "writable": true
+    }
+   ],
+   "qualified": "Gdk.Cursor",
+   "refs": [
+    "Gdk.Texture"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "Device": {
+   "abstract": true,
+   "blocked": {},
+   "builder": false,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "gtype": "GdkDevice",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": [
+    {
+     "js": "getActiveLayoutIndex",
+     "name": "get_active_layout_index",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     },
+     "since": "4.18"
+    },
+    {
+     "js": "getCapsLockState",
+     "name": "get_caps_lock_state",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "getDeviceTool",
+     "name": "get_device_tool",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.DeviceTool"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "getDirection",
+     "name": "get_direction",
+     "params": [],
+     "ret": {
+      "k": "enum",
+      "t": "Pango.Direction"
+     }
+    },
+    {
+     "js": "getDisplay",
+     "name": "get_display",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Display"
+     }
+    },
+    {
+     "js": "getHasCursor",
+     "name": "get_has_cursor",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "getLayoutNames",
+     "name": "get_layout_names",
+     "params": [],
+     "ret": {
+      "k": "strv"
+     },
+     "ret_nullable": true,
+     "since": "4.18"
+    },
+    {
+     "js": "getModifierState",
+     "name": "get_modifier_state",
+     "params": [],
+     "ret": {
+      "k": "flags",
+      "t": "Gdk.ModifierType"
+     }
+    },
+    {
+     "js": "getName",
+     "name": "get_name",
+     "params": [],
+     "ret": {
+      "k": "str"
+     }
+    },
+    {
+     "js": "getNumLockState",
+     "name": "get_num_lock_state",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "getNumTouches",
+     "name": "get_num_touches",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "guint"
+     }
+    },
+    {
+     "js": "getProductId",
+     "name": "get_product_id",
+     "params": [],
+     "ret": {
+      "k": "str"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "getScrollLockState",
+     "name": "get_scroll_lock_state",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "getSeat",
+     "name": "get_seat",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Seat"
+     }
+    },
+    {
+     "js": "getSource",
+     "name": "get_source",
+     "params": [],
+     "ret": {
+      "k": "enum",
+      "t": "Gdk.InputSource"
+     }
+    },
+    {
+     "js": "getSurfaceAtPosition",
+     "name": "get_surface_at_position",
+     "params": [
+      {
+       "dir": "out",
+       "js": "winX",
+       "name": "win_x",
+       "nullable": true,
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "winY",
+       "name": "win_y",
+       "nullable": true,
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Surface"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "getTimestamp",
+     "name": "get_timestamp",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "guint32"
+     },
+     "since": "4.2"
+    },
+    {
+     "js": "getVendorId",
+     "name": "get_vendor_id",
+     "params": [],
+     "ret": {
+      "k": "str"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "hasBidiLayouts",
+     "name": "has_bidi_layouts",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     }
+    }
+   ],
+   "name": "Device",
+   "ns": "Gdk",
+   "parent": "GObject.Object",
+   "prerequisites": [],
+   "properties": [
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "activeLayoutIndex",
+     "name": "active-layout-index",
+     "readable": true,
+     "since": "4.18",
+     "type": {
+      "k": "int",
+      "t": "gint"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "capsLockState",
+     "name": "caps-lock-state",
+     "readable": true,
+     "type": {
+      "k": "bool"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "direction",
+     "name": "direction",
+     "readable": true,
+     "type": {
+      "k": "enum",
+      "t": "Pango.Direction"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "display",
+     "name": "display",
+     "readable": true,
+     "type": {
+      "k": "object",
+      "t": "Gdk.Display"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "hasBidiLayouts",
+     "name": "has-bidi-layouts",
+     "readable": true,
+     "type": {
+      "k": "bool"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "hasCursor",
+     "name": "has-cursor",
+     "readable": true,
+     "type": {
+      "k": "bool"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "layoutNames",
+     "name": "layout-names",
+     "readable": true,
+     "since": "4.18",
+     "type": {
+      "k": "strv"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "modifierState",
+     "name": "modifier-state",
+     "readable": true,
+     "type": {
+      "k": "flags",
+      "t": "Gdk.ModifierType"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "nAxes",
+     "name": "n-axes",
+     "readable": true,
+     "type": {
+      "k": "int",
+      "t": "guint"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "name",
+     "name": "name",
+     "readable": true,
+     "type": {
+      "k": "str"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "numLockState",
+     "name": "num-lock-state",
+     "readable": true,
+     "type": {
+      "k": "bool"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "numTouches",
+     "name": "num-touches",
+     "readable": true,
+     "type": {
+      "k": "int",
+      "t": "guint"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "productId",
+     "name": "product-id",
+     "readable": true,
+     "type": {
+      "k": "str"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "scrollLockState",
+     "name": "scroll-lock-state",
+     "readable": true,
+     "type": {
+      "k": "bool"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "seat",
+     "name": "seat",
+     "readable": true,
+     "type": {
+      "k": "object",
+      "t": "Gdk.Seat"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "source",
+     "name": "source",
+     "readable": true,
+     "type": {
+      "k": "enum",
+      "t": "Gdk.InputSource"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "tool",
+     "name": "tool",
+     "readable": true,
+     "type": {
+      "k": "object",
+      "t": "Gdk.DeviceTool"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "vendorId",
+     "name": "vendor-id",
+     "readable": true,
+     "type": {
+      "k": "str"
+     },
+     "writable": true
+    }
+   ],
+   "qualified": "Gdk.Device",
+   "refs": [
+    "Gdk.DeviceTool",
+    "Gdk.Display",
+    "Gdk.InputSource",
+    "Gdk.ModifierType",
+    "Gdk.Seat",
+    "Gdk.Surface",
+    "Pango.Direction"
+   ],
+   "scope": "closure",
+   "signals": [
+    {
+     "args": [],
+     "name": "changed"
+    },
+    {
+     "args": [
+      {
+       "name": "tool",
+       "type": {
+        "k": "object",
+        "t": "Gdk.DeviceTool"
+       }
+      }
+     ],
+     "name": "tool-changed"
+    }
+   ],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "DeviceTool": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "gtype": "GdkDeviceTool",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": [
+    {
+     "js": "getAxes",
+     "name": "get_axes",
+     "params": [],
+     "ret": {
+      "k": "flags",
+      "t": "Gdk.AxisFlags"
+     }
+    },
+    {
+     "js": "getHardwareId",
+     "name": "get_hardware_id",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "guint64"
+     }
+    },
+    {
+     "js": "getSerial",
+     "name": "get_serial",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "guint64"
+     }
+    },
+    {
+     "js": "getToolType",
+     "name": "get_tool_type",
+     "params": [],
+     "ret": {
+      "k": "enum",
+      "t": "Gdk.DeviceToolType"
+     }
+    }
+   ],
+   "name": "DeviceTool",
+   "ns": "Gdk",
+   "parent": "GObject.Object",
+   "prerequisites": [],
+   "properties": [
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "axes",
+     "name": "axes",
+     "readable": true,
+     "type": {
+      "k": "flags",
+      "t": "Gdk.AxisFlags"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "hardwareId",
+     "name": "hardware-id",
+     "readable": true,
+     "type": {
+      "k": "int",
+      "t": "guint64"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "serial",
+     "name": "serial",
+     "readable": true,
+     "type": {
+      "k": "int",
+      "t": "guint64"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "toolType",
+     "name": "tool-type",
+     "readable": true,
+     "type": {
+      "k": "enum",
+      "t": "Gdk.DeviceToolType"
+     },
+     "writable": true
+    }
+   ],
+   "qualified": "Gdk.DeviceTool",
+   "refs": [
+    "Gdk.AxisFlags",
+    "Gdk.DeviceToolType"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "Display": {
+   "abstract": false,
+   "blocked": {
+    "get_setting": "variant",
+    "map_keycode": "type:needs-override:Gdk.KeymapKey",
+    "map_keyval": "type:needs-override:Gdk.KeymapKey",
+    "prop:dmabuf-formats": "struct by value"
+   },
+   "builder": false,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "gtype": "GdkDisplay",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": [
+    {
+     "js": "beep",
+     "name": "beep",
+     "params": [],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "close",
+     "name": "close",
+     "params": [],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "createGlContext",
+     "name": "create_gl_context",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.GLContext"
+     },
+     "since": "4.6",
+     "throws": true
+    },
+    {
+     "js": "deviceIsGrabbed",
+     "name": "device_is_grabbed",
+     "params": [
+      {
+       "js": "device",
+       "name": "device",
+       "type": {
+        "k": "object",
+        "t": "Gdk.Device"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "flush",
+     "name": "flush",
+     "params": [],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "getAppLaunchContext",
+     "name": "get_app_launch_context",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.AppLaunchContext"
+     }
+    },
+    {
+     "js": "getClipboard",
+     "name": "get_clipboard",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Clipboard"
+     }
+    },
+    {
+     "js": "getDefaultSeat",
+     "name": "get_default_seat",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Seat"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "getDmabufFormats",
+     "name": "get_dmabuf_formats",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Gdk.DmabufFormats"
+     },
+     "since": "4.14"
+    },
+    {
+     "js": "getMonitorAtSurface",
+     "name": "get_monitor_at_surface",
+     "params": [
+      {
+       "js": "surface",
+       "name": "surface",
+       "type": {
+        "k": "object",
+        "t": "Gdk.Surface"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Monitor"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "getMonitors",
+     "name": "get_monitors",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gio.ListModel"
+     }
+    },
+    {
+     "js": "getName",
+     "name": "get_name",
+     "params": [],
+     "ret": {
+      "k": "str"
+     }
+    },
+    {
+     "js": "getPrimaryClipboard",
+     "name": "get_primary_clipboard",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Clipboard"
+     }
+    },
+    {
+     "js": "isClosed",
+     "name": "is_closed",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "isComposited",
+     "name": "is_composited",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "isRgba",
+     "name": "is_rgba",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "listSeats",
+     "name": "list_seats",
+     "params": [],
+     "ret": {
+      "elem": {
+       "k": "object",
+       "t": "Gdk.Seat"
+      },
+      "k": "list",
+      "slist": false
+     }
+    },
+    {
+     "js": "prepareGl",
+     "name": "prepare_gl",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "4.4",
+     "throws": true
+    },
+    {
+     "js": "supportsInputShapes",
+     "name": "supports_input_shapes",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "supportsShadowWidth",
+     "name": "supports_shadow_width",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "4.14"
+    },
+    {
+     "js": "sync",
+     "name": "sync",
+     "params": [],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "translateKey",
+     "name": "translate_key",
+     "params": [
+      {
+       "js": "keycode",
+       "name": "keycode",
+       "type": {
+        "k": "int",
+        "t": "guint"
+       }
+      },
+      {
+       "js": "state",
+       "name": "state",
+       "type": {
+        "k": "flags",
+        "t": "Gdk.ModifierType"
+       }
+      },
+      {
+       "js": "group",
+       "name": "group",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "keyval",
+       "name": "keyval",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "guint"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "effectiveGroup",
+       "name": "effective_group",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "level",
+       "name": "level",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "consumed",
+       "name": "consumed",
+       "nullable": true,
+       "type": {
+        "k": "flags",
+        "t": "Gdk.ModifierType"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     }
+    }
+   ],
+   "name": "Display",
+   "ns": "Gdk",
+   "parent": "GObject.Object",
+   "prerequisites": [],
+   "properties": [
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "composited",
+     "name": "composited",
+     "readable": true,
+     "type": {
+      "k": "bool"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "inputShapes",
+     "name": "input-shapes",
+     "readable": true,
+     "type": {
+      "k": "bool"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "rgba",
+     "name": "rgba",
+     "readable": true,
+     "type": {
+      "k": "bool"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "shadowWidth",
+     "name": "shadow-width",
+     "readable": true,
+     "since": "4.14",
+     "type": {
+      "k": "bool"
+     },
+     "writable": false
+    }
+   ],
+   "qualified": "Gdk.Display",
+   "refs": [
+    "Gdk.AppLaunchContext",
+    "Gdk.Clipboard",
+    "Gdk.Device",
+    "Gdk.DmabufFormats",
+    "Gdk.GLContext",
+    "Gdk.ModifierType",
+    "Gdk.Monitor",
+    "Gdk.Seat",
+    "Gdk.Surface",
+    "Gio.ListModel"
+   ],
+   "scope": "closure",
+   "signals": [
+    {
+     "args": [
+      {
+       "name": "is_error",
+       "type": {
+        "k": "bool"
+       }
+      }
+     ],
+     "name": "closed"
+    },
+    {
+     "args": [],
+     "name": "opened"
+    },
+    {
+     "args": [
+      {
+       "name": "seat",
+       "type": {
+        "k": "object",
+        "t": "Gdk.Seat"
+       }
+      }
+     ],
+     "name": "seat-added"
+    },
+    {
+     "args": [
+      {
+       "name": "seat",
+       "type": {
+        "k": "object",
+        "t": "Gdk.Seat"
+       }
+      }
+     ],
+     "name": "seat-removed"
+    },
+    {
+     "args": [
+      {
+       "name": "setting",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "name": "setting-changed"
+    }
+   ],
+   "since": null,
+   "statics": [
+    {
+     "js": "getDefault",
+     "name": "get_default",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Display"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "open",
+     "name": "open",
+     "params": [
+      {
+       "js": "displayName",
+       "name": "display_name",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Display"
+     },
+     "ret_nullable": true
+    }
+   ],
+   "undecided": []
+  },
+  "DmabufFormats": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "value",
+   "constructors": [],
+   "curated": false,
+   "gtype": "GdkDmabufFormats",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "contains",
+     "name": "contains",
+     "params": [
+      {
+       "js": "fourcc",
+       "name": "fourcc",
+       "type": {
+        "k": "int",
+        "t": "guint32"
+       }
+      },
+      {
+       "js": "modifier",
+       "name": "modifier",
+       "type": {
+        "k": "int",
+        "t": "guint64"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "4.14"
+    },
+    {
+     "js": "equal",
+     "name": "equal",
+     "params": [
+      {
+       "js": "formats2",
+       "name": "formats2",
+       "nullable": true,
+       "type": {
+        "k": "boxed",
+        "t": "Gdk.DmabufFormats"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "4.14"
+    },
+    {
+     "js": "getFormat",
+     "name": "get_format",
+     "params": [
+      {
+       "js": "idx",
+       "name": "idx",
+       "type": {
+        "k": "int",
+        "t": "gsize"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "fourcc",
+       "name": "fourcc",
+       "type": {
+        "k": "int",
+        "t": "guint32"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "modifier",
+       "name": "modifier",
+       "type": {
+        "k": "int",
+        "t": "guint64"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "4.14"
+    },
+    {
+     "js": "getNFormats",
+     "name": "get_n_formats",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gsize"
+     },
+     "since": "4.14"
+    }
+   ],
+   "name": "DmabufFormats",
+   "ns": "Gdk",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Gdk.DmabufFormats",
+   "refs": [],
+   "scope": "closure",
+   "signals": [],
+   "since": "4.14",
+   "statics": [],
+   "undecided": []
+  },
+  "Drag": {
+   "abstract": true,
+   "blocked": {
+    "prop:formats": "struct by value"
+   },
+   "builder": false,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "gtype": "GdkDrag",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": [
+    {
+     "js": "dropDone",
+     "name": "drop_done",
+     "params": [
+      {
+       "js": "success",
+       "name": "success",
+       "type": {
+        "k": "bool"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "getActions",
+     "name": "get_actions",
+     "params": [],
+     "ret": {
+      "k": "flags",
+      "t": "Gdk.DragAction"
+     }
+    },
+    {
+     "js": "getContent",
+     "name": "get_content",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.ContentProvider"
+     }
+    },
+    {
+     "js": "getDevice",
+     "name": "get_device",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Device"
+     }
+    },
+    {
+     "js": "getDisplay",
+     "name": "get_display",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Display"
+     }
+    },
+    {
+     "js": "getDragSurface",
+     "name": "get_drag_surface",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Surface"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "getFormats",
+     "name": "get_formats",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Gdk.ContentFormats"
+     }
+    },
+    {
+     "js": "getSelectedAction",
+     "name": "get_selected_action",
+     "params": [],
+     "ret": {
+      "k": "flags",
+      "t": "Gdk.DragAction"
+     }
+    },
+    {
+     "js": "getSurface",
+     "name": "get_surface",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Surface"
+     }
+    },
+    {
+     "js": "setHotspot",
+     "name": "set_hotspot",
+     "params": [
+      {
+       "js": "hotX",
+       "name": "hot_x",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "js": "hotY",
+       "name": "hot_y",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    }
+   ],
+   "name": "Drag",
+   "ns": "Gdk",
+   "parent": "GObject.Object",
+   "prerequisites": [],
+   "properties": [
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "actions",
+     "name": "actions",
+     "readable": true,
+     "type": {
+      "k": "flags",
+      "t": "Gdk.DragAction"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "content",
+     "name": "content",
+     "readable": true,
+     "type": {
+      "k": "object",
+      "t": "Gdk.ContentProvider"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "device",
+     "name": "device",
+     "readable": true,
+     "type": {
+      "k": "object",
+      "t": "Gdk.Device"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "display",
+     "name": "display",
+     "readable": true,
+     "type": {
+      "k": "object",
+      "t": "Gdk.Display"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "selectedAction",
+     "name": "selected-action",
+     "readable": true,
+     "type": {
+      "k": "flags",
+      "t": "Gdk.DragAction"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "surface",
+     "name": "surface",
+     "readable": true,
+     "type": {
+      "k": "object",
+      "t": "Gdk.Surface"
+     },
+     "writable": true
+    }
+   ],
+   "qualified": "Gdk.Drag",
+   "refs": [
+    "Gdk.ContentFormats",
+    "Gdk.ContentProvider",
+    "Gdk.Device",
+    "Gdk.Display",
+    "Gdk.DragAction",
+    "Gdk.DragCancelReason",
+    "Gdk.Surface"
+   ],
+   "scope": "closure",
+   "signals": [
+    {
+     "args": [
+      {
+       "name": "reason",
+       "type": {
+        "k": "enum",
+        "t": "Gdk.DragCancelReason"
+       }
+      }
+     ],
+     "name": "cancel"
+    },
+    {
+     "args": [],
+     "name": "dnd-finished"
+    },
+    {
+     "args": [],
+     "name": "drop-performed"
+    }
+   ],
+   "since": null,
+   "statics": [
+    {
+     "js": "begin",
+     "name": "begin",
+     "params": [
+      {
+       "js": "surface",
+       "name": "surface",
+       "type": {
+        "k": "object",
+        "t": "Gdk.Surface"
+       }
+      },
+      {
+       "js": "device",
+       "name": "device",
+       "type": {
+        "k": "object",
+        "t": "Gdk.Device"
+       }
+      },
+      {
+       "js": "content",
+       "name": "content",
+       "type": {
+        "k": "object",
+        "t": "Gdk.ContentProvider"
+       }
+      },
+      {
+       "js": "actions",
+       "name": "actions",
+       "type": {
+        "k": "flags",
+        "t": "Gdk.DragAction"
+       }
+      },
+      {
+       "js": "dx",
+       "name": "dx",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "js": "dy",
+       "name": "dy",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Drag"
+     },
+     "ret_nullable": true
+    }
+   ],
+   "undecided": []
+  },
+  "DrawContext": {
+   "abstract": true,
+   "blocked": {},
+   "builder": false,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "gtype": "GdkDrawContext",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": [
+    {
+     "js": "getDisplay",
+     "name": "get_display",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Display"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "getSurface",
+     "name": "get_surface",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Surface"
+     },
+     "ret_nullable": true
+    }
+   ],
+   "name": "DrawContext",
+   "ns": "Gdk",
+   "parent": "GObject.Object",
+   "prerequisites": [],
+   "properties": [
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "display",
+     "name": "display",
+     "readable": true,
+     "type": {
+      "k": "object",
+      "t": "Gdk.Display"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "surface",
+     "name": "surface",
+     "readable": true,
+     "type": {
+      "k": "object",
+      "t": "Gdk.Surface"
+     },
+     "writable": true
+    }
+   ],
+   "qualified": "Gdk.DrawContext",
+   "refs": [
+    "Gdk.Display",
+    "Gdk.Surface"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "Drop": {
+   "abstract": true,
+   "blocked": {
+    "prop:formats": "struct by value",
+    "read_async": "async",
+    "read_value_async": "async"
+   },
+   "builder": false,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "gtype": "GdkDrop",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": [
+    {
+     "js": "finish",
+     "name": "finish",
+     "params": [
+      {
+       "js": "action",
+       "name": "action",
+       "type": {
+        "k": "flags",
+        "t": "Gdk.DragAction"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "getActions",
+     "name": "get_actions",
+     "params": [],
+     "ret": {
+      "k": "flags",
+      "t": "Gdk.DragAction"
+     }
+    },
+    {
+     "js": "getDevice",
+     "name": "get_device",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Device"
+     }
+    },
+    {
+     "js": "getDisplay",
+     "name": "get_display",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Display"
+     }
+    },
+    {
+     "js": "getDrag",
+     "name": "get_drag",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Drag"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "getFormats",
+     "name": "get_formats",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Gdk.ContentFormats"
+     }
+    },
+    {
+     "js": "getSurface",
+     "name": "get_surface",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Surface"
+     }
+    },
+    {
+     "js": "status",
+     "name": "status",
+     "params": [
+      {
+       "js": "actions",
+       "name": "actions",
+       "type": {
+        "k": "flags",
+        "t": "Gdk.DragAction"
+       }
+      },
+      {
+       "js": "preferred",
+       "name": "preferred",
+       "type": {
+        "k": "flags",
+        "t": "Gdk.DragAction"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    }
+   ],
+   "name": "Drop",
+   "ns": "Gdk",
+   "parent": "GObject.Object",
+   "prerequisites": [],
+   "properties": [
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "actions",
+     "name": "actions",
+     "readable": true,
+     "type": {
+      "k": "flags",
+      "t": "Gdk.DragAction"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "device",
+     "name": "device",
+     "readable": true,
+     "type": {
+      "k": "object",
+      "t": "Gdk.Device"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "display",
+     "name": "display",
+     "readable": true,
+     "type": {
+      "k": "object",
+      "t": "Gdk.Display"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "drag",
+     "name": "drag",
+     "readable": true,
+     "type": {
+      "k": "object",
+      "t": "Gdk.Drag"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "surface",
+     "name": "surface",
+     "readable": true,
+     "type": {
+      "k": "object",
+      "t": "Gdk.Surface"
+     },
+     "writable": true
+    }
+   ],
+   "qualified": "Gdk.Drop",
+   "refs": [
+    "Gdk.ContentFormats",
+    "Gdk.Device",
+    "Gdk.Display",
+    "Gdk.Drag",
+    "Gdk.DragAction",
+    "Gdk.Surface"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "EventSequence": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "value",
+   "constructors": [],
+   "curated": false,
+   "gtype": "GdkEventSequence",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [],
+   "name": "EventSequence",
+   "ns": "Gdk",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Gdk.EventSequence",
+   "refs": [],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "FrameClock": {
+   "abstract": true,
+   "blocked": {},
+   "builder": false,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "gtype": "GdkFrameClock",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": [
+    {
+     "js": "beginUpdating",
+     "name": "begin_updating",
+     "params": [],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "endUpdating",
+     "name": "end_updating",
+     "params": [],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "getCurrentTimings",
+     "name": "get_current_timings",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Gdk.FrameTimings"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "getFps",
+     "name": "get_fps",
+     "params": [],
+     "ret": {
+      "k": "float"
+     }
+    },
+    {
+     "js": "getFrameCounter",
+     "name": "get_frame_counter",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint64"
+     }
+    },
+    {
+     "js": "getFrameTime",
+     "name": "get_frame_time",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint64"
+     }
+    },
+    {
+     "js": "getHistoryStart",
+     "name": "get_history_start",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint64"
+     }
+    },
+    {
+     "js": "getRefreshInfo",
+     "name": "get_refresh_info",
+     "params": [
+      {
+       "js": "baseTime",
+       "name": "base_time",
+       "type": {
+        "k": "int",
+        "t": "gint64"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "refreshIntervalReturn",
+       "name": "refresh_interval_return",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "gint64"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "presentationTimeReturn",
+       "name": "presentation_time_return",
+       "type": {
+        "k": "int",
+        "t": "gint64"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "getTimings",
+     "name": "get_timings",
+     "params": [
+      {
+       "js": "frameCounter",
+       "name": "frame_counter",
+       "type": {
+        "k": "int",
+        "t": "gint64"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "Gdk.FrameTimings"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "requestPhase",
+     "name": "request_phase",
+     "params": [
+      {
+       "js": "phase",
+       "name": "phase",
+       "type": {
+        "k": "flags",
+        "t": "Gdk.FrameClockPhase"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    }
+   ],
+   "name": "FrameClock",
+   "ns": "Gdk",
+   "parent": "GObject.Object",
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Gdk.FrameClock",
+   "refs": [
+    "Gdk.FrameClockPhase",
+    "Gdk.FrameTimings"
+   ],
+   "scope": "closure",
+   "signals": [
+    {
+     "args": [],
+     "name": "after-paint"
+    },
+    {
+     "args": [],
+     "name": "before-paint"
+    },
+    {
+     "args": [],
+     "name": "flush-events"
+    },
+    {
+     "args": [],
+     "name": "layout"
+    },
+    {
+     "args": [],
+     "name": "paint"
+    },
+    {
+     "args": [],
+     "name": "resume-events"
+    },
+    {
+     "args": [],
+     "name": "update"
+    }
+   ],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "FrameTimings": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "value",
+   "constructors": [],
+   "curated": false,
+   "gtype": "GdkFrameTimings",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "getComplete",
+     "name": "get_complete",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "getFrameCounter",
+     "name": "get_frame_counter",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint64"
+     }
+    },
+    {
+     "js": "getFrameTime",
+     "name": "get_frame_time",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint64"
+     }
+    },
+    {
+     "js": "getPredictedPresentationTime",
+     "name": "get_predicted_presentation_time",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint64"
+     }
+    },
+    {
+     "js": "getPresentationTime",
+     "name": "get_presentation_time",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint64"
+     }
+    },
+    {
+     "js": "getRefreshInterval",
+     "name": "get_refresh_interval",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint64"
+     }
+    }
+   ],
+   "name": "FrameTimings",
+   "ns": "Gdk",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Gdk.FrameTimings",
+   "refs": [],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "GLContext": {
+   "abstract": true,
+   "blocked": {},
+   "builder": false,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "gtype": "GdkGLContext",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": [
+    {
+     "js": "getAllowedApis",
+     "name": "get_allowed_apis",
+     "params": [],
+     "ret": {
+      "k": "flags",
+      "t": "Gdk.GLAPI"
+     },
+     "since": "4.6"
+    },
+    {
+     "js": "getApi",
+     "name": "get_api",
+     "params": [],
+     "ret": {
+      "k": "flags",
+      "t": "Gdk.GLAPI"
+     },
+     "since": "4.6"
+    },
+    {
+     "js": "getDebugEnabled",
+     "name": "get_debug_enabled",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "getDisplay",
+     "name": "get_display",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Display"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "getForwardCompatible",
+     "name": "get_forward_compatible",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "getRequiredVersion",
+     "name": "get_required_version",
+     "params": [
+      {
+       "dir": "out",
+       "js": "major",
+       "name": "major",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "minor",
+       "name": "minor",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "getSurface",
+     "name": "get_surface",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Surface"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "getUseEs",
+     "name": "get_use_es",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "getVersion",
+     "name": "get_version",
+     "params": [
+      {
+       "dir": "out",
+       "js": "major",
+       "name": "major",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "minor",
+       "name": "minor",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "isLegacy",
+     "name": "is_legacy",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "isShared",
+     "name": "is_shared",
+     "params": [
+      {
+       "js": "other",
+       "name": "other",
+       "type": {
+        "k": "object",
+        "t": "Gdk.GLContext"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "4.4"
+    },
+    {
+     "js": "makeCurrent",
+     "name": "make_current",
+     "params": [],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "realize",
+     "name": "realize",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     },
+     "throws": true
+    },
+    {
+     "js": "setAllowedApis",
+     "name": "set_allowed_apis",
+     "params": [
+      {
+       "js": "apis",
+       "name": "apis",
+       "type": {
+        "k": "flags",
+        "t": "Gdk.GLAPI"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "4.6"
+    },
+    {
+     "js": "setDebugEnabled",
+     "name": "set_debug_enabled",
+     "params": [
+      {
+       "js": "enabled",
+       "name": "enabled",
+       "type": {
+        "k": "bool"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "setForwardCompatible",
+     "name": "set_forward_compatible",
+     "params": [
+      {
+       "js": "compatible",
+       "name": "compatible",
+       "type": {
+        "k": "bool"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "setRequiredVersion",
+     "name": "set_required_version",
+     "params": [
+      {
+       "js": "major",
+       "name": "major",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "js": "minor",
+       "name": "minor",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "setUseEs",
+     "name": "set_use_es",
+     "params": [
+      {
+       "js": "useEs",
+       "name": "use_es",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    }
+   ],
+   "name": "GLContext",
+   "ns": "Gdk",
+   "parent": "Gdk.DrawContext",
+   "prerequisites": [],
+   "properties": [
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "allowedApis",
+     "name": "allowed-apis",
+     "readable": true,
+     "since": "4.6",
+     "type": {
+      "k": "flags",
+      "t": "Gdk.GLAPI"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "api",
+     "name": "api",
+     "readable": true,
+     "since": "4.6",
+     "type": {
+      "k": "flags",
+      "t": "Gdk.GLAPI"
+     },
+     "writable": false
+    }
+   ],
+   "qualified": "Gdk.GLContext",
+   "refs": [
+    "Gdk.Display",
+    "Gdk.GLAPI",
+    "Gdk.Surface"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [
+    {
+     "js": "clearCurrent",
+     "name": "clear_current",
+     "params": [],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "getCurrent",
+     "name": "get_current",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.GLContext"
+     },
+     "ret_nullable": true
+    }
+   ],
+   "undecided": []
+  },
+  "Monitor": {
+   "abstract": false,
+   "blocked": {
+    "prop:geometry": "struct by value"
+   },
+   "builder": false,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "gtype": "GdkMonitor",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": [
+    {
+     "js": "getConnector",
+     "name": "get_connector",
+     "params": [],
+     "ret": {
+      "k": "str"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "getDescription",
+     "name": "get_description",
+     "params": [],
+     "ret": {
+      "k": "str"
+     },
+     "ret_nullable": true,
+     "since": "4.10"
+    },
+    {
+     "js": "getDisplay",
+     "name": "get_display",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Display"
+     }
+    },
+    {
+     "js": "getGeometry",
+     "name": "get_geometry",
+     "params": [
+      {
+       "dir": "out",
+       "js": "geometry",
+       "name": "geometry",
+       "type": {
+        "k": "record",
+        "t": "Gdk.Rectangle"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "getHeightMm",
+     "name": "get_height_mm",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     }
+    },
+    {
+     "js": "getManufacturer",
+     "name": "get_manufacturer",
+     "params": [],
+     "ret": {
+      "k": "str"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "getModel",
+     "name": "get_model",
+     "params": [],
+     "ret": {
+      "k": "str"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "getRefreshRate",
+     "name": "get_refresh_rate",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     }
+    },
+    {
+     "js": "getScale",
+     "name": "get_scale",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "4.14"
+    },
+    {
+     "js": "getScaleFactor",
+     "name": "get_scale_factor",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     }
+    },
+    {
+     "js": "getSubpixelLayout",
+     "name": "get_subpixel_layout",
+     "params": [],
+     "ret": {
+      "k": "enum",
+      "t": "Gdk.SubpixelLayout"
+     }
+    },
+    {
+     "js": "getWidthMm",
+     "name": "get_width_mm",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     }
+    },
+    {
+     "js": "isValid",
+     "name": "is_valid",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     }
+    }
+   ],
+   "name": "Monitor",
+   "ns": "Gdk",
+   "parent": "GObject.Object",
+   "prerequisites": [],
+   "properties": [
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "connector",
+     "name": "connector",
+     "readable": true,
+     "type": {
+      "k": "str"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "description",
+     "name": "description",
+     "readable": true,
+     "since": "4.10",
+     "type": {
+      "k": "str"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "display",
+     "name": "display",
+     "readable": true,
+     "type": {
+      "k": "object",
+      "t": "Gdk.Display"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "heightMm",
+     "name": "height-mm",
+     "readable": true,
+     "type": {
+      "k": "int",
+      "t": "gint"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "manufacturer",
+     "name": "manufacturer",
+     "readable": true,
+     "type": {
+      "k": "str"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "model",
+     "name": "model",
+     "readable": true,
+     "type": {
+      "k": "str"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "refreshRate",
+     "name": "refresh-rate",
+     "readable": true,
+     "type": {
+      "k": "int",
+      "t": "gint"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "scale",
+     "name": "scale",
+     "readable": true,
+     "since": "4.14",
+     "type": {
+      "k": "float"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "scaleFactor",
+     "name": "scale-factor",
+     "readable": true,
+     "type": {
+      "k": "int",
+      "t": "gint"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "subpixelLayout",
+     "name": "subpixel-layout",
+     "readable": true,
+     "type": {
+      "k": "enum",
+      "t": "Gdk.SubpixelLayout"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "valid",
+     "name": "valid",
+     "readable": true,
+     "type": {
+      "k": "bool"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "widthMm",
+     "name": "width-mm",
+     "readable": true,
+     "type": {
+      "k": "int",
+      "t": "gint"
+     },
+     "writable": false
+    }
+   ],
+   "qualified": "Gdk.Monitor",
+   "refs": [
+    "Gdk.Display",
+    "Gdk.Rectangle",
+    "Gdk.SubpixelLayout"
+   ],
+   "scope": "closure",
+   "signals": [
+    {
+     "args": [],
+     "name": "invalidate"
+    }
+   ],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "Paintable": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "gtype": "GdkPaintable",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "interface",
+   "lifetime": "shared",
+   "methods": [
+    {
+     "js": "computeConcreteSize",
+     "name": "compute_concrete_size",
+     "params": [
+      {
+       "js": "specifiedWidth",
+       "name": "specified_width",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "js": "specifiedHeight",
+       "name": "specified_height",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "js": "defaultWidth",
+       "name": "default_width",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "js": "defaultHeight",
+       "name": "default_height",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "concreteWidth",
+       "name": "concrete_width",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "concreteHeight",
+       "name": "concrete_height",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "getCurrentImage",
+     "name": "get_current_image",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Paintable"
+     }
+    },
+    {
+     "js": "getFlags",
+     "name": "get_flags",
+     "params": [],
+     "ret": {
+      "k": "flags",
+      "t": "Gdk.PaintableFlags"
+     }
+    },
+    {
+     "js": "getIntrinsicAspectRatio",
+     "name": "get_intrinsic_aspect_ratio",
+     "params": [],
+     "ret": {
+      "k": "float"
+     }
+    },
+    {
+     "js": "getIntrinsicHeight",
+     "name": "get_intrinsic_height",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     }
+    },
+    {
+     "js": "getIntrinsicWidth",
+     "name": "get_intrinsic_width",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     }
+    },
+    {
+     "js": "invalidateContents",
+     "name": "invalidate_contents",
+     "params": [],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "invalidateSize",
+     "name": "invalidate_size",
+     "params": [],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "snapshot",
+     "name": "snapshot",
+     "params": [
+      {
+       "js": "snapshot",
+       "name": "snapshot",
+       "type": {
+        "k": "object",
+        "t": "Gdk.Snapshot"
+       }
+      },
+      {
+       "js": "width",
+       "name": "width",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "js": "height",
+       "name": "height",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    }
+   ],
+   "name": "Paintable",
+   "ns": "Gdk",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Gdk.Paintable",
+   "refs": [
+    "Gdk.PaintableFlags",
+    "Gdk.Snapshot"
+   ],
+   "scope": "closure",
+   "signals": [
+    {
+     "args": [],
+     "name": "invalidate-contents"
+    },
+    {
+     "args": [],
+     "name": "invalidate-size"
+    }
+   ],
+   "since": null,
+   "statics": [
+    {
+     "js": "newEmpty",
+     "name": "new_empty",
+     "params": [
+      {
+       "js": "intrinsicWidth",
+       "name": "intrinsic_width",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "js": "intrinsicHeight",
+       "name": "intrinsic_height",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Paintable"
+     }
+    }
+   ],
+   "undecided": []
+  },
+  "RGBA": {
+   "abstract": false,
+   "blocked": {
+    "equal": "struct by value"
+   },
+   "builder": false,
+   "category": "record",
+   "constructors": [],
+   "curated": false,
+   "fields": [
+    {
+     "name": "red",
+     "type": "gfloat"
+    },
+    {
+     "name": "green",
+     "type": "gfloat"
+    },
+    {
+     "name": "blue",
+     "type": "gfloat"
+    },
+    {
+     "name": "alpha",
+     "type": "gfloat"
+    }
+   ],
+   "gtype": "GdkRGBA",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "record",
+   "methods": [
+    {
+     "js": "hash",
+     "name": "hash",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "guint"
+     }
+    },
+    {
+     "js": "isClear",
+     "name": "is_clear",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "isOpaque",
+     "name": "is_opaque",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "parse",
+     "name": "parse",
+     "params": [
+      {
+       "js": "spec",
+       "name": "spec",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "print",
+     "name": "print",
+     "params": [
+      {
+       "js": "string",
+       "name": "string",
+       "type": {
+        "k": "boxed",
+        "t": "GLib.String"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.String"
+     }
+    },
+    {
+     "js": "toString",
+     "name": "to_string",
+     "params": [],
+     "ret": {
+      "k": "str"
+     }
+    }
+   ],
+   "name": "RGBA",
+   "ns": "Gdk",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Gdk.RGBA",
+   "refs": [
+    "GLib.String"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "Rectangle": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "record",
+   "constructors": [],
+   "curated": false,
+   "fields": [
+    {
+     "name": "x",
+     "type": "gint"
+    },
+    {
+     "name": "y",
+     "type": "gint"
+    },
+    {
+     "name": "width",
+     "type": "gint"
+    },
+    {
+     "name": "height",
+     "type": "gint"
+    }
+   ],
+   "gtype": "GdkRectangle",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "record",
+   "methods": [
+    {
+     "js": "containsPoint",
+     "name": "contains_point",
+     "params": [
+      {
+       "js": "x",
+       "name": "x",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "js": "y",
+       "name": "y",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "equal",
+     "name": "equal",
+     "params": [
+      {
+       "js": "rect2",
+       "name": "rect2",
+       "type": {
+        "k": "record",
+        "t": "Gdk.Rectangle"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "intersect",
+     "name": "intersect",
+     "params": [
+      {
+       "js": "src2",
+       "name": "src2",
+       "type": {
+        "k": "record",
+        "t": "Gdk.Rectangle"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "dest",
+       "name": "dest",
+       "nullable": true,
+       "type": {
+        "k": "record",
+        "t": "Gdk.Rectangle"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "union",
+     "name": "union",
+     "params": [
+      {
+       "js": "src2",
+       "name": "src2",
+       "type": {
+        "k": "record",
+        "t": "Gdk.Rectangle"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "dest",
+       "name": "dest",
+       "type": {
+        "k": "record",
+        "t": "Gdk.Rectangle"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    }
+   ],
+   "name": "Rectangle",
+   "ns": "Gdk",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Gdk.Rectangle",
+   "refs": [],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "Seat": {
+   "abstract": true,
+   "blocked": {},
+   "builder": false,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "gtype": "GdkSeat",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": [
+    {
+     "js": "getCapabilities",
+     "name": "get_capabilities",
+     "params": [],
+     "ret": {
+      "k": "flags",
+      "t": "Gdk.SeatCapabilities"
+     }
+    },
+    {
+     "js": "getDevices",
+     "name": "get_devices",
+     "params": [
+      {
+       "js": "capabilities",
+       "name": "capabilities",
+       "type": {
+        "k": "flags",
+        "t": "Gdk.SeatCapabilities"
+       }
+      }
+     ],
+     "ret": {
+      "elem": {
+       "k": "object",
+       "t": "Gdk.Device"
+      },
+      "k": "list",
+      "slist": false
+     }
+    },
+    {
+     "js": "getDisplay",
+     "name": "get_display",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Display"
+     }
+    },
+    {
+     "js": "getKeyboard",
+     "name": "get_keyboard",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Device"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "getPointer",
+     "name": "get_pointer",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Device"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "getTools",
+     "name": "get_tools",
+     "params": [],
+     "ret": {
+      "elem": {
+       "k": "object",
+       "t": "Gdk.DeviceTool"
+      },
+      "k": "list",
+      "slist": false
+     }
+    }
+   ],
+   "name": "Seat",
+   "ns": "Gdk",
+   "parent": "GObject.Object",
+   "prerequisites": [],
+   "properties": [
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "display",
+     "name": "display",
+     "readable": true,
+     "type": {
+      "k": "object",
+      "t": "Gdk.Display"
+     },
+     "writable": true
+    }
+   ],
+   "qualified": "Gdk.Seat",
+   "refs": [
+    "Gdk.Device",
+    "Gdk.DeviceTool",
+    "Gdk.Display",
+    "Gdk.SeatCapabilities"
+   ],
+   "scope": "closure",
+   "signals": [
+    {
+     "args": [
+      {
+       "name": "device",
+       "type": {
+        "k": "object",
+        "t": "Gdk.Device"
+       }
+      }
+     ],
+     "name": "device-added"
+    },
+    {
+     "args": [
+      {
+       "name": "device",
+       "type": {
+        "k": "object",
+        "t": "Gdk.Device"
+       }
+      }
+     ],
+     "name": "device-removed"
+    },
+    {
+     "args": [
+      {
+       "name": "tool",
+       "type": {
+        "k": "object",
+        "t": "Gdk.DeviceTool"
+       }
+      }
+     ],
+     "name": "tool-added"
+    },
+    {
+     "args": [
+      {
+       "name": "tool",
+       "type": {
+        "k": "object",
+        "t": "Gdk.DeviceTool"
+       }
+      }
+     ],
+     "name": "tool-removed"
+    }
+   ],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "Snapshot": {
+   "abstract": true,
+   "blocked": {},
+   "builder": false,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "gtype": "GdkSnapshot",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": [],
+   "name": "Snapshot",
+   "ns": "Gdk",
+   "parent": "GObject.Object",
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Gdk.Snapshot",
+   "refs": [],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "Surface": {
+   "abstract": true,
+   "blocked": {
+    "set_input_region": "unbound:cairo.Region",
+    "signal:event": "fundamental",
+    "signal:render": "struct by value"
+   },
+   "builder": false,
+   "category": "object",
+   "constructors": [
+    {
+     "js": "newPopup",
+     "name": "new_popup",
+     "params": [
+      {
+       "js": "parent",
+       "name": "parent",
+       "type": {
+        "k": "object",
+        "t": "Gdk.Surface"
+       }
+      },
+      {
+       "js": "autohide",
+       "name": "autohide",
+       "type": {
+        "k": "bool"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Surface"
+     }
+    },
+    {
+     "js": "newToplevel",
+     "name": "new_toplevel",
+     "params": [
+      {
+       "js": "display",
+       "name": "display",
+       "type": {
+        "k": "object",
+        "t": "Gdk.Display"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Surface"
+     }
+    }
+   ],
+   "curated": false,
+   "gtype": "GdkSurface",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": [
+    {
+     "js": "beep",
+     "name": "beep",
+     "params": [],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "createGlContext",
+     "name": "create_gl_context",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.GLContext"
+     },
+     "throws": true
+    },
+    {
+     "js": "destroy",
+     "name": "destroy",
+     "params": [],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "getCursor",
+     "name": "get_cursor",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Cursor"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "getDeviceCursor",
+     "name": "get_device_cursor",
+     "params": [
+      {
+       "js": "device",
+       "name": "device",
+       "type": {
+        "k": "object",
+        "t": "Gdk.Device"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Cursor"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "getDevicePosition",
+     "name": "get_device_position",
+     "params": [
+      {
+       "js": "device",
+       "name": "device",
+       "type": {
+        "k": "object",
+        "t": "Gdk.Device"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "x",
+       "name": "x",
+       "nullable": true,
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "y",
+       "name": "y",
+       "nullable": true,
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "mask",
+       "name": "mask",
+       "nullable": true,
+       "type": {
+        "k": "flags",
+        "t": "Gdk.ModifierType"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "getDisplay",
+     "name": "get_display",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Display"
+     }
+    },
+    {
+     "js": "getFrameClock",
+     "name": "get_frame_clock",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.FrameClock"
+     }
+    },
+    {
+     "js": "getHeight",
+     "name": "get_height",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     }
+    },
+    {
+     "js": "getMapped",
+     "name": "get_mapped",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "getScale",
+     "name": "get_scale",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "4.12"
+    },
+    {
+     "js": "getScaleFactor",
+     "name": "get_scale_factor",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     }
+    },
+    {
+     "js": "getWidth",
+     "name": "get_width",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     }
+    },
+    {
+     "js": "hide",
+     "name": "hide",
+     "params": [],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "isDestroyed",
+     "name": "is_destroyed",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "queueRender",
+     "name": "queue_render",
+     "params": [],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "requestLayout",
+     "name": "request_layout",
+     "params": [],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "setCursor",
+     "name": "set_cursor",
+     "params": [
+      {
+       "js": "cursor",
+       "name": "cursor",
+       "nullable": true,
+       "type": {
+        "k": "object",
+        "t": "Gdk.Cursor"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "setDeviceCursor",
+     "name": "set_device_cursor",
+     "params": [
+      {
+       "js": "device",
+       "name": "device",
+       "type": {
+        "k": "object",
+        "t": "Gdk.Device"
+       }
+      },
+      {
+       "js": "cursor",
+       "name": "cursor",
+       "type": {
+        "k": "object",
+        "t": "Gdk.Cursor"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "translateCoordinates",
+     "name": "translate_coordinates",
+     "params": [
+      {
+       "js": "to",
+       "name": "to",
+       "type": {
+        "k": "object",
+        "t": "Gdk.Surface"
+       }
+      },
+      {
+       "dir": "inout",
+       "js": "x",
+       "name": "x",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "inout",
+       "js": "y",
+       "name": "y",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     }
+    }
+   ],
+   "name": "Surface",
+   "ns": "Gdk",
+   "parent": "GObject.Object",
+   "prerequisites": [],
+   "properties": [
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "cursor",
+     "name": "cursor",
+     "readable": true,
+     "type": {
+      "k": "object",
+      "t": "Gdk.Cursor"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "display",
+     "name": "display",
+     "readable": true,
+     "type": {
+      "k": "object",
+      "t": "Gdk.Display"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "frameClock",
+     "name": "frame-clock",
+     "readable": true,
+     "type": {
+      "k": "object",
+      "t": "Gdk.FrameClock"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "height",
+     "name": "height",
+     "readable": true,
+     "type": {
+      "k": "int",
+      "t": "gint"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "mapped",
+     "name": "mapped",
+     "readable": true,
+     "type": {
+      "k": "bool"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "scale",
+     "name": "scale",
+     "readable": true,
+     "since": "4.12",
+     "type": {
+      "k": "float"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "scaleFactor",
+     "name": "scale-factor",
+     "readable": true,
+     "type": {
+      "k": "int",
+      "t": "gint"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "width",
+     "name": "width",
+     "readable": true,
+     "type": {
+      "k": "int",
+      "t": "gint"
+     },
+     "writable": false
+    }
+   ],
+   "qualified": "Gdk.Surface",
+   "refs": [
+    "Gdk.Cursor",
+    "Gdk.Device",
+    "Gdk.Display",
+    "Gdk.FrameClock",
+    "Gdk.GLContext",
+    "Gdk.ModifierType",
+    "Gdk.Monitor"
+   ],
+   "scope": "closure",
+   "signals": [
+    {
+     "args": [
+      {
+       "name": "monitor",
+       "type": {
+        "k": "object",
+        "t": "Gdk.Monitor"
+       }
+      }
+     ],
+     "name": "enter-monitor"
+    },
+    {
+     "args": [
+      {
+       "name": "width",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "name": "height",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "name": "layout"
+    },
+    {
+     "args": [
+      {
+       "name": "monitor",
+       "type": {
+        "k": "object",
+        "t": "Gdk.Monitor"
+       }
+      }
+     ],
+     "name": "leave-monitor"
+    }
+   ],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "Texture": {
+   "abstract": true,
+   "blocked": {
+    "download": "array without length",
+    "prop:color-state": "struct by value"
+   },
+   "builder": false,
+   "category": "object",
+   "constructors": [
+    {
+     "js": "newFromBytes",
+     "name": "new_from_bytes",
+     "params": [
+      {
+       "js": "bytes",
+       "name": "bytes",
+       "type": {
+        "k": "boxed",
+        "t": "GLib.Bytes"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Texture"
+     },
+     "since": "4.6",
+     "throws": true
+    },
+    {
+     "js": "newFromFile",
+     "name": "new_from_file",
+     "params": [
+      {
+       "js": "file",
+       "name": "file",
+       "type": {
+        "k": "object",
+        "t": "Gio.File"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Texture"
+     },
+     "throws": true
+    },
+    {
+     "js": "newFromFilename",
+     "name": "new_from_filename",
+     "params": [
+      {
+       "js": "path",
+       "name": "path",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Texture"
+     },
+     "since": "4.6",
+     "throws": true
+    },
+    {
+     "js": "newFromResource",
+     "name": "new_from_resource",
+     "params": [
+      {
+       "js": "resourcePath",
+       "name": "resource_path",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Texture"
+     }
+    }
+   ],
+   "curated": true,
+   "gtype": "GdkTexture",
+   "hidden": [],
+   "interfaces": [
+    "Gdk.Paintable",
+    "Gio.Icon",
+    "Gio.LoadableIcon"
+   ],
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": [
+    {
+     "js": "getColorState",
+     "name": "get_color_state",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Gdk.ColorState"
+     },
+     "since": "4.16"
+    },
+    {
+     "js": "getFormat",
+     "name": "get_format",
+     "params": [],
+     "ret": {
+      "k": "enum",
+      "t": "Gdk.MemoryFormat"
+     },
+     "since": "4.10"
+    },
+    {
+     "js": "getHeight",
+     "name": "get_height",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     }
+    },
+    {
+     "js": "getWidth",
+     "name": "get_width",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     }
+    },
+    {
+     "js": "saveToPng",
+     "name": "save_to_png",
+     "params": [
+      {
+       "js": "filename",
+       "name": "filename",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "saveToPngBytes",
+     "name": "save_to_png_bytes",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.Bytes"
+     },
+     "since": "4.6"
+    },
+    {
+     "js": "saveToTiff",
+     "name": "save_to_tiff",
+     "params": [
+      {
+       "js": "filename",
+       "name": "filename",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "4.6"
+    },
+    {
+     "js": "saveToTiffBytes",
+     "name": "save_to_tiff_bytes",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.Bytes"
+     },
+     "since": "4.6"
+    }
+   ],
+   "name": "Texture",
+   "ns": "Gdk",
+   "parent": "GObject.Object",
+   "prerequisites": [],
+   "properties": [
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "height",
+     "name": "height",
+     "readable": true,
+     "type": {
+      "k": "int",
+      "t": "gint"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "width",
+     "name": "width",
+     "readable": true,
+     "type": {
+      "k": "int",
+      "t": "gint"
+     },
+     "writable": true
+    }
+   ],
+   "qualified": "Gdk.Texture",
+   "refs": [
+    "GLib.Bytes",
+    "Gdk.ColorState",
+    "Gdk.MemoryFormat",
+    "Gio.File"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  }
+ },
+ "version": "4.0"
+}

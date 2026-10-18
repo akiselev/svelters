@@ -1245,7 +1245,8 @@ void b_request_frame(void *) {
 const svl_backend kBackend = {SVL_ABI_VERSION, &g, b_resolve, b_create, b_insert, b_remove, b_destroy,
                               b_set_prop, b_get_prop, b_call, b_listen, b_handle_info, b_run, b_wake, b_schedule_wake, b_quit,
                               b_last_error, SVL_CAP_UTF16_IN | SVL_CAP_UTF16_OUT, b_describe, b_describe_type, b_cancel, b_request_frame,
-                              b_set_child_attr, b_get_child_attr, b_listen_ex, b_style};
+                              b_set_child_attr, b_get_child_attr, b_listen_ex, b_style,
+                              /* ABI v2.5 construct, call_static: not implemented by Qt yet (N2) */ nullptr, nullptr};
 
 }  // namespace
 

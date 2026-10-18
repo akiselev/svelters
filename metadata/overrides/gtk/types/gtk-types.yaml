@@ -1,0 +1,65 @@
+# Overrides of the non-GUI type pipeline (tools/metadata/gtk/types_facts.py). Lists stay short: everything
+# else is classified by rules from the GIR (plans/research/NON-GUI-TYPES.md section 3.4).
+
+# The N0 pilot set: every member of these types has a generated, ledger-verified test.
+curated:
+  - Gio.File
+  - Gio.ListStore
+  - Gtk.TextBuffer
+  - Gtk.StringList
+  - Gtk.DirectoryList
+  - Gtk.FileDialog
+  - Gdk.Texture
+  - Gdk.Clipboard
+  - Pango.AttrList
+  - Pango.FontDescription
+
+# Types bound beyond the closure of what the Gtk API mentions.
+roots:
+  - Gio.Settings
+  - Gio.File
+  - Gio.FileInfo
+  - Gio.ListStore
+  - Gio.Menu
+  - Gio.MenuItem
+  - Gio.SimpleAction
+  - Gio.SimpleActionGroup
+  - GLib.Uri
+  - GLib.KeyFile
+  - GLib.Bytes
+  - GLib.DateTime
+  - GLib.TimeZone
+
+# Never bound: the JS runtime owns timers and the main loop (PLAN rule 6), and the rest is GLib/GObject
+# machinery with no JS use.
+exclude:
+  - GLib.MainContext
+  - GLib.MainLoop
+  - GLib.Source
+  - GLib.Thread
+  - GLib.ThreadPool
+  - GLib.Mutex
+  - GLib.RecMutex
+  - GLib.RWLock
+  - GLib.Cond
+  - GLib.Private
+  - GLib.Timer
+  - GLib.IOChannel
+  - GLib.Pid
+  - GObject.Closure
+  - GObject.TypeModule
+  - GObject.TypePlugin
+  - GObject.Binding
+  - GObject.BindingGroup
+  - GObject.SignalGroup
+  - GObject.WeakRef
+  - GObject.ParamSpec
+
+# VALUE mutator exceptions the name and `const` rules cannot decide. `hide` lists methods to hide,
+# `keep` methods to keep, by qualified type name. Filled from the `undecided` section of the report.
+hide:
+  Gtk.ExpressionWatch: [unwatch]
+  Pango.Matrix: [concat]
+keep:
+  GLib.Tree: [nnodes]
+  Gio.SettingsSchema: [list_children, list_keys]

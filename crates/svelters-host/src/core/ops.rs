@@ -94,7 +94,7 @@ impl Core {
     /// The kind of a live handle; an error that says why for a dead one.
     pub(crate) fn kind_of(&self, h: svl_handle) -> Result<svl_id, String> {
         let st = self.st.borrow();
-        if let Some(k) = st.handles.get(&h) {
+        if let Some(k) = st.handles.get(&h).or_else(|| st.boxed.get(&h)) {
             return Ok(*k);
         }
         Err(match st.dead.why.get(&h) {
@@ -107,7 +107,7 @@ impl Core {
     /// ops treat that as a no-op), an error for a handle the host never issued.
     pub(crate) fn live_kind(&self, h: svl_handle) -> Result<Option<svl_id>, String> {
         let st = self.st.borrow();
-        if let Some(k) = st.handles.get(&h) {
+        if let Some(k) = st.handles.get(&h).or_else(|| st.boxed.get(&h)) {
             return Ok(Some(*k));
         }
         if st.dead.why.contains_key(&h) {
@@ -539,7 +539,7 @@ impl Core {
 
     /// A method with OUT / INOUT parameters answers `LIST [ret, out...]`, outs in parameter order.
     /// JS sees one object: `ret` (unless the method is void) and one key per out parameter.
-    fn decode_outs<W: JsWriter>(&self, w: &W, mname: &str, k: svl_id, d: &MemberDesc, v: &Value) -> Result<W::V, OpError> {
+    pub(super) fn decode_outs<W: JsWriter>(&self, w: &W, mname: &str, k: svl_id, d: &MemberDesc, v: &Value) -> Result<W::V, OpError> {
         let outs: Vec<(usize, &SlotDesc)> = d.params.iter().filter(|p| p.has(SVL_D_OUT | SVL_D_INOUT)).enumerate().collect();
         let items = match v {
             Value::List(items) if items.len() == outs.len() + 1 => items,
@@ -599,7 +599,7 @@ impl Core {
         }
     }
 
-    fn decode_result<W: JsWriter>(&self, w: &W, v: &Value) -> Result<W::V, OpError> {
+    pub(super) fn decode_result<W: JsWriter>(&self, w: &W, v: &Value) -> Result<W::V, OpError> {
         self.adopt_handles(v);
         convert::decode(w, v, self).map_err(|m| match m.strip_prefix("RangeError: ") {
             Some(rest) => OpError {
@@ -646,12 +646,14 @@ impl Core {
 
     /// A boxed handle reached JS: track it so release is idempotent.
     pub(crate) fn note_boxed(&self, h: svl_handle) {
-        self.st.borrow_mut().boxed.insert(h);
+        // A VALUE handle answers its kind in `handle_info` (0 for opaque values).
+        let kind = self.backend.handle_info(h).map(|i| i.kind).unwrap_or(0);
+        self.st.borrow_mut().boxed.insert(h, kind);
     }
 
     /// Explicit release (`dispose()`): immediately, once. A second call is a no-op.
     pub(crate) fn release_boxed(&self, h: svl_handle) {
-        let live = self.st.borrow_mut().boxed.remove(&h);
+        let live = self.st.borrow_mut().boxed.remove(&h).is_some();
         if live {
             self.backend.destroy(h);
         }
@@ -660,7 +662,7 @@ impl Core {
     /// GC release: only records the handle. Never calls the backend (may run mid-conversion).
     pub(crate) fn queue_release(&self, h: svl_handle) {
         if let Ok(mut st) = self.st.try_borrow_mut() {
-            if st.boxed.contains(&h) {
+            if st.boxed.contains_key(&h) {
                 st.release_queue.push(h);
             }
         }

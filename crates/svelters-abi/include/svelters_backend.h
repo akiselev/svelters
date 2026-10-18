@@ -1,4 +1,4 @@
-/* svelters backend ABI, version 3 (draft; additive tail members: 2.1 request_frame, frame; 2.2 set_child_attr, get_child_attr, listen_ex). Source of truth: plans/architecture/backend-abi.md
+/* svelters backend ABI, version 3 (draft; additive tail members: 2.1 request_frame, frame; 2.2 set_child_attr, get_child_attr, listen_ex; 2.5 construct, call_static, SVL_LIFE_SHARED, SVL_T_TYPE). Source of truth: plans/architecture/backend-abi.md
  *
  * v3 = the value model from docs/notes/js-native-serdes.md section 5.1 on top of v2 (timers, handle
  * lifetime). */
@@ -91,6 +91,7 @@ enum {
   SVL_T_DATETIME = 8, /* F64 epoch ms */
   SVL_T_VARIANT = 9,
   SVL_T_TYPED_VARIANT = 10, /* RECORD {signature: string, value}: a variant with an exact GVariant type signature */
+  SVL_T_TYPE = 11,   /* ABI v2.5. STR: a native type name ("Gtk.StringObject", "QObject", "NSURL"); a GType, QMetaType or Class */
   SVL_T_FIRST_BACKEND = 0x10000
 };
 
@@ -112,7 +113,9 @@ enum { /* svl_member_desc.flags */
   SVL_M_THROWS = 1,
   SVL_M_ASYNC = 2,
   SVL_M_SYNC_SAFE = 4,
-  SVL_M_BLOCKING = 8
+  SVL_M_BLOCKING = 8,
+  SVL_M_STATIC = 16, /* ABI v2.5. Reached through call_static only (no receiver handle) */
+  SVL_M_CTOR = 32    /* ABI v2.5. With STATIC: returns a new reference (OWNED/SHARED handle or VALUE) */
 };
 
 typedef struct svl_slot_desc {
@@ -160,6 +163,11 @@ typedef enum svl_name_kind {
   SVL_ATTR = 5 /* ABI v2.2: child attribute, scoped by the parent's kind */
 } svl_name_kind;
 
+/* ABI v2.5: `describe(SVL_KIND, 0, kind)` answers the kind itself: `name` is the qualified native name
+ * ("Gio.ListStore"), `ret.type` the id of the nearest bound ancestor kind (0 at the root), and
+ * n_params == 0. The host reads it to give JS the type chain of a handle (reflected kinds have no
+ * generated name table). */
+
 /* ABI v2.2: listen_ex flags, and where they ride back in the signal id of post_event/call_sync. */
 enum { SVL_LISTEN_AFTER = 1, SVL_LISTEN_CAPTURE = 2 };
 
@@ -192,7 +200,11 @@ typedef enum svl_lifetime {
   SVL_LIFE_OWNED = 1,
   SVL_LIFE_TOPLEVEL = 2,
   SVL_LIFE_BORROWED = 3,
-  SVL_LIFE_VALUE = 4
+  SVL_LIFE_VALUE = 4,
+  /* ABI v2.5. A strong reference to a refcounted object outside the widget tree: one handle per object,
+   * kept alive by the backend until `destroy` (which drops only our reference, never disposes or closes
+   * the object). The host may call `destroy` when the JS wrapper is garbage collected. */
+  SVL_LIFE_SHARED = 5
 } svl_lifetime;
 
 /* Why a handle died; the `reason` of host->on_destroyed. */
@@ -295,6 +307,16 @@ typedef struct svl_backend {
      SVL_STR (or SVL_NULL to clear). Returns >= 0 on success; SVL_STYLE_TARGET returns the dialect
      (SVL_STYLE_TARGET_CSS / _QSS / _NONE). Payload formats: plans/architecture/backend-abi.md. */
   int (*style)(void *self, uint32_t op, svl_handle h, const svl_value *v);
+
+  /* ABI v2.5 (both may be NULL). `construct` creates an instance of `kind` with construct-time
+   * properties (`props[i]` is a SVL_PROP id of `kind`, `values[i]` its value): GTK uses
+   * g_object_new_with_properties, so construct-only properties work. `create(kind)` is `construct`
+   * with n == 0. The new handle is written to `out` as a SVL_HANDLE (or SVL_BOXED for a VALUE kind).
+   * `call_static` calls a static function or constructor function (SVL_M_STATIC / SVL_M_CTOR) of
+   * `kind`; `method` is a SVL_METHOD id of `kind`. Both return < 0 on failure with last_error set (and
+   * possibly an SVL_ERROR in `out`). */
+  int (*construct)(void *self, svl_id kind, const svl_id *props, const svl_value *values, size_t n, svl_value *out);
+  int (*call_static)(void *self, svl_id kind, svl_id method, const svl_value *args, size_t n, svl_value *out);
 } svl_backend;
 
 /* Values written to `out` by a backend stay valid until the backend's next call. A backend returning an

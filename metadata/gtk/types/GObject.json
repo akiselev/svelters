@@ -1,0 +1,354 @@
+{
+ "namespace": "GObject",
+ "schema": "svelters-types/v1",
+ "toolkit": "gtk",
+ "types": {
+  "InitiallyUnowned": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "gtype": "GInitiallyUnowned",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": [],
+   "name": "InitiallyUnowned",
+   "ns": "GObject",
+   "parent": "GObject.Object",
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "GObject.InitiallyUnowned",
+   "refs": [],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "Object": {
+   "abstract": false,
+   "blocked": {
+    "bind_property_with_closures": "unbound:GObject.Closure",
+    "compat_control": "gpointer",
+    "interface_find_property": "type:unknown:GObject.TypeInterface",
+    "interface_install_property": "type:unknown:GObject.TypeInterface",
+    "interface_list_properties": "type:unknown:GObject.TypeInterface",
+    "signal:notify": "fundamental"
+   },
+   "builder": false,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "gtype": "GObject",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": [],
+   "name": "Object",
+   "ns": "GObject",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "GObject.Object",
+   "refs": [],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "Value": {
+   "abstract": false,
+   "blocked": {
+    "dup_variant": "variant",
+    "get_boxed": "gpointer",
+    "get_param": "fundamental",
+    "get_pointer": "gpointer",
+    "get_variant": "variant",
+    "init": "variant",
+    "init_from_instance": "type:needs-override:GObject.TypeInstance",
+    "peek_pointer": "gpointer",
+    "reset": "variant",
+    "set_boxed": "gpointer",
+    "set_instance": "gpointer",
+    "set_param": "fundamental",
+    "set_pointer": "gpointer",
+    "set_static_boxed": "gpointer",
+    "set_variant": "variant",
+    "take_boxed": "gpointer",
+    "take_variant": "variant",
+    "transform": "variant"
+   },
+   "builder": false,
+   "category": "value",
+   "constructors": [],
+   "curated": false,
+   "gtype": "GValue",
+   "hidden": [
+    "set_boolean",
+    "set_double",
+    "set_enum",
+    "set_flags",
+    "set_float",
+    "set_gtype",
+    "set_int",
+    "set_int64",
+    "set_interned_string",
+    "set_long",
+    "set_object",
+    "set_schar",
+    "set_static_string",
+    "set_string",
+    "set_uchar",
+    "set_uint",
+    "set_uint64",
+    "set_ulong",
+    "steal_string",
+    "take_string",
+    "unset"
+   ],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "dupObject",
+     "name": "dup_object",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "GObject.Object"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "dupString",
+     "name": "dup_string",
+     "params": [],
+     "ret": {
+      "k": "str"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "fitsPointer",
+     "name": "fits_pointer",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "getBoolean",
+     "name": "get_boolean",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "getDouble",
+     "name": "get_double",
+     "params": [],
+     "ret": {
+      "k": "float"
+     }
+    },
+    {
+     "js": "getEnum",
+     "name": "get_enum",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     }
+    },
+    {
+     "js": "getFlags",
+     "name": "get_flags",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "guint"
+     }
+    },
+    {
+     "js": "getFloat",
+     "name": "get_float",
+     "params": [],
+     "ret": {
+      "k": "float"
+     }
+    },
+    {
+     "js": "getGtype",
+     "name": "get_gtype",
+     "params": [],
+     "ret": {
+      "k": "gtype"
+     },
+     "since": "2.12"
+    },
+    {
+     "js": "getInt",
+     "name": "get_int",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     }
+    },
+    {
+     "js": "getInt64",
+     "name": "get_int64",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint64"
+     }
+    },
+    {
+     "js": "getLong",
+     "name": "get_long",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "glong"
+     }
+    },
+    {
+     "js": "getObject",
+     "name": "get_object",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "GObject.Object"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "getSchar",
+     "name": "get_schar",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint8"
+     },
+     "since": "2.32"
+    },
+    {
+     "js": "getString",
+     "name": "get_string",
+     "params": [],
+     "ret": {
+      "k": "str"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "getUchar",
+     "name": "get_uchar",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "guint8"
+     }
+    },
+    {
+     "js": "getUint",
+     "name": "get_uint",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "guint"
+     }
+    },
+    {
+     "js": "getUint64",
+     "name": "get_uint64",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "guint64"
+     }
+    },
+    {
+     "js": "getUlong",
+     "name": "get_ulong",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gulong"
+     }
+    }
+   ],
+   "name": "Value",
+   "ns": "GObject",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "GObject.Value",
+   "refs": [
+    "GObject.Object"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [
+    {
+     "js": "typeCompatible",
+     "name": "type_compatible",
+     "params": [
+      {
+       "js": "srcType",
+       "name": "src_type",
+       "type": {
+        "k": "gtype"
+       }
+      },
+      {
+       "js": "destType",
+       "name": "dest_type",
+       "type": {
+        "k": "gtype"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "typeTransformable",
+     "name": "type_transformable",
+     "params": [
+      {
+       "js": "srcType",
+       "name": "src_type",
+       "type": {
+        "k": "gtype"
+       }
+      },
+      {
+       "js": "destType",
+       "name": "dest_type",
+       "type": {
+        "k": "gtype"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     }
+    }
+   ],
+   "undecided": []
+  }
+ },
+ "version": "2.0"
+}
