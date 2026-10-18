@@ -32,6 +32,10 @@ VALUE_TY = {"bool": "Bool", "i32": "I32", "u32": "U32", "i64": "I64", "u64": "U6
             "string": "Str", "variant": "Variant"}
 F_READ, F_WRITE, F_CONSTRUCT, F_CONSTRUCT_ONLY, F_EXPLICIT_NOTIFY, F_VIRTUAL, F_VIA = 1, 2, 4, 8, 16, 32, 64
 HANDLER_RESULT = {"none": 0, "bool_stop": 1, "value": 2}
+# The oldest GTK the backend links and runs against (docs/notes/fg1-gtk-compat.md). Kinds and
+# properties added after it carry their GIR `since` in the tables, are resolved at run time
+# (no link-time reference to their symbols) and are refused with a clear error on older GTK.
+MIN_GTK = (4, 14)
 
 
 def rs(s: str) -> str:
@@ -50,6 +54,24 @@ def is_label_virtual(p: dict) -> bool:
 def value_ty(ref: str) -> str:
     head = ref.split("<")[0]
     return VALUE_TY.get(ref) or {"enum": "Enum", "flags": "Flags", "object": "Object", "boxed": "Boxed"}.get(head, "Other")
+
+
+def _ver(v: str | None) -> tuple[int, int] | None:
+    if not v:
+        return None
+    a, b = (v.split(".") + ["0"])[:2]
+    return int(a), int(b)
+
+
+def needs(*recs: dict | None) -> tuple[int, int] | None:
+    """The newest GIR `since` among `recs` (a kind, a member) when it is newer than MIN_GTK, else None."""
+    vs = [v for r in recs if r for v in [_ver(r.get("since") or (r.get("availability") or {}).get("since"))] if v]
+    top = max(vs, default=None)
+    return top if top and top > MIN_GTK else None
+
+
+def since_lit(v: tuple[int, int] | None) -> str:
+    return f"({v[0]}, {v[1]})" if v else "(0, 0)"
 
 
 def gir_name(doc: dict) -> str:
@@ -141,6 +163,8 @@ pub struct KindInfo {
     pub is_abstract: bool,
     pub is_interface: bool,
     pub default_slot: &'static str,
+    /// GTK version the kind needs when newer than the build minimum (`compat::MIN`), else (0, 0).
+    pub since: (u16, u16),
 }
 
 pub struct PropInfo {
@@ -153,6 +177,8 @@ pub struct PropInfo {
     pub echo: &'static [&'static str],
     pub via: &'static str,
     pub target: &'static str,
+    /// GTK version the property needs when newer than the build minimum (`compat::MIN`), else (0, 0).
+    pub since: (u16, u16),
 }
 
 pub struct SignalInfo {
@@ -207,7 +233,7 @@ pub struct AttrInfo {
         slot = d.get("children", {}).get("default_slot") or ""
         o.append(f"    KindInfo {{ name: {rs(gir_name(d))}, tag: {rs(tag)}, gtype: {rs(d['native']['gtype'])}, parent: {parent}, "
                  f"ifaces: &[{', '.join(map(str, ifaces))}], is_abstract: {str(bool(d['abstract'])).lower()}, "
-                 f"is_interface: {str(d['kind'] == 'interface').lower()}, default_slot: {rs(slot)} }},\n")
+                 f"is_interface: {str(d['kind'] == 'interface').lower()}, default_slot: {rs(slot)}, since: {since_lit(needs(d))} }},\n")
     o.append("];\n")
 
     o.append(f"\npub static PROPS: [PropInfo; {len(m.props)}] = [\n")
@@ -219,8 +245,9 @@ pub struct AttrInfo {
               | (F_VIRTUAL if is_label_virtual(p) else 0) | (F_VIA if is_via(p) else 0))
         echo = ", ".join(rs(e) for e in p.get("echo_suppress", []))
         via, target = ((p["virtual"]["via"], p["virtual"]["property"]) if is_via(p) else ("", ""))
+        owner = m.kinds[k - 1]
         o.append(f"    PropInfo {{ kind: {k}, name: {rs(p['name'])}, js_name: {rs(p['js_name'])}, ty: ValueTy::{value_ty(p['type']['ref'])}, "
-                 f"gtype: {rs(p['type'].get('gtype', ''))}, flags: {fl}, echo: &[{echo}], via: {rs(via)}, target: {rs(target)} }},\n")
+                 f"gtype: {rs(p['type'].get('gtype', ''))}, flags: {fl}, echo: &[{echo}], via: {rs(via)}, target: {rs(target)}, since: {since_lit(needs(owner, p))} }},\n")
     o.append("];\n")
 
     o.append(f"\npub static SIGNALS: [SignalInfo; {len(m.signals)}] = [\n")
@@ -1078,6 +1105,11 @@ def gen_verify(m: Model) -> tuple[str, list[dict], list[str]]:
         except (Untestable, ValueError, KeyError) as e:
             f.errors.append(f"{fact_id}: {e}")
             return
+        v = needs(d, record)
+        if v:
+            # Kinds and members newer than the build minimum: skipped (with a message) on older GTK.
+            skip = f"() {{\n    if crate::testing::skip_below_gtk({v[0]}, {v[1]}) {{\n        return;\n    }}\n    on_gtk("
+            fns = [(n, src.replace("() {\n    on_gtk(", skip, 1)) for n, src in fns]
         f.add(fact_id, section, gir_name(d), name, record, fns)
 
     for k, s, d in m.slots:
@@ -1258,10 +1290,15 @@ def ts_key(name: str) -> str:
 def gen_types(m: Model) -> str:
     """GTypes register lazily; call each concrete class's get_type before name lookup."""
     ks = [d for d in m.kinds if d["kind"] == "object" and not d["abstract"] and d["native"].get("get_type")]
-    o = [HEADER, "\nunsafe extern \"C\" {\n"]
-    o += [f"    fn {d['native']['get_type']}() -> usize;\n" for d in ks]
-    o.append("}\n\n/// Register the GType named `gtype` (no-op for unknown names). Must run after `gtk::init`.\npub fn ensure_registered(gtype: &str) {\n    match gtype {\n")
-    o += [f"        {rs(d['native']['gtype'])} => {{ unsafe {{ {d['native']['get_type']}() }}; }}\n" for d in ks]
+    o = [HEADER, f"//\n// Kinds up to GTK {MIN_GTK[0]}.{MIN_GTK[1]} (the build minimum) link their get_type; newer ones are looked up\n"
+         "// at run time, so the backend links against the minimum GTK.\n\nunsafe extern \"C\" {\n"]
+    o += [f"    fn {d['native']['get_type']}() -> usize;\n" for d in ks if not needs(d)]
+    o.append("}\n\n/// Register the GType named `gtype` (no-op for unknown names, and for kinds the running GTK lacks).\n"
+             "/// Must run after `gtk::init`.\npub fn ensure_registered(gtype: &str) {\n    match gtype {\n")
+    for d in ks:
+        g = d['native']['get_type']
+        call = f"crate::compat::call_get_type(c{rs(g)})" if needs(d) else f"unsafe {{ {g}() }}"
+        o.append(f"        {rs(d['native']['gtype'])} => {{ {call}; }}\n")
     o.append("        _ => {}\n    }\n}\n")
     return "".join(o)
 

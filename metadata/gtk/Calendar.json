@@ -764,9 +764,11 @@
         "set": "gtk_calendar_set_date"
       },
       "annotated": {
-        "fields": [],
+        "fields": [
+          "since"
+        ],
         "origin": "manual",
-        "provenance": "GtkCalendar:date, GDateTime (Gtk 4.14 docs); ABI v3 date value, round-trip test"
+        "provenance": "GtkCalendar:date, GDateTime (Gtk 4.14 docs); ABI v3 date value, round-trip test; the property is GTK 4.16 (absent at run time on 4.14, GIR has no version)"
       },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Calendar:prop:date",
@@ -790,6 +792,7 @@
         "origin": "runtime",
         "owner": "GtkCalendar"
       },
+      "since": "4.16",
       "type": {
         "gtype": "GDateTime",
         "native": null,

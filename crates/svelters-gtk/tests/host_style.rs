@@ -55,6 +55,11 @@ fn classes(b: &GtkBackend, h: u64) -> Vec<String> {
 
 #[test]
 fn styles_from_svelte_reach_gtk_widgets_and_follow_tokens_and_scheme() {
+    // Tokens are CSS custom properties (GTK 4.16); the scheme switch uses `@media
+    // (prefers-color-scheme)` (GTK 4.20).
+    if svelters_gtk::testing::skip_below_gtk(4, 20) {
+        return;
+    }
     let bundle = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../fixtures/styles/dist/app.js");
     if !bundle.exists() {
         eprintln!("skipped: {} is not built", bundle.display());

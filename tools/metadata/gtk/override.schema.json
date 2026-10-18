@@ -282,6 +282,11 @@
             }
           }
         },
+        "since": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+$",
+          "description": "GTK version that added the property, when the GIR lacks it (GtkCalendar:date). Gates it at run time (crates/svelters-gtk/src/compat.rs)."
+        },
         "provenance": {
           "$ref": "#/$defs/provenance"
         },

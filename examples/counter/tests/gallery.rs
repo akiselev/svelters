@@ -126,6 +126,27 @@ macro_rules! gallery_page {
             run_page($tk, $page, &[$($class),*], &[$(($hex, $min)),*]);
         }
     };
+    // A page that uses kinds or props newer than the oldest supported GTK: skipped below `needs`.
+    ($name:ident, $tk:literal, $page:literal, [$($class:literal),* $(,)?], needs ($maj:literal, $min_v:literal)) => {
+        #[test]
+        fn $name() {
+            if gtk_below($maj, $min_v) {
+                return;
+            }
+            run_page($tk, $page, &[$($class),*], &[]);
+        }
+    };
+}
+
+/// True (after printing a SKIP line) when the running GTK predates `major.minor`.
+fn gtk_below(major: u16, minor: u16) -> bool {
+    #[cfg(feature = "gtk")]
+    return svelters_gtk::testing::skip_below_gtk(major, minor);
+    #[cfg(not(feature = "gtk"))]
+    {
+        let _ = (major, minor);
+        false
+    }
 }
 
 // ---- GTK pages (fixtures/gallery-gtk/src/pages) ----
@@ -135,9 +156,9 @@ gallery_page!(gtk_01_widget, "gtk", "01-widget", ["GtkLabel", "GtkButton", "GtkE
 gallery_page!(gtk_05_containers, "gtk", "05-containers", ["GtkCenterBox", "GtkPaned", "GtkFrame", "GtkExpander", "GtkRevealer", "GtkAspectFrame", "GtkOverlay", "GtkWindowHandle", "GtkViewport", "GtkScrolledWindow", "GtkSearchBar"]);
 gallery_page!(gtk_06_layout, "gtk", "06-layout", ["GtkStack", "GtkStackSwitcher", "GtkStackSidebar", "GtkNotebook", "GtkFlowBox", "GtkFlowBoxChild", "GtkListBox", "GtkActionBar", "GtkGrid", "GtkFixed", "GtkOverlay"]);
 gallery_page!(gtk_03_text, "gtk", "03-text", ["GtkEntry", "GtkPasswordEntry", "GtkSearchEntry", "GtkText", "GtkEditableLabel", "GtkLabel", "GtkInscription", "GtkTextView", "GtkShortcutLabel"]);
-gallery_page!(gtk_09_display, "gtk", "09-display", ["GtkImage", "GtkSpinner", "GtkSeparator", "GtkPicture", "GtkDrawingArea", "GtkGraphicsOffload", "GtkCalendar"]);
+gallery_page!(gtk_09_display, "gtk", "09-display", ["GtkImage", "GtkSpinner", "GtkSeparator", "GtkPicture", "GtkDrawingArea", "GtkGraphicsOffload", "GtkCalendar"], needs (4, 16)); // GtkGraphicsOffload:black-background
 gallery_page!(gtk_02_buttons, "gtk", "02-buttons", ["GtkButton", "GtkToggleButton", "GtkCheckButton", "GtkSwitch", "GtkLinkButton", "GtkLockButton", "GtkMenuButton", "GtkPopover", "GtkScaleButton", "GtkVolumeButton"]);
-gallery_page!(gtk_07_bars, "gtk", "07-bars", ["GtkHeaderBar", "GtkWindowControls"]);
+gallery_page!(gtk_07_bars, "gtk", "07-bars", ["GtkHeaderBar", "GtkWindowControls"], needs (4, 18)); // use-native-controls
 gallery_page!(gtk_08_dialogs, "gtk", "08-dialogs", ["GtkMenuButton", "GtkPopover", "GtkEmojiChooser", "GtkAboutDialog"]);
 
 /// G9: toplevels declared in `if` blocks are real windows, transient for the main one and shown;

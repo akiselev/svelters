@@ -333,6 +333,7 @@ impl Inner {
         if k.is_abstract || k.is_interface {
             return Err(format!("{} is not instantiable", k.gtype));
         }
+        crate::compat::require(k.since, &format!("<{}> ({})", k.tag, k.gtype))?;
         crate::generated::types::ensure_registered(k.gtype);
         let t = glib::Type::from_name(k.gtype).ok_or_else(|| format!("GType {} is not registered", k.gtype))?;
         if !t.is_a(glib::Type::OBJECT) {
@@ -697,6 +698,7 @@ impl Inner {
         if p.flags & F_WRITE == 0 {
             return Err(format!("property {} is read-only", p.name));
         }
+        crate::compat::require(p.since, &format!("property {}:{}", KINDS[p.kind as usize - 1].gtype, p.name))?;
         if p.flags & F_VIRTUAL != 0 {
             let text = match v.tag {
                 SVL_NULL => None,
@@ -754,6 +756,7 @@ impl Inner {
         if p.flags & F_READ == 0 {
             return Err(format!("property {} is write-only", p.name));
         }
+        crate::compat::require(p.since, &format!("property {}:{}", KINDS[p.kind as usize - 1].gtype, p.name))?;
         let mut buf = self.out.borrow_mut();
         *buf = StrBuf::default();
         if p.flags & F_VIRTUAL != 0 {
@@ -1062,6 +1065,11 @@ impl Inner {
         let p = PROPS.get((member as usize).checked_sub(1)?)?;
         let k = KINDS.get((kind as usize).checked_sub(1)?)?;
         if !lookup::in_chain(kind, p.kind) {
+            return None;
+        }
+        // A property newer than the running GTK is unavailable (no descriptor), with the reason.
+        if let Err(e) = crate::compat::require(p.since, &format!("property {}:{}", KINDS[p.kind as usize - 1].gtype, p.name)) {
+            self.set_error(e);
             return None;
         }
         let mut table = self.types.borrow_mut();

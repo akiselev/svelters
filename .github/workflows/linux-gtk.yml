@@ -86,25 +86,44 @@ jobs:
             target/m2b/
             target/*.png
 
-  # Ubuntu 24.04 ships GTK 4.14. svelters-gtk does not link against it yet: the generated type
-  # table (crates/svelters-gtk/src/generated/types.rs) calls *_get_type of kinds added after 4.14
-  # (GtkSvg, GtkPopoverBin, GtkTryExpression, GtkAccessibleHyperlink). Informational until the
-  # backend resolves those at run time; see docs/notes/ci1.md.
+  # The oldest supported GTK (docs/notes/fg1-gtk-compat.md): Ubuntu 24.04 ships GTK 4.14. The same
+  # backend build must link and pass here; kinds/members newer than 4.14 are resolved at run time
+  # and their tests print "SKIP: needs GTK x.y".
   gtk-4-14:
     runs-on: ubuntu-24.04
-    timeout-minutes: 40
-    continue-on-error: true
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
-      - name: System packages (GTK 4.14)
+      - name: System packages (GTK 4.14, Xvfb, fonts)
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends libgtk-4-dev libgirepository-2.0-dev gir1.2-gtk-4.0
+          sudo apt-get install -y --no-install-recommends \
+            libgtk-4-dev libgirepository-2.0-dev gir1.2-gtk-4.0 xvfb xauth dbus dbus-x11 \
+            fonts-dejavu-core fonts-noto-core librsvg2-common imagemagick python3-yaml python3-jsonschema python3-pytest
           pkg-config --modversion gtk4
       - name: Rust toolchain (rust-toolchain.toml)
         run: rustup toolchain install --profile minimal && rustc --version
       - uses: Swatinem/rust-cache@v2
         with:
           shared-key: linux-gtk-4-14
-      - name: Build svelters-gtk tests against GTK 4.14
-        run: cargo test --no-run -p svelters-gtk -p counter --no-default-features --features counter/gtk
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-nextest
+
+      - uses: ./.github/actions/setup-pnpm
+
+      - name: Build svelters-compile (needed by pnpm build)
+        run: cargo build -p svelters-compiler --bin svelters-compile
+      - name: Build bundles
+        run: pnpm build
+
+      - name: Build tests against GTK 4.14
+        run: cargo nextest run --no-run -p svelters-gtk -p counter --no-default-features --features counter/gtk
+
+      - name: nextest (GTK 4.14)
+        timeout-minutes: 30
+        run: >
+          xvfb-run -a -s "-screen 0 1920x1080x24" dbus-run-session --
+          cargo nextest run --no-fail-fast --success-output never
+          -p svelters-gtk -p counter --no-default-features --features counter/gtk
+          -E 'not (package(counter) & test(/qt/))'
