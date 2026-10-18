@@ -147,4 +147,4 @@ Both reproduce on the top of the #18042 stack. They are written up but not filed
 - The renderer's O(n) sibling lookups were measured at 86 s for a reverse of 10,000 rows before the P5 fix. After the fix the bare renderer reverses 1000 rows in 46 ms; Svelte's own keyed `reconcile` is still quadratic. See [Lists and snippets](/guides/lists-and-snippets/).
 - `.svelte` files are not yet typechecked against the generated element declarations (`svelte-check` is not installed in the workspace).
 
-Sources: `docs/notes/svelte-feature-survey.md`, `docs/notes/svelte-fork-upstream-bugs.md`, `docs/notes/p5-integration.md`, `docs/notes/styling-gtk-css-qss.md`, `plans/STATUS.md`.
+Sources: `docs/notes/svelte-feature-survey.md`, `docs/notes/svelte-fork-upstream-bugs.md`, `docs/notes/p5-integration.md`, `docs/notes/styling-gtk-css-qss.md`, `STATUS.md`.

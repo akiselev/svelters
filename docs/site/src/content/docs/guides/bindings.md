@@ -4,7 +4,7 @@ description: Two-way binding on native widgets today (component wrappers), echo 
 ---
 
 :::caution[In progress: F1]
-Element `bind:this` and `bind:<prop>` are coming through our Svelte fork. Milestone F1 (`plans/STATUS.md`, state IN PROGRESS) has two phases: phase A adds `bind:this` and a binding hook in the fork; phase B adds the renderer side and binding metadata after P5. Until then, every element `bind:` is a compile error, and this page describes the interim pattern.
+Element `bind:this` and `bind:<prop>` are coming through our Svelte fork. Milestone F1 (`STATUS.md`, state IN PROGRESS) has two phases: phase A adds `bind:this` and a binding hook in the fork; phase B adds the renderer side and binding metadata after P5. Until then, every element `bind:` is a compile error, and this page describes the interim pattern.
 :::
 
 ## What is a compile error today
@@ -105,4 +105,4 @@ What app code can do with the node is limited: the current renderer exposes no `
 
 After the native widget is destroyed, a held node is marked dead; reads and calls on it throw `StaleHandleError(reason)`. This is part of the ownership design, see [Ownership](/concepts/ownership/#abi-v2-and-implementation-state).
 
-Sources: `docs/notes/svelte-feature-survey.md` (section 4), `docs/notes/signals-and-slots-semantics.md` (section 1.6), `docs/notes/p5-integration.md`, `plans/STATUS.md`, `PLAN.md`.
+Sources: `docs/notes/svelte-feature-survey.md` (section 4), `docs/notes/signals-and-slots-semantics.md` (section 1.6), `docs/notes/p5-integration.md`, `STATUS.md`, `PLAN.md`.

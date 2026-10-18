@@ -152,7 +152,7 @@ Written incrementally by the CLI research lane (2026-10-17). Design proposal: `p
 ### Dependency fetching facts
 - The Svelte fork is a vendored tarball `vendor/svelte/svelte-5.57.2-27b7dfb.tgz`, forced workspace-wide by
   an override in `pnpm-workspace.yaml:10`. `vendor/svelte/PIN` says the fork branch is "not pushed" while
-  `plans/STATUS.md` F1 says pushed to akiselev/svelte; either way there is **no published package** an
+  `STATUS.md` F1 says pushed to akiselev/svelte; either way there is **no published package** an
   outside project can depend on. A scaffold outside the repo needs one (npm alias
   `"svelte": "npm:@svelters/svelte@5.57.2-cr.N"` or a tarball URL on a GitHub release) plus a matching
   `overrides`/`pnpm.overrides` so `@sveltejs/vite-plugin-svelte` resolves the same copy.

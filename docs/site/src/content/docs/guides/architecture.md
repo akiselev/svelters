@@ -105,7 +105,7 @@ Generators and ingesters take only metadata JSON, overrides, templates and build
 
 ## Lanes and milestones
 
-Four P lanes ran in parallel once the ABI was agreed, then integrated in P5. State as of `plans/STATUS.md`:
+Four P lanes ran in parallel once the ABI was agreed, then integrated in P5. State as of `STATUS.md`:
 
 | Milestone | State | Evidence |
 | --- | --- | --- |
@@ -139,4 +139,4 @@ Release build, Xvfb, shared 4-core machine, GTK 4.22.4 software GL, Qt 6.11.
 
 The bundle for the counter is 147 KB unminified (36 KB gzip). On a 1000-row list, QuickJS time dominates: the host/ABI layer costs 16 to 18 ms for 11,000 operations. See [Lists and snippets](/guides/lists-and-snippets/).
 
-Sources: `PLAN.md`, `plans/STATUS.md`, `plans/architecture/backend-abi.md`, `docs/notes/custom-renderer-trial.md`, `docs/notes/svelte5-custom-renderer.md`, `docs/notes/p1-js-lane.md`, `docs/notes/p2-host-lane.md`, `docs/notes/p3-gtk-lane.md`, `docs/notes/p4-qt-lane.md`, `docs/notes/p5-integration.md`, `docs/notes/quickjs-jit-cranelift.md`, `docs/notes/node-deno-integration.md`.
+Sources: `PLAN.md`, `STATUS.md`, `plans/architecture/backend-abi.md`, `docs/notes/custom-renderer-trial.md`, `docs/notes/svelte5-custom-renderer.md`, `docs/notes/p1-js-lane.md`, `docs/notes/p2-host-lane.md`, `docs/notes/p3-gtk-lane.md`, `docs/notes/p4-qt-lane.md`, `docs/notes/p5-integration.md`, `docs/notes/quickjs-jit-cranelift.md`, `docs/notes/node-deno-integration.md`.

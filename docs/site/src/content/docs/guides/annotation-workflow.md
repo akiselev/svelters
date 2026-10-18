@@ -27,7 +27,7 @@ The generators are Python during the prototype. They move to Rust in M3 so a pro
 | Qt 6 | PySide typesystem XML | ownership rules (parent ownership, `setCentralWidget` releasing the old child) |
 | Qt 6 | uic behaviour on `.ui` samples | canonical child placement for QMainWindow, QTabWidget, layouts |
 
-Current counts (from `plans/STATUS.md`): GTK 443 kinds ingested, 298 kinds, 1304 properties and 349 signals in the generated tables. Qt 192 classes ingested, 8 elements annotated, 41 generated tests passing.
+Current counts (from `STATUS.md`): GTK 443 kinds ingested, 298 kinds, 1304 properties and 349 signals in the generated tables. Qt 192 classes ingested, 8 elements annotated, 41 generated tests passing.
 
 What no upstream source encodes, and is therefore annotated by hand:
 
