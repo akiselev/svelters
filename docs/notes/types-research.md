@@ -119,3 +119,37 @@ Reading: for Gio/Gdk/Pango/Gsk the generic invoker already covers 60-75% once re
 ## 5. Status
 
 Proposal written: `plans/research/NON-GUI-TYPES.md` (taxonomy, ABI draft: SHARED lifetime + `construct` + `call_static` + `SVL_T_TYPE` + `SVL_M_STATIC/CTOR`, per-toolkit plan, generation, Svelte examples, prior art, phasing N0-N4, open questions). No production code changed. Probe binary for Qt was built in the session scratchpad, not in the repo.
+
+## 6. Follow-up (lead, 2026-10-17): metadata + automation, hand-written core only
+
+Request: no per-type hand bindings. Find each toolkit's machine-readable source of truth, auto-classify into the taxonomy by rules, keep whitelists/overrides small, and draw the boundary: hand-written object-model core per toolkit; everything else generated and calling only that core. (Widget facts belong to the annotation-automation agent, `docs/notes/annotation-automation-research.md`; this lane covers non-GUI types only.)
+
+### 6.1 Sources found on this machine
+
+| Toolkit | Source | Where | What it gives |
+|---|---|---|---|
+| GTK | GIR (+ typelib at runtime) | `/usr/share/gir-1.0`, `/usr/lib/girepository-1.0` | everything: GType, fundamental + ref/unref funcs, boxed get-type, record fields + `private`, `transfer`, `caller-allocates`, `scope`, `glib:finish-func`, nullable, error domains |
+| Qt | qdoc indexes | `/usr/share/doc/qt6/<mod>/<mod>.index` | classes, bases, every public function with parameter/return spellings, properties, enums, status (deprecated), `static` |
+| Qt | PySide6 typesystem XML | `/usr/share/PySide6/typesystems/*.xml` (101 files) | value-type 455 / object-type 1176 / primitive-type 54 / container-type 9; 34 class rejections; removed members; 483 ownership modifications (parent/define-ownership/reference-count) |
+| Qt | moc metatypes JSON | `/usr/lib/qt6/metatypes/qt6*_metatypes.json` | 2764 Q_OBJECT + 590 Q_GADGET classes with props/signals/slots/invokables (moc --output-json, shipped) |
+| Qt | PyQt6 sip | `site-packages/PyQt6/bindings/Qt*/*.sip` (1002 classes) | `/Transfer/` 239, `/TransferThis/` 304, `/TransferBack/` 45, `/Factory/` 69, `/KeepReference/` 71, `/In/` 26 / `/Out/` 21 (sip treats non-const `T*` of basic types as out by default) |
+| Qt | libclang over headers | `/usr/include/qt6`, `python-clang` 21 installed | nested public-field structs qdoc does not describe as records (QFont::Tag, QTextOption::Tab, QCalendar::YearMonthDay, QTextLayout::FormatRange) |
+| Apple | objc2 header-translator output | `~/.cargo/registry/src/*/objc2-foundation-0.3.2`, `objc2-app-kit-0.3.2` (MIT/Apache, readable on Linux) | super chains, `thread_kind = MainThreadOnly`, Send/Sync, NSCopying, property setters ("Setter for"), safe vs unsafe methods, DynBlock params, `#[repr(C)]` structs; plus `translation-config.toml` skip lists |
+| Apple | SDK headers via libclang | MAC1 `tools/metadata/appkit/ingest.py` (on a Mac) | nullability, generics, availability, NS_SWIFT_ASYNC |
+| WinUI | winmd | `target/winsdk/**.winmd` (fetch.py) + `windows-default` crate (Windows.winmd) through `winmd-tool` | every type: struct/enum/runtime class/interface, activatable + statics + composable factories, IAsync*, IVector*, IReference, Exclusive/Default interfaces |
+
+### 6.2 Auto-classifier prototypes (no hand lists except record shapes / exclusion regexes)
+
+- `scripts/types_gir_classify.py` (GTK stack, GIR): 26 record, 182 value, 326 object, 24 model, 3 async-infra, 8 transient, 97 needs-override, 244 enum, 104 flags, 159 callback (all namespaces). Members of bindable types: **5990, 96% auto** (Gio 97%, Gdk 97%, Gsk 94%, Pango 94%, Graphene 100%, Gtk 97%, GLib 90%, GObject 83%); 765 excluded automatically (deprecated/non-introspectable 390, ref/unref/copy/free/qdata 225 = core, `_finish` 150 folded). Blockers: needs-override types 75, gpointer 62, transient (TextIter) 36, non-string hash tables 17.
+  - Scope policy "closure of types reachable from the Gtk API": GLib 12, GObject 6, Gio 40, Gdk 28, Gsk 10, Pango 19, Graphene 16 bindable types (of 36/34/154/62/53/26/17). In scope: 26 needs-override types; 28 distinct types block in-scope members (TextIter 35 by far; then OutputVector 4, RoundedRect 4, Pango Attr* subtypes).
+  - Mutability is **not** derivable from C: 42 value types take `const self` everywhere, 140 do not, including immutable GBytes and GskRenderNode. So VALUE handles expose all generated methods; "snapshot" comes only from transfer (copy-boxed copies, refcounted boxed shares).
+- `scripts/types_qt_classify.py` (QtCore/QtGui/QtWidgets, qdoc + PySide + moc): 17 record (shape whitelist), 116 value, 115 object, 12 model, 8 statics-only, 33 unique (non-QObject C++ objects with a ctor), 24 item, 3 async, 82 transient (events, paint, style options), **8 needs-override**, 8 unclassified, 221 excluded by one machinery regex (templates, smart pointers, iterators, locks, JNI/Android/Mac/Vulkan/RHI/OpenGL, accessibility). Members: **7560, 92% auto** (QtCore 89%, QtGui 95%, QtWidgets non-widgets 92%); 1559 excluded automatically (special members 431, operators 679, removed-by-PySide 281, deprecated 90, templates/platform 69). Blockers: unknown spellings 174 (90 distinct, mostly nested structs and std types), out-pointers 121 (sip default rule settles them), transient 83 (callback-only types), QBindable 39 (skip).
+- `scripts/types_objc2_classify.py` (Foundation + AppKit via objc2): Foundation 190 object / 82 value / 8 record; AppKit 190 object / 29 value / 1 record / 78 widget. 491 non-widget classes, 49 MainThreadOnly, 88 Send. Methods 9697, **82% objc2-safe** (Foundation 79%, AppKit 86%); 226 with block params, 113 completion-handler shaped. Rule misses spotted: NSColor (one class-property setter) lands in object; NSURLSession*Task in value. Overrides needed in the dozens.
+- WinUI: rules only (no prototype run; winmd-tool needs a windows-bindgen build). WinRT metadata is the most explicit of the four: struct → record; runtime class → object (SHARED, COM); `IAsyncOperation*`/`IAsyncAction*` → async; `IVector`/`IObservableVector`/`IMap` → model; `IVectorView`/`IIterable` → list; `IReference<T>` → nullable T; activatable/statics/composable attributes → construct/call_static. Expect few overrides beyond DependencyObject-specific rules.
+
+### 6.3 Core / generated boundary (sizing from existing code)
+
+Existing core-like code: GTK `convert.rs` 944 + `gi.rs` 778 + identity/lifetime parts of `backend.rs` (~300) + `types.rs` 193 ≈ 2.2k lines; Qt `serdes.hpp.in` 974 + handle/identity parts of `backend.cpp.in` (~350). Estimates for the full non-GUI core: GTK ~3.0k (≈2.2k exist), Qt ~2.2k (≈1.3k exist), WinUI ~2.0k, Apple ~2.5k. Details in the proposal §2.
+
+### 6.4 Status
+Proposal rewritten around the core/generated boundary and the metadata pipeline: `plans/research/NON-GUI-TYPES.md` (§2 core API per toolkit with sizes, §3 sources/rules/measured coverage/override counts/pipeline). Classifier prototypes: `types_gir_classify.py`, `types_qt_classify.py`, `types_objc2_classify.py`.
