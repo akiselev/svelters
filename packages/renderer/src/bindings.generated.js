@@ -352,10 +352,15 @@ export const BINDINGS = {
     text: { prop: "text", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["gtk"] },
   },
   "secure-text-field": {
+    "double-value": { prop: "double-value", signal: "control-text-did-change", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    "float-value": { prop: "float-value", signal: "control-text-did-change", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    "int-value": { prop: "int-value", signal: "control-text-did-change", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    "integer-value": { prop: "integer-value", signal: "control-text-did-change", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
     "string-value": { prop: "string-value", signal: "control-text-did-change", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["appkit"] },
   },
   slider: {
     "double-value": { prop: "double-value", signal: "action", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    "float-value": { prop: "float-value", signal: "action", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
     value: { prop: "value", signal: "value-changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt", "winui"] },
   },
   "spin-box": {
@@ -413,6 +418,10 @@ export const BINDINGS = {
     "plain-text": { prop: "plain-text", signal: "text-changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["qt"] },
   },
   "text-field": {
+    "double-value": { prop: "double-value", signal: "control-text-did-change", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    "float-value": { prop: "float-value", signal: "control-text-did-change", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    "int-value": { prop: "int-value", signal: "control-text-did-change", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    "integer-value": { prop: "integer-value", signal: "control-text-did-change", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
     "string-value": { prop: "string-value", signal: "control-text-did-change", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["appkit"] },
   },
   "text-view": {

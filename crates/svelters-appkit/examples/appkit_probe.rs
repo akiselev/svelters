@@ -232,12 +232,15 @@ mod mac {
         }
     }
 
+    /// Probes one prop: the default from a fresh subject, then each candidate that differs from it on its
+    /// own fresh subject until one round-trips exactly (`attempts` counts them). Without an exact one, the
+    /// first attempt is reported.
     fn probe_prop(h: &'static Harness, mtm: MainThreadMarker, subject: &str, p: &J, listen: &[&str]) -> J {
         let name = p["name"].as_str().unwrap_or_default();
-        let key = p["key"].as_str().unwrap_or_default();
         let o = h.create(subject);
-        let obj = h.backend.object(o).expect("live subject");
         let default = h.get(o, name);
+        h.destroy(o);
+        h.pump(2);
         let mut rec = serde_json::Map::new();
         rec.insert("default".into(), match &default {
             Ok(v) => out(v),
@@ -253,17 +256,49 @@ mod mac {
                 Some((v, e, s))
             })
             .collect();
-        let Some((v, expect, raw)) = cands
-            .iter()
-            .find(|(_, e, _)| default.as_ref().map_or(true, |d| !equal(d, e)))
-            .or(cands.last())
-            .cloned()
-        else {
-            h.destroy(o);
-            rec.insert("outcome".into(), json!("no_sample"));
-            return J::Object(rec);
-        };
-        rec.insert("sample".into(), raw.clone());
+        let mut tries: Vec<&(Value, Value, &J)> = cands.iter().filter(|(_, e, _)| default.as_ref().map_or(true, |d| !equal(d, e))).collect();
+        if tries.is_empty() {
+            match cands.last() {
+                Some(c) => tries.push(c),
+                None => {
+                    rec.insert("outcome".into(), json!("no_sample"));
+                    return J::Object(rec);
+                }
+            }
+        }
+        let mut first: Option<serde_json::Map<String, J>> = None;
+        for (n, (v, expect, raw)) in tries.iter().enumerate() {
+            let mut a = attempt(h, mtm, subject, p, listen, &default, v, expect);
+            a.insert("sample".into(), (*raw).clone());
+            a.insert("attempts".into(), json!(n + 1));
+            if a["outcome"] == "exact" {
+                rec.extend(a);
+                return J::Object(rec);
+            }
+            first.get_or_insert(a);
+        }
+        let mut a = first.unwrap();
+        a.insert("attempts".into(), json!(tries.len()));
+        rec.extend(a);
+        J::Object(rec)
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn attempt(
+        h: &'static Harness,
+        mtm: MainThreadMarker,
+        subject: &str,
+        p: &J,
+        listen: &[&str],
+        default: &Result<Value, String>,
+        v: &Value,
+        expect: &Value,
+    ) -> serde_json::Map<String, J> {
+        let name = p["name"].as_str().unwrap_or_default();
+        let key = p["key"].as_str().unwrap_or_default();
+        let mut rec = serde_json::Map::new();
+        let o = h.create(subject);
+        let obj = h.backend.object(o).expect("live subject");
         for s in listen {
             let _ = h.listen(o, s, true);
         }
@@ -283,7 +318,8 @@ mod mac {
                 let _: () = msg_send![&*obj, removeObserver: &*observer, forKeyPath: &*nskey];
             });
         }
-        let events: Vec<String> = h.take_events().into_iter().filter(|e| e.0 == o).map(|e| e.1).collect::<std::collections::BTreeSet<_>>().into_iter().collect();
+        let events: Vec<String> =
+            h.take_events().into_iter().filter(|e| e.0 == o).map(|e| e.1).collect::<std::collections::BTreeSet<_>>().into_iter().collect();
         for s in listen {
             let _ = h.listen(o, s, false);
         }
@@ -296,7 +332,7 @@ mod mac {
                 rec.insert("error".into(), json!(e));
                 "unreadable"
             }
-            (Ok(()), Ok(r)) if equal(r, &expect) => "exact",
+            (Ok(()), Ok(r)) if equal(r, expect) => "exact",
             (Ok(()), Ok(r)) if default.as_ref().is_ok_and(|d| equal(d, r)) => "ignored",
             _ => "normalized",
         };
@@ -309,7 +345,7 @@ mod mac {
         drop(obj);
         h.destroy(o);
         h.pump(2);
-        J::Object(rec)
+        rec
     }
 }
 

@@ -229,6 +229,11 @@ impl Harness {
         oref(&self.native(h))
     }
 
+    /// Whether the native object answers `selector` (members newer than the running macOS do not).
+    pub fn responds(&self, h: u64, selector: &str) -> bool {
+        svelters_apple::objc::bridge::responds(&self.native(h), svelters_apple::objc::bridge::sel(selector))
+    }
+
     pub fn is_kind(&self, h: u64, class: &str) -> bool {
         let cls = svelters_apple::objc::bridge::class_named(class).expect("class");
         svelters_apple::objc::bridge::is_kind(&self.native(h), cls)

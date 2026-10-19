@@ -18,7 +18,7 @@
    14,
    14
   ],
-  "props_annotated": 3,
+  "props_annotated": 7,
   "signal_results": 0,
   "signals": [
    0,
@@ -29,11 +29,11 @@
   "unexposed": null,
   "verified": [
    0,
-   6
+   10
   ],
   "verified_inferred": [
    0,
-   0
+   4
   ]
  },
  {
@@ -55,7 +55,7 @@
    27,
    27
   ],
-  "props_annotated": 5,
+  "props_annotated": 19,
   "signal_results": 0,
   "signals": [
    1,
@@ -66,11 +66,11 @@
   "unexposed": null,
   "verified": [
    0,
-   10
+   24
   ],
   "verified_inferred": [
    0,
-   0
+   14
   ]
  },
  {
@@ -92,7 +92,7 @@
    23,
    24
   ],
-  "props_annotated": 2,
+  "props_annotated": 12,
   "signal_results": 0,
   "signals": [
    1,
@@ -103,11 +103,11 @@
   "unexposed": null,
   "verified": [
    0,
-   3
+   13
   ],
   "verified_inferred": [
    0,
-   0
+   10
   ]
  },
  {
@@ -129,7 +129,7 @@
    9,
    9
   ],
-  "props_annotated": 4,
+  "props_annotated": 8,
   "signal_results": 0,
   "signals": [
    0,
@@ -140,11 +140,11 @@
   "unexposed": null,
   "verified": [
    0,
-   8
+   12
   ],
   "verified_inferred": [
    0,
-   0
+   4
   ]
  },
  {
@@ -166,7 +166,7 @@
    0,
    0
   ],
-  "props_annotated": 1,
+  "props_annotated": 5,
   "signal_results": 0,
   "signals": [
    0,
@@ -177,16 +177,16 @@
   "unexposed": null,
   "verified": [
    0,
-   3
+   7
   ],
   "verified_inferred": [
    0,
-   0
+   4
   ]
  },
  {
   "abstract": false,
-  "bindings": 1,
+  "bindings": 2,
   "delivery": 0,
   "element": "slider",
   "gallery": null,
@@ -203,7 +203,7 @@
    12,
    12
   ],
-  "props_annotated": 6,
+  "props_annotated": 12,
   "signal_results": 0,
   "signals": [
    0,
@@ -214,11 +214,11 @@
   "unexposed": null,
   "verified": [
    0,
-   9
+   16
   ],
   "verified_inferred": [
    0,
-   0
+   7
   ]
  },
  {
@@ -240,7 +240,7 @@
    10,
    10
   ],
-  "props_annotated": 5,
+  "props_annotated": 6,
   "signal_results": 0,
   "signals": [
    0,
@@ -251,16 +251,16 @@
   "unexposed": null,
   "verified": [
    0,
-   8
+   9
   ],
   "verified_inferred": [
    0,
-   0
+   1
   ]
  },
  {
   "abstract": false,
-  "bindings": 1,
+  "bindings": 5,
   "delivery": 0,
   "element": "text-field",
   "gallery": null,
@@ -277,22 +277,22 @@
    25,
    25
   ],
-  "props_annotated": 7,
+  "props_annotated": 24,
   "signal_results": 0,
   "signals": [
-   2,
-   2
+   3,
+   3
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
    0,
-   12
+   34
   ],
   "verified_inferred": [
    0,
-   0
+   22
   ]
  },
  {
@@ -314,22 +314,22 @@
    102,
    103
   ],
-  "props_annotated": 4,
+  "props_annotated": 28,
   "signal_results": 0,
   "signals": [
-   0,
-   0
+   2,
+   2
   ],
   "slots": 1,
   "slots_own": 1,
   "unexposed": null,
   "verified": [
    0,
-   7
+   33
   ],
   "verified_inferred": [
    0,
-   0
+   26
   ]
  },
  {
@@ -351,22 +351,22 @@
    107,
    112
   ],
-  "props_annotated": 4,
+  "props_annotated": 35,
   "signal_results": 1,
   "signals": [
-   2,
-   2
+   15,
+   15
   ],
   "slots": 1,
   "slots_own": 1,
   "unexposed": null,
   "verified": [
    0,
-   13
+   57
   ],
   "verified_inferred": [
    0,
-   0
+   44
   ]
  }
 ]

@@ -1,0 +1,2426 @@
+{
+ "classes": {
+  "NSBox": {
+   "created": true,
+   "native_class": "NSBox",
+   "notifications": {},
+   "props": {
+    "border-width": {
+     "default": 1.0,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": 0.5,
+     "sample": {
+      "t": "f64",
+      "v": 0.5
+     }
+    },
+    "box-type": {
+     "default": "primary",
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": "separator",
+     "sample": {
+      "t": "str",
+      "v": "separator"
+     }
+    },
+    "content-view-margins": {
+     "default": {
+      "record": [
+       5.0,
+       5.0
+      ]
+     },
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": {
+      "record": [
+       120.0,
+       40.0
+      ]
+     },
+     "sample": {
+      "t": "size",
+      "v": [
+       120.0,
+       40.0
+      ]
+     }
+    },
+    "corner-radius": {
+     "default": 0.0,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": 0.5,
+     "sample": {
+      "t": "f64",
+      "v": 0.5
+     }
+    },
+    "title": {
+     "default": "Title",
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": "svl probe",
+     "sample": {
+      "t": "str",
+      "v": "svl probe"
+     }
+    },
+    "title-position": {
+     "default": "at-top",
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": "no-title",
+     "sample": {
+      "t": "str",
+      "v": "no-title"
+     }
+    },
+    "transparent": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    }
+   },
+   "signals": {},
+   "subject": "box"
+  },
+  "NSButton": {
+   "created": true,
+   "native_class": "NSButton",
+   "notifications": {},
+   "props": {
+    "allows-mixed-state": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "alternate-title": {
+     "default": "",
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": "svl probe",
+     "sample": {
+      "t": "str",
+      "v": "svl probe"
+     }
+    },
+    "attributed-alternate-title": {
+     "default": "",
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": "svl probe",
+     "sample": {
+      "t": "str",
+      "v": "svl probe"
+     }
+    },
+    "attributed-title": {
+     "default": "Button",
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": "svl probe",
+     "sample": {
+      "t": "str",
+      "v": "svl probe"
+     }
+    },
+    "bezel-style": {
+     "default": "automatic",
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": "push",
+     "sample": {
+      "t": "str",
+      "v": "push"
+     }
+    },
+    "border-shape": {
+     "default": "automatic",
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": "capsule",
+     "sample": {
+      "t": "str",
+      "v": "capsule"
+     }
+    },
+    "bordered": {
+     "default": true,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": false,
+     "sample": {
+      "t": "bool",
+      "v": false
+     }
+    },
+    "double-value": {
+     "default": 0.0,
+     "events": [],
+     "inherited": true,
+     "kvo": true,
+     "outcome": "ignored",
+     "read": 0.0,
+     "sample": {
+      "t": "f64",
+      "v": 0.5
+     }
+    },
+    "float-value": {
+     "default": 0.0,
+     "events": [],
+     "inherited": true,
+     "kvo": true,
+     "outcome": "ignored",
+     "read": 0.0,
+     "sample": {
+      "t": "f64",
+      "v": 0.5
+     }
+    },
+    "has-destructive-action": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "image-hugs-title": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "image-position": {
+     "default": "no-image",
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": "image-only",
+     "sample": {
+      "t": "str",
+      "v": "image-only"
+     }
+    },
+    "image-scaling": {
+     "default": "image-scale-none",
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": "image-scale-proportionally-down",
+     "sample": {
+      "t": "str",
+      "v": "image-scale-proportionally-down"
+     }
+    },
+    "int-value": {
+     "default": 0,
+     "events": [],
+     "inherited": true,
+     "kvo": true,
+     "outcome": "normalized",
+     "read": 1,
+     "sample": {
+      "t": "i64",
+      "v": 3
+     }
+    },
+    "integer-value": {
+     "default": 0,
+     "events": [],
+     "inherited": true,
+     "kvo": true,
+     "outcome": "normalized",
+     "read": 1,
+     "sample": {
+      "t": "i64",
+      "v": 3
+     }
+    },
+    "key-equivalent": {
+     "default": "",
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": "svl probe",
+     "sample": {
+      "t": "str",
+      "v": "svl probe"
+     }
+    },
+    "key-equivalent-modifier-mask": {
+     "default": 0,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": 65536,
+     "sample": {
+      "expect": {
+       "t": "i64",
+       "v": 65536
+      },
+      "t": "names",
+      "v": [
+       "caps-lock"
+      ]
+     }
+    },
+    "max-accelerator-level": {
+     "default": 1,
+     "events": [],
+     "kvo": true,
+     "outcome": "ignored",
+     "read": 1,
+     "sample": {
+      "t": "i64",
+      "v": 3
+     }
+    },
+    "shows-border-only-while-mouse-inside": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "spring-loaded": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "state": {
+     "default": "off",
+     "events": [],
+     "kvo": true,
+     "outcome": "normalized",
+     "read": "on",
+     "sample": {
+      "t": "str",
+      "v": "mixed"
+     }
+    },
+    "string-value": {
+     "default": "0",
+     "events": [],
+     "inherited": true,
+     "kvo": true,
+     "outcome": "normalized",
+     "read": "1",
+     "sample": {
+      "t": "str",
+      "v": "svl probe"
+     }
+    },
+    "tint-prominence": {
+     "default": "automatic",
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": "none",
+     "sample": {
+      "t": "str",
+      "v": "none"
+     }
+    },
+    "title": {
+     "default": "Button",
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": "svl probe",
+     "sample": {
+      "t": "str",
+      "v": "svl probe"
+     }
+    },
+    "transparent": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    }
+   },
+   "signals": {
+    "action": {
+     "args": [],
+     "delivered": true
+    }
+   },
+   "subject": "button"
+  },
+  "NSControl": {
+   "created": true,
+   "native_class": "NSButton",
+   "notifications": {},
+   "props": {
+    "alignment": {
+     "default": "center",
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": "left",
+     "sample": {
+      "t": "str",
+      "v": "left"
+     }
+    },
+    "allows-expansion-tool-tips": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "attributed-string-value": {
+     "default": "0",
+     "error": "attributedStringValue: Objective-C exception: -[NSTaggedPointerString string]: unrecognized selector sent to instance 0x8451c8d0f8265d9c",
+     "events": [],
+     "kvo": false,
+     "outcome": "error",
+     "read": "0",
+     "sample": {
+      "t": "str",
+      "v": "svl probe"
+     }
+    },
+    "base-writing-direction": {
+     "default": "natural",
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": "left-to-right",
+     "sample": {
+      "t": "str",
+      "v": "left-to-right"
+     }
+    },
+    "continuous": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "control-size": {
+     "default": "regular",
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": "small",
+     "sample": {
+      "t": "str",
+      "v": "small"
+     }
+    },
+    "double-value": {
+     "default": 0.0,
+     "events": [],
+     "kvo": true,
+     "outcome": "ignored",
+     "read": 0.0,
+     "sample": {
+      "t": "f64",
+      "v": 0.5
+     }
+    },
+    "enabled": {
+     "default": true,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": false,
+     "sample": {
+      "t": "bool",
+      "v": false
+     }
+    },
+    "float-value": {
+     "default": 0.0,
+     "events": [],
+     "kvo": true,
+     "outcome": "ignored",
+     "read": 0.0,
+     "sample": {
+      "t": "f64",
+      "v": 0.5
+     }
+    },
+    "highlighted": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "ignores-multi-click": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "int-value": {
+     "default": 0,
+     "events": [],
+     "kvo": true,
+     "outcome": "normalized",
+     "read": 1,
+     "sample": {
+      "t": "i64",
+      "v": 3
+     }
+    },
+    "integer-value": {
+     "default": 0,
+     "events": [],
+     "kvo": true,
+     "outcome": "normalized",
+     "read": 1,
+     "sample": {
+      "t": "i64",
+      "v": 3
+     }
+    },
+    "line-break-mode": {
+     "default": "word-wrapping",
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": "char-wrapping",
+     "sample": {
+      "t": "str",
+      "v": "char-wrapping"
+     }
+    },
+    "refuses-first-responder": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "string-value": {
+     "default": "0",
+     "events": [],
+     "kvo": true,
+     "outcome": "normalized",
+     "read": "1",
+     "sample": {
+      "t": "str",
+      "v": "svl probe"
+     }
+    },
+    "tag": {
+     "default": -1,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": 3,
+     "sample": {
+      "t": "i64",
+      "v": 3
+     }
+    },
+    "uses-single-line-mode": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    }
+   },
+   "signals": {
+    "action": {
+     "args": [],
+     "delivered": true
+    }
+   },
+   "subject": "button"
+  },
+  "NSProgressIndicator": {
+   "created": true,
+   "native_class": "NSProgressIndicator",
+   "notifications": {},
+   "props": {
+    "control-size": {
+     "default": "regular",
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": "small",
+     "sample": {
+      "t": "str",
+      "v": "small"
+     }
+    },
+    "displayed-when-stopped": {
+     "default": true,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": false,
+     "sample": {
+      "t": "bool",
+      "v": false
+     }
+    },
+    "double-value": {
+     "default": 0.0,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": 0.5,
+     "sample": {
+      "t": "f64",
+      "v": 0.5
+     }
+    },
+    "indeterminate": {
+     "default": true,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": false,
+     "sample": {
+      "t": "bool",
+      "v": false
+     }
+    },
+    "max-value": {
+     "default": 100.0,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": 0.5,
+     "sample": {
+      "t": "f64",
+      "v": 0.5
+     }
+    },
+    "min-value": {
+     "default": 0.0,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": 0.5,
+     "sample": {
+      "t": "f64",
+      "v": 0.5
+     }
+    },
+    "style": {
+     "default": "bar",
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": "spinning",
+     "sample": {
+      "t": "str",
+      "v": "spinning"
+     }
+    },
+    "uses-threaded-animation": {
+     "default": true,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": false,
+     "sample": {
+      "t": "bool",
+      "v": false
+     }
+    }
+   },
+   "signals": {},
+   "subject": "progress-indicator"
+  },
+  "NSSecureTextField": {
+   "created": true,
+   "native_class": "NSSecureTextField",
+   "notifications": {},
+   "props": {
+    "double-value": {
+     "default": 0.0,
+     "events": [],
+     "inherited": true,
+     "kvo": true,
+     "outcome": "exact",
+     "read": 0.5,
+     "sample": {
+      "t": "f64",
+      "v": 0.5
+     }
+    },
+    "float-value": {
+     "default": 0.0,
+     "events": [],
+     "inherited": true,
+     "kvo": true,
+     "outcome": "exact",
+     "read": 0.5,
+     "sample": {
+      "t": "f64",
+      "v": 0.5
+     }
+    },
+    "int-value": {
+     "default": 0,
+     "events": [],
+     "inherited": true,
+     "kvo": true,
+     "outcome": "exact",
+     "read": 3,
+     "sample": {
+      "t": "i64",
+      "v": 3
+     }
+    },
+    "integer-value": {
+     "default": 0,
+     "events": [],
+     "inherited": true,
+     "kvo": true,
+     "outcome": "exact",
+     "read": 3,
+     "sample": {
+      "t": "i64",
+      "v": 3
+     }
+    },
+    "string-value": {
+     "default": "",
+     "events": [],
+     "inherited": true,
+     "kvo": true,
+     "outcome": "exact",
+     "read": "svl probe",
+     "sample": {
+      "t": "str",
+      "v": "svl probe"
+     }
+    }
+   },
+   "signals": {
+    "action": {
+     "args": [],
+     "delivered": true
+    },
+    "control-text-did-change": {
+     "args": [
+      ""
+     ],
+     "delivered": true
+    },
+    "control-text-did-end-editing": {
+     "args": [
+      ""
+     ],
+     "delivered": true
+    }
+   },
+   "subject": "secure-text-field"
+  },
+  "NSSlider": {
+   "created": true,
+   "native_class": "NSSlider",
+   "notifications": {},
+   "props": {
+    "allows-tick-mark-values-only": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "alt-increment-value": {
+     "default": 0.0,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": 0.5,
+     "sample": {
+      "t": "f64",
+      "v": 0.5
+     }
+    },
+    "double-value": {
+     "default": 0.0,
+     "events": [],
+     "inherited": true,
+     "kvo": true,
+     "outcome": "exact",
+     "read": 0.5,
+     "sample": {
+      "t": "f64",
+      "v": 0.5
+     }
+    },
+    "float-value": {
+     "default": 0.0,
+     "events": [],
+     "inherited": true,
+     "kvo": true,
+     "outcome": "exact",
+     "read": 0.5,
+     "sample": {
+      "t": "f64",
+      "v": 0.5
+     }
+    },
+    "int-value": {
+     "default": 0,
+     "events": [],
+     "inherited": true,
+     "kvo": true,
+     "outcome": "normalized",
+     "read": 1,
+     "sample": {
+      "t": "i64",
+      "v": 3
+     }
+    },
+    "integer-value": {
+     "default": 0,
+     "events": [],
+     "inherited": true,
+     "kvo": true,
+     "outcome": "normalized",
+     "read": 1,
+     "sample": {
+      "t": "i64",
+      "v": 3
+     }
+    },
+    "max-value": {
+     "default": 1.0,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": 0.5,
+     "sample": {
+      "t": "f64",
+      "v": 0.5
+     }
+    },
+    "min-value": {
+     "default": 0.0,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": 0.5,
+     "sample": {
+      "t": "f64",
+      "v": 0.5
+     }
+    },
+    "neutral-value": {
+     "default": 0.0,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": 0.5,
+     "sample": {
+      "t": "f64",
+      "v": 0.5
+     }
+    },
+    "number-of-tick-marks": {
+     "default": 0,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": 3,
+     "sample": {
+      "t": "i64",
+      "v": 3
+     }
+    },
+    "slider-type": {
+     "default": "linear",
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": "circular",
+     "sample": {
+      "t": "str",
+      "v": "circular"
+     }
+    },
+    "string-value": {
+     "default": "0",
+     "events": [],
+     "inherited": true,
+     "kvo": true,
+     "outcome": "ignored",
+     "read": "0",
+     "sample": {
+      "t": "str",
+      "v": "svl probe"
+     }
+    },
+    "tick-mark-position": {
+     "default": "below",
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": "above",
+     "sample": {
+      "t": "str",
+      "v": "above"
+     }
+    },
+    "tint-prominence": {
+     "default": "automatic",
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": "none",
+     "sample": {
+      "t": "str",
+      "v": "none"
+     }
+    },
+    "vertical": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    }
+   },
+   "signals": {
+    "action": {
+     "args": [],
+     "delivered": true
+    }
+   },
+   "subject": "slider"
+  },
+  "NSStackView": {
+   "created": true,
+   "native_class": "NSStackView",
+   "notifications": {},
+   "props": {
+    "alignment": {
+     "default": "center-y",
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": "left",
+     "sample": {
+      "t": "str",
+      "v": "left"
+     }
+    },
+    "detaches-hidden-views": {
+     "default": true,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": false,
+     "sample": {
+      "t": "bool",
+      "v": false
+     }
+    },
+    "distribution": {
+     "default": "gravity-areas",
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": "fill",
+     "sample": {
+      "t": "str",
+      "v": "fill"
+     }
+    },
+    "edge-insets": {
+     "default": {
+      "record": [
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": {
+      "record": [
+       1.0,
+       2.0,
+       3.0,
+       4.0
+      ]
+     },
+     "sample": {
+      "t": "insets",
+      "v": [
+       1.0,
+       2.0,
+       3.0,
+       4.0
+      ]
+     }
+    },
+    "orientation": {
+     "default": "horizontal",
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": "vertical",
+     "sample": {
+      "t": "str",
+      "v": "vertical"
+     }
+    },
+    "spacing": {
+     "default": 8.0,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": 0.5,
+     "sample": {
+      "t": "f64",
+      "v": 0.5
+     }
+    }
+   },
+   "signals": {},
+   "subject": "stack-view"
+  },
+  "NSTextField": {
+   "created": true,
+   "native_class": "NSTextField",
+   "notifications": {
+    "NSControlTextDidBeginEditingNotification": {
+     "symbol": "NSControlTextDidBeginEditingNotification"
+    }
+   },
+   "props": {
+    "allows-character-picker-touch-bar-item": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "allows-default-tightening-for-truncation": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "allows-editing-text-attributes": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "allows-writing-tools": {
+     "default": true,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": false,
+     "sample": {
+      "t": "bool",
+      "v": false
+     }
+    },
+    "allows-writing-tools-affordance": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "automatic-text-completion-enabled": {
+     "default": true,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": false,
+     "sample": {
+      "t": "bool",
+      "v": false
+     }
+    },
+    "bezel-style": {
+     "default": "square-bezel",
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": "rounded-bezel",
+     "sample": {
+      "t": "str",
+      "v": "rounded-bezel"
+     }
+    },
+    "bezeled": {
+     "default": true,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": false,
+     "sample": {
+      "t": "bool",
+      "v": false
+     }
+    },
+    "bordered": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "double-value": {
+     "default": 0.0,
+     "events": [],
+     "inherited": true,
+     "kvo": true,
+     "outcome": "exact",
+     "read": 0.5,
+     "sample": {
+      "t": "f64",
+      "v": 0.5
+     }
+    },
+    "draws-background": {
+     "default": true,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": false,
+     "sample": {
+      "t": "bool",
+      "v": false
+     }
+    },
+    "editable": {
+     "default": true,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": false,
+     "sample": {
+      "t": "bool",
+      "v": false
+     }
+    },
+    "float-value": {
+     "default": 0.0,
+     "events": [],
+     "inherited": true,
+     "kvo": true,
+     "outcome": "exact",
+     "read": 0.5,
+     "sample": {
+      "t": "f64",
+      "v": 0.5
+     }
+    },
+    "imports-graphics": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "int-value": {
+     "default": 0,
+     "events": [],
+     "inherited": true,
+     "kvo": true,
+     "outcome": "exact",
+     "read": 3,
+     "sample": {
+      "t": "i64",
+      "v": 3
+     }
+    },
+    "integer-value": {
+     "default": 0,
+     "events": [],
+     "inherited": true,
+     "kvo": true,
+     "outcome": "exact",
+     "read": 3,
+     "sample": {
+      "t": "i64",
+      "v": 3
+     }
+    },
+    "line-break-strategy": {
+     "default": 0,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": 1,
+     "sample": {
+      "expect": {
+       "t": "i64",
+       "v": 1
+      },
+      "t": "names",
+      "v": [
+       "push-out"
+      ]
+     }
+    },
+    "maximum-number-of-lines": {
+     "default": 0,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": 3,
+     "sample": {
+      "t": "i64",
+      "v": 3
+     }
+    },
+    "placeholder-attributed-string": {
+     "default": null,
+     "error": "placeholderAttributedString: Objective-C exception: -[NSTaggedPointerString _mayRequireIntentResolution]: unrecognized selector sent to instance 0x8d46f929235d50e8",
+     "events": [],
+     "kvo": false,
+     "outcome": "error",
+     "read": null,
+     "sample": {
+      "t": "str",
+      "v": "svl probe"
+     }
+    },
+    "placeholder-string": {
+     "default": null,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": "svl probe",
+     "sample": {
+      "t": "str",
+      "v": "svl probe"
+     }
+    },
+    "preferred-max-layout-width": {
+     "default": 0.0,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": 0.5,
+     "sample": {
+      "t": "f64",
+      "v": 0.5
+     }
+    },
+    "resolves-natural-alignment-with-base-writing-direction": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "selectable": {
+     "default": true,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": false,
+     "sample": {
+      "t": "bool",
+      "v": false
+     }
+    },
+    "string-value": {
+     "default": "",
+     "events": [],
+     "inherited": true,
+     "kvo": true,
+     "outcome": "exact",
+     "read": "svl probe",
+     "sample": {
+      "t": "str",
+      "v": "svl probe"
+     }
+    }
+   },
+   "signals": {
+    "action": {
+     "args": [],
+     "delivered": true
+    },
+    "control-text-did-change": {
+     "args": [
+      ""
+     ],
+     "delivered": true
+    },
+    "control-text-did-end-editing": {
+     "args": [
+      ""
+     ],
+     "delivered": true
+    }
+   },
+   "subject": "text-field"
+  },
+  "NSView": {
+   "created": true,
+   "native_class": "NSView",
+   "notifications": {
+    "NSViewBoundsDidChangeNotification": {
+     "symbol": "NSViewBoundsDidChangeNotification"
+    },
+    "NSViewFrameDidChangeNotification": {
+     "symbol": "NSViewFrameDidChangeNotification"
+    }
+   },
+   "props": {
+    "additional-safe-area-insets": {
+     "default": {
+      "record": [
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": {
+      "record": [
+       1.0,
+       2.0,
+       3.0,
+       4.0
+      ]
+     },
+     "sample": {
+      "t": "insets",
+      "v": [
+       1.0,
+       2.0,
+       3.0,
+       4.0
+      ]
+     }
+    },
+    "allowed-touch-types": {
+     "default": 1,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": 2,
+     "sample": {
+      "expect": {
+       "t": "i64",
+       "v": 2
+      },
+      "t": "names",
+      "v": [
+       "indirect"
+      ]
+     }
+    },
+    "alpha-value": {
+     "default": 1.0,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": 0.5,
+     "sample": {
+      "t": "f64",
+      "v": 0.5
+     }
+    },
+    "autoresizes-subviews": {
+     "default": true,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": false,
+     "sample": {
+      "t": "bool",
+      "v": false
+     }
+    },
+    "autoresizing-mask": {
+     "default": 0,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": 1,
+     "sample": {
+      "expect": {
+       "t": "i64",
+       "v": 1
+      },
+      "t": "names",
+      "v": [
+       "min-x-margin"
+      ]
+     }
+    },
+    "bounds": {
+     "default": {
+      "record": [
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "events": [],
+     "kvo": true,
+     "outcome": "normalized",
+     "read": {
+      "record": [
+       10.0,
+       20.0,
+       0.0,
+       0.0
+      ]
+     },
+     "sample": {
+      "t": "rect",
+      "v": [
+       10.0,
+       20.0,
+       120.0,
+       40.0
+      ]
+     }
+    },
+    "bounds-rotation": {
+     "default": 0.0,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": 0.5,
+     "sample": {
+      "t": "f64",
+      "v": 0.5
+     }
+    },
+    "can-draw-concurrently": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "can-draw-subviews-into-layer": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "clips-to-bounds": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "focus-ring-type": {
+     "default": "default",
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": "none",
+     "sample": {
+      "t": "str",
+      "v": "none"
+     }
+    },
+    "frame": {
+     "default": {
+      "record": [
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": {
+      "record": [
+       10.0,
+       20.0,
+       120.0,
+       40.0
+      ]
+     },
+     "sample": {
+      "t": "rect",
+      "v": [
+       10.0,
+       20.0,
+       120.0,
+       40.0
+      ]
+     }
+    },
+    "frame-center-rotation": {
+     "default": 0.0,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": 0.5,
+     "sample": {
+      "t": "f64",
+      "v": 0.5
+     }
+    },
+    "frame-rotation": {
+     "default": 0.0,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": 0.5,
+     "sample": {
+      "t": "f64",
+      "v": 0.5
+     }
+    },
+    "hidden": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "horizontal-content-size-constraint-active": {
+     "default": true,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": false,
+     "sample": {
+      "t": "bool",
+      "v": false
+     }
+    },
+    "layer-contents-placement": {
+     "default": "scale-axes-independently",
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": "scale-proportionally-to-fit",
+     "sample": {
+      "t": "str",
+      "v": "scale-proportionally-to-fit"
+     }
+    },
+    "layer-contents-redraw-policy": {
+     "default": "on-set-needs-display",
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": "never",
+     "sample": {
+      "t": "str",
+      "v": "never"
+     }
+    },
+    "layer-uses-core-image-filters": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "needs-display": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "ignored",
+     "read": false,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "needs-layout": {
+     "default": true,
+     "events": [],
+     "kvo": true,
+     "outcome": "ignored",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": false
+     }
+    },
+    "needs-update-constraints": {
+     "default": true,
+     "events": [],
+     "kvo": true,
+     "outcome": "ignored",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": false
+     }
+    },
+    "posts-bounds-changed-notifications": {
+     "default": true,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": false,
+     "sample": {
+      "t": "bool",
+      "v": false
+     }
+    },
+    "posts-frame-changed-notifications": {
+     "default": true,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": false,
+     "sample": {
+      "t": "bool",
+      "v": false
+     }
+    },
+    "prefers-compact-control-size-metrics": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "prepared-content-rect": {
+     "default": {
+      "record": [
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": {
+      "record": [
+       10.0,
+       20.0,
+       120.0,
+       40.0
+      ]
+     },
+     "sample": {
+      "t": "rect",
+      "v": [
+       10.0,
+       20.0,
+       120.0,
+       40.0
+      ]
+     }
+    },
+    "tool-tip": {
+     "default": null,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": "svl probe",
+     "sample": {
+      "t": "str",
+      "v": "svl probe"
+     }
+    },
+    "translates-autoresizing-mask-into-constraints": {
+     "default": true,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": false,
+     "sample": {
+      "t": "bool",
+      "v": false
+     }
+    },
+    "user-interface-layout-direction": {
+     "default": "left-to-right",
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": "right-to-left",
+     "sample": {
+      "t": "str",
+      "v": "right-to-left"
+     }
+    },
+    "vertical-content-size-constraint-active": {
+     "default": true,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": false,
+     "sample": {
+      "t": "bool",
+      "v": false
+     }
+    },
+    "wants-layer": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "wants-resting-touches": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    }
+   },
+   "signals": {},
+   "subject": "view"
+  },
+  "NSWindow": {
+   "created": true,
+   "native_class": "NSWindow",
+   "notifications": {
+    "NSWindowDidBecomeKeyNotification": {
+     "symbol": "NSWindowDidBecomeKeyNotification"
+    },
+    "NSWindowDidBecomeMainNotification": {
+     "symbol": "NSWindowDidBecomeMainNotification"
+    },
+    "NSWindowDidChangeBackingPropertiesNotification": {
+     "symbol": "NSWindowDidChangeBackingPropertiesNotification"
+    },
+    "NSWindowDidChangeOcclusionStateNotification": {
+     "symbol": "NSWindowDidChangeOcclusionStateNotification"
+    },
+    "NSWindowDidChangeScreenNotification": {
+     "symbol": "NSWindowDidChangeScreenNotification"
+    },
+    "NSWindowDidDeminiaturizeNotification": {
+     "symbol": "NSWindowDidDeminiaturizeNotification"
+    },
+    "NSWindowDidEnterFullScreenNotification": {
+     "symbol": "NSWindowDidEnterFullScreenNotification"
+    },
+    "NSWindowDidExitFullScreenNotification": {
+     "symbol": "NSWindowDidExitFullScreenNotification"
+    },
+    "NSWindowDidMiniaturizeNotification": {
+     "symbol": "NSWindowDidMiniaturizeNotification"
+    },
+    "NSWindowDidMoveNotification": {
+     "symbol": "NSWindowDidMoveNotification"
+    },
+    "NSWindowDidResignKeyNotification": {
+     "symbol": "NSWindowDidResignKeyNotification"
+    },
+    "NSWindowDidResignMainNotification": {
+     "symbol": "NSWindowDidResignMainNotification"
+    },
+    "NSWindowDidResizeNotification": {
+     "symbol": "NSWindowDidResizeNotification"
+    }
+   },
+   "props": {
+    "accepts-mouse-moved-events": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "allows-tool-tips-when-application-is-inactive": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "alpha-value": {
+     "default": 1.0,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": 0.5,
+     "sample": {
+      "t": "f64",
+      "v": 0.5
+     }
+    },
+    "aspect-ratio": {
+     "default": {
+      "record": [
+       0.0,
+       0.0
+      ]
+     },
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": {
+      "record": [
+       120.0,
+       40.0
+      ]
+     },
+     "sample": {
+      "t": "size",
+      "v": [
+       120.0,
+       40.0
+      ]
+     }
+    },
+    "autorecalculates-key-view-loop": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "can-become-visible-without-login": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "can-hide": {
+     "default": true,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": false,
+     "sample": {
+      "t": "bool",
+      "v": false
+     }
+    },
+    "content-aspect-ratio": {
+     "default": {
+      "record": [
+       0.0,
+       0.0
+      ]
+     },
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": {
+      "record": [
+       120.0,
+       40.0
+      ]
+     },
+     "sample": {
+      "t": "size",
+      "v": [
+       120.0,
+       40.0
+      ]
+     }
+    },
+    "content-max-size": {
+     "default": {
+      "record": [
+       3.4028234663852886e+38,
+       3.4028234663852886e+38
+      ]
+     },
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": {
+      "record": [
+       120.0,
+       40.0
+      ]
+     },
+     "sample": {
+      "t": "size",
+      "v": [
+       120.0,
+       40.0
+      ]
+     }
+    },
+    "content-min-size": {
+     "default": {
+      "record": [
+       0.0,
+       0.0
+      ]
+     },
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": {
+      "record": [
+       120.0,
+       40.0
+      ]
+     },
+     "sample": {
+      "t": "size",
+      "v": [
+       120.0,
+       40.0
+      ]
+     }
+    },
+    "content-resize-increments": {
+     "default": {
+      "record": [
+       1.0,
+       1.0
+      ]
+     },
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": {
+      "record": [
+       120.0,
+       40.0
+      ]
+     },
+     "sample": {
+      "t": "size",
+      "v": [
+       120.0,
+       40.0
+      ]
+     }
+    },
+    "displays-when-screen-profile-changes": {
+     "default": true,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": false,
+     "sample": {
+      "t": "bool",
+      "v": false
+     }
+    },
+    "document-edited": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "excluded-from-windows-menu": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "has-shadow": {
+     "default": true,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": false,
+     "sample": {
+      "t": "bool",
+      "v": false
+     }
+    },
+    "hides-on-deactivate": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "max-full-screen-content-size": {
+     "default": {
+      "record": [
+       100000.0,
+       100000.0
+      ]
+     },
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": {
+      "record": [
+       120.0,
+       40.0
+      ]
+     },
+     "sample": {
+      "t": "size",
+      "v": [
+       120.0,
+       40.0
+      ]
+     }
+    },
+    "max-size": {
+     "default": {
+      "record": [
+       3.4028234663852886e+38,
+       3.4028234663852886e+38
+      ]
+     },
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": {
+      "record": [
+       120.0,
+       40.0
+      ]
+     },
+     "sample": {
+      "t": "size",
+      "v": [
+       120.0,
+       40.0
+      ]
+     }
+    },
+    "min-full-screen-content-size": {
+     "default": {
+      "record": [
+       87.0,
+       33.0
+      ]
+     },
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": {
+      "record": [
+       120.0,
+       40.0
+      ]
+     },
+     "sample": {
+      "t": "size",
+      "v": [
+       120.0,
+       40.0
+      ]
+     }
+    },
+    "min-size": {
+     "default": {
+      "record": [
+       0.0,
+       32.0
+      ]
+     },
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": {
+      "record": [
+       120.0,
+       40.0
+      ]
+     },
+     "sample": {
+      "t": "size",
+      "v": [
+       120.0,
+       40.0
+      ]
+     }
+    },
+    "miniwindow-title": {
+     "default": "appkit_probe",
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": "svl probe",
+     "sample": {
+      "t": "str",
+      "v": "svl probe"
+     }
+    },
+    "movable": {
+     "default": true,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": false,
+     "sample": {
+      "t": "bool",
+      "v": false
+     }
+    },
+    "movable-by-window-background": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "opaque": {
+     "default": true,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": false,
+     "sample": {
+      "t": "bool",
+      "v": false
+     }
+    },
+    "ordered-index": {
+     "default": 1,
+     "events": [],
+     "kvo": true,
+     "outcome": "ignored",
+     "read": 1,
+     "sample": {
+      "t": "i64",
+      "v": 3
+     }
+    },
+    "preserves-content-during-live-resize": {
+     "default": true,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": false,
+     "sample": {
+      "t": "bool",
+      "v": false
+     }
+    },
+    "prevents-application-termination-when-modal": {
+     "default": true,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": false,
+     "sample": {
+      "t": "bool",
+      "v": false
+     }
+    },
+    "released-when-closed": {
+     "error": "signal 11",
+     "outcome": "crash"
+    },
+    "represented-filename": {
+     "default": "",
+     "events": [],
+     "kvo": true,
+     "outcome": "normalized",
+     "read": "/Users/runner/work/svelters/svelters/~/work/svelters/svelters/svl probe",
+     "sample": {
+      "t": "str",
+      "v": "svl probe"
+     }
+    },
+    "resize-increments": {
+     "default": {
+      "record": [
+       1.0,
+       1.0
+      ]
+     },
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": {
+      "record": [
+       120.0,
+       40.0
+      ]
+     },
+     "sample": {
+      "t": "size",
+      "v": [
+       120.0,
+       40.0
+      ]
+     }
+    },
+    "subtitle": {
+     "default": "",
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": "svl probe",
+     "sample": {
+      "t": "str",
+      "v": "svl probe"
+     }
+    },
+    "title": {
+     "default": "",
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": "svl probe",
+     "sample": {
+      "t": "str",
+      "v": "svl probe"
+     }
+    },
+    "title-visibility": {
+     "default": "visible",
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": "hidden",
+     "sample": {
+      "t": "str",
+      "v": "hidden"
+     }
+    },
+    "titlebar-appears-transparent": {
+     "default": false,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": true,
+     "sample": {
+      "t": "bool",
+      "v": true
+     }
+    },
+    "titlebar-separator-style": {
+     "default": "automatic",
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": "none",
+     "sample": {
+      "t": "str",
+      "v": "none"
+     }
+    },
+    "toolbar-style": {
+     "default": "automatic",
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": "expanded",
+     "sample": {
+      "t": "str",
+      "v": "expanded"
+     }
+    },
+    "views-need-display": {
+     "default": true,
+     "events": [],
+     "kvo": true,
+     "outcome": "exact",
+     "read": false,
+     "sample": {
+      "t": "bool",
+      "v": false
+     }
+    }
+   },
+   "signals": {},
+   "subject": "window"
+  }
+ },
+ "runtime": {
+  "arch": "arm64",
+  "macos": "26.6.2"
+ },
+ "schema": "svelters-probe-appkit/v1",
+ "sdk": "MacOSX26.1",
+ "toolkit": "appkit",
+ "version": "26.1"
+}

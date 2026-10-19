@@ -258,9 +258,11 @@ def build(m: Model):
     return "".join(o)
 
 
-ROW_STRUCTS = """    pub struct PropRow {
+ROW_STRUCTS = """    /// `setter`: the native setter; a class without it (a member newer than the running macOS) skips the row.
+    pub struct PropRow {
         pub tag: &'static str,
         pub name: &'static str,
+        pub setter: &'static str,
         pub sample: S,
         pub expect: S,
     }
@@ -293,6 +295,11 @@ ROW_FNS = {
         let h = Harness::shared();
         let _g = h.case_guard();
         let o = h.create(r.tag);
+        if !h.responds(o, r.setter) {
+            eprintln!("skipped: {} has no {} on this macOS", r.tag, r.setter);
+            h.destroy(o);
+            return;
+        }
         h.set(o, r.name, r.sample.v()).unwrap();
         assert_eq!(h.get(o, r.name).unwrap(), r.expect.v(), "{} reads back the sample", r.name);
         h.destroy(o);
@@ -482,7 +489,7 @@ def tests(m: Model) -> tuple[str, list[dict], list[dict]]:
                     t.cannot(cls, "props", p["name"], f"sample {p['sample']!r} has no row value")
                     continue
                 t.row("prop", name, f"prop {cls}.{p['name']}: {p['provenance']}",
-                      f"PropRow {{ tag: {rs(tag)}, name: {rs(p['name'])}, sample: {sv}, expect: {ev} }}", (cls, "props", p["name"], p))
+                      f"PropRow {{ tag: {rs(tag)}, name: {rs(p['name'])}, setter: {rs(meta['accessors'].get('set', ''))}, sample: {sv}, expect: {ev} }}", (cls, "props", p["name"], p))
                 continue
             add(name, f"prop {cls}.{p['name']}: {p['provenance']}",
                 f'    let o = h.create({rs(tag)});\n    h.set(o, {rs(p["name"])}, {value(p["sample"], ref)}).unwrap();\n'

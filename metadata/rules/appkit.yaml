@@ -29,6 +29,12 @@ deny_props:
     pattern: '^(level|collection-behavior|sharing-type|tabbing-mode|tabbing-identifier|frame-autosave-name|represented-url|restorable|restoration-class|depth-limit|backing-type|allows-concurrent-view-drawing|ignores-mouse-events|animation-behavior)$'
     reason: window-server or process-wide state (window level, Spaces, screen sharing, tabbing, autosave, state restoration); not something a page sets per window
   - class: NSWindow
+    pattern: '^released-when-closed$'
+    reason: the backend's handle table owns windows and sets it NO; the first CI probe crashed (SIGSEGV) destroying a window probed with YES
+  - class: NSWindow
+    pattern: '^(represented-filename)$'
+    reason: resolved against the working directory (the probe read back a runner path); not deterministic across machines
+  - class: NSWindow
     pattern: '^style-mask$'
     reason: manual (metadata/overrides/appkit/NSWindow.yaml); a probe that drops `titled` can leave the window without a frame view
 

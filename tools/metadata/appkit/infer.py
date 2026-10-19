@@ -33,6 +33,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 import tempfile
 from pathlib import Path
@@ -139,6 +140,11 @@ class Kind:
         self.review.append({"kind": self.cls, "section": section, "name": name, "confidence": conf,
                             "band": "middle" if conf >= 0.6 else "low", "pattern": pattern})
 
+    def denied(self, js: str) -> bool:
+        """rules deny_props (a probe from before a pattern was added may still list the prop)."""
+        chain = self.inp.chain(self.cls)
+        return any((not d.get("class") or d["class"] in chain) and re.match(d["pattern"], js) for d in self.inp.rules.get("deny_props", []))
+
     # -- P1/P3 ----------------------------------------------------------------------------------
     def infer_props(self) -> None:
         if not self.k:
@@ -147,6 +153,9 @@ class Kind:
         for n, r in sorted((self.k.get("props") or {}).items()):
             _, meta = self.inp.find_prop(self.cls, n)
             if meta is None or not meta["access"]["write"]:
+                continue
+            if self.denied(n):
+                self.skip("prop:denied")
                 continue
             outcome = r.get("outcome")
             if outcome != "exact":

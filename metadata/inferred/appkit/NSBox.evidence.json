@@ -1,0 +1,113 @@
+{
+ "props:border-width": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 1.0,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": 0.5,
+   "sample": {
+    "t": "f64",
+    "v": 0.5
+   }
+  }
+ },
+ "props:box-type": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "primary",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "separator",
+   "sample": {
+    "t": "str",
+    "v": "separator"
+   }
+  }
+ },
+ "props:content-view-margins": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": {
+    "record": [
+     5.0,
+     5.0
+    ]
+   },
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": {
+    "record": [
+     120.0,
+     40.0
+    ]
+   },
+   "sample": {
+    "t": "size",
+    "v": [
+     120.0,
+     40.0
+    ]
+   }
+  }
+ },
+ "props:corner-radius": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0.0,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": 0.5,
+   "sample": {
+    "t": "f64",
+    "v": 0.5
+   }
+  }
+ },
+ "props:title": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "Title",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "sample": {
+    "t": "str",
+    "v": "svl probe"
+   }
+  }
+ },
+ "props:title-position": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "at-top",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "no-title",
+   "sample": {
+    "t": "str",
+    "v": "no-title"
+   }
+  }
+ },
+ "props:transparent": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ }
+}

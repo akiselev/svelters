@@ -1,270 +1,270 @@
 {
- "inferred": {},
- "probe": false,
+ "inferred": {
+  "bindings": 7,
+  "props": 153,
+  "signals": 16
+ },
+ "probe": true,
  "promote_at": 0.9,
  "rows": [
   {
-   "band": "middle",
-   "confidence": 0.6,
+   "band": "low",
+   "confidence": 0.5,
    "kind": "NSButton",
    "name": "double-value",
-   "pattern": "binding:no-probe",
+   "pattern": "binding:prop-ignored",
    "section": "bindings"
   },
   {
-   "band": "middle",
-   "confidence": 0.6,
+   "band": "low",
+   "confidence": 0.5,
    "kind": "NSButton",
    "name": "float-value",
-   "pattern": "binding:no-probe",
+   "pattern": "binding:prop-ignored",
    "section": "bindings"
   },
   {
-   "band": "middle",
-   "confidence": 0.6,
+   "band": "low",
+   "confidence": 0.5,
    "kind": "NSButton",
    "name": "int-value",
-   "pattern": "binding:no-probe",
+   "pattern": "binding:prop-normalized",
    "section": "bindings"
   },
   {
-   "band": "middle",
-   "confidence": 0.6,
+   "band": "low",
+   "confidence": 0.5,
    "kind": "NSButton",
    "name": "integer-value",
-   "pattern": "binding:no-probe",
+   "pattern": "binding:prop-normalized",
    "section": "bindings"
   },
   {
-   "band": "middle",
-   "confidence": 0.6,
+   "band": "low",
+   "confidence": 0.5,
    "kind": "NSButton",
    "name": "string-value",
-   "pattern": "binding:no-probe",
+   "pattern": "binding:prop-normalized",
    "section": "bindings"
   },
   {
-   "band": "middle",
-   "confidence": 0.6,
-   "kind": "NSSlider",
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSButton",
    "name": "double-value",
-   "pattern": "binding:no-probe",
-   "section": "bindings"
+   "pattern": "prop:ignored",
+   "section": "props"
   },
   {
-   "band": "middle",
-   "confidence": 0.6,
-   "kind": "NSSlider",
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSButton",
    "name": "float-value",
-   "pattern": "binding:no-probe",
-   "section": "bindings"
+   "pattern": "prop:ignored",
+   "section": "props"
   },
   {
-   "band": "middle",
-   "confidence": 0.6,
-   "kind": "NSSlider",
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSButton",
    "name": "int-value",
-   "pattern": "binding:no-probe",
-   "section": "bindings"
+   "pattern": "prop:normalized",
+   "section": "props"
   },
   {
-   "band": "middle",
-   "confidence": 0.6,
-   "kind": "NSSlider",
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSButton",
    "name": "integer-value",
-   "pattern": "binding:no-probe",
-   "section": "bindings"
+   "pattern": "prop:normalized",
+   "section": "props"
   },
   {
-   "band": "middle",
-   "confidence": 0.6,
-   "kind": "NSSlider",
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSButton",
+   "name": "max-accelerator-level",
+   "pattern": "prop:ignored",
+   "section": "props"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSButton",
+   "name": "state",
+   "pattern": "prop:normalized",
+   "section": "props"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSButton",
    "name": "string-value",
-   "pattern": "binding:no-probe",
-   "section": "bindings"
+   "pattern": "prop:normalized",
+   "section": "props"
   },
   {
-   "band": "middle",
-   "confidence": 0.6,
-   "kind": "NSTextField",
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSControl",
+   "name": "attributed-string-value",
+   "pattern": "prop:error",
+   "section": "props"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSControl",
    "name": "double-value",
-   "pattern": "binding:no-probe",
-   "section": "bindings"
+   "pattern": "prop:ignored",
+   "section": "props"
   },
   {
-   "band": "middle",
-   "confidence": 0.6,
-   "kind": "NSTextField",
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSControl",
    "name": "float-value",
-   "pattern": "binding:no-probe",
-   "section": "bindings"
+   "pattern": "prop:ignored",
+   "section": "props"
   },
   {
-   "band": "middle",
-   "confidence": 0.6,
-   "kind": "NSTextField",
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSControl",
    "name": "int-value",
-   "pattern": "binding:no-probe",
-   "section": "bindings"
+   "pattern": "prop:normalized",
+   "section": "props"
   },
   {
-   "band": "middle",
-   "confidence": 0.6,
-   "kind": "NSTextField",
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSControl",
    "name": "integer-value",
-   "pattern": "binding:no-probe",
-   "section": "bindings"
+   "pattern": "prop:normalized",
+   "section": "props"
   },
   {
-   "band": "middle",
-   "confidence": 0.6,
-   "kind": "NSTextField",
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSControl",
    "name": "string-value",
-   "pattern": "binding:no-probe",
+   "pattern": "prop:normalized",
+   "section": "props"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSSlider",
+   "name": "int-value",
+   "pattern": "binding:prop-normalized",
    "section": "bindings"
   },
   {
-   "band": "middle",
-   "confidence": 0.6,
-   "kind": "NSTextField",
-   "name": "control-text-did-begin-editing",
-   "pattern": "signal:no-probe",
-   "section": "signals"
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSSlider",
+   "name": "integer-value",
+   "pattern": "binding:prop-normalized",
+   "section": "bindings"
   },
   {
-   "band": "middle",
-   "confidence": 0.6,
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSSlider",
+   "name": "string-value",
+   "pattern": "binding:prop-ignored",
+   "section": "bindings"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSSlider",
+   "name": "int-value",
+   "pattern": "prop:normalized",
+   "section": "props"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSSlider",
+   "name": "integer-value",
+   "pattern": "prop:normalized",
+   "section": "props"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSSlider",
+   "name": "string-value",
+   "pattern": "prop:ignored",
+   "section": "props"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSTextField",
+   "name": "placeholder-attributed-string",
+   "pattern": "prop:error",
+   "section": "props"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
    "kind": "NSView",
-   "name": "view-bounds-did-change",
-   "pattern": "signal:no-probe",
-   "section": "signals"
+   "name": "bounds",
+   "pattern": "prop:normalized",
+   "section": "props"
   },
   {
-   "band": "middle",
-   "confidence": 0.6,
+   "band": "low",
+   "confidence": 0.5,
    "kind": "NSView",
-   "name": "view-frame-did-change",
-   "pattern": "signal:no-probe",
-   "section": "signals"
+   "name": "needs-display",
+   "pattern": "prop:ignored",
+   "section": "props"
   },
   {
-   "band": "middle",
-   "confidence": 0.6,
-   "kind": "NSWindow",
-   "name": "window-did-become-key",
-   "pattern": "signal:no-probe",
-   "section": "signals"
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSView",
+   "name": "needs-layout",
+   "pattern": "prop:ignored",
+   "section": "props"
   },
   {
-   "band": "middle",
-   "confidence": 0.6,
-   "kind": "NSWindow",
-   "name": "window-did-become-main",
-   "pattern": "signal:no-probe",
-   "section": "signals"
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSView",
+   "name": "needs-update-constraints",
+   "pattern": "prop:ignored",
+   "section": "props"
   },
   {
-   "band": "middle",
-   "confidence": 0.6,
+   "band": "low",
+   "confidence": 0.5,
    "kind": "NSWindow",
-   "name": "window-did-change-backing-properties",
-   "pattern": "signal:no-probe",
-   "section": "signals"
-  },
-  {
-   "band": "middle",
-   "confidence": 0.6,
-   "kind": "NSWindow",
-   "name": "window-did-change-occlusion-state",
-   "pattern": "signal:no-probe",
-   "section": "signals"
-  },
-  {
-   "band": "middle",
-   "confidence": 0.6,
-   "kind": "NSWindow",
-   "name": "window-did-change-screen",
-   "pattern": "signal:no-probe",
-   "section": "signals"
-  },
-  {
-   "band": "middle",
-   "confidence": 0.6,
-   "kind": "NSWindow",
-   "name": "window-did-deminiaturize",
-   "pattern": "signal:no-probe",
-   "section": "signals"
-  },
-  {
-   "band": "middle",
-   "confidence": 0.6,
-   "kind": "NSWindow",
-   "name": "window-did-enter-full-screen",
-   "pattern": "signal:no-probe",
-   "section": "signals"
-  },
-  {
-   "band": "middle",
-   "confidence": 0.6,
-   "kind": "NSWindow",
-   "name": "window-did-exit-full-screen",
-   "pattern": "signal:no-probe",
-   "section": "signals"
-  },
-  {
-   "band": "middle",
-   "confidence": 0.6,
-   "kind": "NSWindow",
-   "name": "window-did-miniaturize",
-   "pattern": "signal:no-probe",
-   "section": "signals"
-  },
-  {
-   "band": "middle",
-   "confidence": 0.6,
-   "kind": "NSWindow",
-   "name": "window-did-move",
-   "pattern": "signal:no-probe",
-   "section": "signals"
-  },
-  {
-   "band": "middle",
-   "confidence": 0.6,
-   "kind": "NSWindow",
-   "name": "window-did-resign-key",
-   "pattern": "signal:no-probe",
-   "section": "signals"
-  },
-  {
-   "band": "middle",
-   "confidence": 0.6,
-   "kind": "NSWindow",
-   "name": "window-did-resign-main",
-   "pattern": "signal:no-probe",
-   "section": "signals"
-  },
-  {
-   "band": "middle",
-   "confidence": 0.6,
-   "kind": "NSWindow",
-   "name": "window-did-resize",
-   "pattern": "signal:no-probe",
-   "section": "signals"
+   "name": "ordered-index",
+   "pattern": "prop:ignored",
+   "section": "props"
   }
  ],
  "schema": "svelters-inferred-review/v1",
  "skipped": {
   "binding:enum-prop": 1,
-  "binding:inherited": 1
+  "binding:inherited": 1,
+  "prop:denied": 2
  },
  "toolkit": "appkit",
  "unreviewed": {
   "by_pattern": {
-   "middle:binding:no-probe": 15,
-   "middle:signal:no-probe": 16
+   "low:binding:prop-ignored": 3,
+   "low:binding:prop-normalized": 5,
+   "low:prop:error": 2,
+   "low:prop:ignored": 10,
+   "low:prop:normalized": 10
   },
-  "low": 0,
-  "middle": 31
+  "low": 30,
+  "middle": 0
  },
  "version": "26.1"
 }
