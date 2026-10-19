@@ -104,19 +104,19 @@ sync #10 unbind [2,1]
 result #10 null
 sync #10 teardown [2]
 remove #12 #16
-destroy #12
-result #10 null
 destroy #17
 destroy #18
 destroy #16
+destroy #12
+result #10 null
 event #8 clicked []
-remove #2 #10
 remove #11 #13
-destroy #11
-destroy #10
 destroy #14
 destroy #15
 destroy #13
+destroy #11
+remove #2 #10
+destroy #10
 event #8 clicked []
 create virtual-list #19
 set #19 layout "list"

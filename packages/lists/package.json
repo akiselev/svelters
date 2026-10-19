@@ -4,17 +4,16 @@
   "license": "MIT",
   "private": true,
   "type": "module",
-  "description": "Virtualized, model-backed lists for svelters: a JS array exposed to GtkListView/QListView, rows rendered by a recycled pool of Svelte components",
+  "description": "Virtualized, model-backed lists for svelters: `<ListView>` (a JS array exposed to GtkListView/QListView, rows rendered into recycled row slots, implemented by @svelters/native-runtime/lists) and `arrange`",
   "exports": {
-    ".": { "svelte": "./src/index.js", "default": "./src/index.js" },
+    ".": "./src/index.js",
     "./diff": "./src/diff.js",
     "./arrange": "./src/arrange.js"
   },
   "dependencies": {
-    "@svelters/renderer": "workspace:*",
-    "svelte": "5.57.2"
+    "@svelters/native-runtime": "workspace:*"
   },
   "scripts": {
-    "test": "node --test test/diff.test.mjs test/arrange.test.mjs"
+    "test": "node --test test/arrange.test.mjs"
   }
 }

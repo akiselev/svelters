@@ -27,7 +27,7 @@ insert #2 #7 before=end slot=default
 insert #1 #2 before=end slot=default
 call #1 present []
 event #7 clicked []
-set #4 label "text=from js"
-set #6 label "value=55"
 set #3 text "from js"
+set #4 label "text=from js"
 set #5 value 55
+set #6 label "value=55"

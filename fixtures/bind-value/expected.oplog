@@ -4,8 +4,8 @@ create box #2
 set #2 orientation "vertical"
 set #2 spacing 6
 create entry #3
-set #3 text "Ann"
 listen #3 changed on
+set #3 text "Ann"
 insert #2 #3 before=end slot=default
 create button #4
 listen #4 clicked on
@@ -27,8 +27,8 @@ event #3 changed ["Zed"]
 set #6 label "Hello Zed"
 set #7 label "changes: 1"
 event #4 clicked []
-set #6 label "Hello Bob"
 set #3 text "Bob"
+set #6 label "Hello Bob"
 event #5 clicked []
-set #6 label "Hello BOB"
 set #3 text "BOB"
+set #6 label "Hello BOB"

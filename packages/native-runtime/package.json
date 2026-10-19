@@ -4,23 +4,28 @@
   "license": "MIT",
   "private": true,
   "type": "module",
-  "description": "Runtime for components compiled by the experimental Rust compiler (NC1): Svelte signals + direct host ops",
+  "description": "Runtime for components compiled by the svelters compiler (svelters-compile): host ops, blocks, styling and lists over Svelte's signals",
   "exports": {
     ".": "./src/index.js",
+    "./core": "./src/core/index.js",
     "./lists": "./src/lists.js",
+    "./style": { "types": "./src/style.d.ts", "default": "./src/style.js" },
+    "./bindings": "./src/bindings.generated.js",
+    "./types": { "types": "./types/index.d.ts" },
     "./vite": "./vite.js"
   },
   "dependencies": {
-    "@svelters/lists": "workspace:*",
-    "@svelters/renderer": "workspace:*",
     "@svelters/style": "workspace:*",
     "@svelters/types": "workspace:*",
     "svelte": "5.57.2"
   },
   "devDependencies": {
-    "@svelters/testhost": "workspace:*"
+    "@svelters/testhost": "workspace:*",
+    "svelte-check": "^4.7.7",
+    "typescript": "~6.0.3"
   },
   "scripts": {
-    "test": "node --import ./test/register.mjs --test test/*.test.mjs"
+    "test": "node ../../tools/check-svelte-internals.mjs && node --import ./test/register.mjs --test test/*.test.mjs && pnpm run check",
+    "check": "svelte-check --workspace check --tsconfig ./tsconfig.json --threshold error --diagnostic-sources js"
   }
 }

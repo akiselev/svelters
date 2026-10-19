@@ -1,77 +1,76 @@
 ---
 title: Bindings
-description: Two-way binding on native widgets today (component wrappers), echo suppression, and the element bind support coming through the Svelte fork.
+description: Element bind:this and bind:<prop> on native widgets, where the binding facts come from, and how echoes of the app's own writes are suppressed.
 ---
 
-:::caution[In progress: F1]
-Element `bind:this` and `bind:<prop>` are coming through our Svelte fork. Milestone F1 (`STATUS.md`, state IN PROGRESS) has two phases: phase A adds `bind:this` and a binding hook in the fork; phase B adds the renderer side and binding metadata after P5. Until then, every element `bind:` is a compile error, and this page describes the interim pattern.
-:::
-
-## What is a compile error today
-
-Under `experimental.customRenderer`, every element binding fails to compile: `bind:value`, `bind:checked`, `bind:group` (also on a real `<input>`), `bind:this` and `bind:clientWidth`. Stock Svelte also rejects `bind:value` on anything other than `input`, `textarea` and `select` (`bind_invalid_target`), and unknown names such as `bind:text` on a custom element (`bind_invalid_name`).
-
-What works unchanged:
+Element `bind:this` and `bind:<prop>` work. The compiler resolves each binding against the toolkit's semantic spec at compile time: which property, which change signal, where the new value comes from and how echoes are suppressed. Component bindings (`$bindable`) work as in Svelte.
 
 | Form | Status |
 | --- | --- |
-| component `bind:prop` | works |
-| component `bind:this` | works |
-| function bindings `bind:v={get, set}` | works |
-| element `bind:this`, `bind:<prop>` | forbidden today; **in progress (F1)** |
-| dimension bindings (`bind:clientWidth`) | forbidden; **planned** as a `resized` pseudo-signal plus a `Measure` wrapper |
+| element `bind:this` | works |
+| element `bind:<prop>` with a binding plan in the spec | works |
+| element `bind:<prop>` without one | compile error (`bind_no_plan`, `unknown_property` or `read_only_property`) |
+| function bindings `bind:v={get, set}` | works, on elements and components |
+| component `bind:prop`, `bind:this` | works |
+| `bind:group`, `bind:clientWidth` and other DOM bindings | compile error: they are not native properties |
 
-## Two-way binding through component wrappers
-
-Two-way binding is a component feature in Svelte 5 (`$bindable`), so each bindable native property gets a wrapper component. The survey verified this pattern on the production renderer. The wrapper is generated from metadata (`entry.text` is bindable and its change signal is `changed`):
+## `bind:<prop>`
 
 ```svelte
-<!-- generated: Entry.svelte -->
-<script lang="ts">
-  import type { EntryProps } from './entry.gen';
-  let { text = $bindable(''), onchanged, ...rest }: EntryProps = $props();
+<script>
+  let name = $state('Ann');
 </script>
-<entry {...rest} text={text} onchanged={(t) => { text = t; onchanged?.(t); }} />
+
+<window title="bind:text">
+  <box orientation="vertical" spacing="6">
+    <entry bind:text={name} />
+    <button onclicked={() => (name = 'Bob')}>Set Bob</button>
+    <label>Hello {name}</label>
+  </box>
+</window>
 ```
 
-```svelte
-<!-- app -->
-<Entry bind:text={name} placeholder-text="Name" onactivate={() => (submitted = name)} />
-<label>Hello {name}</label>
-```
+The binding name is the property's kebab-case name: `bind:text` on a GTK `entry` or a Qt `line-edit`, `bind:checked` on an `action` or `check-box`, `bind:value` on a Qt `slider`, `bind:current-index` on a Qt `tab-widget`. The element typings list every bindable property per tag (`BindableProps` in `@svelters/native-runtime/types`).
 
-Resulting operations:
+The compiler emits one runtime call per binding:
+
+- A render effect writes the bound value to the property. A write equal to the last value the node holds is skipped.
+- On the change signal, the new value is taken from the signal's arguments (or read with `getProp` when the signal carries none). It is recorded as the node's last value, so writing it back is not echoed, and it is assigned to your state only if it differs.
+
+Writing the same property explicitly and through a binding (`<entry text="x" bind:text={t}>`) is a compile error (`bind_and_prop`). A one-way prop that has a binding in the spec (`text={draft}` on an entry, without `bind:`) still records native edits when its signal is delivered, so writing the edited value back is not echoed either.
+
+Operations from the `bind-value` fixture, which is this example plus an "Upper" button and a change counter (abridged; `#3` is the entry, `#4` the "Set Bob" button, `#6` the greeting):
 
 ```text
-create entry #3 ; set #3 placeholder-text "Name" ; set #3 text "Ann" ; listen #3 activate on ; listen #3 changed on
-event #3 changed ["Bob"]  -> set #4 label "Hello Bob"     (no echo `set #3 text`)
-JS name = "Cy"            -> set #3 text "Cy" ; set #4 label "Hello Cy"
+create entry #3 ; set #3 text "Ann" ; listen #3 changed on
+event #3 changed ["Zed"]  -> set #6 label "Hello Zed"     (no echo `set #3 text`)
+event #4 clicked []       -> set #3 text "Bob" ; set #6 label "Hello Bob"
 ```
 
-:::note[State of the wrappers]
-The wrapper above is the survey prototype. Generating wrapper components from metadata is the first item in the survey's work list and is not shipped. The generator produces `.d.ts` element declarations today (`packages/renderer/types/{gtk,qt}.d.ts`), not wrapper components.
-:::
+## Where binding facts come from
 
-Notes on the pattern:
+Bindings are annotations, not code. `bindings:` blocks in `metadata/overrides/<toolkit>/*.yaml` name the property, its direction (`two_way` or `read_only`), the change signal, the value source (`argN` or a read-back) and the echo strategy. They are checked against the toolkit metadata (the property exists and is writable, the signal exists, the argument has the property's type) and generated into:
 
-- The wrapper forwards the user's `onchanged` explicitly, because a function in `...rest` is dropped by the spread bug unless its name starts with `on` (see [known fork bugs](/guides/svelte-support/#known-fork-bugs)). `on*` handlers inside a spread are attached as events.
-- Other planned wrapper forms: `bind:checked` becomes `CheckButton bind:active` or `Switch bind:active` (GTK `notify::active`, Qt `toggled`); `bind:group` becomes a `RadioGroup`/`CheckGroup` wrapper with `$bindable` `value`/`values` and items registering through context; `bind:value` on a select becomes `DropDown bind:selected`.
-- egui has no widget state to echo, so the value round-trips every frame. WinUI `TwoWay` bindings and AppKit KVO fit the same wrapper.
+- the semantic specs (`metadata/semantics/<toolkit>.json`, `kinds.<id>.bindings`), which the compiler reads;
+- `packages/native-runtime/src/bindings.generated.js` and `packages/native-runtime/types/bindings.d.ts`.
+
+The GTK spec has 237 bindings, many of them `notify::<prop>` on GTK properties; the Qt spec has 34, on the annotated elements. See [Metadata and annotations](/guides/annotation-workflow/).
 
 ## Echo suppression and notify signals
 
-Setting a bound property from JS must not come back as a user change. Today, the entry mirror is hard-coded for `entry` with `changed`. The renderer mirrors `entry.text`, so a native `changed` event does not produce a redundant `set text`. The survey's recommendation is to make this metadata-driven (**planned**).
+Setting a bound property from JS must not come back as a user change. Two mechanisms apply:
+
+- **Compare.** The runtime skips a write equal to the node's last value and records natively reported values, as above.
+- **Backend blocking** (`echo: host_suppressed` in the annotation, `backend_blocks` in the spec). The backend blocks its own handler while it applies a programmatic set, so the toolkit's notification does not reach JS. GTK blocks our handler id; Qt uses a per-handle flag, never `blockSignals(true)`, which would silence the app's other connections and accessibility observers. `echo_suppress[]` on a GTK property and `suppress_signals` on a Qt element property record these facts.
 
 Where the change signal comes from:
 
 | Toolkit | Notify source |
 | --- | --- |
-| GTK | `notify::<prop>` (`ParamSpec` with `EXPLICIT_NOTIFY`) |
-| Qt | the `NOTIFY` signal of the `Q_PROPERTY` (`textChanged`, `valueChanged`, `currentIndexChanged`) |
+| GTK | `notify::<prop>` (`ParamSpec` with `EXPLICIT_NOTIFY`), or a user-edit signal such as `entry` `changed` or `check-button` `toggled` |
+| Qt | the `NOTIFY` signal of the `Q_PROPERTY` (`text-changed`, `value-changed`, `current-index-changed`) |
 
-with a curated preference for user-edit signals where they exist (Qt `textEdited` over `textChanged`, `QAbstractSlider::sliderMoved`).
-
-Probed behavior that drives the rules:
+Probed behaviour that drives the annotations:
 
 ```text
 GTK Entry  set_text x, x, (blocked) y, y  -> notify::text ['x', 'x', 'y']   re-emits on identical set
@@ -79,30 +78,32 @@ GTK SpinButton set_value 5,5,500 (max 99) -> value-changed 5, 99            clam
 GTK Switch set_active(True)               -> state-set True, then notify::active
 Qt QLineEdit setText x, (blocked) y, y    -> textChanged ['x']               unchanged set does not emit
 Qt QSpinBox  setValue 5,5,500 (max 99)    -> valueChanged [5, 99]
-own writable props on Gtk widget classes: 581, with EXPLICIT_NOTIFY: 498
 ```
 
-Design rules (from the signals research; **planned**, M4 two-way binding):
+:::note[Not applied by the runtime]
+The annotations also record `read_back` (read the property after a set because the toolkit may clamp or normalise it) and `compare_before_set` against the native value. The runtime compares only against the last value it wrote or saw; it does not read back after a set. A clamped value reaches JS only if the toolkit emits the change signal for it.
+:::
 
-1. When the renderer sets a bound property, bracket the native set by blocking **our** handler (`g_signal_handler_block` with our handler id on GTK; a per-handle suppress flag on Qt). Never `blockSignals(true)` on Qt: it silences the app's other connections and accessibility observers.
-2. After the set, read the property back. If it differs from what JS wrote (clamping, normalisation), post one synthetic change event so `$bindable` converges to the native value.
-3. Compare before setting in the renderer. `GtkEntry` re-notifies on identical text and also moves the cursor.
-4. Programmatic sets can emit sync signals (`Switch::state-set`). Block the sync handler too while applying a host op.
-5. Prefer the user-intent signal where metadata has one.
-6. GTK `freeze_notify`/`thaw_notify` helps batching but not suppression, since notifications are delivered at thaw.
-
-In the annotation files, `echo_suppress[]` on a property and `suppress_signals` on a Qt element property record these facts. Qt `QLineEdit` programmatic `text` sets do not emit `changed` for that reason.
-
-## `bind:this` today: `{@attach}`
-
-`{@attach}` runs after the element is created and inserted, so it can hold the node:
+## `bind:this`
 
 ```svelte
-<entry {@attach (node) => { ref = node; return () => (ref = null); }} />
+<script>
+  let win = $state();
+  let entry = $state();
+</script>
+
+<window title="bind:this" bind:this={win}>
+  <entry bind:this={entry} text="seed" />
+  <button onclicked={() => { console.log(entry.getProp('text')); win.call('present'); }}>Read</button>
+</window>
 ```
 
-What app code can do with the node is limited: the current renderer exposes no `getProp` or `call` to components. The survey prototyped `callNative(node, method, args)`; a typed per-kind handle API (`widget(node).grabFocus()`) is **planned**. Once F1 lands, element `bind:this` is the intended syntax.
+The bound value is the runtime's node (`NativeElement` in the typings):
 
-After the native widget is destroyed, a held node is marked dead; reads and calls on it throw `StaleHandleError(reason)`. This is part of the ownership design, see [Ownership](/concepts/ownership/#abi-v2-and-implementation-state).
+- `call(method, ...args)` calls a native method, `getProp(name)` reads a property. An object result is a node: the bound node for an object the app created, else one stable borrowed node per native object.
+- `tag`, `handle` and `dead` describe the node.
+- After the native widget is destroyed, `call` and `getProp` throw `StaleHandleError` with a `reason` (`destroyed` or the native death reason, such as `parent`). See [Ownership](/concepts/ownership/#abi-v2-and-implementation-state).
 
-Sources: `docs/notes/svelte-feature-survey.md` (section 4), `docs/notes/signals-and-slots-semantics.md` (section 1.6), `docs/notes/p5-integration.md`, `STATUS.md`, `PLAN.md`.
+`bind:this` on a toplevel with `show="none"` is how an app opens a dialog itself: `about.call('present')`. `bind:this` on a component binds its exports, as in Svelte.
+
+Sources: `docs/notes/native-compiler/runtime-contract.md` (`bind`, `track`), `docs/notes/native-compiler/semantic-spec.md`, `docs/notes/fork-bindings.md` (section 6, binding schema), `docs/notes/signals-and-slots-semantics.md` (section 1.6), `packages/native-runtime/src/index.js`, `packages/native-runtime/types/native.d.ts`, `fixtures/bind-value/`, `fixtures/bind-this/`, `fixtures/dialogs/`.

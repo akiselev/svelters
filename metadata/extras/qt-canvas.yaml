@@ -1,0 +1,12 @@
+# Hand-written Qt element (tools/metadata/qt/templates/canvas.hpp.in, kCanvasKind): the recording canvas
+# (X8), a QWidget whose paintEvent replays the JSON display list @svelters/canvas records. Its members are
+# cv_resolve's rows. `spec`: see gtk-menus.yaml; on Qt `signals_from` copies the event-family signal records
+# of that element (the same synthetic event filters).
+elements:
+  - tag: canvas
+    spec:
+      kind: canvas
+      native: QWidget
+      props: { ops: { type: string, nullable: true }, content-width: i32, content-height: i32, hexpand: bool, vexpand: bool }
+      signals_from: { element: box-layout, names: [key-release, mouse-press, mouse-release, mouse-move, mouse-double-click, wheel, focus-in, focus-out, enter, leave, resize, context-menu] }
+      provenance: "canvas.hpp.in cv_resolve / cv_set_prop"

@@ -408,8 +408,10 @@ def gtk_spec() -> dict:
         w = f"gtk rules kinds.{k}"
         if k not in kinds:
             fail(f"{w}: no such kind")
-        check_keys(w, r, {"lifetime", "present", "text_content", "signals", "provenance"})
-        prov = need_prov(w, r) if {"lifetime", "present", "text_content"} & set(r) else None
+        check_keys(w, r, {"lifetime", "present", "text_content", "attaches_to", "signals", "provenance"})
+        prov = need_prov(w, r) if {"lifetime", "present", "text_content", "attaches_to"} & set(r) else None
+        if "attaches_to" in r and r["attaches_to"] not in kinds:
+            fail(f"{w}: attaches_to {r['attaches_to']!r} is not a kind")
         if "lifetime" in r and r["lifetime"] not in LIFETIMES:
             fail(f"{w}: lifetime must be one of {sorted(LIFETIMES)}")
         if "present" in r and not any(k2 in chains[k] and r["present"] == n for k2, n in
@@ -431,7 +433,7 @@ def gtk_spec() -> dict:
                     fail(f"{sw}: bad arg type {a.get('type')!r}")
             kinds[k]["signals"][sname]["args"] = [dict(a) for a in sr.get("args", [])]
             kinds[k]["provenance"][f"signals.{sname}"] = sp
-        for f in ("lifetime", "present", "text_content"):
+        for f in ("lifetime", "present", "text_content", "attaches_to"):
             if f in r:
                 kinds[k]["provenance"][f] = prov
     # text_prop: metadata/overrides/gtk/<Kind>.yaml (not merged into metadata/gtk); inherited like the rules
@@ -459,6 +461,12 @@ def gtk_spec() -> dict:
                     kinds[k]["provenance"][f] = f"inherited from {src}"
         if kinds[k]["lifetime"] == "toplevel" and kinds[k]["present"] is None:
             fail(f"{k}: toplevel kind without a present method")
+        # attaches_to (RT1): only on the kinds that have it, inherited like the facts above
+        src = next((c for c in chains[k] if c in krules and "attaches_to" in krules[c]), None)
+        if src is not None:
+            kinds[k]["attaches_to"] = krules[src]["attaches_to"]
+            if src != k:
+                kinds[k]["provenance"]["attaches_to"] = f"inherited from {src}"
 
     # bindings: the `bindings` annotations (metadata/overrides/gtk, merged into metadata/gtk)
     for d in m.kinds:
@@ -508,7 +516,9 @@ def gtk_spec() -> dict:
     if emitted_attrs != tables["attrs"]:
         fail(f"child attributes differ from svelters-gtk tables: {sorted(emitted_attrs ^ tables['attrs'])}")
 
+    # the style table covers the generated kinds only (setters are resolved against their props)
     style = style_table.build("gtk", style_table.load("gtk"), tags, kinds)
+    extra_kinds("gtk", kinds, tags, lambda b: kinds[b]["chain"])
     al = aliases(rules, "gtk rules", lambda s: any(s in kinds[k]["signals"] for k in kinds))
     return {"schema": SCHEMA, "backend": "gtk", "framework": rules["framework"], "event_aliases": al,
             "row_outlet": row_outlet(rules, "gtk rules", tags),
@@ -683,15 +693,98 @@ def qt_spec() -> dict:
                 if not any(a in o["chain"] for o in kinds.values()):
                     print(f"note: no Qt element is a {a}", file=sys.stderr)
 
-    style = style_table.build("qt", style_table.load("qt"), {t: t for t in kinds}, kinds)
+    # `construct.context_menu` elements (QMenu) inserted into any other widget are its context menu (X4)
+    for el in m.elements:
+        if el["construct"].get("context_menu"):
+            kinds[el["tag"]]["attaches_to"] = "QWidget"
+            kinds[el["tag"]]["provenance"]["attaches_to"] = "construct.context_menu (menus.hpp.in ctx_attach)"
+    qtags = {t: t for t in kinds}
+    style = style_table.build("qt", style_table.load("qt"), dict(qtags), kinds)
+    extra_kinds("qt", kinds, qtags, lambda b: kinds[b]["chain"], m.chain)
     al = aliases(rules, "qt rules", lambda s: any(s in kd["signals"] for kd in kinds.values()))
     return {"schema": SCHEMA, "backend": "qt", "framework": rules["framework"], "event_aliases": al,
             "row_outlet": row_outlet(rules, "qt rules", kinds),
-            "tags": {t: t for t in sorted(kinds)}, "kinds": kinds, "style": style, "element_hints": hints,
+            "tags": dict(sorted(qtags.items())), "kinds": kinds, "style": style, "element_hints": hints,
             # only annotated methods exist at runtime
             "method_lookup": "annotated",
             "source": {"metadata": "metadata/qt/*.json + metadata/overrides/qt/*.yaml",
                        "rules": "metadata/semantics/rules/qt.yaml", "style": "metadata/style/qt.yaml"}}
+
+
+EXTRAS = ROOT / "metadata/extras"
+EXTRA_SPEC_KEYS = {"kind", "native", "base", "props", "signals", "signals_from", "methods", "children", "attaches_to",
+                   "provenance"}
+
+
+def extra_kinds(tk: str, kinds: dict, tags: dict, base_chain, native_chain=lambda n: []) -> None:
+    """Hand-written kinds with no ingested class (metadata/extras/<tk>-*.yaml `elements[].spec`, RT1): GTK
+    menus and the recording canvas, the Qt canvas. Added after the generated kinds (and after the GTK table
+    cross-check: the backend serves them from hand-written code, not the generated tables).
+    `base_chain(base)` is the chain a kind with `base` continues with."""
+    added = []
+    for path in sorted(EXTRAS.glob(f"{tk}-*.yaml")):
+        for el in svmeta.load_yaml(path).get("elements", []):
+            sp = el.get("spec")
+            if not sp:
+                continue
+            tag = el["tag"]
+            w = f"metadata/extras/{path.name} <{tag}> spec"
+            check_keys(w, sp, EXTRA_SPEC_KEYS)
+            prov = need_prov(w, sp)
+            k = sp["kind"]
+            if k in kinds or tag in tags:
+                fail(f"{w}: kind {k} or tag {tag} already exists")
+            base = sp.get("base")
+            if base is not None and base not in kinds:
+                fail(f"{w}: base {base} is not a kind")
+            props = {}
+            for name, t in sorted((sp.get("props") or {}).items()):
+                t = t if isinstance(t, dict) else {"type": t}
+                if t["type"] not in SCALARS:
+                    fail(f"{w}: prop {name}: only scalar types are supported, not {t['type']!r}")
+                props[name] = {"js": name, "native": name, "type": t["type"], "nullable": bool(t.get("nullable")),
+                               "readable": True, "writable": True, "construct_only": False, "default": t.get("default")}
+            sigs = {}
+            for name, args in sorted((sp.get("signals") or {}).items()):
+                sigs[name] = phases_rec({"name": name, "js_event": name, "args": [dict(a) for a in args],
+                                         "handler_result": "none", "sync_required": False,
+                                         "disconnect_on_drop": True}, [])
+            sf = sp.get("signals_from")
+            if sf:
+                src = kinds.get(tags.get(sf["element"], ""))
+                if src is None:
+                    fail(f"{w}: signals_from: no element {sf['element']}")
+                for name in sf["names"]:
+                    if name not in src["signals"]:
+                        fail(f"{w}: signals_from: <{sf['element']}> has no signal {name}")
+                    sigs[name] = json.loads(json.dumps(src["signals"][name]))
+            children = None
+            if sp.get("children"):
+                children = {"policy": "ordered", "default_slot": "items", "slots": {"items": {
+                    "many": True, "accepts": list(sp["children"]["accepts"]), "route_by_kind": False,
+                    "order": "before_sibling", "attrs": {}}}}
+            rec = {"native": sp["native"], "abstract": False, "interface": False,
+                   "chain": [k] + (base_chain(base) if base else native_chain(sp["native"])), "lifetime": "owned", "present": None,
+                   "text_content": None, "props": props, "signals": sigs, "bindings": {}, "children": children,
+                   "methods": {n: {"dispatch": "extra", "native": n, "params": [], "returns": type_rec(None)}
+                               for n in sp.get("methods") or []},
+                   "provenance": {"kind": prov}}
+            if sp.get("attaches_to"):
+                if sp["attaches_to"] not in kinds and tk != "qt":
+                    fail(f"{w}: attaches_to {sp['attaches_to']} is not a kind")
+                rec["attaches_to"] = sp["attaches_to"]
+
+            def fp(n, rec=rec):
+                return next((p for p in rec["props"].values() if n in (p["js"], p["native"])), None)
+            for b in sorted(el.get("bindings", []), key=lambda b: b["name"]):
+                rec["bindings"][b["name"]] = binding_from_metadata(k, b, fp, lambda n, rec=rec: rec["signals"].get(n))
+            kinds[k] = rec
+            tags[tag] = k
+            added.append(k)
+    for k in added:
+        for a in ((kinds[k]["children"] or {}).get("slots") or {}).get("items", {}).get("accepts", []):
+            if a not in kinds:
+                fail(f"extra kind {k}: slot accepts unknown kind {a}")
 
 
 # ---- AppKit ----------------------------------------------------------------------------------

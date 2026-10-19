@@ -1,7 +1,8 @@
 # NC1: experimental Rust Svelte compiler with native semantics
 
-Status: IN PROGRESS (audit + foundation choice). Runs side by side with the existing JS pipeline;
-nothing in the working Vite/@svelters/renderer path changes.
+Status: merged via ST1; since RT1 (`plans/milestones/RT1-retire-fork-runtime-core.md`) the only
+frontend (the JS pipeline it ran beside, Vite + stock Svelte through the fork into
+@svelters/renderer, is retired). The text below is the original plan.
 
 Goal: a Rust Svelte compiler whose output is JavaScript executed by rquickjs through the existing
 host/ABI, with compilation driven by per-framework semantic specifications (elements, props,

@@ -92,7 +92,7 @@ The P milestone applies ops directly instead of batching. Batching comes later i
 
 ## JS-side host ops
 
-The L1 adapter calls these and the host forwards them to the vtable:
+The L1 runtime (`@svelters/native-runtime`) calls these and the host forwards them to the vtable:
 
 ```ts
 interface SveltersHost {
@@ -118,7 +118,7 @@ interface SveltersHost {
 
 The JS host caches name→ID resolution per kind. The Node TestHost implements this interface in JS and records an op log. The QuickJS host implements it natively. A given fixture must produce the same op log in both.
 
-**Widget creation timing.** Svelte clones each template with `cloneNode(true)` for every instance, so the shim creates the native widget when a node is first inserted under a native-backed parent, not when the node is constructed or cloned.
+**Widget creation timing.** Compiled components create each native widget where the element is declared (`$n.element`), insert it once its children are in place and present a toplevel after its subtree is complete (`docs/notes/native-compiler/runtime-contract.md`). (The retired DOM shim and renderer created widgets lazily, on first insertion under a native-backed parent, because Svelte cloned templates.)
 
 ## Qt build: leaf crate
 
@@ -223,7 +223,7 @@ void (*schedule_wake)(void *self, int64_t ms);
 
 ## ABI v2 (approved 2026-10-17, lands at the start of M2)
 
-**Status: implemented in M2a** (host, log backend, GTK, Qt, renderer). Deviations from the text below are listed under "As implemented" at the end of this section.
+**Status: implemented in M2a** (host, log backend, GTK, Qt, the then JS renderer; today `@svelters/native-runtime`). Deviations from the text below are listed under "As implemented" at the end of this section.
 
 ABI v2 bundles two approved changes: toolkit-native timers (above) and the lifetime model from `docs/notes/ownership-and-lifetimes.md`. `SVL_ABI_VERSION` becomes 2.
 
@@ -259,7 +259,7 @@ Rules:
   - Log backend: scripted fixtures (`HostConfig::scripted`) keep the host's own virtual clock, which is deterministic and instant and never calls `schedule_wake`. Unscripted runs on the log backend honour `schedule_wake` in wall time, so the real-timer test exercises the same path as the toolkits. A virtual clock inside the backend would need the host to read the backend's time, which the ABI does not offer.
 - **Handles.** Backends mint monotonic handles that are never reused. The host rejects a handle at or above 2^53. The dead-handle ring keeps the last 4096 dead handles. Errors read `handle #12 was destroyed (its window was closed)`; a handle that fell out of the ring or was never issued reads `stale or foreign handle 12`.
 - **Destroy.** The host's `destroy` is idempotent and silent (no `on_destroyed` for the app's own destroy). `setProp`, `listen(off)`, `remove` and `destroy` on a dead handle are no-ops; `getProp`, `call`, `insert` and `listen(on)` throw.
-- **Native death.** `on_destroyed(h, reason)` only records the death and queues a `gone` event; the next checkpoint calls `globalThis.__svelters_gone(h, reasonName)` (installed by `@svelters/renderer`). The renderer drops the handle from its tables and sends nothing more for that node. Signals queued for a handle that died are dropped silently.
+- **Native death.** `on_destroyed(h, reason)` only records the death and queues a `gone` event; the next checkpoint calls `globalThis.__svelters_gone(h, reasonName)` (installed by `@svelters/native-runtime`'s `mount`; before RT1 by `@svelters/renderer`). The runtime drops the handle from its tables and sends nothing more for that node. Signals queued for a handle that died are dropped silently.
 - **Cascade.** GTK reports the window (`closed`) first, then every handle inserted below it (`parent`), from its slot records, because GTK has already unparented the children when `destroy` is emitted. Qt does the same eagerly in the close filter while the object tree is intact.
 - **Classes.** The four lifetime classes exist in the ABI. `owned` and `toplevel` are minted by `create` and `borrowed` by getters and calls (X1, below); no `value` handle is minted yet (ABI v3). A toplevel is a window or dialog kind (GTK: `GtkWindow`; Qt: derived from `QMainWindow`/`QDialog`, decided by the generator).
 
@@ -270,11 +270,11 @@ No ABI change: the behaviour below is what a conforming backend does with the ex
 - **Minting.** A `get_prop` or `call` result of `SVL_HANDLE` may name a handle the host has not seen. The host then asks `handle_info` for its kind and lifetime class and adds it to its handle table (a borrowed handle is never a toplevel for the quit decision). A result that names an object the app created carries that object's existing handle.
 - **Identity.** One live handle per native object, found from the object itself, never by an address map that can outlive it (GTK: GObject qdata; Qt: a side table erased from `destroyed`). Handles are never reused, so asking again after the app forgot a handle returns a new number for the same object.
 - **Weak.** A borrowed handle holds its object weakly (GTK: `GWeakRef` and a weak notify; Qt: `QPointer`). It never keeps the object alive and never deletes it.
-- **`destroy` on a borrowed handle** only forgets it (silent, idempotent). The renderer calls it when the node for a borrowed handle is garbage-collected.
+- **`destroy` on a borrowed handle** only forgets it (silent, idempotent). The runtime calls it when the node for a borrowed handle is garbage-collected.
 - **Death.** The owner deleting the object reports `SVL_GONE_OWNER`. When a toplevel closes natively, borrowed handles reachable below it (the QObject parent chain on Qt; the handle whose getter minted them on GTK) are reported as `SVL_GONE_PARENT` in the same cascade, after the window and its inserted children. Each handle is reported at most once.
 - **Tree.** `insert` and `remove` fail with "borrowed" for a borrowed parent or child. `set_prop`, `get_prop`, `call` and `listen` work on them.
 - **Kind.** The nearest ancestor type that has a generated kind, or 0 when none has. Property and signal lookups use the kind, so a borrowed `GtkText` supports the properties of `Text`/`Editable`/`Widget` and a borrowed plain `QWidget` (kind 0) supports only the universal getters.
-- **JS.** Results are renderer nodes (`globalThis.__svelters_node(h)` is installed by `@svelters/renderer`; without a renderer the host returns the number). An object we created resolves to its own bound node, a native-made one to a single `borrowed` node per handle. Nodes passed as `call`/`setProp` arguments (anything with a numeric `svlHandle`) are converted back to handles.
+- **JS.** Results are runtime nodes (`globalThis.__svelters_node(h)` is installed by `@svelters/native-runtime`'s `mount`; without it the host returns the number). An object we created resolves to its own bound node, a native-made one to a single `borrowed` node per handle. Nodes passed as `call`/`setProp` arguments (anything with a numeric `svlHandle`) are converted back to handles.
 - **Method ids** are not limited to the generated tables. A backend may mint more ids from `resolve(SVL_METHOD, kind, name)`:
   - GTK: ids past `METHODS.len()` are typelib methods, resolved through girepository-2.0 and invoked with `gi_function_info_invoke` (libffi). `snake_case` and `camelCase` names both work. Supported types: bool, 8..64-bit integers, float/double, UTF-8 strings, enums (nick or number in, nick out), flags (number, nick or `a|b` in, number out), objects and interfaces (handle or null in; existing or borrowed handle out; `transfer full` in gets its own reference, `transfer full` out becomes an owned handle). Callbacks, out/inout parameters, arrays, lists, hash tables, GType, structs/boxed values and static functions are rejected with an error that names the feature. The matrix and follow-ups are in `docs/notes/x1-borrowed-gi.md`.
   - Qt: ids from `1 << 20` are universal object getters generated from the qdoc metadata of every QObject-derived class (`parent`, `parentWidget`, `window`, `centralWidget`, `viewport`, `lineEdit`, ...); they apply to any kind and fail with "does not apply" on a receiver of the wrong class. The annotated-method generator also accepts `object<T>` parameters and results.
@@ -400,7 +400,7 @@ enum { SVL_LISTEN_AFTER = 1, SVL_LISTEN_CAPTURE = 2 };   /* listen_ex flags; 4 i
 
 - `SVL_LISTEN_AFTER`: run after the class/default handler (GTK `connect_after`).
 - `SVL_LISTEN_CAPTURE`: run in the capture phase, before the target (event controllers on GTK; an event filter on Qt).
-- Each (handle, signal, flags) is a separate native connection. The renderer turns listeners on at the first and off at the last listener of that triple.
+- Each (handle, signal, flags) is a separate native connection. The runtime turns listeners on at the first and off at the last listener of that triple.
 - The backend reports which connection fired by or-ing `flags << 28` into the signal id it passes to `post_event` and `call_sync`. The host strips the bits, resolves the name from the base id and hands the flags to JS, which runs only the listeners registered with those flags.
 - Support is per backend and per signal. A combination that has no honest native meaning fails with an error that names the reason; see "Listener phases per backend" in `docs/notes/x3-childattr-listen.md`.
 - The op log gets one more word on `listen` lines (`listen #1 key-pressed on after+capture`, only when flags are set) and one line type `attr #<parent> #<child> <name> <json>` (`null` = reset).
@@ -453,7 +453,7 @@ No new vtable member and no new name kind. Convention for `insert`/`remove` when
 - `insert(parent, child, before=0, slot=0)` makes `child` transient for the window that contains `parent` (`parent` itself when it is a window). GTK: `gtk_window_set_transient_for`. Qt: `QWidget::setParent(parent->window(), windowFlags())`, which keeps the window type. `before` and `slot` are ignored. The child is not shown by the insert; `present` (windows), `open` (Qt dialogs, window-modal, non-blocking) or `modal` + `present` (GTK) show it. Blocking calls (`exec`, run loops) are never exposed.
 - `remove(parent, child)` undoes it (`set_transient_for(NULL)`, `setParent(nullptr, flags)`). Inserting an already inserted toplevel, a window into itself, or into a parent that is not in a window fails.
 - The tree edge is real for lifetime purposes: when the parent window dies, its transient toplevels die with it and are reported `SVL_GONE_PARENT` (Qt through the QObject parent; GTK destroys them from an idle). A transient toplevel that is closed on its own reports `SVL_GONE_CLOSED` as any toplevel.
-- Renderer side: a toplevel kind (`TOPLEVELS` in `bindings.generated.js`) may appear anywhere in a component; it is realized, inserted under the nearest enclosing toplevel element (none at the root), and shown by its `show` policy (`modal`, `modeless`, `none`) after that window was shown.
+- JS side (`@svelters/native-runtime`, `$n.toplevel`; the compiler emits it for every toplevel kind): a toplevel kind may appear anywhere in a component; it is created, inserted under the nearest enclosing toplevel element once the appends that contain it are complete (none at the root), and shown by its static `show` policy (`modal`, `modeless`, `none`; dialogs default to modal, using `TOPLEVELS` in `bindings.generated.js` for the modal method and the `modal` property) after that window was shown.
 
 Later ABI additions, not part of v2:
 
@@ -595,7 +595,7 @@ Things to do now, with no ABI change:
 
 - JS passes cached IDs, not names (1430 → 770 ns per `setProp`).
 - Strings are borrowed.
-- Descriptor-driven prop coercion replaces the renderer's hand-written `INT_PROPS`.
+- Descriptor-driven prop coercion replaces the renderer's hand-written `INT_PROPS` (since RT1 the compiler types static values from the semantic spec).
 - Enums go out as names on both toolkits.
 
 ### As implemented (S1, S2): the value model

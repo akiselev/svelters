@@ -1,4 +1,4 @@
-import * as $ from 'svelte/internal/client';
+import * as $ from '@svelters/native-runtime/core';
 import * as $n from '@svelters/native-runtime';
 import { untrack } from 'svelte';
 let instances = $.state(0);

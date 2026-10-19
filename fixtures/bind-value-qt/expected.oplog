@@ -4,8 +4,8 @@ create box-layout #2
 set #2 direction "top-to-bottom"
 set #2 spacing 6
 create line-edit #3
-set #3 text "Ann"
 listen #3 text-changed on
+set #3 text "Ann"
 insert #2 #3 before=end slot=default
 create push-button #4
 listen #4 clicked on
@@ -27,8 +27,8 @@ event #3 text-changed ["Zed"]
 set #6 text "Hello Zed"
 set #7 text "changes: 1"
 event #4 clicked []
-set #6 text "Hello Bob"
 set #3 text "Bob"
+set #6 text "Hello Bob"
 event #5 clicked []
-set #6 text "Hello BOB"
 set #3 text "BOB"
+set #6 text "Hello BOB"

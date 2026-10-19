@@ -1,5 +1,5 @@
 [{"checkpoint":true},
- {"sync":[4,"key-pressed",[97,38,0],"capture"]},
- {"sync":[4,"key-pressed",[97,38,0]]},
- {"sync":[4,"key-pressed",[97,38,0],"after"]},
+ {"sync":[5,"key-pressed",[97,38,0],"capture"]},
+ {"sync":[5,"key-pressed",[97,38,0]]},
+ {"sync":[5,"key-pressed",[97,38,0],"after"]},
  {"checkpoint":true}]

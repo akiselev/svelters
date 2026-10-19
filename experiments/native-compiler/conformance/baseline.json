@@ -1,6 +1,6 @@
 {
  "note": "samples that pass; run.mjs --check fails if one stops passing",
- "count": 498,
+ "count": 500,
  "pass": [
   "1000-reading-derived-effects",
   "abort-signal-derived-destroy",
@@ -30,7 +30,9 @@
   "bind-this-component-in-state-dev",
   "bind-this-destroy-timing",
   "bind-this-destroy-timing2",
+  "bind-this-proxy",
   "bind-this-proxy-deep",
+  "bind-this-raw",
   "bind-value-state",
   "bindable-prop-and-export",
   "binding-property-non-reactive-ignored",

@@ -1,166 +1,121 @@
 ---
 title: Events
-description: How native signals reach Svelte handlers, what modifiers and return values do today, and what is planned for sync signals and listen flags.
+description: How native signals reach Svelte handlers, listen phases (capture, after), sync signals and the NativeEvent object, and what replaces DOM modifiers.
 ---
 
-Native signals reach your component as ordinary `on*` attributes. This page separates what works today from what is design only.
+Native signals reach your component as ordinary `on*` attributes. The compiler checks every event name against the toolkit's semantic spec, so a misspelt or missing signal is a compile error (`unknown_event`) with the closest names.
 
-## What works today
+## Handlers
 
 ```svelte
 <button onclicked={() => count++}>Increment</button>
-<window onclose-request={(e) => { /* ... */ }}>
+<entry onchanged={() => changes++} />
 ```
 
-| Source | Renderer call | Host listen |
+| Source | Runtime call | Host listen |
 | --- | --- | --- |
-| `onclicked={f}` | `addEventListener(el, 'clicked', handler, {})` | `listen(h, clicked, on)` |
-| `onclose-request={f}` | type `close-request` | `listen(h, close-request, on)` |
-| `onclickedcapture={f}` | type `clicked`, options `{capture: true}` | see [capture](#capture) |
+| `onclicked={f}` | `$n.on(node, 'clicked', f)` | `listen(h, clicked, on)` |
+| `onkey-pressedcapture={f}` | `$n.on(node, 'key-pressed', f, LISTEN_CAPTURE)` | `listen(h, key-pressed, on, capture)` |
+| `{@attach listen('key-pressed', f, { after: true })}` | `$n.listen('key-pressed', f, LISTEN_AFTER)` | `listen(h, key-pressed, on, after)` |
 
-- **Native names only.** The event name is the native signal name in kebab case (`onclicked`, `ontext-changed` on a Qt `line-edit`, `onclose-request` on a GTK window). There are no DOM-style aliases: `onclick` and `onchange` listen to signals that do not exist.
-- **No delegation.** The renderer receives each handler directly. Svelte's own delegation does not apply.
-- **Raw arguments.** A handler gets the host's arguments spread: `changed` delivers the text (`onchanged={(text) => ...}`), `clicked` delivers none. Handler `this` is the node.
-- **Queued delivery.** Events are queued by the backend and delivered to JS at the next checkpoint. Effects and tree operations that follow happen in microtasks, so their ops appear at the next checkpoint, not inside the dispatch.
+- **Native names only.** The event name is the native signal name in kebab case (`onclicked`, `ontext-changed` on a Qt `line-edit`, `onclose-request` on a GTK window). There are no DOM-style aliases: `onclick` is `unknown_event`.
+- **Raw arguments.** A handler gets the signal's arguments spread, as the spec lists them: `changed` on a GTK entry and `text-changed` on a Qt `line-edit` deliver the text (`onchanged={(text) => ...}`), `clicked` delivers none. Handler `this` is the runtime node.
+- **One connection per signal and phase.** The host listens on the first handler for a (signal, phase) pair and stops when the last one goes. Handlers registered inside a block are removed with it.
+- **Queued delivery.** Ordinary signals are queued by the backend and delivered to JS at the next checkpoint. State writes in a handler are flushed by Svelte's microtask batch, so the resulting ops appear at the next job drain, not inside the dispatch.
 - **Component callback props** (`onSave={...}`) are plain props and work.
-- **Exceptions** in a handler propagate out of dispatch and stop the remaining handlers of that dispatch.
+- **Legacy `on:clicked={handler}`** compiles to the same listener as `onclicked={handler}`. Modifiers (`on:clicked|once`), bare forwarding (`on:clicked`) and `on:` on components are compile errors.
 
 ### Entry text changes
 
-GTK `entry` `changed` and Qt `line-edit` `text-changed` both deliver `[text]`. Programmatic sets of `text` do not emit `text-changed` on Qt (the annotation uses `suppress_signals`, implemented with `QSignalBlocker`), and GTK emits `changed` twice (delete plus insert), so tests accept repeats.
+GTK `entry` `changed` and Qt `line-edit` `text-changed` both deliver `[text]`. Programmatic sets of `text` do not emit `text-changed` on Qt (the annotation uses `suppress_signals`), and GTK emits `changed` twice for one replacement (delete plus insert). For two-way state, use [`bind:text`](/guides/bindings/) rather than a handler.
 
-## Why `on:` does not compile
+<a id="listen-flags-abi-proposal-not-applied"></a>
 
-Under `experimental.customRenderer`, every `on:` directive is a compile error: `incompatible_with_custom_renderer: 'on:' is not compatible with 'customRenderer'`. It applies to `on:clicked|once` in both legacy and runes components. Use `onclicked`, not `on:clicked`.
+## Listen phases
 
-In stock Svelte, mixing `on:click` and `onclick` in one component is also an error (`mixed_event_handler_syntaxes`).
+Some toolkits deliver a signal in more than one phase. Each phase is a separate native connection, so it is chosen at listen time.
+
+- **Capture.** `on<signal>capture={f}`, Svelte's capture suffix, listens in the capture phase. The compiler first looks up the full name, so a native signal whose name ends in `capture` still works.
+- **After.** `{@attach listen(signal, f, { after: true })}` connects after the default handler.
+
+`listen`, `LISTEN_AFTER` and `LISTEN_CAPTURE` come from `@svelters/native-runtime`. When the signal and options are static, the compiler resolves them at compile time. The spec lists the phases each signal accepts; anything else is `listen_phase_unsupported`:
+
+| Toolkit | `after` | `capture` |
+| --- | --- | --- |
+| GTK | every signal (`G_CONNECT_AFTER`) | event controllers only (`GTK_PHASE_CAPTURE`) |
+| Qt | QObject signals | the synthetic `key-press` only |
+
+```svelte
+<script>
+  import { listen } from '@svelters/native-runtime';
+  let log = $state('');
+</script>
+
+<entry>
+  <event-controller-key
+    onkey-pressed={() => (log += 'b')}
+    onkey-pressedcapture={() => (log += 'c')}
+    {@attach listen('key-pressed', () => (log += 'a'), { after: true })}
+  />
+</entry>
+```
+
+GTK delivers key presses, clicks, motion and focus through event controllers: `<event-controller-key>`, `<gesture-click>`, `<event-controller-motion>`, `<event-controller-scroll>`, `<event-controller-focus>`. They are attached to the enclosing widget whatever its child slots, so they can sit inside any element.
+
+<a id="the-event-object-design-m4"></a>
+
+## Sync signals and `NativeEvent`
+
+Some native signals expect an answer during emission: veto a window close, mark a key press handled. The spec marks them `sync` (GTK: signals with a handler result or `sync_required`, such as `close-request` and `key-pressed`; Qt: the synthetic `close-request` and `key-press`). The host delivers them through `call_sync`, and their handlers get a `NativeEvent` first: `(event, ...args)`.
+
+```svelte
+<window title="Editor" onclose-request={(e) => {
+  if (dirty) e.preventDefault();               // window stays open
+}}>
+  <entry>
+    <event-controller-key onkey-pressed={(e, keyval) => {
+      if (keyval === 97) e.preventDefault();   // key 'a' marked handled
+    }} />
+  </entry>
+</window>
+```
+
+The result for the toolkit:
+
+1. `e.result = v` wins (typed results, including objects that become out parameters).
+2. Else `e.preventDefault()` or `e.stopPropagation()` give `true` (veto the close, key handled).
+3. Else `null`: the toolkit's default.
+
+`e.stopImmediatePropagation()` skips the remaining handlers. Handler return values are ignored, as Svelte ignores them, and the compiler warns about a sync handler that returns a boolean literal (`sync_handler_return`) or whose first parameter is named like the signal's first argument (`sync_handler_arguments`), both signs of a handler written for the old shape.
+
+An async handler must set flags before its first `await`; a handler that returns a Promise draws a console warning. When JS is busy as the signal fires, the toolkit uses its default and the host delivers the event later with `e.deferred = true`; flags set then are ignored.
+
+`NativeEvent` is exported from `@svelters/native-runtime` together with `StaleHandleError`.
 
 ## Modifiers
 
-Svelte 5's own replacement for modifiers is a plain function wrapper written by the user. It needs no renderer support and only affects the JS side:
+DOM modifiers do not compile. Svelte 5's own replacement is a plain function wrapper, which needs no runtime support:
 
 ```svelte
 <script>
   const once = (fn) => { let ran = false; return (...a) => { if (!ran) { ran = true; return fn(...a); } }; };
+  const prevent = (fn) => (e, ...a) => { e.preventDefault(); return fn(e, ...a); };
 </script>
 <button onclicked={once(() => count++)}>Increment once</button>
+<window onclose-request={prevent(() => log.push('close vetoed'))} />
 ```
 
-### Capture
-
-`onclickedcapture` and `onkey-pressedcapture` work: Svelte strips a trailing `capture` from the event name and passes `{capture: true}` to the renderer. Note that the strip applies to any event name, so a native signal whose name ends in `capture` cannot be listened to without a rename.
-
-:::caution[Planned: native capture phase]
-Today `capture` reaches the renderer but does not select a native capture-phase connection. The renderer prototype maps `capture: true` to `flags.phase = 'capture'`, which needs the `listen` flags ABI change below. Until then, non-empty flags are not supported by the backends.
-:::
-
-## The event object (design, M4)
-
-:::caution[Planned]
-`call_sync` returns an error until M4. The synchronous event-object protocol below is the design from the signals research, not shipped behavior.
-:::
-
-Some native signals expect an answer during emission: veto a window close, mark a key press handled, accept a drop. The design reads the result from the event object after dispatch, as the DOM and QML do, rather than from the return value:
-
-| Event field | Meaning | GTK result | Qt result |
-| --- | --- | --- | --- |
-| `defaultPrevented` (`e.preventDefault()`) | keep the default from happening | `TRUE` from a `stop_on_true` signal (`close-request`, `activate-link`, `key-pressed`) | event filter ignores the event (`close` on `main-window`) or returns `true` |
-| `cancelBubble` (`e.stopPropagation()`) | stop propagation | same bool | `ev->accept(); return true` |
-| `returnValue` | explicit value for value-returning signals (`DragAction`, tooltip bool) | the value | `setDropAction(...)` and so on |
-
-An async handler works if it sets flags before its first `await`:
-
-```svelte
-<window onclose-request={async (e) => {
-  if (!dirty) return;
-  e.preventDefault();                          // window stays open
-  if (await confirmDiscard()) win.destroy();   // runs at a later checkpoint
-}} />
-```
-
-This is the opposite of gjs, where a returned Promise is truthy and silently becomes `TRUE`.
-
-Metadata marks each signal `delivery: queued` or `sync`. Only signals with a JS listener are connected, so a sync signal with no listener costs nothing. Other rules of the design:
-
-- JS may read anything and write `$state` inside a sync handler. QuickJS jobs are not drained inside `call_sync`, and `flushSync()` there is a dev error.
-- Host tree and property operations issued from a sync handler are appended to the checkpoint queue, not applied, except methods on borrowed argument objects.
-- A sync-handler call is bounded: dev warns at 16 ms and interrupts at 1 s; release defaults to 250 ms. An exception or timeout returns the signal's `default_result`.
-- Depth of nested sync emission is capped at 8.
-
-The slots research lists open questions on this design (deferred ops versus direct application, delivering queued events before a sync handler, timeout budgets).
-
-### Return values today
-
-`dispatch` returns `{ results, event }`: each handler's return value in registration order, and `args[0]` when it is a non-null object. The host may ignore `results` until sync signals exist.
-
-:::danger[Do not rely on return values]
-The compiler passes inline arrows and plain identifiers straight through, but wraps every other expression (props, calls, member expressions, `stop(fn)`) in a function that does not `return`. A handler received as a prop cannot return a value to the host. Conversely, an inline arrow that happens to return a value (`() => (todo.done = true)`) does return it, so "truthy means handled" would misfire. The design keeps `accept_return: false` as the default.
-:::
-
-## `@svelters/events` (planned)
-
-:::caution[Planned]
-`@svelters/events` does not exist yet. These helpers are the recommendation from the modifier survey.
-:::
-
-| Helper | Does |
-| --- | --- |
-| `prevent(fn)` | calls `e.preventDefault()`, then `fn` |
-| `stop(fn)` | calls `e.stopPropagation()`, then `fn` |
-| `once(fn)` | runs `fn` once; a native disconnect is only an optimisation |
-| `listen(type, fn, flags)` | for use with `{@attach}`, built on `svelte/events` `on()` |
-
-`prevent`, `stop` and `once` only touch the event object or JS state, so they survive the lost-return-value wrappers and async handlers.
-
-Intended usage with `{@attach}`:
-
-```svelte
-<window onclose-request={prevent(() => log.push('close vetoed'))}>
-  <entry
-    onkey-pressedcapture={(e) => log.push('capture ' + e.keyval)}
-    onkey-pressed={stop((e) => log.push('bubble ' + e.keyval))}
-    {@attach after('notify::text', () => log.push('after notify'))}
-    {@attach listen('activate', once(() => log.push('activate once')), { sync: true })} />
-</window>
-```
-
-`{@attach}` runs after the element is inserted, and `svelte/events` `on(el, type, fn, options)` forwards any options object to `renderer.addEventListener` unchanged and removes the listener on cleanup. That is why it is the channel for listen-time flags: the renderer never sees the user's function (only Svelte's `target_handler` wrapper), so tags set on the function are invisible at listen time. This already works with stock `svelte/events`; the helpers and the host support for the flags do not exist yet.
-
-## Listen flags (ABI proposal, not applied)
-
-Listen-time semantics must reach the backend, because they select a separate native connection. Dispatch-time semantics (prevent, stop) are results of one emission and live on the event object.
-
-| Semantic | GTK | Qt | Needed at |
-| --- | --- | --- | --- |
-| capture phase | `gtk_event_controller_set_propagation_phase(GTK_PHASE_CAPTURE)` on a controller per listener | event filter on the target or an ancestor | listen time |
-| after default handler | `G_CONNECT_AFTER` | call the base `event()` first in the subclass override | listen time |
-| sync | closure marshalled into JS through `call_sync` | filter or virtual override calling JS | listen time (from metadata `delivery: sync`) |
-| stop or prevent | `GDK_EVENT_STOP` or `TRUE` | `accept()` or filter result | dispatch time |
-| once | `g_signal_handler_disconnect` after first emission | `Qt::SingleShotConnection` | either; JS-side `once` is enough |
-
-Proposed ABI addition (**not applied**):
-
-```text
-listen(h, signal, on, flags?)
-flags = { phase?: 'capture' | 'target' | 'bubble', after?: bool, sync?: bool }
-```
-
-- Two listens with different flags are separate native connections. `off` must carry the same flags.
-- The host's dispatch back into JS must say which connection fired: `__svelters_dispatch(h, signal, args, {phase, after})`.
-- `sync` is normally derived from metadata; the flag is only an override. `once` stays JS-side.
-- Until a backend needs it, the renderer can reject non-empty flags with a clear error.
-
-The current `listen` has no `flags` parameter; see [the ABI reference](/concepts/abi/#listen).
+`prevent` and `stop` only make sense on sync signals, where the first argument is the `NativeEvent`. There is no shipped helper package for these.
 
 ## Replacing `svelte:window`
 
-`svelte:window`, `svelte:document` and `svelte:body` are compile errors. Each use case has a native replacement, none implemented yet (**planned**, "app-level API"):
+`svelte:window`, `svelte:document` and `svelte:body` are compile errors. Native replacements:
 
 | Browser idiom | Native replacement |
 | --- | --- |
-| global shortcut | `GtkShortcutController` or `QShortcut`; element form `<shortcut trigger="..." onactivated={quit} />` |
+| global shortcut | an `<action shortcut="Ctrl+Q" onactivate={...}>` in a menu or tool bar, or an `<event-controller-key>` on the window (GTK) |
 | `beforeunload` / window close | `<window onclose-request={(e) => dirty && e.preventDefault()}>` (sync signal) |
-| `resize` | `notify::default-width` (GTK), `QEvent::Resize` filter (Qt), exposed as an `onresized` pseudo-signal |
-| theme, activation | an app module, for example `@svelters/app` with `colorScheme`, `active` and `quit()` |
+| `resize` | `notify::default-width` (GTK) and similar property notifications; no portable `onresized` yet (**planned**) |
+| theme | `setColorScheme` from `@svelters/native-runtime/style`; following the system setting is open |
 
-Sources: `docs/notes/svelte-feature-survey.md` (sections 3 and 3a), `docs/notes/signals-and-slots-semantics.md` (sections 1.3 to 1.6), `docs/notes/p1-js-lane.md`, `packages/renderer/src/index.js`.
+Sources: `docs/notes/native-compiler/runtime-contract.md` ("Events"), `docs/notes/native-compiler/deviations.md`, `docs/notes/x2-sync-frame.md`, `docs/notes/x3-childattr-listen.md`, `docs/notes/x8-events-draw.md`, `docs/notes/signals-and-slots-semantics.md` (sections 1.3 to 1.6), `packages/native-runtime/src/index.js`, `fixtures/sync-handlers/`, `fixtures/listen-phases/`.

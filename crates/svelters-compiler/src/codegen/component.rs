@@ -59,7 +59,7 @@ pub struct Codegen<'a, 's> {
 /// Generates the whole module. `name` is the component function name.
 pub fn generate(src: &str, comp: &Component, rw: &dyn Rewriter, name: &str, filename: &str) -> (String, String) {
     let mut g = Codegen { src, rw, w: Writer::new(src), tmp: 0, root_fragment: false, _p: std::marker::PhantomData };
-    g.w.write("import * as $ from 'svelte/internal/client';\nimport * as $n from '@svelters/native-runtime';\n");
+    g.w.write("import * as $ from '@svelters/native-runtime/core';\nimport * as $n from '@svelters/native-runtime';\n");
     rw.script(&mut g.w, true);
     let (hoisted, instance): (Vec<_>, Vec<_>) = comp.root.snippets.iter().partition(|s| rw.hoist_snippet(s.span.start));
     for s in hoisted {
@@ -166,9 +166,16 @@ impl Codegen<'_, '_> {
         let n = format!("$$n{}", e.id + 1); // `$$` is reserved by Svelte, so user bindings cannot collide
         self.line();
         self.w.map(e.span.start);
-        match &e.present {
-            Some(p) => self.w.write(&format!("const {n} = $n.element({}, {});", js_str(&e.kind), js_str(p))),
-            None => self.w.write(&format!("const {n} = $n.element({});", js_str(&e.kind))),
+        if e.toplevel {
+            let present = e.present.as_deref().map_or("null".to_string(), js_str);
+            match &e.show {
+                Some(s) => self.w.write(&format!("const {n} = $n.toplevel({}, {present}, {});", js_str(&e.kind), js_str(s))),
+                None => self.w.write(&format!("const {n} = $n.toplevel({}, {present});", js_str(&e.kind))),
+            }
+        } else if e.attached {
+            self.w.write(&format!("const {n} = $n.attached({});", js_str(&e.kind)));
+        } else {
+            self.w.write(&format!("const {n} = $n.element({});", js_str(&e.kind)));
         }
         if let Some(c) = &e.class_expr {
             self.line();
@@ -945,7 +952,8 @@ impl Codegen<'_, '_> {
                     self.expr_text(target, Mode::Read);
                 }
             }
-            self.w.write(")");
+            // closes `$.bind_this(`, and for a dynamic component also `$n.component(`
+            self.w.write(if dynamic { "))" } else { ")" });
         }
         self.w.write(";");
         if scoped {

@@ -1,44 +1,40 @@
-style sheet "*" null
-style scheme "light" 0
-style sheet "@tokens" ":root {\n  --sv-bg: #f6f5f4;\n  --sv-fg: #2e3436;\n  --sv-surface: #ffffff;\n  --sv-border: #cdc7c2;\n  --sv-accent: #3584e4;\n  --sv-accent-hover: #1c71d8;\n  --sv-accent-fg: #ffffff;\n  --sv-muted: #77767b;\n  --sv-danger: #c01c28;\n  --sv-radius: 6px;\n  --sv-space-1: 4px;\n  --sv-space-2: 8px;\n  --sv-space-3: 12px;\n  --sv-space-4: 16px;\n  --sv-font-size: 11pt;\n  --sv-font-family: sans-serif;\n}\n"
-style sheet "src/App.svelte" null
 create window #1
 set #1 title "Precedence"
-style #1 classes "sv-k-window"
 create box #2
 set #2 orientation "vertical"
-style #2 classes "sv-k-box"
 create box #3
-style #3 classes "sv-k-box row svelte-1n46o8q"
 set #3 spacing 8
 insert #2 #3 before=end slot=default
 create box #4
-style #4 classes "sv-k-box row svelte-1n46o8q"
-style #4 name "a"
 set #4 spacing 5
 insert #2 #4 before=end slot=default
 create box #5
 set #5 spacing 1
-style #5 classes "sv-k-box"
 insert #2 #5 before=end slot=default
 create box #6
-style #6 classes "sv-k-box row svelte-1n46o8q"
-set #6 spacing 3
+set #6 spacing 8
 insert #2 #6 before=end slot=default
 create button #7
 listen #7 clicked on
-style #7 classes "sv-k-button"
 set #7 label "Next"
 insert #2 #7 before=end slot=default
 insert #1 #2 before=end slot=default
 call #1 present []
+style sheet "*" null
+style scheme "light" 0
+style sheet "@tokens" ":root {\n  --sv-bg: #f6f5f4;\n  --sv-fg: #2e3436;\n  --sv-surface: #ffffff;\n  --sv-border: #cdc7c2;\n  --sv-accent: #3584e4;\n  --sv-accent-hover: #1c71d8;\n  --sv-accent-fg: #ffffff;\n  --sv-muted: #77767b;\n  --sv-danger: #c01c28;\n  --sv-radius: 6px;\n  --sv-space-1: 4px;\n  --sv-space-2: 8px;\n  --sv-space-3: 12px;\n  --sv-space-4: 16px;\n  --sv-font-size: 11pt;\n  --sv-font-family: sans-serif;\n}\n"
+style #3 classes "row"
+style #4 classes "row"
+style #4 name "a"
+style #6 classes "row"
+set #6 spacing 3
 event #7 clicked []
 set #3 spacing 4
-style #4 name "b"
 set #4 spacing 8
+style #4 name "b"
 set #6 spacing 8
 event #7 clicked []
 set #3 spacing 8
-style #4 name "a"
 set #4 spacing 5
+style #4 name "a"
 set #6 spacing 3

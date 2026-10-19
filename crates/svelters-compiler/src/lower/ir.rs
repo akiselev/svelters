@@ -63,8 +63,17 @@ pub struct Element<'a> {
     pub span: Span,
     /// The tag passed to `host.create`.
     pub kind: String,
-    /// Zero-argument method to call once a toplevel is complete (root items only).
+    /// The spec's zero-argument method that shows a toplevel modelessly (None: the runtime picks
+    /// one, as for Qt dialogs).
     pub present: Option<String>,
+    /// A toplevel kind (`$n.toplevel`): shown by its `show` policy at the root, or made transient
+    /// for the enclosing toplevel when declared inside an element (X7).
+    pub toplevel: bool,
+    /// A static `show="modal|modeless|none"` on a toplevel.
+    pub show: Option<String>,
+    /// Attached to its parent element instead of placed in a slot (`$n.attached`: event
+    /// controllers, context menus).
+    pub attached: bool,
     pub slot: Slot,
     /// `class={expr}` (or an interpolated `class`): the element's runtime class set, declared as
     /// `const c<id> = $.derived(() => $n.classes(expr))` and read by style conditions.

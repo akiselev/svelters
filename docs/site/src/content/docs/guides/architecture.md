@@ -3,33 +3,38 @@ title: Architecture
 description: The layers from Vite build to native toolkit, the backend C ABI, and the milestone lanes with their current state.
 ---
 
-Svelters v2 runs stock Svelte 5 components in embedded QuickJS-NG and renders them with native toolkits: GTK4 first, QtWidgets second, egui later. Application code is ordinary Svelte and TypeScript. The plan was adopted on 2026-10-16.
+Svelters v2 runs Svelte 5 components in embedded QuickJS-NG and renders them with native toolkits: GTK4 first, QtWidgets second, AppKit and WinUI in progress, egui later. Application code is ordinary Svelte and TypeScript, compiled by the project's own Rust compiler. The plan was adopted on 2026-10-16. On 2026-10-17 the compiler was chosen as the only frontend; milestone RT1 retired the earlier one.
 
 ## Layers
 
 ```text
-L0  build        Vite + stock Svelte 5 (generate: client, fragments: "tree")
-                 -> ESM bundle (browser export condition) + source maps
+L0  build        Vite + svelters-compile (Rust Svelte compiler, native lowering
+                 from per-backend semantic specs) via @svelters/build
+                 -> one ESM bundle (dist/app.js) + source maps
                               |
-L1  renderer     @svelters/dom: DOM-style shim (Node/Element/Text/Comment,
-    adapter      document, window) -- OR -- a custom renderer via the Svelte
-                 PR #18042 fork. Both sit behind the same host-op interface.
+L1  runtime      @svelters/native-runtime: host ops, blocks, styling, lists;
+                 reactivity from its core (/core: Svelte 5's signals behind
+                 one adapter file)
                               |  host ops: create / insert / remove / setProp /
                               |  listen / call / destroy; events come back queued
 L2  host core    Rust (rquickjs/QuickJS-NG): module loading, job pump, timers,
                  console, source maps, handle table, event queue, hot reload
                               |  svelters backend C ABI (fixed, ~15 functions)
-L3  backends     GTK4 (Rust/gtk4-rs)   QtWidgets (generated C++)   egui (Rust)
+L3  backends     GTK4 (Rust/gtk4-rs)   QtWidgets (generated C++)
+                 AppKit, WinUI (Rust slices)   egui (later)
                               |
-L4  toolkit      GTK4 / Qt 6 / egui
+L4  toolkit      GTK4 / Qt 6 / AppKit / WinUI 3 / egui
 ```
 
-Widget metadata and codegen run alongside the layers. Upstream sources plus annotations produce element-kind tables, TypeScript typings, the Qt C++ dispatch code and the GTK method bindings.
+Widget metadata and codegen run alongside the layers. Upstream sources plus annotations produce element-kind tables, the compiler's semantic specs, TypeScript typings, the Qt C++ dispatch code and the GTK method bindings.
 
 | Layer | Where | Responsibility |
 | --- | --- | --- |
-| L0 | `packages/build` (`@svelters/build`) | Vite config for apps; pins Svelte, Vite and the Svelte plugin exactly |
-| L1 | `packages/renderer` (`@svelters/renderer`), `packages/dom` (`@svelters/dom`) | Turn Svelte's tree operations into host ops |
+| L0 | `packages/build` (`@svelters/build`) | Vite config and `svelters-build` CLI for apps; pins Svelte and Vite exactly |
+| L0 | `crates/svelters-compiler` (`svelters-compile`), `packages/native-runtime/vite.js` | Compile `.svelte` and `.svelte.js` to native-runtime calls, checked against `metadata/semantics/<toolkit>.json` |
+| L1 | `packages/native-runtime` (`@svelters/native-runtime`) | Host ops, template blocks, bindings, events, styling runtime, virtualized lists, element typings |
+| L1 | `packages/style`, `packages/lists`, `packages/canvas`, `packages/types` | CSS translation and tokens, `ListView` re-export and `arrange`, recording canvas, generated non-UI types |
+| Tests | `packages/testhost` (`@svelters/testhost`) | Node host that records the op log, fixture runner |
 | L2 | `crates/svelters-host` | QuickJS host, handle table, name-to-ID caches, event queue, timers, checkpoint |
 | L2/L3 boundary | `crates/svelters-abi` | `svelters_backend.h` and its Rust mirror |
 | L3 | `crates/svelters-gtk`, `crates/svelters-qt-build` plus a leaf crate, `crates/svelters-backend-log` | Toolkit backends and the op-recording test backend |
@@ -44,18 +49,18 @@ Widget metadata and codegen run alongside the layers. Upstream sources plus anno
 5. An ordinary `.svelte` or `.ts` edit never invokes Cargo or a C++ compiler in development.
 6. Each toolkit's event loop is authoritative. QuickJS jobs are pumped at host checkpoints and never busy-polled. JS timers and animation frames belong to the toolkit's native timers and frame clock; the host never runs its own timing thread. The timer thread in the P2 host is a stopgap that ABI v2 removes (see [the ABI](/concepts/abi/#schedule_wake)).
 
-## L1: the renderer fork
+## L1: the compiler and native runtime
 
-Svelte PR #18042 (custom renderer API) is the project's Svelte fork until it merges upstream.
+Components are compiled by `svelters-compile` (crate `crates/svelters-compiler`), a Rust port of Svelte 5.57.2's parser, acorn and scope analysis, with its own native lowering in place of Svelte's DOM output.
 
-- It is vendored as a tarball pinned in `vendor/svelte/PIN` (`5.57.2`, branch `custom-condition` at `f3de3f2`, the top of the #18042 stack).
-- An agent tracks upstream weekly (`tests/renderer-conformance/WEEKLY.md`).
-- The compile option is `experimental.customRenderer`. Components compile to calls on a renderer object (`createElement`, `insert`, `setAttribute`, `addEventListener`, ...). `css: 'injected'`, `on:` directives, `{@html}`, transitions and `svelte:window`/`document`/`body` are compile errors under it.
-- Handler return values reach the host directly, because the PR does not delegate events.
-- `@svelters/renderer` implements the renderer. Native widgets are created lazily, when a node first lands under a realized native parent. Fragments, comments and anchors stay JS-only. Child lists are linked sibling lists, so keyed reorders are linear.
-- `@svelters/dom` is the fallback: a DOM-style shim over stock Svelte output (`fragments: "tree"`). Select it with `SVELTERS_BACKEND=shim`; the default is `SVELTERS_BACKEND=renderer`. Both paths produce byte-identical op logs for the fixtures.
+- The compiler knows no widget by name. It reads a per-backend semantic spec, `metadata/semantics/<toolkit>.json`, generated from the same metadata as the backends. Tags, props and their value types, signals, sync signals, listen phases, child slots, child attributes, bindings, toplevel kinds and the style table come from there.
+- Mistakes are compile errors with positions: an unknown element, prop or signal, a child the parent's slot rejects, a bad static value, a binding the spec has no plan for.
+- Static attribute values are typed at compile time (`spacing="8"` becomes the integer 8). The runtime never coerces.
+- Generated code imports `$` from `@svelters/native-runtime/core` (the reactive core; Svelte's signals behind one adapter file, `src/core/svelte.js`) and `$n` from `@svelters/native-runtime` (host ops, blocks, events, bindings, styling). There is no DOM mirror and there are no anchor nodes; the runtime keeps only the ordering native insertion needs.
+- Svelte itself is stock `svelte@5.57.2` from npm. Its runtime backs the core and its compiler only scopes component CSS.
+- `@svelters/build` wires it together: `svelteConfig(root)` reads the toolkit from the app's `package.json` and compiles `src/App.svelte` into `dist/app.js`.
 
-The two stacked PRs the project depends on are #18461 (a tree-shakeable `custom_renderer` flag) and #18511 (the `custom-renderer` export condition). PR #18405 (interleaving renderers) is not needed functionally. Two bugs found in the fork are recorded in [Svelte support](/guides/svelte-support/#known-fork-bugs).
+What the compiler accepts is on [Svelte support](/guides/svelte-support/). The earlier L1, stock Svelte compiled through a vendored fork of Svelte PR #18042 into a custom renderer with a DOM-shim fallback, is retired; its history is in `docs/notes/custom-renderer-trial.md` and `docs/notes/fork-bindings.md`.
 
 ## L2: the host core
 
@@ -88,7 +93,7 @@ Backends are generated from widget metadata. The generators are Python during P 
 | | GTK4 | QtWidgets |
 | --- | --- | --- |
 | Language | Rust over `gtk4-rs` (0.11) | C++17, one translation unit generated per build |
-| Generated parts | kind, prop, signal and slot tables, slot dispatch, verification tests, `.d.ts` into `crates/svelters-gtk/src/generated/` and `packages/renderer/types/` | ids and `resolve` tables, `create`, `set_prop`, `get_prop`, `call`, slot `insert`/`remove`, `listen` connectors, the verification file, `qt.d.ts` |
+| Generated parts | kind, prop, signal and slot tables, slot dispatch, verification tests, Rust into `crates/svelters-gtk/src/generated/`, `.d.ts` into `packages/native-runtime/types/` | ids and `resolve` tables, `create`, `set_prop`, `get_prop`, `call`, slot `insert`/`remove`, `listen` connectors, the verification file, `qt.d.ts` |
 | Hand-written | handle table, value conversion, loop glue | handle table (`QPointer` plus a `destroyed` connection), error plumbing, vtable glue, `run`/`wake`/`quit`, test runtime |
 | Build | ordinary crate; generated Rust is checked in | a project-owned **leaf crate** whose `build.rs` calls `svelters-qt-build`, compiles with `cc` and `pkg-config Qt6Widgets` |
 | Dev invocation | tables now; dynamic GObject introspection for methods is M3 | `QMetaProperty` fallback for properties without direct accessors |
@@ -105,27 +110,9 @@ Generators and ingesters take only metadata JSON, overrides, templates and build
 
 ## Lanes and milestones
 
-Four P lanes ran in parallel once the ABI was agreed, then integrated in P5. State as of `STATUS.md`:
+Four P lanes ran in parallel once the ABI was agreed, then integrated in P5 (counter on GTK and Qt from one bundle). Later milestones added two-way bindings, sync handlers, listen phases and child attributes, virtualized lists, menus, toplevels, styling, the canvas, the ABI v3 value model, the AppKit and WinUI slices and the native compiler. `STATUS.md` is the ledger: state, merge commit and evidence for each milestone.
 
-| Milestone | State | Evidence |
-| --- | --- | --- |
-| P1 JS lane | DONE | 4 fixtures (19/87/35/9 ops) pass in the Node TestHost |
-| P1b renderer fork | DONE | renderer and shim produce identical op logs; conformance node equals QuickJS |
-| P2 host lane | DONE | 21 of 21 tests; fixtures byte-identical in QuickJS |
-| P3 GTK lane | DONE | 443 Gtk kinds ingested; 298 kinds, 1304 props, 349 signals in tables; 22 tests plus P1 oplog replay |
-| P4 Qt lane | DONE | 192 classes ingested; 8 elements annotated; 41 generated tests; leaf-crate rebuild verified |
-| P5 integration | DONE | counter on GTK and Qt; 57 of 57 nextest including 12 integration tests; first frame GTK about 1.2 s, Qt about 0.2 s |
-| F1 fork bindings | IN PROGRESS | phase A: `bind:this` and a binding hook in the fork; phase B after P5 |
-| D1 docs generator | IN PROGRESS | generated API reference and this site |
-| S1 serdes main types | IN PROGRESS | ABI v3 value model and converters; merges after P5 |
-| M2 dev loop | QUEUED | ABI v2, native timers, Vite watch reload without Cargo, source-mapped errors |
-| M3 metadata and codegen | QUEUED | Python generators ported to Rust, annotations at scale, GTK dynamic invocation, full `.d.ts` |
-| M4 native semantics | QUEUED | named child slots, sync handlers and return values, two-way binding, ownership |
-| M5 lists and model-view | QUEUED | virtualized lists (`GListModel`, `QAbstractItemModel`) |
-| M6 release binding linker | QUEUED | tree-shaken native roots to thin generated bindings |
-| M7 egui | QUEUED | egui backend |
-
-Later: accessibility, devtools, packaging, upstream-compat automation, ecosystem integrations.
+Queued: M3 (generators ported to Rust, annotations at scale), M6 (release binding linker) and M7 (egui), among others.
 
 ## P5 measurements
 
@@ -137,6 +124,6 @@ Release build, Xvfb, shared 4-core machine, GTK 4.22.4 software GL, Qt 6.11.
 | Release binary, one toolkit | 3.40 MB | 2.56 MB |
 | Peak RSS, counter | 204 MB | 55 MB |
 
-The bundle for the counter is 147 KB unminified (36 KB gzip). On a 1000-row list, QuickJS time dominates: the host/ABI layer costs 16 to 18 ms for 11,000 operations. See [Lists and snippets](/guides/lists-and-snippets/).
+At P5, with the since-retired renderer pipeline, the counter bundle was 147 KB unminified (36 KB gzip). On a 1000-row list, QuickJS time dominates: the host/ABI layer costs 16 to 18 ms for 11,000 operations. See [Lists and snippets](/guides/lists-and-snippets/).
 
-Sources: `PLAN.md`, `STATUS.md`, `plans/architecture/backend-abi.md`, `docs/notes/custom-renderer-trial.md`, `docs/notes/svelte5-custom-renderer.md`, `docs/notes/p1-js-lane.md`, `docs/notes/p2-host-lane.md`, `docs/notes/p3-gtk-lane.md`, `docs/notes/p4-qt-lane.md`, `docs/notes/p5-integration.md`, `docs/notes/quickjs-jit-cranelift.md`, `docs/notes/node-deno-integration.md`.
+Sources: `PLAN.md`, `STATUS.md`, `plans/architecture/backend-abi.md`, `docs/notes/native-compiler/runtime-contract.md`, `docs/notes/native-compiler/semantic-spec.md`, `packages/build/index.js`, `packages/native-runtime/vite.js`, `docs/notes/custom-renderer-trial.md` (history), `docs/notes/p1-js-lane.md`, `docs/notes/p2-host-lane.md`, `docs/notes/p3-gtk-lane.md`, `docs/notes/p4-qt-lane.md`, `docs/notes/p5-integration.md`, `docs/notes/quickjs-jit-cranelift.md`, `docs/notes/node-deno-integration.md`.

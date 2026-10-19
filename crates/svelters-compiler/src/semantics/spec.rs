@@ -82,6 +82,11 @@ pub struct KindSpec {
     pub methods: BTreeMap<String, MethodSpec>,
     #[serde(default)]
     pub provenance: BTreeMap<String, String>,
+    /// A kind inserted into any element that `is_a` this kind or class, whatever that element's
+    /// slots (GTK event controllers and context menus, the Qt context `menu`): `host.insert` with
+    /// no slot and no position. None for every other kind.
+    #[serde(default)]
+    pub attaches_to: Option<String>,
 }
 
 /// A parameter or return type of a method: a spec type name (`bool|i32|...|other`, or `void` for

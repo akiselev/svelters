@@ -59,6 +59,8 @@ jobs:
           tool: cargo-nextest
 
       - uses: ./.github/actions/setup-pnpm
+      - name: Build svelters-compile (the fixtures are compiled by it)
+        run: cargo build -p svelters-compiler --bin svelters-compile
       - name: Build bundles
         run: pnpm --filter './fixtures/*' --filter './tests/qt-types-*' build
 

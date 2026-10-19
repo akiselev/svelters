@@ -49,7 +49,6 @@ fn first_chunk(value: &AttributeValue) -> Option<Chunk<'_>> {
 }
 
 pub fn read_options(node: ElementData) -> PResult<SvelteOptions> {
-    let span = Span { start: node.start, end: node.end };
 
     let mut attributes: Vec<Attribute> = Vec::with_capacity(node.attributes.len());
     for attribute in node.attributes {
@@ -68,7 +67,6 @@ pub fn read_options(node: ElementData) -> PResult<SvelteOptions> {
         preserve_whitespace: None,
         namespace: None,
         css: None,
-        custom_renderer: None,
         custom_element: None,
         attributes: Vec::new(),
     };
@@ -82,25 +80,6 @@ pub fn read_options(node: ElementData) -> PResult<SvelteOptions> {
             }
             "tag" => {
                 return Err(e::svelte_options_deprecated_tag(attribute));
-            }
-            "customRenderer" => {
-                let chunk = first_chunk(&attribute.value);
-                let multi = matches!(&attribute.value, AttributeValue::Sequence(v) if v.len() != 1);
-
-                let Some(chunk) = chunk.filter(|_| !multi) else {
-                    return Err(e::svelte_options_invalid_attribute_value(attribute, "a string or null"));
-                };
-
-                match chunk {
-                    Chunk::Text(data) => component_options.custom_renderer = Some(Some(data.to_string())),
-                    Chunk::Expression(Expression::Literal(l)) if matches!(l.value, LiteralValue::String(_) | LiteralValue::Null) => {
-                        component_options.custom_renderer = Some(match &l.value {
-                            LiteralValue::String(s) => Some(s.clone()),
-                            _ => None,
-                        });
-                    }
-                    _ => return Err(e::svelte_options_invalid_attribute_value(attribute, "a string or null")),
-                }
             }
             "customElement" => {
                 if read_custom_element(attribute)? {
@@ -139,13 +118,6 @@ pub fn read_options(node: ElementData) -> PResult<SvelteOptions> {
             }
             _ => return Err(e::svelte_options_unknown_attribute(attribute, name)),
         }
-    }
-
-    if component_options.css.as_deref() == Some("injected") && matches!(component_options.custom_renderer, Some(Some(_))) {
-        // Find the css attribute node for the error position
-        let css_attribute = attributes.iter().find(|a| a.name == "css");
-        let pos = css_attribute.map_or(span, |a| Span { start: a.start, end: a.end });
-        return Err(e::incompatible_with_custom_renderer(pos, "`css: 'injected'`"));
     }
 
     component_options.attributes = attributes;

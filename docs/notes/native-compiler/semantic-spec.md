@@ -12,7 +12,8 @@ The NC1 compiler does not hard-code widget knowledge. Each backend has a checked
 | `metadata/gtk/*.json` (GIR + PyGObject, overrides already merged), through `tools/metadata/gtk/gen_backend.py`'s `Model` | every GTK object/interface kind, chain, props (types, enum nicks, flags bits, ranges, access, defaults, notify), signals (args, handler result), annotated slots and methods, element tags | generated |
 | `metadata/overrides/qt/*.yaml` resolved against `metadata/qt/*.json` by `tools/metadata/qt/gen_cpp.py`'s `Model` | Qt elements (one kind per annotated tag), their annotated props/signals/methods/slots (with `inherit:` facts applied), enum member names, toplevel class (`emit_toplevel`) | generated |
 | `bindings:` annotations (`metadata/overrides/gtk/*.yaml` merged into `metadata/gtk`, `metadata/overrides/qt/*.yaml` elements; schema in `docs/notes/fork-bindings.md` section 6) | `bind:<name>`: property, direction, change signal and value source, echo strategy, compare-before-set, read-back, sync signals on set, lifetime | generated |
-| `metadata/semantics/rules/{gtk,qt}.yaml` | facts no upstream source encodes: event aliases, toplevel `present`, text-content prop, signal arg contracts, Qt defaults, missing-element hints, style declarations and units | hand-written |
+| `metadata/semantics/rules/{gtk,qt}.yaml` | facts no upstream source encodes: event aliases, toplevel `present`, text-content prop, `attaches_to` (GTK event controllers), signal arg contracts, Qt defaults, missing-element hints, style declarations and units | hand-written |
+| `metadata/extras/<toolkit>-*.yaml` `elements[].spec` (RT1) | kinds the backend implements by hand, with no ingested class: GTK `menu-bar`, `tool-bar`, `context-menu`, `menu`, `action`, `menu-separator` (`backend/menus.rs`) and `canvas` (`backend/canvas.rs`, a drawing area); Qt `canvas` (`canvas.hpp.in`). Kind id, native type, `base` kind whose chain follows, scalar props, signal args (Qt: `signals_from` another element), methods, an `items` slot, `attaches_to`; bindings from the same file's `bindings` | hand-written; added after the GTK table cross-check |
 
 Regenerate with `python3 tools/metadata/semantics/gen_semantics.py` (`--check` fails when a
 checked-in output is stale). Output is byte-identical on rerun. Run the GTK and Qt generators
@@ -73,6 +74,11 @@ One JSON object; `kinds` and `tags` have one entry per line.
   - Props: `string_form: true` on record/boxed/object values the backend also takes as a string
     (GTK `has_string_form`: Pango font descriptions, GIcon, GdkRGBA, shortcut triggers, GFile;
     Qt QIcon/QKeySequence/QUrl/QFont/Color): static attributes pass the text.
+  - `attaches_to` (RT1, only on the kinds that have it): a kind or class; the element is placed in
+    any element that `is_a` it when that element's slots do not take it (`host.insert` with no
+    slot or position, `$n.attached`): GTK `Gtk.EventController` kinds and `context-menu` attach to
+    `Gtk.Widget`, `menu` to `Gtk.MenuButton`; the Qt `construct.context_menu` element (`menu`) to
+    `QWidget`. Next to text in a text-content element they do not count as content.
   - `provenance`: where each rule-derived fact on the kind came from.
 - `style.units.<unit>` `{scale}`; `style.declarations.<name>`: `applies_to` (kind or class, `is_a`),
   (superseded by ST1: `style` is now the style table of metadata/style/<backend>.yaml, `{dialect,

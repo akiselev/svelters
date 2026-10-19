@@ -29,10 +29,10 @@ fn file(path: &str) -> String {
 #[test]
 fn appkit_and_winui_builtin_specs_compile_the_counter_fixtures() {
     let mac = js("appkit", &file("fixtures/counter-mac/src/App.svelte"));
-    assert!(mac.contains(r#"$n.element("window", "make-key-and-order-front")"#), "{mac}");
+    assert!(mac.contains(r#"$n.toplevel("window", "make-key-and-order-front")"#), "{mac}");
     assert!(mac.contains(r#""string-value""#) && mac.contains(r#""action""#), "{mac}");
     let win = js("winui", &file("fixtures/counter-win/src/App.svelte"));
-    assert!(win.contains(r#"$n.element("window", "activate")"#), "{win}");
+    assert!(win.contains(r#"$n.toplevel("window", "activate")"#), "{win}");
     assert!(win.contains(r#"$n.child_attr("#) && win.contains(r#""row""#), "{win}");
     assert!(win.contains(r#""click""#) && win.contains(r#""content""#), "{win}");
 }

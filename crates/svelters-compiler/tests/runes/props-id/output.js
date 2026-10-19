@@ -1,4 +1,4 @@
-import * as $ from 'svelte/internal/client';
+import * as $ from '@svelters/native-runtime/core';
 import * as $n from '@svelters/native-runtime';
 var rest_excludes = new Set(["$$slots", "$$events", "$$legacy", "a", "b", "c", "d", "e", "f", "g-h"]);
 

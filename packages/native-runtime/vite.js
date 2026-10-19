@@ -1,27 +1,32 @@
-// Vite config helper for bundles built on @svelters/native-runtime: one self-contained ES module
-// (dist/app.js) like packages/build, plus the aliases that expose Svelte's internal effects and task modules.
+// Vite config and plugin for apps compiled by the svelters compiler (svelters-compile) onto
+// @svelters/native-runtime: one self-contained ES module (dist/app.js; @svelters/build wraps it for an
+// app directory), the aliases that resolve the runtime's modules from any component, and the three
+// Svelte modules the core adapter (src/core/svelte.js) imports that Svelte's exports map hides.
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import fs from 'node:fs';
 import { createHash } from 'node:crypto';
-import { compile as svelteCompile } from 'svelte/compiler';
+import { compile as svelteCompile, parse as svelteParse } from 'svelte/compiler';
 import { extractNative, translateSheet } from '@svelters/style/build';
 import { typesAliases } from '@svelters/types/vite';
 import { formatDiagnostic } from '@svelters/style/runtime';
 
-/** The specifier src/index.js imports for block/branch/destroy_effect/component_root. */
+/** The specifier src/core/svelte.js imports for block/branch/destroy_effect/component_root. */
 export const EFFECTS_SPECIFIER = 'svelte/internal/client/reactivity/effects';
 
-/** Absolute path of this package's runtime entry. */
+/** Absolute path of this package's runtime entry (`$n` in generated code). */
 export const runtimePath = fileURLToPath(new URL('./src/index.js', import.meta.url));
 
-/**
- * The native implementation of `@svelters/lists` (`ListView`): compiled components that import
- * the JS pipeline's list package get the same component API over the same host protocol.
- */
+/** The core generated code imports as `$` (`@svelters/native-runtime/core`, RUNTIME.md phase 1). */
+export const corePath = fileURLToPath(new URL('./src/core/index.js', import.meta.url));
+
+/** The implementation of `@svelters/lists` (`ListView`, virtualized native lists). */
 export const listsPath = fileURLToPath(new URL('./src/lists.js', import.meta.url));
+
+/** The X6 styling runtime (`registerStyles`, `setColorScheme`, `setTokens`): `@svelters/native-runtime/style`. */
+export const stylePath = fileURLToPath(new URL('./src/style.js', import.meta.url));
 
 /** Absolute path of Svelte's effects module (hidden by the package's exports map). */
 export const effectsPath = path.join(
@@ -37,12 +42,12 @@ export const taskPath = path.join(path.dirname(effectsPath), '../dom/task.js');
 export const CONTEXT_SPECIFIER = 'svelte/internal/client/context';
 export const contextPath = path.join(path.dirname(effectsPath), '../context.js');
 
-/** Every hidden Svelte module src/ imports: specifier -> absolute path. */
+/** Every hidden Svelte module src/core/svelte.js imports: specifier -> absolute path. */
 export const HIDDEN_MODULES = { [EFFECTS_SPECIFIER]: effectsPath, [TASK_SPECIFIER]: taskPath, [CONTEXT_SPECIFIER]: contextPath };
 
 /**
  * Vite config for one app: `entry` (relative to `root`) -> `<root>/<outDir>/app.js`, es2022, not
- * minified, with a source map, resolved with the same conditions as packages/build.
+ * minified, with a source map, resolved with the `browser` condition (Svelte's client build).
  */
 export function nativeConfig(root, { entry = 'main.js', outDir = 'dist', plugins = [] } = {}) {
   return {
@@ -51,13 +56,16 @@ export function nativeConfig(root, { entry = 'main.js', outDir = 'dist', plugins
     configFile: false,
     logLevel: 'warn',
     resolve: {
-      conditions: ['custom-renderer', 'browser'],
+      conditions: ['browser'],
       alias: [
         { find: /^svelte\/internal\/client\/reactivity\/effects(\.js)?$/, replacement: effectsPath },
         { find: /^svelte\/internal\/client\/dom\/task(\.js)?$/, replacement: taskPath },
         { find: /^svelte\/internal\/client\/context(\.js)?$/, replacement: contextPath },
         // generated components import the runtime from wherever the .svelte file lives
         { find: /^@svelters\/native-runtime$/, replacement: runtimePath },
+        { find: /^@svelters\/native-runtime\/core$/, replacement: corePath },
+        // the styling API (`setColorScheme`, `setTokens`), also for apps that do not depend on it
+        { find: /^@svelters\/native-runtime\/style$/, replacement: registerPath },
         // virtualized lists: `import { ListView } from '@svelters/lists'` gets the native
         // implementation (same component API and host protocol, see src/lists.js)
         { find: /^@svelters\/(native-runtime\/)?lists$/, replacement: listsPath },
@@ -84,7 +92,8 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../
 /** The `svelters-compile` binary: $SVELTERS_COMPILE, else the newest of the workspace's release/debug builds. */
 export function compilerPath() {
   if (process.env.SVELTERS_COMPILE) return process.env.SVELTERS_COMPILE;
-  const found = ['target/release/svelters-compile', 'target/debug/svelters-compile']
+  const exe = process.platform === 'win32' ? '.exe' : '';
+  const found = [`target/release/svelters-compile${exe}`, `target/debug/svelters-compile${exe}`]
     .map((p) => path.join(repoRoot, p))
     .filter((p) => fs.existsSync(p))
     .sort((a, b) => fs.statSync(b).mtimeMs - fs.statSync(a).mtimeMs);
@@ -92,14 +101,41 @@ export function compilerPath() {
   return found[0];
 }
 
-const registerPath = createRequire(import.meta.url).resolve('@svelters/renderer/style');
+const registerPath = stylePath;
 const STYLE_TAG = /<style(\s[^>]*)?>([\s\S]*?)<\/style>/;
 
 /**
- * The X6 half of a component's `<style>` (ST1): `@native` blocks lifted out, Svelte scopes the
- * rest with `scope` (its own CSS compile, as the stock pipeline), and @svelters/style translates
- * it for `toolkit` without the setter declarations (the Rust compiler matches those itself).
- * Returns null when nothing remains for the toolkit's dialect.
+ * `src` with every `bind:` directive blanked (same length, so positions hold). Stock Svelte only
+ * knows the DOM bindings (`bind:text` on a native element is `bind_invalid_name`); a binding never
+ * changes which elements a selector matches, so the CSS of the blanked component is the same.
+ */
+export function withoutBindings(src) {
+  let ast;
+  try {
+    ast = svelteParse(src, { modern: true });
+  } catch {
+    return src;
+  }
+  const ranges = [];
+  const walk = (n) => {
+    if (Array.isArray(n)) for (const x of n) walk(x);
+    else if (n && typeof n === 'object') {
+      if (n.type === 'BindDirective' && typeof n.start === 'number') ranges.push([n.start, n.end]);
+      for (const [k, v] of Object.entries(n)) if (k !== 'instance' && k !== 'module' && k !== 'css') walk(v);
+    }
+  };
+  walk(ast.fragment);
+  let out = src;
+  for (const [a, b] of ranges.sort((x, y) => y[0] - x[0])) out = out.slice(0, a) + ' '.repeat(b - a) + out.slice(b);
+  return out;
+}
+
+/**
+ * The X6 half of a component's `<style>` (ST1): `@native` blocks lifted out, stock Svelte scopes
+ * the rest with `scope` (a CSS-only compile of the component: `css: 'external'`, its bindings
+ * blanked, see withoutBindings), and @svelters/style translates it for `toolkit` without the
+ * setter declarations (the Rust compiler matches those itself). Returns null when nothing remains
+ * for the toolkit's dialect.
  */
 export function nativeSheets(code, file, toolkit, warn = () => {}) {
   const m = STYLE_TAG.exec(code);
@@ -110,7 +146,7 @@ export function nativeSheets(code, file, toolkit, warn = () => {}) {
   const scope = `svelte-${createHash('sha256').update(path.relative(repoRoot, file)).digest('hex').slice(0, 10)}`;
   let r;
   try {
-    r = svelteCompile(src, { filename: file, css: 'external', cssHash: () => scope, experimental: { customRenderer: 'svelters-native' } });
+    r = svelteCompile(withoutBindings(src), { filename: file, css: 'external', cssHash: () => scope });
   } catch (e) {
     // the native compiler reports the component's own problems; only the CSS half is skipped
     warn(`<style> not translated: Svelte could not compile the component for its CSS: ${String(e.message).split('\n')[0]}`);

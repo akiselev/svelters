@@ -30,6 +30,7 @@ insert #1 #2 before=end slot=default
 call #1 present []
 event #4 text-changed ["alpha"]
 event #5 clicked []
+set #4 text ""
 create box-layout #9
 set #9 direction "left-to-right"
 set #9 spacing 6
@@ -41,9 +42,9 @@ listen #11 clicked on
 set #11 text "Remove"
 insert #9 #11 before=end slot=default
 insert #8 #9 before=end slot=default
-set #4 text ""
 event #4 text-changed ["beta"]
 event #5 clicked []
+set #4 text ""
 create box-layout #12
 set #12 direction "left-to-right"
 set #12 spacing 6
@@ -55,9 +56,9 @@ listen #14 clicked on
 set #14 text "Remove"
 insert #12 #14 before=end slot=default
 insert #8 #12 before=end slot=default
-set #4 text ""
 event #4 text-changed ["gamma"]
 event #5 clicked []
+set #4 text ""
 create box-layout #15
 set #15 direction "left-to-right"
 set #15 spacing 6
@@ -69,12 +70,11 @@ listen #17 clicked on
 set #17 text "Remove"
 insert #15 #17 before=end slot=default
 insert #8 #15 before=end slot=default
-set #4 text ""
 event #6 clicked []
+remove #8 #12
+insert #8 #12 before=#9 slot=default
 remove #8 #15
-insert #8 #15 before=#9 slot=default
-remove #8 #9
-insert #8 #9 before=end slot=default
+insert #8 #15 before=#12 slot=default
 event #14 clicked []
 remove #8 #12
 destroy #13

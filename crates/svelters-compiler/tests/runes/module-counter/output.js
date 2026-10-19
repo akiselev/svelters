@@ -1,4 +1,4 @@
-import * as $ from 'svelte/internal/client';
+import * as $ from '@svelters/native-runtime/core';
 let count = $.state(0);
 export const doubled = () => $.get(count) * 2;
 export const settings = $.proxy({ step: 1 });

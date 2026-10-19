@@ -1,22 +1,23 @@
 # Native runtime contract (`@svelters/native-runtime`)
 
-Generated components target this API. It sits on Svelte's own signal/effect runtime
-(`svelte/internal/client`, plus `block`/`branch`/`destroy_effect`/`component_root` from
-`svelte/src/internal/client/reactivity/effects.js` through a resolver alias, since the package's
-exports hide them) and talks to the host directly (`globalThis.__svelters_host`, see
+Generated components target two modules: the reactive core `$` (`@svelters/native-runtime/core`,
+"Core API" below) and the host-op runtime `$n` (`@svelters/native-runtime`, "API" below). The
+runtime talks to the host directly (`globalThis.__svelters_host`, see
 `plans/architecture/backend-abi.md` "JS-side host ops"). There is no JS mirror of a DOM tree and no
-anchor nodes: the runtime keeps only the ordering information native insertion needs.
+anchor nodes: the runtime keeps only the ordering information native insertion needs. Since RT1
+this is the only frontend (`plans/milestones/RT1-retire-fork-runtime-core.md`); the op logs the
+fixtures check (`fixtures/*/expected.oplog`) are this runtime's.
 
 ## Shape of generated code (counter fixture)
 
 ```js
-import * as $ from 'svelte/internal/client';
+import * as $ from '@svelters/native-runtime/core';
 import * as $n from '@svelters/native-runtime';
 
 export default function App($$anchor, $$props) {
   $.push($$props, true);
   let count = $.state(0);
-  const n1 = $n.element('window', 'present');      // toplevel kind: second arg = present method
+  const n1 = $n.toplevel('window', 'present');     // toplevel kind: second arg = present method
   $n.set(n1, 'title', 'Counter');                  // static props: values already typed by the compiler
   const n2 = $n.element('box');
   $n.set(n2, 'orientation', 'vertical');
@@ -36,12 +37,12 @@ export default function App($$anchor, $$props) {
 ```
 
 
-Required op order (matches the JS pipeline's op logs): `create`, static `set`s / `listen`s /
+Required op order (as the retired JS pipeline's op logs): `create`, static `set`s / `listen`s /
 first effect runs in source order, children inserted into a node before that node is inserted
 into its parent, `present` after a toplevel's subtree is complete.
 
 Update order: render effects run in effect-tree order during a flush, so with template effects
-emitted in source order (above) an update can order its ops differently from the JS pipeline,
+emitted in source order (above) an update can order its ops differently from the retired JS pipeline,
 where Svelte groups a fragment's template effects after its blocks (e.g. a label update before the
 `{#if}` below it instead of after). The resulting native state is the same; see
 `experiments/native-compiler/handwritten/README.md`.
@@ -49,23 +50,54 @@ where Svelte groups a fragment's template effects after its blocks (e.g. a label
 Text content folded into a prop (`label` of label/button) must be a string: the compiler emits a
 template literal (`` `${$.get(x) ?? ''}` ``) unless the expression is statically a string.
 
-Building: `@svelters/native-runtime/vite` exports `nativeConfig(root, { entry, outDir })` (one ES
-module `dist/app.js`, es2022, unminified, source map, conditions `custom-renderer`/`browser`, and
-the alias `svelte/internal/client/reactivity/effects` -> Svelte's effects file).
+Building: `@svelters/native-runtime/vite` exports `nativeConfig(root, { entry, outDir, plugins })`
+(one ES module `dist/app.js`, es2022, unminified, source map, condition `browser`, the aliases of
+the runtime's own modules and of the three Svelte modules the core adapter imports that Svelte's
+exports map hides) and `svelteNative({ backend, spec, dev })`, the Vite plugin that runs
+`svelters-compile`. `@svelters/build`'s `svelteConfig(root)` wraps both for an app directory
+(toolkit from `package.json` `"svelters": { "toolkit" }`, entry `src/App.svelte`).
+
+## Core API (`@svelters/native-runtime/core`)
+
+The `$` namespace: exactly the names the compiler can emit, with Svelte's names and call shapes
+(`packages/native-runtime/test/core-contract.test.mjs` reads them off the compiler's sources and
+checks the module exports exactly those). Today (RUNTIME.md phase 1) each is Svelte's own,
+re-exported from the core adapter `src/core/svelte.js`, the only module of the native runtime that
+imports `svelte/internal/*`; `tools/check-svelte-internals.mjs` asserts what the adapter takes from
+the installed Svelte (version pin, these names, the hidden modules, effect flag bits, the
+`Boundary` members Svelte calls on `effect.b`, the effect-tree fields).
+
+- graph: `state, derived, get, set, update, update_pre, safe_get, untrack, eager, pending,
+  effect_tracking, proxy, snapshot, to_array`
+- effects: `effect_root, user_effect, user_pre_effect, template_effect`
+- component: `push, pop, prop, fallback, rest_props, spread_props, exclude_from_object, props_id,
+  bind_this, attach, noop`
+- stores: `setup_stores, store_get, store_set, store_mutate, store_unsub, validate_store,
+  update_store, update_pre_store, update_prop, update_pre_prop`
+- dev: `tag, tag_proxy, inspect, trace`
+
+Core internals for the block machinery (`src/core/internal.js`, not part of the compiler contract):
+`root` (Svelte's `component_root`), `block`, `branch`, `destroy`, `destroyed(effect)`, `active()`,
+`reorder(parent, effects)` (keyed-each effect order), `boundary_handler({ parent, transform_error,
+error })` / `boundary_scope(handler)` / `current_boundary()` / `root_boundary(handler)` (error
+boundaries as Svelte's runtime sees them on `effect.b`), `queue_task`, `get_all_contexts`,
+`set_context`, `flush`, `tick`, `clsx`.
 
 ## API
 
 | Function | Semantics |
 | --- | --- |
-| `element(kind, present?)` | `host.create(kind)`; registers the node with the current ownership scope. `present` marks a toplevel: when appended to the root container the runtime calls `host.call(h, present, [])`. |
+| `element(kind)` | `host.create(kind)`; registers the node with the current ownership scope. (`element(kind, present)` is `toplevel(kind, present)`.) |
+| `toplevel(kind, present, show?)` | A toplevel kind (X7, the compiler emits it for every one): created like `element`. Appended to the root container it is shown by its policy; appended anywhere else it is inserted into the nearest enclosing toplevel (`host.insert(enclosing, h, null)`: transient, backend-abi.md "Toplevels in the tree") once the appends around it are complete, and shown after that one was shown. Policy: the static `show` (`modal`, `modeless`, `none`; `show_invalid` at compile time otherwise), else `modal` for dialog kinds (`TOPLEVELS` in `src/bindings.generated.js`) and `modeless` for windows. `modeless` calls `present` (the spec's method; null: the first `TOPLEVELS` candidate the host resolves); `modal` calls the kind's modal method (`open` on Qt dialogs, else `present`), setting `modal` to true first when the kind has it and the app did not set it; `none` shows nothing (the app calls `present` through `bind:this`). Removal: `host.remove(enclosing, h)`, then destroy. |
+| `attached(kind)` | A kind the spec marks `attaches_to` (GTK event controllers and `context-menu`, a Qt `menu` outside a menu container) placed in an element whose slots do not take it: created like `element`, inserted into its parent with no slot and no position (`host.insert(parent, h, null)`), never used as the `before` of a sibling, not moved by keyed updates. In a text-content element (`<button>Copy <context-menu>…`) it does not count as content. |
 | `set(node, prop, value)` | `host.setProp` unless `value` equals the last value written (`Object.is`). No-op on a dead or destroyed node. |
 | `assume(node, prop, value)` | Records the spec's native default as the last value without writing it (a fresh widget is at its default), so a style fallback to the default is not written redundantly. |
 | `capture(node, prop)` / `RESTORE` | `capture` reads `host.getProp` once (before the first write) and remembers it; the read value also counts as the last value, so restoring an untouched prop is a no-op. `set(node, prop, RESTORE)` writes the captured value. Used when the spec has no default to restore. |
-| `attr(node, name, value)` | `class`, `id` or `style` for the X6 styling (ST1): stored on the node and sent with `host.style` (CLASSES / NAME / INLINE / OPACITY) at the end of the job by `@svelters/renderer/style`, as the renderer does; inline setter declarations of a dynamic `style` are written with `set`. `class_name(base, set, toggles)` builds the class string, `style_text(base, pairs)` the inline style, `setter_value(backend, name, v)` parses a `style:<setter>` value. |
+| `attr(node, name, value)` | `class`, `id` or `style` for the X6 styling (ST1): stored on the node and sent with `host.style` (CLASSES / NAME / INLINE / OPACITY) at the end of the job by the styling runtime (`src/style.js`, `@svelters/native-runtime/style`); inline setter declarations of a dynamic `style` are written with `set`. `class_name(base, set, toggles)` builds the class string, `style_text(base, pairs)` the inline style, `setter_value(backend, name, v)` parses a `style:<setter>` value. |
 | `token(node, prop, token, on)` | Only for a backend whose `class` is a token-list prop (the DOM conformance backend); GTK `cssClasses` is never written whole (ST1). Maintains a token list prop (a list of strings under ABI v3): reads the initial native value once via `getProp` (or uses the last written value), adds/removes `token`, writes the joined list when it changes. |
 | `on(node, signal, handler, flags = 0)` | Registers `handler` (called with the event args, `this` = the runtime node) for (signal, `flags`) and `host.listen(h, signal, true)` on the first handler for that pair (`host.listen(h, signal, true, flags)` when `flags` is not 0: `LISTEN_AFTER = 1`, `LISTEN_CAPTURE = 2`, ABI v2.2 `listen_ex`). Each (signal, flags) is its own native connection. Removed when the scope that registered it is disposed; `listen off` only if the node outlives that scope and has no handler left for the pair, never when the node itself is destroyed (backends disconnect on destroy: `disconnect_on: handle_drop`). |
-| `listen(type, handler, options)` | @svelters/renderer's attachment helper (`{@attach listen('key-pressed', fn, { after: true })}`): on attach `on(node, signal, handler, flags)`, the cleanup removes it. `type` goes through the renderer's alias table (`click` -> `clicked`); `options` is `{ after, capture }` or a flags number. The compiler emits `$.attach(node, () => $n.listen(signal, handler, flags))` with the spec-resolved signal when type and options are static; a `@svelters/renderer` import is rewritten to this module (which also exports `NativeEvent`, `StaleHandleError`, `LISTEN_AFTER`, `LISTEN_CAPTURE`). |
-| `child_attr(node, name, value)` | `parent:<name>={value}`: stored on the node; sent with `host.setChildAttr(parent, node, name, value)` right after every insert (first placement, keyed move, any re-insert) and on every change while inserted. `undefined`/`null` resets (sent as `null`) and drops it. Same rules as the renderer's `setChildAttr`. |
+| `listen(type, handler, options)` | The attachment helper components import from `@svelters/native-runtime` (`{@attach listen('key-pressed', fn, { after: true })}`): on attach `on(node, signal, handler, flags)`, the cleanup removes it. `type` is the native signal name (no aliases); `options` is `{ after, capture }` or a flags number. The compiler emits `$.attach(node, () => $n.listen(signal, handler, flags))` with the spec-resolved signal when type and options are static; this module also exports `NativeEvent`, `StaleHandleError`, `LISTEN_AFTER`, `LISTEN_CAPTURE`. |
+| `child_attr(node, name, value)` | `parent:<name>={value}`: stored on the node; sent with `host.setChildAttr(parent, node, name, value)` right after every insert (first placement, keyed move, any re-insert) and on every change while inserted. `undefined`/`null` resets (sent as `null`) and drops it. Same rules as the retired renderer's `setChildAttr`. |
 | `bind(node, prop, signal, arg, get, set)` | Two-way binding plan from the backend spec: a render effect writes `get()` through `set(node, prop, …)`; on `signal` the new value is `args[arg]` (or `host.getProp` when `arg < 0`); it is recorded as the node's last value for `prop` (so echoes and redundant writes are no-ops) and passed to `set(v)` when it differs from `get()`. |
 | `track(node, prop, signal, arg)` | For a one-way prop that has a spec binding (`text={draft}` on an entry, without `bind:`): on `signal` records `args[arg]` (or `getProp` when `arg < 0`) as the node's last value for `prop`, so writing the same value back is not echoed. Passive: it runs (before the handlers) when the signal is delivered because a handler listens, but never makes the host listen itself, exactly as the JS renderer's hard-coded `entry`/`changed` mirror. |
 | `slot(node, name)` | The container for `node`'s slot `name` (`null` = default slot; the host gets `slot` undefined). Same object for the same (node, name). |
@@ -105,10 +137,10 @@ job drain, as in the JS pipeline.
 (GTK: `handler_result != none` or `sync_required`, e.g. `close-request`, `mnemonic-activate`; Qt:
 the synthetic `close-request` and `key-press`) is delivered through `call_sync` as
 `__svelters_dispatch_sync(h, signal, args, flags)`. Its handlers get **`(event, ...args)`**, not
-`(...args)`: `event` is a `NativeEvent` (the renderer's class, exported here). The result for the
+`(...args)`: `event` is a `NativeEvent` (exported here). The result for the
 toolkit: `event.result = v` wins; else `event.preventDefault()` / `stopPropagation()` give `true`
 (veto the close, key handled); else `null` (toolkit default). Handler return values are ignored,
-as Svelte ignores them; a Promise return draws the renderer's warning; `stopImmediatePropagation()`
+as Svelte ignores them; a Promise return draws a warning; `stopImmediatePropagation()`
 skips the remaining handlers. When JS was busy the host delivers the event later as
 `__svelters_dispatch(h, signal, args, true, flags)`: same `(event, ...args)` shape with
 `event.deferred = true`, flags ignored. The compiler knows which signals are sync and warns
@@ -122,7 +154,7 @@ signal accepts (`phases`); anything else is `listen_phase_unsupported` at compil
 `after` on any signal, `capture` on event controllers only; Qt: `after` on QObject signals,
 `capture` on `key-press` only).
 
-**Borrowed handles.** `mount` installs `__svelters_node(h)` (the renderer's `nodeFor`): the host
+**Borrowed handles.** `mount` installs `__svelters_node(h)` (`nodeFor`): the host
 wraps handles in `call`/`getProp` results with it, so `node.call('getParent')` returns the
 runtime node of an object the app created (identity holds), or one stable `borrowed` node per
 other handle (held weakly, `host.destroy` once collected, stale after `gone`).
@@ -140,7 +172,7 @@ resolved against the **actual parent element's slot** the child is placed in (sp
 the slot that has it), a static value is coerced to the attribute's type
 (`bool|i32|u32|i64|f64|string|enum`, `child_attr_bad_value`), a dynamic one becomes a render
 effect `$n.child_attr(node, name, value)`. Elements whose parent is not known at compile time (a
-component's root elements, snippet bodies) pass the value through unchecked, as the renderer;
+component's root elements, snippet bodies) pass the value through unchecked;
 snippet roots are checked at each local `{@render}` site. Runtime semantics: `child_attr` above.
 
 ## Spreads with static keys and `{@attach}`
@@ -256,14 +288,12 @@ says which one it wants:
 </ListView>
 ```
 
-`{#each}` never virtualizes and `<ListView>` never builds rows eagerly. `<ListView>` is the JS
-pipeline's component (`packages/lists`, M5); `nativeConfig` resolves `@svelters/lists` to
-`@svelters/native-runtime/lists` (`src/lists.js`), which has the same props, the same
-exports and the same host protocol (`plans/architecture/backend-abi.md` "Model-view protocol
-(M5)"), so a component written for the JS pipeline compiles unchanged and both pipelines produce
-the same op log for the same script (only the order of destroys inside a teardown differs). The
-native `virtuallist` element itself is a backend extra kind (not in the generated specs) and is not
-authorable directly.
+`{#each}` never virtualizes and `<ListView>` never builds rows eagerly. `<ListView>` is
+`@svelters/native-runtime/lists` (`src/lists.js`); `@svelters/lists` re-exports it (and
+`nativeConfig` resolves the specifier to it), with the props, exports and host protocol of the M5
+component of the retired JS pipeline (`plans/architecture/backend-abi.md` "Model-view protocol
+(M5)"). The native `virtuallist` element itself is a backend extra kind (not in the generated
+specs) and is not authorable directly.
 
 Props: `items` (array or iterable), `key(item, index)` (default: the index), `row` snippet
 `(item, index)`, `layout` (`list` | `grid`), `selection` (`none` | `single`), `bind:selected`
@@ -314,10 +344,11 @@ selection); Qt keeps the position.
 deferred delivery, teardown); compiled harness cases `virtual-list`, `lists-stress`,
 `lists-recycle` (+ `script.deferred.json`, run live on both pipelines) and `lists-diagnostics`;
 real toolkits through `native.mjs` with clicks-only twins of the scripts
-(`experiments/native-compiler/compiled/scripts/*.native.json`); timings: `bench-lists.mjs`.
+(`experiments/native-compiler/compiled/scripts/*.native.json`).
 
-**Timings** (`bench-lists.mjs`, debug `counter`, Xvfb, median of 3, ms from the click to idle,
-10 ms poll granularity; JS pipeline / compiled). `<ListView>` (lists-stress): GTK fill 1k 134 / 84,
+**Timings** (historical, measured before RT1 with `bench-lists.mjs`, which compared the two
+pipelines and was removed with the JS pipeline; debug `counter`, Xvfb, median of 3, ms from the
+click to idle, 10 ms poll granularity; JS pipeline / compiled). `<ListView>` (lists-stress): GTK fill 1k 134 / 84,
 fill 10k 199 / 183, append 49 / 51, prepend 85 / 66, reverse 10k 230 / 197, sortDesc 166 / 144,
 odd filter 221 / 177, scroll to end 36 / 22; Qt fill 1k 14 / 13, fill 10k 71 / 75, reverse 83 / 86,
 sortDesc 121 / 123, scroll 11 / 11. The eager `{#each}` baseline (bench/keyed-bench, 1000 rows of

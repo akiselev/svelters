@@ -1,4 +1,4 @@
-import renderer, { listen } from '@svelters/renderer';
+import { listen, set } from '@svelters/native-runtime';
 import { Canvas2D } from './recorder.js';
 
 // The size arrives as `resize(width, height)` on GTK and `resize(Size, oldSize)` on Qt.
@@ -25,7 +25,7 @@ export function draw(fn) {
     $effect(() => {
       const ctx = new Canvas2D(size.width, size.height);
       fn(ctx, size);
-      renderer.setAttribute(node, 'ops', ctx.toJSON());
+      set(node, 'ops', ctx.toJSON());
     });
     return stop;
   };
