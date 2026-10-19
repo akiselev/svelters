@@ -26,6 +26,7 @@ export default function input($$anchor, $$props) {
   }
 	const $$n1 = $n.element("label");
 	$.template_effect(() => $n.set($$n1, "label", `${$.get(a)} ${$.get(b)} ${left()} ${right()}`));
+	$n.track($$n1, "label", "notify::label", -1);
 	$n.append($$anchor, $$n1);
 	$.pop();
 }

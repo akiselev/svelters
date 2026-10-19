@@ -8658,6 +8658,9 @@ fn method_graphicsoffload_set_enabled() {
 /// bind:black-background on GraphicsOffload: rule: B1: GtkGraphicsOffload:black-background is writable, scalar and notifies; the renderer compares before set
 #[test]
 fn binding_graphicsoffload_black_background() {
+    if crate::testing::skip_below_gtk(4, 16) {
+        return;
+    }
     on_gtk(|| {
         let mut h = Harness::new();
         let o = h.create("graphics-offload");
@@ -9212,6 +9215,9 @@ fn binding_headerbar_show_title_buttons() {
 /// bind:use-native-controls on HeaderBar: rule: B1: GtkHeaderBar:use-native-controls is writable, scalar and notifies; the renderer compares before set
 #[test]
 fn binding_headerbar_use_native_controls() {
+    if crate::testing::skip_below_gtk(4, 18) {
+        return;
+    }
     on_gtk(|| {
         let mut h = Harness::new();
         let o = h.create("header-bar");
@@ -12424,6 +12430,9 @@ fn binding_listbox_show_separators() {
 /// bind:tab-behavior on ListBox: rule: B1: GtkListBox:tab-behavior is writable, scalar and notifies; the renderer compares before set
 #[test]
 fn binding_listbox_tab_behavior() {
+    if crate::testing::skip_below_gtk(4, 18) {
+        return;
+    }
     on_gtk(|| {
         let mut h = Harness::new();
         let o = h.create("list-box");
@@ -15098,6 +15107,9 @@ fn binding_picture_content_fit() {
 /// bind:isolate-contents on Picture: rule: B1: GtkPicture:isolate-contents is writable, scalar and notifies; the renderer compares before set
 #[test]
 fn binding_picture_isolate_contents() {
+    if crate::testing::skip_below_gtk(4, 22) {
+        return;
+    }
     on_gtk(|| {
         let mut h = Harness::new();
         let o = h.create("picture");
@@ -26568,6 +26580,9 @@ fn binding_window_fullscreened() {
 /// bind:gravity on Window: rule: B1: GtkWindow:gravity is writable, scalar and notifies; the renderer compares before set
 #[test]
 fn binding_window_gravity() {
+    if crate::testing::skip_below_gtk(4, 20) {
+        return;
+    }
     on_gtk(|| {
         let mut h = Harness::new();
         let o = h.create("window");
@@ -26960,6 +26975,9 @@ fn binding_windowcontrols_side() {
 /// bind:use-native-controls on WindowControls: rule: B1: GtkWindowControls:use-native-controls is writable, scalar and notifies; the renderer compares before set
 #[test]
 fn binding_windowcontrols_use_native_controls() {
+    if crate::testing::skip_below_gtk(4, 18) {
+        return;
+    }
     on_gtk(|| {
         let mut h = Harness::new();
         let o = h.create("window-controls");

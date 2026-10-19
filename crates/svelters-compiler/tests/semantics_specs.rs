@@ -203,10 +203,11 @@ fn bind_text_on_entry() {
 fn no_binding_for_label() {
     let gtk = load("gtk");
     // Gtk.Inscription has a `text` property but no binding annotation.
-    assert_eq!(gtk.plan_binding(&el(&gtk, "inscription"), "text").unwrap_err().code, codes::BIND_NO_PLAN);
-    let e = gtk.plan_binding(&el(&gtk, "label"), "label").unwrap_err();
+    // (GtkLabel:label is bindable since AI1 inferred the generic `bind:<prop>` facts.)
+    let e = gtk.plan_binding(&el(&gtk, "inscription"), "text").unwrap_err();
     assert_eq!(e.code, codes::BIND_NO_PLAN);
-    assert!(e.message.contains("notify::label"), "{}", e.message);
+    assert!(e.message.contains("notify::text"), "{}", e.message);
+    assert!(gtk.plan_binding(&el(&gtk, "label"), "label").is_ok());
     let qt = load("qt");
     let e = qt.plan_binding(&el(&qt, "label"), "text").unwrap_err();
     assert_eq!(e.code, codes::BIND_NO_PLAN);

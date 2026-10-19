@@ -21,6 +21,7 @@ export default function input($$anchor, $$props) {
   }
 	const $$n1 = $n.element("label");
 	$.template_effect(() => $n.set($$n1, "label", `${$count()} ${$user().name} ${$theme()}`));
+	$n.track($$n1, "label", "notify::label", -1);
 	$n.append($$anchor, $$n1);
 	const $$n2 = $n.element("entry");
 	$n.bind($$n2, "text", "changed", 0, () => $user().name, ($$value) => { $.store_mutate(user, $.untrack($user).name = $$value, $.untrack($user)); });

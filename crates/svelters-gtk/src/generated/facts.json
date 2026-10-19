@@ -5036,7 +5036,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:GraphicsOffload:binding:black-background",
-   "fingerprint": "e28d8389e6f5bc89",
+   "fingerprint": "bfdb1bcccad82625",
    "kind": "GraphicsOffload",
    "name": "black-background",
    "origin": "inferred",
@@ -5376,7 +5376,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:HeaderBar:binding:use-native-controls",
-   "fingerprint": "cff319e96dda8317",
+   "fingerprint": "3bd3dcca82345d2f",
    "kind": "HeaderBar",
    "name": "use-native-controls",
    "origin": "inferred",
@@ -7362,7 +7362,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:ListBox:binding:tab-behavior",
-   "fingerprint": "dfbfcea08ff1d8db",
+   "fingerprint": "e57a4050e28fbc12",
    "kind": "ListBox",
    "name": "tab-behavior",
    "origin": "inferred",
@@ -9039,7 +9039,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Picture:binding:isolate-contents",
-   "fingerprint": "2e3423079e0160f4",
+   "fingerprint": "8373bb0461141202",
    "kind": "Picture",
    "name": "isolate-contents",
    "origin": "inferred",
@@ -16323,7 +16323,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Window:binding:gravity",
-   "fingerprint": "17d27a62425199ba",
+   "fingerprint": "0f6e4860991ef453",
    "kind": "Window",
    "name": "gravity",
    "origin": "inferred",
@@ -16536,7 +16536,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:WindowControls:binding:use-native-controls",
-   "fingerprint": "97454baf06df2de3",
+   "fingerprint": "8aa33dc0052156fb",
    "kind": "WindowControls",
    "name": "use-native-controls",
    "origin": "inferred",
