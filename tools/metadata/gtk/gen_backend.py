@@ -1152,7 +1152,7 @@ LIFE = {"owned": "SVL_LIFE_OWNED", "toplevel": "SVL_LIFE_TOPLEVEL"}
 def gen_verify(m: Model) -> tuple[str, list[dict], list[str], list[dict]]:
     f = Facts()
 
-    def attempt(fact_id, section, d, name, record, make):
+    def attempt(fact_id, section, d, name, record, make, extra=()):
         try:
             fns = make()
         except (Untestable, ValueError, KeyError) as e:
@@ -1163,7 +1163,7 @@ def gen_verify(m: Model) -> tuple[str, list[dict], list[str], list[dict]]:
             else:
                 f.errors.append(f"{fact_id}: {e}")
             return
-        v = needs(d, record)
+        v = needs(d, record, *extra)
         if v:
             # Kinds and members newer than the build minimum: skipped (with a message) on older GTK.
             skip = f"() {{\n    if crate::testing::skip_below_gtk({v[0]}, {v[1]}) {{\n        return;\n    }}\n    on_gtk("
@@ -1211,7 +1211,9 @@ def gen_verify(m: Model) -> tuple[str, list[dict], list[str], list[dict]]:
 """)]
             attempt(me["id"], "methods", d, me["name"], me, mk)
         for b in d.get("bindings", []):
-            attempt(b.get("id") or f"{d['id']}:binding:{b['name']}", "bindings", d, b["name"], b, lambda b=b, d=d: [binding_test(m, d, b)])
+            # A binding is as new as its property (e.g. Window:gravity, 4.20).
+            attempt(b.get("id") or f"{d['id']}:binding:{b['name']}", "bindings", d, b["name"], b, lambda b=b, d=d: [binding_test(m, d, b)],
+                    extra=(find_prop(m, d, b["property"]),))
         life = d.get("lifetime")
         if life and life.get("origin") == "manual":
             def mkl(d=d, life=life):
