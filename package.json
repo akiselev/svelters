@@ -13,6 +13,7 @@
     "build": "pnpm -r --filter '!@svelters/docs' build",
     "watch": "node packages/build/bin/svelters-build.mjs --watch",
     "docs:ir": "python3 tools/docs/build_ir.py",
+    "docs:pack": "cargo run -q --release -p svelters-cli -- docs-pack",
     "docs:build": "python3 tools/docs/build_ir.py && pnpm --filter @svelters/docs build && pnpm --filter @svelters/docs check-links",
     "docs:dev": "python3 tools/docs/build_ir.py && pnpm --filter @svelters/docs dev",
     "docs:screenshots": "python3 tools/docs/screenshots/run.py",

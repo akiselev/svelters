@@ -51,3 +51,20 @@ jobs:
       - name: pnpm docs:test
         if: ${{ !cancelled() }}
         run: pnpm docs:test
+
+      # `svelters docs` (C0, plans/milestones/CL0-cli-docs.md): unit + golden tests and the pack/site
+      # consistency test (needs node and the docs IR, which docs:test above has built). No GUI here,
+      # so the nextest headless wrapper is bypassed.
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-nextest
+      - name: svelters-cli tests
+        if: ${{ !cancelled() }}
+        env:
+          SVELTERS_SHOW_GUI: '1'
+        run: |
+          cargo clippy -p svelters-cli --all-targets -- -D warnings
+          cargo nextest run -p svelters-cli --no-fail-fast
+          cargo run -q -p svelters-cli -- docs-pack
+          cargo run -q -p svelters-cli -- docs gtk button --brief
+          cargo run -q -p svelters-cli -- docs qt main-window.close --json || test $? -eq 2
