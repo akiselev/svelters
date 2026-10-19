@@ -858,7 +858,8 @@ impl Inner {
             .map(|e| {
                 e.signals
                     .iter()
-                    .filter(|(sid, _)| p.echo.contains(&SIGNALS[(**sid & SVL_SIGNAL_ID_MASK) as usize - 1].name))
+                    // Reflected signals (ids >= reflect::DYN_BASE, on non-widget objects) are not in the table.
+                    .filter(|(sid, _)| SIGNALS.get(((**sid & SVL_SIGNAL_ID_MASK) as usize).wrapping_sub(1)).is_some_and(|s| p.echo.contains(&s.name)))
                     .map(|(sid, id)| (st.via_targets.get(&(h, *sid)).cloned().unwrap_or_else(|| elem.clone()), id))
                     .collect()
             })
@@ -1575,6 +1576,15 @@ impl GtkBackend {
     /// Diagnostic access to the object behind a handle.
     pub fn object(&self, h: u64) -> Option<glib::Object> {
         self.ctl.local.obj_of(h).ok().map(|x| x.0)
+    }
+
+    /// Test hook: the name of a signal id, generated (`clicked`) or reflected (`notify::text`).
+    pub fn signal_name(&self, id: u32) -> String {
+        let id = id & SVL_SIGNAL_ID_MASK;
+        if let Some(s) = SIGNALS.get((id as usize).wrapping_sub(1)) {
+            return s.name.to_string();
+        }
+        self.ctl.local.reflect.borrow().signal(id).map(|(_, n)| n.clone()).unwrap_or_else(|| format!("#{id}"))
     }
 
     /// Test hook: the items of a menu container as text (`a,b,{c,d},Sub[e],`).
