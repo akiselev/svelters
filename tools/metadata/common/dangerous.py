@@ -249,6 +249,29 @@ class Dangerous:
                 for kind, sec, name, _ in found if sec == "methods" and not any(p.fullmatch(name) for p in pats)]
 
 
+def ts_remarks(ann: dict) -> str:
+    """`Dangerous: <reason>. Use instead: <use_instead>.` on one line, safe inside a /** */ comment."""
+    def clean(s: str) -> str:
+        return re.sub(r"\s+", " ", s).strip().rstrip(".").replace("*/", "*\\/")
+    text = f"Dangerous ({ann['severity']}): {clean(ann['reason'])}."
+    if ann.get("reachable") is False:
+        text += " Not reachable from JS today."
+    if ann.get("use_instead"):
+        text += f" Use instead: {clean(ann['use_instead'])}."
+    return text
+
+
+def ts_comment(ann: dict | None, indent: str = "  ", tags: tuple[str, ...] = ()) -> str:
+    """The JSDoc block of a typed member: `@remarks Dangerous: ...` (not `@deprecated`: the member is not going away,
+    and a strike-through would read as "use the newer API") plus `tags` (e.g. `@unverified`). '' when neither applies."""
+    lines = ([f"@remarks {ts_remarks(ann)}"] if ann else []) + list(tags)
+    if not lines:
+        return ""
+    if len(lines) == 1 and not ann:
+        return f"{indent}/** {lines[0]} */\n"
+    return f"{indent}/**\n" + "".join(f"{indent} * {x}\n" for x in lines) + f"{indent} */\n"
+
+
 SCHEMA_LINE = '    "dangerous": {block},\n'
 SCHEMA_ANCHOR = '\n  "properties": {\n'
 

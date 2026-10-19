@@ -44,6 +44,8 @@
         {
           "name": "visible",
           "js_name": "visible",
+          "dangerous": { "severity": "owned-by-backend", "reason": "The backend toggles it on insert.", "reachable": false,
+                         "source": "metadata/overrides/demo/Widget.yaml" },
           "origin": "gir",
           "type": { "display": "boolean", "neutral": "bool" },
           "default": "true",
@@ -55,7 +57,10 @@
       ],
       "events": [],
       "methods": [
-        { "name": "show", "origin": "gir", "signature": "show(): void", "params": [], "returns": { "display": "void" } }
+        { "name": "show", "origin": "gir", "signature": "show(): void", "params": [], "returns": { "display": "void" },
+          "dangerous": { "severity": "corrupts-tree", "reason": "Maps the widget behind the renderer's `show` attribute (<demo>).",
+                         "use_instead": "The `visible` attribute or {#if}.", "evidence": ["crates/demo/src/backend.rs:1"],
+                         "source": "metadata/dangerous/demo.yaml#show" } }
       ],
       "constructors": [],
       "values": [],
@@ -163,6 +168,7 @@
     "annotated_events": 1,
     "properties_by_origin": { "gir": 2 },
     "docs": { "kinds_with_description": 1 },
-    "serdes": { "status": "unknown", "supported_types": null, "total_types": null }
+    "serdes": { "status": "unknown", "supported_types": null, "total_types": null },
+    "dangerous": { "properties": 1, "events": 0, "methods": 1 }
   }
 }

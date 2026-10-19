@@ -52,6 +52,25 @@ def neutral_to_ts(ref: str, name_of) -> tuple[str, str | None]:
     return "unknown", None
 
 
+# IR member list -> the member section of tools/metadata/common/dangerous.py
+DANGEROUS_SECTIONS = {"properties": "properties", "events": "signals", "methods": "methods"}
+
+
+def annotate_dangerous(entity: dict, kind: str, resolver) -> None:
+    """Mark the entity's own members that the toolkit's dangerous layer marks (`resolver.lookup(kind, section, name)`,
+    tools/metadata/common/dangerous.py). Every member the metadata lists is documented, so a dangerous one always
+    gets its warning, whether or not it is annotated."""
+    for field, sec in DANGEROUS_SECTIONS.items():
+        for r in entity.get(field, []):
+            a = resolver.lookup(kind, sec, r["name"])
+            if a:
+                r["dangerous"] = a
+
+
+def dangerous_coverage(ents: list[dict]) -> dict:
+    return {f: sum(1 for e in ents for r in e.get(f, []) if r.get("dangerous")) for f in DANGEROUS_SECTIONS}
+
+
 def display_value(v: Any) -> str | None:
     if v is None:
         return None

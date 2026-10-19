@@ -1431,6 +1431,9 @@ export interface QtElementDescriptors {
     methods: {
       cascadeSubWindows(): void;
       tileSubWindows(): void;
+      /**
+       * @remarks Dangerous (corrupts-tree): The subwindows slot wraps each child element in a QMdiSubWindow (addSubWindow, metadata/overrides/qt/QMdiArea.yaml:35-42); closing the wrappers deletes them with the child widgets behind the renderer: the backend reports the handles gone (native_destroyed, tools/metadata/qt/templates/backend.cpp.in:282) while the Svelte tree still renders them. Use instead: Remove the subwindow children with {#if}/{#each}.
+       */
       closeAllSubWindows(): void;
       show(): void;
       hide(): void;
@@ -1515,6 +1518,9 @@ export interface QtElementDescriptors {
       "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
+      /**
+       * @remarks Dangerous (corrupts-tree): The items slot parents and inserts the backend's actions and menus (tools/metadata/qt/templates/menus.hpp.in:69-73); clear() drops them behind it (and deletes the actions the bar parents), so a later remove fails ("child is not in this parent", menus.hpp.in:83). Use instead: Remove the <action>/<menu> children with {#if}/{#each}.
+       */
       clear(): void;
       show(): void;
       hide(): void;
@@ -2541,6 +2547,9 @@ export interface QtElementDescriptors {
       "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
+      /**
+       * @remarks Dangerous (corrupts-tree): The items slot holds the backend's actions and menus through the menu glue (tools/metadata/qt/templates/menus.hpp.in:69-73); clear() drops them behind it, so a later remove fails ("child is not in this parent", menus.hpp.in:83). Use instead: Remove the item children with {#if}/{#each}.
+       */
       clear(): void;
       isFloating(): boolean;
       show(): void;

@@ -19,6 +19,7 @@ Everything on this page is computed at build time from the generated IR. Serdes 
 | Properties | 2 (1 annotated) |
 | Events | 1 (1 annotated) |
 | Methods | 1 |
+| Dangerous members | 1 properties, 0 events, 1 methods (warned on their pages) |
 | Properties by origin | <span class="svl-badge svl-origin-gir" title="GObject-Introspection repository">gir</span> 2 |
 | Docs: kinds with description | 1 |
 | Serdes (per-type support) | **unknown** (no serdes fields in metadata yet) |

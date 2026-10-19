@@ -116,17 +116,6 @@ rules:
     reason: The pages slot inserts with insertTab and removes with removeTab(indexOf) (metadata/overrides/qt/QTabWidget.yaml:84-97); clear desyncs it.
     use_instead: Page children of <tab-widget> with parent:tab-text.
 
-  - id: tab-widget-bar
-    section: methods
-    name: addTab|insertTab|removeTab|moveTab
-    kinds: [QTabBar]
-    severity: corrupts-tree
-    reason: >-
-      Only on the bar inside a <tab-widget> (reachable through the tabBar() object getter, tools/metadata/qt/gen_cpp.py:1509-1531):
-      the tab widget's pages slot keeps tab and page indexes in step (metadata/overrides/qt/QTabWidget.yaml:84-97), and changing
-      the inner bar's tabs desyncs them. A standalone <tab-bar> is fine.
-    use_instead: Page children of the <tab-widget>.
-
   - id: tool-box-items
     section: methods
     name: addItem|insertItem|removeItem

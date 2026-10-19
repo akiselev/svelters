@@ -78,6 +78,10 @@ class Frontend:
 
         self.verified = ledger.verified_facts("qt")
         self.facts = [e["fact"] for e in ledger.load("qt")["entries"]]
+        # Dangerous members (metadata/dangerous/<tk>.yaml, override `dangerous:` blocks): docs warn on them.
+        import dangerous  # noqa: E402  (tools/metadata/common)
+
+        self.dangerous = dangerous.Dangerous(TK, root)
         # The manual overrides with the inferred layer (metadata/inferred/qt) merged under them.
         sys.path.insert(0, str(root / "tools/metadata/qt"))
         import qt_layers as layers  # noqa: E402
@@ -351,7 +355,7 @@ class Frontend:
         return None
 
     def example(self, tag: str, props: list[dict], events: list[dict], children: dict | None) -> dict:
-        ann_p = [p for p in props if p["annotated"] and p["access"]["write"]]
+        ann_p = [p for p in props if p["annotated"] and p["access"]["write"] and not p.get("dangerous")]
         attrs = []
         for p in ann_p[:3]:
             n = p["type"].get("neutral", "")
@@ -454,6 +458,7 @@ class Frontend:
             abi += ["create", "destroy"]
         if ch:
             abi += ["insert", "remove"]
+        irlib.annotate_dangerous(e, stem, self.dangerous)  # before the example, which skips dangerous members
         e["abi_symbols"] = sorted(set(abi))
         if tags:
             e["screenshot"] = f"{TK}/{tags[0]}"
@@ -520,6 +525,7 @@ class Frontend:
                 "annotated_events": sum(1 for e in ents for p in e["events"] if p.get("annotated")),
                 "properties_by_origin": dict(sorted(by_origin.items())), "docs": docs_cov,
                 "serdes": {"status": "unknown", "supported_types": None, "total_types": None},
+                "dangerous": irlib.dangerous_coverage(ents),
             },
         }
 

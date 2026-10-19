@@ -116,6 +116,32 @@ class FrontendTests(unittest.TestCase):
         self.assertEqual(len([e for e in ir["entities"] if e["tags"]]), len(classes))
         self.assertGreater(len(tags), 50)
 
+    def test_dangerous_members_are_documented(self):
+        """Every dangerous member of the metadata (tools/metadata/common/dangerous.py) is in the IR, marked, and the
+        examples never use one."""
+        dz = load("dangerous_for_docs", "tools/metadata/common/dangerous.py")
+        field = {"methods": "methods", "properties": "properties", "signals": "events"}
+        for tk in ("gtk", "qt"):
+            ir = ir_of(tk)
+            by_name = {e["id"].split(":", 1)[1].split(".")[-1]: e for e in ir["entities"] if e["kind"] in ("class", "interface")}
+            marked = {(k, f, r["name"]) for k, e in by_name.items() for f in field.values() for r in e[f] if r.get("dangerous")}
+            want = {(k, field[s], n) for k, s, n, _ in dz.Dangerous(tk, ROOT).all()}
+            self.assertEqual(marked, want, tk)
+            self.assertEqual(sum(ir["coverage"]["dangerous"].values()),
+                             sum(1 for e in ir["entities"] for f in field.values() for r in e[f] if r.get("dangerous")))
+            for e in ir["entities"]:
+                names = {r["js_name"] for r in e["properties"] if r.get("dangerous")}
+                for ex in e.get("examples", []):
+                    for n in names:
+                        self.assertNotIn(f" {n}=", ex["code"], f"{tk}:{e['name']} example uses dangerous {n}")
+        win = next(e for e in ir_of("gtk")["entities"] if e["tags"] == ["window"])
+        titlebar = next(m for m in win["methods"] if m["name"] == "set_titlebar")
+        self.assertEqual(titlebar["dangerous"]["severity"], "corrupts-tree")
+        self.assertTrue(titlebar["dangerous"]["source"].startswith("metadata/dangerous/gtk.yaml#"))
+        app = next(p for p in win["properties"] if p["name"] == "application")
+        self.assertEqual(app["dangerous"]["severity"], "owned-by-backend")
+        self.assertNotIn("dangerous", next(m for m in win["methods"] if m["name"] == "present"))
+
     def test_qt_text_policy(self):
         brief = ir_of("qt", text_policy="brief")
         links = ir_of("qt", text_policy="links")

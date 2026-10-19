@@ -2144,7 +2144,7 @@
  {
   "abstract": false,
   "bindings": 1,
-  "dangerous": 4,
+  "dangerous": 0,
   "defaults": 12,
   "element": "tab-bar",
   "gallery": "08-bars",

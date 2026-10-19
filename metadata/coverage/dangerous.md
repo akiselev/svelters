@@ -7,7 +7,7 @@ A dangerous member is reachable from app code at run time (unless marked not rea
 | Toolkit | Methods | Properties | Signals | Reachable today | Not reachable (marked for exposure) |
 | --- | --- | --- | --- | --- | --- |
 | gtk | 91 | 40 | 0 | 131 | 0 |
-| qt | 53 | 1 | 0 | 9 | 45 |
+| qt | 49 | 1 | 0 | 5 | 45 |
 | appkit | 8 | 7 | 0 | 12 | 3 |
 | winui | 0 | 2 | 0 | 1 | 1 |
 
@@ -187,10 +187,6 @@ A dangerous member is reachable from app code at run time (unless marked not rea
 | `QStatusBar.insertPermanentWidget` (method) | corrupts-tree | no | `metadata/dangerous/qt.yaml#status-bar-permanent` |
 | `QStatusBar.insertWidget` (method) | corrupts-tree | no | `metadata/dangerous/qt.yaml#page-slots` |
 | `QStatusBar.removeWidget` (method) | corrupts-tree | no | `metadata/dangerous/qt.yaml#page-slots` |
-| `QTabBar.addTab` (method) | corrupts-tree | yes | `metadata/dangerous/qt.yaml#tab-widget-bar` |
-| `QTabBar.insertTab` (method) | corrupts-tree | yes | `metadata/dangerous/qt.yaml#tab-widget-bar` |
-| `QTabBar.moveTab` (method) | corrupts-tree | yes | `metadata/dangerous/qt.yaml#tab-widget-bar` |
-| `QTabBar.removeTab` (method) | corrupts-tree | yes | `metadata/dangerous/qt.yaml#tab-widget-bar` |
 | `QTabWidget.addTab` (method) | corrupts-tree | no | `metadata/dangerous/qt.yaml#tab-widget-pages` |
 | `QTabWidget.clear` (method) | corrupts-tree | no | `metadata/dangerous/qt.yaml#tab-widget-pages` |
 | `QTabWidget.insertTab` (method) | corrupts-tree | no | `metadata/dangerous/qt.yaml#tab-widget-pages` |

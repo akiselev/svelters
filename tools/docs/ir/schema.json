@@ -364,6 +364,9 @@
         "verified": {
           "type": "boolean",
           "description": "Every generated test of this fact passed (metadata/verified/<toolkit>.json)."
+        },
+        "dangerous": {
+          "$ref": "#/$defs/dangerous"
         }
       }
     },
@@ -478,6 +481,9 @@
         "verified": {
           "type": "boolean",
           "description": "Every generated test of this fact passed (metadata/verified/<toolkit>.json)."
+        },
+        "dangerous": {
+          "$ref": "#/$defs/dangerous"
         }
       },
       "additionalProperties": false
@@ -568,6 +574,9 @@
         "verified": {
           "type": "boolean",
           "description": "Every generated test of this fact passed (metadata/verified/<toolkit>.json)."
+        },
+        "dangerous": {
+          "$ref": "#/$defs/dangerous"
         }
       },
       "additionalProperties": false
@@ -650,6 +659,9 @@
         "verified": {
           "type": "boolean",
           "description": "Every generated test of this fact passed (metadata/verified/<toolkit>.json)."
+        },
+        "dangerous": {
+          "$ref": "#/$defs/dangerous"
         }
       },
       "additionalProperties": false
@@ -1140,6 +1152,66 @@
               ]
             }
           }
+        },
+        "dangerous": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "properties",
+            "events",
+            "methods"
+          ],
+          "description": "Dangerous members documented in this IR, by member list.",
+          "properties": {
+            "properties": {
+              "type": "integer"
+            },
+            "events": {
+              "type": "integer"
+            },
+            "methods": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "dangerous": {
+      "type": "object",
+      "description": "The member is dangerous: reachable from app code (unless reachable is false) but the backend owns what it changes (tools/metadata/common/dangerous.py, docs/notes/dangerous-members.md). Properties: the write side.",
+      "additionalProperties": false,
+      "required": [
+        "severity",
+        "reason",
+        "source"
+      ],
+      "properties": {
+        "severity": {
+          "enum": [
+            "corrupts-tree",
+            "owned-by-backend",
+            "crashes",
+            "other"
+          ]
+        },
+        "reason": {
+          "type": "string"
+        },
+        "use_instead": {
+          "type": "string"
+        },
+        "reachable": {
+          "type": "boolean"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "source": {
+          "type": "string",
+          "description": "Where it is declared: metadata/dangerous/<tk>.yaml#<rule> or an override file."
         }
       }
     }
