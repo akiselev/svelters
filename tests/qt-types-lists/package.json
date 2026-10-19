@@ -2,6 +2,9 @@
   "name": "@svelters-fixtures/qt-types-lists",
   "version": "0.0.0",
   "private": true,
+  "svelters": {
+    "toolkit": "qt"
+  },
   "type": "module",
   "scripts": {
     "build": "vite build",

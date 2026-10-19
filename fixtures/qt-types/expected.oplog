@@ -7,7 +7,6 @@ call #2 index [2,0]
 call #2 setData [null,"three"]
 static QIcon.new ["/tmp/svelters-qt-types.png"] #3
 static QUrl.new ["https://example.com/docs/index.html"] #4
-call #4 host []
 create main-window #5
 set #5 window-title "Types"
 create box-layout #6
@@ -24,6 +23,8 @@ set #9 text "5 characters"
 insert #6 #9 before=end slot=default
 create push-button #10
 set #10 icon 3
+call #4 host []
+set #10 text null
 insert #6 #10 before=end slot=default
 insert #5 #6 before=end slot=default
 call #5 present []
