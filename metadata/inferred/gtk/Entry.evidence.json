@@ -331,6 +331,19 @@
    "signals": []
   }
  },
+ "properties:attributes": {
+  "confidence": 0.8,
+  "evidence": {
+   "log": [],
+   "outcome": "identity",
+   "type": "PangoAttrList"
+  },
+  "review": {
+   "decision": "accept",
+   "reason": "real boxed property (Pango); no string form yet, so JS carries it as an opaque boxed handle; the round trip is what the converter guarantees",
+   "reviewer": "claude-opus-5.5 (AI1 review, 2026-10-19)"
+  }
+ },
  "properties:buffer": {
   "confidence": 0.9,
   "evidence": {
@@ -412,6 +425,19 @@
    "signals": [
     "notify::cursor"
    ]
+  }
+ },
+ "properties:input-hints": {
+  "confidence": 0.8,
+  "evidence": {
+   "log": [],
+   "outcome": "identity",
+   "type": "GtkInputHints"
+  },
+  "review": {
+   "decision": "accept",
+   "reason": "flags property: the converter maps numbers/nick lists both ways; the probe has no flags sampler, the round trip test stands",
+   "reviewer": "claude-opus-5.5 (AI1 review, 2026-10-19)"
   }
  },
  "properties:input-purpose": {
@@ -534,6 +560,19 @@
    "signals": []
   }
  },
+ "properties:primary-icon-gicon": {
+  "confidence": 0.8,
+  "evidence": {
+   "log": [],
+   "outcome": "identity",
+   "type": "GIcon"
+  },
+  "review": {
+   "decision": "accept",
+   "reason": "real nullable icon property; the converter takes a handle or a string form (icon name / image path), null round trip is the generated test",
+   "reviewer": "claude-opus-5.5 (AI1 review, 2026-10-19)"
+  }
+ },
  "properties:primary-icon-name": {
   "confidence": 0.95,
   "evidence": {
@@ -549,6 +588,19 @@
    "signals": [
     "notify::primary-icon-storage-type"
    ]
+  }
+ },
+ "properties:primary-icon-paintable": {
+  "confidence": 0.8,
+  "evidence": {
+   "log": [],
+   "outcome": "identity",
+   "type": "GdkPaintable"
+  },
+  "review": {
+   "decision": "accept",
+   "reason": "real nullable icon property; the converter takes a handle or a string form (icon name / image path), null round trip is the generated test",
+   "reviewer": "claude-opus-5.5 (AI1 review, 2026-10-19)"
   }
  },
  "properties:primary-icon-sensitive": {
@@ -645,6 +697,19 @@
    "signals": []
   }
  },
+ "properties:secondary-icon-gicon": {
+  "confidence": 0.8,
+  "evidence": {
+   "log": [],
+   "outcome": "identity",
+   "type": "GIcon"
+  },
+  "review": {
+   "decision": "accept",
+   "reason": "real nullable icon property; the converter takes a handle or a string form (icon name / image path), null round trip is the generated test",
+   "reviewer": "claude-opus-5.5 (AI1 review, 2026-10-19)"
+  }
+ },
  "properties:secondary-icon-name": {
   "confidence": 0.95,
   "evidence": {
@@ -660,6 +725,19 @@
    "signals": [
     "notify::secondary-icon-storage-type"
    ]
+  }
+ },
+ "properties:secondary-icon-paintable": {
+  "confidence": 0.8,
+  "evidence": {
+   "log": [],
+   "outcome": "identity",
+   "type": "GdkPaintable"
+  },
+  "review": {
+   "decision": "accept",
+   "reason": "real nullable icon property; the converter takes a handle or a string form (icon name / image path), null round trip is the generated test",
+   "reviewer": "claude-opus-5.5 (AI1 review, 2026-10-19)"
   }
  },
  "properties:secondary-icon-sensitive": {
@@ -729,6 +807,19 @@
     "notify::secondary-icon-storage-type",
     "notify::secondary-icon-tooltip-text"
    ]
+  }
+ },
+ "properties:tabs": {
+  "confidence": 0.8,
+  "evidence": {
+   "log": [],
+   "outcome": "identity",
+   "type": "PangoTabArray"
+  },
+  "review": {
+   "decision": "accept",
+   "reason": "real boxed property (Pango); no string form yet, so JS carries it as an opaque boxed handle; the round trip is what the converter guarantees",
+   "reviewer": "claude-opus-5.5 (AI1 review, 2026-10-19)"
   }
  },
  "properties:truncate-multiline": {

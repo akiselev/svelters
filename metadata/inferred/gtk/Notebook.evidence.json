@@ -102,6 +102,27 @@
    "ret": "top"
   }
  },
+ "methods:popup_enable": {
+  "confidence": 0.8,
+  "evidence": {
+   "changed": {
+    "enable-popup": [
+     false,
+     true
+    ]
+   },
+   "class": "action",
+   "outcome": "ok",
+   "signals": [
+    "notify::enable-popup"
+   ]
+  },
+  "review": {
+   "decision": "accept",
+   "reason": "sets enable-popup to true and nothing else (gtk_notebook_popup_enable); no window or main loop needed",
+   "reviewer": "claude-opus-5.5 (AI1 review, 2026-10-19)"
+  }
+ },
  "methods:set_group_name": {
   "confidence": 0.95,
   "evidence": {

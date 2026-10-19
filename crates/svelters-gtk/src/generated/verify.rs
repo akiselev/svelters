@@ -1463,6 +1463,32 @@ fn signal_aboutdialog_activate_link() {
     });
 }
 
+/// property AboutDialog.artists (JS artists, round trip): probe: round trip identity; manual: review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): GStrv round-trips through the list<string> converter both ways; the probe only lacked a non-empty sample
+#[test]
+fn prop_aboutdialog_artists() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("about-dialog");
+        
+        let before = h.get_value(o, "artists");
+        h.set_value(o, "artists", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "artists")), crate::testing::shape(&before));
+    });
+}
+
+/// property AboutDialog.authors (JS authors, round trip): probe: round trip identity; manual: review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): GStrv round-trips through the list<string> converter both ways; the probe only lacked a non-empty sample
+#[test]
+fn prop_aboutdialog_authors() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("about-dialog");
+        
+        let before = h.get_value(o, "authors");
+        h.set_value(o, "authors", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "authors")), crate::testing::shape(&before));
+    });
+}
+
 /// property AboutDialog.comments (JS comments): GtkAboutDialog:comments (Gtk 4 docs)
 #[test]
 fn prop_aboutdialog_comments() {
@@ -1493,6 +1519,19 @@ fn prop_aboutdialog_copyright() {
     });
 }
 
+/// property AboutDialog.documenters (JS documenters, round trip): probe: round trip identity; manual: review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): GStrv round-trips through the list<string> converter both ways; the probe only lacked a non-empty sample
+#[test]
+fn prop_aboutdialog_documenters() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("about-dialog");
+        
+        let before = h.get_value(o, "documenters");
+        h.set_value(o, "documenters", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "documenters")), crate::testing::shape(&before));
+    });
+}
+
 /// property AboutDialog.license (JS license): probe: round trip exact; notify fired
 #[test]
 fn prop_aboutdialog_license() {
@@ -1520,6 +1559,19 @@ fn prop_aboutdialog_license_type() {
         assert_eq!(id, h.resolve_prop("about-dialog", "license-type"));
         h.set_str(o, "license-type", "custom").unwrap();
         assert_eq!(h.get(o, "license-type"), V::Str("custom".into()));
+    });
+}
+
+/// property AboutDialog.logo (JS logo, round trip): probe: round trip identity; manual: review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): GdkPaintable with a string form (image path) and bytes form; null round trip; the dialog renders it lazily
+#[test]
+fn prop_aboutdialog_logo() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("about-dialog");
+        
+        let before = h.get_value(o, "logo");
+        h.set_value(o, "logo", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "logo")), crate::testing::shape(&before));
     });
 }
 
@@ -2127,6 +2179,19 @@ fn prop_actionable_action_name() {
     });
 }
 
+/// property Actionable.action-target (JS action-target, round trip): probe: round trip identity; manual: review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): GVariant property, the converter has a variant codec; null clears the target (documented)
+#[test]
+fn prop_actionable_action_target() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("button");
+        
+        let before = h.get_value(o, "action-target");
+        h.set_value(o, "action-target", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "action-target")), crate::testing::shape(&before));
+    });
+}
+
 /// method Actionable.get_action_name (dynamic GI call): probe: equals property action-name
 #[test]
 fn method_actionable_get_action_name() {
@@ -2591,6 +2656,34 @@ fn method_aspectframe_set_ratio() {
         let w = h.widget(o);
         let _ = (&w, &r);
         assert!(h.get(o, "ratio") == V::F64(2.0), "postcondition: h.get(o, 'ratio') == V::F64(2.0)");
+    });
+}
+
+/// method AspectFrame.set_xalign (dynamic GI call): rule: set then read property xalign; float sample 0.25 from the GIR range, the probe left it unsampled
+#[test]
+fn method_aspectframe_set_xalign() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("aspect-frame");
+        
+        let r = h.call_args(o, "set_xalign", &[V::F64(0.25)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "xalign") == V::F64(0.25), "postcondition: h.get(o, 'xalign') == V::F64(0.25)");
+    });
+}
+
+/// method AspectFrame.set_yalign (dynamic GI call): rule: set then read property yalign; float sample 0.25 from the GIR range, the probe left it unsampled
+#[test]
+fn method_aspectframe_set_yalign() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("aspect-frame");
+        
+        let r = h.call_args(o, "set_yalign", &[V::F64(0.25)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "yalign") == V::F64(0.25), "postcondition: h.get(o, 'yalign') == V::F64(0.25)");
     });
 }
 
@@ -5333,6 +5426,19 @@ fn prop_entry_activates_default() {
     });
 }
 
+/// property Entry.attributes (JS attributes, round trip): probe: round trip identity; manual: review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): real boxed property (Pango); no string form yet, so JS carries it as an opaque boxed handle; the round trip is what the converter guarantees
+#[test]
+fn prop_entry_attributes() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let before = h.get_value(o, "attributes");
+        h.set_value(o, "attributes", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "attributes")), crate::testing::shape(&before));
+    });
+}
+
 /// property Entry.buffer (JS buffer, round trip): probe: round trip exact; notify fired
 #[test]
 fn prop_entry_buffer() {
@@ -5404,6 +5510,19 @@ fn prop_entry_im_module() {
     });
 }
 
+/// property Entry.input-hints (JS input-hints, round trip): probe: round trip identity; manual: review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): flags property: the converter maps numbers/nick lists both ways; the probe has no flags sampler, the round trip test stands
+#[test]
+fn prop_entry_input_hints() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let before = h.get_value(o, "input-hints");
+        h.set_value(o, "input-hints", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "input-hints")), crate::testing::shape(&before));
+    });
+}
+
 /// property Entry.input-purpose (JS input-purpose): GtkEntry:input-purpose (Gtk 4 docs)
 #[test]
 fn prop_entry_input_purpose() {
@@ -5416,6 +5535,21 @@ fn prop_entry_input_purpose() {
         assert_eq!(id, h.resolve_prop("entry", "input-purpose"));
         h.set_str(o, "input-purpose", "alpha").unwrap();
         assert_eq!(h.get(o, "input-purpose"), V::Str("alpha".into()));
+    });
+}
+
+/// property Entry.invisible-char (JS invisible-char): GtkEntry:invisible-char (Gtk 4 docs); the probe errors on ParamSpecUnichar, so the sample is manual (AI1 review 2026-10-19, docs/notes/ai1-gtk-review.md)
+#[test]
+fn prop_entry_invisible_char() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let id = h.resolve_prop("entry", "invisible-char");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("entry", "invisible-char"));
+        h.set_i64(o, "invisible-char", 9679).unwrap();
+        assert_eq!(h.get(o, "invisible-char"), V::I64(9679));
     });
 }
 
@@ -5530,6 +5664,19 @@ fn prop_entry_primary_icon_activatable() {
     });
 }
 
+/// property Entry.primary-icon-gicon (JS primary-icon-gicon, round trip): probe: round trip identity; manual: review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): real nullable icon property; the converter takes a handle or a string form (icon name / image path), null round trip is the generated test
+#[test]
+fn prop_entry_primary_icon_gicon() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let before = h.get_value(o, "primary-icon-gicon");
+        h.set_value(o, "primary-icon-gicon", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "primary-icon-gicon")), crate::testing::shape(&before));
+    });
+}
+
 /// property Entry.primary-icon-name (JS primary-icon-name): probe: round trip exact; notify fired
 #[test]
 fn prop_entry_primary_icon_name() {
@@ -5542,6 +5689,19 @@ fn prop_entry_primary_icon_name() {
         assert_eq!(id, h.resolve_prop("entry", "primary-icon-name"));
         h.set_str(o, "primary-icon-name", "svl probe").unwrap();
         assert_eq!(h.get(o, "primary-icon-name"), V::Str("svl probe".into()));
+    });
+}
+
+/// property Entry.primary-icon-paintable (JS primary-icon-paintable, round trip): probe: round trip identity; manual: review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): real nullable icon property; the converter takes a handle or a string form (icon name / image path), null round trip is the generated test
+#[test]
+fn prop_entry_primary_icon_paintable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let before = h.get_value(o, "primary-icon-paintable");
+        h.set_value(o, "primary-icon-paintable", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "primary-icon-paintable")), crate::testing::shape(&before));
     });
 }
 
@@ -5635,6 +5795,19 @@ fn prop_entry_secondary_icon_activatable() {
     });
 }
 
+/// property Entry.secondary-icon-gicon (JS secondary-icon-gicon, round trip): probe: round trip identity; manual: review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): real nullable icon property; the converter takes a handle or a string form (icon name / image path), null round trip is the generated test
+#[test]
+fn prop_entry_secondary_icon_gicon() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let before = h.get_value(o, "secondary-icon-gicon");
+        h.set_value(o, "secondary-icon-gicon", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "secondary-icon-gicon")), crate::testing::shape(&before));
+    });
+}
+
 /// property Entry.secondary-icon-name (JS secondary-icon-name): probe: round trip exact; notify fired
 #[test]
 fn prop_entry_secondary_icon_name() {
@@ -5647,6 +5820,19 @@ fn prop_entry_secondary_icon_name() {
         assert_eq!(id, h.resolve_prop("entry", "secondary-icon-name"));
         h.set_str(o, "secondary-icon-name", "svl probe").unwrap();
         assert_eq!(h.get(o, "secondary-icon-name"), V::Str("svl probe".into()));
+    });
+}
+
+/// property Entry.secondary-icon-paintable (JS secondary-icon-paintable, round trip): probe: round trip identity; manual: review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): real nullable icon property; the converter takes a handle or a string form (icon name / image path), null round trip is the generated test
+#[test]
+fn prop_entry_secondary_icon_paintable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let before = h.get_value(o, "secondary-icon-paintable");
+        h.set_value(o, "secondary-icon-paintable", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "secondary-icon-paintable")), crate::testing::shape(&before));
     });
 }
 
@@ -5707,6 +5893,19 @@ fn prop_entry_show_emoji_icon() {
         assert_eq!(id, h.resolve_prop("entry", "show-emoji-icon"));
         h.set_bool(o, "show-emoji-icon", true).unwrap();
         assert_eq!(h.get(o, "show-emoji-icon"), V::Bool(true));
+    });
+}
+
+/// property Entry.tabs (JS tabs, round trip): probe: round trip identity; manual: review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): real boxed property (Pango); no string form yet, so JS carries it as an opaque boxed handle; the round trip is what the converter guarantees
+#[test]
+fn prop_entry_tabs() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("entry");
+        
+        let before = h.get_value(o, "tabs");
+        h.set_value(o, "tabs", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "tabs")), crate::testing::shape(&before));
     });
 }
 
@@ -8132,6 +8331,19 @@ fn prop_fontdialogbutton_font_features() {
     });
 }
 
+/// property FontDialogButton.language (JS language, round trip): probe: round trip identity; manual: review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): PangoLanguage boxed, interned; opaque handle or null round trip
+#[test]
+fn prop_fontdialogbutton_language() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("font-dialog-button");
+        
+        let before = h.get_value(o, "language");
+        h.set_value(o, "language", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "language")), crate::testing::shape(&before));
+    });
+}
+
 /// property FontDialogButton.level (JS level): GtkFontDialogButton:level, GtkFontLevel enum (Gtk 4 docs)
 #[test]
 fn prop_fontdialogbutton_level() {
@@ -9548,6 +9760,19 @@ fn binding_image_use_fallback() {
     });
 }
 
+/// property Inscription.attributes (JS attributes, round trip): probe: round trip identity; manual: review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): real boxed property (Pango); no string form yet, so JS carries it as an opaque boxed handle; the round trip is what the converter guarantees
+#[test]
+fn prop_inscription_attributes() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("inscription");
+        
+        let before = h.get_value(o, "attributes");
+        h.set_value(o, "attributes", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "attributes")), crate::testing::shape(&before));
+    });
+}
+
 /// property Inscription.min-chars (JS min-chars): probe: round trip exact; notify fired
 #[test]
 fn prop_inscription_min_chars() {
@@ -9665,6 +9890,21 @@ fn prop_inscription_xalign() {
         assert_eq!(id, h.resolve_prop("inscription", "xalign"));
         h.set_f64(o, "xalign", 1.0).unwrap();
         assert_eq!(h.get(o, "xalign"), V::F64(1.0));
+    });
+}
+
+/// property Inscription.yalign (JS yalign): rule: float sample 0.25 from the GIR range [0.0, 1.0]; the probe left it unsampled
+#[test]
+fn prop_inscription_yalign() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("inscription");
+        
+        let id = h.resolve_prop("inscription", "yalign");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("inscription", "yalign"));
+        h.set_f64(o, "yalign", 0.25).unwrap();
+        assert_eq!(h.get(o, "yalign"), V::F64(0.25));
     });
 }
 
@@ -9794,6 +10034,20 @@ fn method_inscription_get_yalign() {
     });
 }
 
+/// method Inscription.set_markup (dynamic GI call): gtk_inscription_set_markup (Gtk 4 docs); markup is write-only, it sets text (and attributes) from the parsed markup (AI1 review 2026-10-19, docs/notes/ai1-gtk-review.md)
+#[test]
+fn method_inscription_set_markup() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("inscription");
+        
+        let r = h.call_args(o, "set_markup", &[V::Str("<b>svl</b>".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "text") == V::Str("svl".into()), "postcondition: h.get(o, 'text') == V::Str('svl'.into())");
+    });
+}
+
 /// method Inscription.set_min_chars (dynamic GI call): probe: set then read property min-chars: exact
 #[test]
 fn method_inscription_set_min_chars() {
@@ -9903,6 +10157,20 @@ fn method_inscription_set_xalign() {
         let w = h.widget(o);
         let _ = (&w, &r);
         assert!(h.get(o, "xalign") == V::F64(1.0), "postcondition: h.get(o, 'xalign') == V::F64(1.0)");
+    });
+}
+
+/// method Inscription.set_yalign (dynamic GI call): rule: set then read property yalign; float sample 0.25 from the GIR range, the probe left it unsampled
+#[test]
+fn method_inscription_set_yalign() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("inscription");
+        
+        let r = h.call_args(o, "set_yalign", &[V::F64(0.25)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "yalign") == V::F64(0.25), "postcondition: h.get(o, 'yalign') == V::F64(0.25)");
     });
 }
 
@@ -10209,6 +10477,19 @@ fn signal_label_copy_clipboard() {
     });
 }
 
+/// property Label.attributes (JS attributes, round trip): probe: round trip identity; manual: review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): real boxed property (Pango); no string form yet, so JS carries it as an opaque boxed handle; the round trip is what the converter guarantees
+#[test]
+fn prop_label_attributes() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let before = h.get_value(o, "attributes");
+        h.set_value(o, "attributes", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "attributes")), crate::testing::shape(&before));
+    });
+}
+
 /// property Label.ellipsize (JS ellipsize): GtkLabel:ellipsize, PangoEllipsizeMode (Gtk 4 docs); Pango nicks kept on the property (A1-GAPS G11)
 #[test]
 fn prop_label_ellipsize() {
@@ -10339,6 +10620,19 @@ fn prop_label_single_line_mode() {
         assert_eq!(id, h.resolve_prop("label", "single-line-mode"));
         h.set_bool(o, "single-line-mode", true).unwrap();
         assert_eq!(h.get(o, "single-line-mode"), V::Bool(true));
+    });
+}
+
+/// property Label.tabs (JS tabs, round trip): probe: round trip identity; manual: review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): real boxed property (Pango); no string form yet, so JS carries it as an opaque boxed handle; the round trip is what the converter guarantees
+#[test]
+fn prop_label_tabs() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let before = h.get_value(o, "tabs");
+        h.set_value(o, "tabs", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "tabs")), crate::testing::shape(&before));
     });
 }
 
@@ -10892,6 +11186,34 @@ fn method_label_set_wrap_mode() {
         let w = h.widget(o);
         let _ = (&w, &r);
         assert!(h.get(o, "wrap-mode") == V::Str("char".into()), "postcondition: h.get(o, 'wrap-mode') == V::Str('char'.into())");
+    });
+}
+
+/// method Label.set_xalign (dynamic GI call): rule: set then read property xalign; float sample 0.25 from the GIR range, the probe left it unsampled
+#[test]
+fn method_label_set_xalign() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "set_xalign", &[V::F64(0.25)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "xalign") == V::F64(0.25), "postcondition: h.get(o, 'xalign') == V::F64(0.25)");
+    });
+}
+
+/// method Label.set_yalign (dynamic GI call): rule: set then read property yalign; float sample 0.25 from the GIR range, the probe left it unsampled
+#[test]
+fn method_label_set_yalign() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "set_yalign", &[V::F64(0.25)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "yalign") == V::F64(0.25), "postcondition: h.get(o, 'yalign') == V::F64(0.25)");
     });
 }
 
@@ -12722,6 +13044,19 @@ fn prop_lockbutton_tooltip_unlock() {
     });
 }
 
+/// property MediaControls.media-stream (JS media-stream, round trip): probe: round trip identity; manual: review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): real nullable object property; set by handle, unset with null; the generated null/handle round trip is a fair test
+#[test]
+fn prop_mediacontrols_media_stream() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("media-controls");
+        
+        let before = h.get_value(o, "media-stream");
+        h.set_value(o, "media-stream", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "media-stream")), crate::testing::shape(&before));
+    });
+}
+
 /// signal MenuButton.activate: GtkMenuButton::activate is an action signal with void return (Gtk 4 docs)
 #[test]
 fn signal_menubutton_activate() {
@@ -13743,6 +14078,20 @@ fn method_notebook_get_tab_pos() {
         let w = h.widget(o);
         let _ = (&w, &r);
         assert!(r == h.get(o, "tab-pos"), "postcondition: r == h.get(o, 'tab-pos')");
+    });
+}
+
+/// method Notebook.popup_enable (dynamic GI call): probe: changes enable-popup to True; manual: review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): sets enable-popup to true and nothing else (gtk_notebook_popup_enable); no window or main loop needed
+#[test]
+fn method_notebook_popup_enable() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("notebook");
+        
+        let r = h.call_args(o, "popup_enable", &[]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "enable-popup") == V::Bool(true), "postcondition: h.get(o, 'enable-popup') == V::Bool(true)");
     });
 }
 
@@ -15259,6 +15608,19 @@ fn prop_popover_mnemonics_visible() {
     });
 }
 
+/// property Popover.pointing-to (JS pointing-to, round trip): GtkPopover:pointing-to (Gtk 4 docs); GTK raises width and height to at least 1, so the unset 0x0 rectangle does not round trip; the test starts from 1,2 3x4 (AI1 review 2026-10-19, docs/notes/ai1-gtk-review.md)
+#[test]
+fn prop_popover_pointing_to() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("popover");
+        h.obj(o).set_property("pointing-to", &gtk::gdk::Rectangle::new(1, 2, 3, 4));
+        let before = h.get_value(o, "pointing-to");
+        h.set_value(o, "pointing-to", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "pointing-to")), crate::testing::shape(&before));
+    });
+}
+
 /// property Popover.position (JS position): GtkPopover:position (Gtk 4 docs); PositionType nick
 #[test]
 fn prop_popover_position() {
@@ -15589,6 +15951,19 @@ fn binding_popover_position() {
         h.set_str(o, "position", "left").unwrap();
         assert!(!h.take_events_with_args().is_empty(), "a programmatic set echoes to the listener; the renderer compares before set");
         assert_eq!(h.get(o, "position"), V::Str("left".into()), "the property reads the programmatic value");
+    });
+}
+
+/// property PopoverMenu.flags (JS flags, round trip): probe: round trip identity; manual: review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): flags property: the converter maps numbers/nick lists both ways; the probe has no flags sampler, the round trip test stands
+#[test]
+fn prop_popovermenu_flags() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("popover-menu");
+        
+        let before = h.get_value(o, "flags");
+        h.set_value(o, "flags", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "flags")), crate::testing::shape(&before));
     });
 }
 
@@ -18776,6 +19151,19 @@ fn prop_searchentry_activates_default() {
     });
 }
 
+/// property SearchEntry.input-hints (JS input-hints, round trip): probe: round trip identity; manual: review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): flags property: the converter maps numbers/nick lists both ways; the probe has no flags sampler, the round trip test stands
+#[test]
+fn prop_searchentry_input_hints() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("search-entry");
+        
+        let before = h.get_value(o, "input-hints");
+        h.set_value(o, "input-hints", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "input-hints")), crate::testing::shape(&before));
+    });
+}
+
 /// property SearchEntry.input-purpose (JS input-purpose): probe: round trip exact; notify fired
 #[test]
 fn prop_searchentry_input_purpose() {
@@ -20214,6 +20602,21 @@ fn prop_stack_visible_child() {
     });
 }
 
+/// property Stack.visible-child-name (JS visible-child-name): GtkStack:visible-child-name (Gtk 4 docs); names an existing page, so the test adds pages a and b; the probe's unknown name was ignored (AI1 review 2026-10-19, docs/notes/ai1-gtk-review.md)
+#[test]
+fn prop_stack_visible_child_name() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("stack");
+        let s = h.obj(o).downcast::<gtk::Stack>().unwrap(); s.add_named(&gtk::Label::new(None), Some("a")); s.add_named(&gtk::Label::new(None), Some("b"));
+        let id = h.resolve_prop("stack", "visible-child-name");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("stack", "visible-child-name"));
+        h.set_str(o, "visible-child-name", "b").unwrap();
+        assert_eq!(h.get(o, "visible-child-name"), V::Str("b".into()));
+    });
+}
+
 /// method Stack.get_hhomogeneous (dynamic GI call): probe: equals property hhomogeneous
 #[test]
 fn method_stack_get_hhomogeneous() {
@@ -20379,6 +20782,20 @@ fn method_stack_set_vhomogeneous() {
         let w = h.widget(o);
         let _ = (&w, &r);
         assert!(h.get(o, "vhomogeneous") == V::Bool(false), "postcondition: h.get(o, 'vhomogeneous') == V::Bool(false)");
+    });
+}
+
+/// method Stack.set_visible_child_name (dynamic GI call): gtk_stack_set_visible_child_name (Gtk 4 docs); needs an existing page, as the property; called through GIRepository (X1) (AI1 review 2026-10-19, docs/notes/ai1-gtk-review.md)
+#[test]
+fn method_stack_set_visible_child_name() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("stack");
+        let s = h.obj(o).downcast::<gtk::Stack>().unwrap(); s.add_named(&gtk::Label::new(None), Some("a")); s.add_named(&gtk::Label::new(None), Some("b"));
+        let r = h.call_args(o, "set_visible_child_name", &[V::Str("b".into())]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "visible-child-name") == V::Str("b".into()), "postcondition: h.get(o, 'visible-child-name') == V::Str('b'.into())");
     });
 }
 
@@ -20993,6 +21410,37 @@ fn signal_text_paste_clipboard() {
     });
 }
 
+/// signal Text.preedit-changed: runtime: returns void, run-last; probe: emitted synthetically with sampled arguments; delivery only, no native trigger
+#[test]
+fn signal_text_preedit_changed() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("text");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            o.emit_by_name::<()>("preedit-changed", &[&"x"]);
+        };
+        assert_ne!(h.resolve_signal("text", "preedit-changed"), 0);
+        assert_eq!(h.resolve_signal("text", "preedit-changed"), h.resolve_signal("text", "preedit-changed"));
+        h.listen(e, "preedit-changed", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "preedit-changed".to_string())), "delivered: {ev:?}");
+        h.listen(e, "preedit-changed", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "preedit-changed", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "preedit-changed", true).is_err(), "stale handle is an error");
+    });
+}
+
 /// signal Text.toggle-overwrite: runtime: returns void, run-last; probe: action signal, emitted and delivered
 #[test]
 fn signal_text_toggle_overwrite() {
@@ -21036,6 +21484,19 @@ fn prop_text_activates_default() {
         assert_eq!(id, h.resolve_prop("text", "activates-default"));
         h.set_bool(o, "activates-default", true).unwrap();
         assert_eq!(h.get(o, "activates-default"), V::Bool(true));
+    });
+}
+
+/// property Text.attributes (JS attributes, round trip): probe: round trip identity; manual: review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): real boxed property (Pango); no string form yet, so JS carries it as an opaque boxed handle; the round trip is what the converter guarantees
+#[test]
+fn prop_text_attributes() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        
+        let before = h.get_value(o, "attributes");
+        h.set_value(o, "attributes", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "attributes")), crate::testing::shape(&before));
     });
 }
 
@@ -21095,6 +21556,19 @@ fn prop_text_im_module() {
     });
 }
 
+/// property Text.input-hints (JS input-hints, round trip): probe: round trip identity; manual: review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): flags property: the converter maps numbers/nick lists both ways; the probe has no flags sampler, the round trip test stands
+#[test]
+fn prop_text_input_hints() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        
+        let before = h.get_value(o, "input-hints");
+        h.set_value(o, "input-hints", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "input-hints")), crate::testing::shape(&before));
+    });
+}
+
 /// property Text.input-purpose (JS input-purpose): probe: round trip exact; notify fired
 #[test]
 fn prop_text_input_purpose() {
@@ -21107,6 +21581,21 @@ fn prop_text_input_purpose() {
         assert_eq!(id, h.resolve_prop("text", "input-purpose"));
         h.set_str(o, "input-purpose", "alpha").unwrap();
         assert_eq!(h.get(o, "input-purpose"), V::Str("alpha".into()));
+    });
+}
+
+/// property Text.invisible-char (JS invisible-char): GtkText:invisible-char (Gtk 4 docs); the probe errors on ParamSpecUnichar, so the sample is manual (AI1 review 2026-10-19, docs/notes/ai1-gtk-review.md)
+#[test]
+fn prop_text_invisible_char() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        
+        let id = h.resolve_prop("text", "invisible-char");
+        assert_ne!(id, 0);
+        assert_eq!(id, h.resolve_prop("text", "invisible-char"));
+        h.set_i64(o, "invisible-char", 9679).unwrap();
+        assert_eq!(h.get(o, "invisible-char"), V::I64(9679));
     });
 }
 
@@ -21182,6 +21671,19 @@ fn prop_text_propagate_text_width() {
         assert_eq!(id, h.resolve_prop("text", "propagate-text-width"));
         h.set_bool(o, "propagate-text-width", true).unwrap();
         assert_eq!(h.get(o, "propagate-text-width"), V::Bool(true));
+    });
+}
+
+/// property Text.tabs (JS tabs, round trip): probe: round trip identity; manual: review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): real boxed property (Pango); no string form yet, so JS carries it as an opaque boxed handle; the round trip is what the converter guarantees
+#[test]
+fn prop_text_tabs() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text");
+        
+        let before = h.get_value(o, "tabs");
+        h.set_value(o, "tabs", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "tabs")), crate::testing::shape(&before));
     });
 }
 
@@ -22151,6 +22653,37 @@ fn signal_textview_paste_clipboard() {
     });
 }
 
+/// signal TextView.preedit-changed: runtime: returns void, run-last; probe: emitted synthetically with sampled arguments; delivery only, no native trigger
+#[test]
+fn signal_textview_preedit_changed() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let e = h.create("text-view");
+        let o = e;
+        
+        let fire = |o: &gtk::glib::Object, v: &str, i: usize| {
+            let _ = (v, i);
+            o.emit_by_name::<()>("preedit-changed", &[&"x"]);
+        };
+        assert_ne!(h.resolve_signal("text-view", "preedit-changed"), 0);
+        assert_eq!(h.resolve_signal("text-view", "preedit-changed"), h.resolve_signal("text-view", "preedit-changed"));
+        h.listen(e, "preedit-changed", true).unwrap();
+        fire(&h.obj(e), "a", 0);
+        // GTK may emit a signal several times per edit (e.g. delete + insert for set_text).
+        let ev = h.take_events();
+        assert!(!ev.is_empty() && ev.iter().all(|x| *x == (e, "preedit-changed".to_string())), "delivered: {ev:?}");
+        h.listen(e, "preedit-changed", false).unwrap();
+        fire(&h.obj(e), "b", 1);
+        assert!(h.take_events().is_empty(), "no delivery after listen(off)");
+        h.listen(e, "preedit-changed", true).unwrap();
+        let obj = h.obj(e);
+        h.destroy(e);
+        fire(&obj, "c", 2);
+        assert!(h.take_events().is_empty(), "handler is disconnected on destroy");
+        assert!(h.listen(e, "preedit-changed", true).is_err(), "stale handle is an error");
+    });
+}
+
 /// signal TextView.select-all: runtime: returns void, run-last; probe: emitted synthetically with sampled arguments; delivery only, no native trigger
 #[test]
 fn signal_textview_select_all() {
@@ -22422,6 +22955,19 @@ fn prop_textview_indent() {
     });
 }
 
+/// property TextView.input-hints (JS input-hints, round trip): probe: round trip identity; manual: review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): flags property: the converter maps numbers/nick lists both ways; the probe has no flags sampler, the round trip test stands
+#[test]
+fn prop_textview_input_hints() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let before = h.get_value(o, "input-hints");
+        h.set_value(o, "input-hints", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "input-hints")), crate::testing::shape(&before));
+    });
+}
+
 /// property TextView.input-purpose (JS input-purpose): probe: round trip exact; notify fired
 #[test]
 fn prop_textview_input_purpose() {
@@ -22554,6 +23100,19 @@ fn prop_textview_right_margin() {
         assert_eq!(id, h.resolve_prop("text-view", "right-margin"));
         h.set_i64(o, "right-margin", 1).unwrap();
         assert_eq!(h.get(o, "right-margin"), V::I64(1));
+    });
+}
+
+/// property TextView.tabs (JS tabs, round trip): probe: round trip identity; manual: review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): real boxed property (Pango); no string form yet, so JS carries it as an opaque boxed handle; the round trip is what the converter guarantees
+#[test]
+fn prop_textview_tabs() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("text-view");
+        
+        let before = h.get_value(o, "tabs");
+        h.set_value(o, "tabs", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "tabs")), crate::testing::shape(&before));
     });
 }
 
@@ -23840,6 +24399,19 @@ fn prop_video_loop() {
         assert_eq!(id, h.resolve_prop("video", "loop"));
         h.set_bool(o, "loop", true).unwrap();
         assert_eq!(h.get(o, "loop"), V::Bool(true));
+    });
+}
+
+/// property Video.media-stream (JS media-stream, round trip): probe: round trip identity; manual: review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): real nullable object property; set by handle, unset with null; the generated null/handle round trip is a fair test
+#[test]
+fn prop_video_media_stream() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("video");
+        
+        let before = h.get_value(o, "media-stream");
+        h.set_value(o, "media-stream", &before).unwrap();
+        assert_eq!(crate::testing::shape(&h.get_value(o, "media-stream")), crate::testing::shape(&before));
     });
 }
 
@@ -25378,6 +25950,20 @@ fn method_widget_set_name() {
         let w = h.widget(o);
         let _ = (&w, &r);
         assert!(h.get(o, "name") == V::Str("svl probe".into()), "postcondition: h.get(o, 'name') == V::Str('svl probe'.into())");
+    });
+}
+
+/// method Widget.set_opacity (dynamic GI call): gtk_widget_set_opacity (Gtk 4 docs); GTK keeps 8 bits (255 * opacity, truncated), 0.2 is 51/255 exactly, 0.5 reads 0.50196 (AI1 review 2026-10-19, docs/notes/ai1-gtk-review.md)
+#[test]
+fn method_widget_set_opacity() {
+    on_gtk(|| {
+        let mut h = Harness::new();
+        let o = h.create("label");
+        
+        let r = h.call_args(o, "set_opacity", &[V::F64(0.2)]).unwrap();
+        let w = h.widget(o);
+        let _ = (&w, &r);
+        assert!(h.get(o, "opacity") == V::F64(0.2), "postcondition: h.get(o, 'opacity') == V::F64(0.2)");
     });
 }
 

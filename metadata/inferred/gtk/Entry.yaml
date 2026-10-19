@@ -4,6 +4,13 @@ properties:
   provenance:
   - origin: probe
     ref: round trip exact; notify fired
+- name: attributes
+  provenance:
+  - origin: probe
+    ref: round trip identity
+  - origin: manual
+    ref: 'review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): real boxed property (Pango); no string form yet, so JS carries it as an opaque
+      boxed handle; the round trip is what the converter guarantees'
 - name: buffer
   provenance:
   - origin: probe
@@ -27,6 +34,13 @@ properties:
   provenance:
   - origin: probe
     ref: round trip exact; notify fired
+- name: input-hints
+  provenance:
+  - origin: probe
+    ref: round trip identity
+  - origin: manual
+    ref: 'review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): flags property: the converter maps numbers/nick lists both ways; the probe
+      has no flags sampler, the round trip test stands'
 - name: input-purpose
   sample: alpha
   provenance:
@@ -67,11 +81,25 @@ properties:
   provenance:
   - origin: probe
     ref: round trip exact; notify fired
+- name: primary-icon-gicon
+  provenance:
+  - origin: probe
+    ref: round trip identity
+  - origin: manual
+    ref: 'review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): real nullable icon property; the converter takes a handle or a string form
+      (icon name / image path), null round trip is the generated test'
 - name: primary-icon-name
   sample: svl probe
   provenance:
   - origin: probe
     ref: round trip exact; notify fired
+- name: primary-icon-paintable
+  provenance:
+  - origin: probe
+    ref: round trip identity
+  - origin: manual
+    ref: 'review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): real nullable icon property; the converter takes a handle or a string form
+      (icon name / image path), null round trip is the generated test'
 - name: primary-icon-sensitive
   sample: false
   provenance:
@@ -102,11 +130,25 @@ properties:
   provenance:
   - origin: probe
     ref: round trip exact; notify fired
+- name: secondary-icon-gicon
+  provenance:
+  - origin: probe
+    ref: round trip identity
+  - origin: manual
+    ref: 'review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): real nullable icon property; the converter takes a handle or a string form
+      (icon name / image path), null round trip is the generated test'
 - name: secondary-icon-name
   sample: svl probe
   provenance:
   - origin: probe
     ref: round trip exact; notify fired
+- name: secondary-icon-paintable
+  provenance:
+  - origin: probe
+    ref: round trip identity
+  - origin: manual
+    ref: 'review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): real nullable icon property; the converter takes a handle or a string form
+      (icon name / image path), null round trip is the generated test'
 - name: secondary-icon-sensitive
   sample: false
   provenance:
@@ -127,6 +169,13 @@ properties:
   provenance:
   - origin: probe
     ref: round trip exact; notify fired
+- name: tabs
+  provenance:
+  - origin: probe
+    ref: round trip identity
+  - origin: manual
+    ref: 'review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): real boxed property (Pango); no string form yet, so JS carries it as an opaque
+      boxed handle; the round trip is what the converter guarantees'
 - name: truncate-multiline
   sample: true
   provenance:

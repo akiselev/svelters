@@ -1,0 +1,282 @@
+# Review decisions on GTK facts below promote_at (tools/metadata/gtk/infer.py, REVIEWED). Hand/agent written.
+# accept: the candidate is written to the inferred layer and tested/ledgered; reject: it leaves the review queue;
+# override: a manual record in metadata/overrides/gtk covers it. See docs/notes/ai1-gtk-review.md.
+schema: svelters-inferred-reviewed/v1
+toolkit: gtk
+version: 4.22.4
+decisions:
+- fact: Widget.methods.get_name
+  pattern: low:method:accessor_get-differs
+  decision: reject
+  reason: 'not an accessor of `name`: gtk_widget_get_name falls back to the type name (GtkLabel) when unset; the property is the API'
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: Stack.methods.set_visible_child_name
+  pattern: low:method:accessor_set-differs
+  decision: override
+  reason: 'right fact, needs a precondition: the name must be an existing page; manual record adds pages a and b in `setup`'
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: Widget.methods.set_opacity
+  pattern: low:method:accessor_set-differs
+  decision: override
+  reason: right fact, the probe's 0.5 is quantised to 0.50196 (8-bit alpha); manual record samples 0.2 (51/255 exactly)
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: CheckButton.methods.set_group
+  pattern: low:method:glib-warning
+  decision: reject
+  reason: '`group` is write-only and takes a peer button handle; no readable state to verify; radio groups need a two-button manual fact'
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: Inscription.methods.set_markup
+  pattern: low:method:glib-warning
+  decision: override
+  reason: 'right fact: `markup` is write-only, but the parsed text is readable; manual record checks text after set_markup'
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: ToggleButton.methods.set_group
+  pattern: low:method:glib-warning
+  decision: reject
+  reason: '`group` is write-only and takes a peer button handle; no readable state to verify; radio groups need a two-button manual fact'
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: Entry.properties.invisible-char
+  pattern: low:prop:error
+  decision: override
+  reason: real u32 (gunichar) property; the probe crashed on ParamSpecUnichar; manual record samples U+25CF
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: Text.properties.invisible-char
+  pattern: low:prop:error
+  decision: override
+  reason: real u32 (gunichar) property; the probe crashed on ParamSpecUnichar; manual record samples U+25CF
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: Image.properties.resource
+  pattern: low:prop:ignored
+  decision: reject
+  reason: needs a registered GResource path; ignoring the probe's unknown path is correct; JS apps ship no resources (use file or icon-name)
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: PasswordEntry.properties.extra-menu
+  pattern: low:prop:ignored
+  decision: reject
+  reason: 'GTK bug: the setter never stores the model while extra_menu is NULL, so it always reads NULL; writes still reach the menu'
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: PopoverMenu.properties.visible-submenu
+  pattern: low:prop:ignored
+  decision: reject
+  reason: names a submenu of the menu model; ignoring an unknown name is correct; would need a menu-model fixture with a submenu
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: Stack.properties.visible-child-name
+  pattern: low:prop:ignored
+  decision: override
+  reason: 'right fact, needs a precondition: the name must be an existing page; manual record adds pages a and b in `setup`'
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: Image.properties.file
+  pattern: low:prop:needs-fixture
+  decision: override
+  reason: already a manual fact in metadata/overrides/gtk (wins over the inferred candidate); nothing to add
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: Widget.properties.opacity
+  pattern: low:prop:normalized
+  decision: override
+  reason: already a manual fact in metadata/overrides/gtk (wins over the inferred candidate); nothing to add (samples 0.0, which survives the 8-bit quantisation)
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: Notebook.properties.page
+  pattern: low:prop:recipe-populate
+  decision: override
+  reason: already a manual fact in metadata/overrides/gtk (wins over the inferred candidate); nothing to add
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: EditableLabel.methods.start_editing
+  pattern: middle:method:action
+  decision: override
+  reason: already a manual fact in metadata/overrides/gtk (wins over the inferred candidate); nothing to add
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: Notebook.methods.popup_enable
+  pattern: middle:method:action
+  decision: accept
+  reason: sets enable-popup to true and nothing else (gtk_notebook_popup_enable); no window or main loop needed
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: Spinner.methods.start
+  pattern: middle:method:action
+  decision: override
+  reason: already a manual fact in metadata/overrides/gtk (wins over the inferred candidate); nothing to add
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: AboutDialog.properties.artists
+  pattern: middle:prop:round-trip
+  decision: accept
+  reason: GStrv round-trips through the list<string> converter both ways; the probe only lacked a non-empty sample
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: AboutDialog.properties.authors
+  pattern: middle:prop:round-trip
+  decision: accept
+  reason: GStrv round-trips through the list<string> converter both ways; the probe only lacked a non-empty sample
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: AboutDialog.properties.documenters
+  pattern: middle:prop:round-trip
+  decision: accept
+  reason: GStrv round-trips through the list<string> converter both ways; the probe only lacked a non-empty sample
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: AboutDialog.properties.logo
+  pattern: middle:prop:round-trip
+  decision: accept
+  reason: GdkPaintable with a string form (image path) and bytes form; null round trip; the dialog renders it lazily
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: Actionable.properties.action-target
+  pattern: middle:prop:round-trip
+  decision: accept
+  reason: GVariant property, the converter has a variant codec; null clears the target (documented)
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: Calendar.properties.date
+  pattern: middle:prop:round-trip
+  decision: override
+  reason: already a manual fact in metadata/overrides/gtk (wins over the inferred candidate); nothing to add
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: ColorDialogButton.properties.rgba
+  pattern: middle:prop:round-trip
+  decision: override
+  reason: already a manual fact in metadata/overrides/gtk (wins over the inferred candidate); nothing to add
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: Entry.properties.attributes
+  pattern: middle:prop:round-trip
+  decision: accept
+  reason: real boxed property (Pango); no string form yet, so JS carries it as an opaque boxed handle; the round trip is what the converter guarantees
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: Entry.properties.input-hints
+  pattern: middle:prop:round-trip
+  decision: accept
+  reason: 'flags property: the converter maps numbers/nick lists both ways; the probe has no flags sampler, the round trip test stands'
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: Entry.properties.primary-icon-gicon
+  pattern: middle:prop:round-trip
+  decision: accept
+  reason: real nullable icon property; the converter takes a handle or a string form (icon name / image path), null round trip is the generated test
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: Entry.properties.primary-icon-paintable
+  pattern: middle:prop:round-trip
+  decision: accept
+  reason: real nullable icon property; the converter takes a handle or a string form (icon name / image path), null round trip is the generated test
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: Entry.properties.secondary-icon-gicon
+  pattern: middle:prop:round-trip
+  decision: accept
+  reason: real nullable icon property; the converter takes a handle or a string form (icon name / image path), null round trip is the generated test
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: Entry.properties.secondary-icon-paintable
+  pattern: middle:prop:round-trip
+  decision: accept
+  reason: real nullable icon property; the converter takes a handle or a string form (icon name / image path), null round trip is the generated test
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: Entry.properties.tabs
+  pattern: middle:prop:round-trip
+  decision: accept
+  reason: real boxed property (Pango); no string form yet, so JS carries it as an opaque boxed handle; the round trip is what the converter guarantees
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: FontDialogButton.properties.font-desc
+  pattern: middle:prop:round-trip
+  decision: override
+  reason: already a manual fact in metadata/overrides/gtk (wins over the inferred candidate); nothing to add
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: FontDialogButton.properties.language
+  pattern: middle:prop:round-trip
+  decision: accept
+  reason: PangoLanguage boxed, interned; opaque handle or null round trip
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: Image.properties.gicon
+  pattern: middle:prop:round-trip
+  decision: override
+  reason: already a manual fact in metadata/overrides/gtk (wins over the inferred candidate); nothing to add
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: Image.properties.paintable
+  pattern: middle:prop:round-trip
+  decision: override
+  reason: already a manual fact in metadata/overrides/gtk (wins over the inferred candidate); nothing to add
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: Inscription.properties.attributes
+  pattern: middle:prop:round-trip
+  decision: accept
+  reason: real boxed property (Pango); no string form yet, so JS carries it as an opaque boxed handle; the round trip is what the converter guarantees
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: Label.properties.attributes
+  pattern: middle:prop:round-trip
+  decision: accept
+  reason: real boxed property (Pango); no string form yet, so JS carries it as an opaque boxed handle; the round trip is what the converter guarantees
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: Label.properties.tabs
+  pattern: middle:prop:round-trip
+  decision: accept
+  reason: real boxed property (Pango); no string form yet, so JS carries it as an opaque boxed handle; the round trip is what the converter guarantees
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: MediaControls.properties.media-stream
+  pattern: middle:prop:round-trip
+  decision: accept
+  reason: real nullable object property; set by handle, unset with null; the generated null/handle round trip is a fair test
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: Picture.properties.paintable
+  pattern: middle:prop:round-trip
+  decision: override
+  reason: already a manual fact in metadata/overrides/gtk (wins over the inferred candidate); nothing to add
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: Popover.properties.pointing-to
+  pattern: middle:prop:round-trip
+  decision: override
+  reason: right fact, but GTK raises a 0x0 rectangle to 1x1, so the unset value does not round trip (generated test failed); manual record starts from 1,2 3x4
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: PopoverMenu.properties.flags
+  pattern: middle:prop:round-trip
+  decision: accept
+  reason: 'flags property: the converter maps numbers/nick lists both ways; the probe has no flags sampler, the round trip test stands'
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: ScaleButton.properties.icons
+  pattern: middle:prop:round-trip
+  decision: override
+  reason: already a manual fact in metadata/overrides/gtk (wins over the inferred candidate); nothing to add
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: SearchEntry.properties.input-hints
+  pattern: middle:prop:round-trip
+  decision: accept
+  reason: 'flags property: the converter maps numbers/nick lists both ways; the probe has no flags sampler, the round trip test stands'
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: Text.properties.attributes
+  pattern: middle:prop:round-trip
+  decision: accept
+  reason: real boxed property (Pango); no string form yet, so JS carries it as an opaque boxed handle; the round trip is what the converter guarantees
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: Text.properties.input-hints
+  pattern: middle:prop:round-trip
+  decision: accept
+  reason: 'flags property: the converter maps numbers/nick lists both ways; the probe has no flags sampler, the round trip test stands'
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: Text.properties.tabs
+  pattern: middle:prop:round-trip
+  decision: accept
+  reason: real boxed property (Pango); no string form yet, so JS carries it as an opaque boxed handle; the round trip is what the converter guarantees
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: TextView.properties.input-hints
+  pattern: middle:prop:round-trip
+  decision: accept
+  reason: 'flags property: the converter maps numbers/nick lists both ways; the probe has no flags sampler, the round trip test stands'
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: TextView.properties.tabs
+  pattern: middle:prop:round-trip
+  decision: accept
+  reason: real boxed property (Pango); no string form yet, so JS carries it as an opaque boxed handle; the round trip is what the converter guarantees
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: Video.properties.media-stream
+  pattern: middle:prop:round-trip
+  decision: accept
+  reason: real nullable object property; set by handle, unset with null; the generated null/handle round trip is a fair test
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: Widget.properties.css-classes
+  pattern: middle:prop:round-trip
+  decision: override
+  reason: already a manual fact in metadata/overrides/gtk (wins over the inferred candidate); nothing to add
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: Widget.properties.cursor
+  pattern: middle:prop:round-trip
+  decision: override
+  reason: already a manual fact in metadata/overrides/gtk (wins over the inferred candidate); nothing to add
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: Window.properties.application
+  pattern: middle:prop:round-trip
+  decision: reject
+  reason: the backend sets every toplevel's application at creation; an app writing it (null) detaches the window and can quit the app
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)
+- fact: Window.properties.display
+  pattern: middle:prop:round-trip
+  decision: reject
+  reason: window-system state owned by the backend, not app state; moving a window between displays is out of scope
+  reviewer: claude-opus-5.5 (AI1 review, 2026-10-19)

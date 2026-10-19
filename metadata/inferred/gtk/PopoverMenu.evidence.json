@@ -1,4 +1,17 @@
 {
+ "properties:flags": {
+  "confidence": 0.8,
+  "evidence": {
+   "log": [],
+   "outcome": "identity",
+   "type": "GtkPopoverMenuFlags"
+  },
+  "review": {
+   "decision": "accept",
+   "reason": "flags property: the converter maps numbers/nick lists both ways; the probe has no flags sampler, the round trip test stands",
+   "reviewer": "claude-opus-5.5 (AI1 review, 2026-10-19)"
+  }
+ },
  "properties:menu-model": {
   "confidence": 0.9,
   "evidence": {

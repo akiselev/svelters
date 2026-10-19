@@ -20,10 +20,14 @@ deny_methods:
     reason: blocking or lifecycle call; changes the widget's state machine, not a property
   - pattern: '^(measure|size_allocate|allocate|snapshot.*|queue_\w+|init_template|dispose_template|unparent|compute_\w+|pick|get_allocat\w+)$'
     reason: vfunc-context call that needs a layout or snapshot pass
-  - pattern: '^(insert_after|insert_before|.*_with_time|activate_default|activate|close|fullscreen|maximize|minimize|.*_dialog|error_bell|keynav_failed|mnemonic_activate|popup|popdown|emit_\w+|spin|update)$'
+  - pattern: '^(insert_after|insert_before|.*_with_time|activate_default|activate|close|set_startup_id|fullscreen|maximize|minimize|.*_dialog|error_bell|keynav_failed|mnemonic_activate|popup|popdown|emit_\w+|spin|update)$'
     reason: acts on the window system or a running main loop
   - pattern: '^(grab_focus|set_focus.*|focus|child_focus|move_focus|set_cursor_from_name|set_cursor)$'
     reason: depends on the realized window and the focus chain
+  # AI1 review (docs/notes/ai1-gtk-review.md): child setters re-parent behind the slot model (children go through
+  # `children` slots), and the backend itself sets a toplevel's application; the display is the window system's.
+  - pattern: '^(set_child|set_(start|end)_child|set_(center|start|end|label|title)_widget|set_titlebar|set_parent|set_application|set_display)$'
+    reason: re-parents a widget or rebinds a toplevel behind the renderer; children are slots, the backend owns application and display
 
 # Signals that are never emitted synthetically (their class handler acts on the window system or needs a drag).
 deny_signals:
@@ -35,6 +39,10 @@ reference_names: [default, focus, mnemonic, transient, relative, buddy, key-capt
 
 # B1: properties that do not get a generic `bind:` (no notify, or the binding table cannot carry the type).
 bind_exclude_types: [u64]
+
+# Float properties the probe left unsampled (outcome `identity`): a sample is taken from the GIR range, the first of
+# these inside it, different from the default and exact as an f32. The generated test is the check (confidence 0.9).
+float_samples: [0.25, 0.75, 2.0]
 
 # Preconditions the probe found necessary for a round trip, with their Rust twin (test `setup`).
 recipes:

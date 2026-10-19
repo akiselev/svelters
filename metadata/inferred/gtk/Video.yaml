@@ -18,6 +18,13 @@ properties:
   provenance:
   - origin: probe
     ref: round trip exact; notify fired
+- name: media-stream
+  provenance:
+  - origin: probe
+    ref: round trip identity
+  - origin: manual
+    ref: 'review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): real nullable object property; set by handle, unset with null; the generated
+      null/handle round trip is a fair test'
 signals:
 - name: notify::autoplay
   derived_from:

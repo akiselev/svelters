@@ -554,6 +554,19 @@
    "signals": []
   }
  },
+ "properties:input-hints": {
+  "confidence": 0.8,
+  "evidence": {
+   "log": [],
+   "outcome": "identity",
+   "type": "GtkInputHints"
+  },
+  "review": {
+   "decision": "accept",
+   "reason": "flags property: the converter maps numbers/nick lists both ways; the probe has no flags sampler, the round trip test stands",
+   "reviewer": "claude-opus-5.5 (AI1 review, 2026-10-19)"
+  }
+ },
  "properties:input-purpose": {
   "confidence": 0.95,
   "evidence": {
@@ -691,6 +704,19 @@
    "signals": []
   }
  },
+ "properties:tabs": {
+  "confidence": 0.8,
+  "evidence": {
+   "log": [],
+   "outcome": "identity",
+   "type": "PangoTabArray"
+  },
+  "review": {
+   "decision": "accept",
+   "reason": "real boxed property (Pango); no string form yet, so JS carries it as an opaque boxed handle; the round trip is what the converter guarantees",
+   "reviewer": "claude-opus-5.5 (AI1 review, 2026-10-19)"
+  }
+ },
  "properties:top-margin": {
   "confidence": 0.95,
   "evidence": {
@@ -791,6 +817,26 @@
    "returns": "void",
    "run": "last",
    "sync_required": false
+  }
+ },
+ "signals:preedit-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "action": true,
+   "handler_result": "none",
+   "n_params": 1,
+   "params": [
+    "gchararray"
+   ],
+   "returns": "void",
+   "run": "last",
+   "sync_required": false,
+   "synthetic": {
+    "args": [
+     "x"
+    ],
+    "emit": "delivered"
+   }
   }
  },
  "signals:select-all": {

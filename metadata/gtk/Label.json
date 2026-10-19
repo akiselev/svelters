@@ -959,6 +959,12 @@
         "origin": "inferred"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_opacity",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_opacity",
+        "origin": "manual"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_overflow",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "set_overflow",
@@ -2886,6 +2892,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "1c26f09410897297",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "rule",
+            "ref": "set then read property xalign; float sample 0.25 from the GIR range, the probe left it unsampled"
+          }
+        ]
+      },
+      "args": [
+        0.25
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"xalign\") == V::F64(0.25)",
       "id": "svelters-api:v1:type:gtk:Gtk:Label:method:set_xalign",
       "invocation": {
         "dev": "introspected",
@@ -2912,6 +2938,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "216d25aaf654d998",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "rule",
+            "ref": "set then read property yalign; float sample 0.25 from the GIR range, the probe left it unsampled"
+          }
+        ]
+      },
+      "args": [
+        0.25
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"yalign\") == V::F64(0.25)",
       "id": "svelters-api:v1:type:gtk:Gtk:Label:method:set_yalign",
       "invocation": {
         "dev": "introspected",
@@ -2956,6 +3002,21 @@
       "accessors": {
         "get": "gtk_label_get_attributes",
         "set": "gtk_label_set_attributes"
+      },
+      "annotated": {
+        "fields": [],
+        "fp": "f810d8fa8c3b0498",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip identity"
+          },
+          {
+            "origin": "manual",
+            "ref": "review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): real boxed property (Pango); no string form yet, so JS carries it as an opaque boxed handle; the round trip is what the converter guarantees"
+          }
+        ]
       },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:attributes",
@@ -3524,6 +3585,21 @@
         "get": "gtk_label_get_tabs",
         "set": "gtk_label_set_tabs"
       },
+      "annotated": {
+        "fields": [],
+        "fp": "6932648669c36657",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip identity"
+          },
+          {
+            "origin": "manual",
+            "ref": "review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): real boxed property (Pango); no string form yet, so JS carries it as an opaque boxed handle; the round trip is what the converter guarantees"
+          }
+        ]
+      },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Label:prop:tabs",
       "invocation": "reflected",
@@ -3842,6 +3918,7 @@
         "origin": "runtime",
         "owner": "GtkLabel"
       },
+      "sample": 0.25,
       "type": {
         "gtype": "gfloat",
         "native": "gfloat",
@@ -3890,6 +3967,7 @@
         "origin": "runtime",
         "owner": "GtkLabel"
       },
+      "sample": 0.25,
       "type": {
         "gtype": "gfloat",
         "native": "gfloat",

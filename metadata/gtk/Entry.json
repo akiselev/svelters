@@ -1167,6 +1167,12 @@
         "origin": "inferred"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_opacity",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_opacity",
+        "origin": "manual"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_overflow",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "set_overflow",
@@ -3423,6 +3429,21 @@
         "get": "gtk_entry_get_attributes",
         "set": "gtk_entry_set_attributes"
       },
+      "annotated": {
+        "fields": [],
+        "fp": "f810d8fa8c3b0498",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip identity"
+          },
+          {
+            "origin": "manual",
+            "ref": "review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): real boxed property (Pango); no string form yet, so JS carries it as an opaque boxed handle; the round trip is what the converter guarantees"
+          }
+        ]
+      },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:attributes",
       "invocation": "reflected",
@@ -3762,6 +3783,21 @@
         "get": "gtk_entry_get_input_hints",
         "set": "gtk_entry_set_input_hints"
       },
+      "annotated": {
+        "fields": [],
+        "fp": "8439ae20df0f65f3",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip identity"
+          },
+          {
+            "origin": "manual",
+            "ref": "review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): flags property: the converter maps numbers/nick lists both ways; the probe has no flags sampler, the round trip test stands"
+          }
+        ]
+      },
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:input-hints",
       "invocation": "reflected",
@@ -3848,6 +3884,13 @@
         "get": "gtk_entry_get_invisible_char",
         "set": "gtk_entry_set_invisible_char"
       },
+      "annotated": {
+        "fields": [
+          "sample"
+        ],
+        "origin": "manual",
+        "provenance": "GtkEntry:invisible-char (Gtk 4 docs); the probe errors on ParamSpecUnichar, so the sample is manual (AI1 review 2026-10-19, docs/notes/ai1-gtk-review.md)"
+      },
       "default": 42,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:invisible-char",
       "invocation": "reflected",
@@ -3870,6 +3913,7 @@
         "origin": "runtime",
         "owner": "GtkEntry"
       },
+      "sample": 9679,
       "type": {
         "gtype": "guint",
         "native": "guint",
@@ -4246,6 +4290,21 @@
         "get": null,
         "set": null
       },
+      "annotated": {
+        "fields": [],
+        "fp": "ed601dd3c055671a",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip identity"
+          },
+          {
+            "origin": "manual",
+            "ref": "review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): real nullable icon property; the converter takes a handle or a string form (icon name / image path), null round trip is the generated test"
+          }
+        ]
+      },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:primary-icon-gicon",
       "invocation": "reflected",
@@ -4339,6 +4398,21 @@
       "accessors": {
         "get": null,
         "set": null
+      },
+      "annotated": {
+        "fields": [],
+        "fp": "a56c334d87d37670",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip identity"
+          },
+          {
+            "origin": "manual",
+            "ref": "review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): real nullable icon property; the converter takes a handle or a string form (icon name / image path), null round trip is the generated test"
+          }
+        ]
       },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:primary-icon-paintable",
@@ -4790,6 +4864,21 @@
         "get": null,
         "set": null
       },
+      "annotated": {
+        "fields": [],
+        "fp": "3a266b43a616170b",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip identity"
+          },
+          {
+            "origin": "manual",
+            "ref": "review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): real nullable icon property; the converter takes a handle or a string form (icon name / image path), null round trip is the generated test"
+          }
+        ]
+      },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:secondary-icon-gicon",
       "invocation": "reflected",
@@ -4883,6 +4972,21 @@
       "accessors": {
         "get": null,
         "set": null
+      },
+      "annotated": {
+        "fields": [],
+        "fp": "98afd3ccd1642ca6",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip identity"
+          },
+          {
+            "origin": "manual",
+            "ref": "review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): real nullable icon property; the converter takes a handle or a string form (icon name / image path), null round trip is the generated test"
+          }
+        ]
       },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:secondary-icon-paintable",
@@ -5177,6 +5281,21 @@
       "accessors": {
         "get": "gtk_entry_get_tabs",
         "set": "gtk_entry_set_tabs"
+      },
+      "annotated": {
+        "fields": [],
+        "fp": "6932648669c36657",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip identity"
+          },
+          {
+            "origin": "manual",
+            "ref": "review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): real boxed property (Pango); no string form yet, so JS carries it as an opaque boxed handle; the round trip is what the converter guarantees"
+          }
+        ]
       },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Entry:prop:tabs",

@@ -606,6 +606,12 @@
         "origin": "inferred"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_opacity",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_opacity",
+        "origin": "manual"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_overflow",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "set_overflow",
@@ -1489,6 +1495,21 @@
       "accessors": {
         "get": "gtk_video_get_media_stream",
         "set": "gtk_video_set_media_stream"
+      },
+      "annotated": {
+        "fields": [],
+        "fp": "dbe529c68b7ca6c1",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip identity"
+          },
+          {
+            "origin": "manual",
+            "ref": "review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): real nullable object property; set by handle, unset with null; the generated null/handle round trip is a fair test"
+          }
+        ]
       },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Video:prop:media-stream",

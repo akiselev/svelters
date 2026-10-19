@@ -1,0 +1,15 @@
+{
+ "properties:media-stream": {
+  "confidence": 0.8,
+  "evidence": {
+   "log": [],
+   "outcome": "identity",
+   "type": "GtkMediaStream"
+  },
+  "review": {
+   "decision": "accept",
+   "reason": "real nullable object property; set by handle, unset with null; the generated null/handle round trip is a fair test",
+   "reviewer": "claude-opus-5.5 (AI1 review, 2026-10-19)"
+  }
+ }
+}

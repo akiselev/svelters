@@ -189,3 +189,109 @@ def test_parked_and_denied_facts_leave_the_layer():
     assert [r["name"] for r in out["methods"]] == ["set_label"] and "bindings" not in out and "signals" not in out
     # a changed record is tried again
     assert len(ingest.drop_parked_and_denied("X", ov, {("X", "methods", "set_label"): "stale"}, [])["methods"]) == 2
+
+
+# ---- rule changes from the AI1 review (docs/notes/ai1-gtk-review.md) ---------------------------------------------
+
+def test_unsampled_float_gets_a_sample_from_the_gir_range():
+    doc = kind([prop("xalign", "f32", range={"min": 0.0, "max": 1.0}, default=0.5)],
+               [meth("set_xalign", ["f32"])])
+    k = run(doc, {"props": {"xalign": {"outcome": "identity"}},
+                  "methods": {"set_xalign": {"class": "accessor_set", "prop": "xalign", "outcome": "no_sample"}}})
+    (p,) = k.ov["properties"]
+    assert p["sample"] == 0.25 and p["provenance"][0]["origin"] == "rule"
+    (m,) = k.ov["methods"]
+    assert m["args"] == [0.25] and m["expect"] == 'h.get(o, "xalign") == V::F64(0.25)'
+    assert k.review == []
+
+
+def test_unranged_float_identity_is_still_held():
+    k = run(kind([prop("ratio", "f32")]), {"props": {"ratio": {"outcome": "identity"}}})
+    assert "properties" not in k.ov and [r["pattern"] for r in k.review] == ["prop:scalar-identity"]
+
+
+def test_non_scalar_accessor_without_a_sample_is_skipped_not_held():
+    doc = kind([prop("tabs", "boxed<svelters-api:v1:type:gtk:Pango:TabArray>"), prop("name", "string")],
+               [meth("set_tabs", ["boxed<svelters-api:v1:type:gtk:Pango:TabArray>"]), meth("get_name", [], "string")])
+    k = run(doc, {"methods": {"set_tabs": {"class": "accessor_set", "prop": "tabs", "outcome": "no_sample"},
+                              "get_name": {"class": "accessor_get", "prop": "name", "outcome": "differs"}}})
+    assert k.skipped.get("method:set-non-scalar") == 1
+    assert [r["name"] for r in k.review] == ["get_name"]          # a scalar accessor that differs still needs review
+
+
+def test_child_setters_are_denied():
+    k = run(kind(methods=[meth("set_child", ["object<svelters-api:v1:type:gtk:Gtk:Widget>"]), meth("set_reveal_child", ["bool"])]),
+            {"methods": {"set_child": {"class": "accessor_set", "prop": "child", "outcome": "no_sample"},
+                         "set_reveal_child": {"class": "accessor_set", "prop": "reveal-child", "outcome": "no_sample"}}})
+    assert sum(c for p, c in k.skipped.items() if p.startswith("method:denied (re-parents")) == 1
+
+
+def test_side_effect_trigger_with_an_unsampled_default_falls_back_to_delivery_only():
+    doc = kind([prop("im-module", "string")], signals=[sig("preedit-changed")])
+    k = run(doc, {"props": {"im-module": {"outcome": "exact", "notify": True, "sample": "x", "default": None, "signals": ["preedit-changed"]}},
+                  "signals": {"preedit-changed": {"returns": "void", "handler_result": "none", "sync_required": False, "run": "last",
+                                                  "params": ["gchararray"], "synthetic": {"args": ["x"], "emit": "delivered"}}}})
+    (s,) = [s for s in k.ov["signals"] if not s.get("derived_from")]
+    assert s["delivery_only"] is True and "property" not in s["trigger"]
+
+
+# ---- review decisions (_reviewed.yaml) ----------------------------------------------------------------------------
+
+def decided(doc, probe, decisions):
+    k = infer.Kind("X", probe, doc, {"X": doc}, infer.Rules(), {f: dict(d) for f, d in decisions.items()})
+    k.infer_props()
+    k.infer_methods()
+    return k
+
+
+IDENT = {"props": {"tags": {"outcome": "identity"}}}
+
+
+def test_accept_writes_the_candidate_with_the_review_as_provenance():
+    doc = kind([prop("tags", "list<string>")])
+    k = decided(doc, IDENT, {"X.properties.tags": {"pattern": "middle:prop:round-trip", "decision": "accept", "reason": "ok", "reviewer": "t"}})
+    (rec,) = k.ov["properties"]
+    assert rec["provenance"][-1] == {"origin": "manual", "ref": "review accept (t): ok"}
+    assert k.ev["properties:tags"]["review"]["decision"] == "accept"
+    assert k.review == [] and k.errors == [] and k.decided[0]["decision"] == "accept"
+
+
+def test_reject_leaves_the_queue_and_writes_nothing():
+    k = decided(kind([prop("tags", "list<string>")]), IDENT,
+                {"X.properties.tags": {"pattern": "middle:prop:round-trip", "decision": "reject", "reason": "no", "reviewer": "t"}})
+    assert "properties" not in k.ov and k.review == [] and k.errors == []
+
+
+def test_a_changed_pattern_voids_the_decision():
+    k = decided(kind([prop("tags", "list<string>")]), IDENT,
+                {"X.properties.tags": {"pattern": "low:prop:ignored", "decision": "accept", "reason": "ok", "reviewer": "t"}})
+    assert "properties" not in k.ov and len(k.review) == 1 and "review it again" in k.errors[0]
+
+
+def test_accept_needs_a_candidate_and_override_needs_a_manual_record(tmp_path, monkeypatch):
+    monkeypatch.setattr(infer, "OVERRIDES", tmp_path)
+    doc = kind([prop("a", "bool"), prop("b", "bool")])
+    probe = {"props": {"a": {"outcome": "ignored"}, "b": {"outcome": "ignored"}}}
+    dec = {"X.properties.a": {"pattern": "low:prop:ignored", "decision": "accept", "reason": "ok", "reviewer": "t"},
+           "X.properties.b": {"pattern": "low:prop:ignored", "decision": "override", "reason": "ok", "reviewer": "t"}}
+    k = decided(doc, probe, dec)
+    assert any("needs a candidate record" in e for e in k.errors) and any("has no properties record 'b'" in e for e in k.errors)
+    (tmp_path / "X.yaml").write_text("properties:\n  - name: b\n    provenance: docs\n")
+    k = decided(doc, probe, dec)
+    assert [e for e in k.errors if "'b'" in e] == []
+
+
+def test_load_decisions_rejects_malformed_and_duplicate_entries(tmp_path):
+    import yaml
+    p = tmp_path / "_reviewed.yaml"
+    good = {"fact": "X.properties.a", "pattern": "low:prop:ignored", "decision": "reject", "reason": "why", "reviewer": "tester"}
+    p.write_text(yaml.safe_dump({"schema": "svelters-inferred-reviewed/v1", "toolkit": "gtk",
+                                 "decisions": [good, good, {**good, "fact": "X.b", "decision": "maybe"}]}))
+    out, errs = infer.load_decisions(p)
+    assert list(out) == ["X.properties.a"] and len(errs) == 2
+
+
+def test_checked_in_decisions_are_well_formed_and_all_used():
+    _, _, summary, errors = infer.run()
+    assert errors == []
+    assert summary["unreviewed"]["middle"] + summary["unreviewed"]["low"] + sum(summary["reviewed"][d] for d in infer.DECISIONS) > 0

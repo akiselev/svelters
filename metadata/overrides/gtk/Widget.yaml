@@ -53,6 +53,11 @@ signals:
     trigger: {property: visible, values: [false, true, false]}
     provenance: "GtkWidget::hide, void, run-first (Gtk 4 docs); emitted when visible becomes false"
 methods:
+  - name: set_opacity
+    dispatch: dynamic
+    args: [0.2]
+    expect: 'h.get(o, "opacity") == V::F64(0.2)'
+    provenance: "gtk_widget_set_opacity (Gtk 4 docs); GTK keeps 8 bits (255 * opacity, truncated), 0.2 is 51/255 exactly, 0.5 reads 0.50196 (AI1 review 2026-10-19, docs/notes/ai1-gtk-review.md)"
   - name: queue_draw
     js_name: queueDraw
     dispatch: zero_arg

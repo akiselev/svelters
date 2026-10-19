@@ -1,4 +1,18 @@
 properties:
+- name: artists
+  provenance:
+  - origin: probe
+    ref: round trip identity
+  - origin: manual
+    ref: 'review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): GStrv round-trips through the list<string> converter both ways; the probe
+      only lacked a non-empty sample'
+- name: authors
+  provenance:
+  - origin: probe
+    ref: round trip identity
+  - origin: manual
+    ref: 'review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): GStrv round-trips through the list<string> converter both ways; the probe
+      only lacked a non-empty sample'
 - name: comments
   sample: svl probe
   provenance:
@@ -9,6 +23,13 @@ properties:
   provenance:
   - origin: probe
     ref: round trip exact; notify fired
+- name: documenters
+  provenance:
+  - origin: probe
+    ref: round trip identity
+  - origin: manual
+    ref: 'review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): GStrv round-trips through the list<string> converter both ways; the probe
+      only lacked a non-empty sample'
 - name: license
   sample: svl probe
   provenance:
@@ -19,6 +40,13 @@ properties:
   provenance:
   - origin: probe
     ref: round trip exact; notify fired
+- name: logo
+  provenance:
+  - origin: probe
+    ref: round trip identity
+  - origin: manual
+    ref: 'review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): GdkPaintable with a string form (image path) and bytes form; null round trip;
+      the dialog renders it lazily'
 - name: logo-icon-name
   sample: svl probe
   provenance:

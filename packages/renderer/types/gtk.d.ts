@@ -10,14 +10,14 @@ export interface GtkATContextProps {
   "onstate-change"?: SvlHandler;
 }
 export interface GtkAboutDialogProps extends GtkWindowProps {
-  /** @unverified */ artists?: string[];
-  /** @unverified */ authors?: string[];
+  artists?: string[];
+  authors?: string[];
   comments?: string;
   copyright?: string;
-  /** @unverified */ documenters?: string[];
+  documenters?: string[];
   license?: string;
   "license-type"?: "unknown" | "custom" | "gpl-2-0" | "gpl-3-0" | "lgpl-2-1" | "lgpl-3-0" | "bsd" | "mit-x11" | "artistic" | "gpl-2-0-only" | "gpl-3-0-only" | "lgpl-2-1-only" | "lgpl-3-0-only" | "agpl-3-0" | "agpl-3-0-only" | "bsd-3" | "apache-2-0" | "mpl-2-0" | "0bsd";
-  /** @unverified */ logo?: number | Boxed;
+  logo?: number | Boxed;
   "logo-icon-name"?: string;
   "program-name"?: string;
   "system-information"?: string;
@@ -47,7 +47,7 @@ export interface GtkActionBarProps extends GtkWidgetProps {
 }
 export interface GtkActionableProps {
   "action-name"?: string;
-  /** @unverified */ "action-target"?: unknown;
+  "action-target"?: unknown;
 }
 export interface GtkActivateActionProps extends GtkShortcutActionProps {
 }
@@ -569,16 +569,16 @@ export interface GtkEmojiChooserProps extends GtkPopoverProps {
 }
 export interface GtkEntryProps extends GtkWidgetProps, GtkCellEditableProps, GtkEditableProps {
   "activates-default"?: boolean;
-  /** @unverified */ attributes?: Boxed<"Pango.AttrList">;
+  attributes?: Boxed<"Pango.AttrList">;
   buffer?: number;
   /** @unverified */ completion?: number;
   "enable-emoji-completion"?: boolean;
   "extra-menu"?: number;
   "has-frame"?: boolean;
   "im-module"?: string;
-  /** @unverified */ "input-hints"?: Array<"spellcheck" | "no-spellcheck" | "word-completion" | "lowercase" | "uppercase-chars" | "uppercase-words" | "uppercase-sentences" | "inhibit-osk" | "vertical-writing" | "emoji" | "no-emoji" | "private">;
+  "input-hints"?: Array<"spellcheck" | "no-spellcheck" | "word-completion" | "lowercase" | "uppercase-chars" | "uppercase-words" | "uppercase-sentences" | "inhibit-osk" | "vertical-writing" | "emoji" | "no-emoji" | "private">;
   "input-purpose"?: "free-form" | "alpha" | "digits" | "number" | "phone" | "url" | "email" | "name" | "password" | "pin" | "terminal";
-  /** @unverified */ "invisible-char"?: number;
+  "invisible-char"?: number;
   "invisible-char-set"?: boolean;
   "max-length"?: number;
   "menu-entry-icon-primary-text"?: string;
@@ -586,23 +586,23 @@ export interface GtkEntryProps extends GtkWidgetProps, GtkCellEditableProps, Gtk
   "overwrite-mode"?: boolean;
   "placeholder-text"?: string;
   "primary-icon-activatable"?: boolean;
-  /** @unverified */ "primary-icon-gicon"?: number | Boxed;
+  "primary-icon-gicon"?: number | Boxed;
   "primary-icon-name"?: string;
-  /** @unverified */ "primary-icon-paintable"?: number | Boxed;
+  "primary-icon-paintable"?: number | Boxed;
   "primary-icon-sensitive"?: boolean;
   "primary-icon-tooltip-markup"?: string;
   "primary-icon-tooltip-text"?: string;
   "progress-fraction"?: number;
   "progress-pulse-step"?: number;
   "secondary-icon-activatable"?: boolean;
-  /** @unverified */ "secondary-icon-gicon"?: number | Boxed;
+  "secondary-icon-gicon"?: number | Boxed;
   "secondary-icon-name"?: string;
-  /** @unverified */ "secondary-icon-paintable"?: number | Boxed;
+  "secondary-icon-paintable"?: number | Boxed;
   "secondary-icon-sensitive"?: boolean;
   "secondary-icon-tooltip-markup"?: string;
   "secondary-icon-tooltip-text"?: string;
   "show-emoji-icon"?: boolean;
-  /** @unverified */ tabs?: Boxed<"Pango.TabArray">;
+  tabs?: Boxed<"Pango.TabArray">;
   "truncate-multiline"?: boolean;
   visibility?: boolean;
   onactivate?: SvlHandler;
@@ -818,7 +818,7 @@ export interface GtkFontDialogButtonProps extends GtkWidgetProps {
   dialog?: number;
   "font-desc"?: Boxed<"Pango.FontDescription"> | string;
   "font-features"?: string;
-  /** @unverified */ language?: Boxed<"Pango.Language">;
+  language?: Boxed<"Pango.Language">;
   level?: "family" | "face" | "font" | "features";
   "use-font"?: boolean;
   "use-size"?: boolean;
@@ -1017,7 +1017,7 @@ export interface GtkInfoBarProps extends GtkWidgetProps {
   onresponse?: SvlHandler;
 }
 export interface GtkInscriptionProps extends GtkWidgetProps, GtkAccessibleTextProps {
-  /** @unverified */ attributes?: Boxed<"Pango.AttrList">;
+  attributes?: Boxed<"Pango.AttrList">;
   /** @unverified */ markup?: string;
   "min-chars"?: number;
   "min-lines"?: number;
@@ -1027,7 +1027,7 @@ export interface GtkInscriptionProps extends GtkWidgetProps, GtkAccessibleTextPr
   "text-overflow"?: "clip" | "ellipsize-start" | "ellipsize-middle" | "ellipsize-end";
   "wrap-mode"?: string;
   xalign?: number;
-  /** @unverified */ yalign?: number;
+  yalign?: number;
   "onnotify::min-chars"?: SvlHandler;
   "onnotify::min-lines"?: SvlHandler;
   "onnotify::nat-chars"?: SvlHandler;
@@ -1039,7 +1039,7 @@ export interface GtkInscriptionProps extends GtkWidgetProps, GtkAccessibleTextPr
 export interface GtkKeyvalTriggerProps extends GtkShortcutTriggerProps {
 }
 export interface GtkLabelProps extends GtkWidgetProps, GtkAccessibleHypertextProps, GtkAccessibleTextProps {
-  /** @unverified */ attributes?: Boxed<"Pango.AttrList">;
+  attributes?: Boxed<"Pango.AttrList">;
   ellipsize?: string;
   "extra-menu"?: number;
   justify?: "left" | "right" | "center" | "fill";
@@ -1050,7 +1050,7 @@ export interface GtkLabelProps extends GtkWidgetProps, GtkAccessibleHypertextPro
   "natural-wrap-mode"?: "inherit" | "none" | "word";
   selectable?: boolean;
   "single-line-mode"?: boolean;
-  /** @unverified */ tabs?: Boxed<"Pango.TabArray">;
+  tabs?: Boxed<"Pango.TabArray">;
   "use-markup"?: boolean;
   "use-underline"?: boolean;
   "width-chars"?: number;
@@ -1167,7 +1167,7 @@ export interface GtkMapListModelProps extends GtkSectionModelProps {
   /** @unverified */ model?: number;
 }
 export interface GtkMediaControlsProps extends GtkWidgetProps {
-  /** @unverified */ "media-stream"?: number;
+  "media-stream"?: number;
 }
 export interface GtkMediaFileProps extends GtkMediaStreamProps {
   /** @unverified */ file?: number;
@@ -1356,7 +1356,7 @@ export interface GtkPopoverProps extends GtkWidgetProps, GtkNativeProps, GtkShor
   /** @unverified */ "default-widget"?: number;
   "has-arrow"?: boolean;
   "mnemonics-visible"?: boolean;
-  /** @unverified */ "pointing-to"?: Rect;
+  "pointing-to"?: Rect;
   position?: "left" | "right" | "top" | "bottom";
   "onactivate-default"?: SvlHandler;
   onclosed?: SvlHandler;
@@ -1373,7 +1373,7 @@ export interface GtkPopoverBinProps extends GtkWidgetProps {
   /** @unverified */ popover?: number;
 }
 export interface GtkPopoverMenuProps extends GtkPopoverProps {
-  /** @unverified */ flags?: Array<"nested">;
+  flags?: Array<"nested">;
   "menu-model"?: number;
   /** @unverified */ "visible-submenu"?: string;
 }
@@ -1564,7 +1564,7 @@ export interface GtkSearchBarProps extends GtkWidgetProps {
 }
 export interface GtkSearchEntryProps extends GtkWidgetProps, GtkEditableProps {
   "activates-default"?: boolean;
-  /** @unverified */ "input-hints"?: Array<"spellcheck" | "no-spellcheck" | "word-completion" | "lowercase" | "uppercase-chars" | "uppercase-words" | "uppercase-sentences" | "inhibit-osk" | "vertical-writing" | "emoji" | "no-emoji" | "private">;
+  "input-hints"?: Array<"spellcheck" | "no-spellcheck" | "word-completion" | "lowercase" | "uppercase-chars" | "uppercase-words" | "uppercase-sentences" | "inhibit-osk" | "vertical-writing" | "emoji" | "no-emoji" | "private">;
   "input-purpose"?: "free-form" | "alpha" | "digits" | "number" | "phone" | "url" | "email" | "name" | "password" | "pin" | "terminal";
   /** @unverified */ "key-capture-widget"?: number;
   "placeholder-text"?: string;
@@ -1771,7 +1771,7 @@ export interface GtkStackProps extends GtkWidgetProps {
   "transition-type"?: "none" | "crossfade" | "slide-right" | "slide-left" | "slide-up" | "slide-down" | "slide-left-right" | "slide-up-down" | "over-up" | "over-down" | "over-left" | "over-right" | "under-up" | "under-down" | "under-left" | "under-right" | "over-up-down" | "over-down-up" | "over-left-right" | "over-right-left" | "rotate-left" | "rotate-right" | "rotate-left-right";
   vhomogeneous?: boolean;
   "visible-child"?: number;
-  /** @unverified */ "visible-child-name"?: string;
+  "visible-child-name"?: string;
   "onnotify::hhomogeneous"?: SvlHandler;
   "onnotify::interpolate-size"?: SvlHandler;
   "onnotify::transition-duration"?: SvlHandler;
@@ -1837,20 +1837,20 @@ export interface GtkSymbolicPaintableProps {
 }
 export interface GtkTextProps extends GtkWidgetProps, GtkAccessibleTextProps, GtkEditableProps {
   "activates-default"?: boolean;
-  /** @unverified */ attributes?: Boxed<"Pango.AttrList">;
+  attributes?: Boxed<"Pango.AttrList">;
   buffer?: number;
   "enable-emoji-completion"?: boolean;
   "extra-menu"?: number;
   "im-module"?: string;
-  /** @unverified */ "input-hints"?: Array<"spellcheck" | "no-spellcheck" | "word-completion" | "lowercase" | "uppercase-chars" | "uppercase-words" | "uppercase-sentences" | "inhibit-osk" | "vertical-writing" | "emoji" | "no-emoji" | "private">;
+  "input-hints"?: Array<"spellcheck" | "no-spellcheck" | "word-completion" | "lowercase" | "uppercase-chars" | "uppercase-words" | "uppercase-sentences" | "inhibit-osk" | "vertical-writing" | "emoji" | "no-emoji" | "private">;
   "input-purpose"?: "free-form" | "alpha" | "digits" | "number" | "phone" | "url" | "email" | "name" | "password" | "pin" | "terminal";
-  /** @unverified */ "invisible-char"?: number;
+  "invisible-char"?: number;
   "invisible-char-set"?: boolean;
   "max-length"?: number;
   "overwrite-mode"?: boolean;
   "placeholder-text"?: string;
   "propagate-text-width"?: boolean;
-  /** @unverified */ tabs?: Boxed<"Pango.TabArray">;
+  tabs?: Boxed<"Pango.TabArray">;
   "truncate-multiline"?: boolean;
   visibility?: boolean;
   onactivate?: SvlHandler;
@@ -2001,7 +2001,7 @@ export interface GtkTextViewProps extends GtkWidgetProps, GtkAccessibleTextProps
   "extra-menu"?: number;
   "im-module"?: string;
   indent?: number;
-  /** @unverified */ "input-hints"?: Array<"spellcheck" | "no-spellcheck" | "word-completion" | "lowercase" | "uppercase-chars" | "uppercase-words" | "uppercase-sentences" | "inhibit-osk" | "vertical-writing" | "emoji" | "no-emoji" | "private">;
+  "input-hints"?: Array<"spellcheck" | "no-spellcheck" | "word-completion" | "lowercase" | "uppercase-chars" | "uppercase-words" | "uppercase-sentences" | "inhibit-osk" | "vertical-writing" | "emoji" | "no-emoji" | "private">;
   "input-purpose"?: "free-form" | "alpha" | "digits" | "number" | "phone" | "url" | "email" | "name" | "password" | "pin" | "terminal";
   justification?: "left" | "right" | "center" | "fill";
   "left-margin"?: number;
@@ -2011,7 +2011,7 @@ export interface GtkTextViewProps extends GtkWidgetProps, GtkAccessibleTextProps
   "pixels-below-lines"?: number;
   "pixels-inside-wrap"?: number;
   "right-margin"?: number;
-  /** @unverified */ tabs?: Boxed<"Pango.TabArray">;
+  tabs?: Boxed<"Pango.TabArray">;
   text?: string;
   "top-margin"?: number;
   "wrap-mode"?: "none" | "char" | "word" | "word-char";
@@ -2159,7 +2159,7 @@ export interface GtkVideoProps extends GtkWidgetProps {
   file?: number;
   "graphics-offload"?: "enabled" | "disabled";
   loop?: boolean;
-  /** @unverified */ "media-stream"?: number;
+  "media-stream"?: number;
   "onnotify::autoplay"?: SvlHandler;
   "onnotify::graphics-offload"?: SvlHandler;
   "onnotify::loop"?: SvlHandler;

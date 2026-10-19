@@ -35,5 +35,18 @@
     "state-flags-changed"
    ]
   }
+ },
+ "properties:action-target": {
+  "confidence": 0.8,
+  "evidence": {
+   "log": [],
+   "outcome": "identity",
+   "type": "GVariant"
+  },
+  "review": {
+   "decision": "accept",
+   "reason": "GVariant property, the converter has a variant codec; null clears the target (documented)",
+   "reviewer": "claude-opus-5.5 (AI1 review, 2026-10-19)"
+  }
  }
 }

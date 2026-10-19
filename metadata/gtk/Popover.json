@@ -673,6 +673,12 @@
         "origin": "inferred"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_opacity",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_opacity",
+        "origin": "manual"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_overflow",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "set_overflow",
@@ -1909,6 +1915,13 @@
         "get": "gtk_popover_get_pointing_to",
         "set": "gtk_popover_set_pointing_to"
       },
+      "annotated": {
+        "fields": [
+          "setup"
+        ],
+        "origin": "manual",
+        "provenance": "GtkPopover:pointing-to (Gtk 4 docs); GTK raises width and height to at least 1, so the unset 0x0 rectangle does not round trip; the test starts from 1,2 3x4 (AI1 review 2026-10-19, docs/notes/ai1-gtk-review.md)"
+      },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Popover:prop:pointing-to",
       "invocation": "reflected",
@@ -1930,6 +1943,7 @@
         "origin": "runtime",
         "owner": "GtkPopover"
       },
+      "setup": "h.obj(o).set_property(\"pointing-to\", &gtk::gdk::Rectangle::new(1, 2, 3, 4));",
       "type": {
         "gtype": "GdkRectangle",
         "native": null,

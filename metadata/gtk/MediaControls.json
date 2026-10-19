@@ -391,6 +391,12 @@
         "origin": "inferred"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_opacity",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_opacity",
+        "origin": "manual"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_overflow",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "set_overflow",
@@ -717,6 +723,21 @@
         "get": "gtk_media_controls_get_media_stream",
         "set": "gtk_media_controls_set_media_stream"
       },
+      "annotated": {
+        "fields": [],
+        "fp": "dbe529c68b7ca6c1",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip identity"
+          },
+          {
+            "origin": "manual",
+            "ref": "review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): real nullable object property; set by handle, unset with null; the generated null/handle round trip is a fair test"
+          }
+        ]
+      },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:MediaControls:prop:media-stream",
       "invocation": "reflected",
@@ -755,6 +776,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
+    "inferred": "inferred/gtk/MediaControls.yaml",
     "overrides": null,
     "runtime": {
       "gtk": "4.22.4",

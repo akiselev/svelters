@@ -286,6 +286,21 @@
         "get": null,
         "set": "gtk_actionable_set_action_target"
       },
+      "annotated": {
+        "fields": [],
+        "fp": "d5eaf8c659b37eb1",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip identity"
+          },
+          {
+            "origin": "manual",
+            "ref": "review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): GVariant property, the converter has a variant codec; null clears the target (documented)"
+          }
+        ]
+      },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Actionable:prop:action-target",
       "invocation": "reflected",
