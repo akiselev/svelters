@@ -93,8 +93,26 @@ class Blocked(Exception):
     pass
 
 
+_OV: dict = {}
+
+
 def load_overrides() -> dict:
-    return yaml.safe_load(OVERRIDES.read_text()) or {}
+    if "ov" not in _OV:
+        _OV["ov"] = yaml.safe_load(OVERRIDES.read_text()) or {}
+    return _OV["ov"]
+
+
+def is_abstract(ing: "Ingest", name: str) -> bool:
+    """A pure virtual anywhere up the chain that no class on the way down (or the class) redeclares."""
+    if name in (load_overrides().get("concrete") or []):
+        return False
+    chain = [name] + ing.chain(name)
+    pure: set[str] = set()
+    for c in reversed(chain):
+        fs = ing.classes.get(c, {}).get("functions", [])
+        pure -= {f["name"] for f in fs if f.get("virtual") != "pure" and f["meta"] not in ("constructor", "signal")}
+        pure |= {f["name"] for f in fs if f.get("virtual") == "pure"}
+    return bool(pure)
 
 
 def norm_spelling(t: str) -> tuple[str, bool, bool, bool]:
@@ -146,13 +164,15 @@ class Ingest:
             self._enums(n, c)
 
     def _enums(self, owner: str, c: dict) -> None:
+        header = "qnamespace.h" if owner == "Qt" else c.get("header")
+        skip = set(load_overrides().get("platform_enum_members") or [])
         for e in c.get("enums", []):
             full = e["fullname"]
-            scoped = full in self.scoped
+            scoped = f"{header}:{e['name']}" in self.scoped
             self.enums[full] = {"owner": owner, "name": e["name"], "scoped": scoped,
                                 "members": [{"name": m["name"], "value": m["value"],
                                              "cpp": f"{full}::{m['name']}" if scoped else f"{owner}::{m['name']}"}
-                                            for m in e["members"]]}
+                                            for m in e["members"] if f"{owner}::{m['name']}" not in skip]}
             if e.get("flags"):
                 self.flag_alias[e["flags"]] = full
         for t in c.get("flag_typedefs", []):
@@ -222,6 +242,11 @@ class Types:
         self.aliases = ov.get("aliases") or {}
         self.block = ov.get("block_types") or {}
 
+    def default_constructible(self, c: str) -> bool:
+        ctors = [f for f in self.ing.classes[c].get("functions", []) if f["meta"] == "constructor"]
+        # No declared constructor: the implicit default constructor exists.
+        return not ctors or any(all(p.get("default") for p in f["params"]) for f in ctors)
+
     def enum(self, spelling: str, ctx: list[str]):
         m = re.match(r"^QFlags<(.+)>$", spelling)
         if m:
@@ -263,7 +288,7 @@ class Types:
             # A typedef of a spelling the rules know (QModelIndexList -> QList<QModelIndex>).
             return self.slot(spelling.replace(core, a["as"]), ctx, ret)
         if a and not ptr:
-            out = {"k": a["k"], "cpp": a.get("cpp") or core}
+            out = {"k": a["k"], "cpp": a.get("cpp") or core, **({"pass": a["pass"]} if a.get("pass") else {})}
             return self._outify(out, ptr, const, mref, ret)
         if PLATFORM.match(core):
             raise Blocked("platform")
@@ -324,12 +349,18 @@ class Types:
                 if const:
                     raise Blocked(f"const pointer to value:{c}")
                 return {"k": "value", "t": c, "cpp": c, "out": True}
+            if not ret and not self.default_constructible(c):
+                # The thunk converts into a local; a class without a default constructor cannot be a parameter.
+                raise Blocked(f"value without default constructor:{c}")
             if mref and not ret:
                 return {"k": "value", "t": c, "cpp": c, "out": "inout"}
             return {"k": "value", "t": c, "cpp": c}
         if cat in ("unique", "item"):
             if c not in self.bound:
                 raise Blocked(f"unbound:{c}")
+            if ret and cat == "unique":
+                # A pointer to a JS-owned kind that JS did not make (an internal object: QTextBlock::layout()).
+                raise Blocked(f"borrowed unique pointer:{c}")
             if not ptr and not (mref or (const and "&" in spelling)):
                 raise Blocked(f"{cat} by value:{c}")
             return {"k": cat, "t": c, "cpp": f"{c} *", "deref": not ptr}
@@ -394,6 +425,7 @@ def build_members(ing: Ingest, name: str, cat: str, ty: Types, ov: dict) -> dict
     renames = ov.get("renames") or {}
     keep = set((ov.get("keep") or {}).get(name, []))
     hide_over = set((ov.get("hide") or {}).get(name, []))
+    platform_members = set(ov.get("platform_members") or [])
     blocked: dict[str, str] = {}
     excluded: collections.Counter = collections.Counter()
     hidden: list[str] = []
@@ -402,6 +434,9 @@ def build_members(ing: Ingest, name: str, cat: str, ty: Types, ov: dict) -> dict
     is_qobject = cat in ("object", "model")
     for decl, f in enumerate(c.get("functions", [])):
         meta = f["meta"]
+        if f.get("access") == "protected" or f"{name}.{f['name']}" in platform_members:
+            excluded["protected or other platform"] += 1
+            continue
         if meta not in ("plain", "slot", "signal", "constructor"):
             excluded["special"] += 1
             continue
@@ -419,7 +454,7 @@ def build_members(ing: Ingest, name: str, cat: str, ty: Types, ov: dict) -> dict
         if sig in removed or f"{f['name']}()" in removed and not f["params"]:
             excluded["removed by PySide"] += 1
             continue
-        if any(PLATFORM.match(norm_spelling(t)[0]) or norm_spelling(t)[0] in TEMPLATE
+        if any((PLATFORM.match(norm_spelling(t)[0]) and norm_spelling(t)[0] not in ty.aliases) or norm_spelling(t)[0] in TEMPLATE
                for t in [f["type"]] + [p["type"] for p in f["params"]]) or "template" in (f["signature"] or ""):
             excluded["template/platform"] += 1
             continue
@@ -629,7 +664,7 @@ def build() -> dict:
         for t in slot_types(rec):
             refs |= refs_of(t)
             enums |= enums_of(t)
-        abstract = any(f.get("virtual") == "pure" for f in c.get("functions", []))
+        abstract = is_abstract(ing, n)
         default_ctor = any(not [p for p in o["params"] if not p.get("default")] for o in rec["constructors"])
         types[n] = {
             "name": n, "module": c["module"], "js_module": f"svelters:qt/{JS_MODULE[c['module']]}", "category": cat,

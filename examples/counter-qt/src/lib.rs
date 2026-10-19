@@ -48,6 +48,10 @@ unsafe extern "C" {
     fn svl_qt_context_request(h: u64) -> i32;
     fn svl_qt_open_menus() -> i32;
     fn svl_qt_close_menus();
+    fn svl_qt_pump(ms: i32);
+    fn svl_qt_child_count(h: u64) -> i32;
+    fn svl_qt_type_counts(values: *mut usize, ptrs: *mut usize, tracked: *mut usize);
+    fn svl_qt_test_future(callback: u64, ms: i32, value: i32);
 }
 
 /// The Qt backend vtable. `run` creates the `QApplication` (if none exists) and owns the loop.
@@ -317,6 +321,28 @@ pub mod hooks {
         let (mut ns, mut calls) = (0, 0);
         unsafe { svl_qt_take_timing(&mut ns, &mut calls) };
         (ns, calls)
+    }
+
+    /// Runs the Qt loop for `ms` milliseconds (deferred deletes included).
+    pub fn pump(ms: i32) {
+        unsafe { svl_qt_pump(ms) }
+    }
+
+    /// QObject children of the object behind `h` (-1: unknown handle).
+    pub fn child_count(h: u64) -> i32 {
+        unsafe { svl_qt_child_count(h) }
+    }
+
+    /// Non-GUI type accounting (N2): `(VALUE handles, unique/item handles, live tracked items)`.
+    pub fn type_counts() -> (usize, usize, usize) {
+        let (mut v, mut p, mut t) = (0, 0, 0);
+        unsafe { svl_qt_type_counts(&mut v, &mut p, &mut t) };
+        (v, p, t)
+    }
+
+    /// Drives the QFuture adapter: completes callback `id` with `value` after `ms` (a negative value cancels).
+    pub fn test_future(id: u64, ms: i32, value: i32) {
+        unsafe { svl_qt_test_future(id, ms, value) }
     }
 }
 

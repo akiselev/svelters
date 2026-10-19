@@ -149,7 +149,9 @@
     "Qt::CaseSensitivity",
     "Qt::MatchFlag"
    ],
-   "excluded": {},
+   "excluded": {
+    "protected or other platform": 2
+   },
    "header": "qcompleter.h",
    "hidden": [
     "caseSensitivity",
@@ -260,7 +262,7 @@
      {
       "const": true,
       "cpp": "model",
-      "decl": 20,
+      "decl": 22,
       "key": "QCompleter.model()",
       "params": [],
       "ret": {
@@ -275,7 +277,7 @@
      {
       "const": true,
       "cpp": "pathFromIndex",
-      "decl": 22,
+      "decl": 24,
       "key": "QCompleter.pathFromIndex(const QModelIndex &)",
       "params": [
        {
@@ -297,7 +299,7 @@
      {
       "const": true,
       "cpp": "popup",
-      "decl": 23,
+      "decl": 25,
       "key": "QCompleter.popup()",
       "params": [],
       "ret": {
@@ -311,7 +313,7 @@
     "setCaseSensitivity": [
      {
       "cpp": "setCaseSensitivity",
-      "decl": 24,
+      "decl": 26,
       "key": "QCompleter.setCaseSensitivity(Qt::CaseSensitivity)",
       "params": [
        {
@@ -331,7 +333,7 @@
     "setCompletionColumn": [
      {
       "cpp": "setCompletionColumn",
-      "decl": 25,
+      "decl": 27,
       "key": "QCompleter.setCompletionColumn(int)",
       "params": [
        {
@@ -350,7 +352,7 @@
     "setCompletionMode": [
      {
       "cpp": "setCompletionMode",
-      "decl": 26,
+      "decl": 28,
       "key": "QCompleter.setCompletionMode(QCompleter::CompletionMode)",
       "params": [
        {
@@ -370,7 +372,7 @@
     "setCompletionPrefix": [
      {
       "cpp": "setCompletionPrefix",
-      "decl": 27,
+      "decl": 29,
       "key": "QCompleter.setCompletionPrefix(const QString &)",
       "params": [
        {
@@ -390,7 +392,7 @@
     "setCompletionRole": [
      {
       "cpp": "setCompletionRole",
-      "decl": 28,
+      "decl": 30,
       "key": "QCompleter.setCompletionRole(int)",
       "params": [
        {
@@ -409,7 +411,7 @@
     "setCurrentRow": [
      {
       "cpp": "setCurrentRow",
-      "decl": 29,
+      "decl": 31,
       "key": "QCompleter.setCurrentRow(int)",
       "params": [
        {
@@ -429,7 +431,7 @@
     "setFilterMode": [
      {
       "cpp": "setFilterMode",
-      "decl": 30,
+      "decl": 32,
       "key": "QCompleter.setFilterMode(Qt::MatchFlags)",
       "params": [
        {
@@ -449,7 +451,7 @@
     "setMaxVisibleItems": [
      {
       "cpp": "setMaxVisibleItems",
-      "decl": 31,
+      "decl": 33,
       "key": "QCompleter.setMaxVisibleItems(int)",
       "params": [
        {
@@ -468,7 +470,7 @@
     "setModel": [
      {
       "cpp": "setModel",
-      "decl": 32,
+      "decl": 34,
       "key": "QCompleter.setModel(QAbstractItemModel *)",
       "params": [
        {
@@ -489,7 +491,7 @@
     "setModelSorting": [
      {
       "cpp": "setModelSorting",
-      "decl": 33,
+      "decl": 35,
       "key": "QCompleter.setModelSorting(QCompleter::ModelSorting)",
       "params": [
        {
@@ -509,7 +511,7 @@
     "setPopup": [
      {
       "cpp": "setPopup",
-      "decl": 34,
+      "decl": 36,
       "key": "QCompleter.setPopup(QAbstractItemView *)",
       "ownership": [
        {
@@ -538,7 +540,7 @@
     "setWidget": [
      {
       "cpp": "setWidget",
-      "decl": 35,
+      "decl": 37,
       "key": "QCompleter.setWidget(QWidget *)",
       "ownership": [
        {
@@ -567,7 +569,7 @@
     "setWrapAround": [
      {
       "cpp": "setWrapAround",
-      "decl": 36,
+      "decl": 38,
       "key": "QCompleter.setWrapAround(bool)",
       "params": [
        {
@@ -588,7 +590,7 @@
      {
       "const": true,
       "cpp": "splitPath",
-      "decl": 37,
+      "decl": 39,
       "key": "QCompleter.splitPath(const QString &)",
       "params": [
        {
@@ -613,7 +615,7 @@
      {
       "const": true,
       "cpp": "widget",
-      "decl": 38,
+      "decl": 40,
       "key": "QCompleter.widget()",
       "params": [],
       "ret": {

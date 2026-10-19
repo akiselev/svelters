@@ -57,6 +57,7 @@ export default defineConfig({
           ],
         },
         { label: 'Non-UI types (GTK)', items: [{ autogenerate: { directory: 'types/gtk' } }] },
+        { label: 'Non-UI types (Qt)', items: [{ autogenerate: { directory: 'types/qt' } }] },
         { label: 'Project', items: [guide('about/licensing', 'Licensing of documentation text')] },
       ],
     }),

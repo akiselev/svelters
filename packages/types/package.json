@@ -4,7 +4,7 @@
   "license": "MIT",
   "private": true,
   "type": "module",
-  "description": "Native object model and generated non-UI types (svelters:gtk/gio, ...) for Svelters apps",
+  "description": "Native object model and generated non-UI types (svelters:gtk/gio, svelters:qt/core, ...) for Svelters apps",
   "sideEffects": false,
   "exports": {
     "./core": {
@@ -13,6 +13,7 @@
     },
     "./vite": "./vite.js",
     "./manifest": "./gtk/manifest.json",
+    "./manifest-qt": "./qt/manifest.json",
     "./gtk/glib": {
       "types": "./gtk/glib.d.ts",
       "default": "./gtk/glib/index.js"
@@ -44,6 +45,18 @@
     "./gtk/pango": {
       "types": "./gtk/pango.d.ts",
       "default": "./gtk/pango/index.js"
+    },
+    "./qt/core": {
+      "types": "./qt/core.d.ts",
+      "default": "./qt/core/index.js"
+    },
+    "./qt/gui": {
+      "types": "./qt/gui.d.ts",
+      "default": "./qt/gui/index.js"
+    },
+    "./qt/widgets": {
+      "types": "./qt/widgets.d.ts",
+      "default": "./qt/widgets/index.js"
     }
   },
   "scripts": {

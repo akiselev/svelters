@@ -865,6 +865,20 @@
 "type":"int"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"event",
+"params":[
+{
+"name":"e",
+"type":"QEvent *"
+}
+],
+"signature":"bool event(QEvent *e) override",
+"type":"bool",
+"virtual":"virtual"
+},
+{
 "meta":"plain",
 "name":"exec",
 "params":[],
@@ -3083,6 +3097,38 @@
 "params":[],
 "signature":"int currentRow() const",
 "type":"int"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"event",
+"params":[
+{
+"name":"ev",
+"type":"QEvent *"
+}
+],
+"signature":"bool event(QEvent *ev) override",
+"type":"bool",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"eventFilter",
+"params":[
+{
+"name":"o",
+"type":"QObject *"
+},
+{
+"name":"e",
+"type":"QEvent *"
+}
+],
+"signature":"bool eventFilter(QObject *o, QEvent *e) override",
+"type":"bool",
+"virtual":"virtual"
 },
 {
 "associated_property":"filterMode",
@@ -6136,6 +6182,26 @@
 "type":"void"
 },
 {
+"access":"protected",
+"const":true,
+"meta":"plain",
+"name":"sizeHint",
+"params":[
+{
+"name":"which",
+"type":"Qt::SizeHint"
+},
+{
+"default":"QSizeF()",
+"name":"constraint",
+"type":"const QSizeF &"
+}
+],
+"signature":"QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint) const override",
+"type":"QSizeF",
+"virtual":"virtual"
+},
+{
 "const":true,
 "meta":"plain",
 "name":"verticalSpacing",
@@ -6261,6 +6327,20 @@
 "virtual":"virtual"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"draw",
+"params":[
+{
+"name":"painter",
+"type":"QPainter *"
+}
+],
+"signature":"void draw(QPainter *painter) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
 "associated_property":"blurHints",
 "meta":"slot",
 "name":"setBlurHints",
@@ -6378,6 +6458,20 @@
 ],
 "signature":"void colorChanged(const QColor &color)",
 "type":"void"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"draw",
+"params":[
+{
+"name":"painter",
+"type":"QPainter *"
+}
+],
+"signature":"void draw(QPainter *painter) override",
+"type":"void",
+"virtual":"virtual"
 },
 {
 "associated_property":"color",
@@ -6552,6 +6646,20 @@
 ],
 "signature":"void colorChanged(const QColor &color)",
 "type":"void"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"draw",
+"params":[
+{
+"name":"painter",
+"type":"QPainter *"
+}
+],
+"signature":"void draw(QPainter *painter) override",
+"type":"void",
+"virtual":"virtual"
 },
 {
 "associated_property":"offset",
@@ -6863,6 +6971,20 @@
 "virtual":"virtual"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"draw",
+"params":[
+{
+"name":"painter",
+"type":"QPainter *"
+}
+],
+"signature":"void draw(QPainter *painter) = 0",
+"type":"void",
+"virtual":"pure"
+},
+{
 "associated_property":"enabled",
 "meta":"signal",
 "name":"enabledChanged",
@@ -6896,6 +7018,20 @@
 ],
 "signature":"void setEnabled(bool enable)",
 "type":"void"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"sourceChanged",
+"params":[
+{
+"name":"flags",
+"type":"QGraphicsEffect::ChangeFlags"
+}
+],
+"signature":"void sourceChanged(QGraphicsEffect::ChangeFlags flags)",
+"type":"void",
+"virtual":"virtual"
 },
 {
 "meta":"slot",
@@ -8397,6 +8533,20 @@
 "virtual":"virtual"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"contextMenuEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneContextMenuEvent *"
+}
+],
+"signature":"void contextMenuEvent(QGraphicsSceneContextMenuEvent *event)",
+"type":"void",
+"virtual":"virtual"
+},
+{
 "const":true,
 "meta":"plain",
 "name":"cursor",
@@ -8429,6 +8579,62 @@
 ],
 "signature":"QTransform deviceTransform(const QTransform &viewportTransform) const",
 "type":"QTransform"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"dragEnterEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneDragDropEvent *"
+}
+],
+"signature":"void dragEnterEvent(QGraphicsSceneDragDropEvent *event)",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"dragLeaveEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneDragDropEvent *"
+}
+],
+"signature":"void dragLeaveEvent(QGraphicsSceneDragDropEvent *event)",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"dragMoveEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneDragDropEvent *"
+}
+],
+"signature":"void dragMoveEvent(QGraphicsSceneDragDropEvent *event)",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"dropEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneDragDropEvent *"
+}
+],
+"signature":"void dropEvent(QGraphicsSceneDragDropEvent *event)",
+"type":"void",
+"virtual":"virtual"
 },
 {
 "const":true,
@@ -8513,12 +8719,40 @@
 "type":"QGraphicsItem::GraphicsItemFlags"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"focusInEvent",
+"params":[
+{
+"name":"event",
+"type":"QFocusEvent *"
+}
+],
+"signature":"void focusInEvent(QFocusEvent *event)",
+"type":"void",
+"virtual":"virtual"
+},
+{
 "const":true,
 "meta":"plain",
 "name":"focusItem",
 "params":[],
 "signature":"QGraphicsItem * focusItem() const",
 "type":"QGraphicsItem *"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"focusOutEvent",
+"params":[
+{
+"name":"event",
+"type":"QFocusEvent *"
+}
+],
+"signature":"void focusOutEvent(QFocusEvent *event)",
+"type":"void",
+"virtual":"virtual"
 },
 {
 "const":true,
@@ -8591,12 +8825,83 @@
 "type":"void"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"hoverEnterEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneHoverEvent *"
+}
+],
+"signature":"void hoverEnterEvent(QGraphicsSceneHoverEvent *event)",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"hoverLeaveEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneHoverEvent *"
+}
+],
+"signature":"void hoverLeaveEvent(QGraphicsSceneHoverEvent *event)",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"hoverMoveEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneHoverEvent *"
+}
+],
+"signature":"void hoverMoveEvent(QGraphicsSceneHoverEvent *event)",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"inputMethodEvent",
+"params":[
+{
+"name":"event",
+"type":"QInputMethodEvent *"
+}
+],
+"signature":"void inputMethodEvent(QInputMethodEvent *event)",
+"type":"void",
+"virtual":"virtual"
+},
+{
 "const":true,
 "meta":"plain",
 "name":"inputMethodHints",
 "params":[],
 "signature":"Qt::InputMethodHints inputMethodHints() const",
 "type":"Qt::InputMethodHints"
+},
+{
+"access":"protected",
+"const":true,
+"meta":"plain",
+"name":"inputMethodQuery",
+"params":[
+{
+"name":"query",
+"type":"Qt::InputMethodQuery"
+}
+],
+"signature":"QVariant inputMethodQuery(Qt::InputMethodQuery query) const",
+"type":"QVariant",
+"virtual":"virtual"
 },
 {
 "meta":"plain",
@@ -8777,6 +9082,24 @@
 "type":"bool"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"itemChange",
+"params":[
+{
+"name":"change",
+"type":"QGraphicsItem::GraphicsItemChange"
+},
+{
+"name":"value",
+"type":"const QVariant &"
+}
+],
+"signature":"QVariant itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)",
+"type":"QVariant",
+"virtual":"virtual"
+},
+{
 "const":true,
 "meta":"plain",
 "name":"itemTransform",
@@ -8793,6 +9116,34 @@
 ],
 "signature":"QTransform itemTransform(const QGraphicsItem *other, bool *ok) const",
 "type":"QTransform"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"keyPressEvent",
+"params":[
+{
+"name":"event",
+"type":"QKeyEvent *"
+}
+],
+"signature":"void keyPressEvent(QKeyEvent *event)",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"keyReleaseEvent",
+"params":[
+{
+"name":"event",
+"type":"QKeyEvent *"
+}
+],
+"signature":"void keyReleaseEvent(QKeyEvent *event)",
+"type":"void",
+"virtual":"virtual"
 },
 {
 "const":true,
@@ -9687,6 +10038,62 @@
 "type":"QPolygonF"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"mouseDoubleClickEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneMouseEvent *"
+}
+],
+"signature":"void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"mouseMoveEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneMouseEvent *"
+}
+],
+"signature":"void mouseMoveEvent(QGraphicsSceneMouseEvent *event)",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"mousePressEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneMouseEvent *"
+}
+],
+"signature":"void mousePressEvent(QGraphicsSceneMouseEvent *event)",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"mouseReleaseEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneMouseEvent *"
+}
+],
+"signature":"void mouseReleaseEvent(QGraphicsSceneMouseEvent *event)",
+"type":"void",
+"virtual":"virtual"
+},
+{
 "meta":"plain",
 "name":"moveBy",
 "params":[
@@ -9839,6 +10246,38 @@
 "params":[],
 "signature":"QRectF sceneBoundingRect() const",
 "type":"QRectF"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"sceneEvent",
+"params":[
+{
+"name":"event",
+"type":"QEvent *"
+}
+],
+"signature":"bool sceneEvent(QEvent *event)",
+"type":"bool",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"sceneEventFilter",
+"params":[
+{
+"name":"watched",
+"type":"QGraphicsItem *"
+},
+{
+"name":"event",
+"type":"QEvent *"
+}
+],
+"signature":"bool sceneEventFilter(QGraphicsItem *watched, QEvent *event)",
+"type":"bool",
+"virtual":"virtual"
 },
 {
 "const":true,
@@ -10501,6 +10940,20 @@
 "type":"void"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"wheelEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneWheelEvent *"
+}
+],
+"signature":"void wheelEvent(QGraphicsSceneWheelEvent *event)",
+"type":"void",
+"virtual":"virtual"
+},
+{
 "const":true,
 "meta":"plain",
 "name":"window",
@@ -10617,6 +11070,34 @@
 ],
 "signature":"QGraphicsItemAnimation(QObject *parent)",
 "type":""
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"afterAnimationStep",
+"params":[
+{
+"name":"step",
+"type":"qreal"
+}
+],
+"signature":"void afterAnimationStep(qreal step)",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"beforeAnimationStep",
+"params":[
+{
+"name":"step",
+"type":"qreal"
+}
+],
+"signature":"void beforeAnimationStep(qreal step)",
+"type":"void",
+"virtual":"virtual"
 },
 {
 "meta":"plain",
@@ -11682,6 +12163,26 @@
 "type":"void"
 },
 {
+"access":"protected",
+"const":true,
+"meta":"plain",
+"name":"sizeHint",
+"params":[
+{
+"name":"which",
+"type":"Qt::SizeHint"
+},
+{
+"default":"QSizeF()",
+"name":"constraint",
+"type":"const QSizeF &"
+}
+],
+"signature":"QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint) const = 0",
+"type":"QSizeF",
+"virtual":"pure"
+},
+{
 "const":true,
 "meta":"plain",
 "name":"sizePolicy",
@@ -12351,6 +12852,20 @@
 "type":"void"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"event",
+"params":[
+{
+"name":"ev",
+"type":"QEvent *"
+}
+],
+"signature":"bool event(QEvent *ev) override",
+"type":"bool",
+"virtual":"virtual"
+},
+{
 "meta":"plain",
 "name":"grabGesture",
 "params":[
@@ -12628,6 +13143,20 @@
 ],
 "signature":"QGraphicsOpacityEffect(QObject *parent)",
 "type":""
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"draw",
+"params":[
+{
+"name":"painter",
+"type":"QPainter *"
+}
+],
+"signature":"void draw(QPainter *painter) override",
+"type":"void",
+"virtual":"virtual"
 },
 {
 "associated_property":"opacity",
@@ -13402,6 +13931,20 @@
 "type":""
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"contextMenuEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneContextMenuEvent *"
+}
+],
+"signature":"void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
 "meta":"plain",
 "name":"createProxyForChildWidget",
 "params":[
@@ -13412,6 +13955,337 @@
 ],
 "signature":"QGraphicsProxyWidget * createProxyForChildWidget(QWidget *child)",
 "type":"QGraphicsProxyWidget *"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"dragEnterEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneDragDropEvent *"
+}
+],
+"signature":"void dragEnterEvent(QGraphicsSceneDragDropEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"dragLeaveEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneDragDropEvent *"
+}
+],
+"signature":"void dragLeaveEvent(QGraphicsSceneDragDropEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"dragMoveEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneDragDropEvent *"
+}
+],
+"signature":"void dragMoveEvent(QGraphicsSceneDragDropEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"dropEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneDragDropEvent *"
+}
+],
+"signature":"void dropEvent(QGraphicsSceneDragDropEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"event",
+"params":[
+{
+"name":"event",
+"type":"QEvent *"
+}
+],
+"signature":"bool event(QEvent *event) override",
+"type":"bool",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"eventFilter",
+"params":[
+{
+"name":"object",
+"type":"QObject *"
+},
+{
+"name":"event",
+"type":"QEvent *"
+}
+],
+"signature":"bool eventFilter(QObject *object, QEvent *event) override",
+"type":"bool",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"focusInEvent",
+"params":[
+{
+"name":"event",
+"type":"QFocusEvent *"
+}
+],
+"signature":"void focusInEvent(QFocusEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"focusNextPrevChild",
+"params":[
+{
+"name":"next",
+"type":"bool"
+}
+],
+"signature":"bool focusNextPrevChild(bool next) override",
+"type":"bool",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"focusOutEvent",
+"params":[
+{
+"name":"event",
+"type":"QFocusEvent *"
+}
+],
+"signature":"void focusOutEvent(QFocusEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"grabMouseEvent",
+"params":[
+{
+"name":"event",
+"type":"QEvent *"
+}
+],
+"signature":"void grabMouseEvent(QEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"hideEvent",
+"params":[
+{
+"name":"event",
+"type":"QHideEvent *"
+}
+],
+"signature":"void hideEvent(QHideEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"hoverEnterEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneHoverEvent *"
+}
+],
+"signature":"void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"hoverLeaveEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneHoverEvent *"
+}
+],
+"signature":"void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"hoverMoveEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneHoverEvent *"
+}
+],
+"signature":"void hoverMoveEvent(QGraphicsSceneHoverEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"inputMethodEvent",
+"params":[
+{
+"name":"event",
+"type":"QInputMethodEvent *"
+}
+],
+"signature":"void inputMethodEvent(QInputMethodEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"const":true,
+"meta":"plain",
+"name":"inputMethodQuery",
+"params":[
+{
+"name":"query",
+"type":"Qt::InputMethodQuery"
+}
+],
+"signature":"QVariant inputMethodQuery(Qt::InputMethodQuery query) const override",
+"type":"QVariant",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"itemChange",
+"params":[
+{
+"name":"change",
+"type":"QGraphicsItem::GraphicsItemChange"
+},
+{
+"name":"value",
+"type":"const QVariant &"
+}
+],
+"signature":"QVariant itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value) override",
+"type":"QVariant",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"keyPressEvent",
+"params":[
+{
+"name":"event",
+"type":"QKeyEvent *"
+}
+],
+"signature":"void keyPressEvent(QKeyEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"keyReleaseEvent",
+"params":[
+{
+"name":"event",
+"type":"QKeyEvent *"
+}
+],
+"signature":"void keyReleaseEvent(QKeyEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"mouseDoubleClickEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneMouseEvent *"
+}
+],
+"signature":"void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"mouseMoveEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneMouseEvent *"
+}
+],
+"signature":"void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"mousePressEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneMouseEvent *"
+}
+],
+"signature":"void mousePressEvent(QGraphicsSceneMouseEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"mouseReleaseEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneMouseEvent *"
+}
+],
+"signature":"void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override",
+"type":"void",
+"virtual":"virtual"
 },
 {
 "meta":"plain",
@@ -13431,6 +14305,20 @@
 }
 ],
 "signature":"void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"resizeEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneResizeEvent *"
+}
+],
+"signature":"void resizeEvent(QGraphicsSceneResizeEvent *event) override",
 "type":"void",
 "virtual":"virtual"
 },
@@ -13460,6 +14348,40 @@
 "type":"void"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"showEvent",
+"params":[
+{
+"name":"event",
+"type":"QShowEvent *"
+}
+],
+"signature":"void showEvent(QShowEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"const":true,
+"meta":"plain",
+"name":"sizeHint",
+"params":[
+{
+"name":"which",
+"type":"Qt::SizeHint"
+},
+{
+"default":"QSizeF()",
+"name":"constraint",
+"type":"const QSizeF &"
+}
+],
+"signature":"QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint) const override",
+"type":"QSizeF",
+"virtual":"virtual"
+},
+{
 "const":true,
 "meta":"plain",
 "name":"subWidgetRect",
@@ -13479,6 +14401,34 @@
 "params":[],
 "signature":"int type() const override",
 "type":"int",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"ungrabMouseEvent",
+"params":[
+{
+"name":"event",
+"type":"QEvent *"
+}
+],
+"signature":"void ungrabMouseEvent(QEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"wheelEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneWheelEvent *"
+}
+],
+"signature":"void wheelEvent(QGraphicsSceneWheelEvent *event) override",
+"type":"void",
 "virtual":"virtual"
 },
 {
@@ -14664,6 +15614,20 @@
 "type":"QList<QGraphicsItem *>"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"contextMenuEvent",
+"params":[
+{
+"name":"contextMenuEvent",
+"type":"QGraphicsSceneContextMenuEvent *"
+}
+],
+"signature":"void contextMenuEvent(QGraphicsSceneContextMenuEvent *contextMenuEvent)",
+"type":"void",
+"virtual":"virtual"
+},
+{
 "meta":"plain",
 "name":"createItemGroup",
 "params":[
@@ -14686,6 +15650,176 @@
 ],
 "signature":"void destroyItemGroup(QGraphicsItemGroup *group)",
 "type":"void"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"dragEnterEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneDragDropEvent *"
+}
+],
+"signature":"void dragEnterEvent(QGraphicsSceneDragDropEvent *event)",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"dragLeaveEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneDragDropEvent *"
+}
+],
+"signature":"void dragLeaveEvent(QGraphicsSceneDragDropEvent *event)",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"dragMoveEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneDragDropEvent *"
+}
+],
+"signature":"void dragMoveEvent(QGraphicsSceneDragDropEvent *event)",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"drawBackground",
+"params":[
+{
+"name":"painter",
+"type":"QPainter *"
+},
+{
+"name":"rect",
+"type":"const QRectF &"
+}
+],
+"signature":"void drawBackground(QPainter *painter, const QRectF &rect)",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"drawForeground",
+"params":[
+{
+"name":"painter",
+"type":"QPainter *"
+},
+{
+"name":"rect",
+"type":"const QRectF &"
+}
+],
+"signature":"void drawForeground(QPainter *painter, const QRectF &rect)",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"drawItems",
+"params":[
+{
+"name":"painter",
+"type":"QPainter *"
+},
+{
+"name":"numItems",
+"type":"int"
+},
+{
+"name":"items",
+"type":"QGraphicsItem *[]"
+},
+{
+"name":"options",
+"type":"const QStyleOptionGraphicsItem[]"
+},
+{
+"default":"nullptr",
+"name":"widget",
+"type":"QWidget *"
+}
+],
+"signature":"void drawItems(QPainter *painter, int numItems, QGraphicsItem *[] items, const QStyleOptionGraphicsItem[] options, QWidget *widget)",
+"status":"deprecated",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"dropEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneDragDropEvent *"
+}
+],
+"signature":"void dropEvent(QGraphicsSceneDragDropEvent *event)",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"event",
+"params":[
+{
+"name":"event",
+"type":"QEvent *"
+}
+],
+"signature":"bool event(QEvent *event) override",
+"type":"bool",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"eventFilter",
+"params":[
+{
+"name":"watched",
+"type":"QObject *"
+},
+{
+"name":"event",
+"type":"QEvent *"
+}
+],
+"signature":"bool eventFilter(QObject *watched, QEvent *event) override",
+"type":"bool",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"focusInEvent",
+"params":[
+{
+"name":"focusEvent",
+"type":"QFocusEvent *"
+}
+],
+"signature":"void focusInEvent(QFocusEvent *focusEvent)",
+"type":"void",
+"virtual":"virtual"
 },
 {
 "const":true,
@@ -14716,6 +15850,20 @@
 "type":"void"
 },
 {
+"access":"protected",
+"meta":"slot",
+"name":"focusNextPrevChild",
+"params":[
+{
+"name":"next",
+"type":"bool"
+}
+],
+"signature":"bool focusNextPrevChild(bool next)",
+"type":"bool",
+"virtual":"virtual"
+},
+{
 "associated_property":"focusOnTouch",
 "const":true,
 "meta":"plain",
@@ -14723,6 +15871,20 @@
 "params":[],
 "signature":"bool focusOnTouch() const",
 "type":"bool"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"focusOutEvent",
+"params":[
+{
+"name":"focusEvent",
+"type":"QFocusEvent *"
+}
+],
+"signature":"void focusOutEvent(QFocusEvent *focusEvent)",
+"type":"void",
+"virtual":"virtual"
 },
 {
 "associated_property":"font",
@@ -14757,6 +15919,34 @@
 "params":[],
 "signature":"qreal height() const",
 "type":"qreal"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"helpEvent",
+"params":[
+{
+"name":"helpEvent",
+"type":"QGraphicsSceneHelpEvent *"
+}
+],
+"signature":"void helpEvent(QGraphicsSceneHelpEvent *helpEvent)",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"inputMethodEvent",
+"params":[
+{
+"name":"event",
+"type":"QInputMethodEvent *"
+}
+],
+"signature":"void inputMethodEvent(QInputMethodEvent *event)",
+"type":"void",
+"virtual":"virtual"
 },
 {
 "const":true,
@@ -15054,6 +16244,34 @@
 "type":"QRectF"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"keyPressEvent",
+"params":[
+{
+"name":"keyEvent",
+"type":"QKeyEvent *"
+}
+],
+"signature":"void keyPressEvent(QKeyEvent *keyEvent)",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"keyReleaseEvent",
+"params":[
+{
+"name":"keyEvent",
+"type":"QKeyEvent *"
+}
+],
+"signature":"void keyReleaseEvent(QKeyEvent *keyEvent)",
+"type":"void",
+"virtual":"virtual"
+},
+{
 "associated_property":"minimumRenderSize",
 "const":true,
 "meta":"plain",
@@ -15063,12 +16281,68 @@
 "type":"qreal"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"mouseDoubleClickEvent",
+"params":[
+{
+"name":"mouseEvent",
+"type":"QGraphicsSceneMouseEvent *"
+}
+],
+"signature":"void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *mouseEvent)",
+"type":"void",
+"virtual":"virtual"
+},
+{
 "const":true,
 "meta":"plain",
 "name":"mouseGrabberItem",
 "params":[],
 "signature":"QGraphicsItem * mouseGrabberItem() const",
 "type":"QGraphicsItem *"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"mouseMoveEvent",
+"params":[
+{
+"name":"mouseEvent",
+"type":"QGraphicsSceneMouseEvent *"
+}
+],
+"signature":"void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"mousePressEvent",
+"params":[
+{
+"name":"mouseEvent",
+"type":"QGraphicsSceneMouseEvent *"
+}
+],
+"signature":"void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"mouseReleaseEvent",
+"params":[
+{
+"name":"mouseEvent",
+"type":"QGraphicsSceneMouseEvent *"
+}
+],
+"signature":"void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)",
+"type":"void",
+"virtual":"virtual"
 },
 {
 "associated_property":"palette",
@@ -15505,6 +16779,20 @@
 "params":[],
 "signature":"QList<QGraphicsView *> views() const",
 "type":"QList<QGraphicsView *>"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"wheelEvent",
+"params":[
+{
+"name":"wheelEvent",
+"type":"QGraphicsSceneWheelEvent *"
+}
+],
+"signature":"void wheelEvent(QGraphicsSceneWheelEvent *wheelEvent)",
+"type":"void",
+"virtual":"virtual"
 },
 {
 "const":true,
@@ -16720,6 +18008,20 @@
 "virtual":"virtual"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"contextMenuEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneContextMenuEvent *"
+}
+],
+"signature":"void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
 "const":true,
 "meta":"plain",
 "name":"defaultTextColor",
@@ -16736,12 +18038,167 @@
 "type":"QTextDocument *"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"dragEnterEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneDragDropEvent *"
+}
+],
+"signature":"void dragEnterEvent(QGraphicsSceneDragDropEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"dragLeaveEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneDragDropEvent *"
+}
+],
+"signature":"void dragLeaveEvent(QGraphicsSceneDragDropEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"dragMoveEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneDragDropEvent *"
+}
+],
+"signature":"void dragMoveEvent(QGraphicsSceneDragDropEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"dropEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneDragDropEvent *"
+}
+],
+"signature":"void dropEvent(QGraphicsSceneDragDropEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"focusInEvent",
+"params":[
+{
+"name":"event",
+"type":"QFocusEvent *"
+}
+],
+"signature":"void focusInEvent(QFocusEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"focusOutEvent",
+"params":[
+{
+"name":"event",
+"type":"QFocusEvent *"
+}
+],
+"signature":"void focusOutEvent(QFocusEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
 "const":true,
 "meta":"plain",
 "name":"font",
 "params":[],
 "signature":"QFont font() const",
 "type":"QFont"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"hoverEnterEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneHoverEvent *"
+}
+],
+"signature":"void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"hoverLeaveEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneHoverEvent *"
+}
+],
+"signature":"void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"hoverMoveEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneHoverEvent *"
+}
+],
+"signature":"void hoverMoveEvent(QGraphicsSceneHoverEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"inputMethodEvent",
+"params":[
+{
+"name":"event",
+"type":"QInputMethodEvent *"
+}
+],
+"signature":"void inputMethodEvent(QInputMethodEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"const":true,
+"meta":"plain",
+"name":"inputMethodQuery",
+"params":[
+{
+"name":"query",
+"type":"Qt::InputMethodQuery"
+}
+],
+"signature":"QVariant inputMethodQuery(Qt::InputMethodQuery query) const override",
+"type":"QVariant",
+"virtual":"virtual"
 },
 {
 "const":true,
@@ -16755,6 +18212,34 @@
 ],
 "signature":"bool isObscuredBy(const QGraphicsItem *item) const override",
 "type":"bool",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"keyPressEvent",
+"params":[
+{
+"name":"event",
+"type":"QKeyEvent *"
+}
+],
+"signature":"void keyPressEvent(QKeyEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"keyReleaseEvent",
+"params":[
+{
+"name":"event",
+"type":"QKeyEvent *"
+}
+],
+"signature":"void keyReleaseEvent(QKeyEvent *event) override",
+"type":"void",
 "virtual":"virtual"
 },
 {
@@ -16780,6 +18265,62 @@
 ],
 "signature":"void linkHovered(const QString &link)",
 "type":"void"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"mouseDoubleClickEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneMouseEvent *"
+}
+],
+"signature":"void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"mouseMoveEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneMouseEvent *"
+}
+],
+"signature":"void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"mousePressEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneMouseEvent *"
+}
+],
+"signature":"void mousePressEvent(QGraphicsSceneMouseEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"mouseReleaseEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneMouseEvent *"
+}
+],
+"signature":"void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override",
+"type":"void",
+"virtual":"virtual"
 },
 {
 "const":true,
@@ -16818,6 +18359,20 @@
 ],
 "signature":"void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override",
 "type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"sceneEvent",
+"params":[
+{
+"name":"event",
+"type":"QEvent *"
+}
+],
+"signature":"bool sceneEvent(QEvent *event) override",
+"type":"bool",
 "virtual":"virtual"
 },
 {
@@ -17212,11 +18767,95 @@
 "virtual":"virtual"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"changeEvent",
+"params":[
+{
+"name":"event",
+"type":"QEvent *"
+}
+],
+"signature":"void changeEvent(QEvent *event)",
+"type":"void",
+"virtual":"virtual"
+},
+{
 "meta":"slot",
 "name":"close",
 "params":[],
 "signature":"bool close()",
 "type":"bool"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"closeEvent",
+"params":[
+{
+"name":"event",
+"type":"QCloseEvent *"
+}
+],
+"signature":"void closeEvent(QCloseEvent *event)",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"event",
+"params":[
+{
+"name":"event",
+"type":"QEvent *"
+}
+],
+"signature":"bool event(QEvent *event) override",
+"type":"bool",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"focusInEvent",
+"params":[
+{
+"name":"event",
+"type":"QFocusEvent *"
+}
+],
+"signature":"void focusInEvent(QFocusEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"focusNextPrevChild",
+"params":[
+{
+"name":"next",
+"type":"bool"
+}
+],
+"signature":"bool focusNextPrevChild(bool next)",
+"type":"bool",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"focusOutEvent",
+"params":[
+{
+"name":"event",
+"type":"QFocusEvent *"
+}
+],
+"signature":"void focusOutEvent(QFocusEvent *event) override",
+"type":"void",
+"virtual":"virtual"
 },
 {
 "associated_property":"focusPolicy",
@@ -17304,6 +18943,34 @@
 "type":"void"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"grabKeyboardEvent",
+"params":[
+{
+"name":"event",
+"type":"QEvent *"
+}
+],
+"signature":"void grabKeyboardEvent(QEvent *event)",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"grabMouseEvent",
+"params":[
+{
+"name":"event",
+"type":"QEvent *"
+}
+],
+"signature":"void grabMouseEvent(QEvent *event)",
+"type":"void",
+"virtual":"virtual"
+},
+{
 "meta":"plain",
 "name":"grabShortcut",
 "params":[
@@ -17319,6 +18986,63 @@
 ],
 "signature":"int grabShortcut(const QKeySequence &sequence, Qt::ShortcutContext context)",
 "type":"int"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"hideEvent",
+"params":[
+{
+"name":"event",
+"type":"QHideEvent *"
+}
+],
+"signature":"void hideEvent(QHideEvent *event)",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"hoverLeaveEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneHoverEvent *"
+}
+],
+"signature":"void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"hoverMoveEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneHoverEvent *"
+}
+],
+"signature":"void hoverMoveEvent(QGraphicsSceneHoverEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"const":true,
+"meta":"plain",
+"name":"initStyleOption",
+"params":[
+{
+"name":"option",
+"type":"QStyleOption *"
+}
+],
+"signature":"void initStyleOption(QStyleOption *option) const",
+"type":"void",
+"virtual":"virtual"
 },
 {
 "meta":"plain",
@@ -17361,6 +19085,24 @@
 "type":"bool"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"itemChange",
+"params":[
+{
+"name":"change",
+"type":"QGraphicsItem::GraphicsItemChange"
+},
+{
+"name":"value",
+"type":"const QVariant &"
+}
+],
+"signature":"QVariant itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value) override",
+"type":"QVariant",
+"virtual":"virtual"
+},
+{
 "associated_property":"layout",
 "const":true,
 "meta":"plain",
@@ -17385,6 +19127,20 @@
 "params":[],
 "signature":"Qt::LayoutDirection layoutDirection() const",
 "type":"Qt::LayoutDirection"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"moveEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneMoveEvent *"
+}
+],
+"signature":"void moveEvent(QGraphicsSceneMoveEvent *event)",
+"type":"void",
+"virtual":"virtual"
 },
 {
 "meta":"plain",
@@ -17438,6 +19194,15 @@
 "params":[],
 "signature":"QPalette palette() const",
 "type":"QPalette"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"polishEvent",
+"params":[],
+"signature":"void polishEvent()",
+"type":"void",
+"virtual":"virtual"
 },
 {
 "const":true,
@@ -17500,6 +19265,34 @@
 ],
 "signature":"void resize(qreal w, qreal h)",
 "type":"void"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"resizeEvent",
+"params":[
+{
+"name":"event",
+"type":"QGraphicsSceneResizeEvent *"
+}
+],
+"signature":"void resizeEvent(QGraphicsSceneResizeEvent *event)",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"sceneEvent",
+"params":[
+{
+"name":"event",
+"type":"QEvent *"
+}
+],
+"signature":"bool sceneEvent(QEvent *event) override",
+"type":"bool",
+"virtual":"virtual"
 },
 {
 "meta":"plain",
@@ -17808,6 +19601,20 @@
 "virtual":"virtual"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"showEvent",
+"params":[
+{
+"name":"event",
+"type":"QShowEvent *"
+}
+],
+"signature":"void showEvent(QShowEvent *event)",
+"type":"void",
+"virtual":"virtual"
+},
+{
 "associated_property":"size",
 "const":true,
 "meta":"plain",
@@ -17815,6 +19622,26 @@
 "params":[],
 "signature":"QSizeF size() const",
 "type":"QSizeF"
+},
+{
+"access":"protected",
+"const":true,
+"meta":"plain",
+"name":"sizeHint",
+"params":[
+{
+"name":"which",
+"type":"Qt::SizeHint"
+},
+{
+"default":"QSizeF()",
+"name":"constraint",
+"type":"const QSizeF &"
+}
+],
+"signature":"QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint) const override",
+"type":"QSizeF",
+"virtual":"virtual"
 },
 {
 "const":true,
@@ -17847,6 +19674,34 @@
 "virtual":"virtual"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"ungrabKeyboardEvent",
+"params":[
+{
+"name":"event",
+"type":"QEvent *"
+}
+],
+"signature":"void ungrabKeyboardEvent(QEvent *event)",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"ungrabMouseEvent",
+"params":[
+{
+"name":"event",
+"type":"QEvent *"
+}
+],
+"signature":"void ungrabMouseEvent(QEvent *event)",
+"type":"void",
+"virtual":"virtual"
+},
+{
 "associated_property":"layoutDirection",
 "meta":"plain",
 "name":"unsetLayoutDirection",
@@ -17862,6 +19717,15 @@
 "type":"void"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"updateGeometry",
+"params":[],
+"signature":"void updateGeometry() override",
+"type":"void",
+"virtual":"virtual"
+},
+{
 "associated_property":"windowFlags",
 "const":true,
 "meta":"plain",
@@ -17869,6 +19733,20 @@
 "params":[],
 "signature":"Qt::WindowFlags windowFlags() const",
 "type":"Qt::WindowFlags"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"windowFrameEvent",
+"params":[
+{
+"name":"event",
+"type":"QEvent *"
+}
+],
+"signature":"bool windowFrameEvent(QEvent *event)",
+"type":"bool",
+"virtual":"virtual"
 },
 {
 "const":true,
@@ -17885,6 +19763,21 @@
 "params":[],
 "signature":"QRectF windowFrameRect() const",
 "type":"QRectF"
+},
+{
+"access":"protected",
+"const":true,
+"meta":"plain",
+"name":"windowFrameSectionAt",
+"params":[
+{
+"name":"pos",
+"type":"const QPointF &"
+}
+],
+"signature":"Qt::WindowFrameSection windowFrameSectionAt(const QPointF &pos) const",
+"type":"Qt::WindowFrameSection",
+"virtual":"virtual"
 },
 {
 "associated_property":"windowTitle",
@@ -18119,6 +20012,20 @@
 ],
 "signature":"QGridLayout(QWidget *parent)",
 "type":""
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"addItem",
+"params":[
+{
+"name":"item",
+"type":"QLayoutItem *"
+}
+],
+"signature":"void addItem(QLayoutItem *item) override",
+"type":"void",
+"virtual":"virtual"
 },
 {
 "meta":"plain",
@@ -18849,6 +20756,154 @@
 "virtual":"virtual"
 },
 {
+"access":"protected",
+"const":true,
+"meta":"plain",
+"name":"drawCheck",
+"params":[
+{
+"name":"painter",
+"type":"QPainter *"
+},
+{
+"name":"option",
+"type":"const QStyleOptionViewItem &"
+},
+{
+"name":"rect",
+"type":"const QRect &"
+},
+{
+"name":"state",
+"type":"Qt::CheckState"
+}
+],
+"signature":"void drawCheck(QPainter *painter, const QStyleOptionViewItem &option, const QRect &rect, Qt::CheckState state) const",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"const":true,
+"meta":"plain",
+"name":"drawDecoration",
+"params":[
+{
+"name":"painter",
+"type":"QPainter *"
+},
+{
+"name":"option",
+"type":"const QStyleOptionViewItem &"
+},
+{
+"name":"rect",
+"type":"const QRect &"
+},
+{
+"name":"pixmap",
+"type":"const QPixmap &"
+}
+],
+"signature":"void drawDecoration(QPainter *painter, const QStyleOptionViewItem &option, const QRect &rect, const QPixmap &pixmap) const",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"const":true,
+"meta":"plain",
+"name":"drawDisplay",
+"params":[
+{
+"name":"painter",
+"type":"QPainter *"
+},
+{
+"name":"option",
+"type":"const QStyleOptionViewItem &"
+},
+{
+"name":"rect",
+"type":"const QRect &"
+},
+{
+"name":"text",
+"type":"const QString &"
+}
+],
+"signature":"void drawDisplay(QPainter *painter, const QStyleOptionViewItem &option, const QRect &rect, const QString &text) const",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"const":true,
+"meta":"plain",
+"name":"drawFocus",
+"params":[
+{
+"name":"painter",
+"type":"QPainter *"
+},
+{
+"name":"option",
+"type":"const QStyleOptionViewItem &"
+},
+{
+"name":"rect",
+"type":"const QRect &"
+}
+],
+"signature":"void drawFocus(QPainter *painter, const QStyleOptionViewItem &option, const QRect &rect) const",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"editorEvent",
+"params":[
+{
+"name":"event",
+"type":"QEvent *"
+},
+{
+"name":"model",
+"type":"QAbstractItemModel *"
+},
+{
+"name":"option",
+"type":"const QStyleOptionViewItem &"
+},
+{
+"name":"index",
+"type":"const QModelIndex &"
+}
+],
+"signature":"bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index) override",
+"type":"bool",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"eventFilter",
+"params":[
+{
+"name":"object",
+"type":"QObject *"
+},
+{
+"name":"event",
+"type":"QEvent *"
+}
+],
+"signature":"bool eventFilter(QObject *object, QEvent *event) override",
+"type":"bool",
+"virtual":"virtual"
+},
+{
 "associated_property":"clipping",
 "const":true,
 "meta":"plain",
@@ -19343,6 +21398,20 @@
 ],
 "signature":"void addWidget(QWidget *w)",
 "type":"void"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"childEvent",
+"params":[
+{
+"name":"e",
+"type":"QChildEvent *"
+}
+],
+"signature":"void childEvent(QChildEvent *e) override",
+"type":"void",
+"virtual":"virtual"
 },
 {
 "meta":"plain",
@@ -21402,6 +23471,28 @@
 "type":"int"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"documentChanged",
+"params":[
+{
+"name":"from",
+"type":"int"
+},
+{
+"name":"charsRemoved",
+"type":"int"
+},
+{
+"name":"charsAdded",
+"type":"int"
+}
+],
+"signature":"void documentChanged(int from, int charsRemoved, int charsAdded) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
 "const":true,
 "meta":"plain",
 "name":"documentSize",
@@ -21752,6 +23843,20 @@
 ],
 "signature":"void drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const override",
 "type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"event",
+"params":[
+{
+"name":"e",
+"type":"QEvent *"
+}
+],
+"signature":"bool event(QEvent *e) override",
+"type":"bool",
 "virtual":"virtual"
 },
 {
@@ -29485,6 +31590,69 @@
 "virtual":"virtual"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"editorEvent",
+"params":[
+{
+"name":"event",
+"type":"QEvent *"
+},
+{
+"name":"model",
+"type":"QAbstractItemModel *"
+},
+{
+"name":"option",
+"type":"const QStyleOptionViewItem &"
+},
+{
+"name":"index",
+"type":"const QModelIndex &"
+}
+],
+"signature":"bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index) override",
+"type":"bool",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"eventFilter",
+"params":[
+{
+"name":"object",
+"type":"QObject *"
+},
+{
+"name":"event",
+"type":"QEvent *"
+}
+],
+"signature":"bool eventFilter(QObject *object, QEvent *event) override",
+"type":"bool",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"const":true,
+"meta":"plain",
+"name":"initStyleOption",
+"params":[
+{
+"name":"option",
+"type":"QStyleOptionViewItem *"
+},
+{
+"name":"index",
+"type":"const QModelIndex &"
+}
+],
+"signature":"void initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const",
+"type":"void",
+"virtual":"virtual"
+},
+{
 "const":true,
 "meta":"plain",
 "name":"itemEditorFactory",
@@ -29880,6 +32048,20 @@
 "params":[],
 "signature":"QMenu * contextMenu() const",
 "type":"QMenu *"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"event",
+"params":[
+{
+"name":"e",
+"type":"QEvent *"
+}
+],
+"signature":"bool event(QEvent *e) override",
+"type":"bool",
+"virtual":"virtual"
 },
 {
 "const":true,
@@ -32541,12 +34723,72 @@
 "type":""
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"createWidget",
+"params":[
+{
+"name":"parent",
+"type":"QWidget *"
+}
+],
+"signature":"QWidget * createWidget(QWidget *parent)",
+"type":"QWidget *",
+"virtual":"virtual"
+},
+{
 "const":true,
 "meta":"plain",
 "name":"defaultWidget",
 "params":[],
 "signature":"QWidget * defaultWidget() const",
 "type":"QWidget *"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"deleteWidget",
+"params":[
+{
+"name":"widget",
+"type":"QWidget *"
+}
+],
+"signature":"void deleteWidget(QWidget *widget)",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"event",
+"params":[
+{
+"name":"event",
+"type":"QEvent *"
+}
+],
+"signature":"bool event(QEvent *event) override",
+"type":"bool",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"eventFilter",
+"params":[
+{
+"name":"obj",
+"type":"QObject *"
+},
+{
+"name":"event",
+"type":"QEvent *"
+}
+],
+"signature":"bool eventFilter(QObject *obj, QEvent *event) override",
+"type":"bool",
+"virtual":"virtual"
 },
 {
 "meta":"plain",

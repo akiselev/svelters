@@ -219,6 +219,28 @@
 "type":"QTextDocument *"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"documentChanged",
+"params":[
+{
+"name":"position",
+"type":"int"
+},
+{
+"name":"charsRemoved",
+"type":"int"
+},
+{
+"name":"charsAdded",
+"type":"int"
+}
+],
+"signature":"void documentChanged(int position, int charsRemoved, int charsAdded) = 0",
+"type":"void",
+"virtual":"pure"
+},
+{
 "const":true,
 "meta":"plain",
 "name":"documentSize",
@@ -255,6 +277,36 @@
 "signature":"void draw(QPainter *painter, const QAbstractTextDocumentLayout::PaintContext &context) = 0",
 "type":"void",
 "virtual":"pure"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"drawInlineObject",
+"params":[
+{
+"name":"painter",
+"type":"QPainter *"
+},
+{
+"name":"rect",
+"type":"const QRectF &"
+},
+{
+"name":"object",
+"type":"QTextInlineObject"
+},
+{
+"name":"posInDocument",
+"type":"int"
+},
+{
+"name":"format",
+"type":"const QTextFormat &"
+}
+],
+"signature":"void drawInlineObject(QPainter *painter, const QRectF &rect, QTextInlineObject object, int posInDocument, const QTextFormat &format)",
+"type":"void",
+"virtual":"virtual"
 },
 {
 "const":true,
@@ -357,6 +409,28 @@
 "type":"QPaintDevice *"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"positionInlineObject",
+"params":[
+{
+"name":"item",
+"type":"QTextInlineObject"
+},
+{
+"name":"posInDocument",
+"type":"int"
+},
+{
+"name":"format",
+"type":"const QTextFormat &"
+}
+],
+"signature":"void positionInlineObject(QTextInlineObject item, int posInDocument, const QTextFormat &format)",
+"type":"void",
+"virtual":"virtual"
+},
+{
 "meta":"plain",
 "name":"registerHandler",
 "params":[
@@ -371,6 +445,28 @@
 ],
 "signature":"void registerHandler(int objectType, QObject *component)",
 "type":"void"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"resizeInlineObject",
+"params":[
+{
+"name":"item",
+"type":"QTextInlineObject"
+},
+{
+"name":"posInDocument",
+"type":"int"
+},
+{
+"name":"format",
+"type":"const QTextFormat &"
+}
+],
+"signature":"void resizeInlineObject(QTextInlineObject item, int posInDocument, const QTextFormat &format)",
+"type":"void",
+"virtual":"virtual"
 },
 {
 "meta":"plain",
@@ -497,6 +593,20 @@
 ],
 "signature":"void contrastPreferenceChanged(Qt::ContrastPreference contrastPreference)",
 "type":"void"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"event",
+"params":[
+{
+"name":"event",
+"type":"QEvent *"
+}
+],
+"signature":"bool event(QEvent *event) override",
+"type":"bool",
+"virtual":"virtual"
 }
 ],
 "header":"qaccessibilityhints.h",
@@ -4136,6 +4246,20 @@
 ],
 "signature":"void enabledChanged(bool enabled)",
 "type":"void"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"event",
+"params":[
+{
+"name":"e",
+"type":"QEvent *"
+}
+],
+"signature":"bool event(QEvent *e) override",
+"type":"bool",
+"virtual":"virtual"
 },
 {
 "associated_property":"font",
@@ -11522,6 +11646,20 @@
 "virtual":"virtual"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"event",
+"params":[
+{
+"name":"event",
+"type":"QEvent *"
+}
+],
+"signature":"bool event(QEvent *event) override",
+"type":"bool",
+"virtual":"virtual"
+},
+{
 "meta":"plain",
 "name":"fetchMore",
 "params":[
@@ -12174,6 +12312,20 @@
 ],
 "signature":"bool testOption(QFileSystemModel::Option option) const",
 "type":"bool"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"timerEvent",
+"params":[
+{
+"name":"event",
+"type":"QTimerEvent *"
+}
+],
+"signature":"void timerEvent(QTimerEvent *event) override",
+"type":"void",
+"virtual":"virtual"
 },
 {
 "const":true,
@@ -17360,6 +17512,20 @@
 "params":[],
 "signature":"qreal devicePixelRatio() const",
 "type":"qreal"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"event",
+"params":[
+{
+"name":"e",
+"type":"QEvent *"
+}
+],
+"signature":"bool event(QEvent *e) override",
+"type":"bool",
+"virtual":"virtual"
 },
 {
 "meta":"plain",
@@ -37927,6 +38093,21 @@
 "type":"int"
 },
 {
+"access":"protected",
+"const":true,
+"meta":"plain",
+"name":"metric",
+"params":[
+{
+"name":"metric",
+"type":"QPaintDevice::PaintDeviceMetric"
+}
+],
+"signature":"int metric(QPaintDevice::PaintDeviceMetric metric) const",
+"type":"int",
+"virtual":"virtual"
+},
+{
 "const":true,
 "meta":"plain",
 "name":"paintEngine",
@@ -37998,6 +38179,20 @@
 ],
 "enums":[],
 "functions":[
+{
+"access":"protected",
+"meta":"plain",
+"name":"paintEvent",
+"params":[
+{
+"name":"event",
+"type":"QPaintEvent *"
+}
+],
+"signature":"void paintEvent(QPaintEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
 {
 "meta":"slot",
 "name":"update",
@@ -45088,6 +45283,16 @@
 "signature":"QPdfOutputIntent outputIntent() const",
 "since":"6.8",
 "type":"QPdfOutputIntent"
+},
+{
+"access":"protected",
+"const":true,
+"meta":"plain",
+"name":"paintEngine",
+"params":[],
+"signature":"QPaintEngine * paintEngine() const override",
+"type":"QPaintEngine *",
+"virtual":"virtual"
 },
 {
 "const":true,
@@ -66953,6 +67158,20 @@
 "type":"QTextDocument *"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"highlightBlock",
+"params":[
+{
+"name":"text",
+"type":"const QString &"
+}
+],
+"signature":"void highlightBlock(const QString &text) = 0",
+"type":"void",
+"virtual":"pure"
+},
+{
 "meta":"slot",
 "name":"rehighlight",
 "params":[],
@@ -68064,7 +68283,50 @@
 "QTextObject"
 ],
 "enums":[],
-"functions":[],
+"functions":[
+{
+"access":"protected",
+"meta":"plain",
+"name":"blockFormatChanged",
+"params":[
+{
+"name":"block",
+"type":"const QTextBlock &"
+}
+],
+"signature":"void blockFormatChanged(const QTextBlock &block)",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"blockInserted",
+"params":[
+{
+"name":"block",
+"type":"const QTextBlock &"
+}
+],
+"signature":"void blockInserted(const QTextBlock &block)",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"blockRemoved",
+"params":[
+{
+"name":"block",
+"type":"const QTextBlock &"
+}
+],
+"signature":"void blockRemoved(const QTextBlock &block)",
+"type":"void",
+"virtual":"virtual"
+}
+],
 "header":"qtextobject.h",
 "moc":{
 "enums":[],
@@ -70320,6 +70582,20 @@
 "type":"void"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"createObject",
+"params":[
+{
+"name":"format",
+"type":"const QTextFormat &"
+}
+],
+"signature":"QTextObject * createObject(const QTextFormat &format)",
+"type":"QTextObject *",
+"virtual":"virtual"
+},
+{
 "meta":"signal",
 "name":"cursorPositionChanged",
 "params":[
@@ -70647,6 +70923,24 @@
 "params":[],
 "signature":"int lineCount() const",
 "type":"int"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"loadResource",
+"params":[
+{
+"name":"type",
+"type":"int"
+},
+{
+"name":"name",
+"type":"const QUrl &"
+}
+],
+"signature":"QVariant loadResource(int type, const QUrl &name)",
+"type":"QVariant",
+"virtual":"virtual"
 },
 {
 "meta":"plain",
@@ -81748,6 +82042,20 @@
 "type":"bool"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"closeEvent",
+"params":[
+{
+"name":"ev",
+"type":"QCloseEvent *"
+}
+],
+"signature":"void closeEvent(QCloseEvent *ev)",
+"type":"void",
+"virtual":"virtual"
+},
+{
 "associated_property":"contentOrientation",
 "const":true,
 "meta":"plain",
@@ -81800,6 +82108,34 @@
 "type":"qreal"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"event",
+"params":[
+{
+"name":"ev",
+"type":"QEvent *"
+}
+],
+"signature":"bool event(QEvent *ev) override",
+"type":"bool",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"exposeEvent",
+"params":[
+{
+"name":"ev",
+"type":"QExposeEvent *"
+}
+],
+"signature":"void exposeEvent(QExposeEvent *ev)",
+"type":"void",
+"virtual":"virtual"
+},
+{
 "const":true,
 "meta":"plain",
 "name":"filePath",
@@ -81830,6 +82166,20 @@
 "type":"void"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"focusInEvent",
+"params":[
+{
+"name":"ev",
+"type":"QFocusEvent *"
+}
+],
+"signature":"void focusInEvent(QFocusEvent *ev)",
+"type":"void",
+"virtual":"virtual"
+},
+{
 "const":true,
 "meta":"plain",
 "name":"focusObject",
@@ -81849,6 +82199,20 @@
 ],
 "signature":"void focusObjectChanged(QObject *object)",
 "type":"void"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"focusOutEvent",
+"params":[
+{
+"name":"ev",
+"type":"QFocusEvent *"
+}
+],
+"signature":"void focusOutEvent(QFocusEvent *ev)",
+"type":"void",
+"virtual":"virtual"
 },
 {
 "const":true,
@@ -81934,6 +82298,20 @@
 "type":"void"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"hideEvent",
+"params":[
+{
+"name":"ev",
+"type":"QHideEvent *"
+}
+],
+"signature":"void hideEvent(QHideEvent *ev)",
+"type":"void",
+"virtual":"virtual"
+},
+{
 "const":true,
 "meta":"plain",
 "name":"icon",
@@ -82000,6 +82378,34 @@
 "params":[],
 "signature":"bool isVisible() const",
 "type":"bool"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"keyPressEvent",
+"params":[
+{
+"name":"ev",
+"type":"QKeyEvent *"
+}
+],
+"signature":"void keyPressEvent(QKeyEvent *ev)",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"keyReleaseEvent",
+"params":[
+{
+"name":"ev",
+"type":"QKeyEvent *"
+}
+],
+"signature":"void keyReleaseEvent(QKeyEvent *ev)",
+"type":"void",
+"virtual":"virtual"
 },
 {
 "meta":"slot",
@@ -82199,6 +82605,98 @@
 "type":"void"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"mouseDoubleClickEvent",
+"params":[
+{
+"name":"ev",
+"type":"QMouseEvent *"
+}
+],
+"signature":"void mouseDoubleClickEvent(QMouseEvent *ev)",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"mouseMoveEvent",
+"params":[
+{
+"name":"ev",
+"type":"QMouseEvent *"
+}
+],
+"signature":"void mouseMoveEvent(QMouseEvent *ev)",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"mousePressEvent",
+"params":[
+{
+"name":"ev",
+"type":"QMouseEvent *"
+}
+],
+"signature":"void mousePressEvent(QMouseEvent *ev)",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"mouseReleaseEvent",
+"params":[
+{
+"name":"ev",
+"type":"QMouseEvent *"
+}
+],
+"signature":"void mouseReleaseEvent(QMouseEvent *ev)",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"moveEvent",
+"params":[
+{
+"name":"ev",
+"type":"QMoveEvent *"
+}
+],
+"signature":"void moveEvent(QMoveEvent *ev)",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"nativeEvent",
+"params":[
+{
+"name":"eventType",
+"type":"const QByteArray &"
+},
+{
+"name":"message",
+"type":"void *"
+},
+{
+"name":"result",
+"type":"qintptr *"
+}
+],
+"signature":"bool nativeEvent(const QByteArray &eventType, void *message, qintptr *result)",
+"type":"bool",
+"virtual":"virtual"
+},
+{
 "associated_property":"opacity",
 "const":true,
 "meta":"plain",
@@ -82219,6 +82717,21 @@
 ],
 "signature":"void opacityChanged(qreal opacity)",
 "type":"void"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"paintEvent",
+"params":[
+{
+"name":"ev",
+"type":"QPaintEvent *"
+}
+],
+"signature":"void paintEvent(QPaintEvent *ev)",
+"since":"6.0",
+"type":"void",
+"virtual":"virtual"
 },
 {
 "const":true,
@@ -82312,6 +82825,20 @@
 ],
 "signature":"void resize(int w, int h)",
 "type":"void"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"resizeEvent",
+"params":[
+{
+"name":"ev",
+"type":"QResizeEvent *"
+}
+],
+"signature":"void resizeEvent(QResizeEvent *ev)",
+"type":"void",
+"virtual":"virtual"
 },
 {
 "const":true,
@@ -82857,6 +83384,20 @@
 "type":"void"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"showEvent",
+"params":[
+{
+"name":"ev",
+"type":"QShowEvent *"
+}
+],
+"signature":"void showEvent(QShowEvent *ev)",
+"type":"void",
+"virtual":"virtual"
+},
+{
 "meta":"slot",
 "name":"showFullScreen",
 "params":[],
@@ -82930,6 +83471,20 @@
 "virtual":"virtual"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"tabletEvent",
+"params":[
+{
+"name":"ev",
+"type":"QTabletEvent *"
+}
+],
+"signature":"void tabletEvent(QTabletEvent *ev)",
+"type":"void",
+"virtual":"virtual"
+},
+{
 "associated_property":"title",
 "const":true,
 "meta":"plain",
@@ -82937,6 +83492,20 @@
 "params":[],
 "signature":"QString title() const",
 "type":"QString"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"touchEvent",
+"params":[
+{
+"name":"ev",
+"type":"QTouchEvent *"
+}
+],
+"signature":"void touchEvent(QTouchEvent *ev)",
+"type":"void",
+"virtual":"virtual"
 },
 {
 "associated_property":"transientParent",
@@ -83017,6 +83586,20 @@
 "params":[],
 "signature":"QVulkanInstance * vulkanInstance() const",
 "type":"QVulkanInstance *"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"wheelEvent",
+"params":[
+{
+"name":"ev",
+"type":"QWheelEvent *"
+}
+],
+"signature":"void wheelEvent(QWheelEvent *ev)",
+"type":"void",
+"virtual":"virtual"
 },
 {
 "associated_property":"width",

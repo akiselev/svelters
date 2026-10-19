@@ -71,3 +71,7 @@ harness = false
 [[test]]
 name = "host_style"
 harness = false
+
+[[test]]
+name = "types_core"
+harness = false

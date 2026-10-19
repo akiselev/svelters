@@ -117,20 +117,14 @@ def load_moc(d: Path) -> dict:
 
 
 def scoped_enums(include: Path) -> set[str]:
-    """`Owner::Name` of every `enum class` in the public headers (best effort: the owner is the innermost class
-    or namespace the regex sees; good enough for qdoc's owner-qualified enum names)."""
+    """`<header>:<Name>` of every `enum class` in the public headers. qdoc names the header of each class, so the
+    classifier asks whether an enum of that class is scoped by its bare name in the class's header."""
     out: set[str] = set()
     for mod in ("QtCore", "QtGui", "QtWidgets"):
         for h in sorted(glob.glob(str(include / mod / "q*.h"))):
             text = Path(h).read_text(errors="replace")
-            owners = [(m.start(), m.group(2)) for m in re.finditer(r"^\s*(class|struct|namespace)\s+(?:Q_\w+\s+)?(\w+)\b[^;]*$", text, re.M)]
             for m in re.finditer(r"\benum\s+(?:class|struct)\s+(\w+)", text):
-                owner = None
-                for pos, name in owners:
-                    if pos < m.start():
-                        owner = name
-                out.add(f"{owner}::{m.group(1)}" if owner else m.group(1))
-                out.add(m.group(1))
+                out.add(f"{Path(h).name}:{m.group(1)}")
     return out
 
 
@@ -149,7 +143,10 @@ def ingest_class(c: ET.Element, module: str) -> dict:
     # qdoc `brief` texts are GFDL documentation: never copied (docs/notes/docs-generator.md, Qt brief policy).
     for f in c.findall("function"):
         meta = f.get("meta")
-        if meta in SKIP_META or f.get("access") != "public" or f.get("related"):
+        # Protected pure virtuals are kept (marked) only so the classifier sees that the class is abstract.
+        # (and protected reimplementations: QFile overrides QIODevice's protected pure readData).
+        protected_pure = f.get("access") == "protected" and f.get("virtual") in ("pure", "virtual")
+        if meta in SKIP_META or (f.get("access") != "public" and not protected_pure) or f.get("related"):
             continue
         fr = {"name": f.get("name"), "meta": meta, "signature": unesc(f.get("signature")),
               "type": unesc(f.get("type")) or "", "params": [param(p) for p in f.findall("parameter")]}
@@ -161,6 +158,8 @@ def ingest_class(c: ET.Element, module: str) -> dict:
                 fr[k.replace("-", "_")] = f.get(k)
         if f.get("status") != "active":
             fr["status"] = f.get("status")
+        if protected_pure:
+            fr["access"] = "protected"
         rec["functions"].append(fr)
     for p in c.findall("property"):
         pr = {"name": p.get("name"), "type": unesc(p.get("dataType")) or "", "writable": p.get("writable") != "false"}

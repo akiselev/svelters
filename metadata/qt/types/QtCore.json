@@ -83,69 +83,47 @@
    "owner": "QAbstractItemModel",
    "scoped": true
   },
-  "QAbstractItemModel::LayoutChangeHint": {
-   "members": [
-    {
-     "cpp": "QAbstractItemModel::NoLayoutChangeHint",
-     "name": "NoLayoutChangeHint",
-     "value": "0"
-    },
-    {
-     "cpp": "QAbstractItemModel::VerticalSortHint",
-     "name": "VerticalSortHint",
-     "value": "1"
-    },
-    {
-     "cpp": "QAbstractItemModel::HorizontalSortHint",
-     "name": "HorizontalSortHint",
-     "value": "2"
-    }
-   ],
-   "name": "LayoutChangeHint",
-   "owner": "QAbstractItemModel",
-   "scoped": false
-  },
   "QCalendar::System": {
    "members": [
     {
-     "cpp": "QCalendar::Gregorian",
+     "cpp": "QCalendar::System::Gregorian",
      "name": "Gregorian",
      "value": "0"
     },
     {
-     "cpp": "QCalendar::Julian",
+     "cpp": "QCalendar::System::Julian",
      "name": "Julian",
      "value": "8"
     },
     {
-     "cpp": "QCalendar::Milankovic",
+     "cpp": "QCalendar::System::Milankovic",
      "name": "Milankovic",
      "value": "9"
     },
     {
-     "cpp": "QCalendar::Jalali",
+     "cpp": "QCalendar::System::Jalali",
      "name": "Jalali",
      "value": "10"
     },
     {
-     "cpp": "QCalendar::IslamicCivil",
+     "cpp": "QCalendar::System::IslamicCivil",
      "name": "IslamicCivil",
      "value": "11"
     },
     {
-     "cpp": "QCalendar::Last",
+     "cpp": "QCalendar::System::Last",
      "name": "Last",
      "value": "11"
     },
     {
-     "cpp": "QCalendar::User",
+     "cpp": "QCalendar::System::User",
      "name": "User",
      "value": "-1"
     }
    ],
    "name": "System",
    "owner": "QCalendar",
-   "scoped": false
+   "scoped": true
   },
   "QCommandLineOption::Flag": {
    "members": [
@@ -5613,49 +5591,49 @@
   "QProcess::UnixProcessFlag": {
    "members": [
     {
-     "cpp": "QProcess::ResetSignalHandlers",
+     "cpp": "QProcess::UnixProcessFlag::ResetSignalHandlers",
      "name": "ResetSignalHandlers",
      "value": "0x0001"
     },
     {
-     "cpp": "QProcess::IgnoreSigPipe",
+     "cpp": "QProcess::UnixProcessFlag::IgnoreSigPipe",
      "name": "IgnoreSigPipe",
      "value": "0x0002"
     },
     {
-     "cpp": "QProcess::CloseFileDescriptors",
+     "cpp": "QProcess::UnixProcessFlag::CloseFileDescriptors",
      "name": "CloseFileDescriptors",
      "value": "0x0010"
     },
     {
-     "cpp": "QProcess::UseVFork",
+     "cpp": "QProcess::UnixProcessFlag::UseVFork",
      "name": "UseVFork",
      "value": "0x0020"
     },
     {
-     "cpp": "QProcess::CreateNewSession",
+     "cpp": "QProcess::UnixProcessFlag::CreateNewSession",
      "name": "CreateNewSession",
      "value": "0x0040"
     },
     {
-     "cpp": "QProcess::DisconnectControllingTerminal",
+     "cpp": "QProcess::UnixProcessFlag::DisconnectControllingTerminal",
      "name": "DisconnectControllingTerminal",
      "value": "0x0080"
     },
     {
-     "cpp": "QProcess::ResetIds",
+     "cpp": "QProcess::UnixProcessFlag::ResetIds",
      "name": "ResetIds",
      "value": "0x0100"
     },
     {
-     "cpp": "QProcess::DisableCoreDumps",
+     "cpp": "QProcess::UnixProcessFlag::DisableCoreDumps",
      "name": "DisableCoreDumps",
      "value": "0x0200"
     }
    ],
    "name": "UnixProcessFlag",
    "owner": "QProcess",
-   "scoped": false
+   "scoped": true
   },
   "QProcessEnvironment::Initialization": {
    "members": [
@@ -5803,26 +5781,6 @@
      "cpp": "QSettings::IniFormat",
      "name": "IniFormat",
      "value": "1"
-    },
-    {
-     "cpp": "QSettings::Registry32Format",
-     "name": "Registry32Format",
-     "value": "2"
-    },
-    {
-     "cpp": "QSettings::Registry64Format",
-     "name": "Registry64Format",
-     "value": "3"
-    },
-    {
-     "cpp": "QSettings::WebLocalStorageFormat",
-     "name": "WebLocalStorageFormat",
-     "value": "4"
-    },
-    {
-     "cpp": "QSettings::WebIndexedDBFormat",
-     "name": "WebIndexedDBFormat",
-     "value": "5"
     },
     {
      "cpp": "QSettings::InvalidFormat",
@@ -6318,34 +6276,34 @@
   "QXmlStreamReader::Error": {
    "members": [
     {
-     "cpp": "QXmlStreamReader::NoError",
+     "cpp": "QXmlStreamReader::Error::NoError",
      "name": "NoError",
      "value": "0"
     },
     {
-     "cpp": "QXmlStreamReader::UnexpectedElementError",
+     "cpp": "QXmlStreamReader::Error::UnexpectedElementError",
      "name": "UnexpectedElementError",
      "value": "1"
     },
     {
-     "cpp": "QXmlStreamReader::CustomError",
+     "cpp": "QXmlStreamReader::Error::CustomError",
      "name": "CustomError",
      "value": "2"
     },
     {
-     "cpp": "QXmlStreamReader::NotWellFormedError",
+     "cpp": "QXmlStreamReader::Error::NotWellFormedError",
      "name": "NotWellFormedError",
      "value": "3"
     },
     {
-     "cpp": "QXmlStreamReader::PrematureEndOfDocumentError",
+     "cpp": "QXmlStreamReader::Error::PrematureEndOfDocumentError",
      "name": "PrematureEndOfDocumentError",
      "value": "4"
     }
    ],
    "name": "Error",
    "owner": "QXmlStreamReader",
-   "scoped": false
+   "scoped": true
   },
   "QXmlStreamReader::ReadElementTextBehaviour": {
    "members": [
@@ -9942,7 +9900,9 @@
     "QAbstractAnimation::Direction",
     "QAbstractAnimation::State"
    ],
-   "excluded": {},
+   "excluded": {
+    "protected or other platform": 4
+   },
    "header": "qabstractanimation.h",
    "hidden": [
     "currentLoop",
@@ -9973,7 +9933,7 @@
      {
       "const": true,
       "cpp": "group",
-      "decl": 14,
+      "decl": 15,
       "key": "QAbstractAnimation.group()",
       "params": [],
       "ret": {
@@ -9987,7 +9947,7 @@
     "pause": [
      {
       "cpp": "pause",
-      "decl": 16,
+      "decl": 17,
       "key": "QAbstractAnimation.pause()",
       "params": [],
       "ret": {
@@ -9999,7 +9959,7 @@
     "resume": [
      {
       "cpp": "resume",
-      "decl": 17,
+      "decl": 18,
       "key": "QAbstractAnimation.resume()",
       "params": [],
       "ret": {
@@ -10011,7 +9971,7 @@
     "setCurrentTime": [
      {
       "cpp": "setCurrentTime",
-      "decl": 18,
+      "decl": 19,
       "key": "QAbstractAnimation.setCurrentTime(int)",
       "params": [
        {
@@ -10031,7 +9991,7 @@
     "setDirection": [
      {
       "cpp": "setDirection",
-      "decl": 19,
+      "decl": 20,
       "key": "QAbstractAnimation.setDirection(QAbstractAnimation::Direction)",
       "params": [
        {
@@ -10051,7 +10011,7 @@
     "setLoopCount": [
      {
       "cpp": "setLoopCount",
-      "decl": 20,
+      "decl": 21,
       "key": "QAbstractAnimation.setLoopCount(int)",
       "params": [
        {
@@ -10070,7 +10030,7 @@
     "setPaused": [
      {
       "cpp": "setPaused",
-      "decl": 21,
+      "decl": 22,
       "key": "QAbstractAnimation.setPaused(bool)",
       "params": [
        {
@@ -10090,7 +10050,7 @@
     "start": [
      {
       "cpp": "start",
-      "decl": 22,
+      "decl": 23,
       "key": "QAbstractAnimation.start(QAbstractAnimation::DeletionPolicy)",
       "params": [
        {
@@ -10112,7 +10072,7 @@
     "stop": [
      {
       "cpp": "stop",
-      "decl": 25,
+      "decl": 26,
       "key": "QAbstractAnimation.stop()",
       "params": [],
       "ret": {
@@ -10125,7 +10085,7 @@
      {
       "const": true,
       "cpp": "totalDuration",
-      "decl": 26,
+      "decl": 27,
       "key": "QAbstractAnimation.totalDuration()",
       "params": [],
       "ret": {
@@ -10266,6 +10226,9 @@
    ],
    "blocked": {
     "QAbstractItemModel.itemData(const QModelIndex &)": "container",
+    "QAbstractItemModel.layoutAboutToBeChanged(const QList<QPersistentModelIndex> &, QAbstractItemModel::LayoutChangeHint)": "value without default constructor:QPersistentModelIndex",
+    "QAbstractItemModel.layoutChanged(const QList<QPersistentModelIndex> &, QAbstractItemModel::LayoutChangeHint)": "value without default constructor:QPersistentModelIndex",
+    "QAbstractItemModel.multiData(const QModelIndex &, QModelRoleDataSpan)": "unbound:QModelRoleDataSpan",
     "QAbstractItemModel.roleNames()": "container",
     "QAbstractItemModel.setItemData(const QModelIndex &, const QMap<int, QVariant> &)": "container"
    },
@@ -10276,7 +10239,6 @@
    "curated": false,
    "enums": [
     "QAbstractItemModel::CheckIndexOption",
-    "QAbstractItemModel::LayoutChangeHint",
     "Qt::DropAction",
     "Qt::ItemFlag",
     "Qt::MatchFlag",
@@ -10284,7 +10246,8 @@
     "Qt::SortOrder"
    ],
    "excluded": {
-    "core": 1
+    "core": 1,
+    "protected or other platform": 1
    },
    "header": "qabstractitemmodel.h",
    "hidden": [],
@@ -11156,36 +11119,6 @@
       }
      }
     ],
-    "multiData": [
-     {
-      "const": true,
-      "cpp": "multiData",
-      "decl": 39,
-      "key": "QAbstractItemModel.multiData(const QModelIndex &, QModelRoleDataSpan)",
-      "params": [
-       {
-        "name": "index",
-        "type": {
-         "cpp": "QModelIndex",
-         "k": "value",
-         "t": "QModelIndex"
-        }
-       },
-       {
-        "name": "roleDataSpan",
-        "type": {
-         "cpp": "QModelRoleDataSpan",
-         "k": "value",
-         "t": "QModelRoleDataSpan"
-        }
-       }
-      ],
-      "ret": {
-       "k": "void"
-      },
-      "since": "6.0"
-     }
-    ],
     "removeColumn": [
      {
       "cpp": "removeColumn",
@@ -11319,7 +11252,7 @@
     "revert": [
      {
       "cpp": "revert",
-      "decl": 45,
+      "decl": 46,
       "key": "QAbstractItemModel.revert()",
       "params": [],
       "ret": {
@@ -11332,7 +11265,7 @@
      {
       "const": true,
       "cpp": "rowCount",
-      "decl": 47,
+      "decl": 48,
       "key": "QAbstractItemModel.rowCount(const QModelIndex &)",
       "params": [
        {
@@ -11355,7 +11288,7 @@
     "setData": [
      {
       "cpp": "setData",
-      "decl": 54,
+      "decl": 55,
       "key": "QAbstractItemModel.setData(const QModelIndex &, const QVariant &, int)",
       "params": [
        {
@@ -11391,7 +11324,7 @@
     "setHeaderData": [
      {
       "cpp": "setHeaderData",
-      "decl": 55,
+      "decl": 56,
       "key": "QAbstractItemModel.setHeaderData(int, Qt::Orientation, const QVariant &, int)",
       "params": [
        {
@@ -11435,7 +11368,7 @@
      {
       "const": true,
       "cpp": "sibling",
-      "decl": 57,
+      "decl": 58,
       "key": "QAbstractItemModel.sibling(int, int, const QModelIndex &)",
       "params": [
        {
@@ -11471,7 +11404,7 @@
     "sort": [
      {
       "cpp": "sort",
-      "decl": 58,
+      "decl": 59,
       "key": "QAbstractItemModel.sort(int, Qt::SortOrder)",
       "params": [
        {
@@ -11500,7 +11433,7 @@
      {
       "const": true,
       "cpp": "span",
-      "decl": 59,
+      "decl": 60,
       "key": "QAbstractItemModel.span(const QModelIndex &)",
       "params": [
        {
@@ -11522,7 +11455,7 @@
     "submit": [
      {
       "cpp": "submit",
-      "decl": 60,
+      "decl": 61,
       "key": "QAbstractItemModel.submit()",
       "params": [],
       "ret": {
@@ -11536,7 +11469,7 @@
      {
       "const": true,
       "cpp": "supportedDragActions",
-      "decl": 61,
+      "decl": 62,
       "key": "QAbstractItemModel.supportedDragActions()",
       "params": [],
       "ret": {
@@ -11550,7 +11483,7 @@
      {
       "const": true,
       "cpp": "supportedDropActions",
-      "decl": 62,
+      "decl": 63,
       "key": "QAbstractItemModel.supportedDropActions()",
       "params": [],
       "ret": {
@@ -11569,9 +11502,7 @@
    "refs": [
     "QMimeData",
     "QModelIndex",
-    "QModelRoleDataSpan",
-    "QObject",
-    "QPersistentModelIndex"
+    "QObject"
    ],
    "scope": "ancestor",
    "signals": [
@@ -11835,58 +11766,6 @@
      "sig": "headerDataChanged(Qt::Orientation,int,int)"
     },
     {
-     "args": [
-      {
-       "name": "parents",
-       "type": {
-        "cpp": "QList<QPersistentModelIndex>",
-        "k": "list",
-        "of": {
-         "cpp": "QPersistentModelIndex",
-         "k": "value",
-         "t": "QPersistentModelIndex"
-        }
-       }
-      },
-      {
-       "name": "hint",
-       "type": {
-        "cpp": "QAbstractItemModel::LayoutChangeHint",
-        "k": "enum",
-        "t": "QAbstractItemModel::LayoutChangeHint"
-       }
-      }
-     ],
-     "name": "layoutAboutToBeChanged",
-     "sig": "layoutAboutToBeChanged(constQList<QPersistentModelIndex>&,QAbstractItemModel::LayoutChangeHint)"
-    },
-    {
-     "args": [
-      {
-       "name": "parents",
-       "type": {
-        "cpp": "QList<QPersistentModelIndex>",
-        "k": "list",
-        "of": {
-         "cpp": "QPersistentModelIndex",
-         "k": "value",
-         "t": "QPersistentModelIndex"
-        }
-       }
-      },
-      {
-       "name": "hint",
-       "type": {
-        "cpp": "QAbstractItemModel::LayoutChangeHint",
-        "k": "enum",
-        "t": "QAbstractItemModel::LayoutChangeHint"
-       }
-      }
-     ],
-     "name": "layoutChanged",
-     "sig": "layoutChanged(constQList<QPersistentModelIndex>&,QAbstractItemModel::LayoutChangeHint)"
-    },
-    {
      "args": [],
      "name": "modelAboutToBeReset",
      "sig": "modelAboutToBeReset()"
@@ -12099,7 +11978,7 @@
    "statics": {}
   },
   "QAbstractListModel": {
-   "abstract": false,
+   "abstract": true,
    "ambiguous": [],
    "bases": [
     "QAbstractItemModel",
@@ -12108,29 +11987,8 @@
    "blocked": {},
    "category": "model",
    "const_twins": 0,
-   "constructible": true,
-   "constructors": [
-    {
-     "cpp": "QAbstractListModel",
-     "decl": 0,
-     "key": "QAbstractListModel.QAbstractListModel(QObject *)",
-     "params": [
-      {
-       "default": true,
-       "name": "parent",
-       "type": {
-        "cpp": "QObject *",
-        "k": "object",
-        "t": "QObject",
-        "widget": false
-       }
-      }
-     ],
-     "ret": {
-      "k": "self"
-     }
-    }
-   ],
+   "constructible": false,
+   "constructors": [],
    "curated": false,
    "enums": [
     "Qt::DropAction",
@@ -13063,7 +12921,7 @@
    "statics": {}
   },
   "QAnimationGroup": {
-   "abstract": false,
+   "abstract": true,
    "ambiguous": [],
    "bases": [
     "QAbstractAnimation",
@@ -13072,32 +12930,13 @@
    "blocked": {},
    "category": "object",
    "const_twins": 0,
-   "constructible": true,
-   "constructors": [
-    {
-     "cpp": "QAnimationGroup",
-     "decl": 0,
-     "key": "QAnimationGroup.QAnimationGroup(QObject *)",
-     "params": [
-      {
-       "default": true,
-       "name": "parent",
-       "type": {
-        "cpp": "QObject *",
-        "k": "object",
-        "t": "QObject",
-        "widget": false
-       }
-      }
-     ],
-     "ret": {
-      "k": "self"
-     }
-    }
-   ],
+   "constructible": false,
+   "constructors": [],
    "curated": false,
    "enums": [],
-   "excluded": {},
+   "excluded": {
+    "protected or other platform": 1
+   },
    "header": "qanimationgroup.h",
    "hidden": [],
    "js_module": "svelters:qt/core",
@@ -13184,7 +13023,7 @@
      {
       "const": true,
       "cpp": "indexOfAnimation",
-      "decl": 5,
+      "decl": 6,
       "key": "QAnimationGroup.indexOfAnimation(QAbstractAnimation *)",
       "params": [
        {
@@ -13206,7 +13045,7 @@
     "insertAnimation": [
      {
       "cpp": "insertAnimation",
-      "decl": 6,
+      "decl": 7,
       "key": "QAnimationGroup.insertAnimation(int, QAbstractAnimation *)",
       "ownership": [
        {
@@ -13242,7 +13081,7 @@
     "removeAnimation": [
      {
       "cpp": "removeAnimation",
-      "decl": 7,
+      "decl": 8,
       "key": "QAnimationGroup.removeAnimation(QAbstractAnimation *)",
       "ownership": [
        {
@@ -13271,7 +13110,7 @@
     "takeAnimation": [
      {
       "cpp": "takeAnimation",
-      "decl": 8,
+      "decl": 9,
       "key": "QAnimationGroup.takeAnimation(int)",
       "ownership": [
        {
@@ -13353,6 +13192,7 @@
     "QIODeviceBase::OpenModeFlag"
    ],
    "excluded": {
+    "protected or other platform": 2,
     "removed by PySide": 1
    },
    "header": "qbuffer.h",
@@ -13460,7 +13300,7 @@
     "seek": [
      {
       "cpp": "seek",
-      "decl": 10,
+      "decl": 11,
       "key": "QBuffer.seek(qint64)",
       "params": [
        {
@@ -13480,7 +13320,7 @@
     "setBuffer": [
      {
       "cpp": "setBuffer",
-      "decl": 11,
+      "decl": 12,
       "key": "QBuffer.setBuffer(QByteArray *)",
       "params": [
        {
@@ -13500,7 +13340,7 @@
     "setData": [
      {
       "cpp": "setData",
-      "decl": 12,
+      "decl": 13,
       "key": "QBuffer.setData(const QByteArray &)",
       "params": [
        {
@@ -13520,7 +13360,7 @@
      {
       "const": true,
       "cpp": "size",
-      "decl": 14,
+      "decl": 15,
       "key": "QBuffer.size()",
       "params": [],
       "ret": {
@@ -14783,9 +14623,9 @@
    "ambiguous": [],
    "bases": [],
    "blocked": {
-    "QCommandLineParser.addHelpOption()": "unique by value:QCommandLineOption",
+    "QCommandLineParser.addHelpOption()": "borrowed unique pointer:QCommandLineOption",
     "QCommandLineParser.addOptions(const QList<QCommandLineOption> &)": "unique by value:QCommandLineOption",
-    "QCommandLineParser.addVersionOption()": "unique by value:QCommandLineOption",
+    "QCommandLineParser.addVersionOption()": "borrowed unique pointer:QCommandLineOption",
     "QCommandLineParser.process(const QCoreApplication &)": "QObject by value:QCoreApplication"
    },
    "category": "unique",
@@ -17605,7 +17445,9 @@
     "QFileDevice::FileTime",
     "QFileDevice::Permission"
    ],
-   "excluded": {},
+   "excluded": {
+    "protected or other platform": 3
+   },
    "header": "qfiledevice.h",
    "hidden": [],
    "js_module": "svelters:qt/core",
@@ -17753,7 +17595,7 @@
     "resize": [
      {
       "cpp": "resize",
-      "decl": 11,
+      "decl": 13,
       "key": "QFileDevice.resize(qint64)",
       "params": [
        {
@@ -17773,7 +17615,7 @@
     "seek": [
      {
       "cpp": "seek",
-      "decl": 12,
+      "decl": 14,
       "key": "QFileDevice.seek(qint64)",
       "params": [
        {
@@ -17793,7 +17635,7 @@
     "setFileTime": [
      {
       "cpp": "setFileTime",
-      "decl": 13,
+      "decl": 15,
       "key": "QFileDevice.setFileTime(const QDateTime &, QFileDevice::FileTime)",
       "params": [
        {
@@ -17821,7 +17663,7 @@
     "setPermissions": [
      {
       "cpp": "setPermissions",
-      "decl": 14,
+      "decl": 16,
       "key": "QFileDevice.setPermissions(QFileDevice::Permissions)",
       "params": [
        {
@@ -17843,7 +17685,7 @@
      {
       "const": true,
       "cpp": "size",
-      "decl": 15,
+      "decl": 17,
       "key": "QFileDevice.size()",
       "params": [],
       "ret": {
@@ -17855,7 +17697,7 @@
     "unsetError": [
      {
       "cpp": "unsetError",
-      "decl": 17,
+      "decl": 19,
       "key": "QFileDevice.unsetError()",
       "params": [],
       "ret": {
@@ -19002,7 +18844,7 @@
    "statics": {}
   },
   "QIODevice": {
-   "abstract": false,
+   "abstract": true,
    "ambiguous": [],
    "bases": [
     "QObject"
@@ -19015,42 +18857,14 @@
    },
    "category": "object",
    "const_twins": 0,
-   "constructible": true,
-   "constructors": [
-    {
-     "cpp": "QIODevice",
-     "decl": 0,
-     "key": "QIODevice.QIODevice()",
-     "params": [],
-     "ret": {
-      "k": "self"
-     }
-    },
-    {
-     "cpp": "QIODevice",
-     "decl": 1,
-     "key": "QIODevice.QIODevice(QObject *)",
-     "params": [
-      {
-       "name": "parent",
-       "type": {
-        "cpp": "QObject *",
-        "k": "object",
-        "t": "QObject",
-        "widget": false
-       }
-      }
-     ],
-     "ret": {
-      "k": "self"
-     }
-    }
-   ],
+   "constructible": false,
+   "constructors": [],
    "curated": false,
    "enums": [
     "QIODeviceBase::OpenModeFlag"
    ],
    "excluded": {
+    "protected or other platform": 4,
     "removed by PySide": 5
    },
    "header": "qiodevice.h",
@@ -19386,7 +19200,7 @@
     "readLine": [
      {
       "cpp": "readLine",
-      "decl": 33,
+      "decl": 34,
       "key": "QIODevice.readLine(qint64)",
       "params": [
        {
@@ -19407,7 +19221,7 @@
     "readLineInto": [
      {
       "cpp": "readLineInto",
-      "decl": 38,
+      "decl": 40,
       "key": "QIODevice.readLineInto(QByteArray *, qint64)",
       "params": [
        {
@@ -19437,7 +19251,7 @@
     "reset": [
      {
       "cpp": "reset",
-      "decl": 40,
+      "decl": 42,
       "key": "QIODevice.reset()",
       "params": [],
       "ret": {
@@ -19449,7 +19263,7 @@
     "rollbackTransaction": [
      {
       "cpp": "rollbackTransaction",
-      "decl": 41,
+      "decl": 43,
       "key": "QIODevice.rollbackTransaction()",
       "params": [],
       "ret": {
@@ -19460,7 +19274,7 @@
     "seek": [
      {
       "cpp": "seek",
-      "decl": 42,
+      "decl": 44,
       "key": "QIODevice.seek(qint64)",
       "params": [
        {
@@ -19480,7 +19294,7 @@
     "setCurrentReadChannel": [
      {
       "cpp": "setCurrentReadChannel",
-      "decl": 43,
+      "decl": 45,
       "key": "QIODevice.setCurrentReadChannel(int)",
       "params": [
        {
@@ -19499,7 +19313,7 @@
     "setCurrentWriteChannel": [
      {
       "cpp": "setCurrentWriteChannel",
-      "decl": 44,
+      "decl": 46,
       "key": "QIODevice.setCurrentWriteChannel(int)",
       "params": [
        {
@@ -19518,7 +19332,7 @@
     "setTextModeEnabled": [
      {
       "cpp": "setTextModeEnabled",
-      "decl": 45,
+      "decl": 47,
       "key": "QIODevice.setTextModeEnabled(bool)",
       "params": [
        {
@@ -19538,7 +19352,7 @@
      {
       "const": true,
       "cpp": "size",
-      "decl": 46,
+      "decl": 48,
       "key": "QIODevice.size()",
       "params": [],
       "ret": {
@@ -19550,7 +19364,7 @@
     "skip": [
      {
       "cpp": "skip",
-      "decl": 47,
+      "decl": 49,
       "key": "QIODevice.skip(qint64)",
       "params": [
        {
@@ -19570,7 +19384,7 @@
     "startTransaction": [
      {
       "cpp": "startTransaction",
-      "decl": 48,
+      "decl": 51,
       "key": "QIODevice.startTransaction()",
       "params": [],
       "ret": {
@@ -19581,7 +19395,7 @@
     "ungetChar": [
      {
       "cpp": "ungetChar",
-      "decl": 49,
+      "decl": 52,
       "key": "QIODevice.ungetChar(char)",
       "params": [
        {
@@ -19600,7 +19414,7 @@
     "waitForBytesWritten": [
      {
       "cpp": "waitForBytesWritten",
-      "decl": 50,
+      "decl": 53,
       "key": "QIODevice.waitForBytesWritten(int)",
       "params": [
        {
@@ -19620,7 +19434,7 @@
     "waitForReadyRead": [
      {
       "cpp": "waitForReadyRead",
-      "decl": 51,
+      "decl": 54,
       "key": "QIODevice.waitForReadyRead(int)",
       "params": [
        {
@@ -19640,7 +19454,7 @@
     "write": [
      {
       "cpp": "write",
-      "decl": 52,
+      "decl": 55,
       "key": "QIODevice.write(const QByteArray &)",
       "params": [
        {
@@ -19661,7 +19475,7 @@
      {
       "const": true,
       "cpp": "writeChannelCount",
-      "decl": 55,
+      "decl": 58,
       "key": "QIODevice.writeChannelCount()",
       "params": [],
       "ret": {
@@ -24836,7 +24650,9 @@
    ],
    "curated": false,
    "enums": [],
-   "excluded": {},
+   "excluded": {
+    "protected or other platform": 1
+   },
    "header": "qmimedata.h",
    "hidden": [],
    "js_module": "svelters:qt/core",
@@ -25039,7 +24855,7 @@
     "setColorData": [
      {
       "cpp": "setColorData",
-      "decl": 14,
+      "decl": 15,
       "key": "QMimeData.setColorData(const QVariant &)",
       "params": [
        {
@@ -25058,7 +24874,7 @@
     "setData": [
      {
       "cpp": "setData",
-      "decl": 15,
+      "decl": 16,
       "key": "QMimeData.setData(const QString &, const QByteArray &)",
       "params": [
        {
@@ -25084,7 +24900,7 @@
     "setHtml": [
      {
       "cpp": "setHtml",
-      "decl": 16,
+      "decl": 17,
       "key": "QMimeData.setHtml(const QString &)",
       "params": [
        {
@@ -25103,7 +24919,7 @@
     "setImageData": [
      {
       "cpp": "setImageData",
-      "decl": 17,
+      "decl": 18,
       "key": "QMimeData.setImageData(const QVariant &)",
       "params": [
        {
@@ -25122,7 +24938,7 @@
     "setText": [
      {
       "cpp": "setText",
-      "decl": 18,
+      "decl": 19,
       "key": "QMimeData.setText(const QString &)",
       "params": [
        {
@@ -25141,7 +24957,7 @@
     "setUrls": [
      {
       "cpp": "setUrls",
-      "decl": 19,
+      "decl": 20,
       "key": "QMimeData.setUrls(const QList<QUrl> &)",
       "params": [
        {
@@ -25166,7 +24982,7 @@
      {
       "const": true,
       "cpp": "text",
-      "decl": 20,
+      "decl": 21,
       "key": "QMimeData.text()",
       "params": [],
       "ret": {
@@ -25179,7 +24995,7 @@
      {
       "const": true,
       "cpp": "urls",
-      "decl": 21,
+      "decl": 22,
       "key": "QMimeData.urls()",
       "params": [],
       "ret": {
@@ -25765,7 +25581,8 @@
    "blocked": {
     "QModelIndex.constInternalPointer()": "gpointer",
     "QModelIndex.internalId()": "type:unknown:quintptr",
-    "QModelIndex.internalPointer()": "gpointer"
+    "QModelIndex.internalPointer()": "gpointer",
+    "QModelIndex.multiData(QModelRoleDataSpan)": "unbound:QModelRoleDataSpan"
    },
    "category": "value",
    "const_twins": 0,
@@ -25879,28 +25696,6 @@
       }
      }
     ],
-    "multiData": [
-     {
-      "const": true,
-      "cpp": "multiData",
-      "decl": 9,
-      "key": "QModelIndex.multiData(QModelRoleDataSpan)",
-      "params": [
-       {
-        "name": "roleDataSpan",
-        "type": {
-         "cpp": "QModelRoleDataSpan",
-         "k": "value",
-         "t": "QModelRoleDataSpan"
-        }
-       }
-      ],
-      "ret": {
-       "k": "void"
-      },
-      "since": "6.0"
-     }
-    ],
     "row": [
      {
       "const": true,
@@ -25994,211 +25789,11 @@
    "properties": [],
    "qobject": false,
    "refs": [
-    "QAbstractItemModel",
-    "QModelRoleDataSpan"
+    "QAbstractItemModel"
    ],
    "scope": "closure",
    "signals": [],
    "since": null,
-   "statics": {}
-  },
-  "QModelRoleData": {
-   "abstract": false,
-   "ambiguous": [],
-   "bases": [],
-   "blocked": {},
-   "category": "value",
-   "const_twins": 0,
-   "constructible": false,
-   "constructors": [
-    {
-     "cpp": "QModelRoleData",
-     "decl": 0,
-     "key": "QModelRoleData.QModelRoleData(int)",
-     "params": [
-      {
-       "name": "role",
-       "type": {
-        "cpp": "int",
-        "k": "int"
-       }
-      }
-     ],
-     "ret": {
-      "k": "self"
-     }
-    }
-   ],
-   "curated": false,
-   "enums": [],
-   "excluded": {
-    "template/platform": 1
-   },
-   "header": "qabstractitemmodel.h",
-   "hidden": [
-    "clearData",
-    "data"
-   ],
-   "js_module": "svelters:qt/core",
-   "lifetime": "value",
-   "merged": 0,
-   "methods": {
-    "data": [
-     {
-      "const": true,
-      "cpp": "data",
-      "decl": 3,
-      "key": "QModelRoleData.data()",
-      "params": [],
-      "ret": {
-       "cpp": "QVariant",
-       "k": "variant"
-      }
-     }
-    ],
-    "role": [
-     {
-      "const": true,
-      "cpp": "role",
-      "decl": 4,
-      "key": "QModelRoleData.role()",
-      "params": [],
-      "ret": {
-       "cpp": "int",
-       "k": "int"
-      }
-     }
-    ]
-   },
-   "module": "QtCore",
-   "name": "QModelRoleData",
-   "parent": null,
-   "properties": [],
-   "qobject": false,
-   "refs": [],
-   "scope": "closure",
-   "signals": [],
-   "since": "6.0",
-   "statics": {}
-  },
-  "QModelRoleDataSpan": {
-   "abstract": false,
-   "ambiguous": [],
-   "bases": [],
-   "blocked": {
-    "QModelRoleDataSpan.QModelRoleDataSpan(QModelRoleData &)": "out param in constructor",
-    "QModelRoleDataSpan.QModelRoleDataSpan(QModelRoleData *, qsizetype)": "out param in constructor",
-    "QModelRoleDataSpan.dataForRole(int)": "pointer to variant"
-   },
-   "category": "value",
-   "const_twins": 0,
-   "constructible": false,
-   "constructors": [
-    {
-     "cpp": "QModelRoleDataSpan",
-     "decl": 0,
-     "key": "QModelRoleDataSpan.QModelRoleDataSpan()",
-     "params": [],
-     "ret": {
-      "k": "self"
-     }
-    }
-   ],
-   "curated": false,
-   "enums": [],
-   "excluded": {
-    "operator": 1,
-    "template/platform": 1
-   },
-   "header": "qabstractitemmodel.h",
-   "hidden": [],
-   "js_module": "svelters:qt/core",
-   "lifetime": "value",
-   "merged": 0,
-   "methods": {
-    "begin": [
-     {
-      "const": true,
-      "cpp": "begin",
-      "decl": 4,
-      "key": "QModelRoleDataSpan.begin()",
-      "params": [],
-      "ret": {
-       "cpp": "QModelRoleData",
-       "k": "value",
-       "out": true,
-       "t": "QModelRoleData"
-      }
-     }
-    ],
-    "data": [
-     {
-      "const": true,
-      "cpp": "data",
-      "decl": 5,
-      "key": "QModelRoleDataSpan.data()",
-      "params": [],
-      "ret": {
-       "cpp": "QModelRoleData",
-       "k": "value",
-       "out": true,
-       "t": "QModelRoleData"
-      }
-     }
-    ],
-    "end": [
-     {
-      "const": true,
-      "cpp": "end",
-      "decl": 7,
-      "key": "QModelRoleDataSpan.end()",
-      "params": [],
-      "ret": {
-       "cpp": "QModelRoleData",
-       "k": "value",
-       "out": true,
-       "t": "QModelRoleData"
-      }
-     }
-    ],
-    "length": [
-     {
-      "const": true,
-      "cpp": "length",
-      "decl": 8,
-      "key": "QModelRoleDataSpan.length()",
-      "params": [],
-      "ret": {
-       "cpp": "qsizetype",
-       "k": "int"
-      }
-     }
-    ],
-    "size": [
-     {
-      "const": true,
-      "cpp": "size",
-      "decl": 10,
-      "key": "QModelRoleDataSpan.size()",
-      "params": [],
-      "ret": {
-       "cpp": "qsizetype",
-       "k": "int"
-      }
-     }
-    ]
-   },
-   "module": "QtCore",
-   "name": "QModelRoleDataSpan",
-   "parent": null,
-   "properties": [],
-   "qobject": false,
-   "refs": [
-    "QModelRoleData"
-   ],
-   "scope": "closure",
-   "signals": [],
-   "since": "6.0",
    "statics": {}
   },
   "QObject": {
@@ -26234,7 +25829,8 @@
    "curated": false,
    "enums": [],
    "excluded": {
-    "core": 49
+    "core": 49,
+    "protected or other platform": 5
    },
    "header": "qobject.h",
    "hidden": [
@@ -26247,7 +25843,7 @@
     "setObjectName": [
      {
       "cpp": "setObjectName",
-      "decl": 43,
+      "decl": 47,
       "key": "QObject.setObjectName(QAnyStringView)",
       "params": [
        {
@@ -26322,7 +25918,9 @@
    ],
    "curated": false,
    "enums": [],
-   "excluded": {},
+   "excluded": {
+    "protected or other platform": 4
+   },
    "header": "qparallelanimationgroup.h",
    "hidden": [],
    "js_module": "svelters:qt/core",
@@ -26420,7 +26018,9 @@
    ],
    "curated": false,
    "enums": [],
-   "excluded": {},
+   "excluded": {
+    "protected or other platform": 2
+   },
    "header": "qpauseanimation.h",
    "hidden": [
     "duration"
@@ -26432,7 +26032,7 @@
     "setDuration": [
      {
       "cpp": "setDuration",
-      "decl": 4,
+      "decl": 5,
       "key": "QPauseAnimation.setDuration(int)",
       "params": [
        {
@@ -26475,7 +26075,9 @@
    "abstract": false,
    "ambiguous": [],
    "bases": [],
-   "blocked": {},
+   "blocked": {
+    "QPersistentModelIndex.multiData(QModelRoleDataSpan)": "unbound:QModelRoleDataSpan"
+   },
    "category": "value",
    "const_twins": 0,
    "constructible": false,
@@ -26590,28 +26192,6 @@
       }
      }
     ],
-    "multiData": [
-     {
-      "const": true,
-      "cpp": "multiData",
-      "decl": 6,
-      "key": "QPersistentModelIndex.multiData(QModelRoleDataSpan)",
-      "params": [
-       {
-        "name": "roleDataSpan",
-        "type": {
-         "cpp": "QModelRoleDataSpan",
-         "k": "value",
-         "t": "QModelRoleDataSpan"
-        }
-       }
-      ],
-      "ret": {
-       "k": "void"
-      },
-      "since": "6.0"
-     }
-    ],
     "row": [
      {
       "const": true,
@@ -26662,8 +26242,7 @@
    "qobject": false,
    "refs": [
     "QAbstractItemModel",
-    "QModelIndex",
-    "QModelRoleDataSpan"
+    "QModelIndex"
    ],
    "scope": "closure",
    "signals": [],
@@ -26678,8 +26257,6 @@
     "QObject"
    ],
    "blocked": {
-    "QProcess.createProcessArgumentsModifier()": "type:unknown:QProcess::CreateProcessArgumentModifier",
-    "QProcess.setCreateProcessArgumentsModifier(QProcess::CreateProcessArgumentModifier)": "type:unknown:QProcess::CreateProcessArgumentModifier",
     "QProcess.setUnixProcessParameters(const QProcess::UnixProcessParameters &)": "type:unknown:QProcess::UnixProcessParameters",
     "QProcess.unixProcessParameters()": "type:unknown:QProcess::UnixProcessParameters"
    },
@@ -26721,6 +26298,7 @@
    ],
    "excluded": {
     "deprecated": 2,
+    "protected or other platform": 5,
     "template/platform": 2
    },
    "header": "qprocess.h",
@@ -26910,19 +26488,6 @@
       "slot": true
      }
     ],
-    "nativeArguments": [
-     {
-      "const": true,
-      "cpp": "nativeArguments",
-      "decl": 19,
-      "key": "QProcess.nativeArguments()",
-      "params": [],
-      "ret": {
-       "cpp": "QString",
-       "k": "string"
-      }
-     }
-    ],
     "open": [
      {
       "cpp": "open",
@@ -27040,7 +26605,7 @@
     "setArguments": [
      {
       "cpp": "setArguments",
-      "decl": 31,
+      "decl": 32,
       "key": "QProcess.setArguments(const QStringList &)",
       "params": [
        {
@@ -27063,7 +26628,7 @@
     "setInputChannelMode": [
      {
       "cpp": "setInputChannelMode",
-      "decl": 35,
+      "decl": 36,
       "key": "QProcess.setInputChannelMode(QProcess::InputChannelMode)",
       "params": [
        {
@@ -27080,29 +26645,10 @@
       }
      }
     ],
-    "setNativeArguments": [
-     {
-      "cpp": "setNativeArguments",
-      "decl": 36,
-      "key": "QProcess.setNativeArguments(const QString &)",
-      "params": [
-       {
-        "name": "arguments",
-        "type": {
-         "cpp": "QString",
-         "k": "string"
-        }
-       }
-      ],
-      "ret": {
-       "k": "void"
-      }
-     }
-    ],
     "setProcessChannelMode": [
      {
       "cpp": "setProcessChannelMode",
-      "decl": 37,
+      "decl": 38,
       "key": "QProcess.setProcessChannelMode(QProcess::ProcessChannelMode)",
       "params": [
        {
@@ -27122,7 +26668,7 @@
     "setProcessEnvironment": [
      {
       "cpp": "setProcessEnvironment",
-      "decl": 38,
+      "decl": 39,
       "key": "QProcess.setProcessEnvironment(const QProcessEnvironment &)",
       "params": [
        {
@@ -27142,7 +26688,7 @@
     "setProgram": [
      {
       "cpp": "setProgram",
-      "decl": 39,
+      "decl": 40,
       "key": "QProcess.setProgram(const QString &)",
       "params": [
        {
@@ -27161,7 +26707,7 @@
     "setReadChannel": [
      {
       "cpp": "setReadChannel",
-      "decl": 40,
+      "decl": 41,
       "key": "QProcess.setReadChannel(QProcess::ProcessChannel)",
       "params": [
        {
@@ -27181,7 +26727,7 @@
     "setStandardErrorFile": [
      {
       "cpp": "setStandardErrorFile",
-      "decl": 41,
+      "decl": 42,
       "key": "QProcess.setStandardErrorFile(const QString &, QIODeviceBase::OpenMode)",
       "params": [
        {
@@ -27209,7 +26755,7 @@
     "setStandardInputFile": [
      {
       "cpp": "setStandardInputFile",
-      "decl": 42,
+      "decl": 43,
       "key": "QProcess.setStandardInputFile(const QString &)",
       "params": [
        {
@@ -27228,7 +26774,7 @@
     "setStandardOutputFile": [
      {
       "cpp": "setStandardOutputFile",
-      "decl": 43,
+      "decl": 44,
       "key": "QProcess.setStandardOutputFile(const QString &, QIODeviceBase::OpenMode)",
       "params": [
        {
@@ -27256,7 +26802,7 @@
     "setStandardOutputProcess": [
      {
       "cpp": "setStandardOutputProcess",
-      "decl": 44,
+      "decl": 45,
       "key": "QProcess.setStandardOutputProcess(QProcess *)",
       "params": [
        {
@@ -27277,7 +26823,7 @@
     "setUnixProcessParameters": [
      {
       "cpp": "setUnixProcessParameters",
-      "decl": 45,
+      "decl": 46,
       "key": "QProcess.setUnixProcessParameters(QProcess::UnixProcessFlags)",
       "params": [
        {
@@ -27298,7 +26844,7 @@
     "setWorkingDirectory": [
      {
       "cpp": "setWorkingDirectory",
-      "decl": 47,
+      "decl": 48,
       "key": "QProcess.setWorkingDirectory(const QString &)",
       "params": [
        {
@@ -27317,7 +26863,7 @@
     "start": [
      {
       "cpp": "start",
-      "decl": 49,
+      "decl": 50,
       "key": "QProcess.start(QIODeviceBase::OpenMode)",
       "params": [
        {
@@ -27336,7 +26882,7 @@
      },
      {
       "cpp": "start",
-      "decl": 50,
+      "decl": 51,
       "key": "QProcess.start(const QString &, const QStringList &, QIODeviceBase::OpenMode)",
       "params": [
        {
@@ -27376,7 +26922,7 @@
     "startCommand": [
      {
       "cpp": "startCommand",
-      "decl": 51,
+      "decl": 52,
       "key": "QProcess.startCommand(const QString &, QIODeviceBase::OpenMode)",
       "params": [
        {
@@ -27405,7 +26951,7 @@
     "startDetached": [
      {
       "cpp": "startDetached",
-      "decl": 53,
+      "decl": 54,
       "key": "QProcess.startDetached(qint64 *)",
       "params": [],
       "ret": {
@@ -27418,7 +26964,7 @@
      {
       "const": true,
       "cpp": "state",
-      "decl": 55,
+      "decl": 56,
       "key": "QProcess.state()",
       "params": [],
       "ret": {
@@ -27431,7 +26977,7 @@
     "terminate": [
      {
       "cpp": "terminate",
-      "decl": 58,
+      "decl": 59,
       "key": "QProcess.terminate()",
       "params": [],
       "ret": {
@@ -27443,7 +26989,7 @@
     "waitForBytesWritten": [
      {
       "cpp": "waitForBytesWritten",
-      "decl": 60,
+      "decl": 61,
       "key": "QProcess.waitForBytesWritten(int)",
       "params": [
        {
@@ -27464,7 +27010,7 @@
     "waitForFinished": [
      {
       "cpp": "waitForFinished",
-      "decl": 61,
+      "decl": 62,
       "key": "QProcess.waitForFinished(int)",
       "params": [
        {
@@ -27485,7 +27031,7 @@
     "waitForReadyRead": [
      {
       "cpp": "waitForReadyRead",
-      "decl": 62,
+      "decl": 63,
       "key": "QProcess.waitForReadyRead(int)",
       "params": [
        {
@@ -27506,7 +27052,7 @@
     "waitForStarted": [
      {
       "cpp": "waitForStarted",
-      "decl": 63,
+      "decl": 64,
       "key": "QProcess.waitForStarted(int)",
       "params": [
        {
@@ -27528,7 +27074,7 @@
      {
       "const": true,
       "cpp": "workingDirectory",
-      "decl": 64,
+      "decl": 65,
       "key": "QProcess.workingDirectory()",
       "params": [],
       "ret": {
@@ -27663,7 +27209,7 @@
     "splitCommand": [
      {
       "cpp": "splitCommand",
-      "decl": 48,
+      "decl": 49,
       "key": "QProcess.splitCommand(QStringView)",
       "params": [
        {
@@ -27687,7 +27233,7 @@
     "startDetached": [
      {
       "cpp": "startDetached",
-      "decl": 52,
+      "decl": 53,
       "key": "QProcess.startDetached(const QString &, const QStringList &, const QString &, qint64 *)",
       "params": [
        {
@@ -27727,7 +27273,7 @@
     "systemEnvironment": [
      {
       "cpp": "systemEnvironment",
-      "decl": 57,
+      "decl": 58,
       "key": "QProcess.systemEnvironment()",
       "params": [],
       "ret": {
@@ -28803,6 +28349,7 @@
     "QIODeviceBase::OpenModeFlag"
    ],
    "excluded": {
+    "protected or other platform": 1,
     "template/platform": 3
    },
    "header": "qsavefile.h",
@@ -28971,7 +28518,9 @@
    ],
    "curated": false,
    "enums": [],
-   "excluded": {},
+   "excluded": {
+    "protected or other platform": 4
+   },
    "header": "qsequentialanimationgroup.h",
    "hidden": [
     "currentAnimation"
@@ -29018,7 +28567,7 @@
     "insertPause": [
      {
       "cpp": "insertPause",
-      "decl": 6,
+      "decl": 7,
       "key": "QSequentialAnimationGroup.insertPause(int, int)",
       "params": [
        {
@@ -29320,7 +28869,9 @@
     "QSettings::Scope",
     "QSettings::Status"
    ],
-   "excluded": {},
+   "excluded": {
+    "protected or other platform": 1
+   },
    "header": "qsettings.h",
    "hidden": [],
    "js_module": "svelters:qt/core",
@@ -29515,7 +29066,7 @@
      {
       "const": true,
       "cpp": "fallbacksEnabled",
-      "decl": 18,
+      "decl": 19,
       "key": "QSettings.fallbacksEnabled()",
       "params": [],
       "ret": {
@@ -29528,7 +29079,7 @@
      {
       "const": true,
       "cpp": "fileName",
-      "decl": 19,
+      "decl": 20,
       "key": "QSettings.fileName()",
       "params": [],
       "ret": {
@@ -29541,7 +29092,7 @@
      {
       "const": true,
       "cpp": "format",
-      "decl": 20,
+      "decl": 21,
       "key": "QSettings.format()",
       "params": [],
       "ret": {
@@ -29555,7 +29106,7 @@
      {
       "const": true,
       "cpp": "group",
-      "decl": 21,
+      "decl": 22,
       "key": "QSettings.group()",
       "params": [],
       "ret": {
@@ -29568,7 +29119,7 @@
      {
       "const": true,
       "cpp": "isAtomicSyncRequired",
-      "decl": 22,
+      "decl": 23,
       "key": "QSettings.isAtomicSyncRequired()",
       "params": [],
       "ret": {
@@ -29581,7 +29132,7 @@
      {
       "const": true,
       "cpp": "isWritable",
-      "decl": 23,
+      "decl": 24,
       "key": "QSettings.isWritable()",
       "params": [],
       "ret": {
@@ -29594,7 +29145,7 @@
      {
       "const": true,
       "cpp": "organizationName",
-      "decl": 24,
+      "decl": 25,
       "key": "QSettings.organizationName()",
       "params": [],
       "ret": {
@@ -29606,7 +29157,7 @@
     "remove": [
      {
       "cpp": "remove",
-      "decl": 26,
+      "decl": 27,
       "key": "QSettings.remove(QAnyStringView)",
       "params": [
        {
@@ -29626,7 +29177,7 @@
      {
       "const": true,
       "cpp": "scope",
-      "decl": 27,
+      "decl": 28,
       "key": "QSettings.scope()",
       "params": [],
       "ret": {
@@ -29639,7 +29190,7 @@
     "setArrayIndex": [
      {
       "cpp": "setArrayIndex",
-      "decl": 28,
+      "decl": 29,
       "key": "QSettings.setArrayIndex(int)",
       "params": [
        {
@@ -29658,7 +29209,7 @@
     "setAtomicSyncRequired": [
      {
       "cpp": "setAtomicSyncRequired",
-      "decl": 29,
+      "decl": 30,
       "key": "QSettings.setAtomicSyncRequired(bool)",
       "params": [
        {
@@ -29677,7 +29228,7 @@
     "setFallbacksEnabled": [
      {
       "cpp": "setFallbacksEnabled",
-      "decl": 31,
+      "decl": 32,
       "key": "QSettings.setFallbacksEnabled(bool)",
       "params": [
        {
@@ -29696,7 +29247,7 @@
     "setValue": [
      {
       "cpp": "setValue",
-      "decl": 33,
+      "decl": 34,
       "key": "QSettings.setValue(QAnyStringView, const QVariant &)",
       "params": [
        {
@@ -29723,7 +29274,7 @@
      {
       "const": true,
       "cpp": "status",
-      "decl": 34,
+      "decl": 35,
       "key": "QSettings.status()",
       "params": [],
       "ret": {
@@ -29736,7 +29287,7 @@
     "sync": [
      {
       "cpp": "sync",
-      "decl": 35,
+      "decl": 36,
       "key": "QSettings.sync()",
       "params": [],
       "ret": {
@@ -29748,7 +29299,7 @@
      {
       "const": true,
       "cpp": "value",
-      "decl": 36,
+      "decl": 37,
       "key": "QSettings.value(QAnyStringView)",
       "params": [
        {
@@ -29767,7 +29318,7 @@
      {
       "const": true,
       "cpp": "value",
-      "decl": 37,
+      "decl": 38,
       "key": "QSettings.value(QAnyStringView, const QVariant &)",
       "params": [
        {
@@ -29820,7 +29371,7 @@
     "setDefaultFormat": [
      {
       "cpp": "setDefaultFormat",
-      "decl": 30,
+      "decl": 31,
       "key": "QSettings.setDefaultFormat(QSettings::Format)",
       "params": [
        {
@@ -29840,7 +29391,7 @@
     "setPath": [
      {
       "cpp": "setPath",
-      "decl": 32,
+      "decl": 33,
       "key": "QSettings.setPath(QSettings::Format, QSettings::Scope, const QString &)",
       "params": [
        {
@@ -29929,7 +29480,8 @@
     "Qt::SortOrder"
    ],
    "excluded": {
-    "core": 1
+    "core": 1,
+    "protected or other platform": 3
    },
    "header": "qsortfilterproxymodel.h",
    "hidden": [
@@ -30121,7 +29673,7 @@
      {
       "const": true,
       "cpp": "flags",
-      "decl": 26,
+      "decl": 28,
       "key": "QSortFilterProxyModel.flags(const QModelIndex &)",
       "params": [
        {
@@ -30144,7 +29696,7 @@
      {
       "const": true,
       "cpp": "hasChildren",
-      "decl": 27,
+      "decl": 29,
       "key": "QSortFilterProxyModel.hasChildren(const QModelIndex &)",
       "params": [
        {
@@ -30167,7 +29719,7 @@
      {
       "const": true,
       "cpp": "headerData",
-      "decl": 28,
+      "decl": 30,
       "key": "QSortFilterProxyModel.headerData(int, Qt::Orientation, int)",
       "params": [
        {
@@ -30204,7 +29756,7 @@
      {
       "const": true,
       "cpp": "index",
-      "decl": 29,
+      "decl": 31,
       "key": "QSortFilterProxyModel.index(int, int, const QModelIndex &)",
       "params": [
        {
@@ -30241,7 +29793,7 @@
     "insertColumns": [
      {
       "cpp": "insertColumns",
-      "decl": 30,
+      "decl": 32,
       "key": "QSortFilterProxyModel.insertColumns(int, int, const QModelIndex &)",
       "params": [
        {
@@ -30277,7 +29829,7 @@
     "insertRows": [
      {
       "cpp": "insertRows",
-      "decl": 31,
+      "decl": 33,
       "key": "QSortFilterProxyModel.insertRows(int, int, const QModelIndex &)",
       "params": [
        {
@@ -30313,7 +29865,7 @@
     "invalidate": [
      {
       "cpp": "invalidate",
-      "decl": 32,
+      "decl": 34,
       "key": "QSortFilterProxyModel.invalidate()",
       "params": [],
       "ret": {
@@ -30326,7 +29878,7 @@
      {
       "const": true,
       "cpp": "isRecursiveFilteringEnabled",
-      "decl": 33,
+      "decl": 35,
       "key": "QSortFilterProxyModel.isRecursiveFilteringEnabled()",
       "params": [],
       "ret": {
@@ -30339,7 +29891,7 @@
      {
       "const": true,
       "cpp": "mapFromSource",
-      "decl": 35,
+      "decl": 38,
       "key": "QSortFilterProxyModel.mapFromSource(const QModelIndex &)",
       "params": [
        {
@@ -30362,7 +29914,7 @@
      {
       "const": true,
       "cpp": "mapSelectionFromSource",
-      "decl": 36,
+      "decl": 39,
       "key": "QSortFilterProxyModel.mapSelectionFromSource(const QItemSelection &)",
       "params": [
        {
@@ -30385,7 +29937,7 @@
      {
       "const": true,
       "cpp": "mapSelectionToSource",
-      "decl": 37,
+      "decl": 40,
       "key": "QSortFilterProxyModel.mapSelectionToSource(const QItemSelection &)",
       "params": [
        {
@@ -30408,7 +29960,7 @@
      {
       "const": true,
       "cpp": "mapToSource",
-      "decl": 38,
+      "decl": 41,
       "key": "QSortFilterProxyModel.mapToSource(const QModelIndex &)",
       "params": [
        {
@@ -30431,7 +29983,7 @@
      {
       "const": true,
       "cpp": "match",
-      "decl": 39,
+      "decl": 42,
       "key": "QSortFilterProxyModel.match(const QModelIndex &, int, const QVariant &, int, Qt::MatchFlags)",
       "params": [
        {
@@ -30489,7 +30041,7 @@
      {
       "const": true,
       "cpp": "mimeData",
-      "decl": 40,
+      "decl": 43,
       "key": "QSortFilterProxyModel.mimeData(const QModelIndexList &)",
       "params": [
        {
@@ -30517,7 +30069,7 @@
      {
       "const": true,
       "cpp": "mimeTypes",
-      "decl": 41,
+      "decl": 44,
       "key": "QSortFilterProxyModel.mimeTypes()",
       "params": [],
       "ret": {
@@ -30533,7 +30085,7 @@
     "removeColumns": [
      {
       "cpp": "removeColumns",
-      "decl": 44,
+      "decl": 47,
       "key": "QSortFilterProxyModel.removeColumns(int, int, const QModelIndex &)",
       "params": [
        {
@@ -30569,7 +30121,7 @@
     "removeRows": [
      {
       "cpp": "removeRows",
-      "decl": 45,
+      "decl": 48,
       "key": "QSortFilterProxyModel.removeRows(int, int, const QModelIndex &)",
       "params": [
        {
@@ -30606,7 +30158,7 @@
      {
       "const": true,
       "cpp": "rowCount",
-      "decl": 46,
+      "decl": 49,
       "key": "QSortFilterProxyModel.rowCount(const QModelIndex &)",
       "params": [
        {
@@ -30628,7 +30180,7 @@
     "setAutoAcceptChildRows": [
      {
       "cpp": "setAutoAcceptChildRows",
-      "decl": 47,
+      "decl": 50,
       "key": "QSortFilterProxyModel.setAutoAcceptChildRows(bool)",
       "params": [
        {
@@ -30647,7 +30199,7 @@
     "setData": [
      {
       "cpp": "setData",
-      "decl": 48,
+      "decl": 51,
       "key": "QSortFilterProxyModel.setData(const QModelIndex &, const QVariant &, int)",
       "params": [
        {
@@ -30683,7 +30235,7 @@
     "setDynamicSortFilter": [
      {
       "cpp": "setDynamicSortFilter",
-      "decl": 49,
+      "decl": 52,
       "key": "QSortFilterProxyModel.setDynamicSortFilter(bool)",
       "params": [
        {
@@ -30702,7 +30254,7 @@
     "setFilterCaseSensitivity": [
      {
       "cpp": "setFilterCaseSensitivity",
-      "decl": 50,
+      "decl": 53,
       "key": "QSortFilterProxyModel.setFilterCaseSensitivity(Qt::CaseSensitivity)",
       "params": [
        {
@@ -30722,7 +30274,7 @@
     "setFilterFixedString": [
      {
       "cpp": "setFilterFixedString",
-      "decl": 51,
+      "decl": 54,
       "key": "QSortFilterProxyModel.setFilterFixedString(const QString &)",
       "params": [
        {
@@ -30742,7 +30294,7 @@
     "setFilterKeyColumn": [
      {
       "cpp": "setFilterKeyColumn",
-      "decl": 52,
+      "decl": 55,
       "key": "QSortFilterProxyModel.setFilterKeyColumn(int)",
       "params": [
        {
@@ -30761,7 +30313,7 @@
     "setFilterRegularExpression": [
      {
       "cpp": "setFilterRegularExpression",
-      "decl": 53,
+      "decl": 56,
       "key": "QSortFilterProxyModel.setFilterRegularExpression(const QRegularExpression &)",
       "params": [
        {
@@ -30780,7 +30332,7 @@
      },
      {
       "cpp": "setFilterRegularExpression",
-      "decl": 54,
+      "decl": 57,
       "key": "QSortFilterProxyModel.setFilterRegularExpression(const QString &)",
       "params": [
        {
@@ -30800,7 +30352,7 @@
     "setFilterRole": [
      {
       "cpp": "setFilterRole",
-      "decl": 55,
+      "decl": 58,
       "key": "QSortFilterProxyModel.setFilterRole(int)",
       "params": [
        {
@@ -30819,7 +30371,7 @@
     "setFilterWildcard": [
      {
       "cpp": "setFilterWildcard",
-      "decl": 56,
+      "decl": 59,
       "key": "QSortFilterProxyModel.setFilterWildcard(const QString &)",
       "params": [
        {
@@ -30839,7 +30391,7 @@
     "setHeaderData": [
      {
       "cpp": "setHeaderData",
-      "decl": 57,
+      "decl": 60,
       "key": "QSortFilterProxyModel.setHeaderData(int, Qt::Orientation, const QVariant &, int)",
       "params": [
        {
@@ -30882,7 +30434,7 @@
     "setRecursiveFilteringEnabled": [
      {
       "cpp": "setRecursiveFilteringEnabled",
-      "decl": 58,
+      "decl": 61,
       "key": "QSortFilterProxyModel.setRecursiveFilteringEnabled(bool)",
       "params": [
        {
@@ -30901,7 +30453,7 @@
     "setSortCaseSensitivity": [
      {
       "cpp": "setSortCaseSensitivity",
-      "decl": 59,
+      "decl": 62,
       "key": "QSortFilterProxyModel.setSortCaseSensitivity(Qt::CaseSensitivity)",
       "params": [
        {
@@ -30921,7 +30473,7 @@
     "setSortLocaleAware": [
      {
       "cpp": "setSortLocaleAware",
-      "decl": 60,
+      "decl": 63,
       "key": "QSortFilterProxyModel.setSortLocaleAware(bool)",
       "params": [
        {
@@ -30940,7 +30492,7 @@
     "setSortRole": [
      {
       "cpp": "setSortRole",
-      "decl": 61,
+      "decl": 64,
       "key": "QSortFilterProxyModel.setSortRole(int)",
       "params": [
        {
@@ -30959,7 +30511,7 @@
     "setSourceModel": [
      {
       "cpp": "setSourceModel",
-      "decl": 62,
+      "decl": 65,
       "key": "QSortFilterProxyModel.setSourceModel(QAbstractItemModel *)",
       "params": [
        {
@@ -30981,7 +30533,7 @@
      {
       "const": true,
       "cpp": "sibling",
-      "decl": 63,
+      "decl": 66,
       "key": "QSortFilterProxyModel.sibling(int, int, const QModelIndex &)",
       "params": [
        {
@@ -31017,7 +30569,7 @@
     "sort": [
      {
       "cpp": "sort",
-      "decl": 64,
+      "decl": 67,
       "key": "QSortFilterProxyModel.sort(int, Qt::SortOrder)",
       "params": [
        {
@@ -31046,7 +30598,7 @@
      {
       "const": true,
       "cpp": "sortColumn",
-      "decl": 67,
+      "decl": 70,
       "key": "QSortFilterProxyModel.sortColumn()",
       "params": [],
       "ret": {
@@ -31059,7 +30611,7 @@
      {
       "const": true,
       "cpp": "sortOrder",
-      "decl": 69,
+      "decl": 72,
       "key": "QSortFilterProxyModel.sortOrder()",
       "params": [],
       "ret": {
@@ -31073,7 +30625,7 @@
      {
       "const": true,
       "cpp": "span",
-      "decl": 72,
+      "decl": 75,
       "key": "QSortFilterProxyModel.span(const QModelIndex &)",
       "params": [
        {
@@ -31096,7 +30648,7 @@
      {
       "const": true,
       "cpp": "supportedDropActions",
-      "decl": 73,
+      "decl": 76,
       "key": "QSortFilterProxyModel.supportedDropActions()",
       "params": [],
       "ret": {
@@ -32207,6 +31759,7 @@
    "curated": false,
    "enums": [],
    "excluded": {
+    "protected or other platform": 1,
     "template/platform": 8
    },
    "header": "qtemporaryfile.h",
@@ -32269,7 +31822,7 @@
     "rename": [
      {
       "cpp": "rename",
-      "decl": 12,
+      "decl": 13,
       "key": "QTemporaryFile.rename(const QString &)",
       "params": [
        {
@@ -32289,7 +31842,7 @@
     "renameOverwrite": [
      {
       "cpp": "renameOverwrite",
-      "decl": 14,
+      "decl": 15,
       "key": "QTemporaryFile.renameOverwrite(const QString &)",
       "params": [
        {
@@ -32310,7 +31863,7 @@
     "setAutoRemove": [
      {
       "cpp": "setAutoRemove",
-      "decl": 16,
+      "decl": 17,
       "key": "QTemporaryFile.setAutoRemove(bool)",
       "params": [
        {
@@ -32507,7 +32060,7 @@
    "excluded": {
     "core": 1,
     "deprecated": 1,
-    "template/platform": 5
+    "template/platform": 4
    },
    "header": "qtimezone.h",
    "hidden": [],
@@ -32931,6 +32484,28 @@
       }
      }
     ],
+    "fromDurationAheadOfUtc": [
+     {
+      "cpp": "fromDurationAheadOfUtc",
+      "decl": 17,
+      "key": "QTimeZone.fromDurationAheadOfUtc(std::chrono::seconds)",
+      "params": [
+       {
+        "name": "offset",
+        "type": {
+         "cpp": "std::chrono::seconds",
+         "k": "int"
+        }
+       }
+      ],
+      "ret": {
+       "cpp": "QTimeZone",
+       "k": "value",
+       "t": "QTimeZone"
+      },
+      "since": "6.5"
+     }
+    ],
     "fromSecondsAheadOfUtc": [
      {
       "cpp": "fromSecondsAheadOfUtc",
@@ -33199,7 +32774,8 @@
    ],
    "excluded": {
     "deprecated": 2,
-    "template/platform": 12
+    "protected or other platform": 1,
+    "template/platform": 6
    },
    "header": "qtimer.h",
    "hidden": [
@@ -33209,7 +32785,7 @@
    ],
    "js_module": "svelters:qt/core",
    "lifetime": "shared",
-   "merged": 0,
+   "merged": 2,
    "methods": {
     "id": [
      {
@@ -33224,6 +32800,19 @@
        "t": "Qt::TimerId"
       },
       "since": "6.8"
+     }
+    ],
+    "intervalAsDuration": [
+     {
+      "const": true,
+      "cpp": "intervalAsDuration",
+      "decl": 9,
+      "key": "QTimer.intervalAsDuration()",
+      "params": [],
+      "ret": {
+       "cpp": "std::chrono::milliseconds",
+       "k": "int"
+      }
      }
     ],
     "isActive": [
@@ -33249,6 +32838,19 @@
       "ret": {
        "cpp": "bool",
        "k": "bool"
+      }
+     }
+    ],
+    "remainingTimeAsDuration": [
+     {
+      "const": true,
+      "cpp": "remainingTimeAsDuration",
+      "decl": 13,
+      "key": "QTimer.remainingTimeAsDuration()",
+      "params": [],
+      "ret": {
+       "cpp": "std::chrono::milliseconds",
+       "k": "int"
       }
      }
     ],
@@ -33356,7 +32958,7 @@
      {
       "const": true,
       "cpp": "timerId",
-      "decl": 31,
+      "decl": 32,
       "key": "QTimer.timerId()",
       "params": [],
       "ret": {
@@ -33425,7 +33027,86 @@
     }
    ],
    "since": null,
-   "statics": {}
+   "statics": {
+    "singleShot": [
+     {
+      "cpp": "singleShot",
+      "decl": 25,
+      "key": "QTimer.singleShot(std::chrono::nanoseconds, const QObject *, const char *)",
+      "params": [
+       {
+        "name": "nsec",
+        "type": {
+         "cpp": "std::chrono::nanoseconds",
+         "k": "int"
+        }
+       },
+       {
+        "name": "receiver",
+        "type": {
+         "cpp": "QObject *",
+         "k": "object",
+         "t": "QObject",
+         "widget": false
+        }
+       },
+       {
+        "name": "member",
+        "type": {
+         "cpp": "const char *",
+         "cstring": true,
+         "k": "string"
+        }
+       }
+      ],
+      "ret": {
+       "k": "void"
+      }
+     },
+     {
+      "cpp": "singleShot",
+      "decl": 24,
+      "key": "QTimer.singleShot(std::chrono::nanoseconds, Qt::TimerType, const QObject *, const char *)",
+      "params": [
+       {
+        "name": "nsec",
+        "type": {
+         "cpp": "std::chrono::nanoseconds",
+         "k": "int"
+        }
+       },
+       {
+        "name": "timerType",
+        "type": {
+         "cpp": "Qt::TimerType",
+         "k": "enum",
+         "t": "Qt::TimerType"
+        }
+       },
+       {
+        "name": "receiver",
+        "type": {
+         "cpp": "QObject *",
+         "k": "object",
+         "t": "QObject",
+         "widget": false
+        }
+       },
+       {
+        "name": "member",
+        "type": {
+         "cpp": "const char *",
+         "cstring": true,
+         "k": "string"
+        }
+       }
+      ],
+      "ret": {
+       "k": "void"
+      }
+     }
+    ]
+   }
   },
   "QUrl": {
    "abstract": false,
@@ -34885,7 +34566,9 @@
    ],
    "curated": false,
    "enums": [],
-   "excluded": {},
+   "excluded": {
+    "protected or other platform": 5
+   },
    "header": "qvariantanimation.h",
    "hidden": [
     "currentValue",
@@ -34902,7 +34585,7 @@
      {
       "const": true,
       "cpp": "keyValueAt",
-      "decl": 7,
+      "decl": 9,
       "key": "QVariantAnimation.keyValueAt(qreal)",
       "params": [
        {
@@ -34922,7 +34605,7 @@
     "setDuration": [
      {
       "cpp": "setDuration",
-      "decl": 9,
+      "decl": 11,
       "key": "QVariantAnimation.setDuration(int)",
       "params": [
        {
@@ -34941,7 +34624,7 @@
     "setEasingCurve": [
      {
       "cpp": "setEasingCurve",
-      "decl": 10,
+      "decl": 12,
       "key": "QVariantAnimation.setEasingCurve(const QEasingCurve &)",
       "params": [
        {
@@ -34961,7 +34644,7 @@
     "setEndValue": [
      {
       "cpp": "setEndValue",
-      "decl": 11,
+      "decl": 13,
       "key": "QVariantAnimation.setEndValue(const QVariant &)",
       "params": [
        {
@@ -34980,7 +34663,7 @@
     "setKeyValueAt": [
      {
       "cpp": "setKeyValueAt",
-      "decl": 12,
+      "decl": 14,
       "key": "QVariantAnimation.setKeyValueAt(qreal, const QVariant &)",
       "params": [
        {
@@ -35006,7 +34689,7 @@
     "setStartValue": [
      {
       "cpp": "setStartValue",
-      "decl": 14,
+      "decl": 16,
       "key": "QVariantAnimation.setStartValue(const QVariant &)",
       "params": [
        {

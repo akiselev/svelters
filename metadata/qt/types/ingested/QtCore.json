@@ -180,6 +180,20 @@
 "virtual":"pure"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"event",
+"params":[
+{
+"name":"event",
+"type":"QEvent *"
+}
+],
+"signature":"bool event(QEvent *event) override",
+"type":"bool",
+"virtual":"virtual"
+},
+{
 "meta":"signal",
 "name":"finished",
 "params":[],
@@ -321,6 +335,52 @@
 "params":[],
 "signature":"int totalDuration() const",
 "type":"int"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"updateCurrentTime",
+"params":[
+{
+"name":"currentTime",
+"type":"int"
+}
+],
+"signature":"void updateCurrentTime(int currentTime) = 0",
+"type":"void",
+"virtual":"pure"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"updateDirection",
+"params":[
+{
+"name":"direction",
+"type":"QAbstractAnimation::Direction"
+}
+],
+"signature":"void updateDirection(QAbstractAnimation::Direction direction)",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"updateState",
+"params":[
+{
+"name":"newState",
+"type":"QAbstractAnimation::State"
+},
+{
+"name":"oldState",
+"type":"QAbstractAnimation::State"
+}
+],
+"signature":"void updateState(QAbstractAnimation::State newState, QAbstractAnimation::State oldState)",
+"type":"void",
+"virtual":"virtual"
 }
 ],
 "header":"qabstractanimation.h",
@@ -1728,6 +1788,15 @@
 ],
 "signature":"bool removeRows(int row, int count, const QModelIndex &parent)",
 "type":"bool",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"slot",
+"name":"resetInternalData",
+"params":[],
+"signature":"void resetInternalData()",
+"type":"void",
 "virtual":"virtual"
 },
 {
@@ -3558,6 +3627,20 @@
 "params":[],
 "signature":"void clear()",
 "type":"void"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"event",
+"params":[
+{
+"name":"event",
+"type":"QEvent *"
+}
+],
+"signature":"bool event(QEvent *event) override",
+"type":"bool",
+"virtual":"virtual"
 },
 {
 "const":true,
@@ -6575,6 +6658,24 @@
 "virtual":"virtual"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"readData",
+"params":[
+{
+"name":"data",
+"type":"char *"
+},
+{
+"name":"len",
+"type":"qint64"
+}
+],
+"signature":"qint64 readData(char *data, qint64 len) override",
+"type":"qint64",
+"virtual":"virtual"
+},
+{
 "meta":"plain",
 "name":"seek",
 "params":[
@@ -6634,6 +6735,24 @@
 "name":"size",
 "params":[],
 "signature":"qint64 size() const override",
+"type":"qint64",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"writeData",
+"params":[
+{
+"name":"data",
+"type":"const char *"
+},
+{
+"name":"len",
+"type":"qint64"
+}
+],
+"signature":"qint64 writeData(const char *data, qint64 len) override",
 "type":"qint64",
 "virtual":"virtual"
 }
@@ -18434,6 +18553,20 @@
 "type":"void"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"timerEvent",
+"params":[
+{
+"name":"e",
+"type":"QTimerEvent *"
+}
+],
+"signature":"void timerEvent(QTimerEvent *e) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
 "associated_property":"timerType",
 "const":true,
 "meta":"plain",
@@ -20331,6 +20464,20 @@
 "signature":"bool closingDown()",
 "static":true,
 "type":"bool"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"event",
+"params":[
+{
+"name":"e",
+"type":"QEvent *"
+}
+],
+"signature":"bool event(QEvent *e) override",
+"type":"bool",
+"virtual":"virtual"
 },
 {
 "meta":"plain",
@@ -30340,6 +30487,42 @@
 "virtual":"virtual"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"readData",
+"params":[
+{
+"name":"data",
+"type":"char *"
+},
+{
+"name":"len",
+"type":"qint64"
+}
+],
+"signature":"qint64 readData(char *data, qint64 len) override",
+"type":"qint64",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"readLineData",
+"params":[
+{
+"name":"data",
+"type":"char *"
+},
+{
+"name":"maxlen",
+"type":"qint64"
+}
+],
+"signature":"qint64 readLineData(char *data, qint64 maxlen) override",
+"type":"qint64",
+"virtual":"virtual"
+},
+{
 "meta":"plain",
 "name":"resize",
 "params":[
@@ -30421,6 +30604,24 @@
 "params":[],
 "signature":"void unsetError()",
 "type":"void"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"writeData",
+"params":[
+{
+"name":"data",
+"type":"const char *"
+},
+{
+"name":"len",
+"type":"qint64"
+}
+],
+"signature":"qint64 writeData(const char *data, qint64 len) override",
+"type":"qint64",
+"virtual":"virtual"
 }
 ],
 "header":"qfiledevice.h",
@@ -35030,6 +35231,24 @@
 "type":"void"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"readData",
+"params":[
+{
+"name":"data",
+"type":"char *"
+},
+{
+"name":"maxSize",
+"type":"qint64"
+}
+],
+"signature":"qint64 readData(char *data, qint64 maxSize) = 0",
+"type":"qint64",
+"virtual":"pure"
+},
+{
 "meta":"plain",
 "name":"readLine",
 "overload_number":"1",
@@ -35058,6 +35277,24 @@
 ],
 "signature":"qint64 readLine(char *data, qint64 maxSize)",
 "type":"qint64"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"readLineData",
+"params":[
+{
+"name":"data",
+"type":"char *"
+},
+{
+"name":"maxSize",
+"type":"qint64"
+}
+],
+"signature":"qint64 readLineData(char *data, qint64 maxSize)",
+"type":"qint64",
+"virtual":"virtual"
 },
 {
 "meta":"plain",
@@ -35212,6 +35449,21 @@
 "type":"qint64"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"skipData",
+"params":[
+{
+"name":"maxSize",
+"type":"qint64"
+}
+],
+"signature":"qint64 skipData(qint64 maxSize)",
+"since":"6.0",
+"type":"qint64",
+"virtual":"virtual"
+},
+{
 "meta":"plain",
 "name":"startTransaction",
 "params":[],
@@ -35305,6 +35557,24 @@
 "params":[],
 "signature":"int writeChannelCount() const",
 "type":"int"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"writeData",
+"params":[
+{
+"name":"data",
+"type":"const char *"
+},
+{
+"name":"maxSize",
+"type":"qint64"
+}
+],
+"signature":"qint64 writeData(const char *data, qint64 maxSize) = 0",
+"type":"qint64",
+"virtual":"pure"
 }
 ],
 "header":"qiodevice.h",
@@ -59156,6 +59426,25 @@
 "type":"void"
 },
 {
+"access":"protected",
+"const":true,
+"meta":"plain",
+"name":"retrieveData",
+"params":[
+{
+"name":"mimeType",
+"type":"const QString &"
+},
+{
+"name":"type",
+"type":"QMetaType"
+}
+],
+"signature":"QVariant retrieveData(const QString &mimeType, QMetaType type) const",
+"type":"QVariant",
+"virtual":"virtual"
+},
+{
 "meta":"plain",
 "name":"setColorData",
 "params":[
@@ -63791,6 +64080,20 @@
 "type":"bool"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"childEvent",
+"params":[
+{
+"name":"event",
+"type":"QChildEvent *"
+}
+],
+"signature":"void childEvent(QChildEvent *event)",
+"type":"void",
+"virtual":"virtual"
+},
+{
 "const":true,
 "meta":"plain",
 "name":"children",
@@ -63971,6 +64274,34 @@
 "type":"QMetaObject::Connection"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"connectNotify",
+"params":[
+{
+"name":"signal",
+"type":"const QMetaMethod &"
+}
+],
+"signature":"void connectNotify(const QMetaMethod &signal)",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"customEvent",
+"params":[
+{
+"name":"event",
+"type":"QEvent *"
+}
+],
+"signature":"void customEvent(QEvent *event)",
+"type":"void",
+"virtual":"virtual"
+},
+{
 "meta":"slot",
 "name":"deleteLater",
 "params":[],
@@ -64124,6 +64455,20 @@
 ],
 "signature":"bool disconnect(const char *signal, const QObject *receiver, const char *method) const",
 "type":"bool"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"disconnectNotify",
+"params":[
+{
+"name":"signal",
+"type":"const QMetaMethod &"
+}
+],
+"signature":"void disconnectNotify(const QMetaMethod &signal)",
+"type":"void",
+"virtual":"virtual"
 },
 {
 "const":true,
@@ -64551,6 +64896,20 @@
 "params":[],
 "signature":"QThread * thread() const",
 "type":"QThread *"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"timerEvent",
+"params":[
+{
+"name":"event",
+"type":"QTimerEvent *"
+}
+],
+"signature":"void timerEvent(QTimerEvent *event)",
+"type":"void",
+"virtual":"virtual"
 },
 {
 "meta":"plain",
@@ -65166,6 +65525,66 @@
 "signature":"int duration() const override",
 "type":"int",
 "virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"event",
+"params":[
+{
+"name":"event",
+"type":"QEvent *"
+}
+],
+"signature":"bool event(QEvent *event) override",
+"type":"bool",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"updateCurrentTime",
+"params":[
+{
+"name":"currentTime",
+"type":"int"
+}
+],
+"signature":"void updateCurrentTime(int currentTime) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"updateDirection",
+"params":[
+{
+"name":"direction",
+"type":"QAbstractAnimation::Direction"
+}
+],
+"signature":"void updateDirection(QAbstractAnimation::Direction direction) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"updateState",
+"params":[
+{
+"name":"newState",
+"type":"QAbstractAnimation::State"
+},
+{
+"name":"oldState",
+"type":"QAbstractAnimation::State"
+}
+],
+"signature":"void updateState(QAbstractAnimation::State newState, QAbstractAnimation::State oldState) override",
+"type":"void",
+"virtual":"virtual"
 }
 ],
 "header":"qparallelanimationgroup.h",
@@ -65279,6 +65698,20 @@
 "virtual":"virtual"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"event",
+"params":[
+{
+"name":"e",
+"type":"QEvent *"
+}
+],
+"signature":"bool event(QEvent *e) override",
+"type":"bool",
+"virtual":"virtual"
+},
+{
 "associated_property":"duration",
 "meta":"plain",
 "name":"setDuration",
@@ -65290,6 +65723,20 @@
 ],
 "signature":"void setDuration(int msecs)",
 "type":"void"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"updateCurrentTime",
+"params":[
+{
+"name":"",
+"type":"int"
+}
+],
+"signature":"void updateCurrentTime(int) override",
+"type":"void",
+"virtual":"virtual"
 }
 ],
 "header":"qpauseanimation.h",
@@ -66823,6 +67270,24 @@
 "type":"QProcess::ProcessChannel"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"readData",
+"params":[
+{
+"name":"data",
+"type":"char *"
+},
+{
+"name":"maxlen",
+"type":"qint64"
+}
+],
+"signature":"qint64 readData(char *data, qint64 maxlen) override",
+"type":"qint64",
+"virtual":"virtual"
+},
+{
 "meta":"signal",
 "name":"readyReadStandardError",
 "params":[],
@@ -67987,6 +68452,20 @@
 "type":"QBindable<QObject *>"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"event",
+"params":[
+{
+"name":"event",
+"type":"QEvent *"
+}
+],
+"signature":"bool event(QEvent *event) override",
+"type":"bool",
+"virtual":"virtual"
+},
+{
 "associated_property":"propertyName",
 "const":true,
 "meta":"plain",
@@ -68029,6 +68508,38 @@
 "params":[],
 "signature":"QObject * targetObject() const",
 "type":"QObject *"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"updateCurrentValue",
+"params":[
+{
+"name":"value",
+"type":"const QVariant &"
+}
+],
+"signature":"void updateCurrentValue(const QVariant &value) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"updateState",
+"params":[
+{
+"name":"newState",
+"type":"QAbstractAnimation::State"
+},
+{
+"name":"oldState",
+"type":"QAbstractAnimation::State"
+}
+],
+"signature":"void updateState(QAbstractAnimation::State newState, QAbstractAnimation::State oldState) override",
+"type":"void",
+"virtual":"virtual"
 }
 ],
 "header":"qpropertyanimation.h",
@@ -69021,6 +69532,38 @@
 "virtual":"virtual"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"event",
+"params":[
+{
+"name":"event",
+"type":"QEvent *"
+}
+],
+"signature":"bool event(QEvent *event) override",
+"type":"bool",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"eventFilter",
+"params":[
+{
+"name":"object",
+"type":"QObject *"
+},
+{
+"name":"event",
+"type":"QEvent *"
+}
+],
+"signature":"bool eventFilter(QObject *object, QEvent *event) override",
+"type":"bool",
+"virtual":"virtual"
+},
+{
 "meta":"plain",
 "name":"fetchMore",
 "params":[
@@ -69351,6 +69894,15 @@
 ],
 "signature":"bool removeRows(int row, int count, const QModelIndex &parent) override",
 "type":"bool",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"slot",
+"name":"resetInternalData",
+"params":[],
+"signature":"void resetInternalData() override",
+"type":"void",
 "virtual":"virtual"
 },
 {
@@ -74251,6 +74803,24 @@
 "signature":"void setFileName(const std::filesystem::path &name)",
 "since":"6.11",
 "type":"void"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"writeData",
+"params":[
+{
+"name":"data",
+"type":"const char *"
+},
+{
+"name":"len",
+"type":"qint64"
+}
+],
+"signature":"qint64 writeData(const char *data, qint64 len) override",
+"type":"qint64",
+"virtual":"virtual"
 }
 ],
 "header":"qsavefile.h",
@@ -74908,6 +75478,20 @@
 "virtual":"virtual"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"event",
+"params":[
+{
+"name":"event",
+"type":"QEvent *"
+}
+],
+"signature":"bool event(QEvent *event) override",
+"type":"bool",
+"virtual":"virtual"
+},
+{
 "meta":"plain",
 "name":"insertPause",
 "params":[
@@ -74922,6 +75506,52 @@
 ],
 "signature":"QPauseAnimation * insertPause(int index, int msecs)",
 "type":"QPauseAnimation *"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"updateCurrentTime",
+"params":[
+{
+"name":"currentTime",
+"type":"int"
+}
+],
+"signature":"void updateCurrentTime(int currentTime) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"updateDirection",
+"params":[
+{
+"name":"direction",
+"type":"QAbstractAnimation::Direction"
+}
+],
+"signature":"void updateDirection(QAbstractAnimation::Direction direction) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"updateState",
+"params":[
+{
+"name":"newState",
+"type":"QAbstractAnimation::State"
+},
+{
+"name":"oldState",
+"type":"QAbstractAnimation::State"
+}
+],
+"signature":"void updateState(QAbstractAnimation::State newState, QAbstractAnimation::State oldState) override",
+"type":"void",
+"virtual":"virtual"
 }
 ],
 "header":"qsequentialanimationgroup.h",
@@ -76252,6 +76882,20 @@
 "params":[],
 "signature":"void endGroup()",
 "type":"void"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"event",
+"params":[
+{
+"name":"event",
+"type":"QEvent *"
+}
+],
+"signature":"bool event(QEvent *event) override",
+"type":"bool",
+"virtual":"virtual"
 },
 {
 "const":true,
@@ -78500,6 +79144,20 @@
 "type":"void"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"event",
+"params":[
+{
+"name":"e",
+"type":"QEvent *"
+}
+],
+"signature":"bool event(QEvent *e) override",
+"type":"bool",
+"virtual":"virtual"
+},
+{
 "const":true,
 "meta":"plain",
 "name":"isEnabled",
@@ -78843,6 +79501,44 @@
 "virtual":"virtual"
 },
 {
+"access":"protected",
+"const":true,
+"meta":"plain",
+"name":"filterAcceptsColumn",
+"params":[
+{
+"name":"source_column",
+"type":"int"
+},
+{
+"name":"source_parent",
+"type":"const QModelIndex &"
+}
+],
+"signature":"bool filterAcceptsColumn(int source_column, const QModelIndex &source_parent) const",
+"type":"bool",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"const":true,
+"meta":"plain",
+"name":"filterAcceptsRow",
+"params":[
+{
+"name":"source_row",
+"type":"int"
+},
+{
+"name":"source_parent",
+"type":"const QModelIndex &"
+}
+],
+"signature":"bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const",
+"type":"bool",
+"virtual":"virtual"
+},
+{
 "associated_property":"filterCaseSensitivity",
 "const":true,
 "meta":"plain",
@@ -79047,6 +79743,25 @@
 "params":[],
 "signature":"bool isSortLocaleAware() const",
 "type":"bool"
+},
+{
+"access":"protected",
+"const":true,
+"meta":"plain",
+"name":"lessThan",
+"params":[
+{
+"name":"source_left",
+"type":"const QModelIndex &"
+},
+{
+"name":"source_right",
+"type":"const QModelIndex &"
+}
+],
+"signature":"bool lessThan(const QModelIndex &source_left, const QModelIndex &source_right) const",
+"type":"bool",
+"virtual":"virtual"
 },
 {
 "const":true,
@@ -89571,6 +90286,21 @@
 "type":"bool"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"open",
+"overload_number":"1",
+"params":[
+{
+"name":"mode",
+"type":"QIODeviceBase::OpenMode"
+}
+],
+"signature":"bool open(QIODeviceBase::OpenMode mode) override",
+"type":"bool",
+"virtual":"virtual"
+},
+{
 "meta":"plain",
 "name":"rename",
 "params":[
@@ -91298,6 +92028,15 @@
 "type":"void"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"run",
+"params":[],
+"signature":"void run()",
+"type":"void",
+"virtual":"virtual"
+},
+{
 "const":true,
 "meta":"plain",
 "name":"serviceLevel",
@@ -92715,6 +93454,20 @@
 "type":"void"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"timerEvent",
+"params":[
+{
+"name":"event",
+"type":"QTimerEvent *"
+}
+],
+"signature":"void timerEvent(QTimerEvent *event) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
 "meta":"slot",
 "name":"toggleDirection",
 "params":[],
@@ -93966,6 +94719,20 @@
 "params":[],
 "signature":"void timeout()",
 "type":"void"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"timerEvent",
+"params":[
+{
+"name":"e",
+"type":"QTimerEvent *"
+}
+],
+"signature":"void timerEvent(QTimerEvent *e) override",
+"type":"void",
+"virtual":"virtual"
 },
 {
 "const":true,
@@ -100368,6 +101135,43 @@
 "type":"QVariant"
 },
 {
+"access":"protected",
+"meta":"plain",
+"name":"event",
+"params":[
+{
+"name":"event",
+"type":"QEvent *"
+}
+],
+"signature":"bool event(QEvent *event) override",
+"type":"bool",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"const":true,
+"meta":"plain",
+"name":"interpolated",
+"params":[
+{
+"name":"from",
+"type":"const QVariant &"
+},
+{
+"name":"to",
+"type":"const QVariant &"
+},
+{
+"name":"progress",
+"type":"qreal"
+}
+],
+"signature":"QVariant interpolated(const QVariant &from, const QVariant &to, qreal progress) const",
+"type":"QVariant",
+"virtual":"virtual"
+},
+{
 "const":true,
 "meta":"plain",
 "name":"keyValueAt",
@@ -100476,6 +101280,52 @@
 "params":[],
 "signature":"QVariant startValue() const",
 "type":"QVariant"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"updateCurrentTime",
+"params":[
+{
+"name":"",
+"type":"int"
+}
+],
+"signature":"void updateCurrentTime(int) override",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"updateCurrentValue",
+"params":[
+{
+"name":"value",
+"type":"const QVariant &"
+}
+],
+"signature":"void updateCurrentValue(const QVariant &value)",
+"type":"void",
+"virtual":"virtual"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"updateState",
+"params":[
+{
+"name":"newState",
+"type":"QAbstractAnimation::State"
+},
+{
+"name":"oldState",
+"type":"QAbstractAnimation::State"
+}
+],
+"signature":"void updateState(QAbstractAnimation::State newState, QAbstractAnimation::State oldState) override",
+"type":"void",
+"virtual":"virtual"
 },
 {
 "associated_property":"currentValue",
@@ -101412,6 +102262,20 @@
 ],
 "signature":"void activated(QWinEventNotifier::HANDLE hEvent)",
 "type":"void"
+},
+{
+"access":"protected",
+"meta":"plain",
+"name":"event",
+"params":[
+{
+"name":"e",
+"type":"QEvent *"
+}
+],
+"signature":"bool event(QEvent *e) override",
+"type":"bool",
+"virtual":"virtual"
 },
 {
 "const":true,
@@ -109044,129 +109908,72 @@
 },
 "schema":"svelters-qt-types-ingest/v1",
 "scoped_enums":[
-"AnnouncementPoliteness",
-"Api",
-"Attribute",
-"AutoConnectContext::AutoConnectMapping",
-"AutoConnectMapping",
-"AutoConnectPolicy",
-"Base64DecodingStatus",
-"CancelMode",
-"Capability",
-"CheckIndexOption",
-"ColorModel",
-"ColorScheme",
-"CompactContinuation::Type",
-"ContextMenuTrigger",
-"ContinuationType",
-"ContrastPreference",
-"CreateProcessArguments::UnixProcessFlag",
-"DeviceType",
-"Direction",
-"Error",
-"ExclusionPolicy",
-"FinalizeResultError",
-"Flag",
-"ForeverConstant",
-"HighDpiScaleFactorRoundingPolicy",
-"InitialState",
-"Initialization",
-"Interface::FinalizeResultError",
-"Internal::WaitForResult",
-"IteratorFlag",
-"JsonFormat",
-"LabelDrawingMode",
-"Launch",
-"LegacyUncomparable",
-"MarkerType",
-"MessageType",
-"Mutable",
-"Op",
-"Option",
-"Ordering",
-"OutOfBoundsPolicy",
-"PermissionStatus",
-"PointerType",
-"Primaries",
-"QAbstractItemModel::CheckIndexOption",
-"QActionGroup::ExclusionPolicy",
-"QByteArray::Base64DecodingStatus",
-"QCborError::QCborNegativeInteger",
-"QCborKnownTags",
-"QCborNegativeInteger",
-"QCborSimpleType",
-"QCborTag",
-"QColorSpace::ColorModel",
-"QColorSpace::Primaries",
-"QColorSpace::TransferFunction",
-"QColorSpace::TransformModel",
-"QComboBox::LabelDrawingMode",
-"QCommandLineParser::MessageType",
-"QDateTime::TransitionResolution",
-"QDateTime::YearRange",
-"QDeadlineTimer::ForeverConstant",
-"QDirListing::IteratorFlag",
-"QEventLoopLocker::Type",
-"QFutureInterfaceBase::CancelMode",
-"QFutureInterfaceBase::ContinuationType",
-"QIcon::ThemeIcon",
-"QInputDevice::Capability",
-"QInputDevice::DeviceType",
-"QJsonValue::JsonFormat",
-"QLocale::TagSeparator",
-"QMessageBox::Option",
-"QNativeIpcKey::Type",
-"QPageLayout::OutOfBoundsPolicy",
-"QPainterStateGuard::InitialState",
-"QPdfWriter::ColorModel",
-"QPointingDevice::PointerType",
-"QRangeModel::AutoConnectPolicy",
-"QRangeModel::RowCategory",
-"QRangeModelImplBase::AutoConnectPolicy",
-"QRhiWidget::Api",
-"QRhiWidget::TextureFormat",
-"QRunnable::Op",
-"QSortFilterProxyModel::Direction",
-"QStringConverterBase::Flag",
-"QT6_ONLY::QT_TECH_PREVIEW_API",
-"QT_TECH_PREVIEW_API",
-"QTextBlockFormat::MarkerType",
-"QThread::QualityOfService",
-"QXmlStreamWriter::Error",
-"Qt::ColorScheme",
-"Qt::ContextMenuTrigger",
-"Qt::ContrastPreference",
-"Qt::HighDpiScaleFactorRoundingPolicy",
-"Qt::Initialization",
-"Qt::PermissionStatus",
-"Qt::TimerId",
-"QtFuture::Launch",
-"QtOrderingPrivate::QtOrderingType",
-"QtOrderingType",
-"QtPrivate::LegacyUncomparable",
-"QtPrivate::Ordering",
-"QtPrivate::SynthesizedAccessFunction",
-"QtPrivate::Uncomparable",
-"QualityOfService",
-"RowCategory",
-"State::AnnouncementPoliteness",
-"State::Attribute",
-"SynthesizedAccessFunction",
-"System",
-"TagSeparator",
-"TextureFormat",
-"ThemeIcon",
-"TimerId",
-"TransferFunction",
-"TransformModel",
-"TransitionResolution",
-"Type",
-"Uncomparable",
-"UnixProcessFlag",
-"WaitForResult",
-"YearMonthDay::System",
-"YearRange",
-"range_traits::Mutable"
+"qabstractitemmodel.h:CheckIndexOption",
+"qaccessible_base.h:AnnouncementPoliteness",
+"qaccessible_base.h:Attribute",
+"qactiongroup.h:ExclusionPolicy",
+"qbytearray.h:Base64DecodingStatus",
+"qcalendar.h:System",
+"qcborcommon.h:QCborKnownTags",
+"qcborcommon.h:QCborNegativeInteger",
+"qcborcommon.h:QCborSimpleType",
+"qcborcommon.h:QCborTag",
+"qcolorspace.h:ColorModel",
+"qcolorspace.h:Primaries",
+"qcolorspace.h:TransferFunction",
+"qcolorspace.h:TransformModel",
+"qcombobox.h:LabelDrawingMode",
+"qcommandlineparser.h:MessageType",
+"qcompare.h:LegacyUncomparable",
+"qcompare.h:Ordering",
+"qcompare.h:Uncomparable",
+"qcomparehelpers.h:QtOrderingType",
+"qdatetime.h:TransitionResolution",
+"qdatetime.h:YearRange",
+"qdeadlinetimer.h:ForeverConstant",
+"qdirlisting.h:IteratorFlag",
+"qeventloop.h:Type",
+"qfuture_impl.h:Launch",
+"qfuture_impl.h:Type",
+"qfutureinterface.h:CancelMode",
+"qfutureinterface.h:ContinuationType",
+"qicon.h:ThemeIcon",
+"qinputdevice.h:Capability",
+"qinputdevice.h:DeviceType",
+"qiterable.h:SynthesizedAccessFunction",
+"qjsonvalue.h:JsonFormat",
+"qlocale.h:TagSeparator",
+"qmessagebox.h:Option",
+"qmetatype.h:QCborSimpleType",
+"qnamespace.h:ColorScheme",
+"qnamespace.h:ContextMenuTrigger",
+"qnamespace.h:ContrastPreference",
+"qnamespace.h:HighDpiScaleFactorRoundingPolicy",
+"qnamespace.h:Initialization",
+"qnamespace.h:PermissionStatus",
+"qnamespace.h:TimerId",
+"qpagelayout.h:OutOfBoundsPolicy",
+"qpainterstateguard.h:InitialState",
+"qpdfwriter.h:ColorModel",
+"qpointingdevice.h:PointerType",
+"qprocess.h:UnixProcessFlag",
+"qrangemodel.h:AutoConnectPolicy",
+"qrangemodel.h:RowCategory",
+"qrangemodel_impl.h:AutoConnectMapping",
+"qrangemodel_impl.h:AutoConnectPolicy",
+"qrangemodel_impl.h:Mutable",
+"qrhiwidget.h:Api",
+"qrhiwidget.h:TextureFormat",
+"qrunnable.h:Op",
+"qsortfilterproxymodel.h:Direction",
+"qstringconverter_base.h:FinalizeResultError",
+"qstringconverter_base.h:Flag",
+"qtestsupport_core.h:WaitForResult",
+"qtextformat.h:MarkerType",
+"qthread.h:QualityOfService",
+"qtipccommon.h:Type",
+"qtversionchecks.h:QT_TECH_PREVIEW_API",
+"qxmlstream.h:Error"
 ],
 "sources":{
 "moc":{

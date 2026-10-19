@@ -1798,966 +1798,6 @@
    "owner": "QFontDatabase",
    "scoped": false
   },
-  "QGlyphRun::GlyphRunFlag": {
-   "members": [
-    {
-     "cpp": "QGlyphRun::Overline",
-     "name": "Overline",
-     "value": "0x01"
-    },
-    {
-     "cpp": "QGlyphRun::Underline",
-     "name": "Underline",
-     "value": "0x02"
-    },
-    {
-     "cpp": "QGlyphRun::StrikeOut",
-     "name": "StrikeOut",
-     "value": "0x04"
-    },
-    {
-     "cpp": "QGlyphRun::RightToLeft",
-     "name": "RightToLeft",
-     "value": "0x08"
-    },
-    {
-     "cpp": "QGlyphRun::SplitLigature",
-     "name": "SplitLigature",
-     "value": "0x10"
-    }
-   ],
-   "name": "GlyphRunFlag",
-   "owner": "QGlyphRun",
-   "scoped": false
-  },
-  "QGradient::CoordinateMode": {
-   "members": [
-    {
-     "cpp": "QGradient::LogicalMode",
-     "name": "LogicalMode",
-     "value": "0"
-    },
-    {
-     "cpp": "QGradient::StretchToDeviceMode",
-     "name": "StretchToDeviceMode",
-     "value": "1"
-    },
-    {
-     "cpp": "QGradient::ObjectBoundingMode",
-     "name": "ObjectBoundingMode",
-     "value": "2"
-    },
-    {
-     "cpp": "QGradient::ObjectMode",
-     "name": "ObjectMode",
-     "value": "3"
-    }
-   ],
-   "name": "CoordinateMode",
-   "owner": "QGradient",
-   "scoped": false
-  },
-  "QGradient::Preset": {
-   "members": [
-    {
-     "cpp": "QGradient::WarmFlame",
-     "name": "WarmFlame",
-     "value": "1"
-    },
-    {
-     "cpp": "QGradient::NightFade",
-     "name": "NightFade",
-     "value": "2"
-    },
-    {
-     "cpp": "QGradient::SpringWarmth",
-     "name": "SpringWarmth",
-     "value": "3"
-    },
-    {
-     "cpp": "QGradient::JuicyPeach",
-     "name": "JuicyPeach",
-     "value": "4"
-    },
-    {
-     "cpp": "QGradient::YoungPassion",
-     "name": "YoungPassion",
-     "value": "5"
-    },
-    {
-     "cpp": "QGradient::LadyLips",
-     "name": "LadyLips",
-     "value": "6"
-    },
-    {
-     "cpp": "QGradient::SunnyMorning",
-     "name": "SunnyMorning",
-     "value": "7"
-    },
-    {
-     "cpp": "QGradient::RainyAshville",
-     "name": "RainyAshville",
-     "value": "8"
-    },
-    {
-     "cpp": "QGradient::FrozenDreams",
-     "name": "FrozenDreams",
-     "value": "9"
-    },
-    {
-     "cpp": "QGradient::WinterNeva",
-     "name": "WinterNeva",
-     "value": "10"
-    },
-    {
-     "cpp": "QGradient::DustyGrass",
-     "name": "DustyGrass",
-     "value": "11"
-    },
-    {
-     "cpp": "QGradient::TemptingAzure",
-     "name": "TemptingAzure",
-     "value": "12"
-    },
-    {
-     "cpp": "QGradient::HeavyRain",
-     "name": "HeavyRain",
-     "value": "13"
-    },
-    {
-     "cpp": "QGradient::AmyCrisp",
-     "name": "AmyCrisp",
-     "value": "14"
-    },
-    {
-     "cpp": "QGradient::MeanFruit",
-     "name": "MeanFruit",
-     "value": "15"
-    },
-    {
-     "cpp": "QGradient::DeepBlue",
-     "name": "DeepBlue",
-     "value": "16"
-    },
-    {
-     "cpp": "QGradient::RipeMalinka",
-     "name": "RipeMalinka",
-     "value": "17"
-    },
-    {
-     "cpp": "QGradient::CloudyKnoxville",
-     "name": "CloudyKnoxville",
-     "value": "18"
-    },
-    {
-     "cpp": "QGradient::MalibuBeach",
-     "name": "MalibuBeach",
-     "value": "19"
-    },
-    {
-     "cpp": "QGradient::NewLife",
-     "name": "NewLife",
-     "value": "20"
-    },
-    {
-     "cpp": "QGradient::TrueSunset",
-     "name": "TrueSunset",
-     "value": "21"
-    },
-    {
-     "cpp": "QGradient::MorpheusDen",
-     "name": "MorpheusDen",
-     "value": "22"
-    },
-    {
-     "cpp": "QGradient::RareWind",
-     "name": "RareWind",
-     "value": "23"
-    },
-    {
-     "cpp": "QGradient::NearMoon",
-     "name": "NearMoon",
-     "value": "24"
-    },
-    {
-     "cpp": "QGradient::WildApple",
-     "name": "WildApple",
-     "value": "25"
-    },
-    {
-     "cpp": "QGradient::SaintPetersburg",
-     "name": "SaintPetersburg",
-     "value": "26"
-    },
-    {
-     "cpp": "QGradient::PlumPlate",
-     "name": "PlumPlate",
-     "value": "28"
-    },
-    {
-     "cpp": "QGradient::EverlastingSky",
-     "name": "EverlastingSky",
-     "value": "29"
-    },
-    {
-     "cpp": "QGradient::HappyFisher",
-     "name": "HappyFisher",
-     "value": "30"
-    },
-    {
-     "cpp": "QGradient::Blessing",
-     "name": "Blessing",
-     "value": "31"
-    },
-    {
-     "cpp": "QGradient::SharpeyeEagle",
-     "name": "SharpeyeEagle",
-     "value": "32"
-    },
-    {
-     "cpp": "QGradient::LadogaBottom",
-     "name": "LadogaBottom",
-     "value": "33"
-    },
-    {
-     "cpp": "QGradient::LemonGate",
-     "name": "LemonGate",
-     "value": "34"
-    },
-    {
-     "cpp": "QGradient::ItmeoBranding",
-     "name": "ItmeoBranding",
-     "value": "35"
-    },
-    {
-     "cpp": "QGradient::ZeusMiracle",
-     "name": "ZeusMiracle",
-     "value": "36"
-    },
-    {
-     "cpp": "QGradient::OldHat",
-     "name": "OldHat",
-     "value": "37"
-    },
-    {
-     "cpp": "QGradient::StarWine",
-     "name": "StarWine",
-     "value": "38"
-    },
-    {
-     "cpp": "QGradient::HappyAcid",
-     "name": "HappyAcid",
-     "value": "41"
-    },
-    {
-     "cpp": "QGradient::AwesomePine",
-     "name": "AwesomePine",
-     "value": "42"
-    },
-    {
-     "cpp": "QGradient::NewYork",
-     "name": "NewYork",
-     "value": "43"
-    },
-    {
-     "cpp": "QGradient::ShyRainbow",
-     "name": "ShyRainbow",
-     "value": "44"
-    },
-    {
-     "cpp": "QGradient::MixedHopes",
-     "name": "MixedHopes",
-     "value": "46"
-    },
-    {
-     "cpp": "QGradient::FlyHigh",
-     "name": "FlyHigh",
-     "value": "47"
-    },
-    {
-     "cpp": "QGradient::StrongBliss",
-     "name": "StrongBliss",
-     "value": "48"
-    },
-    {
-     "cpp": "QGradient::FreshMilk",
-     "name": "FreshMilk",
-     "value": "49"
-    },
-    {
-     "cpp": "QGradient::SnowAgain",
-     "name": "SnowAgain",
-     "value": "50"
-    },
-    {
-     "cpp": "QGradient::FebruaryInk",
-     "name": "FebruaryInk",
-     "value": "51"
-    },
-    {
-     "cpp": "QGradient::KindSteel",
-     "name": "KindSteel",
-     "value": "52"
-    },
-    {
-     "cpp": "QGradient::SoftGrass",
-     "name": "SoftGrass",
-     "value": "53"
-    },
-    {
-     "cpp": "QGradient::GrownEarly",
-     "name": "GrownEarly",
-     "value": "54"
-    },
-    {
-     "cpp": "QGradient::SharpBlues",
-     "name": "SharpBlues",
-     "value": "55"
-    },
-    {
-     "cpp": "QGradient::ShadyWater",
-     "name": "ShadyWater",
-     "value": "56"
-    },
-    {
-     "cpp": "QGradient::DirtyBeauty",
-     "name": "DirtyBeauty",
-     "value": "57"
-    },
-    {
-     "cpp": "QGradient::GreatWhale",
-     "name": "GreatWhale",
-     "value": "58"
-    },
-    {
-     "cpp": "QGradient::TeenNotebook",
-     "name": "TeenNotebook",
-     "value": "59"
-    },
-    {
-     "cpp": "QGradient::PoliteRumors",
-     "name": "PoliteRumors",
-     "value": "60"
-    },
-    {
-     "cpp": "QGradient::SweetPeriod",
-     "name": "SweetPeriod",
-     "value": "61"
-    },
-    {
-     "cpp": "QGradient::WideMatrix",
-     "name": "WideMatrix",
-     "value": "62"
-    },
-    {
-     "cpp": "QGradient::SoftCherish",
-     "name": "SoftCherish",
-     "value": "63"
-    },
-    {
-     "cpp": "QGradient::RedSalvation",
-     "name": "RedSalvation",
-     "value": "64"
-    },
-    {
-     "cpp": "QGradient::BurningSpring",
-     "name": "BurningSpring",
-     "value": "65"
-    },
-    {
-     "cpp": "QGradient::NightParty",
-     "name": "NightParty",
-     "value": "66"
-    },
-    {
-     "cpp": "QGradient::SkyGlider",
-     "name": "SkyGlider",
-     "value": "67"
-    },
-    {
-     "cpp": "QGradient::HeavenPeach",
-     "name": "HeavenPeach",
-     "value": "68"
-    },
-    {
-     "cpp": "QGradient::PurpleDivision",
-     "name": "PurpleDivision",
-     "value": "69"
-    },
-    {
-     "cpp": "QGradient::AquaSplash",
-     "name": "AquaSplash",
-     "value": "70"
-    },
-    {
-     "cpp": "QGradient::SpikyNaga",
-     "name": "SpikyNaga",
-     "value": "72"
-    },
-    {
-     "cpp": "QGradient::LoveKiss",
-     "name": "LoveKiss",
-     "value": "73"
-    },
-    {
-     "cpp": "QGradient::CleanMirror",
-     "name": "CleanMirror",
-     "value": "75"
-    },
-    {
-     "cpp": "QGradient::PremiumDark",
-     "name": "PremiumDark",
-     "value": "76"
-    },
-    {
-     "cpp": "QGradient::ColdEvening",
-     "name": "ColdEvening",
-     "value": "77"
-    },
-    {
-     "cpp": "QGradient::CochitiLake",
-     "name": "CochitiLake",
-     "value": "78"
-    },
-    {
-     "cpp": "QGradient::SummerGames",
-     "name": "SummerGames",
-     "value": "79"
-    },
-    {
-     "cpp": "QGradient::PassionateBed",
-     "name": "PassionateBed",
-     "value": "80"
-    },
-    {
-     "cpp": "QGradient::MountainRock",
-     "name": "MountainRock",
-     "value": "81"
-    },
-    {
-     "cpp": "QGradient::DesertHump",
-     "name": "DesertHump",
-     "value": "82"
-    },
-    {
-     "cpp": "QGradient::JungleDay",
-     "name": "JungleDay",
-     "value": "83"
-    },
-    {
-     "cpp": "QGradient::PhoenixStart",
-     "name": "PhoenixStart",
-     "value": "84"
-    },
-    {
-     "cpp": "QGradient::OctoberSilence",
-     "name": "OctoberSilence",
-     "value": "85"
-    },
-    {
-     "cpp": "QGradient::FarawayRiver",
-     "name": "FarawayRiver",
-     "value": "86"
-    },
-    {
-     "cpp": "QGradient::AlchemistLab",
-     "name": "AlchemistLab",
-     "value": "87"
-    },
-    {
-     "cpp": "QGradient::OverSun",
-     "name": "OverSun",
-     "value": "88"
-    },
-    {
-     "cpp": "QGradient::PremiumWhite",
-     "name": "PremiumWhite",
-     "value": "89"
-    },
-    {
-     "cpp": "QGradient::MarsParty",
-     "name": "MarsParty",
-     "value": "90"
-    },
-    {
-     "cpp": "QGradient::EternalConstance",
-     "name": "EternalConstance",
-     "value": "91"
-    },
-    {
-     "cpp": "QGradient::JapanBlush",
-     "name": "JapanBlush",
-     "value": "92"
-    },
-    {
-     "cpp": "QGradient::SmilingRain",
-     "name": "SmilingRain",
-     "value": "93"
-    },
-    {
-     "cpp": "QGradient::CloudyApple",
-     "name": "CloudyApple",
-     "value": "94"
-    },
-    {
-     "cpp": "QGradient::BigMango",
-     "name": "BigMango",
-     "value": "95"
-    },
-    {
-     "cpp": "QGradient::HealthyWater",
-     "name": "HealthyWater",
-     "value": "96"
-    },
-    {
-     "cpp": "QGradient::AmourAmour",
-     "name": "AmourAmour",
-     "value": "97"
-    },
-    {
-     "cpp": "QGradient::RiskyConcrete",
-     "name": "RiskyConcrete",
-     "value": "98"
-    },
-    {
-     "cpp": "QGradient::StrongStick",
-     "name": "StrongStick",
-     "value": "99"
-    },
-    {
-     "cpp": "QGradient::ViciousStance",
-     "name": "ViciousStance",
-     "value": "100"
-    },
-    {
-     "cpp": "QGradient::PaloAlto",
-     "name": "PaloAlto",
-     "value": "101"
-    },
-    {
-     "cpp": "QGradient::HappyMemories",
-     "name": "HappyMemories",
-     "value": "102"
-    },
-    {
-     "cpp": "QGradient::MidnightBloom",
-     "name": "MidnightBloom",
-     "value": "103"
-    },
-    {
-     "cpp": "QGradient::Crystalline",
-     "name": "Crystalline",
-     "value": "104"
-    },
-    {
-     "cpp": "QGradient::PartyBliss",
-     "name": "PartyBliss",
-     "value": "106"
-    },
-    {
-     "cpp": "QGradient::ConfidentCloud",
-     "name": "ConfidentCloud",
-     "value": "107"
-    },
-    {
-     "cpp": "QGradient::LeCocktail",
-     "name": "LeCocktail",
-     "value": "108"
-    },
-    {
-     "cpp": "QGradient::RiverCity",
-     "name": "RiverCity",
-     "value": "109"
-    },
-    {
-     "cpp": "QGradient::FrozenBerry",
-     "name": "FrozenBerry",
-     "value": "110"
-    },
-    {
-     "cpp": "QGradient::ChildCare",
-     "name": "ChildCare",
-     "value": "112"
-    },
-    {
-     "cpp": "QGradient::FlyingLemon",
-     "name": "FlyingLemon",
-     "value": "113"
-    },
-    {
-     "cpp": "QGradient::NewRetrowave",
-     "name": "NewRetrowave",
-     "value": "114"
-    },
-    {
-     "cpp": "QGradient::HiddenJaguar",
-     "name": "HiddenJaguar",
-     "value": "115"
-    },
-    {
-     "cpp": "QGradient::AboveTheSky",
-     "name": "AboveTheSky",
-     "value": "116"
-    },
-    {
-     "cpp": "QGradient::Nega",
-     "name": "Nega",
-     "value": "117"
-    },
-    {
-     "cpp": "QGradient::DenseWater",
-     "name": "DenseWater",
-     "value": "118"
-    },
-    {
-     "cpp": "QGradient::Seashore",
-     "name": "Seashore",
-     "value": "120"
-    },
-    {
-     "cpp": "QGradient::MarbleWall",
-     "name": "MarbleWall",
-     "value": "121"
-    },
-    {
-     "cpp": "QGradient::CheerfulCaramel",
-     "name": "CheerfulCaramel",
-     "value": "122"
-    },
-    {
-     "cpp": "QGradient::NightSky",
-     "name": "NightSky",
-     "value": "123"
-    },
-    {
-     "cpp": "QGradient::MagicLake",
-     "name": "MagicLake",
-     "value": "124"
-    },
-    {
-     "cpp": "QGradient::YoungGrass",
-     "name": "YoungGrass",
-     "value": "125"
-    },
-    {
-     "cpp": "QGradient::ColorfulPeach",
-     "name": "ColorfulPeach",
-     "value": "126"
-    },
-    {
-     "cpp": "QGradient::GentleCare",
-     "name": "GentleCare",
-     "value": "127"
-    },
-    {
-     "cpp": "QGradient::PlumBath",
-     "name": "PlumBath",
-     "value": "128"
-    },
-    {
-     "cpp": "QGradient::HappyUnicorn",
-     "name": "HappyUnicorn",
-     "value": "129"
-    },
-    {
-     "cpp": "QGradient::AfricanField",
-     "name": "AfricanField",
-     "value": "131"
-    },
-    {
-     "cpp": "QGradient::SolidStone",
-     "name": "SolidStone",
-     "value": "132"
-    },
-    {
-     "cpp": "QGradient::OrangeJuice",
-     "name": "OrangeJuice",
-     "value": "133"
-    },
-    {
-     "cpp": "QGradient::GlassWater",
-     "name": "GlassWater",
-     "value": "134"
-    },
-    {
-     "cpp": "QGradient::NorthMiracle",
-     "name": "NorthMiracle",
-     "value": "136"
-    },
-    {
-     "cpp": "QGradient::FruitBlend",
-     "name": "FruitBlend",
-     "value": "137"
-    },
-    {
-     "cpp": "QGradient::MillenniumPine",
-     "name": "MillenniumPine",
-     "value": "138"
-    },
-    {
-     "cpp": "QGradient::HighFlight",
-     "name": "HighFlight",
-     "value": "139"
-    },
-    {
-     "cpp": "QGradient::MoleHall",
-     "name": "MoleHall",
-     "value": "140"
-    },
-    {
-     "cpp": "QGradient::SpaceShift",
-     "name": "SpaceShift",
-     "value": "142"
-    },
-    {
-     "cpp": "QGradient::ForestInei",
-     "name": "ForestInei",
-     "value": "143"
-    },
-    {
-     "cpp": "QGradient::RoyalGarden",
-     "name": "RoyalGarden",
-     "value": "144"
-    },
-    {
-     "cpp": "QGradient::RichMetal",
-     "name": "RichMetal",
-     "value": "145"
-    },
-    {
-     "cpp": "QGradient::JuicyCake",
-     "name": "JuicyCake",
-     "value": "146"
-    },
-    {
-     "cpp": "QGradient::SmartIndigo",
-     "name": "SmartIndigo",
-     "value": "147"
-    },
-    {
-     "cpp": "QGradient::SandStrike",
-     "name": "SandStrike",
-     "value": "148"
-    },
-    {
-     "cpp": "QGradient::NorseBeauty",
-     "name": "NorseBeauty",
-     "value": "149"
-    },
-    {
-     "cpp": "QGradient::AquaGuidance",
-     "name": "AquaGuidance",
-     "value": "150"
-    },
-    {
-     "cpp": "QGradient::SunVeggie",
-     "name": "SunVeggie",
-     "value": "151"
-    },
-    {
-     "cpp": "QGradient::SeaLord",
-     "name": "SeaLord",
-     "value": "152"
-    },
-    {
-     "cpp": "QGradient::BlackSea",
-     "name": "BlackSea",
-     "value": "153"
-    },
-    {
-     "cpp": "QGradient::GrassShampoo",
-     "name": "GrassShampoo",
-     "value": "154"
-    },
-    {
-     "cpp": "QGradient::LandingAircraft",
-     "name": "LandingAircraft",
-     "value": "155"
-    },
-    {
-     "cpp": "QGradient::WitchDance",
-     "name": "WitchDance",
-     "value": "156"
-    },
-    {
-     "cpp": "QGradient::SleeplessNight",
-     "name": "SleeplessNight",
-     "value": "157"
-    },
-    {
-     "cpp": "QGradient::AngelCare",
-     "name": "AngelCare",
-     "value": "158"
-    },
-    {
-     "cpp": "QGradient::CrystalRiver",
-     "name": "CrystalRiver",
-     "value": "159"
-    },
-    {
-     "cpp": "QGradient::SoftLipstick",
-     "name": "SoftLipstick",
-     "value": "160"
-    },
-    {
-     "cpp": "QGradient::SaltMountain",
-     "name": "SaltMountain",
-     "value": "161"
-    },
-    {
-     "cpp": "QGradient::PerfectWhite",
-     "name": "PerfectWhite",
-     "value": "162"
-    },
-    {
-     "cpp": "QGradient::FreshOasis",
-     "name": "FreshOasis",
-     "value": "163"
-    },
-    {
-     "cpp": "QGradient::StrictNovember",
-     "name": "StrictNovember",
-     "value": "164"
-    },
-    {
-     "cpp": "QGradient::MorningSalad",
-     "name": "MorningSalad",
-     "value": "165"
-    },
-    {
-     "cpp": "QGradient::DeepRelief",
-     "name": "DeepRelief",
-     "value": "166"
-    },
-    {
-     "cpp": "QGradient::SeaStrike",
-     "name": "SeaStrike",
-     "value": "167"
-    },
-    {
-     "cpp": "QGradient::NightCall",
-     "name": "NightCall",
-     "value": "168"
-    },
-    {
-     "cpp": "QGradient::SupremeSky",
-     "name": "SupremeSky",
-     "value": "169"
-    },
-    {
-     "cpp": "QGradient::LightBlue",
-     "name": "LightBlue",
-     "value": "170"
-    },
-    {
-     "cpp": "QGradient::MindCrawl",
-     "name": "MindCrawl",
-     "value": "171"
-    },
-    {
-     "cpp": "QGradient::LilyMeadow",
-     "name": "LilyMeadow",
-     "value": "172"
-    },
-    {
-     "cpp": "QGradient::SugarLollipop",
-     "name": "SugarLollipop",
-     "value": "173"
-    },
-    {
-     "cpp": "QGradient::SweetDessert",
-     "name": "SweetDessert",
-     "value": "174"
-    },
-    {
-     "cpp": "QGradient::MagicRay",
-     "name": "MagicRay",
-     "value": "175"
-    },
-    {
-     "cpp": "QGradient::TeenParty",
-     "name": "TeenParty",
-     "value": "176"
-    },
-    {
-     "cpp": "QGradient::FrozenHeat",
-     "name": "FrozenHeat",
-     "value": "177"
-    },
-    {
-     "cpp": "QGradient::GagarinView",
-     "name": "GagarinView",
-     "value": "178"
-    },
-    {
-     "cpp": "QGradient::FabledSunset",
-     "name": "FabledSunset",
-     "value": "179"
-    },
-    {
-     "cpp": "QGradient::PerfectBlue",
-     "name": "PerfectBlue",
-     "value": "180"
-    },
-    {
-     "cpp": "QGradient::NumPresets",
-     "name": "NumPresets",
-     "value": "181"
-    }
-   ],
-   "name": "Preset",
-   "owner": "QGradient",
-   "scoped": false
-  },
-  "QGradient::Spread": {
-   "members": [
-    {
-     "cpp": "QGradient::PadSpread",
-     "name": "PadSpread",
-     "value": "0"
-    },
-    {
-     "cpp": "QGradient::ReflectSpread",
-     "name": "ReflectSpread",
-     "value": "1"
-    },
-    {
-     "cpp": "QGradient::RepeatSpread",
-     "name": "RepeatSpread",
-     "value": "2"
-    }
-   ],
-   "name": "Spread",
-   "owner": "QGradient",
-   "scoped": false
-  },
-  "QGradient::Type": {
-   "members": [
-    {
-     "cpp": "QGradient::LinearGradient",
-     "name": "LinearGradient",
-     "value": "0"
-    },
-    {
-     "cpp": "QGradient::RadialGradient",
-     "name": "RadialGradient",
-     "value": "1"
-    },
-    {
-     "cpp": "QGradient::ConicalGradient",
-     "name": "ConicalGradient",
-     "value": "2"
-    },
-    {
-     "cpp": "QGradient::NoGradient",
-     "name": "NoGradient",
-     "value": "3"
-    }
-   ],
-   "name": "Type",
-   "owner": "QGradient",
-   "scoped": false
-  },
   "QIcon::Mode": {
    "members": [
     {
@@ -4741,45 +3781,6 @@
    "owner": "QPixelFormat",
    "scoped": false
   },
-  "QRawFont::AntialiasingType": {
-   "members": [
-    {
-     "cpp": "QRawFont::PixelAntialiasing",
-     "name": "PixelAntialiasing",
-     "value": "0"
-    },
-    {
-     "cpp": "QRawFont::SubPixelAntialiasing",
-     "name": "SubPixelAntialiasing",
-     "value": "1"
-    }
-   ],
-   "name": "AntialiasingType",
-   "owner": "QRawFont",
-   "scoped": false
-  },
-  "QRawFont::LayoutFlag": {
-   "members": [
-    {
-     "cpp": "QRawFont::SeparateAdvances",
-     "name": "SeparateAdvances",
-     "value": "0"
-    },
-    {
-     "cpp": "QRawFont::KernedAdvances",
-     "name": "KernedAdvances",
-     "value": "1"
-    },
-    {
-     "cpp": "QRawFont::UseDesignMetrics",
-     "name": "UseDesignMetrics",
-     "value": "2"
-    }
-   ],
-   "name": "LayoutFlag",
-   "owner": "QRawFont",
-   "scoped": false
-  },
   "QRegion::RegionType": {
    "members": [
     {
@@ -5107,60 +4108,6 @@
    "owner": "QTextFrameFormat",
    "scoped": false
   },
-  "QTextLayout::CursorMode": {
-   "members": [
-    {
-     "cpp": "QTextLayout::SkipCharacters",
-     "name": "SkipCharacters",
-     "value": "0"
-    },
-    {
-     "cpp": "QTextLayout::SkipWords",
-     "name": "SkipWords",
-     "value": "1"
-    }
-   ],
-   "name": "CursorMode",
-   "owner": "QTextLayout",
-   "scoped": false
-  },
-  "QTextLayout::GlyphRunRetrievalFlag": {
-   "members": [
-    {
-     "cpp": "QTextLayout::RetrieveGlyphIndexes",
-     "name": "RetrieveGlyphIndexes",
-     "value": "0x1"
-    },
-    {
-     "cpp": "QTextLayout::RetrieveGlyphPositions",
-     "name": "RetrieveGlyphPositions",
-     "value": "0x2"
-    },
-    {
-     "cpp": "QTextLayout::RetrieveStringIndexes",
-     "name": "RetrieveStringIndexes",
-     "value": "0x4"
-    },
-    {
-     "cpp": "QTextLayout::RetrieveString",
-     "name": "RetrieveString",
-     "value": "0x8"
-    },
-    {
-     "cpp": "QTextLayout::DefaultRetrievalFlags",
-     "name": "DefaultRetrievalFlags",
-     "value": "RetrieveGlyphIndexes | RetrieveGlyphPositions"
-    },
-    {
-     "cpp": "QTextLayout::RetrieveAll",
-     "name": "RetrieveAll",
-     "value": "0xffff"
-    }
-   ],
-   "name": "GlyphRunRetrievalFlag",
-   "owner": "QTextLayout",
-   "scoped": false
-  },
   "QTextLength::Type": {
    "members": [
     {
@@ -5181,40 +4128,6 @@
    ],
    "name": "Type",
    "owner": "QTextLength",
-   "scoped": false
-  },
-  "QTextLine::CursorPosition": {
-   "members": [
-    {
-     "cpp": "QTextLine::CursorBetweenCharacters",
-     "name": "CursorBetweenCharacters",
-     "value": "0"
-    },
-    {
-     "cpp": "QTextLine::CursorOnCharacter",
-     "name": "CursorOnCharacter",
-     "value": "1"
-    }
-   ],
-   "name": "CursorPosition",
-   "owner": "QTextLine",
-   "scoped": false
-  },
-  "QTextLine::Edge": {
-   "members": [
-    {
-     "cpp": "QTextLine::Leading",
-     "name": "Leading",
-     "value": "0"
-    },
-    {
-     "cpp": "QTextLine::Trailing",
-     "name": "Trailing",
-     "value": "1"
-    }
-   ],
-   "name": "Edge",
-   "owner": "QTextLine",
    "scoped": false
   },
   "QTextListFormat::Style": {
@@ -5579,7 +4492,9 @@
    "enums": [
     "Qt::HitTestAccuracy"
    ],
-   "excluded": {},
+   "excluded": {
+    "protected or other platform": 4
+   },
    "header": "qabstracttextdocumentlayout.h",
    "hidden": [],
    "js_module": "svelters:qt/gui",
@@ -5674,7 +4589,7 @@
      {
       "const": true,
       "cpp": "documentSize",
-      "decl": 5,
+      "decl": 6,
       "key": "QAbstractTextDocumentLayout.documentSize()",
       "params": [],
       "pure": true,
@@ -5689,7 +4604,7 @@
      {
       "const": true,
       "cpp": "formatAt",
-      "decl": 8,
+      "decl": 10,
       "key": "QAbstractTextDocumentLayout.formatAt(const QPointF &)",
       "params": [
        {
@@ -5712,7 +4627,7 @@
      {
       "const": true,
       "cpp": "frameBoundingRect",
-      "decl": 9,
+      "decl": 11,
       "key": "QAbstractTextDocumentLayout.frameBoundingRect(QTextFrame *)",
       "params": [
        {
@@ -5737,7 +4652,7 @@
      {
       "const": true,
       "cpp": "hitTest",
-      "decl": 11,
+      "decl": 13,
       "key": "QAbstractTextDocumentLayout.hitTest(const QPointF &, Qt::HitTestAccuracy)",
       "params": [
        {
@@ -5768,7 +4683,7 @@
      {
       "const": true,
       "cpp": "imageAt",
-      "decl": 12,
+      "decl": 14,
       "key": "QAbstractTextDocumentLayout.imageAt(const QPointF &)",
       "params": [
        {
@@ -5790,7 +4705,7 @@
      {
       "const": true,
       "cpp": "pageCount",
-      "decl": 13,
+      "decl": 15,
       "key": "QAbstractTextDocumentLayout.pageCount()",
       "params": [],
       "pure": true,
@@ -5803,7 +4718,7 @@
     "registerHandler": [
      {
       "cpp": "registerHandler",
-      "decl": 16,
+      "decl": 19,
       "key": "QAbstractTextDocumentLayout.registerHandler(int, QObject *)",
       "params": [
        {
@@ -5831,7 +4746,7 @@
     "unregisterHandler": [
      {
       "cpp": "unregisterHandler",
-      "decl": 18,
+      "decl": 22,
       "key": "QAbstractTextDocumentLayout.unregisterHandler(int, QObject *)",
       "params": [
        {
@@ -6034,7 +4949,8 @@
     "Qt::ShortcutContext"
    ],
    "excluded": {
-    "deprecated": 3
+    "deprecated": 3,
+    "protected or other platform": 1
    },
    "header": "qaction.h",
    "hidden": [
@@ -6126,7 +5042,7 @@
     "hover": [
      {
       "cpp": "hover",
-      "decl": 14,
+      "decl": 15,
       "key": "QAction.hover()",
       "params": [],
       "ret": {
@@ -6139,7 +5055,7 @@
      {
       "const": true,
       "cpp": "isCheckable",
-      "decl": 18,
+      "decl": 19,
       "key": "QAction.isCheckable()",
       "params": [],
       "ret": {
@@ -6152,7 +5068,7 @@
      {
       "const": true,
       "cpp": "isChecked",
-      "decl": 19,
+      "decl": 20,
       "key": "QAction.isChecked()",
       "params": [],
       "ret": {
@@ -6165,7 +5081,7 @@
      {
       "const": true,
       "cpp": "isEnabled",
-      "decl": 20,
+      "decl": 21,
       "key": "QAction.isEnabled()",
       "params": [],
       "ret": {
@@ -6178,7 +5094,7 @@
      {
       "const": true,
       "cpp": "isIconVisibleInMenu",
-      "decl": 21,
+      "decl": 22,
       "key": "QAction.isIconVisibleInMenu()",
       "params": [],
       "ret": {
@@ -6191,7 +5107,7 @@
      {
       "const": true,
       "cpp": "isSeparator",
-      "decl": 22,
+      "decl": 23,
       "key": "QAction.isSeparator()",
       "params": [],
       "ret": {
@@ -6204,7 +5120,7 @@
      {
       "const": true,
       "cpp": "isShortcutVisibleInContextMenu",
-      "decl": 23,
+      "decl": 24,
       "key": "QAction.isShortcutVisibleInContextMenu()",
       "params": [],
       "ret": {
@@ -6217,7 +5133,7 @@
      {
       "const": true,
       "cpp": "isVisible",
-      "decl": 24,
+      "decl": 25,
       "key": "QAction.isVisible()",
       "params": [],
       "ret": {
@@ -6230,7 +5146,7 @@
      {
       "const": true,
       "cpp": "menu",
-      "decl": 25,
+      "decl": 26,
       "key": "QAction.menu()",
       "params": [],
       "ret": {
@@ -6244,7 +5160,7 @@
     "resetEnabled": [
      {
       "cpp": "resetEnabled",
-      "decl": 29,
+      "decl": 30,
       "key": "QAction.resetEnabled()",
       "params": [],
       "ret": {
@@ -6256,7 +5172,7 @@
     "setActionGroup": [
      {
       "cpp": "setActionGroup",
-      "decl": 30,
+      "decl": 31,
       "key": "QAction.setActionGroup(QActionGroup *)",
       "params": [
        {
@@ -6277,7 +5193,7 @@
     "setAutoRepeat": [
      {
       "cpp": "setAutoRepeat",
-      "decl": 31,
+      "decl": 32,
       "key": "QAction.setAutoRepeat(bool)",
       "params": [
        {
@@ -6296,7 +5212,7 @@
     "setCheckable": [
      {
       "cpp": "setCheckable",
-      "decl": 32,
+      "decl": 33,
       "key": "QAction.setCheckable(bool)",
       "params": [
        {
@@ -6315,7 +5231,7 @@
     "setChecked": [
      {
       "cpp": "setChecked",
-      "decl": 33,
+      "decl": 34,
       "key": "QAction.setChecked(bool)",
       "params": [
        {
@@ -6335,7 +5251,7 @@
     "setData": [
      {
       "cpp": "setData",
-      "decl": 34,
+      "decl": 35,
       "key": "QAction.setData(const QVariant &)",
       "params": [
        {
@@ -6354,7 +5270,7 @@
     "setDisabled": [
      {
       "cpp": "setDisabled",
-      "decl": 35,
+      "decl": 36,
       "key": "QAction.setDisabled(bool)",
       "params": [
        {
@@ -6374,7 +5290,7 @@
     "setEnabled": [
      {
       "cpp": "setEnabled",
-      "decl": 36,
+      "decl": 37,
       "key": "QAction.setEnabled(bool)",
       "params": [
        {
@@ -6394,7 +5310,7 @@
     "setFont": [
      {
       "cpp": "setFont",
-      "decl": 37,
+      "decl": 38,
       "key": "QAction.setFont(const QFont &)",
       "params": [
        {
@@ -6414,7 +5330,7 @@
     "setIcon": [
      {
       "cpp": "setIcon",
-      "decl": 38,
+      "decl": 39,
       "key": "QAction.setIcon(const QIcon &)",
       "params": [
        {
@@ -6434,7 +5350,7 @@
     "setIconText": [
      {
       "cpp": "setIconText",
-      "decl": 39,
+      "decl": 40,
       "key": "QAction.setIconText(const QString &)",
       "params": [
        {
@@ -6453,7 +5369,7 @@
     "setIconVisibleInMenu": [
      {
       "cpp": "setIconVisibleInMenu",
-      "decl": 40,
+      "decl": 41,
       "key": "QAction.setIconVisibleInMenu(bool)",
       "params": [
        {
@@ -6472,7 +5388,7 @@
     "setMenu": [
      {
       "cpp": "setMenu",
-      "decl": 41,
+      "decl": 42,
       "key": "QAction.setMenu(QMenu *)",
       "params": [
        {
@@ -6493,7 +5409,7 @@
     "setMenuRole": [
      {
       "cpp": "setMenuRole",
-      "decl": 42,
+      "decl": 43,
       "key": "QAction.setMenuRole(QAction::MenuRole)",
       "params": [
        {
@@ -6513,7 +5429,7 @@
     "setPriority": [
      {
       "cpp": "setPriority",
-      "decl": 43,
+      "decl": 44,
       "key": "QAction.setPriority(QAction::Priority)",
       "params": [
        {
@@ -6533,7 +5449,7 @@
     "setSeparator": [
      {
       "cpp": "setSeparator",
-      "decl": 44,
+      "decl": 45,
       "key": "QAction.setSeparator(bool)",
       "params": [
        {
@@ -6552,7 +5468,7 @@
     "setShortcut": [
      {
       "cpp": "setShortcut",
-      "decl": 45,
+      "decl": 46,
       "key": "QAction.setShortcut(const QKeySequence &)",
       "params": [
        {
@@ -6572,7 +5488,7 @@
     "setShortcutContext": [
      {
       "cpp": "setShortcutContext",
-      "decl": 46,
+      "decl": 47,
       "key": "QAction.setShortcutContext(Qt::ShortcutContext)",
       "params": [
        {
@@ -6592,7 +5508,7 @@
     "setShortcutVisibleInContextMenu": [
      {
       "cpp": "setShortcutVisibleInContextMenu",
-      "decl": 47,
+      "decl": 48,
       "key": "QAction.setShortcutVisibleInContextMenu(bool)",
       "params": [
        {
@@ -6611,7 +5527,7 @@
     "setShortcuts": [
      {
       "cpp": "setShortcuts",
-      "decl": 48,
+      "decl": 49,
       "key": "QAction.setShortcuts(QKeySequence::StandardKey)",
       "params": [
        {
@@ -6629,7 +5545,7 @@
      },
      {
       "cpp": "setShortcuts",
-      "decl": 49,
+      "decl": 50,
       "key": "QAction.setShortcuts(const QList<QKeySequence> &)",
       "params": [
        {
@@ -6653,7 +5569,7 @@
     "setStatusTip": [
      {
       "cpp": "setStatusTip",
-      "decl": 50,
+      "decl": 51,
       "key": "QAction.setStatusTip(const QString &)",
       "params": [
        {
@@ -6672,7 +5588,7 @@
     "setText": [
      {
       "cpp": "setText",
-      "decl": 51,
+      "decl": 52,
       "key": "QAction.setText(const QString &)",
       "params": [
        {
@@ -6691,7 +5607,7 @@
     "setToolTip": [
      {
       "cpp": "setToolTip",
-      "decl": 52,
+      "decl": 53,
       "key": "QAction.setToolTip(const QString &)",
       "params": [
        {
@@ -6710,7 +5626,7 @@
     "setVisible": [
      {
       "cpp": "setVisible",
-      "decl": 53,
+      "decl": 54,
       "key": "QAction.setVisible(bool)",
       "params": [
        {
@@ -6730,7 +5646,7 @@
     "setWhatsThis": [
      {
       "cpp": "setWhatsThis",
-      "decl": 54,
+      "decl": 55,
       "key": "QAction.setWhatsThis(const QString &)",
       "params": [
        {
@@ -6750,7 +5666,7 @@
      {
       "const": true,
       "cpp": "shortcuts",
-      "decl": 57,
+      "decl": 58,
       "key": "QAction.shortcuts()",
       "params": [],
       "ret": {
@@ -6767,7 +5683,7 @@
     "showStatusText": [
      {
       "cpp": "showStatusText",
-      "decl": 58,
+      "decl": 59,
       "key": "QAction.showStatusText(QObject *)",
       "params": [
        {
@@ -6790,7 +5706,7 @@
     "toggle": [
      {
       "cpp": "toggle",
-      "decl": 61,
+      "decl": 62,
       "key": "QAction.toggle()",
       "params": [],
       "ret": {
@@ -6802,7 +5718,7 @@
     "trigger": [
      {
       "cpp": "trigger",
-      "decl": 64,
+      "decl": 65,
       "key": "QAction.trigger()",
       "params": [],
       "ret": {
@@ -7471,7 +6387,8 @@
    "ambiguous": [],
    "bases": [],
    "blocked": {
-    "QBrush.gradient()": "const pointer to value:QGradient"
+    "QBrush.QBrush(const QGradient &)": "unbound:QGradient",
+    "QBrush.gradient()": "unbound:QGradient"
    },
    "category": "value",
    "const_twins": 0,
@@ -7482,24 +6399,6 @@
      "decl": 0,
      "key": "QBrush.QBrush()",
      "params": [],
-     "ret": {
-      "k": "self"
-     }
-    },
-    {
-     "cpp": "QBrush",
-     "decl": 6,
-     "key": "QBrush.QBrush(const QGradient &)",
-     "params": [
-      {
-       "name": "gradient",
-       "type": {
-        "cpp": "QGradient",
-        "k": "value",
-        "t": "QGradient"
-       }
-      }
-     ],
      "ret": {
       "k": "self"
      }
@@ -7776,7 +6675,6 @@
    "properties": [],
    "qobject": false,
    "refs": [
-    "QGradient",
     "QImage",
     "QPixmap",
     "QTransform"
@@ -9521,6 +8419,7 @@
     "QObject"
    ],
    "blocked": {
+    "QFileSystemModel.iconProvider()": "borrowed unique pointer:QAbstractFileIconProvider",
     "QFileSystemModel.roleNames()": "container"
    },
    "category": "model",
@@ -9559,7 +8458,8 @@
     "Qt::SortOrder"
    ],
    "excluded": {
-    "core": 1
+    "core": 1,
+    "protected or other platform": 2
    },
    "header": "qfilesystemmodel.h",
    "hidden": [
@@ -9701,7 +8601,7 @@
     "fetchMore": [
      {
       "cpp": "fetchMore",
-      "decl": 6,
+      "decl": 7,
       "key": "QFileSystemModel.fetchMore(const QModelIndex &)",
       "params": [
        {
@@ -9722,7 +8622,7 @@
      {
       "const": true,
       "cpp": "fileIcon",
-      "decl": 7,
+      "decl": 8,
       "key": "QFileSystemModel.fileIcon(const QModelIndex &)",
       "params": [
        {
@@ -9745,7 +8645,7 @@
      {
       "const": true,
       "cpp": "fileInfo",
-      "decl": 8,
+      "decl": 9,
       "key": "QFileSystemModel.fileInfo(const QModelIndex &)",
       "params": [
        {
@@ -9768,7 +8668,7 @@
      {
       "const": true,
       "cpp": "fileName",
-      "decl": 9,
+      "decl": 10,
       "key": "QFileSystemModel.fileName(const QModelIndex &)",
       "params": [
        {
@@ -9790,7 +8690,7 @@
      {
       "const": true,
       "cpp": "filePath",
-      "decl": 10,
+      "decl": 11,
       "key": "QFileSystemModel.filePath(const QModelIndex &)",
       "params": [
        {
@@ -9812,7 +8712,7 @@
      {
       "const": true,
       "cpp": "filter",
-      "decl": 12,
+      "decl": 13,
       "key": "QFileSystemModel.filter()",
       "params": [],
       "ret": {
@@ -9826,7 +8726,7 @@
      {
       "const": true,
       "cpp": "flags",
-      "decl": 13,
+      "decl": 14,
       "key": "QFileSystemModel.flags(const QModelIndex &)",
       "params": [
        {
@@ -9849,7 +8749,7 @@
      {
       "const": true,
       "cpp": "hasChildren",
-      "decl": 14,
+      "decl": 15,
       "key": "QFileSystemModel.hasChildren(const QModelIndex &)",
       "params": [
        {
@@ -9872,7 +8772,7 @@
      {
       "const": true,
       "cpp": "headerData",
-      "decl": 15,
+      "decl": 16,
       "key": "QFileSystemModel.headerData(int, Qt::Orientation, int)",
       "params": [
        {
@@ -9905,26 +8805,11 @@
       }
      }
     ],
-    "iconProvider": [
-     {
-      "const": true,
-      "cpp": "iconProvider",
-      "decl": 16,
-      "key": "QFileSystemModel.iconProvider()",
-      "params": [],
-      "ret": {
-       "cpp": "QAbstractFileIconProvider *",
-       "deref": false,
-       "k": "unique",
-       "t": "QAbstractFileIconProvider"
-      }
-     }
-    ],
     "index": [
      {
       "const": true,
       "cpp": "index",
-      "decl": 17,
+      "decl": 18,
       "key": "QFileSystemModel.index(const QString &, int)",
       "params": [
        {
@@ -9952,7 +8837,7 @@
      {
       "const": true,
       "cpp": "index",
-      "decl": 18,
+      "decl": 19,
       "key": "QFileSystemModel.index(int, int, const QModelIndex &)",
       "params": [
        {
@@ -9990,7 +8875,7 @@
      {
       "const": true,
       "cpp": "isDir",
-      "decl": 19,
+      "decl": 20,
       "key": "QFileSystemModel.isDir(const QModelIndex &)",
       "params": [
        {
@@ -10012,7 +8897,7 @@
      {
       "const": true,
       "cpp": "isReadOnly",
-      "decl": 20,
+      "decl": 21,
       "key": "QFileSystemModel.isReadOnly()",
       "params": [],
       "ret": {
@@ -10025,7 +8910,7 @@
      {
       "const": true,
       "cpp": "lastModified",
-      "decl": 21,
+      "decl": 22,
       "key": "QFileSystemModel.lastModified(const QModelIndex &)",
       "params": [
        {
@@ -10045,7 +8930,7 @@
      {
       "const": true,
       "cpp": "lastModified",
-      "decl": 22,
+      "decl": 23,
       "key": "QFileSystemModel.lastModified(const QModelIndex &, const QTimeZone &)",
       "params": [
        {
@@ -10076,7 +8961,7 @@
      {
       "const": true,
       "cpp": "mimeData",
-      "decl": 23,
+      "decl": 24,
       "key": "QFileSystemModel.mimeData(const QModelIndexList &)",
       "params": [
        {
@@ -10104,7 +8989,7 @@
      {
       "const": true,
       "cpp": "mimeTypes",
-      "decl": 24,
+      "decl": 25,
       "key": "QFileSystemModel.mimeTypes()",
       "params": [],
       "ret": {
@@ -10120,7 +9005,7 @@
     "mkdir": [
      {
       "cpp": "mkdir",
-      "decl": 25,
+      "decl": 26,
       "key": "QFileSystemModel.mkdir(const QModelIndex &, const QString &)",
       "params": [
        {
@@ -10150,7 +9035,7 @@
      {
       "const": true,
       "cpp": "myComputer",
-      "decl": 26,
+      "decl": 27,
       "key": "QFileSystemModel.myComputer(int)",
       "params": [
        {
@@ -10172,7 +9057,7 @@
      {
       "const": true,
       "cpp": "nameFilters",
-      "decl": 28,
+      "decl": 29,
       "key": "QFileSystemModel.nameFilters()",
       "params": [],
       "ret": {
@@ -10189,7 +9074,7 @@
      {
       "const": true,
       "cpp": "permissions",
-      "decl": 31,
+      "decl": 32,
       "key": "QFileSystemModel.permissions(const QModelIndex &)",
       "params": [
        {
@@ -10211,7 +9096,7 @@
     "remove": [
      {
       "cpp": "remove",
-      "decl": 32,
+      "decl": 33,
       "key": "QFileSystemModel.remove(const QModelIndex &)",
       "params": [
        {
@@ -10232,7 +9117,7 @@
     "rmdir": [
      {
       "cpp": "rmdir",
-      "decl": 34,
+      "decl": 35,
       "key": "QFileSystemModel.rmdir(const QModelIndex &)",
       "params": [
        {
@@ -10254,7 +9139,7 @@
      {
       "const": true,
       "cpp": "rootDirectory",
-      "decl": 36,
+      "decl": 37,
       "key": "QFileSystemModel.rootDirectory()",
       "params": [],
       "ret": {
@@ -10268,7 +9153,7 @@
      {
       "const": true,
       "cpp": "rootPath",
-      "decl": 37,
+      "decl": 38,
       "key": "QFileSystemModel.rootPath()",
       "params": [],
       "ret": {
@@ -10281,7 +9166,7 @@
      {
       "const": true,
       "cpp": "rowCount",
-      "decl": 39,
+      "decl": 40,
       "key": "QFileSystemModel.rowCount(const QModelIndex &)",
       "params": [
        {
@@ -10303,7 +9188,7 @@
     "setData": [
      {
       "cpp": "setData",
-      "decl": 40,
+      "decl": 41,
       "key": "QFileSystemModel.setData(const QModelIndex &, const QVariant &, int)",
       "params": [
        {
@@ -10339,7 +9224,7 @@
     "setFilter": [
      {
       "cpp": "setFilter",
-      "decl": 41,
+      "decl": 42,
       "key": "QFileSystemModel.setFilter(QDir::Filters)",
       "params": [
        {
@@ -10359,7 +9244,7 @@
     "setIconProvider": [
      {
       "cpp": "setIconProvider",
-      "decl": 42,
+      "decl": 43,
       "key": "QFileSystemModel.setIconProvider(QAbstractFileIconProvider *)",
       "ownership": [
        {
@@ -10388,7 +9273,7 @@
     "setNameFilterDisables": [
      {
       "cpp": "setNameFilterDisables",
-      "decl": 43,
+      "decl": 44,
       "key": "QFileSystemModel.setNameFilterDisables(bool)",
       "params": [
        {
@@ -10407,7 +9292,7 @@
     "setNameFilters": [
      {
       "cpp": "setNameFilters",
-      "decl": 44,
+      "decl": 45,
       "key": "QFileSystemModel.setNameFilters(const QStringList &)",
       "params": [
        {
@@ -10430,7 +9315,7 @@
     "setOption": [
      {
       "cpp": "setOption",
-      "decl": 45,
+      "decl": 46,
       "key": "QFileSystemModel.setOption(QFileSystemModel::Option, bool)",
       "params": [
        {
@@ -10458,7 +9343,7 @@
     "setOptions": [
      {
       "cpp": "setOptions",
-      "decl": 46,
+      "decl": 47,
       "key": "QFileSystemModel.setOptions(QFileSystemModel::Options)",
       "params": [
        {
@@ -10478,7 +9363,7 @@
     "setReadOnly": [
      {
       "cpp": "setReadOnly",
-      "decl": 47,
+      "decl": 48,
       "key": "QFileSystemModel.setReadOnly(bool)",
       "params": [
        {
@@ -10497,7 +9382,7 @@
     "setResolveSymlinks": [
      {
       "cpp": "setResolveSymlinks",
-      "decl": 48,
+      "decl": 49,
       "key": "QFileSystemModel.setResolveSymlinks(bool)",
       "params": [
        {
@@ -10516,7 +9401,7 @@
     "setRootPath": [
      {
       "cpp": "setRootPath",
-      "decl": 49,
+      "decl": 50,
       "key": "QFileSystemModel.setRootPath(const QString &)",
       "params": [
        {
@@ -10538,7 +9423,7 @@
      {
       "const": true,
       "cpp": "sibling",
-      "decl": 50,
+      "decl": 51,
       "key": "QFileSystemModel.sibling(int, int, const QModelIndex &)",
       "params": [
        {
@@ -10575,7 +9460,7 @@
      {
       "const": true,
       "cpp": "size",
-      "decl": 51,
+      "decl": 52,
       "key": "QFileSystemModel.size(const QModelIndex &)",
       "params": [
        {
@@ -10596,7 +9481,7 @@
     "sort": [
      {
       "cpp": "sort",
-      "decl": 52,
+      "decl": 53,
       "key": "QFileSystemModel.sort(int, Qt::SortOrder)",
       "params": [
        {
@@ -10625,7 +9510,7 @@
      {
       "const": true,
       "cpp": "supportedDropActions",
-      "decl": 53,
+      "decl": 54,
       "key": "QFileSystemModel.supportedDropActions()",
       "params": [],
       "ret": {
@@ -10639,7 +9524,7 @@
      {
       "const": true,
       "cpp": "testOption",
-      "decl": 54,
+      "decl": 55,
       "key": "QFileSystemModel.testOption(QFileSystemModel::Option)",
       "params": [
        {
@@ -10661,7 +9546,7 @@
      {
       "const": true,
       "cpp": "type",
-      "decl": 55,
+      "decl": 57,
       "key": "QFileSystemModel.type(const QModelIndex &)",
       "params": [
        {
@@ -11511,7 +10396,9 @@
    "abstract": false,
    "ambiguous": [],
    "bases": [],
-   "blocked": {},
+   "blocked": {
+    "QFontDatabase.styleString(const QFontInfo &)": "value without default constructor:QFontInfo"
+   },
    "category": "value",
    "const_twins": 0,
    "constructible": false,
@@ -11537,8 +10424,7 @@
    "properties": [],
    "qobject": false,
    "refs": [
-    "QFont",
-    "QFontInfo"
+    "QFont"
    ],
    "scope": "root",
    "signals": [],
@@ -12175,25 +11061,6 @@
          "cpp": "QFont",
          "k": "value",
          "t": "QFont"
-        }
-       }
-      ],
-      "ret": {
-       "cpp": "QString",
-       "k": "string"
-      }
-     },
-     {
-      "cpp": "styleString",
-      "decl": 27,
-      "key": "QFontDatabase.styleString(const QFontInfo &)",
-      "params": [
-       {
-        "name": "fontInfo",
-        "type": {
-         "cpp": "QFontInfo",
-         "k": "value",
-         "t": "QFontInfo"
         }
        }
       ],
@@ -13267,6 +12134,7 @@
    "bases": [],
    "blocked": {
     "QFontMetricsF.QFontMetricsF(const QFont &, const QPaintDevice *)": "type:transient:QPaintDevice",
+    "QFontMetricsF.QFontMetricsF(const QFontMetrics &)": "value without default constructor:QFontMetrics",
     "QFontMetricsF.boundingRect(QChar)": "blocked-type:QChar",
     "QFontMetricsF.horizontalAdvance(QChar)": "blocked-type:QChar",
     "QFontMetricsF.inFont(QChar)": "blocked-type:QChar",
@@ -13288,24 +12156,6 @@
         "cpp": "QFont",
         "k": "value",
         "t": "QFont"
-       }
-      }
-     ],
-     "ret": {
-      "k": "self"
-     }
-    },
-    {
-     "cpp": "QFontMetricsF",
-     "decl": 2,
-     "key": "QFontMetricsF.QFontMetricsF(const QFontMetrics &)",
-     "params": [
-      {
-       "name": "fontMetrics",
-       "type": {
-        "cpp": "QFontMetrics",
-        "k": "value",
-        "t": "QFontMetrics"
        }
       }
      ],
@@ -13866,7 +12716,6 @@
    "qobject": false,
    "refs": [
     "QFont",
-    "QFontMetrics",
     "QTextOption"
    ],
    "scope": "root",
@@ -13962,348 +12811,6 @@
    "scope": "closure",
    "signals": [],
    "since": "6.9",
-   "statics": {}
-  },
-  "QGlyphRun": {
-   "abstract": false,
-   "ambiguous": [],
-   "bases": [],
-   "blocked": {
-    "QGlyphRun.setRawData(const quint32 *, const QPointF *, int)": "type:unknown:quint32"
-   },
-   "category": "value",
-   "const_twins": 0,
-   "constructible": false,
-   "constructors": [
-    {
-     "cpp": "QGlyphRun",
-     "decl": 0,
-     "key": "QGlyphRun.QGlyphRun()",
-     "params": [],
-     "ret": {
-      "k": "self"
-     }
-    }
-   ],
-   "curated": false,
-   "enums": [
-    "QGlyphRun::GlyphRunFlag"
-   ],
-   "excluded": {
-    "core": 1,
-    "operator": 2
-   },
-   "header": "qglyphrun.h",
-   "hidden": [
-    "clear",
-    "setBoundingRect",
-    "setFlag",
-    "setFlags",
-    "setGlyphIndexes",
-    "setOverline",
-    "setPositions",
-    "setRawFont",
-    "setRightToLeft",
-    "setSourceString",
-    "setStrikeOut",
-    "setStringIndexes",
-    "setUnderline"
-   ],
-   "js_module": "svelters:qt/gui",
-   "lifetime": "value",
-   "merged": 0,
-   "methods": {
-    "boundingRect": [
-     {
-      "const": true,
-      "cpp": "boundingRect",
-      "decl": 1,
-      "key": "QGlyphRun.boundingRect()",
-      "params": [],
-      "ret": {
-       "cpp": "QRectF",
-       "k": "record",
-       "t": "Rect"
-      }
-     }
-    ],
-    "flags": [
-     {
-      "const": true,
-      "cpp": "flags",
-      "decl": 3,
-      "key": "QGlyphRun.flags()",
-      "params": [],
-      "ret": {
-       "cpp": "QFlags<QGlyphRun::GlyphRunFlag>",
-       "k": "flags",
-       "t": "QGlyphRun::GlyphRunFlag"
-      }
-     }
-    ],
-    "glyphIndexes": [
-     {
-      "const": true,
-      "cpp": "glyphIndexes",
-      "decl": 4,
-      "key": "QGlyphRun.glyphIndexes()",
-      "params": [],
-      "ret": {
-       "cpp": "QList<quint32>",
-       "k": "list",
-       "of": {
-        "cpp": "quint32",
-        "k": "int"
-       }
-      }
-     }
-    ],
-    "isEmpty": [
-     {
-      "const": true,
-      "cpp": "isEmpty",
-      "decl": 5,
-      "key": "QGlyphRun.isEmpty()",
-      "params": [],
-      "ret": {
-       "cpp": "bool",
-       "k": "bool"
-      }
-     }
-    ],
-    "isRightToLeft": [
-     {
-      "const": true,
-      "cpp": "isRightToLeft",
-      "decl": 6,
-      "key": "QGlyphRun.isRightToLeft()",
-      "params": [],
-      "ret": {
-       "cpp": "bool",
-       "k": "bool"
-      }
-     }
-    ],
-    "overline": [
-     {
-      "const": true,
-      "cpp": "overline",
-      "decl": 9,
-      "key": "QGlyphRun.overline()",
-      "params": [],
-      "ret": {
-       "cpp": "bool",
-       "k": "bool"
-      }
-     }
-    ],
-    "positions": [
-     {
-      "const": true,
-      "cpp": "positions",
-      "decl": 10,
-      "key": "QGlyphRun.positions()",
-      "params": [],
-      "ret": {
-       "cpp": "QList<QPointF>",
-       "k": "list",
-       "of": {
-        "cpp": "QPointF",
-        "k": "record",
-        "t": "Point"
-       }
-      }
-     }
-    ],
-    "rawFont": [
-     {
-      "const": true,
-      "cpp": "rawFont",
-      "decl": 11,
-      "key": "QGlyphRun.rawFont()",
-      "params": [],
-      "ret": {
-       "cpp": "QRawFont",
-       "k": "value",
-       "t": "QRawFont"
-      }
-     }
-    ],
-    "sourceString": [
-     {
-      "const": true,
-      "cpp": "sourceString",
-      "decl": 25,
-      "key": "QGlyphRun.sourceString()",
-      "params": [],
-      "ret": {
-       "cpp": "QString",
-       "k": "string"
-      },
-      "since": "6.5"
-     }
-    ],
-    "strikeOut": [
-     {
-      "const": true,
-      "cpp": "strikeOut",
-      "decl": 26,
-      "key": "QGlyphRun.strikeOut()",
-      "params": [],
-      "ret": {
-       "cpp": "bool",
-       "k": "bool"
-      }
-     }
-    ],
-    "stringIndexes": [
-     {
-      "const": true,
-      "cpp": "stringIndexes",
-      "decl": 27,
-      "key": "QGlyphRun.stringIndexes()",
-      "params": [],
-      "ret": {
-       "cpp": "QList<qsizetype>",
-       "k": "list",
-       "of": {
-        "cpp": "qsizetype",
-        "k": "int"
-       }
-      },
-      "since": "6.5"
-     }
-    ],
-    "underline": [
-     {
-      "const": true,
-      "cpp": "underline",
-      "decl": 29,
-      "key": "QGlyphRun.underline()",
-      "params": [],
-      "ret": {
-       "cpp": "bool",
-       "k": "bool"
-      }
-     }
-    ]
-   },
-   "module": "QtGui",
-   "name": "QGlyphRun",
-   "parent": null,
-   "properties": [],
-   "qobject": false,
-   "refs": [
-    "QRawFont"
-   ],
-   "scope": "closure",
-   "signals": [],
-   "since": null,
-   "statics": {}
-  },
-  "QGradient": {
-   "abstract": false,
-   "ambiguous": [],
-   "bases": [],
-   "blocked": {
-    "QGradient.setStops(const QGradientStops &)": "type:unknown:QGradientStops",
-    "QGradient.stops()": "type:unknown:QGradientStops"
-   },
-   "category": "value",
-   "const_twins": 0,
-   "constructible": false,
-   "constructors": [
-    {
-     "cpp": "QGradient",
-     "decl": 0,
-     "key": "QGradient.QGradient(QGradient::Preset)",
-     "params": [
-      {
-       "name": "preset",
-       "type": {
-        "cpp": "QGradient::Preset",
-        "k": "enum",
-        "t": "QGradient::Preset"
-       }
-      }
-     ],
-     "ret": {
-      "k": "self"
-     }
-    }
-   ],
-   "curated": false,
-   "enums": [
-    "QGradient::CoordinateMode",
-    "QGradient::Preset",
-    "QGradient::Spread",
-    "QGradient::Type"
-   ],
-   "excluded": {
-    "operator": 2
-   },
-   "header": "qbrush.h",
-   "hidden": [
-    "setColorAt",
-    "setCoordinateMode",
-    "setSpread"
-   ],
-   "js_module": "svelters:qt/gui",
-   "lifetime": "value",
-   "merged": 0,
-   "methods": {
-    "coordinateMode": [
-     {
-      "const": true,
-      "cpp": "coordinateMode",
-      "decl": 1,
-      "key": "QGradient.coordinateMode()",
-      "params": [],
-      "ret": {
-       "cpp": "QGradient::CoordinateMode",
-       "k": "enum",
-       "t": "QGradient::CoordinateMode"
-      }
-     }
-    ],
-    "spread": [
-     {
-      "const": true,
-      "cpp": "spread",
-      "decl": 8,
-      "key": "QGradient.spread()",
-      "params": [],
-      "ret": {
-       "cpp": "QGradient::Spread",
-       "k": "enum",
-       "t": "QGradient::Spread"
-      }
-     }
-    ],
-    "type": [
-     {
-      "const": true,
-      "cpp": "type",
-      "decl": 10,
-      "key": "QGradient.type()",
-      "params": [],
-      "ret": {
-       "cpp": "QGradient::Type",
-       "k": "enum",
-       "t": "QGradient::Type"
-      }
-     }
-    ]
-   },
-   "module": "QtGui",
-   "name": "QGradient",
-   "parent": null,
-   "properties": [],
-   "qobject": false,
-   "refs": [],
-   "scope": "closure",
-   "signals": [],
-   "since": null,
    "statics": {}
   },
   "QIcon": {
@@ -15011,6 +13518,7 @@
    "ambiguous": [],
    "bases": [],
    "blocked": {
+    "QIconEngine.clone()": "borrowed unique pointer:QIconEngine",
     "QIconEngine.paint(QPainter *, const QRect &, QIcon::Mode, QIcon::State)": "type:transient:QPainter",
     "QIconEngine.read(QDataStream &)": "unbound:QDataStream",
     "QIconEngine.write(QDataStream &)": "unbound:QDataStream"
@@ -15183,22 +13691,6 @@
         "k": "record",
         "t": "Size"
        }
-      }
-     }
-    ],
-    "clone": [
-     {
-      "const": true,
-      "cpp": "clone",
-      "decl": 5,
-      "key": "QIconEngine.clone()",
-      "params": [],
-      "pure": true,
-      "ret": {
-       "cpp": "QIconEngine *",
-       "deref": false,
-       "k": "unique",
-       "t": "QIconEngine"
       }
      }
     ],
@@ -22025,663 +20517,6 @@
    "since": null,
    "statics": {}
   },
-  "QRawFont": {
-   "abstract": false,
-   "ambiguous": [],
-   "bases": [],
-   "blocked": {
-    "QRawFont.advancesForGlyphIndexes(const quint32 *, QPointF *, int)": "type:unknown:quint32",
-    "QRawFont.advancesForGlyphIndexes(const quint32 *, QPointF *, int, QRawFont::LayoutFlags)": "type:unknown:quint32",
-    "QRawFont.fontTable(QFont::Tag)": "type:unknown:QFont::Tag",
-    "QRawFont.glyphIndexesForChars(const QChar *, int, quint32 *, int *)": "blocked-type:QChar",
-    "QRawFont.supportsCharacter(QChar)": "blocked-type:QChar"
-   },
-   "category": "value",
-   "const_twins": 0,
-   "constructible": false,
-   "constructors": [
-    {
-     "cpp": "QRawFont",
-     "decl": 0,
-     "key": "QRawFont.QRawFont()",
-     "params": [],
-     "ret": {
-      "k": "self"
-     }
-    },
-    {
-     "cpp": "QRawFont",
-     "decl": 2,
-     "key": "QRawFont.QRawFont(const QString &, qreal, QFont::HintingPreference)",
-     "params": [
-      {
-       "name": "fileName",
-       "type": {
-        "cpp": "QString",
-        "k": "string"
-       }
-      },
-      {
-       "name": "pixelSize",
-       "type": {
-        "cpp": "qreal",
-        "k": "float"
-       }
-      },
-      {
-       "default": true,
-       "name": "hintingPreference",
-       "type": {
-        "cpp": "QFont::HintingPreference",
-        "k": "enum",
-        "t": "QFont::HintingPreference"
-       }
-      }
-     ],
-     "ret": {
-      "k": "self"
-     }
-    },
-    {
-     "cpp": "QRawFont",
-     "decl": 1,
-     "key": "QRawFont.QRawFont(const QByteArray &, qreal, QFont::HintingPreference)",
-     "params": [
-      {
-       "name": "fontData",
-       "type": {
-        "cpp": "QByteArray",
-        "k": "bytes"
-       }
-      },
-      {
-       "name": "pixelSize",
-       "type": {
-        "cpp": "qreal",
-        "k": "float"
-       }
-      },
-      {
-       "default": true,
-       "name": "hintingPreference",
-       "type": {
-        "cpp": "QFont::HintingPreference",
-        "k": "enum",
-        "t": "QFont::HintingPreference"
-       }
-      }
-     ],
-     "ret": {
-      "k": "self"
-     }
-    }
-   ],
-   "curated": false,
-   "enums": [
-    "QFont::HintingPreference",
-    "QFont::Style",
-    "QFontDatabase::WritingSystem",
-    "QRawFont::AntialiasingType",
-    "QRawFont::LayoutFlag"
-   ],
-   "excluded": {
-    "core": 1,
-    "operator": 2
-   },
-   "header": "qrawfont.h",
-   "hidden": [
-    "loadFromData",
-    "loadFromFile",
-    "setPixelSize"
-   ],
-   "js_module": "svelters:qt/gui",
-   "lifetime": "value",
-   "merged": 0,
-   "methods": {
-    "advancesForGlyphIndexes": [
-     {
-      "const": true,
-      "cpp": "advancesForGlyphIndexes",
-      "decl": 3,
-      "key": "QRawFont.advancesForGlyphIndexes(const QList<quint32> &)",
-      "params": [
-       {
-        "name": "glyphIndexes",
-        "type": {
-         "cpp": "QList<quint32>",
-         "k": "list",
-         "of": {
-          "cpp": "quint32",
-          "k": "int"
-         }
-        }
-       }
-      ],
-      "ret": {
-       "cpp": "QList<QPointF>",
-       "k": "list",
-       "of": {
-        "cpp": "QPointF",
-        "k": "record",
-        "t": "Point"
-       }
-      }
-     },
-     {
-      "const": true,
-      "cpp": "advancesForGlyphIndexes",
-      "decl": 4,
-      "key": "QRawFont.advancesForGlyphIndexes(const QList<quint32> &, QRawFont::LayoutFlags)",
-      "params": [
-       {
-        "name": "glyphIndexes",
-        "type": {
-         "cpp": "QList<quint32>",
-         "k": "list",
-         "of": {
-          "cpp": "quint32",
-          "k": "int"
-         }
-        }
-       },
-       {
-        "name": "layoutFlags",
-        "type": {
-         "cpp": "QFlags<QRawFont::LayoutFlag>",
-         "k": "flags",
-         "t": "QRawFont::LayoutFlag"
-        }
-       }
-      ],
-      "ret": {
-       "cpp": "QList<QPointF>",
-       "k": "list",
-       "of": {
-        "cpp": "QPointF",
-        "k": "record",
-        "t": "Point"
-       }
-      }
-     }
-    ],
-    "alphaMapForGlyph": [
-     {
-      "const": true,
-      "cpp": "alphaMapForGlyph",
-      "decl": 7,
-      "key": "QRawFont.alphaMapForGlyph(quint32, QRawFont::AntialiasingType, const QTransform &)",
-      "params": [
-       {
-        "name": "glyphIndex",
-        "type": {
-         "cpp": "quint32",
-         "k": "int"
-        }
-       },
-       {
-        "default": true,
-        "name": "antialiasingType",
-        "type": {
-         "cpp": "QRawFont::AntialiasingType",
-         "k": "enum",
-         "t": "QRawFont::AntialiasingType"
-        }
-       },
-       {
-        "default": true,
-        "name": "transform",
-        "type": {
-         "cpp": "QTransform",
-         "k": "value",
-         "t": "QTransform"
-        }
-       }
-      ],
-      "ret": {
-       "cpp": "QImage",
-       "k": "value",
-       "t": "QImage"
-      }
-     }
-    ],
-    "ascent": [
-     {
-      "const": true,
-      "cpp": "ascent",
-      "decl": 8,
-      "key": "QRawFont.ascent()",
-      "params": [],
-      "ret": {
-       "cpp": "qreal",
-       "k": "float"
-      }
-     }
-    ],
-    "averageCharWidth": [
-     {
-      "const": true,
-      "cpp": "averageCharWidth",
-      "decl": 9,
-      "key": "QRawFont.averageCharWidth()",
-      "params": [],
-      "ret": {
-       "cpp": "qreal",
-       "k": "float"
-      }
-     }
-    ],
-    "boundingRect": [
-     {
-      "const": true,
-      "cpp": "boundingRect",
-      "decl": 10,
-      "key": "QRawFont.boundingRect(quint32)",
-      "params": [
-       {
-        "name": "glyphIndex",
-        "type": {
-         "cpp": "quint32",
-         "k": "int"
-        }
-       }
-      ],
-      "ret": {
-       "cpp": "QRectF",
-       "k": "record",
-       "t": "Rect"
-      }
-     }
-    ],
-    "capHeight": [
-     {
-      "const": true,
-      "cpp": "capHeight",
-      "decl": 11,
-      "key": "QRawFont.capHeight()",
-      "params": [],
-      "ret": {
-       "cpp": "qreal",
-       "k": "float"
-      }
-     }
-    ],
-    "descent": [
-     {
-      "const": true,
-      "cpp": "descent",
-      "decl": 12,
-      "key": "QRawFont.descent()",
-      "params": [],
-      "ret": {
-       "cpp": "qreal",
-       "k": "float"
-      }
-     }
-    ],
-    "familyName": [
-     {
-      "const": true,
-      "cpp": "familyName",
-      "decl": 13,
-      "key": "QRawFont.familyName()",
-      "params": [],
-      "ret": {
-       "cpp": "QString",
-       "k": "string"
-      }
-     }
-    ],
-    "fontTable": [
-     {
-      "const": true,
-      "cpp": "fontTable",
-      "decl": 15,
-      "key": "QRawFont.fontTable(const char *)",
-      "params": [
-       {
-        "name": "tag",
-        "type": {
-         "cpp": "const char *",
-         "cstring": true,
-         "k": "string"
-        }
-       }
-      ],
-      "ret": {
-       "cpp": "QByteArray",
-       "k": "bytes"
-      }
-     }
-    ],
-    "glyphCount": [
-     {
-      "const": true,
-      "cpp": "glyphCount",
-      "decl": 17,
-      "key": "QRawFont.glyphCount()",
-      "params": [],
-      "ret": {
-       "cpp": "quint32",
-       "k": "int"
-      },
-      "since": "6.11"
-     }
-    ],
-    "glyphIndexesForString": [
-     {
-      "const": true,
-      "cpp": "glyphIndexesForString",
-      "decl": 19,
-      "key": "QRawFont.glyphIndexesForString(const QString &)",
-      "params": [
-       {
-        "name": "text",
-        "type": {
-         "cpp": "QString",
-         "k": "string"
-        }
-       }
-      ],
-      "ret": {
-       "cpp": "QList<quint32>",
-       "k": "list",
-       "of": {
-        "cpp": "quint32",
-        "k": "int"
-       }
-      }
-     }
-    ],
-    "glyphName": [
-     {
-      "const": true,
-      "cpp": "glyphName",
-      "decl": 20,
-      "key": "QRawFont.glyphName(quint32)",
-      "params": [
-       {
-        "name": "glyphIndex",
-        "type": {
-         "cpp": "quint32",
-         "k": "int"
-        }
-       }
-      ],
-      "ret": {
-       "cpp": "QString",
-       "k": "string"
-      },
-      "since": "6.11"
-     }
-    ],
-    "hintingPreference": [
-     {
-      "const": true,
-      "cpp": "hintingPreference",
-      "decl": 21,
-      "key": "QRawFont.hintingPreference()",
-      "params": [],
-      "ret": {
-       "cpp": "QFont::HintingPreference",
-       "k": "enum",
-       "t": "QFont::HintingPreference"
-      }
-     }
-    ],
-    "isValid": [
-     {
-      "const": true,
-      "cpp": "isValid",
-      "decl": 22,
-      "key": "QRawFont.isValid()",
-      "params": [],
-      "ret": {
-       "cpp": "bool",
-       "k": "bool"
-      }
-     }
-    ],
-    "leading": [
-     {
-      "const": true,
-      "cpp": "leading",
-      "decl": 23,
-      "key": "QRawFont.leading()",
-      "params": [],
-      "ret": {
-       "cpp": "qreal",
-       "k": "float"
-      }
-     }
-    ],
-    "lineThickness": [
-     {
-      "const": true,
-      "cpp": "lineThickness",
-      "decl": 24,
-      "key": "QRawFont.lineThickness()",
-      "params": [],
-      "ret": {
-       "cpp": "qreal",
-       "k": "float"
-      }
-     }
-    ],
-    "maxCharWidth": [
-     {
-      "const": true,
-      "cpp": "maxCharWidth",
-      "decl": 27,
-      "key": "QRawFont.maxCharWidth()",
-      "params": [],
-      "ret": {
-       "cpp": "qreal",
-       "k": "float"
-      }
-     }
-    ],
-    "pathForGlyph": [
-     {
-      "const": true,
-      "cpp": "pathForGlyph",
-      "decl": 30,
-      "key": "QRawFont.pathForGlyph(quint32)",
-      "params": [
-       {
-        "name": "glyphIndex",
-        "type": {
-         "cpp": "quint32",
-         "k": "int"
-        }
-       }
-      ],
-      "ret": {
-       "cpp": "QPainterPath",
-       "k": "value",
-       "t": "QPainterPath"
-      }
-     }
-    ],
-    "pixelSize": [
-     {
-      "const": true,
-      "cpp": "pixelSize",
-      "decl": 31,
-      "key": "QRawFont.pixelSize()",
-      "params": [],
-      "ret": {
-       "cpp": "qreal",
-       "k": "float"
-      }
-     }
-    ],
-    "style": [
-     {
-      "const": true,
-      "cpp": "style",
-      "decl": 33,
-      "key": "QRawFont.style()",
-      "params": [],
-      "ret": {
-       "cpp": "QFont::Style",
-       "k": "enum",
-       "t": "QFont::Style"
-      }
-     }
-    ],
-    "styleName": [
-     {
-      "const": true,
-      "cpp": "styleName",
-      "decl": 34,
-      "key": "QRawFont.styleName()",
-      "params": [],
-      "ret": {
-       "cpp": "QString",
-       "k": "string"
-      }
-     }
-    ],
-    "supportedWritingSystems": [
-     {
-      "const": true,
-      "cpp": "supportedWritingSystems",
-      "decl": 35,
-      "key": "QRawFont.supportedWritingSystems()",
-      "params": [],
-      "ret": {
-       "cpp": "QList<QFontDatabase::WritingSystem>",
-       "k": "list",
-       "of": {
-        "cpp": "QFontDatabase::WritingSystem",
-        "k": "enum",
-        "t": "QFontDatabase::WritingSystem"
-       }
-      }
-     }
-    ],
-    "supportsCharacter": [
-     {
-      "const": true,
-      "cpp": "supportsCharacter",
-      "decl": 37,
-      "key": "QRawFont.supportsCharacter(uint)",
-      "params": [
-       {
-        "name": "ucs4",
-        "type": {
-         "cpp": "uint",
-         "k": "int"
-        }
-       }
-      ],
-      "ret": {
-       "cpp": "bool",
-       "k": "bool"
-      }
-     }
-    ],
-    "underlinePosition": [
-     {
-      "const": true,
-      "cpp": "underlinePosition",
-      "decl": 39,
-      "key": "QRawFont.underlinePosition()",
-      "params": [],
-      "ret": {
-       "cpp": "qreal",
-       "k": "float"
-      }
-     }
-    ],
-    "unitsPerEm": [
-     {
-      "const": true,
-      "cpp": "unitsPerEm",
-      "decl": 40,
-      "key": "QRawFont.unitsPerEm()",
-      "params": [],
-      "ret": {
-       "cpp": "qreal",
-       "k": "float"
-      }
-     }
-    ],
-    "weight": [
-     {
-      "const": true,
-      "cpp": "weight",
-      "decl": 41,
-      "key": "QRawFont.weight()",
-      "params": [],
-      "ret": {
-       "cpp": "int",
-       "k": "int"
-      }
-     }
-    ],
-    "xHeight": [
-     {
-      "const": true,
-      "cpp": "xHeight",
-      "decl": 42,
-      "key": "QRawFont.xHeight()",
-      "params": [],
-      "ret": {
-       "cpp": "qreal",
-       "k": "float"
-      }
-     }
-    ]
-   },
-   "module": "QtGui",
-   "name": "QRawFont",
-   "parent": null,
-   "properties": [],
-   "qobject": false,
-   "refs": [
-    "QFont",
-    "QImage",
-    "QPainterPath",
-    "QTransform"
-   ],
-   "scope": "closure",
-   "signals": [],
-   "since": null,
-   "statics": {
-    "fromFont": [
-     {
-      "cpp": "fromFont",
-      "decl": 16,
-      "key": "QRawFont.fromFont(const QFont &, QFontDatabase::WritingSystem)",
-      "params": [
-       {
-        "name": "font",
-        "type": {
-         "cpp": "QFont",
-         "k": "value",
-         "t": "QFont"
-        }
-       },
-       {
-        "default": true,
-        "name": "writingSystem",
-        "type": {
-         "cpp": "QFontDatabase::WritingSystem",
-         "k": "enum",
-         "t": "QFontDatabase::WritingSystem"
-        }
-       }
-      ],
-      "ret": {
-       "cpp": "QRawFont",
-       "k": "value",
-       "t": "QRawFont"
-      }
-     }
-    ]
-   }
-  },
   "QRegion": {
    "abstract": false,
    "ambiguous": [],
@@ -23686,6 +21521,7 @@
    "ambiguous": [],
    "bases": [],
    "blocked": {
+    "QStandardItem.multiData(QModelRoleDataSpan)": "unbound:QModelRoleDataSpan",
     "QStandardItem.read(QDataStream &)": "unbound:QDataStream",
     "QStandardItem.write(QDataStream &)": "unbound:QDataStream"
    },
@@ -24482,28 +22318,6 @@
        "t": "QStandardItemModel",
        "widget": false
       }
-     }
-    ],
-    "multiData": [
-     {
-      "const": true,
-      "cpp": "multiData",
-      "decl": 39,
-      "key": "QStandardItem.multiData(QModelRoleDataSpan)",
-      "params": [
-       {
-        "name": "roleDataSpan",
-        "type": {
-         "cpp": "QModelRoleDataSpan",
-         "k": "value",
-         "t": "QModelRoleDataSpan"
-        }
-       }
-      ],
-      "ret": {
-       "k": "void"
-      },
-      "since": "6.0"
      }
     ],
     "removeColumn": [
@@ -25412,7 +23226,6 @@
     "QFont",
     "QIcon",
     "QModelIndex",
-    "QModelRoleDataSpan",
     "QStandardItemModel"
    ],
    "scope": "root",
@@ -25430,6 +23243,7 @@
    "blocked": {
     "QStandardItemModel.bindableSortRole()": "type:unknown:QBindable<int>",
     "QStandardItemModel.itemData(const QModelIndex &)": "container",
+    "QStandardItemModel.multiData(const QModelIndex &, QModelRoleDataSpan)": "unbound:QModelRoleDataSpan",
     "QStandardItemModel.roleNames()": "container",
     "QStandardItemModel.setItemData(const QModelIndex &, const QMap<int, QVariant> &)": "container",
     "QStandardItemModel.setItemRoleNames(const QHash<int, QByteArray> &)": "container"
@@ -26332,35 +24146,6 @@
       }
      }
     ],
-    "multiData": [
-     {
-      "const": true,
-      "cpp": "multiData",
-      "decl": 33,
-      "key": "QStandardItemModel.multiData(const QModelIndex &, QModelRoleDataSpan)",
-      "params": [
-       {
-        "name": "index",
-        "type": {
-         "cpp": "QModelIndex",
-         "k": "value",
-         "t": "QModelIndex"
-        }
-       },
-       {
-        "name": "roleDataSpan",
-        "type": {
-         "cpp": "QModelRoleDataSpan",
-         "k": "value",
-         "t": "QModelRoleDataSpan"
-        }
-       }
-      ],
-      "ret": {
-       "k": "void"
-      }
-     }
-    ],
     "removeColumns": [
      {
       "cpp": "removeColumns",
@@ -27073,7 +24858,6 @@
    "refs": [
     "QMimeData",
     "QModelIndex",
-    "QModelRoleDataSpan",
     "QObject",
     "QStandardItem"
    ],
@@ -27105,6 +24889,7 @@
    "blocked": {
     "QTextBlock.begin()": "type:excluded:QTextBlock::iterator",
     "QTextBlock.end()": "type:excluded:QTextBlock::iterator",
+    "QTextBlock.layout()": "unbound:QTextLayout",
     "QTextBlock.setUserData(QTextBlockUserData *)": "type:needs-override:QTextBlockUserData",
     "QTextBlock.textFormats()": "type:unknown:QTextLayout::FormatRange",
     "QTextBlock.userData()": "type:needs-override:QTextBlockUserData"
@@ -27274,21 +25059,6 @@
       }
      }
     ],
-    "layout": [
-     {
-      "const": true,
-      "cpp": "layout",
-      "decl": 13,
-      "key": "QTextBlock.layout()",
-      "params": [],
-      "ret": {
-       "cpp": "QTextLayout *",
-       "deref": false,
-       "k": "unique",
-       "t": "QTextLayout"
-      }
-     }
-    ],
     "length": [
      {
       "const": true,
@@ -27434,7 +25204,6 @@
     "QTextBlockFormat",
     "QTextCharFormat",
     "QTextDocument",
-    "QTextLayout",
     "QTextList"
    ],
    "scope": "closure",
@@ -27730,7 +25499,9 @@
    "constructors": [],
    "curated": false,
    "enums": [],
-   "excluded": {},
+   "excluded": {
+    "protected or other platform": 3
+   },
    "header": "qtextobject.h",
    "hidden": [],
    "js_module": "svelters:qt/gui",
@@ -28927,7 +26698,9 @@
     "QTextDocument::Stacks",
     "Qt::CursorMoveStyle"
    ],
-   "excluded": {},
+   "excluded": {
+    "protected or other platform": 2
+   },
    "header": "qtextdocument.h",
    "hidden": [
     "baseUrl",
@@ -29138,7 +26911,7 @@
      {
       "const": true,
       "cpp": "defaultCursorMoveStyle",
-      "decl": 21,
+      "decl": 22,
       "key": "QTextDocument.defaultCursorMoveStyle()",
       "params": [],
       "ret": {
@@ -29152,7 +26925,7 @@
      {
       "const": true,
       "cpp": "defaultTextOption",
-      "decl": 25,
+      "decl": 26,
       "key": "QTextDocument.defaultTextOption()",
       "params": [],
       "ret": {
@@ -29166,7 +26939,7 @@
      {
       "const": true,
       "cpp": "documentLayout",
-      "decl": 26,
+      "decl": 27,
       "key": "QTextDocument.documentLayout()",
       "params": [],
       "ret": {
@@ -29181,7 +26954,7 @@
      {
       "const": true,
       "cpp": "end",
-      "decl": 30,
+      "decl": 31,
       "key": "QTextDocument.end()",
       "params": [],
       "ret": {
@@ -29195,7 +26968,7 @@
      {
       "const": true,
       "cpp": "find",
-      "decl": 32,
+      "decl": 33,
       "key": "QTextDocument.find(const QRegularExpression &, int, QTextDocument::FindFlags)",
       "params": [
        {
@@ -29233,7 +27006,7 @@
      {
       "const": true,
       "cpp": "find",
-      "decl": 34,
+      "decl": 35,
       "key": "QTextDocument.find(const QString &, int, QTextDocument::FindFlags)",
       "params": [
        {
@@ -29270,7 +27043,7 @@
      {
       "const": true,
       "cpp": "find",
-      "decl": 31,
+      "decl": 32,
       "key": "QTextDocument.find(const QRegularExpression &, const QTextCursor &, QTextDocument::FindFlags)",
       "params": [
        {
@@ -29308,7 +27081,7 @@
      {
       "const": true,
       "cpp": "find",
-      "decl": 33,
+      "decl": 34,
       "key": "QTextDocument.find(const QString &, const QTextCursor &, QTextDocument::FindFlags)",
       "params": [
        {
@@ -29347,7 +27120,7 @@
      {
       "const": true,
       "cpp": "findBlock",
-      "decl": 35,
+      "decl": 36,
       "key": "QTextDocument.findBlock(int)",
       "params": [
        {
@@ -29369,7 +27142,7 @@
      {
       "const": true,
       "cpp": "findBlockByLineNumber",
-      "decl": 36,
+      "decl": 37,
       "key": "QTextDocument.findBlockByLineNumber(int)",
       "params": [
        {
@@ -29391,7 +27164,7 @@
      {
       "const": true,
       "cpp": "findBlockByNumber",
-      "decl": 37,
+      "decl": 38,
       "key": "QTextDocument.findBlockByNumber(int)",
       "params": [
        {
@@ -29413,7 +27186,7 @@
      {
       "const": true,
       "cpp": "firstBlock",
-      "decl": 38,
+      "decl": 39,
       "key": "QTextDocument.firstBlock()",
       "params": [],
       "ret": {
@@ -29427,7 +27200,7 @@
      {
       "const": true,
       "cpp": "idealWidth",
-      "decl": 39,
+      "decl": 40,
       "key": "QTextDocument.idealWidth()",
       "params": [],
       "ret": {
@@ -29440,7 +27213,7 @@
      {
       "const": true,
       "cpp": "isEmpty",
-      "decl": 41,
+      "decl": 42,
       "key": "QTextDocument.isEmpty()",
       "params": [],
       "ret": {
@@ -29453,7 +27226,7 @@
      {
       "const": true,
       "cpp": "isLayoutEnabled",
-      "decl": 42,
+      "decl": 43,
       "key": "QTextDocument.isLayoutEnabled()",
       "params": [],
       "ret": {
@@ -29466,7 +27239,7 @@
      {
       "const": true,
       "cpp": "isModified",
-      "decl": 43,
+      "decl": 44,
       "key": "QTextDocument.isModified()",
       "params": [],
       "ret": {
@@ -29479,7 +27252,7 @@
      {
       "const": true,
       "cpp": "isRedoAvailable",
-      "decl": 44,
+      "decl": 45,
       "key": "QTextDocument.isRedoAvailable()",
       "params": [],
       "ret": {
@@ -29492,7 +27265,7 @@
      {
       "const": true,
       "cpp": "isUndoAvailable",
-      "decl": 45,
+      "decl": 46,
       "key": "QTextDocument.isUndoAvailable()",
       "params": [],
       "ret": {
@@ -29505,7 +27278,7 @@
      {
       "const": true,
       "cpp": "isUndoRedoEnabled",
-      "decl": 46,
+      "decl": 47,
       "key": "QTextDocument.isUndoRedoEnabled()",
       "params": [],
       "ret": {
@@ -29518,7 +27291,7 @@
      {
       "const": true,
       "cpp": "lastBlock",
-      "decl": 47,
+      "decl": 48,
       "key": "QTextDocument.lastBlock()",
       "params": [],
       "ret": {
@@ -29532,7 +27305,7 @@
      {
       "const": true,
       "cpp": "lineCount",
-      "decl": 48,
+      "decl": 49,
       "key": "QTextDocument.lineCount()",
       "params": [],
       "ret": {
@@ -29544,7 +27317,7 @@
     "markContentsDirty": [
      {
       "cpp": "markContentsDirty",
-      "decl": 49,
+      "decl": 51,
       "key": "QTextDocument.markContentsDirty(int, int)",
       "params": [
        {
@@ -29571,7 +27344,7 @@
      {
       "const": true,
       "cpp": "metaInformation",
-      "decl": 51,
+      "decl": 53,
       "key": "QTextDocument.metaInformation(QTextDocument::MetaInformation)",
       "params": [
        {
@@ -29593,7 +27366,7 @@
      {
       "const": true,
       "cpp": "object",
-      "decl": 53,
+      "decl": 55,
       "key": "QTextDocument.object(int)",
       "ownership": [
        {
@@ -29624,7 +27397,7 @@
      {
       "const": true,
       "cpp": "objectForFormat",
-      "decl": 54,
+      "decl": 56,
       "key": "QTextDocument.objectForFormat(const QTextFormat &)",
       "ownership": [
        {
@@ -29656,7 +27429,7 @@
      {
       "const": true,
       "cpp": "pageCount",
-      "decl": 55,
+      "decl": 57,
       "key": "QTextDocument.pageCount()",
       "params": [],
       "ret": {
@@ -29668,7 +27441,7 @@
     "redo": [
      {
       "cpp": "redo",
-      "decl": 58,
+      "decl": 60,
       "key": "QTextDocument.redo()",
       "params": [],
       "ret": {
@@ -29680,7 +27453,7 @@
     "redoCursor": [
      {
       "cpp": "redo",
-      "decl": 59,
+      "decl": 61,
       "key": "QTextDocument.redo(QTextCursor *)",
       "params": [
        {
@@ -29702,7 +27475,7 @@
      {
       "const": true,
       "cpp": "resource",
-      "decl": 61,
+      "decl": 63,
       "key": "QTextDocument.resource(int, const QUrl &)",
       "params": [
        {
@@ -29731,7 +27504,7 @@
      {
       "const": true,
       "cpp": "revision",
-      "decl": 63,
+      "decl": 65,
       "key": "QTextDocument.revision()",
       "params": [],
       "ret": {
@@ -29744,7 +27517,7 @@
      {
       "const": true,
       "cpp": "rootFrame",
-      "decl": 64,
+      "decl": 66,
       "key": "QTextDocument.rootFrame()",
       "params": [],
       "ret": {
@@ -29758,7 +27531,7 @@
     "setBaseUrl": [
      {
       "cpp": "setBaseUrl",
-      "decl": 65,
+      "decl": 67,
       "key": "QTextDocument.setBaseUrl(const QUrl &)",
       "params": [
        {
@@ -29778,7 +27551,7 @@
     "setBaselineOffset": [
      {
       "cpp": "setBaselineOffset",
-      "decl": 66,
+      "decl": 68,
       "key": "QTextDocument.setBaselineOffset(qreal)",
       "params": [
        {
@@ -29798,7 +27571,7 @@
     "setDefaultCursorMoveStyle": [
      {
       "cpp": "setDefaultCursorMoveStyle",
-      "decl": 67,
+      "decl": 69,
       "key": "QTextDocument.setDefaultCursorMoveStyle(Qt::CursorMoveStyle)",
       "params": [
        {
@@ -29818,7 +27591,7 @@
     "setDefaultFont": [
      {
       "cpp": "setDefaultFont",
-      "decl": 68,
+      "decl": 70,
       "key": "QTextDocument.setDefaultFont(const QFont &)",
       "params": [
        {
@@ -29838,7 +27611,7 @@
     "setDefaultStyleSheet": [
      {
       "cpp": "setDefaultStyleSheet",
-      "decl": 70,
+      "decl": 72,
       "key": "QTextDocument.setDefaultStyleSheet(const QString &)",
       "params": [
        {
@@ -29857,7 +27630,7 @@
     "setDefaultTextOption": [
      {
       "cpp": "setDefaultTextOption",
-      "decl": 71,
+      "decl": 73,
       "key": "QTextDocument.setDefaultTextOption(const QTextOption &)",
       "params": [
        {
@@ -29877,7 +27650,7 @@
     "setDocumentLayout": [
      {
       "cpp": "setDocumentLayout",
-      "decl": 72,
+      "decl": 74,
       "key": "QTextDocument.setDocumentLayout(QAbstractTextDocumentLayout *)",
       "ownership": [
        {
@@ -29906,7 +27679,7 @@
     "setDocumentMargin": [
      {
       "cpp": "setDocumentMargin",
-      "decl": 73,
+      "decl": 75,
       "key": "QTextDocument.setDocumentMargin(qreal)",
       "params": [
        {
@@ -29925,7 +27698,7 @@
     "setHtml": [
      {
       "cpp": "setHtml",
-      "decl": 74,
+      "decl": 76,
       "key": "QTextDocument.setHtml(const QString &)",
       "params": [
        {
@@ -29944,7 +27717,7 @@
     "setIndentWidth": [
      {
       "cpp": "setIndentWidth",
-      "decl": 75,
+      "decl": 77,
       "key": "QTextDocument.setIndentWidth(qreal)",
       "params": [
        {
@@ -29963,7 +27736,7 @@
     "setLayoutEnabled": [
      {
       "cpp": "setLayoutEnabled",
-      "decl": 76,
+      "decl": 78,
       "key": "QTextDocument.setLayoutEnabled(bool)",
       "params": [
        {
@@ -29982,7 +27755,7 @@
     "setMarkdown": [
      {
       "cpp": "setMarkdown",
-      "decl": 77,
+      "decl": 79,
       "key": "QTextDocument.setMarkdown(const QString &, QTextDocument::MarkdownFeatures)",
       "params": [
        {
@@ -30010,7 +27783,7 @@
     "setMaximumBlockCount": [
      {
       "cpp": "setMaximumBlockCount",
-      "decl": 78,
+      "decl": 80,
       "key": "QTextDocument.setMaximumBlockCount(int)",
       "params": [
        {
@@ -30029,7 +27802,7 @@
     "setMetaInformation": [
      {
       "cpp": "setMetaInformation",
-      "decl": 79,
+      "decl": 81,
       "key": "QTextDocument.setMetaInformation(QTextDocument::MetaInformation, const QString &)",
       "params": [
        {
@@ -30056,7 +27829,7 @@
     "setModified": [
      {
       "cpp": "setModified",
-      "decl": 80,
+      "decl": 82,
       "key": "QTextDocument.setModified(bool)",
       "params": [
        {
@@ -30077,7 +27850,7 @@
     "setPageSize": [
      {
       "cpp": "setPageSize",
-      "decl": 81,
+      "decl": 83,
       "key": "QTextDocument.setPageSize(const QSizeF &)",
       "params": [
        {
@@ -30097,7 +27870,7 @@
     "setPlainText": [
      {
       "cpp": "setPlainText",
-      "decl": 82,
+      "decl": 84,
       "key": "QTextDocument.setPlainText(const QString &)",
       "params": [
        {
@@ -30116,7 +27889,7 @@
     "setSubScriptBaseline": [
      {
       "cpp": "setSubScriptBaseline",
-      "decl": 84,
+      "decl": 86,
       "key": "QTextDocument.setSubScriptBaseline(qreal)",
       "params": [
        {
@@ -30136,7 +27909,7 @@
     "setSuperScriptBaseline": [
      {
       "cpp": "setSuperScriptBaseline",
-      "decl": 85,
+      "decl": 87,
       "key": "QTextDocument.setSuperScriptBaseline(qreal)",
       "params": [
        {
@@ -30156,7 +27929,7 @@
     "setTextWidth": [
      {
       "cpp": "setTextWidth",
-      "decl": 86,
+      "decl": 88,
       "key": "QTextDocument.setTextWidth(qreal)",
       "params": [
        {
@@ -30175,7 +27948,7 @@
     "setUndoRedoEnabled": [
      {
       "cpp": "setUndoRedoEnabled",
-      "decl": 87,
+      "decl": 89,
       "key": "QTextDocument.setUndoRedoEnabled(bool)",
       "params": [
        {
@@ -30194,7 +27967,7 @@
     "setUseDesignMetrics": [
      {
       "cpp": "setUseDesignMetrics",
-      "decl": 88,
+      "decl": 90,
       "key": "QTextDocument.setUseDesignMetrics(bool)",
       "params": [
        {
@@ -30214,7 +27987,7 @@
      {
       "const": true,
       "cpp": "subScriptBaseline",
-      "decl": 90,
+      "decl": 92,
       "key": "QTextDocument.subScriptBaseline()",
       "params": [],
       "ret": {
@@ -30228,7 +28001,7 @@
      {
       "const": true,
       "cpp": "superScriptBaseline",
-      "decl": 91,
+      "decl": 93,
       "key": "QTextDocument.superScriptBaseline()",
       "params": [],
       "ret": {
@@ -30242,7 +28015,7 @@
      {
       "const": true,
       "cpp": "toHtml",
-      "decl": 93,
+      "decl": 95,
       "key": "QTextDocument.toHtml()",
       "params": [],
       "ret": {
@@ -30255,7 +28028,7 @@
      {
       "const": true,
       "cpp": "toMarkdown",
-      "decl": 94,
+      "decl": 96,
       "key": "QTextDocument.toMarkdown(QTextDocument::MarkdownFeatures)",
       "params": [
        {
@@ -30278,7 +28051,7 @@
      {
       "const": true,
       "cpp": "toPlainText",
-      "decl": 95,
+      "decl": 97,
       "key": "QTextDocument.toPlainText()",
       "params": [],
       "ret": {
@@ -30291,7 +28064,7 @@
      {
       "const": true,
       "cpp": "toRawText",
-      "decl": 96,
+      "decl": 98,
       "key": "QTextDocument.toRawText()",
       "params": [],
       "ret": {
@@ -30303,7 +28076,7 @@
     "undo": [
      {
       "cpp": "undo",
-      "decl": 97,
+      "decl": 99,
       "key": "QTextDocument.undo()",
       "params": [],
       "ret": {
@@ -30315,7 +28088,7 @@
     "undoCursor": [
      {
       "cpp": "undo",
-      "decl": 98,
+      "decl": 100,
       "key": "QTextDocument.undo(QTextCursor *)",
       "params": [
        {
@@ -32018,707 +29791,6 @@
    "since": null,
    "statics": {}
   },
-  "QTextLayout": {
-   "abstract": false,
-   "ambiguous": [],
-   "bases": [],
-   "blocked": {
-    "QTextLayout.draw(QPainter *, const QPointF &, const QList<QTextLayout::FormatRange> &, const QRectF &)": "type:transient:QPainter",
-    "QTextLayout.drawCursor(QPainter *, const QPointF &, int)": "type:transient:QPainter",
-    "QTextLayout.drawCursor(QPainter *, const QPointF &, int, int)": "type:transient:QPainter",
-    "QTextLayout.formats()": "type:unknown:QTextLayout::FormatRange",
-    "QTextLayout.setFormats(const QList<QTextLayout::FormatRange> &)": "type:unknown:QTextLayout::FormatRange"
-   },
-   "category": "unique",
-   "const_twins": 0,
-   "constructible": false,
-   "constructors": [
-    {
-     "cpp": "QTextLayout",
-     "decl": 0,
-     "key": "QTextLayout.QTextLayout()",
-     "params": [],
-     "ret": {
-      "k": "self"
-     }
-    },
-    {
-     "cpp": "QTextLayout",
-     "decl": 1,
-     "key": "QTextLayout.QTextLayout(const QString &)",
-     "params": [
-      {
-       "name": "text",
-       "type": {
-        "cpp": "QString",
-        "k": "string"
-       }
-      }
-     ],
-     "ret": {
-      "k": "self"
-     }
-    },
-    {
-     "cpp": "QTextLayout",
-     "decl": 2,
-     "key": "QTextLayout.QTextLayout(const QString &, const QFont &, const QPaintDevice *)",
-     "params": [
-      {
-       "name": "text",
-       "type": {
-        "cpp": "QString",
-        "k": "string"
-       }
-      },
-      {
-       "name": "font",
-       "type": {
-        "cpp": "QFont",
-        "k": "value",
-        "t": "QFont"
-       }
-      }
-     ],
-     "ret": {
-      "k": "self"
-     }
-    }
-   ],
-   "curated": false,
-   "enums": [
-    "QTextLayout::CursorMode",
-    "QTextLayout::GlyphRunRetrievalFlag",
-    "Qt::CursorMoveStyle"
-   ],
-   "excluded": {},
-   "header": "qtextlayout.h",
-   "hidden": [],
-   "js_module": "svelters:qt/gui",
-   "lifetime": "owned",
-   "merged": 0,
-   "methods": {
-    "beginLayout": [
-     {
-      "cpp": "beginLayout",
-      "decl": 3,
-      "key": "QTextLayout.beginLayout()",
-      "params": [],
-      "ret": {
-       "k": "void"
-      }
-     }
-    ],
-    "boundingRect": [
-     {
-      "const": true,
-      "cpp": "boundingRect",
-      "decl": 4,
-      "key": "QTextLayout.boundingRect()",
-      "params": [],
-      "ret": {
-       "cpp": "QRectF",
-       "k": "record",
-       "t": "Rect"
-      }
-     }
-    ],
-    "cacheEnabled": [
-     {
-      "const": true,
-      "cpp": "cacheEnabled",
-      "decl": 5,
-      "key": "QTextLayout.cacheEnabled()",
-      "params": [],
-      "ret": {
-       "cpp": "bool",
-       "k": "bool"
-      }
-     }
-    ],
-    "clearFormats": [
-     {
-      "cpp": "clearFormats",
-      "decl": 6,
-      "key": "QTextLayout.clearFormats()",
-      "params": [],
-      "ret": {
-       "k": "void"
-      }
-     }
-    ],
-    "clearLayout": [
-     {
-      "cpp": "clearLayout",
-      "decl": 7,
-      "key": "QTextLayout.clearLayout()",
-      "params": [],
-      "ret": {
-       "k": "void"
-      }
-     }
-    ],
-    "createLine": [
-     {
-      "cpp": "createLine",
-      "decl": 8,
-      "key": "QTextLayout.createLine()",
-      "params": [],
-      "ret": {
-       "cpp": "QTextLine",
-       "k": "value",
-       "t": "QTextLine"
-      }
-     }
-    ],
-    "cursorMoveStyle": [
-     {
-      "const": true,
-      "cpp": "cursorMoveStyle",
-      "decl": 9,
-      "key": "QTextLayout.cursorMoveStyle()",
-      "params": [],
-      "ret": {
-       "cpp": "Qt::CursorMoveStyle",
-       "k": "enum",
-       "t": "Qt::CursorMoveStyle"
-      }
-     }
-    ],
-    "endLayout": [
-     {
-      "cpp": "endLayout",
-      "decl": 13,
-      "key": "QTextLayout.endLayout()",
-      "params": [],
-      "ret": {
-       "k": "void"
-      }
-     }
-    ],
-    "font": [
-     {
-      "const": true,
-      "cpp": "font",
-      "decl": 14,
-      "key": "QTextLayout.font()",
-      "params": [],
-      "ret": {
-       "cpp": "QFont",
-       "k": "value",
-       "t": "QFont"
-      }
-     }
-    ],
-    "glyphRuns": [
-     {
-      "const": true,
-      "cpp": "glyphRuns",
-      "decl": 16,
-      "key": "QTextLayout.glyphRuns(int, int)",
-      "params": [
-       {
-        "default": true,
-        "name": "from",
-        "type": {
-         "cpp": "int",
-         "k": "int"
-        }
-       },
-       {
-        "default": true,
-        "name": "length",
-        "type": {
-         "cpp": "int",
-         "k": "int"
-        }
-       }
-      ],
-      "ret": {
-       "cpp": "QList<QGlyphRun>",
-       "k": "list",
-       "of": {
-        "cpp": "QGlyphRun",
-        "k": "value",
-        "t": "QGlyphRun"
-       }
-      }
-     },
-     {
-      "const": true,
-      "cpp": "glyphRuns",
-      "decl": 17,
-      "key": "QTextLayout.glyphRuns(int, int, QTextLayout::GlyphRunRetrievalFlags)",
-      "params": [
-       {
-        "name": "from",
-        "type": {
-         "cpp": "int",
-         "k": "int"
-        }
-       },
-       {
-        "name": "length",
-        "type": {
-         "cpp": "int",
-         "k": "int"
-        }
-       },
-       {
-        "name": "retrievalFlags",
-        "type": {
-         "cpp": "QFlags<QTextLayout::GlyphRunRetrievalFlag>",
-         "k": "flags",
-         "t": "QTextLayout::GlyphRunRetrievalFlag"
-        }
-       }
-      ],
-      "ret": {
-       "cpp": "QList<QGlyphRun>",
-       "k": "list",
-       "of": {
-        "cpp": "QGlyphRun",
-        "k": "value",
-        "t": "QGlyphRun"
-       }
-      },
-      "since": "6.5"
-     }
-    ],
-    "isValidCursorPosition": [
-     {
-      "const": true,
-      "cpp": "isValidCursorPosition",
-      "decl": 18,
-      "key": "QTextLayout.isValidCursorPosition(int)",
-      "params": [
-       {
-        "name": "pos",
-        "type": {
-         "cpp": "int",
-         "k": "int"
-        }
-       }
-      ],
-      "ret": {
-       "cpp": "bool",
-       "k": "bool"
-      }
-     }
-    ],
-    "leftCursorPosition": [
-     {
-      "const": true,
-      "cpp": "leftCursorPosition",
-      "decl": 19,
-      "key": "QTextLayout.leftCursorPosition(int)",
-      "params": [
-       {
-        "name": "oldPos",
-        "type": {
-         "cpp": "int",
-         "k": "int"
-        }
-       }
-      ],
-      "ret": {
-       "cpp": "int",
-       "k": "int"
-      }
-     }
-    ],
-    "lineAt": [
-     {
-      "const": true,
-      "cpp": "lineAt",
-      "decl": 20,
-      "key": "QTextLayout.lineAt(int)",
-      "params": [
-       {
-        "name": "i",
-        "type": {
-         "cpp": "int",
-         "k": "int"
-        }
-       }
-      ],
-      "ret": {
-       "cpp": "QTextLine",
-       "k": "value",
-       "t": "QTextLine"
-      }
-     }
-    ],
-    "lineCount": [
-     {
-      "const": true,
-      "cpp": "lineCount",
-      "decl": 21,
-      "key": "QTextLayout.lineCount()",
-      "params": [],
-      "ret": {
-       "cpp": "int",
-       "k": "int"
-      }
-     }
-    ],
-    "lineForTextPosition": [
-     {
-      "const": true,
-      "cpp": "lineForTextPosition",
-      "decl": 22,
-      "key": "QTextLayout.lineForTextPosition(int)",
-      "params": [
-       {
-        "name": "pos",
-        "type": {
-         "cpp": "int",
-         "k": "int"
-        }
-       }
-      ],
-      "ret": {
-       "cpp": "QTextLine",
-       "k": "value",
-       "t": "QTextLine"
-      }
-     }
-    ],
-    "maximumWidth": [
-     {
-      "const": true,
-      "cpp": "maximumWidth",
-      "decl": 23,
-      "key": "QTextLayout.maximumWidth()",
-      "params": [],
-      "ret": {
-       "cpp": "qreal",
-       "k": "float"
-      }
-     }
-    ],
-    "minimumWidth": [
-     {
-      "const": true,
-      "cpp": "minimumWidth",
-      "decl": 24,
-      "key": "QTextLayout.minimumWidth()",
-      "params": [],
-      "ret": {
-       "cpp": "qreal",
-       "k": "float"
-      }
-     }
-    ],
-    "nextCursorPosition": [
-     {
-      "const": true,
-      "cpp": "nextCursorPosition",
-      "decl": 25,
-      "key": "QTextLayout.nextCursorPosition(int, QTextLayout::CursorMode)",
-      "params": [
-       {
-        "name": "oldPos",
-        "type": {
-         "cpp": "int",
-         "k": "int"
-        }
-       },
-       {
-        "default": true,
-        "name": "mode",
-        "type": {
-         "cpp": "QTextLayout::CursorMode",
-         "k": "enum",
-         "t": "QTextLayout::CursorMode"
-        }
-       }
-      ],
-      "ret": {
-       "cpp": "int",
-       "k": "int"
-      }
-     }
-    ],
-    "position": [
-     {
-      "const": true,
-      "cpp": "position",
-      "decl": 26,
-      "key": "QTextLayout.position()",
-      "params": [],
-      "ret": {
-       "cpp": "QPointF",
-       "k": "record",
-       "t": "Point"
-      }
-     }
-    ],
-    "preeditAreaPosition": [
-     {
-      "const": true,
-      "cpp": "preeditAreaPosition",
-      "decl": 27,
-      "key": "QTextLayout.preeditAreaPosition()",
-      "params": [],
-      "ret": {
-       "cpp": "int",
-       "k": "int"
-      }
-     }
-    ],
-    "preeditAreaText": [
-     {
-      "const": true,
-      "cpp": "preeditAreaText",
-      "decl": 28,
-      "key": "QTextLayout.preeditAreaText()",
-      "params": [],
-      "ret": {
-       "cpp": "QString",
-       "k": "string"
-      }
-     }
-    ],
-    "previousCursorPosition": [
-     {
-      "const": true,
-      "cpp": "previousCursorPosition",
-      "decl": 29,
-      "key": "QTextLayout.previousCursorPosition(int, QTextLayout::CursorMode)",
-      "params": [
-       {
-        "name": "oldPos",
-        "type": {
-         "cpp": "int",
-         "k": "int"
-        }
-       },
-       {
-        "default": true,
-        "name": "mode",
-        "type": {
-         "cpp": "QTextLayout::CursorMode",
-         "k": "enum",
-         "t": "QTextLayout::CursorMode"
-        }
-       }
-      ],
-      "ret": {
-       "cpp": "int",
-       "k": "int"
-      }
-     }
-    ],
-    "rightCursorPosition": [
-     {
-      "const": true,
-      "cpp": "rightCursorPosition",
-      "decl": 30,
-      "key": "QTextLayout.rightCursorPosition(int)",
-      "params": [
-       {
-        "name": "oldPos",
-        "type": {
-         "cpp": "int",
-         "k": "int"
-        }
-       }
-      ],
-      "ret": {
-       "cpp": "int",
-       "k": "int"
-      }
-     }
-    ],
-    "setCacheEnabled": [
-     {
-      "cpp": "setCacheEnabled",
-      "decl": 31,
-      "key": "QTextLayout.setCacheEnabled(bool)",
-      "params": [
-       {
-        "name": "enable",
-        "type": {
-         "cpp": "bool",
-         "k": "bool"
-        }
-       }
-      ],
-      "ret": {
-       "k": "void"
-      }
-     }
-    ],
-    "setCursorMoveStyle": [
-     {
-      "cpp": "setCursorMoveStyle",
-      "decl": 32,
-      "key": "QTextLayout.setCursorMoveStyle(Qt::CursorMoveStyle)",
-      "params": [
-       {
-        "name": "style",
-        "type": {
-         "cpp": "Qt::CursorMoveStyle",
-         "k": "enum",
-         "t": "Qt::CursorMoveStyle"
-        }
-       }
-      ],
-      "ret": {
-       "k": "void"
-      }
-     }
-    ],
-    "setFont": [
-     {
-      "cpp": "setFont",
-      "decl": 33,
-      "key": "QTextLayout.setFont(const QFont &)",
-      "params": [
-       {
-        "name": "font",
-        "type": {
-         "cpp": "QFont",
-         "k": "value",
-         "t": "QFont"
-        }
-       }
-      ],
-      "ret": {
-       "k": "void"
-      }
-     }
-    ],
-    "setPosition": [
-     {
-      "cpp": "setPosition",
-      "decl": 35,
-      "key": "QTextLayout.setPosition(const QPointF &)",
-      "params": [
-       {
-        "name": "p",
-        "type": {
-         "cpp": "QPointF",
-         "k": "record",
-         "t": "Point"
-        }
-       }
-      ],
-      "ret": {
-       "k": "void"
-      }
-     }
-    ],
-    "setPreeditArea": [
-     {
-      "cpp": "setPreeditArea",
-      "decl": 36,
-      "key": "QTextLayout.setPreeditArea(int, const QString &)",
-      "params": [
-       {
-        "name": "position",
-        "type": {
-         "cpp": "int",
-         "k": "int"
-        }
-       },
-       {
-        "name": "text",
-        "type": {
-         "cpp": "QString",
-         "k": "string"
-        }
-       }
-      ],
-      "ret": {
-       "k": "void"
-      }
-     }
-    ],
-    "setText": [
-     {
-      "cpp": "setText",
-      "decl": 37,
-      "key": "QTextLayout.setText(const QString &)",
-      "params": [
-       {
-        "name": "string",
-        "type": {
-         "cpp": "QString",
-         "k": "string"
-        }
-       }
-      ],
-      "ret": {
-       "k": "void"
-      }
-     }
-    ],
-    "setTextOption": [
-     {
-      "cpp": "setTextOption",
-      "decl": 38,
-      "key": "QTextLayout.setTextOption(const QTextOption &)",
-      "params": [
-       {
-        "name": "option",
-        "type": {
-         "cpp": "QTextOption",
-         "k": "value",
-         "t": "QTextOption"
-        }
-       }
-      ],
-      "ret": {
-       "k": "void"
-      }
-     }
-    ],
-    "text": [
-     {
-      "const": true,
-      "cpp": "text",
-      "decl": 39,
-      "key": "QTextLayout.text()",
-      "params": [],
-      "ret": {
-       "cpp": "QString",
-       "k": "string"
-      }
-     }
-    ],
-    "textOption": [
-     {
-      "const": true,
-      "cpp": "textOption",
-      "decl": 40,
-      "key": "QTextLayout.textOption()",
-      "params": [],
-      "ret": {
-       "cpp": "QTextOption",
-       "k": "value",
-       "t": "QTextOption"
-      }
-     }
-    ]
-   },
-   "module": "QtGui",
-   "name": "QTextLayout",
-   "parent": null,
-   "properties": [],
-   "qobject": false,
-   "refs": [
-    "QFont",
-    "QGlyphRun",
-    "QTextLine",
-    "QTextOption"
-   ],
-   "scope": "closure",
-   "signals": [],
-   "since": null,
-   "statics": {}
-  },
   "QTextLength": {
    "abstract": false,
    "ambiguous": [],
@@ -32831,447 +29903,6 @@
    "properties": [],
    "qobject": false,
    "refs": [],
-   "scope": "closure",
-   "signals": [],
-   "since": null,
-   "statics": {}
-  },
-  "QTextLine": {
-   "abstract": false,
-   "ambiguous": [],
-   "bases": [],
-   "blocked": {
-    "QTextLine.draw(QPainter *, const QPointF &)": "type:transient:QPainter"
-   },
-   "category": "value",
-   "const_twins": 0,
-   "constructible": false,
-   "constructors": [
-    {
-     "cpp": "QTextLine",
-     "decl": 0,
-     "key": "QTextLine.QTextLine()",
-     "params": [],
-     "ret": {
-      "k": "self"
-     }
-    }
-   ],
-   "curated": false,
-   "enums": [
-    "QTextLayout::GlyphRunRetrievalFlag",
-    "QTextLine::CursorPosition",
-    "QTextLine::Edge"
-   ],
-   "excluded": {},
-   "header": "qtextlayout.h",
-   "hidden": [
-    "setLeadingIncluded",
-    "setLineWidth",
-    "setNumColumns",
-    "setPosition"
-   ],
-   "js_module": "svelters:qt/gui",
-   "lifetime": "value",
-   "merged": 0,
-   "methods": {
-    "ascent": [
-     {
-      "const": true,
-      "cpp": "ascent",
-      "decl": 1,
-      "key": "QTextLine.ascent()",
-      "params": [],
-      "ret": {
-       "cpp": "qreal",
-       "k": "float"
-      }
-     }
-    ],
-    "cursorToX": [
-     {
-      "const": true,
-      "cpp": "cursorToX",
-      "decl": 2,
-      "key": "QTextLine.cursorToX(int *, QTextLine::Edge)",
-      "params": [
-       {
-        "name": "cursorPos",
-        "type": {
-         "cpp": "int",
-         "k": "int",
-         "out": true
-        }
-       },
-       {
-        "default": true,
-        "name": "edge",
-        "type": {
-         "cpp": "QTextLine::Edge",
-         "k": "enum",
-         "t": "QTextLine::Edge"
-        }
-       }
-      ],
-      "ret": {
-       "cpp": "qreal",
-       "k": "float"
-      }
-     },
-     {
-      "const": true,
-      "cpp": "cursorToX",
-      "decl": 3,
-      "key": "QTextLine.cursorToX(int, QTextLine::Edge)",
-      "params": [
-       {
-        "name": "cursorPos",
-        "type": {
-         "cpp": "int",
-         "k": "int"
-        }
-       },
-       {
-        "default": true,
-        "name": "edge",
-        "type": {
-         "cpp": "QTextLine::Edge",
-         "k": "enum",
-         "t": "QTextLine::Edge"
-        }
-       }
-      ],
-      "ret": {
-       "cpp": "qreal",
-       "k": "float"
-      }
-     }
-    ],
-    "descent": [
-     {
-      "const": true,
-      "cpp": "descent",
-      "decl": 4,
-      "key": "QTextLine.descent()",
-      "params": [],
-      "ret": {
-       "cpp": "qreal",
-       "k": "float"
-      }
-     }
-    ],
-    "glyphRuns": [
-     {
-      "const": true,
-      "cpp": "glyphRuns",
-      "decl": 6,
-      "key": "QTextLine.glyphRuns(int, int)",
-      "params": [
-       {
-        "default": true,
-        "name": "from",
-        "type": {
-         "cpp": "int",
-         "k": "int"
-        }
-       },
-       {
-        "default": true,
-        "name": "length",
-        "type": {
-         "cpp": "int",
-         "k": "int"
-        }
-       }
-      ],
-      "ret": {
-       "cpp": "QList<QGlyphRun>",
-       "k": "list",
-       "of": {
-        "cpp": "QGlyphRun",
-        "k": "value",
-        "t": "QGlyphRun"
-       }
-      }
-     },
-     {
-      "const": true,
-      "cpp": "glyphRuns",
-      "decl": 7,
-      "key": "QTextLine.glyphRuns(int, int, QTextLayout::GlyphRunRetrievalFlags)",
-      "params": [
-       {
-        "name": "from",
-        "type": {
-         "cpp": "int",
-         "k": "int"
-        }
-       },
-       {
-        "name": "length",
-        "type": {
-         "cpp": "int",
-         "k": "int"
-        }
-       },
-       {
-        "name": "retrievalFlags",
-        "type": {
-         "cpp": "QFlags<QTextLayout::GlyphRunRetrievalFlag>",
-         "k": "flags",
-         "t": "QTextLayout::GlyphRunRetrievalFlag"
-        }
-       }
-      ],
-      "ret": {
-       "cpp": "QList<QGlyphRun>",
-       "k": "list",
-       "of": {
-        "cpp": "QGlyphRun",
-        "k": "value",
-        "t": "QGlyphRun"
-       }
-      },
-      "since": "6.5"
-     }
-    ],
-    "height": [
-     {
-      "const": true,
-      "cpp": "height",
-      "decl": 8,
-      "key": "QTextLine.height()",
-      "params": [],
-      "ret": {
-       "cpp": "qreal",
-       "k": "float"
-      }
-     }
-    ],
-    "horizontalAdvance": [
-     {
-      "const": true,
-      "cpp": "horizontalAdvance",
-      "decl": 9,
-      "key": "QTextLine.horizontalAdvance()",
-      "params": [],
-      "ret": {
-       "cpp": "qreal",
-       "k": "float"
-      }
-     }
-    ],
-    "isValid": [
-     {
-      "const": true,
-      "cpp": "isValid",
-      "decl": 10,
-      "key": "QTextLine.isValid()",
-      "params": [],
-      "ret": {
-       "cpp": "bool",
-       "k": "bool"
-      }
-     }
-    ],
-    "leading": [
-     {
-      "const": true,
-      "cpp": "leading",
-      "decl": 11,
-      "key": "QTextLine.leading()",
-      "params": [],
-      "ret": {
-       "cpp": "qreal",
-       "k": "float"
-      }
-     }
-    ],
-    "leadingIncluded": [
-     {
-      "const": true,
-      "cpp": "leadingIncluded",
-      "decl": 12,
-      "key": "QTextLine.leadingIncluded()",
-      "params": [],
-      "ret": {
-       "cpp": "bool",
-       "k": "bool"
-      }
-     }
-    ],
-    "lineNumber": [
-     {
-      "const": true,
-      "cpp": "lineNumber",
-      "decl": 13,
-      "key": "QTextLine.lineNumber()",
-      "params": [],
-      "ret": {
-       "cpp": "int",
-       "k": "int"
-      }
-     }
-    ],
-    "naturalTextRect": [
-     {
-      "const": true,
-      "cpp": "naturalTextRect",
-      "decl": 14,
-      "key": "QTextLine.naturalTextRect()",
-      "params": [],
-      "ret": {
-       "cpp": "QRectF",
-       "k": "record",
-       "t": "Rect"
-      }
-     }
-    ],
-    "naturalTextWidth": [
-     {
-      "const": true,
-      "cpp": "naturalTextWidth",
-      "decl": 15,
-      "key": "QTextLine.naturalTextWidth()",
-      "params": [],
-      "ret": {
-       "cpp": "qreal",
-       "k": "float"
-      }
-     }
-    ],
-    "position": [
-     {
-      "const": true,
-      "cpp": "position",
-      "decl": 16,
-      "key": "QTextLine.position()",
-      "params": [],
-      "ret": {
-       "cpp": "QPointF",
-       "k": "record",
-       "t": "Point"
-      }
-     }
-    ],
-    "rect": [
-     {
-      "const": true,
-      "cpp": "rect",
-      "decl": 17,
-      "key": "QTextLine.rect()",
-      "params": [],
-      "ret": {
-       "cpp": "QRectF",
-       "k": "record",
-       "t": "Rect"
-      }
-     }
-    ],
-    "textLength": [
-     {
-      "const": true,
-      "cpp": "textLength",
-      "decl": 23,
-      "key": "QTextLine.textLength()",
-      "params": [],
-      "ret": {
-       "cpp": "int",
-       "k": "int"
-      }
-     }
-    ],
-    "textStart": [
-     {
-      "const": true,
-      "cpp": "textStart",
-      "decl": 24,
-      "key": "QTextLine.textStart()",
-      "params": [],
-      "ret": {
-       "cpp": "int",
-       "k": "int"
-      }
-     }
-    ],
-    "width": [
-     {
-      "const": true,
-      "cpp": "width",
-      "decl": 25,
-      "key": "QTextLine.width()",
-      "params": [],
-      "ret": {
-       "cpp": "qreal",
-       "k": "float"
-      }
-     }
-    ],
-    "x": [
-     {
-      "const": true,
-      "cpp": "x",
-      "decl": 26,
-      "key": "QTextLine.x()",
-      "params": [],
-      "ret": {
-       "cpp": "qreal",
-       "k": "float"
-      }
-     }
-    ],
-    "xToCursor": [
-     {
-      "const": true,
-      "cpp": "xToCursor",
-      "decl": 27,
-      "key": "QTextLine.xToCursor(qreal, QTextLine::CursorPosition)",
-      "params": [
-       {
-        "name": "x",
-        "type": {
-         "cpp": "qreal",
-         "k": "float"
-        }
-       },
-       {
-        "default": true,
-        "name": "cpos",
-        "type": {
-         "cpp": "QTextLine::CursorPosition",
-         "k": "enum",
-         "t": "QTextLine::CursorPosition"
-        }
-       }
-      ],
-      "ret": {
-       "cpp": "int",
-       "k": "int"
-      }
-     }
-    ],
-    "y": [
-     {
-      "const": true,
-      "cpp": "y",
-      "decl": 28,
-      "key": "QTextLine.y()",
-      "params": [],
-      "ret": {
-       "cpp": "qreal",
-       "k": "float"
-      }
-     }
-    ]
-   },
-   "module": "QtGui",
-   "name": "QTextLine",
-   "parent": null,
-   "properties": [],
-   "qobject": false,
-   "refs": [
-    "QGlyphRun"
-   ],
    "scope": "closure",
    "signals": [],
    "since": null,

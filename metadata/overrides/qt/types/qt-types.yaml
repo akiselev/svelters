@@ -15,6 +15,16 @@ curated:
   - QMimeDatabase
   - QTemporaryDir
 
+# How the generated ledger tests make a subject of a curated type that is not a constructible QObject
+# (those are made with `construct`): the arguments of its constructor (`new`), as JSON-ish scalars.
+subjects:
+  QUrl: ["https://example.com/a/b?x=1#top"]
+  QFileInfo: ["/usr/share"]
+  QIcon: []
+  QMimeDatabase: []
+  QTemporaryDir: []
+  QStandardItem: ["item"]
+
 # Types bound beyond the signature closure of these roots (the allowlist of QtCore/QtGui roots, section 3.4).
 roots:
   - QTimer
@@ -26,6 +36,9 @@ roots:
   - QUrlQuery
   - QStandardPaths
   - QStringListModel
+  - QProcess
+  - QImage
+  - QPixmap
   - QSortFilterProxyModel
   - QIdentityProxyModel
   - QItemSelectionModel
@@ -123,6 +136,8 @@ exclude:
   - QTextStream
   - QDebug
   - QDirListing
+  - QModelRoleData
+  - QModelRoleDataSpan
 
 # Taxonomy overrides (section 3.4 "type overrides"): `class:` replaces the rule's category.
 classes:
@@ -164,9 +179,32 @@ aliases:
   QStringView: {k: string, cpp: QString}
   QAnyStringView: {k: string, cpp: QString}
   QByteArrayView: {k: bytes, cpp: QByteArray}
-  QVariantMap: {k: variant, cpp: QVariant}
-  QVariantList: {k: variant, cpp: QVariant}
-  QVariantHash: {k: variant, cpp: QVariant}
+  # `pass`: how the converted local reaches the parameter.
+  QVariantMap: {k: variant, cpp: QVariant, pass: ".toMap()"}
+  QVariantList: {k: variant, cpp: QVariant, pass: ".toList()"}
+  QVariantHash: {k: variant, cpp: QVariant, pass: ".toHash()"}
+
+# Concrete although a pure virtual looks unoverridden: the override is private and qdoc does not list it
+# (QAbstractListModel implements index/parent/columnCount privately).
+concrete:
+  - QStringListModel
+  - QProcess
+  - QImage
+  - QPixmap
+
+# Enum members declared only on another platform (`#ifdef Q_OS_WIN` / `Q_OS_WASM` in the header).
+platform_enum_members:
+  - QSettings::Registry32Format
+  - QSettings::Registry64Format
+  - QSettings::WebLocalStorageFormat
+  - QSettings::WebIndexedDBFormat
+
+# Members declared only on another platform.
+platform_members:
+  - QProcess.nativeArguments
+  - QProcess.setNativeArguments
+  - QProcess.createProcessArgumentsModifier
+  - QProcess.setCreateProcessArgumentsModifier
 
 # Spellings never bound (they compile against one Qt but not the other, or have no JS meaning).
 block_types:

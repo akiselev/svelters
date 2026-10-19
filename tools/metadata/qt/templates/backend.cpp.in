@@ -67,6 +67,10 @@
 #include <QtWidgets/QStyleFactory>
 #include <QtGui/QPalette>
 #include <QtGui/QImage>
+#include <QtCore/QFuture>
+#include <QtCore/QPromise>
+#include <QtCore/QEventLoop>
+#include <QtCore/QMetaMethod>
 //@@INCLUDES@@
 
 // Headers of the value-model converters (serdes.hpp.in is included inside the anonymous namespace).
@@ -193,6 +197,12 @@ struct Core {
 
 Core g;
 bool g_test_throw = false;
+
+// The non-GUI type core (types_core.hpp.in, N2): what the generic runtime above it needs to know.
+namespace svl {
+void drop(svl_handle h);
+svl_id kind_of(const QObject *o);
+}  // namespace svl
 QObject *g_owner = nullptr;  // the receiver of the getter or call being converted: owner of the borrowed handles it mints
 
 // Optional measurement of the time spent inside backend calls (toolkit side of a host op).
@@ -256,6 +266,7 @@ void drop_listeners(svl_handle h) {
     it = g.observers.erase(it);
   }
   g.after_make.erase(g.after_make.lower_bound({h, 0, 0}), g.after_make.lower_bound({h + 1, 0, 0}));
+  svl::drop(h);  // signal relays of the type layer
 }
 
 // Qt runs the slots of a signal in connection order, and a signal is emitted after the widget changed
@@ -333,6 +344,7 @@ svl_handle intern(QObject *o, QObject *owner) {
   Entry e;
   e.obj = o;
   e.kind = gen_kind_of(o);
+  if (!e.kind) e.kind = svl::kind_of(o);  // not an element class: its bound type (QObject at worst)
   e.life = SVL_LIFE_BORROWED;
   e.owner = owner ? handle_of(owner) : 0;
   e.destroyed = QObject::connect(o, &QObject::destroyed, [h](QObject *obj) { native_destroyed(h, obj); });
@@ -508,6 +520,8 @@ void post(svl_handle h, svl_id sig, const svl_value *args, size_t n) {
 //@@VLIST@@
 
 //@@MENUS@@
+
+//@@TYPES_CORE@@
 
 // ---- event families (synthetic signals, ABI v2.4) ----------------------------------------------
 //
@@ -724,6 +738,8 @@ T from_int(int v) {
 
 //@@GETTERS@@
 
+//@@TYPES@@
+
 // ---- property observation (ABI v2.6) --------------------------------------------------------
 //
 // Mechanics only (plans/research/REACTIVITY.md §12 decides the semantics): while (handle, prop) is
@@ -797,14 +813,19 @@ int b_observe(void *, svl_handle h, svl_id prop, bool on) {
     return 0;
   }
   if (e->kind == kVListKind || e->kind == kCanvasKind) return unsupported("observe: virtual-list and canvas properties cannot be observed");
-  const svl_member_desc *d = gen_describe(SVL_PROP, e->kind, prop);
-  if (!d || !d->name) return fail("observe: unknown property id " + std::to_string(prop) + " for this kind");
+  // Type-layer props (N2) carry their native name; element props their JS name.
+  const char *pname = svl::is_member_id(prop) ? svl::native_name(prop) : nullptr;
+  if (!pname) {
+    const svl_member_desc *d = gen_describe(SVL_PROP, e->kind, prop);
+    pname = d ? d->name : nullptr;
+  }
+  if (!pname) return fail("observe: unknown property id " + std::to_string(prop) + " for this kind");
   QObject *o = e->obj.data();
   const QMetaObject *mo = o->metaObject();
-  const std::string qname = camel_of(d->name);
+  const std::string qname = camel_of(pname);
   const int pi = mo->indexOfProperty(qname.c_str());
   if (pi < 0)
-    return unsupported("observe: " + std::string(d->name) + " is not a Q_PROPERTY of " + mo->className() + ", so it has no NOTIFY signal");
+    return unsupported("observe: " + std::string(pname) + " is not a Q_PROPERTY of " + mo->className() + ", so it has no NOTIFY signal");
   const QMetaProperty mp = mo->property(pi);
   if (!mp.isReadable()) return fail("observe: " + qname + " is write-only");
   if (mp.isConstant()) return fail("observe: " + qname + " is CONSTANT: it never changes");
@@ -827,6 +848,12 @@ svl_id b_resolve(void *, uint32_t what, svl_id kind, const char *name, size_t le
   if (what == SVL_KIND && n == "canvas") return kCanvasKind;
   if (kind == kVListKind) return vl_resolve(what, n);
   if (kind == kCanvasKind) return cv_resolve(what, n);
+  // Non-GUI type kinds (N2): their own and inherited members, then the metaobject fallback. A static that
+  // shares its name with an instance method is reached as `static:<name>` (the JS modules know which).
+  if (svl::is_type_kind(kind)) {
+    if (what == SVL_METHOD && n.substr(0, 7) == "static:") return svl::gen_static_member(kind, n.substr(7));
+    if (svl_id t = svl::resolve(what, kind, n)) return t;
+  }
   Table t = table_for(what, kind);
   for (size_t i = 0; i < t.n; ++i)
     if (t.items[i].name == n) return t.items[i].id;
@@ -834,6 +861,8 @@ svl_id b_resolve(void *, uint32_t what, svl_id kind, const char *name, size_t le
   if (what == SVL_METHOD)
     for (size_t i = 0; i < kGetterCount; ++i)
       if (kGetterNames[i] == n) return kGetterBase + static_cast<svl_id>(i);
+  // Type kinds by native name (`QTimer`), and element kinds' methods of their class's bound type.
+  if (what == SVL_KIND || !svl::is_type_kind(kind)) return svl::resolve(what, kind, n);
   return 0;
 }
 
@@ -923,18 +952,24 @@ int b_remove(void *, svl_handle parent, svl_handle child) {
 
 void b_destroy(void *, svl_handle h) {
   TimeScope timing_;
-  if (g.boxed.erase(h)) return;  // a boxed value: drop the held copy (idempotent)
+  if (g.boxed.erase(h)) {  // a boxed value: drop the held copy (idempotent)
+    g_boxed_kind.erase(h);
+    return;
+  }
+  if (svl::destroy(h)) return;  // a unique object or an item (N2)
   auto it = g.table.find(h);
   if (it == g.table.end()) return;
   QObject *o = it->second.obj.data();
   const bool toplevel = it->second.toplevel;
   const bool borrowed = it->second.life == SVL_LIFE_BORROWED;
+  // SHARED (an object JS made, decision Q1): JS's reference is the ownership unless a QObject parent took it.
+  const bool parented = it->second.life == SVL_LIFE_SHARED && o && o->parent();
   QObject::disconnect(it->second.destroyed);
   if (o) g.by_obj.erase(o);
   g.table.erase(it);
   drop_listeners(h);
   // A borrowed object belongs to its native owner: forget it, never delete it.
-  if (borrowed) return;
+  if (borrowed || parented) return;
   // Not a candidate for a new borrowed handle while the deferred delete is pending.
   if (o) o->setProperty("_svl_dying", true);
   // Never delete synchronously: the caller may be inside one of this object's signals.
@@ -953,6 +988,7 @@ int b_set_prop(void *, svl_handle h, svl_id prop, const svl_value *v) {
   try {
     if (e->kind == kVListKind) return vl_set_prop(*e, prop, v);
     if (e->kind == kCanvasKind) return cv_set_prop(*e, prop, v);
+    if (svl::is_member_id(prop)) return svl::set_prop(*e, prop, v);
     return gen_set_prop(*e, prop, v);
   } catch (const std::exception &x) {
     return fail(std::string("set_prop: C++ exception: ") + x.what());
@@ -970,6 +1006,7 @@ int b_get_prop(void *, svl_handle h, svl_id prop, svl_value *out) {
   try {
     if (e->kind == kVListKind) return vl_get_prop(*e, prop, out);
     if (e->kind == kCanvasKind) return cv_get_prop(*e, prop, out);
+    if (svl::is_member_id(prop)) return svl::get_prop(*e, prop, out);
     return gen_get_prop(*e, prop, out);
   } catch (const std::exception &x) {
     out_error(out, "c++", x.what());
@@ -982,12 +1019,26 @@ int b_get_prop(void *, svl_handle h, svl_id prop, svl_value *out) {
 
 int b_call(void *, svl_handle h, svl_id method, const svl_value *args, size_t n, svl_value *out) {
   TimeScope timing_;
-  Entry *e = find(h);
-  if (!e) return fail("call: stale or unknown handle");
   g_out.clear();
   g_in.clear();
-  g_owner = e->obj.data();
   out_null(out);
+  try {
+    // VALUE, unique and item handles, and type-layer members of QObject handles (N2).
+    Entry *te = find(h);
+    g_owner = te ? te->obj.data() : nullptr;
+    bool handled = false;
+    const int rc = svl::call(h, method, args, n, out, handled);
+    if (handled) return rc;
+  } catch (const std::exception &x) {
+    out_error(out, "c++", x.what());
+    return fail(std::string("call: C++ exception: ") + x.what());
+  } catch (...) {
+    out_error(out, "c++", "unknown C++ exception");
+    return fail("call: unknown C++ exception");
+  }
+  Entry *e = find(h);
+  if (!e) return fail("call: stale or unknown handle");
+  g_owner = e->obj.data();
   try {
     if (g_test_throw) {  // test hook: make the next call throw, to exercise the boundary
       g_test_throw = false;
@@ -1015,6 +1066,7 @@ int b_call(void *, svl_handle h, svl_id method, const svl_value *args, size_t n,
 }
 
 const svl_member_desc *b_describe(void *, uint32_t what, svl_id kind, svl_id member) {
+  if (what == SVL_KIND || svl::is_member_id(member)) return svl::describe(what, kind, member);
   return gen_describe(what, kind, member);
 }
 
@@ -1027,6 +1079,7 @@ int b_listen_ex(void *, svl_handle h, svl_id sig, bool on, uint32_t flags) {
   if (flags & ~static_cast<uint32_t>(SVL_LISTEN_AFTER | SVL_LISTEN_CAPTURE)) return fail("listen: unknown listener flags");
   if (e->kind == kVListKind) return vl_listen(*e, sig, on);
   if (e->kind == kCanvasKind) return cv_listen(h, *e, sig, on, flags);
+  if (svl::is_member_id(sig)) return svl::listen(h, *e, sig, on, flags);
   return gen_listen(h, *e, sig, on, flags);
 }
 
@@ -1071,11 +1124,13 @@ int b_get_child_attr(void *, svl_handle parent, svl_handle child, svl_id attr, s
 
 int b_handle_info(void *, svl_handle h, svl_handle_info *out) {
   if (g.boxed.count(h)) {  // a boxed value is a VALUE handle: refcounted and immutable, released by `destroy`
-    out->kind = 0;
+    auto k = g_boxed_kind.find(h);
+    out->kind = k == g_boxed_kind.end() ? 0 : k->second;  // N2: values of bound classes have a kind
     out->lifetime = SVL_LIFE_VALUE;
     out->flags = 0;
     return 0;
   }
+  if (svl::handle_info(h, out)) return 0;  // unique objects and items
   Entry *e = find(h);
   if (!e) return fail("handle_info: stale or unknown handle");
   out->kind = e->kind;
@@ -1346,12 +1401,51 @@ void b_request_frame(void *) {
   g.frame_timer->start(delay);
 }
 
+// ABI v2.5 construct: a type kind through the non-GUI core (SHARED, default constructor then setters);
+// an element kind is `create` plus `set_prop`, so a widget made this way is OWNED / TOPLEVEL as usual.
+int b_construct(void *self, svl_id kind, const svl_id *props, const svl_value *values, size_t n, svl_value *out) {
+  TimeScope timing_;
+  g_out.clear();
+  g_in.clear();
+  try {
+    if (svl::is_type_kind(kind)) return svl::construct(kind, props, values, n, out);
+    const svl_handle h = b_create(self, kind);
+    if (!h) return -1;
+    for (size_t i = 0; i < n; ++i)
+      if (b_set_prop(self, h, props[i], &values[i]) != 0) {
+        const std::string why = g.err;
+        b_destroy(self, h);
+        return fail(why);
+      }
+    *out = mkv(SVL_HANDLE);
+    out->u.h = h;
+    return 0;
+  } catch (const std::exception &x) {
+    return fail(std::string("construct: C++ exception: ") + x.what());
+  }
+}
+
+// ABI v2.5 call_static: statics and constructors (`new`) of the type kinds.
+int b_call_static(void *, svl_id kind, svl_id method, const svl_value *args, size_t n, svl_value *out) {
+  TimeScope timing_;
+  try {
+    if (!svl::is_type_kind(kind)) return fail("call_static: element kinds have no static methods");
+    return svl::call_static(kind, method, args, n, out);
+  } catch (const std::exception &x) {
+    out_error(out, "c++", x.what());
+    return fail(std::string("call_static: C++ exception: ") + x.what());
+  } catch (...) {
+    out_error(out, "c++", "unknown C++ exception");
+    return fail("call_static: unknown C++ exception");
+  }
+}
+
 // v3 members (caps, describe, describe_type, cancel) follow `last_error`; v2.1/v2.2 members follow those.
 const svl_backend kBackend = {SVL_ABI_VERSION, &g, b_resolve, b_create, b_insert, b_remove, b_destroy,
                               b_set_prop, b_get_prop, b_call, b_listen, b_handle_info, b_run, b_wake, b_schedule_wake, b_quit,
                               b_last_error, SVL_CAP_UTF16_IN | SVL_CAP_UTF16_OUT, b_describe, b_describe_type, b_cancel, b_request_frame,
                               b_set_child_attr, b_get_child_attr, b_listen_ex, b_style,
-                              /* ABI v2.5 construct, call_static: not implemented by Qt yet (N2) */ nullptr, nullptr,
+                              /* ABI v2.5 (N2) */ b_construct, b_call_static,
                               /* ABI v2.6 */ b_observe};
 
 }  // namespace
@@ -1758,6 +1852,47 @@ extern "C" int svl_qt_vlist_activate(int pos) {
 
 // Handles in the table (owned, toplevel and borrowed): the leak check of the tests.
 extern "C" size_t svl_qt_live_handles(void) { return g.table.size(); }
+
+// Runs the Qt loop for `ms` milliseconds, deferred deletes included (tests that drive the backend directly).
+extern "C" void svl_qt_pump(int ms) {
+  ensure_app();
+  const auto until = std::chrono::steady_clock::now() + std::chrono::milliseconds(ms);
+  do {
+    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+    QCoreApplication::processEvents(QEventLoop::AllEvents, 5);
+  } while (std::chrono::steady_clock::now() < until);
+  QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+}
+
+// QObject children of the object behind `h` (-1 for an unknown handle): ownership checks of the tests.
+extern "C" int svl_qt_child_count(svl_handle h) {
+  QObject *o = debug_obj(h);
+  return o ? static_cast<int>(o->children().size()) : -1;
+}
+
+// The QFuture adapter (svl::async_from_future) on a promise this hook fulfils after `ms` milliseconds
+// with `value`, or cancels when `value` < 0: no bound Qt API returns a QFuture yet (N2), so the tests drive it.
+extern "C" void svl_qt_test_future(uint64_t callback, int ms, int value) {
+  ensure_app();
+  auto promise = std::make_shared<QPromise<int>>();
+  promise->start();
+  svl::async_from_future(promise->future(), callback);
+  QTimer::singleShot(ms, g.waker.load(), [promise, value] {
+    if (value < 0) {
+      promise->future().cancel();
+    } else {
+      promise->addResult(value);
+    }
+    promise->finish();
+  });
+}
+
+// Non-GUI type accounting (N2): VALUE handles, unique objects and items JS holds, and live tracked items.
+extern "C" void svl_qt_type_counts(size_t *values, size_t *ptrs, size_t *tracked) {
+  *values = g.boxed.size();
+  *ptrs = svl::g_ptrs.size();
+  *tracked = svl::g_tracked.size();
+}
 
 // Run `cb(ud)` on the Qt loop thread after `ms` milliseconds. Creates the QApplication if needed.
 extern "C" void svl_qt_run_later(void (*cb)(void *), void *ud, int ms) {

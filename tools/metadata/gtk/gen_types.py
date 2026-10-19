@@ -659,18 +659,13 @@ class Gen:
         return out
 
     def package_json(self, namespaces: list[str]) -> str:
-        p = PKG / "package.json"
-        base = json.loads(p.read_text()) if p.exists() else {}
-        base.update({"name": "@svelters/types", "version": "0.0.0", "license": "MIT", "private": True, "type": "module",
-                     "description": "Native object model and generated non-UI types (svelters:gtk/gio, ...) for Svelters apps",
-                     "sideEffects": False})
-        exports = {"./core": {"types": "./src/core.d.ts", "default": "./src/core.js"}, "./vite": "./vite.js", "./manifest": "./gtk/manifest.json"}
+        # Shared with the Qt generator, which owns the `./qt/*` keys (tools/metadata/common/types_pkg.py).
+        sys.path.insert(0, str(ROOT / "tools/metadata/common"))
+        import types_pkg
+        own = {"./manifest": "./gtk/manifest.json"}
         for ns in namespaces:
-            exports[f"./gtk/{nsdir(ns)}"] = {"types": f"./gtk/{nsdir(ns)}.d.ts", "default": f"./gtk/{nsdir(ns)}/index.js"}
-        base["exports"] = exports
-        base["scripts"] = {"test": "node --test test/*.test.mjs && tsc -p test/types/tsconfig.json"}
-        base["devDependencies"] = {"typescript": "~6.0.3", "vite": "8.3.4"}
-        return json.dumps(base, indent=2) + "\n"
+            own[f"./gtk/{nsdir(ns)}"] = {"types": f"./gtk/{nsdir(ns)}.d.ts", "default": f"./gtk/{nsdir(ns)}/index.js"}
+        return types_pkg.package_json(PKG / "package.json", own, "./gtk/", ["./manifest"])
 
 
 def write_all(files: dict[Path, str], check: bool) -> int:
