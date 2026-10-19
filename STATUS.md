@@ -32,7 +32,7 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | FW1 WinUI startup fix | DONE | 9fea0b98 | islands init order (STA, bootstrap, DispatcherQueue, composed Application, WindowsXamlManager, then XamlControlsResources), single init per thread, WinUiBackend::shutdown(); windows-latest green: lib 12/12, generated 60/60, selftest, counter; open: generated tests skip shutdown(), keyboard routing untested |
 | FA1 AppKit CI fix + Xcode metadata | DONE | cd670afd | slot-backed props (subviews etc.) refused before conversion, insert restores old child on refusal, display link added to the real NSRunLoopCommonModes + 64 ms backup timer, panic-guarded test cleanup; metadata/appkit regenerated with Xcode 26.1.1 / macOS 26.1 SDK on the macOS runner (byte-identical), appkit-metadata CI freshness job; macos-latest green; open: ProMotion/multi-display/real interaction only verifiable on a real Mac |
 | FG1 GTK >= 4.14 support | DONE | 7c07fc87 | newer kinds resolve `*_get_type` via dlsym at runtime, version-gated props with compat.rs errors, Ubuntu GTK 4.14 CI job now required (614 tests) alongside Arch 4.24 (822); local gates 931/931 (4 flaky under load: qt toplevels close_dialog/close_parent ABRT, gtk verify echo_editable* SEGV); limitation: `--sv-*` CSS variables need GTK >= 4.16 |
-| AI1 annotation inference (GTK → Qt → WinUI) | PAUSED (GTK slice code-complete, not merged) | fc01aa9e on `ci/ai1-gtk` | probe.py + infer.py + metadata/rules/gtk.yaml + metadata/inferred/gtk; ingested < inferred < manual; +937 inferred verified GTK facts (565 methods, 220 bindings, 109 props, 40 signals, 3 slots), 1 parked, 45 mid / 90 low unreviewed in `_review.json`; full ledger refresh 1451/1451 green, but full gates + 4.14 CI not run; Qt/WinUI slices not started; handoff `docs/notes/ai1-handoff.md` |
+| AI1 annotation inference (GTK → Qt → WinUI) | GTK slice DONE (Qt/WinUI slices QUEUED) | 2736297a | probe.py + infer.py + metadata/rules/gtk.yaml + metadata/inferred/gtk; ingested < inferred < manual; +937 inferred verified GTK facts (565 methods, 220 bindings, 109 props, 40 signals, 3 slots); ledger 1501 tests, 0 failing, 1 parked; inferred `bind:<prop>` tests skip below the property's GIR `since`; semantics specs flatten inferred provenance; GtkLabel:label now bindable (passive `$n.track` in compiled output); local 1933 nextest (2 stale compiler expectations fixed, suite re-run 156/156), pnpm test, docs:test; all 5 CI workflows green incl. gtk-4-14; 45 mid / 90 low unreviewed in `_review.json`; handoff `docs/notes/ai1-handoff.md` |
 | NT0 non-GUI types pilot (GTK, N0) | DONE | 49bc8290 | ABI v2.5 additive (SHARED, construct, call_static, SVL_T_TYPE, STATIC/CTOR flags); every GObject a handle; gi.rs over 8 typelibs; types_facts.py classifies 301 types; packages/types ES modules (file per class, sideEffects:false) + signature-closure manifest; curated 10 types: 50 types_verify tests in the GTK ledger (564/564); Qt oplog replay skips construct/static logs (Qt types are N2); local 996/996 nextest, pnpm test, test:meta, docs:test; all 5 CI workflows green incl. gtk-4-14; handoff `docs/notes/nt0-handoff.md` |
 | X1 object returns + GTK GI calls | DONE | 5ea82a6 | borrowed handles with stable identity + weak refs (GTK qdata, Qt by_obj map); GTK dynamic calls via GIRepository (scalars, strings, enums/flags, objects, GStrv, boxed); ~110 Qt object getters; 156/156 nextest; out params wait on S2 |
 | X2 sync handlers + frame clock | DONE | ba5bb65 | call_sync with event-object results (e.result / preventDefault), close-request per-event veto, key handled on GTK+Qt, rAF on GdkFrameClock / QWindow::requestUpdate; ABI v2.1 additive; 127/127 nextest; listen phases deferred (listen_ex proposal) |
@@ -45,26 +45,21 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | M6 release binding linker | QUEUED | | |
 | M7 egui | QUEUED | | |
 
-## Handoff (2026-10-18, paused for weekly quota)
+## Handoff (2026-10-19)
 
-`master` is green and usable: local gates 931/931 at 7c07fc87 (FG1), and all five CI workflows were green after FW1/FA1/FG1. Nothing unverified has been merged. Two lanes are paused on pushed branches. Each has a handoff note, and its worktree is kept under `.claude/worktrees/`.
+`master` is green: NT0 and AI1 merged, all five CI workflows green on both branches before merge (incl. gtk-4-14). No lanes are paused.
 
-**Resume order:**
-1. **NT0** (`ci/nt0-types`, worktree `agent-ab68746002833b005`): follow `docs/notes/nt0-handoff.md`.
-   - `cargo check -p svelters-gtk --tests`.
-   - `python3 tools/metadata/ledger.py refresh --toolkit gtk`, then commit `metadata/verified/gtk.json`.
-   - Full gates: `pnpm -r build`; `tools/dev/cargo-slot xvfb-run -a cargo nextest run --workspace --no-fail-fast`; `pnpm test`; `pnpm docs:test`.
-   - Check the CI results on `ci/nt0-types`, in particular the GTK 4.14 job and the Qt build with the new nullable ABI members.
-   - Merge.
-2. **AI1** (`ci/ai1-gtk`, worktree `agent-ae50fa4f78edc518f`): follow `docs/notes/ai1-handoff.md`.
-   - Merge master, after NT0 lands. Both touch the ledger and the generated GTK tests.
-   - Full gates and the 4.14 CI job, then merge.
-   - Then the Qt slice: accept-by-pattern, table-driven tests. Then WinUI: rules only, verified via CI.
-   - Watch: `bindings.generated.js` grew from 11KB to 60KB.
-   - The 135 mid/low facts in `metadata/inferred/gtk/_review.json` await a decision on agent review.
+**Local test environment (this WSL machine):**
+- GUI tests always run on a private Xvfb via `tools/dev/headless`. nextest wraps every Linux test in it, and `ledger.py refresh` wraps the whole run. Windows never reach the WSLg desktop. `SVELTERS_SHOW_GUI=1` opts out. For speed, wrap a whole run once (`tools/dev/headless cargo nextest run ...`): a plain run starts one Xvfb per test (1690 GUI tests: 20 min instead of ~10).
+- WSLg trap: GDK uses the `wayland-0` socket even with `WAYLAND_DISPLAY` unset, and `/tmp/.X11-unix` is read-only (Xvfb needs an explicit display number). The wrapper handles both.
+- Needed packages: `gobject-introspection-runtime` (cairo-1.0.typelib; without it GI silently disables and NT0's types tests fail), `cargo-nextest` in `~/.cargo/bin`, pytest in the pyenv Python (`test:meta`). pnpm is only available through `corepack pnpm`.
+
+**Next:**
+1. Decide the reactivity questions (`plans/research/REACTIVITY.md` §12, 11 decisions with recommendations). Bug found there: GTK non-widget objects can't listen to `notify::<prop>` (`crates/svelters-gtk/src/reflect.rs:128` drops the `::detail`).
+2. Decide the mobile questions: iOS I1–I9 (`docs/notes/ios-uikit-backend.md`), Android A1–A10 (`docs/notes/android-backend.md`). Both need the host start-order change (non-blocking `run` plus a started hook).
+3. AI1 Qt slice: accept-by-pattern, table-driven tests. Then WinUI: rules only, verified via CI. The 135 mid/low GTK facts in `_review.json` await a decision on agent review. Watch `bindings.generated.js` size (60KB).
 
 **Decided, not started:**
-- Reactivity research for the ABI: notify / NOTIFY / KVO / DP callbacks (`plans/research/NON-GUI-TYPES.md` §10 Q2).
 - NT N1–N4 (GTK async, Qt with runtime overload dispatch, native models, WinUI/AppKit).
 - CLI C0 (`plans/research/CLI.md`).
 - Retiring the stock renderer and Svelte fork in favour of the Rust compiler.
@@ -74,7 +69,7 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 
 **Open user questions:** the custom-widgets questions, the runtime research questions, and the QuickJS decisions (CSS scoping port order, alias table location, CJS, release format, debugger, Intl, Rust CLI). See each research doc.
 
-**Known flakes under load:** qt toplevels close_dialog/close_parent (ABRT); gtk verify echo_editable*, textview_get_buffer, textbuffer_undo (SEGV).
+**Known flakes under load:** qt toplevels close_dialog/close_parent (ABRT); gtk verify echo_editable*, textview_get_buffer, textbuffer_undo (SEGV). Probably the WSLg display rather than load: since the headless wrapper, 1690/1690 GUI tests and 996/996 workspace tests passed with no retries.
 
 **Untracked in the main checkout, not ours:** `.playwright-mcp/`, `docs/notes/scripts/winui_proto_filter.txt`.
 
@@ -95,3 +90,6 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | Ownership and lifetimes | ownership-and-lifetimes.md | done: explicit tree-driven lifetime, 4 lifetime classes, ABI v2 proposal |
 | Svelte feature survey (lists, snippets, bindings, modifiers) | svelte-feature-survey.md | done |
 | Styling: GTK CSS and Qt QSS | styling-gtk-css-qss.md | done: 4-layer model, portable vocabulary + native escape hatch |
+| Reactive native properties (observability, ABI, `\|nonreactive`, compiler traits) | ../../plans/research/REACTIVITY.md | done: mark-stale-then-read, batched per checkpoint; 11 decisions open |
+| iOS UIKit backend | ios-uikit-backend.md | done: svelters-uikit on svelters-apple; decisions I1–I9 open |
+| Android backend | android-backend.md | done: classic Views + JNI, Compose subtrees later; decisions A1–A10 open |
