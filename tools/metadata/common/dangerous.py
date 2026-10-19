@@ -196,6 +196,8 @@ class Dangerous:
             elif ann is False and not any(rule_matches(r, kind, k["bases"], sec, name) for r in self.rules):
                 errs.append(f"{self.manual_files[(kind, sec, name)]}: dangerous {sec} {name!r}: false exempts nothing (no rule matches)")
         errs += self.check_inferred(found)
+        if self.root == ROOT:
+            errs += self.check_generated_facts(found)
         if self.tk == "gtk":
             errs += self.check_gtk_rules(found)
         return errs
@@ -238,6 +240,37 @@ class Dangerous:
                         walk(r)
 
             walk(data)
+        return errs
+
+    def check_generated_facts(self, found, manifest: dict | None = None) -> list[str]:
+        """The generators' fact manifests (what the ledger verifies): no inferred fact and no binding (manual or
+        inferred) is a dangerous member. A manual method or property fact may be one (e.g. Qt `QMenuBar.clear`):
+        it is reachable on purpose, and the docs warn on it."""
+        if manifest is None:
+            sys.path.insert(0, str(HERE.parent))
+            import ledger  # noqa: E402
+
+            try:
+                manifest = json.loads(ledger.GTK_FACTS.read_text()) if self.tk == "gtk" else ledger.qt_facts() if self.tk == "qt" \
+                    else json.loads(ledger.FACTS[self.tk].read_text())
+            except (OSError, KeyError, AttributeError):
+                return []
+        names = self.names_of(found)
+        sec_of = {**LIST_SECTION, "prop": "properties", "notify": "properties", "signal": "signals", "method": "methods",
+                  "binding": "properties"}
+        errs = []
+        for f in manifest.get("facts", []):
+            sec = sec_of.get(f.get("section", ""))
+            if not sec:
+                continue
+            binding = f["section"] in ("bindings", "binding")
+            if f.get("origin") != "inferred" and not binding:
+                continue
+            bad = set().union(*[names.get(c, {}).get(sec, set()) for c in self.members.chain(f.get("kind", ""))])
+            if f.get("name") in bad:
+                what = "binding" if binding else "inferred fact"
+                errs.append(f"{self.tk}: {what} {f['fact']} is a dangerous member (metadata/dangerous/{self.tk}.yaml or an override "
+                            f"`dangerous:` block); remove it from the facts")
         return errs
 
     def check_gtk_rules(self, found) -> list[str]:

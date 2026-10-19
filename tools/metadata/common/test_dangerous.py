@@ -119,6 +119,20 @@ def test_check_rejects_dangerous_members_in_the_inferred_layer(root):
     assert "'title'" not in errs
 
 
+def test_generated_facts_cross_check(root):
+    d = dangerous.Dangerous("gtk", root)
+    found = d.all()
+    man = {"facts": [
+        {"fact": "f1", "kind": "ApplicationWindow", "section": "properties", "name": "application", "origin": "inferred"},  # inherited
+        {"fact": "f2", "kind": "Window", "section": "bindings", "name": "child", "origin": "manual"},
+        {"fact": "f3", "kind": "Window", "section": "methods", "name": "set_child", "origin": "manual"},     # manual: allowed
+        {"fact": "f4", "kind": "Window", "section": "properties", "name": "title", "origin": "inferred"},
+        {"fact": "f5", "kind": "Window", "section": "slots", "name": "child", "origin": "inferred"},          # a slot, not a member
+    ]}
+    errs = d.check_generated_facts(found, man)
+    assert [e.split(" is a ")[0] for e in errs] == ["gtk: inferred fact f1", "gtk: binding f2"]
+
+
 def test_gtk_dangerous_methods_must_be_denied_to_inference(root):
     (root / "metadata/rules/gtk.yaml").write_text(yaml.safe_dump({"deny_methods": [{"pattern": "^set_child$", "reason": "x"}]}))
     errs = dangerous.Dangerous("gtk", root).check()
@@ -147,6 +161,16 @@ def test_override_schemas_carry_the_block(tk):
     assert list(v.iter_errors({"methods": {"x": {"severity": "bad", "reason": "long enough reason"}}}))
     assert list(v.iter_errors({"methods": {"x": True}}))
     assert list(v.iter_errors({"fields": {}}))
+
+
+def test_ts_comment():
+    ann = {"severity": "corrupts-tree", "reason": "Re-parents\n  behind the slots */.", "use_instead": "A child element.", "reachable": False}
+    assert dangerous.ts_comment(None) == ""
+    assert dangerous.ts_comment(None, tags=("@unverified",)) == "  /** @unverified */\n"
+    assert dangerous.ts_comment(ann, tags=("@unverified",)) == (
+        "  /**\n   * @remarks Dangerous (corrupts-tree): Re-parents behind the slots *\\/. Not reachable from JS today."
+        " Use instead: A child element.\n   * @unverified\n   */\n")
+    assert "@deprecated" not in dangerous.ts_comment(ann)
 
 
 def test_severities_agree():
