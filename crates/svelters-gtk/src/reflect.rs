@@ -26,7 +26,8 @@ pub struct Reflect {
     props: Vec<glib::ParamSpec>,
     prop_ids: HashMap<usize, u32>,
     signals: Vec<(glib::subclass::SignalId, String)>,
-    signal_ids: HashMap<u32, u32>,
+    /// Keyed by the connect name: the signal's own name, plus `::detail` for detailed signals.
+    signal_ids: HashMap<String, u32>,
 }
 
 /// `fooBar` and `foo_bar` to `foo-bar`.
@@ -120,23 +121,47 @@ impl Reflect {
         self.props.get(id.checked_sub(DYN_BASE)? as usize)
     }
 
+    /// A reflected signal by name, kebab-cased if needed. Detailed names work for signals that
+    /// take a detail (`notify::text`, `notify::enable-undo`, `notify::enableUndo`): the detail of
+    /// `notify` must name a property of the kind and is normalised to its canonical name.
     pub fn find_signal(&mut self, kind: u32, name: &str) -> u32 {
         if !self.is_dynamic_kind(kind) {
             return 0;
         }
         let Some(t) = self.type_of_kind(kind) else { return 0 };
-        let sid = glib::subclass::SignalId::lookup(name, t).or_else(|| {
-            let k = kebab(name);
-            (k != name).then(|| glib::subclass::SignalId::lookup(&k, t)).flatten()
+        let (base, detail) = match name.split_once("::") {
+            Some((b, d)) if !d.is_empty() => (b, Some(d)),
+            Some(_) => return 0,
+            None => (name, None),
+        };
+        let sid = glib::subclass::SignalId::lookup(base, t).or_else(|| {
+            let k = kebab(base);
+            (k != base).then(|| glib::subclass::SignalId::lookup(&k, t)).flatten()
         });
         let Some(sid) = sid else { return 0 };
-        let raw: u32 = sid.into_glib();
-        if let Some(id) = self.signal_ids.get(&raw) {
+        let mut key = sid.name().to_string();
+        if let Some(d) = detail {
+            if !sid.query().flags().contains(glib::SignalFlags::DETAILED) {
+                return 0;
+            }
+            let d = if key == "notify" {
+                let ps = find_pspec(t, d).or_else(|| {
+                    let k = kebab(d);
+                    (k != d).then(|| find_pspec(t, &k)).flatten()
+                });
+                let Some(ps) = ps else { return 0 };
+                ps.name().to_string()
+            } else {
+                d.to_string()
+            };
+            key = format!("{key}::{d}");
+        }
+        if let Some(id) = self.signal_ids.get(&key) {
             return *id;
         }
         let id = DYN_BASE + self.signals.len() as u32;
-        self.signals.push((sid, sid.name().to_string()));
-        self.signal_ids.insert(raw, id);
+        self.signals.push((sid, key.clone()));
+        self.signal_ids.insert(key, id);
         id
     }
 
