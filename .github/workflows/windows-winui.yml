@@ -75,8 +75,16 @@ jobs:
       - name: svelters-winui generated
         if: ${{ !cancelled() }}
         timeout-minutes: 15
+        # One JSON line per test start and result for the verified ledger, next to the fact manifest the binary was
+        # generated from (artifact windows-winui-report, logs/winui-ledger):
+        #   python3 tools/metadata/ledger.py import --toolkit winui <unpacked artifact>
+        # records passes and parks failing inferred facts; the next run must then be green.
         run: |
-          New-Item -ItemType Directory -Force logs | Out-Null
+          New-Item -ItemType Directory -Force logs/winui-ledger | Out-Null
+          $env:SVELTERS_TEST_RESULTS = "$pwd\logs\winui-ledger\winui-results.jsonl"
+          Remove-Item -ErrorAction SilentlyContinue $env:SVELTERS_TEST_RESULTS
+          Copy-Item crates/svelters-winui/src/generated/facts.json logs/winui-ledger/facts.json
+          git rev-parse HEAD | Out-File -Encoding ascii logs/winui-ledger/commit.txt
           cmd /c "cargo test -p svelters-winui --test generated > logs\generated.log 2>&1"
           $code = $LASTEXITCODE
           Get-Content logs\generated.log

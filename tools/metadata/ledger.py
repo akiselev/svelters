@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verified-facts ledger: metadata/verified/{gtk,qt,appkit}.json.
+"""Verified-facts ledger: metadata/verified/{gtk,qt,appkit,winui}.json.
 
 Every annotated fact has generated tests: the manual facts (hand/agent annotations) and the inferred
 ones (metadata/inferred/<tk>, written by infer.py). The generators write a fact manifest (fact id ->
@@ -23,8 +23,9 @@ A parked fact stays out until its record changes (a new probe or rule) or the to
 toolkit version in the ledger: the probe is a maintainer step, CI only checks it is current.
 
   python3 tools/metadata/ledger.py refresh [--toolkit gtk|qt|appkit|all]   # needs a display or xvfb-run (appkit: a Mac)
-  python3 tools/metadata/ledger.py check   [--toolkit gtk|qt|appkit|all]
+  python3 tools/metadata/ledger.py check   [--toolkit gtk|qt|appkit|winui|all]
   python3 tools/metadata/ledger.py import  --toolkit appkit RESULTS [--dry-run]
+  python3 tools/metadata/ledger.py import  --toolkit winui <results.jsonl or the unpacked CI artifact dir>
 
 `import` is for toolkits whose tests only run elsewhere (AppKit on the macOS CI runner): it reads a
 test-results file (JSON lines `{"test", "result": "pass"|"fail", "message"}` as written by
@@ -32,6 +33,11 @@ svelters_apple::testing with SVELTERS_TEST_RESULTS, a JSON `{"results": [...]}` 
 or JUnit XML), matches the test names against the generator's facts manifest, parks failing inferred
 facts and regenerates (like refresh), and writes the ledger. `all` covers gtk, qt and every other
 toolkit that has a facts manifest and a ledger file.
+
+Toolkits whose tests only run on a CI runner (winui: crates/svelters-winui/src/generated/facts.json, tests on the
+windows-winui job) have no `refresh`: the job writes one JSON line per test (SVELTERS_TEST_RESULTS) next to a copy
+of facts.json, and `import` records that artifact (`import_ci`). Only facts whose fingerprint in the artifact equals
+the current one are recorded; failing inferred facts are parked as in `refresh` (tests that never ran stay pending).
 
 Cargo runs go through the machine-wide build queue `tools/dev/cargo-slot` (it sets
 CARGO_BUILD_JOBS, NEXTEST_TEST_THREADS and CARGO_BUILD_BUILD_DIR); without it, the environment's
@@ -52,7 +58,10 @@ ROOT = Path(__file__).resolve().parents[2]
 LEDGER_DIR = ROOT / "metadata/verified"
 GTK_FACTS = ROOT / "crates/svelters-gtk/src/generated/facts.json"
 # Facts manifests written by a generator (gtk is extended with the hand-written kinds below; qt is built on the fly).
-FACTS = {"gtk": GTK_FACTS, "appkit": ROOT / "crates/svelters-appkit/src/generated/facts.json"}
+WINUI_FACTS = ROOT / "crates/svelters-winui/src/generated/facts.json"
+FACTS = {"gtk": GTK_FACTS, "appkit": ROOT / "crates/svelters-appkit/src/generated/facts.json", "winui": WINUI_FACTS}
+# Toolkits verified on a CI runner only (no local `refresh`; `import` reads the CI artifact with import_ci).
+CI_ONLY = {"winui": WINUI_FACTS}
 
 
 def qt_facts() -> dict:
@@ -222,14 +231,17 @@ def run_qt(only: set[str] | None = None) -> tuple[dict[str, str], dict[str, str]
 
 
 PARKED = {"gtk": ROOT / "metadata/inferred/gtk/_parked.json", "qt": ROOT / "metadata/inferred/qt/_parked.json",
-          "appkit": ROOT / "metadata/inferred/appkit/_parked.json"}
+          "appkit": ROOT / "metadata/inferred/appkit/_parked.json", "winui": ROOT / "metadata/inferred/winui/_parked.json"}
 # What turns the merged metadata into the generated backend, in order (a parked fact leaves all of them).
 REGEN = {"gtk": [["tools/metadata/gtk/ingest.py"], ["tools/metadata/gtk/gen_backend.py"], ["tools/metadata/common/gen_bindings.py"],
                  ["tools/metadata/semantics/gen_semantics.py"]],
          # Qt: the generator runs in the counter-qt build (it reads _parked.json); the rest consumes the merged layers.
          "qt": [["tools/metadata/common/gen_bindings.py"], ["tools/metadata/semantics/gen_semantics.py"]],
          "appkit": [["tools/metadata/appkit/gen_backend.py"], ["tools/metadata/common/gen_bindings.py"],
-                    ["tools/metadata/semantics/gen_semantics.py"]]}
+                    ["tools/metadata/semantics/gen_semantics.py"]],
+         # winui: windows-bindgen (tools/metadata/winui/regen.sh) is not rerun; parking only removes members from the filter.
+         "winui": [["tools/metadata/winui/gen_backend.py"], ["tools/metadata/common/gen_bindings.py"],
+                   ["tools/metadata/semantics/gen_semantics.py"]]}
 
 
 def load_parked(tk: str) -> list[dict]:
@@ -352,6 +364,88 @@ def import_results(tk: str, path: Path, dry_run: bool = False) -> int:
     return 1 if bad else 0
 
 
+def read_ci_results(path: Path) -> tuple[dict[str, str], dict[str, str], dict | None]:
+    """(test -> pass|fail|crash, test -> message, the facts.json the run was built from or None) from a results file
+    (one JSON line per test start and result) or a directory holding one (the unpacked CI artifact)."""
+    if path.is_dir():
+        found = sorted(path.rglob("*results*.jsonl"))
+        if len(found) != 1:
+            raise SystemExit(f"ledger: expected one *results*.jsonl under {path}, found {[str(f) for f in found]}")
+        jsonl = found[0]
+    else:
+        jsonl = path
+    snaps = sorted(jsonl.parent.rglob("facts.json"))
+    snap = json.loads(snaps[0].read_text()) if snaps else None
+    results: dict[str, str] = {}
+    msgs: dict[str, str] = {}
+    for line in jsonl.read_text().splitlines():
+        if not line.strip():
+            continue
+        r = json.loads(line)
+        if r["result"] == "start":
+            results[r["test"]] = "crash"          # stays so if the process died inside the test
+            msgs[r["test"]] = "the test process ended inside this test (crash or fail-fast)"
+        else:
+            results[r["test"]] = r["result"]
+            if r.get("message"):
+                msgs[r["test"]] = r["message"][:240]
+            else:
+                msgs.pop(r["test"], None)
+    return results, msgs, snap
+
+
+def import_ci(tk: str, path: Path) -> int:
+    """Record a CI run of a CI-only toolkit: entries for the facts the run tested with their current fingerprint, park
+    the failing inferred ones (regenerating without them), keep earlier entries for facts the run did not test."""
+    if tk not in CI_ONLY:
+        raise SystemExit(f"ledger: import is for the CI-only toolkits {sorted(CI_ONLY)}; {tk} has `refresh`")
+    results, msgs, snap = read_ci_results(path)
+    if not results:
+        raise SystemExit(f"ledger: no test results in {path}")
+    man = manifest(tk)
+    if snap is not None and snap.get("version") != man["version"]:
+        raise SystemExit(f"ledger: the run tested {tk} {snap.get('version')}, the metadata is {man['version']}")
+    ran_fp = {f["fact"]: f["fingerprint"] for f in (snap or man)["facts"]}
+
+    def tested(m: dict) -> dict:
+        """The manifest restricted to facts the run tested as they are now (same fingerprint, every test has a result)."""
+        return {**m, "facts": [f for f in m["facts"] if ran_fp.get(f["fact"]) == f["fingerprint"] and all(t in results for t in f["tests"])],
+                "untestable": m.get("untestable", [])}
+
+    stale = [f["fact"] for f in man["facts"] if f["fact"] in ran_fp and ran_fp[f["fact"]] != f["fingerprint"]]
+    for _ in range(4):
+        if tk not in PARKED or not park(tk, tested(man), results, msgs):
+            break
+        regenerate(tk)
+        man = manifest(tk)
+    old = {(e["fact"], e["test"]): e for e in load(tk)["entries"]}
+    entries, bad, soft, pending = [], 0, 0, 0
+    for f in man["facts"]:
+        ok = ran_fp.get(f["fact"]) == f["fingerprint"]
+        for t in f["tests"]:
+            if ok and t in results:
+                r = results[t]
+                entries.append({"fact": f["fact"], "origin": f.get("origin", "manual"), "test": t, "result": r,
+                                "fingerprint": f["fingerprint"], "version": man["version"]})
+            elif (f["fact"], t) in old and old[(f["fact"], t)]["fingerprint"] == f["fingerprint"]:
+                r = old[(f["fact"], t)]["result"]
+                entries.append(old[(f["fact"], t)])
+            else:
+                pending += 1
+                continue
+            if r != "pass":
+                if f.get("origin") == "inferred":
+                    soft += 1
+                else:
+                    bad += 1
+                    print(f"  {f['fact']}: {t}: {r}: {msgs.get(t, '')}", file=sys.stderr)
+    save(tk, man["version"], entries)
+    print(f"ledger {tk}: imported {len(results)} test results; {len(man['facts'])} facts, {len(entries)} entries, "
+          f"{bad} manual not passing, {soft} inferred not passing, {pending} pending, {len(stale)} stale in the run, "
+          f"{len(load_parked(tk))} parked")
+    return 1 if bad else 0
+
+
 # Generators whose output reads the ledger (typings mark unverified facts); rerun after it changes.
 GEN_AFTER_LEDGER = {"gtk": "tools/metadata/gtk/gen_backend.py"}
 
@@ -371,6 +465,9 @@ def run_appkit() -> tuple[dict[str, str], dict[str, str]]:
 
 
 def refresh(tk: str) -> int:
+    if tk in CI_ONLY:
+        raise SystemExit(f"ledger: {tk} tests run on CI only: download the job's artifact and run "
+                         f"`ledger.py import --toolkit {tk} <dir>`")
     man = manifest(tk)
     if tk == "appkit":
         results, msgs = run_appkit()
@@ -426,6 +523,8 @@ def check(tk: str) -> int:
     problems = probe_problems(tk, load(tk).get("version") or man["version"])
     if load(tk).get("version") not in (None, man["version"]):
         problems.append(f"the ledger was refreshed on {tk} {load(tk)['version']}, the metadata is {man['version']} (refresh)")
+    fix = (f"the windows-winui CI job, then `ledger.py import --toolkit {tk} <its artifact>`" if tk in CI_ONLY
+           else f"`ledger.py refresh --toolkit {tk}`")
     inferred = {"pass": 0, "pending": 0, "failing": 0}
     for f in man["facts"]:
         for t in f["tests"]:
@@ -437,14 +536,14 @@ def check(tk: str) -> int:
                     inferred["pending"] += 1
                 elif e["result"] != "pass":
                     inferred["failing"] += 1
-                    problems.append(f"{f['fact']}: {t}: inferred fact failed and is not parked (run `ledger.py refresh --toolkit {tk}`)")
+                    problems.append(f"{f['fact']}: {t}: inferred fact failed and is not parked (run {fix})")
                 else:
                     inferred["pass"] += 1
                 continue
             if e is None:
-                problems.append(f"{f['fact']}: {t}: not in the ledger (run `ledger.py refresh --toolkit {tk}`)")
+                problems.append(f"{f['fact']}: {t}: not in the ledger (run {fix})")
             elif e["fingerprint"] != f["fingerprint"]:
-                problems.append(f"{f['fact']}: {t}: fact or test changed since it was verified (refresh)")
+                problems.append(f"{f['fact']}: {t}: fact or test changed since it was verified (run {fix})")
             elif e["result"] != "pass":
                 problems.append(f"{f['fact']}: {t}: {e['result']}")
     if problems:
@@ -475,16 +574,20 @@ def toolkits_all() -> list[str]:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("cmd", choices=["refresh", "check", "import"])
-    ap.add_argument("results", nargs="?", type=Path, help="import: the test-results file (JSON lines, JSON or JUnit XML)")
-    ap.add_argument("--toolkit", default="all", choices=["gtk", "qt", "appkit", "all"])
+    ap.add_argument("results", nargs="?", type=Path, help="import: the test-results file (JSON lines, JSON or JUnit XML), or for winui the unpacked CI artifact directory")
+    ap.add_argument("--toolkit", default="all", choices=["gtk", "qt", "appkit", "winui", "all"])
     ap.add_argument("--dry-run", action="store_true", help="import: report what would change, write nothing")
     a = ap.parse_args()
     if a.cmd == "import":
+        if a.toolkit in CI_ONLY and a.results is not None:
+            return import_ci(a.toolkit, a.results)
         if a.toolkit not in FACTS or a.toolkit == "gtk" or a.results is None:
             ap.error("import needs --toolkit appkit and a results file")
         return import_results(a.toolkit, a.results, a.dry_run)
     rc = 0
-    for tk in (toolkits_all() if a.toolkit == "all" else [a.toolkit]):
+    # `refresh --toolkit all` runs what runs here; CI-only toolkits (and AppKit off macOS) are imported instead.
+    local = lambda t: t not in CI_ONLY and (t != "appkit" or sys.platform == "darwin")  # noqa: E731
+    for tk in ([t for t in toolkits_all() if a.cmd != "refresh" or local(t)] if a.toolkit == "all" else [a.toolkit]):
         rc |= (refresh if a.cmd == "refresh" else check)(tk)
     return rc
 

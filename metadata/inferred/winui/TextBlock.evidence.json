@@ -1,0 +1,631 @@
+{
+ "bindings:character-spacing": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::character-spacing",
+   "type": "i32"
+  },
+  "rule": "B1"
+ },
+ "bindings:font-size": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::font-size",
+   "type": "f64"
+  },
+  "rule": "B1"
+ },
+ "bindings:font-stretch": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::font-stretch",
+   "type": "enum<Windows.UI.Text.FontStretch>"
+  },
+  "rule": "B1"
+ },
+ "bindings:font-style": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::font-style",
+   "type": "enum<Windows.UI.Text.FontStyle>"
+  },
+  "rule": "B1"
+ },
+ "bindings:horizontal-text-alignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::horizontal-text-alignment",
+   "type": "enum<Microsoft.UI.Xaml.TextAlignment>"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-color-font-enabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-color-font-enabled",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-text-scale-factor-enabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-text-scale-factor-enabled",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-text-selection-enabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-text-selection-enabled",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:line-height": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::line-height",
+   "type": "f64"
+  },
+  "rule": "B1"
+ },
+ "bindings:line-stacking-strategy": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::line-stacking-strategy",
+   "type": "enum<Microsoft.UI.Xaml.LineStackingStrategy>"
+  },
+  "rule": "B1"
+ },
+ "bindings:max-lines": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::max-lines",
+   "type": "i32"
+  },
+  "rule": "B1"
+ },
+ "bindings:optical-margin-alignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::optical-margin-alignment",
+   "type": "enum<Microsoft.UI.Xaml.OpticalMarginAlignment>"
+  },
+  "rule": "B1"
+ },
+ "bindings:text": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::text",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "bindings:text-alignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::text-alignment",
+   "type": "enum<Microsoft.UI.Xaml.TextAlignment>"
+  },
+  "rule": "B1"
+ },
+ "bindings:text-line-bounds": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::text-line-bounds",
+   "type": "enum<Microsoft.UI.Xaml.TextLineBounds>"
+  },
+  "rule": "B1"
+ },
+ "bindings:text-reading-order": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::text-reading-order",
+   "type": "enum<Microsoft.UI.Xaml.TextReadingOrder>"
+  },
+  "rule": "B1"
+ },
+ "bindings:text-trimming": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::text-trimming",
+   "type": "enum<Microsoft.UI.Xaml.TextTrimming>"
+  },
+  "rule": "B1"
+ },
+ "bindings:text-wrapping": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::text-wrapping",
+   "type": "enum<Microsoft.UI.Xaml.TextWrapping>"
+  },
+  "rule": "B1"
+ },
+ "events:ContextMenuOpening": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.ContextMenuEventArgs",
+   "delegate": "Microsoft.UI.Xaml.Controls.ContextMenuOpeningEventHandler",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:IsTextTrimmedChanged": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.IsTextTrimmedChangedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TextBlock, Microsoft.UI.Xaml.Controls.IsTextTrimmedChangedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:SelectionChanged": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.RoutedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.RoutedEventHandler",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "methods:SelectAll": {
+  "confidence": 0.9,
+  "evidence": {
+   "returns": null
+  },
+  "rule": "M1"
+ },
+ "notify:CharacterSpacing": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "CharacterSpacingProperty",
+   "type": "i32"
+  },
+  "rule": "O6"
+ },
+ "notify:FontSize": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "FontSizeProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:FontStretch": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "FontStretchProperty",
+   "type": "enum<Windows.UI.Text.FontStretch>"
+  },
+  "rule": "O6"
+ },
+ "notify:FontStyle": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "FontStyleProperty",
+   "type": "enum<Windows.UI.Text.FontStyle>"
+  },
+  "rule": "O6"
+ },
+ "notify:HorizontalTextAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "HorizontalTextAlignmentProperty",
+   "type": "enum<Microsoft.UI.Xaml.TextAlignment>"
+  },
+  "rule": "O6"
+ },
+ "notify:IsColorFontEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsColorFontEnabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsTextScaleFactorEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsTextScaleFactorEnabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsTextSelectionEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsTextSelectionEnabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:LineHeight": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "LineHeightProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:LineStackingStrategy": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "LineStackingStrategyProperty",
+   "type": "enum<Microsoft.UI.Xaml.LineStackingStrategy>"
+  },
+  "rule": "O6"
+ },
+ "notify:MaxLines": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MaxLinesProperty",
+   "type": "i32"
+  },
+  "rule": "O6"
+ },
+ "notify:OpticalMarginAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "OpticalMarginAlignmentProperty",
+   "type": "enum<Microsoft.UI.Xaml.OpticalMarginAlignment>"
+  },
+  "rule": "O6"
+ },
+ "notify:Padding": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "PaddingProperty",
+   "type": "value<Microsoft.UI.Xaml.Thickness>"
+  },
+  "rule": "O6"
+ },
+ "notify:Text": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "TextProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "notify:TextAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "TextAlignmentProperty",
+   "type": "enum<Microsoft.UI.Xaml.TextAlignment>"
+  },
+  "rule": "O6"
+ },
+ "notify:TextLineBounds": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "TextLineBoundsProperty",
+   "type": "enum<Microsoft.UI.Xaml.TextLineBounds>"
+  },
+  "rule": "O6"
+ },
+ "notify:TextReadingOrder": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "TextReadingOrderProperty",
+   "type": "enum<Microsoft.UI.Xaml.TextReadingOrder>"
+  },
+  "rule": "O6"
+ },
+ "notify:TextTrimming": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "TextTrimmingProperty",
+   "type": "enum<Microsoft.UI.Xaml.TextTrimming>"
+  },
+  "rule": "O6"
+ },
+ "notify:TextWrapping": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "TextWrappingProperty",
+   "type": "enum<Microsoft.UI.Xaml.TextWrapping>"
+  },
+  "rule": "O6"
+ },
+ "props:BaselineOffset": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+   "type": "f64",
+   "write": false
+  },
+  "rule": "P1"
+ },
+ "props:CharacterSpacing": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+   "samples": [
+    3,
+    7
+   ],
+   "type": "i32",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:FontSize": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+   "samples": [
+    48.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:FontStretch": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+   "samples": [
+    "UltraCondensed",
+    "Undefined"
+   ],
+   "type": "enum<Windows.UI.Text.FontStretch>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:FontStyle": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+   "samples": [
+    "Oblique",
+    "Normal"
+   ],
+   "type": "enum<Windows.UI.Text.FontStyle>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:HorizontalTextAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+   "samples": [
+    "Left",
+    "Center"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.TextAlignment>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsColorFontEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsTextScaleFactorEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsTextSelectionEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsTextTrimmed": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+   "type": "bool",
+   "write": false
+  },
+  "rule": "P1"
+ },
+ "props:LineHeight": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+   "samples": [
+    48.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:LineStackingStrategy": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+   "samples": [
+    "BlockLineHeight",
+    "MaxHeight"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.LineStackingStrategy>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:MaxLines": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+   "samples": [
+    3,
+    7
+   ],
+   "type": "i32",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:OpticalMarginAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+   "samples": [
+    "TrimSideBearings",
+    "None"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.OpticalMarginAlignment>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Padding": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+   "samples": [
+    "1,2,3,4",
+    "5"
+   ],
+   "type": "value<Microsoft.UI.Xaml.Thickness>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:SelectedText": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+   "type": "string",
+   "write": false
+  },
+  "rule": "P1"
+ },
+ "props:Text": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:TextAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+   "samples": [
+    "Left",
+    "Center"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.TextAlignment>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:TextLineBounds": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+   "samples": [
+    "TrimToCapHeight",
+    "Full"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.TextLineBounds>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:TextReadingOrder": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+   "samples": [
+    "UseFlowDirection",
+    "Default"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.TextReadingOrder>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:TextTrimming": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+   "samples": [
+    "CharacterEllipsis",
+    "None"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.TextTrimming>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:TextWrapping": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+   "samples": [
+    "Wrap",
+    "NoWrap"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.TextWrapping>",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

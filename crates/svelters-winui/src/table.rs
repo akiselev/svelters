@@ -51,6 +51,9 @@ pub struct Event {
     pub sync: bool,
     /// The ABI v2 window close rule (veto + post while listened).
     pub close: bool,
+    /// `notify::<prop>`: a DependencyProperty change callback (`RegisterPropertyChangedCallback`) on the
+    /// prop `native`; no payload, the listener reads the prop.
+    pub notify: bool,
     pub payload: &'static [&'static str],
 }
 
@@ -191,7 +194,14 @@ mod tests {
             assert_eq!(p.name, kebab(p.native));
         }
         for e in EVENTS {
-            assert_eq!(e.name, kebab(e.native));
+            if e.notify {
+                assert_eq!(e.name, format!("notify::{}", kebab(e.native)));
+                assert!(e.payload.is_empty() && !e.sync && !e.close);
+                let p = PROPS.iter().find(|p| p.class == e.class && p.native == e.native);
+                assert!(p.is_some_and(|p| p.read && p.write), "{}: no read-write prop {} on its class", e.name, e.native);
+            } else {
+                assert_eq!(e.name, kebab(e.native));
+            }
         }
         for m in METHODS {
             assert_eq!(m.name, kebab(m.native));

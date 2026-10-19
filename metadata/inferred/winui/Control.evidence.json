@@ -1,0 +1,384 @@
+{
+ "events:FocusDisengaged": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.FocusDisengagedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.Control, Microsoft.UI.Xaml.Controls.FocusDisengagedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:FocusEngaged": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.FocusEngagedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.Control, Microsoft.UI.Xaml.Controls.FocusEngagedEventArgs>",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:IsEnabledChanged": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.DependencyPropertyChangedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.DependencyPropertyChangedEventHandler",
+   "result": null,
+   "trigger": "set:IsEnabled=false"
+  },
+  "rule": "R1/R2"
+ },
+ "notify:BackgroundSizing": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "BackgroundSizingProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.BackgroundSizing>"
+  },
+  "rule": "O6"
+ },
+ "notify:BorderThickness": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "BorderThicknessProperty",
+   "type": "value<Microsoft.UI.Xaml.Thickness>"
+  },
+  "rule": "O6"
+ },
+ "notify:CharacterSpacing": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "CharacterSpacingProperty",
+   "type": "i32"
+  },
+  "rule": "O6"
+ },
+ "notify:ElementSoundMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "ElementSoundModeProperty",
+   "type": "enum<Microsoft.UI.Xaml.ElementSoundMode>"
+  },
+  "rule": "O6"
+ },
+ "notify:FontSize": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "FontSizeProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:FontStretch": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "FontStretchProperty",
+   "type": "enum<Windows.UI.Text.FontStretch>"
+  },
+  "rule": "O6"
+ },
+ "notify:FontStyle": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "FontStyleProperty",
+   "type": "enum<Windows.UI.Text.FontStyle>"
+  },
+  "rule": "O6"
+ },
+ "notify:HorizontalContentAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "HorizontalContentAlignmentProperty",
+   "type": "enum<Microsoft.UI.Xaml.HorizontalAlignment>"
+  },
+  "rule": "O6"
+ },
+ "notify:IsEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsEnabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsFocusEngaged": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsFocusEngagedProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsFocusEngagementEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsFocusEngagementEnabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsTextScaleFactorEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsTextScaleFactorEnabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:Padding": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "PaddingProperty",
+   "type": "value<Microsoft.UI.Xaml.Thickness>"
+  },
+  "rule": "O6"
+ },
+ "notify:RequiresPointer": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "RequiresPointerProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.RequiresPointer>"
+  },
+  "rule": "O6"
+ },
+ "notify:TabNavigation": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "TabNavigationProperty",
+   "type": "enum<Microsoft.UI.Xaml.Input.KeyboardNavigationMode>"
+  },
+  "rule": "O6"
+ },
+ "notify:VerticalContentAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "VerticalContentAlignmentProperty",
+   "type": "enum<Microsoft.UI.Xaml.VerticalAlignment>"
+  },
+  "rule": "O6"
+ },
+ "props:BackgroundSizing": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IControl",
+   "samples": [
+    "OuterBorderEdge",
+    "InnerBorderEdge"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.BackgroundSizing>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:BorderThickness": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IControl",
+   "samples": [
+    "1,2,3,4",
+    "5"
+   ],
+   "type": "value<Microsoft.UI.Xaml.Thickness>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:CharacterSpacing": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IControl",
+   "samples": [
+    3,
+    7
+   ],
+   "type": "i32",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:ElementSoundMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IControl",
+   "samples": [
+    "FocusOnly",
+    "Default"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.ElementSoundMode>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:FontSize": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IControl",
+   "samples": [
+    48.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:FontStretch": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IControl",
+   "samples": [
+    "UltraCondensed",
+    "Undefined"
+   ],
+   "type": "enum<Windows.UI.Text.FontStretch>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:FontStyle": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IControl",
+   "samples": [
+    "Oblique",
+    "Normal"
+   ],
+   "type": "enum<Windows.UI.Text.FontStyle>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:HorizontalContentAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IControl",
+   "samples": [
+    "Center",
+    "Left"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.HorizontalAlignment>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IControl",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsFocusEngaged": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IControl",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsFocusEngagementEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IControl",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsTextScaleFactorEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IControl",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Padding": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IControl",
+   "samples": [
+    "1,2,3,4",
+    "5"
+   ],
+   "type": "value<Microsoft.UI.Xaml.Thickness>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:RequiresPointer": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IControl",
+   "samples": [
+    "WhenEngaged",
+    "Never"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.RequiresPointer>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:TabNavigation": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IControl",
+   "samples": [
+    "Cycle",
+    "Local"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Input.KeyboardNavigationMode>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:VerticalContentAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IControl",
+   "samples": [
+    "Center",
+    "Top"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.VerticalAlignment>",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

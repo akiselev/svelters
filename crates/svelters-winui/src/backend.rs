@@ -18,7 +18,7 @@ use crate::bindings::Windows::Win32::{DispatchMessageW, GetMessageW, MSG, PM_REM
 use crate::conv;
 use crate::dispatch::{ATTR_GET, ATTR_SET, CREATE, EVENT_CONNECT, METHOD_CALL, PROP_GET, PROP_SET, SLOT_OPS, SlotOps};
 use crate::names::EVENTS;
-use crate::sink::Sink;
+use crate::sink::{Registration, Sink};
 use crate::table::{self, Ty};
 use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
@@ -35,7 +35,7 @@ thread_local! {
     static AFTER_NEXT: Cell<u64> = const { Cell::new(1) };
     static CURRENT: RefCell<Weak<Inner>> = RefCell::new(Weak::new());
     /// Event registrations to drop outside the handler that ended them.
-    static GRAVEYARD: RefCell<Vec<EventRevoker>> = const { RefCell::new(Vec::new()) };
+    static GRAVEYARD: RefCell<Vec<Registration>> = const { RefCell::new(Vec::new()) };
 }
 
 fn current() -> Option<Rc<Inner>> {
@@ -49,11 +49,11 @@ struct Entry {
     /// Slot id the handle was inserted into (0 when not inserted).
     slot: u32,
     children: Vec<u64>,
-    listeners: HashMap<(u32, u32), EventRevoker>,
+    listeners: HashMap<(u32, u32), Registration>,
     /// JS listeners of the close event (window `closed`).
     close_listeners: u32,
     /// Always-on registrations (the close handler of a toplevel).
-    internal: Vec<EventRevoker>,
+    internal: Vec<Registration>,
 }
 
 struct WakeShared {
@@ -164,7 +164,7 @@ fn on_frame() {
     if !inner.frame_pending.replace(false) {
         // Nobody asked for this frame: stop listening (outside this handler).
         if let Some(r) = inner.frame_sub.borrow_mut().take() {
-            GRAVEYARD.with(|g| g.borrow_mut().push(r));
+            GRAVEYARD.with(|g| g.borrow_mut().push(r.into()));
             inner.enqueue_wake_noop();
         }
         return;
@@ -335,7 +335,7 @@ impl WinUiBackend {
                 if let Some((t, rev, f)) = entry {
                     let _ = t.Stop();
                     if let Some(r) = rev {
-                        GRAVEYARD.with(|g| g.borrow_mut().push(r));
+                        GRAVEYARD.with(|g| g.borrow_mut().push(r.into()));
                     }
                     if let Some(f) = f {
                         f();

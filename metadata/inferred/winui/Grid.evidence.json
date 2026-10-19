@@ -1,0 +1,136 @@
+{
+ "bindings:background-sizing": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::background-sizing",
+   "type": "enum<Microsoft.UI.Xaml.Controls.BackgroundSizing>"
+  },
+  "rule": "B1"
+ },
+ "bindings:column-spacing": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::column-spacing",
+   "type": "f64"
+  },
+  "rule": "B1"
+ },
+ "bindings:row-spacing": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::row-spacing",
+   "type": "f64"
+  },
+  "rule": "B1"
+ },
+ "notify:BackgroundSizing": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "BackgroundSizingProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.BackgroundSizing>"
+  },
+  "rule": "O6"
+ },
+ "notify:BorderThickness": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "BorderThicknessProperty",
+   "type": "value<Microsoft.UI.Xaml.Thickness>"
+  },
+  "rule": "O6"
+ },
+ "notify:ColumnSpacing": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "ColumnSpacingProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:Padding": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "PaddingProperty",
+   "type": "value<Microsoft.UI.Xaml.Thickness>"
+  },
+  "rule": "O6"
+ },
+ "notify:RowSpacing": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "RowSpacingProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "props:BackgroundSizing": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IGrid",
+   "samples": [
+    "OuterBorderEdge",
+    "InnerBorderEdge"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.BackgroundSizing>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:BorderThickness": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IGrid",
+   "samples": [
+    "1,2,3,4",
+    "5"
+   ],
+   "type": "value<Microsoft.UI.Xaml.Thickness>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:ColumnSpacing": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IGrid",
+   "samples": [
+    12.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Padding": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IGrid",
+   "samples": [
+    "1,2,3,4",
+    "5"
+   ],
+   "type": "value<Microsoft.UI.Xaml.Thickness>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:RowSpacing": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IGrid",
+   "samples": [
+    12.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

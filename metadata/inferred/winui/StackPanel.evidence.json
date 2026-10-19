@@ -1,0 +1,206 @@
+{
+ "bindings:are-scroll-snap-points-regular": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::are-scroll-snap-points-regular",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:background-sizing": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::background-sizing",
+   "type": "enum<Microsoft.UI.Xaml.Controls.BackgroundSizing>"
+  },
+  "rule": "B1"
+ },
+ "bindings:orientation": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::orientation",
+   "type": "enum<Microsoft.UI.Xaml.Controls.Orientation>"
+  },
+  "rule": "B1"
+ },
+ "bindings:spacing": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::spacing",
+   "type": "f64"
+  },
+  "rule": "B1"
+ },
+ "events:HorizontalSnapPointsChanged": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "object",
+   "delegate": "Windows.Foundation.EventHandler<object>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:VerticalSnapPointsChanged": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "object",
+   "delegate": "Windows.Foundation.EventHandler<object>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "notify:AreScrollSnapPointsRegular": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "AreScrollSnapPointsRegularProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:BackgroundSizing": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "BackgroundSizingProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.BackgroundSizing>"
+  },
+  "rule": "O6"
+ },
+ "notify:BorderThickness": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "BorderThicknessProperty",
+   "type": "value<Microsoft.UI.Xaml.Thickness>"
+  },
+  "rule": "O6"
+ },
+ "notify:Orientation": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "OrientationProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.Orientation>"
+  },
+  "rule": "O6"
+ },
+ "notify:Padding": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "PaddingProperty",
+   "type": "value<Microsoft.UI.Xaml.Thickness>"
+  },
+  "rule": "O6"
+ },
+ "notify:Spacing": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "SpacingProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "props:AreHorizontalSnapPointsRegular": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false,
+   "interface": "Microsoft.UI.Xaml.Controls.Primitives.IScrollSnapPointsInfo",
+   "type": "bool",
+   "write": false
+  },
+  "rule": "P1"
+ },
+ "props:AreScrollSnapPointsRegular": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IStackPanel",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:AreVerticalSnapPointsRegular": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false,
+   "interface": "Microsoft.UI.Xaml.Controls.Primitives.IScrollSnapPointsInfo",
+   "type": "bool",
+   "write": false
+  },
+  "rule": "P1"
+ },
+ "props:BackgroundSizing": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IStackPanel",
+   "samples": [
+    "OuterBorderEdge",
+    "InnerBorderEdge"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.BackgroundSizing>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:BorderThickness": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IStackPanel",
+   "samples": [
+    "1,2,3,4",
+    "5"
+   ],
+   "type": "value<Microsoft.UI.Xaml.Thickness>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Orientation": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IStackPanel",
+   "samples": [
+    "Horizontal",
+    "Vertical"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.Orientation>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Padding": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IStackPanel",
+   "samples": [
+    "1,2,3,4",
+    "5"
+   ],
+   "type": "value<Microsoft.UI.Xaml.Thickness>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Spacing": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IStackPanel",
+   "samples": [
+    12.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

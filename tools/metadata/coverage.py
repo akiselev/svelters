@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""API-surface coverage report: metadata/coverage/{gtk,qt,appkit}.md (and a machine-readable .json).
+"""API-surface coverage report: metadata/coverage/{gtk,qt,appkit,winui}.md (and a machine-readable .json).
 
 Per kind: exposed as an element (or why not), props/signals/methods exposed out of the kind's own
 total, slots annotated, ownership annotated, signal results annotated, bindings annotated,
@@ -123,8 +123,8 @@ def gtk_rows() -> list[dict]:
 
 
 def gtk_fact_table(tk: str = "gtk") -> dict:
-    """Facts by section and state: manual / inferred verified, delivery-only, pending; parked and unreviewed counts."""
-    man = json.loads(ledger.GTK_FACTS.read_text()) if tk == "gtk" else ledger.qt_facts() if tk == "qt" else json.loads(ledger.FACTS[tk].read_text())
+    """Facts by section and state: manual / inferred verified, weak (`delivery`/`connect`), pending; parked and unreviewed counts."""
+    man = json.loads(ledger.GTK_FACTS.read_text()) if tk == "gtk" else ledger.manifest(tk)
     verified = ledger.verified_facts(tk)
     sections: dict[str, dict[str, int]] = {}
     for f in man["facts"]:
@@ -132,7 +132,7 @@ def gtk_fact_table(tk: str = "gtk") -> dict:
         origin = f.get("origin", "manual")
         if f["fact"] in verified:
             row[origin] += 1
-            row["delivery"] += f.get("strength") == "delivery"
+            row["delivery"] += f.get("strength") in ("delivery", "connect")
         else:
             row["pending"] += 1
     parked: dict[str, int] = {}
@@ -196,7 +196,10 @@ def qt_rows() -> list[dict]:
 
 def appkit_rows() -> list[dict]:
     sys.path.insert(0, str(HERE / "appkit"))
-    import gen_backend as appkit_gen  # noqa: E402
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("svelters_appkit_gen_c", HERE / "appkit/gen_backend.py")
+    appkit_gen = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(appkit_gen)
     m = appkit_gen.Model()
     man = json.loads(ledger.FACTS["appkit"].read_text())
     verified = ledger.verified_facts("appkit")
@@ -226,6 +229,41 @@ def appkit_rows() -> list[dict]:
     return rows
 
 
+# ---- WinUI -------------------------------------------------------------------------------------
+
+def winui_rows() -> list[dict]:
+    """Every ingested class (metadata/winui). Exposed = in the generated tables (manual and inferred layers merged,
+    parked facts left out): WinUI has no reflection fallback, like Qt."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("svelters_winui_gen_c", ROOT / "tools/metadata/winui/gen_backend.py")
+    gen = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(gen)
+    m = gen.Model()
+    man = ledger.manifest("winui")
+    verified = ledger.verified_facts("winui")
+    rows = []
+    for cls, k in sorted(m.classes.items(), key=lambda kv: gen.short(kv[0])):
+        name = gen.short(cls)
+        facts = [f["fact"] for f in man["facts"] if f["kind"] == name]
+        kind = next((x for x in m.kinds if x["class"] == cls), None)
+        own = lambda xs: [x for x in xs if x["class"] == cls]  # noqa: E731
+        sigs = [e for e in own(m.events) if not e["notify"]]
+        rows.append({
+            "kind": name, "native": cls, "abstract": bool(k["abstract"]),
+            "element": kind["tag"] if kind else None, "unexposed": None,
+            "props": [len(own(m.props)), len(k["properties"])], "props_annotated": len(own(m.props)),
+            "signals": [len(sigs), len(k["signals"])], "methods": [len(own(m.methods)), len(k["methods"])],
+            "notify": sum(1 for e in own(m.events) if e["notify"]),
+            "slots": len(own(m.slots)), "slots_own": len(own(m.slots)), "ownership": bool(own(m.slots)),
+            "signal_results": sum(1 for e in sigs if e["o"].get("result")),
+            "bindings": len(m.ovr.get(cls, {}).get("bindings", [])),
+            "verified": [sum(1 for f in facts if f in verified), len(facts)],
+            "inherited": 0, "gallery": None,
+            "lifetime": (kind["el"].get("lifetime") or "owned") if kind else None,
+        })
+    return rows
+
+
 # ---- output ------------------------------------------------------------------------------------
 
 def render(tk: str, rows: list[dict]) -> str:
@@ -249,10 +287,11 @@ def render(tk: str, rows: list[dict]) -> str:
          f"| Facts verified (manual and inferred) | {vf}/{vt} |",
          f"| Kinds on a gallery page | {sum(1 for r in rows if r['gallery'])} |",
          ""]
-    if tk in ("gtk", "qt", "appkit"):
+    if tk in ("gtk", "qt", "appkit", "winui"):
         ft = gtk_fact_table(tk)
+        weak = "connect" if tk == "winui" else "delivery"
         o += ["## Facts by state\n",
-              "| Section | Verified (manual) | Verified (inferred) | of which `verified: delivery` | Pending | Parked |",
+              f"| Section | Verified (manual) | Verified (inferred) | of which `verified: {weak}` | Pending | Parked |",
               "| --- | --- | --- | --- | --- | --- |"]
         for sec, r in ft["sections"].items():
             o.append(f"| {sec} | {r['manual']} | {r['inferred']} | {r['delivery'] or '-'} | {r['pending'] or '-'} | {ft['parked'].get(sec, '-')} |")
@@ -275,6 +314,11 @@ def render(tk: str, rows: list[dict]) -> str:
                  "unannotated ones at run time); signals and methods only when annotated (manual or inferred). The tests run "
                  "only on macOS: results are imported from the macos-appkit CI job (`ledger.py import --toolkit appkit`). "
                  "Props (annotated) counts props with a test sample.\n")
+    elif tk == "winui":
+        o.append("WinUI exposes only the facts in the generated tables (manual and inferred annotations; no reflection "
+                 "fallback). The tests run on the windows-winui CI job only; `ledger.py import --toolkit winui` records "
+                 f"its results. {sum(r.get('notify', 0) for r in rows)} props have a `notify::<prop>` event (DependencyProperty "
+                 "callback); a `verified: connect` event was connected and disconnected, not raised.\n")
     else:
         o.append("Qt exposes only annotated facts (the generated C++ backend has no reflection fallback); "
                  f"{sum(r.get('defaults', 0) for r in rows)} properties carry a typed default read from a default-constructed instance.\n")
@@ -297,7 +341,7 @@ def main() -> int:
     ap.add_argument("--check", action="store_true", help="fail if the checked-in reports are stale")
     a = ap.parse_args()
     stale = []
-    for tk, rows in (("gtk", gtk_rows()), ("qt", qt_rows()), ("appkit", appkit_rows())):
+    for tk, rows in (("gtk", gtk_rows()), ("qt", qt_rows()), ("appkit", appkit_rows()), ("winui", winui_rows())):
         for path, text in ((OUT / f"{tk}.md", render(tk, rows)),
                            (OUT / f"{tk}.json", json.dumps(sorted(rows, key=lambda r: r["kind"]), indent=1, sort_keys=True) + "\n")):
             if not path.exists() or path.read_text() != text:
