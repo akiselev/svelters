@@ -263,3 +263,26 @@ impl CloneBoxed for V {
         self.clone()
     }
 }
+
+#[test]
+fn detailed_notify_on_non_widget_objects() {
+    on_gtk(|| {
+        let h = Harness::new();
+        let buf = h.construct("Gtk.TextBuffer", &[("text", s("hello"))]).unwrap();
+        // `notify::<prop>` takes the property by native or JS name; the detail must be a property.
+        h.listen(buf, "notify::text", true).unwrap();
+        h.listen(buf, "notify::enableUndo", true).unwrap();
+        assert!(h.listen(buf, "notify::no-such-prop", true).is_err());
+        assert!(h.listen(buf, "changed::detail", true).is_err(), "`changed` takes no detail");
+        h.set_value(buf, "text", &Value::Str("x".into())).unwrap();
+        let names: Vec<String> = h.take_events().into_iter().map(|(_, n)| n).collect();
+        assert!(names.iter().any(|n| n == "notify::text"), "{names:?}");
+        assert!(!names.iter().any(|n| n.contains("nable")), "only the named property fires: {names:?}");
+        h.set_value(buf, "enable-undo", &Value::Bool(false)).unwrap();
+        let names: Vec<String> = h.take_events().into_iter().map(|(_, n)| n).collect();
+        assert_eq!(names, ["notify::enableUndo"], "reported under the name it was listened with");
+        h.listen(buf, "notify::text", false).unwrap();
+        h.set_value(buf, "text", &Value::Str("y".into())).unwrap();
+        assert!(h.take_events().is_empty());
+    });
+}

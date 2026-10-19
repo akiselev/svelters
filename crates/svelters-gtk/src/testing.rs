@@ -590,7 +590,7 @@ impl Harness {
     pub fn take_events_flags(&self) -> Vec<(u64, String, u32)> {
         let evs: Vec<_> = self.rec.events.borrow_mut().drain(..).collect();
         evs.into_iter()
-            .map(|(h, s, _)| (h, SIGNALS[(s & SVL_SIGNAL_ID_MASK) as usize - 1].name.to_string(), s >> SVL_SIGNAL_FLAGS_SHIFT))
+            .map(|(h, s, _)| (h, self.backend.signal_name(s), s >> SVL_SIGNAL_FLAGS_SHIFT))
             .collect()
     }
 
@@ -599,7 +599,7 @@ impl Harness {
         let calls: Vec<_> = self.rec.sync_calls.borrow_mut().drain(..).collect();
         calls
             .into_iter()
-            .map(|(h, s, _)| (h, SIGNALS[(s & SVL_SIGNAL_ID_MASK) as usize - 1].name.to_string(), s >> SVL_SIGNAL_FLAGS_SHIFT))
+            .map(|(h, s, _)| (h, self.backend.signal_name(s), s >> SVL_SIGNAL_FLAGS_SHIFT))
             .collect()
     }
 
@@ -707,7 +707,7 @@ impl Harness {
     /// `call_sync` calls answered with a value or a failure since the last take.
     pub fn take_sync_calls(&self) -> Vec<(u64, String, Vec<Value>)> {
         let calls: Vec<_> = self.rec.sync_calls.borrow_mut().drain(..).collect();
-        calls.into_iter().map(|(h, sig, a)| (h, crate::generated::tables::SIGNALS[(sig & SVL_SIGNAL_ID_MASK) as usize - 1].name.to_string(), a)).collect()
+        calls.into_iter().map(|(h, sig, a)| (h, self.backend.signal_name(sig), a)).collect()
     }
 
     /// `host.frame` calls received since the last take.
