@@ -109,4 +109,96 @@ No ABI change. Host changes, none of them ABI (`crates/svelters-host`):
 
 ## Completion record
 
-Filled in at the end of the lane; see below.
+### Commits (branch `worktree-agent-a13573a6ffaa278fe`, pushed as `ci/nt1`)
+
+- `a4e89004`: closures, folding, host adoption/orphans/async statics, facts and generators. `gio_services` passes on the generic path.
+- `e01206d7`: async verify group, `types_members` cross-check, `async_callbacks` lifetime test, docs, NON-GUI-TYPES and backend-abi notes.
+- `441fd8e7`: orphaned completions refuse backend invocations; GTK ledger refreshed.
+- The final commit adds this record.
+
+### Gates
+
+Observed locally at `441fd8e7`, after the last code change; this record is the only later edit:
+
+| Gate | Result |
+|---|---|
+| `tools/dev/headless tools/dev/cargo-slot cargo nextest run --workspace --no-fail-fast` | 2006 run, 2006 passed, 7 skipped |
+| `python3 tools/metadata/ledger.py refresh --toolkit gtk` | gtk: 1521 facts, 1546 tests, 0 manual not passing, 0 inferred not passing, 1 parked |
+| `ledger.py check` | gtk 550 manual verified; inferred 971 verified, 0 pending, 1 parked (qt/appkit/winui unchanged) |
+| `corepack pnpm test` (with `test:meta`) | rc 0; pytest 127 passed, 1 skipped (the opt-in `SVELTERS_CHECK_GIR` test) |
+| `corepack pnpm -r build` | rc 0 (needs `python3 tools/docs/build_ir.py` first, and a `pnpm` on `PATH`: `experiments/native-compiler/compiled` spawns a bare `pnpm`) |
+| `corepack pnpm docs:test` | rc 0; 11 Python tests (1 skipped), 17 node tests |
+| `check-links` | 909 pages, all references resolve |
+
+The N1 tests in the crate:
+
+- `gio_services` 1/1;
+- `async_callbacks` 1/1;
+- `types_verify` 54/54, including 4 `*_async`;
+- `types_members` 7/7;
+- `@svelters/types`: 14 node tests plus `tsc` on the typings.
+
+### CI (`ci/nt1` at `441fd8e7`)
+
+All five workflows passed:
+
+| Workflow | Run id | Result |
+|---|---|---|
+| js | 39301392419 | success |
+| linux-gtk | 39301392420 | success: `gtk` (Arch) 1892/1892, 36 skipped; `gtk-4-14` (Ubuntu, required) 1675/1675, 29 skipped |
+| linux-qt | 39301392440 | success |
+| macos-appkit | 39301392478 | success |
+| windows-winui | 39301392505 | success |
+
+The first push (`e01206d7`, runs 39298739506 and 39298739581) failed in two places:
+
+- `js`: the ledger was not refreshed yet.
+- `linux-gtk` Arch: the host `serdes_async` late-completion expectation. `441fd8e7` fixes it.
+
+`gtk-4-14` already passed on that first push.
+
+### Bound members before and after
+
+Both columns use the same GIR (GTK 4.24.1); "before" is the NT0 rules run on it:
+
+| | before (NT0 rules) | after (N1) |
+|---|---:|---:|
+| bound members (8 namespaces) | 3552 | 3732 |
+| blocked | 593 | 409 |
+| blocked `async` | 106 | 6 |
+| blocked `callback*` | 38 | 20 |
+| blocked `unbound` | 86 | 13 |
+
+- **What is bound now:** 94 async members (7 of them statics or constructors), 14 members with callback parameters, 72 members with widget slots.
+- **Curated types:**
+  - Gio.File 63 → 95 bound (4 blocked);
+  - Gtk.FileDialog 25 → 33 (0 blocked);
+  - Gdk.Clipboard 9 → 13;
+  - Gtk.TextBuffer 84 → 85.
+- **Still blocked async (6):** 3 starts with out parameters (`InputStream.read_async`, `read_all_async`, `DBusConnection.send_message_with_reply`) and 3 without a `<stem>_finish` (`File.copy/move_async_with_closures`, `replace_contents_bytes_async`).
+- **GIR drift.** The checked-in NT0 facts were made on GTK 4.22 (3520 bound / 588 blocked). Regenerating on 4.24.1 with the NT0 rules gives 3552 / 593, including +2 Gtk models (EnumList, EnumListItem). The GTK 4.24 `cairo-1.0.gir` is not installed on this machine (Arch `gobject-introspection` is missing; only `-runtime` is installed). The facts were generated with `--girdir` pointing at the system GIRs plus that file, taken from the matching Arch package (1.86.0-2) under `target/`.
+
+### Open items
+
+1. **Facts and invoker disagree outside N1.** A cross-check of *every* bound member found NT0-era disagreements, so the generated `types_members.rs` is scoped to the N1 surface for now. Examples seen:
+   - GLib 21/176: `GLib.Uri.*`, `KeyFile.load_*` (enums and flags without a GType, `UriFlags`/`KeyFileFlags`);
+   - Gio 5/655: caller-allocated out arrays (`InputStream.read`, `DBusMessage.to_blob`), GType-less enums;
+   - Graphene 9/232;
+   - Gsk 2: struct by value;
+   - many Gtk widget-interface members (`Gtk.Editable.*`, `Gtk.Actionable.*`) that do not resolve on the interface's own kind.
+
+   The fix is in `types_facts.py`: block GType-less enums and flags and caller-allocated arrays, or teach `gi.rs` about them. Then the check can widen.
+2. **Async options after defaulted parameters.** `{ signal }` must come after every declared parameter. With a defaulted `ioPriority` the caller passes it explicitly (`queryInfoAsync(a, f, 0, { signal })`).
+3. **`forever` scope** is implemented (never freed natively; the JS function lives until its owner dies, forever for statics) but has no real-API test: no bound member has it.
+4. **Callbacks that run off the main thread** get the zero value and a stderr message. GTK/GIO callbacks in the bound set run on the main context.
+5. **Docs IR** (`tools/docs`, read by CL0) still has no non-GUI types. The type pages are generated straight from the facts, as in NT0.
+6. **`types_facts.py --check` needs a complete GIR set** (cairo). Whoever regenerates next needs the same `--girdir` workaround or the `gobject-introspection` package.
+
+### Conflict risks
+
+- **NT2 / shared files:**
+  - `packages/types/src/core.js` and `core.d.ts`: additive `callAsync`, `callStaticAsync`, `AsyncOptions`, `NativeElement`.
+  - `packages/types/package.json`: `gen_types.py` rewrites `exports` and `scripts`. Unchanged content here, but NT2's `qt/` exports must survive the generator.
+  - `plans/architecture/backend-abi.md`: a new "N1" section, no ABI change.
+- **Host files:** `crates/svelters-host/src/core/{callbacks,asyncs,statics,ops}.rs` and `core.rs` (event adoption). NT2's Qt async work may touch `asyncs.rs`.
+- **RT1:** none expected. `packages/types/vite.js` and the build alias wiring are untouched.
