@@ -50,14 +50,6 @@ Construct-time properties (construct-only ones can only be given here): `acceptL
 - `getInitialName()`, since 4.10
 - `getModal()`, since 4.10
 - `getTitle()`, since 4.10
-- `open(parent)`, since 4.10
-- `openMultiple(parent)`, since 4.10
-- `openMultipleTextFiles(parent)`, since 4.18
-- `openTextFile(parent)`, since 4.18
-- `save(parent)`, since 4.10
-- `saveTextFile(parent)`, since 4.18
-- `selectFolder(parent)`, since 4.10
-- `selectMultipleFolders(parent)`, since 4.10
 - `setAcceptLabel(acceptLabel)`, since 4.10
 - `setDefaultFilter(filter)`, since 4.10
 - `setFilters(filters)`, since 4.10
@@ -66,4 +58,17 @@ Construct-time properties (construct-only ones can only be given here): `acceptL
 - `setInitialName(name)`, since 4.10
 - `setModal(modal)`, since 4.10
 - `setTitle(title)`, since 4.10
+
+## Async methods
+
+Each folds a native `_async`/`_finish` pair into one call that returns a Promise. It resolves with the finish result (an object of the out parameters where there are any) and rejects with a `NativeError`. The native `GCancellable` is not exposed: pass `{ signal }` (an `AbortSignal`) as the last argument to cancel, which rejects with code `cancelled`. See [Async calls and callbacks](../async/).
+
+- `open(parent, { signal }?)` → `Promise<object>` (`open` + `open_finish`), since 4.10
+- `openMultiple(parent, { signal }?)` → `Promise<object>` (`open_multiple` + `open_multiple_finish`), since 4.10
+- `openMultipleTextFiles(parent, { signal }?)` → `Promise<{ ret, encoding }>` (`open_multiple_text_files` + `open_multiple_text_files_finish`), since 4.18
+- `openTextFile(parent, { signal }?)` → `Promise<{ ret, encoding }>` (`open_text_file` + `open_text_file_finish`), since 4.18
+- `save(parent, { signal }?)` → `Promise<object>` (`save` + `save_finish`), since 4.10
+- `saveTextFile(parent, { signal }?)` → `Promise<{ ret, encoding, lineEnding }>` (`save_text_file` + `save_text_file_finish`), since 4.18
+- `selectFolder(parent, { signal }?)` → `Promise<object>` (`select_folder` + `select_folder_finish`), since 4.10
+- `selectMultipleFolders(parent, { signal }?)` → `Promise<object>` (`select_multiple_folders` + `select_multiple_folders_finish`), since 4.10
 

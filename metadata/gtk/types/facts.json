@@ -51,6 +51,16 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gdk:Clipboard:async",
+   "facts_digest": "9c12e424184dc082",
+   "kind": "Clipboard",
+   "name": "async",
+   "section": "types",
+   "tests": [
+    "types_verify::gdk_clipboard_async"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gdk:Texture:construct",
    "facts_digest": "4db3b4d765008bdf",
    "kind": "Texture",
@@ -101,6 +111,16 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gdk:Texture:async",
+   "facts_digest": "4db3b4d765008bdf",
+   "kind": "Texture",
+   "name": "async",
+   "section": "types",
+   "tests": [
+    "types_verify::gdk_texture_async"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gio:File:construct",
    "facts_digest": "1724c5a5adbd8a71",
    "kind": "File",
@@ -148,6 +168,16 @@
    "section": "types",
    "tests": [
     "types_verify::gio_file_lifetime"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gio:File:async",
+   "facts_digest": "1724c5a5adbd8a71",
+   "kind": "File",
+   "name": "async",
+   "section": "types",
+   "tests": [
+    "types_verify::gio_file_async"
    ]
   },
   {
@@ -298,6 +328,16 @@
    "section": "types",
    "tests": [
     "types_verify::gtk_filedialog_lifetime"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:FileDialog:async",
+   "facts_digest": "7590a41365814081",
+   "kind": "FileDialog",
+   "name": "async",
+   "section": "types",
+   "tests": [
+    "types_verify::gtk_filedialog_async"
    ]
   },
   {

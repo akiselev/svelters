@@ -1081,6 +1081,11 @@ impl DynMethod {
         self.plan.as_ref().is_ok_and(|p| p.has_outs())
     }
 
+    /// Why the invoker refuses this function, if it does.
+    pub fn plan_error(&self) -> Option<&str> {
+        self.plan.as_ref().err().map(|e| e.as_str())
+    }
+
     /// An `_async` function folded with its `_finish`: JS gets a Promise (`SVL_M_ASYNC`).
     pub fn is_async(&self) -> bool {
         self.plan.as_ref().is_ok_and(|p| p.async_args.is_some())

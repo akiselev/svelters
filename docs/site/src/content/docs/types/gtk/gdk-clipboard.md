@@ -37,11 +37,16 @@ Construct-time properties (construct-only ones can only be given here): `display
 - `getDisplay()`
 - `getFormats()`
 - `isLocal()`
-- `readAsync(mimeTypes, ioPriority)`
-- `readTextAsync()`
-- `readTextureAsync()`
 - `setContent(provider)`
-- `storeAsync(ioPriority)`
+
+## Async methods
+
+Each folds a native `_async`/`_finish` pair into one call that returns a Promise. It resolves with the finish result (an object of the out parameters where there are any) and rejects with a `NativeError`. The native `GCancellable` is not exposed: pass `{ signal }` (an `AbortSignal`) as the last argument to cancel, which rejects with code `cancelled`. See [Async calls and callbacks](../async/).
+
+- `readAsync(mimeTypes, ioPriority, { signal }?)` → `Promise<{ ret, outMimeType }>` (`read_async` + `read_finish`)
+- `readTextAsync({ signal }?)` → `Promise<str>` (`read_text_async` + `read_text_finish`)
+- `readTextureAsync({ signal }?)` → `Promise<object>` (`read_texture_async` + `read_texture_finish`)
+- `storeAsync(ioPriority, { signal }?)` → `Promise<bool>` (`store_async` + `store_finish`)
 
 ## Events
 

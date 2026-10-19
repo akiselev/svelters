@@ -107,12 +107,53 @@ test('methods call by native name, statics by native type, returns are wrapped a
 
 test('out parameters come back as an object, trailing nullable parameters default to null', () => {
   const f = wrapObject(File, installHost()(9));
-  results.set('load_contents', () => ({ ret: true, contents: new Uint8Array([1, 2]), etagOut: 'e' }));
+  // the host keys out values by the native parameter name; the module renames them
+  results.set('load_contents', () => ({ ret: true, contents: new Uint8Array([1, 2]), etag_out: 'e' }));
   const r = f.loadContents();
   assert.deepEqual(log.at(-1), ['call', 9, 'load_contents', [null]]);
   assert.equal(r.ret, true);
   assert.deepEqual([...r.contents], [1, 2]);
   assert.equal(r.etagOut, 'e');
+});
+
+test('async members return a Promise, pass { signal } last and shape the finish result', async () => {
+  const node = installHost();
+  const f = wrapObject(File, node(9));
+  results.set('load_contents_async', () => Promise.resolve({ ret: true, contents: new Uint8Array([7]), etag_out: null }));
+  const p = f.loadContentsAsync();
+  assert.ok(p instanceof Promise);
+  assert.deepEqual(log.at(-1), ['call', 9, 'load_contents_async', []]);
+  const r = await p;
+  assert.deepEqual(Object.keys(r), ['ret', 'contents', 'etagOut']);
+  assert.equal(r.etagOut, null);
+  const signal = new AbortController().signal;
+  results.set('query_info_async', (args) => Promise.resolve(node(55)));
+  const info = await f.queryInfoAsync('standard::size', 'none', 0, { signal });
+  assert.deepEqual(log.at(-1).slice(0, 3), ['call', 9, 'query_info_async']);
+  assert.equal(log.at(-1)[3].length, 4, 'options travel after the declared arguments');
+  assert.equal(info.constructor.name, 'FileInfo');
+  // a rejection passes through unchanged
+  results.set('delete_async', () => Promise.reject(new Error('nope')));
+  await assert.rejects(f.deleteAsync(), /nope/);
+  // async statics go through callStatic
+  results.set('Gio.File.new_tmp_async', () => Promise.resolve({ ret: node(60), iostream: node(61) }));
+  const t = await File.newTmpAsync(null);
+  assert.equal(t.ret.constructor.name, 'File');
+  assert.equal(t.iostream.constructor.name, 'FileIOStream');
+  assert.throws(() => f.loadContentsAsync(42), /options must be an object/);
+});
+
+test('callback arguments that are objects arrive as generated classes', async () => {
+  const node = installHost();
+  const { CustomFilter } = await import('../gtk/gtk/CustomFilter.js');
+  const cf = wrapObject(CustomFilter, node(909));
+  let seen;
+  results.set('set_filter_func', (args) => args[0](node(70)));
+  cf.setFilterFunc((item) => (seen = item));
+  assert.equal(seen.constructor.name, 'Object');
+  assert.equal(seen.svlHandle, 70);
+  results.set('set_filter_func', (args) => args[0]);
+  assert.equal(cf.setFilterFunc(null), undefined);
 });
 
 test('property accessors read and write through getProp / setProp', () => {

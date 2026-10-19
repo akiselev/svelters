@@ -41,7 +41,7 @@ Construct-time properties (construct-only ones can only be given here): `enableU
 
 ## Methods
 
-- `addCommitNotify(flags, commitNotify)`, since 4.16
+- `addCommitNotify(flags, commitNotify)`, since 4.16; `commitNotify` is a callback (notified scope)
 - `addMark(mark, where)`
 - `addSelectionClipboard(clipboard)`
 - `applyTag(tag, start, end)`

@@ -17,6 +17,8 @@ Every non-UI GTK type is a named export of a `svelters:gtk/<namespace>` module. 
 - **Values** (`Pango.FontDescription`, `Gdk.ContentFormats`) are VALUE handles: immutable, no identity, `equals`, `toString`, `dispose`.
 - **Release builds** keep only what an app imports, plus the types its signatures mention. The manifest is `packages/types/gtk/manifest.json`.
 
+- **Async methods** (`file.loadContentsAsync()`, `dialog.open(window)`) return Promises; `{ signal }` cancels. **Callbacks** are plain JS functions. See [Async calls and callbacks](async/).
+
 The curated set below has a page and ledger-verified tests; the other bound types are generated from the same facts.
 
 ## Curated types

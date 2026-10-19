@@ -1368,7 +1368,13 @@ impl Inner {
         }
         if what == SVL_METHOD && member as usize > METHODS.len() {
             let gi = self.gi.borrow().clone()?;
-            return gi.method(member - METHODS.len() as u32 - 1)?.describe(&mut self.types.borrow_mut(), &gi);
+            let dm = gi.method(member - METHODS.len() as u32 - 1)?;
+            let d = dm.describe(&mut self.types.borrow_mut(), &gi);
+            if d.is_none() {
+                // The reason the invoker refuses the function, for `last_error`.
+                self.set_error(dm.plan_error().unwrap_or("no descriptor").to_string());
+            }
+            return d;
         }
         if what != SVL_PROP {
             return None;

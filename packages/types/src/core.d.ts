@@ -41,7 +41,8 @@ export class NativeValue {
 
 /** Options of every generated async method: `signal` cancels the native operation (`GCancellable`). */
 export interface AsyncOptions {
-  signal?: AbortSignal | null;
+  /** An `AbortSignal` (structurally: anything with `aborted` and an `abort` event). */
+  signal?: { readonly aborted: boolean; addEventListener(type: 'abort', fn: () => void): void } | null;
 }
 
 /** An element (a renderer node) where a native widget is expected. */

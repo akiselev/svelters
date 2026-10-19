@@ -552,6 +552,20 @@ These links weren't re-fetched in this session; the descriptions come from the p
 | N3 models and reactivity | — | `@svelters/lists` takes native models; optional reactive accessors (`notify::`/NOTIFY via `createSubscriber`) | 10k-item DirectoryList scroll; the TextBuffer example needs no `$state` mirror |
 | N4 Apple / WinUI | objc2-based or ObjC++ core; C++/WinRT core | objc2 and winmd ingest + classify; build `winmd-tool` for Windows.Foundation/Microsoft.UI | when those backends grow past the P set |
 
+### N1 as built (2026-10-19, `plans/milestones/NT1-gtk-async.md`)
+
+Where the build deviates from the plan above:
+
+- **No ABI change.** The plan's "one-shot `CALLBACK`" and `SVL_M_ASYNC` from S1/S2 were enough. The host gained three non-ABI behaviours:
+  - it adopts handles that arrive in callback and signal arguments;
+  - it rejects an async completion whose owner dies with `NativeError { domain: 'svelters', code: 'disposed' }`, instead of dropping it;
+  - it runs async statics through `callStatic`.
+- **Pairing by name, not by the typelib.** The typelib names the `_finish` of an `_async` only from GLib 2.84 on, and the GTK 4.14 CI job has GLib 2.80. Both the backend and `types_facts.py` pair `<stem>_async`/`<stem>` with `<stem>_finish` in the same container. A GIR `glib:finish-func` that names something else blocks the member: 3 cases, such as `File.replace_contents_bytes_async`.
+- **Closures** (`crates/svelters-gtk/src/closures.rs`, about 330 lines) use `gi_callable_info_create_closure`. A native closure is never freed inside its own invocation: frees are deferred to an idle. `forever` scope is reported to the host as `notified` and never freed natively; there is none in the bound set. A GIR `call` scope on a callback of an async function (`load_partial_contents_async`'s `read_more_callback` runs after the call returns) is refused, not trusted.
+- **Cancellable:** hidden. The JS form is `{ signal }` as a trailing options object. Every operation gets its own `GCancellable`, and `backend.cancel(id)` cancels it.
+- **Widget slots.** Widget-typed parameters and returns of non-widget classes are now bound as element handles (`k: widget` in the facts). `FileDialog.open(parent)`, the §7 example, needed this. It unblocked about 90 Gtk members, including the synchronous ones.
+- **Abort of a file dialog** rejects with `gtk-dialog-error-quark` / `cancelled`. `dismissed` is the user closing it. §7's comment assumed `dismissed` for both.
+
 ## 10. Decisions (user, 2026-10-17)
 
 - **Q1 — transfer-none returns of non-widget objects are SHARED** (strong references), for now. The `lifetime: borrowed` override stays available for exceptions.
