@@ -735,6 +735,12 @@ def first_kind(m: Model, cls: str) -> dict:
     raise GenError(f"no kind for {cls}")
 
 
+def stable(ty: dict | None) -> dict | None:
+    """A wire type without its table index (`Enum` index into ENUMS): fingerprints must not change when another
+    fact enters or leaves the tables (parking one would otherwise invalidate the others)."""
+    return None if ty is None else {k: v for k, v in ty.items() if k != "index"}
+
+
 def test_values(p: dict) -> list:
     """The values a prop's test writes, in order (a manual `test` is one value, an inferred one a list)."""
     v = p["o"].get("test")
@@ -784,17 +790,17 @@ def gen_tests(m: Model) -> str:
         if isinstance(p["o"].get("test"), list):
             cases = ", ".join(f"({test_value(p, v)}, {expected_value(p, v)})" for v in vals)
             call = f"t::roundtrip({tag}, {rs_str(p['name'])}, &[{cases}])"
-            fact(p["class"], "props", p["native"], name, {"o": p["o"], "ty": p["ty"]}, call)
+            fact(p["class"], "props", p["native"], name, {"o": p["o"], "ty": stable(p["ty"])}, call)
             add_row(name, call)
         elif vals:
             body = (f"    let mut h = Harness::new();\n    let w = h.create({tag});\n"
                     f"    h.set(w, {rs_str(p['name'])}, {test_value(p, vals[0])}).unwrap();\n"
                     f"    assert_eq!(h.get(w, {rs_str(p['name'])}).unwrap(), {expected_value(p, vals[0])});\n")
-            fact(p["class"], "props", p["native"], name, {"o": p["o"], "ty": p["ty"]}, body)
+            fact(p["class"], "props", p["native"], name, {"o": p["o"], "ty": stable(p["ty"])}, body)
             add_test(name, body)
         elif p["origin"] == "inferred" and p["read"] and not p["write"]:
             call = f"t::readable({tag}, {rs_str(p['name'])})"
-            fact(p["class"], "props", p["native"], name, {"o": p["o"], "ty": p["ty"]}, call)
+            fact(p["class"], "props", p["native"], name, {"o": p["o"], "ty": stable(p["ty"])}, call)
             add_row(name, call)
     for s in m.slots:
         k = first_kind(m, s["class"])
@@ -927,7 +933,7 @@ def gen_tests(m: Model) -> str:
             m.unusable(mt["class"], "methods", mt["native"], f"{mt['file']}: method {mt['native']}: no generated test for arguments")
             continue
         call = f"t::call0({rs_str(k['tag'])}, {rs_str(mt['name'])})"
-        fact(mt["class"], "methods", mt["native"], name, {"o": mt["o"], "ret": mt["ret"]}, call)
+        fact(mt["class"], "methods", mt["native"], name, {"o": mt["o"], "ret": stable(mt["ret"])}, call)
         add_row(name, call)
     # A generic binding is verified by its change event's test (the notify test writes the prop and sees the callback).
     for cls, ov in sorted(m.ovr.items(), key=lambda kv: short(kv[0])):

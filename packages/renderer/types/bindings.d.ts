@@ -436,7 +436,6 @@ export interface BindableProps {
     text: string; // winui
     "text-alignment": string; // winui
     "text-line-bounds": string; // winui
-    "text-reading-order": string; // winui
     "text-trimming": string; // winui
     "text-wrapping": string; // winui
   };
@@ -454,7 +453,6 @@ export interface BindableProps {
     "prevent-keyboard-display-on-programmatic-focus": boolean; // winui
     text: string; // winui
     "text-alignment": string; // winui
-    "text-reading-order": string; // winui
     "text-wrapping": string; // winui
   };
   "text-edit": {

@@ -1,0 +1,87 @@
+{
+ "parked": [
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:notify:IsFocusEngaged",
+   "kind": "Control",
+   "message": "<button> is-focus-engaged = Bool(true): is-focus-engaged: Error: Control must be focused before setting IsFocusEngaged to true. (HRESULT 0x800F1000)",
+   "name": "IsFocusEngaged",
+   "record_fp": "441b24fd576506ae",
+   "section": "notify",
+   "test": "notify_button_is_focus_engaged",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:IsFocusEngaged",
+   "kind": "Control",
+   "message": "<button> is-focus-engaged = Bool(true): is-focus-engaged: Error: Control must be focused before setting IsFocusEngaged to true. (HRESULT 0x800F1000)",
+   "name": "IsFocusEngaged",
+   "record_fp": "f25633e18fea882d",
+   "section": "props",
+   "test": "prop_button_is_focus_engaged",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:binding:text-reading-order",
+   "kind": "TextBlock",
+   "message": "generator: TextBlock.yaml: bind:text-reading-order: property text-reading-order is not exposed",
+   "name": "text-reading-order",
+   "record_fp": "ad22123f2e488cd3",
+   "section": "bindings",
+   "test": "(not generated)",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:notify:TextReadingOrder",
+   "kind": "TextBlock",
+   "message": "generator: TextBlock.yaml: notify TextReadingOrder: the prop is not exposed on Microsoft.UI.Xaml.Controls.TextBlock",
+   "name": "TextReadingOrder",
+   "record_fp": "49c400a51402e5ef",
+   "section": "notify",
+   "test": "(not generated)",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:TextReadingOrder",
+   "kind": "TextBlock",
+   "message": "assertion `left == right` failed: <text-block> text-reading-order after writing Str(\"UseFlowDirection\")\n  left: Str(\"default\")\n right: Str(\"use-flow-direction\")",
+   "name": "TextReadingOrder",
+   "record_fp": "1353005380a69a39",
+   "section": "props",
+   "test": "prop_text_block_text_reading_order",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:binding:text-reading-order",
+   "kind": "TextBox",
+   "message": "generator: TextBox.yaml: bind:text-reading-order: property text-reading-order is not exposed",
+   "name": "text-reading-order",
+   "record_fp": "86544632db91045c",
+   "section": "bindings",
+   "test": "(not generated)",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:notify:TextReadingOrder",
+   "kind": "TextBox",
+   "message": "generator: TextBox.yaml: notify TextReadingOrder: the prop is not exposed on Microsoft.UI.Xaml.Controls.TextBox",
+   "name": "TextReadingOrder",
+   "record_fp": "d574dccf2883941b",
+   "section": "notify",
+   "test": "(not generated)",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:TextReadingOrder",
+   "kind": "TextBox",
+   "message": "assertion `left == right` failed: <text-box> text-reading-order after writing Str(\"UseFlowDirection\")\n  left: Str(\"default\")\n right: Str(\"use-flow-direction\")",
+   "name": "TextReadingOrder",
+   "record_fp": "fcb1860ed8e6519d",
+   "section": "props",
+   "test": "prop_text_box_text_reading_order",
+   "version": "2.3.9"
+  }
+ ],
+ "schema": "svelters-parked/v1",
+ "toolkit": "winui",
+ "version": "2.3.9"
+}

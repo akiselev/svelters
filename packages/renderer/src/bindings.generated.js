@@ -437,7 +437,6 @@ export const BINDINGS = {
     text: { prop: "text", signal: "notify::text", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
     "text-alignment": { prop: "text-alignment", signal: "notify::text-alignment", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
     "text-line-bounds": { prop: "text-line-bounds", signal: "notify::text-line-bounds", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
-    "text-reading-order": { prop: "text-reading-order", signal: "notify::text-reading-order", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
     "text-trimming": { prop: "text-trimming", signal: "notify::text-trimming", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
     "text-wrapping": { prop: "text-wrapping", signal: "notify::text-wrapping", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
   },
@@ -455,7 +454,6 @@ export const BINDINGS = {
     "prevent-keyboard-display-on-programmatic-focus": { prop: "prevent-keyboard-display-on-programmatic-focus", signal: "notify::prevent-keyboard-display-on-programmatic-focus", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
     text: { prop: "text", signal: "text-changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["winui"] },
     "text-alignment": { prop: "text-alignment", signal: "notify::text-alignment", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
-    "text-reading-order": { prop: "text-reading-order", signal: "notify::text-reading-order", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
     "text-wrapping": { prop: "text-wrapping", signal: "notify::text-wrapping", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
   },
   "text-edit": {
