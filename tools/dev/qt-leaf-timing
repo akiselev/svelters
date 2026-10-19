@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Measures a Qt leaf-crate rebuild (build script: generator + C++ compile) and the generated C++ size.
+# SCCACHE_RECACHE forces a real C++ compile (cc-rs goes through sccache). Touches the generator so only counter-qt's build script and the crates above it rerun.
+#   tools/dev/qt-leaf-timing [label]
+set -euo pipefail
+cd "$(dirname "$0")/../.."
+touch tools/metadata/qt/gen_cpp.py
+start=$(date +%s)
+SCCACHE_RECACHE=1 tools/dev/cargo-slot cargo build -p counter-qt 2>&1 | tail -1
+end=$(date +%s)
+echo "${1:-leaf} rebuild: $((end - start)) s"
+dir=$(ls -dt target/build/debug/build/counter-qt-*/out/svl_qt | head -1)
+wc -lc "$dir"/*.cpp

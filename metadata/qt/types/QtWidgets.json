@@ -1,0 +1,777 @@
+{
+ "enums": {
+  "QCompleter::CompletionMode": {
+   "members": [
+    {
+     "cpp": "QCompleter::PopupCompletion",
+     "name": "PopupCompletion",
+     "value": "0"
+    },
+    {
+     "cpp": "QCompleter::UnfilteredPopupCompletion",
+     "name": "UnfilteredPopupCompletion",
+     "value": "1"
+    },
+    {
+     "cpp": "QCompleter::InlineCompletion",
+     "name": "InlineCompletion",
+     "value": "2"
+    }
+   ],
+   "name": "CompletionMode",
+   "owner": "QCompleter",
+   "scoped": false
+  },
+  "QCompleter::ModelSorting": {
+   "members": [
+    {
+     "cpp": "QCompleter::UnsortedModel",
+     "name": "UnsortedModel",
+     "value": "0"
+    },
+    {
+     "cpp": "QCompleter::CaseSensitivelySortedModel",
+     "name": "CaseSensitivelySortedModel",
+     "value": "1"
+    },
+    {
+     "cpp": "QCompleter::CaseInsensitivelySortedModel",
+     "name": "CaseInsensitivelySortedModel",
+     "value": "2"
+    }
+   ],
+   "name": "ModelSorting",
+   "owner": "QCompleter",
+   "scoped": false
+  }
+ },
+ "js_module": "svelters:qt/widgets",
+ "module": "QtWidgets",
+ "schema": "svelters-types/v1",
+ "toolkit": "qt",
+ "types": {
+  "QCompleter": {
+   "abstract": false,
+   "ambiguous": [],
+   "bases": [
+    "QObject"
+   ],
+   "blocked": {},
+   "category": "object",
+   "const_twins": 0,
+   "constructible": true,
+   "constructors": [
+    {
+     "cpp": "QCompleter",
+     "decl": 1,
+     "key": "QCompleter.QCompleter(QObject *)",
+     "params": [
+      {
+       "default": true,
+       "name": "parent",
+       "type": {
+        "cpp": "QObject *",
+        "k": "object",
+        "t": "QObject",
+        "widget": false
+       }
+      }
+     ],
+     "ret": {
+      "k": "self"
+     }
+    },
+    {
+     "cpp": "QCompleter",
+     "decl": 0,
+     "key": "QCompleter.QCompleter(QAbstractItemModel *, QObject *)",
+     "params": [
+      {
+       "name": "model",
+       "type": {
+        "cpp": "QAbstractItemModel *",
+        "k": "object",
+        "t": "QAbstractItemModel",
+        "widget": false
+       }
+      },
+      {
+       "default": true,
+       "name": "parent",
+       "type": {
+        "cpp": "QObject *",
+        "k": "object",
+        "t": "QObject",
+        "widget": false
+       }
+      }
+     ],
+     "ret": {
+      "k": "self"
+     }
+    },
+    {
+     "cpp": "QCompleter",
+     "decl": 2,
+     "key": "QCompleter.QCompleter(const QStringList &, QObject *)",
+     "params": [
+      {
+       "name": "list",
+       "type": {
+        "cpp": "QStringList",
+        "k": "list",
+        "of": {
+         "cpp": "QString",
+         "k": "string"
+        }
+       }
+      },
+      {
+       "default": true,
+       "name": "parent",
+       "type": {
+        "cpp": "QObject *",
+        "k": "object",
+        "t": "QObject",
+        "widget": false
+       }
+      }
+     ],
+     "ret": {
+      "k": "self"
+     }
+    }
+   ],
+   "curated": false,
+   "enums": [
+    "QCompleter::CompletionMode",
+    "QCompleter::ModelSorting",
+    "Qt::CaseSensitivity",
+    "Qt::MatchFlag"
+   ],
+   "excluded": {},
+   "header": "qcompleter.h",
+   "hidden": [
+    "caseSensitivity",
+    "completionColumn",
+    "completionMode",
+    "completionPrefix",
+    "completionRole",
+    "filterMode",
+    "maxVisibleItems",
+    "modelSorting",
+    "wrapAround"
+   ],
+   "js_module": "svelters:qt/widgets",
+   "lifetime": "shared",
+   "merged": 0,
+   "methods": {
+    "complete": [
+     {
+      "cpp": "complete",
+      "decl": 6,
+      "key": "QCompleter.complete(const QRect &)",
+      "params": [
+       {
+        "default": true,
+        "name": "rect",
+        "type": {
+         "cpp": "QRect",
+         "k": "record",
+         "t": "Rect"
+        }
+       }
+      ],
+      "ret": {
+       "k": "void"
+      },
+      "slot": true
+     }
+    ],
+    "completionCount": [
+     {
+      "const": true,
+      "cpp": "completionCount",
+      "decl": 8,
+      "key": "QCompleter.completionCount()",
+      "params": [],
+      "ret": {
+       "cpp": "int",
+       "k": "int"
+      }
+     }
+    ],
+    "completionModel": [
+     {
+      "const": true,
+      "cpp": "completionModel",
+      "decl": 10,
+      "key": "QCompleter.completionModel()",
+      "params": [],
+      "ret": {
+       "cpp": "QAbstractItemModel *",
+       "k": "object",
+       "t": "QAbstractItemModel",
+       "widget": false
+      }
+     }
+    ],
+    "currentCompletion": [
+     {
+      "const": true,
+      "cpp": "currentCompletion",
+      "decl": 13,
+      "key": "QCompleter.currentCompletion()",
+      "params": [],
+      "ret": {
+       "cpp": "QString",
+       "k": "string"
+      }
+     }
+    ],
+    "currentIndex": [
+     {
+      "const": true,
+      "cpp": "currentIndex",
+      "decl": 14,
+      "key": "QCompleter.currentIndex()",
+      "params": [],
+      "ret": {
+       "cpp": "QModelIndex",
+       "k": "value",
+       "t": "QModelIndex"
+      }
+     }
+    ],
+    "currentRow": [
+     {
+      "const": true,
+      "cpp": "currentRow",
+      "decl": 15,
+      "key": "QCompleter.currentRow()",
+      "params": [],
+      "ret": {
+       "cpp": "int",
+       "k": "int"
+      }
+     }
+    ],
+    "model": [
+     {
+      "const": true,
+      "cpp": "model",
+      "decl": 20,
+      "key": "QCompleter.model()",
+      "params": [],
+      "ret": {
+       "cpp": "QAbstractItemModel *",
+       "k": "object",
+       "t": "QAbstractItemModel",
+       "widget": false
+      }
+     }
+    ],
+    "pathFromIndex": [
+     {
+      "const": true,
+      "cpp": "pathFromIndex",
+      "decl": 22,
+      "key": "QCompleter.pathFromIndex(const QModelIndex &)",
+      "params": [
+       {
+        "name": "index",
+        "type": {
+         "cpp": "QModelIndex",
+         "k": "value",
+         "t": "QModelIndex"
+        }
+       }
+      ],
+      "ret": {
+       "cpp": "QString",
+       "k": "string"
+      }
+     }
+    ],
+    "popup": [
+     {
+      "const": true,
+      "cpp": "popup",
+      "decl": 23,
+      "key": "QCompleter.popup()",
+      "params": [],
+      "ret": {
+       "cpp": "QAbstractItemView *",
+       "k": "object",
+       "t": "QAbstractItemView",
+       "widget": true
+      }
+     }
+    ],
+    "setCaseSensitivity": [
+     {
+      "cpp": "setCaseSensitivity",
+      "decl": 24,
+      "key": "QCompleter.setCaseSensitivity(Qt::CaseSensitivity)",
+      "params": [
+       {
+        "name": "caseSensitivity",
+        "type": {
+         "cpp": "Qt::CaseSensitivity",
+         "k": "enum",
+         "t": "Qt::CaseSensitivity"
+        }
+       }
+      ],
+      "ret": {
+       "k": "void"
+      }
+     }
+    ],
+    "setCompletionColumn": [
+     {
+      "cpp": "setCompletionColumn",
+      "decl": 25,
+      "key": "QCompleter.setCompletionColumn(int)",
+      "params": [
+       {
+        "name": "column",
+        "type": {
+         "cpp": "int",
+         "k": "int"
+        }
+       }
+      ],
+      "ret": {
+       "k": "void"
+      }
+     }
+    ],
+    "setCompletionMode": [
+     {
+      "cpp": "setCompletionMode",
+      "decl": 26,
+      "key": "QCompleter.setCompletionMode(QCompleter::CompletionMode)",
+      "params": [
+       {
+        "name": "mode",
+        "type": {
+         "cpp": "QCompleter::CompletionMode",
+         "k": "enum",
+         "t": "QCompleter::CompletionMode"
+        }
+       }
+      ],
+      "ret": {
+       "k": "void"
+      }
+     }
+    ],
+    "setCompletionPrefix": [
+     {
+      "cpp": "setCompletionPrefix",
+      "decl": 27,
+      "key": "QCompleter.setCompletionPrefix(const QString &)",
+      "params": [
+       {
+        "name": "prefix",
+        "type": {
+         "cpp": "QString",
+         "k": "string"
+        }
+       }
+      ],
+      "ret": {
+       "k": "void"
+      },
+      "slot": true
+     }
+    ],
+    "setCompletionRole": [
+     {
+      "cpp": "setCompletionRole",
+      "decl": 28,
+      "key": "QCompleter.setCompletionRole(int)",
+      "params": [
+       {
+        "name": "role",
+        "type": {
+         "cpp": "int",
+         "k": "int"
+        }
+       }
+      ],
+      "ret": {
+       "k": "void"
+      }
+     }
+    ],
+    "setCurrentRow": [
+     {
+      "cpp": "setCurrentRow",
+      "decl": 29,
+      "key": "QCompleter.setCurrentRow(int)",
+      "params": [
+       {
+        "name": "row",
+        "type": {
+         "cpp": "int",
+         "k": "int"
+        }
+       }
+      ],
+      "ret": {
+       "cpp": "bool",
+       "k": "bool"
+      }
+     }
+    ],
+    "setFilterMode": [
+     {
+      "cpp": "setFilterMode",
+      "decl": 30,
+      "key": "QCompleter.setFilterMode(Qt::MatchFlags)",
+      "params": [
+       {
+        "name": "filterMode",
+        "type": {
+         "cpp": "QFlags<Qt::MatchFlag>",
+         "k": "flags",
+         "t": "Qt::MatchFlag"
+        }
+       }
+      ],
+      "ret": {
+       "k": "void"
+      }
+     }
+    ],
+    "setMaxVisibleItems": [
+     {
+      "cpp": "setMaxVisibleItems",
+      "decl": 31,
+      "key": "QCompleter.setMaxVisibleItems(int)",
+      "params": [
+       {
+        "name": "maxItems",
+        "type": {
+         "cpp": "int",
+         "k": "int"
+        }
+       }
+      ],
+      "ret": {
+       "k": "void"
+      }
+     }
+    ],
+    "setModel": [
+     {
+      "cpp": "setModel",
+      "decl": 32,
+      "key": "QCompleter.setModel(QAbstractItemModel *)",
+      "params": [
+       {
+        "name": "model",
+        "type": {
+         "cpp": "QAbstractItemModel *",
+         "k": "object",
+         "t": "QAbstractItemModel",
+         "widget": false
+        }
+       }
+      ],
+      "ret": {
+       "k": "void"
+      }
+     }
+    ],
+    "setModelSorting": [
+     {
+      "cpp": "setModelSorting",
+      "decl": 33,
+      "key": "QCompleter.setModelSorting(QCompleter::ModelSorting)",
+      "params": [
+       {
+        "name": "sorting",
+        "type": {
+         "cpp": "QCompleter::ModelSorting",
+         "k": "enum",
+         "t": "QCompleter::ModelSorting"
+        }
+       }
+      ],
+      "ret": {
+       "k": "void"
+      }
+     }
+    ],
+    "setPopup": [
+     {
+      "cpp": "setPopup",
+      "decl": 34,
+      "key": "QCompleter.setPopup(QAbstractItemView *)",
+      "ownership": [
+       {
+        "action": "add",
+        "arg": "1",
+        "fact": "parent",
+        "index": "this"
+       }
+      ],
+      "params": [
+       {
+        "name": "popup",
+        "type": {
+         "cpp": "QAbstractItemView *",
+         "k": "object",
+         "t": "QAbstractItemView",
+         "widget": true
+        }
+       }
+      ],
+      "ret": {
+       "k": "void"
+      }
+     }
+    ],
+    "setWidget": [
+     {
+      "cpp": "setWidget",
+      "decl": 35,
+      "key": "QCompleter.setWidget(QWidget *)",
+      "ownership": [
+       {
+        "action": "add",
+        "arg": "this",
+        "fact": "parent",
+        "index": "1"
+       }
+      ],
+      "params": [
+       {
+        "name": "widget",
+        "type": {
+         "cpp": "QWidget *",
+         "k": "object",
+         "t": "QWidget",
+         "widget": true
+        }
+       }
+      ],
+      "ret": {
+       "k": "void"
+      }
+     }
+    ],
+    "setWrapAround": [
+     {
+      "cpp": "setWrapAround",
+      "decl": 36,
+      "key": "QCompleter.setWrapAround(bool)",
+      "params": [
+       {
+        "name": "wrap",
+        "type": {
+         "cpp": "bool",
+         "k": "bool"
+        }
+       }
+      ],
+      "ret": {
+       "k": "void"
+      },
+      "slot": true
+     }
+    ],
+    "splitPath": [
+     {
+      "const": true,
+      "cpp": "splitPath",
+      "decl": 37,
+      "key": "QCompleter.splitPath(const QString &)",
+      "params": [
+       {
+        "name": "path",
+        "type": {
+         "cpp": "QString",
+         "k": "string"
+        }
+       }
+      ],
+      "ret": {
+       "cpp": "QStringList",
+       "k": "list",
+       "of": {
+        "cpp": "QString",
+        "k": "string"
+       }
+      }
+     }
+    ],
+    "widget": [
+     {
+      "const": true,
+      "cpp": "widget",
+      "decl": 38,
+      "key": "QCompleter.widget()",
+      "params": [],
+      "ret": {
+       "cpp": "QWidget *",
+       "k": "object",
+       "t": "QWidget",
+       "widget": true
+      }
+     }
+    ]
+   },
+   "module": "QtWidgets",
+   "name": "QCompleter",
+   "parent": "QObject",
+   "properties": [
+    {
+     "name": "caseSensitivity",
+     "type": {
+      "cpp": "Qt::CaseSensitivity",
+      "k": "enum",
+      "t": "Qt::CaseSensitivity"
+     },
+     "writable": true
+    },
+    {
+     "name": "completionColumn",
+     "type": {
+      "cpp": "int",
+      "k": "int"
+     },
+     "writable": true
+    },
+    {
+     "name": "completionMode",
+     "type": {
+      "cpp": "QCompleter::CompletionMode",
+      "k": "enum",
+      "t": "QCompleter::CompletionMode"
+     },
+     "writable": true
+    },
+    {
+     "name": "completionPrefix",
+     "type": {
+      "cpp": "QString",
+      "k": "string"
+     },
+     "writable": true
+    },
+    {
+     "name": "completionRole",
+     "type": {
+      "cpp": "int",
+      "k": "int"
+     },
+     "writable": true
+    },
+    {
+     "name": "filterMode",
+     "type": {
+      "cpp": "QFlags<Qt::MatchFlag>",
+      "k": "flags",
+      "t": "Qt::MatchFlag"
+     },
+     "writable": true
+    },
+    {
+     "name": "maxVisibleItems",
+     "type": {
+      "cpp": "int",
+      "k": "int"
+     },
+     "writable": true
+    },
+    {
+     "name": "modelSorting",
+     "type": {
+      "cpp": "QCompleter::ModelSorting",
+      "k": "enum",
+      "t": "QCompleter::ModelSorting"
+     },
+     "writable": true
+    },
+    {
+     "name": "wrapAround",
+     "type": {
+      "cpp": "bool",
+      "k": "bool"
+     },
+     "writable": true
+    }
+   ],
+   "qobject": true,
+   "refs": [
+    "QAbstractItemModel",
+    "QModelIndex",
+    "QObject"
+   ],
+   "scope": "root",
+   "signals": [
+    {
+     "args": [
+      {
+       "name": "index",
+       "type": {
+        "cpp": "QModelIndex",
+        "k": "value",
+        "t": "QModelIndex"
+       }
+      }
+     ],
+     "name": "activated",
+     "sig": "activated(constQModelIndex&)"
+    },
+    {
+     "args": [
+      {
+       "name": "text",
+       "type": {
+        "cpp": "QString",
+        "k": "string"
+       }
+      }
+     ],
+     "name": "activated",
+     "sig": "activated(constQString&)"
+    },
+    {
+     "args": [
+      {
+       "name": "index",
+       "type": {
+        "cpp": "QModelIndex",
+        "k": "value",
+        "t": "QModelIndex"
+       }
+      }
+     ],
+     "name": "highlighted",
+     "sig": "highlighted(constQModelIndex&)"
+    },
+    {
+     "args": [
+      {
+       "name": "text",
+       "type": {
+        "cpp": "QString",
+        "k": "string"
+       }
+      }
+     ],
+     "name": "highlighted",
+     "sig": "highlighted(constQString&)"
+    }
+   ],
+   "since": null,
+   "statics": {}
+  }
+ },
+ "version": "6.11.0"
+}
