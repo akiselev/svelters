@@ -407,6 +407,8 @@ def check(tk: str) -> int:
     man = manifest(tk)
     led = {(e["fact"], e["test"]): e for e in load(tk)["entries"]}
     problems = probe_problems(tk, load(tk).get("version") or man["version"])
+    fix = (f"the windows-winui CI job, then `ledger.py import --toolkit {tk} <its artifact>`" if tk in CI_ONLY
+           else f"`ledger.py refresh --toolkit {tk}`")
     if load(tk).get("version") not in (None, man["version"]):
         problems.append(f"the ledger was refreshed on {tk} {load(tk)['version']}, the metadata is {man['version']} (refresh)")
     inferred = {"pass": 0, "pending": 0, "failing": 0}
@@ -420,14 +422,14 @@ def check(tk: str) -> int:
                     inferred["pending"] += 1
                 elif e["result"] != "pass":
                     inferred["failing"] += 1
-                    problems.append(f"{f['fact']}: {t}: inferred fact failed and is not parked (run `ledger.py refresh --toolkit {tk}`)")
+                    problems.append(f"{f['fact']}: {t}: inferred fact failed and is not parked (run {fix})")
                 else:
                     inferred["pass"] += 1
                 continue
             if e is None:
-                problems.append(f"{f['fact']}: {t}: not in the ledger (run `ledger.py refresh --toolkit {tk}`)")
+                problems.append(f"{f['fact']}: {t}: not in the ledger (run {fix})")
             elif e["fingerprint"] != f["fingerprint"]:
-                problems.append(f"{f['fact']}: {t}: fact or test changed since it was verified (refresh)")
+                problems.append(f"{f['fact']}: {t}: fact or test changed since it was verified (run {fix})")
             elif e["result"] != "pass":
                 problems.append(f"{f['fact']}: {t}: {e['result']}")
     if problems:

@@ -25,7 +25,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:ButtonBase:prop:ClickMode",
-   "fingerprint": "4c264e7236085244",
+   "fingerprint": "ba14eab5f913cdf5",
    "kind": "ButtonBase",
    "name": "ClickMode",
    "origin": "inferred",
@@ -508,7 +508,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:BackgroundSizing",
-   "fingerprint": "1f4a2f7c65b1ab22",
+   "fingerprint": "b3aea0d33412bba9",
    "kind": "Control",
    "name": "BackgroundSizing",
    "origin": "inferred",
@@ -544,7 +544,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:ElementSoundMode",
-   "fingerprint": "d9c61a4a6eb1d251",
+   "fingerprint": "9d44129b4a36b059",
    "kind": "Control",
    "name": "ElementSoundMode",
    "origin": "inferred",
@@ -567,7 +567,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:FontStretch",
-   "fingerprint": "27e64df42dc84da9",
+   "fingerprint": "4623108bc3e4bcf8",
    "kind": "Control",
    "name": "FontStretch",
    "origin": "inferred",
@@ -579,7 +579,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:FontStyle",
-   "fingerprint": "89ee34e261bb6686",
+   "fingerprint": "7467a5469c9c1b7b",
    "kind": "Control",
    "name": "FontStyle",
    "origin": "inferred",
@@ -591,7 +591,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:HorizontalContentAlignment",
-   "fingerprint": "bd9be1c1e077eec9",
+   "fingerprint": "8feffa232471ccbb",
    "kind": "Control",
    "name": "HorizontalContentAlignment",
    "origin": "inferred",
@@ -649,7 +649,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:RequiresPointer",
-   "fingerprint": "cdb850a8e52f0447",
+   "fingerprint": "232a53c4f1d3b6bb",
    "kind": "Control",
    "name": "RequiresPointer",
    "origin": "inferred",
@@ -661,7 +661,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:TabNavigation",
-   "fingerprint": "0e4b8a3723d5c2a5",
+   "fingerprint": "a24c2bb602203f80",
    "kind": "Control",
    "name": "TabNavigation",
    "origin": "inferred",
@@ -673,7 +673,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:VerticalContentAlignment",
-   "fingerprint": "ba08ed3c31aa3254",
+   "fingerprint": "1be734a34f18ac17",
    "kind": "Control",
    "name": "VerticalContentAlignment",
    "origin": "inferred",
@@ -825,7 +825,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Grid:prop:BackgroundSizing",
-   "fingerprint": "a360cfb756c76747",
+   "fingerprint": "5da1e145ce486255",
    "kind": "Grid",
    "name": "BackgroundSizing",
    "origin": "inferred",
@@ -1166,7 +1166,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:prop:Orientation",
-   "fingerprint": "0bcfc9c2bc7ef3da",
+   "fingerprint": "89d2f4e56f840d18",
    "kind": "Slider",
    "name": "Orientation",
    "origin": "manual",
@@ -1177,7 +1177,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:prop:SnapsTo",
-   "fingerprint": "fb87dc84cbb46982",
+   "fingerprint": "eebea8fd683b3901",
    "kind": "Slider",
    "name": "SnapsTo",
    "origin": "inferred",
@@ -1212,7 +1212,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:prop:TickPlacement",
-   "fingerprint": "d9f9e2c9a319e7f6",
+   "fingerprint": "88de7c69b538677f",
    "kind": "Slider",
    "name": "TickPlacement",
    "origin": "inferred",
@@ -1406,7 +1406,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:prop:BackgroundSizing",
-   "fingerprint": "c2b079a0cee15719",
+   "fingerprint": "01ce5a11a2f0cfb9",
    "kind": "StackPanel",
    "name": "BackgroundSizing",
    "origin": "inferred",
@@ -1430,7 +1430,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:prop:Orientation",
-   "fingerprint": "a5a62bc16d7ed641",
+   "fingerprint": "7b740acb545cc14d",
    "kind": "StackPanel",
    "name": "Orientation",
    "origin": "manual",
@@ -1969,7 +1969,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:FontStretch",
-   "fingerprint": "192afac8b55e2a32",
+   "fingerprint": "c19740bc63fd7d42",
    "kind": "TextBlock",
    "name": "FontStretch",
    "origin": "inferred",
@@ -1981,7 +1981,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:FontStyle",
-   "fingerprint": "1bdfd70ab15bcbb2",
+   "fingerprint": "362d84ce47f7a440",
    "kind": "TextBlock",
    "name": "FontStyle",
    "origin": "inferred",
@@ -1993,7 +1993,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:HorizontalTextAlignment",
-   "fingerprint": "f052acaf865a621c",
+   "fingerprint": "8c52d0ee42eced61",
    "kind": "TextBlock",
    "name": "HorizontalTextAlignment",
    "origin": "inferred",
@@ -2064,7 +2064,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:LineStackingStrategy",
-   "fingerprint": "edd53d764de87316",
+   "fingerprint": "b6bcced87e8c32e8",
    "kind": "TextBlock",
    "name": "LineStackingStrategy",
    "origin": "inferred",
@@ -2087,7 +2087,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:OpticalMarginAlignment",
-   "fingerprint": "15b92dae851e637a",
+   "fingerprint": "c019f7729f26c139",
    "kind": "TextBlock",
    "name": "OpticalMarginAlignment",
    "origin": "inferred",
@@ -2134,7 +2134,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:TextAlignment",
-   "fingerprint": "6b42107f2b5d4ea2",
+   "fingerprint": "b48a8d67ebda3612",
    "kind": "TextBlock",
    "name": "TextAlignment",
    "origin": "inferred",
@@ -2146,7 +2146,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:TextLineBounds",
-   "fingerprint": "86b81ec5c0875e2e",
+   "fingerprint": "b6dc94fff3bf9af3",
    "kind": "TextBlock",
    "name": "TextLineBounds",
    "origin": "inferred",
@@ -2158,7 +2158,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:TextTrimming",
-   "fingerprint": "89d86d9e71368c9e",
+   "fingerprint": "d164874a7a6bd93b",
    "kind": "TextBlock",
    "name": "TextTrimming",
    "origin": "inferred",
@@ -2170,7 +2170,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:TextWrapping",
-   "fingerprint": "ed8731c6afa924d6",
+   "fingerprint": "dd7578a82d9fd497",
    "kind": "TextBlock",
    "name": "TextWrapping",
    "origin": "manual",
@@ -2752,7 +2752,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:CharacterCasing",
-   "fingerprint": "0c1197c34c3243d4",
+   "fingerprint": "727755bd99e809af",
    "kind": "TextBox",
    "name": "CharacterCasing",
    "origin": "inferred",
@@ -2764,7 +2764,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:DesiredCandidateWindowAlignment",
-   "fingerprint": "79a3e12043d220fa",
+   "fingerprint": "9942945bcdf5f369",
    "kind": "TextBox",
    "name": "DesiredCandidateWindowAlignment",
    "origin": "inferred",
@@ -2787,7 +2787,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:HorizontalTextAlignment",
-   "fingerprint": "6dd416b68441aa15",
+   "fingerprint": "11406637ccd3e758",
    "kind": "TextBox",
    "name": "HorizontalTextAlignment",
    "origin": "inferred",
@@ -2927,7 +2927,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:TextAlignment",
-   "fingerprint": "d03c3c76c247b0fa",
+   "fingerprint": "8e348c7ce361a4ba",
    "kind": "TextBox",
    "name": "TextAlignment",
    "origin": "inferred",
@@ -2939,7 +2939,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:TextWrapping",
-   "fingerprint": "1b5ce1e99921cfe0",
+   "fingerprint": "b45f27e007700680",
    "kind": "TextBox",
    "name": "TextWrapping",
    "origin": "manual",
@@ -3267,7 +3267,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:ActualTheme",
-   "fingerprint": "f6ae95ae7135b9f6",
+   "fingerprint": "75199979859197a3",
    "kind": "FrameworkElement",
    "name": "ActualTheme",
    "origin": "inferred",
@@ -3303,7 +3303,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:FlowDirection",
-   "fingerprint": "61343e5dcd34c459",
+   "fingerprint": "2bc43461e932ee3f",
    "kind": "FrameworkElement",
    "name": "FlowDirection",
    "origin": "inferred",
@@ -3362,7 +3362,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:HorizontalAlignment",
-   "fingerprint": "1732fd3c009600bf",
+   "fingerprint": "3b8c5eb54ed7713e",
    "kind": "FrameworkElement",
    "name": "HorizontalAlignment",
    "origin": "manual",
@@ -3465,7 +3465,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:RequestedTheme",
-   "fingerprint": "c83b3075498a5f53",
+   "fingerprint": "3df5eda3f81b6ed8",
    "kind": "FrameworkElement",
    "name": "RequestedTheme",
    "origin": "inferred",
@@ -3477,7 +3477,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:VerticalAlignment",
-   "fingerprint": "bb889bd189aad8e5",
+   "fingerprint": "6a954b9e23b69027",
    "kind": "FrameworkElement",
    "name": "VerticalAlignment",
    "origin": "manual",
@@ -4378,7 +4378,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:CompositeMode",
-   "fingerprint": "ca8f69e53c837a7e",
+   "fingerprint": "d70cb769f290228c",
    "kind": "UIElement",
    "name": "CompositeMode",
    "origin": "inferred",
@@ -4402,7 +4402,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:FocusState",
-   "fingerprint": "ed6e95ca066bbf0b",
+   "fingerprint": "3bef9c5c04975b88",
    "kind": "UIElement",
    "name": "FocusState",
    "origin": "inferred",
@@ -4509,7 +4509,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:KeyTipPlacementMode",
-   "fingerprint": "397d57f56fc673f6",
+   "fingerprint": "c815b85395334382",
    "kind": "UIElement",
    "name": "KeyTipPlacementMode",
    "origin": "inferred",
@@ -4533,7 +4533,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:KeyboardAcceleratorPlacementMode",
-   "fingerprint": "540689938f1b71d2",
+   "fingerprint": "f3fe59c4228a7359",
    "kind": "UIElement",
    "name": "KeyboardAcceleratorPlacementMode",
    "origin": "inferred",
@@ -4568,7 +4568,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:TabFocusNavigation",
-   "fingerprint": "a3c0d1ad6f72a869",
+   "fingerprint": "c02d411efbf4d42b",
    "kind": "UIElement",
    "name": "TabFocusNavigation",
    "origin": "inferred",
@@ -4616,7 +4616,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:Visibility",
-   "fingerprint": "04c1cdfe1391b16b",
+   "fingerprint": "63714ee05be7349e",
    "kind": "UIElement",
    "name": "Visibility",
    "origin": "manual",
@@ -4627,7 +4627,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:XYFocusDownNavigationStrategy",
-   "fingerprint": "639f2316b5f11e4d",
+   "fingerprint": "7c440f28a939d28a",
    "kind": "UIElement",
    "name": "XYFocusDownNavigationStrategy",
    "origin": "inferred",
@@ -4639,7 +4639,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:XYFocusKeyboardNavigation",
-   "fingerprint": "196aa4dba1c2d71e",
+   "fingerprint": "fd014b52ad6f4bc8",
    "kind": "UIElement",
    "name": "XYFocusKeyboardNavigation",
    "origin": "inferred",
@@ -4651,7 +4651,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:XYFocusLeftNavigationStrategy",
-   "fingerprint": "dcf60000a41d6d51",
+   "fingerprint": "c0d0065ed337f06f",
    "kind": "UIElement",
    "name": "XYFocusLeftNavigationStrategy",
    "origin": "inferred",
@@ -4663,7 +4663,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:XYFocusRightNavigationStrategy",
-   "fingerprint": "0992223bd24b9ada",
+   "fingerprint": "5fc53fbf5555ac03",
    "kind": "UIElement",
    "name": "XYFocusRightNavigationStrategy",
    "origin": "inferred",
@@ -4675,7 +4675,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:XYFocusUpNavigationStrategy",
-   "fingerprint": "b7d522dab2bf2ab3",
+   "fingerprint": "8366a340c4c0d72d",
    "kind": "UIElement",
    "name": "XYFocusUpNavigationStrategy",
    "origin": "inferred",

@@ -61,7 +61,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
+   5,
    5
   ]
  },
@@ -127,7 +127,7 @@
   "slots_own": 1,
   "unexposed": null,
   "verified": [
-   0,
+   2,
    2
   ]
  },
@@ -144,13 +144,13 @@
    2
   ],
   "native": "Microsoft.UI.Xaml.Controls.Control",
-  "notify": 16,
+  "notify": 15,
   "ownership": false,
   "props": [
-   16,
+   15,
    24
   ],
-  "props_annotated": 16,
+  "props_annotated": 15,
   "signal_results": 1,
   "signals": [
    3,
@@ -160,8 +160,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   35
+   33,
+   33
   ]
  },
  {
@@ -226,7 +226,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
+   46,
    46
   ]
  },
@@ -259,7 +259,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
+   19,
    19
   ]
  },
@@ -292,7 +292,7 @@
   "slots_own": 1,
   "unexposed": null,
   "verified": [
-   0,
+   2,
    2
   ]
  },
@@ -325,7 +325,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
+   11,
    11
   ]
  },
@@ -358,7 +358,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
+   25,
    25
   ]
  },
@@ -391,13 +391,13 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
+   20,
    20
   ]
  },
  {
   "abstract": false,
-  "bindings": 18,
+  "bindings": 17,
   "element": "text-block",
   "gallery": null,
   "inherited": 0,
@@ -408,13 +408,13 @@
    4
   ],
   "native": "Microsoft.UI.Xaml.Controls.TextBlock",
-  "notify": 19,
+  "notify": 18,
   "ownership": false,
   "props": [
-   22,
+   21,
    34
   ],
-  "props_annotated": 22,
+  "props_annotated": 21,
   "signal_results": 1,
   "signals": [
    3,
@@ -424,13 +424,13 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   63
+   59,
+   60
   ]
  },
  {
   "abstract": false,
-  "bindings": 15,
+  "bindings": 14,
   "element": "text-box",
   "gallery": null,
   "inherited": 0,
@@ -441,13 +441,13 @@
    10
   ],
   "native": "Microsoft.UI.Xaml.Controls.TextBox",
-  "notify": 15,
+  "notify": 14,
   "ownership": false,
   "props": [
-   22,
+   21,
    30
   ],
-  "props_annotated": 22,
+  "props_annotated": 21,
   "signal_results": 6,
   "signals": [
    13,
@@ -457,8 +457,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
-   67
+   62,
+   64
   ]
  },
  {
@@ -490,7 +490,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
+   7,
    7
   ]
  },
@@ -523,7 +523,7 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   0,
+   86,
    96
   ]
  },
@@ -556,7 +556,7 @@
   "slots_own": 1,
   "unexposed": null,
   "verified": [
-   0,
+   5,
    5
   ]
  }

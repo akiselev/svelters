@@ -6443,27 +6443,6 @@ pub mod Microsoft {
             }
             #[repr(transparent)]
             #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
-            pub struct TextReadingOrder(pub i32);
-            impl TextReadingOrder {
-                pub const Default: Self = Self(0);
-                pub const UseFlowDirection: Self = Self(0);
-                pub const DetectFromContent: Self = Self(1);
-            }
-            impl windows_core::imp::TypeKind for TextReadingOrder {
-                type TypeKind = windows_core::imp::CopyType;
-            }
-            impl windows_core::RuntimeType for TextReadingOrder {
-                const SIGNATURE: windows_core::imp::ConstBuffer =
-                    windows_core::imp::ConstBuffer::from_slice(
-                        b"enum(Microsoft.UI.Xaml.TextReadingOrder;i4)",
-                    );
-                const NAME: windows_core::imp::ConstBuffer =
-                    windows_core::imp::ConstBuffer::from_slice(
-                        b"Microsoft.UI.Xaml.TextReadingOrder",
-                    );
-            }
-            #[repr(transparent)]
-            #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
             pub struct TextTrimming(pub i32);
             impl TextTrimming {
                 pub const None: Self = Self(0);
@@ -9852,27 +9831,6 @@ pub mod Microsoft {
                         let this = &windows_core::Interface::cast::<IControl>(self)?;
                         unsafe {
                             (windows_core::Interface::vtable(this).SetIsFocusEngagementEnabled)(
-                                windows_core::Interface::as_raw(this),
-                                value,
-                            )
-                            .ok()
-                        }
-                    }
-                    pub fn IsFocusEngaged(&self) -> windows_core::Result<bool> {
-                        let this = &windows_core::Interface::cast::<IControl>(self)?;
-                        unsafe {
-                            let mut result__ = core::mem::zeroed();
-                            (windows_core::Interface::vtable(this).IsFocusEngaged)(
-                                windows_core::Interface::as_raw(this),
-                                &mut result__,
-                            )
-                            .map(|| result__)
-                        }
-                    }
-                    pub fn SetIsFocusEngaged(&self, value: bool) -> windows_core::Result<()> {
-                        let this = &windows_core::Interface::cast::<IControl>(self)?;
-                        unsafe {
-                            (windows_core::Interface::vtable(this).SetIsFocusEngaged)(
                                 windows_core::Interface::as_raw(this),
                                 value,
                             )
@@ -13388,27 +13346,6 @@ pub mod Microsoft {
                         let this = &windows_core::Interface::cast::<IControl>(self)?;
                         unsafe {
                             (windows_core::Interface::vtable(this).SetIsFocusEngagementEnabled)(
-                                windows_core::Interface::as_raw(this),
-                                value,
-                            )
-                            .ok()
-                        }
-                    }
-                    pub fn IsFocusEngaged(&self) -> windows_core::Result<bool> {
-                        let this = &windows_core::Interface::cast::<IControl>(self)?;
-                        unsafe {
-                            let mut result__ = core::mem::zeroed();
-                            (windows_core::Interface::vtable(this).IsFocusEngaged)(
-                                windows_core::Interface::as_raw(this),
-                                &mut result__,
-                            )
-                            .map(|| result__)
-                        }
-                    }
-                    pub fn SetIsFocusEngaged(&self, value: bool) -> windows_core::Result<()> {
-                        let this = &windows_core::Interface::cast::<IControl>(self)?;
-                        unsafe {
-                            (windows_core::Interface::vtable(this).SetIsFocusEngaged)(
                                 windows_core::Interface::as_raw(this),
                                 value,
                             )
@@ -17060,27 +16997,6 @@ pub mod Microsoft {
                             .ok()
                         }
                     }
-                    pub fn IsFocusEngaged(&self) -> windows_core::Result<bool> {
-                        let this = &windows_core::Interface::cast::<IControl>(self)?;
-                        unsafe {
-                            let mut result__ = core::mem::zeroed();
-                            (windows_core::Interface::vtable(this).IsFocusEngaged)(
-                                windows_core::Interface::as_raw(this),
-                                &mut result__,
-                            )
-                            .map(|| result__)
-                        }
-                    }
-                    pub fn SetIsFocusEngaged(&self, value: bool) -> windows_core::Result<()> {
-                        let this = &windows_core::Interface::cast::<IControl>(self)?;
-                        unsafe {
-                            (windows_core::Interface::vtable(this).SetIsFocusEngaged)(
-                                windows_core::Interface::as_raw(this),
-                                value,
-                            )
-                            .ok()
-                        }
-                    }
                     pub fn RequiresPointer(&self) -> windows_core::Result<RequiresPointer> {
                         let this = &windows_core::Interface::cast::<IControl>(self)?;
                         unsafe {
@@ -20556,25 +20472,6 @@ pub mod Microsoft {
                             .ok()
                         }
                     }
-                    pub fn IsFocusEngaged(&self) -> windows_core::Result<bool> {
-                        unsafe {
-                            let mut result__ = core::mem::zeroed();
-                            (windows_core::Interface::vtable(self).IsFocusEngaged)(
-                                windows_core::Interface::as_raw(self),
-                                &mut result__,
-                            )
-                            .map(|| result__)
-                        }
-                    }
-                    pub fn SetIsFocusEngaged(&self, value: bool) -> windows_core::Result<()> {
-                        unsafe {
-                            (windows_core::Interface::vtable(self).SetIsFocusEngaged)(
-                                windows_core::Interface::as_raw(self),
-                                value,
-                            )
-                            .ok()
-                        }
-                    }
                     pub fn RequiresPointer(&self) -> windows_core::Result<RequiresPointer> {
                         unsafe {
                             let mut result__ = core::mem::zeroed();
@@ -20988,17 +20885,6 @@ pub mod Microsoft {
                         Self::IControlStatics(|this| unsafe {
                             let mut result__ = core::mem::zeroed();
                             (windows_core::Interface::vtable (this) . IsFocusEngagementEnabledProperty)(windows_core::Interface::as_raw (this) , & mut result__) . and_then (|| windows_core::imp::Type::from_abi (result__))
-                        })
-                    }
-                    pub fn IsFocusEngagedProperty()
-                    -> windows_core::Result<super::DependencyProperty> {
-                        Self::IControlStatics(|this| unsafe {
-                            let mut result__ = core::mem::zeroed();
-                            (windows_core::Interface::vtable(this).IsFocusEngagedProperty)(
-                                windows_core::Interface::as_raw(this),
-                                &mut result__,
-                            )
-                            .and_then(|| windows_core::imp::Type::from_abi(result__))
                         })
                     }
                     pub fn RequiresPointerProperty()
@@ -27521,16 +27407,8 @@ pub mod Microsoft {
                             *mut core::ffi::c_void,
                             bool,
                         ) -> windows_core::HRESULT,
-                    pub IsFocusEngaged: unsafe extern "system" fn(
-                        *mut core::ffi::c_void,
-                        *mut bool,
-                    )
-                        -> windows_core::HRESULT,
-                    pub SetIsFocusEngaged: unsafe extern "system" fn(
-                        *mut core::ffi::c_void,
-                        bool,
-                    )
-                        -> windows_core::HRESULT,
+                    IsFocusEngaged: usize,
+                    SetIsFocusEngaged: usize,
                     pub RequiresPointer: unsafe extern "system" fn(
                         *mut core::ffi::c_void,
                         *mut RequiresPointer,
@@ -27759,11 +27637,7 @@ pub mod Microsoft {
                             *mut core::ffi::c_void,
                             *mut *mut core::ffi::c_void,
                         ) -> windows_core::HRESULT,
-                    pub IsFocusEngagedProperty: unsafe extern "system" fn(
-                        *mut core::ffi::c_void,
-                        *mut *mut core::ffi::c_void,
-                    )
-                        -> windows_core::HRESULT,
+                    IsFocusEngagedProperty: usize,
                     pub RequiresPointerProperty: unsafe extern "system" fn(
                         *mut core::ffi::c_void,
                         *mut *mut core::ffi::c_void,
@@ -28755,16 +28629,8 @@ pub mod Microsoft {
                         bool,
                     )
                         -> windows_core::HRESULT,
-                    pub TextReadingOrder: unsafe extern "system" fn(
-                        *mut core::ffi::c_void,
-                        *mut super::TextReadingOrder,
-                    )
-                        -> windows_core::HRESULT,
-                    pub SetTextReadingOrder: unsafe extern "system" fn(
-                        *mut core::ffi::c_void,
-                        super::TextReadingOrder,
-                    )
-                        -> windows_core::HRESULT,
+                    TextReadingOrder: usize,
+                    SetTextReadingOrder: usize,
                     pub IsTextScaleFactorEnabled:
                         unsafe extern "system" fn(
                             *mut core::ffi::c_void,
@@ -28932,11 +28798,7 @@ pub mod Microsoft {
                             *mut core::ffi::c_void,
                             *mut *mut core::ffi::c_void,
                         ) -> windows_core::HRESULT,
-                    pub TextReadingOrderProperty:
-                        unsafe extern "system" fn(
-                            *mut core::ffi::c_void,
-                            *mut *mut core::ffi::c_void,
-                        ) -> windows_core::HRESULT,
+                    TextReadingOrderProperty: usize,
                     pub IsTextScaleFactorEnabledProperty:
                         unsafe extern "system" fn(
                             *mut core::ffi::c_void,
@@ -29306,16 +29168,8 @@ pub mod Microsoft {
                     CutSelectionToClipboard: usize,
                     pub ClearUndoRedoHistory:
                         unsafe extern "system" fn(*mut core::ffi::c_void) -> windows_core::HRESULT,
-                    pub TextReadingOrder: unsafe extern "system" fn(
-                        *mut core::ffi::c_void,
-                        *mut super::TextReadingOrder,
-                    )
-                        -> windows_core::HRESULT,
-                    pub SetTextReadingOrder: unsafe extern "system" fn(
-                        *mut core::ffi::c_void,
-                        super::TextReadingOrder,
-                    )
-                        -> windows_core::HRESULT,
+                    TextReadingOrder: usize,
+                    SetTextReadingOrder: usize,
                     pub DesiredCandidateWindowAlignment:
                         unsafe extern "system" fn(
                             *mut core::ffi::c_void,
@@ -29528,11 +29382,6 @@ pub mod Microsoft {
                     ProofingMenuFlyoutProperty: usize,
                     DescriptionProperty: usize,
                     pub DesiredCandidateWindowAlignmentProperty:
-                        unsafe extern "system" fn(
-                            *mut core::ffi::c_void,
-                            *mut *mut core::ffi::c_void,
-                        ) -> windows_core::HRESULT,
-                    pub TextReadingOrderProperty:
                         unsafe extern "system" fn(
                             *mut core::ffi::c_void,
                             *mut *mut core::ffi::c_void,
@@ -32855,27 +32704,6 @@ pub mod Microsoft {
                         let this = &windows_core::Interface::cast::<IControl>(self)?;
                         unsafe {
                             (windows_core::Interface::vtable(this).SetIsFocusEngagementEnabled)(
-                                windows_core::Interface::as_raw(this),
-                                value,
-                            )
-                            .ok()
-                        }
-                    }
-                    pub fn IsFocusEngaged(&self) -> windows_core::Result<bool> {
-                        let this = &windows_core::Interface::cast::<IControl>(self)?;
-                        unsafe {
-                            let mut result__ = core::mem::zeroed();
-                            (windows_core::Interface::vtable(this).IsFocusEngaged)(
-                                windows_core::Interface::as_raw(this),
-                                &mut result__,
-                            )
-                            .map(|| result__)
-                        }
-                    }
-                    pub fn SetIsFocusEngaged(&self, value: bool) -> windows_core::Result<()> {
-                        let this = &windows_core::Interface::cast::<IControl>(self)?;
-                        unsafe {
-                            (windows_core::Interface::vtable(this).SetIsFocusEngaged)(
                                 windows_core::Interface::as_raw(this),
                                 value,
                             )
@@ -41012,30 +40840,6 @@ pub mod Microsoft {
                             .ok()
                         }
                     }
-                    pub fn TextReadingOrder(
-                        &self,
-                    ) -> windows_core::Result<super::TextReadingOrder> {
-                        unsafe {
-                            let mut result__ = core::mem::zeroed();
-                            (windows_core::Interface::vtable(self).TextReadingOrder)(
-                                windows_core::Interface::as_raw(self),
-                                &mut result__,
-                            )
-                            .map(|| result__)
-                        }
-                    }
-                    pub fn SetTextReadingOrder(
-                        &self,
-                        value: super::TextReadingOrder,
-                    ) -> windows_core::Result<()> {
-                        unsafe {
-                            (windows_core::Interface::vtable(self).SetTextReadingOrder)(
-                                windows_core::Interface::as_raw(self),
-                                value,
-                            )
-                            .ok()
-                        }
-                    }
                     pub fn IsTextScaleFactorEnabled(&self) -> windows_core::Result<bool> {
                         unsafe {
                             let mut result__ = core::mem::zeroed();
@@ -41360,17 +41164,6 @@ pub mod Microsoft {
                         Self::ITextBlockStatics(|this| unsafe {
                             let mut result__ = core::mem::zeroed();
                             (windows_core::Interface::vtable(this).IsColorFontEnabledProperty)(
-                                windows_core::Interface::as_raw(this),
-                                &mut result__,
-                            )
-                            .and_then(|| windows_core::imp::Type::from_abi(result__))
-                        })
-                    }
-                    pub fn TextReadingOrderProperty()
-                    -> windows_core::Result<super::DependencyProperty> {
-                        Self::ITextBlockStatics(|this| unsafe {
-                            let mut result__ = core::mem::zeroed();
-                            (windows_core::Interface::vtable(this).TextReadingOrderProperty)(
                                 windows_core::Interface::as_raw(this),
                                 &mut result__,
                             )
@@ -43449,27 +43242,6 @@ pub mod Microsoft {
                             .ok()
                         }
                     }
-                    pub fn IsFocusEngaged(&self) -> windows_core::Result<bool> {
-                        let this = &windows_core::Interface::cast::<IControl>(self)?;
-                        unsafe {
-                            let mut result__ = core::mem::zeroed();
-                            (windows_core::Interface::vtable(this).IsFocusEngaged)(
-                                windows_core::Interface::as_raw(this),
-                                &mut result__,
-                            )
-                            .map(|| result__)
-                        }
-                    }
-                    pub fn SetIsFocusEngaged(&self, value: bool) -> windows_core::Result<()> {
-                        let this = &windows_core::Interface::cast::<IControl>(self)?;
-                        unsafe {
-                            (windows_core::Interface::vtable(this).SetIsFocusEngaged)(
-                                windows_core::Interface::as_raw(this),
-                                value,
-                            )
-                            .ok()
-                        }
-                    }
                     pub fn RequiresPointer(&self) -> windows_core::Result<RequiresPointer> {
                         let this = &windows_core::Interface::cast::<IControl>(self)?;
                         unsafe {
@@ -45527,30 +45299,6 @@ pub mod Microsoft {
                             .ok()
                         }
                     }
-                    pub fn TextReadingOrder(
-                        &self,
-                    ) -> windows_core::Result<super::TextReadingOrder> {
-                        unsafe {
-                            let mut result__ = core::mem::zeroed();
-                            (windows_core::Interface::vtable(self).TextReadingOrder)(
-                                windows_core::Interface::as_raw(self),
-                                &mut result__,
-                            )
-                            .map(|| result__)
-                        }
-                    }
-                    pub fn SetTextReadingOrder(
-                        &self,
-                        value: super::TextReadingOrder,
-                    ) -> windows_core::Result<()> {
-                        unsafe {
-                            (windows_core::Interface::vtable(self).SetTextReadingOrder)(
-                                windows_core::Interface::as_raw(self),
-                                value,
-                            )
-                            .ok()
-                        }
-                    }
                     pub fn DesiredCandidateWindowAlignment(
                         &self,
                     ) -> windows_core::Result<CandidateWindowAlignment> {
@@ -45823,17 +45571,6 @@ pub mod Microsoft {
                             let mut result__ = core::mem::zeroed();
                             (windows_core::Interface::vtable(this)
                                 .DesiredCandidateWindowAlignmentProperty)(
-                                windows_core::Interface::as_raw(this),
-                                &mut result__,
-                            )
-                            .and_then(|| windows_core::imp::Type::from_abi(result__))
-                        })
-                    }
-                    pub fn TextReadingOrderProperty()
-                    -> windows_core::Result<super::DependencyProperty> {
-                        Self::ITextBoxStatics(|this| unsafe {
-                            let mut result__ = core::mem::zeroed();
-                            (windows_core::Interface::vtable(this).TextReadingOrderProperty)(
                                 windows_core::Interface::as_raw(this),
                                 &mut result__,
                             )
@@ -48737,27 +48474,6 @@ pub mod Microsoft {
                             let this = &windows_core::Interface::cast::<super::IControl>(self)?;
                             unsafe {
                                 (windows_core::Interface::vtable(this).SetIsFocusEngagementEnabled)(
-                                    windows_core::Interface::as_raw(this),
-                                    value,
-                                )
-                                .ok()
-                            }
-                        }
-                        pub fn IsFocusEngaged(&self) -> windows_core::Result<bool> {
-                            let this = &windows_core::Interface::cast::<super::IControl>(self)?;
-                            unsafe {
-                                let mut result__ = core::mem::zeroed();
-                                (windows_core::Interface::vtable(this).IsFocusEngaged)(
-                                    windows_core::Interface::as_raw(this),
-                                    &mut result__,
-                                )
-                                .map(|| result__)
-                            }
-                        }
-                        pub fn SetIsFocusEngaged(&self, value: bool) -> windows_core::Result<()> {
-                            let this = &windows_core::Interface::cast::<super::IControl>(self)?;
-                            unsafe {
-                                (windows_core::Interface::vtable(this).SetIsFocusEngaged)(
                                     windows_core::Interface::as_raw(this),
                                     value,
                                 )
@@ -52739,27 +52455,6 @@ pub mod Microsoft {
                                 .ok()
                             }
                         }
-                        pub fn IsFocusEngaged(&self) -> windows_core::Result<bool> {
-                            let this = &windows_core::Interface::cast::<super::IControl>(self)?;
-                            unsafe {
-                                let mut result__ = core::mem::zeroed();
-                                (windows_core::Interface::vtable(this).IsFocusEngaged)(
-                                    windows_core::Interface::as_raw(this),
-                                    &mut result__,
-                                )
-                                .map(|| result__)
-                            }
-                        }
-                        pub fn SetIsFocusEngaged(&self, value: bool) -> windows_core::Result<()> {
-                            let this = &windows_core::Interface::cast::<super::IControl>(self)?;
-                            unsafe {
-                                (windows_core::Interface::vtable(this).SetIsFocusEngaged)(
-                                    windows_core::Interface::as_raw(this),
-                                    value,
-                                )
-                                .ok()
-                            }
-                        }
                         pub fn RequiresPointer(
                             &self,
                         ) -> windows_core::Result<super::RequiresPointer> {
@@ -56717,27 +56412,6 @@ pub mod Microsoft {
                             let this = &windows_core::Interface::cast::<super::IControl>(self)?;
                             unsafe {
                                 (windows_core::Interface::vtable(this).SetIsFocusEngagementEnabled)(
-                                    windows_core::Interface::as_raw(this),
-                                    value,
-                                )
-                                .ok()
-                            }
-                        }
-                        pub fn IsFocusEngaged(&self) -> windows_core::Result<bool> {
-                            let this = &windows_core::Interface::cast::<super::IControl>(self)?;
-                            unsafe {
-                                let mut result__ = core::mem::zeroed();
-                                (windows_core::Interface::vtable(this).IsFocusEngaged)(
-                                    windows_core::Interface::as_raw(this),
-                                    &mut result__,
-                                )
-                                .map(|| result__)
-                            }
-                        }
-                        pub fn SetIsFocusEngaged(&self, value: bool) -> windows_core::Result<()> {
-                            let this = &windows_core::Interface::cast::<super::IControl>(self)?;
-                            unsafe {
-                                (windows_core::Interface::vtable(this).SetIsFocusEngaged)(
                                     windows_core::Interface::as_raw(this),
                                     value,
                                 )
