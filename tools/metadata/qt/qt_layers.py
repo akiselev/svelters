@@ -14,6 +14,9 @@ records to elements a manual override declares:
 
 Every inferred record that stays is marked `_origin: inferred` and `_fp: <fingerprint of the inferred YAML
 record>`; underscore keys are bookkeeping, never part of a fact.
+
+A manual file's top-level `dangerous:` block (members the backend owns) is not an element fact: it is copied through
+untouched and read by tools/metadata/common/dangerous.py; an inferred file may not have one (`dangerous.py --check`).
 """
 from __future__ import annotations
 

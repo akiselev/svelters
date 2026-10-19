@@ -45,6 +45,17 @@ A button with a [label](/api/demo/button/#property-label) and an &lt;unknown&gt;
 <button label="x" />
 ```
 
+## Dangerous members
+
+:::danger[2 dangerous members]
+These are reachable from app code (through `call()`, `setProp` or an attribute) unless marked otherwise, but the backend owns what they change: using them can corrupt the widget tree svelters manages, fight its lifecycle or crash. Nothing blocks them at run time yet.
+:::
+
+| Member | Kind | Severity | Why | Use instead |
+| --- | --- | --- | --- | --- |
+| [`visible`](/api/demo/types/demowidget/#property-visible) <small>from Widget</small> | property (not reachable today) | owned by the backend | The backend toggles it on insert. | – |
+| [`show`](/api/demo/types/demowidget/#method-show) <small>from Widget</small> | method | corrupts the widget tree | Maps the widget behind the renderer's `show` attribute (&lt;demo&gt;). | The `visible` attribute or {#if}. |
+
 ## Properties
 
 | JS name | Type | Default | Range | Access | Notify / bind | Origin | Version |
@@ -67,7 +78,7 @@ Type `string` or `null` · read / write · default `""` · notify `notify::label
 
 | JS name | Type | Access | Description |
 | --- | --- | --- | --- |
-| [`visible`](/api/demo/types/demowidget/#property-visible) | `boolean` | read / write | Whether the widget is shown. See Align. |
+| [`visible`](/api/demo/types/demowidget/#property-visible) <span class="svl-danger" title="Dangerous: the backend owns what this changes">⚠ dangerous</span> | `boolean` | read / write | Whether the widget is shown. See Align. |
 
 </details>
 

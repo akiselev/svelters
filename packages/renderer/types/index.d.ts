@@ -10,6 +10,7 @@ import type { BindableProps, ToplevelAttrs, ToplevelTag } from './bindings';
 import type { MenuElements } from './menus';
 
 export type { GtkElements, QtElementDescriptors };
+export type { GtkDangerousMethods } from './gtk';
 export type { BindableProps } from './bindings';
 export type { MenuElements } from './menus';
 export type { NativeElement, StaleHandleError } from './native';

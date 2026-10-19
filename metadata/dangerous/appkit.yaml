@@ -1,0 +1,74 @@
+# Dangerous AppKit members (schema: tools/metadata/common/dangerous.schema.json; model: docs/notes/dangerous-members.md).
+# Reachable from app JS at run time: a method name the generated table misses goes to dyn_method
+# (crates/svelters-appkit/src/backend.rs:1193) -> bridge::find_selector (crates/svelters-apple/src/objc/bridge.rs:136), which
+# walks the class's ObjC method list, so any selector the class implements is callable (NSInvocation, backend.rs:660-683;
+# only alloc/new/copy/init and `_` names are refused, bridge.rs:142, 345). Properties go through dyn_prop + KVC
+# setValue:forKey: (backend.rs:1182, 431). The one guard, slot_owning_key (backend.rs:404-411), refuses writes to slot
+# child storage (contentView, subviews): those are marked `reachable: false`.
+# Single members: metadata/overrides/appkit/NSWindow.yaml `dangerous:` (delegate, releasedWhenClosed).
+schema: svelters-dangerous/v1
+toolkit: appkit
+rules:
+  - id: subviews
+    section: methods
+    name: add-subview|add-subview-positioned-relative-to|remove-from-superview
+    kinds: [NSView]
+    severity: corrupts-tree
+    reason: >-
+      The subviews slot inserts with addSubview: / addSubview:positioned:relativeTo: and detaches with removeFromSuperview
+      (crates/svelters-appkit/src/generated/tables.rs:434, backend.rs:551-560, 582-587); a direct call moves the view while the
+      handle table still links it to its old parent (backend.rs:492-533), so a later ordered insert fails.
+    use_instead: Children in markup ({#if}/{#each}); the renderer inserts and removes through the subviews slot.
+    evidence: [crates/svelters-appkit/src/backend.rs:492-587]
+
+  - id: subviews-prop
+    section: properties
+    name: subviews
+    kinds: [NSView]
+    reachable: false
+    severity: corrupts-tree
+    reason: The list the subviews slot owns (crates/svelters-appkit/src/generated/tables.rs:434); set_prop already refuses it as slot-owned (backend.rs:404-411).
+    use_instead: Children in markup.
+
+  - id: arranged-subviews
+    section: methods
+    name: add-arranged-subview|insert-arranged-subview-at-index|remove-arranged-subview
+    kinds: [NSStackView]
+    severity: corrupts-tree
+    reason: >-
+      The arranged-subviews slot appends, inserts at an index and removes with these (crates/svelters-appkit/src/generated/tables.rs:433,
+      backend.rs:540-580); the backend computes indexes from the native list, so views added or removed behind it shift them.
+    use_instead: Children of <stack-view> in markup.
+    evidence: [crates/svelters-appkit/src/backend.rs:540-580]
+
+  - id: content-view
+    section: methods
+    name: set-content-view
+    kinds: [NSWindow, NSBox]
+    severity: corrupts-tree
+    reason: >-
+      The content-view slot's set op (crates/svelters-appkit/src/generated/tables.rs:432, 435; backend.rs:536-537); after a
+      foreign replace, remove's identity check on contentView turns it into a no-op (backend.rs:566-575) while the table
+      still holds the old child.
+    use_instead: One child element inside <window> / <box>.
+    evidence: [crates/svelters-appkit/src/backend.rs:536-575]
+
+  - id: content-view-prop
+    section: properties
+    name: contentView
+    kinds: [NSWindow, NSBox]
+    reachable: false
+    severity: corrupts-tree
+    reason: The content-view slot's storage; set_prop refuses it as slot-owned (crates/svelters-appkit/src/backend.rs:404-411), but set-content-view reaches the same state.
+    use_instead: One child element inside <window> / <box>.
+
+  - id: target-action
+    section: properties
+    name: target|action
+    kinds: [NSControl]
+    severity: owned-by-backend
+    reason: >-
+      listen() installs the backend's SveltersTarget and the fire: action (crates/svelters-appkit/src/backend.rs:700-709), and
+      cleanup clears the target only while it is still that target; overwriting either silently stops the `action` event.
+    use_instead: onaction={...}
+    evidence: [crates/svelters-appkit/src/backend.rs:700-709]

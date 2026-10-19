@@ -9,7 +9,8 @@
 Both files use the override schema (tools/metadata/winui/override.schema.json). Every merged record says where it
 came from: `origins[(class, section, name)]` is `manual` or `inferred`, and `record_fps[...]` is the fingerprint of
 the inferred record (what the ledger parks it by). Readers: gen_backend.py (tables, tests, facts), and
-tools/metadata/common/gen_bindings.py (renderer binding table).
+tools/metadata/common/gen_bindings.py (renderer binding table). A manual `dangerous:` block (members the backend owns)
+is not merged: tools/metadata/common/dangerous.py reads it from the override file.
 """
 from __future__ import annotations
 
@@ -65,7 +66,7 @@ class Layers:
         man, inf = self.manual.get(cls, {}), self.inferred.get(cls, {})
         short = cls.rsplit(".", 1)[1]
         deny = man.get("deny", [])
-        out = {k: v for k, v in man.items() if k not in SECTIONS and k != "deny"}
+        out = {k: v for k, v in man.items() if k not in SECTIONS and k != "deny" and k not in svmeta.READ_TIME_KEYS}
         out["class"] = cls
         for sec, key in SECTIONS.items():
             recs: list[dict] = []

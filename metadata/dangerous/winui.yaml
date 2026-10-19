@@ -1,0 +1,19 @@
+# Dangerous WinUI members (schema: tools/metadata/common/dangerous.schema.json; model: docs/notes/dangerous-members.md).
+# WinUI has no generic call path: names resolve only against the generated tables (crates/svelters-winui/src/backend.rs:510-518,
+# table.rs:109-123), so JS reaches exactly the props, events and methods of the overrides (generated/names.rs). The one
+# reachable dangerous member is an annotated record and is declared in its override's `dangerous:` block
+# (metadata/overrides/winui/ContentControl.yaml: Content). The rule below is backend-owned state that is not reachable today.
+schema: svelters-dangerous/v1
+toolkit: winui
+rules:
+  - id: window-content
+    section: properties
+    name: Content
+    kinds: [Window]
+    reachable: false
+    severity: corrupts-tree
+    reason: >-
+      The window's single-child slot, set and cleared by insert/remove (crates/svelters-winui/src/generated/dispatch.rs:534-538,
+      backend.rs:579, 617); a write behind it leaves the slot occupant record (backend.rs:576-578) pointing at a detached child.
+    use_instead: One child element inside <window>.
+    evidence: [crates/svelters-winui/src/generated/dispatch.rs:534-538, crates/svelters-winui/src/backend.rs:570-620]

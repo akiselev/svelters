@@ -2,6 +2,7 @@
  {
   "abstract": false,
   "bindings": 16,
+  "dangerous": 0,
   "delivery": 1,
   "element": "about-dialog",
   "gallery": "08-dialogs",
@@ -39,6 +40,7 @@
  {
   "abstract": false,
   "bindings": 1,
+  "dangerous": 4,
   "delivery": 0,
   "element": "action-bar",
   "gallery": "06-layout",
@@ -76,6 +78,7 @@
  {
   "abstract": true,
   "bindings": 0,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": "01-widget",
@@ -113,6 +116,7 @@
  {
   "abstract": true,
   "bindings": 0,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -150,6 +154,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -187,6 +192,7 @@
  {
   "abstract": false,
   "bindings": 14,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -224,6 +230,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -261,6 +268,7 @@
  {
   "abstract": false,
   "bindings": 15,
+  "dangerous": 0,
   "delivery": 0,
   "element": "application-window",
   "gallery": null,
@@ -298,6 +306,7 @@
  {
   "abstract": false,
   "bindings": 2,
+  "dangerous": 2,
   "delivery": 0,
   "element": "aspect-frame",
   "gallery": "05-containers",
@@ -335,6 +344,7 @@
  {
   "abstract": false,
   "bindings": 14,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -372,6 +382,7 @@
  {
   "abstract": false,
   "bindings": 4,
+  "dangerous": 5,
   "delivery": 0,
   "element": "box",
   "gallery": "00-overview",
@@ -409,6 +420,7 @@
  {
   "abstract": false,
   "bindings": 3,
+  "dangerous": 2,
   "delivery": 0,
   "element": "button",
   "gallery": "00-overview",
@@ -446,6 +458,7 @@
  {
   "abstract": false,
   "bindings": 4,
+  "dangerous": 0,
   "delivery": 5,
   "element": "calendar",
   "gallery": "09-display",
@@ -483,6 +496,7 @@
  {
   "abstract": true,
   "bindings": 0,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -520,6 +534,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -557,6 +572,7 @@
  {
   "abstract": false,
   "bindings": 2,
+  "dangerous": 6,
   "delivery": 0,
   "element": "center-box",
   "gallery": "05-containers",
@@ -594,6 +610,7 @@
  {
   "abstract": false,
   "bindings": 3,
+  "dangerous": 2,
   "delivery": 0,
   "element": "check-button",
   "gallery": "02-buttons",
@@ -631,6 +648,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -668,6 +686,7 @@
  {
   "abstract": true,
   "bindings": 0,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -705,6 +724,7 @@
  {
   "abstract": false,
   "bindings": 14,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -742,6 +762,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -779,6 +800,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 0,
   "delivery": 0,
   "element": "color-dialog-button",
   "gallery": null,
@@ -816,6 +838,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -853,6 +876,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 2,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -890,6 +914,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -927,6 +952,7 @@
  {
   "abstract": false,
   "bindings": 14,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -964,6 +990,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 2,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -1001,6 +1028,7 @@
  {
   "abstract": false,
   "bindings": 2,
+  "dangerous": 0,
   "delivery": 1,
   "element": "drawing-area",
   "gallery": "09-display",
@@ -1038,6 +1066,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -1075,6 +1104,7 @@
  {
   "abstract": true,
   "bindings": 0,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": "01-widget",
@@ -1112,6 +1142,7 @@
  {
   "abstract": false,
   "bindings": 1,
+  "dangerous": 0,
   "delivery": 0,
   "element": "editable-label",
   "gallery": "03-text",
@@ -1149,6 +1180,7 @@
  {
   "abstract": false,
   "bindings": 5,
+  "dangerous": 0,
   "delivery": 1,
   "element": "emoji-chooser",
   "gallery": "08-dialogs",
@@ -1186,6 +1218,7 @@
  {
   "abstract": false,
   "bindings": 17,
+  "dangerous": 0,
   "delivery": 0,
   "element": "entry",
   "gallery": "00-overview",
@@ -1223,6 +1256,7 @@
  {
   "abstract": false,
   "bindings": 4,
+  "dangerous": 4,
   "delivery": 0,
   "element": "expander",
   "gallery": "05-containers",
@@ -1260,6 +1294,7 @@
  {
   "abstract": true,
   "bindings": 0,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -1297,6 +1332,7 @@
  {
   "abstract": false,
   "bindings": 14,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -1334,6 +1370,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -1371,6 +1408,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 2,
   "delivery": 0,
   "element": "fixed",
   "gallery": "06-layout",
@@ -1408,6 +1446,7 @@
  {
   "abstract": false,
   "bindings": 8,
+  "dangerous": 5,
   "delivery": 1,
   "element": "flow-box",
   "gallery": "06-layout",
@@ -1445,6 +1484,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 2,
   "delivery": 0,
   "element": "flow-box-child",
   "gallery": "06-layout",
@@ -1482,6 +1522,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -1519,6 +1560,7 @@
  {
   "abstract": true,
   "bindings": 0,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -1556,6 +1598,7 @@
  {
   "abstract": false,
   "bindings": 14,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -1593,6 +1636,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -1630,6 +1674,7 @@
  {
   "abstract": false,
   "bindings": 3,
+  "dangerous": 0,
   "delivery": 0,
   "element": "font-dialog-button",
   "gallery": null,
@@ -1667,6 +1712,7 @@
  {
   "abstract": false,
   "bindings": 1,
+  "dangerous": 4,
   "delivery": 0,
   "element": "frame",
   "gallery": "05-containers",
@@ -1704,6 +1750,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -1741,6 +1788,7 @@
  {
   "abstract": false,
   "bindings": 2,
+  "dangerous": 2,
   "delivery": 0,
   "element": "graphics-offload",
   "gallery": "09-display",
@@ -1778,6 +1826,7 @@
  {
   "abstract": false,
   "bindings": 5,
+  "dangerous": 5,
   "delivery": 0,
   "element": "grid",
   "gallery": "06-layout",
@@ -1815,6 +1864,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -1852,6 +1902,7 @@
  {
   "abstract": false,
   "bindings": 2,
+  "dangerous": 5,
   "delivery": 0,
   "element": "header-bar",
   "gallery": "07-bars",
@@ -1889,6 +1940,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -1926,6 +1978,7 @@
  {
   "abstract": false,
   "bindings": 3,
+  "dangerous": 0,
   "delivery": 0,
   "element": "image",
   "gallery": "09-display",
@@ -1963,6 +2016,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": "07-bars",
@@ -2000,6 +2054,7 @@
  {
   "abstract": false,
   "bindings": 7,
+  "dangerous": 0,
   "delivery": 0,
   "element": "inscription",
   "gallery": "03-text",
@@ -2037,6 +2092,7 @@
  {
   "abstract": false,
   "bindings": 13,
+  "dangerous": 0,
   "delivery": 1,
   "element": "label",
   "gallery": "00-overview",
@@ -2074,6 +2130,7 @@
  {
   "abstract": false,
   "bindings": 5,
+  "dangerous": 0,
   "delivery": 0,
   "element": "level-bar",
   "gallery": "04-ranges",
@@ -2111,6 +2168,7 @@
  {
   "abstract": false,
   "bindings": 4,
+  "dangerous": 0,
   "delivery": 1,
   "element": "link-button",
   "gallery": "02-buttons",
@@ -2148,6 +2206,7 @@
  {
   "abstract": true,
   "bindings": 0,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -2185,6 +2244,7 @@
  {
   "abstract": false,
   "bindings": 5,
+  "dangerous": 5,
   "delivery": 1,
   "element": "list-box",
   "gallery": "06-layout",
@@ -2222,6 +2282,7 @@
  {
   "abstract": false,
   "bindings": 2,
+  "dangerous": 2,
   "delivery": 0,
   "element": "list-box-row",
   "gallery": null,
@@ -2259,6 +2320,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -2296,6 +2358,7 @@
  {
   "abstract": false,
   "bindings": 3,
+  "dangerous": 0,
   "delivery": 0,
   "element": "lock-button",
   "gallery": "02-buttons",
@@ -2333,6 +2396,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 0,
   "delivery": 0,
   "element": "media-controls",
   "gallery": null,
@@ -2370,6 +2434,7 @@
  {
   "abstract": false,
   "bindings": 7,
+  "dangerous": 4,
   "delivery": 0,
   "element": "menu-button",
   "gallery": "02-buttons",
@@ -2407,6 +2472,7 @@
  {
   "abstract": false,
   "bindings": 14,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -2444,6 +2510,7 @@
  {
   "abstract": false,
   "bindings": 6,
+  "dangerous": 9,
   "delivery": 2,
   "element": "notebook",
   "gallery": "06-layout",
@@ -2481,6 +2548,7 @@
  {
   "abstract": true,
   "bindings": 0,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": "01-widget",
@@ -2518,6 +2586,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 4,
   "delivery": 0,
   "element": "overlay",
   "gallery": "05-containers",
@@ -2555,6 +2624,7 @@
  {
   "abstract": false,
   "bindings": 14,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -2592,6 +2662,7 @@
  {
   "abstract": false,
   "bindings": 7,
+  "dangerous": 4,
   "delivery": 4,
   "element": "paned",
   "gallery": "05-containers",
@@ -2629,6 +2700,7 @@
  {
   "abstract": false,
   "bindings": 3,
+  "dangerous": 0,
   "delivery": 0,
   "element": "password-entry",
   "gallery": "03-text",
@@ -2666,6 +2738,7 @@
  {
   "abstract": false,
   "bindings": 3,
+  "dangerous": 0,
   "delivery": 0,
   "element": "picture",
   "gallery": "09-display",
@@ -2703,6 +2776,7 @@
  {
   "abstract": false,
   "bindings": 5,
+  "dangerous": 2,
   "delivery": 1,
   "element": "popover",
   "gallery": "08-dialogs",
@@ -2740,6 +2814,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 4,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -2777,6 +2852,7 @@
  {
   "abstract": false,
   "bindings": 5,
+  "dangerous": 0,
   "delivery": 0,
   "element": "popover-menu",
   "gallery": null,
@@ -2814,6 +2890,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 0,
   "delivery": 0,
   "element": "popover-menu-bar",
   "gallery": "07-bars",
@@ -2851,6 +2928,7 @@
  {
   "abstract": false,
   "bindings": 14,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -2888,6 +2966,7 @@
  {
   "abstract": false,
   "bindings": 5,
+  "dangerous": 0,
   "delivery": 0,
   "element": "progress-bar",
   "gallery": "04-ranges",
@@ -2925,6 +3004,7 @@
  {
   "abstract": false,
   "bindings": 6,
+  "dangerous": 0,
   "delivery": 2,
   "element": "range",
   "gallery": "04-ranges",
@@ -2962,6 +3042,7 @@
  {
   "abstract": false,
   "bindings": 3,
+  "dangerous": 2,
   "delivery": 0,
   "element": "revealer",
   "gallery": "05-containers",
@@ -2999,6 +3080,7 @@
  {
   "abstract": false,
   "bindings": 10,
+  "dangerous": 0,
   "delivery": 0,
   "element": "scale",
   "gallery": "04-ranges",
@@ -3036,6 +3118,7 @@
  {
   "abstract": false,
   "bindings": 2,
+  "dangerous": 0,
   "delivery": 0,
   "element": "scale-button",
   "gallery": "02-buttons",
@@ -3073,6 +3156,7 @@
  {
   "abstract": true,
   "bindings": 0,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -3110,6 +3194,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 0,
   "delivery": 0,
   "element": "scrollbar",
   "gallery": "04-ranges",
@@ -3147,6 +3232,7 @@
  {
   "abstract": false,
   "bindings": 12,
+  "dangerous": 2,
   "delivery": 0,
   "element": "scrolled-window",
   "gallery": "00-overview",
@@ -3184,6 +3270,7 @@
  {
   "abstract": false,
   "bindings": 2,
+  "dangerous": 2,
   "delivery": 0,
   "element": "search-bar",
   "gallery": "05-containers",
@@ -3221,6 +3308,7 @@
  {
   "abstract": false,
   "bindings": 4,
+  "dangerous": 0,
   "delivery": 2,
   "element": "search-entry",
   "gallery": "03-text",
@@ -3258,6 +3346,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 0,
   "delivery": 0,
   "element": "separator",
   "gallery": "09-display",
@@ -3295,6 +3384,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 0,
   "delivery": 0,
   "element": "shortcut-label",
   "gallery": "03-text",
@@ -3332,6 +3422,7 @@
  {
   "abstract": false,
   "bindings": 4,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -3369,6 +3460,7 @@
  {
   "abstract": false,
   "bindings": 4,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -3406,6 +3498,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -3443,6 +3536,7 @@
  {
   "abstract": false,
   "bindings": 14,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -3480,6 +3574,7 @@
  {
   "abstract": false,
   "bindings": 8,
+  "dangerous": 0,
   "delivery": 1,
   "element": "spin-button",
   "gallery": "04-ranges",
@@ -3517,6 +3612,7 @@
  {
   "abstract": false,
   "bindings": 1,
+  "dangerous": 0,
   "delivery": 0,
   "element": "spinner",
   "gallery": "09-display",
@@ -3554,6 +3650,7 @@
  {
   "abstract": false,
   "bindings": 5,
+  "dangerous": 4,
   "delivery": 0,
   "element": "stack",
   "gallery": "06-layout",
@@ -3591,6 +3688,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 0,
   "delivery": 0,
   "element": "stack-sidebar",
   "gallery": "06-layout",
@@ -3628,6 +3726,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 0,
   "delivery": 0,
   "element": "stack-switcher",
   "gallery": "06-layout",
@@ -3665,6 +3764,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": "07-bars",
@@ -3702,6 +3802,7 @@
  {
   "abstract": false,
   "bindings": 2,
+  "dangerous": 0,
   "delivery": 0,
   "element": "switch",
   "gallery": "02-buttons",
@@ -3739,6 +3840,7 @@
  {
   "abstract": false,
   "bindings": 10,
+  "dangerous": 0,
   "delivery": 2,
   "element": "text",
   "gallery": "03-text",
@@ -3776,6 +3878,7 @@
  {
   "abstract": false,
   "bindings": 17,
+  "dangerous": 0,
   "delivery": 3,
   "element": "text-view",
   "gallery": "03-text",
@@ -3813,6 +3916,7 @@
  {
   "abstract": false,
   "bindings": 4,
+  "dangerous": 0,
   "delivery": 0,
   "element": "toggle-button",
   "gallery": "02-buttons",
@@ -3850,6 +3954,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 2,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -3887,6 +3992,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 0,
   "delivery": 0,
   "element": null,
   "gallery": null,
@@ -3924,6 +4030,7 @@
  {
   "abstract": false,
   "bindings": 3,
+  "dangerous": 0,
   "delivery": 0,
   "element": "video",
   "gallery": null,
@@ -3961,6 +4068,7 @@
  {
   "abstract": false,
   "bindings": 1,
+  "dangerous": 2,
   "delivery": 0,
   "element": "viewport",
   "gallery": "05-containers",
@@ -3998,6 +4106,7 @@
  {
   "abstract": false,
   "bindings": 2,
+  "dangerous": 0,
   "delivery": 0,
   "element": "volume-button",
   "gallery": "02-buttons",
@@ -4035,6 +4144,7 @@
  {
   "abstract": true,
   "bindings": 0,
+  "dangerous": 4,
   "delivery": 0,
   "element": null,
   "gallery": "01-widget",
@@ -4072,6 +4182,7 @@
  {
   "abstract": false,
   "bindings": 14,
+  "dangerous": 12,
   "delivery": 2,
   "element": "window",
   "gallery": "08-dialogs",
@@ -4109,6 +4220,7 @@
  {
   "abstract": false,
   "bindings": 2,
+  "dangerous": 0,
   "delivery": 0,
   "element": "window-controls",
   "gallery": "07-bars",
@@ -4146,6 +4258,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 2,
   "delivery": 0,
   "element": "window-handle",
   "gallery": "05-containers",

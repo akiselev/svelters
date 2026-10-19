@@ -125,6 +125,10 @@ class Frontend:
         self.verified = ledger.verified_facts("gtk")
         facts = root / "crates/svelters-gtk/src/generated/facts.json"
         self.facts = [f["fact"] for f in json.loads(facts.read_text())["facts"]] if facts.exists() else []
+        # Dangerous members (metadata/dangerous/<tk>.yaml, override `dangerous:` blocks): docs warn on them.
+        import dangerous  # noqa: E402  (tools/metadata/common)
+
+        self.dangerous = dangerous.Dangerous(TK, root)
 
     # ----- types -----
     def name_of(self, tid: str) -> tuple[str, str | None]:
@@ -318,7 +322,7 @@ class Frontend:
                 dv = (p["default"] or '""').strip('"')
                 return json_str(dv)
             return None
-        cand = [p for p in props if p["access"]["write"] and not p["access"]["construct_only"] and p["role"] == "value" and sample(p)]
+        cand = [p for p in props if p["access"]["write"] and not p["access"]["construct_only"] and p["role"] == "value" and not p.get("dangerous") and sample(p)]
         cand.sort(key=lambda p: (not p["annotated"], p["type"]["neutral"].split("<")[0] not in ("string",), p["name"]))
         attrs = [f'{p["js_name"]}={sample(p)}' for p in cand[:3]]
         ev = sorted(events, key=lambda e: (not e["annotated"], e["name"]))[:1]
@@ -430,6 +434,7 @@ class Frontend:
             abi += ["create", "destroy"]
         if ch and ch["policy"] not in ("none", "unknown"):
             abi += ["insert", "remove"]
+        irlib.annotate_dangerous(e, stem, self.dangerous)  # before the example, which skips dangerous members
         e["abi_symbols"] = sorted(set(abi))
         if tag:
             e["screenshot"] = f"{TK}/{tag}"
@@ -487,6 +492,7 @@ class Frontend:
                 "properties_by_origin": dict(sorted(by_origin.items())),
                 "docs": docs_cov,
                 "serdes": {"status": "unknown", "supported_types": None, "total_types": None},
+                "dangerous": irlib.dangerous_coverage(ents),
             },
         }
         return ir

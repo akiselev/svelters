@@ -54,6 +54,18 @@
   border-style: dashed;
   color: var(--sl-color-gray-3);
 }
+/* dangerous members (tools/metadata/common/dangerous.py): the row mark next to the member name */
+.svl-danger {
+  display: inline-block;
+  font-size: var(--sl-text-xs);
+  line-height: 1.5;
+  padding: 0 0.4em;
+  border-radius: 0.25rem;
+  white-space: nowrap;
+  color: var(--sl-color-red-high);
+  background: var(--sl-color-red-low);
+  border: 1px solid var(--sl-color-red);
+}
 .svl-badge {
   font-family: var(--sl-font-mono);
   color: #fff;

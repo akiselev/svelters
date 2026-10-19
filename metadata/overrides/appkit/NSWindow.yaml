@@ -63,3 +63,22 @@ methods:
     selector: "performClose:"
     test: false
     provenance: "NSWindow.h: simulates the close button; asks windowShouldClose: first"
+
+# Dangerous members (docs/notes/dangerous-members.md): reachable from JS (KVC), but the backend owns what they change.
+dangerous:
+  properties:
+    delegate:
+      severity: owned-by-backend
+      reason: >-
+        create() installs the backend's WindowDelegate (crates/svelters-appkit/src/backend.rs:474-478); replacing it means
+        windowShouldClose:/windowWillClose: never reach the backend, so a user-closed window is never reported gone, its
+        subtree handles are never released and the vetoable close stops working.
+      use_instead: The window-should-close (preventDefault vetoes) and window-will-close events.
+      evidence: [crates/svelters-appkit/src/backend.rs:474-478]
+    releasedWhenClosed:
+      severity: crashes
+      reason: >-
+        create() forces it to NO (crates/svelters-appkit/src/backend.rs:465) because the handle table holds a strong reference
+        to the window (backend.rs:469); YES makes AppKit release the window on close under that handle (over-release).
+      use_instead: Nothing to set; the window lives as long as its element (unmount closes it).
+      evidence: [crates/svelters-appkit/src/backend.rs:463-469]

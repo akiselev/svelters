@@ -2,6 +2,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 0,
   "element": "button",
   "gallery": null,
   "inherited": 0,
@@ -35,6 +36,7 @@
  {
   "abstract": true,
   "bindings": 0,
+  "dangerous": 0,
   "element": null,
   "gallery": null,
   "inherited": 0,
@@ -68,6 +70,7 @@
  {
   "abstract": false,
   "bindings": 1,
+  "dangerous": 0,
   "element": "check-box",
   "gallery": null,
   "inherited": 0,
@@ -101,6 +104,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 1,
   "element": null,
   "gallery": null,
   "inherited": 0,
@@ -134,6 +138,7 @@
  {
   "abstract": true,
   "bindings": 0,
+  "dangerous": 0,
   "element": null,
   "gallery": null,
   "inherited": 0,
@@ -167,6 +172,7 @@
  {
   "abstract": true,
   "bindings": 0,
+  "dangerous": 0,
   "element": null,
   "gallery": null,
   "inherited": 0,
@@ -200,6 +206,7 @@
  {
   "abstract": true,
   "bindings": 0,
+  "dangerous": 0,
   "element": null,
   "gallery": null,
   "inherited": 0,
@@ -233,6 +240,7 @@
  {
   "abstract": false,
   "bindings": 3,
+  "dangerous": 0,
   "element": "grid",
   "gallery": null,
   "inherited": 0,
@@ -266,6 +274,7 @@
  {
   "abstract": true,
   "bindings": 0,
+  "dangerous": 0,
   "element": null,
   "gallery": null,
   "inherited": 0,
@@ -299,6 +308,7 @@
  {
   "abstract": true,
   "bindings": 0,
+  "dangerous": 0,
   "element": null,
   "gallery": null,
   "inherited": 0,
@@ -332,6 +342,7 @@
  {
   "abstract": false,
   "bindings": 9,
+  "dangerous": 0,
   "element": "slider",
   "gallery": null,
   "inherited": 0,
@@ -365,6 +376,7 @@
  {
   "abstract": false,
   "bindings": 4,
+  "dangerous": 0,
   "element": "stack-panel",
   "gallery": null,
   "inherited": 0,
@@ -398,6 +410,7 @@
  {
   "abstract": false,
   "bindings": 17,
+  "dangerous": 0,
   "element": "text-block",
   "gallery": null,
   "inherited": 0,
@@ -431,6 +444,7 @@
  {
   "abstract": false,
   "bindings": 14,
+  "dangerous": 0,
   "element": "text-box",
   "gallery": null,
   "inherited": 0,
@@ -464,6 +478,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 0,
   "element": null,
   "gallery": null,
   "inherited": 0,
@@ -497,6 +512,7 @@
  {
   "abstract": true,
   "bindings": 0,
+  "dangerous": 0,
   "element": null,
   "gallery": null,
   "inherited": 0,
@@ -530,6 +546,7 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 1,
   "element": "window",
   "gallery": null,
   "inherited": 0,

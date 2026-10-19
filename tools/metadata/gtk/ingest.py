@@ -6,6 +6,8 @@ query on the installed libgtk). Annotations are merged over the ingested facts i
 lowest precedence first: the inferred layer (metadata/inferred/gtk/<Kind>.yaml, written by
 infer.py; facts parked by the ledger are left out) and the hand/agent annotations from
 metadata/overrides/gtk/<Kind>.yaml. Output: metadata/gtk/<Kind>.json, one file per type.
+An override's `dangerous:` block (members the backend owns) is not merged: consumers read it, with
+metadata/dangerous/gtk.yaml, through tools/metadata/common/dangerous.py.
 
 Deterministic: inputs are the GIR, the live type registry (no display needed), the overrides,
 the inferred layer, the parked list and the constants below. No clocks, env or network. Run from anywhere:
@@ -507,6 +509,8 @@ def apply_override(doc: dict, ov: dict, errors: list[str], layer: str = "manual"
             clean[key] = {**val, "id": f"{doc['id']}:lifetime", "origin": "manual"}
         elif key == "text_prop":
             continue  # read from the override by tools/metadata/semantics/gen_semantics.py, not merged
+        elif key in svmeta.READ_TIME_KEYS:
+            continue  # `dangerous`: a read-time layer (tools/metadata/common/dangerous.py), never part of a fact
         elif key == "unexposed":
             clean[key] = {**val, "origin": "manual"}
         else:

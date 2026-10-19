@@ -247,6 +247,56 @@ function memberAnchor(kind, name, used) {
   return a;
 }
 
+// ---------- dangerous members (IR `dangerous`, tools/metadata/common/dangerous.py) ----------
+
+const SEVERITY_LABEL = {
+  'corrupts-tree': 'corrupts the widget tree',
+  'owned-by-backend': 'owned by the backend',
+  crashes: 'can crash',
+  other: 'backend-owned state',
+};
+const dangerText = (s) => mapOutsideCode(String(s), esc);
+const DANGER_MARK = ' <span class="svl-danger" title="Dangerous: the backend owns what this changes">⚠ dangerous</span>';
+const dangerMark = (m) => (m?.dangerous ? DANGER_MARK : '');
+
+// The warning callout on a dangerous member's details.
+function dangerCallout(d, what) {
+  const how = d.reachable === false
+    ? `${what} is not possible from app code today; the backend owns this state, so do not expose it`
+    : `${what} is reachable from app code (a native call or attribute), but the backend owns what it changes`;
+  const o = [`:::danger[Dangerous: ${SEVERITY_LABEL[d.severity] ?? d.severity}]`, `${how}. ${dangerText(d.reason)}`];
+  if (d.use_instead) o.push('', `**Use instead:** ${dangerText(d.use_instead)}`);
+  o.push('', `<small>Declared in <code>${esc(d.source)}</code>. Nothing blocks it at run time yet.</small>`, ':::', '');
+  return o;
+}
+
+// The per-kind list: own and inherited dangerous members, linking to their details.
+function dangerSection(model, e, anc) {
+  const KINDS = [['properties', 'property', 'property'], ['events', 'event', 'event'], ['methods', 'method', 'method']];
+  const rows = [];
+  for (const owner of [e, ...anc]) {
+    for (const [field, kind, anchor] of KINDS) {
+      for (const m of owner[field] ?? []) {
+        if (!m.dangerous) continue;
+        if (rows.some((r) => r.field === field && r.m.name === m.name)) continue; // overridden lower in the chain
+        rows.push({ field, kind, anchor, m, owner });
+      }
+    }
+  }
+  if (!rows.length) return [];
+  const o = ['## Dangerous members', '', `:::danger[${rows.length} dangerous member${rows.length === 1 ? '' : 's'}]`,
+    'These are reachable from app code (through `call()`, `setProp` or an attribute) unless marked otherwise, but the backend owns what they change: using them can corrupt the widget tree svelters manages, fight its lifecycle or crash. Nothing blocks them at run time yet.', ':::', '',
+    '| Member | Kind | Severity | Why | Use instead |', '| --- | --- | --- | --- | --- |'];
+  for (const r of rows) {
+    const here = r.owner === e;
+    const href = `${here ? '' : model.link(r.owner.id)}#${r.anchor}-${slugify(r.m.name)}`;
+    const label = r.field === 'properties' ? r.m.js_name : r.m.name;
+    o.push(`| [\`${cell(label)}\`](${href})${here ? '' : ` <small>from ${esc(r.owner.name)}</small>`} | ${r.kind}${r.m.dangerous.reachable === false ? ' (not reachable today)' : ''} | ${esc(SEVERITY_LABEL[r.m.dangerous.severity] ?? r.m.dangerous.severity)} | ${cell(dangerText(r.m.dangerous.reason))} | ${cell(dangerText(r.m.dangerous.use_instead ?? '–'))} |`);
+  }
+  o.push('');
+  return o;
+}
+
 function tierBadge(e) {
   return e.status.tier === 'annotated'
     ? '<span class="svl-tier svl-tier-annotated" title="Hand/agent-annotated, with generated verification tests">Annotated &amp; tested</span>'
@@ -328,6 +378,8 @@ export function renderEntity(model, e) {
   if (e.description) o.push('## Description', '', renderText(model, e.description, { toolkit: tk, level: 4 }), '');
   else if (e.summary && e.summary.truncated) o.push(`:::note[Documentation text]`, `Only a short brief is included here. Read the complete documentation upstream: [${e.upstream.label}](${e.upstream.url}).`, ':::', '');
 
+  o.push(...dangerSection(model, e, anc));
+
   if (e.values.length) {
     o.push('## Values', '', '| Name | Value | Description |', '| --- | --- | --- |');
     for (const v of e.values) {
@@ -392,7 +444,7 @@ export function renderEntity(model, e) {
       o.push('### Inherited methods', '');
       for (const [a, list] of groupBy(inh, (x) => x.owner.id)) {
         const ow = list[0].owner;
-        o.push(`<details><summary>From ${esc(ow.name)} (${list.length})</summary>`, '', list.map((x) => `[\`${cell(x.m.name)}\`](${model.link(ow.id)}#method-${slugify(x.m.name)})`).join(', '), '', '</details>', '');
+        o.push(`<details><summary>From ${esc(ow.name)} (${list.length})</summary>`, '', list.map((x) => `[\`${cell(x.m.name)}\`](${model.link(ow.id)}#method-${slugify(x.m.name)})${x.m.dangerous ? ' ⚠' : ''}`).join(', '), '', '</details>', '');
       }
     }
   }
@@ -458,10 +510,10 @@ function inheritedBlock(model, list, kind, title, tk) {
     o.push(`<details><summary>From ${esc(ow.name)} (${items.length})</summary>`, '');
     if (kind === 'property') {
       o.push('| JS name | Type | Access | Description |', '| --- | --- | --- | --- |');
-      for (const { m } of items) o.push(`| [\`${cell(m.js_name)}\`](${model.link(ow.id)}#property-${slugify(m.name)}) | ${cell(typeMd(model, m.type))} | ${access(m)} | ${cell(plain(brief(model, m.doc, tk)))} |`);
+      for (const { m } of items) o.push(`| [\`${cell(m.js_name)}\`](${model.link(ow.id)}#property-${slugify(m.name)})${dangerMark(m)} | ${cell(typeMd(model, m.type))} | ${access(m)} | ${cell(plain(brief(model, m.doc, tk)))} |`);
     } else {
       o.push('| Event | Handler | Description |', '| --- | --- | --- |');
-      for (const { m } of items) o.push(`| [\`${cell(m.name)}\`](${model.link(ow.id)}#event-${slugify(m.name)}) | \`${cell(m.handler_prop)}\` | ${cell(plain(brief(model, m.doc, tk)))} |`);
+      for (const { m } of items) o.push(`| [\`${cell(m.name)}\`](${model.link(ow.id)}#event-${slugify(m.name)})${dangerMark(m)} | \`${cell(m.handler_prop)}\` | ${cell(plain(brief(model, m.doc, tk)))} |`);
     }
     o.push('', '</details>', '');
   }
@@ -475,7 +527,7 @@ function propSummary(model, e, props, tk, used) {
     const a = memberAnchor('property', p.name, used);
     const range = p.range && (p.range.min != null || p.range.max != null) ? `${fmtNum(p.range.min)} … ${fmtNum(p.range.max)}` : '–';
     const nb = p.notify ? `\`${cell(p.notify)}\`${p.bindable ? ' · bindable' : ''}` : '–';
-    o.push(`| [\`${cell(p.js_name)}\`](#${a})${p.annotated ? ' ★' : ''} | ${cell(typeMd(model, p.type))} | ${p.default != null ? '`' + cell(p.default) + '`' : '–'} | ${range} | ${access(p)} | ${nb} | ${originBadges(p)} | ${cell(availabilityMd(p.availability)) || '–'} |`);
+    o.push(`| [\`${cell(p.js_name)}\`](#${a})${p.annotated ? ' ★' : ''}${dangerMark(p)} | ${cell(typeMd(model, p.type))} | ${p.default != null ? '`' + cell(p.default) + '`' : '–'} | ${range} | ${access(p)} | ${nb} | ${originBadges(p)} | ${cell(availabilityMd(p.availability)) || '–'} |`);
     const ex = extFields(model, e, 'property', p);
     const d = [`<a id="${a}"></a>`, `#### \`${p.js_name}\``, ''];
     d.push(`<div class="svl-meta">${originBadges(p)}${p.annotated ? ' <span class="svl-kind">annotated</span>' : ''} ${typeMd(model, p.type).startsWith('[') ? '' : ''}</div>`, '');
@@ -487,6 +539,7 @@ function propSummary(model, e, props, tk, used) {
     const avp = availabilityMd(p.availability);
     if (avp) bits.push(avp);
     d.push(bits.join(' · '), '');
+    if (p.dangerous) d.push(...dangerCallout(p.dangerous, 'Writing this property'));
     if (p.availability?.deprecated_note) d.push(`> Deprecated: ${plain(brief(model, { md: p.availability.deprecated_note }, tk))}`, '');
     if (p.doc) d.push(renderText(model, p.doc, { toolkit: tk, level: 5 }), '');
     if (ex.length) d.push(extInline(ex), '');
@@ -509,9 +562,10 @@ function eventSection(model, e, tk, used) {
     const args = ev.params.length ? ev.params.map((p) => `${p.name}: ${cell(typeMd(model, p.type))}`).join(', ') : '–';
     const handlers = [ev.handler_prop, ...(ev.handler_aliases ?? [])].map((h) => '`' + cell(h) + '`').join(' / ');
     const sync = ev.sync_required ? 'sync required' : 'async';
-    o.push(`| [\`${cell(ev.name)}\`](#${a})${ev.annotated ? ' ★' : ''} | ${handlers} | ${args} | ${cell(ev.returns?.display ?? 'void')} | ${sync}${ev.handler_result && ev.handler_result !== 'none' ? ', result `' + ev.handler_result + '`' : ''} | ${ev.phase ? '`' + cell(ev.phase) + '`' : '–'} | ${originBadges(ev)} |`);
+    o.push(`| [\`${cell(ev.name)}\`](#${a})${ev.annotated ? ' ★' : ''}${dangerMark(ev)} | ${handlers} | ${args} | ${cell(ev.returns?.display ?? 'void')} | ${sync}${ev.handler_result && ev.handler_result !== 'none' ? ', result `' + ev.handler_result + '`' : ''} | ${ev.phase ? '`' + cell(ev.phase) + '`' : '–'} | ${originBadges(ev)} |`);
     const d = [`<a id="${a}"></a>`, `#### \`${ev.name}\``, '', `<div class="svl-meta">${originBadges(ev)}${ev.annotated ? ' <span class="svl-kind">annotated</span>' : ''}</div>`, ''];
     d.push(`Handler: ${handlers} · arguments: ${args} · returns \`${ev.returns?.display ?? 'void'}\` · ${sync}${ev.phase ? ` · phase \`${ev.phase}\`` : ''}${ev.flags?.length ? ' · flags ' + ev.flags.map((f) => '`' + f + '`').join(', ') : ''}`, '');
+    if (ev.dangerous) d.push(...dangerCallout(ev.dangerous, 'Using this event'));
     if (ev.doc) d.push(renderText(model, ev.doc, { toolkit: tk, level: 5 }), '');
     const ex = extFields(model, e, 'event', ev);
     if (ex.length) d.push(extInline(ex), '');
@@ -526,9 +580,10 @@ function methodTable(model, e, list, kind, tk, used) {
   for (const m of list) {
     const a = memberAnchor(kind, m.name, used);
     const flags = [m.static ? 'static' : '', m.virtual ? 'virtual' : '', m.access && m.access !== 'public' ? m.access : ''].filter(Boolean);
-    o.push(`| <a id="${a}"></a>\`${cell(m.name)}\`${m.annotated ? ' ★' : ''} | \`${cell(m.signature)}\`${flags.length ? ' <small>' + flags.join(', ') + '</small>' : ''}${m.unsupported_reason ? ' <small>unsupported: ' + esc(m.unsupported_reason) + '</small>' : ''} | ${originBadges(m)} |`);
-    if (m.doc || extFields(model, e, 'method', m).length) {
+    o.push(`| <a id="${a}"></a>\`${cell(m.name)}\`${m.annotated ? ' ★' : ''}${dangerMark(m)} | \`${cell(m.signature)}\`${flags.length ? ' <small>' + flags.join(', ') + '</small>' : ''}${m.unsupported_reason ? ' <small>unsupported: ' + esc(m.unsupported_reason) + '</small>' : ''} | ${originBadges(m)} |`);
+    if (m.doc || m.dangerous || extFields(model, e, 'method', m).length) {
       detail.push(`#### \`${m.name}\``, '', '`' + m.signature.replace(/`/g, "'") + '`', '');
+      if (m.dangerous) detail.push(...dangerCallout(m.dangerous, `Calling \`${m.name}\``));
       if (m.doc) detail.push(renderText(model, m.doc, { toolkit: tk, level: 5 }), '');
       const ex = extFields(model, e, 'method', m);
       if (ex.length) detail.push(extInline(ex), '');
@@ -621,6 +676,7 @@ export function renderCoverage(model) {
     o.push(`| Properties | ${c.properties} (${c.annotated_properties} annotated) |`);
     o.push(`| Events | ${c.events} (${c.annotated_events} annotated) |`);
     o.push(`| Methods | ${c.methods} |`);
+    if (c.dangerous) o.push(`| Dangerous members | ${c.dangerous.properties} properties, ${c.dangerous.events} events, ${c.dangerous.methods} methods (warned on their pages) |`);
     o.push(`| Properties by origin | ${Object.entries(c.properties_by_origin ?? {}).map(([k, v]) => `${badge(k)} ${v}`).join(' ')} |`);
     for (const [k, v] of Object.entries(c.docs ?? {})) o.push(`| Docs: ${k.replace(/_/g, ' ')} | ${v} |`);
     o.push(`| Serdes (per-type support) | ${c.serdes.status === 'unknown' ? '**unknown** (no serdes fields in metadata yet)' : `${c.serdes.supported_types} / ${c.serdes.total_types}`} |`);

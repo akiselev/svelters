@@ -11,7 +11,8 @@ gen_bindings.py, probe.py) reads them through `load()`:
   metadata/inferred/appkit/_parked.json   inferred facts whose generated test failed on macOS
                                           (ledger.py import): left out while their record is unchanged
 
-`element` is manual only. Each merged record's layer is in `origin[(class, section, name)]`:
+`element` is manual only, and so is the `dangerous:` block (members the backend owns), which is not merged at all:
+tools/metadata/common/dangerous.py reads it from the override file. Each merged record's layer is in `origin[(class, section, name)]`:
 ("manual", None) or ("inferred", <record fingerprint>).
 """
 from __future__ import annotations

@@ -41,3 +41,14 @@ elements:
           on_remove: empty
           ops: {}
           provenance: "QWidget::insertAction/removeAction (qdoc); a QMenu item is its menuAction(); X4"
+
+# Dangerous members (docs/notes/dangerous-members.md): reachable from JS, but the backend owns what they change.
+dangerous:
+  methods:
+    clear:
+      severity: corrupts-tree
+      reason: >-
+        The items slot holds the backend's actions and menus through the menu glue (tools/metadata/qt/templates/menus.hpp.in:69-73);
+        clear() drops them behind it, so a later remove fails ("child is not in this parent", menus.hpp.in:83).
+      use_instead: Remove the item children with {#if}/{#each}.
+      evidence: [tools/metadata/qt/templates/menus.hpp.in:69-83]

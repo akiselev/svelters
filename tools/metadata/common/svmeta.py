@@ -20,6 +20,11 @@ REQUIRED = ("schema", "toolkit", "id", "native", "kind")
 LIST_KEYS = {"properties": "name", "signals": "name", "methods": "name", "constructors": "id", "slots": "name", "bindings": "name"}
 # Annotation layers, lowest precedence first: ingested < inferred < manual (plans/research/ANNOTATION-AUTOMATION.md section 5.2).
 LAYERS = ("inferred", "manual")
+# Override keys that are read where they are used and never merged into a kind's facts (so no fact record or
+# fingerprint changes when they change). `dangerous`: members the backend owns (tools/metadata/common/dangerous.py,
+# metadata/dangerous/<tk>.yaml < the override's `dangerous:` block; docs/notes/dangerous-members.md).
+READ_TIME_KEYS = ("dangerous",)
+DANGEROUS_SEVERITIES = ("corrupts-tree", "owned-by-backend", "crashes", "other")
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -62,6 +67,8 @@ def merge(base: Any, override: Any, key: str | None = None, origin: str = "manua
     if isinstance(base, dict) and isinstance(override, dict):
         out = dict(base)
         for k, v in override.items():
+            if k in READ_TIME_KEYS:
+                continue  # never part of a fact (see READ_TIME_KEYS)
             out[k] = merge(base[k], v, k, origin) if k in base else _mark(copy.deepcopy(v), origin)
         return out
     if isinstance(base, list) and isinstance(override, list) and key in LIST_KEYS:
@@ -92,6 +99,9 @@ def validate(kind: dict[str, Any]) -> list[str]:
             o = v.get("origin")
             if o is not None and o not in ORIGINS:
                 errs.append(f"{path}: unknown origin {o!r}")
+            for k in READ_TIME_KEYS:
+                if k in v:
+                    errs.append(f"{path}: {k!r} is a read-time layer and must not be merged into the facts")
             for k, x in v.items():
                 walk(x, f"{path}.{k}")
         elif isinstance(v, list):

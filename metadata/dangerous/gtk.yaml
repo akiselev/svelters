@@ -1,0 +1,209 @@
+# Dangerous GTK members (schema: tools/metadata/common/dangerous.schema.json; model: docs/notes/dangerous-members.md).
+# Reachable from app JS at run time (GIRepository `call` fallback: crates/svelters-gtk/src/backend.rs:1700-1703 ->
+# gi.rs:480-528 takes any typelib method by name; `setProp` writes any writable GObject property, backend.rs:806-881),
+# but the backend owns what they change. Not blocked: the docs and the typings warn. Single members and exemptions go in
+# the `dangerous:` block of metadata/overrides/gtk/<Kind>.yaml. Every method below is also in a `deny_methods` pattern
+# of metadata/rules/gtk.yaml, so inference never makes it a fact (dangerous.py --check).
+#
+# Why the tree breaks: insert/remove keep each child's slot in the backend's own record (backend.rs:687-692), remove
+# trusts it (backend.rs:726-733), insert refuses a child that already has a parent (backend.rs:677-678), and
+# native_destroyed walks the records to report a window's descendants (backend.rs:504-560). A call that re-parents or
+# removes a widget behind them leaves the records stale: later inserts and removes act on the wrong widget or fail.
+schema: svelters-dangerous/v1
+toolkit: gtk
+rules:
+  - id: child-setters
+    section: methods
+    name: 'set_child|set_(start|end)_child|set_(center|start|end|label|title)_widget|set_titlebar|set_popover'
+    severity: corrupts-tree
+    reason: >-
+      Re-parents a widget behind the slot model: the single-child slots are exactly these setters
+      (metadata/overrides/gtk/Window.yaml:88-89 child, :104-105 titlebar; Paned.yaml:17-18; CenterBox.yaml:17-18;
+      Frame.yaml:17-18; HeaderBar.yaml:73-74; MenuButton.yaml:59-60 popover), and the backend records the slot of every
+      child it inserts (crates/svelters-gtk/src/backend.rs:679-692). AI1 review: rejected as re-parenting
+      (docs/notes/ai1-gtk-review.md).
+    use_instead: 'Put the child element inside the parent and pick the slot with `data-slot` (`<header-bar data-slot="titlebar">`); remove it with {#if}.'
+    evidence: [crates/svelters-gtk/src/backend.rs:674-693, metadata/overrides/gtk/Window.yaml:86-106]
+
+  - id: widget-tree
+    section: methods
+    name: 'set_parent|unparent|insert_before|insert_after'
+    kinds: [Widget]
+    severity: corrupts-tree
+    reason: >-
+      Moves a widget in GTK's widget tree without the backend: its insert refuses a child that already has a parent and
+      remove errors on a child it did not insert (crates/svelters-gtk/src/backend.rs:677-678, 726-733). AI1 review
+      rejected set_parent as re-parenting.
+    use_instead: Svelte markup order ({#if}, {#each}); the renderer inserts and removes through the slots.
+    evidence: [crates/svelters-gtk/src/backend.rs:643-739]
+
+  - id: box-children
+    section: methods
+    name: 'append|prepend|remove|insert_child_after|reorder_child_after'
+    kinds: [Box]
+    severity: corrupts-tree
+    reason: >-
+      The Box `children` slot inserts with insert_child_after and removes with remove (metadata/overrides/gtk/Box.yaml:24-25);
+      a direct call adds or drops a child the backend's slot record does not know (crates/svelters-gtk/src/backend.rs:687-692).
+    use_instead: Children of <box> in markup; order follows the markup.
+    evidence: [metadata/overrides/gtk/Box.yaml:22-25]
+
+  - id: list-children
+    section: methods
+    name: 'append|prepend|insert|remove|remove_all'
+    kinds: [ListBox, FlowBox]
+    severity: corrupts-tree
+    reason: >-
+      The ListBox/FlowBox slots insert with insert and remove with remove (metadata/overrides/gtk/ListBox.yaml:58-60,
+      FlowBox.yaml:49-50); remove_all and direct inserts desync the backend's slot records (crates/svelters-gtk/src/backend.rs:687-692).
+    use_instead: Children of <list-box>/<flow-box> in markup ({#each}).
+    evidence: [metadata/overrides/gtk/ListBox.yaml:58-60, metadata/overrides/gtk/FlowBox.yaml:49-50]
+
+  - id: grid-children
+    section: methods
+    name: 'attach|attach_next_to|remove|remove_row|remove_column'
+    kinds: [Grid]
+    severity: corrupts-tree
+    reason: >-
+      The Grid slot attaches and removes children itself (metadata/overrides/gtk/Grid.yaml:61-62); remove_row/remove_column
+      also destroy children the renderer still holds.
+    use_instead: Children of <grid> with the `parent:` child attributes (column, row, spans).
+    evidence: [metadata/overrides/gtk/Grid.yaml:61-62]
+
+  - id: fixed-children
+    section: methods
+    name: 'put|remove'
+    kinds: [Fixed]
+    severity: corrupts-tree
+    reason: The Fixed slot inserts with put and removes with remove (metadata/overrides/gtk/Fixed.yaml:35-36); a direct call bypasses its slot record.
+    use_instead: Children of <fixed>; position them with the child attributes (move is the safe attribute op).
+    evidence: [metadata/overrides/gtk/Fixed.yaml:35-36]
+
+  - id: overlay-children
+    section: methods
+    name: 'add_overlay|remove_overlay'
+    kinds: [Overlay]
+    severity: corrupts-tree
+    reason: The Overlay `overlays` slot uses add_overlay/remove_overlay (metadata/overrides/gtk/Overlay.yaml:47-48); a direct call bypasses its slot record.
+    use_instead: Children of <overlay> in the overlay slot (`data-slot`).
+    evidence: [metadata/overrides/gtk/Overlay.yaml:47-48]
+
+  - id: bar-children
+    section: methods
+    name: 'pack_start|pack_end|remove'
+    kinds: [HeaderBar, ActionBar]
+    severity: corrupts-tree
+    reason: >-
+      The start/end slots of HeaderBar and ActionBar pack and remove with these (metadata/overrides/gtk/HeaderBar.yaml:40-41,56-57,
+      ActionBar.yaml:20-21,36-37); a direct call bypasses the slot records.
+    use_instead: Children with `data-slot="start"` / `data-slot="end"`.
+    evidence: [metadata/overrides/gtk/HeaderBar.yaml:40-57, metadata/overrides/gtk/ActionBar.yaml:20-37]
+
+  - id: stack-children
+    section: methods
+    name: 'add_child|add_named|add_titled|remove'
+    kinds: [Stack]
+    severity: corrupts-tree
+    reason: The Stack pages slot adds with add_child and removes with remove (metadata/overrides/gtk/Stack.yaml:72-73); a direct call adds or drops pages behind it.
+    use_instead: Page children of <stack> ({#if}/{#each}); switch with visible-child-name.
+    evidence: [metadata/overrides/gtk/Stack.yaml:72-73]
+
+  - id: notebook-children
+    section: methods
+    name: '(append|prepend|insert)_page(_menu)?|remove_page|reorder_child|detach_tab'
+    kinds: [Notebook]
+    severity: corrupts-tree
+    reason: The Notebook pages slot inserts with insert_page and removes with remove_page (metadata/overrides/gtk/Notebook.yaml:115-116); page indexes drift when pages change behind it.
+    use_instead: Page children of <notebook> with the tab child attributes.
+    evidence: [metadata/overrides/gtk/Notebook.yaml:115-116]
+
+  - id: toplevel-application
+    section: methods
+    name: set_application
+    kinds: [Window]
+    severity: owned-by-backend
+    reason: >-
+      The backend sets every toplevel's application at creation (crates/svelters-gtk/src/backend.rs:472-475) and keeps the
+      shared app alive itself (backend.rs:1917-1918); changing or clearing it takes the window out of the app's window list.
+    use_instead: Nothing to set; every <window> belongs to the app.
+    evidence: [crates/svelters-gtk/src/backend.rs:472-475]
+
+  - id: toplevel-application-prop
+    section: properties
+    name: application
+    kinds: [Window]
+    severity: owned-by-backend
+    reason: >-
+      Set by the backend on every toplevel at creation (crates/svelters-gtk/src/backend.rs:472-475); an app write (null)
+      detaches the window from the app. AI1 review rejected Window.application for this reason.
+    use_instead: Nothing to set; every <window> belongs to the app.
+    evidence: [crates/svelters-gtk/src/backend.rs:472-475]
+
+  - id: toplevel-transient
+    section: methods
+    name: set_transient_for
+    kinds: [Window, NativeDialog]
+    severity: owned-by-backend
+    reason: >-
+      A window nested in another element becomes its transient child through the backend (insert_transient,
+      crates/svelters-gtk/src/backend.rs:618-634), and remove clears it (backend.rs:714-724); setting it by hand makes the
+      backend's record and GTK disagree.
+    use_instead: Nest the <window>/<dialog> element inside its owner.
+    evidence: [crates/svelters-gtk/src/backend.rs:618-634]
+
+  - id: toplevel-transient-prop
+    section: properties
+    name: transient-for
+    kinds: [Window, NativeDialog]
+    severity: owned-by-backend
+    reason: Owned by the backend's insert_transient/remove (crates/svelters-gtk/src/backend.rs:618-634, 714-724), like set_transient_for.
+    use_instead: Nest the <window>/<dialog> element inside its owner.
+    evidence: [crates/svelters-gtk/src/backend.rs:618-634]
+
+  - id: toplevel-display
+    section: methods
+    name: set_display
+    kinds: [Window]
+    severity: other
+    reason: >-
+      Window-system state, not app state: moving a toplevel to another GdkDisplay unrealizes and re-realizes it behind the
+      renderer, and the backend opens one display only. AI1 review rejected set_display and Window.display (docs/notes/ai1-gtk-review.md).
+    use_instead: Nothing; svelters runs on the default display.
+
+  - id: toplevel-display-prop
+    section: properties
+    name: display
+    kinds: [Window]
+    severity: other
+    reason: Window-system state (the default display the backend opened), as set_display; AI1 review rejected writes to Window.display.
+    use_instead: Nothing; svelters runs on the default display.
+
+  - id: toplevel-startup-id
+    section: methods
+    name: set_startup_id
+    kinds: [Window]
+    severity: other
+    reason: >-
+      Startup notification is window-system state: GTK hands the id to the window system when the window is shown, which
+      the renderer's `show` attribute does (packages/renderer/src/index.js:390-401). AI1 review moved it to the
+      window-system deny pattern (metadata/rules/gtk.yaml).
+    use_instead: Nothing; svelters has no startup-notification support.
+
+  - id: toplevel-startup-id-prop
+    section: properties
+    name: startup-id
+    kinds: [Window]
+    severity: other
+    reason: Write-only twin of set_startup_id (window-system startup notification, handed over when the renderer shows the window).
+    use_instead: Nothing; svelters has no startup-notification support.
+
+  - id: child-properties
+    section: properties
+    name: 'child|start-child|end-child|titlebar|label-widget|title-widget|(start|center|end)-widget|popover'
+    severity: corrupts-tree
+    reason: >-
+      The widget-typed twins of the child setters, generated as writable attributes (crates/svelters-gtk/src/generated/tables.rs,
+      packages/renderer/types/gtk.d.ts): writing one re-parents a widget behind the slot records the backend keeps
+      (crates/svelters-gtk/src/backend.rs:679-692).
+    use_instead: 'Put the child element inside the parent (`data-slot` picks a named slot); never pass a handle to these attributes.'
+    evidence: [crates/svelters-gtk/src/backend.rs:674-693]

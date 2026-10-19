@@ -144,6 +144,9 @@ impl Config {
             &inferred,
             &root.join("tools/metadata/qt"),
             &root.join("tools/metadata/common/svmeta.py"),
+            // the typings warn on dangerous members (tools/metadata/common/dangerous.py)
+            &root.join("tools/metadata/common/dangerous.py"),
+            &root.join("metadata/dangerous/qt.yaml"),
             &abi_include,
         ] {
             println!("cargo:rerun-if-changed={}", p.display());

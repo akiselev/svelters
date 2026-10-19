@@ -53,6 +53,26 @@ test('portable elements link between GTK and Qt', () => {
   }
 });
 
+test('dangerous members are warned on (metadata/dangerous, docs/notes/dangerous-members.md)', () => {
+  const win = pages.get('api/gtk/window.md');
+  assert.match(win, /\n## Dangerous members\n/);
+  for (const m of ['set_titlebar', 'set_child', 'set_application', 'set_display', 'set_startup_id']) {
+    assert.match(win, new RegExp('`' + m + '` <span class="svl-danger"'), `window method ${m} not marked`);
+  }
+  assert.match(win, /\[`application`\]\(#property-application\)/);
+  assert.match(win, /:::danger\[Dangerous: corrupts the widget tree\]\nCalling `set_titlebar`/);
+  // inherited: an application window lists Window's and Widget's dangerous members
+  const appwin = pages.get('api/gtk/application-window.md');
+  assert.match(appwin, /\[`set_application`\]\(\/api\/gtk\/window\/#method-set-application\) <small>from Window<\/small>/);
+  assert.match(appwin, /\[`set_parent`\]\([^)]*#method-set-parent\) <small>from Widget<\/small>/);
+  // Qt: backend-owned but not reachable today
+  const mw = pages.get('api/qt/main-window.md');
+  assert.match(mw, /`setCentralWidget` <span class="svl-danger"/);
+  assert.match(mw, /Calling `setCentralWidget` is not possible from app code today/);
+  // a member that is safe stays unmarked
+  assert.doesNotMatch(win, /`present` <span class="svl-danger"/);
+});
+
 const dist = path.join(site, 'dist');
 test('built site has the counter pages (skipped when dist/ is absent)', { skip: !fs.existsSync(dist) }, () => {
   for (const tk of ['gtk', 'qt']) {
