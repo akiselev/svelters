@@ -4,7 +4,8 @@
 Inputs (only these):
   gtk: metadata/gtk/*.json   (`bindings` list on a kind with an `element.tag`; merged from metadata/overrides/gtk/*.yaml by ingest.py)
   qt:  metadata/overrides/qt/*.yaml   (`bindings` list on an `elements[]` entry)
-  appkit: metadata/overrides/appkit/*.yaml + metadata/appkit/*.json   (`bindings` list on a class; applies to the element classes deriving from it)
+  appkit: metadata/overrides/appkit/*.yaml over metadata/inferred/appkit/*.yaml (layers.py) + metadata/appkit/*.json
+          (`bindings` list on a class; applies to the element classes deriving from it)
   winui:  metadata/overrides/winui/*.yaml + metadata/winui/*.json     (same; property and signal are kebab-case JS names)
 Outputs (checked in, byte-identical on rerun):
   packages/renderer/src/bindings.generated.js   table used by renderer.bind(el, name, get, set)
@@ -207,10 +208,17 @@ def _add_binding(out: dict, tag: str, b: dict, tk: str, props: dict, signals: di
     out[tag][name] = fields
 
 
+def appkit_layers() -> dict[str, dict]:
+    """The AppKit annotations, ingested < inferred < manual (tools/metadata/appkit/layers.py)."""
+    sys.path.insert(0, str(ROOT / "tools/metadata/appkit"))
+    import layers  # noqa: E402
+    return layers.load(validate=False)[0]
+
+
 def appkit_bindings() -> dict[str, dict[str, dict]]:
     """AppKit bindings: tag from `element.tag`; one on a class without an element applies to the element
     classes whose chain includes it."""
-    ov = {p.stem: svmeta.load_yaml(p) for p in sorted(APPKIT_OVERRIDES.glob("*.yaml"))}
+    ov = appkit_layers()
     meta = {p.stem: svmeta.load_json(p) for p in sorted(APPKIT_META.glob("NS*.json"))}
     chain = lambda cls: [cls] + [c for c in meta[cls]["bases"] if c in meta]  # noqa: E731
     elements = {c: o["element"]["tag"] for c, o in ov.items() if (o.get("element") or {}).get("tag")}
@@ -312,8 +320,8 @@ def appkit_toplevels() -> dict[str, dict]:
     """AppKit elements of lifetime `toplevel` (metadata/overrides/appkit/*.yaml). Windows are shown
     with `make-key-and-order-front` (NSWindow has no `present`)."""
     out: dict[str, dict] = {}
-    for path in sorted(APPKIT_OVERRIDES.glob("*.yaml")):
-        el = svmeta.load_yaml(path).get("element") or {}
+    for data in appkit_layers().values():
+        el = data.get("element") or {}
         if el.get("lifetime") == "toplevel":
             out[el["tag"]] = {"open": ["make-key-and-order-front"], "modeless": ["make-key-and-order-front"],
                               "modalProp": False, "dialog": False}

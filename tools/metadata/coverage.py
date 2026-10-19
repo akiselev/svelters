@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""API-surface coverage report: metadata/coverage/{gtk,qt}.md (and a machine-readable .json).
+"""API-surface coverage report: metadata/coverage/{gtk,qt,appkit}.md (and a machine-readable .json).
 
 Per kind: exposed as an element (or why not), props/signals/methods exposed out of the kind's own
 total, slots annotated, ownership annotated, signal results annotated, bindings annotated,
@@ -17,6 +17,9 @@ What "exposed" means differs per toolkit, so each toolkit has a small adapter:
   as exposed when it is reachable. Methods count only when annotated (no GI invocation yet).
 - Qt: only annotated facts exist in the generated backend, so exposed = annotated on an element
   (directly or through an `inherit:` block declared on this class).
+- AppKit: every ingested property whose type the tables carry is exposed (KVC); signals and
+  methods only when annotated (manual or inferred, tools/metadata/appkit/layers.py). Results come
+  from the macOS CI job (`ledger.py import`).
 
 Deterministic: reads metadata/, the ledger and the gallery pages; writes sorted output.
 
@@ -104,10 +107,10 @@ def gtk_rows() -> list[dict]:
     return rows
 
 
-def gtk_fact_table() -> dict:
+def gtk_fact_table(tk: str = "gtk") -> dict:
     """Facts by section and state: manual / inferred verified, delivery-only, pending; parked and unreviewed counts."""
-    man = json.loads(ledger.GTK_FACTS.read_text())
-    verified = ledger.verified_facts("gtk")
+    man = json.loads(ledger.FACTS[tk].read_text())
+    verified = ledger.verified_facts(tk)
     sections: dict[str, dict[str, int]] = {}
     for f in man["facts"]:
         row = sections.setdefault(f["section"], {"manual": 0, "inferred": 0, "delivery": 0, "pending": 0})
@@ -118,10 +121,10 @@ def gtk_fact_table() -> dict:
         else:
             row["pending"] += 1
     parked: dict[str, int] = {}
-    for r in ledger.load_parked("gtk"):
+    for r in ledger.load_parked(tk):
         parked[r["section"]] = parked.get(r["section"], 0) + 1
     review = {}
-    rp = ROOT / "metadata/inferred/gtk/_review.json"
+    rp = ROOT / f"metadata/inferred/{tk}/_review.json"
     if rp.exists():
         review = json.loads(rp.read_text()).get("unreviewed", {})
     return {"sections": dict(sorted(sections.items())), "parked": dict(sorted(parked.items())), "unreviewed": review}
@@ -174,6 +177,40 @@ def qt_rows() -> list[dict]:
     return rows
 
 
+# ---- AppKit ------------------------------------------------------------------------------------
+
+def appkit_rows() -> list[dict]:
+    sys.path.insert(0, str(HERE / "appkit"))
+    import gen_backend as appkit_gen  # noqa: E402
+    m = appkit_gen.Model()
+    man = json.loads(ledger.FACTS["appkit"].read_text())
+    verified = ledger.verified_facts("appkit")
+    info = {f["fact"]: f for f in man["facts"]}
+    carried = set(appkit_gen.SCALAR_TY) | {"object"}
+    rows = []
+    for cls in m.classes:
+        ov = m.ov.get(cls, {})
+        el = ov.get("element") or {}
+        props = m.meta[cls]["properties"]
+        conv = [p for p in props if p["type"]["ref"] in carried or p["type"]["ref"].startswith(("object<", "enum<", "flags<"))]
+        facts = [f for f in info if info[f]["kind"] == cls]
+        rows.append({
+            "kind": cls, "native": cls, "abstract": not el, "element": el.get("tag"), "unexposed": None,
+            "props": [len(conv), len(props)], "props_annotated": sum(1 for p in ov.get("props", []) if "sample" in p),
+            "signals": [len(ov.get("signals", [])), len(ov.get("signals", []))],
+            "methods": [len(ov.get("methods", [])), len(m.meta[cls]["methods"])],
+            "slots": len(ov.get("slots", [])), "slots_own": len(ov.get("slots", [])), "ownership": bool(ov.get("slots")),
+            "signal_results": sum(1 for s in ov.get("signals", []) if s.get("result", "none") != "none"),
+            "bindings": len(ov.get("bindings", [])),
+            "verified": [sum(1 for f in facts if f in verified), len(facts)],
+            "verified_inferred": [sum(1 for f in facts if f in verified and info[f].get("origin") == "inferred"),
+                                  sum(1 for f in facts if info[f].get("origin") == "inferred")],
+            "delivery": sum(1 for f in facts if f in verified and info[f].get("strength") == "delivery"),
+            "inherited": 0, "gallery": None, "lifetime": el.get("lifetime"),
+        })
+    return rows
+
+
 # ---- output ------------------------------------------------------------------------------------
 
 def render(tk: str, rows: list[dict]) -> str:
@@ -197,8 +234,8 @@ def render(tk: str, rows: list[dict]) -> str:
          f"| Facts verified (manual and inferred) | {vf}/{vt} |",
          f"| Kinds on a gallery page | {sum(1 for r in rows if r['gallery'])} |",
          ""]
-    if tk == "gtk":
-        ft = gtk_fact_table()
+    if tk in ("gtk", "appkit"):
+        ft = gtk_fact_table(tk)
         o += ["## Facts by state\n",
               "| Section | Verified (manual) | Verified (inferred) | of which `verified: delivery` | Pending | Parked |",
               "| --- | --- | --- | --- | --- | --- |"]
@@ -213,10 +250,16 @@ def render(tk: str, rows: list[dict]) -> str:
                   "| Band and pattern | Candidates |", "| --- | --- |"]
             o += [f"| `{k}` | {v} |" for k, v in un.get("by_pattern", {}).items()]
             o.append("")
-        o.append("GTK exposes every property whose type the backend converts and every signal by reflection, and "
-                 "every introspectable method through GIRepository (X1; no out params, arrays or callbacks). The "
-                 "methods column counts annotated methods, which have generated tests; the annotated and verified "
-                 "columns say which facts are tested. Properties without a passing test are marked `@unverified` in the typings.\n")
+        if tk == "gtk":
+            o.append("GTK exposes every property whose type the backend converts and every signal by reflection, and "
+                     "every introspectable method through GIRepository (X1; no out params, arrays or callbacks). The "
+                     "methods column counts annotated methods, which have generated tests; the annotated and verified "
+                     "columns say which facts are tested. Properties without a passing test are marked `@unverified` in the typings.\n")
+        else:
+            o.append("AppKit exposes every ingested property whose type the tables carry through KVC (dev mode also resolves "
+                     "unannotated ones at run time); signals and methods only when annotated (manual or inferred). The tests run "
+                     "only on macOS: results are imported from the macos-appkit CI job (`ledger.py import --toolkit appkit`). "
+                     "Props (annotated) counts props with a test sample.\n")
     else:
         o.append("Qt exposes only annotated facts (the generated C++ backend has no reflection fallback); "
                  f"{sum(r.get('defaults', 0) for r in rows)} properties carry a typed default read from a default-constructed instance.\n")
@@ -227,7 +270,7 @@ def render(tk: str, rows: list[dict]) -> str:
         el = f"`<{r['element']}>`" if r["element"] else ("abstract" if r["abstract"] else (f"no: {r['unexposed']}" if r["unexposed"] else "no"))
         if r["element"] and "," in r["element"]:
             el = ", ".join(f"`<{t.strip()}>`" for t in r["element"].split(","))
-        props = ratio(*r["props"]) + (f" ({r['props_annotated']} annotated)" if tk == "gtk" and r["props_annotated"] else "")
+        props = ratio(*r["props"]) + (f" ({r['props_annotated']} annotated)" if tk in ("gtk", "appkit") and r["props_annotated"] else "")
         o.append(f"| {r['kind']} | {el} | {props} | {ratio(*r['signals'])} | {ratio(*r['methods'])} | {r['slots'] or '-'} | "
                  f"{'yes' if r['ownership'] else '-'} | {r['signal_results'] or '-'} | {r['bindings'] or '-'} | {ratio(*r['verified'])} | "
                  f"{r['gallery'] or '-'} | {r['lifetime'] or '-'} |")
@@ -239,7 +282,7 @@ def main() -> int:
     ap.add_argument("--check", action="store_true", help="fail if the checked-in reports are stale")
     a = ap.parse_args()
     stale = []
-    for tk, rows in (("gtk", gtk_rows()), ("qt", qt_rows())):
+    for tk, rows in (("gtk", gtk_rows()), ("qt", qt_rows()), ("appkit", appkit_rows())):
         for path, text in ((OUT / f"{tk}.md", render(tk, rows)),
                            (OUT / f"{tk}.json", json.dumps(sorted(rows, key=lambda r: r["kind"]), indent=1, sort_keys=True) + "\n")):
             if not path.exists() or path.read_text() != text:

@@ -19,3 +19,7 @@ svelters-apple.workspace = true
 objc2 = "0.6.5"
 objc2-foundation = { version = "0.3.2", default-features = false, features = ["std", "NSString", "NSValue", "NSObject", "NSNotification", "NSGeometry", "NSDate"] }
 objc2-app-kit = { version = "0.3.2", default-features = false, features = ["std", "NSApplication", "NSResponder", "NSRunningApplication", "NSWindow", "NSView", "NSEvent", "NSGraphics"] }
+
+# The runtime prober (examples/appkit_probe.rs, driven by tools/metadata/appkit/probe.py).
+[target.'cfg(target_os = "macos")'.dev-dependencies]
+serde_json.workspace = true

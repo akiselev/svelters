@@ -1,0 +1,270 @@
+{
+ "inferred": {},
+ "probe": false,
+ "promote_at": 0.9,
+ "rows": [
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSButton",
+   "name": "double-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSButton",
+   "name": "float-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSButton",
+   "name": "int-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSButton",
+   "name": "integer-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSButton",
+   "name": "string-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSSlider",
+   "name": "double-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSSlider",
+   "name": "float-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSSlider",
+   "name": "int-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSSlider",
+   "name": "integer-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSSlider",
+   "name": "string-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSTextField",
+   "name": "double-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSTextField",
+   "name": "float-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSTextField",
+   "name": "int-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSTextField",
+   "name": "integer-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSTextField",
+   "name": "string-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSTextField",
+   "name": "control-text-did-begin-editing",
+   "pattern": "signal:no-probe",
+   "section": "signals"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSView",
+   "name": "view-bounds-did-change",
+   "pattern": "signal:no-probe",
+   "section": "signals"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSView",
+   "name": "view-frame-did-change",
+   "pattern": "signal:no-probe",
+   "section": "signals"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSWindow",
+   "name": "window-did-become-key",
+   "pattern": "signal:no-probe",
+   "section": "signals"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSWindow",
+   "name": "window-did-become-main",
+   "pattern": "signal:no-probe",
+   "section": "signals"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSWindow",
+   "name": "window-did-change-backing-properties",
+   "pattern": "signal:no-probe",
+   "section": "signals"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSWindow",
+   "name": "window-did-change-occlusion-state",
+   "pattern": "signal:no-probe",
+   "section": "signals"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSWindow",
+   "name": "window-did-change-screen",
+   "pattern": "signal:no-probe",
+   "section": "signals"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSWindow",
+   "name": "window-did-deminiaturize",
+   "pattern": "signal:no-probe",
+   "section": "signals"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSWindow",
+   "name": "window-did-enter-full-screen",
+   "pattern": "signal:no-probe",
+   "section": "signals"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSWindow",
+   "name": "window-did-exit-full-screen",
+   "pattern": "signal:no-probe",
+   "section": "signals"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSWindow",
+   "name": "window-did-miniaturize",
+   "pattern": "signal:no-probe",
+   "section": "signals"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSWindow",
+   "name": "window-did-move",
+   "pattern": "signal:no-probe",
+   "section": "signals"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSWindow",
+   "name": "window-did-resign-key",
+   "pattern": "signal:no-probe",
+   "section": "signals"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSWindow",
+   "name": "window-did-resign-main",
+   "pattern": "signal:no-probe",
+   "section": "signals"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSWindow",
+   "name": "window-did-resize",
+   "pattern": "signal:no-probe",
+   "section": "signals"
+  }
+ ],
+ "schema": "svelters-inferred-review/v1",
+ "skipped": {
+  "binding:enum-prop": 1,
+  "binding:inherited": 1
+ },
+ "toolkit": "appkit",
+ "unreviewed": {
+  "by_pattern": {
+   "middle:binding:no-probe": 15,
+   "middle:signal:no-probe": 16
+  },
+  "low": 0,
+  "middle": 31
+ },
+ "version": "26.1"
+}

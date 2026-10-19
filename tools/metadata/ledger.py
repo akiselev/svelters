@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verified-facts ledger: metadata/verified/{gtk,qt}.json.
+"""Verified-facts ledger: metadata/verified/{gtk,qt,appkit}.json.
 
 Every annotated fact has generated tests: the manual facts (hand/agent annotations) and the inferred
 ones (metadata/inferred/<tk>, written by infer.py). The generators write a fact manifest (fact id ->
@@ -7,6 +7,7 @@ origin, test names + a fingerprint over the fact record and its test source):
 
   gtk: crates/svelters-gtk/src/generated/facts.json   (written by tools/metadata/gtk/gen_backend.py)
   qt:  produced on the fly by tools/metadata/qt/gen_cpp.py --facts
+  appkit: crates/svelters-appkit/src/generated/facts.json (tools/metadata/appkit/gen_backend.py)
 
 `refresh` runs the generated tests and records, per test: the fact id, the origin, the test id, the
 result, the fingerprint and the toolkit version. `check` fails when any manual fact lacks a passing
@@ -21,8 +22,16 @@ A parked fact stays out until its record changes (a new probe or rule) or the to
 `check` also fails when the checked-in probe (metadata/probe/<tk>/<version>.json) is not for the
 toolkit version in the ledger: the probe is a maintainer step, CI only checks it is current.
 
-  python3 tools/metadata/ledger.py refresh [--toolkit gtk|qt|all]   # needs a display or xvfb-run
-  python3 tools/metadata/ledger.py check   [--toolkit gtk|qt|all]
+  python3 tools/metadata/ledger.py refresh [--toolkit gtk|qt|appkit|all]   # needs a display or xvfb-run (appkit: a Mac)
+  python3 tools/metadata/ledger.py check   [--toolkit gtk|qt|appkit|all]
+  python3 tools/metadata/ledger.py import  --toolkit appkit RESULTS [--dry-run]
+
+`import` is for toolkits whose tests only run elsewhere (AppKit on the macOS CI runner): it reads a
+test-results file (JSON lines `{"test", "result": "pass"|"fail", "message"}` as written by
+svelters_apple::testing with SVELTERS_TEST_RESULTS, a JSON `{"results": [...]}` of the same records,
+or JUnit XML), matches the test names against the generator's facts manifest, parks failing inferred
+facts and regenerates (like refresh), and writes the ledger. `all` covers gtk, qt and every other
+toolkit that has a facts manifest and a ledger file.
 
 Cargo runs go through the machine-wide build queue `tools/dev/cargo-slot` (it sets
 CARGO_BUILD_JOBS, NEXTEST_TEST_THREADS and CARGO_BUILD_BUILD_DIR); without it, the environment's
@@ -42,6 +51,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 LEDGER_DIR = ROOT / "metadata/verified"
 GTK_FACTS = ROOT / "crates/svelters-gtk/src/generated/facts.json"
+# Facts manifests written by a generator (gtk is extended with the hand-written kinds below; qt is built on the fly).
+FACTS = {"gtk": GTK_FACTS, "appkit": ROOT / "crates/svelters-appkit/src/generated/facts.json"}
 
 
 def qt_facts() -> dict:
@@ -96,7 +107,9 @@ def manifest(tk: str) -> dict:
         m = json.loads(GTK_FACTS.read_text())
         m["facts"] = m["facts"] + gtk_extra_facts()
         return m
-    return qt_facts()
+    if tk == "qt":
+        return qt_facts()
+    return json.loads(FACTS[tk].read_text())
 
 
 def load(tk: str) -> dict:
@@ -205,10 +218,12 @@ def run_qt() -> dict[str, str]:
     return res
 
 
-PARKED = {"gtk": ROOT / "metadata/inferred/gtk/_parked.json"}
+PARKED = {"gtk": ROOT / "metadata/inferred/gtk/_parked.json", "appkit": ROOT / "metadata/inferred/appkit/_parked.json"}
 # What turns the merged metadata into the generated backend, in order (a parked fact leaves all of them).
 REGEN = {"gtk": [["tools/metadata/gtk/ingest.py"], ["tools/metadata/gtk/gen_backend.py"], ["tools/metadata/common/gen_bindings.py"],
-                 ["tools/metadata/semantics/gen_semantics.py"]]}
+                 ["tools/metadata/semantics/gen_semantics.py"]],
+         "appkit": [["tools/metadata/appkit/gen_backend.py"], ["tools/metadata/common/gen_bindings.py"],
+                    ["tools/metadata/semantics/gen_semantics.py"]]}
 
 
 def load_parked(tk: str) -> list[dict]:
@@ -249,9 +264,111 @@ def park(tk: str, man: dict, results: dict[str, str], msgs: dict[str, str]) -> b
     return True
 
 
+def read_results(path: Path) -> tuple[dict[str, str], dict[str, str]]:
+    """(test -> pass|fail|skip, test -> failure message) from JSON lines, a JSON document or JUnit XML. A test
+    reported more than once keeps its last result (a rerun)."""
+    text = path.read_text()
+    res: dict[str, str] = {}
+    msgs: dict[str, str] = {}
+    if text.lstrip().startswith("<"):
+        import xml.etree.ElementTree as ET
+        for tc in ET.fromstring(text).iter("testcase"):
+            name = tc.get("name") or ""
+            bad = tc.find("failure") if tc.find("failure") is not None else tc.find("error")
+            if bad is not None:
+                res[name] = "fail"
+                msgs[name] = (bad.get("message") or (bad.text or "").strip() or "failed")[:240]
+            else:
+                res[name] = "skip" if tc.find("skipped") is not None else "pass"
+        return res, msgs
+    try:
+        doc = json.loads(text)
+        recs = doc if isinstance(doc, list) else doc["results"] if "results" in doc else [doc]
+    except ValueError:
+        recs = [json.loads(line) for line in text.splitlines() if line.strip()]
+    for r in recs:
+        res[r["test"]] = r["result"]
+        if r["result"] != "pass" and r.get("message"):
+            msgs[r["test"]] = r["message"][:240]
+        else:
+            msgs.pop(r["test"], None)
+    return res, msgs
+
+
+def record(tk: str, man: dict, results: dict[str, str], write: bool = True) -> tuple[list[dict], int, int]:
+    """Ledger entries for every test of the manifest: (entries, manual not passing, inferred not passing)."""
+    entries, bad, soft = [], 0, 0
+    for f in man["facts"]:
+        for t in f["tests"]:
+            r = results.get(t, "missing")
+            if r != "pass":
+                if f.get("origin") == "inferred":
+                    soft += 1
+                else:
+                    bad += 1
+            entries.append({"fact": f["fact"], "origin": f.get("origin", "manual"), "test": t, "result": r,
+                            "fingerprint": f["fingerprint"], "version": man["version"]})
+    if write:
+        save(tk, man["version"], entries)
+    return entries, bad, soft
+
+
+def import_results(tk: str, path: Path, dry_run: bool = False) -> int:
+    """Record results produced elsewhere (CI artifact) against the current facts manifest; park failing inferred
+    facts and regenerate (their tests leave the manifest; the remaining facts keep their fingerprints)."""
+    results, msgs = read_results(path)
+    man = manifest(tk)
+    known = {t for f in man["facts"] for t in f["tests"]}
+    stray = sorted(set(results) - known)
+    if dry_run:
+        entries, bad, soft = record(tk, man, results, write=False)
+        old = {(e["fact"], e["test"]): (e["result"], e["fingerprint"]) for e in load(tk)["entries"]}
+        changed = sum(1 for e in entries if old.get((e["fact"], e["test"])) != (e["result"], e["fingerprint"]))
+        fails = sorted(t for f in man["facts"] for t in f["tests"] if results.get(t, "missing") != "pass")
+        print(f"ledger {tk} (dry run): {len(results)} results, {len(man['facts'])} facts, {bad} manual and {soft} inferred not passing, "
+              f"{changed} entries would change, {len(stray)} results without a fact")
+        for t in fails[:60]:
+            print(f"  {results.get(t, 'missing')}: {t}" + (f": {msgs[t]}" if t in msgs else ""))
+        return 0
+    if park(tk, man, results, msgs):
+        regenerate(tk)
+        man = manifest(tk)
+    _, bad, soft = record(tk, man, results)
+    if tk in GEN_AFTER_LEDGER:
+        subprocess.run([sys.executable, str(ROOT / GEN_AFTER_LEDGER[tk])], cwd=ROOT, check=True)
+    n = sum(len(f["tests"]) for f in man["facts"])
+    print(f"ledger {tk}: imported {path.name}: {len(man['facts'])} facts, {n} tests, {bad} manual not passing, {soft} inferred not passing, "
+          f"{len(load_parked(tk))} parked, {len(stray)} results without a fact")
+    return 1 if bad else 0
+
+
+# Generators whose output reads the ledger (typings mark unverified facts); rerun after it changes.
+GEN_AFTER_LEDGER = {"gtk": "tools/metadata/gtk/gen_backend.py"}
+
+
+def run_appkit() -> tuple[dict[str, str], dict[str, str]]:
+    """The generated AppKit tests on this Mac (svelters_apple::testing writes the results file)."""
+    if sys.platform != "darwin":
+        raise SystemExit("ledger: AppKit tests run on macOS; elsewhere import the CI results (ledger.py import --toolkit appkit FILE)")
+    with tempfile.TemporaryDirectory() as d:
+        out = Path(d) / "results.jsonl"
+        e = env()
+        e["SVELTERS_TEST_RESULTS"] = str(out)
+        subprocess.run(display_prefix() + ["cargo", "test", "-p", "counter-mac", "--test", "generated"], cwd=ROOT, env=e)
+        if not out.exists():
+            raise SystemExit("ledger: no AppKit test results (build failure?)")
+        return read_results(out)
+
+
 def refresh(tk: str) -> int:
     man = manifest(tk)
-    if tk == "gtk":
+    if tk == "appkit":
+        results, msgs = run_appkit()
+        if park(tk, man, results, msgs):
+            regenerate(tk)
+            man = manifest(tk)
+            results, msgs = run_appkit()
+    elif tk == "gtk":
         results, msgs = run_gtk()
         for _ in range(4):
             if not park(tk, man, results, msgs):
@@ -268,29 +385,21 @@ def refresh(tk: str) -> int:
                 msgs.update(m2)
     else:
         results = run_qt()
-    entries, bad, soft = [], 0, 0
-    for f in man["facts"]:
-        for t in f["tests"]:
-            r = results.get(t, "missing")
-            if r != "pass":
-                if f.get("origin") == "inferred":
-                    soft += 1
-                else:
-                    bad += 1
-            entries.append({"fact": f["fact"], "origin": f.get("origin", "manual"), "test": t, "result": r,
-                            "fingerprint": f["fingerprint"], "version": man["version"]})
-    save(tk, man["version"], entries)
-    if tk == "gtk":
-        subprocess.run([sys.executable, str(ROOT / "tools/metadata/gtk/gen_backend.py")], cwd=ROOT, check=True)   # typings read the ledger
+    _, bad, soft = record(tk, man, results)
+    if tk in GEN_AFTER_LEDGER:
+        subprocess.run([sys.executable, str(ROOT / GEN_AFTER_LEDGER[tk])], cwd=ROOT, check=True)   # typings read the ledger
     n = sum(len(f["tests"]) for f in man["facts"])
     parked = len(load_parked(tk))
     print(f"ledger {tk}: {len(man['facts'])} facts, {n} tests, {bad} manual not passing, {soft} inferred not passing, {parked} parked")
     return 1 if bad else 0
 
 
+PROBED = {"gtk", "appkit"}
+
+
 def probe_problems(tk: str, version: str) -> list[str]:
     """The checked-in probe must be for the toolkit version the ledger was refreshed on."""
-    if tk != "gtk":
+    if tk not in PROBED:
         return []
     p = ROOT / f"metadata/probe/{tk}/{version}.json"
     if not p.exists():
@@ -335,7 +444,7 @@ def check(tk: str) -> int:
             print("  " + p, file=sys.stderr)
         return 1
     manual = sum(1 for f in man["facts"] if f.get("origin") != "inferred")
-    extra = f"; inferred {inferred['pass']} verified, {inferred['pending']} pending, {len(load_parked(tk))} parked" if tk == "gtk" else ""
+    extra = f"; inferred {inferred['pass']} verified, {inferred['pending']} pending, {len(load_parked(tk))} parked" if tk in PARKED else ""
     print(f"ledger {tk}: {manual} manual facts verified{extra}")
     return 0
 
@@ -349,13 +458,24 @@ def verified_facts(tk: str) -> set[str]:
     return {f for f, ok in by.items() if ok}
 
 
+def toolkits_all() -> list[str]:
+    """gtk and qt, plus each toolkit with a facts manifest whose results arrive by import once it has a ledger."""
+    return ["gtk", "qt"] + [tk for tk, p in FACTS.items() if tk not in ("gtk", "qt") and p.exists() and (LEDGER_DIR / f"{tk}.json").exists()]
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("cmd", choices=["refresh", "check"])
-    ap.add_argument("--toolkit", default="all", choices=["gtk", "qt", "all"])
+    ap.add_argument("cmd", choices=["refresh", "check", "import"])
+    ap.add_argument("results", nargs="?", type=Path, help="import: the test-results file (JSON lines, JSON or JUnit XML)")
+    ap.add_argument("--toolkit", default="all", choices=["gtk", "qt", "appkit", "all"])
+    ap.add_argument("--dry-run", action="store_true", help="import: report what would change, write nothing")
     a = ap.parse_args()
+    if a.cmd == "import":
+        if a.toolkit not in FACTS or a.toolkit == "gtk" or a.results is None:
+            ap.error("import needs --toolkit appkit and a results file")
+        return import_results(a.toolkit, a.results, a.dry_run)
     rc = 0
-    for tk in (["gtk", "qt"] if a.toolkit == "all" else [a.toolkit]):
+    for tk in (toolkits_all() if a.toolkit == "all" else [a.toolkit]):
         rc |= (refresh if a.cmd == "refresh" else check)(tk)
     return rc
 
