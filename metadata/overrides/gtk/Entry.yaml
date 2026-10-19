@@ -1,4 +1,7 @@
 properties:
+  - name: invisible-char
+    sample: 9679   # U+25CF BLACK CIRCLE; a gunichar, carried as a u32
+    provenance: "GtkEntry:invisible-char (Gtk 4 docs); the probe errors on ParamSpecUnichar, so the sample is manual (AI1 review 2026-10-19, docs/notes/ai1-gtk-review.md)"
   - name: placeholder-text
     provenance: "GtkEntry:placeholder-text (Gtk 4 docs); P prop, JS name 'placeholder'"
   - name: visibility

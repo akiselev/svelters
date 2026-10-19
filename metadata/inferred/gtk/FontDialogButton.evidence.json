@@ -129,6 +129,19 @@
    "signals": []
   }
  },
+ "properties:language": {
+  "confidence": 0.8,
+  "evidence": {
+   "log": [],
+   "outcome": "identity",
+   "type": "PangoLanguage"
+  },
+  "review": {
+   "decision": "accept",
+   "reason": "PangoLanguage boxed, interned; opaque handle or null round trip",
+   "reviewer": "claude-opus-5.5 (AI1 review, 2026-10-19)"
+  }
+ },
  "properties:level": {
   "confidence": 0.95,
   "evidence": {

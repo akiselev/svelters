@@ -644,6 +644,30 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:artists",
+   "fingerprint": "b552c4d849a0efe0",
+   "kind": "AboutDialog",
+   "name": "artists",
+   "origin": "inferred",
+   "record_fp": "e1ac6f44e4a48285",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_aboutdialog_artists"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:authors",
+   "fingerprint": "769db6851b3b7d35",
+   "kind": "AboutDialog",
+   "name": "authors",
+   "origin": "inferred",
+   "record_fp": "3a10a16f0a3af954",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_aboutdialog_authors"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:comments",
    "fingerprint": "08c679ef7f4d3e14",
    "kind": "AboutDialog",
@@ -663,6 +687,18 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_aboutdialog_copyright"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:documenters",
+   "fingerprint": "7117d71734e51381",
+   "kind": "AboutDialog",
+   "name": "documenters",
+   "origin": "inferred",
+   "record_fp": "5e30285e49cce925",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_aboutdialog_documenters"
    ]
   },
   {
@@ -686,6 +722,18 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_aboutdialog_license_type"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:logo",
+   "fingerprint": "dd6ed6ca40465d3c",
+   "kind": "AboutDialog",
+   "name": "logo",
+   "origin": "inferred",
+   "record_fp": "efbd5082185a7489",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_aboutdialog_logo"
    ]
   },
   {
@@ -1151,6 +1199,18 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Actionable:prop:action-target",
+   "fingerprint": "d089fd231d33f786",
+   "kind": "Actionable",
+   "name": "action-target",
+   "origin": "inferred",
+   "record_fp": "d5eaf8c659b37eb1",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_actionable_action_target"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Actionable:method:get_action_name",
    "fingerprint": "93f01284e34f9254",
    "kind": "Actionable",
@@ -1389,7 +1449,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:AspectFrame:prop:xalign",
-   "fingerprint": "c835e76f41ee23c7",
+   "fingerprint": "4304cca525433be0",
    "kind": "AspectFrame",
    "name": "xalign",
    "origin": "manual",
@@ -1400,7 +1460,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:AspectFrame:prop:yalign",
-   "fingerprint": "f0f4a17d9c262261",
+   "fingerprint": "5ae17cee17f77465",
    "kind": "AspectFrame",
    "name": "yalign",
    "origin": "manual",
@@ -1479,6 +1539,30 @@
    "section": "methods",
    "tests": [
     "generated::verify::method_aspectframe_set_ratio"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:AspectFrame:method:set_xalign",
+   "fingerprint": "fa0338dd963c72d9",
+   "kind": "AspectFrame",
+   "name": "set_xalign",
+   "origin": "inferred",
+   "record_fp": "1c26f09410897297",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_aspectframe_set_xalign"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:AspectFrame:method:set_yalign",
+   "fingerprint": "6392569f79250bef",
+   "kind": "AspectFrame",
+   "name": "set_yalign",
+   "origin": "inferred",
+   "record_fp": "216d25aaf654d998",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_aspectframe_set_yalign"
    ]
   },
   {
@@ -3077,6 +3161,18 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:attributes",
+   "fingerprint": "753ec184174ad87a",
+   "kind": "Entry",
+   "name": "attributes",
+   "origin": "inferred",
+   "record_fp": "f810d8fa8c3b0498",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_entry_attributes"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:buffer",
    "fingerprint": "7d569faab7eb829c",
    "kind": "Entry",
@@ -3136,6 +3232,18 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:input-hints",
+   "fingerprint": "604d722e2ea9f532",
+   "kind": "Entry",
+   "name": "input-hints",
+   "origin": "inferred",
+   "record_fp": "8439ae20df0f65f3",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_entry_input_hints"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:input-purpose",
    "fingerprint": "7036d9851ee9d144",
    "kind": "Entry",
@@ -3144,6 +3252,17 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_entry_input_purpose"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:invisible-char",
+   "fingerprint": "e92e07b978870d32",
+   "kind": "Entry",
+   "name": "invisible-char",
+   "origin": "manual",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_entry_invisible_char"
    ]
   },
   {
@@ -3228,6 +3347,18 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:primary-icon-gicon",
+   "fingerprint": "9673ba55b76d1e9d",
+   "kind": "Entry",
+   "name": "primary-icon-gicon",
+   "origin": "inferred",
+   "record_fp": "ed601dd3c055671a",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_entry_primary_icon_gicon"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:primary-icon-name",
    "fingerprint": "29cafb6682fd5abd",
    "kind": "Entry",
@@ -3237,6 +3368,18 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_entry_primary_icon_name"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:primary-icon-paintable",
+   "fingerprint": "48ab972b91a9b5ec",
+   "kind": "Entry",
+   "name": "primary-icon-paintable",
+   "origin": "inferred",
+   "record_fp": "a56c334d87d37670",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_entry_primary_icon_paintable"
    ]
   },
   {
@@ -3312,6 +3455,18 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:secondary-icon-gicon",
+   "fingerprint": "f09946e4619fcf23",
+   "kind": "Entry",
+   "name": "secondary-icon-gicon",
+   "origin": "inferred",
+   "record_fp": "3a266b43a616170b",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_entry_secondary_icon_gicon"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:secondary-icon-name",
    "fingerprint": "55c528ba1a03d95d",
    "kind": "Entry",
@@ -3321,6 +3476,18 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_entry_secondary_icon_name"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:secondary-icon-paintable",
+   "fingerprint": "f48eb3f4dc59d20a",
+   "kind": "Entry",
+   "name": "secondary-icon-paintable",
+   "origin": "inferred",
+   "record_fp": "98afd3ccd1642ca6",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_entry_secondary_icon_paintable"
    ]
   },
   {
@@ -3369,6 +3536,18 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_entry_show_emoji_icon"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:tabs",
+   "fingerprint": "6643a7b14f4ebc10",
+   "kind": "Entry",
+   "name": "tabs",
+   "origin": "inferred",
+   "record_fp": "6932648669c36657",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_entry_tabs"
    ]
   },
   {
@@ -4709,6 +4888,18 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:prop:language",
+   "fingerprint": "7e03ef22660b1348",
+   "kind": "FontDialogButton",
+   "name": "language",
+   "origin": "inferred",
+   "record_fp": "e236d52555922553",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_fontdialogbutton_language"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:prop:level",
    "fingerprint": "bd6368573d6cabec",
    "kind": "FontDialogButton",
@@ -5594,6 +5785,18 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Inscription:prop:attributes",
+   "fingerprint": "25b0c55a02fc9f63",
+   "kind": "Inscription",
+   "name": "attributes",
+   "origin": "inferred",
+   "record_fp": "f810d8fa8c3b0498",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_inscription_attributes"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Inscription:prop:min-chars",
    "fingerprint": "f41165f5dc2c6cfe",
    "kind": "Inscription",
@@ -5684,6 +5887,18 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_inscription_xalign"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Inscription:prop:yalign",
+   "fingerprint": "83c67899d128c723",
+   "kind": "Inscription",
+   "name": "yalign",
+   "origin": "inferred",
+   "record_fp": "1902f2df80ec892e",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_inscription_yalign"
    ]
   },
   {
@@ -5794,6 +6009,17 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Inscription:method:set_markup",
+   "fingerprint": "fce15b127b9881e5",
+   "kind": "Inscription",
+   "name": "set_markup",
+   "origin": "manual",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_inscription_set_markup"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Inscription:method:set_min_chars",
    "fingerprint": "c4cc3d5be446bf90",
    "kind": "Inscription",
@@ -5887,6 +6113,18 @@
    "section": "methods",
    "tests": [
     "generated::verify::method_inscription_set_xalign"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Inscription:method:set_yalign",
+   "fingerprint": "8ab613b5a4adc9d2",
+   "kind": "Inscription",
+   "name": "set_yalign",
+   "origin": "inferred",
+   "record_fp": "216d25aaf654d998",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_inscription_set_yalign"
    ]
   },
   {
@@ -6010,6 +6248,18 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Label:prop:attributes",
+   "fingerprint": "0cf37920f5dd81f6",
+   "kind": "Label",
+   "name": "attributes",
+   "origin": "inferred",
+   "record_fp": "f810d8fa8c3b0498",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_label_attributes"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Label:prop:ellipsize",
    "fingerprint": "7c21cb0e5ca5bec7",
    "kind": "Label",
@@ -6112,6 +6362,18 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Label:prop:tabs",
+   "fingerprint": "f34b56e615ba684b",
+   "kind": "Label",
+   "name": "tabs",
+   "origin": "inferred",
+   "record_fp": "6932648669c36657",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_label_tabs"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Label:prop:use-markup",
    "fingerprint": "94f306a513798a22",
    "kind": "Label",
@@ -6169,7 +6431,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Label:prop:xalign",
-   "fingerprint": "4844a19f1660b072",
+   "fingerprint": "d06396b2c2957dc4",
    "kind": "Label",
    "name": "xalign",
    "origin": "manual",
@@ -6180,7 +6442,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Label:prop:yalign",
-   "fingerprint": "e2cd8079d2f8e2a7",
+   "fingerprint": "1df48467c3ee8fcc",
    "kind": "Label",
    "name": "yalign",
    "origin": "manual",
@@ -6568,6 +6830,30 @@
    "section": "methods",
    "tests": [
     "generated::verify::method_label_set_wrap_mode"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Label:method:set_xalign",
+   "fingerprint": "4a4257ca0022b61e",
+   "kind": "Label",
+   "name": "set_xalign",
+   "origin": "inferred",
+   "record_fp": "1c26f09410897297",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_label_set_xalign"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Label:method:set_yalign",
+   "fingerprint": "eb439bf7c7ccbc7c",
+   "kind": "Label",
+   "name": "set_yalign",
+   "origin": "inferred",
+   "record_fp": "216d25aaf654d998",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_label_set_yalign"
    ]
   },
   {
@@ -7559,6 +7845,18 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:MediaControls:prop:media-stream",
+   "fingerprint": "760afe7dd19741ae",
+   "kind": "MediaControls",
+   "name": "media-stream",
+   "origin": "inferred",
+   "record_fp": "dbe529c68b7ca6c1",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_mediacontrols_media_stream"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:MenuButton:signal:activate",
    "fingerprint": "ee8e159d5bf677c1",
    "kind": "MenuButton",
@@ -8212,6 +8510,18 @@
    "section": "methods",
    "tests": [
     "generated::verify::method_notebook_get_tab_pos"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Notebook:method:popup_enable",
+   "fingerprint": "db5500d2b73cb888",
+   "kind": "Notebook",
+   "name": "popup_enable",
+   "origin": "inferred",
+   "record_fp": "417d8fa92b4a1b65",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_notebook_popup_enable"
    ]
   },
   {
@@ -9118,6 +9428,17 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Popover:prop:pointing-to",
+   "fingerprint": "1ba77dae46884b39",
+   "kind": "Popover",
+   "name": "pointing-to",
+   "origin": "manual",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_popover_pointing_to"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Popover:prop:position",
    "fingerprint": "8682506583abde67",
    "kind": "Popover",
@@ -9328,6 +9649,18 @@
    "section": "bindings",
    "tests": [
     "generated::verify::binding_popover_position"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:PopoverMenu:prop:flags",
+   "fingerprint": "ddc3906c17331397",
+   "kind": "PopoverMenu",
+   "name": "flags",
+   "origin": "inferred",
+   "record_fp": "b2e3c463c7c2039c",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_popovermenu_flags"
    ]
   },
   {
@@ -11347,6 +11680,18 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:SearchEntry:prop:input-hints",
+   "fingerprint": "e85aac7b611a63af",
+   "kind": "SearchEntry",
+   "name": "input-hints",
+   "origin": "inferred",
+   "record_fp": "8439ae20df0f65f3",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_searchentry_input_hints"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:SearchEntry:prop:input-purpose",
    "fingerprint": "46c45cb6e5c8273b",
    "kind": "SearchEntry",
@@ -12180,6 +12525,17 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Stack:prop:visible-child-name",
+   "fingerprint": "2159585e0d352252",
+   "kind": "Stack",
+   "name": "visible-child-name",
+   "origin": "manual",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_stack_visible_child_name"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Stack:method:get_hhomogeneous",
    "fingerprint": "61d2057a77867e08",
    "kind": "Stack",
@@ -12321,6 +12677,17 @@
    "section": "methods",
    "tests": [
     "generated::verify::method_stack_set_vhomogeneous"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Stack:method:set_visible_child_name",
+   "fingerprint": "5162ac2aede640ab",
+   "kind": "Stack",
+   "name": "set_visible_child_name",
+   "origin": "manual",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_stack_set_visible_child_name"
    ]
   },
   {
@@ -12592,6 +12959,19 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Text:signal:preedit-changed",
+   "fingerprint": "6a03cf08a439e76b",
+   "kind": "Text",
+   "name": "preedit-changed",
+   "origin": "inferred",
+   "record_fp": "bcb9ed2a2be5626b",
+   "section": "signals",
+   "strength": "delivery",
+   "tests": [
+    "generated::verify::signal_text_preedit_changed"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Text:signal:toggle-overwrite",
    "fingerprint": "924ea49979a53698",
    "kind": "Text",
@@ -12612,6 +12992,18 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_text_activates_default"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Text:prop:attributes",
+   "fingerprint": "c4826c6cfeb87584",
+   "kind": "Text",
+   "name": "attributes",
+   "origin": "inferred",
+   "record_fp": "f810d8fa8c3b0498",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_text_attributes"
    ]
   },
   {
@@ -12663,6 +13055,18 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Text:prop:input-hints",
+   "fingerprint": "c2eaeefd45ecfb98",
+   "kind": "Text",
+   "name": "input-hints",
+   "origin": "inferred",
+   "record_fp": "8439ae20df0f65f3",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_text_input_hints"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Text:prop:input-purpose",
    "fingerprint": "a6b569a3490d9e61",
    "kind": "Text",
@@ -12672,6 +13076,17 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_text_input_purpose"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Text:prop:invisible-char",
+   "fingerprint": "8009b0d116031789",
+   "kind": "Text",
+   "name": "invisible-char",
+   "origin": "manual",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_text_invisible_char"
    ]
   },
   {
@@ -12729,6 +13144,18 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_text_propagate_text_width"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Text:prop:tabs",
+   "fingerprint": "ac669abc482ab123",
+   "kind": "Text",
+   "name": "tabs",
+   "origin": "inferred",
+   "record_fp": "6932648669c36657",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_text_tabs"
    ]
   },
   {
@@ -13284,6 +13711,19 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:TextView:signal:preedit-changed",
+   "fingerprint": "df606554e9a6e959",
+   "kind": "TextView",
+   "name": "preedit-changed",
+   "origin": "inferred",
+   "record_fp": "bcb9ed2a2be5626b",
+   "section": "signals",
+   "strength": "delivery",
+   "tests": [
+    "generated::verify::signal_textview_preedit_changed"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:TextView:signal:select-all",
    "fingerprint": "dca9329bc19170d8",
    "kind": "TextView",
@@ -13438,6 +13878,18 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:TextView:prop:input-hints",
+   "fingerprint": "61aafad85b4b3543",
+   "kind": "TextView",
+   "name": "input-hints",
+   "origin": "inferred",
+   "record_fp": "8439ae20df0f65f3",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_textview_input_hints"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:TextView:prop:input-purpose",
    "fingerprint": "2242caabe1e8eddf",
    "kind": "TextView",
@@ -13540,6 +13992,18 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_textview_right_margin"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:TextView:prop:tabs",
+   "fingerprint": "d6b46f0fa449c408",
+   "kind": "TextView",
+   "name": "tabs",
+   "origin": "inferred",
+   "record_fp": "6932648669c36657",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_textview_tabs"
    ]
   },
   {
@@ -14299,6 +14763,18 @@
    "section": "properties",
    "tests": [
     "generated::verify::prop_video_loop"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Video:prop:media-stream",
+   "fingerprint": "12910b537d5e523a",
+   "kind": "Video",
+   "name": "media-stream",
+   "origin": "inferred",
+   "record_fp": "dbe529c68b7ca6c1",
+   "section": "properties",
+   "tests": [
+    "generated::verify::prop_video_media_stream"
    ]
   },
   {
@@ -15472,6 +15948,17 @@
    "section": "methods",
    "tests": [
     "generated::verify::method_widget_set_name"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_opacity",
+   "fingerprint": "c45a287f5c7a8765",
+   "kind": "Widget",
+   "name": "set_opacity",
+   "origin": "manual",
+   "section": "methods",
+   "tests": [
+    "generated::verify::method_widget_set_opacity"
    ]
   },
   {

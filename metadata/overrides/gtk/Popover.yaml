@@ -1,4 +1,7 @@
 properties:
+  - name: pointing-to
+    setup: 'h.obj(o).set_property("pointing-to", &gtk::gdk::Rectangle::new(1, 2, 3, 4));'
+    provenance: "GtkPopover:pointing-to (Gtk 4 docs); GTK raises width and height to at least 1, so the unset 0x0 rectangle does not round trip; the test starts from 1,2 3x4 (AI1 review 2026-10-19, docs/notes/ai1-gtk-review.md)"
   - name: autohide
     provenance: "GtkPopover:autohide (Gtk 4 docs)"
   - name: has-arrow

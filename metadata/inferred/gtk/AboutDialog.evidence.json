@@ -243,6 +243,32 @@
    "sample": true
   }
  },
+ "properties:artists": {
+  "confidence": 0.8,
+  "evidence": {
+   "log": [],
+   "outcome": "identity",
+   "type": "GStrv"
+  },
+  "review": {
+   "decision": "accept",
+   "reason": "GStrv round-trips through the list<string> converter both ways; the probe only lacked a non-empty sample",
+   "reviewer": "claude-opus-5.5 (AI1 review, 2026-10-19)"
+  }
+ },
+ "properties:authors": {
+  "confidence": 0.8,
+  "evidence": {
+   "log": [],
+   "outcome": "identity",
+   "type": "GStrv"
+  },
+  "review": {
+   "decision": "accept",
+   "reason": "GStrv round-trips through the list<string> converter both ways; the probe only lacked a non-empty sample",
+   "reviewer": "claude-opus-5.5 (AI1 review, 2026-10-19)"
+  }
+ },
  "properties:comments": {
   "confidence": 0.95,
   "evidence": {
@@ -271,6 +297,19 @@
    "reset_log": [],
    "sample": "svl probe",
    "signals": []
+  }
+ },
+ "properties:documenters": {
+  "confidence": 0.8,
+  "evidence": {
+   "log": [],
+   "outcome": "identity",
+   "type": "GStrv"
+  },
+  "review": {
+   "decision": "accept",
+   "reason": "GStrv round-trips through the list<string> converter both ways; the probe only lacked a non-empty sample",
+   "reviewer": "claude-opus-5.5 (AI1 review, 2026-10-19)"
   }
  },
  "properties:license": {
@@ -303,6 +342,19 @@
    "reset_log": [],
    "sample": "custom",
    "signals": []
+  }
+ },
+ "properties:logo": {
+  "confidence": 0.8,
+  "evidence": {
+   "log": [],
+   "outcome": "identity",
+   "type": "GdkPaintable"
+  },
+  "review": {
+   "decision": "accept",
+   "reason": "GdkPaintable with a string form (image path) and bytes form; null round trip; the dialog renders it lazily",
+   "reviewer": "claude-opus-5.5 (AI1 review, 2026-10-19)"
   }
  },
  "properties:logo-icon-name": {

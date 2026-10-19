@@ -1,4 +1,8 @@
 properties:
+  - name: visible-child-name
+    sample: b
+    setup: 'let s = h.obj(o).downcast::<gtk::Stack>().unwrap(); s.add_named(&gtk::Label::new(None), Some("a")); s.add_named(&gtk::Label::new(None), Some("b"));'
+    provenance: "GtkStack:visible-child-name (Gtk 4 docs); names an existing page, so the test adds pages a and b; the probe's unknown name was ignored (AI1 review 2026-10-19, docs/notes/ai1-gtk-review.md)"
   - name: visible-child
     provenance: "GtkStack:visible-child (Gtk 4 docs); object reference, round trip"
   - name: transition-type
@@ -69,3 +73,10 @@ children:
         remove: {native: "GtkStack::remove(GtkWidget*)", args: [child], effects: {child: unparented}}
       verify: {}
       provenance: [{origin: gir, ref: "gtk_stack_add_child"}, {origin: gir, ref: "gtk_stack_remove"}]
+methods:
+  - name: set_visible_child_name
+    dispatch: dynamic
+    setup: 'let s = h.obj(o).downcast::<gtk::Stack>().unwrap(); s.add_named(&gtk::Label::new(None), Some("a")); s.add_named(&gtk::Label::new(None), Some("b"));'
+    args: [b]
+    expect: 'h.get(o, "visible-child-name") == V::Str("b".into())'
+    provenance: "gtk_stack_set_visible_child_name (Gtk 4 docs); needs an existing page, as the property; called through GIRepository (X1) (AI1 review 2026-10-19, docs/notes/ai1-gtk-review.md)"

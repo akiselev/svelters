@@ -1,4 +1,11 @@
 properties:
+- name: attributes
+  provenance:
+  - origin: probe
+    ref: round trip identity
+  - origin: manual
+    ref: 'review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): real boxed property (Pango); no string form yet, so JS carries it as an opaque
+      boxed handle; the round trip is what the converter guarantees'
 - name: min-chars
   sample: 4
   provenance:
@@ -39,6 +46,11 @@ properties:
   provenance:
   - origin: probe
     ref: round trip exact; notify fired
+- name: yalign
+  sample: 0.25
+  provenance:
+  - origin: rule
+    ref: float sample 0.25 from the GIR range [0.0, 1.0]; the probe left it unsampled
 signals:
 - name: notify::min-chars
   derived_from:
@@ -343,6 +355,14 @@ methods:
   provenance:
   - origin: probe
     ref: 'set then read property xalign: exact'
+- name: set_yalign
+  dispatch: dynamic
+  args:
+  - 0.25
+  expect: h.get(o, "yalign") == V::F64(0.25)
+  provenance:
+  - origin: rule
+    ref: set then read property yalign; float sample 0.25 from the GIR range, the probe left it unsampled
 bindings:
 - name: min-chars
   direction: two_way

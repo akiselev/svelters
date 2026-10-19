@@ -748,6 +748,12 @@
         "origin": "inferred"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_opacity",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_opacity",
+        "origin": "manual"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_overflow",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "set_overflow",
@@ -2473,6 +2479,21 @@
         "get": "gtk_about_dialog_get_artists",
         "set": "gtk_about_dialog_set_artists"
       },
+      "annotated": {
+        "fields": [],
+        "fp": "e1ac6f44e4a48285",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip identity"
+          },
+          {
+            "origin": "manual",
+            "ref": "review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): GStrv round-trips through the list<string> converter both ways; the probe only lacked a non-empty sample"
+          }
+        ]
+      },
       "default": "[]",
       "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:artists",
       "invocation": "reflected",
@@ -2512,6 +2533,21 @@
       "accessors": {
         "get": "gtk_about_dialog_get_authors",
         "set": "gtk_about_dialog_set_authors"
+      },
+      "annotated": {
+        "fields": [],
+        "fp": "3a10a16f0a3af954",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip identity"
+          },
+          {
+            "origin": "manual",
+            "ref": "review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): GStrv round-trips through the list<string> converter both ways; the probe only lacked a non-empty sample"
+          }
+        ]
       },
       "default": "[]",
       "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:authors",
@@ -2644,6 +2680,21 @@
       "accessors": {
         "get": "gtk_about_dialog_get_documenters",
         "set": "gtk_about_dialog_set_documenters"
+      },
+      "annotated": {
+        "fields": [],
+        "fp": "5e30285e49cce925",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip identity"
+          },
+          {
+            "origin": "manual",
+            "ref": "review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): GStrv round-trips through the list<string> converter both ways; the probe only lacked a non-empty sample"
+          }
+        ]
       },
       "default": "[]",
       "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:documenters",
@@ -2784,6 +2835,21 @@
       "accessors": {
         "get": "gtk_about_dialog_get_logo",
         "set": "gtk_about_dialog_set_logo"
+      },
+      "annotated": {
+        "fields": [],
+        "fp": "efbd5082185a7489",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip identity"
+          },
+          {
+            "origin": "manual",
+            "ref": "review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): GdkPaintable with a string form (image path) and bytes form; null round trip; the dialog renders it lazily"
+          }
+        ]
       },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:logo",

@@ -235,6 +235,16 @@ methods:
   provenance:
   - origin: probe
     ref: equals property tab-pos
+- name: popup_enable
+  dispatch: dynamic
+  args: []
+  expect: h.get(o, "enable-popup") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: changes enable-popup to True
+  - origin: manual
+    ref: 'review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): sets enable-popup to true and nothing else (gtk_notebook_popup_enable); no
+      window or main loop needed'
 - name: set_group_name
   dispatch: dynamic
   args:

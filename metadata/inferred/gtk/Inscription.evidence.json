@@ -216,6 +216,27 @@
    "sample": 1.0
   }
  },
+ "methods:set_yalign": {
+  "confidence": 0.9,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "no_sample",
+   "prop": "yalign"
+  }
+ },
+ "properties:attributes": {
+  "confidence": 0.8,
+  "evidence": {
+   "log": [],
+   "outcome": "identity",
+   "type": "PangoAttrList"
+  },
+  "review": {
+   "decision": "accept",
+   "reason": "real boxed property (Pango); no string form yet, so JS carries it as an opaque boxed handle; the round trip is what the converter guarantees",
+   "reviewer": "claude-opus-5.5 (AI1 review, 2026-10-19)"
+  }
+ },
  "properties:min-chars": {
   "confidence": 0.95,
   "evidence": {
@@ -334,6 +355,14 @@
    "reset_log": [],
    "sample": 1.0,
    "signals": []
+  }
+ },
+ "properties:yalign": {
+  "confidence": 0.9,
+  "evidence": {
+   "log": [],
+   "outcome": "identity",
+   "type": "gfloat"
   }
  }
 }

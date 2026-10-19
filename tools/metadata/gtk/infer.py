@@ -8,16 +8,18 @@ Inputs (a pure function of these; no GTK, display, clock or network):
                                    are never read back, so rerunning is idempotent)
   metadata/probe/gtk/<version>.json  tools/metadata/gtk/probe.py output (a maintainer step)
   metadata/rules/gtk.yaml          denylist, reference names, recipes, thresholds
-  metadata/overrides/gtk/*.yaml    only to avoid proposing slots for a kind that has hand-written ones
+  metadata/overrides/gtk/*.yaml    only to avoid proposing slots for a kind that has hand-written ones, and to check
+                                   that a review decision `override` names a manual record
+  metadata/inferred/gtk/_reviewed.yaml  review decisions on facts below promote_at (see REVIEWED below)
 
 Outputs (byte-identical on rerun):
   metadata/inferred/gtk/<Kind>.yaml           facts with confidence >= promote_at, in the override schema
                                               (tools/metadata/gtk/override.schema.json). ingest.py merges them
                                               under the manual overrides.
   metadata/inferred/gtk/<Kind>.evidence.json  confidence and the probe excerpt of every fact, for review
-  metadata/inferred/gtk/_review.json          facts below promote_at (middle and low band) and the counts of
-                                              what was denied or skipped, by pattern. Nothing reads it back:
-                                              those facts stay unreviewed.
+  metadata/inferred/gtk/_review.json          facts below promote_at (middle and low band) that no decision in
+                                              _reviewed.yaml covers, the counts of decided ones, and the counts of
+                                              what was denied or skipped, by pattern.
 
 Rules (plans/research/ANNOTATION-AUTOMATION.md section 2): P1/P3 props with the probe's sample, M1 accessor,
 getter and action methods, M2 deny-by-pattern, R1/R2 signal results and triggers (a property set, an action
@@ -48,6 +50,19 @@ OVERRIDES = ROOT / "metadata/overrides/gtk"
 PROBE_DIR = ROOT / "metadata/probe/gtk"
 RULES = ROOT / "metadata/rules/gtk.yaml"
 OUT = ROOT / "metadata/inferred/gtk"
+# Review decisions (hand/agent written, never regenerated). One entry per fact below promote_at:
+#   - fact: Kind.section.name          (section: properties, methods, signals, bindings, slots)
+#     pattern: middle:prop:round-trip  (band:pattern of the review row; a re-probe that changes it voids the decision)
+#     decision: accept | reject | override
+#     reason: one line
+#     reviewer: who decided
+# accept: the candidate record is written to the inferred layer (tested and ledgered like any inferred fact); only
+#         facts with a candidate record (not `hold`s) can be accepted. reject: the fact leaves the review queue.
+#         override: a manual record in metadata/overrides/gtk/<Kind>.yaml covers the fact (checked).
+# A decision that matches no review row (stale, or the fact was promoted by a rule) is an error, as is a malformed one.
+REVIEWED = OUT / "_reviewed.yaml"
+DECISIONS = ("accept", "reject", "override")
+KEEP = ("_parked.json", "_reviewed.yaml")      # files in OUT that infer.py never writes or deletes
 SCHEMA = Path(__file__).resolve().parent / "override.schema.json"
 
 INGESTED = ("gir", "runtime")
@@ -120,6 +135,7 @@ class Rules:
         self.reference_names = set(r["reference_names"])
         self.bind_exclude = set(r["bind_exclude_types"])
         self.recipes = r["recipes"]
+        self.float_samples = [float(x) for x in r.get("float_samples", [])]
 
     def denied(self, pats, name: str) -> str | None:
         return next((why for rx, why in pats if rx.match(name)), None)
@@ -128,8 +144,11 @@ class Rules:
 class Kind:
     """One probed kind with its ingested record."""
 
-    def __init__(self, name: str, probe: dict, doc: dict, docs: dict[str, dict], rules: Rules):
+    def __init__(self, name: str, probe: dict, doc: dict, docs: dict[str, dict], rules: Rules, decisions: dict | None = None):
         self.name, self.k, self.d, self.docs, self.rules = name, probe, doc, docs, rules
+        self.decisions = decisions or {}
+        self.decided: list[dict] = []
+        self.errors: list[str] = []
         self.props = {p["name"]: p for p in doc["properties"] if p.get("origin") in INGESTED}
         self.methods = {m["name"]: m for m in doc["methods"] if m.get("origin") in INGESTED}
         self.signals = {s["name"]: s for s in doc["signals"] if s.get("origin") in INGESTED}
@@ -147,14 +166,40 @@ class Kind:
         if conf >= self.rules.promote_at:
             self.ov.setdefault(section, []).append(rec)
             self.ev[f"{section}:{name}"] = {"confidence": conf, "evidence": evidence}
-        else:
-            self.review.append({"kind": self.name, "section": section, "name": name, "confidence": conf,
-                                "band": "middle" if conf >= 0.6 else "low", "pattern": pattern})
+        elif self.queue(section, name, conf, pattern, rec, evidence) == "accept":
+            self.ov.setdefault(section, []).append(rec)
 
     def hold(self, section: str, name: str, conf: float, pattern: str) -> None:
-        """A fact the evidence does not support yet: listed for review, never written."""
-        self.review.append({"kind": self.name, "section": section, "name": name, "confidence": conf,
-                            "band": "middle" if conf >= 0.6 else "low", "pattern": pattern})
+        """A fact the evidence does not support yet: listed for review, never written (a decision may settle it)."""
+        self.queue(section, name, conf, pattern, None)
+
+    def queue(self, section: str, name: str, conf: float, pattern: str, rec: dict | None, evidence=None) -> str | None:
+        """A fact below promote_at: a review row, or settled by its decision in _reviewed.yaml. Returns the decision.
+        An accepted record gets the review as provenance and an evidence entry; the caller writes it."""
+        row = {"kind": self.name, "section": section, "name": name, "confidence": conf,
+               "band": "middle" if conf >= 0.6 else "low", "pattern": pattern}
+        fact = f"{self.name}.{section}.{name}"
+        d = self.decisions.get(fact)
+        if d is None:
+            self.review.append(row)
+            return None
+        d["_used"] = True
+        if d["pattern"] != f"{row['band']}:{pattern}":
+            self.errors.append(f"{fact}: decided as {d['pattern']} but the review row is now {row['band']}:{pattern}; review it again")
+            self.review.append(row)
+            return None
+        if d["decision"] == "accept":
+            if rec is None:
+                self.errors.append(f"{fact}: `accept` needs a candidate record, and {pattern} has none; write a manual record "
+                                   "in metadata/overrides/gtk and decide `override`")
+                return None
+            rec["provenance"] = list(rec["provenance"]) + [{"origin": "manual", "ref": f"review accept ({d['reviewer']}): {d['reason']}"}]
+            self.ev[f"{section}:{name}"] = {"confidence": conf, "evidence": evidence,
+                                            "review": {"decision": "accept", "reason": d["reason"], "reviewer": d["reviewer"]}}
+        elif d["decision"] == "override" and not manual_record(self.name, section, name):
+            self.errors.append(f"{fact}: decided `override`, but metadata/overrides/gtk/{self.name}.yaml has no {section} record {name!r}")
+        self.decided.append({**row, "decision": d["decision"]})
+        return d["decision"]
 
     # -- lookups --------------------------------------------------------------------------------
     def chain(self) -> list[dict]:
@@ -206,7 +251,15 @@ class Kind:
             rec: dict = {"name": n}
             if scalar_ref(ref):
                 if outcome != "exact":
-                    self.hold("properties", n, 0.8, "prop:scalar-identity")
+                    smp = self.float_sample(m)
+                    if smp is None:
+                        self.hold("properties", n, 0.8, "prop:scalar-identity")
+                        continue
+                    # The probe does not sample floats; the generated test sets one taken from the GIR range.
+                    rec["sample"] = smp
+                    rec["provenance"] = [{"origin": "rule", "ref": f"float sample {smp} from the GIR range "
+                                          f"[{m['range']['min']}, {m['range']['max']}]; the probe left it unsampled"}]
+                    self.emit("properties", n, rec, 0.9, p, "prop:float-range-sample")
                     continue
                 if not sample_ok(ref, p.get("sample")):
                     self.hold("properties", n, 0.5, "prop:needs-fixture")
@@ -227,6 +280,17 @@ class Kind:
             self.emit("properties", n, rec, conf, p, "prop:round-trip")
             if outcome == "exact" and scalar_ref(ref):
                 self.fired_by_add(n, p, ref, setup)
+
+    def float_sample(self, pm: dict | None) -> float | None:
+        """A float sample from the property's GIR range: the first of `float_samples` inside it, not the default,
+        exact as an f32. None when the property is not a ranged float."""
+        if pm is None or head(pm["type"]["ref"]) not in ("f32", "f64"):
+            return None
+        rng = pm.get("range") or {}
+        lo, hi = rng.get("min"), rng.get("max")
+        if lo is None or hi is None:
+            return None
+        return next((x for x in self.rules.float_samples if lo <= x <= hi and x != pm.get("default") and f32_exact(x)), None)
 
     def fired_by_add(self, n: str, p: dict, ref: str, setup: str) -> None:
         for s in p.get("signals") or []:
@@ -283,8 +347,20 @@ class Kind:
                 rec.update({"args": [sample], "expect": f'h.get(o, "{mp["prop"]}") == {rust_v(sample)}'})
                 prov, conf = f"set then read property {mp['prop']}: exact", 0.95
             elif cls in ("accessor_get", "accessor_set"):
-                self.hold("methods", n, 0.5, f"method:{cls}-{mp.get('outcome')}")
-                continue
+                # A non-scalar accessor is skipped whatever the probe outcome (as an exact one is): the generated
+                # test has no literal for its value, so a review row could never become a fact.
+                pm = self.prop_meta(mp.get("prop") or "")
+                vt = m["returns"]["type"] if cls == "accessor_get" else (m["params"][0]["type"] if len(m["params"]) == 1 else "")
+                if not scalar_ref(vt):
+                    self.skip("method:get-non-scalar" if cls == "accessor_get" else "method:set-non-scalar")
+                    continue
+                smp = self.float_sample(pm) if cls == "accessor_set" and mp.get("outcome") == "no_sample" \
+                    and pm is not None and head(pm["type"]["ref"]) == head(vt) and not mp.get("log") else None
+                if smp is None:
+                    self.hold("methods", n, 0.5, f"method:{cls}-{mp.get('outcome')}")
+                    continue
+                rec.update({"args": [smp], "expect": f'h.get(o, "{mp["prop"]}") == {rust_v(smp)}'})
+                prov, conf = f"set then read property {mp['prop']}; float sample {smp} from the GIR range, the probe left it unsampled", 0.9
             elif cls == "pure_getter" and mp.get("outcome") == "ok":
                 ret, val = m["returns"]["type"], mp.get("ret")
                 if not scalar_ref(ret) or head(ret) in ("f32", "f64") or rust_v(val) is None or not sample_ok(ret, val) \
@@ -307,7 +383,7 @@ class Kind:
                 prov, conf = f"changes {prop} to {after!r}", 0.8
             else:
                 continue
-            rec["provenance"] = [{"origin": "probe", "ref": prov}]
+            rec["provenance"] = [{"origin": "rule" if "GIR range" in prov else "probe", "ref": prov}]
             self.emit("methods", n, rec, conf, mp, f"method:{cls}")
 
     # -- signals (R1/R2) ------------------------------------------------------------------------
@@ -321,14 +397,16 @@ class Kind:
             conf = 0.95
             fired = self.fired_by.get(n)
             why = self.rules.denied(self.rules.deny_signals, n)
+            unsampled = bool(fired and not why and not sample_ok(fired[1]["ref"], fired[1]["default"]))
+            if unsampled:
+                # A property whose default the test cannot write back (im-module: NULL) fires the signal only as a
+                # side effect; a synthetic emission below still gives a delivery-only fact.
+                fired = None
             if fired and not why:
                 prop, f = fired
                 trig = {"property": prop, "values": [f["sample"], f["default"], f["sample"]]}
                 if f["setup"]:
                     trig["setup"] = f["setup"]
-                if not sample_ok(f["ref"], f["default"]):
-                    self.hold("signals", n, 0.5, "signal:trigger-default-unsampled")
-                    continue
                 rec["trigger"] = trig
                 prov.append({"origin": "probe", "ref": f"emitted when {prop} is set"})
                 pattern = "signal:property-trigger"
@@ -343,6 +421,9 @@ class Kind:
                 rec["delivery_only"] = True
                 prov.append({"origin": "probe", "ref": "emitted synthetically with sampled arguments; delivery only, no native trigger"})
                 conf, pattern = 0.9, "signal:delivery-only"
+            elif unsampled:
+                self.hold("signals", n, 0.5, "signal:trigger-default-unsampled")
+                continue
             else:
                 self.skip("signal:no-trigger" if not why else f"signal:denied ({why})")
                 continue
@@ -392,13 +473,13 @@ class Kind:
                    "verify": {}, "provenance": [{"origin": "probe", "ref": by}]}
             conf = 0.95 if s["parent"] == "direct" else 0.8
             slots.append((name, rec, conf, s))
+        keep = []
         for name, rec, conf, s in slots:
             if conf >= self.rules.promote_at:
                 self.ev[f"slots:{name}"] = {"confidence": conf, "evidence": s}
-            else:
-                self.review.append({"kind": self.name, "section": "slots", "name": name, "confidence": conf,
-                                    "band": "middle" if conf >= 0.6 else "low", "pattern": "slot:ancestor-parented"})
-        keep = [r for _, r, c, _ in slots if c >= self.rules.promote_at]
+                keep.append(rec)
+            elif self.queue("slots", name, conf, "slot:ancestor-parented", rec, s) == "accept":
+                keep.append(rec)
         if keep:
             self.ov["children"] = {
                 "policy": "single_child" if len(keep) == 1 and keep[0]["name"] == "child" else "named_slots",
@@ -449,6 +530,42 @@ def manual_children(kind: str) -> bool:
     return p.exists() and bool((yaml.safe_load(p.read_text()) or {}).get("children"))
 
 
+def manual_record(kind: str, section: str, name: str) -> bool:
+    """metadata/overrides/gtk/<kind>.yaml has a record `name` in `section` (slots: children.slots)."""
+    p = OVERRIDES / f"{kind}.yaml"
+    if not p.exists():
+        return False
+    doc = yaml.safe_load(p.read_text()) or {}
+    recs = (doc.get("children") or {}).get("slots", []) if section == "slots" else doc.get(section, [])
+    return any(r.get("name") == name for r in recs or [])
+
+
+FIELDS = ("fact", "pattern", "decision", "reason", "reviewer")
+
+
+def load_decisions(path: Path | None = None) -> tuple[dict[str, dict], list[str]]:
+    """fact -> decision from _reviewed.yaml, and the format errors."""
+    path = path or REVIEWED
+    if not path.exists():
+        return {}, []
+    doc = yaml.safe_load(path.read_text()) or {}
+    errs = []
+    if doc.get("schema") != "svelters-inferred-reviewed/v1" or doc.get("toolkit") != "gtk":
+        errs.append(f"{path.name}: expected schema svelters-inferred-reviewed/v1, toolkit gtk")
+    out: dict[str, dict] = {}
+    for i, d in enumerate(doc.get("decisions") or []):
+        fact = str(d.get("fact", ""))
+        bad = [k for k in FIELDS if not isinstance(d.get(k), str) or len(d[k].strip()) < 2] + [k for k in d if k not in FIELDS]
+        if bad or d["decision"] not in DECISIONS or len(fact.split(".")) != 3:
+            errs.append(f"{path.name}: decision #{i + 1} ({fact or '?'}) is malformed ({', '.join(bad) or 'decision or fact'})")
+            continue
+        if fact in out:
+            errs.append(f"{path.name}: {fact} is decided twice")
+            continue
+        out[fact] = dict(d)
+    return out, errs
+
+
 def find_probe(version: str) -> dict:
     p = PROBE_DIR / f"{version}.json"
     if not p.exists():
@@ -456,11 +573,13 @@ def find_probe(version: str) -> dict:
     return json.loads(p.read_text())
 
 
-def run() -> tuple[dict[str, str], dict[str, str], dict]:
+def run() -> tuple[dict[str, str], dict[str, str], dict, list[str]]:
     docs = load_docs()
     version = next(iter(docs.values()))["source"]["gir"]["version"]
     probe = find_probe(version)
     rules = Rules()
+    decisions, errors = load_decisions()
+    decided: list[dict] = []
     files: dict[str, str] = {}
     evid: dict[str, str] = {}
     review: list[dict] = []
@@ -477,7 +596,7 @@ def run() -> tuple[dict[str, str], dict[str, str], dict]:
                 continue
         elif "element" not in d:
             continue                         # a kind without an element is not exposed (deny-by-pattern applies to methods)
-        kd = Kind(name, k, d, docs, rules)
+        kd = Kind(name, k, d, docs, rules, decisions)
         kd.infer_props()
         kd.infer_methods()
         if subject:
@@ -489,6 +608,8 @@ def run() -> tuple[dict[str, str], dict[str, str], dict]:
             kd.infer_slots(manual_children(name))
             kd.infer_bindings()
         review += kd.review
+        decided += kd.decided
+        errors += kd.errors
         for p, c in kd.skipped.items():
             skipped[p] = skipped.get(p, 0) + c
         if not kd.ov:
@@ -501,19 +622,27 @@ def run() -> tuple[dict[str, str], dict[str, str], dict]:
         for key in kd.ev:
             sec = key.split(":", 1)[0]
             counts[sec] = counts.get(sec, 0) + 1
+    errors += [f"{f} matches no review row (promoted by a rule, or gone); remove the decision"
+               for f, d in sorted(decisions.items()) if not d.get("_used")]
     by_pattern: dict[str, int] = {}
     for r in review:
         key = f"{r['band']}:{r['pattern']}"
         by_pattern[key] = by_pattern.get(key, 0) + 1
+    rev_by: dict[str, dict[str, int]] = {}
+    for r in decided:
+        c = rev_by.setdefault(f"{r['band']}:{r['pattern']}", {})
+        c[r["decision"]] = c.get(r["decision"], 0) + 1
     summary = {"schema": "svelters-inferred-review/v1", "toolkit": "gtk", "version": version,
                "promote_at": rules.promote_at,
                "inferred": dict(sorted(counts.items())),
                "unreviewed": {"middle": sum(1 for r in review if r["band"] == "middle"),
                               "low": sum(1 for r in review if r["band"] == "low"),
                               "by_pattern": dict(sorted(by_pattern.items()))},
+               "reviewed": {**{dec: sum(1 for r in decided if r["decision"] == dec) for dec in DECISIONS},
+                            "by_pattern": {k: dict(sorted(v.items())) for k, v in sorted(rev_by.items())}},
                "skipped": dict(sorted(skipped.items())),
                "rows": sorted(review, key=lambda r: (r["kind"], r["section"], r["name"]))}
-    return files, evid, summary
+    return files, evid, summary, errors
 
 
 def record_fingerprints(files: dict[str, str]) -> dict[tuple[str, str, str], str]:
@@ -561,14 +690,17 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--check", action="store_true", help="fail if the checked-in inferred layer is stale")
     a = ap.parse_args()
-    files, evid, summary = run()
+    files, evid, summary, rev_errs = run()
+    if rev_errs:
+        print("infer: review decisions (metadata/inferred/gtk/_reviewed.yaml):", *rev_errs, sep="\n  ", file=sys.stderr)
+        return 1
     errs = validate(files)
     if errs:
         print("infer: the inferred layer breaks the override schema:", *errs[:20], sep="\n  ", file=sys.stderr)
         return 1
     want = {**files, **evid, "_review.json": json.dumps(summary, indent=1, sort_keys=True) + "\n"}
     parked_stale = prune_parked(files, a.check)
-    have = {p.name for p in OUT.glob("*") if p.is_file() and p.name != "_parked.json"} if OUT.exists() else set()
+    have = {p.name for p in OUT.glob("*") if p.is_file() and p.name not in KEEP} if OUT.exists() else set()
     stale = sorted([n for n, t in want.items() if not (OUT / n).exists() or (OUT / n).read_text() != t] + sorted(have - set(want)))
     if a.check:
         for n in stale:
@@ -584,7 +716,8 @@ def main() -> int:
             (OUT / n).write_text(t)
     inf = summary["inferred"]
     print(f"infer: {len(files)} kinds; facts " + ", ".join(f"{k} {v}" for k, v in inf.items())
-          + f"; unreviewed middle {summary['unreviewed']['middle']}, low {summary['unreviewed']['low']}", file=sys.stderr)
+          + f"; unreviewed middle {summary['unreviewed']['middle']}, low {summary['unreviewed']['low']}"
+          + "; reviewed " + ", ".join(f"{d} {summary['reviewed'][d]}" for d in DECISIONS), file=sys.stderr)
     return 0
 
 

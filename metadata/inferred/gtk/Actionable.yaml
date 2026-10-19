@@ -6,6 +6,13 @@ properties:
   provenance:
   - origin: probe
     ref: round trip exact; notify fired
+- name: action-target
+  provenance:
+  - origin: probe
+    ref: round trip identity
+  - origin: manual
+    ref: 'review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): GVariant property, the converter has a variant codec; null clears the target
+      (documented)'
 methods:
 - name: get_action_name
   dispatch: dynamic

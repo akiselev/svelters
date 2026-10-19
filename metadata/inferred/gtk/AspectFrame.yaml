@@ -9,6 +9,16 @@ properties:
   provenance:
   - origin: probe
     ref: round trip exact; notify fired
+- name: xalign
+  sample: 0.25
+  provenance:
+  - origin: rule
+    ref: float sample 0.25 from the GIR range [0.0, 1.0]; the probe left it unsampled
+- name: yalign
+  sample: 0.25
+  provenance:
+  - origin: rule
+    ref: float sample 0.25 from the GIR range [0.0, 1.0]; the probe left it unsampled
 signals:
 - name: notify::obey-child
   derived_from:
@@ -105,6 +115,22 @@ methods:
   provenance:
   - origin: probe
     ref: 'set then read property ratio: exact'
+- name: set_xalign
+  dispatch: dynamic
+  args:
+  - 0.25
+  expect: h.get(o, "xalign") == V::F64(0.25)
+  provenance:
+  - origin: rule
+    ref: set then read property xalign; float sample 0.25 from the GIR range, the probe left it unsampled
+- name: set_yalign
+  dispatch: dynamic
+  args:
+  - 0.25
+  expect: h.get(o, "yalign") == V::F64(0.25)
+  provenance:
+  - origin: rule
+    ref: set then read property yalign; float sample 0.25 from the GIR range, the probe left it unsampled
 bindings:
 - name: obey-child
   direction: two_way

@@ -8,6 +8,12 @@ properties:
   provenance:
   - origin: probe
     ref: round trip exact; notify fired
+- name: language
+  provenance:
+  - origin: probe
+    ref: round trip identity
+  - origin: manual
+    ref: 'review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): PangoLanguage boxed, interned; opaque handle or null round trip'
 - name: level
   sample: family
   provenance:

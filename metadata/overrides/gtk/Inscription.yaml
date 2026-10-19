@@ -6,6 +6,11 @@ properties:
   - name: nat-chars
     provenance: "GtkInscription:nat-chars (Gtk 4 docs)"
 methods:
+  - name: set_markup
+    dispatch: dynamic
+    args: ["<b>svl</b>"]
+    expect: 'h.get(o, "text") == V::Str("svl".into())'
+    provenance: "gtk_inscription_set_markup (Gtk 4 docs); markup is write-only, it sets text (and attributes) from the parsed markup (AI1 review 2026-10-19, docs/notes/ai1-gtk-review.md)"
   - name: get_text
     js_name: get_text
     dispatch: dynamic

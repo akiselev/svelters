@@ -71,6 +71,22 @@
    "sample": 2.0
   }
  },
+ "methods:set_xalign": {
+  "confidence": 0.9,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "no_sample",
+   "prop": "xalign"
+  }
+ },
+ "methods:set_yalign": {
+  "confidence": 0.9,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "no_sample",
+   "prop": "yalign"
+  }
+ },
  "properties:obey-child": {
   "confidence": 0.95,
   "evidence": {
@@ -99,6 +115,22 @@
    "reset_log": [],
    "sample": 2.0,
    "signals": []
+  }
+ },
+ "properties:xalign": {
+  "confidence": 0.9,
+  "evidence": {
+   "log": [],
+   "outcome": "identity",
+   "type": "gfloat"
+  }
+ },
+ "properties:yalign": {
+  "confidence": 0.9,
+  "evidence": {
+   "log": [],
+   "outcome": "identity",
+   "type": "gfloat"
   }
  }
 }

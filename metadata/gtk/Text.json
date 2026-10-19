@@ -879,6 +879,12 @@
         "origin": "inferred"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_opacity",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_opacity",
+        "origin": "manual"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_overflow",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "set_overflow",
@@ -2396,6 +2402,21 @@
         "get": "gtk_text_get_attributes",
         "set": "gtk_text_set_attributes"
       },
+      "annotated": {
+        "fields": [],
+        "fp": "f810d8fa8c3b0498",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip identity"
+          },
+          {
+            "origin": "manual",
+            "ref": "review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): real boxed property (Pango); no string form yet, so JS carries it as an opaque boxed handle; the round trip is what the converter guarantees"
+          }
+        ]
+      },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Text:prop:attributes",
       "invocation": "reflected",
@@ -2647,6 +2668,21 @@
         "get": "gtk_text_get_input_hints",
         "set": "gtk_text_set_input_hints"
       },
+      "annotated": {
+        "fields": [],
+        "fp": "8439ae20df0f65f3",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip identity"
+          },
+          {
+            "origin": "manual",
+            "ref": "review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): flags property: the converter maps numbers/nick lists both ways; the probe has no flags sampler, the round trip test stands"
+          }
+        ]
+      },
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Text:prop:input-hints",
       "invocation": "reflected",
@@ -2741,6 +2777,13 @@
         "get": "gtk_text_get_invisible_char",
         "set": "gtk_text_set_invisible_char"
       },
+      "annotated": {
+        "fields": [
+          "sample"
+        ],
+        "origin": "manual",
+        "provenance": "GtkText:invisible-char (Gtk 4 docs); the probe errors on ParamSpecUnichar, so the sample is manual (AI1 review 2026-10-19, docs/notes/ai1-gtk-review.md)"
+      },
       "default": 42,
       "id": "svelters-api:v1:type:gtk:Gtk:Text:prop:invisible-char",
       "invocation": "reflected",
@@ -2763,6 +2806,7 @@
         "origin": "runtime",
         "owner": "GtkText"
       },
+      "sample": 9679,
       "type": {
         "gtype": "guint",
         "native": "guint",
@@ -3070,6 +3114,21 @@
       "accessors": {
         "get": "gtk_text_get_tabs",
         "set": "gtk_text_set_tabs"
+      },
+      "annotated": {
+        "fields": [],
+        "fp": "6932648669c36657",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip identity"
+          },
+          {
+            "origin": "manual",
+            "ref": "review accept (claude-opus-5.5 (AI1 review, 2026-10-19)): real boxed property (Pango); no string form yet, so JS carries it as an opaque boxed handle; the round trip is what the converter guarantees"
+          }
+        ]
       },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Text:prop:tabs",
@@ -3582,12 +3641,33 @@
       "sync_required": false
     },
     {
+      "annotated": {
+        "fields": [
+          "delivery_only",
+          "handler_result",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "bcb9ed2a2be5626b",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "runtime",
+            "ref": "returns void, run-last"
+          },
+          {
+            "origin": "probe",
+            "ref": "emitted synthetically with sampled arguments; delivery only, no native trigger"
+          }
+        ]
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
           "native_destroy"
         ]
       },
+      "delivery_only": true,
       "flags": [
         "action"
       ],
@@ -3611,7 +3691,16 @@
         "origin": "runtime",
         "return_gtype": "void"
       },
-      "sync_required": false
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "rust": "o.emit_by_name::<()>(\"preedit-changed\", &[&\"x\"]);",
+        "values": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
     },
     {
       "annotated": {

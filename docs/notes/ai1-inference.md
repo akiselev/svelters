@@ -68,6 +68,8 @@ Mac handoff: `docs/notes/ai1-appkit-mac-handoff.md`.
 - 2026-10-17: prototype moved, deterministic probe, infer/ingest/gen/ledger/coverage code written; first inference
   run over 57 kinds gave 291 props, 472 methods, 45 signals, 228 generic bindings, 3 slots (concrete kinds only,
   before abstract subjects and the synthetic-signal probe).
+- 2026-10-19: review of the 135 middle/low-band facts (`docs/notes/ai1-gtk-review.md`): `_reviewed.yaml` decisions,
+  four rule changes; 38 accepted, 76 rejected, 21 overridden; queue empty.
 
 ## Slice 2 (Qt): design as built
 
