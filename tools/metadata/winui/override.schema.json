@@ -29,7 +29,7 @@
           "name": { "type": "string", "description": "Native property name (winmd get_/put_ accessor)" },
           "as": { "enum": ["string"], "description": "Expose an object-typed prop as a boxed value of this type" },
           "custom": { "type": "string", "pattern": "^[a-z_]+$", "description": "Hand-written converter <custom>_set/_get in crates/svelters-winui/src/custom.rs" },
-          "test": { "description": "Value the generated test writes and reads back" },
+          "test": { "description": "Value the generated test writes and reads back, or a list of values written and read back in order" },
           "provenance": { "type": "string" }
         }
       }
@@ -63,7 +63,7 @@
               }
             }
           },
-          "trigger": { "type": "string", "pattern": "^(invoke|set:[A-Za-z]+=.*)$", "description": "How the generated test raises the event: automation-peer invoke, or setting a prop" },
+          "trigger": { "type": "string", "pattern": "^(invoke|mount|set:[A-Za-z]+=.*)$", "description": "How the generated test raises the event: automation-peer invoke, setting a prop, or `mount` (insert the element into an activated window). An inferred event without one gets a connect test (listen on and off: `verified: connect`)" },
           "asynchronous": { "type": "boolean", "description": "The toolkit raises the event later, not inside the triggering call" },
           "provenance": { "type": "string" }
         }
@@ -110,6 +110,24 @@
           "provenance": { "type": "string" }
         }
       }
+    },
+    "notify": {
+      "type": "array",
+      "description": "Props of this class that get a `notify::<prop>` event: a DependencyProperty change callback (DependencyObject.RegisterPropertyChangedCallback) without payload; the listener reads the prop. The prop must be exposed and a DependencyProperty (winmd), and not on the no_notify list of metadata/rules/winui.yaml.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "provenance"],
+        "properties": {
+          "name": { "type": "string", "description": "Native property name" },
+          "provenance": { "type": "string" }
+        }
+      }
+    },
+    "deny": {
+      "type": "array",
+      "description": "Inferred facts of this class (metadata/inferred/winui) to leave out, as `<section>:<glob>` over the native name (`props:Tag`, `events:Pointer*`) or, for bindings, the binding name. A manual record already replaces the inferred one of the same name.",
+      "items": { "type": "string", "pattern": "^(props|events|methods|bindings|notify):.+$" }
     },
     "bindings": {
       "type": "array",

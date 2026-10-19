@@ -154,11 +154,12 @@ export interface BindableProps {
     enabled: string; // gtk
   };
   grid: {
+    "background-sizing": string; // winui
     "baseline-row": number; // gtk
     "column-homogeneous": boolean; // gtk
-    "column-spacing": number; // gtk
+    "column-spacing": number; // gtk/winui
     "row-homogeneous": boolean; // gtk
-    "row-spacing": number; // gtk
+    "row-spacing": number; // gtk/winui
   };
   "group-box": {
     checked: boolean; // qt
@@ -355,6 +356,14 @@ export interface BindableProps {
   };
   slider: {
     "double-value": number; // appkit
+    "intermediate-value": number; // winui
+    "is-direction-reversed": boolean; // winui
+    "is-thumb-tool-tip-enabled": boolean; // winui
+    orientation: string; // winui
+    "snaps-to": string; // winui
+    "step-frequency": number; // winui
+    "tick-frequency": number; // winui
+    "tick-placement": string; // winui
     value: number; // qt/winui
   };
   "spin-box": {
@@ -379,6 +388,12 @@ export interface BindableProps {
     "transition-duration": number; // gtk
     "transition-type": string; // gtk
     vhomogeneous: boolean; // gtk
+  };
+  "stack-panel": {
+    "are-scroll-snap-points-regular": boolean; // winui
+    "background-sizing": string; // winui
+    orientation: string; // winui
+    spacing: number; // winui
   };
   "stacked-widget": {
     "current-index": number; // qt
@@ -405,8 +420,42 @@ export interface BindableProps {
     "truncate-multiline": boolean; // gtk
     visibility: boolean; // gtk
   };
-  "text-box": {
+  "text-block": {
+    "character-spacing": number; // winui
+    "font-size": number; // winui
+    "font-stretch": string; // winui
+    "font-style": string; // winui
+    "horizontal-text-alignment": string; // winui
+    "is-color-font-enabled": boolean; // winui
+    "is-text-scale-factor-enabled": boolean; // winui
+    "is-text-selection-enabled": boolean; // winui
+    "line-height": number; // winui
+    "line-stacking-strategy": string; // winui
+    "max-lines": number; // winui
+    "optical-margin-alignment": string; // winui
     text: string; // winui
+    "text-alignment": string; // winui
+    "text-line-bounds": string; // winui
+    "text-reading-order": string; // winui
+    "text-trimming": string; // winui
+    "text-wrapping": string; // winui
+  };
+  "text-box": {
+    "accepts-return": boolean; // winui
+    "character-casing": string; // winui
+    "desired-candidate-window-alignment": string; // winui
+    "horizontal-text-alignment": string; // winui
+    "is-color-font-enabled": boolean; // winui
+    "is-read-only": boolean; // winui
+    "is-spell-check-enabled": boolean; // winui
+    "is-text-prediction-enabled": boolean; // winui
+    "max-length": number; // winui
+    "placeholder-text": string; // winui
+    "prevent-keyboard-display-on-programmatic-focus": boolean; // winui
+    text: string; // winui
+    "text-alignment": string; // winui
+    "text-reading-order": string; // winui
+    "text-wrapping": string; // winui
   };
   "text-edit": {
     "plain-text": string; // qt

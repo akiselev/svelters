@@ -5,7 +5,7 @@
 use super::names::*;
 use crate::conv::{self, R};
 use crate::custom;
-use crate::sink::Sink;
+use crate::sink::{Registration, Sink};
 use svelters_abi::Value;
 use windows_core::{IInspectable, Interface};
 
@@ -22,500 +22,2415 @@ pub static CREATE: &[fn() -> WinResult<IInspectable>] = &[
     || Ok(crate::bindings::Microsoft::UI::Xaml::Window::new()?.into()),
 ];
 
-fn set_prop0_content_control_content(o: &IInspectable, v: &Value) -> R<()> {
+fn set_prop0_button_base_click_mode(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::ButtonBase>().map_err(conv::err)?.SetClickMode(crate::bindings::Microsoft::UI::Xaml::Controls::ClickMode(conv::enum_(v, &ENUMS[0])?)).map_err(conv::err)
+}
+fn get_prop0_button_base_click_mode(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::ButtonBase>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[0], t.ClickMode().map_err(conv::err)?.0))
+}
+fn get_prop1_button_base_is_pointer_over(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::ButtonBase>().map_err(conv::err)?;
+    Ok(Value::Bool(t.IsPointerOver().map_err(conv::err)?))
+}
+fn get_prop2_button_base_is_pressed(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::ButtonBase>().map_err(conv::err)?;
+    Ok(Value::Bool(t.IsPressed().map_err(conv::err)?))
+}
+fn set_prop3_content_control_content(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::ContentControl>().map_err(conv::err)?.SetContent(conv::boxed_str(v)?.as_ref()).map_err(conv::err)
 }
-fn get_prop0_content_control_content(o: &IInspectable) -> R<Value> {
+fn get_prop3_content_control_content(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::ContentControl>().map_err(conv::err)?;
     Ok(conv::unboxed_value(t.Content().ok()))
 }
-fn set_prop1_control_is_enabled(o: &IInspectable, v: &Value) -> R<()> {
+fn set_prop4_control_is_enabled(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Control>().map_err(conv::err)?.SetIsEnabled(conv::bool_(v)?).map_err(conv::err)
 }
-fn get_prop1_control_is_enabled(o: &IInspectable) -> R<Value> {
+fn get_prop4_control_is_enabled(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Control>().map_err(conv::err)?;
     Ok(Value::Bool(t.IsEnabled().map_err(conv::err)?))
 }
-fn set_prop2_control_font_size(o: &IInspectable, v: &Value) -> R<()> {
+fn set_prop5_control_font_size(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Control>().map_err(conv::err)?.SetFontSize(conv::f64_(v)?).map_err(conv::err)
 }
-fn get_prop2_control_font_size(o: &IInspectable) -> R<Value> {
+fn get_prop5_control_font_size(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Control>().map_err(conv::err)?;
     Ok(Value::F64(t.FontSize().map_err(conv::err)?))
 }
-fn set_prop3_control_padding(o: &IInspectable, v: &Value) -> R<()> {
+fn set_prop6_control_padding(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Control>().map_err(conv::err)?.SetPadding(conv::thickness(v)?).map_err(conv::err)
 }
-fn get_prop3_control_padding(o: &IInspectable) -> R<Value> {
+fn get_prop6_control_padding(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Control>().map_err(conv::err)?;
     Ok(conv::thickness_value(t.Padding().map_err(conv::err)?))
 }
-fn set_prop4_framework_element_width(o: &IInspectable, v: &Value) -> R<()> {
+fn set_prop7_control_background_sizing(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Control>().map_err(conv::err)?.SetBackgroundSizing(crate::bindings::Microsoft::UI::Xaml::Controls::BackgroundSizing(conv::enum_(v, &ENUMS[1])?)).map_err(conv::err)
+}
+fn get_prop7_control_background_sizing(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Control>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[1], t.BackgroundSizing().map_err(conv::err)?.0))
+}
+fn set_prop8_control_border_thickness(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Control>().map_err(conv::err)?.SetBorderThickness(conv::thickness(v)?).map_err(conv::err)
+}
+fn get_prop8_control_border_thickness(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Control>().map_err(conv::err)?;
+    Ok(conv::thickness_value(t.BorderThickness().map_err(conv::err)?))
+}
+fn set_prop9_control_character_spacing(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Control>().map_err(conv::err)?.SetCharacterSpacing(conv::i32_(v)?).map_err(conv::err)
+}
+fn get_prop9_control_character_spacing(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Control>().map_err(conv::err)?;
+    Ok(Value::I64(t.CharacterSpacing().map_err(conv::err)? as i64))
+}
+fn set_prop10_control_element_sound_mode(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Control>().map_err(conv::err)?.SetElementSoundMode(crate::bindings::Microsoft::UI::Xaml::ElementSoundMode(conv::enum_(v, &ENUMS[2])?)).map_err(conv::err)
+}
+fn get_prop10_control_element_sound_mode(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Control>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[2], t.ElementSoundMode().map_err(conv::err)?.0))
+}
+fn set_prop11_control_font_stretch(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Control>().map_err(conv::err)?.SetFontStretch(crate::bindings::Windows::UI::Text::FontStretch(conv::enum_(v, &ENUMS[3])?)).map_err(conv::err)
+}
+fn get_prop11_control_font_stretch(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Control>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[3], t.FontStretch().map_err(conv::err)?.0))
+}
+fn set_prop12_control_font_style(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Control>().map_err(conv::err)?.SetFontStyle(crate::bindings::Windows::UI::Text::FontStyle(conv::enum_(v, &ENUMS[4])?)).map_err(conv::err)
+}
+fn get_prop12_control_font_style(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Control>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[4], t.FontStyle().map_err(conv::err)?.0))
+}
+fn set_prop13_control_horizontal_content_alignment(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Control>().map_err(conv::err)?.SetHorizontalContentAlignment(crate::bindings::Microsoft::UI::Xaml::HorizontalAlignment(conv::enum_(v, &ENUMS[5])?)).map_err(conv::err)
+}
+fn get_prop13_control_horizontal_content_alignment(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Control>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[5], t.HorizontalContentAlignment().map_err(conv::err)?.0))
+}
+fn set_prop14_control_is_focus_engaged(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Control>().map_err(conv::err)?.SetIsFocusEngaged(conv::bool_(v)?).map_err(conv::err)
+}
+fn get_prop14_control_is_focus_engaged(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Control>().map_err(conv::err)?;
+    Ok(Value::Bool(t.IsFocusEngaged().map_err(conv::err)?))
+}
+fn set_prop15_control_is_focus_engagement_enabled(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Control>().map_err(conv::err)?.SetIsFocusEngagementEnabled(conv::bool_(v)?).map_err(conv::err)
+}
+fn get_prop15_control_is_focus_engagement_enabled(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Control>().map_err(conv::err)?;
+    Ok(Value::Bool(t.IsFocusEngagementEnabled().map_err(conv::err)?))
+}
+fn set_prop16_control_is_text_scale_factor_enabled(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Control>().map_err(conv::err)?.SetIsTextScaleFactorEnabled(conv::bool_(v)?).map_err(conv::err)
+}
+fn get_prop16_control_is_text_scale_factor_enabled(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Control>().map_err(conv::err)?;
+    Ok(Value::Bool(t.IsTextScaleFactorEnabled().map_err(conv::err)?))
+}
+fn set_prop17_control_requires_pointer(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Control>().map_err(conv::err)?.SetRequiresPointer(crate::bindings::Microsoft::UI::Xaml::Controls::RequiresPointer(conv::enum_(v, &ENUMS[6])?)).map_err(conv::err)
+}
+fn get_prop17_control_requires_pointer(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Control>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[6], t.RequiresPointer().map_err(conv::err)?.0))
+}
+fn set_prop18_control_tab_navigation(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Control>().map_err(conv::err)?.SetTabNavigation(crate::bindings::Microsoft::UI::Xaml::Input::KeyboardNavigationMode(conv::enum_(v, &ENUMS[7])?)).map_err(conv::err)
+}
+fn get_prop18_control_tab_navigation(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Control>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[7], t.TabNavigation().map_err(conv::err)?.0))
+}
+fn set_prop19_control_vertical_content_alignment(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Control>().map_err(conv::err)?.SetVerticalContentAlignment(crate::bindings::Microsoft::UI::Xaml::VerticalAlignment(conv::enum_(v, &ENUMS[8])?)).map_err(conv::err)
+}
+fn get_prop19_control_vertical_content_alignment(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Control>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[8], t.VerticalContentAlignment().map_err(conv::err)?.0))
+}
+fn set_prop20_framework_element_width(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?.SetWidth(conv::f64_(v)?).map_err(conv::err)
 }
-fn get_prop4_framework_element_width(o: &IInspectable) -> R<Value> {
+fn get_prop20_framework_element_width(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?;
     Ok(Value::F64(t.Width().map_err(conv::err)?))
 }
-fn set_prop5_framework_element_height(o: &IInspectable, v: &Value) -> R<()> {
+fn set_prop21_framework_element_height(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?.SetHeight(conv::f64_(v)?).map_err(conv::err)
 }
-fn get_prop5_framework_element_height(o: &IInspectable) -> R<Value> {
+fn get_prop21_framework_element_height(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?;
     Ok(Value::F64(t.Height().map_err(conv::err)?))
 }
-fn set_prop6_framework_element_min_width(o: &IInspectable, v: &Value) -> R<()> {
+fn set_prop22_framework_element_min_width(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?.SetMinWidth(conv::f64_(v)?).map_err(conv::err)
 }
-fn get_prop6_framework_element_min_width(o: &IInspectable) -> R<Value> {
+fn get_prop22_framework_element_min_width(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?;
     Ok(Value::F64(t.MinWidth().map_err(conv::err)?))
 }
-fn set_prop7_framework_element_min_height(o: &IInspectable, v: &Value) -> R<()> {
+fn set_prop23_framework_element_min_height(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?.SetMinHeight(conv::f64_(v)?).map_err(conv::err)
 }
-fn get_prop7_framework_element_min_height(o: &IInspectable) -> R<Value> {
+fn get_prop23_framework_element_min_height(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?;
     Ok(Value::F64(t.MinHeight().map_err(conv::err)?))
 }
-fn set_prop8_framework_element_margin(o: &IInspectable, v: &Value) -> R<()> {
+fn set_prop24_framework_element_margin(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?.SetMargin(conv::thickness(v)?).map_err(conv::err)
 }
-fn get_prop8_framework_element_margin(o: &IInspectable) -> R<Value> {
+fn get_prop24_framework_element_margin(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?;
     Ok(conv::thickness_value(t.Margin().map_err(conv::err)?))
 }
-fn set_prop9_framework_element_horizontal_alignment(o: &IInspectable, v: &Value) -> R<()> {
-    o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?.SetHorizontalAlignment(crate::bindings::Microsoft::UI::Xaml::HorizontalAlignment(conv::enum_(v, &ENUMS[0])?)).map_err(conv::err)
+fn set_prop25_framework_element_horizontal_alignment(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?.SetHorizontalAlignment(crate::bindings::Microsoft::UI::Xaml::HorizontalAlignment(conv::enum_(v, &ENUMS[5])?)).map_err(conv::err)
 }
-fn get_prop9_framework_element_horizontal_alignment(o: &IInspectable) -> R<Value> {
+fn get_prop25_framework_element_horizontal_alignment(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?;
-    Ok(conv::enum_name(&ENUMS[0], t.HorizontalAlignment().map_err(conv::err)?.0))
+    Ok(conv::enum_name(&ENUMS[5], t.HorizontalAlignment().map_err(conv::err)?.0))
 }
-fn set_prop10_framework_element_vertical_alignment(o: &IInspectable, v: &Value) -> R<()> {
-    o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?.SetVerticalAlignment(crate::bindings::Microsoft::UI::Xaml::VerticalAlignment(conv::enum_(v, &ENUMS[1])?)).map_err(conv::err)
+fn set_prop26_framework_element_vertical_alignment(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?.SetVerticalAlignment(crate::bindings::Microsoft::UI::Xaml::VerticalAlignment(conv::enum_(v, &ENUMS[8])?)).map_err(conv::err)
 }
-fn get_prop10_framework_element_vertical_alignment(o: &IInspectable) -> R<Value> {
+fn get_prop26_framework_element_vertical_alignment(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?;
-    Ok(conv::enum_name(&ENUMS[1], t.VerticalAlignment().map_err(conv::err)?.0))
+    Ok(conv::enum_name(&ENUMS[8], t.VerticalAlignment().map_err(conv::err)?.0))
 }
-fn set_prop11_framework_element_name(o: &IInspectable, v: &Value) -> R<()> {
+fn set_prop27_framework_element_name(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?.SetName(&conv::hstring(v)?).map_err(conv::err)
 }
-fn get_prop11_framework_element_name(o: &IInspectable) -> R<Value> {
+fn get_prop27_framework_element_name(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?;
     Ok(Value::Str(t.Name().map_err(conv::err)?.to_string_lossy()))
 }
-fn get_prop12_framework_element_actual_width(o: &IInspectable) -> R<Value> {
+fn get_prop28_framework_element_actual_width(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?;
     Ok(Value::F64(t.ActualWidth().map_err(conv::err)?))
 }
-fn get_prop13_framework_element_actual_height(o: &IInspectable) -> R<Value> {
+fn get_prop29_framework_element_actual_height(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?;
     Ok(Value::F64(t.ActualHeight().map_err(conv::err)?))
 }
-fn set_prop14_grid_row_spacing(o: &IInspectable, v: &Value) -> R<()> {
+fn get_prop30_framework_element_actual_theme(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[9], t.ActualTheme().map_err(conv::err)?.0))
+}
+fn set_prop31_framework_element_allow_focus_on_interaction(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?.SetAllowFocusOnInteraction(conv::bool_(v)?).map_err(conv::err)
+}
+fn get_prop31_framework_element_allow_focus_on_interaction(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?;
+    Ok(Value::Bool(t.AllowFocusOnInteraction().map_err(conv::err)?))
+}
+fn set_prop32_framework_element_allow_focus_when_disabled(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?.SetAllowFocusWhenDisabled(conv::bool_(v)?).map_err(conv::err)
+}
+fn get_prop32_framework_element_allow_focus_when_disabled(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?;
+    Ok(Value::Bool(t.AllowFocusWhenDisabled().map_err(conv::err)?))
+}
+fn set_prop33_framework_element_flow_direction(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?.SetFlowDirection(crate::bindings::Microsoft::UI::Xaml::FlowDirection(conv::enum_(v, &ENUMS[10])?)).map_err(conv::err)
+}
+fn get_prop33_framework_element_flow_direction(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[10], t.FlowDirection().map_err(conv::err)?.0))
+}
+fn set_prop34_framework_element_focus_visual_margin(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?.SetFocusVisualMargin(conv::thickness(v)?).map_err(conv::err)
+}
+fn get_prop34_framework_element_focus_visual_margin(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?;
+    Ok(conv::thickness_value(t.FocusVisualMargin().map_err(conv::err)?))
+}
+fn set_prop35_framework_element_focus_visual_primary_thickness(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?.SetFocusVisualPrimaryThickness(conv::thickness(v)?).map_err(conv::err)
+}
+fn get_prop35_framework_element_focus_visual_primary_thickness(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?;
+    Ok(conv::thickness_value(t.FocusVisualPrimaryThickness().map_err(conv::err)?))
+}
+fn set_prop36_framework_element_focus_visual_secondary_thickness(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?.SetFocusVisualSecondaryThickness(conv::thickness(v)?).map_err(conv::err)
+}
+fn get_prop36_framework_element_focus_visual_secondary_thickness(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?;
+    Ok(conv::thickness_value(t.FocusVisualSecondaryThickness().map_err(conv::err)?))
+}
+fn get_prop37_framework_element_is_loaded(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?;
+    Ok(Value::Bool(t.IsLoaded().map_err(conv::err)?))
+}
+fn set_prop38_framework_element_language(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?.SetLanguage(&conv::hstring(v)?).map_err(conv::err)
+}
+fn get_prop38_framework_element_language(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?;
+    Ok(Value::Str(t.Language().map_err(conv::err)?.to_string_lossy()))
+}
+fn set_prop39_framework_element_max_height(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?.SetMaxHeight(conv::f64_(v)?).map_err(conv::err)
+}
+fn get_prop39_framework_element_max_height(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?;
+    Ok(Value::F64(t.MaxHeight().map_err(conv::err)?))
+}
+fn set_prop40_framework_element_max_width(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?.SetMaxWidth(conv::f64_(v)?).map_err(conv::err)
+}
+fn get_prop40_framework_element_max_width(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?;
+    Ok(Value::F64(t.MaxWidth().map_err(conv::err)?))
+}
+fn set_prop41_framework_element_requested_theme(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?.SetRequestedTheme(crate::bindings::Microsoft::UI::Xaml::ElementTheme(conv::enum_(v, &ENUMS[9])?)).map_err(conv::err)
+}
+fn get_prop41_framework_element_requested_theme(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[9], t.RequestedTheme().map_err(conv::err)?.0))
+}
+fn set_prop42_grid_row_spacing(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Grid>().map_err(conv::err)?.SetRowSpacing(conv::f64_(v)?).map_err(conv::err)
 }
-fn get_prop14_grid_row_spacing(o: &IInspectable) -> R<Value> {
+fn get_prop42_grid_row_spacing(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Grid>().map_err(conv::err)?;
     Ok(Value::F64(t.RowSpacing().map_err(conv::err)?))
 }
-fn set_prop15_grid_column_spacing(o: &IInspectable, v: &Value) -> R<()> {
+fn set_prop43_grid_column_spacing(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Grid>().map_err(conv::err)?.SetColumnSpacing(conv::f64_(v)?).map_err(conv::err)
 }
-fn get_prop15_grid_column_spacing(o: &IInspectable) -> R<Value> {
+fn get_prop43_grid_column_spacing(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Grid>().map_err(conv::err)?;
     Ok(Value::F64(t.ColumnSpacing().map_err(conv::err)?))
 }
-fn set_prop16_grid_padding(o: &IInspectable, v: &Value) -> R<()> {
+fn set_prop44_grid_padding(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Grid>().map_err(conv::err)?.SetPadding(conv::thickness(v)?).map_err(conv::err)
 }
-fn get_prop16_grid_padding(o: &IInspectable) -> R<Value> {
+fn get_prop44_grid_padding(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Grid>().map_err(conv::err)?;
     Ok(conv::thickness_value(t.Padding().map_err(conv::err)?))
 }
-fn set_prop17_grid_row_definitions(o: &IInspectable, v: &Value) -> R<()> {
+fn set_prop45_grid_row_definitions(o: &IInspectable, v: &Value) -> R<()> {
     custom::grid_rows_set(&o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Grid>().map_err(conv::err)?, v)
 }
-fn get_prop17_grid_row_definitions(o: &IInspectable) -> R<Value> {
+fn get_prop45_grid_row_definitions(o: &IInspectable) -> R<Value> {
     custom::grid_rows_get(&o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Grid>().map_err(conv::err)?)
 }
-fn set_prop18_grid_column_definitions(o: &IInspectable, v: &Value) -> R<()> {
+fn set_prop46_grid_column_definitions(o: &IInspectable, v: &Value) -> R<()> {
     custom::grid_columns_set(&o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Grid>().map_err(conv::err)?, v)
 }
-fn get_prop18_grid_column_definitions(o: &IInspectable) -> R<Value> {
+fn get_prop46_grid_column_definitions(o: &IInspectable) -> R<Value> {
     custom::grid_columns_get(&o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Grid>().map_err(conv::err)?)
 }
-fn set_prop19_range_base_minimum(o: &IInspectable, v: &Value) -> R<()> {
+fn set_prop47_grid_background_sizing(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Grid>().map_err(conv::err)?.SetBackgroundSizing(crate::bindings::Microsoft::UI::Xaml::Controls::BackgroundSizing(conv::enum_(v, &ENUMS[1])?)).map_err(conv::err)
+}
+fn get_prop47_grid_background_sizing(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Grid>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[1], t.BackgroundSizing().map_err(conv::err)?.0))
+}
+fn set_prop48_grid_border_thickness(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Grid>().map_err(conv::err)?.SetBorderThickness(conv::thickness(v)?).map_err(conv::err)
+}
+fn get_prop48_grid_border_thickness(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Grid>().map_err(conv::err)?;
+    Ok(conv::thickness_value(t.BorderThickness().map_err(conv::err)?))
+}
+fn get_prop49_panel_is_items_host(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Panel>().map_err(conv::err)?;
+    Ok(Value::Bool(t.IsItemsHost().map_err(conv::err)?))
+}
+fn set_prop50_range_base_minimum(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::RangeBase>().map_err(conv::err)?.SetMinimum(conv::f64_(v)?).map_err(conv::err)
 }
-fn get_prop19_range_base_minimum(o: &IInspectable) -> R<Value> {
+fn get_prop50_range_base_minimum(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::RangeBase>().map_err(conv::err)?;
     Ok(Value::F64(t.Minimum().map_err(conv::err)?))
 }
-fn set_prop20_range_base_maximum(o: &IInspectable, v: &Value) -> R<()> {
+fn set_prop51_range_base_maximum(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::RangeBase>().map_err(conv::err)?.SetMaximum(conv::f64_(v)?).map_err(conv::err)
 }
-fn get_prop20_range_base_maximum(o: &IInspectable) -> R<Value> {
+fn get_prop51_range_base_maximum(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::RangeBase>().map_err(conv::err)?;
     Ok(Value::F64(t.Maximum().map_err(conv::err)?))
 }
-fn set_prop21_range_base_value(o: &IInspectable, v: &Value) -> R<()> {
+fn set_prop52_range_base_value(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::RangeBase>().map_err(conv::err)?.SetValue(conv::f64_(v)?).map_err(conv::err)
 }
-fn get_prop21_range_base_value(o: &IInspectable) -> R<Value> {
+fn get_prop52_range_base_value(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::RangeBase>().map_err(conv::err)?;
     Ok(Value::F64(t.Value().map_err(conv::err)?))
 }
-fn set_prop22_range_base_small_change(o: &IInspectable, v: &Value) -> R<()> {
+fn set_prop53_range_base_small_change(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::RangeBase>().map_err(conv::err)?.SetSmallChange(conv::f64_(v)?).map_err(conv::err)
 }
-fn get_prop22_range_base_small_change(o: &IInspectable) -> R<Value> {
+fn get_prop53_range_base_small_change(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::RangeBase>().map_err(conv::err)?;
     Ok(Value::F64(t.SmallChange().map_err(conv::err)?))
 }
-fn set_prop23_range_base_large_change(o: &IInspectable, v: &Value) -> R<()> {
+fn set_prop54_range_base_large_change(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::RangeBase>().map_err(conv::err)?.SetLargeChange(conv::f64_(v)?).map_err(conv::err)
 }
-fn get_prop23_range_base_large_change(o: &IInspectable) -> R<Value> {
+fn get_prop54_range_base_large_change(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::RangeBase>().map_err(conv::err)?;
     Ok(Value::F64(t.LargeChange().map_err(conv::err)?))
 }
-fn set_prop24_slider_step_frequency(o: &IInspectable, v: &Value) -> R<()> {
+fn set_prop55_slider_step_frequency(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Slider>().map_err(conv::err)?.SetStepFrequency(conv::f64_(v)?).map_err(conv::err)
 }
-fn get_prop24_slider_step_frequency(o: &IInspectable) -> R<Value> {
+fn get_prop55_slider_step_frequency(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Slider>().map_err(conv::err)?;
     Ok(Value::F64(t.StepFrequency().map_err(conv::err)?))
 }
-fn set_prop25_slider_orientation(o: &IInspectable, v: &Value) -> R<()> {
-    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Slider>().map_err(conv::err)?.SetOrientation(crate::bindings::Microsoft::UI::Xaml::Controls::Orientation(conv::enum_(v, &ENUMS[2])?)).map_err(conv::err)
+fn set_prop56_slider_orientation(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Slider>().map_err(conv::err)?.SetOrientation(crate::bindings::Microsoft::UI::Xaml::Controls::Orientation(conv::enum_(v, &ENUMS[11])?)).map_err(conv::err)
 }
-fn get_prop25_slider_orientation(o: &IInspectable) -> R<Value> {
+fn get_prop56_slider_orientation(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Slider>().map_err(conv::err)?;
-    Ok(conv::enum_name(&ENUMS[2], t.Orientation().map_err(conv::err)?.0))
+    Ok(conv::enum_name(&ENUMS[11], t.Orientation().map_err(conv::err)?.0))
 }
-fn set_prop26_slider_header(o: &IInspectable, v: &Value) -> R<()> {
+fn set_prop57_slider_header(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Slider>().map_err(conv::err)?.SetHeader(conv::boxed_str(v)?.as_ref()).map_err(conv::err)
 }
-fn get_prop26_slider_header(o: &IInspectable) -> R<Value> {
+fn get_prop57_slider_header(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Slider>().map_err(conv::err)?;
     Ok(conv::unboxed_value(t.Header().ok()))
 }
-fn set_prop27_stack_panel_orientation(o: &IInspectable, v: &Value) -> R<()> {
-    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::StackPanel>().map_err(conv::err)?.SetOrientation(crate::bindings::Microsoft::UI::Xaml::Controls::Orientation(conv::enum_(v, &ENUMS[2])?)).map_err(conv::err)
+fn set_prop58_slider_intermediate_value(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Slider>().map_err(conv::err)?.SetIntermediateValue(conv::f64_(v)?).map_err(conv::err)
 }
-fn get_prop27_stack_panel_orientation(o: &IInspectable) -> R<Value> {
+fn get_prop58_slider_intermediate_value(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Slider>().map_err(conv::err)?;
+    Ok(Value::F64(t.IntermediateValue().map_err(conv::err)?))
+}
+fn set_prop59_slider_is_direction_reversed(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Slider>().map_err(conv::err)?.SetIsDirectionReversed(conv::bool_(v)?).map_err(conv::err)
+}
+fn get_prop59_slider_is_direction_reversed(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Slider>().map_err(conv::err)?;
+    Ok(Value::Bool(t.IsDirectionReversed().map_err(conv::err)?))
+}
+fn set_prop60_slider_is_thumb_tool_tip_enabled(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Slider>().map_err(conv::err)?.SetIsThumbToolTipEnabled(conv::bool_(v)?).map_err(conv::err)
+}
+fn get_prop60_slider_is_thumb_tool_tip_enabled(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Slider>().map_err(conv::err)?;
+    Ok(Value::Bool(t.IsThumbToolTipEnabled().map_err(conv::err)?))
+}
+fn set_prop61_slider_snaps_to(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Slider>().map_err(conv::err)?.SetSnapsTo(crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::SliderSnapsTo(conv::enum_(v, &ENUMS[12])?)).map_err(conv::err)
+}
+fn get_prop61_slider_snaps_to(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Slider>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[12], t.SnapsTo().map_err(conv::err)?.0))
+}
+fn set_prop62_slider_tick_frequency(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Slider>().map_err(conv::err)?.SetTickFrequency(conv::f64_(v)?).map_err(conv::err)
+}
+fn get_prop62_slider_tick_frequency(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Slider>().map_err(conv::err)?;
+    Ok(Value::F64(t.TickFrequency().map_err(conv::err)?))
+}
+fn set_prop63_slider_tick_placement(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Slider>().map_err(conv::err)?.SetTickPlacement(crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::TickPlacement(conv::enum_(v, &ENUMS[13])?)).map_err(conv::err)
+}
+fn get_prop63_slider_tick_placement(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Slider>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[13], t.TickPlacement().map_err(conv::err)?.0))
+}
+fn set_prop64_stack_panel_orientation(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::StackPanel>().map_err(conv::err)?.SetOrientation(crate::bindings::Microsoft::UI::Xaml::Controls::Orientation(conv::enum_(v, &ENUMS[11])?)).map_err(conv::err)
+}
+fn get_prop64_stack_panel_orientation(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::StackPanel>().map_err(conv::err)?;
-    Ok(conv::enum_name(&ENUMS[2], t.Orientation().map_err(conv::err)?.0))
+    Ok(conv::enum_name(&ENUMS[11], t.Orientation().map_err(conv::err)?.0))
 }
-fn set_prop28_stack_panel_spacing(o: &IInspectable, v: &Value) -> R<()> {
+fn set_prop65_stack_panel_spacing(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::StackPanel>().map_err(conv::err)?.SetSpacing(conv::f64_(v)?).map_err(conv::err)
 }
-fn get_prop28_stack_panel_spacing(o: &IInspectable) -> R<Value> {
+fn get_prop65_stack_panel_spacing(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::StackPanel>().map_err(conv::err)?;
     Ok(Value::F64(t.Spacing().map_err(conv::err)?))
 }
-fn set_prop29_stack_panel_padding(o: &IInspectable, v: &Value) -> R<()> {
+fn set_prop66_stack_panel_padding(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::StackPanel>().map_err(conv::err)?.SetPadding(conv::thickness(v)?).map_err(conv::err)
 }
-fn get_prop29_stack_panel_padding(o: &IInspectable) -> R<Value> {
+fn get_prop66_stack_panel_padding(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::StackPanel>().map_err(conv::err)?;
     Ok(conv::thickness_value(t.Padding().map_err(conv::err)?))
 }
-fn set_prop30_text_block_text(o: &IInspectable, v: &Value) -> R<()> {
+fn get_prop67_stack_panel_are_horizontal_snap_points_regular(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::StackPanel>().map_err(conv::err)?;
+    Ok(Value::Bool(t.AreHorizontalSnapPointsRegular().map_err(conv::err)?))
+}
+fn set_prop68_stack_panel_are_scroll_snap_points_regular(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::StackPanel>().map_err(conv::err)?.SetAreScrollSnapPointsRegular(conv::bool_(v)?).map_err(conv::err)
+}
+fn get_prop68_stack_panel_are_scroll_snap_points_regular(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::StackPanel>().map_err(conv::err)?;
+    Ok(Value::Bool(t.AreScrollSnapPointsRegular().map_err(conv::err)?))
+}
+fn get_prop69_stack_panel_are_vertical_snap_points_regular(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::StackPanel>().map_err(conv::err)?;
+    Ok(Value::Bool(t.AreVerticalSnapPointsRegular().map_err(conv::err)?))
+}
+fn set_prop70_stack_panel_background_sizing(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::StackPanel>().map_err(conv::err)?.SetBackgroundSizing(crate::bindings::Microsoft::UI::Xaml::Controls::BackgroundSizing(conv::enum_(v, &ENUMS[1])?)).map_err(conv::err)
+}
+fn get_prop70_stack_panel_background_sizing(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::StackPanel>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[1], t.BackgroundSizing().map_err(conv::err)?.0))
+}
+fn set_prop71_stack_panel_border_thickness(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::StackPanel>().map_err(conv::err)?.SetBorderThickness(conv::thickness(v)?).map_err(conv::err)
+}
+fn get_prop71_stack_panel_border_thickness(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::StackPanel>().map_err(conv::err)?;
+    Ok(conv::thickness_value(t.BorderThickness().map_err(conv::err)?))
+}
+fn set_prop72_text_block_text(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?.SetText(&conv::hstring(v)?).map_err(conv::err)
 }
-fn get_prop30_text_block_text(o: &IInspectable) -> R<Value> {
+fn get_prop72_text_block_text(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?;
     Ok(Value::Str(t.Text().map_err(conv::err)?.to_string_lossy()))
 }
-fn set_prop31_text_block_font_size(o: &IInspectable, v: &Value) -> R<()> {
+fn set_prop73_text_block_font_size(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?.SetFontSize(conv::f64_(v)?).map_err(conv::err)
 }
-fn get_prop31_text_block_font_size(o: &IInspectable) -> R<Value> {
+fn get_prop73_text_block_font_size(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?;
     Ok(Value::F64(t.FontSize().map_err(conv::err)?))
 }
-fn set_prop32_text_block_text_wrapping(o: &IInspectable, v: &Value) -> R<()> {
-    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?.SetTextWrapping(crate::bindings::Microsoft::UI::Xaml::TextWrapping(conv::enum_(v, &ENUMS[3])?)).map_err(conv::err)
+fn set_prop74_text_block_text_wrapping(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?.SetTextWrapping(crate::bindings::Microsoft::UI::Xaml::TextWrapping(conv::enum_(v, &ENUMS[14])?)).map_err(conv::err)
 }
-fn get_prop32_text_block_text_wrapping(o: &IInspectable) -> R<Value> {
+fn get_prop74_text_block_text_wrapping(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?;
-    Ok(conv::enum_name(&ENUMS[3], t.TextWrapping().map_err(conv::err)?.0))
+    Ok(conv::enum_name(&ENUMS[14], t.TextWrapping().map_err(conv::err)?.0))
 }
-fn set_prop33_text_block_is_text_selection_enabled(o: &IInspectable, v: &Value) -> R<()> {
+fn set_prop75_text_block_is_text_selection_enabled(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?.SetIsTextSelectionEnabled(conv::bool_(v)?).map_err(conv::err)
 }
-fn get_prop33_text_block_is_text_selection_enabled(o: &IInspectable) -> R<Value> {
+fn get_prop75_text_block_is_text_selection_enabled(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?;
     Ok(Value::Bool(t.IsTextSelectionEnabled().map_err(conv::err)?))
 }
-fn set_prop34_text_block_max_lines(o: &IInspectable, v: &Value) -> R<()> {
+fn set_prop76_text_block_max_lines(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?.SetMaxLines(conv::i32_(v)?).map_err(conv::err)
 }
-fn get_prop34_text_block_max_lines(o: &IInspectable) -> R<Value> {
+fn get_prop76_text_block_max_lines(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?;
     Ok(Value::I64(t.MaxLines().map_err(conv::err)? as i64))
 }
-fn set_prop35_text_box_text(o: &IInspectable, v: &Value) -> R<()> {
+fn get_prop77_text_block_baseline_offset(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?;
+    Ok(Value::F64(t.BaselineOffset().map_err(conv::err)?))
+}
+fn set_prop78_text_block_character_spacing(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?.SetCharacterSpacing(conv::i32_(v)?).map_err(conv::err)
+}
+fn get_prop78_text_block_character_spacing(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?;
+    Ok(Value::I64(t.CharacterSpacing().map_err(conv::err)? as i64))
+}
+fn set_prop79_text_block_font_stretch(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?.SetFontStretch(crate::bindings::Windows::UI::Text::FontStretch(conv::enum_(v, &ENUMS[3])?)).map_err(conv::err)
+}
+fn get_prop79_text_block_font_stretch(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[3], t.FontStretch().map_err(conv::err)?.0))
+}
+fn set_prop80_text_block_font_style(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?.SetFontStyle(crate::bindings::Windows::UI::Text::FontStyle(conv::enum_(v, &ENUMS[4])?)).map_err(conv::err)
+}
+fn get_prop80_text_block_font_style(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[4], t.FontStyle().map_err(conv::err)?.0))
+}
+fn set_prop81_text_block_horizontal_text_alignment(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?.SetHorizontalTextAlignment(crate::bindings::Microsoft::UI::Xaml::TextAlignment(conv::enum_(v, &ENUMS[15])?)).map_err(conv::err)
+}
+fn get_prop81_text_block_horizontal_text_alignment(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[15], t.HorizontalTextAlignment().map_err(conv::err)?.0))
+}
+fn set_prop82_text_block_is_color_font_enabled(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?.SetIsColorFontEnabled(conv::bool_(v)?).map_err(conv::err)
+}
+fn get_prop82_text_block_is_color_font_enabled(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?;
+    Ok(Value::Bool(t.IsColorFontEnabled().map_err(conv::err)?))
+}
+fn set_prop83_text_block_is_text_scale_factor_enabled(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?.SetIsTextScaleFactorEnabled(conv::bool_(v)?).map_err(conv::err)
+}
+fn get_prop83_text_block_is_text_scale_factor_enabled(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?;
+    Ok(Value::Bool(t.IsTextScaleFactorEnabled().map_err(conv::err)?))
+}
+fn get_prop84_text_block_is_text_trimmed(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?;
+    Ok(Value::Bool(t.IsTextTrimmed().map_err(conv::err)?))
+}
+fn set_prop85_text_block_line_height(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?.SetLineHeight(conv::f64_(v)?).map_err(conv::err)
+}
+fn get_prop85_text_block_line_height(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?;
+    Ok(Value::F64(t.LineHeight().map_err(conv::err)?))
+}
+fn set_prop86_text_block_line_stacking_strategy(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?.SetLineStackingStrategy(crate::bindings::Microsoft::UI::Xaml::LineStackingStrategy(conv::enum_(v, &ENUMS[16])?)).map_err(conv::err)
+}
+fn get_prop86_text_block_line_stacking_strategy(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[16], t.LineStackingStrategy().map_err(conv::err)?.0))
+}
+fn set_prop87_text_block_optical_margin_alignment(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?.SetOpticalMarginAlignment(crate::bindings::Microsoft::UI::Xaml::OpticalMarginAlignment(conv::enum_(v, &ENUMS[17])?)).map_err(conv::err)
+}
+fn get_prop87_text_block_optical_margin_alignment(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[17], t.OpticalMarginAlignment().map_err(conv::err)?.0))
+}
+fn set_prop88_text_block_padding(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?.SetPadding(conv::thickness(v)?).map_err(conv::err)
+}
+fn get_prop88_text_block_padding(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?;
+    Ok(conv::thickness_value(t.Padding().map_err(conv::err)?))
+}
+fn get_prop89_text_block_selected_text(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?;
+    Ok(Value::Str(t.SelectedText().map_err(conv::err)?.to_string_lossy()))
+}
+fn set_prop90_text_block_text_alignment(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?.SetTextAlignment(crate::bindings::Microsoft::UI::Xaml::TextAlignment(conv::enum_(v, &ENUMS[15])?)).map_err(conv::err)
+}
+fn get_prop90_text_block_text_alignment(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[15], t.TextAlignment().map_err(conv::err)?.0))
+}
+fn set_prop91_text_block_text_line_bounds(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?.SetTextLineBounds(crate::bindings::Microsoft::UI::Xaml::TextLineBounds(conv::enum_(v, &ENUMS[18])?)).map_err(conv::err)
+}
+fn get_prop91_text_block_text_line_bounds(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[18], t.TextLineBounds().map_err(conv::err)?.0))
+}
+fn set_prop92_text_block_text_reading_order(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?.SetTextReadingOrder(crate::bindings::Microsoft::UI::Xaml::TextReadingOrder(conv::enum_(v, &ENUMS[19])?)).map_err(conv::err)
+}
+fn get_prop92_text_block_text_reading_order(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[19], t.TextReadingOrder().map_err(conv::err)?.0))
+}
+fn set_prop93_text_block_text_trimming(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?.SetTextTrimming(crate::bindings::Microsoft::UI::Xaml::TextTrimming(conv::enum_(v, &ENUMS[20])?)).map_err(conv::err)
+}
+fn get_prop93_text_block_text_trimming(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[20], t.TextTrimming().map_err(conv::err)?.0))
+}
+fn set_prop94_text_box_text(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?.SetText(&conv::hstring(v)?).map_err(conv::err)
 }
-fn get_prop35_text_box_text(o: &IInspectable) -> R<Value> {
+fn get_prop94_text_box_text(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?;
     Ok(Value::Str(t.Text().map_err(conv::err)?.to_string_lossy()))
 }
-fn set_prop36_text_box_placeholder_text(o: &IInspectable, v: &Value) -> R<()> {
+fn set_prop95_text_box_placeholder_text(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?.SetPlaceholderText(&conv::hstring(v)?).map_err(conv::err)
 }
-fn get_prop36_text_box_placeholder_text(o: &IInspectable) -> R<Value> {
+fn get_prop95_text_box_placeholder_text(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?;
     Ok(Value::Str(t.PlaceholderText().map_err(conv::err)?.to_string_lossy()))
 }
-fn set_prop37_text_box_is_read_only(o: &IInspectable, v: &Value) -> R<()> {
+fn set_prop96_text_box_is_read_only(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?.SetIsReadOnly(conv::bool_(v)?).map_err(conv::err)
 }
-fn get_prop37_text_box_is_read_only(o: &IInspectable) -> R<Value> {
+fn get_prop96_text_box_is_read_only(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?;
     Ok(Value::Bool(t.IsReadOnly().map_err(conv::err)?))
 }
-fn set_prop38_text_box_max_length(o: &IInspectable, v: &Value) -> R<()> {
+fn set_prop97_text_box_max_length(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?.SetMaxLength(conv::i32_(v)?).map_err(conv::err)
 }
-fn get_prop38_text_box_max_length(o: &IInspectable) -> R<Value> {
+fn get_prop97_text_box_max_length(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?;
     Ok(Value::I64(t.MaxLength().map_err(conv::err)? as i64))
 }
-fn set_prop39_text_box_accepts_return(o: &IInspectable, v: &Value) -> R<()> {
+fn set_prop98_text_box_accepts_return(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?.SetAcceptsReturn(conv::bool_(v)?).map_err(conv::err)
 }
-fn get_prop39_text_box_accepts_return(o: &IInspectable) -> R<Value> {
+fn get_prop98_text_box_accepts_return(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?;
     Ok(Value::Bool(t.AcceptsReturn().map_err(conv::err)?))
 }
-fn set_prop40_text_box_text_wrapping(o: &IInspectable, v: &Value) -> R<()> {
-    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?.SetTextWrapping(crate::bindings::Microsoft::UI::Xaml::TextWrapping(conv::enum_(v, &ENUMS[3])?)).map_err(conv::err)
+fn set_prop99_text_box_text_wrapping(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?.SetTextWrapping(crate::bindings::Microsoft::UI::Xaml::TextWrapping(conv::enum_(v, &ENUMS[14])?)).map_err(conv::err)
 }
-fn get_prop40_text_box_text_wrapping(o: &IInspectable) -> R<Value> {
+fn get_prop99_text_box_text_wrapping(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?;
-    Ok(conv::enum_name(&ENUMS[3], t.TextWrapping().map_err(conv::err)?.0))
+    Ok(conv::enum_name(&ENUMS[14], t.TextWrapping().map_err(conv::err)?.0))
 }
-fn set_prop41_text_box_header(o: &IInspectable, v: &Value) -> R<()> {
+fn set_prop100_text_box_header(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?.SetHeader(conv::boxed_str(v)?.as_ref()).map_err(conv::err)
 }
-fn get_prop41_text_box_header(o: &IInspectable) -> R<Value> {
+fn get_prop100_text_box_header(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?;
     Ok(conv::unboxed_value(t.Header().ok()))
 }
-fn set_prop42_toggle_button_is_checked(o: &IInspectable, v: &Value) -> R<()> {
+fn get_prop101_text_box_can_paste_clipboard_content(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?;
+    Ok(Value::Bool(t.CanPasteClipboardContent().map_err(conv::err)?))
+}
+fn get_prop102_text_box_can_redo(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?;
+    Ok(Value::Bool(t.CanRedo().map_err(conv::err)?))
+}
+fn get_prop103_text_box_can_undo(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?;
+    Ok(Value::Bool(t.CanUndo().map_err(conv::err)?))
+}
+fn set_prop104_text_box_character_casing(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?.SetCharacterCasing(crate::bindings::Microsoft::UI::Xaml::Controls::CharacterCasing(conv::enum_(v, &ENUMS[21])?)).map_err(conv::err)
+}
+fn get_prop104_text_box_character_casing(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[21], t.CharacterCasing().map_err(conv::err)?.0))
+}
+fn set_prop105_text_box_desired_candidate_window_alignment(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?.SetDesiredCandidateWindowAlignment(crate::bindings::Microsoft::UI::Xaml::Controls::CandidateWindowAlignment(conv::enum_(v, &ENUMS[22])?)).map_err(conv::err)
+}
+fn get_prop105_text_box_desired_candidate_window_alignment(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[22], t.DesiredCandidateWindowAlignment().map_err(conv::err)?.0))
+}
+fn set_prop106_text_box_horizontal_text_alignment(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?.SetHorizontalTextAlignment(crate::bindings::Microsoft::UI::Xaml::TextAlignment(conv::enum_(v, &ENUMS[15])?)).map_err(conv::err)
+}
+fn get_prop106_text_box_horizontal_text_alignment(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[15], t.HorizontalTextAlignment().map_err(conv::err)?.0))
+}
+fn set_prop107_text_box_is_color_font_enabled(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?.SetIsColorFontEnabled(conv::bool_(v)?).map_err(conv::err)
+}
+fn get_prop107_text_box_is_color_font_enabled(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?;
+    Ok(Value::Bool(t.IsColorFontEnabled().map_err(conv::err)?))
+}
+fn set_prop108_text_box_is_spell_check_enabled(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?.SetIsSpellCheckEnabled(conv::bool_(v)?).map_err(conv::err)
+}
+fn get_prop108_text_box_is_spell_check_enabled(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?;
+    Ok(Value::Bool(t.IsSpellCheckEnabled().map_err(conv::err)?))
+}
+fn set_prop109_text_box_is_text_prediction_enabled(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?.SetIsTextPredictionEnabled(conv::bool_(v)?).map_err(conv::err)
+}
+fn get_prop109_text_box_is_text_prediction_enabled(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?;
+    Ok(Value::Bool(t.IsTextPredictionEnabled().map_err(conv::err)?))
+}
+fn set_prop110_text_box_prevent_keyboard_display_on_programmatic_focus(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?.SetPreventKeyboardDisplayOnProgrammaticFocus(conv::bool_(v)?).map_err(conv::err)
+}
+fn get_prop110_text_box_prevent_keyboard_display_on_programmatic_focus(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?;
+    Ok(Value::Bool(t.PreventKeyboardDisplayOnProgrammaticFocus().map_err(conv::err)?))
+}
+fn set_prop111_text_box_selected_text(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?.SetSelectedText(&conv::hstring(v)?).map_err(conv::err)
+}
+fn get_prop111_text_box_selected_text(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?;
+    Ok(Value::Str(t.SelectedText().map_err(conv::err)?.to_string_lossy()))
+}
+fn set_prop112_text_box_selection_length(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?.SetSelectionLength(conv::i32_(v)?).map_err(conv::err)
+}
+fn get_prop112_text_box_selection_length(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?;
+    Ok(Value::I64(t.SelectionLength().map_err(conv::err)? as i64))
+}
+fn set_prop113_text_box_selection_start(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?.SetSelectionStart(conv::i32_(v)?).map_err(conv::err)
+}
+fn get_prop113_text_box_selection_start(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?;
+    Ok(Value::I64(t.SelectionStart().map_err(conv::err)? as i64))
+}
+fn set_prop114_text_box_text_alignment(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?.SetTextAlignment(crate::bindings::Microsoft::UI::Xaml::TextAlignment(conv::enum_(v, &ENUMS[15])?)).map_err(conv::err)
+}
+fn get_prop114_text_box_text_alignment(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[15], t.TextAlignment().map_err(conv::err)?.0))
+}
+fn set_prop115_text_box_text_reading_order(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?.SetTextReadingOrder(crate::bindings::Microsoft::UI::Xaml::TextReadingOrder(conv::enum_(v, &ENUMS[19])?)).map_err(conv::err)
+}
+fn get_prop115_text_box_text_reading_order(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[19], t.TextReadingOrder().map_err(conv::err)?.0))
+}
+fn set_prop116_toggle_button_is_checked(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::ToggleButton>().map_err(conv::err)?.SetIsChecked(conv::nullable_bool(v)?).map_err(conv::err)
 }
-fn get_prop42_toggle_button_is_checked(o: &IInspectable) -> R<Value> {
+fn get_prop116_toggle_button_is_checked(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::ToggleButton>().map_err(conv::err)?;
     Ok(conv::nullable_bool_value(t.IsChecked().ok()))
 }
-fn set_prop43_toggle_button_is_three_state(o: &IInspectable, v: &Value) -> R<()> {
+fn set_prop117_toggle_button_is_three_state(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::ToggleButton>().map_err(conv::err)?.SetIsThreeState(conv::bool_(v)?).map_err(conv::err)
 }
-fn get_prop43_toggle_button_is_three_state(o: &IInspectable) -> R<Value> {
+fn get_prop117_toggle_button_is_three_state(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::ToggleButton>().map_err(conv::err)?;
     Ok(Value::Bool(t.IsThreeState().map_err(conv::err)?))
 }
-fn set_prop44_ui_element_visibility(o: &IInspectable, v: &Value) -> R<()> {
-    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?.SetVisibility(crate::bindings::Microsoft::UI::Xaml::Visibility(conv::enum_(v, &ENUMS[4])?)).map_err(conv::err)
+fn set_prop118_ui_element_visibility(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?.SetVisibility(crate::bindings::Microsoft::UI::Xaml::Visibility(conv::enum_(v, &ENUMS[23])?)).map_err(conv::err)
 }
-fn get_prop44_ui_element_visibility(o: &IInspectable) -> R<Value> {
+fn get_prop118_ui_element_visibility(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?;
-    Ok(conv::enum_name(&ENUMS[4], t.Visibility().map_err(conv::err)?.0))
+    Ok(conv::enum_name(&ENUMS[23], t.Visibility().map_err(conv::err)?.0))
 }
-fn set_prop45_ui_element_opacity(o: &IInspectable, v: &Value) -> R<()> {
+fn set_prop119_ui_element_opacity(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?.SetOpacity(conv::f64_(v)?).map_err(conv::err)
 }
-fn get_prop45_ui_element_opacity(o: &IInspectable) -> R<Value> {
+fn get_prop119_ui_element_opacity(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?;
     Ok(Value::F64(t.Opacity().map_err(conv::err)?))
 }
-fn set_prop46_ui_element_is_hit_test_visible(o: &IInspectable, v: &Value) -> R<()> {
+fn set_prop120_ui_element_is_hit_test_visible(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?.SetIsHitTestVisible(conv::bool_(v)?).map_err(conv::err)
 }
-fn get_prop46_ui_element_is_hit_test_visible(o: &IInspectable) -> R<Value> {
+fn get_prop120_ui_element_is_hit_test_visible(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?;
     Ok(Value::Bool(t.IsHitTestVisible().map_err(conv::err)?))
 }
-fn set_prop47_window_title(o: &IInspectable, v: &Value) -> R<()> {
+fn set_prop121_ui_element_access_key(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?.SetAccessKey(&conv::hstring(v)?).map_err(conv::err)
+}
+fn get_prop121_ui_element_access_key(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?;
+    Ok(Value::Str(t.AccessKey().map_err(conv::err)?.to_string_lossy()))
+}
+fn set_prop122_ui_element_can_be_scroll_anchor(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?.SetCanBeScrollAnchor(conv::bool_(v)?).map_err(conv::err)
+}
+fn get_prop122_ui_element_can_be_scroll_anchor(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?;
+    Ok(Value::Bool(t.CanBeScrollAnchor().map_err(conv::err)?))
+}
+fn set_prop123_ui_element_composite_mode(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?.SetCompositeMode(crate::bindings::Microsoft::UI::Xaml::Media::ElementCompositeMode(conv::enum_(v, &ENUMS[24])?)).map_err(conv::err)
+}
+fn get_prop123_ui_element_composite_mode(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[24], t.CompositeMode().map_err(conv::err)?.0))
+}
+fn set_prop124_ui_element_exit_display_mode_on_access_key_invoked(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?.SetExitDisplayModeOnAccessKeyInvoked(conv::bool_(v)?).map_err(conv::err)
+}
+fn get_prop124_ui_element_exit_display_mode_on_access_key_invoked(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?;
+    Ok(Value::Bool(t.ExitDisplayModeOnAccessKeyInvoked().map_err(conv::err)?))
+}
+fn get_prop125_ui_element_focus_state(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[25], t.FocusState().map_err(conv::err)?.0))
+}
+fn set_prop126_ui_element_is_access_key_scope(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?.SetIsAccessKeyScope(conv::bool_(v)?).map_err(conv::err)
+}
+fn get_prop126_ui_element_is_access_key_scope(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?;
+    Ok(Value::Bool(t.IsAccessKeyScope().map_err(conv::err)?))
+}
+fn set_prop127_ui_element_is_double_tap_enabled(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?.SetIsDoubleTapEnabled(conv::bool_(v)?).map_err(conv::err)
+}
+fn get_prop127_ui_element_is_double_tap_enabled(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?;
+    Ok(Value::Bool(t.IsDoubleTapEnabled().map_err(conv::err)?))
+}
+fn set_prop128_ui_element_is_holding_enabled(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?.SetIsHoldingEnabled(conv::bool_(v)?).map_err(conv::err)
+}
+fn get_prop128_ui_element_is_holding_enabled(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?;
+    Ok(Value::Bool(t.IsHoldingEnabled().map_err(conv::err)?))
+}
+fn set_prop129_ui_element_is_right_tap_enabled(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?.SetIsRightTapEnabled(conv::bool_(v)?).map_err(conv::err)
+}
+fn get_prop129_ui_element_is_right_tap_enabled(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?;
+    Ok(Value::Bool(t.IsRightTapEnabled().map_err(conv::err)?))
+}
+fn set_prop130_ui_element_is_tab_stop(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?.SetIsTabStop(conv::bool_(v)?).map_err(conv::err)
+}
+fn get_prop130_ui_element_is_tab_stop(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?;
+    Ok(Value::Bool(t.IsTabStop().map_err(conv::err)?))
+}
+fn set_prop131_ui_element_is_tap_enabled(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?.SetIsTapEnabled(conv::bool_(v)?).map_err(conv::err)
+}
+fn get_prop131_ui_element_is_tap_enabled(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?;
+    Ok(Value::Bool(t.IsTapEnabled().map_err(conv::err)?))
+}
+fn set_prop132_ui_element_key_tip_horizontal_offset(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?.SetKeyTipHorizontalOffset(conv::f64_(v)?).map_err(conv::err)
+}
+fn get_prop132_ui_element_key_tip_horizontal_offset(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?;
+    Ok(Value::F64(t.KeyTipHorizontalOffset().map_err(conv::err)?))
+}
+fn set_prop133_ui_element_key_tip_placement_mode(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?.SetKeyTipPlacementMode(crate::bindings::Microsoft::UI::Xaml::Input::KeyTipPlacementMode(conv::enum_(v, &ENUMS[26])?)).map_err(conv::err)
+}
+fn get_prop133_ui_element_key_tip_placement_mode(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[26], t.KeyTipPlacementMode().map_err(conv::err)?.0))
+}
+fn set_prop134_ui_element_key_tip_vertical_offset(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?.SetKeyTipVerticalOffset(conv::f64_(v)?).map_err(conv::err)
+}
+fn get_prop134_ui_element_key_tip_vertical_offset(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?;
+    Ok(Value::F64(t.KeyTipVerticalOffset().map_err(conv::err)?))
+}
+fn set_prop135_ui_element_keyboard_accelerator_placement_mode(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?.SetKeyboardAcceleratorPlacementMode(crate::bindings::Microsoft::UI::Xaml::Input::KeyboardAcceleratorPlacementMode(conv::enum_(v, &ENUMS[27])?)).map_err(conv::err)
+}
+fn get_prop135_ui_element_keyboard_accelerator_placement_mode(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[27], t.KeyboardAcceleratorPlacementMode().map_err(conv::err)?.0))
+}
+fn set_prop136_ui_element_rasterization_scale(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?.SetRasterizationScale(conv::f64_(v)?).map_err(conv::err)
+}
+fn get_prop136_ui_element_rasterization_scale(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?;
+    Ok(Value::F64(t.RasterizationScale().map_err(conv::err)?))
+}
+fn set_prop137_ui_element_tab_focus_navigation(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?.SetTabFocusNavigation(crate::bindings::Microsoft::UI::Xaml::Input::KeyboardNavigationMode(conv::enum_(v, &ENUMS[7])?)).map_err(conv::err)
+}
+fn get_prop137_ui_element_tab_focus_navigation(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[7], t.TabFocusNavigation().map_err(conv::err)?.0))
+}
+fn set_prop138_ui_element_tab_index(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?.SetTabIndex(conv::i32_(v)?).map_err(conv::err)
+}
+fn get_prop138_ui_element_tab_index(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?;
+    Ok(Value::I64(t.TabIndex().map_err(conv::err)? as i64))
+}
+fn set_prop139_ui_element_use_layout_rounding(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?.SetUseLayoutRounding(conv::bool_(v)?).map_err(conv::err)
+}
+fn get_prop139_ui_element_use_layout_rounding(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?;
+    Ok(Value::Bool(t.UseLayoutRounding().map_err(conv::err)?))
+}
+fn set_prop140_ui_element_use_system_focus_visuals(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?.SetUseSystemFocusVisuals(conv::bool_(v)?).map_err(conv::err)
+}
+fn get_prop140_ui_element_use_system_focus_visuals(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?;
+    Ok(Value::Bool(t.UseSystemFocusVisuals().map_err(conv::err)?))
+}
+fn set_prop141_ui_element_xy_focus_down_navigation_strategy(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?.SetXYFocusDownNavigationStrategy(crate::bindings::Microsoft::UI::Xaml::Input::XYFocusNavigationStrategy(conv::enum_(v, &ENUMS[28])?)).map_err(conv::err)
+}
+fn get_prop141_ui_element_xy_focus_down_navigation_strategy(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[28], t.XYFocusDownNavigationStrategy().map_err(conv::err)?.0))
+}
+fn set_prop142_ui_element_xy_focus_keyboard_navigation(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?.SetXYFocusKeyboardNavigation(crate::bindings::Microsoft::UI::Xaml::Input::XYFocusKeyboardNavigationMode(conv::enum_(v, &ENUMS[29])?)).map_err(conv::err)
+}
+fn get_prop142_ui_element_xy_focus_keyboard_navigation(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[29], t.XYFocusKeyboardNavigation().map_err(conv::err)?.0))
+}
+fn set_prop143_ui_element_xy_focus_left_navigation_strategy(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?.SetXYFocusLeftNavigationStrategy(crate::bindings::Microsoft::UI::Xaml::Input::XYFocusNavigationStrategy(conv::enum_(v, &ENUMS[28])?)).map_err(conv::err)
+}
+fn get_prop143_ui_element_xy_focus_left_navigation_strategy(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[28], t.XYFocusLeftNavigationStrategy().map_err(conv::err)?.0))
+}
+fn set_prop144_ui_element_xy_focus_right_navigation_strategy(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?.SetXYFocusRightNavigationStrategy(crate::bindings::Microsoft::UI::Xaml::Input::XYFocusNavigationStrategy(conv::enum_(v, &ENUMS[28])?)).map_err(conv::err)
+}
+fn get_prop144_ui_element_xy_focus_right_navigation_strategy(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[28], t.XYFocusRightNavigationStrategy().map_err(conv::err)?.0))
+}
+fn set_prop145_ui_element_xy_focus_up_navigation_strategy(o: &IInspectable, v: &Value) -> R<()> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?.SetXYFocusUpNavigationStrategy(crate::bindings::Microsoft::UI::Xaml::Input::XYFocusNavigationStrategy(conv::enum_(v, &ENUMS[28])?)).map_err(conv::err)
+}
+fn get_prop145_ui_element_xy_focus_up_navigation_strategy(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?;
+    Ok(conv::enum_name(&ENUMS[28], t.XYFocusUpNavigationStrategy().map_err(conv::err)?.0))
+}
+fn set_prop146_window_title(o: &IInspectable, v: &Value) -> R<()> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Window>().map_err(conv::err)?.SetTitle(&conv::hstring(v)?).map_err(conv::err)
 }
-fn get_prop47_window_title(o: &IInspectable) -> R<Value> {
+fn get_prop146_window_title(o: &IInspectable) -> R<Value> {
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Window>().map_err(conv::err)?;
     Ok(Value::Str(t.Title().map_err(conv::err)?.to_string_lossy()))
 }
+fn get_prop147_window_visible(o: &IInspectable) -> R<Value> {
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Window>().map_err(conv::err)?;
+    Ok(Value::Bool(t.Visible().map_err(conv::err)?))
+}
 
 pub static PROP_SET: &[Option<fn(&IInspectable, &Value) -> R<()>>] = &[
-    Some(set_prop0_content_control_content),
-    Some(set_prop1_control_is_enabled),
-    Some(set_prop2_control_font_size),
-    Some(set_prop3_control_padding),
-    Some(set_prop4_framework_element_width),
-    Some(set_prop5_framework_element_height),
-    Some(set_prop6_framework_element_min_width),
-    Some(set_prop7_framework_element_min_height),
-    Some(set_prop8_framework_element_margin),
-    Some(set_prop9_framework_element_horizontal_alignment),
-    Some(set_prop10_framework_element_vertical_alignment),
-    Some(set_prop11_framework_element_name),
+    Some(set_prop0_button_base_click_mode),
     None,
     None,
-    Some(set_prop14_grid_row_spacing),
-    Some(set_prop15_grid_column_spacing),
-    Some(set_prop16_grid_padding),
-    Some(set_prop17_grid_row_definitions),
-    Some(set_prop18_grid_column_definitions),
-    Some(set_prop19_range_base_minimum),
-    Some(set_prop20_range_base_maximum),
-    Some(set_prop21_range_base_value),
-    Some(set_prop22_range_base_small_change),
-    Some(set_prop23_range_base_large_change),
-    Some(set_prop24_slider_step_frequency),
-    Some(set_prop25_slider_orientation),
-    Some(set_prop26_slider_header),
-    Some(set_prop27_stack_panel_orientation),
-    Some(set_prop28_stack_panel_spacing),
-    Some(set_prop29_stack_panel_padding),
-    Some(set_prop30_text_block_text),
-    Some(set_prop31_text_block_font_size),
-    Some(set_prop32_text_block_text_wrapping),
-    Some(set_prop33_text_block_is_text_selection_enabled),
-    Some(set_prop34_text_block_max_lines),
-    Some(set_prop35_text_box_text),
-    Some(set_prop36_text_box_placeholder_text),
-    Some(set_prop37_text_box_is_read_only),
-    Some(set_prop38_text_box_max_length),
-    Some(set_prop39_text_box_accepts_return),
-    Some(set_prop40_text_box_text_wrapping),
-    Some(set_prop41_text_box_header),
-    Some(set_prop42_toggle_button_is_checked),
-    Some(set_prop43_toggle_button_is_three_state),
-    Some(set_prop44_ui_element_visibility),
-    Some(set_prop45_ui_element_opacity),
-    Some(set_prop46_ui_element_is_hit_test_visible),
-    Some(set_prop47_window_title),
+    Some(set_prop3_content_control_content),
+    Some(set_prop4_control_is_enabled),
+    Some(set_prop5_control_font_size),
+    Some(set_prop6_control_padding),
+    Some(set_prop7_control_background_sizing),
+    Some(set_prop8_control_border_thickness),
+    Some(set_prop9_control_character_spacing),
+    Some(set_prop10_control_element_sound_mode),
+    Some(set_prop11_control_font_stretch),
+    Some(set_prop12_control_font_style),
+    Some(set_prop13_control_horizontal_content_alignment),
+    Some(set_prop14_control_is_focus_engaged),
+    Some(set_prop15_control_is_focus_engagement_enabled),
+    Some(set_prop16_control_is_text_scale_factor_enabled),
+    Some(set_prop17_control_requires_pointer),
+    Some(set_prop18_control_tab_navigation),
+    Some(set_prop19_control_vertical_content_alignment),
+    Some(set_prop20_framework_element_width),
+    Some(set_prop21_framework_element_height),
+    Some(set_prop22_framework_element_min_width),
+    Some(set_prop23_framework_element_min_height),
+    Some(set_prop24_framework_element_margin),
+    Some(set_prop25_framework_element_horizontal_alignment),
+    Some(set_prop26_framework_element_vertical_alignment),
+    Some(set_prop27_framework_element_name),
+    None,
+    None,
+    None,
+    Some(set_prop31_framework_element_allow_focus_on_interaction),
+    Some(set_prop32_framework_element_allow_focus_when_disabled),
+    Some(set_prop33_framework_element_flow_direction),
+    Some(set_prop34_framework_element_focus_visual_margin),
+    Some(set_prop35_framework_element_focus_visual_primary_thickness),
+    Some(set_prop36_framework_element_focus_visual_secondary_thickness),
+    None,
+    Some(set_prop38_framework_element_language),
+    Some(set_prop39_framework_element_max_height),
+    Some(set_prop40_framework_element_max_width),
+    Some(set_prop41_framework_element_requested_theme),
+    Some(set_prop42_grid_row_spacing),
+    Some(set_prop43_grid_column_spacing),
+    Some(set_prop44_grid_padding),
+    Some(set_prop45_grid_row_definitions),
+    Some(set_prop46_grid_column_definitions),
+    Some(set_prop47_grid_background_sizing),
+    Some(set_prop48_grid_border_thickness),
+    None,
+    Some(set_prop50_range_base_minimum),
+    Some(set_prop51_range_base_maximum),
+    Some(set_prop52_range_base_value),
+    Some(set_prop53_range_base_small_change),
+    Some(set_prop54_range_base_large_change),
+    Some(set_prop55_slider_step_frequency),
+    Some(set_prop56_slider_orientation),
+    Some(set_prop57_slider_header),
+    Some(set_prop58_slider_intermediate_value),
+    Some(set_prop59_slider_is_direction_reversed),
+    Some(set_prop60_slider_is_thumb_tool_tip_enabled),
+    Some(set_prop61_slider_snaps_to),
+    Some(set_prop62_slider_tick_frequency),
+    Some(set_prop63_slider_tick_placement),
+    Some(set_prop64_stack_panel_orientation),
+    Some(set_prop65_stack_panel_spacing),
+    Some(set_prop66_stack_panel_padding),
+    None,
+    Some(set_prop68_stack_panel_are_scroll_snap_points_regular),
+    None,
+    Some(set_prop70_stack_panel_background_sizing),
+    Some(set_prop71_stack_panel_border_thickness),
+    Some(set_prop72_text_block_text),
+    Some(set_prop73_text_block_font_size),
+    Some(set_prop74_text_block_text_wrapping),
+    Some(set_prop75_text_block_is_text_selection_enabled),
+    Some(set_prop76_text_block_max_lines),
+    None,
+    Some(set_prop78_text_block_character_spacing),
+    Some(set_prop79_text_block_font_stretch),
+    Some(set_prop80_text_block_font_style),
+    Some(set_prop81_text_block_horizontal_text_alignment),
+    Some(set_prop82_text_block_is_color_font_enabled),
+    Some(set_prop83_text_block_is_text_scale_factor_enabled),
+    None,
+    Some(set_prop85_text_block_line_height),
+    Some(set_prop86_text_block_line_stacking_strategy),
+    Some(set_prop87_text_block_optical_margin_alignment),
+    Some(set_prop88_text_block_padding),
+    None,
+    Some(set_prop90_text_block_text_alignment),
+    Some(set_prop91_text_block_text_line_bounds),
+    Some(set_prop92_text_block_text_reading_order),
+    Some(set_prop93_text_block_text_trimming),
+    Some(set_prop94_text_box_text),
+    Some(set_prop95_text_box_placeholder_text),
+    Some(set_prop96_text_box_is_read_only),
+    Some(set_prop97_text_box_max_length),
+    Some(set_prop98_text_box_accepts_return),
+    Some(set_prop99_text_box_text_wrapping),
+    Some(set_prop100_text_box_header),
+    None,
+    None,
+    None,
+    Some(set_prop104_text_box_character_casing),
+    Some(set_prop105_text_box_desired_candidate_window_alignment),
+    Some(set_prop106_text_box_horizontal_text_alignment),
+    Some(set_prop107_text_box_is_color_font_enabled),
+    Some(set_prop108_text_box_is_spell_check_enabled),
+    Some(set_prop109_text_box_is_text_prediction_enabled),
+    Some(set_prop110_text_box_prevent_keyboard_display_on_programmatic_focus),
+    Some(set_prop111_text_box_selected_text),
+    Some(set_prop112_text_box_selection_length),
+    Some(set_prop113_text_box_selection_start),
+    Some(set_prop114_text_box_text_alignment),
+    Some(set_prop115_text_box_text_reading_order),
+    Some(set_prop116_toggle_button_is_checked),
+    Some(set_prop117_toggle_button_is_three_state),
+    Some(set_prop118_ui_element_visibility),
+    Some(set_prop119_ui_element_opacity),
+    Some(set_prop120_ui_element_is_hit_test_visible),
+    Some(set_prop121_ui_element_access_key),
+    Some(set_prop122_ui_element_can_be_scroll_anchor),
+    Some(set_prop123_ui_element_composite_mode),
+    Some(set_prop124_ui_element_exit_display_mode_on_access_key_invoked),
+    None,
+    Some(set_prop126_ui_element_is_access_key_scope),
+    Some(set_prop127_ui_element_is_double_tap_enabled),
+    Some(set_prop128_ui_element_is_holding_enabled),
+    Some(set_prop129_ui_element_is_right_tap_enabled),
+    Some(set_prop130_ui_element_is_tab_stop),
+    Some(set_prop131_ui_element_is_tap_enabled),
+    Some(set_prop132_ui_element_key_tip_horizontal_offset),
+    Some(set_prop133_ui_element_key_tip_placement_mode),
+    Some(set_prop134_ui_element_key_tip_vertical_offset),
+    Some(set_prop135_ui_element_keyboard_accelerator_placement_mode),
+    Some(set_prop136_ui_element_rasterization_scale),
+    Some(set_prop137_ui_element_tab_focus_navigation),
+    Some(set_prop138_ui_element_tab_index),
+    Some(set_prop139_ui_element_use_layout_rounding),
+    Some(set_prop140_ui_element_use_system_focus_visuals),
+    Some(set_prop141_ui_element_xy_focus_down_navigation_strategy),
+    Some(set_prop142_ui_element_xy_focus_keyboard_navigation),
+    Some(set_prop143_ui_element_xy_focus_left_navigation_strategy),
+    Some(set_prop144_ui_element_xy_focus_right_navigation_strategy),
+    Some(set_prop145_ui_element_xy_focus_up_navigation_strategy),
+    Some(set_prop146_window_title),
+    None,
 ];
 
 pub static PROP_GET: &[Option<fn(&IInspectable) -> R<Value>>] = &[
-    Some(get_prop0_content_control_content),
-    Some(get_prop1_control_is_enabled),
-    Some(get_prop2_control_font_size),
-    Some(get_prop3_control_padding),
-    Some(get_prop4_framework_element_width),
-    Some(get_prop5_framework_element_height),
-    Some(get_prop6_framework_element_min_width),
-    Some(get_prop7_framework_element_min_height),
-    Some(get_prop8_framework_element_margin),
-    Some(get_prop9_framework_element_horizontal_alignment),
-    Some(get_prop10_framework_element_vertical_alignment),
-    Some(get_prop11_framework_element_name),
-    Some(get_prop12_framework_element_actual_width),
-    Some(get_prop13_framework_element_actual_height),
-    Some(get_prop14_grid_row_spacing),
-    Some(get_prop15_grid_column_spacing),
-    Some(get_prop16_grid_padding),
-    Some(get_prop17_grid_row_definitions),
-    Some(get_prop18_grid_column_definitions),
-    Some(get_prop19_range_base_minimum),
-    Some(get_prop20_range_base_maximum),
-    Some(get_prop21_range_base_value),
-    Some(get_prop22_range_base_small_change),
-    Some(get_prop23_range_base_large_change),
-    Some(get_prop24_slider_step_frequency),
-    Some(get_prop25_slider_orientation),
-    Some(get_prop26_slider_header),
-    Some(get_prop27_stack_panel_orientation),
-    Some(get_prop28_stack_panel_spacing),
-    Some(get_prop29_stack_panel_padding),
-    Some(get_prop30_text_block_text),
-    Some(get_prop31_text_block_font_size),
-    Some(get_prop32_text_block_text_wrapping),
-    Some(get_prop33_text_block_is_text_selection_enabled),
-    Some(get_prop34_text_block_max_lines),
-    Some(get_prop35_text_box_text),
-    Some(get_prop36_text_box_placeholder_text),
-    Some(get_prop37_text_box_is_read_only),
-    Some(get_prop38_text_box_max_length),
-    Some(get_prop39_text_box_accepts_return),
-    Some(get_prop40_text_box_text_wrapping),
-    Some(get_prop41_text_box_header),
-    Some(get_prop42_toggle_button_is_checked),
-    Some(get_prop43_toggle_button_is_three_state),
-    Some(get_prop44_ui_element_visibility),
-    Some(get_prop45_ui_element_opacity),
-    Some(get_prop46_ui_element_is_hit_test_visible),
-    Some(get_prop47_window_title),
+    Some(get_prop0_button_base_click_mode),
+    Some(get_prop1_button_base_is_pointer_over),
+    Some(get_prop2_button_base_is_pressed),
+    Some(get_prop3_content_control_content),
+    Some(get_prop4_control_is_enabled),
+    Some(get_prop5_control_font_size),
+    Some(get_prop6_control_padding),
+    Some(get_prop7_control_background_sizing),
+    Some(get_prop8_control_border_thickness),
+    Some(get_prop9_control_character_spacing),
+    Some(get_prop10_control_element_sound_mode),
+    Some(get_prop11_control_font_stretch),
+    Some(get_prop12_control_font_style),
+    Some(get_prop13_control_horizontal_content_alignment),
+    Some(get_prop14_control_is_focus_engaged),
+    Some(get_prop15_control_is_focus_engagement_enabled),
+    Some(get_prop16_control_is_text_scale_factor_enabled),
+    Some(get_prop17_control_requires_pointer),
+    Some(get_prop18_control_tab_navigation),
+    Some(get_prop19_control_vertical_content_alignment),
+    Some(get_prop20_framework_element_width),
+    Some(get_prop21_framework_element_height),
+    Some(get_prop22_framework_element_min_width),
+    Some(get_prop23_framework_element_min_height),
+    Some(get_prop24_framework_element_margin),
+    Some(get_prop25_framework_element_horizontal_alignment),
+    Some(get_prop26_framework_element_vertical_alignment),
+    Some(get_prop27_framework_element_name),
+    Some(get_prop28_framework_element_actual_width),
+    Some(get_prop29_framework_element_actual_height),
+    Some(get_prop30_framework_element_actual_theme),
+    Some(get_prop31_framework_element_allow_focus_on_interaction),
+    Some(get_prop32_framework_element_allow_focus_when_disabled),
+    Some(get_prop33_framework_element_flow_direction),
+    Some(get_prop34_framework_element_focus_visual_margin),
+    Some(get_prop35_framework_element_focus_visual_primary_thickness),
+    Some(get_prop36_framework_element_focus_visual_secondary_thickness),
+    Some(get_prop37_framework_element_is_loaded),
+    Some(get_prop38_framework_element_language),
+    Some(get_prop39_framework_element_max_height),
+    Some(get_prop40_framework_element_max_width),
+    Some(get_prop41_framework_element_requested_theme),
+    Some(get_prop42_grid_row_spacing),
+    Some(get_prop43_grid_column_spacing),
+    Some(get_prop44_grid_padding),
+    Some(get_prop45_grid_row_definitions),
+    Some(get_prop46_grid_column_definitions),
+    Some(get_prop47_grid_background_sizing),
+    Some(get_prop48_grid_border_thickness),
+    Some(get_prop49_panel_is_items_host),
+    Some(get_prop50_range_base_minimum),
+    Some(get_prop51_range_base_maximum),
+    Some(get_prop52_range_base_value),
+    Some(get_prop53_range_base_small_change),
+    Some(get_prop54_range_base_large_change),
+    Some(get_prop55_slider_step_frequency),
+    Some(get_prop56_slider_orientation),
+    Some(get_prop57_slider_header),
+    Some(get_prop58_slider_intermediate_value),
+    Some(get_prop59_slider_is_direction_reversed),
+    Some(get_prop60_slider_is_thumb_tool_tip_enabled),
+    Some(get_prop61_slider_snaps_to),
+    Some(get_prop62_slider_tick_frequency),
+    Some(get_prop63_slider_tick_placement),
+    Some(get_prop64_stack_panel_orientation),
+    Some(get_prop65_stack_panel_spacing),
+    Some(get_prop66_stack_panel_padding),
+    Some(get_prop67_stack_panel_are_horizontal_snap_points_regular),
+    Some(get_prop68_stack_panel_are_scroll_snap_points_regular),
+    Some(get_prop69_stack_panel_are_vertical_snap_points_regular),
+    Some(get_prop70_stack_panel_background_sizing),
+    Some(get_prop71_stack_panel_border_thickness),
+    Some(get_prop72_text_block_text),
+    Some(get_prop73_text_block_font_size),
+    Some(get_prop74_text_block_text_wrapping),
+    Some(get_prop75_text_block_is_text_selection_enabled),
+    Some(get_prop76_text_block_max_lines),
+    Some(get_prop77_text_block_baseline_offset),
+    Some(get_prop78_text_block_character_spacing),
+    Some(get_prop79_text_block_font_stretch),
+    Some(get_prop80_text_block_font_style),
+    Some(get_prop81_text_block_horizontal_text_alignment),
+    Some(get_prop82_text_block_is_color_font_enabled),
+    Some(get_prop83_text_block_is_text_scale_factor_enabled),
+    Some(get_prop84_text_block_is_text_trimmed),
+    Some(get_prop85_text_block_line_height),
+    Some(get_prop86_text_block_line_stacking_strategy),
+    Some(get_prop87_text_block_optical_margin_alignment),
+    Some(get_prop88_text_block_padding),
+    Some(get_prop89_text_block_selected_text),
+    Some(get_prop90_text_block_text_alignment),
+    Some(get_prop91_text_block_text_line_bounds),
+    Some(get_prop92_text_block_text_reading_order),
+    Some(get_prop93_text_block_text_trimming),
+    Some(get_prop94_text_box_text),
+    Some(get_prop95_text_box_placeholder_text),
+    Some(get_prop96_text_box_is_read_only),
+    Some(get_prop97_text_box_max_length),
+    Some(get_prop98_text_box_accepts_return),
+    Some(get_prop99_text_box_text_wrapping),
+    Some(get_prop100_text_box_header),
+    Some(get_prop101_text_box_can_paste_clipboard_content),
+    Some(get_prop102_text_box_can_redo),
+    Some(get_prop103_text_box_can_undo),
+    Some(get_prop104_text_box_character_casing),
+    Some(get_prop105_text_box_desired_candidate_window_alignment),
+    Some(get_prop106_text_box_horizontal_text_alignment),
+    Some(get_prop107_text_box_is_color_font_enabled),
+    Some(get_prop108_text_box_is_spell_check_enabled),
+    Some(get_prop109_text_box_is_text_prediction_enabled),
+    Some(get_prop110_text_box_prevent_keyboard_display_on_programmatic_focus),
+    Some(get_prop111_text_box_selected_text),
+    Some(get_prop112_text_box_selection_length),
+    Some(get_prop113_text_box_selection_start),
+    Some(get_prop114_text_box_text_alignment),
+    Some(get_prop115_text_box_text_reading_order),
+    Some(get_prop116_toggle_button_is_checked),
+    Some(get_prop117_toggle_button_is_three_state),
+    Some(get_prop118_ui_element_visibility),
+    Some(get_prop119_ui_element_opacity),
+    Some(get_prop120_ui_element_is_hit_test_visible),
+    Some(get_prop121_ui_element_access_key),
+    Some(get_prop122_ui_element_can_be_scroll_anchor),
+    Some(get_prop123_ui_element_composite_mode),
+    Some(get_prop124_ui_element_exit_display_mode_on_access_key_invoked),
+    Some(get_prop125_ui_element_focus_state),
+    Some(get_prop126_ui_element_is_access_key_scope),
+    Some(get_prop127_ui_element_is_double_tap_enabled),
+    Some(get_prop128_ui_element_is_holding_enabled),
+    Some(get_prop129_ui_element_is_right_tap_enabled),
+    Some(get_prop130_ui_element_is_tab_stop),
+    Some(get_prop131_ui_element_is_tap_enabled),
+    Some(get_prop132_ui_element_key_tip_horizontal_offset),
+    Some(get_prop133_ui_element_key_tip_placement_mode),
+    Some(get_prop134_ui_element_key_tip_vertical_offset),
+    Some(get_prop135_ui_element_keyboard_accelerator_placement_mode),
+    Some(get_prop136_ui_element_rasterization_scale),
+    Some(get_prop137_ui_element_tab_focus_navigation),
+    Some(get_prop138_ui_element_tab_index),
+    Some(get_prop139_ui_element_use_layout_rounding),
+    Some(get_prop140_ui_element_use_system_focus_visuals),
+    Some(get_prop141_ui_element_xy_focus_down_navigation_strategy),
+    Some(get_prop142_ui_element_xy_focus_keyboard_navigation),
+    Some(get_prop143_ui_element_xy_focus_left_navigation_strategy),
+    Some(get_prop144_ui_element_xy_focus_right_navigation_strategy),
+    Some(get_prop145_ui_element_xy_focus_up_navigation_strategy),
+    Some(get_prop146_window_title),
+    Some(get_prop147_window_visible),
 ];
 
-fn event0_button_base_click(o: &IInspectable, sink: Sink) -> WinResult<windows_core::EventRevoker> {
+fn event0_button_base_click(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::ButtonBase>()?.Click(move |_s, _a| {
         sink.post(vec![]);
-    })
+    }).map(Into::into)
 }
-fn event1_range_base_value_changed(o: &IInspectable, sink: Sink) -> WinResult<windows_core::EventRevoker> {
+fn event1_button_base_notify_click_mode(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::ButtonBase::ClickModeProperty()?, sink)
+}
+fn event2_control_focus_disengaged(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Control>()?.FocusDisengaged(move |_s, _a| {
+        sink.post(vec![]);
+    }).map(Into::into)
+}
+fn event3_control_focus_engaged(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Control>()?.FocusEngaged(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetHandled(true);
+        }
+    }).map(Into::into)
+}
+fn event4_control_is_enabled_changed(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Control>()?.IsEnabledChanged(move |_s, _a| {
+        sink.post(vec![]);
+    }).map(Into::into)
+}
+fn event5_control_notify_background_sizing(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Control::BackgroundSizingProperty()?, sink)
+}
+fn event6_control_notify_border_thickness(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Control::BorderThicknessProperty()?, sink)
+}
+fn event7_control_notify_character_spacing(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Control::CharacterSpacingProperty()?, sink)
+}
+fn event8_control_notify_element_sound_mode(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Control::ElementSoundModeProperty()?, sink)
+}
+fn event9_control_notify_font_size(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Control::FontSizeProperty()?, sink)
+}
+fn event10_control_notify_font_stretch(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Control::FontStretchProperty()?, sink)
+}
+fn event11_control_notify_font_style(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Control::FontStyleProperty()?, sink)
+}
+fn event12_control_notify_horizontal_content_alignment(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Control::HorizontalContentAlignmentProperty()?, sink)
+}
+fn event13_control_notify_is_enabled(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Control::IsEnabledProperty()?, sink)
+}
+fn event14_control_notify_is_focus_engaged(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Control::IsFocusEngagedProperty()?, sink)
+}
+fn event15_control_notify_is_focus_engagement_enabled(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Control::IsFocusEngagementEnabledProperty()?, sink)
+}
+fn event16_control_notify_is_text_scale_factor_enabled(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Control::IsTextScaleFactorEnabledProperty()?, sink)
+}
+fn event17_control_notify_padding(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Control::PaddingProperty()?, sink)
+}
+fn event18_control_notify_requires_pointer(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Control::RequiresPointerProperty()?, sink)
+}
+fn event19_control_notify_tab_navigation(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Control::TabNavigationProperty()?, sink)
+}
+fn event20_control_notify_vertical_content_alignment(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Control::VerticalContentAlignmentProperty()?, sink)
+}
+fn event21_framework_element_actual_theme_changed(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>()?.ActualThemeChanged(move |_s, _a| {
+        sink.post(vec![]);
+    }).map(Into::into)
+}
+fn event22_framework_element_data_context_changed(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>()?.DataContextChanged(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetHandled(true);
+        }
+    }).map(Into::into)
+}
+fn event23_framework_element_effective_viewport_changed(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>()?.EffectiveViewportChanged(move |_s, _a| {
+        sink.post(vec![]);
+    }).map(Into::into)
+}
+fn event24_framework_element_layout_updated(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>()?.LayoutUpdated(move |_s, _a| {
+        sink.post(vec![]);
+    }).map(Into::into)
+}
+fn event25_framework_element_loaded(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>()?.Loaded(move |_s, _a| {
+        sink.post(vec![]);
+    }).map(Into::into)
+}
+fn event26_framework_element_loading(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>()?.Loading(move |_s, _a| {
+        sink.post(vec![]);
+    }).map(Into::into)
+}
+fn event27_framework_element_size_changed(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>()?.SizeChanged(move |_s, _a| {
+        sink.post(vec![]);
+    }).map(Into::into)
+}
+fn event28_framework_element_unloaded(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>()?.Unloaded(move |_s, _a| {
+        sink.post(vec![]);
+    }).map(Into::into)
+}
+fn event29_framework_element_notify_allow_focus_on_interaction(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::FrameworkElement::AllowFocusOnInteractionProperty()?, sink)
+}
+fn event30_framework_element_notify_allow_focus_when_disabled(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::FrameworkElement::AllowFocusWhenDisabledProperty()?, sink)
+}
+fn event31_framework_element_notify_flow_direction(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::FrameworkElement::FlowDirectionProperty()?, sink)
+}
+fn event32_framework_element_notify_focus_visual_margin(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::FrameworkElement::FocusVisualMarginProperty()?, sink)
+}
+fn event33_framework_element_notify_focus_visual_primary_thickness(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::FrameworkElement::FocusVisualPrimaryThicknessProperty()?, sink)
+}
+fn event34_framework_element_notify_focus_visual_secondary_thickness(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::FrameworkElement::FocusVisualSecondaryThicknessProperty()?, sink)
+}
+fn event35_framework_element_notify_height(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::FrameworkElement::HeightProperty()?, sink)
+}
+fn event36_framework_element_notify_horizontal_alignment(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::FrameworkElement::HorizontalAlignmentProperty()?, sink)
+}
+fn event37_framework_element_notify_language(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::FrameworkElement::LanguageProperty()?, sink)
+}
+fn event38_framework_element_notify_margin(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::FrameworkElement::MarginProperty()?, sink)
+}
+fn event39_framework_element_notify_max_height(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::FrameworkElement::MaxHeightProperty()?, sink)
+}
+fn event40_framework_element_notify_max_width(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::FrameworkElement::MaxWidthProperty()?, sink)
+}
+fn event41_framework_element_notify_min_height(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::FrameworkElement::MinHeightProperty()?, sink)
+}
+fn event42_framework_element_notify_min_width(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::FrameworkElement::MinWidthProperty()?, sink)
+}
+fn event43_framework_element_notify_name(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::FrameworkElement::NameProperty()?, sink)
+}
+fn event44_framework_element_notify_requested_theme(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::FrameworkElement::RequestedThemeProperty()?, sink)
+}
+fn event45_framework_element_notify_vertical_alignment(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::FrameworkElement::VerticalAlignmentProperty()?, sink)
+}
+fn event46_framework_element_notify_width(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::FrameworkElement::WidthProperty()?, sink)
+}
+fn event47_grid_notify_background_sizing(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Grid::BackgroundSizingProperty()?, sink)
+}
+fn event48_grid_notify_border_thickness(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Grid::BorderThicknessProperty()?, sink)
+}
+fn event49_grid_notify_column_spacing(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Grid::ColumnSpacingProperty()?, sink)
+}
+fn event50_grid_notify_padding(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Grid::PaddingProperty()?, sink)
+}
+fn event51_grid_notify_row_spacing(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Grid::RowSpacingProperty()?, sink)
+}
+fn event52_range_base_value_changed(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::RangeBase>()?.ValueChanged(move |_s, a| {
         let Some(a) = a.as_ref() else { return };
         sink.post(vec![a.NewValue().map(Value::F64).unwrap_or(Value::Null), a.OldValue().map(Value::F64).unwrap_or(Value::Null)]);
-    })
+    }).map(Into::into)
 }
-fn event2_text_box_text_changed(o: &IInspectable, sink: Sink) -> WinResult<windows_core::EventRevoker> {
+fn event53_range_base_notify_large_change(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::RangeBase::LargeChangeProperty()?, sink)
+}
+fn event54_range_base_notify_maximum(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::RangeBase::MaximumProperty()?, sink)
+}
+fn event55_range_base_notify_minimum(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::RangeBase::MinimumProperty()?, sink)
+}
+fn event56_range_base_notify_small_change(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::RangeBase::SmallChangeProperty()?, sink)
+}
+fn event57_range_base_notify_value(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::RangeBase::ValueProperty()?, sink)
+}
+fn event58_slider_notify_intermediate_value(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Slider::IntermediateValueProperty()?, sink)
+}
+fn event59_slider_notify_is_direction_reversed(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Slider::IsDirectionReversedProperty()?, sink)
+}
+fn event60_slider_notify_is_thumb_tool_tip_enabled(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Slider::IsThumbToolTipEnabledProperty()?, sink)
+}
+fn event61_slider_notify_orientation(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Slider::OrientationProperty()?, sink)
+}
+fn event62_slider_notify_snaps_to(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Slider::SnapsToProperty()?, sink)
+}
+fn event63_slider_notify_step_frequency(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Slider::StepFrequencyProperty()?, sink)
+}
+fn event64_slider_notify_tick_frequency(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Slider::TickFrequencyProperty()?, sink)
+}
+fn event65_slider_notify_tick_placement(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Slider::TickPlacementProperty()?, sink)
+}
+fn event66_stack_panel_horizontal_snap_points_changed(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::StackPanel>()?.HorizontalSnapPointsChanged(move |_s, _a| {
+        sink.post(vec![]);
+    }).map(Into::into)
+}
+fn event67_stack_panel_vertical_snap_points_changed(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::StackPanel>()?.VerticalSnapPointsChanged(move |_s, _a| {
+        sink.post(vec![]);
+    }).map(Into::into)
+}
+fn event68_stack_panel_notify_are_scroll_snap_points_regular(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::StackPanel::AreScrollSnapPointsRegularProperty()?, sink)
+}
+fn event69_stack_panel_notify_background_sizing(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::StackPanel::BackgroundSizingProperty()?, sink)
+}
+fn event70_stack_panel_notify_border_thickness(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::StackPanel::BorderThicknessProperty()?, sink)
+}
+fn event71_stack_panel_notify_orientation(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::StackPanel::OrientationProperty()?, sink)
+}
+fn event72_stack_panel_notify_padding(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::StackPanel::PaddingProperty()?, sink)
+}
+fn event73_stack_panel_notify_spacing(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::StackPanel::SpacingProperty()?, sink)
+}
+fn event74_text_block_context_menu_opening(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>()?.ContextMenuOpening(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetHandled(true);
+        }
+    }).map(Into::into)
+}
+fn event75_text_block_is_text_trimmed_changed(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>()?.IsTextTrimmedChanged(move |_s, _a| {
+        sink.post(vec![]);
+    }).map(Into::into)
+}
+fn event76_text_block_selection_changed(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>()?.SelectionChanged(move |_s, _a| {
+        sink.post(vec![]);
+    }).map(Into::into)
+}
+fn event77_text_block_notify_character_spacing(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::CharacterSpacingProperty()?, sink)
+}
+fn event78_text_block_notify_font_size(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::FontSizeProperty()?, sink)
+}
+fn event79_text_block_notify_font_stretch(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::FontStretchProperty()?, sink)
+}
+fn event80_text_block_notify_font_style(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::FontStyleProperty()?, sink)
+}
+fn event81_text_block_notify_horizontal_text_alignment(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::HorizontalTextAlignmentProperty()?, sink)
+}
+fn event82_text_block_notify_is_color_font_enabled(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::IsColorFontEnabledProperty()?, sink)
+}
+fn event83_text_block_notify_is_text_scale_factor_enabled(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::IsTextScaleFactorEnabledProperty()?, sink)
+}
+fn event84_text_block_notify_is_text_selection_enabled(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::IsTextSelectionEnabledProperty()?, sink)
+}
+fn event85_text_block_notify_line_height(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::LineHeightProperty()?, sink)
+}
+fn event86_text_block_notify_line_stacking_strategy(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::LineStackingStrategyProperty()?, sink)
+}
+fn event87_text_block_notify_max_lines(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::MaxLinesProperty()?, sink)
+}
+fn event88_text_block_notify_optical_margin_alignment(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::OpticalMarginAlignmentProperty()?, sink)
+}
+fn event89_text_block_notify_padding(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::PaddingProperty()?, sink)
+}
+fn event90_text_block_notify_text(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::TextProperty()?, sink)
+}
+fn event91_text_block_notify_text_alignment(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::TextAlignmentProperty()?, sink)
+}
+fn event92_text_block_notify_text_line_bounds(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::TextLineBoundsProperty()?, sink)
+}
+fn event93_text_block_notify_text_reading_order(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::TextReadingOrderProperty()?, sink)
+}
+fn event94_text_block_notify_text_trimming(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::TextTrimmingProperty()?, sink)
+}
+fn event95_text_block_notify_text_wrapping(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::TextWrappingProperty()?, sink)
+}
+fn event96_text_box_text_changed(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>()?.TextChanged(move |s, _a| {
         let Some(s) = s.as_ref().and_then(|s| s.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().ok()) else { return };
         sink.post(vec![s.Text().map(|x| Value::Str(x.to_string_lossy())).unwrap_or(Value::Null)]);
-    })
+    }).map(Into::into)
 }
-fn event3_text_box_before_text_changing(o: &IInspectable, sink: Sink) -> WinResult<windows_core::EventRevoker> {
+fn event97_text_box_before_text_changing(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>()?.BeforeTextChanging(move |_s, a| {
         let Some(a) = a.as_ref() else { return };
         let reply = sink.sync(vec![a.NewText().map(|x| Value::Str(x.to_string_lossy())).unwrap_or(Value::Null)]);
         if conv::is_true(&reply) {
             let _ = a.SetCancel(true);
         }
-    })
+    }).map(Into::into)
 }
-fn event4_toggle_button_checked(o: &IInspectable, sink: Sink) -> WinResult<windows_core::EventRevoker> {
+fn event98_text_box_candidate_window_bounds_changed(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>()?.CandidateWindowBoundsChanged(move |_s, _a| {
+        sink.post(vec![]);
+    }).map(Into::into)
+}
+fn event99_text_box_context_menu_opening(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>()?.ContextMenuOpening(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetHandled(true);
+        }
+    }).map(Into::into)
+}
+fn event100_text_box_copying_to_clipboard(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>()?.CopyingToClipboard(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetHandled(true);
+        }
+    }).map(Into::into)
+}
+fn event101_text_box_cutting_to_clipboard(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>()?.CuttingToClipboard(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetHandled(true);
+        }
+    }).map(Into::into)
+}
+fn event102_text_box_paste(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>()?.Paste(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetHandled(true);
+        }
+    }).map(Into::into)
+}
+fn event103_text_box_selection_changed(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>()?.SelectionChanged(move |_s, _a| {
+        sink.post(vec![]);
+    }).map(Into::into)
+}
+fn event104_text_box_selection_changing(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>()?.SelectionChanging(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetCancel(true);
+        }
+    }).map(Into::into)
+}
+fn event105_text_box_text_changing(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>()?.TextChanging(move |_s, _a| {
+        sink.post(vec![]);
+    }).map(Into::into)
+}
+fn event106_text_box_text_composition_changed(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>()?.TextCompositionChanged(move |_s, _a| {
+        sink.post(vec![]);
+    }).map(Into::into)
+}
+fn event107_text_box_text_composition_ended(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>()?.TextCompositionEnded(move |_s, _a| {
+        sink.post(vec![]);
+    }).map(Into::into)
+}
+fn event108_text_box_text_composition_started(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>()?.TextCompositionStarted(move |_s, _a| {
+        sink.post(vec![]);
+    }).map(Into::into)
+}
+fn event109_text_box_notify_accepts_return(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBox::AcceptsReturnProperty()?, sink)
+}
+fn event110_text_box_notify_character_casing(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBox::CharacterCasingProperty()?, sink)
+}
+fn event111_text_box_notify_desired_candidate_window_alignment(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBox::DesiredCandidateWindowAlignmentProperty()?, sink)
+}
+fn event112_text_box_notify_horizontal_text_alignment(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBox::HorizontalTextAlignmentProperty()?, sink)
+}
+fn event113_text_box_notify_is_color_font_enabled(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBox::IsColorFontEnabledProperty()?, sink)
+}
+fn event114_text_box_notify_is_read_only(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBox::IsReadOnlyProperty()?, sink)
+}
+fn event115_text_box_notify_is_spell_check_enabled(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBox::IsSpellCheckEnabledProperty()?, sink)
+}
+fn event116_text_box_notify_is_text_prediction_enabled(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBox::IsTextPredictionEnabledProperty()?, sink)
+}
+fn event117_text_box_notify_max_length(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBox::MaxLengthProperty()?, sink)
+}
+fn event118_text_box_notify_placeholder_text(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBox::PlaceholderTextProperty()?, sink)
+}
+fn event119_text_box_notify_prevent_keyboard_display_on_programmatic_focus(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBox::PreventKeyboardDisplayOnProgrammaticFocusProperty()?, sink)
+}
+fn event120_text_box_notify_text(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBox::TextProperty()?, sink)
+}
+fn event121_text_box_notify_text_alignment(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBox::TextAlignmentProperty()?, sink)
+}
+fn event122_text_box_notify_text_reading_order(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBox::TextReadingOrderProperty()?, sink)
+}
+fn event123_text_box_notify_text_wrapping(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBox::TextWrappingProperty()?, sink)
+}
+fn event124_toggle_button_checked(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::ToggleButton>()?.Checked(move |_s, _a| {
         sink.post(vec![]);
-    })
+    }).map(Into::into)
 }
-fn event5_toggle_button_unchecked(o: &IInspectable, sink: Sink) -> WinResult<windows_core::EventRevoker> {
+fn event125_toggle_button_unchecked(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::ToggleButton>()?.Unchecked(move |_s, _a| {
         sink.post(vec![]);
-    })
+    }).map(Into::into)
 }
-fn event6_ui_element_key_down(o: &IInspectable, sink: Sink) -> WinResult<windows_core::EventRevoker> {
+fn event126_toggle_button_indeterminate(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::ToggleButton>()?.Indeterminate(move |_s, _a| {
+        sink.post(vec![]);
+    }).map(Into::into)
+}
+fn event127_toggle_button_notify_is_checked(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::ToggleButton::IsCheckedProperty()?, sink)
+}
+fn event128_toggle_button_notify_is_three_state(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::ToggleButton::IsThreeStateProperty()?, sink)
+}
+fn event129_ui_element_key_down(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.KeyDown(move |_s, a| {
         let Some(a) = a.as_ref() else { return };
         let reply = sink.sync(vec![a.Key().map(|x| Value::I64(x.0 as i64)).unwrap_or(Value::Null)]);
         if conv::is_true(&reply) {
             let _ = a.SetHandled(true);
         }
-    })
+    }).map(Into::into)
 }
-fn event7_window_closed(o: &IInspectable, sink: Sink) -> WinResult<windows_core::EventRevoker> {
+fn event130_ui_element_access_key_display_dismissed(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.AccessKeyDisplayDismissed(move |_s, _a| {
+        sink.post(vec![]);
+    }).map(Into::into)
+}
+fn event131_ui_element_access_key_display_requested(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.AccessKeyDisplayRequested(move |_s, _a| {
+        sink.post(vec![]);
+    }).map(Into::into)
+}
+fn event132_ui_element_access_key_invoked(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.AccessKeyInvoked(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetHandled(true);
+        }
+    }).map(Into::into)
+}
+fn event133_ui_element_bring_into_view_requested(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.BringIntoViewRequested(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetHandled(true);
+        }
+    }).map(Into::into)
+}
+fn event134_ui_element_character_received(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.CharacterReceived(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetHandled(true);
+        }
+    }).map(Into::into)
+}
+fn event135_ui_element_context_canceled(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.ContextCanceled(move |_s, _a| {
+        sink.post(vec![]);
+    }).map(Into::into)
+}
+fn event136_ui_element_context_requested(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.ContextRequested(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetHandled(true);
+        }
+    }).map(Into::into)
+}
+fn event137_ui_element_double_tapped(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.DoubleTapped(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetHandled(true);
+        }
+    }).map(Into::into)
+}
+fn event138_ui_element_drag_enter(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.DragEnter(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetHandled(true);
+        }
+    }).map(Into::into)
+}
+fn event139_ui_element_drag_leave(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.DragLeave(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetHandled(true);
+        }
+    }).map(Into::into)
+}
+fn event140_ui_element_drag_over(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.DragOver(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetHandled(true);
+        }
+    }).map(Into::into)
+}
+fn event141_ui_element_drag_starting(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.DragStarting(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetCancel(true);
+        }
+    }).map(Into::into)
+}
+fn event142_ui_element_drop(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.Drop(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetHandled(true);
+        }
+    }).map(Into::into)
+}
+fn event143_ui_element_drop_completed(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.DropCompleted(move |_s, _a| {
+        sink.post(vec![]);
+    }).map(Into::into)
+}
+fn event144_ui_element_getting_focus(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.GettingFocus(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetCancel(true);
+        }
+    }).map(Into::into)
+}
+fn event145_ui_element_got_focus(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.GotFocus(move |_s, _a| {
+        sink.post(vec![]);
+    }).map(Into::into)
+}
+fn event146_ui_element_holding(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.Holding(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetHandled(true);
+        }
+    }).map(Into::into)
+}
+fn event147_ui_element_key_up(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.KeyUp(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetHandled(true);
+        }
+    }).map(Into::into)
+}
+fn event148_ui_element_losing_focus(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.LosingFocus(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetCancel(true);
+        }
+    }).map(Into::into)
+}
+fn event149_ui_element_lost_focus(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.LostFocus(move |_s, _a| {
+        sink.post(vec![]);
+    }).map(Into::into)
+}
+fn event150_ui_element_manipulation_completed(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.ManipulationCompleted(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetHandled(true);
+        }
+    }).map(Into::into)
+}
+fn event151_ui_element_manipulation_delta(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.ManipulationDelta(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetHandled(true);
+        }
+    }).map(Into::into)
+}
+fn event152_ui_element_manipulation_inertia_starting(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.ManipulationInertiaStarting(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetHandled(true);
+        }
+    }).map(Into::into)
+}
+fn event153_ui_element_manipulation_started(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.ManipulationStarted(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetHandled(true);
+        }
+    }).map(Into::into)
+}
+fn event154_ui_element_manipulation_starting(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.ManipulationStarting(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetHandled(true);
+        }
+    }).map(Into::into)
+}
+fn event155_ui_element_no_focus_candidate_found(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.NoFocusCandidateFound(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetHandled(true);
+        }
+    }).map(Into::into)
+}
+fn event156_ui_element_pointer_canceled(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.PointerCanceled(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetHandled(true);
+        }
+    }).map(Into::into)
+}
+fn event157_ui_element_pointer_capture_lost(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.PointerCaptureLost(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetHandled(true);
+        }
+    }).map(Into::into)
+}
+fn event158_ui_element_pointer_entered(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.PointerEntered(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetHandled(true);
+        }
+    }).map(Into::into)
+}
+fn event159_ui_element_pointer_exited(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.PointerExited(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetHandled(true);
+        }
+    }).map(Into::into)
+}
+fn event160_ui_element_pointer_moved(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.PointerMoved(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetHandled(true);
+        }
+    }).map(Into::into)
+}
+fn event161_ui_element_pointer_pressed(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.PointerPressed(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetHandled(true);
+        }
+    }).map(Into::into)
+}
+fn event162_ui_element_pointer_released(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.PointerReleased(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetHandled(true);
+        }
+    }).map(Into::into)
+}
+fn event163_ui_element_pointer_wheel_changed(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.PointerWheelChanged(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetHandled(true);
+        }
+    }).map(Into::into)
+}
+fn event164_ui_element_preview_key_down(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.PreviewKeyDown(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetHandled(true);
+        }
+    }).map(Into::into)
+}
+fn event165_ui_element_preview_key_up(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.PreviewKeyUp(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetHandled(true);
+        }
+    }).map(Into::into)
+}
+fn event166_ui_element_process_keyboard_accelerators(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.ProcessKeyboardAccelerators(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetHandled(true);
+        }
+    }).map(Into::into)
+}
+fn event167_ui_element_right_tapped(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.RightTapped(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetHandled(true);
+        }
+    }).map(Into::into)
+}
+fn event168_ui_element_tapped(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()?.Tapped(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetHandled(true);
+        }
+    }).map(Into::into)
+}
+fn event169_ui_element_notify_access_key(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::AccessKeyProperty()?, sink)
+}
+fn event170_ui_element_notify_can_be_scroll_anchor(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::CanBeScrollAnchorProperty()?, sink)
+}
+fn event171_ui_element_notify_composite_mode(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::CompositeModeProperty()?, sink)
+}
+fn event172_ui_element_notify_exit_display_mode_on_access_key_invoked(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::ExitDisplayModeOnAccessKeyInvokedProperty()?, sink)
+}
+fn event173_ui_element_notify_is_access_key_scope(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::IsAccessKeyScopeProperty()?, sink)
+}
+fn event174_ui_element_notify_is_double_tap_enabled(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::IsDoubleTapEnabledProperty()?, sink)
+}
+fn event175_ui_element_notify_is_hit_test_visible(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::IsHitTestVisibleProperty()?, sink)
+}
+fn event176_ui_element_notify_is_holding_enabled(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::IsHoldingEnabledProperty()?, sink)
+}
+fn event177_ui_element_notify_is_right_tap_enabled(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::IsRightTapEnabledProperty()?, sink)
+}
+fn event178_ui_element_notify_is_tab_stop(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::IsTabStopProperty()?, sink)
+}
+fn event179_ui_element_notify_is_tap_enabled(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::IsTapEnabledProperty()?, sink)
+}
+fn event180_ui_element_notify_key_tip_horizontal_offset(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::KeyTipHorizontalOffsetProperty()?, sink)
+}
+fn event181_ui_element_notify_key_tip_placement_mode(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::KeyTipPlacementModeProperty()?, sink)
+}
+fn event182_ui_element_notify_key_tip_vertical_offset(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::KeyTipVerticalOffsetProperty()?, sink)
+}
+fn event183_ui_element_notify_keyboard_accelerator_placement_mode(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::KeyboardAcceleratorPlacementModeProperty()?, sink)
+}
+fn event184_ui_element_notify_opacity(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::OpacityProperty()?, sink)
+}
+fn event185_ui_element_notify_tab_focus_navigation(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::TabFocusNavigationProperty()?, sink)
+}
+fn event186_ui_element_notify_tab_index(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::TabIndexProperty()?, sink)
+}
+fn event187_ui_element_notify_use_layout_rounding(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::UseLayoutRoundingProperty()?, sink)
+}
+fn event188_ui_element_notify_use_system_focus_visuals(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::UseSystemFocusVisualsProperty()?, sink)
+}
+fn event189_ui_element_notify_visibility(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::VisibilityProperty()?, sink)
+}
+fn event190_ui_element_notify_xy_focus_down_navigation_strategy(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::XYFocusDownNavigationStrategyProperty()?, sink)
+}
+fn event191_ui_element_notify_xy_focus_keyboard_navigation(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::XYFocusKeyboardNavigationProperty()?, sink)
+}
+fn event192_ui_element_notify_xy_focus_left_navigation_strategy(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::XYFocusLeftNavigationStrategyProperty()?, sink)
+}
+fn event193_ui_element_notify_xy_focus_right_navigation_strategy(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::XYFocusRightNavigationStrategyProperty()?, sink)
+}
+fn event194_ui_element_notify_xy_focus_up_navigation_strategy(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    crate::sink::notify(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::XYFocusUpNavigationStrategyProperty()?, sink)
+}
+fn event195_window_closed(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Window>()?.Closed(move |_s, a| {
         let Some(a) = a.as_ref() else { return };
         if sink.close() {
             let _ = a.SetHandled(true);
         }
-    })
+    }).map(Into::into)
+}
+fn event196_window_activated(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
+    o.cast::<crate::bindings::Microsoft::UI::Xaml::Window>()?.Activated(move |_s, a| {
+        let Some(a) = a.as_ref() else { return };
+        let reply = sink.sync(vec![]);
+        if conv::is_true(&reply) {
+            let _ = a.SetHandled(true);
+        }
+    }).map(Into::into)
 }
 
-pub static EVENT_CONNECT: &[fn(&IInspectable, Sink) -> WinResult<windows_core::EventRevoker>] = &[
+pub static EVENT_CONNECT: &[fn(&IInspectable, Sink) -> WinResult<Registration>] = &[
     event0_button_base_click,
-    event1_range_base_value_changed,
-    event2_text_box_text_changed,
-    event3_text_box_before_text_changing,
-    event4_toggle_button_checked,
-    event5_toggle_button_unchecked,
-    event6_ui_element_key_down,
-    event7_window_closed,
+    event1_button_base_notify_click_mode,
+    event2_control_focus_disengaged,
+    event3_control_focus_engaged,
+    event4_control_is_enabled_changed,
+    event5_control_notify_background_sizing,
+    event6_control_notify_border_thickness,
+    event7_control_notify_character_spacing,
+    event8_control_notify_element_sound_mode,
+    event9_control_notify_font_size,
+    event10_control_notify_font_stretch,
+    event11_control_notify_font_style,
+    event12_control_notify_horizontal_content_alignment,
+    event13_control_notify_is_enabled,
+    event14_control_notify_is_focus_engaged,
+    event15_control_notify_is_focus_engagement_enabled,
+    event16_control_notify_is_text_scale_factor_enabled,
+    event17_control_notify_padding,
+    event18_control_notify_requires_pointer,
+    event19_control_notify_tab_navigation,
+    event20_control_notify_vertical_content_alignment,
+    event21_framework_element_actual_theme_changed,
+    event22_framework_element_data_context_changed,
+    event23_framework_element_effective_viewport_changed,
+    event24_framework_element_layout_updated,
+    event25_framework_element_loaded,
+    event26_framework_element_loading,
+    event27_framework_element_size_changed,
+    event28_framework_element_unloaded,
+    event29_framework_element_notify_allow_focus_on_interaction,
+    event30_framework_element_notify_allow_focus_when_disabled,
+    event31_framework_element_notify_flow_direction,
+    event32_framework_element_notify_focus_visual_margin,
+    event33_framework_element_notify_focus_visual_primary_thickness,
+    event34_framework_element_notify_focus_visual_secondary_thickness,
+    event35_framework_element_notify_height,
+    event36_framework_element_notify_horizontal_alignment,
+    event37_framework_element_notify_language,
+    event38_framework_element_notify_margin,
+    event39_framework_element_notify_max_height,
+    event40_framework_element_notify_max_width,
+    event41_framework_element_notify_min_height,
+    event42_framework_element_notify_min_width,
+    event43_framework_element_notify_name,
+    event44_framework_element_notify_requested_theme,
+    event45_framework_element_notify_vertical_alignment,
+    event46_framework_element_notify_width,
+    event47_grid_notify_background_sizing,
+    event48_grid_notify_border_thickness,
+    event49_grid_notify_column_spacing,
+    event50_grid_notify_padding,
+    event51_grid_notify_row_spacing,
+    event52_range_base_value_changed,
+    event53_range_base_notify_large_change,
+    event54_range_base_notify_maximum,
+    event55_range_base_notify_minimum,
+    event56_range_base_notify_small_change,
+    event57_range_base_notify_value,
+    event58_slider_notify_intermediate_value,
+    event59_slider_notify_is_direction_reversed,
+    event60_slider_notify_is_thumb_tool_tip_enabled,
+    event61_slider_notify_orientation,
+    event62_slider_notify_snaps_to,
+    event63_slider_notify_step_frequency,
+    event64_slider_notify_tick_frequency,
+    event65_slider_notify_tick_placement,
+    event66_stack_panel_horizontal_snap_points_changed,
+    event67_stack_panel_vertical_snap_points_changed,
+    event68_stack_panel_notify_are_scroll_snap_points_regular,
+    event69_stack_panel_notify_background_sizing,
+    event70_stack_panel_notify_border_thickness,
+    event71_stack_panel_notify_orientation,
+    event72_stack_panel_notify_padding,
+    event73_stack_panel_notify_spacing,
+    event74_text_block_context_menu_opening,
+    event75_text_block_is_text_trimmed_changed,
+    event76_text_block_selection_changed,
+    event77_text_block_notify_character_spacing,
+    event78_text_block_notify_font_size,
+    event79_text_block_notify_font_stretch,
+    event80_text_block_notify_font_style,
+    event81_text_block_notify_horizontal_text_alignment,
+    event82_text_block_notify_is_color_font_enabled,
+    event83_text_block_notify_is_text_scale_factor_enabled,
+    event84_text_block_notify_is_text_selection_enabled,
+    event85_text_block_notify_line_height,
+    event86_text_block_notify_line_stacking_strategy,
+    event87_text_block_notify_max_lines,
+    event88_text_block_notify_optical_margin_alignment,
+    event89_text_block_notify_padding,
+    event90_text_block_notify_text,
+    event91_text_block_notify_text_alignment,
+    event92_text_block_notify_text_line_bounds,
+    event93_text_block_notify_text_reading_order,
+    event94_text_block_notify_text_trimming,
+    event95_text_block_notify_text_wrapping,
+    event96_text_box_text_changed,
+    event97_text_box_before_text_changing,
+    event98_text_box_candidate_window_bounds_changed,
+    event99_text_box_context_menu_opening,
+    event100_text_box_copying_to_clipboard,
+    event101_text_box_cutting_to_clipboard,
+    event102_text_box_paste,
+    event103_text_box_selection_changed,
+    event104_text_box_selection_changing,
+    event105_text_box_text_changing,
+    event106_text_box_text_composition_changed,
+    event107_text_box_text_composition_ended,
+    event108_text_box_text_composition_started,
+    event109_text_box_notify_accepts_return,
+    event110_text_box_notify_character_casing,
+    event111_text_box_notify_desired_candidate_window_alignment,
+    event112_text_box_notify_horizontal_text_alignment,
+    event113_text_box_notify_is_color_font_enabled,
+    event114_text_box_notify_is_read_only,
+    event115_text_box_notify_is_spell_check_enabled,
+    event116_text_box_notify_is_text_prediction_enabled,
+    event117_text_box_notify_max_length,
+    event118_text_box_notify_placeholder_text,
+    event119_text_box_notify_prevent_keyboard_display_on_programmatic_focus,
+    event120_text_box_notify_text,
+    event121_text_box_notify_text_alignment,
+    event122_text_box_notify_text_reading_order,
+    event123_text_box_notify_text_wrapping,
+    event124_toggle_button_checked,
+    event125_toggle_button_unchecked,
+    event126_toggle_button_indeterminate,
+    event127_toggle_button_notify_is_checked,
+    event128_toggle_button_notify_is_three_state,
+    event129_ui_element_key_down,
+    event130_ui_element_access_key_display_dismissed,
+    event131_ui_element_access_key_display_requested,
+    event132_ui_element_access_key_invoked,
+    event133_ui_element_bring_into_view_requested,
+    event134_ui_element_character_received,
+    event135_ui_element_context_canceled,
+    event136_ui_element_context_requested,
+    event137_ui_element_double_tapped,
+    event138_ui_element_drag_enter,
+    event139_ui_element_drag_leave,
+    event140_ui_element_drag_over,
+    event141_ui_element_drag_starting,
+    event142_ui_element_drop,
+    event143_ui_element_drop_completed,
+    event144_ui_element_getting_focus,
+    event145_ui_element_got_focus,
+    event146_ui_element_holding,
+    event147_ui_element_key_up,
+    event148_ui_element_losing_focus,
+    event149_ui_element_lost_focus,
+    event150_ui_element_manipulation_completed,
+    event151_ui_element_manipulation_delta,
+    event152_ui_element_manipulation_inertia_starting,
+    event153_ui_element_manipulation_started,
+    event154_ui_element_manipulation_starting,
+    event155_ui_element_no_focus_candidate_found,
+    event156_ui_element_pointer_canceled,
+    event157_ui_element_pointer_capture_lost,
+    event158_ui_element_pointer_entered,
+    event159_ui_element_pointer_exited,
+    event160_ui_element_pointer_moved,
+    event161_ui_element_pointer_pressed,
+    event162_ui_element_pointer_released,
+    event163_ui_element_pointer_wheel_changed,
+    event164_ui_element_preview_key_down,
+    event165_ui_element_preview_key_up,
+    event166_ui_element_process_keyboard_accelerators,
+    event167_ui_element_right_tapped,
+    event168_ui_element_tapped,
+    event169_ui_element_notify_access_key,
+    event170_ui_element_notify_can_be_scroll_anchor,
+    event171_ui_element_notify_composite_mode,
+    event172_ui_element_notify_exit_display_mode_on_access_key_invoked,
+    event173_ui_element_notify_is_access_key_scope,
+    event174_ui_element_notify_is_double_tap_enabled,
+    event175_ui_element_notify_is_hit_test_visible,
+    event176_ui_element_notify_is_holding_enabled,
+    event177_ui_element_notify_is_right_tap_enabled,
+    event178_ui_element_notify_is_tab_stop,
+    event179_ui_element_notify_is_tap_enabled,
+    event180_ui_element_notify_key_tip_horizontal_offset,
+    event181_ui_element_notify_key_tip_placement_mode,
+    event182_ui_element_notify_key_tip_vertical_offset,
+    event183_ui_element_notify_keyboard_accelerator_placement_mode,
+    event184_ui_element_notify_opacity,
+    event185_ui_element_notify_tab_focus_navigation,
+    event186_ui_element_notify_tab_index,
+    event187_ui_element_notify_use_layout_rounding,
+    event188_ui_element_notify_use_system_focus_visuals,
+    event189_ui_element_notify_visibility,
+    event190_ui_element_notify_xy_focus_down_navigation_strategy,
+    event191_ui_element_notify_xy_focus_keyboard_navigation,
+    event192_ui_element_notify_xy_focus_left_navigation_strategy,
+    event193_ui_element_notify_xy_focus_right_navigation_strategy,
+    event194_ui_element_notify_xy_focus_up_navigation_strategy,
+    event195_window_closed,
+    event196_window_activated,
 ];
 
 pub enum SlotOps {
@@ -554,25 +2469,67 @@ pub static ATTR_GET: &[fn(&IInspectable) -> R<Value>] = &[
     |c| Ok(Value::I64(crate::bindings::Microsoft::UI::Xaml::Controls::Grid::GetColumnSpan(&c.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>().map_err(conv::err)?).map_err(conv::err)? as i64)),
 ];
 
-fn method0_text_box_select_all(o: &IInspectable, args: &[Value]) -> R<Value> {
+fn method0_text_block_select_all(o: &IInspectable, args: &[Value]) -> R<Value> {
+    conv::arity(args, 0)?;
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>().map_err(conv::err)?;
+    t.SelectAll().map_err(conv::err)?;
+    Ok(Value::Null)
+}
+fn method1_text_box_select_all(o: &IInspectable, args: &[Value]) -> R<Value> {
     conv::arity(args, 0)?;
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?;
     t.SelectAll().map_err(conv::err)?;
     Ok(Value::Null)
 }
-fn method1_text_box_select(o: &IInspectable, args: &[Value]) -> R<Value> {
+fn method2_text_box_select(o: &IInspectable, args: &[Value]) -> R<Value> {
     conv::arity(args, 2)?;
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?;
     t.Select(conv::i32_(conv::arg(args, 0)?)?, conv::i32_(conv::arg(args, 1)?)?).map_err(conv::err)?;
     Ok(Value::Null)
 }
-fn method2_window_activate(o: &IInspectable, args: &[Value]) -> R<Value> {
+fn method3_text_box_clear_undo_redo_history(o: &IInspectable, args: &[Value]) -> R<Value> {
+    conv::arity(args, 0)?;
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?;
+    t.ClearUndoRedoHistory().map_err(conv::err)?;
+    Ok(Value::Null)
+}
+fn method4_text_box_redo(o: &IInspectable, args: &[Value]) -> R<Value> {
+    conv::arity(args, 0)?;
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?;
+    t.Redo().map_err(conv::err)?;
+    Ok(Value::Null)
+}
+fn method5_text_box_undo(o: &IInspectable, args: &[Value]) -> R<Value> {
+    conv::arity(args, 0)?;
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>().map_err(conv::err)?;
+    t.Undo().map_err(conv::err)?;
+    Ok(Value::Null)
+}
+fn method6_ui_element_invalidate_arrange(o: &IInspectable, args: &[Value]) -> R<Value> {
+    conv::arity(args, 0)?;
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?;
+    t.InvalidateArrange().map_err(conv::err)?;
+    Ok(Value::Null)
+}
+fn method7_ui_element_invalidate_measure(o: &IInspectable, args: &[Value]) -> R<Value> {
+    conv::arity(args, 0)?;
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?;
+    t.InvalidateMeasure().map_err(conv::err)?;
+    Ok(Value::Null)
+}
+fn method8_ui_element_update_layout(o: &IInspectable, args: &[Value]) -> R<Value> {
+    conv::arity(args, 0)?;
+    let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>().map_err(conv::err)?;
+    t.UpdateLayout().map_err(conv::err)?;
+    Ok(Value::Null)
+}
+fn method9_window_activate(o: &IInspectable, args: &[Value]) -> R<Value> {
     conv::arity(args, 0)?;
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Window>().map_err(conv::err)?;
     t.Activate().map_err(conv::err)?;
     Ok(Value::Null)
 }
-fn method3_window_close(o: &IInspectable, args: &[Value]) -> R<Value> {
+fn method10_window_close(o: &IInspectable, args: &[Value]) -> R<Value> {
     conv::arity(args, 0)?;
     let t = o.cast::<crate::bindings::Microsoft::UI::Xaml::Window>().map_err(conv::err)?;
     t.Close().map_err(conv::err)?;
@@ -580,8 +2537,15 @@ fn method3_window_close(o: &IInspectable, args: &[Value]) -> R<Value> {
 }
 
 pub static METHOD_CALL: &[fn(&IInspectable, &[Value]) -> R<Value>] = &[
-    method0_text_box_select_all,
-    method1_text_box_select,
-    method2_window_activate,
-    method3_window_close,
+    method0_text_block_select_all,
+    method1_text_box_select_all,
+    method2_text_box_select,
+    method3_text_box_clear_undo_redo_history,
+    method4_text_box_redo,
+    method5_text_box_undo,
+    method6_ui_element_invalidate_arrange,
+    method7_ui_element_invalidate_measure,
+    method8_ui_element_update_layout,
+    method9_window_activate,
+    method10_window_close,
 ];

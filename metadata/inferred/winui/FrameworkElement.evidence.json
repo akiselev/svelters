@@ -1,0 +1,518 @@
+{
+ "events:ActualThemeChanged": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "object",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.FrameworkElement, object>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:DataContextChanged": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.DataContextChangedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.FrameworkElement, Microsoft.UI.Xaml.DataContextChangedEventArgs>",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:EffectiveViewportChanged": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.EffectiveViewportChangedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.FrameworkElement, Microsoft.UI.Xaml.EffectiveViewportChangedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:LayoutUpdated": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "object",
+   "delegate": "Windows.Foundation.EventHandler<object>",
+   "result": null,
+   "trigger": "mount"
+  },
+  "rule": "R1/R2"
+ },
+ "events:Loaded": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.RoutedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.RoutedEventHandler",
+   "result": null,
+   "trigger": "mount"
+  },
+  "rule": "R1/R2"
+ },
+ "events:Loading": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "object",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.FrameworkElement, object>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:SizeChanged": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.SizeChangedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.SizeChangedEventHandler",
+   "result": null,
+   "trigger": "mount"
+  },
+  "rule": "R1/R2"
+ },
+ "events:Unloaded": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.RoutedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.RoutedEventHandler",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "notify:AllowFocusOnInteraction": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "AllowFocusOnInteractionProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:AllowFocusWhenDisabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "AllowFocusWhenDisabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:FlowDirection": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "FlowDirectionProperty",
+   "type": "enum<Microsoft.UI.Xaml.FlowDirection>"
+  },
+  "rule": "O6"
+ },
+ "notify:FocusVisualMargin": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "FocusVisualMarginProperty",
+   "type": "value<Microsoft.UI.Xaml.Thickness>"
+  },
+  "rule": "O6"
+ },
+ "notify:FocusVisualPrimaryThickness": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "FocusVisualPrimaryThicknessProperty",
+   "type": "value<Microsoft.UI.Xaml.Thickness>"
+  },
+  "rule": "O6"
+ },
+ "notify:FocusVisualSecondaryThickness": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "FocusVisualSecondaryThicknessProperty",
+   "type": "value<Microsoft.UI.Xaml.Thickness>"
+  },
+  "rule": "O6"
+ },
+ "notify:Height": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "HeightProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:HorizontalAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "HorizontalAlignmentProperty",
+   "type": "enum<Microsoft.UI.Xaml.HorizontalAlignment>"
+  },
+  "rule": "O6"
+ },
+ "notify:Language": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "LanguageProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "notify:Margin": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MarginProperty",
+   "type": "value<Microsoft.UI.Xaml.Thickness>"
+  },
+  "rule": "O6"
+ },
+ "notify:MaxHeight": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MaxHeightProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:MaxWidth": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MaxWidthProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:MinHeight": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MinHeightProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:MinWidth": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MinWidthProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:Name": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "NameProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "notify:RequestedTheme": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "RequestedThemeProperty",
+   "type": "enum<Microsoft.UI.Xaml.ElementTheme>"
+  },
+  "rule": "O6"
+ },
+ "notify:VerticalAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "VerticalAlignmentProperty",
+   "type": "enum<Microsoft.UI.Xaml.VerticalAlignment>"
+  },
+  "rule": "O6"
+ },
+ "notify:Width": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "WidthProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "props:ActualHeight": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+   "type": "f64",
+   "write": false
+  },
+  "rule": "P1"
+ },
+ "props:ActualTheme": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+   "type": "enum<Microsoft.UI.Xaml.ElementTheme>",
+   "write": false
+  },
+  "rule": "P1"
+ },
+ "props:ActualWidth": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+   "type": "f64",
+   "write": false
+  },
+  "rule": "P1"
+ },
+ "props:AllowFocusOnInteraction": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:AllowFocusWhenDisabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:FlowDirection": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+   "samples": [
+    "RightToLeft",
+    "LeftToRight"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.FlowDirection>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:FocusVisualMargin": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+   "samples": [
+    "1,2,3,4",
+    "5"
+   ],
+   "type": "value<Microsoft.UI.Xaml.Thickness>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:FocusVisualPrimaryThickness": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+   "samples": [
+    "1,2,3,4",
+    "5"
+   ],
+   "type": "value<Microsoft.UI.Xaml.Thickness>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:FocusVisualSecondaryThickness": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+   "samples": [
+    "1,2,3,4",
+    "5"
+   ],
+   "type": "value<Microsoft.UI.Xaml.Thickness>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Height": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+   "samples": [
+    48.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:HorizontalAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+   "samples": [
+    "Center",
+    "Left"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.HorizontalAlignment>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsLoaded": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false,
+   "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+   "type": "bool",
+   "write": false
+  },
+  "rule": "P1"
+ },
+ "props:Language": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+   "samples": [
+    "de-DE",
+    "en-US"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Margin": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+   "samples": [
+    "1,2,3,4",
+    "5"
+   ],
+   "type": "value<Microsoft.UI.Xaml.Thickness>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:MaxHeight": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+   "samples": [
+    48.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:MaxWidth": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+   "samples": [
+    48.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:MinHeight": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+   "samples": [
+    48.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:MinWidth": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+   "samples": [
+    48.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Name": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:RequestedTheme": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+   "samples": [
+    "Light",
+    "Default"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.ElementTheme>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:VerticalAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+   "samples": [
+    "Center",
+    "Top"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.VerticalAlignment>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Width": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+   "samples": [
+    48.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

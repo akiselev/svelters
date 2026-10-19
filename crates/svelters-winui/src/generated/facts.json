@@ -1,365 +1,4846 @@
 {
-  "facts": {
-    "winui:ButtonBase:event:Click": {
-      "fingerprint": "9f8ab3898e7d899c",
-      "tests": [
-        "event_button_click"
-      ]
-    },
-    "winui:ContentControl:prop:Content": {
-      "fingerprint": "f0089c701748bb47",
-      "tests": [
-        "prop_button_content"
-      ]
-    },
-    "winui:ContentControl:slot:content": {
-      "fingerprint": "46cb887f99b7bed3",
-      "tests": [
-        "slot_button_content"
-      ]
-    },
-    "winui:Control:prop:FontSize": {
-      "fingerprint": "671aa0bd7aff7603",
-      "tests": [
-        "prop_button_font_size"
-      ]
-    },
-    "winui:Control:prop:IsEnabled": {
-      "fingerprint": "6f53325ceefe69cb",
-      "tests": [
-        "prop_button_is_enabled"
-      ]
-    },
-    "winui:Control:prop:Padding": {
-      "fingerprint": "feb2ccd5fd522ddd",
-      "tests": [
-        "prop_button_padding"
-      ]
-    },
-    "winui:FrameworkElement:prop:Height": {
-      "fingerprint": "14cbb682a391f3dd",
-      "tests": [
-        "prop_button_height"
-      ]
-    },
-    "winui:FrameworkElement:prop:HorizontalAlignment": {
-      "fingerprint": "bc21ac05d322879f",
-      "tests": [
-        "prop_button_horizontal_alignment"
-      ]
-    },
-    "winui:FrameworkElement:prop:Margin": {
-      "fingerprint": "c27c41a5a7fdbe7e",
-      "tests": [
-        "prop_button_margin"
-      ]
-    },
-    "winui:FrameworkElement:prop:MinHeight": {
-      "fingerprint": "12c0ed1b8fc6792b",
-      "tests": [
-        "prop_button_min_height"
-      ]
-    },
-    "winui:FrameworkElement:prop:MinWidth": {
-      "fingerprint": "c73460b282e91f58",
-      "tests": [
-        "prop_button_min_width"
-      ]
-    },
-    "winui:FrameworkElement:prop:Name": {
-      "fingerprint": "3644246a47aaebeb",
-      "tests": [
-        "prop_button_name"
-      ]
-    },
-    "winui:FrameworkElement:prop:VerticalAlignment": {
-      "fingerprint": "63dc1bd66287aacf",
-      "tests": [
-        "prop_button_vertical_alignment"
-      ]
-    },
-    "winui:FrameworkElement:prop:Width": {
-      "fingerprint": "dae65ad55cf8b4a7",
-      "tests": [
-        "prop_button_width"
-      ]
-    },
-    "winui:Grid:attr:Column": {
-      "fingerprint": "7b6d80893ec8f756",
-      "tests": [
-        "attr_grid_column"
-      ]
-    },
-    "winui:Grid:attr:ColumnSpan": {
-      "fingerprint": "deded422f94310a8",
-      "tests": [
-        "attr_grid_column_span"
-      ]
-    },
-    "winui:Grid:attr:Row": {
-      "fingerprint": "c6934b410b037a11",
-      "tests": [
-        "attr_grid_row"
-      ]
-    },
-    "winui:Grid:attr:RowSpan": {
-      "fingerprint": "e14c52eac7975a79",
-      "tests": [
-        "attr_grid_row_span"
-      ]
-    },
-    "winui:Grid:prop:ColumnDefinitions": {
-      "fingerprint": "e52a5726cdc417ce",
-      "tests": [
-        "prop_grid_column_definitions"
-      ]
-    },
-    "winui:Grid:prop:ColumnSpacing": {
-      "fingerprint": "40fe67074e041f26",
-      "tests": [
-        "prop_grid_column_spacing"
-      ]
-    },
-    "winui:Grid:prop:Padding": {
-      "fingerprint": "205e59675814d5be",
-      "tests": [
-        "prop_grid_padding"
-      ]
-    },
-    "winui:Grid:prop:RowDefinitions": {
-      "fingerprint": "cd0229cdfa1d3233",
-      "tests": [
-        "prop_grid_row_definitions"
-      ]
-    },
-    "winui:Grid:prop:RowSpacing": {
-      "fingerprint": "90ba80066a5771aa",
-      "tests": [
-        "prop_grid_row_spacing"
-      ]
-    },
-    "winui:Panel:slot:children": {
-      "fingerprint": "85d5267e7ed9bb7a",
-      "tests": [
-        "slot_grid_children"
-      ]
-    },
-    "winui:RangeBase:event:ValueChanged": {
-      "fingerprint": "ab751c35ab2cbdc9",
-      "tests": [
-        "event_slider_value_changed"
-      ]
-    },
-    "winui:RangeBase:prop:LargeChange": {
-      "fingerprint": "bd114fdc3f1d7213",
-      "tests": [
-        "prop_slider_large_change"
-      ]
-    },
-    "winui:RangeBase:prop:Maximum": {
-      "fingerprint": "cefe25d741c10f95",
-      "tests": [
-        "prop_slider_maximum"
-      ]
-    },
-    "winui:RangeBase:prop:Minimum": {
-      "fingerprint": "d7d5bf303fa7a6f2",
-      "tests": [
-        "prop_slider_minimum"
-      ]
-    },
-    "winui:RangeBase:prop:SmallChange": {
-      "fingerprint": "4f560891a4ddea9c",
-      "tests": [
-        "prop_slider_small_change"
-      ]
-    },
-    "winui:RangeBase:prop:Value": {
-      "fingerprint": "389d1fb9e2d7e23a",
-      "tests": [
-        "prop_slider_value"
-      ]
-    },
-    "winui:Slider:prop:Header": {
-      "fingerprint": "8e701406f38873a3",
-      "tests": [
-        "prop_slider_header"
-      ]
-    },
-    "winui:Slider:prop:Orientation": {
-      "fingerprint": "062db52c226cc5aa",
-      "tests": [
-        "prop_slider_orientation"
-      ]
-    },
-    "winui:Slider:prop:StepFrequency": {
-      "fingerprint": "320d7ab924c5ff3a",
-      "tests": [
-        "prop_slider_step_frequency"
-      ]
-    },
-    "winui:StackPanel:prop:Orientation": {
-      "fingerprint": "c78ac3775ec25764",
-      "tests": [
-        "prop_stack_panel_orientation"
-      ]
-    },
-    "winui:StackPanel:prop:Padding": {
-      "fingerprint": "b9bfd6af0b695661",
-      "tests": [
-        "prop_stack_panel_padding"
-      ]
-    },
-    "winui:StackPanel:prop:Spacing": {
-      "fingerprint": "1f639d6eccdf13e2",
-      "tests": [
-        "prop_stack_panel_spacing"
-      ]
-    },
-    "winui:TextBlock:prop:FontSize": {
-      "fingerprint": "ff3355004c63d6cf",
-      "tests": [
-        "prop_text_block_font_size"
-      ]
-    },
-    "winui:TextBlock:prop:IsTextSelectionEnabled": {
-      "fingerprint": "73180b55cf82d451",
-      "tests": [
-        "prop_text_block_is_text_selection_enabled"
-      ]
-    },
-    "winui:TextBlock:prop:MaxLines": {
-      "fingerprint": "772ae808d46a36ab",
-      "tests": [
-        "prop_text_block_max_lines"
-      ]
-    },
-    "winui:TextBlock:prop:Text": {
-      "fingerprint": "025f5ebe585d66a3",
-      "tests": [
-        "prop_text_block_text"
-      ]
-    },
-    "winui:TextBlock:prop:TextWrapping": {
-      "fingerprint": "7df61aa8ca1b0701",
-      "tests": [
-        "prop_text_block_text_wrapping"
-      ]
-    },
-    "winui:TextBox:event:BeforeTextChanging": {
-      "fingerprint": "9739807e49b786dd",
-      "tests": [
-        "event_text_box_before_text_changing"
-      ]
-    },
-    "winui:TextBox:event:TextChanged": {
-      "fingerprint": "51051d0d4c45a329",
-      "tests": [
-        "event_text_box_text_changed"
-      ]
-    },
-    "winui:TextBox:prop:AcceptsReturn": {
-      "fingerprint": "42124a53c1fc7385",
-      "tests": [
-        "prop_text_box_accepts_return"
-      ]
-    },
-    "winui:TextBox:prop:Header": {
-      "fingerprint": "02e1feb90b6e0fdb",
-      "tests": [
-        "prop_text_box_header"
-      ]
-    },
-    "winui:TextBox:prop:IsReadOnly": {
-      "fingerprint": "0100b185b5cc863a",
-      "tests": [
-        "prop_text_box_is_read_only"
-      ]
-    },
-    "winui:TextBox:prop:MaxLength": {
-      "fingerprint": "d4f1beca3ca0305c",
-      "tests": [
-        "prop_text_box_max_length"
-      ]
-    },
-    "winui:TextBox:prop:PlaceholderText": {
-      "fingerprint": "ee12c1092f208419",
-      "tests": [
-        "prop_text_box_placeholder_text"
-      ]
-    },
-    "winui:TextBox:prop:Text": {
-      "fingerprint": "611aeb2819ee91b1",
-      "tests": [
-        "prop_text_box_text"
-      ]
-    },
-    "winui:TextBox:prop:TextWrapping": {
-      "fingerprint": "5c3a886f306cf7fd",
-      "tests": [
-        "prop_text_box_text_wrapping"
-      ]
-    },
-    "winui:ToggleButton:event:Checked": {
-      "fingerprint": "84d194929fd8572c",
-      "tests": [
-        "event_check_box_checked"
-      ]
-    },
-    "winui:ToggleButton:event:Unchecked": {
-      "fingerprint": "227db61d5d16cd21",
-      "tests": [
-        "event_check_box_unchecked"
-      ]
-    },
-    "winui:ToggleButton:prop:IsChecked": {
-      "fingerprint": "585487dd1f466804",
-      "tests": [
-        "prop_check_box_is_checked"
-      ]
-    },
-    "winui:ToggleButton:prop:IsThreeState": {
-      "fingerprint": "68f7ffd6c1e6d8a2",
-      "tests": [
-        "prop_check_box_is_three_state"
-      ]
-    },
-    "winui:UIElement:prop:IsHitTestVisible": {
-      "fingerprint": "d1e20560acb773e9",
-      "tests": [
-        "prop_button_is_hit_test_visible"
-      ]
-    },
-    "winui:UIElement:prop:Opacity": {
-      "fingerprint": "b8f9a6b3e3fbc880",
-      "tests": [
-        "prop_button_opacity"
-      ]
-    },
-    "winui:UIElement:prop:Visibility": {
-      "fingerprint": "514587a72ce8393c",
-      "tests": [
-        "prop_button_visibility"
-      ]
-    },
-    "winui:Window:event:Closed": {
-      "fingerprint": "d7c526ba1b94c042",
-      "tests": [
-        "event_window_closed"
-      ]
-    },
-    "winui:Window:prop:Title": {
-      "fingerprint": "609a20f0e3912f6e",
-      "tests": [
-        "prop_window_title"
-      ]
-    },
-    "winui:Window:slot:content": {
-      "fingerprint": "c538e3698a65a9d8",
-      "tests": [
-        "slot_window_content"
-      ]
-    }
+ "facts": [
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:ButtonBase:event:Click",
+   "fingerprint": "6870a573665dace4",
+   "kind": "ButtonBase",
+   "name": "Click",
+   "origin": "manual",
+   "section": "events",
+   "tests": [
+    "event_button_click"
+   ]
   },
-  "toolkit": "winui"
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:ButtonBase:notify:ClickMode",
+   "fingerprint": "f7243279ad3156b9",
+   "kind": "ButtonBase",
+   "name": "ClickMode",
+   "origin": "inferred",
+   "record_fp": "ef0c1388d3bf2fb6",
+   "section": "notify",
+   "tests": [
+    "notify_button_click_mode"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:ButtonBase:prop:ClickMode",
+   "fingerprint": "4c264e7236085244",
+   "kind": "ButtonBase",
+   "name": "ClickMode",
+   "origin": "inferred",
+   "record_fp": "82d56adf9bdac5af",
+   "section": "props",
+   "tests": [
+    "prop_button_click_mode"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:ButtonBase:prop:IsPointerOver",
+   "fingerprint": "bcb1659beb6d1f6b",
+   "kind": "ButtonBase",
+   "name": "IsPointerOver",
+   "origin": "inferred",
+   "record_fp": "ddf7ca9d953b13ad",
+   "section": "props",
+   "tests": [
+    "prop_button_is_pointer_over"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:ButtonBase:prop:IsPressed",
+   "fingerprint": "7e0ae83b663ba9ae",
+   "kind": "ButtonBase",
+   "name": "IsPressed",
+   "origin": "inferred",
+   "record_fp": "0173321faab00a0d",
+   "section": "props",
+   "tests": [
+    "prop_button_is_pressed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:RangeBase:event:ValueChanged",
+   "fingerprint": "c9443ae5b9b80feb",
+   "kind": "RangeBase",
+   "name": "ValueChanged",
+   "origin": "manual",
+   "section": "events",
+   "tests": [
+    "event_slider_value_changed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:RangeBase:notify:LargeChange",
+   "fingerprint": "fde0cb0a993d02c7",
+   "kind": "RangeBase",
+   "name": "LargeChange",
+   "origin": "inferred",
+   "record_fp": "0d513e5118e97195",
+   "section": "notify",
+   "tests": [
+    "notify_slider_large_change"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:RangeBase:notify:Maximum",
+   "fingerprint": "ac04350dd913f1f9",
+   "kind": "RangeBase",
+   "name": "Maximum",
+   "origin": "inferred",
+   "record_fp": "5a13cf025114b19f",
+   "section": "notify",
+   "tests": [
+    "notify_slider_maximum"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:RangeBase:notify:Minimum",
+   "fingerprint": "e7d1cca7bf340659",
+   "kind": "RangeBase",
+   "name": "Minimum",
+   "origin": "inferred",
+   "record_fp": "0f2a2b74ca6c73ae",
+   "section": "notify",
+   "tests": [
+    "notify_slider_minimum"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:RangeBase:notify:SmallChange",
+   "fingerprint": "8c0f7c2ce342510a",
+   "kind": "RangeBase",
+   "name": "SmallChange",
+   "origin": "inferred",
+   "record_fp": "88262b47a01de5b5",
+   "section": "notify",
+   "tests": [
+    "notify_slider_small_change"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:RangeBase:notify:Value",
+   "fingerprint": "8cecca820a49ede2",
+   "kind": "RangeBase",
+   "name": "Value",
+   "origin": "inferred",
+   "record_fp": "8b60f0a2205cd39e",
+   "section": "notify",
+   "tests": [
+    "notify_slider_value"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:RangeBase:prop:LargeChange",
+   "fingerprint": "78dc9045850a20d5",
+   "kind": "RangeBase",
+   "name": "LargeChange",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_slider_large_change"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:RangeBase:prop:Maximum",
+   "fingerprint": "a20e3a69a49bb64d",
+   "kind": "RangeBase",
+   "name": "Maximum",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_slider_maximum"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:RangeBase:prop:Minimum",
+   "fingerprint": "8b0609d5a7e3df00",
+   "kind": "RangeBase",
+   "name": "Minimum",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_slider_minimum"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:RangeBase:prop:SmallChange",
+   "fingerprint": "9155dd495b96eec5",
+   "kind": "RangeBase",
+   "name": "SmallChange",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_slider_small_change"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:RangeBase:prop:Value",
+   "fingerprint": "ab3f99fb01aa7ba1",
+   "kind": "RangeBase",
+   "name": "Value",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_slider_value"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:ToggleButton:event:Checked",
+   "fingerprint": "d0ff2d2bf9ebec50",
+   "kind": "ToggleButton",
+   "name": "Checked",
+   "origin": "manual",
+   "section": "events",
+   "tests": [
+    "event_check_box_checked"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:ToggleButton:event:Indeterminate",
+   "fingerprint": "62e8a340810fda50",
+   "kind": "ToggleButton",
+   "name": "Indeterminate",
+   "origin": "inferred",
+   "record_fp": "399591d3624b9568",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_check_box_indeterminate"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:ToggleButton:event:Unchecked",
+   "fingerprint": "7270c7de3fd5f6fe",
+   "kind": "ToggleButton",
+   "name": "Unchecked",
+   "origin": "manual",
+   "section": "events",
+   "tests": [
+    "event_check_box_unchecked"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:ToggleButton:notify:IsChecked",
+   "fingerprint": "35c67c5eb0739247",
+   "kind": "ToggleButton",
+   "name": "IsChecked",
+   "origin": "inferred",
+   "record_fp": "4552045192ca03e7",
+   "section": "notify",
+   "tests": [
+    "notify_check_box_is_checked"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:ToggleButton:notify:IsThreeState",
+   "fingerprint": "6dcb02479e8dc766",
+   "kind": "ToggleButton",
+   "name": "IsThreeState",
+   "origin": "inferred",
+   "record_fp": "abd60831764239be",
+   "section": "notify",
+   "tests": [
+    "notify_check_box_is_three_state"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:ToggleButton:prop:IsChecked",
+   "fingerprint": "6d2688007c3240ef",
+   "kind": "ToggleButton",
+   "name": "IsChecked",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_check_box_is_checked"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:ToggleButton:prop:IsThreeState",
+   "fingerprint": "9cbe1fb6a8538e06",
+   "kind": "ToggleButton",
+   "name": "IsThreeState",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_check_box_is_three_state"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ContentControl:prop:Content",
+   "fingerprint": "12b9b6d93ca1d47d",
+   "kind": "ContentControl",
+   "name": "Content",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_button_content"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ContentControl:slot:content",
+   "fingerprint": "d0658a584b8b9e80",
+   "kind": "ContentControl",
+   "name": "content",
+   "origin": "manual",
+   "section": "slots",
+   "tests": [
+    "slot_button_content"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:event:FocusDisengaged",
+   "fingerprint": "6e215d8dba562c5c",
+   "kind": "Control",
+   "name": "FocusDisengaged",
+   "origin": "inferred",
+   "record_fp": "021a88dc3bf09652",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_focus_disengaged"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:event:FocusEngaged",
+   "fingerprint": "96fa0d70ae49e4a4",
+   "kind": "Control",
+   "name": "FocusEngaged",
+   "origin": "inferred",
+   "record_fp": "874e4f3cb80db82e",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_focus_engaged"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:event:IsEnabledChanged",
+   "fingerprint": "743d4e46a94b2cfe",
+   "kind": "Control",
+   "name": "IsEnabledChanged",
+   "origin": "inferred",
+   "record_fp": "b826128ccce1ace6",
+   "section": "events",
+   "tests": [
+    "event_button_is_enabled_changed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:notify:BackgroundSizing",
+   "fingerprint": "44ab302134f38a54",
+   "kind": "Control",
+   "name": "BackgroundSizing",
+   "origin": "inferred",
+   "record_fp": "e69602a75780d28e",
+   "section": "notify",
+   "tests": [
+    "notify_button_background_sizing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:notify:BorderThickness",
+   "fingerprint": "76bebde8bb065ef2",
+   "kind": "Control",
+   "name": "BorderThickness",
+   "origin": "inferred",
+   "record_fp": "da85b44697ed08ab",
+   "section": "notify",
+   "tests": [
+    "notify_button_border_thickness"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:notify:CharacterSpacing",
+   "fingerprint": "d0a565133deb4f49",
+   "kind": "Control",
+   "name": "CharacterSpacing",
+   "origin": "inferred",
+   "record_fp": "24b464833b6ccfcc",
+   "section": "notify",
+   "tests": [
+    "notify_button_character_spacing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:notify:ElementSoundMode",
+   "fingerprint": "0a0dd49642afe792",
+   "kind": "Control",
+   "name": "ElementSoundMode",
+   "origin": "inferred",
+   "record_fp": "4f30f9f0668c9f81",
+   "section": "notify",
+   "tests": [
+    "notify_button_element_sound_mode"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:notify:FontSize",
+   "fingerprint": "4fb80c7eb094d9b9",
+   "kind": "Control",
+   "name": "FontSize",
+   "origin": "inferred",
+   "record_fp": "db20786ed8ea4e61",
+   "section": "notify",
+   "tests": [
+    "notify_button_font_size"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:notify:FontStretch",
+   "fingerprint": "75b53eb0b6b01420",
+   "kind": "Control",
+   "name": "FontStretch",
+   "origin": "inferred",
+   "record_fp": "57950ebef447cb29",
+   "section": "notify",
+   "tests": [
+    "notify_button_font_stretch"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:notify:FontStyle",
+   "fingerprint": "0678774b025b746f",
+   "kind": "Control",
+   "name": "FontStyle",
+   "origin": "inferred",
+   "record_fp": "f8ed2256635a0ca8",
+   "section": "notify",
+   "tests": [
+    "notify_button_font_style"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:notify:HorizontalContentAlignment",
+   "fingerprint": "2e01636b4d81335f",
+   "kind": "Control",
+   "name": "HorizontalContentAlignment",
+   "origin": "inferred",
+   "record_fp": "03b282ac5050b665",
+   "section": "notify",
+   "tests": [
+    "notify_button_horizontal_content_alignment"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:notify:IsEnabled",
+   "fingerprint": "f0bc756b527f0d42",
+   "kind": "Control",
+   "name": "IsEnabled",
+   "origin": "inferred",
+   "record_fp": "d1f4bcaaaeb628c9",
+   "section": "notify",
+   "tests": [
+    "notify_button_is_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:notify:IsFocusEngaged",
+   "fingerprint": "ab2b69aea0c8bad3",
+   "kind": "Control",
+   "name": "IsFocusEngaged",
+   "origin": "inferred",
+   "record_fp": "441b24fd576506ae",
+   "section": "notify",
+   "tests": [
+    "notify_button_is_focus_engaged"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:notify:IsFocusEngagementEnabled",
+   "fingerprint": "c0b52f94bbde2151",
+   "kind": "Control",
+   "name": "IsFocusEngagementEnabled",
+   "origin": "inferred",
+   "record_fp": "cc250480659cab91",
+   "section": "notify",
+   "tests": [
+    "notify_button_is_focus_engagement_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:notify:IsTextScaleFactorEnabled",
+   "fingerprint": "200d72bcb4f56c00",
+   "kind": "Control",
+   "name": "IsTextScaleFactorEnabled",
+   "origin": "inferred",
+   "record_fp": "3c14aa033e0f64c7",
+   "section": "notify",
+   "tests": [
+    "notify_button_is_text_scale_factor_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:notify:Padding",
+   "fingerprint": "5ad53b48db9f8860",
+   "kind": "Control",
+   "name": "Padding",
+   "origin": "inferred",
+   "record_fp": "d52c4d27675c8c8e",
+   "section": "notify",
+   "tests": [
+    "notify_button_padding"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:notify:RequiresPointer",
+   "fingerprint": "8e1fe8f478458083",
+   "kind": "Control",
+   "name": "RequiresPointer",
+   "origin": "inferred",
+   "record_fp": "1ef24f7fd7d13340",
+   "section": "notify",
+   "tests": [
+    "notify_button_requires_pointer"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:notify:TabNavigation",
+   "fingerprint": "7a0e6e081077e1f7",
+   "kind": "Control",
+   "name": "TabNavigation",
+   "origin": "inferred",
+   "record_fp": "f9c12484427f974a",
+   "section": "notify",
+   "tests": [
+    "notify_button_tab_navigation"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:notify:VerticalContentAlignment",
+   "fingerprint": "e026b33cc8d9c99e",
+   "kind": "Control",
+   "name": "VerticalContentAlignment",
+   "origin": "inferred",
+   "record_fp": "00937e31410b20e8",
+   "section": "notify",
+   "tests": [
+    "notify_button_vertical_content_alignment"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:BackgroundSizing",
+   "fingerprint": "1f4a2f7c65b1ab22",
+   "kind": "Control",
+   "name": "BackgroundSizing",
+   "origin": "inferred",
+   "record_fp": "7a8a5fd58f48d440",
+   "section": "props",
+   "tests": [
+    "prop_button_background_sizing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:BorderThickness",
+   "fingerprint": "36e65cd11c003b23",
+   "kind": "Control",
+   "name": "BorderThickness",
+   "origin": "inferred",
+   "record_fp": "857309272bb1e712",
+   "section": "props",
+   "tests": [
+    "prop_button_border_thickness"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:CharacterSpacing",
+   "fingerprint": "4cd7a044b4e3b90c",
+   "kind": "Control",
+   "name": "CharacterSpacing",
+   "origin": "inferred",
+   "record_fp": "2d28bea956677f98",
+   "section": "props",
+   "tests": [
+    "prop_button_character_spacing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:ElementSoundMode",
+   "fingerprint": "d9c61a4a6eb1d251",
+   "kind": "Control",
+   "name": "ElementSoundMode",
+   "origin": "inferred",
+   "record_fp": "772a7b14a164e0dc",
+   "section": "props",
+   "tests": [
+    "prop_button_element_sound_mode"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:FontSize",
+   "fingerprint": "6579a01cd05f003a",
+   "kind": "Control",
+   "name": "FontSize",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_button_font_size"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:FontStretch",
+   "fingerprint": "27e64df42dc84da9",
+   "kind": "Control",
+   "name": "FontStretch",
+   "origin": "inferred",
+   "record_fp": "5be505bee19c411d",
+   "section": "props",
+   "tests": [
+    "prop_button_font_stretch"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:FontStyle",
+   "fingerprint": "89ee34e261bb6686",
+   "kind": "Control",
+   "name": "FontStyle",
+   "origin": "inferred",
+   "record_fp": "a817d4119f583390",
+   "section": "props",
+   "tests": [
+    "prop_button_font_style"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:HorizontalContentAlignment",
+   "fingerprint": "bd9be1c1e077eec9",
+   "kind": "Control",
+   "name": "HorizontalContentAlignment",
+   "origin": "inferred",
+   "record_fp": "d56b77b12d9cbca6",
+   "section": "props",
+   "tests": [
+    "prop_button_horizontal_content_alignment"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:IsEnabled",
+   "fingerprint": "d5baa861034ff175",
+   "kind": "Control",
+   "name": "IsEnabled",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_button_is_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:IsFocusEngaged",
+   "fingerprint": "8abee630ef76ca3e",
+   "kind": "Control",
+   "name": "IsFocusEngaged",
+   "origin": "inferred",
+   "record_fp": "f25633e18fea882d",
+   "section": "props",
+   "tests": [
+    "prop_button_is_focus_engaged"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:IsFocusEngagementEnabled",
+   "fingerprint": "92e7b00befd505d9",
+   "kind": "Control",
+   "name": "IsFocusEngagementEnabled",
+   "origin": "inferred",
+   "record_fp": "311c5dc3cb472845",
+   "section": "props",
+   "tests": [
+    "prop_button_is_focus_engagement_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:IsTextScaleFactorEnabled",
+   "fingerprint": "a3c205a6f51b26cc",
+   "kind": "Control",
+   "name": "IsTextScaleFactorEnabled",
+   "origin": "inferred",
+   "record_fp": "1d95fd4848e88052",
+   "section": "props",
+   "tests": [
+    "prop_button_is_text_scale_factor_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:Padding",
+   "fingerprint": "a7976f1539ed461d",
+   "kind": "Control",
+   "name": "Padding",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_button_padding"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:RequiresPointer",
+   "fingerprint": "cdb850a8e52f0447",
+   "kind": "Control",
+   "name": "RequiresPointer",
+   "origin": "inferred",
+   "record_fp": "c6d5fb7bf00c4720",
+   "section": "props",
+   "tests": [
+    "prop_button_requires_pointer"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:TabNavigation",
+   "fingerprint": "0e4b8a3723d5c2a5",
+   "kind": "Control",
+   "name": "TabNavigation",
+   "origin": "inferred",
+   "record_fp": "d8897eac8db169ff",
+   "section": "props",
+   "tests": [
+    "prop_button_tab_navigation"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:VerticalContentAlignment",
+   "fingerprint": "ba08ed3c31aa3254",
+   "kind": "Control",
+   "name": "VerticalContentAlignment",
+   "origin": "inferred",
+   "record_fp": "cf038e80f07575ca",
+   "section": "props",
+   "tests": [
+    "prop_button_vertical_content_alignment"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Grid:attr:Column",
+   "fingerprint": "76f47f2e9685cb35",
+   "kind": "Grid",
+   "name": "Column",
+   "origin": "manual",
+   "section": "attached",
+   "tests": [
+    "attr_grid_column"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Grid:attr:ColumnSpan",
+   "fingerprint": "299e32e57ea41455",
+   "kind": "Grid",
+   "name": "ColumnSpan",
+   "origin": "manual",
+   "section": "attached",
+   "tests": [
+    "attr_grid_column_span"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Grid:attr:Row",
+   "fingerprint": "8eb46e8c3683e5cf",
+   "kind": "Grid",
+   "name": "Row",
+   "origin": "manual",
+   "section": "attached",
+   "tests": [
+    "attr_grid_row"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Grid:attr:RowSpan",
+   "fingerprint": "3c80724d61bf07d2",
+   "kind": "Grid",
+   "name": "RowSpan",
+   "origin": "manual",
+   "section": "attached",
+   "tests": [
+    "attr_grid_row_span"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Grid:binding:background-sizing",
+   "fingerprint": "63d5ca782c4b487a",
+   "kind": "Grid",
+   "name": "background-sizing",
+   "origin": "inferred",
+   "record_fp": "afe7f0ab223563a8",
+   "section": "bindings",
+   "tests": [
+    "notify_grid_background_sizing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Grid:binding:column-spacing",
+   "fingerprint": "88c422cd420d3634",
+   "kind": "Grid",
+   "name": "column-spacing",
+   "origin": "inferred",
+   "record_fp": "dc9cc5a33985e362",
+   "section": "bindings",
+   "tests": [
+    "notify_grid_column_spacing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Grid:binding:row-spacing",
+   "fingerprint": "32940dbcd5200e34",
+   "kind": "Grid",
+   "name": "row-spacing",
+   "origin": "inferred",
+   "record_fp": "9e656326289f8603",
+   "section": "bindings",
+   "tests": [
+    "notify_grid_row_spacing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Grid:notify:BackgroundSizing",
+   "fingerprint": "58ba17c9e872bd86",
+   "kind": "Grid",
+   "name": "BackgroundSizing",
+   "origin": "inferred",
+   "record_fp": "961376bfc5a69f50",
+   "section": "notify",
+   "tests": [
+    "notify_grid_background_sizing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Grid:notify:BorderThickness",
+   "fingerprint": "5f70ce330d35d97d",
+   "kind": "Grid",
+   "name": "BorderThickness",
+   "origin": "inferred",
+   "record_fp": "b469643ea5cbab21",
+   "section": "notify",
+   "tests": [
+    "notify_grid_border_thickness"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Grid:notify:ColumnSpacing",
+   "fingerprint": "873dec25dc778a76",
+   "kind": "Grid",
+   "name": "ColumnSpacing",
+   "origin": "inferred",
+   "record_fp": "2a0a542bb113a12b",
+   "section": "notify",
+   "tests": [
+    "notify_grid_column_spacing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Grid:notify:Padding",
+   "fingerprint": "227eef49884336eb",
+   "kind": "Grid",
+   "name": "Padding",
+   "origin": "inferred",
+   "record_fp": "a9610fae3979478f",
+   "section": "notify",
+   "tests": [
+    "notify_grid_padding"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Grid:notify:RowSpacing",
+   "fingerprint": "a0d6b6d5adc4fa27",
+   "kind": "Grid",
+   "name": "RowSpacing",
+   "origin": "inferred",
+   "record_fp": "a7d4dc74e6419e9b",
+   "section": "notify",
+   "tests": [
+    "notify_grid_row_spacing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Grid:prop:BackgroundSizing",
+   "fingerprint": "a360cfb756c76747",
+   "kind": "Grid",
+   "name": "BackgroundSizing",
+   "origin": "inferred",
+   "record_fp": "39642ecd3346f7a8",
+   "section": "props",
+   "tests": [
+    "prop_grid_background_sizing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Grid:prop:BorderThickness",
+   "fingerprint": "b0391eb37d146f51",
+   "kind": "Grid",
+   "name": "BorderThickness",
+   "origin": "inferred",
+   "record_fp": "32c61e0408591669",
+   "section": "props",
+   "tests": [
+    "prop_grid_border_thickness"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Grid:prop:ColumnDefinitions",
+   "fingerprint": "6947ece3d9806c71",
+   "kind": "Grid",
+   "name": "ColumnDefinitions",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_grid_column_definitions"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Grid:prop:ColumnSpacing",
+   "fingerprint": "99d670fc10a88417",
+   "kind": "Grid",
+   "name": "ColumnSpacing",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_grid_column_spacing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Grid:prop:Padding",
+   "fingerprint": "67c72d663a9b4565",
+   "kind": "Grid",
+   "name": "Padding",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_grid_padding"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Grid:prop:RowDefinitions",
+   "fingerprint": "63d4658f6a0df13c",
+   "kind": "Grid",
+   "name": "RowDefinitions",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_grid_row_definitions"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Grid:prop:RowSpacing",
+   "fingerprint": "ebac4c7e07c163ec",
+   "kind": "Grid",
+   "name": "RowSpacing",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_grid_row_spacing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Panel:prop:IsItemsHost",
+   "fingerprint": "7bc5ea7531ee3a93",
+   "kind": "Panel",
+   "name": "IsItemsHost",
+   "origin": "inferred",
+   "record_fp": "cfffa02f782c8d12",
+   "section": "props",
+   "tests": [
+    "prop_grid_is_items_host"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Panel:slot:children",
+   "fingerprint": "01e300248892aa23",
+   "kind": "Panel",
+   "name": "children",
+   "origin": "manual",
+   "section": "slots",
+   "tests": [
+    "slot_grid_children"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:binding:intermediate-value",
+   "fingerprint": "2815efa50ed2431a",
+   "kind": "Slider",
+   "name": "intermediate-value",
+   "origin": "inferred",
+   "record_fp": "f55ad06b35f6691c",
+   "section": "bindings",
+   "tests": [
+    "notify_slider_intermediate_value"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:binding:is-direction-reversed",
+   "fingerprint": "92e6979b3befbd8c",
+   "kind": "Slider",
+   "name": "is-direction-reversed",
+   "origin": "inferred",
+   "record_fp": "2b9b00df8009c169",
+   "section": "bindings",
+   "tests": [
+    "notify_slider_is_direction_reversed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:binding:is-thumb-tool-tip-enabled",
+   "fingerprint": "7999fc12362c9626",
+   "kind": "Slider",
+   "name": "is-thumb-tool-tip-enabled",
+   "origin": "inferred",
+   "record_fp": "6b13b509a5f8c9ce",
+   "section": "bindings",
+   "tests": [
+    "notify_slider_is_thumb_tool_tip_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:binding:orientation",
+   "fingerprint": "e5d53b3f7d79a190",
+   "kind": "Slider",
+   "name": "orientation",
+   "origin": "inferred",
+   "record_fp": "50c0a19b08ecaa09",
+   "section": "bindings",
+   "tests": [
+    "notify_slider_orientation"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:binding:snaps-to",
+   "fingerprint": "b55aef445109ea35",
+   "kind": "Slider",
+   "name": "snaps-to",
+   "origin": "inferred",
+   "record_fp": "a99d0ddbfc51e3d4",
+   "section": "bindings",
+   "tests": [
+    "notify_slider_snaps_to"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:binding:step-frequency",
+   "fingerprint": "83c4bdfed732515e",
+   "kind": "Slider",
+   "name": "step-frequency",
+   "origin": "inferred",
+   "record_fp": "4b9bdbacf1f547df",
+   "section": "bindings",
+   "tests": [
+    "notify_slider_step_frequency"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:binding:tick-frequency",
+   "fingerprint": "1dca6cf8efef01d9",
+   "kind": "Slider",
+   "name": "tick-frequency",
+   "origin": "inferred",
+   "record_fp": "935a6a2d93230d7a",
+   "section": "bindings",
+   "tests": [
+    "notify_slider_tick_frequency"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:binding:tick-placement",
+   "fingerprint": "dd535eb42009a52d",
+   "kind": "Slider",
+   "name": "tick-placement",
+   "origin": "inferred",
+   "record_fp": "bc0cb930526e8ab2",
+   "section": "bindings",
+   "tests": [
+    "notify_slider_tick_placement"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:notify:IntermediateValue",
+   "fingerprint": "2d68f83d256f5fbb",
+   "kind": "Slider",
+   "name": "IntermediateValue",
+   "origin": "inferred",
+   "record_fp": "102d4db6d700338a",
+   "section": "notify",
+   "tests": [
+    "notify_slider_intermediate_value"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:notify:IsDirectionReversed",
+   "fingerprint": "044b601b90852d52",
+   "kind": "Slider",
+   "name": "IsDirectionReversed",
+   "origin": "inferred",
+   "record_fp": "5631aed38f6d85fc",
+   "section": "notify",
+   "tests": [
+    "notify_slider_is_direction_reversed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:notify:IsThumbToolTipEnabled",
+   "fingerprint": "a017bf16cb2e99f5",
+   "kind": "Slider",
+   "name": "IsThumbToolTipEnabled",
+   "origin": "inferred",
+   "record_fp": "9ffa6bfa8287974c",
+   "section": "notify",
+   "tests": [
+    "notify_slider_is_thumb_tool_tip_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:notify:Orientation",
+   "fingerprint": "5cd24177c6984d9c",
+   "kind": "Slider",
+   "name": "Orientation",
+   "origin": "inferred",
+   "record_fp": "b9beadfac35bc05b",
+   "section": "notify",
+   "tests": [
+    "notify_slider_orientation"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:notify:SnapsTo",
+   "fingerprint": "c0df62497a0aba09",
+   "kind": "Slider",
+   "name": "SnapsTo",
+   "origin": "inferred",
+   "record_fp": "9e0b52e4284b9554",
+   "section": "notify",
+   "tests": [
+    "notify_slider_snaps_to"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:notify:StepFrequency",
+   "fingerprint": "4a301ceb2f24d841",
+   "kind": "Slider",
+   "name": "StepFrequency",
+   "origin": "inferred",
+   "record_fp": "f8b0bf4b31e0e95c",
+   "section": "notify",
+   "tests": [
+    "notify_slider_step_frequency"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:notify:TickFrequency",
+   "fingerprint": "c026f03e71f8ec5b",
+   "kind": "Slider",
+   "name": "TickFrequency",
+   "origin": "inferred",
+   "record_fp": "1518206640bfd3d8",
+   "section": "notify",
+   "tests": [
+    "notify_slider_tick_frequency"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:notify:TickPlacement",
+   "fingerprint": "dd8637c470f56118",
+   "kind": "Slider",
+   "name": "TickPlacement",
+   "origin": "inferred",
+   "record_fp": "117682f8310c7aea",
+   "section": "notify",
+   "tests": [
+    "notify_slider_tick_placement"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:prop:Header",
+   "fingerprint": "f22316998f446abf",
+   "kind": "Slider",
+   "name": "Header",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_slider_header"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:prop:IntermediateValue",
+   "fingerprint": "8fe7f4498fd2f066",
+   "kind": "Slider",
+   "name": "IntermediateValue",
+   "origin": "inferred",
+   "record_fp": "9e90292d7cbef57b",
+   "section": "props",
+   "tests": [
+    "prop_slider_intermediate_value"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:prop:IsDirectionReversed",
+   "fingerprint": "ab8e6909782a5c3a",
+   "kind": "Slider",
+   "name": "IsDirectionReversed",
+   "origin": "inferred",
+   "record_fp": "5874ee7c95cd87bf",
+   "section": "props",
+   "tests": [
+    "prop_slider_is_direction_reversed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:prop:IsThumbToolTipEnabled",
+   "fingerprint": "d5bae8e3acf72250",
+   "kind": "Slider",
+   "name": "IsThumbToolTipEnabled",
+   "origin": "inferred",
+   "record_fp": "590ba6717fb10662",
+   "section": "props",
+   "tests": [
+    "prop_slider_is_thumb_tool_tip_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:prop:Orientation",
+   "fingerprint": "0bcfc9c2bc7ef3da",
+   "kind": "Slider",
+   "name": "Orientation",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_slider_orientation"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:prop:SnapsTo",
+   "fingerprint": "fb87dc84cbb46982",
+   "kind": "Slider",
+   "name": "SnapsTo",
+   "origin": "inferred",
+   "record_fp": "5cedaea9af525997",
+   "section": "props",
+   "tests": [
+    "prop_slider_snaps_to"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:prop:StepFrequency",
+   "fingerprint": "fc1a3ff46fe1aabd",
+   "kind": "Slider",
+   "name": "StepFrequency",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_slider_step_frequency"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:prop:TickFrequency",
+   "fingerprint": "792ec125de3ab4d6",
+   "kind": "Slider",
+   "name": "TickFrequency",
+   "origin": "inferred",
+   "record_fp": "727f782dacf76915",
+   "section": "props",
+   "tests": [
+    "prop_slider_tick_frequency"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:prop:TickPlacement",
+   "fingerprint": "d9f9e2c9a319e7f6",
+   "kind": "Slider",
+   "name": "TickPlacement",
+   "origin": "inferred",
+   "record_fp": "7de33d90d6eced3b",
+   "section": "props",
+   "tests": [
+    "prop_slider_tick_placement"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:binding:are-scroll-snap-points-regular",
+   "fingerprint": "a452c4568da5d171",
+   "kind": "StackPanel",
+   "name": "are-scroll-snap-points-regular",
+   "origin": "inferred",
+   "record_fp": "e6745b131ebf90b9",
+   "section": "bindings",
+   "tests": [
+    "notify_stack_panel_are_scroll_snap_points_regular"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:binding:background-sizing",
+   "fingerprint": "0d1816826362a298",
+   "kind": "StackPanel",
+   "name": "background-sizing",
+   "origin": "inferred",
+   "record_fp": "4c225a9b35307470",
+   "section": "bindings",
+   "tests": [
+    "notify_stack_panel_background_sizing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:binding:orientation",
+   "fingerprint": "b6b5dc7bef6f3027",
+   "kind": "StackPanel",
+   "name": "orientation",
+   "origin": "inferred",
+   "record_fp": "0ba3abf94ea18c6b",
+   "section": "bindings",
+   "tests": [
+    "notify_stack_panel_orientation"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:binding:spacing",
+   "fingerprint": "011efeef225ed2d7",
+   "kind": "StackPanel",
+   "name": "spacing",
+   "origin": "inferred",
+   "record_fp": "22e82d948b5c8dbe",
+   "section": "bindings",
+   "tests": [
+    "notify_stack_panel_spacing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:event:HorizontalSnapPointsChanged",
+   "fingerprint": "d5f9a0d68b4a0a31",
+   "kind": "StackPanel",
+   "name": "HorizontalSnapPointsChanged",
+   "origin": "inferred",
+   "record_fp": "62ed5eb57ef765ab",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_stack_panel_horizontal_snap_points_changed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:event:VerticalSnapPointsChanged",
+   "fingerprint": "1746bd632a89e0cc",
+   "kind": "StackPanel",
+   "name": "VerticalSnapPointsChanged",
+   "origin": "inferred",
+   "record_fp": "50ca8336ab74b020",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_stack_panel_vertical_snap_points_changed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:notify:AreScrollSnapPointsRegular",
+   "fingerprint": "c33882375833e050",
+   "kind": "StackPanel",
+   "name": "AreScrollSnapPointsRegular",
+   "origin": "inferred",
+   "record_fp": "3966dde993ead824",
+   "section": "notify",
+   "tests": [
+    "notify_stack_panel_are_scroll_snap_points_regular"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:notify:BackgroundSizing",
+   "fingerprint": "5c9e6287f0e850bc",
+   "kind": "StackPanel",
+   "name": "BackgroundSizing",
+   "origin": "inferred",
+   "record_fp": "4f92248226d82d13",
+   "section": "notify",
+   "tests": [
+    "notify_stack_panel_background_sizing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:notify:BorderThickness",
+   "fingerprint": "6996a494e7c66d79",
+   "kind": "StackPanel",
+   "name": "BorderThickness",
+   "origin": "inferred",
+   "record_fp": "4224a216c6b22927",
+   "section": "notify",
+   "tests": [
+    "notify_stack_panel_border_thickness"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:notify:Orientation",
+   "fingerprint": "db63e36ec14bc375",
+   "kind": "StackPanel",
+   "name": "Orientation",
+   "origin": "inferred",
+   "record_fp": "eb05de98046dfea2",
+   "section": "notify",
+   "tests": [
+    "notify_stack_panel_orientation"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:notify:Padding",
+   "fingerprint": "e8425fd859e822c4",
+   "kind": "StackPanel",
+   "name": "Padding",
+   "origin": "inferred",
+   "record_fp": "ea95c2f3d45a719f",
+   "section": "notify",
+   "tests": [
+    "notify_stack_panel_padding"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:notify:Spacing",
+   "fingerprint": "9fa2a70de261edcf",
+   "kind": "StackPanel",
+   "name": "Spacing",
+   "origin": "inferred",
+   "record_fp": "4255e56ec18f98d3",
+   "section": "notify",
+   "tests": [
+    "notify_stack_panel_spacing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:prop:AreHorizontalSnapPointsRegular",
+   "fingerprint": "238aa2ca8a1e7032",
+   "kind": "StackPanel",
+   "name": "AreHorizontalSnapPointsRegular",
+   "origin": "inferred",
+   "record_fp": "bf86d4895e3b4c87",
+   "section": "props",
+   "tests": [
+    "prop_stack_panel_are_horizontal_snap_points_regular"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:prop:AreScrollSnapPointsRegular",
+   "fingerprint": "f13a9ce745637112",
+   "kind": "StackPanel",
+   "name": "AreScrollSnapPointsRegular",
+   "origin": "inferred",
+   "record_fp": "72e172e3f856b28d",
+   "section": "props",
+   "tests": [
+    "prop_stack_panel_are_scroll_snap_points_regular"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:prop:AreVerticalSnapPointsRegular",
+   "fingerprint": "6090e66cdc973e97",
+   "kind": "StackPanel",
+   "name": "AreVerticalSnapPointsRegular",
+   "origin": "inferred",
+   "record_fp": "5e8cfebb114f3e2d",
+   "section": "props",
+   "tests": [
+    "prop_stack_panel_are_vertical_snap_points_regular"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:prop:BackgroundSizing",
+   "fingerprint": "c2b079a0cee15719",
+   "kind": "StackPanel",
+   "name": "BackgroundSizing",
+   "origin": "inferred",
+   "record_fp": "049244d0ba851479",
+   "section": "props",
+   "tests": [
+    "prop_stack_panel_background_sizing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:prop:BorderThickness",
+   "fingerprint": "a72ab0bbcd251091",
+   "kind": "StackPanel",
+   "name": "BorderThickness",
+   "origin": "inferred",
+   "record_fp": "1f4504532b962481",
+   "section": "props",
+   "tests": [
+    "prop_stack_panel_border_thickness"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:prop:Orientation",
+   "fingerprint": "a5a62bc16d7ed641",
+   "kind": "StackPanel",
+   "name": "Orientation",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_stack_panel_orientation"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:prop:Padding",
+   "fingerprint": "4f80be55c1fb2cb2",
+   "kind": "StackPanel",
+   "name": "Padding",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_stack_panel_padding"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:prop:Spacing",
+   "fingerprint": "9ffea9d716293d4a",
+   "kind": "StackPanel",
+   "name": "Spacing",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_stack_panel_spacing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:binding:character-spacing",
+   "fingerprint": "1972fb7b0c6e10c8",
+   "kind": "TextBlock",
+   "name": "character-spacing",
+   "origin": "inferred",
+   "record_fp": "5da401f3bf198dbf",
+   "section": "bindings",
+   "tests": [
+    "notify_text_block_character_spacing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:binding:font-size",
+   "fingerprint": "b5a8743a471446ce",
+   "kind": "TextBlock",
+   "name": "font-size",
+   "origin": "inferred",
+   "record_fp": "5cb93b9dcdec061c",
+   "section": "bindings",
+   "tests": [
+    "notify_text_block_font_size"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:binding:font-stretch",
+   "fingerprint": "9d98334f79b65824",
+   "kind": "TextBlock",
+   "name": "font-stretch",
+   "origin": "inferred",
+   "record_fp": "4c9e2b28f3cdadf5",
+   "section": "bindings",
+   "tests": [
+    "notify_text_block_font_stretch"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:binding:font-style",
+   "fingerprint": "110e7790209aef7a",
+   "kind": "TextBlock",
+   "name": "font-style",
+   "origin": "inferred",
+   "record_fp": "8fed8fac3811254a",
+   "section": "bindings",
+   "tests": [
+    "notify_text_block_font_style"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:binding:horizontal-text-alignment",
+   "fingerprint": "ed953b1ba5e4b940",
+   "kind": "TextBlock",
+   "name": "horizontal-text-alignment",
+   "origin": "inferred",
+   "record_fp": "5b13e59e876f1ce4",
+   "section": "bindings",
+   "tests": [
+    "notify_text_block_horizontal_text_alignment"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:binding:is-color-font-enabled",
+   "fingerprint": "d902a68ee43b1ff7",
+   "kind": "TextBlock",
+   "name": "is-color-font-enabled",
+   "origin": "inferred",
+   "record_fp": "be7ed1fe3cea49b0",
+   "section": "bindings",
+   "tests": [
+    "notify_text_block_is_color_font_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:binding:is-text-scale-factor-enabled",
+   "fingerprint": "69db720b1335d3ff",
+   "kind": "TextBlock",
+   "name": "is-text-scale-factor-enabled",
+   "origin": "inferred",
+   "record_fp": "9afd5f13b32224aa",
+   "section": "bindings",
+   "tests": [
+    "notify_text_block_is_text_scale_factor_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:binding:is-text-selection-enabled",
+   "fingerprint": "23f6123ba48e8b4a",
+   "kind": "TextBlock",
+   "name": "is-text-selection-enabled",
+   "origin": "inferred",
+   "record_fp": "45e3572bb6d863f5",
+   "section": "bindings",
+   "tests": [
+    "notify_text_block_is_text_selection_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:binding:line-height",
+   "fingerprint": "6af24780bff245c4",
+   "kind": "TextBlock",
+   "name": "line-height",
+   "origin": "inferred",
+   "record_fp": "3c81c4e9f3ac4816",
+   "section": "bindings",
+   "tests": [
+    "notify_text_block_line_height"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:binding:line-stacking-strategy",
+   "fingerprint": "9ac23a64b2bb1d3a",
+   "kind": "TextBlock",
+   "name": "line-stacking-strategy",
+   "origin": "inferred",
+   "record_fp": "c02af59c9bf8ee71",
+   "section": "bindings",
+   "tests": [
+    "notify_text_block_line_stacking_strategy"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:binding:max-lines",
+   "fingerprint": "61d9c6dac32846d7",
+   "kind": "TextBlock",
+   "name": "max-lines",
+   "origin": "inferred",
+   "record_fp": "ea3692d006134daf",
+   "section": "bindings",
+   "tests": [
+    "notify_text_block_max_lines"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:binding:optical-margin-alignment",
+   "fingerprint": "ae531b745a267112",
+   "kind": "TextBlock",
+   "name": "optical-margin-alignment",
+   "origin": "inferred",
+   "record_fp": "31990bf96cb73d97",
+   "section": "bindings",
+   "tests": [
+    "notify_text_block_optical_margin_alignment"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:binding:text",
+   "fingerprint": "412da999e4634d5f",
+   "kind": "TextBlock",
+   "name": "text",
+   "origin": "inferred",
+   "record_fp": "d1ffac1c10f63310",
+   "section": "bindings",
+   "tests": [
+    "notify_text_block_text"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:binding:text-alignment",
+   "fingerprint": "04fac7d124b02233",
+   "kind": "TextBlock",
+   "name": "text-alignment",
+   "origin": "inferred",
+   "record_fp": "64cae63e22bcddf3",
+   "section": "bindings",
+   "tests": [
+    "notify_text_block_text_alignment"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:binding:text-line-bounds",
+   "fingerprint": "8940259a21025694",
+   "kind": "TextBlock",
+   "name": "text-line-bounds",
+   "origin": "inferred",
+   "record_fp": "bd16e36bb19e89e7",
+   "section": "bindings",
+   "tests": [
+    "notify_text_block_text_line_bounds"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:binding:text-reading-order",
+   "fingerprint": "bd44120b7b9bc8d3",
+   "kind": "TextBlock",
+   "name": "text-reading-order",
+   "origin": "inferred",
+   "record_fp": "ad22123f2e488cd3",
+   "section": "bindings",
+   "tests": [
+    "notify_text_block_text_reading_order"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:binding:text-trimming",
+   "fingerprint": "a0d22c96bcb63039",
+   "kind": "TextBlock",
+   "name": "text-trimming",
+   "origin": "inferred",
+   "record_fp": "f5d8908cd58d0281",
+   "section": "bindings",
+   "tests": [
+    "notify_text_block_text_trimming"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:binding:text-wrapping",
+   "fingerprint": "a92ecfa532797cd6",
+   "kind": "TextBlock",
+   "name": "text-wrapping",
+   "origin": "inferred",
+   "record_fp": "97fc7d5409e6d08e",
+   "section": "bindings",
+   "tests": [
+    "notify_text_block_text_wrapping"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:event:ContextMenuOpening",
+   "fingerprint": "0c91148a45110f5f",
+   "kind": "TextBlock",
+   "name": "ContextMenuOpening",
+   "origin": "inferred",
+   "record_fp": "0e1245fdb8fefe6d",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_text_block_context_menu_opening"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:event:IsTextTrimmedChanged",
+   "fingerprint": "5f0fbed34c6d31e2",
+   "kind": "TextBlock",
+   "name": "IsTextTrimmedChanged",
+   "origin": "inferred",
+   "record_fp": "f9506fcde9c9b197",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_text_block_is_text_trimmed_changed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:event:SelectionChanged",
+   "fingerprint": "ffae0bd202972cf6",
+   "kind": "TextBlock",
+   "name": "SelectionChanged",
+   "origin": "inferred",
+   "record_fp": "e186651080f69dc7",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_text_block_selection_changed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:method:SelectAll",
+   "fingerprint": "5a148e89e5868192",
+   "kind": "TextBlock",
+   "name": "SelectAll",
+   "origin": "inferred",
+   "record_fp": "8a0567b094ddcff1",
+   "section": "methods",
+   "tests": [
+    "method_text_block_select_all"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:notify:CharacterSpacing",
+   "fingerprint": "8fe06e0edad64473",
+   "kind": "TextBlock",
+   "name": "CharacterSpacing",
+   "origin": "inferred",
+   "record_fp": "4820aae92174d433",
+   "section": "notify",
+   "tests": [
+    "notify_text_block_character_spacing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:notify:FontSize",
+   "fingerprint": "92176bbc198f99ec",
+   "kind": "TextBlock",
+   "name": "FontSize",
+   "origin": "inferred",
+   "record_fp": "cb000d649cfe6da1",
+   "section": "notify",
+   "tests": [
+    "notify_text_block_font_size"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:notify:FontStretch",
+   "fingerprint": "57283b8004280299",
+   "kind": "TextBlock",
+   "name": "FontStretch",
+   "origin": "inferred",
+   "record_fp": "7b937ac661b842a0",
+   "section": "notify",
+   "tests": [
+    "notify_text_block_font_stretch"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:notify:FontStyle",
+   "fingerprint": "fe1a30202531640e",
+   "kind": "TextBlock",
+   "name": "FontStyle",
+   "origin": "inferred",
+   "record_fp": "4201dd8ddc463ecf",
+   "section": "notify",
+   "tests": [
+    "notify_text_block_font_style"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:notify:HorizontalTextAlignment",
+   "fingerprint": "7f15a0ba882f4cbb",
+   "kind": "TextBlock",
+   "name": "HorizontalTextAlignment",
+   "origin": "inferred",
+   "record_fp": "36364db4f8810070",
+   "section": "notify",
+   "tests": [
+    "notify_text_block_horizontal_text_alignment"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:notify:IsColorFontEnabled",
+   "fingerprint": "387877de81b6b392",
+   "kind": "TextBlock",
+   "name": "IsColorFontEnabled",
+   "origin": "inferred",
+   "record_fp": "170468316d857d9e",
+   "section": "notify",
+   "tests": [
+    "notify_text_block_is_color_font_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:notify:IsTextScaleFactorEnabled",
+   "fingerprint": "5fc9887f9b2bd93d",
+   "kind": "TextBlock",
+   "name": "IsTextScaleFactorEnabled",
+   "origin": "inferred",
+   "record_fp": "cd54946ab668587c",
+   "section": "notify",
+   "tests": [
+    "notify_text_block_is_text_scale_factor_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:notify:IsTextSelectionEnabled",
+   "fingerprint": "623cf1e1cf86a61a",
+   "kind": "TextBlock",
+   "name": "IsTextSelectionEnabled",
+   "origin": "inferred",
+   "record_fp": "3f5e339258f503de",
+   "section": "notify",
+   "tests": [
+    "notify_text_block_is_text_selection_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:notify:LineHeight",
+   "fingerprint": "14014133726f6e43",
+   "kind": "TextBlock",
+   "name": "LineHeight",
+   "origin": "inferred",
+   "record_fp": "643c5b8ed694bba8",
+   "section": "notify",
+   "tests": [
+    "notify_text_block_line_height"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:notify:LineStackingStrategy",
+   "fingerprint": "6541fdbc976d1ea0",
+   "kind": "TextBlock",
+   "name": "LineStackingStrategy",
+   "origin": "inferred",
+   "record_fp": "016f683215dda5ca",
+   "section": "notify",
+   "tests": [
+    "notify_text_block_line_stacking_strategy"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:notify:MaxLines",
+   "fingerprint": "18d86982575969b0",
+   "kind": "TextBlock",
+   "name": "MaxLines",
+   "origin": "inferred",
+   "record_fp": "b57c43f057ebfc32",
+   "section": "notify",
+   "tests": [
+    "notify_text_block_max_lines"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:notify:OpticalMarginAlignment",
+   "fingerprint": "29103d8e898d09e5",
+   "kind": "TextBlock",
+   "name": "OpticalMarginAlignment",
+   "origin": "inferred",
+   "record_fp": "7ac98781e19d8f45",
+   "section": "notify",
+   "tests": [
+    "notify_text_block_optical_margin_alignment"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:notify:Padding",
+   "fingerprint": "87fe5a3a8cb75147",
+   "kind": "TextBlock",
+   "name": "Padding",
+   "origin": "inferred",
+   "record_fp": "42bfa4578215d232",
+   "section": "notify",
+   "tests": [
+    "notify_text_block_padding"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:notify:Text",
+   "fingerprint": "3422b0e06f21ff89",
+   "kind": "TextBlock",
+   "name": "Text",
+   "origin": "inferred",
+   "record_fp": "8f59890b8fc0a279",
+   "section": "notify",
+   "tests": [
+    "notify_text_block_text"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:notify:TextAlignment",
+   "fingerprint": "e4ce1e4894aa4a44",
+   "kind": "TextBlock",
+   "name": "TextAlignment",
+   "origin": "inferred",
+   "record_fp": "49811e1cddc4807e",
+   "section": "notify",
+   "tests": [
+    "notify_text_block_text_alignment"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:notify:TextLineBounds",
+   "fingerprint": "76c4c4ba36522e53",
+   "kind": "TextBlock",
+   "name": "TextLineBounds",
+   "origin": "inferred",
+   "record_fp": "d486e1c695261293",
+   "section": "notify",
+   "tests": [
+    "notify_text_block_text_line_bounds"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:notify:TextReadingOrder",
+   "fingerprint": "7a7fb1e16e60a266",
+   "kind": "TextBlock",
+   "name": "TextReadingOrder",
+   "origin": "inferred",
+   "record_fp": "49c400a51402e5ef",
+   "section": "notify",
+   "tests": [
+    "notify_text_block_text_reading_order"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:notify:TextTrimming",
+   "fingerprint": "927fff73ae2e5bdd",
+   "kind": "TextBlock",
+   "name": "TextTrimming",
+   "origin": "inferred",
+   "record_fp": "e1e1fb65245a9b13",
+   "section": "notify",
+   "tests": [
+    "notify_text_block_text_trimming"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:notify:TextWrapping",
+   "fingerprint": "f47de347bd71e1df",
+   "kind": "TextBlock",
+   "name": "TextWrapping",
+   "origin": "inferred",
+   "record_fp": "bc5a8ee8a14d5b18",
+   "section": "notify",
+   "tests": [
+    "notify_text_block_text_wrapping"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:BaselineOffset",
+   "fingerprint": "50d4471ad70da84b",
+   "kind": "TextBlock",
+   "name": "BaselineOffset",
+   "origin": "inferred",
+   "record_fp": "89cb0a9d396037b9",
+   "section": "props",
+   "tests": [
+    "prop_text_block_baseline_offset"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:CharacterSpacing",
+   "fingerprint": "c0a5eb8adacea7ed",
+   "kind": "TextBlock",
+   "name": "CharacterSpacing",
+   "origin": "inferred",
+   "record_fp": "2bd80d316b0077d5",
+   "section": "props",
+   "tests": [
+    "prop_text_block_character_spacing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:FontSize",
+   "fingerprint": "600b45683f6742f2",
+   "kind": "TextBlock",
+   "name": "FontSize",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_text_block_font_size"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:FontStretch",
+   "fingerprint": "192afac8b55e2a32",
+   "kind": "TextBlock",
+   "name": "FontStretch",
+   "origin": "inferred",
+   "record_fp": "0e67839afbbab970",
+   "section": "props",
+   "tests": [
+    "prop_text_block_font_stretch"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:FontStyle",
+   "fingerprint": "1bdfd70ab15bcbb2",
+   "kind": "TextBlock",
+   "name": "FontStyle",
+   "origin": "inferred",
+   "record_fp": "30c7f9d9f2f98e4f",
+   "section": "props",
+   "tests": [
+    "prop_text_block_font_style"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:HorizontalTextAlignment",
+   "fingerprint": "f052acaf865a621c",
+   "kind": "TextBlock",
+   "name": "HorizontalTextAlignment",
+   "origin": "inferred",
+   "record_fp": "91f5a512f371bd9b",
+   "section": "props",
+   "tests": [
+    "prop_text_block_horizontal_text_alignment"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:IsColorFontEnabled",
+   "fingerprint": "59d2be18379fbb0a",
+   "kind": "TextBlock",
+   "name": "IsColorFontEnabled",
+   "origin": "inferred",
+   "record_fp": "636b6d763a0965c2",
+   "section": "props",
+   "tests": [
+    "prop_text_block_is_color_font_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:IsTextScaleFactorEnabled",
+   "fingerprint": "fe20258e9b114b04",
+   "kind": "TextBlock",
+   "name": "IsTextScaleFactorEnabled",
+   "origin": "inferred",
+   "record_fp": "73eb267f2b7cce4b",
+   "section": "props",
+   "tests": [
+    "prop_text_block_is_text_scale_factor_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:IsTextSelectionEnabled",
+   "fingerprint": "62481bda850f86b1",
+   "kind": "TextBlock",
+   "name": "IsTextSelectionEnabled",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_text_block_is_text_selection_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:IsTextTrimmed",
+   "fingerprint": "ebdccec68a219be6",
+   "kind": "TextBlock",
+   "name": "IsTextTrimmed",
+   "origin": "inferred",
+   "record_fp": "ce3e281dacd0177a",
+   "section": "props",
+   "tests": [
+    "prop_text_block_is_text_trimmed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:LineHeight",
+   "fingerprint": "99195deaa1ca3da9",
+   "kind": "TextBlock",
+   "name": "LineHeight",
+   "origin": "inferred",
+   "record_fp": "4c1491d667f116d0",
+   "section": "props",
+   "tests": [
+    "prop_text_block_line_height"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:LineStackingStrategy",
+   "fingerprint": "edd53d764de87316",
+   "kind": "TextBlock",
+   "name": "LineStackingStrategy",
+   "origin": "inferred",
+   "record_fp": "205a58a31313cea2",
+   "section": "props",
+   "tests": [
+    "prop_text_block_line_stacking_strategy"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:MaxLines",
+   "fingerprint": "47c11901895911fe",
+   "kind": "TextBlock",
+   "name": "MaxLines",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_text_block_max_lines"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:OpticalMarginAlignment",
+   "fingerprint": "15b92dae851e637a",
+   "kind": "TextBlock",
+   "name": "OpticalMarginAlignment",
+   "origin": "inferred",
+   "record_fp": "12dab466c6a2b7c7",
+   "section": "props",
+   "tests": [
+    "prop_text_block_optical_margin_alignment"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:Padding",
+   "fingerprint": "bd57a4574db1cfef",
+   "kind": "TextBlock",
+   "name": "Padding",
+   "origin": "inferred",
+   "record_fp": "22b8d21766366843",
+   "section": "props",
+   "tests": [
+    "prop_text_block_padding"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:SelectedText",
+   "fingerprint": "fdfabfad349493d9",
+   "kind": "TextBlock",
+   "name": "SelectedText",
+   "origin": "inferred",
+   "record_fp": "4ab0ed797ed6f5fa",
+   "section": "props",
+   "tests": [
+    "prop_text_block_selected_text"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:Text",
+   "fingerprint": "0a4362a4f50c515e",
+   "kind": "TextBlock",
+   "name": "Text",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_text_block_text"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:TextAlignment",
+   "fingerprint": "6b42107f2b5d4ea2",
+   "kind": "TextBlock",
+   "name": "TextAlignment",
+   "origin": "inferred",
+   "record_fp": "dba2e84bc521c116",
+   "section": "props",
+   "tests": [
+    "prop_text_block_text_alignment"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:TextLineBounds",
+   "fingerprint": "86b81ec5c0875e2e",
+   "kind": "TextBlock",
+   "name": "TextLineBounds",
+   "origin": "inferred",
+   "record_fp": "cb807e788b8aee73",
+   "section": "props",
+   "tests": [
+    "prop_text_block_text_line_bounds"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:TextReadingOrder",
+   "fingerprint": "3735595d70c5618d",
+   "kind": "TextBlock",
+   "name": "TextReadingOrder",
+   "origin": "inferred",
+   "record_fp": "1353005380a69a39",
+   "section": "props",
+   "tests": [
+    "prop_text_block_text_reading_order"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:TextTrimming",
+   "fingerprint": "22851766d5771d0d",
+   "kind": "TextBlock",
+   "name": "TextTrimming",
+   "origin": "inferred",
+   "record_fp": "256a5a9ca65294d7",
+   "section": "props",
+   "tests": [
+    "prop_text_block_text_trimming"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:TextWrapping",
+   "fingerprint": "ed8731c6afa924d6",
+   "kind": "TextBlock",
+   "name": "TextWrapping",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_text_block_text_wrapping"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:binding:accepts-return",
+   "fingerprint": "7c9e1e6dd9ab19e7",
+   "kind": "TextBox",
+   "name": "accepts-return",
+   "origin": "inferred",
+   "record_fp": "3c1a24bd25bdc8e4",
+   "section": "bindings",
+   "tests": [
+    "notify_text_box_accepts_return"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:binding:character-casing",
+   "fingerprint": "25723eab4d8c5c8f",
+   "kind": "TextBox",
+   "name": "character-casing",
+   "origin": "inferred",
+   "record_fp": "00d5b5e0fbea4a0c",
+   "section": "bindings",
+   "tests": [
+    "notify_text_box_character_casing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:binding:desired-candidate-window-alignment",
+   "fingerprint": "165ddd0fa4397453",
+   "kind": "TextBox",
+   "name": "desired-candidate-window-alignment",
+   "origin": "inferred",
+   "record_fp": "e46e7a3236c5ad0b",
+   "section": "bindings",
+   "tests": [
+    "notify_text_box_desired_candidate_window_alignment"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:binding:horizontal-text-alignment",
+   "fingerprint": "df3834f5a73e64c4",
+   "kind": "TextBox",
+   "name": "horizontal-text-alignment",
+   "origin": "inferred",
+   "record_fp": "6af540a4f4f90074",
+   "section": "bindings",
+   "tests": [
+    "notify_text_box_horizontal_text_alignment"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:binding:is-color-font-enabled",
+   "fingerprint": "e7ce58b54bc94d69",
+   "kind": "TextBox",
+   "name": "is-color-font-enabled",
+   "origin": "inferred",
+   "record_fp": "e50dfbca77f5257c",
+   "section": "bindings",
+   "tests": [
+    "notify_text_box_is_color_font_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:binding:is-read-only",
+   "fingerprint": "3948ddc6e68ace16",
+   "kind": "TextBox",
+   "name": "is-read-only",
+   "origin": "inferred",
+   "record_fp": "bbd54209ae2e42b0",
+   "section": "bindings",
+   "tests": [
+    "notify_text_box_is_read_only"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:binding:is-spell-check-enabled",
+   "fingerprint": "b9cde36138900f70",
+   "kind": "TextBox",
+   "name": "is-spell-check-enabled",
+   "origin": "inferred",
+   "record_fp": "a0bc486bfb67764d",
+   "section": "bindings",
+   "tests": [
+    "notify_text_box_is_spell_check_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:binding:is-text-prediction-enabled",
+   "fingerprint": "f4102eb8dcb9f5f2",
+   "kind": "TextBox",
+   "name": "is-text-prediction-enabled",
+   "origin": "inferred",
+   "record_fp": "ac3cbfd8bb2393e8",
+   "section": "bindings",
+   "tests": [
+    "notify_text_box_is_text_prediction_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:binding:max-length",
+   "fingerprint": "c20b5b43d56cf4ac",
+   "kind": "TextBox",
+   "name": "max-length",
+   "origin": "inferred",
+   "record_fp": "6a904b68b5a9b953",
+   "section": "bindings",
+   "tests": [
+    "notify_text_box_max_length"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:binding:placeholder-text",
+   "fingerprint": "d180d69fae278c41",
+   "kind": "TextBox",
+   "name": "placeholder-text",
+   "origin": "inferred",
+   "record_fp": "8855e717cbd4f9d5",
+   "section": "bindings",
+   "tests": [
+    "notify_text_box_placeholder_text"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:binding:prevent-keyboard-display-on-programmatic-focus",
+   "fingerprint": "d479fee2b9fec5be",
+   "kind": "TextBox",
+   "name": "prevent-keyboard-display-on-programmatic-focus",
+   "origin": "inferred",
+   "record_fp": "07a650da05f63ab1",
+   "section": "bindings",
+   "tests": [
+    "notify_text_box_prevent_keyboard_display_on_programmatic_focus"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:binding:text-alignment",
+   "fingerprint": "ba9caaf57f4749f8",
+   "kind": "TextBox",
+   "name": "text-alignment",
+   "origin": "inferred",
+   "record_fp": "5fa6ef4850175e57",
+   "section": "bindings",
+   "tests": [
+    "notify_text_box_text_alignment"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:binding:text-reading-order",
+   "fingerprint": "07490162b2439e60",
+   "kind": "TextBox",
+   "name": "text-reading-order",
+   "origin": "inferred",
+   "record_fp": "86544632db91045c",
+   "section": "bindings",
+   "tests": [
+    "notify_text_box_text_reading_order"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:binding:text-wrapping",
+   "fingerprint": "79b160723d4bf03c",
+   "kind": "TextBox",
+   "name": "text-wrapping",
+   "origin": "inferred",
+   "record_fp": "720406c04a58d848",
+   "section": "bindings",
+   "tests": [
+    "notify_text_box_text_wrapping"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:event:BeforeTextChanging",
+   "fingerprint": "3e2e7851fe155d79",
+   "kind": "TextBox",
+   "name": "BeforeTextChanging",
+   "origin": "manual",
+   "section": "events",
+   "tests": [
+    "event_text_box_before_text_changing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:event:CandidateWindowBoundsChanged",
+   "fingerprint": "d7d3220e39c31425",
+   "kind": "TextBox",
+   "name": "CandidateWindowBoundsChanged",
+   "origin": "inferred",
+   "record_fp": "0088777c1f006890",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_text_box_candidate_window_bounds_changed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:event:ContextMenuOpening",
+   "fingerprint": "67a4263ccbb0c6e0",
+   "kind": "TextBox",
+   "name": "ContextMenuOpening",
+   "origin": "inferred",
+   "record_fp": "3375936daf9ab30f",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_text_box_context_menu_opening"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:event:CopyingToClipboard",
+   "fingerprint": "4618f440bad646bb",
+   "kind": "TextBox",
+   "name": "CopyingToClipboard",
+   "origin": "inferred",
+   "record_fp": "906b0deaf22b84a3",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_text_box_copying_to_clipboard"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:event:CuttingToClipboard",
+   "fingerprint": "64b99f053ae17a50",
+   "kind": "TextBox",
+   "name": "CuttingToClipboard",
+   "origin": "inferred",
+   "record_fp": "2e929e0e9f6bdb4b",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_text_box_cutting_to_clipboard"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:event:Paste",
+   "fingerprint": "97351bf993cbfeb2",
+   "kind": "TextBox",
+   "name": "Paste",
+   "origin": "inferred",
+   "record_fp": "f765841c134062f0",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_text_box_paste"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:event:SelectionChanged",
+   "fingerprint": "ff8e19645308ab5a",
+   "kind": "TextBox",
+   "name": "SelectionChanged",
+   "origin": "inferred",
+   "record_fp": "d434b97592fef0c5",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_text_box_selection_changed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:event:SelectionChanging",
+   "fingerprint": "70dc4b4161c27f46",
+   "kind": "TextBox",
+   "name": "SelectionChanging",
+   "origin": "inferred",
+   "record_fp": "e67dfe2899870881",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_text_box_selection_changing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:event:TextChanged",
+   "fingerprint": "035fc171702a3b37",
+   "kind": "TextBox",
+   "name": "TextChanged",
+   "origin": "manual",
+   "section": "events",
+   "tests": [
+    "event_text_box_text_changed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:event:TextChanging",
+   "fingerprint": "51ac1375266c671c",
+   "kind": "TextBox",
+   "name": "TextChanging",
+   "origin": "inferred",
+   "record_fp": "1bfaf4ff21663d0f",
+   "section": "events",
+   "tests": [
+    "event_text_box_text_changing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:event:TextCompositionChanged",
+   "fingerprint": "161bf693eec37ebe",
+   "kind": "TextBox",
+   "name": "TextCompositionChanged",
+   "origin": "inferred",
+   "record_fp": "0cd8999933376424",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_text_box_text_composition_changed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:event:TextCompositionEnded",
+   "fingerprint": "d0cbbf02f3f8ba1d",
+   "kind": "TextBox",
+   "name": "TextCompositionEnded",
+   "origin": "inferred",
+   "record_fp": "bae5e039291b5d94",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_text_box_text_composition_ended"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:event:TextCompositionStarted",
+   "fingerprint": "9e915e989ce87e0d",
+   "kind": "TextBox",
+   "name": "TextCompositionStarted",
+   "origin": "inferred",
+   "record_fp": "acb9f9f63c4111a9",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_text_box_text_composition_started"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:method:ClearUndoRedoHistory",
+   "fingerprint": "b693e9c28cf0689c",
+   "kind": "TextBox",
+   "name": "ClearUndoRedoHistory",
+   "origin": "inferred",
+   "record_fp": "e68df54aaecfb093",
+   "section": "methods",
+   "tests": [
+    "method_text_box_clear_undo_redo_history"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:method:Redo",
+   "fingerprint": "b4455e084c32acc8",
+   "kind": "TextBox",
+   "name": "Redo",
+   "origin": "inferred",
+   "record_fp": "79d02504ffedb620",
+   "section": "methods",
+   "tests": [
+    "method_text_box_redo"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:method:Undo",
+   "fingerprint": "58095f380c34c311",
+   "kind": "TextBox",
+   "name": "Undo",
+   "origin": "inferred",
+   "record_fp": "2b9e6ae891c2ee26",
+   "section": "methods",
+   "tests": [
+    "method_text_box_undo"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:notify:AcceptsReturn",
+   "fingerprint": "43a475828437f1b7",
+   "kind": "TextBox",
+   "name": "AcceptsReturn",
+   "origin": "inferred",
+   "record_fp": "dbfd146ed4f10b4d",
+   "section": "notify",
+   "tests": [
+    "notify_text_box_accepts_return"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:notify:CharacterCasing",
+   "fingerprint": "73f69f8f5c52ea7e",
+   "kind": "TextBox",
+   "name": "CharacterCasing",
+   "origin": "inferred",
+   "record_fp": "d8c3121539815df5",
+   "section": "notify",
+   "tests": [
+    "notify_text_box_character_casing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:notify:DesiredCandidateWindowAlignment",
+   "fingerprint": "9e90fa3c12354303",
+   "kind": "TextBox",
+   "name": "DesiredCandidateWindowAlignment",
+   "origin": "inferred",
+   "record_fp": "6b3b165ea26a1e6a",
+   "section": "notify",
+   "tests": [
+    "notify_text_box_desired_candidate_window_alignment"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:notify:HorizontalTextAlignment",
+   "fingerprint": "e397b62bc21d6f05",
+   "kind": "TextBox",
+   "name": "HorizontalTextAlignment",
+   "origin": "inferred",
+   "record_fp": "11e395d928e7d8dc",
+   "section": "notify",
+   "tests": [
+    "notify_text_box_horizontal_text_alignment"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:notify:IsColorFontEnabled",
+   "fingerprint": "e03223eb1280a2d0",
+   "kind": "TextBox",
+   "name": "IsColorFontEnabled",
+   "origin": "inferred",
+   "record_fp": "1aa31dfc014508f7",
+   "section": "notify",
+   "tests": [
+    "notify_text_box_is_color_font_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:notify:IsReadOnly",
+   "fingerprint": "4efe8bb6ea55f228",
+   "kind": "TextBox",
+   "name": "IsReadOnly",
+   "origin": "inferred",
+   "record_fp": "f08d5003f7b63147",
+   "section": "notify",
+   "tests": [
+    "notify_text_box_is_read_only"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:notify:IsSpellCheckEnabled",
+   "fingerprint": "380e65b9074c3d46",
+   "kind": "TextBox",
+   "name": "IsSpellCheckEnabled",
+   "origin": "inferred",
+   "record_fp": "5914da21975ef573",
+   "section": "notify",
+   "tests": [
+    "notify_text_box_is_spell_check_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:notify:IsTextPredictionEnabled",
+   "fingerprint": "872a6dc3a2137a8a",
+   "kind": "TextBox",
+   "name": "IsTextPredictionEnabled",
+   "origin": "inferred",
+   "record_fp": "6b2ec4fb35f87b94",
+   "section": "notify",
+   "tests": [
+    "notify_text_box_is_text_prediction_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:notify:MaxLength",
+   "fingerprint": "9c7a0c642f4c9f6f",
+   "kind": "TextBox",
+   "name": "MaxLength",
+   "origin": "inferred",
+   "record_fp": "528b2cb4a97abeb7",
+   "section": "notify",
+   "tests": [
+    "notify_text_box_max_length"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:notify:PlaceholderText",
+   "fingerprint": "ab19983ebc013aa3",
+   "kind": "TextBox",
+   "name": "PlaceholderText",
+   "origin": "inferred",
+   "record_fp": "6e15fc2f1387c4dc",
+   "section": "notify",
+   "tests": [
+    "notify_text_box_placeholder_text"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:notify:PreventKeyboardDisplayOnProgrammaticFocus",
+   "fingerprint": "2b5209329855ab3a",
+   "kind": "TextBox",
+   "name": "PreventKeyboardDisplayOnProgrammaticFocus",
+   "origin": "inferred",
+   "record_fp": "b368de8b04b671f5",
+   "section": "notify",
+   "tests": [
+    "notify_text_box_prevent_keyboard_display_on_programmatic_focus"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:notify:Text",
+   "fingerprint": "42f2c375bf60b469",
+   "kind": "TextBox",
+   "name": "Text",
+   "origin": "inferred",
+   "record_fp": "91d94754f375b6c2",
+   "section": "notify",
+   "tests": [
+    "notify_text_box_text"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:notify:TextAlignment",
+   "fingerprint": "fcc3858fd22a6bcd",
+   "kind": "TextBox",
+   "name": "TextAlignment",
+   "origin": "inferred",
+   "record_fp": "7bf89b620b0f2018",
+   "section": "notify",
+   "tests": [
+    "notify_text_box_text_alignment"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:notify:TextReadingOrder",
+   "fingerprint": "4249626f864ff381",
+   "kind": "TextBox",
+   "name": "TextReadingOrder",
+   "origin": "inferred",
+   "record_fp": "d574dccf2883941b",
+   "section": "notify",
+   "tests": [
+    "notify_text_box_text_reading_order"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:notify:TextWrapping",
+   "fingerprint": "5a4ae17c1a013c09",
+   "kind": "TextBox",
+   "name": "TextWrapping",
+   "origin": "inferred",
+   "record_fp": "321706167cd4d0f0",
+   "section": "notify",
+   "tests": [
+    "notify_text_box_text_wrapping"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:AcceptsReturn",
+   "fingerprint": "39d6a36af503dd5c",
+   "kind": "TextBox",
+   "name": "AcceptsReturn",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_text_box_accepts_return"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:CanPasteClipboardContent",
+   "fingerprint": "9e6c60de33432757",
+   "kind": "TextBox",
+   "name": "CanPasteClipboardContent",
+   "origin": "inferred",
+   "record_fp": "52df453715b3f027",
+   "section": "props",
+   "tests": [
+    "prop_text_box_can_paste_clipboard_content"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:CanRedo",
+   "fingerprint": "f700a9a17973a9ec",
+   "kind": "TextBox",
+   "name": "CanRedo",
+   "origin": "inferred",
+   "record_fp": "4ba69b524473210b",
+   "section": "props",
+   "tests": [
+    "prop_text_box_can_redo"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:CanUndo",
+   "fingerprint": "020ea0b7dd6d7d3f",
+   "kind": "TextBox",
+   "name": "CanUndo",
+   "origin": "inferred",
+   "record_fp": "db57f3758bb77c7d",
+   "section": "props",
+   "tests": [
+    "prop_text_box_can_undo"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:CharacterCasing",
+   "fingerprint": "0ae09320e7a5d51d",
+   "kind": "TextBox",
+   "name": "CharacterCasing",
+   "origin": "inferred",
+   "record_fp": "384a5d31a47da123",
+   "section": "props",
+   "tests": [
+    "prop_text_box_character_casing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:DesiredCandidateWindowAlignment",
+   "fingerprint": "779c87e583540956",
+   "kind": "TextBox",
+   "name": "DesiredCandidateWindowAlignment",
+   "origin": "inferred",
+   "record_fp": "4b63ba9246482172",
+   "section": "props",
+   "tests": [
+    "prop_text_box_desired_candidate_window_alignment"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:Header",
+   "fingerprint": "a54a08eedd233aac",
+   "kind": "TextBox",
+   "name": "Header",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_text_box_header"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:HorizontalTextAlignment",
+   "fingerprint": "6dd416b68441aa15",
+   "kind": "TextBox",
+   "name": "HorizontalTextAlignment",
+   "origin": "inferred",
+   "record_fp": "88b84fb8c6ecf108",
+   "section": "props",
+   "tests": [
+    "prop_text_box_horizontal_text_alignment"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:IsColorFontEnabled",
+   "fingerprint": "534e260801ffbae9",
+   "kind": "TextBox",
+   "name": "IsColorFontEnabled",
+   "origin": "inferred",
+   "record_fp": "d78a0d43066f5526",
+   "section": "props",
+   "tests": [
+    "prop_text_box_is_color_font_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:IsReadOnly",
+   "fingerprint": "cd85f710ab9253a2",
+   "kind": "TextBox",
+   "name": "IsReadOnly",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_text_box_is_read_only"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:IsSpellCheckEnabled",
+   "fingerprint": "0130d59236bfe830",
+   "kind": "TextBox",
+   "name": "IsSpellCheckEnabled",
+   "origin": "inferred",
+   "record_fp": "d65e97bff17a5e86",
+   "section": "props",
+   "tests": [
+    "prop_text_box_is_spell_check_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:IsTextPredictionEnabled",
+   "fingerprint": "f6500f74e4f5569b",
+   "kind": "TextBox",
+   "name": "IsTextPredictionEnabled",
+   "origin": "inferred",
+   "record_fp": "d15ba57628ecedc1",
+   "section": "props",
+   "tests": [
+    "prop_text_box_is_text_prediction_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:MaxLength",
+   "fingerprint": "45910faa2bae850b",
+   "kind": "TextBox",
+   "name": "MaxLength",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_text_box_max_length"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:PlaceholderText",
+   "fingerprint": "33835c7c5b136131",
+   "kind": "TextBox",
+   "name": "PlaceholderText",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_text_box_placeholder_text"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:PreventKeyboardDisplayOnProgrammaticFocus",
+   "fingerprint": "1112c82afe61d31b",
+   "kind": "TextBox",
+   "name": "PreventKeyboardDisplayOnProgrammaticFocus",
+   "origin": "inferred",
+   "record_fp": "ff6540e6df18bf65",
+   "section": "props",
+   "tests": [
+    "prop_text_box_prevent_keyboard_display_on_programmatic_focus"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:SelectedText",
+   "fingerprint": "4587c6696aaa94bd",
+   "kind": "TextBox",
+   "name": "SelectedText",
+   "origin": "inferred",
+   "record_fp": "23716fc37d21445b",
+   "section": "props",
+   "tests": [
+    "prop_text_box_selected_text"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:SelectionLength",
+   "fingerprint": "264ec4a657f12c3b",
+   "kind": "TextBox",
+   "name": "SelectionLength",
+   "origin": "inferred",
+   "record_fp": "588b408cc8e6ee9b",
+   "section": "props",
+   "tests": [
+    "prop_text_box_selection_length"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:SelectionStart",
+   "fingerprint": "f573fe1b5694d08f",
+   "kind": "TextBox",
+   "name": "SelectionStart",
+   "origin": "inferred",
+   "record_fp": "ee6921594eeefcb0",
+   "section": "props",
+   "tests": [
+    "prop_text_box_selection_start"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:Text",
+   "fingerprint": "ff1b7945088ad3d1",
+   "kind": "TextBox",
+   "name": "Text",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_text_box_text"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:TextAlignment",
+   "fingerprint": "d03c3c76c247b0fa",
+   "kind": "TextBox",
+   "name": "TextAlignment",
+   "origin": "inferred",
+   "record_fp": "3b484248c4ec8066",
+   "section": "props",
+   "tests": [
+    "prop_text_box_text_alignment"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:TextReadingOrder",
+   "fingerprint": "28dde2bb87346db4",
+   "kind": "TextBox",
+   "name": "TextReadingOrder",
+   "origin": "inferred",
+   "record_fp": "fcb1860ed8e6519d",
+   "section": "props",
+   "tests": [
+    "prop_text_box_text_reading_order"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:TextWrapping",
+   "fingerprint": "1b5ce1e99921cfe0",
+   "kind": "TextBox",
+   "name": "TextWrapping",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_text_box_text_wrapping"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:event:ActualThemeChanged",
+   "fingerprint": "85abb6cf17d9f375",
+   "kind": "FrameworkElement",
+   "name": "ActualThemeChanged",
+   "origin": "inferred",
+   "record_fp": "0d320f248c96df41",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_actual_theme_changed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:event:DataContextChanged",
+   "fingerprint": "a51bd97bd0ccbf55",
+   "kind": "FrameworkElement",
+   "name": "DataContextChanged",
+   "origin": "inferred",
+   "record_fp": "ade57f0ccfd6b7ee",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_data_context_changed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:event:EffectiveViewportChanged",
+   "fingerprint": "5c8432c0e4e02eba",
+   "kind": "FrameworkElement",
+   "name": "EffectiveViewportChanged",
+   "origin": "inferred",
+   "record_fp": "06971b37874ab8b8",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_effective_viewport_changed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:event:LayoutUpdated",
+   "fingerprint": "1e2a98002b9ef186",
+   "kind": "FrameworkElement",
+   "name": "LayoutUpdated",
+   "origin": "inferred",
+   "record_fp": "a7401bbe82ba0bc1",
+   "section": "events",
+   "tests": [
+    "event_button_layout_updated"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:event:Loaded",
+   "fingerprint": "1b0e4a97a57c1907",
+   "kind": "FrameworkElement",
+   "name": "Loaded",
+   "origin": "inferred",
+   "record_fp": "1c4055cf378232fc",
+   "section": "events",
+   "tests": [
+    "event_button_loaded"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:event:Loading",
+   "fingerprint": "54fe97cdd9c67e91",
+   "kind": "FrameworkElement",
+   "name": "Loading",
+   "origin": "inferred",
+   "record_fp": "d64af0e9f3e07542",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_loading"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:event:SizeChanged",
+   "fingerprint": "dab32a7bd87b42ec",
+   "kind": "FrameworkElement",
+   "name": "SizeChanged",
+   "origin": "inferred",
+   "record_fp": "b6c60d1d7453bb72",
+   "section": "events",
+   "tests": [
+    "event_button_size_changed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:event:Unloaded",
+   "fingerprint": "b6c9712aa083c8be",
+   "kind": "FrameworkElement",
+   "name": "Unloaded",
+   "origin": "inferred",
+   "record_fp": "da84dc4c47d4529b",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_unloaded"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:notify:AllowFocusOnInteraction",
+   "fingerprint": "12ac0e273db0f557",
+   "kind": "FrameworkElement",
+   "name": "AllowFocusOnInteraction",
+   "origin": "inferred",
+   "record_fp": "285b43e80359b177",
+   "section": "notify",
+   "tests": [
+    "notify_button_allow_focus_on_interaction"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:notify:AllowFocusWhenDisabled",
+   "fingerprint": "2a267bb26c8ced07",
+   "kind": "FrameworkElement",
+   "name": "AllowFocusWhenDisabled",
+   "origin": "inferred",
+   "record_fp": "f6f2ae50ff0dff75",
+   "section": "notify",
+   "tests": [
+    "notify_button_allow_focus_when_disabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:notify:FlowDirection",
+   "fingerprint": "0bc0190a5ea134ee",
+   "kind": "FrameworkElement",
+   "name": "FlowDirection",
+   "origin": "inferred",
+   "record_fp": "1fa477eac2fd8da4",
+   "section": "notify",
+   "tests": [
+    "notify_button_flow_direction"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:notify:FocusVisualMargin",
+   "fingerprint": "07b0676d3c30b08e",
+   "kind": "FrameworkElement",
+   "name": "FocusVisualMargin",
+   "origin": "inferred",
+   "record_fp": "c4e9f01eb0e574ab",
+   "section": "notify",
+   "tests": [
+    "notify_button_focus_visual_margin"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:notify:FocusVisualPrimaryThickness",
+   "fingerprint": "2845f2ec818adb82",
+   "kind": "FrameworkElement",
+   "name": "FocusVisualPrimaryThickness",
+   "origin": "inferred",
+   "record_fp": "9145d6eae2a300ca",
+   "section": "notify",
+   "tests": [
+    "notify_button_focus_visual_primary_thickness"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:notify:FocusVisualSecondaryThickness",
+   "fingerprint": "86612ae3e3ca370d",
+   "kind": "FrameworkElement",
+   "name": "FocusVisualSecondaryThickness",
+   "origin": "inferred",
+   "record_fp": "2f35da0df6805813",
+   "section": "notify",
+   "tests": [
+    "notify_button_focus_visual_secondary_thickness"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:notify:Height",
+   "fingerprint": "b9ec44cc2b55f00d",
+   "kind": "FrameworkElement",
+   "name": "Height",
+   "origin": "inferred",
+   "record_fp": "76c1b0aebbb41f62",
+   "section": "notify",
+   "tests": [
+    "notify_button_height"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:notify:HorizontalAlignment",
+   "fingerprint": "6d91b6fea0ff52c0",
+   "kind": "FrameworkElement",
+   "name": "HorizontalAlignment",
+   "origin": "inferred",
+   "record_fp": "ed4ab5d73fe7994f",
+   "section": "notify",
+   "tests": [
+    "notify_button_horizontal_alignment"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:notify:Language",
+   "fingerprint": "457f006574d1b5c1",
+   "kind": "FrameworkElement",
+   "name": "Language",
+   "origin": "inferred",
+   "record_fp": "373d43ee03ee4541",
+   "section": "notify",
+   "tests": [
+    "notify_button_language"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:notify:Margin",
+   "fingerprint": "b3cf15f5652e1d69",
+   "kind": "FrameworkElement",
+   "name": "Margin",
+   "origin": "inferred",
+   "record_fp": "5081b60197497f0a",
+   "section": "notify",
+   "tests": [
+    "notify_button_margin"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:notify:MaxHeight",
+   "fingerprint": "8f0c6890224f243a",
+   "kind": "FrameworkElement",
+   "name": "MaxHeight",
+   "origin": "inferred",
+   "record_fp": "9068e4e34ef54bfd",
+   "section": "notify",
+   "tests": [
+    "notify_button_max_height"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:notify:MaxWidth",
+   "fingerprint": "564a12debbcb02d9",
+   "kind": "FrameworkElement",
+   "name": "MaxWidth",
+   "origin": "inferred",
+   "record_fp": "9ef4c7c18aa7230a",
+   "section": "notify",
+   "tests": [
+    "notify_button_max_width"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:notify:MinHeight",
+   "fingerprint": "ce6f1ad906660dda",
+   "kind": "FrameworkElement",
+   "name": "MinHeight",
+   "origin": "inferred",
+   "record_fp": "9b372865db4fb667",
+   "section": "notify",
+   "tests": [
+    "notify_button_min_height"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:notify:MinWidth",
+   "fingerprint": "d653271cb94404fb",
+   "kind": "FrameworkElement",
+   "name": "MinWidth",
+   "origin": "inferred",
+   "record_fp": "ebc5af436ae6fd09",
+   "section": "notify",
+   "tests": [
+    "notify_button_min_width"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:notify:Name",
+   "fingerprint": "fbf96177957f40a4",
+   "kind": "FrameworkElement",
+   "name": "Name",
+   "origin": "inferred",
+   "record_fp": "4d57e1dfcf41acaf",
+   "section": "notify",
+   "tests": [
+    "notify_button_name"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:notify:RequestedTheme",
+   "fingerprint": "5d0e6de8cf3fe5f8",
+   "kind": "FrameworkElement",
+   "name": "RequestedTheme",
+   "origin": "inferred",
+   "record_fp": "87ecc886ea34a28f",
+   "section": "notify",
+   "tests": [
+    "notify_button_requested_theme"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:notify:VerticalAlignment",
+   "fingerprint": "336fa251d545c9a2",
+   "kind": "FrameworkElement",
+   "name": "VerticalAlignment",
+   "origin": "inferred",
+   "record_fp": "e712c04d731678af",
+   "section": "notify",
+   "tests": [
+    "notify_button_vertical_alignment"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:notify:Width",
+   "fingerprint": "8061fec2d6234dac",
+   "kind": "FrameworkElement",
+   "name": "Width",
+   "origin": "inferred",
+   "record_fp": "d7414a7f9dba1add",
+   "section": "notify",
+   "tests": [
+    "notify_button_width"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:ActualTheme",
+   "fingerprint": "f6ae95ae7135b9f6",
+   "kind": "FrameworkElement",
+   "name": "ActualTheme",
+   "origin": "inferred",
+   "record_fp": "78726ae42bc5a4e2",
+   "section": "props",
+   "tests": [
+    "prop_button_actual_theme"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:AllowFocusOnInteraction",
+   "fingerprint": "8ebcdeb31040cadd",
+   "kind": "FrameworkElement",
+   "name": "AllowFocusOnInteraction",
+   "origin": "inferred",
+   "record_fp": "d77ae39f5950cf5c",
+   "section": "props",
+   "tests": [
+    "prop_button_allow_focus_on_interaction"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:AllowFocusWhenDisabled",
+   "fingerprint": "35ac6bc3aa0d7310",
+   "kind": "FrameworkElement",
+   "name": "AllowFocusWhenDisabled",
+   "origin": "inferred",
+   "record_fp": "d568368cefc38b73",
+   "section": "props",
+   "tests": [
+    "prop_button_allow_focus_when_disabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:FlowDirection",
+   "fingerprint": "61343e5dcd34c459",
+   "kind": "FrameworkElement",
+   "name": "FlowDirection",
+   "origin": "inferred",
+   "record_fp": "ffa48641421e7ed4",
+   "section": "props",
+   "tests": [
+    "prop_button_flow_direction"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:FocusVisualMargin",
+   "fingerprint": "a7bd9a5f815d8156",
+   "kind": "FrameworkElement",
+   "name": "FocusVisualMargin",
+   "origin": "inferred",
+   "record_fp": "1d48f28605361a65",
+   "section": "props",
+   "tests": [
+    "prop_button_focus_visual_margin"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:FocusVisualPrimaryThickness",
+   "fingerprint": "66314e5b1d507fd2",
+   "kind": "FrameworkElement",
+   "name": "FocusVisualPrimaryThickness",
+   "origin": "inferred",
+   "record_fp": "f8734bb3d6ca7ec2",
+   "section": "props",
+   "tests": [
+    "prop_button_focus_visual_primary_thickness"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:FocusVisualSecondaryThickness",
+   "fingerprint": "d71813063e9e7342",
+   "kind": "FrameworkElement",
+   "name": "FocusVisualSecondaryThickness",
+   "origin": "inferred",
+   "record_fp": "ae1129638230bf4f",
+   "section": "props",
+   "tests": [
+    "prop_button_focus_visual_secondary_thickness"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:Height",
+   "fingerprint": "718c7d658c818c54",
+   "kind": "FrameworkElement",
+   "name": "Height",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_button_height"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:HorizontalAlignment",
+   "fingerprint": "1732fd3c009600bf",
+   "kind": "FrameworkElement",
+   "name": "HorizontalAlignment",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_button_horizontal_alignment"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:IsLoaded",
+   "fingerprint": "0683783cfeed4348",
+   "kind": "FrameworkElement",
+   "name": "IsLoaded",
+   "origin": "inferred",
+   "record_fp": "56d0ddb75f92d3c8",
+   "section": "props",
+   "tests": [
+    "prop_button_is_loaded"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:Language",
+   "fingerprint": "72bf0207b9bd984e",
+   "kind": "FrameworkElement",
+   "name": "Language",
+   "origin": "inferred",
+   "record_fp": "e6e2bf3078c3d66a",
+   "section": "props",
+   "tests": [
+    "prop_button_language"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:Margin",
+   "fingerprint": "ca63bc91756b06a5",
+   "kind": "FrameworkElement",
+   "name": "Margin",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_button_margin"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:MaxHeight",
+   "fingerprint": "ca798f0f2b4cd363",
+   "kind": "FrameworkElement",
+   "name": "MaxHeight",
+   "origin": "inferred",
+   "record_fp": "25c0caeb4cf479e5",
+   "section": "props",
+   "tests": [
+    "prop_button_max_height"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:MaxWidth",
+   "fingerprint": "8be33d31204823e6",
+   "kind": "FrameworkElement",
+   "name": "MaxWidth",
+   "origin": "inferred",
+   "record_fp": "e59112658305addc",
+   "section": "props",
+   "tests": [
+    "prop_button_max_width"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:MinHeight",
+   "fingerprint": "10ce1dce4f716c12",
+   "kind": "FrameworkElement",
+   "name": "MinHeight",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_button_min_height"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:MinWidth",
+   "fingerprint": "15e7f79d57ef0428",
+   "kind": "FrameworkElement",
+   "name": "MinWidth",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_button_min_width"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:Name",
+   "fingerprint": "e846b132a62a3c9f",
+   "kind": "FrameworkElement",
+   "name": "Name",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_button_name"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:RequestedTheme",
+   "fingerprint": "c83b3075498a5f53",
+   "kind": "FrameworkElement",
+   "name": "RequestedTheme",
+   "origin": "inferred",
+   "record_fp": "069dbd735e233b93",
+   "section": "props",
+   "tests": [
+    "prop_button_requested_theme"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:VerticalAlignment",
+   "fingerprint": "bb889bd189aad8e5",
+   "kind": "FrameworkElement",
+   "name": "VerticalAlignment",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_button_vertical_alignment"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:Width",
+   "fingerprint": "c5b986997adc3478",
+   "kind": "FrameworkElement",
+   "name": "Width",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_button_width"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:AccessKeyDisplayDismissed",
+   "fingerprint": "aee19911f4a47797",
+   "kind": "UIElement",
+   "name": "AccessKeyDisplayDismissed",
+   "origin": "inferred",
+   "record_fp": "6eb18be916b04461",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_access_key_display_dismissed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:AccessKeyDisplayRequested",
+   "fingerprint": "740ab34679f284fa",
+   "kind": "UIElement",
+   "name": "AccessKeyDisplayRequested",
+   "origin": "inferred",
+   "record_fp": "a88a9e8ba51c5aa6",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_access_key_display_requested"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:AccessKeyInvoked",
+   "fingerprint": "836c83daad4fff59",
+   "kind": "UIElement",
+   "name": "AccessKeyInvoked",
+   "origin": "inferred",
+   "record_fp": "5e221e4b1f27aa96",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_access_key_invoked"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:BringIntoViewRequested",
+   "fingerprint": "52e32181afa5044c",
+   "kind": "UIElement",
+   "name": "BringIntoViewRequested",
+   "origin": "inferred",
+   "record_fp": "504a59209c92d5ea",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_bring_into_view_requested"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:CharacterReceived",
+   "fingerprint": "8c81a366b99b9acc",
+   "kind": "UIElement",
+   "name": "CharacterReceived",
+   "origin": "inferred",
+   "record_fp": "fe3cff2cf15b9590",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_character_received"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:ContextCanceled",
+   "fingerprint": "2b891995ec719459",
+   "kind": "UIElement",
+   "name": "ContextCanceled",
+   "origin": "inferred",
+   "record_fp": "d853670edd97532e",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_context_canceled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:ContextRequested",
+   "fingerprint": "e45093374db9a8b6",
+   "kind": "UIElement",
+   "name": "ContextRequested",
+   "origin": "inferred",
+   "record_fp": "02ea8d1ffff92883",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_context_requested"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:DoubleTapped",
+   "fingerprint": "bad541844414ffa6",
+   "kind": "UIElement",
+   "name": "DoubleTapped",
+   "origin": "inferred",
+   "record_fp": "fb3ca2dd9629b836",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_double_tapped"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:DragEnter",
+   "fingerprint": "c71eff808ad412af",
+   "kind": "UIElement",
+   "name": "DragEnter",
+   "origin": "inferred",
+   "record_fp": "4ddd2f46f4f78f0b",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_drag_enter"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:DragLeave",
+   "fingerprint": "b97b4872a4272516",
+   "kind": "UIElement",
+   "name": "DragLeave",
+   "origin": "inferred",
+   "record_fp": "6e8aadfe1f06df19",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_drag_leave"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:DragOver",
+   "fingerprint": "475a279c4bf25d9b",
+   "kind": "UIElement",
+   "name": "DragOver",
+   "origin": "inferred",
+   "record_fp": "20b7e46657e90628",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_drag_over"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:DragStarting",
+   "fingerprint": "ca7738afdcfccca2",
+   "kind": "UIElement",
+   "name": "DragStarting",
+   "origin": "inferred",
+   "record_fp": "4986facf7a050a95",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_drag_starting"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:Drop",
+   "fingerprint": "c3b3cac24266c241",
+   "kind": "UIElement",
+   "name": "Drop",
+   "origin": "inferred",
+   "record_fp": "660056dd0cd4178f",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_drop"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:DropCompleted",
+   "fingerprint": "c2744e77581eb058",
+   "kind": "UIElement",
+   "name": "DropCompleted",
+   "origin": "inferred",
+   "record_fp": "e2df182cceaf4921",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_drop_completed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:GettingFocus",
+   "fingerprint": "9d131316850bd56c",
+   "kind": "UIElement",
+   "name": "GettingFocus",
+   "origin": "inferred",
+   "record_fp": "ba55b9dc35942172",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_getting_focus"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:GotFocus",
+   "fingerprint": "90db1528658233de",
+   "kind": "UIElement",
+   "name": "GotFocus",
+   "origin": "inferred",
+   "record_fp": "f6981f956656945f",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_got_focus"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:Holding",
+   "fingerprint": "5843abaf2e6811e0",
+   "kind": "UIElement",
+   "name": "Holding",
+   "origin": "inferred",
+   "record_fp": "5ab13a0fc15386c6",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_holding"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:KeyUp",
+   "fingerprint": "10411f131372a918",
+   "kind": "UIElement",
+   "name": "KeyUp",
+   "origin": "inferred",
+   "record_fp": "ba98f26fd0d3d140",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_key_up"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:LosingFocus",
+   "fingerprint": "970c1c96914869a3",
+   "kind": "UIElement",
+   "name": "LosingFocus",
+   "origin": "inferred",
+   "record_fp": "ece2a2b7f6396072",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_losing_focus"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:LostFocus",
+   "fingerprint": "a7b52c34303eef37",
+   "kind": "UIElement",
+   "name": "LostFocus",
+   "origin": "inferred",
+   "record_fp": "a95674dcc01f6ddb",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_lost_focus"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:ManipulationCompleted",
+   "fingerprint": "424eb2facc53d00f",
+   "kind": "UIElement",
+   "name": "ManipulationCompleted",
+   "origin": "inferred",
+   "record_fp": "df66590f1ef02d68",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_manipulation_completed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:ManipulationDelta",
+   "fingerprint": "06ece62c4c494387",
+   "kind": "UIElement",
+   "name": "ManipulationDelta",
+   "origin": "inferred",
+   "record_fp": "d63fb92231513c54",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_manipulation_delta"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:ManipulationInertiaStarting",
+   "fingerprint": "518e42fdc637a286",
+   "kind": "UIElement",
+   "name": "ManipulationInertiaStarting",
+   "origin": "inferred",
+   "record_fp": "eeff609bb7e77de6",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_manipulation_inertia_starting"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:ManipulationStarted",
+   "fingerprint": "ba57b76e3189db5a",
+   "kind": "UIElement",
+   "name": "ManipulationStarted",
+   "origin": "inferred",
+   "record_fp": "e14bfa7028c88e78",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_manipulation_started"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:ManipulationStarting",
+   "fingerprint": "2ec3876b5eedbaea",
+   "kind": "UIElement",
+   "name": "ManipulationStarting",
+   "origin": "inferred",
+   "record_fp": "2f5e3bcf7adf8801",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_manipulation_starting"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:NoFocusCandidateFound",
+   "fingerprint": "175ef2456bdd3a53",
+   "kind": "UIElement",
+   "name": "NoFocusCandidateFound",
+   "origin": "inferred",
+   "record_fp": "6a2f4bb98d3f10fa",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_no_focus_candidate_found"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:PointerCanceled",
+   "fingerprint": "173d05cd774db1e2",
+   "kind": "UIElement",
+   "name": "PointerCanceled",
+   "origin": "inferred",
+   "record_fp": "18380dec87e473d6",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_pointer_canceled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:PointerCaptureLost",
+   "fingerprint": "d7e7657ce9b77e3c",
+   "kind": "UIElement",
+   "name": "PointerCaptureLost",
+   "origin": "inferred",
+   "record_fp": "adb1c2a88a5a7fd1",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_pointer_capture_lost"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:PointerEntered",
+   "fingerprint": "37ccb6f52b4869ac",
+   "kind": "UIElement",
+   "name": "PointerEntered",
+   "origin": "inferred",
+   "record_fp": "04d168ab69df60d9",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_pointer_entered"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:PointerExited",
+   "fingerprint": "107be1966e416c89",
+   "kind": "UIElement",
+   "name": "PointerExited",
+   "origin": "inferred",
+   "record_fp": "382cf0d119812c5c",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_pointer_exited"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:PointerMoved",
+   "fingerprint": "7551b2e5f17b8e0a",
+   "kind": "UIElement",
+   "name": "PointerMoved",
+   "origin": "inferred",
+   "record_fp": "786d3d24a058e0f3",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_pointer_moved"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:PointerPressed",
+   "fingerprint": "0dad3b4a4029f8b3",
+   "kind": "UIElement",
+   "name": "PointerPressed",
+   "origin": "inferred",
+   "record_fp": "1ff74e85ee030236",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_pointer_pressed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:PointerReleased",
+   "fingerprint": "3a27055732c98d12",
+   "kind": "UIElement",
+   "name": "PointerReleased",
+   "origin": "inferred",
+   "record_fp": "131abd8b48af41ce",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_pointer_released"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:PointerWheelChanged",
+   "fingerprint": "deb178f1cf9cd4af",
+   "kind": "UIElement",
+   "name": "PointerWheelChanged",
+   "origin": "inferred",
+   "record_fp": "c4ffe74865173eac",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_pointer_wheel_changed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:PreviewKeyDown",
+   "fingerprint": "fbc2e3eefc21b2db",
+   "kind": "UIElement",
+   "name": "PreviewKeyDown",
+   "origin": "inferred",
+   "record_fp": "1008e6baea549759",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_preview_key_down"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:PreviewKeyUp",
+   "fingerprint": "35bc064137fbdeec",
+   "kind": "UIElement",
+   "name": "PreviewKeyUp",
+   "origin": "inferred",
+   "record_fp": "2b0a07b1635e146e",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_preview_key_up"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:ProcessKeyboardAccelerators",
+   "fingerprint": "a96ef030797566e3",
+   "kind": "UIElement",
+   "name": "ProcessKeyboardAccelerators",
+   "origin": "inferred",
+   "record_fp": "990f42082967caab",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_process_keyboard_accelerators"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:RightTapped",
+   "fingerprint": "ebe8e194afd772f6",
+   "kind": "UIElement",
+   "name": "RightTapped",
+   "origin": "inferred",
+   "record_fp": "e91ae7381ff2cfa4",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_right_tapped"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:event:Tapped",
+   "fingerprint": "cddb462a9039b89e",
+   "kind": "UIElement",
+   "name": "Tapped",
+   "origin": "inferred",
+   "record_fp": "8cb6d456390213b9",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_button_tapped"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:method:InvalidateArrange",
+   "fingerprint": "a9642898ef570592",
+   "kind": "UIElement",
+   "name": "InvalidateArrange",
+   "origin": "inferred",
+   "record_fp": "e5f7983bfa43c7d5",
+   "section": "methods",
+   "tests": [
+    "method_button_invalidate_arrange"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:method:InvalidateMeasure",
+   "fingerprint": "a17037a4ec9fce92",
+   "kind": "UIElement",
+   "name": "InvalidateMeasure",
+   "origin": "inferred",
+   "record_fp": "ec5a0e431508ce28",
+   "section": "methods",
+   "tests": [
+    "method_button_invalidate_measure"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:method:UpdateLayout",
+   "fingerprint": "f197120c515dd15c",
+   "kind": "UIElement",
+   "name": "UpdateLayout",
+   "origin": "inferred",
+   "record_fp": "8a8d73c1682d4290",
+   "section": "methods",
+   "tests": [
+    "method_button_update_layout"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:notify:AccessKey",
+   "fingerprint": "bb862c033c12d1e5",
+   "kind": "UIElement",
+   "name": "AccessKey",
+   "origin": "inferred",
+   "record_fp": "c48b2ec438d181a7",
+   "section": "notify",
+   "tests": [
+    "notify_button_access_key"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:notify:CanBeScrollAnchor",
+   "fingerprint": "fcb95323ce0e4c5e",
+   "kind": "UIElement",
+   "name": "CanBeScrollAnchor",
+   "origin": "inferred",
+   "record_fp": "786c77ff822e6a5a",
+   "section": "notify",
+   "tests": [
+    "notify_button_can_be_scroll_anchor"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:notify:CompositeMode",
+   "fingerprint": "8fd277a05fd3410e",
+   "kind": "UIElement",
+   "name": "CompositeMode",
+   "origin": "inferred",
+   "record_fp": "3763be4b2892db7d",
+   "section": "notify",
+   "tests": [
+    "notify_button_composite_mode"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:notify:ExitDisplayModeOnAccessKeyInvoked",
+   "fingerprint": "22d0534bf2b9894d",
+   "kind": "UIElement",
+   "name": "ExitDisplayModeOnAccessKeyInvoked",
+   "origin": "inferred",
+   "record_fp": "9dc8b854d8f81b2d",
+   "section": "notify",
+   "tests": [
+    "notify_button_exit_display_mode_on_access_key_invoked"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:notify:IsAccessKeyScope",
+   "fingerprint": "2977b94dabba1e73",
+   "kind": "UIElement",
+   "name": "IsAccessKeyScope",
+   "origin": "inferred",
+   "record_fp": "1f9ba621435eb46d",
+   "section": "notify",
+   "tests": [
+    "notify_button_is_access_key_scope"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:notify:IsDoubleTapEnabled",
+   "fingerprint": "c3f54a82f5d71f1d",
+   "kind": "UIElement",
+   "name": "IsDoubleTapEnabled",
+   "origin": "inferred",
+   "record_fp": "a9cc426dd730d83f",
+   "section": "notify",
+   "tests": [
+    "notify_button_is_double_tap_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:notify:IsHitTestVisible",
+   "fingerprint": "a2bc9fdd6d0c5958",
+   "kind": "UIElement",
+   "name": "IsHitTestVisible",
+   "origin": "inferred",
+   "record_fp": "821619bacdbfb602",
+   "section": "notify",
+   "tests": [
+    "notify_button_is_hit_test_visible"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:notify:IsHoldingEnabled",
+   "fingerprint": "02c69329153cc56a",
+   "kind": "UIElement",
+   "name": "IsHoldingEnabled",
+   "origin": "inferred",
+   "record_fp": "07d3560750f63b9e",
+   "section": "notify",
+   "tests": [
+    "notify_button_is_holding_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:notify:IsRightTapEnabled",
+   "fingerprint": "defd5a0c69e725c5",
+   "kind": "UIElement",
+   "name": "IsRightTapEnabled",
+   "origin": "inferred",
+   "record_fp": "1f9620de51600ac7",
+   "section": "notify",
+   "tests": [
+    "notify_button_is_right_tap_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:notify:IsTabStop",
+   "fingerprint": "97f1506b5a0c6943",
+   "kind": "UIElement",
+   "name": "IsTabStop",
+   "origin": "inferred",
+   "record_fp": "68329af9ec101059",
+   "section": "notify",
+   "tests": [
+    "notify_button_is_tab_stop"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:notify:IsTapEnabled",
+   "fingerprint": "48e2d46c17ddf8d2",
+   "kind": "UIElement",
+   "name": "IsTapEnabled",
+   "origin": "inferred",
+   "record_fp": "bbb36ef78f307b28",
+   "section": "notify",
+   "tests": [
+    "notify_button_is_tap_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:notify:KeyTipHorizontalOffset",
+   "fingerprint": "7403e65423301472",
+   "kind": "UIElement",
+   "name": "KeyTipHorizontalOffset",
+   "origin": "inferred",
+   "record_fp": "57a230b462dd086d",
+   "section": "notify",
+   "tests": [
+    "notify_button_key_tip_horizontal_offset"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:notify:KeyTipPlacementMode",
+   "fingerprint": "5bf7462b39be74f8",
+   "kind": "UIElement",
+   "name": "KeyTipPlacementMode",
+   "origin": "inferred",
+   "record_fp": "b64adf8a1df703aa",
+   "section": "notify",
+   "tests": [
+    "notify_button_key_tip_placement_mode"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:notify:KeyTipVerticalOffset",
+   "fingerprint": "88c5d5769d18a7c9",
+   "kind": "UIElement",
+   "name": "KeyTipVerticalOffset",
+   "origin": "inferred",
+   "record_fp": "06e374a778604c6d",
+   "section": "notify",
+   "tests": [
+    "notify_button_key_tip_vertical_offset"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:notify:KeyboardAcceleratorPlacementMode",
+   "fingerprint": "f03d7bf9e5be80df",
+   "kind": "UIElement",
+   "name": "KeyboardAcceleratorPlacementMode",
+   "origin": "inferred",
+   "record_fp": "6904b1dfed74143e",
+   "section": "notify",
+   "tests": [
+    "notify_button_keyboard_accelerator_placement_mode"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:notify:Opacity",
+   "fingerprint": "2bb72b52442be13a",
+   "kind": "UIElement",
+   "name": "Opacity",
+   "origin": "inferred",
+   "record_fp": "4edb6e44e745612f",
+   "section": "notify",
+   "tests": [
+    "notify_button_opacity"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:notify:TabFocusNavigation",
+   "fingerprint": "5205c5576a4043ea",
+   "kind": "UIElement",
+   "name": "TabFocusNavigation",
+   "origin": "inferred",
+   "record_fp": "318feb40293b158c",
+   "section": "notify",
+   "tests": [
+    "notify_button_tab_focus_navigation"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:notify:TabIndex",
+   "fingerprint": "092d7d1e8399424b",
+   "kind": "UIElement",
+   "name": "TabIndex",
+   "origin": "inferred",
+   "record_fp": "ed492b9d320c6614",
+   "section": "notify",
+   "tests": [
+    "notify_button_tab_index"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:notify:UseLayoutRounding",
+   "fingerprint": "db49aadc7a1533a3",
+   "kind": "UIElement",
+   "name": "UseLayoutRounding",
+   "origin": "inferred",
+   "record_fp": "7123f55230ef1c88",
+   "section": "notify",
+   "tests": [
+    "notify_button_use_layout_rounding"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:notify:UseSystemFocusVisuals",
+   "fingerprint": "74b97c46aaaa101f",
+   "kind": "UIElement",
+   "name": "UseSystemFocusVisuals",
+   "origin": "inferred",
+   "record_fp": "9a1272a779027138",
+   "section": "notify",
+   "tests": [
+    "notify_button_use_system_focus_visuals"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:notify:Visibility",
+   "fingerprint": "106c6745fe328cf9",
+   "kind": "UIElement",
+   "name": "Visibility",
+   "origin": "inferred",
+   "record_fp": "6c3adf2184a0c9d7",
+   "section": "notify",
+   "tests": [
+    "notify_button_visibility"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:notify:XYFocusDownNavigationStrategy",
+   "fingerprint": "f438ae63c15516c0",
+   "kind": "UIElement",
+   "name": "XYFocusDownNavigationStrategy",
+   "origin": "inferred",
+   "record_fp": "b92c70924f3fcd8d",
+   "section": "notify",
+   "tests": [
+    "notify_button_xy_focus_down_navigation_strategy"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:notify:XYFocusKeyboardNavigation",
+   "fingerprint": "dd536f5506637733",
+   "kind": "UIElement",
+   "name": "XYFocusKeyboardNavigation",
+   "origin": "inferred",
+   "record_fp": "7da488604294f920",
+   "section": "notify",
+   "tests": [
+    "notify_button_xy_focus_keyboard_navigation"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:notify:XYFocusLeftNavigationStrategy",
+   "fingerprint": "485c5fbc8619b29f",
+   "kind": "UIElement",
+   "name": "XYFocusLeftNavigationStrategy",
+   "origin": "inferred",
+   "record_fp": "941b65731aec5385",
+   "section": "notify",
+   "tests": [
+    "notify_button_xy_focus_left_navigation_strategy"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:notify:XYFocusRightNavigationStrategy",
+   "fingerprint": "e97523f46d99c795",
+   "kind": "UIElement",
+   "name": "XYFocusRightNavigationStrategy",
+   "origin": "inferred",
+   "record_fp": "971f9d4b3ac3a1e4",
+   "section": "notify",
+   "tests": [
+    "notify_button_xy_focus_right_navigation_strategy"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:notify:XYFocusUpNavigationStrategy",
+   "fingerprint": "c1dafc97bed4d48b",
+   "kind": "UIElement",
+   "name": "XYFocusUpNavigationStrategy",
+   "origin": "inferred",
+   "record_fp": "0480128d43fceeb6",
+   "section": "notify",
+   "tests": [
+    "notify_button_xy_focus_up_navigation_strategy"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:AccessKey",
+   "fingerprint": "14ad45630a51f19e",
+   "kind": "UIElement",
+   "name": "AccessKey",
+   "origin": "inferred",
+   "record_fp": "0507f558ca1d641d",
+   "section": "props",
+   "tests": [
+    "prop_button_access_key"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:CanBeScrollAnchor",
+   "fingerprint": "37e8d4400c5cd761",
+   "kind": "UIElement",
+   "name": "CanBeScrollAnchor",
+   "origin": "inferred",
+   "record_fp": "00c7e1151aee5858",
+   "section": "props",
+   "tests": [
+    "prop_button_can_be_scroll_anchor"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:CompositeMode",
+   "fingerprint": "797a677f4db238db",
+   "kind": "UIElement",
+   "name": "CompositeMode",
+   "origin": "inferred",
+   "record_fp": "e031319f55527e4f",
+   "section": "props",
+   "tests": [
+    "prop_button_composite_mode"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:ExitDisplayModeOnAccessKeyInvoked",
+   "fingerprint": "ee450f2c7c4e5925",
+   "kind": "UIElement",
+   "name": "ExitDisplayModeOnAccessKeyInvoked",
+   "origin": "inferred",
+   "record_fp": "55ce8646667590d7",
+   "section": "props",
+   "tests": [
+    "prop_button_exit_display_mode_on_access_key_invoked"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:FocusState",
+   "fingerprint": "8d70dced8b113b54",
+   "kind": "UIElement",
+   "name": "FocusState",
+   "origin": "inferred",
+   "record_fp": "67e47fac8f1a84f4",
+   "section": "props",
+   "tests": [
+    "prop_button_focus_state"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:IsAccessKeyScope",
+   "fingerprint": "fedc74e4f87fc2c9",
+   "kind": "UIElement",
+   "name": "IsAccessKeyScope",
+   "origin": "inferred",
+   "record_fp": "d7f3aad0c427bb82",
+   "section": "props",
+   "tests": [
+    "prop_button_is_access_key_scope"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:IsDoubleTapEnabled",
+   "fingerprint": "4fbc76962791c057",
+   "kind": "UIElement",
+   "name": "IsDoubleTapEnabled",
+   "origin": "inferred",
+   "record_fp": "28adf2b1859f2185",
+   "section": "props",
+   "tests": [
+    "prop_button_is_double_tap_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:IsHitTestVisible",
+   "fingerprint": "afd9bda4cadb7cc0",
+   "kind": "UIElement",
+   "name": "IsHitTestVisible",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_button_is_hit_test_visible"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:IsHoldingEnabled",
+   "fingerprint": "e62b6842ca5d4758",
+   "kind": "UIElement",
+   "name": "IsHoldingEnabled",
+   "origin": "inferred",
+   "record_fp": "2f3c15476d4aff6d",
+   "section": "props",
+   "tests": [
+    "prop_button_is_holding_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:IsRightTapEnabled",
+   "fingerprint": "a387f85fb91082f7",
+   "kind": "UIElement",
+   "name": "IsRightTapEnabled",
+   "origin": "inferred",
+   "record_fp": "989593866187d6a1",
+   "section": "props",
+   "tests": [
+    "prop_button_is_right_tap_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:IsTabStop",
+   "fingerprint": "9cb7fed016787303",
+   "kind": "UIElement",
+   "name": "IsTabStop",
+   "origin": "inferred",
+   "record_fp": "7950563bc7b2898d",
+   "section": "props",
+   "tests": [
+    "prop_button_is_tab_stop"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:IsTapEnabled",
+   "fingerprint": "cf9745b27923a26a",
+   "kind": "UIElement",
+   "name": "IsTapEnabled",
+   "origin": "inferred",
+   "record_fp": "39a168219170327e",
+   "section": "props",
+   "tests": [
+    "prop_button_is_tap_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:KeyTipHorizontalOffset",
+   "fingerprint": "59b807cc8d593653",
+   "kind": "UIElement",
+   "name": "KeyTipHorizontalOffset",
+   "origin": "inferred",
+   "record_fp": "9dd5df957146c8f0",
+   "section": "props",
+   "tests": [
+    "prop_button_key_tip_horizontal_offset"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:KeyTipPlacementMode",
+   "fingerprint": "ef9ff5100b7c97e9",
+   "kind": "UIElement",
+   "name": "KeyTipPlacementMode",
+   "origin": "inferred",
+   "record_fp": "c5258c2d7aad8ec9",
+   "section": "props",
+   "tests": [
+    "prop_button_key_tip_placement_mode"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:KeyTipVerticalOffset",
+   "fingerprint": "6df1b5371b65c08f",
+   "kind": "UIElement",
+   "name": "KeyTipVerticalOffset",
+   "origin": "inferred",
+   "record_fp": "906fa64d38653764",
+   "section": "props",
+   "tests": [
+    "prop_button_key_tip_vertical_offset"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:KeyboardAcceleratorPlacementMode",
+   "fingerprint": "c15402ae2825d121",
+   "kind": "UIElement",
+   "name": "KeyboardAcceleratorPlacementMode",
+   "origin": "inferred",
+   "record_fp": "9ee43f6e0e6e552d",
+   "section": "props",
+   "tests": [
+    "prop_button_keyboard_accelerator_placement_mode"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:Opacity",
+   "fingerprint": "98b645572003bc7c",
+   "kind": "UIElement",
+   "name": "Opacity",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_button_opacity"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:RasterizationScale",
+   "fingerprint": "283ab1e717e45e9e",
+   "kind": "UIElement",
+   "name": "RasterizationScale",
+   "origin": "inferred",
+   "record_fp": "c17fb8d45be285fe",
+   "section": "props",
+   "tests": [
+    "prop_button_rasterization_scale"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:TabFocusNavigation",
+   "fingerprint": "a3c0d1ad6f72a869",
+   "kind": "UIElement",
+   "name": "TabFocusNavigation",
+   "origin": "inferred",
+   "record_fp": "6fea1c29efd6aac8",
+   "section": "props",
+   "tests": [
+    "prop_button_tab_focus_navigation"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:TabIndex",
+   "fingerprint": "88eecf2898055819",
+   "kind": "UIElement",
+   "name": "TabIndex",
+   "origin": "inferred",
+   "record_fp": "a2f59e0aec69267f",
+   "section": "props",
+   "tests": [
+    "prop_button_tab_index"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:UseLayoutRounding",
+   "fingerprint": "f9dc2362bb188dd3",
+   "kind": "UIElement",
+   "name": "UseLayoutRounding",
+   "origin": "inferred",
+   "record_fp": "dcf7236d36367291",
+   "section": "props",
+   "tests": [
+    "prop_button_use_layout_rounding"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:UseSystemFocusVisuals",
+   "fingerprint": "b7eca5664f4aa7cf",
+   "kind": "UIElement",
+   "name": "UseSystemFocusVisuals",
+   "origin": "inferred",
+   "record_fp": "a029033b305cca42",
+   "section": "props",
+   "tests": [
+    "prop_button_use_system_focus_visuals"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:Visibility",
+   "fingerprint": "b284cf8931a2400e",
+   "kind": "UIElement",
+   "name": "Visibility",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_button_visibility"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:XYFocusDownNavigationStrategy",
+   "fingerprint": "081f71729b2372d7",
+   "kind": "UIElement",
+   "name": "XYFocusDownNavigationStrategy",
+   "origin": "inferred",
+   "record_fp": "b8d2f611dd0661c0",
+   "section": "props",
+   "tests": [
+    "prop_button_xy_focus_down_navigation_strategy"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:XYFocusKeyboardNavigation",
+   "fingerprint": "885d6c92306bbe3e",
+   "kind": "UIElement",
+   "name": "XYFocusKeyboardNavigation",
+   "origin": "inferred",
+   "record_fp": "583bcf3014242691",
+   "section": "props",
+   "tests": [
+    "prop_button_xy_focus_keyboard_navigation"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:XYFocusLeftNavigationStrategy",
+   "fingerprint": "70cf7347ac79f4fc",
+   "kind": "UIElement",
+   "name": "XYFocusLeftNavigationStrategy",
+   "origin": "inferred",
+   "record_fp": "7f3b6faf7e2b7f4e",
+   "section": "props",
+   "tests": [
+    "prop_button_xy_focus_left_navigation_strategy"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:XYFocusRightNavigationStrategy",
+   "fingerprint": "38387117140a1a53",
+   "kind": "UIElement",
+   "name": "XYFocusRightNavigationStrategy",
+   "origin": "inferred",
+   "record_fp": "5547dbc00b251cc7",
+   "section": "props",
+   "tests": [
+    "prop_button_xy_focus_right_navigation_strategy"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:XYFocusUpNavigationStrategy",
+   "fingerprint": "2532bf2d06b15280",
+   "kind": "UIElement",
+   "name": "XYFocusUpNavigationStrategy",
+   "origin": "inferred",
+   "record_fp": "e44b54a6a8a6e3e5",
+   "section": "props",
+   "tests": [
+    "prop_button_xy_focus_up_navigation_strategy"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:Window:event:Activated",
+   "fingerprint": "047eb06839feabc8",
+   "kind": "Window",
+   "name": "Activated",
+   "origin": "inferred",
+   "record_fp": "80638c4f416286c2",
+   "section": "events",
+   "strength": "connect",
+   "tests": [
+    "event_window_activated"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:Window:event:Closed",
+   "fingerprint": "9752af0bab65cff8",
+   "kind": "Window",
+   "name": "Closed",
+   "origin": "manual",
+   "section": "events",
+   "tests": [
+    "event_window_closed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:Window:prop:Title",
+   "fingerprint": "240c092ec87c0e0a",
+   "kind": "Window",
+   "name": "Title",
+   "origin": "manual",
+   "section": "props",
+   "tests": [
+    "prop_window_title"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:Window:prop:Visible",
+   "fingerprint": "25d750eea7e9cfd4",
+   "kind": "Window",
+   "name": "Visible",
+   "origin": "inferred",
+   "record_fp": "00f33d729e616c17",
+   "section": "props",
+   "tests": [
+    "prop_window_visible"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:Window:slot:content",
+   "fingerprint": "235838e99e688d04",
+   "kind": "Window",
+   "name": "content",
+   "origin": "manual",
+   "section": "slots",
+   "tests": [
+    "slot_window_content"
+   ]
+  }
+ ],
+ "toolkit": "winui",
+ "untestable": [],
+ "version": "2.3.9"
 }

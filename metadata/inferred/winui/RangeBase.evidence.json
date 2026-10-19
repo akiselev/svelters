@@ -1,0 +1,122 @@
+{
+ "events:ValueChanged": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventHandler",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "notify:LargeChange": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "LargeChangeProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:Maximum": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MaximumProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:Minimum": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MinimumProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:SmallChange": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "SmallChangeProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:Value": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "ValueProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "props:LargeChange": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.Primitives.IRangeBase",
+   "samples": [
+    12.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Maximum": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.Primitives.IRangeBase",
+   "samples": [
+    12.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Minimum": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.Primitives.IRangeBase",
+   "samples": [
+    12.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:SmallChange": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.Primitives.IRangeBase",
+   "samples": [
+    12.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Value": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.Primitives.IRangeBase",
+   "samples": [
+    12.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verified-facts ledger: metadata/verified/{gtk,qt}.json.
+"""Verified-facts ledger: metadata/verified/{gtk,qt,winui}.json.
 
 Every annotated fact has generated tests: the manual facts (hand/agent annotations) and the inferred
 ones (metadata/inferred/<tk>, written by infer.py). The generators write a fact manifest (fact id ->
@@ -22,7 +22,13 @@ A parked fact stays out until its record changes (a new probe or rule) or the to
 toolkit version in the ledger: the probe is a maintainer step, CI only checks it is current.
 
   python3 tools/metadata/ledger.py refresh [--toolkit gtk|qt|all]   # needs a display or xvfb-run
-  python3 tools/metadata/ledger.py check   [--toolkit gtk|qt|all]
+  python3 tools/metadata/ledger.py check   [--toolkit gtk|qt|winui|all]
+  python3 tools/metadata/ledger.py import  --toolkit winui <results.jsonl or the unpacked CI artifact dir>
+
+Toolkits whose tests only run on a CI runner (winui: crates/svelters-winui/src/generated/facts.json, tests on the
+windows-winui job) have no `refresh`: the job writes one JSON line per test (SVELTERS_TEST_RESULTS) next to a copy
+of facts.json, and `import` records that artifact. Only facts whose fingerprint in the artifact equals the current
+one are recorded; failing inferred facts are parked as in `refresh` (tests that never ran are left pending).
 
 Cargo runs go through the machine-wide build queue `tools/dev/cargo-slot` (it sets
 CARGO_BUILD_JOBS, NEXTEST_TEST_THREADS and CARGO_BUILD_BUILD_DIR); without it, the environment's
@@ -91,7 +97,14 @@ def gtk_type_facts() -> list[dict]:
     return out
 
 
+WINUI_FACTS = ROOT / "crates/svelters-winui/src/generated/facts.json"
+# Toolkits verified on a CI runner only: their manifest file, imported with `import` (no local `refresh`).
+CI_ONLY = {"winui": WINUI_FACTS}
+
+
 def manifest(tk: str) -> dict:
+    if tk in CI_ONLY:
+        return json.loads(CI_ONLY[tk].read_text())
     if tk == "gtk":
         m = json.loads(GTK_FACTS.read_text())
         m["facts"] = m["facts"] + gtk_extra_facts()
@@ -205,10 +218,13 @@ def run_qt() -> dict[str, str]:
     return res
 
 
-PARKED = {"gtk": ROOT / "metadata/inferred/gtk/_parked.json"}
+PARKED = {"gtk": ROOT / "metadata/inferred/gtk/_parked.json", "winui": ROOT / "metadata/inferred/winui/_parked.json"}
 # What turns the merged metadata into the generated backend, in order (a parked fact leaves all of them).
 REGEN = {"gtk": [["tools/metadata/gtk/ingest.py"], ["tools/metadata/gtk/gen_backend.py"], ["tools/metadata/common/gen_bindings.py"],
-                 ["tools/metadata/semantics/gen_semantics.py"]]}
+                 ["tools/metadata/semantics/gen_semantics.py"]],
+         # winui: windows-bindgen (tools/metadata/winui/regen.sh) is not rerun; parking only removes members from the filter.
+         "winui": [["tools/metadata/winui/gen_backend.py"], ["tools/metadata/common/gen_bindings.py"],
+                   ["tools/metadata/semantics/gen_semantics.py"]]}
 
 
 def load_parked(tk: str) -> list[dict]:
@@ -249,7 +265,92 @@ def park(tk: str, man: dict, results: dict[str, str], msgs: dict[str, str]) -> b
     return True
 
 
+def read_ci_results(path: Path) -> tuple[dict[str, str], dict[str, str], dict | None]:
+    """(test -> pass|fail|crash, test -> message, the facts.json the run was built from or None) from a results file
+    (one JSON line per test start and result) or a directory holding one (the unpacked CI artifact)."""
+    if path.is_dir():
+        found = sorted(path.rglob("*results*.jsonl"))
+        if len(found) != 1:
+            raise SystemExit(f"ledger: expected one *results*.jsonl under {path}, found {[str(f) for f in found]}")
+        jsonl = found[0]
+    else:
+        jsonl = path
+    snaps = sorted(jsonl.parent.rglob("facts.json"))
+    snap = json.loads(snaps[0].read_text()) if snaps else None
+    results: dict[str, str] = {}
+    msgs: dict[str, str] = {}
+    for line in jsonl.read_text().splitlines():
+        if not line.strip():
+            continue
+        r = json.loads(line)
+        if r["result"] == "start":
+            results[r["test"]] = "crash"          # stays so if the process died inside the test
+            msgs[r["test"]] = "the test process ended inside this test (crash or fail-fast)"
+        else:
+            results[r["test"]] = r["result"]
+            if r.get("message"):
+                msgs[r["test"]] = r["message"][:240]
+            else:
+                msgs.pop(r["test"], None)
+    return results, msgs, snap
+
+
+def import_ci(tk: str, path: Path) -> int:
+    """Record a CI run of a CI-only toolkit: entries for the facts the run tested with their current fingerprint, park
+    the failing inferred ones (regenerating without them), keep earlier entries for facts the run did not test."""
+    if tk not in CI_ONLY:
+        raise SystemExit(f"ledger: import is for the CI-only toolkits {sorted(CI_ONLY)}; {tk} has `refresh`")
+    results, msgs, snap = read_ci_results(path)
+    if not results:
+        raise SystemExit(f"ledger: no test results in {path}")
+    man = manifest(tk)
+    if snap is not None and snap.get("version") != man["version"]:
+        raise SystemExit(f"ledger: the run tested {tk} {snap.get('version')}, the metadata is {man['version']}")
+    ran_fp = {f["fact"]: f["fingerprint"] for f in (snap or man)["facts"]}
+
+    def tested(m: dict) -> dict:
+        """The manifest restricted to facts the run tested as they are now (same fingerprint, every test has a result)."""
+        return {**m, "facts": [f for f in m["facts"] if ran_fp.get(f["fact"]) == f["fingerprint"] and all(t in results for t in f["tests"])],
+                "untestable": m.get("untestable", [])}
+
+    stale = [f["fact"] for f in man["facts"] if f["fact"] in ran_fp and ran_fp[f["fact"]] != f["fingerprint"]]
+    for _ in range(4):
+        if tk not in PARKED or not park(tk, tested(man), results, msgs):
+            break
+        regenerate(tk)
+        man = manifest(tk)
+    old = {(e["fact"], e["test"]): e for e in load(tk)["entries"]}
+    entries, bad, soft, pending = [], 0, 0, 0
+    for f in man["facts"]:
+        ok = ran_fp.get(f["fact"]) == f["fingerprint"]
+        for t in f["tests"]:
+            if ok and t in results:
+                r = results[t]
+                entries.append({"fact": f["fact"], "origin": f.get("origin", "manual"), "test": t, "result": r,
+                                "fingerprint": f["fingerprint"], "version": man["version"]})
+            elif (f["fact"], t) in old and old[(f["fact"], t)]["fingerprint"] == f["fingerprint"]:
+                r = old[(f["fact"], t)]["result"]
+                entries.append(old[(f["fact"], t)])
+            else:
+                pending += 1
+                continue
+            if r != "pass":
+                if f.get("origin") == "inferred":
+                    soft += 1
+                else:
+                    bad += 1
+                    print(f"  {f['fact']}: {t}: {r}: {msgs.get(t, '')}", file=sys.stderr)
+    save(tk, man["version"], entries)
+    print(f"ledger {tk}: imported {len(results)} test results; {len(man['facts'])} facts, {len(entries)} entries, "
+          f"{bad} manual not passing, {soft} inferred not passing, {pending} pending, {len(stale)} stale in the run, "
+          f"{len(load_parked(tk))} parked")
+    return 1 if bad else 0
+
+
 def refresh(tk: str) -> int:
+    if tk in CI_ONLY:
+        raise SystemExit(f"ledger: {tk} tests run on CI only: download the job's artifact and run "
+                         f"`ledger.py import --toolkit {tk} <dir>`")
     man = manifest(tk)
     if tk == "gtk":
         results, msgs = run_gtk()
@@ -335,7 +436,7 @@ def check(tk: str) -> int:
             print("  " + p, file=sys.stderr)
         return 1
     manual = sum(1 for f in man["facts"] if f.get("origin") != "inferred")
-    extra = f"; inferred {inferred['pass']} verified, {inferred['pending']} pending, {len(load_parked(tk))} parked" if tk == "gtk" else ""
+    extra = f"; inferred {inferred['pass']} verified, {inferred['pending']} pending, {len(load_parked(tk))} parked" if tk in PARKED else ""
     print(f"ledger {tk}: {manual} manual facts verified{extra}")
     return 0
 
@@ -351,11 +452,17 @@ def verified_facts(tk: str) -> set[str]:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("cmd", choices=["refresh", "check"])
-    ap.add_argument("--toolkit", default="all", choices=["gtk", "qt", "all"])
+    ap.add_argument("cmd", choices=["refresh", "check", "import"])
+    ap.add_argument("--toolkit", default="all", choices=["gtk", "qt", "winui", "all"])
+    ap.add_argument("results", nargs="?", help="import: the CI results file or the unpacked artifact directory")
     a = ap.parse_args()
+    if a.cmd == "import":
+        if a.toolkit == "all" or not a.results:
+            ap.error("import needs --toolkit <tk> and a results path")
+        return import_ci(a.toolkit, Path(a.results))
     rc = 0
-    for tk in (["gtk", "qt"] if a.toolkit == "all" else [a.toolkit]):
+    # `refresh --toolkit all` runs what runs here; CI-only toolkits are imported instead.
+    for tk in ([t for t in ("gtk", "qt", *CI_ONLY) if not (a.cmd == "refresh" and t in CI_ONLY)] if a.toolkit == "all" else [a.toolkit]):
         rc |= (refresh if a.cmd == "refresh" else check)(tk)
     return rc
 

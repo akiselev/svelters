@@ -1,0 +1,76 @@
+# Data the WinUI inference rules read (tools/metadata/winui/infer.py; plans/research/ANNOTATION-AUTOMATION.md section 2).
+# WinUI has no runtime probe (WinUI cannot run on Linux, not even under Wine): the facts are rules over the winmd
+# metadata alone, and the generated tests are the only check. They run on the windows-winui CI job; its results are
+# imported with `tools/metadata/ledger.py import --toolkit winui <artifact>` (pass = verified, fail = parked).
+# Decisions made by reviews belong here (patterns), single-fact decisions in metadata/overrides/winui (`deny:` or a
+# manual record).
+schema: svelters-rules/v1
+toolkit: winui
+
+# Facts below this confidence are not written to metadata/inferred/winui; they are listed in _review.json.
+promote_at: 0.9
+
+# P1: generated test samples, by the property's wire type and, first match wins, its native name. Each list is
+# written and read back in order, so a list of two distinct values changes the value at least once whatever the
+# default is (the notify test relies on that).
+samples:
+  by_name:
+    - { pattern: '^Opacity$', values: [0.5, 0.25] }
+    - { pattern: '^Language$', values: ["de-DE", "en-US"] }
+    - { pattern: '(Width|Height|Size)$', values: [48.0, 24.0] }
+  bool: [true, false]
+  i32: [3, 7]
+  f64: [12.0, 24.0]
+  string: ["svelters", "winui"]
+  thickness: ["1,2,3,4", "5"]
+  nullable_bool: [true, false]
+  # enum: the second member, then the first (enums with one member are skipped)
+
+# Props never inferred (any section that names them), with the reason.
+deny_props:
+  - pattern: '^Window\.(ExtendsContentIntoTitleBar)$'
+    reason: changes the window frame of the CI session's windows; manual if wanted
+  - pattern: '^UIElement\.(CanDrag|AllowDrop|ManipulationMode)$'
+    reason: drag and manipulation setup needs a pointer; no observable effect a test can read back without one
+  - pattern: '^FrameworkElement\.(Tag|DataContext|Resources|Style|Triggers)$'
+    reason: arbitrary object or resource plumbing, not a widget property
+
+# O6 (plans/research/REACTIVITY.md section 3.4): DependencyProperties that never notify. They get no `notify::` event
+# and no generic binding, although the winmd marks them as DPs; the event that does report the change is named.
+no_notify:
+  - prop: FrameworkElement.ActualWidth
+    use: SizeChanged
+    reason: '"do not raise property change notifications" (FrameworkElement.ActualWidth docs); use SizeChanged'
+  - prop: FrameworkElement.ActualHeight
+    use: SizeChanged
+    reason: '"do not raise property change notifications" (FrameworkElement.ActualHeight docs); use SizeChanged'
+  - prop: FrameworkElement.ActualTheme
+    use: ActualThemeChanged
+    reason: computed from RequestedTheme up the tree; ActualThemeChanged reports it
+
+# M2: methods never inferred. Patterns match `<Class>.<Method>`.
+deny_methods:
+  - pattern: '\.(PasteFromClipboard|CopySelectionToClipboard|CutSelectionToClipboard)$'
+    reason: touches the session clipboard
+  - pattern: '\.(Focus|StartBringIntoView|RemoveFocusEngagement|ReleasePointerCaptures|CancelDirectManipulations)$'
+    reason: depends on the focus chain, a pointer or a scroll host of a realized window
+  - pattern: '^Window\.'
+    reason: window lifecycle (Activate/Close are manual and covered by the close test)
+  - pattern: '\.(GetAlphaMask|GetVisualInternal|ApplyTemplate)$'
+    reason: composition and template plumbing, not an app-level call
+
+# R1/R2 for events. Events never inferred:
+deny_events:
+  - pattern: '^Window\.(SizeChanged|VisibilityChanged)$'
+    reason: raised by the window system for the session's real window; nothing to connect a test to without one
+
+# Settable bool on the args that `e.preventDefault()` maps to (R1), in order of preference. Only args classes that
+# declare the property themselves qualify (the dispatch code calls the setter on the args type).
+result_props: [Cancel, Handled]
+
+# R2: how the generated test raises an event. Events without a trigger get a connect test (listen on and off; the
+# fact is `verified: connect`, not native causation).
+triggers:
+  - { pattern: '^Control\.IsEnabledChanged$', trigger: "set:IsEnabled=false" }
+  - { pattern: '^FrameworkElement\.(Loaded|SizeChanged|LayoutUpdated)$', trigger: mount }
+  - { pattern: '^TextBox\.TextChanging$', trigger: "set:Text=abc" }

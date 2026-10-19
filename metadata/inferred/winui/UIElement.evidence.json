@@ -1,0 +1,1019 @@
+{
+ "events:AccessKeyDisplayDismissed": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Input.AccessKeyDisplayDismissedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.UIElement, Microsoft.UI.Xaml.Input.AccessKeyDisplayDismissedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:AccessKeyDisplayRequested": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Input.AccessKeyDisplayRequestedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.UIElement, Microsoft.UI.Xaml.Input.AccessKeyDisplayRequestedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:AccessKeyInvoked": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Input.AccessKeyInvokedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.UIElement, Microsoft.UI.Xaml.Input.AccessKeyInvokedEventArgs>",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:BringIntoViewRequested": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.BringIntoViewRequestedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.UIElement, Microsoft.UI.Xaml.BringIntoViewRequestedEventArgs>",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:CharacterReceived": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Input.CharacterReceivedRoutedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.UIElement, Microsoft.UI.Xaml.Input.CharacterReceivedRoutedEventArgs>",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:ContextCanceled": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.RoutedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.UIElement, Microsoft.UI.Xaml.RoutedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:ContextRequested": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Input.ContextRequestedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.UIElement, Microsoft.UI.Xaml.Input.ContextRequestedEventArgs>",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:DoubleTapped": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.Input.DoubleTappedEventHandler",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:DragEnter": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.DragEventArgs",
+   "delegate": "Microsoft.UI.Xaml.DragEventHandler",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:DragLeave": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.DragEventArgs",
+   "delegate": "Microsoft.UI.Xaml.DragEventHandler",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:DragOver": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.DragEventArgs",
+   "delegate": "Microsoft.UI.Xaml.DragEventHandler",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:DragStarting": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.DragStartingEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.UIElement, Microsoft.UI.Xaml.DragStartingEventArgs>",
+   "result": "Cancel",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:Drop": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.DragEventArgs",
+   "delegate": "Microsoft.UI.Xaml.DragEventHandler",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:DropCompleted": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.DropCompletedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.UIElement, Microsoft.UI.Xaml.DropCompletedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:GettingFocus": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Input.GettingFocusEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.UIElement, Microsoft.UI.Xaml.Input.GettingFocusEventArgs>",
+   "result": "Cancel",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:GotFocus": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.RoutedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.RoutedEventHandler",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:Holding": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Input.HoldingRoutedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.Input.HoldingEventHandler",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:KeyDown": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Input.KeyRoutedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.Input.KeyEventHandler",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:KeyUp": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Input.KeyRoutedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.Input.KeyEventHandler",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:LosingFocus": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Input.LosingFocusEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.UIElement, Microsoft.UI.Xaml.Input.LosingFocusEventArgs>",
+   "result": "Cancel",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:LostFocus": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.RoutedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.RoutedEventHandler",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:ManipulationCompleted": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Input.ManipulationCompletedRoutedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.Input.ManipulationCompletedEventHandler",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:ManipulationDelta": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Input.ManipulationDeltaRoutedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.Input.ManipulationDeltaEventHandler",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:ManipulationInertiaStarting": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Input.ManipulationInertiaStartingRoutedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.Input.ManipulationInertiaStartingEventHandler",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:ManipulationStarted": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Input.ManipulationStartedRoutedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.Input.ManipulationStartedEventHandler",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:ManipulationStarting": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Input.ManipulationStartingRoutedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.Input.ManipulationStartingEventHandler",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:NoFocusCandidateFound": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Input.NoFocusCandidateFoundEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.UIElement, Microsoft.UI.Xaml.Input.NoFocusCandidateFoundEventArgs>",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:PointerCanceled": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.Input.PointerEventHandler",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:PointerCaptureLost": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.Input.PointerEventHandler",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:PointerEntered": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.Input.PointerEventHandler",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:PointerExited": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.Input.PointerEventHandler",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:PointerMoved": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.Input.PointerEventHandler",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:PointerPressed": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.Input.PointerEventHandler",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:PointerReleased": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.Input.PointerEventHandler",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:PointerWheelChanged": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.Input.PointerEventHandler",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:PreviewKeyDown": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Input.KeyRoutedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.Input.KeyEventHandler",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:PreviewKeyUp": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Input.KeyRoutedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.Input.KeyEventHandler",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:ProcessKeyboardAccelerators": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Input.ProcessKeyboardAcceleratorEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.UIElement, Microsoft.UI.Xaml.Input.ProcessKeyboardAcceleratorEventArgs>",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:RightTapped": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Input.RightTappedRoutedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.Input.RightTappedEventHandler",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:Tapped": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Input.TappedRoutedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.Input.TappedEventHandler",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "methods:InvalidateArrange": {
+  "confidence": 0.9,
+  "evidence": {
+   "returns": null
+  },
+  "rule": "M1"
+ },
+ "methods:InvalidateMeasure": {
+  "confidence": 0.9,
+  "evidence": {
+   "returns": null
+  },
+  "rule": "M1"
+ },
+ "methods:UpdateLayout": {
+  "confidence": 0.9,
+  "evidence": {
+   "returns": null
+  },
+  "rule": "M1"
+ },
+ "notify:AccessKey": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "AccessKeyProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "notify:CanBeScrollAnchor": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "CanBeScrollAnchorProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:CompositeMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "CompositeModeProperty",
+   "type": "enum<Microsoft.UI.Xaml.Media.ElementCompositeMode>"
+  },
+  "rule": "O6"
+ },
+ "notify:ExitDisplayModeOnAccessKeyInvoked": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "ExitDisplayModeOnAccessKeyInvokedProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsAccessKeyScope": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsAccessKeyScopeProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsDoubleTapEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsDoubleTapEnabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsHitTestVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsHitTestVisibleProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsHoldingEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsHoldingEnabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsRightTapEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsRightTapEnabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsTabStop": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsTabStopProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsTapEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsTapEnabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:KeyTipHorizontalOffset": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "KeyTipHorizontalOffsetProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:KeyTipPlacementMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "KeyTipPlacementModeProperty",
+   "type": "enum<Microsoft.UI.Xaml.Input.KeyTipPlacementMode>"
+  },
+  "rule": "O6"
+ },
+ "notify:KeyTipVerticalOffset": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "KeyTipVerticalOffsetProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:KeyboardAcceleratorPlacementMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "KeyboardAcceleratorPlacementModeProperty",
+   "type": "enum<Microsoft.UI.Xaml.Input.KeyboardAcceleratorPlacementMode>"
+  },
+  "rule": "O6"
+ },
+ "notify:Opacity": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "OpacityProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:TabFocusNavigation": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "TabFocusNavigationProperty",
+   "type": "enum<Microsoft.UI.Xaml.Input.KeyboardNavigationMode>"
+  },
+  "rule": "O6"
+ },
+ "notify:TabIndex": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "TabIndexProperty",
+   "type": "i32"
+  },
+  "rule": "O6"
+ },
+ "notify:UseLayoutRounding": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "UseLayoutRoundingProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:UseSystemFocusVisuals": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "UseSystemFocusVisualsProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:Visibility": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "VisibilityProperty",
+   "type": "enum<Microsoft.UI.Xaml.Visibility>"
+  },
+  "rule": "O6"
+ },
+ "notify:XYFocusDownNavigationStrategy": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "XYFocusDownNavigationStrategyProperty",
+   "type": "enum<Microsoft.UI.Xaml.Input.XYFocusNavigationStrategy>"
+  },
+  "rule": "O6"
+ },
+ "notify:XYFocusKeyboardNavigation": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "XYFocusKeyboardNavigationProperty",
+   "type": "enum<Microsoft.UI.Xaml.Input.XYFocusKeyboardNavigationMode>"
+  },
+  "rule": "O6"
+ },
+ "notify:XYFocusLeftNavigationStrategy": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "XYFocusLeftNavigationStrategyProperty",
+   "type": "enum<Microsoft.UI.Xaml.Input.XYFocusNavigationStrategy>"
+  },
+  "rule": "O6"
+ },
+ "notify:XYFocusRightNavigationStrategy": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "XYFocusRightNavigationStrategyProperty",
+   "type": "enum<Microsoft.UI.Xaml.Input.XYFocusNavigationStrategy>"
+  },
+  "rule": "O6"
+ },
+ "notify:XYFocusUpNavigationStrategy": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "XYFocusUpNavigationStrategyProperty",
+   "type": "enum<Microsoft.UI.Xaml.Input.XYFocusNavigationStrategy>"
+  },
+  "rule": "O6"
+ },
+ "props:AccessKey": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IUIElement",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:CanBeScrollAnchor": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IUIElement",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:CompositeMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IUIElement",
+   "samples": [
+    "SourceOver",
+    "Inherit"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Media.ElementCompositeMode>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:ExitDisplayModeOnAccessKeyInvoked": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IUIElement",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:FocusState": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IUIElement",
+   "type": "enum<Microsoft.UI.Xaml.FocusState>",
+   "write": false
+  },
+  "rule": "P1"
+ },
+ "props:IsAccessKeyScope": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IUIElement",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsDoubleTapEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IUIElement",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsHitTestVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IUIElement",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsHoldingEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IUIElement",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsRightTapEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IUIElement",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsTabStop": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IUIElement",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsTapEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IUIElement",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:KeyTipHorizontalOffset": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IUIElement",
+   "samples": [
+    12.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:KeyTipPlacementMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IUIElement",
+   "samples": [
+    "Bottom",
+    "Auto"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Input.KeyTipPlacementMode>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:KeyTipVerticalOffset": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IUIElement",
+   "samples": [
+    12.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:KeyboardAcceleratorPlacementMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IUIElement",
+   "samples": [
+    "Hidden",
+    "Auto"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Input.KeyboardAcceleratorPlacementMode>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Opacity": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IUIElement",
+   "samples": [
+    0.5,
+    0.25
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:RasterizationScale": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false,
+   "interface": "Microsoft.UI.Xaml.IUIElement",
+   "samples": [
+    12.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:TabFocusNavigation": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IUIElement",
+   "samples": [
+    "Cycle",
+    "Local"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Input.KeyboardNavigationMode>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:TabIndex": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IUIElement",
+   "samples": [
+    3,
+    7
+   ],
+   "type": "i32",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:UseLayoutRounding": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IUIElement",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:UseSystemFocusVisuals": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IUIElement",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Visibility": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IUIElement",
+   "samples": [
+    "Collapsed",
+    "Visible"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Visibility>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:XYFocusDownNavigationStrategy": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IUIElement",
+   "samples": [
+    "Projection",
+    "Auto"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Input.XYFocusNavigationStrategy>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:XYFocusKeyboardNavigation": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IUIElement",
+   "samples": [
+    "Enabled",
+    "Auto"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Input.XYFocusKeyboardNavigationMode>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:XYFocusLeftNavigationStrategy": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IUIElement",
+   "samples": [
+    "Projection",
+    "Auto"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Input.XYFocusNavigationStrategy>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:XYFocusRightNavigationStrategy": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IUIElement",
+   "samples": [
+    "Projection",
+    "Auto"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Input.XYFocusNavigationStrategy>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:XYFocusUpNavigationStrategy": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IUIElement",
+   "samples": [
+    "Projection",
+    "Auto"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Input.XYFocusNavigationStrategy>",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

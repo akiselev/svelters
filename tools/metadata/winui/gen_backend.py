@@ -5,6 +5,8 @@ Inputs (only these):
   metadata/winui/*.json             upstream facts from the winmd (ingest.py)
   metadata/overrides/winui/*.yaml   annotations: which kinds, props, events, slots, attrs and methods
                                     are exposed, and how (schema: override.schema.json)
+  metadata/inferred/winui/*.yaml    the inferred layer (infer.py), same schema, under the manual one;
+                                    minus metadata/inferred/winui/_parked.json (layers.py merges them)
 Outputs (checked in, byte-identical on rerun):
   crates/svelters-winui/src/generated/names.rs     platform-neutral tables (every target)
   crates/svelters-winui/src/generated/dispatch.rs  typed windows-rs calls per id (cfg(windows))
@@ -29,6 +31,8 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
 sys.path.insert(0, str(HERE.parent / "common"))
+sys.path.insert(0, str(HERE))
+import winui_layers  # noqa: E402
 import naming  # noqa: E402
 import svmeta  # noqa: E402
 
@@ -93,6 +97,9 @@ RO_INIT_SINGLETHREADED
 """
 
 PRIM = {"bool": "Bool", "i32": "I32", "f64": "F64", "string": "Str"}
+# Section of an override -> the fact id's member word.
+SINGULAR = {"props": "prop", "events": "event", "notify": "notify", "slots": "slot", "attached": "attr", "methods": "method",
+            "bindings": "binding"}
 
 
 class GenError(Exception):
@@ -129,19 +136,21 @@ class Model:
             k = svmeta.load_json(p)
             self.classes[k["native"]["name"]] = k
         self.types = svmeta.load_json(META / "_types.json")["types"]
+        self.layers = winui_layers.Layers()
         self.ovr: dict[str, dict] = {}
-        self.ovr_file: dict[str, str] = {}
+        self.ovr_file: dict[str, str] = dict(self.layers.files)
         errs = []
-        for p in sorted(OVERRIDES.glob("*.yaml")):
+        for p in self.layers.paths + self.layers.inferred_paths:
             errs += svmeta.check_override(p, SCHEMA)
-            o = svmeta.load_yaml(p)
-            if o["class"] not in self.classes:
-                errs.append(f"{p.name}: class {o['class']} is not in metadata/winui (run ingest.py)")
+        for cls, o in self.layers.merged.items():
+            if cls not in self.classes:
+                errs.append(f"{self.ovr_file[cls]}: class {cls} is not in metadata/winui (run ingest.py)")
                 continue
-            self.ovr[o["class"]] = o
-            self.ovr_file[o["class"]] = p.name
+            self.ovr[cls] = o
         if errs:
             raise GenError("\n".join(errs))
+        # Inferred facts the generator cannot use or test: left out of the tables, the ledger parks them.
+        self.untestable: list[dict] = []
         # Class table: every class in some kind's chain, in a stable order.
         self.kinds = []
         for cls in sorted(self.ovr, key=short):
@@ -171,7 +180,39 @@ class Model:
             if not cands:
                 raise GenError(f"{a['file']}: attached {a['native']}: no slot {a['slot_name']} in the chain of {a['class']}")
             a["slot"] = cands[0]
-        self.facts: dict[str, dict] = {}
+        self._bindings()
+        self.facts: list[dict] = []
+
+    def origin(self, cls: str, sec: str, name: str) -> str:
+        return self.layers.origin(cls, sec, name)
+
+    def fact_id(self, cls: str, sec: str, name: str) -> str:
+        return f"{self.classes[cls]['id']}:{SINGULAR[sec]}:{name}"
+
+    def unusable(self, cls: str, sec: str, name: str, why: str) -> None:
+        """An inferred fact the generator cannot use: left out (the ledger parks it). A manual one is an error."""
+        if self.origin(cls, sec, name) != "inferred":
+            raise GenError(why)
+        self.untestable.append({"fact": self.fact_id(cls, sec, name), "kind": short(cls), "section": sec, "name": name,
+                                "record_fp": self.layers.record_fp(cls, sec, name), "message": f"generator: {why}"})
+
+    def _bindings(self) -> None:
+        """Drop inferred bindings whose property or change event is not in the tables (parked or unusable)."""
+        for cls, o in self.ovr.items():
+            keep = []
+            chain = [cls] + self.classes[cls]["bases"]
+            for b in o.get("bindings", []):
+                sig = (b.get("change") or {}).get("signal")
+                if not any(p["name"] == b["property"] and p["class"] in chain for p in self.props):
+                    self.unusable(cls, "bindings", b["name"], f"{self.ovr_file[cls]}: bind:{b['name']}: property {b['property']} is not exposed")
+                elif sig and not any(e["name"] == sig and e["class"] in chain for e in self.events):
+                    self.unusable(cls, "bindings", b["name"], f"{self.ovr_file[cls]}: bind:{b['name']}: event {sig} is not exposed")
+                else:
+                    keep.append(b)
+            if keep:
+                o["bindings"] = keep
+            else:
+                o.pop("bindings", None)
 
     def enum_index(self, full: str) -> int:
         if full not in self.enums:
@@ -203,47 +244,72 @@ class Model:
         nprops = {p["name"]: p for p in k["properties"]}
         for p in o.get("props", []):
             where = f"{f}: prop {p['name']}"
-            np = nprops.get(p["name"])
-            if np is None:
-                raise GenError(f"{where}: no such property on {cls} (winmd)")
-            ty = self.ty_of(where, np["type"]["ref"], p)
+            try:
+                np = nprops.get(p["name"])
+                if np is None:
+                    raise GenError(f"{where}: no such property on {cls} (winmd)")
+                ty = self.ty_of(where, np["type"]["ref"], p)
+                custom = ty["t"] == "Custom"
+                read = np["access"]["read"]
+                write = np["access"]["write"] or custom
+                if "test" in p and not write:
+                    raise GenError(f"{where}: read-only property has a test value")
+            except GenError as ex:
+                self.unusable(cls, "props", p["name"], str(ex))
+                continue
             if ty["t"] == "Enum":
                 ty["index"] = self.enum_index(ty["enum"])
-            custom = ty["t"] == "Custom"
-            read = np["access"]["read"]
-            write = np["access"]["write"] or custom
-            if "test" in p and not write:
-                raise GenError(f"{where}: read-only property has a test value")
             self.props.append({"name": kebab(p["name"]), "native": p["name"], "class": cls, "ci": ci, "ty": ty,
-                               "read": read, "write": write, "o": p, "file": f})
+                               "read": read, "write": write, "dp": bool(np.get("dependency_property")), "o": p, "file": f,
+                               "origin": self.origin(cls, "props", p["name"])})
         nsigs = {s["name"]: s for s in k["signals"]}
         for e in o.get("events", []):
             where = f"{f}: event {e['name']}"
-            ns = nsigs.get(e["name"])
-            if ns is None:
-                raise GenError(f"{where}: no such event on {cls} (winmd)")
-            args_props = {p["name"]: p for p in ns["args_props"]}
-            payload = []
-            for item in e.get("payload", []):
-                if item["from"] == "args":
-                    ap = args_props.get(item["prop"])
-                    if ap is None:
-                        raise GenError(f"{where}: {ns['args']} has no property {item['prop']}")
-                    tref = ap["type"]["ref"]
-                else:
-                    tref = self.prop_type_in_chain(cls, item["prop"], where)
-                payload.append({**item, "ref": tref})
-            result = e.get("result")
-            if result:
-                ap = args_props.get(result["prop"])
-                if ap is None or not ap["settable"]:
-                    raise GenError(f"{where}: result prop {result['prop']} is not a settable property of {ns['args']} (winmd)")
-                if not e.get("sync"):
-                    raise GenError(f"{where}: an event with a result must be sync")
-            if e.get("close") and not args_props.get("Handled", {}).get("settable"):
-                raise GenError(f"{where}: close events need a settable Handled on their args")
+            try:
+                ns = nsigs.get(e["name"])
+                if ns is None:
+                    raise GenError(f"{where}: no such event on {cls} (winmd)")
+                args_props = {p["name"]: p for p in ns["args_props"]}
+                payload = []
+                for item in e.get("payload", []):
+                    if item["from"] == "args":
+                        ap = args_props.get(item["prop"])
+                        if ap is None:
+                            raise GenError(f"{where}: {ns['args']} has no property {item['prop']}")
+                        tref = ap["type"]["ref"]
+                    else:
+                        tref = self.prop_type_in_chain(cls, item["prop"], where)
+                    payload.append({**item, "ref": tref})
+                result = e.get("result")
+                if result:
+                    ap = args_props.get(result["prop"])
+                    if ap is None or not ap["settable"]:
+                        raise GenError(f"{where}: result prop {result['prop']} is not a settable property of {ns['args']} (winmd)")
+                    if not e.get("sync"):
+                        raise GenError(f"{where}: an event with a result must be sync")
+                if e.get("close") and not args_props.get("Handled", {}).get("settable"):
+                    raise GenError(f"{where}: close events need a settable Handled on their args")
+            except GenError as ex:
+                self.unusable(cls, "events", e["name"], str(ex))
+                continue
             self.events.append({"name": kebab(e["name"]), "native": e["name"], "class": cls, "ci": ci, "o": e, "file": f,
-                                "args": ns["args"], "sender": ns["sender"], "delegate": ns["delegate"], "payload": payload})
+                                "args": ns["args"], "sender": ns["sender"], "delegate": ns["delegate"], "payload": payload,
+                                "notify": False, "section": "events", "origin": self.origin(cls, "events", e["name"])})
+        for n in o.get("notify", []):
+            # `notify::<prop>`: a DependencyProperty change callback on a prop of this class exposed above.
+            p = next((x for x in self.props if x["class"] == cls and x["native"] == n["name"]), None)
+            dps = set(k.get("dependency_properties", []))
+            where = f"{f}: notify {n['name']}"
+            if p is None:
+                self.unusable(cls, "notify", n["name"], f"{where}: the prop is not exposed on {cls}")
+            elif not (p["dp"] and f"{n['name']}Property" in dps):
+                self.unusable(cls, "notify", n["name"], f"{where}: not a DependencyProperty (winmd)")
+            elif not (p["read"] and p["write"]) or p["ty"]["t"] == "Custom":
+                self.unusable(cls, "notify", n["name"], f"{where}: the prop is not readable and writable")
+            else:
+                self.events.append({"name": f"notify::{p['name']}", "native": n["name"], "class": cls, "ci": ci, "o": n, "file": f,
+                                    "args": None, "sender": None, "delegate": None, "payload": [], "notify": True, "prop": p,
+                                    "section": "notify", "origin": self.origin(cls, "notify", n["name"])})
         for s in o.get("slots", []):
             where = f"{f}: slot {s['name']}"
             np = nprops.get(s["prop"])
@@ -276,13 +342,20 @@ class Model:
             nmeth.setdefault(m["name"], m)
         for m in o.get("methods", []):
             where = f"{f}: method {m['name']}"
-            nm = nmeth.get(m["name"])
-            if nm is None:
-                raise GenError(f"{where}: no such method on {cls} (winmd)")
-            params = [{"name": p["name"], "ty": self.ty_of(where, p["type"]["ref"], {})} for p in nm["params"]]
-            ret = None if nm["returns"]["native"] == "void" else self.ty_of(where, nm["returns"]["ref"], {})
+            try:
+                nm = nmeth.get(m["name"])
+                if nm is None:
+                    raise GenError(f"{where}: no such method on {cls} (winmd)")
+                params = [{"name": p["name"], "ty": self.ty_of(where, p["type"]["ref"], {})} for p in nm["params"]]
+                ret = None if nm["returns"]["native"] == "void" else self.ty_of(where, nm["returns"]["ref"], {})
+            except GenError as ex:
+                self.unusable(cls, "methods", m["name"], str(ex))
+                continue
+            for ty in [p["ty"] for p in params] + ([ret] if ret else []):
+                if ty["t"] == "Enum":
+                    ty["index"] = self.enum_index(ty["enum"])
             self.methods.append({"name": kebab(m["name"]), "native": m["name"], "class": cls, "ci": ci, "params": params,
-                                 "ret": ret, "o": m, "file": f})
+                                 "ret": ret, "o": m, "file": f, "origin": self.origin(cls, "methods", m["name"])})
 
     def prop_type_in_chain(self, cls: str, prop: str, where: str) -> str:
         for c in [cls] + self.classes[cls]["bases"]:
@@ -340,7 +413,8 @@ def gen_names(m: Model) -> str:
     for e in m.events:
         payload = ", ".join(rs_str(x["name"]) for x in e["payload"])
         o.append(f"    Event {{ name: {rs_str(e['name'])}, native: {rs_str(e['native'])}, class: {e['ci']}, "
-                 f"sync: {str(bool(e['o'].get('sync'))).lower()}, close: {str(bool(e['o'].get('close'))).lower()}, payload: &[{payload}] }},\n")
+                 f"sync: {str(bool(e['o'].get('sync'))).lower()}, close: {str(bool(e['o'].get('close'))).lower()}, "
+                 f"notify: {str(e['notify']).lower()}, payload: &[{payload}] }},\n")
     o.append("];\n\n")
     o.append("pub static SLOTS: &[Slot] = &[\n")
     for s in m.slots:
@@ -434,7 +508,7 @@ def payload_expr(item: dict, m: Model) -> str:
 def gen_dispatch(m: Model) -> str:
     o = [HEADER, "//! Typed windows-rs calls per id, parallel to the tables in names.rs (Windows only).\n\n",
          "#![allow(non_snake_case, clippy::all, unused_imports)]\n",
-         "use super::names::*;\n", "use crate::conv::{self, R};\n", "use crate::custom;\n", "use crate::sink::Sink;\n",
+         "use super::names::*;\n", "use crate::conv::{self, R};\n", "use crate::custom;\n", "use crate::sink::{Registration, Sink};\n",
          "use svelters_abi::Value;\n", "use windows_core::{IInspectable, Interface};\n\n",
          "type WinResult<T> = windows_core::Result<T>;\n\n"]
     # create
@@ -468,6 +542,12 @@ def gen_dispatch(m: Model) -> str:
     # events
     for i, e in enumerate(m.events):
         cls = rs_path(e["class"])
+        if e["notify"]:
+            fn = f"event{i}_{snake(short(e['class']))}_notify_{snake(e['native'])}"
+            e["fn"] = fn
+            o.append(f"fn {fn}(o: &IInspectable, sink: Sink) -> WinResult<Registration> {{\n"
+                     f"    crate::sink::notify(o, &{cls}::{e['native']}Property()?, sink)\n}}\n")
+            continue
         fn = f"event{i}_{snake(short(e['class']))}_{snake(e['native'])}"
         e["fn"] = fn
         body = []
@@ -489,9 +569,9 @@ def gen_dispatch(m: Model) -> str:
             body.append(f"        sink.post(vec![{args}]);")
         sv = "s" if needs_sender else "_s"
         av = "a" if needs_args else "_a"
-        o.append(f"fn {fn}(o: &IInspectable, sink: Sink) -> WinResult<windows_core::EventRevoker> {{\n"
-                 f"    o.cast::<{cls}>()?.{e['native']}(move |{sv}, {av}| {{\n" + "\n".join(body) + "\n    })\n}\n")
-    o.append("\npub static EVENT_CONNECT: &[fn(&IInspectable, Sink) -> WinResult<windows_core::EventRevoker>] = &[\n")
+        o.append(f"fn {fn}(o: &IInspectable, sink: Sink) -> WinResult<Registration> {{\n"
+                 f"    o.cast::<{cls}>()?.{e['native']}(move |{sv}, {av}| {{\n" + "\n".join(body) + "\n    }).map(Into::into)\n}\n")
+    o.append("\npub static EVENT_CONNECT: &[fn(&IInspectable, Sink) -> WinResult<Registration>] = &[\n")
     for e in m.events:
         o.append(f"    {e['fn']},\n")
     o.append("];\n\n")
@@ -569,6 +649,13 @@ def gen_filter(m: Model) -> str:
             add(p["class"], f"put_{p['native']}")
     delegates = set()
     for e in m.events:
+        if e["notify"]:
+            # The DependencyProperty identifier (a static getter) and the callback API (sink.rs).
+            add(e["class"], f"get_{e['native']}Property")
+            add("Microsoft.UI.Xaml.DependencyObject", "RegisterPropertyChangedCallback", "UnregisterPropertyChangedCallback")
+            add("Microsoft.UI.Xaml.DependencyProperty")
+            delegates.add("Microsoft.UI.Xaml.DependencyPropertyChangedCallback")
+            continue
         add(e["class"], f"add_{e['native']}", f"remove_{e['native']}")
         # The typed event wrappers construct the delegate (`KeyEventHandler::new`), which bindgen only
         # emits for delegates the filter selects.
@@ -584,7 +671,8 @@ def gen_filter(m: Model) -> str:
             add(args, f"get_{res['prop']}", f"put_{res['prop']}")
         if e["o"].get("close"):
             add(args, "get_Handled", "put_Handled")
-        add(args)
+        if "." in args:          # not `object` (EventHandler<object>)
+            add(args)
     for s in m.slots:
         add(s["class"], f"get_{s['native']}") if s["many"] else add(s["class"], f"get_{s['native']}", f"put_{s['native']}")
     for a in m.attrs:
@@ -647,29 +735,70 @@ def first_kind(m: Model, cls: str) -> dict:
     raise GenError(f"no kind for {cls}")
 
 
+def test_values(p: dict) -> list:
+    """The values a prop's test writes, in order (a manual `test` is one value, an inferred one a list)."""
+    v = p["o"].get("test")
+    if v is None:
+        return []
+    return list(v) if isinstance(v, list) else [v]
+
+
 def gen_tests(m: Model) -> str:
     o = [HEADER, "//! One verification test per annotated fact. Windows only: `cargo test -p svelters-winui --test generated`.\n",
-         "//! Each test runs on the one STA thread of the harness (harness = false).\n\n",
+         "//! Each test runs on the one STA thread of the harness (harness = false). Inferred facts use the\n",
+         "//! table-driven checks of `svelters_winui::testing` (one row each, at the end of TESTS).\n\n",
          "#[cfg(windows)]\nmod tests {\n",
-         "use svelters_abi::Value;\nuse svelters_winui::testing::{Harness, Reply};\n\n"]
-    tests = []
+         "use svelters_abi::Value;\nuse svelters_winui::testing::{self as t, Harness, Reply};\n\n"]
+    tests: list[tuple[str, str]] = []     # hand-shaped tests: (fn name, body)
+    rows: list[tuple[str, str]] = []      # table rows: (test name, call)
+    seen: set[str] = set()
 
-    def fact(fid: str, test: str, record: dict) -> None:
-        m.facts[fid] = {"tests": [test], "fingerprint": svmeta.fingerprint(record)}
+    def fact(cls: str, sec: str, name: str, test: str, record: dict, src: str, strength: str | None = None) -> None:
+        origin = m.origin(cls, sec, name)
+        rec = {"fact": m.fact_id(cls, sec, name), "kind": short(cls), "section": sec, "name": name, "origin": origin,
+               "tests": [test], "fingerprint": svmeta.fingerprint({"record": record, "test": src})}
+        if origin == "inferred":
+            rec["record_fp"] = m.layers.record_fp(cls, sec, name)
+        if strength:
+            rec["strength"] = strength
+        m.facts.append(rec)
 
+    def add_test(name: str, body: str) -> None:
+        if name in seen:
+            raise GenError(f"two facts generate the test {name}")
+        seen.add(name)
+        tests.append((name, body))
+
+    def add_row(name: str, call: str) -> None:
+        if name in seen:
+            raise GenError(f"two facts generate the test {name}")
+        seen.add(name)
+        rows.append((name, call))
+
+    notify_test: dict[tuple[str, str], tuple[str, str]] = {}    # (class, event name) -> (test name, call)
     for p in m.props:
-        if "test" not in p["o"]:
-            continue
         k = first_kind(m, p["class"])
+        tag = rs_str(k["tag"])
         name = f"prop_{snake(k['tag'])}_{snake(p['native'])}"
-        fact(f"winui:{short(p['class'])}:prop:{p['native']}", name, {"o": p["o"], "ty": p["ty"]})
-        tests.append((name, f"    let mut h = Harness::new();\n    let w = h.create({rs_str(k['tag'])});\n"
-                     f"    h.set(w, {rs_str(p['name'])}, {test_value(p, p['o']['test'])}).unwrap();\n"
-                     f"    assert_eq!(h.get(w, {rs_str(p['name'])}).unwrap(), {expected_value(p, p['o']['test'])});\n"))
+        vals = test_values(p)
+        if isinstance(p["o"].get("test"), list):
+            cases = ", ".join(f"({test_value(p, v)}, {expected_value(p, v)})" for v in vals)
+            call = f"t::roundtrip({tag}, {rs_str(p['name'])}, &[{cases}])"
+            fact(p["class"], "props", p["native"], name, {"o": p["o"], "ty": p["ty"]}, call)
+            add_row(name, call)
+        elif vals:
+            body = (f"    let mut h = Harness::new();\n    let w = h.create({tag});\n"
+                    f"    h.set(w, {rs_str(p['name'])}, {test_value(p, vals[0])}).unwrap();\n"
+                    f"    assert_eq!(h.get(w, {rs_str(p['name'])}).unwrap(), {expected_value(p, vals[0])});\n")
+            fact(p["class"], "props", p["native"], name, {"o": p["o"], "ty": p["ty"]}, body)
+            add_test(name, body)
+        elif p["origin"] == "inferred" and p["read"] and not p["write"]:
+            call = f"t::readable({tag}, {rs_str(p['name'])})"
+            fact(p["class"], "props", p["native"], name, {"o": p["o"], "ty": p["ty"]}, call)
+            add_row(name, call)
     for s in m.slots:
         k = first_kind(m, s["class"])
         name = f"slot_{snake(k['tag'])}_{snake(s['name'])}"
-        fact(f"winui:{short(s['class'])}:slot:{s['name']}", name, {"o": s["o"], "many": s["many"]})
         child = "text-block"
         if s["many"]:
             body = (f"    let mut h = Harness::new();\n    let p = h.create({rs_str(k['tag'])});\n"
@@ -689,44 +818,80 @@ def gen_tests(m: Model) -> str:
                     f"    h.remove(p, a).unwrap();\n    assert!(h.slot_items(p, {rs_str(s['name'])}).is_empty());\n"
                     f"    h.insert(p, b, None, Some({rs_str(s['name'])})).unwrap();\n"
                     f"    assert_eq!(h.slot_items(p, {rs_str(s['name'])}), vec![b]);\n")
-        tests.append((name, body))
+        fact(s["class"], "slots", s["name"], name, {"o": s["o"], "many": s["many"]}, body)
+        add_test(name, body)
     for a in m.attrs:
         k = first_kind(m, a["class"])
         name = f"attr_{snake(k['tag'])}_{snake(a['native'])}"
-        fact(f"winui:{short(a['class'])}:attr:{a['native']}", name, {"o": a["o"]})
-        tests.append((name, f"    let mut h = Harness::new();\n    let p = h.create({rs_str(k['tag'])});\n"
-                     f"    let c = h.create(\"text-block\");\n    h.insert(p, c, None, None).unwrap();\n"
-                     f"    h.set_attr(p, c, {rs_str(a['name'])}, Value::I64({a['o']['test']})).unwrap();\n"
-                     f"    assert_eq!(h.get_attr(p, c, {rs_str(a['name'])}).unwrap(), Value::I64({a['o']['test']}));\n"
-                     f"    h.set_attr(p, c, {rs_str(a['name'])}, Value::Null).unwrap();\n"
-                     f"    assert_eq!(h.get_attr(p, c, {rs_str(a['name'])}).unwrap(), Value::I64({a['default']}));\n"
-                     f"    h.remove(p, c).unwrap();\n"
-                     f"    h.set_attr(p, c, {rs_str(a['name'])}, Value::I64(1)).unwrap_err();\n"))
+        body = (f"    let mut h = Harness::new();\n    let p = h.create({rs_str(k['tag'])});\n"
+                f"    let c = h.create(\"text-block\");\n    h.insert(p, c, None, None).unwrap();\n"
+                f"    h.set_attr(p, c, {rs_str(a['name'])}, Value::I64({a['o']['test']})).unwrap();\n"
+                f"    assert_eq!(h.get_attr(p, c, {rs_str(a['name'])}).unwrap(), Value::I64({a['o']['test']}));\n"
+                f"    h.set_attr(p, c, {rs_str(a['name'])}, Value::Null).unwrap();\n"
+                f"    assert_eq!(h.get_attr(p, c, {rs_str(a['name'])}).unwrap(), Value::I64({a['default']}));\n"
+                f"    h.remove(p, c).unwrap();\n"
+                f"    h.set_attr(p, c, {rs_str(a['name'])}, Value::I64(1)).unwrap_err();\n")
+        fact(a["class"], "attached", a["native"], name, {"o": a["o"]}, body)
+        add_test(name, body)
     for e in m.events:
         k = first_kind(m, e["class"])
+        tag = rs_str(k["tag"])
+        if e["notify"]:
+            p = e["prop"]
+            vals = test_values(p)
+            name = f"notify_{snake(k['tag'])}_{snake(e['native'])}"
+            if not vals:
+                m.unusable(e["class"], "notify", e["native"], f"{e['file']}: notify {e['native']}: the prop has no test value to write")
+                continue
+            call = (f"t::notify({tag}, {rs_str(p['name'])}, {rs_str(e['name'])}, "
+                    f"&[{', '.join(test_value(p, v) for v in vals)}])")
+            fact(e["class"], "notify", e["native"], name, {"o": e["o"], "prop": p["o"]}, call)
+            add_row(name, call)
+            notify_test[(e["class"], e["name"])] = (name, call)
+            continue
         trig = e["o"].get("trigger")
         name = f"event_{snake(k['tag'])}_{snake(e['native'])}"
+        inferred = e["origin"] == "inferred"
         if e["o"].get("close"):
-            fact(f"winui:{short(e['class'])}:event:{e['native']}", name, {"o": e["o"]})
-            tests.append((name, f"    let mut h = Harness::new();\n    let w = h.create({rs_str(k['tag'])});\n"
-                         f"    h.call(w, \"activate\", &[]).unwrap();\n    h.listen(w, {rs_str(e['name'])}, true).unwrap();\n"
-                         f"    h.call(w, \"close\", &[]).unwrap();\n    h.pump(200);\n"
-                         f"    assert_eq!(h.events(w, {rs_str(e['name'])}), 1, \"close while listened is vetoed and posted\");\n"
-                         f"    assert!(h.gone(w).is_none(), \"vetoed window stays alive\");\n"
-                         f"    h.listen(w, {rs_str(e['name'])}, false).unwrap();\n"
-                         f"    h.call(w, \"close\", &[]).unwrap();\n    h.pump(200);\n"
-                         f"    assert_eq!(h.gone(w), Some(svelters_abi::SVL_GONE_CLOSED));\n"))
+            body = (f"    let mut h = Harness::new();\n    let w = h.create({tag});\n"
+                    f"    h.call(w, \"activate\", &[]).unwrap();\n    h.listen(w, {rs_str(e['name'])}, true).unwrap();\n"
+                    f"    h.call(w, \"close\", &[]).unwrap();\n    h.pump(200);\n"
+                    f"    assert_eq!(h.events(w, {rs_str(e['name'])}), 1, \"close while listened is vetoed and posted\");\n"
+                    f"    assert!(h.gone(w).is_none(), \"vetoed window stays alive\");\n"
+                    f"    h.listen(w, {rs_str(e['name'])}, false).unwrap();\n"
+                    f"    h.call(w, \"close\", &[]).unwrap();\n    h.pump(200);\n"
+                    f"    assert_eq!(h.gone(w), Some(svelters_abi::SVL_GONE_CLOSED));\n")
+            fact(e["class"], "events", e["native"], name, {"o": e["o"]}, body)
+            add_test(name, body)
             continue
         if not trig:
+            if inferred:
+                call = f"t::connect({tag}, {rs_str(e['name'])})"
+                fact(e["class"], "events", e["native"], name, {"o": e["o"]}, call, strength="connect")
+                add_row(name, call)
             continue
-        fact(f"winui:{short(e['class'])}:event:{e['native']}", name, {"o": e["o"]})
-        lines = [f"    let mut h = Harness::new();\n    let w = h.create({rs_str(k['tag'])});\n"]
+        lines = [f"    let mut h = Harness::new();\n    let w = h.create({tag});\n"]
+        if trig == "mount":
+            if k["el"].get("lifetime") == "toplevel":
+                m.unusable(e["class"], "events", e["native"], f"{e['file']}: event {e['native']}: a toplevel cannot be mounted")
+                continue
+            lines.append(f"    h.listen(w, {rs_str(e['name'])}, true).unwrap();\n"
+                         "    let win = h.create(\"window\");\n    h.insert(win, w, None, None).unwrap();\n"
+                         "    h.call(win, \"activate\", &[]).unwrap();\n    h.pump(300);\n"
+                         f"    assert!(h.events(w, {rs_str(e['name'])}) >= 1, \"raised when mounted in an activated window\");\n")
+            body = "".join(lines)
+            fact(e["class"], "events", e["native"], name, {"o": e["o"]}, body)
+            add_test(name, body)
+            continue
         if k["el"].get("lifetime") != "toplevel":
             lines.append("    let win = h.create(\"window\");\n    h.insert(win, w, None, None).unwrap();\n"
                          "    h.call(win, \"activate\", &[]).unwrap();\n    h.pump(100);\n")
         if trig.startswith("set:"):
             prop, val = trig[4:].split("=", 1)
-            p = next(x for x in m.props if x["native"] == prop and x["class"] in k["chain"])
+            p = next((x for x in m.props if x["native"] == prop and x["class"] in k["chain"]), None)
+            if p is None:
+                m.unusable(e["class"], "events", e["native"], f"{e['file']}: event {e['native']}: trigger prop {prop} is not exposed")
+                continue
             pre = {"true": True, "false": False}.get(val, val)
             if pre is False:
                 lines.append(f"    h.set(w, {rs_str(p['name'])}, Value::Bool(true)).unwrap();\n    h.pump(50);\n")
@@ -737,26 +902,55 @@ def gen_tests(m: Model) -> str:
         if trig == "invoke":
             lines.append("    h.invoke(w).unwrap();\n")
         else:
-            prop, val = trig[4:].split("=", 1)
-            p = next(x for x in m.props if x["native"] == prop and x["class"] in k["chain"])
             v = {"true": True, "false": False}.get(val, val)
             if p["ty"]["t"] == "F64":
                 v = float(val)
             lines.append(f"    h.set(w, {rs_str(p['name'])}, {test_value(p, v)}).unwrap();\n")
         lines.append("    h.pump(200);\n")
-        lines.append(f"    assert_eq!(h.events(w, {rs_str(e['name'])}), 1, \"event delivered once\");\n")
+        if inferred:
+            lines.append(f"    assert!(h.events(w, {rs_str(e['name'])}) >= 1, \"event delivered\");\n")
+        else:
+            lines.append(f"    assert_eq!(h.events(w, {rs_str(e['name'])}), 1, \"event delivered once\");\n")
         if e["payload"]:
             lines.append(f"    assert_eq!(h.last_args(w, {rs_str(e['name'])}).len(), {len(e['payload'])}, \"payload arity\");\n")
         if res and trig.startswith("set:Text"):
             lines.append(f"    assert_ne!(h.get(w, \"text\").unwrap(), Value::Str({rs_str(trig.split('=', 1)[1])}.into()), \"{res['prop']} = true vetoes the change\");\n")
-        tests.append((name, "".join(lines)))
+        body = "".join(lines)
+        fact(e["class"], "events", e["native"], name, {"o": e["o"]}, body)
+        add_test(name, body)
+    for mt in m.methods:
+        if mt["origin"] != "inferred":
+            continue
+        k = first_kind(m, mt["class"])
+        name = f"method_{snake(k['tag'])}_{snake(mt['native'])}"
+        if mt["params"]:
+            m.unusable(mt["class"], "methods", mt["native"], f"{mt['file']}: method {mt['native']}: no generated test for arguments")
+            continue
+        call = f"t::call0({rs_str(k['tag'])}, {rs_str(mt['name'])})"
+        fact(mt["class"], "methods", mt["native"], name, {"o": mt["o"], "ret": mt["ret"]}, call)
+        add_row(name, call)
+    # A generic binding is verified by its change event's test (the notify test writes the prop and sees the callback).
+    for cls, ov in sorted(m.ovr.items(), key=lambda kv: short(kv[0])):
+        chain = [cls] + m.classes[cls]["bases"]
+        for b in ov.get("bindings", []):
+            sig = (b.get("change") or {}).get("signal", "")
+            hit = next((notify_test[(c, sig)] for c in chain if (c, sig) in notify_test), None)
+            if hit is None:
+                continue                 # an event-driven binding (manual): covered by its event's own test, if any
+            fact(cls, "bindings", b["name"], hit[0], {"o": b}, hit[1])
     for name, body in tests:
         o.append(f"pub fn {name}() {{\n{body}}}\n\n")
-    o.append("pub static TESTS: &[(&str, fn())] = &[\n" + "".join(f"    ({rs_str(n)}, {n}),\n" for n, _ in tests) + "];\n}\n\n")
+    o.append("pub static TESTS: &[(&str, fn())] = &[\n" + "".join(f"    ({rs_str(n)}, {n}),\n" for n, _ in tests)
+             + "".join(f"    ({rs_str(n)}, || {call}),\n" for n, call in rows) + "];\n}\n\n")
     o.append("fn main() {\n    // Lists and runs nothing off Windows, so cargo test and nextest see an empty target.\n"
              "    #[cfg(windows)]\n    let tests = tests::TESTS;\n    #[cfg(not(windows))]\n    let tests: &[(&str, fn())] = &[];\n"
              "    std::process::exit(svelters_winui::harness::main(tests));\n}\n")
     return "".join(o)
+
+def toolkit_version(m: Model) -> str:
+    """The WinUI package the metadata was ingested from (`microsoft.windowsappsdk.winui 2.3.9` -> 2.3.9): the
+    version the ledger records results for."""
+    return next(iter(m.classes.values()))["source"]["package"].rsplit(" ", 1)[1]
 
 
 def main() -> int:
@@ -766,7 +960,10 @@ def main() -> int:
     try:
         m = Model()
         outs = {OUT_NAMES: gen_names(m), OUT_DISPATCH: gen_dispatch(m), OUT_FILTER: gen_filter(m), OUT_TESTS: gen_tests(m)}
-        outs[OUT_FACTS] = json.dumps({"toolkit": "winui", "facts": m.facts}, indent=2, sort_keys=True) + "\n"
+        outs[OUT_FACTS] = json.dumps({"toolkit": "winui", "version": toolkit_version(m),
+                                      "facts": sorted(m.facts, key=lambda f: f["fact"]),
+                                      "untestable": sorted(m.untestable, key=lambda f: f["fact"])},
+                                     indent=1, sort_keys=True) + "\n"
     except GenError as e:
         print(f"gen_backend: {e}", file=sys.stderr)
         return 1
@@ -779,7 +976,8 @@ def main() -> int:
         p.parent.mkdir(parents=True, exist_ok=True)
         p.write_text(outs[p])
     print(f"gen_backend: {len(m.kinds)} kinds, {len(m.props)} props, {len(m.events)} events, {len(m.slots)} slots, "
-          f"{len(m.attrs)} attrs, {len(m.methods)} methods, {len(m.facts)} facts; {len(stale)} files written")
+          f"{len(m.attrs)} attrs, {len(m.methods)} methods, {len(m.facts)} facts "
+          f"({sum(1 for f in m.facts if f['origin'] == 'inferred')} inferred, {len(m.untestable)} untestable); {len(stale)} files written")
     return 0
 
 

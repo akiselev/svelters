@@ -1,0 +1,563 @@
+[
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "button",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "Button",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.Button",
+  "notify": 0,
+  "ownership": false,
+  "props": [
+   0,
+   1
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": true,
+  "bindings": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "ButtonBase",
+  "lifetime": null,
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.Primitives.ButtonBase",
+  "notify": 1,
+  "ownership": false,
+  "props": [
+   3,
+   5
+  ],
+  "props_annotated": 3,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   5
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 1,
+  "element": "check-box",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "CheckBox",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.CheckBox",
+  "notify": 0,
+  "ownership": false,
+  "props": [
+   0,
+   0
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "ContentControl",
+  "lifetime": null,
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.ContentControl",
+  "notify": 0,
+  "ownership": true,
+  "props": [
+   1,
+   5
+  ],
+  "props_annotated": 1,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 1,
+  "slots_own": 1,
+  "unexposed": null,
+  "verified": [
+   0,
+   2
+  ]
+ },
+ {
+  "abstract": true,
+  "bindings": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "Control",
+  "lifetime": null,
+  "methods": [
+   0,
+   2
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.Control",
+  "notify": 16,
+  "ownership": false,
+  "props": [
+   16,
+   24
+  ],
+  "props_annotated": 16,
+  "signal_results": 1,
+  "signals": [
+   3,
+   3
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   35
+  ]
+ },
+ {
+  "abstract": true,
+  "bindings": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "DependencyObject",
+  "lifetime": null,
+  "methods": [
+   0,
+   7
+  ],
+  "native": "Microsoft.UI.Xaml.DependencyObject",
+  "notify": 0,
+  "ownership": false,
+  "props": [
+   0,
+   2
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": true,
+  "bindings": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "FrameworkElement",
+  "lifetime": null,
+  "methods": [
+   0,
+   3
+  ],
+  "native": "Microsoft.UI.Xaml.FrameworkElement",
+  "notify": 18,
+  "ownership": false,
+  "props": [
+   22,
+   31
+  ],
+  "props_annotated": 22,
+  "signal_results": 1,
+  "signals": [
+   8,
+   8
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   46
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 3,
+  "element": "grid",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "Grid",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.Grid",
+  "notify": 5,
+  "ownership": false,
+  "props": [
+   7,
+   9
+  ],
+  "props_annotated": 7,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   19
+  ]
+ },
+ {
+  "abstract": true,
+  "bindings": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "Panel",
+  "lifetime": null,
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.Panel",
+  "notify": 0,
+  "ownership": true,
+  "props": [
+   1,
+   5
+  ],
+  "props_annotated": 1,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 1,
+  "slots_own": 1,
+  "unexposed": null,
+  "verified": [
+   0,
+   2
+  ]
+ },
+ {
+  "abstract": true,
+  "bindings": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "RangeBase",
+  "lifetime": null,
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.Primitives.RangeBase",
+  "notify": 5,
+  "ownership": false,
+  "props": [
+   5,
+   5
+  ],
+  "props_annotated": 5,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   11
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 9,
+  "element": "slider",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "Slider",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.Slider",
+  "notify": 8,
+  "ownership": false,
+  "props": [
+   9,
+   11
+  ],
+  "props_annotated": 9,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   25
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 4,
+  "element": "stack-panel",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "StackPanel",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   3
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.StackPanel",
+  "notify": 6,
+  "ownership": false,
+  "props": [
+   8,
+   10
+  ],
+  "props_annotated": 8,
+  "signal_results": 0,
+  "signals": [
+   2,
+   2
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   20
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 18,
+  "element": "text-block",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "TextBlock",
+  "lifetime": "owned",
+  "methods": [
+   1,
+   4
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.TextBlock",
+  "notify": 19,
+  "ownership": false,
+  "props": [
+   22,
+   34
+  ],
+  "props_annotated": 22,
+  "signal_results": 1,
+  "signals": [
+   3,
+   3
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   63
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 15,
+  "element": "text-box",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "TextBox",
+  "lifetime": "owned",
+  "methods": [
+   5,
+   10
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.TextBox",
+  "notify": 15,
+  "ownership": false,
+  "props": [
+   22,
+   30
+  ],
+  "props_annotated": 22,
+  "signal_results": 6,
+  "signals": [
+   13,
+   13
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   67
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "ToggleButton",
+  "lifetime": null,
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.Primitives.ToggleButton",
+  "notify": 2,
+  "ownership": false,
+  "props": [
+   2,
+   2
+  ],
+  "props_annotated": 2,
+  "signal_results": 0,
+  "signals": [
+   3,
+   3
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   7
+  ]
+ },
+ {
+  "abstract": true,
+  "bindings": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "UIElement",
+  "lifetime": null,
+  "methods": [
+   3,
+   21
+  ],
+  "native": "Microsoft.UI.Xaml.UIElement",
+  "notify": 26,
+  "ownership": false,
+  "props": [
+   28,
+   66
+  ],
+  "props_annotated": 28,
+  "signal_results": 34,
+  "signals": [
+   40,
+   40
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   96
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "element": "window",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "Window",
+  "lifetime": "toplevel",
+  "methods": [
+   2,
+   3
+  ],
+  "native": "Microsoft.UI.Xaml.Window",
+  "notify": 0,
+  "ownership": true,
+  "props": [
+   2,
+   11
+  ],
+  "props_annotated": 2,
+  "signal_results": 1,
+  "signals": [
+   2,
+   4
+  ],
+  "slots": 1,
+  "slots_own": 1,
+  "unexposed": null,
+  "verified": [
+   0,
+   5
+  ]
+ }
+]

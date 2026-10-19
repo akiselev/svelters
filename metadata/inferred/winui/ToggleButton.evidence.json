@@ -1,0 +1,76 @@
+{
+ "events:Checked": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.RoutedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.RoutedEventHandler",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:Indeterminate": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.RoutedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.RoutedEventHandler",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:Unchecked": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.RoutedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.RoutedEventHandler",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "notify:IsChecked": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsCheckedProperty",
+   "type": "nullable<bool>"
+  },
+  "rule": "O6"
+ },
+ "notify:IsThreeState": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsThreeStateProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "props:IsChecked": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.Primitives.IToggleButton",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "nullable<bool>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsThreeState": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.Primitives.IToggleButton",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

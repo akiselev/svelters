@@ -9,7 +9,7 @@ Inputs (nothing else; output is byte-identical on rerun):
   both: metadata/semantics/rules/{gtk,qt}.yaml (hand-written facts, each with a provenance) and
         metadata/style/{gtk,qt}.yaml (the style property table, tools/metadata/style/style_table.py).
   AppKit: metadata/appkit/*.json + metadata/overrides/appkit/*.yaml through tools/metadata/appkit/gen_backend.py's Model;
-  WinUI: metadata/winui/*.json + metadata/overrides/winui/*.yaml through tools/metadata/winui/gen_backend.py's Model;
+  WinUI: metadata/winui/*.json + metadata/overrides/winui/*.yaml + metadata/inferred/winui/*.yaml through tools/metadata/winui/gen_backend.py's Model;
   all: `text_prop` and `bindings` from the overrides; metadata/style/<toolkit>.yaml.
 Outputs: metadata/semantics/{gtk,qt,appkit,winui}.json.
 
@@ -873,9 +873,13 @@ def winui_spec() -> dict:
         if tc:
             kd["text_content"] = tc
             kd["provenance"]["text_content"] = "metadata/overrides/winui text_prop"
+    # `notify::<prop>` events (DependencyProperty callbacks; not ActualWidth/ActualHeight, which never notify).
+    notify = {(e["class"], e["native"]): e["name"] for e in m.events if e["notify"]}
     for p in m.props:
         r = {"js": p["name"], "native": p["native"], **wtype(f"{p['file']} prop {p['native']}", p["ty"]),
              "readable": bool(p["read"]), "writable": bool(p["write"]), "construct_only": False, "default": None}
+        if (p["class"], p["native"]) in notify:
+            r["notify"] = notify[(p["class"], p["native"])]
         kinds[short(p["class"])]["props"][p["name"]] = {k: r[k] for k in sorted(r)}
     for e in m.events:
         o = e["o"]
@@ -950,7 +954,7 @@ def winui_spec() -> dict:
     style = style_table.build("winui", style_table.load("winui"), tags, kinds)
     return {"schema": SCHEMA, "backend": "winui", "framework": "WinUI 3 (svelters-winui, windows-rs)", "event_aliases": {},
             "tags": dict(sorted(tags.items())), "kinds": kinds, "style": style, "method_lookup": "annotated",
-            "source": {"metadata": "metadata/winui/*.json + metadata/overrides/winui/*.yaml", "style": "metadata/style/winui.yaml"}}
+            "source": {"metadata": "metadata/winui/*.json + metadata/overrides/winui/*.yaml + metadata/inferred/winui/*.yaml", "style": "metadata/style/winui.yaml"}}
 
 
 def main() -> int:

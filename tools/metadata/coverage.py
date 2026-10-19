@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""API-surface coverage report: metadata/coverage/{gtk,qt}.md (and a machine-readable .json).
+"""API-surface coverage report: metadata/coverage/{gtk,qt,winui}.md (and a machine-readable .json).
 
 Per kind: exposed as an element (or why not), props/signals/methods exposed out of the kind's own
 total, slots annotated, ownership annotated, signal results annotated, bindings annotated,
@@ -104,24 +104,24 @@ def gtk_rows() -> list[dict]:
     return rows
 
 
-def gtk_fact_table() -> dict:
-    """Facts by section and state: manual / inferred verified, delivery-only, pending; parked and unreviewed counts."""
-    man = json.loads(ledger.GTK_FACTS.read_text())
-    verified = ledger.verified_facts("gtk")
+def gtk_fact_table(tk: str = "gtk") -> dict:
+    """Facts by section and state: manual / inferred verified, weak (`delivery`/`connect`), pending; parked and unreviewed counts."""
+    man = json.loads(ledger.GTK_FACTS.read_text()) if tk == "gtk" else ledger.manifest(tk)
+    verified = ledger.verified_facts(tk)
     sections: dict[str, dict[str, int]] = {}
     for f in man["facts"]:
         row = sections.setdefault(f["section"], {"manual": 0, "inferred": 0, "delivery": 0, "pending": 0})
         origin = f.get("origin", "manual")
         if f["fact"] in verified:
             row[origin] += 1
-            row["delivery"] += f.get("strength") == "delivery"
+            row["delivery"] += f.get("strength") in ("delivery", "connect")
         else:
             row["pending"] += 1
     parked: dict[str, int] = {}
-    for r in ledger.load_parked("gtk"):
+    for r in ledger.load_parked(tk):
         parked[r["section"]] = parked.get(r["section"], 0) + 1
     review = {}
-    rp = ROOT / "metadata/inferred/gtk/_review.json"
+    rp = ROOT / f"metadata/inferred/{tk}/_review.json"
     if rp.exists():
         review = json.loads(rp.read_text()).get("unreviewed", {})
     return {"sections": dict(sorted(sections.items())), "parked": dict(sorted(parked.items())), "unreviewed": review}
@@ -174,6 +174,41 @@ def qt_rows() -> list[dict]:
     return rows
 
 
+# ---- WinUI -------------------------------------------------------------------------------------
+
+def winui_rows() -> list[dict]:
+    """Every ingested class (metadata/winui). Exposed = in the generated tables (manual and inferred layers merged,
+    parked facts left out): WinUI has no reflection fallback, like Qt."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("svelters_winui_gen_c", ROOT / "tools/metadata/winui/gen_backend.py")
+    gen = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(gen)
+    m = gen.Model()
+    man = ledger.manifest("winui")
+    verified = ledger.verified_facts("winui")
+    rows = []
+    for cls, k in sorted(m.classes.items(), key=lambda kv: gen.short(kv[0])):
+        name = gen.short(cls)
+        facts = [f["fact"] for f in man["facts"] if f["kind"] == name]
+        kind = next((x for x in m.kinds if x["class"] == cls), None)
+        own = lambda xs: [x for x in xs if x["class"] == cls]  # noqa: E731
+        sigs = [e for e in own(m.events) if not e["notify"]]
+        rows.append({
+            "kind": name, "native": cls, "abstract": bool(k["abstract"]),
+            "element": kind["tag"] if kind else None, "unexposed": None,
+            "props": [len(own(m.props)), len(k["properties"])], "props_annotated": len(own(m.props)),
+            "signals": [len(sigs), len(k["signals"])], "methods": [len(own(m.methods)), len(k["methods"])],
+            "notify": sum(1 for e in own(m.events) if e["notify"]),
+            "slots": len(own(m.slots)), "slots_own": len(own(m.slots)), "ownership": bool(own(m.slots)),
+            "signal_results": sum(1 for e in sigs if e["o"].get("result")),
+            "bindings": len(m.ovr.get(cls, {}).get("bindings", [])),
+            "verified": [sum(1 for f in facts if f in verified), len(facts)],
+            "inherited": 0, "gallery": None,
+            "lifetime": (kind["el"].get("lifetime") or "owned") if kind else None,
+        })
+    return rows
+
+
 # ---- output ------------------------------------------------------------------------------------
 
 def render(tk: str, rows: list[dict]) -> str:
@@ -197,10 +232,11 @@ def render(tk: str, rows: list[dict]) -> str:
          f"| Facts verified (manual and inferred) | {vf}/{vt} |",
          f"| Kinds on a gallery page | {sum(1 for r in rows if r['gallery'])} |",
          ""]
-    if tk == "gtk":
-        ft = gtk_fact_table()
+    if tk in ("gtk", "winui"):
+        ft = gtk_fact_table(tk)
+        weak = "delivery" if tk == "gtk" else "connect"
         o += ["## Facts by state\n",
-              "| Section | Verified (manual) | Verified (inferred) | of which `verified: delivery` | Pending | Parked |",
+              f"| Section | Verified (manual) | Verified (inferred) | of which `verified: {weak}` | Pending | Parked |",
               "| --- | --- | --- | --- | --- | --- |"]
         for sec, r in ft["sections"].items():
             o.append(f"| {sec} | {r['manual']} | {r['inferred']} | {r['delivery'] or '-'} | {r['pending'] or '-'} | {ft['parked'].get(sec, '-')} |")
@@ -213,10 +249,16 @@ def render(tk: str, rows: list[dict]) -> str:
                   "| Band and pattern | Candidates |", "| --- | --- |"]
             o += [f"| `{k}` | {v} |" for k, v in un.get("by_pattern", {}).items()]
             o.append("")
-        o.append("GTK exposes every property whose type the backend converts and every signal by reflection, and "
-                 "every introspectable method through GIRepository (X1; no out params, arrays or callbacks). The "
-                 "methods column counts annotated methods, which have generated tests; the annotated and verified "
-                 "columns say which facts are tested. Properties without a passing test are marked `@unverified` in the typings.\n")
+        if tk == "gtk":
+            o.append("GTK exposes every property whose type the backend converts and every signal by reflection, and "
+                     "every introspectable method through GIRepository (X1; no out params, arrays or callbacks). The "
+                     "methods column counts annotated methods, which have generated tests; the annotated and verified "
+                     "columns say which facts are tested. Properties without a passing test are marked `@unverified` in the typings.\n")
+        else:
+            o.append("WinUI exposes only the facts in the generated tables (manual and inferred annotations; no reflection "
+                     "fallback). The tests run on the windows-winui CI job only; `ledger.py import --toolkit winui` records "
+                     f"its results. {sum(r['notify'] for r in rows)} props have a `notify::<prop>` event (DependencyProperty "
+                     "callback); a `verified: connect` event was connected and disconnected, not raised.\n")
     else:
         o.append("Qt exposes only annotated facts (the generated C++ backend has no reflection fallback); "
                  f"{sum(r.get('defaults', 0) for r in rows)} properties carry a typed default read from a default-constructed instance.\n")
@@ -239,7 +281,7 @@ def main() -> int:
     ap.add_argument("--check", action="store_true", help="fail if the checked-in reports are stale")
     a = ap.parse_args()
     stale = []
-    for tk, rows in (("gtk", gtk_rows()), ("qt", qt_rows())):
+    for tk, rows in (("gtk", gtk_rows()), ("qt", qt_rows()), ("winui", winui_rows())):
         for path, text in ((OUT / f"{tk}.md", render(tk, rows)),
                            (OUT / f"{tk}.json", json.dumps(sorted(rows, key=lambda r: r["kind"]), indent=1, sort_keys=True) + "\n")):
             if not path.exists() or path.read_text() != text:

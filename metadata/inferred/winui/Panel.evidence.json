@@ -1,0 +1,12 @@
+{
+ "props:IsItemsHost": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IPanel",
+   "type": "bool",
+   "write": false
+  },
+  "rule": "P1"
+ }
+}

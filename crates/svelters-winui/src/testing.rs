@@ -198,6 +198,63 @@ impl Drop for Harness {
     }
 }
 
+// ---- Table-driven checks of the generated tests (inferred facts, tools/metadata/winui/gen_backend.py) ----
+
+/// Writes each value of `cases` to `prop` of a new `<tag>` and reads back the expected value.
+pub fn roundtrip(tag: &str, prop: &str, cases: &[(Value, Value)]) {
+    let mut h = Harness::new();
+    let w = h.create(tag);
+    for (v, want) in cases {
+        h.set(w, prop, v.clone()).unwrap_or_else(|e| panic!("<{tag}> {prop} = {v:?}: {e}"));
+        let got = h.get(w, prop).unwrap_or_else(|e| panic!("<{tag}> read {prop}: {e}"));
+        assert_eq!(got, *want, "<{tag}> {prop} after writing {v:?}");
+    }
+}
+
+/// A read-only prop of a new `<tag>` reads without an error.
+pub fn readable(tag: &str, prop: &str) {
+    let mut h = Harness::new();
+    let w = h.create(tag);
+    h.get(w, prop).unwrap_or_else(|e| panic!("<{tag}> read {prop}: {e}"));
+}
+
+/// `notify::<prop>`: while listened, writing `values` in order (at least one of them changes the prop)
+/// raises the event; after unlistening, writes raise nothing.
+pub fn notify(tag: &str, prop: &str, event: &str, values: &[Value]) {
+    let mut h = Harness::new();
+    let w = h.create(tag);
+    h.listen(w, event, true).unwrap_or_else(|e| panic!("<{tag}> listen {event}: {e}"));
+    for v in values {
+        h.set(w, prop, v.clone()).unwrap_or_else(|e| panic!("<{tag}> {prop} = {v:?}: {e}"));
+        h.pump(20);
+    }
+    let n = h.events(w, event);
+    assert!(n >= 1, "<{tag}> {event}: no callback after writing {values:?}");
+    h.listen(w, event, false).unwrap_or_else(|e| panic!("<{tag}> unlisten {event}: {e}"));
+    for v in values.iter().rev() {
+        h.set(w, prop, v.clone()).unwrap();
+    }
+    h.pump(20);
+    assert_eq!(h.events(w, event), n, "<{tag}> {event}: raised after unlistening");
+}
+
+/// An event without a test trigger: listening and unlistening on a new `<tag>` succeed (the delegate and
+/// its add/remove accessors work). Strength `connect`: native causation is not checked.
+pub fn connect(tag: &str, event: &str) {
+    let mut h = Harness::new();
+    let w = h.create(tag);
+    h.listen(w, event, true).unwrap_or_else(|e| panic!("<{tag}> listen {event}: {e}"));
+    h.pump(10);
+    h.listen(w, event, false).unwrap_or_else(|e| panic!("<{tag}> unlisten {event}: {e}"));
+}
+
+/// A method without arguments on a new `<tag>` returns without an error.
+pub fn call0(tag: &str, method: &str) {
+    let mut h = Harness::new();
+    let w = h.create(tag);
+    h.call(w, method, &[]).unwrap_or_else(|e| panic!("<{tag}> {method}(): {e}"));
+}
+
 /// Runs `tests` on this thread; see [`crate::harness::main`].
 pub fn run_tests(tests: &[(&str, fn())]) -> i32 {
     crate::harness::main(tests)
