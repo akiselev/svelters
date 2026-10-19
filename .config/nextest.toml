@@ -1,3 +1,5 @@
+experimental = ["wrapper-scripts"]
+
 # GUI integration tests start real GTK/Qt windows under Xvfb. GTK's GL renderer runs in software
 # there, and several at once can stall or lose the (virtual) Vulkan device, so they share a small
 # group. One retry covers that environmental flake; a real failure still fails twice.
@@ -11,3 +13,15 @@ retries = 1
 # A GUI test that hangs (a run loop waiting for an event that never comes) is killed instead of
 # holding a build slot for hours: reported slow at 2 min, terminated at 6 min.
 slow-timeout = { period = "120s", terminate-after = 3 }
+
+# Every Linux test runs on a private Xvfb with GTK/Qt pinned to X11 (tools/dev/headless), so a plain
+# `cargo nextest run` never opens windows on the desktop (WSLg exposes a Wayland socket that GDK
+# finds even without WAYLAND_DISPLAY). Under an outer `tools/dev/headless` or CI's xvfb-run the
+# wrapper only sets the backend variables. SVELTERS_SHOW_GUI=1 opts out for debugging.
+[scripts.wrapper.headless]
+command = { command-line = "tools/dev/headless", relative-to = "workspace-root" }
+
+[[profile.default.scripts]]
+platform = 'cfg(target_os = "linux")'
+filter = 'all()'
+run-wrapper = 'headless'

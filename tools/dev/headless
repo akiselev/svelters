@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+# Runs a command on a private virtual X server (Xvfb), so GUI tests never open windows on the
+# desktop (WSLg, or a real X/Wayland session). The Xvfb is stopped when the command exits, and
+# X clients die with their display, so nothing outlives the run.
+#
+#   tools/dev/headless cargo nextest run -p svelters-gtk
+#   SVELTERS_SHOW_GUI=1 tools/dev/headless ...     # run on the real display instead (debugging)
+#
+# Unsetting WAYLAND_DISPLAY is not enough: GDK falls back to the default `wayland-0` socket in
+# XDG_RUNTIME_DIR (WSLg always has one), so the backends are pinned to X11 as well.
+# nextest runs every Linux test through this script (.config/nextest.toml); nested calls reuse the
+# display the outer call started. Xvfb is started directly with -displayfd (ready in ~10 ms),
+# not through xvfb-run, which waits seconds per start.
+set -euo pipefail
+
+if [ "${SVELTERS_SHOW_GUI:-}" = 1 ]; then
+  exec "$@"
+fi
+
+export GDK_BACKEND=x11 QT_QPA_PLATFORM=xcb GSK_RENDERER=${GSK_RENDERER:-cairo}
+unset WAYLAND_DISPLAY
+
+# Already on a virtual display: one this script started, or CI's own xvfb-run.
+if [ -n "${DISPLAY:-}" ] && { [ "${SVELTERS_HEADLESS_DISPLAY:-}" = "$DISPLAY" ] || [ -n "${CI:-}" ]; }; then
+  exec "$@"
+fi
+
+if ! command -v Xvfb >/dev/null; then
+  echo "headless: Xvfb not found (Arch: xorg-server-xvfb, Debian/Ubuntu: xvfb); refusing to use the real display (SVELTERS_SHOW_GUI=1 to allow)" >&2
+  exit 127
+fi
+
+# Pick a free display number ourselves: WSLg mounts /tmp/.X11-unix read-only, so Xvfb can only
+# listen on the abstract socket of an explicit display (-displayfd's auto-numbering gives up).
+# An X server whose SIGUSR1 is ignored signals its parent when it is ready to accept clients.
+xvfb=
+cleanup() { [ -n "$xvfb" ] && { kill "$xvfb" 2>/dev/null || true; wait "$xvfb" 2>/dev/null || true; }; }
+trap cleanup EXIT
+trap 'exit 143' TERM
+trap 'exit 130' INT
+ready=0
+trap 'ready=1' USR1
+n=
+for cand in $(seq 100 399); do
+  [ -e "/tmp/.X$cand-lock" ] && continue
+  ready=0
+  (trap '' USR1; exec Xvfb ":$cand" -screen 0 1920x1080x24 -nolisten tcp -noreset) 2>/dev/null &
+  xvfb=$!
+  for _ in $(seq 1 1000); do
+    [ "$ready" = 1 ] && break
+    kill -0 "$xvfb" 2>/dev/null || break
+    sleep 0.01
+  done
+  if [ "$ready" = 1 ]; then
+    n=$cand
+    break
+  fi
+  wait "$xvfb" 2>/dev/null || true   # lost a race for this number, or it failed: try the next one
+  xvfb=
+done
+[ -n "$n" ] || { echo "headless: could not start Xvfb" >&2; exit 1; }
+# Xvfb signals again on a server reset; keep a no-op handler (children get the default action).
+trap ':' USR1
+
+export DISPLAY=":$n" SVELTERS_HEADLESS_DISPLAY=":$n"
+unset XAUTHORITY
+"$@" &
+child=$!
+trap 'kill -TERM "$child" 2>/dev/null; exit 143' TERM
+trap 'kill -INT "$child" 2>/dev/null; exit 130' INT
+set +e
+while :; do
+  wait "$child"
+  rc=$?
+  kill -0 "$child" 2>/dev/null || break   # a trapped signal interrupted wait: keep waiting
+done
+exit "$rc"

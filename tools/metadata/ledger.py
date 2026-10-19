@@ -34,7 +34,6 @@ import argparse
 import json
 import os
 import re
-import shutil
 import subprocess
 import sys
 import tempfile
@@ -128,10 +127,11 @@ def env() -> dict:
 
 
 def display_prefix() -> list[str]:
-    """The build queue (when present) and a virtual display (when there is none)."""
+    """The build queue (when present) and a private virtual display: always, even when the session
+    has one (WSLg, a desktop), so test windows never reach the user's screen (tools/dev/headless)."""
     out = [str(SLOT)] if SLOT.exists() else ([str(ROOT / "tools/dev/cargo-slot")] if (ROOT / "tools/dev/cargo-slot").exists() else [])
-    if not (os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY")) and shutil.which("xvfb-run"):
-        out += ["xvfb-run", "-a"]
+    if sys.platform.startswith("linux"):
+        out += [str(ROOT / "tools/dev/headless")]
     return out
 
 
